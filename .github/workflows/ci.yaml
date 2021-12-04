@@ -93,7 +93,7 @@ jobs:
         run: mix dialyzer --no-check --halt-exit-status
 
   unit_tests:
-    name: Unit Tests
+    name: Tests
     needs: deps
     runs-on: ubuntu-latest
     steps:
