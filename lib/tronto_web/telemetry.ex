@@ -1,4 +1,6 @@
 defmodule TrontoWeb.Telemetry do
+  @moduledoc nil
+
   use Supervisor
   import Telemetry.Metrics
 
