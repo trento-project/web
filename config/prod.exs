@@ -50,6 +50,38 @@ config :logger, level: :info
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
 
+defmodule ErlangSSL do
+  @moduledoc """
+  Convenient module to decode cert and key files using erlang ssl module.
+  """
+  def get_der(value) do
+    {type, entry} =
+      value
+      |> decode_pem_bin()
+      |> decode_pem_entry()
+      |> split_type_and_entry()
+
+    {type, encode_der(type, entry)}
+  end
+
+  defp decode_pem_bin(pem_bin) do
+    pem_bin |> :public_key.pem_decode() |> hd()
+  end
+
+  defp decode_pem_entry(pem_entry) do
+    :public_key.pem_entry_decode(pem_entry)
+  end
+
+  defp encode_der(ans1_type, ans1_entity) do
+    :public_key.der_encode(ans1_type, ans1_entity)
+  end
+
+  defp split_type_and_entry(ans1_entry) do
+    ans1_type = elem(ans1_entry, 0)
+    {ans1_type, ans1_entry}
+  end
+end
+
 config :tronto, TrontoWeb.Endpoint,
   # Possibly not needed, but doesn't hurt
   http: [port: {:system, "PORT"}],
@@ -61,5 +93,11 @@ config :tronto, Tronto.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
   ssl: true,
+  ssl_opts: [
+    verify: :verify_none,
+    cacerts: [ErlangSSL.get_der(System.get_env("DATABASE_CA")) |> elem(1)],
+    cert: ErlangSSL.get_der(System.get_env("DATABASE_CERT")) |> elem(1),
+    key: ErlangSSL.get_der(System.get_env("DATABASE_KEY"))
+  ],
   # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections where n is the number of app replicas.
   pool_size: 2
