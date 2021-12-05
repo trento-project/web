@@ -12,7 +12,7 @@ defmodule Tronto.MixProject do
       aliases: aliases(),
       deps: deps(),
       dialyzer: [
-        plt_add_apps: [:ex_unit],
+        plt_add_apps: [:ex_unit]
         # check_plt: true,
         # ignore_warnings: "dialyzer_ignore.exs"
       ]
