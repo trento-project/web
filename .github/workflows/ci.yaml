@@ -139,3 +139,27 @@ jobs:
 
       - name: Run test
         run: mix test --trace --slowest 10
+
+  deploy:
+    needs: test # Will only run if the test job succeeds
+    if: github.ref == 'refs/heads/master' # Only run this job if it is on the main branch
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: main # Check out main instead of the latest commit
+          fetch-depth: 0 # Checkout the whole branch
+          
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8.1
+          
+      - uses: mhanberg/gigalixir-action@<current release>
+        with:
+          GIGALIXIR_APP: tronto # Feel free to also put this in your secrets
+          # GIGALIXIR_CLEAN: true # defaults to false
+          GIGALIXIR_USERNAME: ${{ secrets.GIGALIXIR_USERNAME }}
+          GIGALIXIR_PASSWORD: ${{ secrets.GIGALIXIR_PASSWORD }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}        
