@@ -10,6 +10,14 @@ config :tronto, Tronto.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+config :tronto, Tronto.EventStore,
+  username: "postgres",
+  password: "postgres",
+  database: "tronto_eventstore_dev",
+  hostname: "localhost",
+  port: 5433,
+  pool_size: 10
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

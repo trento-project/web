@@ -10,7 +10,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :tronto, TrontoWeb.Endpoint,
-  url: [host: "example.com", port: 80],
+  url: [host: "tronto.gigalixirapp.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
@@ -99,5 +99,16 @@ config :tronto, Tronto.Repo,
     cert: ErlangSSL.get_der(System.get_env("DATABASE_CERT")) |> elem(1),
     key: ErlangSSL.get_der(System.get_env("DATABASE_KEY"))
   ],
-  # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections where n is the number of app replicas.
-  pool_size: 2
+  pool_size: 10
+
+config :tronto, Tronto.EventStore,
+  adapter: Ecto.Adapters.Postgres,
+  url: System.get_env("EVENT_STORE_URL"),
+  ssl: true,
+  ssl_opts: [
+    verify: :verify_none,
+    cacerts: [ErlangSSL.get_der(System.get_env("DATABASE_CA")) |> elem(1)],
+    cert: ErlangSSL.get_der(System.get_env("DATABASE_CERT")) |> elem(1),
+    key: ErlangSSL.get_der(System.get_env("DATABASE_KEY"))
+  ],
+  pool_size: 10
