@@ -47,6 +47,15 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :tronto, Tronto.Commanded,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.EventStore,
+    event_store: Tronto.EventStore
+  ],
+  pubsub: :local,
+  registry: :local
+
+config :tronto, event_stores: [Tronto.EventStore]
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

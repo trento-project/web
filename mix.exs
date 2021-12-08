@@ -39,6 +39,7 @@ defmodule Tronto.MixProject do
   defp deps do
     [
       {:commanded, "~> 1.3"},
+      {:commanded_eventstore_adapter, "~> 1.2"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.6"},
