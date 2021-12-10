@@ -2,9 +2,15 @@
   "devDependencies": {
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.4",
+    "prettier": "2.5.1",
     "tailwindcss": "^2.2.19"
   },
   "scripts": {
     "deploy": "NODE_ENV=production tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.0.2"
   }
 }
