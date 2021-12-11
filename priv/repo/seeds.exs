@@ -9,3 +9,11 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+%Tronto.Accounts.User{}
+|> Tronto.Accounts.User.changeset(%{
+  email: "chiecks@tronto.io",
+  password: "secret1234",
+  confirm_password: "secret1234"
+})
+|> Tronto.Repo.insert!()
