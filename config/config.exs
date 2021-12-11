@@ -58,6 +58,12 @@ config :tronto, Tronto.Commanded,
 config :tronto, Tronto.EventStore, serializer: Commanded.Serialization.JsonSerializer
 
 config :tronto, event_stores: [Tronto.EventStore]
+
+config :tronto, :pow,
+  user: Tronto.Accounts.User,
+  repo: Tronto.Repo,
+  web_module: TrontoWeb
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

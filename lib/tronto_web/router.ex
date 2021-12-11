@@ -1,5 +1,6 @@
 defmodule TrontoWeb.Router do
   use TrontoWeb, :router
+  use Pow.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -14,11 +15,20 @@ defmodule TrontoWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", TrontoWeb do
+  pipeline :protected do
+    plug Pow.Plug.RequireAuthenticated,
+      error_handler: Pow.Phoenix.PlugErrorHandler
+  end
+
+  scope "/" do
     pipe_through :browser
 
+    pow_session_routes()
+  end
+
+  scope "/", TrontoWeb do
+    pipe_through [:browser, :protected]
     get "/", PageController, :index
-    get "/login", PageController, :login
   end
 
   # Other scopes may use custom stacks.
