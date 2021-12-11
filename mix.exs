@@ -76,7 +76,6 @@ defmodule Tronto.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
         "cmd --cd assets npm run deploy",
-        "esbuild default --minify",
         "phx.digest"
       ]
     ]
