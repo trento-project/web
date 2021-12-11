@@ -75,7 +75,7 @@ defmodule Tronto.MixProject do
       "event_store.setup": ["event_store.create", "event_store.init"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
-        "cmd --cd assets npm run deploy",
+        # "cmd --cd assets npm run deploy",
         "esbuild default --minify",
         "phx.digest"
       ]

@@ -6,7 +6,7 @@
     "tailwindcss": "^2.2.19"
   },
   "scripts": {
-    "deploy": "NODE_ENV=production tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css"
+    "deploy": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css && cd .. && mix assets.deploy && rm -f _build/esbuild"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.2",
