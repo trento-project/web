@@ -1,30 +1,23 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import { render } from 'react-dom';
 
 import { Routes, Route, Link, Outlet, BrowserRouter } from 'react-router-dom';
 
-import { Fragment, useState } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
+
 import {
-  BellIcon,
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
-  HomeIcon,
-  InboxIcon,
-  MenuAlt2Icon,
-  UsersIcon,
-  XIcon,
-  SearchIcon,
-} from '@heroicons/react/outline';
+  EOS_HOME_OUTLINED,
+  EOS_VIRTUAL_HOST_MANAGER,
+  EOS_CLUSTER_ROLE,
+  EOS_CLOSE,
+  EOS_MENU,
+  EOS_NOTIFICATIONS,
+} from 'eos-icons-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Team', href: '#', icon: UsersIcon, current: false },
-  { name: 'Projects', href: '#', icon: FolderIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: InboxIcon, current: false },
-  { name: 'Reports', href: '#', icon: ChartBarIcon, current: false },
+  { name: 'Dashboard', href: '#', icon: EOS_HOME_OUTLINED, current: true },
+  { name: 'Hosts', href: '#', icon: EOS_VIRTUAL_HOST_MANAGER, current: false },
+  { name: 'Clusters', href: '#', icon: EOS_CLUSTER_ROLE, current: false },
 ];
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
@@ -83,7 +76,10 @@ const Layout = () => {
                     onClick={() => setSidebarOpen(false)}
                   >
                     <span className="sr-only">Close sidebar</span>
-                    <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                    <EOS_CLOSE
+                      className="h-6 w-6 text-white"
+                      aria-hidden="true"
+                    />
                   </button>
                 </div>
               </Transition.Child>
@@ -179,35 +175,17 @@ const Layout = () => {
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
-            <MenuAlt2Icon className="h-6 w-6" aria-hidden="true" />
+            <EOS_MENU className="h-6 w-6" aria-hidden="true" />
           </button>
           <div className="flex-1 px-4 flex justify-between">
-            <div className="flex-1 flex">
-              <form className="w-full flex md:ml-0" action="#" method="GET">
-                <label htmlFor="search-field" className="sr-only">
-                  Search
-                </label>
-                <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                  <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                    <SearchIcon className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <input
-                    id="search-field"
-                    className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm"
-                    placeholder="Search"
-                    type="search"
-                    name="search"
-                  />
-                </div>
-              </form>
-            </div>
+            <div className="flex-1 flex"></div>
             <div className="ml-4 flex items-center md:ml-6">
               <button
                 type="button"
                 className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <span className="sr-only">View notifications</span>
-                <BellIcon className="h-6 w-6" aria-hidden="true" />
+                <EOS_NOTIFICATIONS className="h-6 w-6" aria-hidden="true" />
               </button>
 
               {/* Profile dropdown */}
