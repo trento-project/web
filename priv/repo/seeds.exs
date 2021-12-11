@@ -14,5 +14,6 @@
 |> Tronto.Accounts.User.changeset(%{
   email: "chiecks@tronto.io",
   password: "secret1234",
-  confirm_password: "secret1234"})
+  confirm_password: "secret1234"
+})
 |> Tronto.Repo.insert!()
