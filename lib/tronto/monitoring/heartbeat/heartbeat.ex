@@ -6,7 +6,7 @@ defmodule Tronto.Monitoring.Heartbeat do
   alias Tronto.Monitoring.Heartbeat.Cache, as: HeartbeatCache
   require Logger
 
-  @heartbeat_interval Application.get_env(:tronto, __MODULE__)[:interval]
+  @heartbeat_interval Application.compile_env!(:tronto, __MODULE__)[:interval]
 
   @spec heartbeat(any) :: :ok
   def heartbeat(agent_id) do
