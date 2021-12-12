@@ -3,34 +3,25 @@ defmodule Tronto.Monitoring.Heartbeat do
   Heartbeat related functions
   """
 
-  @heartbeat_time :timer.seconds(5)
-
+  alias Tronto.Monitoring.Heartbeat.Cache, as: HeartbeatCache
   require Logger
+
+  @heartbeat_interval Application.get_env(:tronto, __MODULE__)[:interval]
 
   @spec heartbeat(any) :: :ok
   def heartbeat(agent_id) do
-    ConCache.put(:heartbeat, agent_id, :dub)
+    HeartbeatCache.put(agent_id, :dub, ttl: @heartbeat_interval)
   end
 
-  @spec emit_expired_heartbeat_event({atom, any, any}) :: :ok | :noop
-  def emit_expired_heartbeat_event({:delete, _, agent_id}) do
-    Logger.info("Emitting heartbeat event: #{agent_id}")
+  def dispatch_heartbeat_failed_commands() do
+    HeartbeatCache.all(:expired)
+    |> Enum.each(fn agent_id ->
+      HeartbeatCache.delete(agent_id)
+      dispatch_command(agent_id)
+    end)
   end
 
-  def emit_expired_heartbeat_event(_), do: :noop
-
-  def con_cache_child_spec() do
-    Supervisor.child_spec(
-      {
-        ConCache,
-        [
-          name: :heartbeat,
-          ttl_check_interval: @heartbeat_time * 2,
-          global_ttl: @heartbeat_time * 2,
-          callback: &emit_expired_heartbeat_event/1
-        ]
-      },
-      id: {ConCache, :heartbeat_cache}
-    )
+  defp dispatch_command(agent_id) do
+    Logger.info("Heartbeat expired for agents: #{inspect(agent_id)}")
   end
 end
