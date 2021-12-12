@@ -16,7 +16,8 @@ defmodule Tronto.Application do
       {Phoenix.PubSub, name: Tronto.PubSub},
       # Start the Endpoint (http/https)
       TrontoWeb.Endpoint,
-      Tronto.Monitoring.Heartbeat.con_cache_child_spec(),
+      {Tronto.Monitoring.Heartbeat.Cache, []},
+      Tronto.Scheduler
       # Start a worker by calling: Tronto.Worker.start_link(arg)
       # {Tronto.Worker, arg}
     ]
