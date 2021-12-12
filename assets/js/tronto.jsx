@@ -15,9 +15,9 @@ import {
 } from 'eos-icons-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: EOS_HOME_OUTLINED, current: true },
-  { name: 'Hosts', href: '#', icon: EOS_VIRTUAL_HOST_MANAGER, current: false },
-  { name: 'Clusters', href: '#', icon: EOS_CLUSTER_ROLE, current: false },
+  { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED, current: true },
+  { name: 'Hosts', href: '/hosts', icon: EOS_VIRTUAL_HOST_MANAGER, current: false },
+  { name: 'Clusters', href: '/clusters', icon: EOS_CLUSTER_ROLE, current: false },
 ];
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
@@ -140,9 +140,9 @@ const Layout = () => {
             <div className="flex-1 flex flex-col overflow-y-auto">
               <nav className="flex-1 px-2 py-4 bg-gray-800 space-y-1">
                 {navigation.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.href}
+                    to={item.href}
                     className={classNames(
                       item.current
                         ? 'bg-gray-900 text-white'
@@ -160,7 +160,7 @@ const Layout = () => {
                       aria-hidden="true"
                     />
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </nav>
             </div>
@@ -213,15 +213,15 @@ const Layout = () => {
                     {userNavigation.map((item) => (
                       <Menu.Item key={item.name}>
                         {({ active }) => (
-                          <a
-                            href={item.href}
+                          <Link
+                            to={item.href}
                             className={classNames(
                               active ? 'bg-gray-100' : '',
                               'block px-4 py-2 text-sm text-gray-700'
                             )}
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         )}
                       </Menu.Item>
                     ))}
