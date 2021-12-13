@@ -56,6 +56,7 @@ defmodule Tronto.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.26"},
+      {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"}
