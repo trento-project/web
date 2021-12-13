@@ -64,6 +64,20 @@ config :tronto, :pow,
   repo: Tronto.Repo,
   web_module: TrontoWeb
 
+config :tronto, Tronto.Monitoring.Heartbeats, interval: :timer.seconds(5)
+
+config :tronto, Tronto.Scheduler,
+  jobs: [
+    heartbeat_check: [
+      # Runs every ten seconds
+      schedule: {:extended, "*/10"},
+      task: {Tronto.Monitoring.Heartbeats, :dispatch_heartbeat_failed_commands, []},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
+    ]
+  ],
+  debug_logging: false
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
