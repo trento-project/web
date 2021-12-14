@@ -43,11 +43,12 @@ defmodule Tronto.Monitoring.Heartbeats do
       Multi.new()
       |> Multi.delete(:delete, heartbeat)
       |> Multi.run(:command, fn _, %{delete: %{agent_id: agent_id}} ->
-        dispatch_command(agent_id)
+        __MODULE__.dispatch_command(agent_id)
       end)
       |> Repo.transaction()
     end)
   end
+
 
   defp get_all_expired_heartbeats() do
     query =
@@ -57,7 +58,8 @@ defmodule Tronto.Monitoring.Heartbeats do
     Repo.all(query)
   end
 
-  defp dispatch_command(agent_id) do
+  # TODO: replace with a command dispatch
+  def dispatch_command(agent_id) do
     Logger.info("Heartbeat expired for agents: #{inspect(agent_id)}")
     {:ok, :done}
   end
