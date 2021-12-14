@@ -60,7 +60,7 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
       Heartbeats.dispatch_heartbeat_failed_commands()
 
       assert [] == Repo.all(Heartbeat)
-      assert_called(Heartbeats.dispatch_command(agent_id))
+      assert_called Heartbeats.dispatch_command(agent_id)
     end
   end
 end
