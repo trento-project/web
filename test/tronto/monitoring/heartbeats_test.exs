@@ -55,12 +55,12 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
 
     with_mocks [
       {DateTime, [:passthrough], utc_now: fn -> now end},
-      {Heartbeats, [:passthrough], dispatch_command: fn _ -> {:ok, :done} end},
-      ] do
+      {Heartbeats, [:passthrough], dispatch_command: fn _ -> {:ok, :done} end}
+    ] do
       Heartbeats.dispatch_heartbeat_failed_commands()
 
       assert [] == Repo.all(Heartbeat)
-      assert_called Heartbeats.dispatch_command(agent_id)
+      assert_called(Heartbeats.dispatch_command(agent_id))
     end
   end
 end

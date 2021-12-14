@@ -37,6 +37,7 @@ defmodule Tronto.Monitoring.Heartbeats do
     end
   end
 
+  @spec dispatch_heartbeat_failed_commands :: :ok
   def dispatch_heartbeat_failed_commands() do
     get_all_expired_heartbeats()
     |> Enum.each(fn heartbeat ->
@@ -49,7 +50,6 @@ defmodule Tronto.Monitoring.Heartbeats do
     end)
   end
 
-
   defp get_all_expired_heartbeats() do
     query =
       from h in Heartbeat,
@@ -59,6 +59,7 @@ defmodule Tronto.Monitoring.Heartbeats do
   end
 
   # TODO: replace with a command dispatch
+  @spec dispatch_command(any) :: {:ok, :done}
   def dispatch_command(agent_id) do
     Logger.info("Heartbeat expired for agents: #{inspect(agent_id)}")
     {:ok, :done}
