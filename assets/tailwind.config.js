@@ -1,7 +1,7 @@
-const Color = require('color')
-const alpha = (clr, val) => Color(clr).alpha(val).rgb().string()
-const lighten = (clr, val) => Color(clr).lighten(val).rgb().string()
-const darken = (clr, val) => Color(clr).darken(val).rgb().string()
+const Color = require('color');
+const alpha = (clr, val) => Color(clr).alpha(val).rgb().string();
+const lighten = (clr, val) => Color(clr).lighten(val).rgb().string();
+const darken = (clr, val) => Color(clr).darken(val).rgb().string();
 
 module.exports = {
   purge: ['./js/**/*.js', '../lib/*_web/**/*.*ex'],
@@ -16,9 +16,9 @@ module.exports = {
         },
         'midnight-blue': '#192072',
         'waterhole-blue': '#2453FF',
-        'mint': '#90EBCD',
-        'persimmon': '#FE7C3F',
-        'fog': '#EFEFEF',
+        mint: '#90EBCD',
+        persimmon: '#FE7C3F',
+        fog: '#EFEFEF',
       },
     },
     fontFamily: {
