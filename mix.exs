@@ -73,6 +73,14 @@ defmodule Tronto.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      start: [
+        "cmd docker-compose up -d",
+        "deps.get",
+        "ecto.create",
+        "ecto.migrate",
+        "event_store.setup",
+        "phx.server"
+      ],
       setup: ["deps.get", "ecto.setup", "event_store.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
