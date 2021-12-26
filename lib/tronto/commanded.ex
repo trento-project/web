@@ -4,4 +4,6 @@ defmodule Tronto.Commanded do
   """
 
   use Commanded.Application, otp_app: :tronto
+
+  router(Tronto.Router)
 end
