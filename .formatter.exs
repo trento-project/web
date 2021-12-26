@@ -1,5 +1,5 @@
 [
-  import_deps: [:ecto, :phoenix],
+  import_deps: [:ecto, :phoenix, :typed_struct],
   locals_without_parens: [
     # mock
     assert_called: :*
