@@ -16,6 +16,7 @@ defmodule Tronto.Application do
       {Phoenix.PubSub, name: Tronto.PubSub},
       # Start the Endpoint (http/https)
       TrontoWeb.Endpoint,
+      Tronto.Commanded,
       Tronto.Scheduler
       # Start a worker by calling: Tronto.Worker.start_link(arg)
       # {Tronto.Worker, arg}
