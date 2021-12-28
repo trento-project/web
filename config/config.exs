@@ -62,7 +62,9 @@ config :tronto, event_stores: [Tronto.EventStore]
 config :tronto, :pow,
   user: Tronto.Accounts.User,
   repo: Tronto.Repo,
-  web_module: TrontoWeb
+  web_module: TrontoWeb,
+  extensions: [PowPersistentSession],
+  controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
 
 config :tronto, Tronto.Monitoring.Heartbeats, interval: :timer.seconds(5)
 
