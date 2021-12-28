@@ -47,5 +47,7 @@ defmodule TrontoWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug Pow.Plug.Session, otp_app: :tronto
+  # TODO: change to something better than a Cookie
+  plug PowPersistentSession.Plug.Cookie
   plug TrontoWeb.Router
 end
