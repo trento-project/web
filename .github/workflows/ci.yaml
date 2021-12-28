@@ -157,7 +157,7 @@ jobs:
         with:
           python-version: 3.8.1
 
-      - uses: mhanberg/gigalixir-action@v0.6.1
+      - uses: mhanberg/gigalixir-action@v0.6.2
         with:
           GIGALIXIR_APP: tronto
           # GIGALIXIR_CLEAN: true # defaults to false
