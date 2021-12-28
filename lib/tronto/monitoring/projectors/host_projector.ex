@@ -28,7 +28,7 @@ defmodule Tronto.Monitoring.HostProjector do
           agent_version: agent_version
         })
 
-        Ecto.Multi.insert(multi, :host, changeset)
+      Ecto.Multi.insert(multi, :host, changeset)
     end
   )
 end

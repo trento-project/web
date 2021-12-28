@@ -11,7 +11,8 @@ defmodule Tronto.ProjectorTestHelper do
       })
   end
 
-  defp next_event_number(projector, projection_name), do: last_seen_event_number(projector, projection_name) + 1
+  defp next_event_number(projector, projection_name),
+    do: last_seen_event_number(projector, projection_name) + 1
 
   defp last_seen_event_number(projector, projection_name) do
     projector

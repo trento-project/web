@@ -18,7 +18,7 @@ defmodule Tronto.Application do
       TrontoWeb.Endpoint,
       Tronto.Commanded,
       Tronto.Scheduler,
-      Tronto.Monitoring.ProjectorsSupervisor,
+      Tronto.Monitoring.ProjectorsSupervisor
       # Start a worker by calling: Tronto.Worker.start_link(arg)
       # {Tronto.Worker, arg}
     ]
