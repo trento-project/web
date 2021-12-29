@@ -5,12 +5,12 @@ defmodule TrontoWeb.DiscoveryController do
 
   @spec collect(Plug.Conn.t(), map) :: Plug.Conn.t()
   def collect(conn, event) do
-
     case Monitoring.handle_discovery_event(event) do
       :ok ->
         conn
         |> put_status(:accepted)
         |> json(%{})
+
       {:error, reason} ->
         conn
         |> put_status(:bad_request)
