@@ -31,7 +31,11 @@ defmodule Tronto.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test),
-    do: ["lib", "test/support", "deps/commanded/test/support/aggregate_case.ex"]
+    do: [
+      "lib",
+      "test/support",
+      "deps/commanded/test/support/aggregate_case.ex"
+    ]
 
   defp elixirc_paths(_), do: ["lib"]
 
@@ -41,6 +45,7 @@ defmodule Tronto.MixProject do
   defp deps do
     [
       {:commanded, "~> 1.3"},
+      {:commanded_ecto_projections, "~> 1.2"},
       {:commanded_eventstore_adapter, "~> 1.2"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
@@ -89,6 +94,7 @@ defmodule Tronto.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "event_store.setup": ["event_store.create", "event_store.init"],
+      "event_store.reset": ["event_store.drop", "event_store.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
         # "cmd --cd assets npm run deploy",
