@@ -1,9 +1,9 @@
 defmodule Tronto.Monitoring.HostTest do
   use Commanded.AggregateCase, aggregate: Tronto.Monitoring.Domain.Host, async: true
 
-  alias Tronto.Monitoring.Domain.Host
   alias Tronto.Monitoring.Domain.Commands.RegisterHost
   alias Tronto.Monitoring.Domain.Events.HostRegistered
+  alias Tronto.Monitoring.Domain.Host
 
   describe "host registration" do
     test "should register a host" do

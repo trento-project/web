@@ -3,13 +3,8 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   alias Tronto.Monitoring.Domain.Host
 
-  alias Tronto.Monitoring.Domain.Commands.{
-    RegisterHost
-  }
-
-  alias Tronto.Monitoring.Domain.Events.{
-    HostRegistered
-  }
+  alias Tronto.Monitoring.Domain.Commands.RegisterHost
+  alias Tronto.Monitoring.Domain.Events.HostRegistered
 
   defstruct [
     :id_host,
