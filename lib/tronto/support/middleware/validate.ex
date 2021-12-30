@@ -1,4 +1,8 @@
 defmodule Tronto.Support.Middleware.Validate do
+  @moduledoc """
+  Validation middleware
+  """
+
   @behaviour Commanded.Middleware
 
   import Commanded.Middleware.Pipeline
