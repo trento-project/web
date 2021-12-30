@@ -31,6 +31,11 @@ defmodule TrontoWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/api", TrontoWeb do
+    pipe_through :api
+    post "/collect", DiscoveryController, :collect
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", TrontoWeb do
   #   pipe_through :api
