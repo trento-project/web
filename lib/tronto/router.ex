@@ -5,9 +5,7 @@ defmodule Tronto.Router do
 
   alias Tronto.Monitoring.Domain.Host
 
-  alias Tronto.Monitoring.Domain.Commands.{
-    RegisterHost
-  }
+  alias Tronto.Monitoring.Domain.Commands.RegisterHost
 
   middleware Validate
 

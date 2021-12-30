@@ -14,7 +14,7 @@ defmodule Tronto.Monitoring.Heartbeats do
 
   @heartbeat_interval Application.compile_env!(:tronto, __MODULE__)[:interval]
 
-  @spec heartbeat(any) :: :ok | {:error, :heartbeat_insert_failed}
+  @spec heartbeat(any()) :: :ok | {:error, :heartbeat_insert_failed}
   def heartbeat(agent_id) do
     case %Heartbeat{}
          |> Heartbeat.changeset(%{
@@ -38,7 +38,7 @@ defmodule Tronto.Monitoring.Heartbeats do
   end
 
   @spec dispatch_heartbeat_failed_commands :: :ok
-  def dispatch_heartbeat_failed_commands() do
+  def dispatch_heartbeat_failed_commands do
     get_all_expired_heartbeats()
     |> Enum.each(fn heartbeat ->
       Multi.new()
@@ -50,7 +50,7 @@ defmodule Tronto.Monitoring.Heartbeats do
     end)
   end
 
-  defp get_all_expired_heartbeats() do
+  defp get_all_expired_heartbeats do
     query =
       from h in Heartbeat,
         where: h.timestamp < ^DateTime.add(DateTime.utc_now(), @heartbeat_interval, :millisecond)
@@ -59,7 +59,7 @@ defmodule Tronto.Monitoring.Heartbeats do
   end
 
   # TODO: replace with a command dispatch
-  @spec dispatch_command(any) :: {:ok, :done}
+  @spec dispatch_command(any()) :: {:ok, :done}
   def dispatch_command(agent_id) do
     Logger.info("Heartbeat expired for agents: #{inspect(agent_id)}")
     {:ok, :done}
