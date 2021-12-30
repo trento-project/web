@@ -14,4 +14,8 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterHost do
     field :ip_addresses, [String.t()], enforce: true
     field :agent_version, String.t(), enforce: true
   end
+
+  use Vex.Struct
+
+  validates(:id_host, uuid: true)
 end
