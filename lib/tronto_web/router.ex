@@ -32,7 +32,7 @@ defmodule TrontoWeb.Router do
   end
 
   scope "/api", TrontoWeb do
-    pipe_through [:api]
+    pipe_through :api
     post "/collect", DiscoveryController, :collect
   end
 
