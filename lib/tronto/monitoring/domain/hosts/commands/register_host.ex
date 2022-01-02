@@ -17,5 +17,5 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterHost do
 
   use Vex.Struct
 
-  validates(:id_host, uuid: true)
+  validates :id_host, uuid: true
 end
