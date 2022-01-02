@@ -6,11 +6,12 @@ defmodule Tronto.Support.Middleware.RegisterHostTest do
   @moduletag :unit
 
   test "should not validate if id_host is not a valid uuid" do
-    command = RegisterHost.new!(%{
-      id_host: Faker.StarWars.character(),
-      hostname: Faker.String.naughty(),
-      ip_addresses: [],
-      agent_version: Faker.App.version(),
+    command =
+      RegisterHost.new!(%{
+        id_host: Faker.StarWars.character(),
+        hostname: Faker.String.naughty(),
+        ip_addresses: [],
+        agent_version: Faker.App.version()
       })
 
     assert not Vex.valid?(command)
