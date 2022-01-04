@@ -29,9 +29,6 @@ const navigation = [
   },
 ];
 
-console.log(useChannel)
-
-
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
   { name: 'Settings', href: '#' },
@@ -42,16 +39,14 @@ const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
   const isCurrentRoute = (route) => pathname === route;
-  const [messages, setMessages] = useState([]);
 
-  const { channel: chatChannel } = useChannel('chat:', undefined, (channel, { messages: initialMessages}) => {
-    setMessages(initialMessages);
+  const channel = useChannel('hosts', undefined, (_, { messages: initialMessages}) => {
   });
 
 
-  // useEventHandler(ch, 'new_message', (message) => {
-  //   console.log(message);
-  // });
+  useEventHandler(channel, 'new_message', (message) => {
+    console.log(message);
+  });
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">

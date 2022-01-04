@@ -10,7 +10,6 @@ export function SocketProvider({ children, options, url }) {
     const s = new Socket(url, options);
     s.connect();
     setSocket(s);
-
     return () => {
       s.disconnect();
       setSocket(null);
