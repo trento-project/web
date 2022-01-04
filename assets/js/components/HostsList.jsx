@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { get } from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+
+import { useChannel, useEventHandler } from '../phoenix-hooks';
 
 import { EOS_FIBER_MANUAL_RECORD_OUTLINED } from 'eos-icons-react';
-
-const notify = () => toast('Here is your toast.');
 
 const HostsList = () => {
   const [hosts, setHosts] = useState([]);
@@ -12,16 +11,17 @@ const HostsList = () => {
     get(`/api/hosts/`).then(({ data }) => {
       setHosts(data);
     });
-    toast.custom((t) => (
-        <div
-          className={`bg-white px-6 py-4 shadow-md rounded-full ${
-            t.visible ? 'animate-enter' : 'animate-leave'
-          }`}
-        >
-          Hello TailwindCSS! 👋
-        </div>
-      ));
   }, []);
+
+  const channel = useChannel(
+    'hosts:notifications',
+    undefined,
+    (_, { messages: initialMessages }) => {}
+  );
+
+  useEventHandler(channel, 'host_registered', (event) => {
+    setHosts((hosts) => [...hosts, event]);
+  });
 
   return (
     <div className="flex flex-col">
@@ -31,7 +31,6 @@ const HostsList = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -71,7 +70,9 @@ const HostsList = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {host.ip_addresses.map((ip) => (
-                        <div key={ip} className="text-sm text-gray-900">{ip}</div>
+                        <div key={ip} className="text-sm text-gray-900">
+                          {ip}
+                        </div>
                       ))}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

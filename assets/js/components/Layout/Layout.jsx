@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 
 import { useChannel, useEventHandler } from '../../phoenix-hooks';
+import { toast } from 'react-hot-toast';
 
 import {
   EOS_CLOSE,
@@ -40,13 +41,23 @@ const Layout = () => {
   const { pathname } = useLocation();
   const isCurrentRoute = (route) => pathname === route;
 
-  const channel = useChannel('hosts', undefined, (_, { messages: initialMessages}) => {
-  });
+  // const channel = useChannel(
+  //   'hosts:notifications',
+  //   undefined,
+  //   (_, { messages: initialMessages }) => {}
+  // );
 
-
-  useEventHandler(channel, 'new_message', (message) => {
-    console.log(message);
-  });
+  // useEventHandler(channel, 'host_registered', (event) => {
+  //   toast.custom((t) => (
+  //     <div
+  //       className={`bg-white px-6 py-4 shadow-md rounded-full ${
+  //         t.visible ? 'animate-enter' : 'animate-leave'
+  //       }`}
+  //     >
+  //       A new host: {event.hostname} has been registered.
+  //     </div>
+  //   ));
+  // });
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">

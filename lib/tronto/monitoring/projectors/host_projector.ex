@@ -35,24 +35,10 @@ defmodule Tronto.Monitoring.HostProjector do
   @impl true
   def after_update(
         %HostRegistered{
-          id_host: id,
-          hostname: hostname,
-          ip_addresses: ip_addresses,
-          agent_version: agent_version
-        },
+        } = event ,
         _,
         _
       ) do
-    Phoenix.PubSub.broadcast(
-      Tronto.PubSub,
-      "hosts",
-      {:host_registered,
-       %{
-         id: id,
-         hostname: hostname,
-         ip_addresses: ip_addresses,
-         agent_version: agent_version
-       }}
-    )
+    TrontoWeb.Endpoint.broadcast("hosts:notifications", "host_registered", event)
   end
 end

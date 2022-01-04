@@ -15,8 +15,8 @@ const ClustersList = () => <h1>CLUSTERS LIST</h1>;
 const App = () => {
   return (
     <div>
-      <SocketProvider url="/live">
-        <Toaster />
+      <SocketProvider url="/socket">
+        <Toaster position="top-right"/>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
