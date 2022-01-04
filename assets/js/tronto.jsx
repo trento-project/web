@@ -3,6 +3,9 @@ import { render } from 'react-dom';
 
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
+import { SocketProvider } from './phoenix-hooks';
+import { Toaster } from 'react-hot-toast';
+
 import Layout from './components/Layout';
 import HostsList from './components/HostsList';
 
@@ -11,15 +14,20 @@ const ClustersList = () => <h1>CLUSTERS LIST</h1>;
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route index path="hosts" element={<HostsList />} />
-          <Route path="clusters" element={<ClustersList />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <div>
+      <SocketProvider url="/live">
+        <Toaster />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route index path="hosts" element={<HostsList />} />
+              <Route path="clusters" element={<ClustersList />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </SocketProvider>
+    </div>
   );
 };
 

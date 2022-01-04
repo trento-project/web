@@ -2,6 +2,8 @@ import React, { Fragment, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 
+import { useChannel, useEventHandler } from '../../phoenix-hooks';
+
 import {
   EOS_CLOSE,
   EOS_MENU,
@@ -27,6 +29,9 @@ const navigation = [
   },
 ];
 
+console.log(useChannel)
+
+
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
   { name: 'Settings', href: '#' },
@@ -37,6 +42,16 @@ const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
   const isCurrentRoute = (route) => pathname === route;
+  const [messages, setMessages] = useState([]);
+
+  const { channel: chatChannel } = useChannel('chat:', undefined, (channel, { messages: initialMessages}) => {
+    setMessages(initialMessages);
+  });
+
+
+  // useEventHandler(ch, 'new_message', (message) => {
+  //   console.log(message);
+  // });
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">

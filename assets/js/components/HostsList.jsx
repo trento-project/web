@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { get } from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 import { EOS_FIBER_MANUAL_RECORD_OUTLINED } from 'eos-icons-react';
+
+const notify = () => toast('Here is your toast.');
 
 const HostsList = () => {
   const [hosts, setHosts] = useState([]);
@@ -9,6 +12,15 @@ const HostsList = () => {
     get(`/api/hosts/`).then(({ data }) => {
       setHosts(data);
     });
+    toast.custom((t) => (
+        <div
+          className={`bg-white px-6 py-4 shadow-md rounded-full ${
+            t.visible ? 'animate-enter' : 'animate-leave'
+          }`}
+        >
+          Hello TailwindCSS! 👋
+        </div>
+      ));
   }, []);
 
   return (
@@ -19,6 +31,7 @@ const HostsList = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -47,18 +60,18 @@ const HostsList = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {hosts.map((host) => (
-                  <tr key="">
+                  <tr key={host.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="content-center">
-                          <EOS_FIBER_MANUAL_RECORD_OUTLINED color="black" />
-                        </div>
+                      <div className="content-center">
+                        <EOS_FIBER_MANUAL_RECORD_OUTLINED color="black" />
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                        {host.hostname}
+                      {host.hostname}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {host.ip_addresses.map((ip) => (
-                        <div className="text-sm text-gray-900">{ip}</div>
+                        <div key={ip} className="text-sm text-gray-900">{ip}</div>
                       ))}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
