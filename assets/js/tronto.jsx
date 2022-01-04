@@ -4,9 +4,9 @@ import { render } from 'react-dom';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
 import Layout from './components/Layout';
+import HostsList from './components/HostsList';
 
 const Home = () => <h1>HOME HERE</h1>;
-const HostsList = () => <h1>HOSTS LIST</h1>;
 const ClustersList = () => <h1>CLUSTERS LIST</h1>;
 
 const App = () => {
