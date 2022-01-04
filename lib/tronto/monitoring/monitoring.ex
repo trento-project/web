@@ -3,7 +3,10 @@ defmodule Tronto.Monitoring do
   This module encapuslates the access to the monitoring bounded context
   """
 
+  alias Tronto.Monitoring.HostReadModel
   alias Tronto.Monitoring.Integration.Discovery
+
+  alias Tronto.Repo
 
   def handle_discovery_event(event) do
     case Discovery.handle_discovery_event(event) do
@@ -13,5 +16,10 @@ defmodule Tronto.Monitoring do
       {:error, _} = error ->
         error
     end
+  end
+
+  @spec get_all_hosts :: [HostReadModel.t()]
+  def get_all_hosts do
+    Repo.all(HostReadModel)
   end
 end
