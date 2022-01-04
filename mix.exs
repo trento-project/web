@@ -52,7 +52,7 @@ defmodule Tronto.MixProject do
       {:domo, "~> 1.5"},
       {:ecto_sql, "~> 3.6"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:faker, "~> 0.17", only: :test},
+      {:faker, "~> 0.17", only: [:dev, :test]},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
@@ -91,7 +91,7 @@ defmodule Tronto.MixProject do
         "event_store.setup",
         "phx.server"
       ],
-      setup: ["deps.get", "ecto.setup", "event_store.setup"],
+      setup: ["deps.get", "event_store.setup", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "event_store.setup": ["event_store.create", "event_store.init"],
