@@ -26,14 +26,11 @@ defmodule TrontoWeb.Router do
     pow_session_routes()
   end
 
-  scope "/", TrontoWeb do
-    pipe_through [:browser, :protected]
-    get "/", PageController, :index
-  end
-
   scope "/api", TrontoWeb do
     pipe_through :api
+
     post "/collect", DiscoveryController, :collect
+    get "/hosts", HostController, :list
   end
 
   # Other scopes may use custom stacks.
@@ -67,5 +64,11 @@ defmodule TrontoWeb.Router do
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  scope "/*path", TrontoWeb do
+    pipe_through [:browser, :protected]
+
+    get "/", PageController, :index
   end
 end
