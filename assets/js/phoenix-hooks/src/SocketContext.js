@@ -5,11 +5,13 @@ export const SocketContext = React.createContext();
 
 export function SocketProvider({ children, options, url }) {
   const [socket, setSocket] = useState(null);
+  const [handlers, setHandlers] = useState([]);
 
   useEffect(() => {
     const s = new Socket(url, options);
     s.connect();
     setSocket(s);
+
     return () => {
       s.disconnect();
       setSocket(null);
@@ -18,7 +20,9 @@ export function SocketProvider({ children, options, url }) {
 
   const props = {
     value: {
-      socket
+      socket,
+      handlers,
+      setHandlers,
     }
   };
 
