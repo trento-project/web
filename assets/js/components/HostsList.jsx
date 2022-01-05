@@ -1,27 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { get } from 'axios';
-
-import { useChannel, useEventHandler } from '../phoenix-hooks';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 import { EOS_FIBER_MANUAL_RECORD_OUTLINED } from 'eos-icons-react';
 
 const HostsList = () => {
-  const [hosts, setHosts] = useState([]);
-  useEffect(() => {
-    get(`/api/hosts/`).then(({ data }) => {
-      setHosts(data);
-    });
-  }, []);
-
-  const channel = useChannel(
-    'hosts:notifications',
-    undefined,
-    (_, { messages: initialMessages }) => {}
-  );
-
-  useEventHandler(channel, 'host_registered', (event) => {
-    setHosts((hosts) => [...hosts, event]);
-  });
+  const hosts = useSelector((state) => state.hostsList.hosts);
 
   return (
     <div className="flex flex-col">

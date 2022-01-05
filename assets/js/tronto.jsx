@@ -3,8 +3,10 @@ import { render } from 'react-dom';
 
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
-import { SocketProvider } from './phoenix-hooks';
 import { Toaster } from 'react-hot-toast';
+import { Provider } from 'react-redux';
+
+import { store } from './state';
 
 import Layout from './components/Layout';
 import HostsList from './components/HostsList';
@@ -15,8 +17,8 @@ const ClustersList = () => <h1>CLUSTERS LIST</h1>;
 const App = () => {
   return (
     <div>
-      <SocketProvider url="/socket">
-        <Toaster position="top-right"/>
+      <Provider store={store}>
+        <Toaster position="top-right" />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
@@ -26,7 +28,7 @@ const App = () => {
             </Route>
           </Routes>
         </BrowserRouter>
-      </SocketProvider>
+      </Provider>
     </div>
   );
 };

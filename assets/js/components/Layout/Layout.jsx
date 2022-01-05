@@ -2,9 +2,6 @@ import React, { Fragment, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 
-import { useChannel, useEventHandler } from '../../phoenix-hooks';
-import { toast } from 'react-hot-toast';
-
 import {
   EOS_CLOSE,
   EOS_MENU,
@@ -40,23 +37,6 @@ const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
   const isCurrentRoute = (route) => pathname === route;
-
-  const channel = useChannel(
-    'hosts:notifications',
-    undefined,
-    (_, { messages: initialMessages }) => {}
-  );
-
-  useEventHandler(channel, 'host_registered', (event) => {
-    toast(
-      <p class="text-sm font-medium text-gray-900">
-        The new host <strong>{event.hostname}</strong> has been discovered
-      </p>,
-      {
-        icon: '🔥',
-      }
-    );
-  });
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
