@@ -10,11 +10,11 @@ defmodule TrontoWeb.HostsChannel do
     end
   end
 
-  # Channels can be used in a request/response fashion
-  # by sending replies to requests from the client
+
   @impl true
   def handle_in("host_registered", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+    broadcast!(socket, "host_registered", payload)
+    {:noreply, socket}
   end
 
   # Add authorization logic here as required.

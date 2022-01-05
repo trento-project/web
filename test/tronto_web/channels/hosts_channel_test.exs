@@ -5,19 +5,14 @@ defmodule TrontoWeb.HostsChannelTest do
     {:ok, _, socket} =
       TrontoWeb.UserSocket
       |> socket("user_id", %{some: :assign})
-      |> subscribe_and_join(TrontoWeb.HostsChannel, "hosts:lobby")
+      |> subscribe_and_join(TrontoWeb.HostsChannel, "hosts:notifications")
 
     %{socket: socket}
   end
 
-  test "ping replies with status ok", %{socket: socket} do
-    ref = push(socket, "ping", %{"hello" => "there"})
-    assert_reply ref, :ok, %{"hello" => "there"}
-  end
-
-  test "shout broadcasts to hosts:lobby", %{socket: socket} do
-    push(socket, "shout", %{"hello" => "all"})
-    assert_broadcast "shout", %{"hello" => "all"}
+  test "host_registered broadcasts to hosts:notifications", %{socket: socket} do
+    push(socket, "host_registered", %{"hostname" => "tonio"})
+    assert_broadcast "host_registered", %{"hostname" => "tonio"}
   end
 
   test "broadcasts are pushed to the client", %{socket: socket} do
