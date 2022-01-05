@@ -48,15 +48,14 @@ const Layout = () => {
   );
 
   useEventHandler(channel, 'host_registered', (event) => {
-    toast.custom((t) => (
-      <div
-        className={`bg-white px-6 py-4 shadow-md rounded-full ${
-          t.visible ? 'animate-enter' : 'animate-leave'
-        }`}
-      >
-        A new host: {event.hostname} has been registered.
-      </div>
-    ));
+    toast(
+      <p class="text-sm font-medium text-gray-900">
+        The new host <strong>{event.hostname}</strong> has been discovered
+      </p>,
+      {
+        icon: '🔥',
+      }
+    );
   });
 
   return (
