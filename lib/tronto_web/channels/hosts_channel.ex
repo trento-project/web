@@ -7,10 +7,12 @@ defmodule TrontoWeb.HostsChannel do
 
   @impl true
   def join("hosts:notifications", payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
+    case authorized?(payload) do
+      true ->
+        {:ok, socket}
+
+        # _ ->
+        # {:error, %{reason: "unauthorized"}}
     end
   end
 
@@ -21,7 +23,5 @@ defmodule TrontoWeb.HostsChannel do
   end
 
   # TODO: Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
-  end
+  defp authorized?(_), do: true
 end
