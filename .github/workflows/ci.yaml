@@ -4,6 +4,8 @@ on:
   push:
     branches: [master]
   pull_request:
+  repository_dispatch:
+    types: [start-ci]
 
 env:
   ELIXIR_VERSION: 1.12.3
