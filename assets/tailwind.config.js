@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./js/**/*.{js,jsx}', '../lib/*_web/**/*.*ex'],
+  content: ['./js/**/*.{js,jsx}', '../lib/*_web/**/*.*ex'],
   theme: {
     extend: {
       colors: {
