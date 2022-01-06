@@ -10,7 +10,6 @@ defmodule TrontoWeb.HostsChannel do
     end
   end
 
-
   @impl true
   def handle_in("host_registered", payload, socket) do
     broadcast!(socket, "host_registered", payload)

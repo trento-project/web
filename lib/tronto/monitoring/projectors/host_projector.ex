@@ -34,8 +34,7 @@ defmodule Tronto.Monitoring.HostProjector do
 
   @impl true
   def after_update(
-        %HostRegistered{
-        } = event ,
+        %HostRegistered{} = event,
         _,
         _
       ) do
