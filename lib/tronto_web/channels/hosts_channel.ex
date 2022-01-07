@@ -6,7 +6,7 @@ defmodule TrontoWeb.HostsChannel do
   use TrontoWeb, :channel
 
   @impl true
-  def join("hosts:notifications", payload, socket), do: {:ok, socket}
+  def join("hosts:notifications", _payload, socket), do: {:ok, socket}
 
   @impl true
   def handle_in("host_registered", payload, socket) do
