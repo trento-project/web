@@ -8,7 +8,7 @@ on:
     types: [start-ci]
 
 env:
-  ELIXIR_VERSION: 1.12.3
+  ELIXIR_VERSION: 1.13.1
   OTP_VERSION: 24
   MIX_ENV: test
 
