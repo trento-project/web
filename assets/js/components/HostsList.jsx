@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { get } from 'axios';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 import { EOS_FIBER_MANUAL_RECORD_OUTLINED } from 'eos-icons-react';
 
 const HostsList = () => {
-  const [hosts, setHosts] = useState([]);
-  useEffect(() => {
-    get(`/api/hosts/`).then(({ data }) => {
-      setHosts(data);
-    });
-  }, []);
+  const hosts = useSelector((state) => state.hostsList.hosts);
 
   return (
     <div className="flex flex-col">
@@ -47,18 +42,20 @@ const HostsList = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {hosts.map((host) => (
-                  <tr key="">
+                  <tr key={host.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="content-center">
-                          <EOS_FIBER_MANUAL_RECORD_OUTLINED color="black" />
-                        </div>
+                      <div className="content-center">
+                        <EOS_FIBER_MANUAL_RECORD_OUTLINED color="black" />
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                        {host.hostname}
+                      {host.hostname}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {host.ip_addresses.map((ip) => (
-                        <div className="text-sm text-gray-900">{ip}</div>
+                        <div key={ip} className="text-sm text-gray-900">
+                          {ip}
+                        </div>
                       ))}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
