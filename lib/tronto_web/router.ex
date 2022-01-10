@@ -31,6 +31,7 @@ defmodule TrontoWeb.Router do
 
     post "/collect", DiscoveryController, :collect
     get "/hosts", HostController, :list
+    post "/hosts/:id/heartbeat", HostController, :heartbeat
   end
 
   # Other scopes may use custom stacks.

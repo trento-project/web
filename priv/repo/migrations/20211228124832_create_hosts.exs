@@ -7,6 +7,7 @@ defmodule Tronto.Repo.Migrations.CreateHosts do
       add :hostname, :string
       add :ip_addresses, {:array, :string}
       add :agent_version, :string
+      add :heartbeat, :string
     end
   end
 end

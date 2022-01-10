@@ -3,7 +3,9 @@ defmodule Tronto.Monitoring.Heartbeats do
   Heartbeat related functions
   """
 
+  alias Tronto.Monitoring.Domain.Commands.UpdateHeartbeat
   alias Tronto.Monitoring.Heartbeat
+
   alias Tronto.Repo
 
   alias Ecto.Multi
@@ -14,27 +16,33 @@ defmodule Tronto.Monitoring.Heartbeats do
 
   @heartbeat_interval Application.compile_env!(:tronto, __MODULE__)[:interval]
 
-  @spec heartbeat(any()) :: :ok | {:error, :heartbeat_insert_failed}
   def heartbeat(agent_id) do
-    case %Heartbeat{}
-         |> Heartbeat.changeset(%{
-           agent_id: agent_id,
-           timestamp: DateTime.utc_now()
-         })
-         |> Repo.insert(
-           conflict_target: :agent_id,
-           on_conflict: {:replace, [:timestamp]}
-         ) do
-      {:ok, _} ->
-        :ok
+    heartbeat = Repo.get(Heartbeat, agent_id)
 
-      {:error, reasons} ->
-        Logger.error("Error while storing heartbeat for agent #{agent_id}",
-          error: inspect(reasons)
-        )
+    changeset =
+      Heartbeat.changeset(
+        %Heartbeat{},
+        %{
+          agent_id: agent_id,
+          timestamp: DateTime.utc_now()
+        }
+      )
 
-        {:error, :heartbeat_insert_failed}
-    end
+    Multi.new()
+    |> Multi.insert(:insert, changeset,
+      conflict_target: :agent_id,
+      on_conflict: {:replace, [:timestamp]}
+    )
+    |> Multi.run(:command, fn _, _ ->
+      case heartbeat do
+        nil ->
+          dispatch_command(agent_id, :passing)
+
+        %Heartbeat{} ->
+          {:ok, :noop}
+      end
+    end)
+    |> Repo.transaction()
   end
 
   @spec dispatch_heartbeat_failed_commands :: :ok
@@ -43,8 +51,8 @@ defmodule Tronto.Monitoring.Heartbeats do
     |> Enum.each(fn heartbeat ->
       Multi.new()
       |> Multi.delete(:delete, heartbeat)
-      |> Multi.run(:command, fn _, %{delete: %{agent_id: agent_id}} ->
-        __MODULE__.dispatch_command(agent_id)
+      |> Multi.run(:command, fn _, %{delete: %Heartbeat{agent_id: agent_id}} ->
+        dispatch_command(agent_id, :critical)
       end)
       |> Repo.transaction()
     end)
@@ -53,15 +61,21 @@ defmodule Tronto.Monitoring.Heartbeats do
   defp get_all_expired_heartbeats do
     query =
       from h in Heartbeat,
-        where: h.timestamp < ^DateTime.add(DateTime.utc_now(), @heartbeat_interval, :millisecond)
+        where: h.timestamp < ^DateTime.add(DateTime.utc_now(), -@heartbeat_interval, :millisecond)
 
     Repo.all(query)
   end
 
-  # TODO: replace with a command dispatch
-  @spec dispatch_command(any()) :: {:ok, :done}
-  def dispatch_command(agent_id) do
-    Logger.info("Heartbeat expired for agents: #{inspect(agent_id)}")
-    {:ok, :done}
+  @spec dispatch_command(any(), :passing | :critical) :: {:ok, :done}
+  defp dispatch_command(agent_id, heartbeat) do
+    case %{id_host: agent_id, heartbeat: heartbeat}
+         |> UpdateHeartbeat.new!()
+         |> Tronto.Commanded.dispatch() do
+      :ok ->
+        {:ok, :done}
+
+      {:error, _} = error ->
+        error
+    end
   end
 end

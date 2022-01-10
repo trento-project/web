@@ -5,10 +5,13 @@ defmodule Tronto.Router do
 
   alias Tronto.Monitoring.Domain.Host
 
-  alias Tronto.Monitoring.Domain.Commands.RegisterHost
+  alias Tronto.Monitoring.Domain.Commands.{
+    RegisterHost,
+    UpdateHeartbeat
+  }
 
   middleware Validate
 
   identify Host, by: :id_host
-  dispatch RegisterHost, to: Host
+  dispatch [RegisterHost, UpdateHeartbeat], to: Host
 end

@@ -10,11 +10,6 @@ defmodule TrontoWeb.HostsChannelTest do
     %{socket: socket}
   end
 
-  test "host_registered broadcasts to hosts:notifications", %{socket: socket} do
-    push(socket, "host_registered", %{"hostname" => "tonio"})
-    assert_broadcast "host_registered", %{"hostname" => "tonio"}
-  end
-
   test "broadcasts are pushed to the client", %{socket: socket} do
     broadcast_from!(socket, "broadcast", %{"some" => "data"})
     assert_push "broadcast", %{"some" => "data"}

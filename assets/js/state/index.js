@@ -26,6 +26,14 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'HOST_REGISTERED', payload })
   );
 
+  channel.on('heartbeat_succeded', (payload) =>
+    store.dispatch({ type: 'HEARTBEAT_SUCCEDED', payload })
+  );
+
+  channel.on('heartbeat_failed', (payload) =>
+    store.dispatch({ type: 'HEARTBEAT_FAILED', payload })
+  );
+
   channel
     .join()
     .receive('ok', ({ messages }) => console.log('catching up', messages))

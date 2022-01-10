@@ -1,4 +1,4 @@
-defmodule Tronto.Support.Middleware.RegisterHostTest do
+defmodule Tronto.Monitoring.Domain.Commands.RegisterHostTest do
   use ExUnit.Case
 
   alias Tronto.Monitoring.Domain.Commands.RegisterHost
@@ -10,7 +10,7 @@ defmodule Tronto.Support.Middleware.RegisterHostTest do
       RegisterHost.new!(%{
         id_host: Faker.StarWars.character(),
         hostname: Faker.String.naughty(),
-        ip_addresses: [],
+        ip_addresses: [Faker.Internet.ip_v4_address()],
         agent_version: Faker.App.version()
       })
 

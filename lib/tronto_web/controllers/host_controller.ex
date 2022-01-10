@@ -10,4 +10,18 @@ defmodule TrontoWeb.HostController do
 
     json(conn, hosts)
   end
+
+  def heartbeat(conn, %{"id" => id}) do
+    case Monitoring.Heartbeats.heartbeat(id) do
+      {:ok, _} ->
+        conn
+        |> put_status(:accepted)
+        |> json(%{})
+
+      {:error, reason} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: reason})
+    end
+  end
 end

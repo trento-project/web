@@ -9,6 +9,8 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
     Heartbeats
   }
 
+  alias Tronto.Monitoring.Domain.Commands.UpdateHeartbeat
+
   alias Tronto.Repo
 
   @moduletag :integration
@@ -16,7 +18,10 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
   test "create new heartbeat" do
     now = DateTime.utc_now()
 
-    with_mock DateTime, [:passthrough], utc_now: fn -> now end do
+    with_mocks [
+      {DateTime, [:passthrough], utc_now: fn -> now end},
+      {Tronto.Commanded, [:passthrough], dispatch: fn _ -> :ok end}
+    ] do
       agent_id = Faker.UUID.v4()
       Heartbeats.heartbeat(agent_id)
 
@@ -24,6 +29,11 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
 
       assert heartbeat.agent_id == agent_id
       assert heartbeat.timestamp == now
+
+      assert_called Tronto.Commanded.dispatch(%UpdateHeartbeat{
+                      id_host: agent_id,
+                      heartbeat: :passing
+                    })
     end
   end
 
@@ -33,12 +43,17 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
 
     now = DateTime.utc_now()
 
-    with_mock DateTime, [:passthrough], utc_now: fn -> now end do
+    with_mocks [
+      {DateTime, [:passthrough], utc_now: fn -> now end},
+      {Tronto.Commanded, [:passthrough], dispatch: fn _ -> :ok end}
+    ] do
       Heartbeats.heartbeat(agent_id)
 
       [heartbeat] = Repo.all(Heartbeat)
 
       assert heartbeat.timestamp == now
+
+      assert_not_called Tronto.Commanded.dispatch(:_)
     end
   end
 
@@ -55,12 +70,16 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
 
     with_mocks [
       {DateTime, [:passthrough], utc_now: fn -> now end},
-      {Heartbeats, [:passthrough], dispatch_command: fn _ -> {:ok, :done} end}
+      {Tronto.Commanded, [:passthrough], dispatch: fn _ -> :ok end}
     ] do
       Heartbeats.dispatch_heartbeat_failed_commands()
 
       assert [] == Repo.all(Heartbeat)
-      assert_called Heartbeats.dispatch_command(agent_id)
+
+      assert_called Tronto.Commanded.dispatch(%UpdateHeartbeat{
+                      id_host: agent_id,
+                      heartbeat: :critical
+                    })
     end
   end
 end
