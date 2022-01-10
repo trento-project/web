@@ -19,7 +19,6 @@ export const hostsListSlice = createSlice({
     updateHost: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
-          console.log(action.payload);
           host = { ...host, ...action.payload }
         }
         return host;
