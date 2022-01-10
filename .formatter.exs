@@ -3,6 +3,7 @@
   locals_without_parens: [
     # mock
     assert_called: :*,
+    assert_not_called: :*,
     # vex
     validates: :*
   ],
