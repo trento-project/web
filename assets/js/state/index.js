@@ -26,6 +26,10 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'HOST_REGISTERED', payload })
   );
 
+  channel.on('host_details_updated', (payload) =>
+  store.dispatch({ type: 'HOST_DETAILS_UPDATED', payload })
+);
+
   channel.on('heartbeat_succeded', (payload) =>
     store.dispatch({ type: 'HEARTBEAT_SUCCEDED', payload })
   );
