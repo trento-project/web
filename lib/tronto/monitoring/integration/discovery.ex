@@ -19,12 +19,24 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     RegisterHost.new(
       id_host: agent_id,
       hostname: hostname,
-      ip_addresses: ip_addresses,
+      ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
       agent_version: agent_version
     )
   end
 
   def handle_discovery_event(_) do
     {:error, :invalid_payload}
+  end
+
+  defp is_non_loopback_ipv4?("127.0.0.1"), do: false
+
+  defp is_non_loopback_ipv4?(ip) do
+    case :inet.parse_ipv4_address(String.to_charlist(ip)) do
+      {:ok, _} ->
+        true
+
+      {:error, :einval} ->
+        false
+    end
   end
 end
