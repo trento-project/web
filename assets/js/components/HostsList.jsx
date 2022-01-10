@@ -1,7 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { EOS_FIBER_MANUAL_RECORD_OUTLINED } from 'eos-icons-react';
+import {
+  EOS_LENS_FILLED,
+} from 'eos-icons-react';
+
+const getHeartbeatIcon = ({ heartbeat }) => {
+  switch (heartbeat) {
+    case 'passing':
+      return <EOS_LENS_FILLED className="fill-jungle-green-500" />;
+    case 'critical':
+      return <EOS_LENS_FILLED className="fill-red-500" />;
+    default:
+      return <EOS_LENS_FILLED className="fill-gray-500" />;
+  }
+};
 
 const HostsList = () => {
   const hosts = useSelector((state) => state.hostsList.hosts);
@@ -45,7 +58,7 @@ const HostsList = () => {
                   <tr key={host.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="content-center">
-                        <EOS_FIBER_MANUAL_RECORD_OUTLINED color="black" />
+                        {getHeartbeatIcon(host)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
