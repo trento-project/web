@@ -18,7 +18,7 @@ defmodule TrontoWeb.HostController do
         |> put_status(:accepted)
         |> json(%{})
 
-      {:error, reason} ->
+      {:error, _, reason, _} ->
         conn
         |> put_status(:bad_request)
         |> json(%{error: reason})
