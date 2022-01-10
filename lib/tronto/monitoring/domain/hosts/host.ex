@@ -11,6 +11,7 @@ defmodule Tronto.Monitoring.Domain.Host do
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostDetailsUpdated,
     HostRegistered
   }
 
@@ -49,11 +50,37 @@ defmodule Tronto.Monitoring.Domain.Host do
     }
   end
 
+  # Host exists but details didn't change
   def execute(
-        %Host{id_host: _},
-        %RegisterHost{}
+        %Host{
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version
+        },
+        %RegisterHost{
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version
+        }
       ) do
     []
+  end
+
+  def execute(
+        %Host{},
+        %RegisterHost{
+          id_host: id_host,
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version
+        }
+      ) do
+    %HostDetailsUpdated{
+      id_host: id_host,
+      hostname: hostname,
+      ip_addresses: ip_addresses,
+      agent_version: agent_version
+    }
   end
 
   # Heartbeat received
@@ -104,6 +131,24 @@ defmodule Tronto.Monitoring.Domain.Host do
         ip_addresses: ip_addresses,
         agent_version: agent_version,
         heartbeat: heartbeat
+    }
+  end
+
+  def apply(
+        %Host{} = host,
+        %HostDetailsUpdated{
+          id_host: id_host,
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version
+        }
+      ) do
+    %Host{
+      host
+      | id_host: id_host,
+        hostname: hostname,
+        ip_addresses: ip_addresses,
+        agent_version: agent_version
     }
   end
 
