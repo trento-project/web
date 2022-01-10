@@ -9,6 +9,7 @@ defmodule Tronto.Monitoring.HostTest do
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostDetailsUpdated,
     HostRegistered
   }
 
@@ -53,27 +54,85 @@ defmodule Tronto.Monitoring.HostTest do
       )
     end
 
-    test "should not register a host if it is already registered" do
+    test "should update host details if it is already registered" do
       id_host = Faker.UUID.v4()
+      new_hostname = Faker.StarWars.character()
+      new_ip_addresses = [Faker.Internet.ip_v4_address()]
+      new_agent_version = Faker.Internet.slug()
+
+      initial_events = [
+        %HostRegistered{
+          id_host: Faker.UUID.v4(),
+          hostname: Faker.StarWars.character(),
+          ip_addresses: [Faker.Internet.ip_v4_address()],
+          agent_version: Faker.Internet.slug(),
+          heartbeat: :unknown
+        }
+      ]
+
+      commands = [
+        RegisterHost.new!(
+          id_host: id_host,
+          hostname: new_hostname,
+          ip_addresses: new_ip_addresses,
+          agent_version: new_agent_version
+        )
+      ]
 
       assert_events(
+        initial_events,
+        commands,
         [
-          %HostRegistered{
+          %HostDetailsUpdated{
             id_host: id_host,
-            hostname: Faker.StarWars.character(),
-            ip_addresses: [Faker.Internet.ip_v4_address()],
-            agent_version: Faker.Internet.slug(),
-            heartbeat: :unknown
+            hostname: new_hostname,
+            ip_addresses: new_ip_addresses,
+            agent_version: new_agent_version
           }
-        ],
-        [
-          RegisterHost.new!(
-            id_host: id_host,
-            hostname: Faker.StarWars.character(),
-            ip_addresses: [Faker.Internet.ip_v4_address()],
-            agent_version: Faker.Internet.slug()
-          )
-        ],
+        ]
+      )
+
+      assert_state(
+        initial_events,
+        commands,
+        %Host{
+          id_host: id_host,
+          hostname: new_hostname,
+          ip_addresses: new_ip_addresses,
+          agent_version: new_agent_version,
+          heartbeat: :unknown
+        }
+      )
+    end
+
+    test "should not update host details if the same details were already registered" do
+      id_host = Faker.UUID.v4()
+      hostname = Faker.StarWars.character()
+      ip_addresses = [Faker.Internet.ip_v4_address()]
+      agent_version = Faker.Internet.slug()
+
+      initial_events = [
+        %HostRegistered{
+          id_host: id_host,
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          heartbeat: :unknown
+        }
+      ]
+
+      commands = [
+        RegisterHost.new!(
+          id_host: id_host,
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version
+        )
+      ]
+
+      assert_events(
+        initial_events,
+        commands,
         []
       )
     end
