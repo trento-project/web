@@ -61,7 +61,7 @@ defmodule Tronto.Monitoring.Domain.Host do
         %Host{id_host: nil},
         %UpdateHeartbeat{}
       ) do
-    []
+    {:error, :host_not_registered}
   end
 
   def execute(

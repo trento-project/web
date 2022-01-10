@@ -39,7 +39,10 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
 
   test "update existing heartbeat" do
     agent_id = Faker.UUID.v4()
-    Heartbeats.heartbeat(agent_id)
+
+    with_mock Tronto.Commanded, [:passthrough], dispatch: fn _ -> :ok end do
+      Heartbeats.heartbeat(agent_id)
+    end
 
     now = DateTime.utc_now()
 
@@ -59,7 +62,10 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
 
   test "dispatch commands on heartbeat expiration" do
     agent_id = Faker.UUID.v4()
-    Heartbeats.heartbeat(agent_id)
+
+    with_mock Tronto.Commanded, [:passthrough], dispatch: fn _ -> :ok end do
+      Heartbeats.heartbeat(agent_id)
+    end
 
     now =
       DateTime.add(
