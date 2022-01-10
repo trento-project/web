@@ -11,6 +11,8 @@ import {
   EOS_CLUSTER_ROLE,
 } from 'eos-icons-react';
 
+import TrentoLogo from '../../../static/trento-logo-stacked.svg'
+
 const classNames = (...classes) => classes.filter(Boolean).join(' ');
 
 const navigation = [
@@ -93,7 +95,7 @@ const Layout = () => {
               <div className="flex-shrink-0 flex items-center px-4">
                 <img
                   className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
+                  src={TrentoLogo}
                   alt="Workflow"
                 />
               </div>
@@ -138,11 +140,11 @@ const Layout = () => {
         <div className="flex flex-col w-64">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center h-16 flex-shrink-0 px-4 bg-pine-green">
+            <div className="flex items-center h-24 flex-shrink-0 bg-pine-green">
               <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-                alt="Workflow"
+                className="h-20 w-auto mt-2 mr-auto ml-auto"
+                src={TrentoLogo}
+                alt="Trento"
               />
             </div>
             <div className="flex-1 flex flex-col overflow-y-auto">
