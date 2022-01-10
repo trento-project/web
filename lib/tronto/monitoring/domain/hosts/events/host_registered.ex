@@ -13,5 +13,6 @@ defmodule Tronto.Monitoring.Domain.Events.HostRegistered do
     field :hostname, String.t(), enforce: true
     field :ip_addresses, [String.t()], enforce: true
     field :agent_version, String.t(), enforce: true
+    field :heartbeat, :unknown, enforce: true, default: :unknown
   end
 end
