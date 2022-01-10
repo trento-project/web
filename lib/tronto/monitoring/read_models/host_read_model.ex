@@ -15,6 +15,7 @@ defmodule Tronto.Monitoring.HostReadModel do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
     field :agent_version, :string
+    field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
