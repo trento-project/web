@@ -1,7 +1,7 @@
 import { get } from 'axios';
 import { put, all, call, takeEvery } from 'redux-saga/effects';
 
-import { appendHost, setHosts, startLoading, stopLoading, setHeartbeatPassing, setHeartbeatCritical }
+import { appendHost, setHosts, updateHost, startLoading, stopLoading, setHeartbeatPassing, setHeartbeatCritical }
   from '../hosts';
 import { watchNotifications } from './notifications';
 
@@ -29,6 +29,14 @@ function* hostRegistered({ payload }) {
 
 function* watchHostRegistered() {
   yield takeEvery('HOST_REGISTERED', hostRegistered);
+}
+
+function* hostDetailsUpdated({ payload }) {
+  yield put(updateHost(payload));
+}
+
+function* watchHostDetailsUpdated() {
+  yield takeEvery('HOST_DETAILS_UPDATED', hostDetailsUpdated);
 }
 
 function* heartbeatSucceded({ payload }) {
@@ -60,5 +68,5 @@ function* watchHeartbeatFailed() {
 }
 
 export default function* rootSaga() {
-  yield all([initialDataFetch(), watchHostRegistered(), watchHeartbeatSucceded(), watchHeartbeatFailed(), watchNotifications()]);
+  yield all([initialDataFetch(), watchHostRegistered(), watchHostDetailsUpdated(), watchHeartbeatSucceded(), watchHeartbeatFailed(), watchNotifications()]);
 }

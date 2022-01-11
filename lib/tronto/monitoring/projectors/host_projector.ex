@@ -11,6 +11,7 @@ defmodule Tronto.Monitoring.HostProjector do
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostDetailsUpdated,
     HostRegistered
   }
 
@@ -38,6 +39,27 @@ defmodule Tronto.Monitoring.HostProjector do
         })
 
       Ecto.Multi.insert(multi, :host, changeset)
+    end
+  )
+
+  project(
+    %HostDetailsUpdated{
+      id_host: id,
+      hostname: hostname,
+      ip_addresses: ip_addresses,
+      agent_version: agent_version
+    },
+    fn multi ->
+      changeset =
+        HostReadModel
+        |> Repo.get(id)
+        |> HostReadModel.changeset(%{
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
@@ -79,30 +101,38 @@ defmodule Tronto.Monitoring.HostProjector do
   end
 
   def after_update(
-        %HeartbeatSucceded{id_host: id_host},
+        %HostDetailsUpdated{},
         _,
-        %{host: %HostReadModel{hostname: hostname}}
+        %{host: host}
+      ) do
+    TrontoWeb.Endpoint.broadcast("hosts:notifications", "host_details_updated", host)
+  end
+
+  def after_update(
+        %HeartbeatSucceded{},
+        _,
+        %{host: %HostReadModel{id: id, hostname: hostname}}
       ) do
     TrontoWeb.Endpoint.broadcast(
       "hosts:notifications",
       "heartbeat_succeded",
       %{
-        id_host: id_host,
+        id: id,
         hostname: hostname
       }
     )
   end
 
   def after_update(
-        %HeartbeatFailed{id_host: id_host},
+        %HeartbeatFailed{},
         _,
-        %{host: %HostReadModel{hostname: hostname}}
+        %{host: %HostReadModel{id: id, hostname: hostname}}
       ) do
     TrontoWeb.Endpoint.broadcast(
       "hosts:notifications",
       "heartbeat_failed",
       %{
-        id_host: id_host,
+        id: id,
         hostname: hostname
       }
     )
