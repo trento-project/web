@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import { Socket } from 'phoenix';
 
 import hostsListReducer from './hosts';
+import liveFeedReducer from './liveFeed';
 
 import rootSaga from './sagas';
 
@@ -11,6 +12,7 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     hostsList: hostsListReducer,
+    liveFeed: liveFeedReducer,
   },
   middleware: [sagaMiddleware],
 });
@@ -27,8 +29,8 @@ const processChannelEvents = (store) => {
   );
 
   channel.on('host_details_updated', (payload) =>
-  store.dispatch({ type: 'HOST_DETAILS_UPDATED', payload })
-);
+    store.dispatch({ type: 'HOST_DETAILS_UPDATED', payload })
+  );
 
   channel.on('heartbeat_succeded', (payload) =>
     store.dispatch({ type: 'HEARTBEAT_SUCCEDED', payload })

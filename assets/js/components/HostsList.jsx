@@ -1,9 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import {
-  EOS_LENS_FILLED,
-} from 'eos-icons-react';
+import { EOS_LENS_FILLED } from 'eos-icons-react';
 
 const getHeartbeatIcon = ({ heartbeat }) => {
   switch (heartbeat) {
@@ -55,7 +53,7 @@ const HostsList = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {hosts.map((host) => (
-                  <tr key={host.id}>
+                  <tr key={host.id} className="animate-fade">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="content-center">
                         {getHeartbeatIcon(host)}

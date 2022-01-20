@@ -1,8 +1,16 @@
 import { get } from 'axios';
 import { put, all, call, takeEvery } from 'redux-saga/effects';
 
-import { appendHost, setHosts, updateHost, startLoading, stopLoading, setHeartbeatPassing, setHeartbeatCritical }
-  from '../hosts';
+import {
+  appendHost,
+  setHosts,
+  updateHost,
+  startLoading,
+  stopLoading,
+  setHeartbeatPassing,
+  setHeartbeatCritical,
+} from '../hosts';
+import { appendEntryToLiveFeed } from '../liveFeed';
 import { watchNotifications } from './notifications';
 
 const notify = ({ text, icon }) => ({
@@ -19,6 +27,12 @@ function* initialDataFetch() {
 
 function* hostRegistered({ payload }) {
   yield put(appendHost(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.hostname,
+      message: 'New host registered.',
+    })
+  );
   yield put(
     notify({
       text: `A new host, ${payload.hostname}, has been discovered.`,
@@ -68,5 +82,12 @@ function* watchHeartbeatFailed() {
 }
 
 export default function* rootSaga() {
-  yield all([initialDataFetch(), watchHostRegistered(), watchHostDetailsUpdated(), watchHeartbeatSucceded(), watchHeartbeatFailed(), watchNotifications()]);
+  yield all([
+    initialDataFetch(),
+    watchHostRegistered(),
+    watchHostDetailsUpdated(),
+    watchHeartbeatSucceded(),
+    watchHeartbeatFailed(),
+    watchNotifications(),
+  ]);
 }
