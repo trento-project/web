@@ -4,9 +4,14 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   from the discovery bounded-context
   """
 
-  alias Tronto.Monitoring.Domain.Commands.RegisterHost
+  @type command :: struct
 
-  @spec handle_discovery_event(map) :: {:error, any} | {:ok, struct}
+  alias Tronto.Monitoring.Domain.Commands.{
+    RegisterCluster,
+    RegisterHost
+  }
+
+  @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
   def handle_discovery_event(%{
         "discovery_type" => "host_discovery",
         "agent_id" => agent_id,
@@ -24,6 +29,30 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     )
   end
 
+  def handle_discovery_event(%{
+        "discovery_type" => "ha_cluster_discovery",
+        "agent_id" => agent_id,
+        "payload" =>
+          %{
+            "Id" => id,
+            "Name" => name,
+            "Crmmon" => %{
+              "Summary" => %{
+                "Resources" => %{"Number" => _resources_number},
+                "Nodes" => %{"Number" => _hosts_number}
+              }
+            }
+          } = payload
+      }) do
+    RegisterCluster.new(
+      id_cluster: id,
+      id_host: agent_id,
+      name: name,
+      sid: parse_cluster_sid(payload),
+      type: detect_cluster_type(payload)
+    )
+  end
+
   def handle_discovery_event(_) do
     {:error, :invalid_payload}
   end
@@ -38,5 +67,46 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       {:error, :einval} ->
         false
     end
+  end
+
+  defp detect_cluster_type(%{"Crmmon" => %{"Clones" => clones}}) do
+    has_sap_hana_topology =
+      Enum.any?(clones, fn %{"Resources" => resources} ->
+        Enum.any?(resources, fn %{"Agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
+      end)
+
+    has_sap_hana =
+      Enum.any?(clones, fn %{"Resources" => resources} ->
+        Enum.any?(resources, fn %{"Agent" => agent} -> agent == "ocf::suse:SAPHana" end)
+      end)
+
+    has_sap_hana_controller =
+      Enum.any?(clones, fn %{"Resources" => resources} ->
+        Enum.any?(resources, fn %{"Agent" => agent} -> agent == "ocf::suse:SAPHanaController" end)
+      end)
+
+    do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
+  end
+
+  defp do_detect_cluster_type(true, true, _), do: :hana_scale_up
+  defp do_detect_cluster_type(true, _, true), do: :hana_scale_out
+  defp do_detect_cluster_type(_, _, _), do: :unknown
+
+  defp parse_cluster_sid(%{"Cib" => %{"Configuration" => %{"Resources" => %{"Clones" => clones}}}}) do
+    clones
+    |> Enum.find_value([], fn
+      %{"Primitive" => %{"Type" => "SAPHanaTopology", "InstanceAttributes" => attributes}} ->
+        attributes
+
+      _ ->
+        nil
+    end)
+    |> Enum.find_value(nil, fn
+      %{"Name" => "SID", "Value" => value} when value != "" ->
+        value
+
+      _ ->
+        nil
+    end)
   end
 end
