@@ -33,3 +33,18 @@ Enum.each(
     |> Tronto.Commanded.dispatch()
   end
 )
+
+Enum.each(
+  0..5,
+  fn _ ->
+    %{
+      id_cluster: Faker.UUID.v4(),
+      id_host: Faker.UUID.v4(),
+      name: Faker.StarWars.character() |> Macro.underscore() |> String.replace(" ", ""),
+      sid: "PRD",
+      type: :hana_scale_up
+    }
+    |> Tronto.Monitoring.Domain.Commands.RegisterCluster.new!()
+    |> Tronto.Commanded.dispatch()
+  end
+)
