@@ -3,7 +3,11 @@ defmodule Tronto.Monitoring do
   This module encapuslates the access to the monitoring bounded context
   """
 
-  alias Tronto.Monitoring.HostReadModel
+  alias Tronto.Monitoring.{
+    ClusterReadModel,
+    HostReadModel
+  }
+
   alias Tronto.Monitoring.Integration.Discovery
 
   alias Tronto.Repo
@@ -21,5 +25,10 @@ defmodule Tronto.Monitoring do
   @spec get_all_hosts :: [HostReadModel.t()]
   def get_all_hosts do
     Repo.all(HostReadModel)
+  end
+
+  @spec get_all_clusters :: [ClusterReadModel.t()]
+  def get_all_clusters do
+    Repo.all(ClusterReadModel)
   end
 end

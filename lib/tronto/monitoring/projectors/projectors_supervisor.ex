@@ -10,6 +10,7 @@ defmodule Tronto.Monitoring.ProjectorsSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
+      Tronto.Monitoring.ClusterProjector,
       Tronto.Monitoring.HostProjector
     ]
 
