@@ -9,9 +9,9 @@ import { Provider } from 'react-redux';
 import { store } from './state';
 
 import Layout from './components/Layout';
+import Home from './components/Home';
 import HostsList from './components/HostsList';
 
-const Home = () => <h1>HOME HERE</h1>;
 const ClustersList = () => <h1>CLUSTERS LIST</h1>;
 
 const App = () => {

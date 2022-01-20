@@ -11,7 +11,7 @@ import {
   EOS_CLUSTER_ROLE,
 } from 'eos-icons-react';
 
-import TrentoLogo from '../../../static/trento-logo-stacked.svg'
+import TrentoLogo from '../../../static/trento-logo-stacked.svg';
 
 const classNames = (...classes) => classes.filter(Boolean).join(' ');
 
@@ -93,11 +93,7 @@ const Layout = () => {
                 </div>
               </Transition.Child>
               <div className="flex-shrink-0 flex items-center px-4">
-                <img
-                  className="h-8 w-auto"
-                  src={TrentoLogo}
-                  alt="Workflow"
-                />
+                <img className="h-8 w-auto" src={TrentoLogo} alt="Workflow" />
               </div>
               <div className="mt-5 flex-1 h-0 overflow-y-auto">
                 <nav className="px-2 space-y-1">

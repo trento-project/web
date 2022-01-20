@@ -5,7 +5,6 @@ const initialState = {
   hosts: [],
 };
 
-
 export const hostsListSlice = createSlice({
   name: 'hostsList',
   initialState,
@@ -19,7 +18,7 @@ export const hostsListSlice = createSlice({
     updateHost: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
-          host = { ...host, ...action.payload }
+          host = { ...host, ...action.payload };
         }
         return host;
       });
@@ -27,7 +26,7 @@ export const hostsListSlice = createSlice({
     setHeartbeatPassing: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
-          host.heartbeat = "passing";
+          host.heartbeat = 'passing';
         }
         return host;
       });
@@ -35,7 +34,7 @@ export const hostsListSlice = createSlice({
     setHeartbeatCritical: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
-          host.heartbeat = "critical";
+          host.heartbeat = 'critical';
         }
         return host;
       });
@@ -49,7 +48,14 @@ export const hostsListSlice = createSlice({
   },
 });
 
-export const { setHosts, appendHost, updateHost, startLoading, stopLoading, setHeartbeatPassing, setHeartbeatCritical } =
-  hostsListSlice.actions;
+export const {
+  setHosts,
+  appendHost,
+  updateHost,
+  startLoading,
+  stopLoading,
+  setHeartbeatPassing,
+  setHeartbeatCritical,
+} = hostsListSlice.actions;
 
 export default hostsListSlice.reducer;
