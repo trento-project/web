@@ -52,7 +52,12 @@ defmodule TrontoWeb.Router do
 
     scope "/" do
       pipe_through :browser
-      live_dashboard "/dashboard", metrics: TrontoWeb.Telemetry
+
+      live_dashboard "/dashboard",
+        metrics: TrontoWeb.Telemetry,
+        additional_pages: [
+          eventstores: {EventStore.Dashboard, event_stores: [Tronto.EventStore]}
+        ]
     end
   end
 
