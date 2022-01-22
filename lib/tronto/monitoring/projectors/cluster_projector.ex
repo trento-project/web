@@ -58,4 +58,21 @@ defmodule Tronto.Monitoring.ClusterProjector do
       Ecto.Multi.update(multi, :cluster, changeset)
     end
   )
+
+  @impl true
+  def after_update(
+        %ClusterRegistered{},
+        _,
+        %{cluster: cluster}
+      ) do
+    TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_registered", cluster)
+  end
+
+  def after_update(
+        %ClusterDetailsUpdated{},
+        _,
+        %{cluster: cluster}
+      ) do
+    TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_details_updated", cluster)
+  end
 end
