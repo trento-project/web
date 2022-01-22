@@ -8,7 +8,7 @@ defmodule TrontoWeb.UserSocket do
 
   ## Channels
 
-  channel "hosts:*", TrontoWeb.HostsChannel
+  channel "monitoring:*", TrontoWeb.MonitoringChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

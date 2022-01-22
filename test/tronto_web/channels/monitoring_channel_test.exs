@@ -1,11 +1,11 @@
-defmodule TrontoWeb.HostsChannelTest do
+defmodule TrontoWeb.MonitoringChannelTest do
   use TrontoWeb.ChannelCase
 
   setup do
     {:ok, _, socket} =
       TrontoWeb.UserSocket
       |> socket("user_id", %{some: :assign})
-      |> subscribe_and_join(TrontoWeb.HostsChannel, "hosts:notifications")
+      |> subscribe_and_join(TrontoWeb.MonitoringChannel, "monitoring:*")
 
     %{socket: socket}
   end
