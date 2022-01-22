@@ -56,12 +56,14 @@ defmodule Tronto.Monitoring.Domain.Cluster do
   def execute(
         %Cluster{
           id_cluster: id_cluster,
+          name: name,
           type: type,
           sid: sid
         } = cluster,
         %RegisterCluster{
           id_cluster: id_cluster,
           id_host: id_host,
+          name: name,
           type: type,
           sid: sid
         }
