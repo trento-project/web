@@ -11,8 +11,7 @@ import { store } from './state';
 import Layout from './components/Layout';
 import Home from './components/Home';
 import HostsList from './components/HostsList';
-
-const ClustersList = () => <h1>CLUSTERS LIST</h1>;
+import ClustersList from './components/ClustersList';
 
 const App = () => {
   return (
