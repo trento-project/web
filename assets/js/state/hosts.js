@@ -39,10 +39,10 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    startLoading: (state) => {
+    startHostsLoading: (state) => {
       state.loading = true;
     },
-    stopLoading: (state) => {
+    stopHostsLoading: (state) => {
       state.loading = false;
     },
   },
@@ -52,8 +52,8 @@ export const {
   setHosts,
   appendHost,
   updateHost,
-  startLoading,
-  stopLoading,
+  startHostsLoading,
+  stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
 } = hostsListSlice.actions;
