@@ -10,7 +10,7 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterClusterTest do
       RegisterCluster.new!(%{
         id_cluster: Faker.String.naughty(),
         id_host: Faker.UUID.v4(),
-        name: Faker.Name.first_name(),
+        name: Faker.StarWars.character(),
         sid: Faker.Lorem.word(),
         type: :unknown
       })
@@ -23,7 +23,7 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterClusterTest do
       RegisterCluster.new!(%{
         id_cluster: Faker.UUID.v4(),
         id_host: Faker.String.naughty(),
-        name: Faker.Name.first_name(),
+        name: Faker.StarWars.character(),
         sid: Faker.Lorem.word(),
         type: :unknown
       })

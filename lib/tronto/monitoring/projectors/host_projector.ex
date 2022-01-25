@@ -97,7 +97,7 @@ defmodule Tronto.Monitoring.HostProjector do
         _,
         %{host: host}
       ) do
-    TrontoWeb.Endpoint.broadcast("hosts:notifications", "host_registered", host)
+    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_registered", host)
   end
 
   def after_update(
@@ -105,7 +105,7 @@ defmodule Tronto.Monitoring.HostProjector do
         _,
         %{host: host}
       ) do
-    TrontoWeb.Endpoint.broadcast("hosts:notifications", "host_details_updated", host)
+    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
   end
 
   def after_update(
@@ -114,7 +114,7 @@ defmodule Tronto.Monitoring.HostProjector do
         %{host: %HostReadModel{id: id, hostname: hostname}}
       ) do
     TrontoWeb.Endpoint.broadcast(
-      "hosts:notifications",
+      "monitoring:hosts",
       "heartbeat_succeded",
       %{
         id: id,
@@ -129,7 +129,7 @@ defmodule Tronto.Monitoring.HostProjector do
         %{host: %HostReadModel{id: id, hostname: hostname}}
       ) do
     TrontoWeb.Endpoint.broadcast(
-      "hosts:notifications",
+      "monitoring:hosts",
       "heartbeat_failed",
       %{
         id: id,

@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import { Socket } from 'phoenix';
 
 import hostsListReducer from './hosts';
+import clustersListReducer from './clusters';
 import liveFeedReducer from './liveFeed';
 
 import rootSaga from './sagas';
@@ -12,6 +13,7 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     hostsList: hostsListReducer,
+    clustersList: clustersListReducer,
     liveFeed: liveFeedReducer,
   },
   middleware: [sagaMiddleware],
@@ -19,27 +21,7 @@ export const store = configureStore({
 
 sagaMiddleware.run(rootSaga);
 
-const processChannelEvents = (store) => {
-  const socket = new Socket('/socket', {});
-  socket.connect();
-  const channel = socket.channel('hosts:notifications', {});
-
-  channel.on('host_registered', (payload) =>
-    store.dispatch({ type: 'HOST_REGISTERED', payload })
-  );
-
-  channel.on('host_details_updated', (payload) =>
-    store.dispatch({ type: 'HOST_DETAILS_UPDATED', payload })
-  );
-
-  channel.on('heartbeat_succeded', (payload) =>
-    store.dispatch({ type: 'HEARTBEAT_SUCCEDED', payload })
-  );
-
-  channel.on('heartbeat_failed', (payload) =>
-    store.dispatch({ type: 'HEARTBEAT_FAILED', payload })
-  );
-
+const joinChannel = (channel) => {
   channel
     .join()
     .receive('ok', ({ messages }) => console.log('catching up', messages))
@@ -47,6 +29,41 @@ const processChannelEvents = (store) => {
     .receive('timeout', () =>
       console.log('Networking issue. Still waiting...')
     );
+}
+
+const processChannelEvents = (store) => {
+  const socket = new Socket('/socket', {});
+  socket.connect();
+
+  const hostsChannel = socket.channel('monitoring:hosts', {});
+  const clustersChannel = socket.channel('monitoring:clusters', {});
+
+  hostsChannel.on('host_registered', (payload) =>
+    store.dispatch({ type: 'HOST_REGISTERED', payload })
+  );
+
+  hostsChannel.on('host_details_updated', (payload) =>
+    store.dispatch({ type: 'HOST_DETAILS_UPDATED', payload })
+  );
+
+  hostsChannel.on('heartbeat_succeded', (payload) =>
+    store.dispatch({ type: 'HEARTBEAT_SUCCEDED', payload })
+  );
+
+  hostsChannel.on('heartbeat_failed', (payload) =>
+    store.dispatch({ type: 'HEARTBEAT_FAILED', payload })
+  );
+
+  clustersChannel.on('cluster_registered', (payload) =>
+    store.dispatch({ type: 'CLUSTER_REGISTERED', payload })
+  );
+
+  clustersChannel.on('cluster_details_updated', (payload) =>
+    store.dispatch({ type: 'CLUSTER_DETAILS_UPDATED', payload })
+  );
+
+  joinChannel(hostsChannel)
+  joinChannel(clustersChannel)
 };
 
 processChannelEvents(store);

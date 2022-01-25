@@ -2,14 +2,23 @@ import { get } from 'axios';
 import { put, all, call, takeEvery } from 'redux-saga/effects';
 
 import {
-  appendHost,
   setHosts,
+  appendHost,
   updateHost,
-  startLoading,
-  stopLoading,
+  startHostsLoading,
+  stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
 } from '../hosts';
+
+import {
+  setClusters,
+  appendCluster,
+  updateCluster,
+  startClustersLoading,
+  stopClustersLoading,
+} from '../clusters';
+
 import { appendEntryToLiveFeed } from '../liveFeed';
 import { watchNotifications } from './notifications';
 
@@ -19,10 +28,15 @@ const notify = ({ text, icon }) => ({
 });
 
 function* initialDataFetch() {
-  yield put(startLoading());
-  const { data } = yield call(get, '/api/hosts');
-  yield put(setHosts(data));
-  yield put(stopLoading());
+  yield put(startHostsLoading());
+  const { data: hosts } = yield call(get, '/api/hosts');
+  yield put(setHosts(hosts));
+  yield put(stopHostsLoading());
+
+  yield put(startClustersLoading());
+  const { data: clusters } = yield call(get, '/api/clusters');
+  yield put(setClusters(clusters));
+  yield put(stopClustersLoading());
 }
 
 function* hostRegistered({ payload }) {
@@ -81,6 +95,34 @@ function* watchHeartbeatFailed() {
   yield takeEvery('HEARTBEAT_FAILED', heartbeatFailed);
 }
 
+function* clusterRegistered({ payload }) {
+  yield put(appendCluster(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.name,
+      message: 'New cluster registered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `A new cluster, ${payload.name}, has been discovered.`,
+      icon: '🖖',
+    })
+  );
+}
+
+function* watchClusterRegistered() {
+  yield takeEvery('CLUSTER_REGISTERED', clusterRegistered);
+}
+
+function* clusterDetailsUpdated({ payload }) {
+  yield put(updateCluster(payload));
+}
+
+function* watchClusterDetailsUpdated() {
+  yield takeEvery('CLUSTER_DETAILS_UPDATED', clusterDetailsUpdated);
+}
+
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
@@ -88,6 +130,8 @@ export default function* rootSaga() {
     watchHostDetailsUpdated(),
     watchHeartbeatSucceded(),
     watchHeartbeatFailed(),
+    watchClusterRegistered(),
+    watchClusterDetailsUpdated(),
     watchNotifications(),
   ]);
 }
