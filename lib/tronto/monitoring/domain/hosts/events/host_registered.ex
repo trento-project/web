@@ -9,7 +9,7 @@ defmodule Tronto.Monitoring.Domain.Events.HostRegistered do
   typedstruct do
     @typedoc "HostRegistered event"
 
-    field :id_host, String.t(), enforce: true
+    field :host_id, String.t(), enforce: true
     field :hostname, String.t(), enforce: true
     field :ip_addresses, [String.t()], enforce: true
     field :agent_version, String.t(), enforce: true

@@ -12,7 +12,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
   }
 
   defstruct [
-    :id_cluster,
+    :cluster_id,
     :name,
     :type,
     :sid,
@@ -20,7 +20,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
   ]
 
   @type t :: %__MODULE__{
-          id_cluster: String.t(),
+          cluster_id: String.t(),
           name: [String.t()],
           type: :hana_scale_up | :hana_scale_out | :unknown,
           sid: String.t(),
@@ -29,10 +29,10 @@ defmodule Tronto.Monitoring.Domain.Cluster do
 
   # New cluster registered
   def execute(
-        %Cluster{id_cluster: nil},
+        %Cluster{cluster_id: nil},
         %RegisterCluster{
-          id_cluster: id_cluster,
-          id_host: id_host,
+          cluster_id: cluster_id,
+          host_id: host_id,
           name: name,
           type: type,
           sid: sid
@@ -40,14 +40,14 @@ defmodule Tronto.Monitoring.Domain.Cluster do
       ) do
     [
       %ClusterRegistered{
-        id_cluster: id_cluster,
+        cluster_id: cluster_id,
         name: name,
         type: type,
         sid: sid
       },
       %HostAddedToCluster{
-        id_cluster: id_cluster,
-        id_host: id_host
+        cluster_id: cluster_id,
+        host_id: host_id
       }
     ]
   end
@@ -55,28 +55,28 @@ defmodule Tronto.Monitoring.Domain.Cluster do
   # Cluster exists but details didn't change
   def execute(
         %Cluster{
-          id_cluster: id_cluster,
+          cluster_id: cluster_id,
           name: name,
           type: type,
           sid: sid
         } = cluster,
         %RegisterCluster{
-          id_cluster: id_cluster,
-          id_host: id_host,
+          cluster_id: cluster_id,
+          host_id: host_id,
           name: name,
           type: type,
           sid: sid
         }
       ) do
-    maybe_emit_host_added_to_cluster_event(cluster, id_host)
+    maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
   # Cluster exists but details changed
   def execute(
         %Cluster{} = cluster,
         %RegisterCluster{
-          id_cluster: id_cluster,
-          id_host: id_host,
+          cluster_id: cluster_id,
+          host_id: host_id,
           name: name,
           type: type,
           sid: sid
@@ -84,18 +84,18 @@ defmodule Tronto.Monitoring.Domain.Cluster do
       ) do
     [
       %ClusterDetailsUpdated{
-        id_cluster: id_cluster,
+        cluster_id: cluster_id,
         name: name,
         type: type,
         sid: sid
       }
-    ] ++ maybe_emit_host_added_to_cluster_event(cluster, id_host)
+    ] ++ maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
   def apply(
         %Cluster{} = cluster,
         %ClusterRegistered{
-          id_cluster: id_cluster,
+          cluster_id: cluster_id,
           name: name,
           type: type,
           sid: sid
@@ -103,7 +103,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
       ) do
     %Cluster{
       cluster
-      | id_cluster: id_cluster,
+      | cluster_id: cluster_id,
         name: name,
         type: type,
         sid: sid
@@ -129,26 +129,26 @@ defmodule Tronto.Monitoring.Domain.Cluster do
   def apply(
         %Cluster{hosts: hosts} = cluster,
         %HostAddedToCluster{
-          id_host: id_host
+          host_id: host_id
         }
       ) do
     %Cluster{
       cluster
-      | hosts: [id_host | hosts]
+      | hosts: [host_id | hosts]
     }
   end
 
   defp maybe_emit_host_added_to_cluster_event(
-         %Cluster{id_cluster: id_cluster, hosts: hosts},
-         id_host
+         %Cluster{cluster_id: cluster_id, hosts: hosts},
+         host_id
        ) do
-    if id_host in hosts do
+    if host_id in hosts do
       []
     else
       [
         %HostAddedToCluster{
-          id_cluster: id_cluster,
-          id_host: id_host
+          cluster_id: cluster_id,
+          host_id: host_id
         }
       ]
     end

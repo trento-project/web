@@ -15,16 +15,16 @@ defmodule Tronto.Monitoring.ClusterTest do
 
   describe "cluster registration" do
     test "should register a cluster and add the registering host to the cluster itself" do
-      id_cluster = Faker.UUID.v4()
-      id_host = Faker.UUID.v4()
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
       type = :hana_scale_up
       sid = Faker.StarWars.planet()
 
       commands = [
         RegisterCluster.new!(
-          id_cluster: id_cluster,
-          id_host: id_host,
+          cluster_id: cluster_id,
+          host_id: host_id,
           name: name,
           sid: sid,
           type: type
@@ -35,14 +35,14 @@ defmodule Tronto.Monitoring.ClusterTest do
         commands,
         [
           %ClusterRegistered{
-            id_cluster: id_cluster,
+            cluster_id: cluster_id,
             name: name,
             sid: sid,
             type: type
           },
           %HostAddedToCluster{
-            id_cluster: id_cluster,
-            id_host: id_host
+            cluster_id: cluster_id,
+            host_id: host_id
           }
         ]
       )
@@ -50,38 +50,38 @@ defmodule Tronto.Monitoring.ClusterTest do
       assert_state(
         commands,
         %Cluster{
-          id_cluster: id_cluster,
+          cluster_id: cluster_id,
           name: name,
           sid: sid,
           type: type,
-          hosts: [id_host]
+          hosts: [host_id]
         }
       )
     end
 
     test "should update cluster details if it is already registered" do
-      id_cluster = Faker.UUID.v4()
-      id_host = Faker.UUID.v4()
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       new_name = Faker.StarWars.character()
       new_sid = Faker.StarWars.planet()
 
       initial_events = [
         %ClusterRegistered{
-          id_cluster: id_cluster,
+          cluster_id: cluster_id,
           name: Faker.StarWars.character(),
           sid: Faker.StarWars.planet(),
           type: :hana_scale_up
         },
         %HostAddedToCluster{
-          id_cluster: id_cluster,
-          id_host: id_host
+          cluster_id: cluster_id,
+          host_id: host_id
         }
       ]
 
       commands = [
         RegisterCluster.new!(
-          id_cluster: id_cluster,
-          id_host: id_host,
+          cluster_id: cluster_id,
+          host_id: host_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up
@@ -93,7 +93,7 @@ defmodule Tronto.Monitoring.ClusterTest do
         commands,
         [
           %ClusterDetailsUpdated{
-            id_cluster: id_cluster,
+            cluster_id: cluster_id,
             name: new_name,
             sid: new_sid,
             type: :hana_scale_up
@@ -105,24 +105,24 @@ defmodule Tronto.Monitoring.ClusterTest do
         initial_events,
         commands,
         %Cluster{
-          id_cluster: id_cluster,
+          cluster_id: cluster_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
-          hosts: [id_host]
+          hosts: [host_id]
         }
       )
     end
 
     test "should update cluster details if it is already registered and add a host to the cluster" do
-      id_cluster = Faker.UUID.v4()
-      id_host = Faker.UUID.v4()
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       new_name = Faker.StarWars.character()
       new_sid = Faker.StarWars.planet()
 
       initial_events = [
         %ClusterRegistered{
-          id_cluster: id_cluster,
+          cluster_id: cluster_id,
           name: Faker.StarWars.character(),
           sid: Faker.StarWars.planet(),
           type: :hana_scale_up
@@ -131,8 +131,8 @@ defmodule Tronto.Monitoring.ClusterTest do
 
       commands = [
         RegisterCluster.new!(
-          id_cluster: id_cluster,
-          id_host: id_host,
+          cluster_id: cluster_id,
+          host_id: host_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up
@@ -144,14 +144,14 @@ defmodule Tronto.Monitoring.ClusterTest do
         commands,
         [
           %ClusterDetailsUpdated{
-            id_cluster: id_cluster,
+            cluster_id: cluster_id,
             name: new_name,
             sid: new_sid,
             type: :hana_scale_up
           },
           %HostAddedToCluster{
-            id_cluster: id_cluster,
-            id_host: id_host
+            cluster_id: cluster_id,
+            host_id: host_id
           }
         ]
       )
@@ -160,11 +160,11 @@ defmodule Tronto.Monitoring.ClusterTest do
         initial_events,
         commands,
         %Cluster{
-          id_cluster: id_cluster,
+          cluster_id: cluster_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
-          hosts: [id_host]
+          hosts: [host_id]
         }
       )
     end

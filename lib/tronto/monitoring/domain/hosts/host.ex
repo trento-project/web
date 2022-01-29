@@ -16,7 +16,7 @@ defmodule Tronto.Monitoring.Domain.Host do
   }
 
   defstruct [
-    :id_host,
+    :host_id,
     :hostname,
     :ip_addresses,
     :agent_version,
@@ -24,7 +24,7 @@ defmodule Tronto.Monitoring.Domain.Host do
   ]
 
   @type t :: %__MODULE__{
-          id_host: String.t(),
+          host_id: String.t(),
           hostname: String.t(),
           ip_addresses: [String.t()],
           agent_version: String.t(),
@@ -33,16 +33,16 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   # New host registered
   def execute(
-        %Host{id_host: nil},
+        %Host{host_id: nil},
         %RegisterHost{
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
         }
       ) do
     %HostRegistered{
-      id_host: id_host,
+      host_id: host_id,
       hostname: hostname,
       ip_addresses: ip_addresses,
       agent_version: agent_version,
@@ -69,14 +69,14 @@ defmodule Tronto.Monitoring.Domain.Host do
   def execute(
         %Host{},
         %RegisterHost{
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
         }
       ) do
     %HostDetailsUpdated{
-      id_host: id_host,
+      host_id: host_id,
       hostname: hostname,
       ip_addresses: ip_addresses,
       agent_version: agent_version
@@ -85,26 +85,26 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   # Heartbeat received
   def execute(
-        %Host{id_host: nil},
+        %Host{host_id: nil},
         %UpdateHeartbeat{}
       ) do
     {:error, :host_not_registered}
   end
 
   def execute(
-        %Host{id_host: id_host, heartbeat: heartbeat},
+        %Host{host_id: host_id, heartbeat: heartbeat},
         %UpdateHeartbeat{heartbeat: :passing}
       )
       when heartbeat != :passing do
-    %HeartbeatSucceded{id_host: id_host}
+    %HeartbeatSucceded{host_id: host_id}
   end
 
   def execute(
-        %Host{id_host: id_host, heartbeat: heartbeat},
+        %Host{host_id: host_id, heartbeat: heartbeat},
         %UpdateHeartbeat{heartbeat: :critical}
       )
       when heartbeat != :critical do
-    %HeartbeatFailed{id_host: id_host}
+    %HeartbeatFailed{host_id: host_id}
   end
 
   def execute(
@@ -117,7 +117,7 @@ defmodule Tronto.Monitoring.Domain.Host do
   def apply(
         %Host{} = host,
         %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
@@ -126,7 +126,7 @@ defmodule Tronto.Monitoring.Domain.Host do
       ) do
     %Host{
       host
-      | id_host: id_host,
+      | host_id: host_id,
         hostname: hostname,
         ip_addresses: ip_addresses,
         agent_version: agent_version,
@@ -137,7 +137,7 @@ defmodule Tronto.Monitoring.Domain.Host do
   def apply(
         %Host{} = host,
         %HostDetailsUpdated{
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
@@ -145,7 +145,7 @@ defmodule Tronto.Monitoring.Domain.Host do
       ) do
     %Host{
       host
-      | id_host: id_host,
+      | host_id: host_id,
         hostname: hostname,
         ip_addresses: ip_addresses,
         agent_version: agent_version
@@ -154,22 +154,22 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   def apply(
         %Host{} = host,
-        %HeartbeatSucceded{id_host: id_host}
+        %HeartbeatSucceded{host_id: host_id}
       ) do
     %Host{
       host
-      | id_host: id_host,
+      | host_id: host_id,
         heartbeat: :passing
     }
   end
 
   def apply(
         %Host{} = host,
-        %HeartbeatFailed{id_host: id_host}
+        %HeartbeatFailed{host_id: host_id}
       ) do
     %Host{
       host
-      | id_host: id_host,
+      | host_id: host_id,
         heartbeat: :critical
     }
   end

@@ -9,11 +9,11 @@ defmodule Tronto.Monitoring.Domain.Commands.UpdateHeartbeat do
   typedstruct do
     @typedoc "UpdateHeartbeat command"
 
-    field :id_host, String.t(), enforce: true
+    field :host_id, String.t(), enforce: true
     field :heartbeat, :passing | :critical, enforce: true
   end
 
   use Vex.Struct
 
-  validates :id_host, uuid: true
+  validates :host_id, uuid: true
 end

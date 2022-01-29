@@ -31,7 +31,7 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
       assert heartbeat.timestamp == now
 
       assert_called Tronto.Commanded.dispatch(%UpdateHeartbeat{
-                      id_host: agent_id,
+                      host_id: agent_id,
                       heartbeat: :passing
                     })
     end
@@ -83,7 +83,7 @@ defmodule Tronto.Monitoring.HeartbeatsTest do
       assert [] == Repo.all(Heartbeat)
 
       assert_called Tronto.Commanded.dispatch(%UpdateHeartbeat{
-                      id_host: agent_id,
+                      host_id: agent_id,
                       heartbeat: :critical
                     })
     end

@@ -16,9 +16,9 @@ defmodule Tronto.Router do
 
   middleware Validate
 
-  identify Host, by: :id_host
+  identify Host, by: :host_id
   dispatch [RegisterHost, UpdateHeartbeat], to: Host
 
-  identify Cluster, by: :id_cluster
+  identify Cluster, by: :cluster_id
   dispatch [RegisterCluster], to: Cluster
 end

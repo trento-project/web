@@ -9,8 +9,8 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterCluster do
   typedstruct do
     @typedoc "RegisterCluster command"
 
-    field :id_cluster, String.t(), enforce: true
-    field :id_host, String.t(), enforce: true
+    field :cluster_id, String.t(), enforce: true
+    field :host_id, String.t(), enforce: true
     field :name, String.t(), enforce: true
     field :type, :hana_scale_up | :hana_scale_out | :unknown, enforce: true
     field :sid, String.t() | nil, enforce: true
@@ -18,6 +18,6 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterCluster do
 
   use Vex.Struct
 
-  validates :id_cluster, uuid: true
-  validates :id_host, uuid: true
+  validates :cluster_id, uuid: true
+  validates :host_id, uuid: true
 end

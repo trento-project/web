@@ -9,6 +9,6 @@ defmodule Tronto.Monitoring.Domain.Events.HeartbeatSucceded do
   typedstruct do
     @typedoc "HeartbeatSucceded event"
 
-    field :id_host, String.t(), enforce: true
+    field :host_id, String.t(), enforce: true
   end
 end

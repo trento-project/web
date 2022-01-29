@@ -22,7 +22,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
         }
       }) do
     RegisterHost.new(
-      id_host: agent_id,
+      host_id: agent_id,
       hostname: hostname,
       ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
       agent_version: agent_version
@@ -45,8 +45,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
           } = payload
       }) do
     RegisterCluster.new(
-      id_cluster: id,
-      id_host: agent_id,
+      cluster_id: id,
+      host_id: agent_id,
       name: name,
       sid: parse_cluster_sid(payload),
       type: detect_cluster_type(payload)

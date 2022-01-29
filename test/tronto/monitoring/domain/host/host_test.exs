@@ -17,14 +17,14 @@ defmodule Tronto.Monitoring.HostTest do
 
   describe "host registration" do
     test "should register a host" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       hostname = Faker.StarWars.character()
       ip_addresses = [Faker.Internet.ip_v4_address()]
       agent_version = Faker.Internet.slug()
 
       commands = [
         RegisterHost.new!(
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
@@ -34,7 +34,7 @@ defmodule Tronto.Monitoring.HostTest do
       assert_events(
         commands,
         %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
@@ -45,7 +45,7 @@ defmodule Tronto.Monitoring.HostTest do
       assert_state(
         commands,
         %Host{
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
@@ -55,14 +55,14 @@ defmodule Tronto.Monitoring.HostTest do
     end
 
     test "should update host details if it is already registered" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       new_hostname = Faker.StarWars.character()
       new_ip_addresses = [Faker.Internet.ip_v4_address()]
       new_agent_version = Faker.Internet.slug()
 
       initial_events = [
         %HostRegistered{
-          id_host: Faker.UUID.v4(),
+          host_id: Faker.UUID.v4(),
           hostname: Faker.StarWars.character(),
           ip_addresses: [Faker.Internet.ip_v4_address()],
           agent_version: Faker.Internet.slug(),
@@ -72,7 +72,7 @@ defmodule Tronto.Monitoring.HostTest do
 
       commands = [
         RegisterHost.new!(
-          id_host: id_host,
+          host_id: host_id,
           hostname: new_hostname,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version
@@ -84,7 +84,7 @@ defmodule Tronto.Monitoring.HostTest do
         commands,
         [
           %HostDetailsUpdated{
-            id_host: id_host,
+            host_id: host_id,
             hostname: new_hostname,
             ip_addresses: new_ip_addresses,
             agent_version: new_agent_version
@@ -96,7 +96,7 @@ defmodule Tronto.Monitoring.HostTest do
         initial_events,
         commands,
         %Host{
-          id_host: id_host,
+          host_id: host_id,
           hostname: new_hostname,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
@@ -106,14 +106,14 @@ defmodule Tronto.Monitoring.HostTest do
     end
 
     test "should not update host details if the same details were already registered" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       hostname = Faker.StarWars.character()
       ip_addresses = [Faker.Internet.ip_v4_address()]
       agent_version = Faker.Internet.slug()
 
       initial_events = [
         %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
@@ -123,7 +123,7 @@ defmodule Tronto.Monitoring.HostTest do
 
       commands = [
         RegisterHost.new!(
-          id_host: id_host,
+          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
@@ -140,11 +140,11 @@ defmodule Tronto.Monitoring.HostTest do
 
   describe "heartbeat" do
     test "should emit an HeartbeatSucceded event if the Host never received an heartbeat already" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
 
       initial_events = [
         host_registered_event = %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: Faker.StarWars.character(),
           ip_addresses: [Faker.Internet.ip_v4_address()],
           agent_version: Faker.Internet.slug(),
@@ -154,19 +154,19 @@ defmodule Tronto.Monitoring.HostTest do
 
       commands = [
         UpdateHeartbeat.new!(
-          id_host: id_host,
+          host_id: host_id,
           heartbeat: :passing
         )
       ]
 
       assert_events(initial_events, commands, [
         %HeartbeatSucceded{
-          id_host: id_host
+          host_id: host_id
         }
       ])
 
       assert_state(initial_events, commands, %Host{
-        id_host: id_host,
+        host_id: host_id,
         hostname: host_registered_event.hostname,
         ip_addresses: host_registered_event.ip_addresses,
         agent_version: host_registered_event.agent_version,
@@ -175,36 +175,36 @@ defmodule Tronto.Monitoring.HostTest do
     end
 
     test "should emit an HeartbeatSucceded event if the Host is in a critical status" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
 
       initial_events = [
         host_registered_event = %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: Faker.StarWars.character(),
           ip_addresses: [Faker.Internet.ip_v4_address()],
           agent_version: Faker.Internet.slug(),
           heartbeat: :unknown
         },
         %HeartbeatFailed{
-          id_host: id_host
+          host_id: host_id
         }
       ]
 
       commands = [
         UpdateHeartbeat.new!(
-          id_host: id_host,
+          host_id: host_id,
           heartbeat: :passing
         )
       ]
 
       assert_events(initial_events, commands, [
         %HeartbeatSucceded{
-          id_host: id_host
+          host_id: host_id
         }
       ])
 
       assert_state(initial_events, commands, %Host{
-        id_host: id_host,
+        host_id: host_id,
         hostname: host_registered_event.hostname,
         ip_addresses: host_registered_event.ip_addresses,
         agent_version: host_registered_event.agent_version,
@@ -213,24 +213,24 @@ defmodule Tronto.Monitoring.HostTest do
     end
 
     test "should not emit an HeartbeatSucceded event if the Host is in a passing status already" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
 
       initial_events = [
         %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: Faker.StarWars.character(),
           ip_addresses: [Faker.Internet.ip_v4_address()],
           agent_version: Faker.Internet.slug(),
           heartbeat: :unknown
         },
         %HeartbeatSucceded{
-          id_host: id_host
+          host_id: host_id
         }
       ]
 
       commands = [
         UpdateHeartbeat.new!(
-          id_host: id_host,
+          host_id: host_id,
           heartbeat: :passing
         )
       ]
@@ -239,36 +239,36 @@ defmodule Tronto.Monitoring.HostTest do
     end
 
     test "should emit an HeartbeatFailed event if the Host has never received an heartbeat" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
 
       initial_events = [
         host_registered_event = %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: Faker.StarWars.character(),
           ip_addresses: [Faker.Internet.ip_v4_address()],
           agent_version: Faker.Internet.slug(),
           heartbeat: :unknown
         },
         %HeartbeatSucceded{
-          id_host: id_host
+          host_id: host_id
         }
       ]
 
       commands = [
         UpdateHeartbeat.new!(
-          id_host: id_host,
+          host_id: host_id,
           heartbeat: :critical
         )
       ]
 
       assert_events(initial_events, commands, [
         %HeartbeatFailed{
-          id_host: id_host
+          host_id: host_id
         }
       ])
 
       assert_state(initial_events, commands, %Host{
-        id_host: id_host,
+        host_id: host_id,
         hostname: host_registered_event.hostname,
         ip_addresses: host_registered_event.ip_addresses,
         agent_version: host_registered_event.agent_version,
@@ -277,11 +277,11 @@ defmodule Tronto.Monitoring.HostTest do
     end
 
     test "should emit an HeartbeatFailed event if the Host is in a passing status" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
 
       initial_events = [
         host_registered_event = %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: Faker.StarWars.character(),
           ip_addresses: [Faker.Internet.ip_v4_address()],
           agent_version: Faker.Internet.slug(),
@@ -291,19 +291,19 @@ defmodule Tronto.Monitoring.HostTest do
 
       commands = [
         UpdateHeartbeat.new!(
-          id_host: id_host,
+          host_id: host_id,
           heartbeat: :critical
         )
       ]
 
       assert_events(initial_events, commands, [
         %HeartbeatFailed{
-          id_host: id_host
+          host_id: host_id
         }
       ])
 
       assert_state(initial_events, commands, %Host{
-        id_host: id_host,
+        host_id: host_id,
         hostname: host_registered_event.hostname,
         ip_addresses: host_registered_event.ip_addresses,
         agent_version: host_registered_event.agent_version,
@@ -312,24 +312,24 @@ defmodule Tronto.Monitoring.HostTest do
     end
 
     test "should not emit an HeartbeatFailed event if the Host is in a critical status already" do
-      id_host = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
 
       initial_events = [
         %HostRegistered{
-          id_host: id_host,
+          host_id: host_id,
           hostname: Faker.StarWars.character(),
           ip_addresses: [Faker.Internet.ip_v4_address()],
           agent_version: Faker.Internet.slug(),
           heartbeat: :unknown
         },
         %HeartbeatFailed{
-          id_host: id_host
+          host_id: host_id
         }
       ]
 
       commands = [
         UpdateHeartbeat.new!(
-          id_host: id_host,
+          host_id: host_id,
           heartbeat: :critical
         )
       ]
