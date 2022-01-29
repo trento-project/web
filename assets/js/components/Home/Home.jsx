@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import day from 'dayjs'
+
 const Home = () => {
   const liveFeed = useSelector((state) => state.liveFeed.entries);
   const hosts = useSelector((state) => state.hostsList.hosts);
@@ -48,11 +50,11 @@ const Home = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {liveFeed.map(({ time, source, message }) => (
                     <tr key={time} className="animate-fade">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="content-center">{time}</div>
+                      <td className="px-6 py-4 whitespace-nowrap text-xs">
+                    <div className="content-center">{day(time).format('YYYY-MM-DD HH:mm:ss')}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{source}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{message}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">{source}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">{message}</td>
                     </tr>
                   ))}
                 </tbody>

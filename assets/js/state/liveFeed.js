@@ -9,7 +9,7 @@ export const liveFeedSlice = createSlice({
   initialState,
   reducers: {
     appendEntryToLiveFeed: (state, { payload: { source, message } }) => {
-      const time = Date.now();
+      const time = new Date;
       const newEntry = { time, source, message };
       const entries = [newEntry, ...state.entries];
       state.entries = entries;
