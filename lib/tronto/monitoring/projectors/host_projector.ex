@@ -21,7 +21,7 @@ defmodule Tronto.Monitoring.HostProjector do
 
   project(
     %HostRegistered{
-      id_host: id,
+      host_id: id,
       hostname: hostname,
       ip_addresses: ip_addresses,
       agent_version: agent_version,
@@ -44,7 +44,7 @@ defmodule Tronto.Monitoring.HostProjector do
 
   project(
     %HostDetailsUpdated{
-      id_host: id,
+      host_id: id,
       hostname: hostname,
       ip_addresses: ip_addresses,
       agent_version: agent_version
@@ -64,7 +64,7 @@ defmodule Tronto.Monitoring.HostProjector do
   )
 
   project(
-    %HeartbeatSucceded{id_host: id},
+    %HeartbeatSucceded{host_id: id},
     fn multi ->
       changeset =
         HostReadModel
@@ -78,7 +78,7 @@ defmodule Tronto.Monitoring.HostProjector do
   )
 
   project(
-    %HeartbeatFailed{id_host: id},
+    %HeartbeatFailed{host_id: id},
     fn multi ->
       changeset =
         HostReadModel

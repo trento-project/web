@@ -5,10 +5,10 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterHostTest do
 
   @moduletag :unit
 
-  test "should not validate if id_host is not a valid uuid" do
+  test "should not validate if host_id is not a valid uuid" do
     command =
       RegisterHost.new!(%{
-        id_host: Faker.StarWars.character(),
+        host_id: Faker.StarWars.character(),
         hostname: Faker.String.naughty(),
         ip_addresses: [Faker.Internet.ip_v4_address()],
         agent_version: Faker.App.version()

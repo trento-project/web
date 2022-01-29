@@ -68,7 +68,7 @@ defmodule Tronto.Monitoring.Heartbeats do
 
   @spec dispatch_command(any(), :passing | :critical) :: {:ok, :done}
   defp dispatch_command(agent_id, heartbeat) do
-    case %{id_host: agent_id, heartbeat: heartbeat}
+    case %{host_id: agent_id, heartbeat: heartbeat}
          |> UpdateHeartbeat.new!()
          |> Tronto.Commanded.dispatch() do
       :ok ->

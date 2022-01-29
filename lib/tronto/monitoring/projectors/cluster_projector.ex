@@ -19,7 +19,7 @@ defmodule Tronto.Monitoring.ClusterProjector do
 
   project(
     %ClusterRegistered{
-      id_cluster: id,
+      cluster_id: id,
       name: name,
       sid: sid,
       type: type
@@ -40,7 +40,7 @@ defmodule Tronto.Monitoring.ClusterProjector do
 
   project(
     %ClusterDetailsUpdated{
-      id_cluster: id,
+      cluster_id: id,
       name: name,
       sid: sid,
       type: type

@@ -9,7 +9,7 @@ defmodule Tronto.Monitoring.Domain.Events.HostAddedToCluster do
   typedstruct do
     @typedoc "HostAddedToCluster event"
 
-    field :id_cluster, String.t(), enforce: true
-    field :id_host, String.t(), enforce: true
+    field :cluster_id, String.t(), enforce: true
+    field :host_id, String.t(), enforce: true
   end
 end

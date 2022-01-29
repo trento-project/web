@@ -24,7 +24,7 @@ Enum.each(
   0..5,
   fn _ ->
     %{
-      id_host: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character() |> Macro.underscore() |> String.replace(" ", ""),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: agent_version
@@ -38,8 +38,8 @@ Enum.each(
   0..5,
   fn _ ->
     %{
-      id_cluster: Faker.UUID.v4(),
-      id_host: Faker.UUID.v4(),
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
       name: Faker.StarWars.character() |> Macro.underscore() |> String.replace(" ", ""),
       sid: "PRD",
       type: :hana_scale_up
