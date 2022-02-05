@@ -36,7 +36,8 @@ const ChecksSelection = () => {
     cluster ? cluster.selected_checks : []
   );
 
-  const isSelected = (check_id) => selectedChecks ? selectedChecks.includes(check_id) : false;
+  const isSelected = (check_id) =>
+    selectedChecks ? selectedChecks.includes(check_id) : false;
 
   useEffect(() => {
     if (cluster) {
@@ -109,8 +110,10 @@ const ChecksSelection = () => {
         <button
           className="bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
           onClick={() => {
-            console.log("clicked")
-            dispatch({ type: 'CHECKS_SELECTED', payload: {checks: selectedChecks, clusterID: clusterID} });
+            dispatch({
+              type: 'CHECKS_SELECTED',
+              payload: { checks: selectedChecks, clusterID: clusterID },
+            });
             navigate(`/clusters/${clusterID}/checks/results`);
           }}
         >
