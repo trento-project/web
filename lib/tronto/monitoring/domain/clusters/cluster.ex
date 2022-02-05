@@ -2,8 +2,8 @@ defmodule Tronto.Monitoring.Domain.Cluster do
   @moduledoc false
 
   alias Tronto.Monitoring.Domain.{
-    Cluster,
-    CheckResult
+    CheckResult,
+    Cluster
   }
 
   alias Tronto.Monitoring.Domain.Commands.{
