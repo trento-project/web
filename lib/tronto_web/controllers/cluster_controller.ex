@@ -48,6 +48,7 @@ defmodule TrontoWeb.ClusterController do
     end
   end
 
+  @spec request_checks_execution(Plug.Conn.t(), map) :: Plug.Conn.t()
   def request_checks_execution(conn, %{"cluster_id" => cluster_id}) do
     case Monitoring.request_checks_execution(cluster_id) do
       :ok ->
@@ -67,7 +68,7 @@ defmodule TrontoWeb.ClusterController do
     json(conn, @catalog)
   end
 
-  @spec checks_catalog(Plug.Conn.t(), map) :: Plug.Conn.t()
+  @spec select_checks(Plug.Conn.t(), map) :: Plug.Conn.t()
   def select_checks(conn, %{"cluster_id" => cluster_id, "checks" => checks}) do
     case Monitoring.select_checks(cluster_id, checks) do
       :ok ->
