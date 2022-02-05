@@ -8,20 +8,10 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-function toggle(array, value) {
-  if (array) {
-    const newArray = Object.assign([], array);
-    var index = newArray.indexOf(value);
-
-    if (index === -1) {
-      newArray.push(value);
-    } else {
-      newArray.splice(index, 1);
-    }
-
-    return newArray;
-  }
-}
+const toggle = (list, element) =>
+  list.includes(element)
+    ? list.filter((string) => string !== element)
+    : [...list, element];
 
 const ChecksSelection = () => {
   const { clusterID } = useParams();
