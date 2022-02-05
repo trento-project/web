@@ -7,6 +7,8 @@ defmodule Tronto.Monitoring.ClusterReadModel do
 
   import Ecto.Changeset
 
+  alias Tronto.Monitoring.CheckResultReadModel
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -15,6 +17,9 @@ defmodule Tronto.Monitoring.ClusterReadModel do
     field :name, :string
     field :sid, :string
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_down, :unknown]
+    field :selected_checks, {:array, :string}, default: []
+
+    has_many :checks_results, CheckResultReadModel, foreign_key: :cluster_id
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

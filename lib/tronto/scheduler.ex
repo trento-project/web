@@ -1,5 +1,5 @@
 defmodule Tronto.Scheduler do
-  @moduledoc nil
+  @moduledoc false
 
   use Quantum, otp_app: :tronto
 end

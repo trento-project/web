@@ -4,6 +4,7 @@ import { Socket } from 'phoenix';
 
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
+import catalogReducer from './catalog';
 import liveFeedReducer from './liveFeed';
 
 import rootSaga from './sagas';
@@ -14,6 +15,7 @@ export const store = configureStore({
   reducer: {
     hostsList: hostsListReducer,
     clustersList: clustersListReducer,
+    catalog: catalogReducer,
     liveFeed: liveFeedReducer,
   },
   middleware: [sagaMiddleware],
@@ -29,7 +31,7 @@ const joinChannel = (channel) => {
     .receive('timeout', () =>
       console.log('Networking issue. Still waiting...')
     );
-}
+};
 
 const processChannelEvents = (store) => {
   const socket = new Socket('/socket', {});
@@ -62,8 +64,20 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'CLUSTER_DETAILS_UPDATED', payload })
   );
 
-  joinChannel(hostsChannel)
-  joinChannel(clustersChannel)
+  clustersChannel.on('checks_execution_started', (payload) =>
+    store.dispatch({ type: 'CHECKS_EXECUTION_STARTED', payload })
+  );
+
+  clustersChannel.on('checks_execution_completed', (payload) =>
+    store.dispatch({ type: 'CHECKS_EXECUTION_COMPLETED', payload })
+  );
+
+  clustersChannel.on('checks_results_updated', (payload) =>
+    store.dispatch({ type: 'CHECKS_RESULTS_UPDATED', payload })
+  );
+
+  joinChannel(hostsChannel);
+  joinChannel(clustersChannel);
 };
 
 processChannelEvents(store);

@@ -30,9 +30,21 @@ defmodule TrontoWeb.Router do
     pipe_through :api
 
     post "/collect", DiscoveryController, :collect
+
     get "/hosts", HostController, :list
     post "/hosts/:id/heartbeat", HostController, :heartbeat
+
     get "/clusters", ClusterController, :list
+    # TODO: this url is weird because the ansible callback expect so
+    # let's maybe change it in the future when we will change the agent as well
+    post "/checks/:cluster_id/results", ClusterController, :store_checks_results
+    post "/clusters/:cluster_id/checks", ClusterController, :select_checks
+
+    post "/clusters/:cluster_id/checks/request_execution",
+         ClusterController,
+         :request_checks_execution
+
+    get "/checks/catalog", ClusterController, :checks_catalog
   end
 
   # Other scopes may use custom stacks.

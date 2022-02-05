@@ -1,5 +1,5 @@
-import { get } from 'axios';
-import { put, all, call, takeEvery } from 'redux-saga/effects';
+import { get, post } from 'axios';
+import { put, all, call, takeEvery, select } from 'redux-saga/effects';
 
 import {
   setHosts,
@@ -15,9 +15,13 @@ import {
   setClusters,
   appendCluster,
   updateCluster,
+  updateSelectedChecks,
+  updateChecksResults,
   startClustersLoading,
   stopClustersLoading,
 } from '../clusters';
+
+import { setCatalog } from '../catalog';
 
 import { appendEntryToLiveFeed } from '../liveFeed';
 import { watchNotifications } from './notifications';
@@ -26,6 +30,15 @@ const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
   payload: { text, icon },
 });
+
+const getClusterName = (clusterID) => (state) => {
+  return state.clustersList.clusters.reduce((acc, cluster) => {
+    if (cluster.id === clusterID) {
+      acc = cluster.name;
+    }
+    return acc;
+  }, '');
+};
 
 function* initialDataFetch() {
   yield put(startHostsLoading());
@@ -37,6 +50,9 @@ function* initialDataFetch() {
   const { data: clusters } = yield call(get, '/api/clusters');
   yield put(setClusters(clusters));
   yield put(stopClustersLoading());
+
+  const { data: catalog } = yield call(get, '/api/checks/catalog');
+  yield put(setCatalog(catalog));
 }
 
 function* hostRegistered({ payload }) {
@@ -123,6 +139,115 @@ function* watchClusterDetailsUpdated() {
   yield takeEvery('CLUSTER_DETAILS_UPDATED', clusterDetailsUpdated);
 }
 
+function* checksSelected({ payload }) {
+  yield put(updateSelectedChecks(payload));
+
+  yield call(post, `/api/clusters/${payload.clusterID}/checks`, {
+    checks: payload.checks,
+  });
+
+  const clusterName = yield select(getClusterName(payload.clusterID));
+  yield put(
+    appendEntryToLiveFeed({
+      source: clusterName,
+      message: 'Checks selection changed.',
+    })
+  );
+
+  yield put(
+    notify({
+      text: `Checks selection saved`,
+      icon: '💾',
+    })
+  );
+}
+
+function* watchChecksSelected() {
+  yield takeEvery('CHECKS_SELECTED', checksSelected);
+}
+
+function* requestChecksExecution({ payload }) {
+  const clusterName = yield select(getClusterName(payload.clusterID));
+
+  yield put(updateSelectedChecks(payload));
+
+  yield call(
+    post,
+    `/api/clusters/${payload.clusterID}/checks/request_execution`,
+    {}
+  );
+
+  yield put(
+    appendEntryToLiveFeed({
+      source: clusterName,
+      message: 'Checks execution requested.',
+    })
+  );
+
+  yield put(
+    notify({
+      text: `Checks execution requested, cluster: ${clusterName}`,
+      icon: '🐰',
+    })
+  );
+}
+
+function* watchRequestChecksExecution() {
+  yield takeEvery('REQUEST_CHECKS_EXECUTION', requestChecksExecution);
+}
+
+function* checksExecutionStarted({ payload }) {
+  const clusterName = yield select(getClusterName(payload.cluster_id));
+
+  yield put(
+    appendEntryToLiveFeed({
+      source: clusterName,
+      message: 'Checks execution started.',
+    })
+  );
+
+  yield put(
+    notify({
+      text: `Checks execution started, cluster: ${clusterName}`,
+      icon: '🐰',
+    })
+  );
+}
+
+function* watchChecksExecutionStarted() {
+  yield takeEvery('CHECKS_EXECUTION_STARTED', checksExecutionStarted);
+}
+
+function* checksExecutionCompleted({ payload }) {
+  const clusterName = yield select(getClusterName(payload.cluster_id));
+
+  yield put(
+    appendEntryToLiveFeed({
+      source: clusterName,
+      message: 'Checks execution completed.',
+    })
+  );
+
+  yield put(
+    notify({
+      text: `Checks execution completed, cluster: ${clusterName}`,
+      icon: '🐇',
+    })
+  );
+}
+
+function* watchChecksExecutionCompleted() {
+  yield takeEvery('CHECKS_EXECUTION_COMPLETED', checksExecutionCompleted);
+}
+
+function* checksResultsUpdated({ payload }) {
+  yield put(updateChecksResults(payload));
+}
+
+function* watchChecksResultsUpdated() {
+  yield takeEvery('CHECKS_RESULTS_UPDATED', checksResultsUpdated);
+}
+
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
@@ -133,5 +258,10 @@ export default function* rootSaga() {
     watchClusterRegistered(),
     watchClusterDetailsUpdated(),
     watchNotifications(),
+    watchChecksSelected(),
+    watchRequestChecksExecution(),
+    watchChecksExecutionStarted(),
+    watchChecksExecutionCompleted(),
+    watchChecksResultsUpdated(),
   ]);
 }

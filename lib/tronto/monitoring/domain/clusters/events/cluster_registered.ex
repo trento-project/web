@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Events.ClusterRegistered do
   @moduledoc """
-    This event is emitted when a cluster is registered.
+  This event is emitted when a cluster is registered.
   """
 
   use TypedStruct

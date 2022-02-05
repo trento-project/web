@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Commands.RegisterHost do
   @moduledoc """
-    Register a host to the monitoring system.
+  Register a host to the monitoring system.
   """
 
   use TypedStruct

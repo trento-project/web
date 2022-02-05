@@ -12,6 +12,8 @@ import Layout from './components/Layout';
 import Home from './components/Home';
 import HostsList from './components/HostsList';
 import ClustersList from './components/ClustersList';
+import ChecksSelection from './components/ChecksSelection';
+import ChecksResults from './components/ChecksResults';
 
 const App = () => {
   return (
@@ -24,6 +26,8 @@ const App = () => {
               <Route index element={<Home />} />
               <Route index path="hosts" element={<HostsList />} />
               <Route path="clusters" element={<ClustersList />} />
+              <Route path="clusters/:clusterID/checks" element={<ChecksSelection />} />
+              <Route path="clusters/:clusterID/checks/results" element={<ChecksResults />} />
             </Route>
           </Routes>
         </BrowserRouter>

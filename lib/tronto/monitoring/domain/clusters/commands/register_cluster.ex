@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Commands.RegisterCluster do
   @moduledoc """
-    Register a cluster to the monitoring system.
+  Register a cluster to the monitoring system.
   """
 
   use TypedStruct

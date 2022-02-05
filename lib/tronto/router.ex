@@ -11,6 +11,9 @@ defmodule Tronto.Router do
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterCluster,
     RegisterHost,
+    RequestChecksExecution,
+    SelectChecks,
+    StoreChecksResults,
     UpdateHeartbeat
   }
 
@@ -20,5 +23,7 @@ defmodule Tronto.Router do
   dispatch [RegisterHost, UpdateHeartbeat], to: Host
 
   identify Cluster, by: :cluster_id
-  dispatch [RegisterCluster], to: Cluster
+
+  dispatch [RegisterCluster, RequestChecksExecution, SelectChecks, StoreChecksResults],
+    to: Cluster
 end

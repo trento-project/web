@@ -9,6 +9,7 @@ defmodule Tronto.Monitoring.ClusterProjector do
     name: "cluster_projector"
 
   alias Tronto.Monitoring.Domain.Events.{
+    ChecksSelected,
     ClusterDetailsUpdated,
     ClusterRegistered
   }
@@ -59,6 +60,23 @@ defmodule Tronto.Monitoring.ClusterProjector do
     end
   )
 
+  project(
+    %ChecksSelected{
+      cluster_id: id,
+      checks: checks
+    },
+    fn multi ->
+      changeset =
+        ClusterReadModel
+        |> Repo.get(id)
+        |> ClusterReadModel.changeset(%{
+          selected_checks: checks
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
+
   @impl true
   def after_update(
         %ClusterRegistered{},
@@ -75,4 +93,6 @@ defmodule Tronto.Monitoring.ClusterProjector do
       ) do
     TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_details_updated", cluster)
   end
+
+  def after_update(_, _, _), do: :ok
 end

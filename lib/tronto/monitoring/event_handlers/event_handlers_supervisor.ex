@@ -1,4 +1,4 @@
-defmodule Tronto.Monitoring.ProjectorsSupervisor do
+defmodule Tronto.Monitoring.EventHandlersSupervisor do
   @moduledoc false
 
   use Supervisor
@@ -10,9 +10,7 @@ defmodule Tronto.Monitoring.ProjectorsSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      Tronto.Monitoring.ClusterProjector,
-      Tronto.Monitoring.HostProjector,
-      Tronto.Monitoring.CheckResultProjector
+      Tronto.Monitoring.ChecksEventsHandler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

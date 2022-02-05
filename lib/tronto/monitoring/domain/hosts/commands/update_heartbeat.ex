@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Commands.UpdateHeartbeat do
   @moduledoc """
-    Updated the host heartbeat.
+  Updated the host heartbeat.
   """
 
   use TypedStruct
