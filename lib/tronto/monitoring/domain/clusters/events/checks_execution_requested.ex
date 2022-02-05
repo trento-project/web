@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Events.ChecksExecutionRequested do
   @moduledoc """
-    Event of the request of a checks execution.
+  Event of the request of a checks execution.
   """
 
   use TypedStruct

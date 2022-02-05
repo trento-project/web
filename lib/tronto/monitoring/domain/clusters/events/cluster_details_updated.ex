@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Events.ClusterDetailsUpdated do
   @moduledoc """
-    This event is emitted when cluster details are updated.
+  This event is emitted when cluster details are updated.
   """
 
   use TypedStruct

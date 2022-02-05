@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Events.ChecksResultsStored do
   @moduledoc """
-    Event of the checks results stored after an execution
+  Event of the checks results stored after an execution
   """
 
   use TypedStruct

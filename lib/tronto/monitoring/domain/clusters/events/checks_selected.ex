@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Events.ChecksSelected do
   @moduledoc """
-    Event of the checks selected in a cluster.
+  Event of the checks selected in a cluster.
   """
 
   use TypedStruct

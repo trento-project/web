@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Commands.SelectChecks do
   @moduledoc """
-    Select the checks to be executed in the cluster.
+  Select the checks to be executed in the cluster.
   """
 
   use TypedStruct

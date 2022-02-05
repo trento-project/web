@@ -1,5 +1,5 @@
 defmodule Tronto.Mailer do
-  @moduledoc nil
+  @moduledoc false
 
   use Swoosh.Mailer, otp_app: :tronto
 end

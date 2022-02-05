@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Commands.RequestChecksExecution do
   @moduledoc """
-    Request a checks execution.
+  Request a checks execution.
   """
 
   use TypedStruct

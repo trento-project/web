@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Commands.StoreChecksResults do
   @moduledoc """
-    Store the checks results coming from an execution on a specific host.
+  Store the checks results coming from an execution on a specific host.
   """
 
   use TypedStruct

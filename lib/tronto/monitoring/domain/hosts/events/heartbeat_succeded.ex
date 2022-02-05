@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Events.HeartbeatSucceded do
   @moduledoc """
-    Heartbeat succeded event
+  Heartbeat succeded event
   """
 
   use TypedStruct

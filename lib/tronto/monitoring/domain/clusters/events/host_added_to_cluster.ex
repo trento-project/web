@@ -1,6 +1,6 @@
 defmodule Tronto.Monitoring.Domain.Events.HostAddedToCluster do
   @moduledoc """
-    This event is emitted when a host is added to a cluster
+  This event is emitted when a host is added to a cluster
   """
 
   use TypedStruct
