@@ -94,6 +94,7 @@ defmodule Tronto.Monitoring.CheckResultProjector do
     Enum.each(hosts, fn host_id ->
       TrontoWeb.Endpoint.broadcast("monitoring:clusters", "checks_results_updated", %{
         cluster_id: cluster_id,
+        host_id: host_id,
         checks_results:
           Enum.map(checks, fn check_id ->
             %{host_id: host_id, check_id: check_id, result: :running}
@@ -114,6 +115,7 @@ defmodule Tronto.Monitoring.CheckResultProjector do
       ) do
     TrontoWeb.Endpoint.broadcast("monitoring:clusters", "checks_results_updated", %{
       cluster_id: cluster_id,
+      host_id: host_id,
       checks_results:
         Enum.map(checks_results, fn %{check_id: check_id, result: result} ->
           %{host_id: host_id, check_id: check_id, result: result}

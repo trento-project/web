@@ -34,7 +34,12 @@ export const clustersListSlice = createSlice({
     updateChecksResults: (state, action) => {
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.cluster_id) {
-          cluster.checks_results = action.payload.checks_results;
+          cluster.checks_results = [
+            ...cluster.checks_results.filter((check_result) => {
+              return check_result.host_id !== action.payload.host_id;
+            }),
+            ...action.payload.checks_results,
+          ];
         }
         return cluster;
       });
