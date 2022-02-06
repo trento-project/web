@@ -47,8 +47,9 @@ defmodule Tronto.Monitoring.CheckResultProjector do
         end)
       end)
       |> List.flatten()
-      |> Enum.reduce(multi, fn %{changes: %{check_id: check_id}} = changeset, acc ->
-        Ecto.Multi.insert(acc, check_id, changeset)
+      |> Enum.reduce(multi, fn %{changes: %{check_id: check_id, host_id: host_id}} = changeset,
+                               acc ->
+        Ecto.Multi.insert(acc, "#{host_id}_#{check_id}", changeset)
       end)
     end
   )
