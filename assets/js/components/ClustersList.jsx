@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Menu, Transition } from '@headlessui/react';
+
+import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -20,9 +23,9 @@ const ClustersList = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div className="-my-2 sm:-mx-6 lg:-mx-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+          <div className="shadow border-b border-gray-200 rounded sm:rounded-lg">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -81,27 +84,86 @@ const ClustersList = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <a
-                        href={`/clusters/${cluster.id}/checks`}
-                        className="text-jungle-green-500 hover:opacity-75"
+                      <Menu
+                        as="div"
+                        className="relative inline-block text-left"
                       >
-                        Edit checks
-                      </a>
-                      &nbsp;&nbsp;
-                      <a
-                        className="text-jungle-green-500 hover:opacity-75"
-                        onClick={() => {
-                          dispatch({
-                            type: 'REQUEST_CHECKS_EXECUTION',
-                            payload: {
-                              clusterID: cluster.id,
-                            },
-                          });
-                          navigate(`/clusters/${cluster.id}/checks/results`);
-                        }}
-                      >
-                        Start execution
-                      </a>
+                        <div>
+                          <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-green-100 rounded-md hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                            <EOS_LUNCH_DINING />
+                          </Menu.Button>
+                        </div>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="absolute z-10 right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="px-1 py-1 ">
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    className={`${
+                                      active
+                                        ? 'bg-jungle-green-500 text-white'
+                                        : 'text-gray-900'
+                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                    onClick={() =>
+                                      navigate(`/clusters/${cluster.id}/checks`)
+                                    }
+                                  >
+                                    <span className="pr-1">
+                                      {active ? (
+                                        <EOS_EDIT color="white" />
+                                      ) : (
+                                        <EOS_EDIT color="black" />
+                                      )}
+                                    </span>
+                                    Edit checks
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </div>
+                            <div className="px-1 py-1">
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    className={`${
+                                      active
+                                        ? 'bg-jungle-green-500 text-white'
+                                        : 'text-gray-900'
+                                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                                    onClick={() => {
+                                      dispatch({
+                                        type: 'REQUEST_CHECKS_EXECUTION',
+                                        payload: {
+                                          clusterID: cluster.id,
+                                        },
+                                      });
+                                      navigate(
+                                        `/clusters/${cluster.id}/checks/results`
+                                      );
+                                    }}
+                                  >
+                                    <span className="pr-1">
+                                      {active ? (
+                                        <EOS_RUN_CIRCLE color="white" />
+                                      ) : (
+                                        <EOS_RUN_CIRCLE color="black" />
+                                      )}
+                                    </span>
+                                    Start execution
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </div>
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
                     </td>
                   </tr>
                 ))}

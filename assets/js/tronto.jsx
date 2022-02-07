@@ -26,8 +26,14 @@ const App = () => {
               <Route index element={<Home />} />
               <Route index path="hosts" element={<HostsList />} />
               <Route path="clusters" element={<ClustersList />} />
-              <Route path="clusters/:clusterID/checks" element={<ChecksSelection />} />
-              <Route path="clusters/:clusterID/checks/results" element={<ChecksResults />} />
+              <Route
+                path="clusters/:clusterID/checks"
+                element={<ChecksSelection />}
+              />
+              <Route
+                path="clusters/:clusterID/checks/results"
+                element={<ChecksResults />}
+              />
             </Route>
           </Routes>
         </BrowserRouter>
