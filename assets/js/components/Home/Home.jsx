@@ -1,21 +1,31 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import day from 'dayjs'
+import day from 'dayjs';
 
 const Home = () => {
   const liveFeed = useSelector((state) => state.liveFeed.entries);
   const hosts = useSelector((state) => state.hostsList.hosts);
+  const clusters = useSelector((state) => state.clustersList.clusters);
   const hostsNumber = hosts.length;
+  const clustersNumber = clusters.length;
 
   return (
     <div className="container px-4">
-      <div className="">
-        <div className="max-w-xs py-4 px-8 bg-white shadow rounded-lg my-2">
+      <div className="flex flex-row">
+        <div className="min-w-[30%] py-4 px-8 bg-white shadow rounded-lg my-2 mr-4">
           <div>
             <h2 className="text-gray-600">Hosts</h2>
             <p className="mt-2 text-gray-800 text-3xl font-semibold">
               {hostsNumber}
+            </p>
+          </div>
+        </div>
+        <div className="min-w-[30%] py-4 px-8 bg-white shadow rounded-lg my-2">
+          <div>
+            <h2 className="text-gray-600">Clusters</h2>
+            <p className="mt-2 text-gray-800 text-3xl font-semibold">
+              {clustersNumber}
             </p>
           </div>
         </div>
@@ -51,10 +61,16 @@ const Home = () => {
                   {liveFeed.map(({ time, source, message }) => (
                     <tr key={time} className="animate-fade">
                       <td className="px-6 py-4 whitespace-nowrap text-xs">
-                    <div className="content-center">{day(time).format('YYYY-MM-DD HH:mm:ss')}</div>
+                        <div className="content-center">
+                          {day(time).format('YYYY-MM-DD HH:mm:ss')}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">{source}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">{message}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {source}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {message}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
