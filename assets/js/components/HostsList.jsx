@@ -55,7 +55,7 @@ const HostsList = () => {
                 {hosts.map((host) => (
                   <tr key={host.id} className="animate-fade">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="content-center">
+                      <div className="ml-4">
                         {getHeartbeatIcon(host)}
                       </div>
                     </td>
