@@ -44,6 +44,14 @@ export const clustersListSlice = createSlice({
         return cluster;
       });
     },
+    updateClusterHealth: (state, action) => {
+      state.clusters = state.clusters.map((cluster) => {
+        if (cluster.id === action.payload.cluster_id) {
+          cluster.health = action.payload.health;
+        }
+        return cluster;
+      });
+    },
     startClustersLoading: (state) => {
       state.loading = true;
     },
@@ -59,6 +67,7 @@ export const {
   updateCluster,
   updateSelectedChecks,
   updateChecksResults,
+  updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
 } = clustersListSlice.actions;
