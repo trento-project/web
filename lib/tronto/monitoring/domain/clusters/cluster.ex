@@ -20,9 +20,9 @@ defmodule Tronto.Monitoring.Domain.Cluster do
     ChecksResultsStored,
     ChecksSelected,
     ClusterDetailsUpdated,
+    ClusterHealthChanged,
     ClusterRegistered,
-    HostAddedToCluster,
-    ClusterHealthChanged
+    HostAddedToCluster
   }
 
   defstruct [
