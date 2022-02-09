@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Menu, Transition } from '@headlessui/react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Menu, Transition} from '@headlessui/react';
 
 import {
   EOS_EDIT,
@@ -98,12 +98,12 @@ const ClustersList = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <a
-                        href={`/clusters/${cluster.id}/checks/results`}
+                      <Link
                         className="text-jungle-green-500 hover:opacity-75"
+                        to={`/clusters/${cluster.id}/checks`}
                       >
                         {cluster.name}
-                      </a>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {cluster.id}
