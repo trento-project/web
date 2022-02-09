@@ -18,6 +18,7 @@ defmodule Tronto.Monitoring.ClusterReadModel do
     field :sid, :string
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_down, :unknown]
     field :selected_checks, {:array, :string}, default: []
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :pending, :unknown]
 
     has_many :checks_results, CheckResultReadModel, foreign_key: :cluster_id
   end

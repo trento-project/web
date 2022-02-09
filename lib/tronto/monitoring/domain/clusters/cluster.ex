@@ -1,6 +1,8 @@
 defmodule Tronto.Monitoring.Domain.Cluster do
   @moduledoc false
 
+  alias Commanded.Aggregate.Multi
+
   alias Tronto.Monitoring.Domain.{
     CheckResult,
     Cluster
@@ -19,7 +21,8 @@ defmodule Tronto.Monitoring.Domain.Cluster do
     ChecksSelected,
     ClusterDetailsUpdated,
     ClusterRegistered,
-    HostAddedToCluster
+    HostAddedToCluster,
+    ClusterHealthChanged
   }
 
   defstruct [
@@ -27,6 +30,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
     :name,
     :type,
     :sid,
+    health: :unknown,
     hosts: [],
     selected_checks: [],
     hosts_checks_results: %{}
@@ -36,6 +40,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
           cluster_id: String.t(),
           name: [String.t()],
           type: :hana_scale_up | :hana_scale_out | :unknown,
+          health: :passing | :warning | :critical | :pending | :unknown,
           sid: String.t(),
           hosts: [String.t()],
           selected_checks: [String.t()],
@@ -129,7 +134,8 @@ defmodule Tronto.Monitoring.Domain.Cluster do
         cluster_id: cluster_id,
         hosts: hosts,
         checks: selected_checks
-      }
+      },
+      %ClusterHealthChanged{cluster_id: cluster_id, health: :pending}
     ]
   end
 
@@ -142,28 +148,36 @@ defmodule Tronto.Monitoring.Domain.Cluster do
         },
         %RequestChecksExecution{cluster_id: cluster_id}
       ) do
-    %ChecksExecutionRequested{
-      cluster_id: cluster_id,
-      hosts: hosts,
-      checks: selected_checks
-    }
+    [
+      %ChecksExecutionRequested{
+        cluster_id: cluster_id,
+        hosts: hosts,
+        checks: selected_checks
+      },
+      %ClusterHealthChanged{cluster_id: cluster_id, health: :pending}
+    ]
   end
 
   # Store checks results
   def execute(
         %Cluster{
           cluster_id: cluster_id
-        },
+        } = cluster,
         %StoreChecksResults{
           host_id: host_id,
           checks_results: checks_results
         }
       ) do
-    %ChecksResultsStored{
-      cluster_id: cluster_id,
-      host_id: host_id,
-      checks_results: checks_results
-    }
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %ChecksResultsStored{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        checks_results: checks_results
+      }
+    end)
+    |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
 
   def apply(
@@ -255,6 +269,10 @@ defmodule Tronto.Monitoring.Domain.Cluster do
     }
   end
 
+  def apply(%Cluster{} = cluster, %ClusterHealthChanged{health: health}) do
+    %Cluster{cluster | health: health}
+  end
+
   defp maybe_emit_host_added_to_cluster_event(
          %Cluster{cluster_id: cluster_id, hosts: hosts},
          host_id
@@ -268,6 +286,40 @@ defmodule Tronto.Monitoring.Domain.Cluster do
           host_id: host_id
         }
       ]
+    end
+  end
+
+  defp maybe_emit_cluster_health_changed_event(%Cluster{
+         cluster_id: cluster_id,
+         hosts_checks_results: hosts_checks_results,
+         health: health
+       }) do
+    checks_results_list =
+      hosts_checks_results
+      |> Enum.flat_map(fn {_, checks_results} -> checks_results end)
+
+    new_health =
+      cond do
+        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :critical end) ->
+          :critical
+
+        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :warning end) ->
+          :warning
+
+        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :passing end) ->
+          :passing
+
+        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :running end) ->
+          :pending
+
+        true ->
+          :unknown
+      end
+
+    if new_health != health do
+      %ClusterHealthChanged{cluster_id: cluster_id, health: new_health}
+    else
+      []
     end
   end
 end

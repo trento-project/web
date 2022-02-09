@@ -109,7 +109,7 @@ defmodule Tronto.Monitoring.CheckResultProjector do
           cluster_id: cluster_id,
           host_id: host_id,
           checks_results: checks_results
-        } = event,
+        },
         _,
         _
       ) do

@@ -3,7 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
 
-import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
+import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING, EOS_LENS_FILLED } from 'eos-icons-react';
+
+import Spinner from './Spinner';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -15,6 +17,21 @@ const getClusterTypeLabel = (type) => {
       return 'Unknown';
   }
 };
+
+const getHealthIcon = (health) => {
+  switch (health) {
+    case 'passing':
+      return <EOS_LENS_FILLED className="fill-jungle-green-500" />;
+    case 'warning':
+      return <EOS_LENS_FILLED className="fill-yellow-500" />;
+    case 'critical':
+      return <EOS_LENS_FILLED className="fill-red-500" />;
+    case 'pending':
+      return <Spinner />;
+    default:
+      return <EOS_LENS_FILLED className="fill-gray-500" />;
+  }
+}
 
 const ClustersList = () => {
   const clusters = useSelector((state) => state.clustersList.clusters);
@@ -29,6 +46,12 @@ const ClustersList = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Health
+                  </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -64,6 +87,9 @@ const ClustersList = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {clusters.map((cluster) => (
                   <tr key={cluster.id} className="animate-fade">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="ml-4">{getHealthIcon(cluster.health)}</div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <a
                         href={`/clusters/${cluster.id}/checks/results`}
