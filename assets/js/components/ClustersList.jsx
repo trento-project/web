@@ -3,7 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
 
-import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING, EOS_LENS_FILLED } from 'eos-icons-react';
+import {
+  EOS_EDIT,
+  EOS_RUN_CIRCLE,
+  EOS_LUNCH_DINING,
+  EOS_LENS_FILLED,
+} from 'eos-icons-react';
 
 import Spinner from './Spinner';
 
@@ -31,7 +36,7 @@ const getHealthIcon = (health) => {
     default:
       return <EOS_LENS_FILLED className="fill-gray-500" />;
   }
-}
+};
 
 const ClustersList = () => {
   const clusters = useSelector((state) => state.clustersList.clusters);
@@ -88,7 +93,9 @@ const ClustersList = () => {
                 {clusters.map((cluster) => (
                   <tr key={cluster.id} className="animate-fade">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="ml-4">{getHealthIcon(cluster.health)}</div>
+                      <div className="ml-4">
+                        {getHealthIcon(cluster.health)}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <a
