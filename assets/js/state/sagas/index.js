@@ -17,6 +17,7 @@ import {
   updateCluster,
   updateSelectedChecks,
   updateChecksResults,
+  updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
 } from '../clusters';
@@ -248,6 +249,14 @@ function* watchChecksResultsUpdated() {
   yield takeEvery('CHECKS_RESULTS_UPDATED', checksResultsUpdated);
 }
 
+function* clusterHealthChanged({ payload }) {
+  yield put(updateClusterHealth(payload));
+}
+
+function* watchClusterHealthChanged() {
+  yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
+}
+
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
@@ -263,5 +272,6 @@ export default function* rootSaga() {
     watchChecksExecutionStarted(),
     watchChecksExecutionCompleted(),
     watchChecksResultsUpdated(),
+    watchClusterHealthChanged(),
   ]);
 }

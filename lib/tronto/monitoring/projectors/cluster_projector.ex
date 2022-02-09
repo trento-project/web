@@ -11,6 +11,7 @@ defmodule Tronto.Monitoring.ClusterProjector do
   alias Tronto.Monitoring.Domain.Events.{
     ChecksSelected,
     ClusterDetailsUpdated,
+    ClusterHealthChanged,
     ClusterRegistered
   }
 
@@ -32,7 +33,8 @@ defmodule Tronto.Monitoring.ClusterProjector do
           id: id,
           name: name,
           sid: sid,
-          type: type
+          type: type,
+          health: :unknown
         })
 
       Ecto.Multi.insert(multi, :cluster, changeset)
@@ -77,6 +79,15 @@ defmodule Tronto.Monitoring.ClusterProjector do
     end
   )
 
+  project(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, fn multi ->
+    changeset =
+      ClusterReadModel
+      |> Repo.get(cluster_id)
+      |> ClusterReadModel.changeset(%{health: health})
+
+    Ecto.Multi.update(multi, :cluster, changeset)
+  end)
+
   @impl true
   def after_update(
         %ClusterRegistered{},
@@ -92,6 +103,13 @@ defmodule Tronto.Monitoring.ClusterProjector do
         %{cluster: cluster}
       ) do
     TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_details_updated", cluster)
+  end
+
+  def after_update(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, _, _) do
+    TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_changed", %{
+      cluster_id: cluster_id,
+      health: health
+    })
   end
 
   def after_update(_, _, _), do: :ok

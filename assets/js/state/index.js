@@ -76,6 +76,10 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'CHECKS_RESULTS_UPDATED', payload })
   );
 
+  clustersChannel.on('cluster_health_changed', (payload) =>
+    store.dispatch({ type: 'CLUSTER_HEALTH_CHANGED', payload })
+  );
+
   joinChannel(hostsChannel);
   joinChannel(clustersChannel);
 };
