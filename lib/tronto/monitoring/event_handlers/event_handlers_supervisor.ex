@@ -10,6 +10,7 @@ defmodule Tronto.Monitoring.EventHandlersSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
+      Tronto.Monitoring.AlertsEventsHandler,
       Tronto.Monitoring.ChecksEventsHandler
     ]
 

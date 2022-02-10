@@ -58,6 +58,7 @@ defmodule Tronto.MixProject do
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.18"},
+      {:gen_smtp, "~> 1.1.1"},
       {:jason, "~> 1.2"},
       {:mock, "~> 0.3.0", only: :test},
       {:phoenix, "~> 1.6.2"},
