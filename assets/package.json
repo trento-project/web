@@ -9,7 +9,7 @@
     "deploy": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css && cd .. && mix assets.deploy && rm -f _build/esbuild"
   },
   "dependencies": {
-    "@headlessui/react": "^1.4.3",
+    "@headlessui/react": "^1.5.0",
     "@heroicons/react": "^1.0.5",
     "@reduxjs/toolkit": "^1.7.2",
     "axios": "^0.26.0",
