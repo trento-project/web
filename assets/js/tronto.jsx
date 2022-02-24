@@ -8,12 +8,12 @@ import { Provider } from 'react-redux';
 
 import { store } from './state';
 
-import Layout from './components/Layout';
-import Home from './components/Home';
-import HostsList from './components/HostsList';
-import ClustersList from './components/ClustersList';
-import ChecksSelection from './components/ChecksSelection';
-import ChecksResults from './components/ChecksResults';
+import Layout from '@components/Layout';
+import Home from '@components/Home';
+import HostsList from '@components/HostsList';
+import ClustersList from '@components/ClustersList';
+import ChecksSelection from '@components/ChecksSelection';
+import ChecksResults from '@components/ChecksResults';
 
 const App = () => {
   return (

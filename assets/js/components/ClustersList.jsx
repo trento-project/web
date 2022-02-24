@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { Menu, Transition} from '@headlessui/react';
+import { Menu, Transition } from '@headlessui/react';
 
 import {
   EOS_EDIT,
