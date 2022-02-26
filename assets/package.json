@@ -9,7 +9,8 @@
   },
   "scripts": {
     "tailwind:build": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css",
-    "build": "node build.js"
+    "build": "node build.js",
+    "deploy": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css && node build.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.5.0",
