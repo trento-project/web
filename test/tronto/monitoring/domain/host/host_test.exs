@@ -1,5 +1,7 @@
 defmodule Tronto.Monitoring.HostTest do
-  use Commanded.AggregateCase, aggregate: Tronto.Monitoring.Domain.Host, async: true
+  use Tronto.AggregateCase, aggregate: Tronto.Monitoring.Domain.Host, async: true
+
+  import Tronto.Factory
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
@@ -22,28 +24,21 @@ defmodule Tronto.Monitoring.HostTest do
       ip_addresses = [Faker.Internet.ip_v4_address()]
       agent_version = Faker.Internet.slug()
 
-      commands = [
+      assert_events_and_state(
+        [],
         RegisterHost.new!(
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
-        )
-      ]
-
-      assert_events(
-        commands,
+        ),
         %HostRegistered{
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
           heartbeat: :unknown
-        }
-      )
-
-      assert_state(
-        commands,
+        },
         %Host{
           host_id: host_id,
           hostname: hostname,
@@ -60,41 +55,20 @@ defmodule Tronto.Monitoring.HostTest do
       new_ip_addresses = [Faker.Internet.ip_v4_address()]
       new_agent_version = Faker.Internet.slug()
 
-      initial_events = [
-        %HostRegistered{
-          host_id: Faker.UUID.v4(),
-          hostname: Faker.StarWars.character(),
-          ip_addresses: [Faker.Internet.ip_v4_address()],
-          agent_version: Faker.Internet.slug(),
-          heartbeat: :unknown
-        }
-      ]
-
-      commands = [
+      assert_events_and_state(
+        host_registered_event(host_id: host_id),
         RegisterHost.new!(
           host_id: host_id,
           hostname: new_hostname,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version
-        )
-      ]
-
-      assert_events(
-        initial_events,
-        commands,
-        [
-          %HostDetailsUpdated{
-            host_id: host_id,
-            hostname: new_hostname,
-            ip_addresses: new_ip_addresses,
-            agent_version: new_agent_version
-          }
-        ]
-      )
-
-      assert_state(
-        initial_events,
-        commands,
+        ),
+        %HostDetailsUpdated{
+          host_id: host_id,
+          hostname: new_hostname,
+          ip_addresses: new_ip_addresses,
+          agent_version: new_agent_version
+        },
         %Host{
           host_id: host_id,
           hostname: new_hostname,
@@ -111,28 +85,19 @@ defmodule Tronto.Monitoring.HostTest do
       ip_addresses = [Faker.Internet.ip_v4_address()]
       agent_version = Faker.Internet.slug()
 
-      initial_events = [
-        %HostRegistered{
+      assert_events(
+        host_registered_event(
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
-          agent_version: agent_version,
-          heartbeat: :unknown
-        }
-      ]
-
-      commands = [
+          agent_version: agent_version
+        ),
         RegisterHost.new!(
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
-        )
-      ]
-
-      assert_events(
-        initial_events,
-        commands,
+        ),
         []
       )
     end
@@ -141,200 +106,146 @@ defmodule Tronto.Monitoring.HostTest do
   describe "heartbeat" do
     test "should emit an HeartbeatSucceded event if the Host never received an heartbeat already" do
       host_id = Faker.UUID.v4()
+      host_registered_event = host_registered_event(host_id: host_id)
 
-      initial_events = [
-        host_registered_event = %HostRegistered{
-          host_id: host_id,
-          hostname: Faker.StarWars.character(),
-          ip_addresses: [Faker.Internet.ip_v4_address()],
-          agent_version: Faker.Internet.slug(),
-          heartbeat: :unknown
-        }
-      ]
-
-      commands = [
+      assert_events_and_state(
+        host_registered_event,
         UpdateHeartbeat.new!(
           host_id: host_id,
           heartbeat: :passing
-        )
-      ]
-
-      assert_events(initial_events, commands, [
+        ),
         %HeartbeatSucceded{
           host_id: host_id
+        },
+        %Host{
+          host_id: host_id,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          heartbeat: :passing
         }
-      ])
-
-      assert_state(initial_events, commands, %Host{
-        host_id: host_id,
-        hostname: host_registered_event.hostname,
-        ip_addresses: host_registered_event.ip_addresses,
-        agent_version: host_registered_event.agent_version,
-        heartbeat: :passing
-      })
+      )
     end
 
     test "should emit an HeartbeatSucceded event if the Host is in a critical status" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event = %HostRegistered{
-          host_id: host_id,
-          hostname: Faker.StarWars.character(),
-          ip_addresses: [Faker.Internet.ip_v4_address()],
-          agent_version: Faker.Internet.slug(),
-          heartbeat: :unknown
-        },
+        host_registered_event = host_registered_event(host_id: host_id),
         %HeartbeatFailed{
           host_id: host_id
         }
       ]
 
-      commands = [
+      assert_events_and_state(
+        initial_events,
         UpdateHeartbeat.new!(
           host_id: host_id,
           heartbeat: :passing
-        )
-      ]
-
-      assert_events(initial_events, commands, [
+        ),
         %HeartbeatSucceded{
           host_id: host_id
+        },
+        %Host{
+          host_id: host_id,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          heartbeat: :passing
         }
-      ])
-
-      assert_state(initial_events, commands, %Host{
-        host_id: host_id,
-        hostname: host_registered_event.hostname,
-        ip_addresses: host_registered_event.ip_addresses,
-        agent_version: host_registered_event.agent_version,
-        heartbeat: :passing
-      })
+      )
     end
 
     test "should not emit an HeartbeatSucceded event if the Host is in a passing status already" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        %HostRegistered{
-          host_id: host_id,
-          hostname: Faker.StarWars.character(),
-          ip_addresses: [Faker.Internet.ip_v4_address()],
-          agent_version: Faker.Internet.slug(),
-          heartbeat: :unknown
-        },
+        host_registered_event(host_id: host_id),
         %HeartbeatSucceded{
           host_id: host_id
         }
       ]
 
-      commands = [
+      assert_events(
+        initial_events,
         UpdateHeartbeat.new!(
           host_id: host_id,
           heartbeat: :passing
-        )
-      ]
-
-      assert_events(initial_events, commands, [])
+        ),
+        []
+      )
     end
 
     test "should emit an HeartbeatFailed event if the Host has never received an heartbeat" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event = %HostRegistered{
-          host_id: host_id,
-          hostname: Faker.StarWars.character(),
-          ip_addresses: [Faker.Internet.ip_v4_address()],
-          agent_version: Faker.Internet.slug(),
-          heartbeat: :unknown
-        },
+        host_registered_event = host_registered_event(host_id: host_id),
         %HeartbeatSucceded{
           host_id: host_id
         }
       ]
 
-      commands = [
+      assert_events_and_state(
+        initial_events,
         UpdateHeartbeat.new!(
           host_id: host_id,
           heartbeat: :critical
-        )
-      ]
-
-      assert_events(initial_events, commands, [
+        ),
         %HeartbeatFailed{
           host_id: host_id
+        },
+        %Host{
+          host_id: host_id,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          heartbeat: :critical
         }
-      ])
-
-      assert_state(initial_events, commands, %Host{
-        host_id: host_id,
-        hostname: host_registered_event.hostname,
-        ip_addresses: host_registered_event.ip_addresses,
-        agent_version: host_registered_event.agent_version,
-        heartbeat: :critical
-      })
+      )
     end
 
     test "should emit an HeartbeatFailed event if the Host is in a passing status" do
       host_id = Faker.UUID.v4()
+      host_registered_event = host_registered_event(host_id: host_id)
 
-      initial_events = [
-        host_registered_event = %HostRegistered{
-          host_id: host_id,
-          hostname: Faker.StarWars.character(),
-          ip_addresses: [Faker.Internet.ip_v4_address()],
-          agent_version: Faker.Internet.slug(),
-          heartbeat: :unknown
-        }
-      ]
-
-      commands = [
+      assert_events_and_state(
+        host_registered_event,
         UpdateHeartbeat.new!(
           host_id: host_id,
           heartbeat: :critical
-        )
-      ]
-
-      assert_events(initial_events, commands, [
+        ),
         %HeartbeatFailed{
           host_id: host_id
+        },
+        %Host{
+          host_id: host_id,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          heartbeat: :critical
         }
-      ])
-
-      assert_state(initial_events, commands, %Host{
-        host_id: host_id,
-        hostname: host_registered_event.hostname,
-        ip_addresses: host_registered_event.ip_addresses,
-        agent_version: host_registered_event.agent_version,
-        heartbeat: :critical
-      })
+      )
     end
 
     test "should not emit an HeartbeatFailed event if the Host is in a critical status already" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        %HostRegistered{
-          host_id: host_id,
-          hostname: Faker.StarWars.character(),
-          ip_addresses: [Faker.Internet.ip_v4_address()],
-          agent_version: Faker.Internet.slug(),
-          heartbeat: :unknown
-        },
+        host_registered_event(host_id: host_id),
         %HeartbeatFailed{
           host_id: host_id
         }
       ]
 
-      commands = [
+      assert_events(
+        initial_events,
         UpdateHeartbeat.new!(
           host_id: host_id,
           heartbeat: :critical
-        )
-      ]
-
-      assert_events(initial_events, commands, [])
+        ),
+        []
+      )
     end
   end
 end
