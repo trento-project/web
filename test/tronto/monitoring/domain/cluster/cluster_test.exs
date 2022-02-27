@@ -1,5 +1,5 @@
 defmodule Tronto.Monitoring.ClusterTest do
-  use Commanded.AggregateCase, aggregate: Tronto.Monitoring.Domain.Cluster, async: true
+  use Tronto.AggregateCase, aggregate: Tronto.Monitoring.Domain.Cluster, async: true
 
   alias Tronto.Monitoring.Domain.Cluster
 
