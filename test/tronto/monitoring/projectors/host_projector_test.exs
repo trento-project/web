@@ -2,6 +2,8 @@ defmodule Tronto.Monitoring.HostProjectorTest do
   use ExUnit.Case
   use Tronto.DataCase
 
+  import Tronto.Factory
+
   alias Tronto.Monitoring.{
     HostProjector,
     HostReadModel
@@ -10,8 +12,7 @@ defmodule Tronto.Monitoring.HostProjectorTest do
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
-    HostDetailsUpdated,
-    HostRegistered
+    HostDetailsUpdated
   }
 
   alias Tronto.ProjectorTestHelper
@@ -19,14 +20,14 @@ defmodule Tronto.Monitoring.HostProjectorTest do
 
   @moduletag :integration
 
+  setup do
+    %HostReadModel{id: host_id} = host_projection()
+
+    %{host_id: host_id}
+  end
+
   test "should project a new host when HostRegistered event is received" do
-    event = %HostRegistered{
-      host_id: Faker.UUID.v4(),
-      hostname: Faker.StarWars.character(),
-      ip_addresses: [Faker.Internet.ip_v4_address()],
-      agent_version: Faker.StarWars.planet(),
-      heartbeat: :unknown
-    }
+    event = host_registered_event()
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
@@ -38,15 +39,9 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     assert event.heartbeat == host_projection.heartbeat
   end
 
-  test "should update an existing host when HostDetailsUpdated event is received" do
-    Repo.insert!(%HostReadModel{
-      id: host_id = Faker.UUID.v4(),
-      hostname: Faker.StarWars.character(),
-      ip_addresses: [Faker.Internet.ip_v4_address()],
-      agent_version: Faker.StarWars.planet(),
-      heartbeat: :unknown
-    })
-
+  test "should update an existing host when HostDetailsUpdated event is received", %{
+    host_id: host_id
+  } do
     event = %HostDetailsUpdated{
       host_id: host_id,
       hostname: Faker.StarWars.character(),
@@ -63,15 +58,8 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     assert event.agent_version == host_projection.agent_version
   end
 
-  test "should update the heartbeat field to passing status when HeartbeatSucceded is received" do
-    Repo.insert!(%HostReadModel{
-      id: host_id = Faker.UUID.v4(),
-      hostname: Faker.StarWars.character(),
-      ip_addresses: [Faker.Internet.ip_v4_address()],
-      agent_version: Faker.StarWars.planet(),
-      heartbeat: :unknown
-    })
-
+  test "should update the heartbeat field to passing status when HeartbeatSucceded is received",
+       %{host_id: host_id} do
     event = %HeartbeatSucceded{
       host_id: host_id
     }
@@ -82,15 +70,9 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     assert :passing == host_projection.heartbeat
   end
 
-  test "should update the heartbeat field to critical status when HeartbeatFailed is received" do
-    Repo.insert!(%HostReadModel{
-      id: host_id = Faker.UUID.v4(),
-      hostname: Faker.StarWars.character(),
-      ip_addresses: [Faker.Internet.ip_v4_address()],
-      agent_version: Faker.StarWars.planet(),
-      heartbeat: :unknown
-    })
-
+  test "should update the heartbeat field to critical status when HeartbeatFailed is received", %{
+    host_id: host_id
+  } do
     event = %HeartbeatFailed{
       host_id: host_id
     }

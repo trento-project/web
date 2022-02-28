@@ -1,5 +1,7 @@
 defmodule Tronto.Monitoring.ClusterTest do
-  use Commanded.AggregateCase, aggregate: Tronto.Monitoring.Domain.Cluster, async: true
+  use Tronto.AggregateCase, aggregate: Tronto.Monitoring.Domain.Cluster, async: true
+
+  import Tronto.Factory
 
   alias Tronto.Monitoring.Domain.Cluster
 
@@ -21,18 +23,15 @@ defmodule Tronto.Monitoring.ClusterTest do
       type = :hana_scale_up
       sid = Faker.StarWars.planet()
 
-      commands = [
+      assert_events_and_state(
+        [],
         RegisterCluster.new!(
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
           sid: sid,
           type: type
-        )
-      ]
-
-      assert_events(
-        commands,
+        ),
         [
           %ClusterRegistered{
             cluster_id: cluster_id,
@@ -44,11 +43,7 @@ defmodule Tronto.Monitoring.ClusterTest do
             cluster_id: cluster_id,
             host_id: host_id
           }
-        ]
-      )
-
-      assert_state(
-        commands,
+        ],
         %Cluster{
           cluster_id: cluster_id,
           name: name,
@@ -66,44 +61,28 @@ defmodule Tronto.Monitoring.ClusterTest do
       new_sid = Faker.StarWars.planet()
 
       initial_events = [
-        %ClusterRegistered{
-          cluster_id: cluster_id,
-          name: Faker.StarWars.character(),
-          sid: Faker.StarWars.planet(),
-          type: :hana_scale_up
-        },
+        cluster_registered_event(cluster_id: cluster_id),
         %HostAddedToCluster{
           cluster_id: cluster_id,
           host_id: host_id
         }
       ]
 
-      commands = [
+      assert_events_and_state(
+        initial_events,
         RegisterCluster.new!(
           cluster_id: cluster_id,
           host_id: host_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up
-        )
-      ]
-
-      assert_events(
-        initial_events,
-        commands,
-        [
-          %ClusterDetailsUpdated{
-            cluster_id: cluster_id,
-            name: new_name,
-            sid: new_sid,
-            type: :hana_scale_up
-          }
-        ]
-      )
-
-      assert_state(
-        initial_events,
-        commands,
+        ),
+        %ClusterDetailsUpdated{
+          cluster_id: cluster_id,
+          name: new_name,
+          sid: new_sid,
+          type: :hana_scale_up
+        },
         %Cluster{
           cluster_id: cluster_id,
           name: new_name,
@@ -120,28 +99,15 @@ defmodule Tronto.Monitoring.ClusterTest do
       new_name = Faker.StarWars.character()
       new_sid = Faker.StarWars.planet()
 
-      initial_events = [
-        %ClusterRegistered{
-          cluster_id: cluster_id,
-          name: Faker.StarWars.character(),
-          sid: Faker.StarWars.planet(),
-          type: :hana_scale_up
-        }
-      ]
-
-      commands = [
+      assert_events_and_state(
+        cluster_registered_event(cluster_id: cluster_id),
         RegisterCluster.new!(
           cluster_id: cluster_id,
           host_id: host_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up
-        )
-      ]
-
-      assert_events(
-        initial_events,
-        commands,
+        ),
         [
           %ClusterDetailsUpdated{
             cluster_id: cluster_id,
@@ -153,12 +119,7 @@ defmodule Tronto.Monitoring.ClusterTest do
             cluster_id: cluster_id,
             host_id: host_id
           }
-        ]
-      )
-
-      assert_state(
-        initial_events,
-        commands,
+        ],
         %Cluster{
           cluster_id: cluster_id,
           name: new_name,

@@ -33,8 +33,7 @@ defmodule Tronto.MixProject do
   defp elixirc_paths(:test),
     do: [
       "lib",
-      "test/support",
-      "deps/commanded/test/support/aggregate_case.ex"
+      "test/support"
     ]
 
   defp elixirc_paths(_), do: ["lib"]

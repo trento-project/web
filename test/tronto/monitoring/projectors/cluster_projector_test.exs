@@ -2,15 +2,14 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
   use ExUnit.Case
   use Tronto.DataCase
 
+  import Tronto.Factory
+
   alias Tronto.Monitoring.{
     ClusterProjector,
     ClusterReadModel
   }
 
-  alias Tronto.Monitoring.Domain.Events.{
-    ClusterDetailsUpdated,
-    ClusterRegistered
-  }
+  alias Tronto.Monitoring.Domain.Events.ClusterDetailsUpdated
 
   alias Tronto.ProjectorTestHelper
   alias Tronto.Repo
@@ -18,12 +17,7 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
   @moduletag :integration
 
   test "should project a new cluster when ClusterRegistered event is received" do
-    event = %ClusterRegistered{
-      cluster_id: Faker.UUID.v4(),
-      name: Faker.StarWars.character(),
-      sid: Faker.StarWars.planet(),
-      type: :hana_scale_up
-    }
+    event = cluster_registered_event()
 
     ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
     cluster_projection = Repo.get!(ClusterReadModel, event.cluster_id)
@@ -35,16 +29,7 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
   end
 
   test "should update the cluster details when ClusterDetailsUpdated is received" do
-    cluster_id = Faker.UUID.v4()
-
-    cluster_registered_event = %ClusterRegistered{
-      cluster_id: cluster_id,
-      name: Faker.StarWars.character(),
-      sid: Faker.StarWars.planet(),
-      type: :hana_scale_up
-    }
-
-    ProjectorTestHelper.project(ClusterProjector, cluster_registered_event, "cluster_projector")
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
 
     cluster_details_updated_event = %ClusterDetailsUpdated{
       cluster_id: cluster_id,
