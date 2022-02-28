@@ -1,6 +1,14 @@
 {
   "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-interactions": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/react": "^6.4.19",
+    "@storybook/testing-library": "^0.0.9",
     "autoprefixer": "^10.4.2",
+    "babel-loader": "^8.2.3",
     "esbuild": "^0.14.23",
     "esbuild-plugin-path-alias": "^1.0.5",
     "postcss": "^8.4.7",
@@ -10,7 +18,9 @@
   "scripts": {
     "tailwind:build": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css",
     "build": "node build.js",
-    "deploy": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css && node build.js"
+    "deploy": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css && node build.js",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@headlessui/react": "^1.5.0",
