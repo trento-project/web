@@ -4,7 +4,6 @@ defmodule Tronto.Monitoring do
   """
 
   alias Tronto.Monitoring.{
-    CheckResultReadModel,
     ClusterReadModel,
     HostReadModel
   }
