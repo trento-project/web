@@ -85,6 +85,19 @@ defmodule TrontoWeb.Router do
     end
   end
 
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :tronto, swagger_file: "swagger.json"
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: Mix.Project.config()[:version],
+        title: "Trento"
+      }
+    }
+  end
+
   scope "/*path", TrontoWeb do
     pipe_through [:browser, :protected]
 
