@@ -54,6 +54,7 @@ defmodule Tronto.MixProject do
       {:eventstore, "~> 1.1",
        [env: :prod, git: "https://github.com/commanded/eventstore.git", override: true]},
       {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
+      {:ex_json_schema, "~> 0.5"},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.18"},
