@@ -5,8 +5,15 @@ defmodule Tronto.Factory do
 
   alias Tronto.Repo
 
-  alias Tronto.Monitoring.Domain.Events.HostRegistered
-  alias Tronto.Monitoring.HostReadModel
+  alias Tronto.Monitoring.Domain.Events.{
+    ClusterRegistered,
+    HostRegistered
+  }
+
+  alias Tronto.Monitoring.{
+    ClusterReadModel,
+    HostReadModel
+  }
 
   def host_registered_event(attrs \\ []) do
     %HostRegistered{
@@ -30,5 +37,28 @@ defmodule Tronto.Factory do
     Repo.insert!(host_projection)
 
     host_projection
+  end
+
+  def cluster_registered_event(attrs \\ []) do
+    %ClusterRegistered{
+      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
+      name: Keyword.get(attrs, :name, Faker.StarWars.character()),
+      sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
+      type: Keyword.get(attrs, :type, :hana_scale_up)
+    }
+  end
+
+  def cluster_projection(attrs \\ []) do
+    cluster_projection = %ClusterReadModel{
+      id: Keyword.get(attrs, :id, Faker.UUID.v4()),
+      name: Keyword.get(attrs, :name, Faker.StarWars.character()),
+      sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
+      type: Keyword.get(attrs, :type, :hana_scale_up),
+      health:  Keyword.get(attrs, :health, :passing)
+    }
+
+    Repo.insert!(cluster_projection)
+
+    cluster_projection
   end
 end
