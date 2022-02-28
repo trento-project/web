@@ -8,6 +8,7 @@ defmodule Tronto.AggregateCase do
 
   alias Commanded.Aggregate.Multi
 
+  # credo:disable-for-this-file
   using opts do
     quote do
       @aggregate Keyword.fetch!(unquote(opts), :aggregate)
@@ -63,7 +64,6 @@ defmodule Tronto.AggregateCase do
       end
 
       # Execute one or more commands against an aggregate.
-      # credo:disable-for-next-line
       defp execute(state, commands) do
         try do
           {state, events} =
