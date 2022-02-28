@@ -67,7 +67,7 @@ defmodule Tronto.Monitoring.Domain.Host do
   end
 
   def execute(
-        %Host{host_id: host_id_2},
+        %Host{},
         %RegisterHost{
           host_id: host_id,
           hostname: hostname,
@@ -137,7 +137,6 @@ defmodule Tronto.Monitoring.Domain.Host do
   def apply(
         %Host{} = host,
         %HostDetailsUpdated{
-          host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version

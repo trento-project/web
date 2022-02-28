@@ -3,7 +3,7 @@ defmodule Tronto.Factory do
   A simple Factory helper module to be used within tests to generate test data
   """
 
-  alias Tronto.Monitoring.Domain.Events.HostRegistereds
+  alias Tronto.Monitoring.Domain.Events.HostRegistered
 
   def host_registered_event(attrs \\ []) do
     %HostRegistered{
