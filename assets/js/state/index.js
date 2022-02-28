@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import { Socket } from 'phoenix';
 
+import { logMessage, logError } from '@lib/log';
+
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
 import catalogReducer from './catalog';
@@ -26,11 +28,9 @@ sagaMiddleware.run(rootSaga);
 const joinChannel = (channel) => {
   channel
     .join()
-    .receive('ok', ({ messages }) => console.log('catching up', messages))
-    .receive('error', ({ reason }) => console.log('failed join', reason))
-    .receive('timeout', () =>
-      console.log('Networking issue. Still waiting...')
-    );
+    .receive('ok', ({ messages }) => logMessage('catching up', messages))
+    .receive('error', ({ reason }) => logError('failed join', reason))
+    .receive('timeout', () => logMessage('Networking issue. Still waiting...'));
 };
 
 const processChannelEvents = (store) => {
