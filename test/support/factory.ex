@@ -26,17 +26,13 @@ defmodule Tronto.Factory do
   end
 
   def host_projection(attrs \\ []) do
-    host_projection = %HostReadModel{
+    Repo.insert!(%HostReadModel{
       id: Keyword.get(attrs, :id, Faker.UUID.v4()),
       hostname: Faker.StarWars.character(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: Faker.StarWars.planet(),
       heartbeat: :unknown
-    }
-
-    Repo.insert!(host_projection)
-
-    host_projection
+    })
   end
 
   def cluster_registered_event(attrs \\ []) do
@@ -49,16 +45,12 @@ defmodule Tronto.Factory do
   end
 
   def cluster_projection(attrs \\ []) do
-    cluster_projection = %ClusterReadModel{
+    Repo.insert!(%ClusterReadModel{
       id: Keyword.get(attrs, :id, Faker.UUID.v4()),
       name: Keyword.get(attrs, :name, Faker.StarWars.character()),
       sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
       type: Keyword.get(attrs, :type, :hana_scale_up),
-      health:  Keyword.get(attrs, :health, :passing)
-    }
-
-    Repo.insert!(cluster_projection)
-
-    cluster_projection
+      health: Keyword.get(attrs, :health, :passing)
+    })
   end
 end
