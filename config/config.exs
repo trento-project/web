@@ -80,6 +80,16 @@ config :tronto, Tronto.Scheduler,
   ],
   debug_logging: false
 
+config :tronto, :phoenix_swagger,
+  swagger_files: %{
+    "priv/static/swagger.json" => [
+      # phoenix routes will be converted to swagger paths
+      router: TrontoWeb.Router
+    ]
+  }
+
+config :phoenix_swagger, json_library: Jason
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
