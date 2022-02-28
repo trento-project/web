@@ -63,6 +63,7 @@ defmodule Tronto.AggregateCase do
       end
 
       # Execute one or more commands against an aggregate.
+      # credo:disable-for-next-line
       defp execute(state, commands) do
         try do
           {state, events} =

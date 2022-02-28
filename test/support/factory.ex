@@ -1,8 +1,9 @@
 defmodule Tronto.Factory do
-  alias Tronto.Monitoring.Domain.Events.{
-    HeartbeatFailed,
-    HostRegistered
-  }
+  @moduledoc """
+  A simple Factory helper module to be used within tests to generate test data
+  """
+
+  alias Tronto.Monitoring.Domain.Events.HostRegistereds
 
   def host_registered_event(attrs \\ []) do
     %HostRegistered{
