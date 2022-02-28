@@ -1,0 +1,1 @@
+call "%~dp0\tronto" eval Tronto.Release.migrate
