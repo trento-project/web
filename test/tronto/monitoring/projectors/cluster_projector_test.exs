@@ -9,9 +9,7 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
     ClusterReadModel
   }
 
-  alias Tronto.Monitoring.Domain.Events.{
-    ClusterDetailsUpdated
-  }
+  alias Tronto.Monitoring.Domain.Events.ClusterDetailsUpdated
 
   alias Tronto.ProjectorTestHelper
   alias Tronto.Repo
