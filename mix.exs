@@ -7,7 +7,7 @@ defmodule Tronto.MixProject do
       version: "0.1.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext, :domo_compiler] ++ Mix.compilers(),
+      compilers: [:gettext, :domo_compiler, :phoenix_swagger] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
