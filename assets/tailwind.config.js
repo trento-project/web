@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 module.exports = {
   content: ['./js/**/*.{js,jsx}', '../lib/*_web/**/*.*ex'],
   theme: {
@@ -5,7 +6,7 @@ module.exports = {
       animation: {
         fade: 'fadeIn 0.5s ease-in-out',
       },
-      keyframes: (theme) => ({
+      keyframes: (_theme) => ({
         fadeIn: {
           '0%': { opacity: '0%' },
           '100%': { opacity: '100%' },

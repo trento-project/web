@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-console */
 const path = require('path');
 const alias = require('esbuild-plugin-path-alias');
 
@@ -24,6 +26,8 @@ require('esbuild')
           '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js'
         ),
         '@components': resolvePath('./js/components'),
+        '@state': resolvePath('./js/state'),
+        '@lib': resolvePath('./js/lib'),
       }),
     ],
   })
