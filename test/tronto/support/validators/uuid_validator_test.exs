@@ -14,7 +14,7 @@ defmodule Tronto.Support.UUIDValidatorTest do
   end
 
   test "should not validate an invalid UUID" do
-    assert :ok =
+    assert {:error, _} =
              UUIDValidator.validate(
                Faker.StarWars.character(),
                nil
