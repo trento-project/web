@@ -80,6 +80,12 @@ config :tronto, Tronto.Scheduler,
   ],
   debug_logging: false
 
+config :vex,
+  sources: [
+    [uuid: Tronto.Support.UUIDValidator],
+    Vex.Validators
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
