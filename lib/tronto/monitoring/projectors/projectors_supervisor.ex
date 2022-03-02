@@ -12,7 +12,8 @@ defmodule Tronto.Monitoring.ProjectorsSupervisor do
     children = [
       Tronto.Monitoring.ClusterProjector,
       Tronto.Monitoring.HostProjector,
-      Tronto.Monitoring.CheckResultProjector
+      Tronto.Monitoring.CheckResultProjector,
+      Tronto.Monitoring.SlesSubscriptionsProjector
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
