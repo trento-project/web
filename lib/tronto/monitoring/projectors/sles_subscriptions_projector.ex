@@ -10,14 +10,12 @@ defmodule Tronto.Monitoring.SlesSubscriptionsProjector do
 
   import Ecto.Query
 
-  alias Tronto.Monitoring.Domain.Events.{
-    SubscriptionsUpdated
-  }
+  alias Tronto.Monitoring.Domain.Events.SlesSubscriptionsUpdated
 
   alias Tronto.Monitoring.SlesSubscriptionReadModel
 
   project(
-    %SubscriptionsUpdated{host_id: host_id, subscriptions: subscriptions},
+    %SlesSubscriptionsUpdated{host_id: host_id, subscriptions: subscriptions},
     fn multi ->
       multi =
         Ecto.Multi.delete_all(

@@ -1,6 +1,6 @@
-defmodule Tronto.Monitoring.Domain.Subscription do
+defmodule Tronto.Monitoring.Domain.SlesSubscription do
   @moduledoc """
-  SLES subscription value object
+  SLES subscriptions value object
   """
 
   use TypedStruct

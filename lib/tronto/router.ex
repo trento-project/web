@@ -16,13 +16,13 @@ defmodule Tronto.Router do
     StoreChecksResults,
     UpdateHeartbeat,
     UpdateProvider,
-    UpdateSubscriptions
+    UpdateSlesSubscriptions
   }
 
   middleware Validate
 
   identify Host, by: :host_id
-  dispatch [RegisterHost, UpdateHeartbeat, UpdateProvider, UpdateSubscriptions], to: Host
+  dispatch [RegisterHost, UpdateHeartbeat, UpdateProvider, UpdateSlesSubscriptions], to: Host
 
   identify Cluster, by: :cluster_id
 

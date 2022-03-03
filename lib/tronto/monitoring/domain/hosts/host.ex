@@ -3,13 +3,11 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   alias Tronto.Monitoring.Domain.Host
 
-  alias Tronto.Monitoring.Domain.Subscription
-
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
     UpdateHeartbeat,
     UpdateProvider,
-    UpdateSubscriptions
+    UpdateSlesSubscriptions
   }
 
   alias Tronto.Monitoring.Domain.Events.{
@@ -18,7 +16,7 @@ defmodule Tronto.Monitoring.Domain.Host do
     HostDetailsUpdated,
     HostRegistered,
     ProviderUpdated,
-    SubscriptionsUpdated
+    SlesSubscriptionsUpdated
   }
 
   defstruct [
@@ -37,7 +35,7 @@ defmodule Tronto.Monitoring.Domain.Host do
           ip_addresses: [String.t()],
           agent_version: String.t(),
           provider: String.t(),
-          subscriptions: [Subscription.t()],
+          subscriptions: [SlesSubscription.t()],
           heartbeat: :passing | :critical | :unknown
         }
 
@@ -141,7 +139,7 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   def execute(
         %Host{host_id: nil},
-        %UpdateSubscriptions{}
+        %UpdateSlesSubscriptions{}
       ) do
     {:error, :host_not_registered}
   end
@@ -156,17 +154,17 @@ defmodule Tronto.Monitoring.Domain.Host do
     }
   end
 
-  def execute(%Host{subscriptions: subscriptions}, %UpdateSubscriptions{
+  def execute(%Host{subscriptions: subscriptions}, %UpdateSlesSubscriptions{
         subscriptions: subscriptions
       }) do
     []
   end
 
-  def execute(%Host{}, %UpdateSubscriptions{
+  def execute(%Host{}, %UpdateSlesSubscriptions{
         host_id: host_id,
         subscriptions: subscriptions
       }) do
-    %SubscriptionsUpdated{
+    %SlesSubscriptionsUpdated{
       host_id: host_id,
       subscriptions: subscriptions
     }
@@ -240,7 +238,7 @@ defmodule Tronto.Monitoring.Domain.Host do
     }
   end
 
-  def apply(%Host{} = host, %SubscriptionsUpdated{
+  def apply(%Host{} = host, %SlesSubscriptionsUpdated{
         subscriptions: subscriptions
       }) do
     %Host{host | subscriptions: subscriptions}

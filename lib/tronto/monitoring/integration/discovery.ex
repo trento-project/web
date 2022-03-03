@@ -10,10 +10,10 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     RegisterCluster,
     RegisterHost,
     UpdateProvider,
-    UpdateSubscriptions
+    UpdateSlesSubscriptions
   }
 
-  alias Tronto.Monitoring.Domain.Subscription
+  alias Tronto.Monitoring.Domain.SlesSubscription
 
   @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
   def handle_discovery_event(%{
@@ -78,7 +78,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     subscriptions =
       Enum.map(payload, fn subscription -> parse_subscription_data(agent_id, subscription) end)
 
-    UpdateSubscriptions.new(host_id: agent_id, subscriptions: subscriptions)
+    UpdateSlesSubscriptions.new(host_id: agent_id, subscriptions: subscriptions)
   end
 
   def handle_discovery_event(_) do
@@ -148,7 +148,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
          "type" => type,
          "version" => version
        }) do
-    Subscription.new!(
+    SlesSubscription.new!(
       host_id: host_id,
       arch: arch,
       expires_at: expires_at,
@@ -167,7 +167,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
          "status" => status,
          "version" => version
        }) do
-    Subscription.new!(
+    SlesSubscription.new!(
       host_id: host_id,
       arch: arch,
       identifier: identifier,
