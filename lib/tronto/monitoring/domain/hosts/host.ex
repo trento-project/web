@@ -3,6 +3,8 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   alias Tronto.Monitoring.Domain.Host
 
+  alias Tronto.Monitoring.Domain.SlesSubscription
+
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
     UpdateHeartbeat,
