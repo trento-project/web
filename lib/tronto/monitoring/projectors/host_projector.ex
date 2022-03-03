@@ -12,7 +12,8 @@ defmodule Tronto.Monitoring.HostProjector do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostDetailsUpdated,
-    HostRegistered
+    HostRegistered,
+    ProviderUpdated
   }
 
   alias Tronto.Monitoring.HostReadModel
@@ -91,6 +92,20 @@ defmodule Tronto.Monitoring.HostProjector do
     end
   )
 
+  project(
+    %ProviderUpdated{host_id: id, provider: provider},
+    fn multi ->
+      changeset =
+        HostReadModel
+        |> Repo.get(id)
+        |> HostReadModel.changeset(%{
+          provider: provider
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
+    end
+  )
+
   @impl true
   def after_update(
         %HostRegistered{},
@@ -136,6 +151,14 @@ defmodule Tronto.Monitoring.HostProjector do
         hostname: hostname
       }
     )
+  end
+
+  def after_update(
+        %ProviderUpdated{},
+        _,
+        %{host: host}
+      ) do
+    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
   end
 
   def after_update(_, _, _), do: :ok
