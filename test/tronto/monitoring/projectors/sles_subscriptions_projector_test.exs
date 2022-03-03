@@ -5,8 +5,8 @@ defmodule Tronto.Monitoring.SlesSubscriptionsProjectorTest do
   import Tronto.Factory
 
   alias Tronto.Monitoring.{
-    SlesSubscriptionsProjector,
-    SlesSubscriptionReadModel
+    SlesSubscriptionReadModel,
+    SlesSubscriptionsProjector
   }
 
   alias Tronto.ProjectorTestHelper
