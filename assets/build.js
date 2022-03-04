@@ -11,6 +11,7 @@ require('esbuild')
     outdir: resolvePath('../priv/static/assets'),
     bundle: true,
     minify: true,
+    sourcemap: true,
     loader: {
       '.png': 'dataurl',
       '.svg': 'dataurl',
