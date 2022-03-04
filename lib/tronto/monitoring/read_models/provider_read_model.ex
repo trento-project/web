@@ -14,11 +14,12 @@ defmodule Tronto.Monitoring.ProviderReadModel do
 
   @type t :: %__MODULE__{}
 
-  @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
+  @derive {Jason.Encoder, except: [:__meta__, :__struct__, :inserted_at, :updated_at]}
   @primary_key false
   schema "providers" do
     field :host_id, Ecto.UUID, primary_key: true
     field :provider, :string
+
     field :data, PolymorphicEmbed,
       types: [
         azure: AzureProviderReadModel
