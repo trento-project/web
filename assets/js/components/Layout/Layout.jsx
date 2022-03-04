@@ -9,6 +9,7 @@ import {
   EOS_HOME_OUTLINED,
   EOS_VIRTUAL_HOST_MANAGER,
   EOS_CLUSTER_ROLE,
+  EOS_INFO,
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
@@ -28,6 +29,7 @@ const navigation = [
     href: '/clusters',
     icon: EOS_CLUSTER_ROLE,
   },
+  { name: 'About', href: '/about', icon: EOS_INFO },
 ];
 
 const userNavigation = [

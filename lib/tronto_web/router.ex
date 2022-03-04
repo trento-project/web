@@ -31,6 +31,8 @@ defmodule TrontoWeb.Router do
 
     post "/collect", DiscoveryController, :collect
 
+    get "/about", AboutController, :info
+
     get "/hosts", HostController, :list
     post "/hosts/:id/heartbeat", HostController, :heartbeat
 
