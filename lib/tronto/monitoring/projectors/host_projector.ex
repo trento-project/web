@@ -191,10 +191,11 @@ defmodule Tronto.Monitoring.HostProjector do
   def after_update(
         %ProviderUpdated{},
         _,
-        %{id: id, host: host}
+        %{host: host}
       ) do
-    HostReadModel
-    |> Repo.get(id)
+
+    host = HostReadModel
+    |> Repo.get(host.id)
     |> Repo.preload(:provider_data)
 
     TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
