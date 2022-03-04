@@ -8,6 +8,7 @@ defmodule Tronto.Monitoring.HostReadModel do
   import Ecto.Changeset
 
   alias Tronto.Monitoring.ClusterReadModel
+  alias Tronto.Monitoring.ProviderReadModel
 
   @type t :: %__MODULE__{}
 
@@ -22,6 +23,7 @@ defmodule Tronto.Monitoring.HostReadModel do
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
 
     has_one :cluster, ClusterReadModel, references: :cluster_id, foreign_key: :id
+    has_one :provider_data, ProviderReadModel, foreign_key: :host_id
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
