@@ -61,12 +61,27 @@ defmodule Tronto.Monitoring.Integration.Discovery do
         "discovery_type" => "cloud_discovery",
         "agent_id" => agent_id,
         "payload" => %{
+          "Provider" => "azure"
+        } = payload
+      }) do
+    UpdateProvider.new(
+      host_id: agent_id,
+      provider: "azure",
+      provider_data: parse_azure_data(payload)
+    )
+  end
+
+  def handle_discovery_event(%{
+        "discovery_type" => "cloud_discovery",
+        "agent_id" => agent_id,
+        "payload" => %{
           "Provider" => provider
         }
       }) do
     UpdateProvider.new(
       host_id: agent_id,
-      provider: provider
+      provider: provider,
+      data: %{}
     )
   end
 
@@ -174,5 +189,33 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       status: status,
       version: version
     )
+  end
+
+  defp parse_azure_data(%{
+        "Provider" => provider,
+        "Metadata" => %{
+          "compute" => %{
+            "name" => name,
+            "resourceId" => resource_group,
+            "location" => location,
+            "vmSize" => vm_size,
+            "storageProfile" => %{
+              "dataDisks" => data_disk,
+            },
+            "offer" => offer,
+            "sku" => sku
+          }
+        }
+      }) do
+    %{
+      provider: provider,
+      vm_name: name,
+      resource_group: resource_group,
+      location: location,
+      vm_size: vm_size,
+      data_disk_number: length(data_disk),
+      offer: offer,
+      sku: sku
+    }
   end
 end
