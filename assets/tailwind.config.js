@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 module.exports = {
+  darkMode: 'class',
   content: ['./js/**/*.{js,jsx}', '../lib/*_web/**/*.*ex'],
   theme: {
     extend: {
