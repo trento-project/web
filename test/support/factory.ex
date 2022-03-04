@@ -7,7 +7,8 @@ defmodule Tronto.Factory do
 
   alias Tronto.Monitoring.Domain.Events.{
     ClusterRegistered,
-    HostRegistered
+    HostRegistered,
+    SlesSubscriptionsUpdated
   }
 
   alias Tronto.Monitoring.{
@@ -52,5 +53,22 @@ defmodule Tronto.Factory do
       type: Keyword.get(attrs, :type, :hana_scale_up),
       health: Keyword.get(attrs, :health, :passing)
     })
+  end
+
+  def subscriptions_updated_event(attrs \\ []) do
+    host_id = Keyword.get(attrs, :host_id, Faker.UUID.v4())
+
+    %SlesSubscriptionsUpdated{
+      host_id: host_id,
+      subscriptions: [
+        %{
+          host_id: host_id,
+          identifier: Faker.StarWars.planet(),
+          version: Faker.StarWars.character(),
+          arch: "x86_64",
+          status: "active"
+        }
+      ]
+    }
   end
 end

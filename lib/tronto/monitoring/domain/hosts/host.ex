@@ -3,10 +3,13 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   alias Tronto.Monitoring.Domain.Host
 
+  alias Tronto.Monitoring.Domain.SlesSubscription
+
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
     UpdateHeartbeat,
-    UpdateProvider
+    UpdateProvider,
+    UpdateSlesSubscriptions
   }
 
   alias Tronto.Monitoring.Domain.Events.{
@@ -14,7 +17,8 @@ defmodule Tronto.Monitoring.Domain.Host do
     HeartbeatSucceded,
     HostDetailsUpdated,
     HostRegistered,
-    ProviderUpdated
+    ProviderUpdated,
+    SlesSubscriptionsUpdated
   }
 
   defstruct [
@@ -23,7 +27,8 @@ defmodule Tronto.Monitoring.Domain.Host do
     :ip_addresses,
     :agent_version,
     :provider,
-    :heartbeat
+    :heartbeat,
+    :subscriptions
   ]
 
   @type t :: %__MODULE__{
@@ -32,6 +37,7 @@ defmodule Tronto.Monitoring.Domain.Host do
           ip_addresses: [String.t()],
           agent_version: String.t(),
           provider: String.t(),
+          subscriptions: [SlesSubscription.t()],
           heartbeat: :passing | :critical | :unknown
         }
 
@@ -134,12 +140,35 @@ defmodule Tronto.Monitoring.Domain.Host do
   end
 
   def execute(
+        %Host{host_id: nil},
+        %UpdateSlesSubscriptions{}
+      ) do
+    {:error, :host_not_registered}
+  end
+
+  def execute(
         %Host{},
         %UpdateProvider{host_id: host_id, provider: provider}
       ) do
     %ProviderUpdated{
       host_id: host_id,
       provider: provider
+    }
+  end
+
+  def execute(%Host{subscriptions: subscriptions}, %UpdateSlesSubscriptions{
+        subscriptions: subscriptions
+      }) do
+    []
+  end
+
+  def execute(%Host{}, %UpdateSlesSubscriptions{
+        host_id: host_id,
+        subscriptions: subscriptions
+      }) do
+    %SlesSubscriptionsUpdated{
+      host_id: host_id,
+      subscriptions: subscriptions
     }
   end
 
@@ -209,5 +238,11 @@ defmodule Tronto.Monitoring.Domain.Host do
       host
       | provider: provider
     }
+  end
+
+  def apply(%Host{} = host, %SlesSubscriptionsUpdated{
+        subscriptions: subscriptions
+      }) do
+    %Host{host | subscriptions: subscriptions}
   end
 end

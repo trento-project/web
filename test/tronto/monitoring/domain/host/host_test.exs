@@ -6,7 +6,8 @@ defmodule Tronto.Monitoring.HostTest do
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
     UpdateHeartbeat,
-    UpdateProvider
+    UpdateProvider,
+    UpdateSlesSubscriptions
   }
 
   alias Tronto.Monitoring.Domain.Events.{
@@ -14,10 +15,12 @@ defmodule Tronto.Monitoring.HostTest do
     HeartbeatSucceded,
     HostDetailsUpdated,
     HostRegistered,
-    ProviderUpdated
+    ProviderUpdated,
+    SlesSubscriptionsUpdated
   }
 
   alias Tronto.Monitoring.Domain.Host
+  alias Tronto.Monitoring.Domain.SlesSubscription
 
   describe "host registration" do
     test "should register a host" do
@@ -302,6 +305,53 @@ defmodule Tronto.Monitoring.HostTest do
           provider: provider
         ),
         []
+      )
+    end
+  end
+
+  describe "sles subscriptions" do
+    test "should update" do
+      host_id = Faker.UUID.v4()
+      identifier = Faker.StarWars.planet()
+      version = Faker.StarWars.character()
+
+      host_registered_event = host_registered_event(host_id: host_id)
+
+      subscription =
+        SlesSubscription.new!(
+          host_id: host_id,
+          identifier: identifier,
+          version: version,
+          arch: "x86_64",
+          status: "active"
+        )
+
+      assert_events_and_state(
+        [host_registered_event],
+        UpdateSlesSubscriptions.new!(
+          host_id: host_id,
+          subscriptions: [subscription]
+        ),
+        %SlesSubscriptionsUpdated{
+          host_id: host_id,
+          subscriptions: [subscription]
+        },
+        %Host{
+          host_id: host_id,
+          agent_version: host_registered_event.agent_version,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          heartbeat: :unknown,
+          subscriptions: [
+            %SlesSubscription{
+              host_id: host_id,
+              identifier: identifier,
+              version: version,
+              arch: "x86_64",
+              status: "active"
+            }
+          ]
+        }
       )
     end
   end
