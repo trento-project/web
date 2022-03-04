@@ -29,7 +29,7 @@ defmodule Tronto.Monitoring.Domain.Host do
     :provider,
     :heartbeat,
     :subscriptions,
-    :provider_data,
+    :provider_data
   ]
 
   @type t :: %__MODULE__{
@@ -239,7 +239,8 @@ defmodule Tronto.Monitoring.Domain.Host do
       ) do
     %Host{
       host
-      | provider: provider, provider_data: provider_data
+      | provider: provider,
+        provider_data: provider_data
     }
   end
 

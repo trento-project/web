@@ -104,12 +104,13 @@ defmodule Tronto.Monitoring.HostProjector do
           provider: provider
         })
 
-      provider_changeset = %ProviderReadModel{}
-      |> ProviderReadModel.changeset(%{
-        host_id: id,
-        provider: provider,
-        data: provider_data
-      })
+      provider_changeset =
+        %ProviderReadModel{}
+        |> ProviderReadModel.changeset(%{
+          host_id: id,
+          provider: provider,
+          data: provider_data
+        })
 
       multi
       |> Ecto.Multi.update(:host, host_changeset)
@@ -195,6 +196,7 @@ defmodule Tronto.Monitoring.HostProjector do
     HostReadModel
     |> Repo.get(id)
     |> Repo.preload(:provider_data)
+
     TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
   end
 
