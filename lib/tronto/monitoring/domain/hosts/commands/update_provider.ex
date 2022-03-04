@@ -11,6 +11,7 @@ defmodule Tronto.Monitoring.Domain.Commands.UpdateProvider do
 
     field :host_id, String.t(), enforce: true
     field :provider, String.t(), enforce: true
+    field :provider_data, map
   end
 
   use Vex.Struct

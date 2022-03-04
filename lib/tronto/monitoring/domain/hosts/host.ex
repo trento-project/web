@@ -28,7 +28,8 @@ defmodule Tronto.Monitoring.Domain.Host do
     :agent_version,
     :provider,
     :heartbeat,
-    :subscriptions
+    :subscriptions,
+    :provider_data,
   ]
 
   @type t :: %__MODULE__{
@@ -38,6 +39,7 @@ defmodule Tronto.Monitoring.Domain.Host do
           agent_version: String.t(),
           provider: String.t(),
           subscriptions: [SlesSubscription.t()],
+          provider_data: map,
           heartbeat: :passing | :critical | :unknown
         }
 
@@ -133,8 +135,8 @@ defmodule Tronto.Monitoring.Domain.Host do
   end
 
   def execute(
-        %Host{provider: provider},
-        %UpdateProvider{provider: provider}
+        %Host{provider: provider, provider_data: provider_data},
+        %UpdateProvider{provider: provider, provider_data: provider_data}
       ) do
     []
   end
@@ -148,11 +150,12 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   def execute(
         %Host{},
-        %UpdateProvider{host_id: host_id, provider: provider}
+        %UpdateProvider{host_id: host_id, provider: provider, provider_data: provider_data}
       ) do
     %ProviderUpdated{
       host_id: host_id,
-      provider: provider
+      provider: provider,
+      provider_data: provider_data
     }
   end
 
@@ -232,11 +235,11 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   def apply(
         %Host{} = host,
-        %ProviderUpdated{provider: provider}
+        %ProviderUpdated{provider: provider, provider_data: provider_data}
       ) do
     %Host{
       host
-      | provider: provider
+      | provider: provider, provider_data: provider_data
     }
   end
 
