@@ -8,7 +8,7 @@ defmodule Tronto.Monitoring.Domain.SlesSubscription do
 
   @derive Jason.Encoder
   typedstruct do
-    @typedoc "Subscription value object"
+    @typedoc "SlesSubscription value object"
 
     field :host_id, String.t(), enforce: true
     field :identifier, String.t(), enforce: true
