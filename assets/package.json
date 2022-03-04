@@ -9,7 +9,7 @@
     "@storybook/testing-library": "^0.0.9",
     "autoprefixer": "^10.4.2",
     "babel-loader": "^8.2.3",
-    "esbuild": "^0.14.23",
+    "esbuild": "^0.14.24",
     "esbuild-plugin-path-alias": "^1.0.5",
     "eslint": "^8.10.0",
     "eslint-plugin-react": "^7.29.3",
