@@ -8,7 +8,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterCluster,
-    RegisterHost
+    RegisterHost,
+    UpdateProvider
   }
 
   @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
@@ -50,6 +51,19 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       name: name,
       sid: parse_cluster_sid(payload),
       type: detect_cluster_type(payload)
+    )
+  end
+
+  def handle_discovery_event(%{
+        "discovery_type" => "cloud_discovery",
+        "agent_id" => agent_id,
+        "payload" => %{
+          "Provider" => provider
+        }
+      }) do
+    UpdateProvider.new(
+      host_id: agent_id,
+      provider: provider
     )
   end
 

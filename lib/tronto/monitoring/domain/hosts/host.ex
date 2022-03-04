@@ -5,14 +5,16 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
-    UpdateHeartbeat
+    UpdateHeartbeat,
+    UpdateProvider
   }
 
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
     HostDetailsUpdated,
-    HostRegistered
+    HostRegistered,
+    ProviderUpdated
   }
 
   defstruct [
@@ -20,6 +22,7 @@ defmodule Tronto.Monitoring.Domain.Host do
     :hostname,
     :ip_addresses,
     :agent_version,
+    :provider,
     :heartbeat
   ]
 
@@ -28,6 +31,7 @@ defmodule Tronto.Monitoring.Domain.Host do
           hostname: String.t(),
           ip_addresses: [String.t()],
           agent_version: String.t(),
+          provider: String.t(),
           heartbeat: :passing | :critical | :unknown
         }
 
@@ -114,6 +118,31 @@ defmodule Tronto.Monitoring.Domain.Host do
     []
   end
 
+  # Update provider received
+  def execute(
+        %Host{host_id: nil},
+        %UpdateProvider{}
+      ) do
+    {:error, :host_not_registered}
+  end
+
+  def execute(
+        %Host{provider: provider},
+        %UpdateProvider{provider: provider}
+      ) do
+    []
+  end
+
+  def execute(
+        %Host{},
+        %UpdateProvider{host_id: host_id, provider: provider}
+      ) do
+    %ProviderUpdated{
+      host_id: host_id,
+      provider: provider
+    }
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -169,6 +198,16 @@ defmodule Tronto.Monitoring.Domain.Host do
       host
       | host_id: host_id,
         heartbeat: :critical
+    }
+  end
+
+  def apply(
+        %Host{} = host,
+        %ProviderUpdated{provider: provider}
+      ) do
+    %Host{
+      host
+      | provider: provider
     }
   end
 end

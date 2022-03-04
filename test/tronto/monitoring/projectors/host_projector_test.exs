@@ -12,7 +12,8 @@ defmodule Tronto.Monitoring.HostProjectorTest do
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
-    HostDetailsUpdated
+    HostDetailsUpdated,
+    ProviderUpdated
   }
 
   alias Tronto.ProjectorTestHelper
@@ -81,5 +82,19 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert :critical == host_projection.heartbeat
+  end
+
+  test "should update the provider field when ProviderUpdated is received", %{
+    host_id: host_id
+  } do
+    event = %ProviderUpdated{
+      host_id: host_id,
+      provider: "azure"
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert "azure" == host_projection.provider
   end
 end
