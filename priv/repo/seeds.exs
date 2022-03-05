@@ -10,6 +10,8 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
+import Tronto.Seeds.Helpers
+
 %Tronto.Accounts.User{}
 |> Tronto.Accounts.User.changeset(%{
   email: "chiecks@tronto.io",
@@ -22,9 +24,9 @@ agent_version = Faker.App.semver()
 
 Enum.each(
   0..5,
-  fn _ ->
+  fn index ->
     %{
-      host_id: Faker.UUID.v4(),
+      host_id: generate_sequential_uuid(index),
       hostname: Faker.StarWars.character() |> Macro.underscore() |> String.replace(" ", ""),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: agent_version
@@ -35,11 +37,11 @@ Enum.each(
 )
 
 Enum.each(
-  0..5,
-  fn _ ->
+  6..11,
+  fn index ->
     %{
-      cluster_id: Faker.UUID.v4(),
-      host_id: Faker.UUID.v4(),
+      cluster_id: generate_sequential_uuid(index),
+      host_id: generate_sequential_uuid(index - 6),
       name: Faker.StarWars.character() |> Macro.underscore() |> String.replace(" ", ""),
       sid: "PRD",
       type: :hana_scale_up
