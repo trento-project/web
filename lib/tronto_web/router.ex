@@ -37,6 +37,9 @@ defmodule TrontoWeb.Router do
     post "/hosts/:id/heartbeat", HostController, :heartbeat
 
     get "/clusters", ClusterController, :list
+    get "/sap_systems", SapSystemController, :list
+    get "/databases", SapSystemController, :list_databases
+
     # TODO: this url is weird because the ansible callback expect so
     # let's maybe change it in the future when we will change the agent as well
     post "/checks/:cluster_id/results", ClusterController, :store_checks_results
