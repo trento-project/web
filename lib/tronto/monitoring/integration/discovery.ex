@@ -6,8 +6,13 @@ defmodule Tronto.Monitoring.Integration.Discovery do
 
   @type command :: struct
 
+  @database_type 1
+  @application_type 2
+
   alias Tronto.Monitoring.Domain.Commands.{
+    RegisterApplicationInstance,
     RegisterCluster,
+    RegisterDatabaseInstance,
     RegisterHost,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -18,7 +23,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     SlesSubscription
   }
 
-  @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
+  @spec handle_discovery_event(map) :: {:ok, command} | {:ok, [command]} | {:error, any}
   def handle_discovery_event(%{
         "discovery_type" => "host_discovery",
         "agent_id" => agent_id,
@@ -97,9 +102,23 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     UpdateSlesSubscriptions.new(host_id: agent_id, subscriptions: subscriptions)
   end
 
-  def handle_discovery_event(_) do
-    {:error, :invalid_payload}
+  def handle_discovery_event(%{
+        "discovery_type" => "sap_system_discovery",
+        "agent_id" => agent_id,
+        "payload" => payload
+      }) do
+    payload
+    |> Enum.flat_map(fn sap_system -> parse_sap_system(sap_system, agent_id) end)
+    |> Enum.reduce_while(
+      {:ok, []},
+      fn
+        {:ok, command}, {:ok, commands} -> {:cont, {:ok, commands ++ [command]}}
+        {:error, _}, _ = error -> {:halt, error}
+      end
+    )
   end
+
+  def handle_discovery_event(_), do: {:error, :invalid_payload}
 
   defp is_non_loopback_ipv4?("127.0.0.1"), do: false
 
@@ -219,4 +238,81 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       sku: sku
     )
   end
+
+  defp parse_sap_system(
+         %{
+           "Type" => @database_type,
+           "Id" => id,
+           "SID" => sid,
+           "Databases" => databases,
+           "Instances" => instances
+         },
+         host_id
+       ) do
+    Enum.flat_map(databases, fn %{"Database" => tenant} ->
+      Enum.map(
+        instances,
+        fn {_, instance} ->
+          instance_number = parse_instance_number(instance)
+
+          RegisterDatabaseInstance.new(
+            sap_system_id: UUID.uuid5(nil, "#{id}:#{tenant}"),
+            sid: sid,
+            tenant: tenant,
+            host_id: host_id,
+            instance_number: instance_number,
+            features: parse_features(instance_number, instance)
+          )
+        end
+      )
+    end)
+  end
+
+  defp parse_sap_system(
+         %{
+           "Type" => @application_type,
+           "SID" => sid,
+           "Instances" => instances,
+           "Profile" => %{
+             "dbs/hdb/dbname" => tenant,
+             "SAPDBHOST" => db_host
+           }
+         },
+         host_id
+       ) do
+    Enum.map(instances, fn {_, instance} ->
+      instance_number = parse_instance_number(instance)
+
+      RegisterApplicationInstance.new(
+        sid: sid,
+        tenant: tenant,
+        db_host: db_host,
+        instance_number: instance_number,
+        features: parse_features(instance_number, instance),
+        host_id: host_id
+      )
+    end)
+  end
+
+  defp parse_features(instance_number, %{"SAPControl" => %{"Instances" => instances}}) do
+    instances
+    |> Map.values()
+    |> Enum.find(fn %{"instanceNr" => number} ->
+      number
+      |> Integer.to_string()
+      |> String.pad_leading(2, "0") == instance_number
+    end)
+    |> case do
+      %{"features" => features} ->
+        features
+
+      _ ->
+        []
+    end
+  end
+
+  defp parse_instance_number(%{
+         "SAPControl" => %{"Properties" => %{"SAPSYSTEM" => %{"value" => instance_number}}}
+       }),
+       do: instance_number
 end
