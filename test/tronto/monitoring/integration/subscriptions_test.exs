@@ -81,7 +81,7 @@ defmodule Tronto.Monitoring.Integration.SubscriptionsTest do
                      type: nil,
                      version: "15.3"
                    },
-                   %Tronto.Monitoring.Domain.SlesSubscription{
+                   %SlesSubscription{
                      arch: "x86_64",
                      expires_at: nil,
                      host_id: "0fc07435-7ee2-54ca-b0de-fb27ffdc5deb",

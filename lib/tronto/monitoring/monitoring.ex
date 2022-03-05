@@ -87,8 +87,8 @@ defmodule Tronto.Monitoring do
   def get_all_sap_systems do
     SapSystemReadModel
     |> Repo.all()
-    |> Repo.preload(database_instances: :host)
     |> Repo.preload(application_instances: :host)
+    |> Repo.preload(database_instances: :host)
   end
 
   @spec get_all_databases :: [map]

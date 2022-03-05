@@ -18,7 +18,8 @@ defmodule Tronto.Monitoring.DatabaseReadModel do
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
-      foreign_key: :sap_system_id
+      foreign_key: :sap_system_id,
+      preload_order: [asc: :host_id]
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
