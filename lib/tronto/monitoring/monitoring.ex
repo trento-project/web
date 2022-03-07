@@ -3,6 +3,8 @@ defmodule Tronto.Monitoring do
   This module encapuslates the access to the monitoring bounded context
   """
 
+  import Ecto.Query
+
   alias Tronto.Monitoring.{
     ClusterReadModel,
     HostReadModel
@@ -59,7 +61,10 @@ defmodule Tronto.Monitoring do
 
   @spec get_all_hosts :: [HostReadModel.t()]
   def get_all_hosts do
-    Repo.all(HostReadModel)
+    HostReadModel
+    |> where([h], not is_nil(h.hostname))
+    |> Repo.all()
+    |> Repo.preload(cluster: :checks_results)
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]

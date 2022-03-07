@@ -19,6 +19,7 @@ defmodule Tronto.Monitoring.Domain.Host do
     :host_id,
     :hostname,
     :ip_addresses,
+    :cluster_id,
     :agent_version,
     :heartbeat
   ]
@@ -27,6 +28,7 @@ defmodule Tronto.Monitoring.Domain.Host do
           host_id: String.t(),
           hostname: String.t(),
           ip_addresses: [String.t()],
+          cluster_id: String.t(),
           agent_version: String.t(),
           heartbeat: :passing | :critical | :unknown
         }
