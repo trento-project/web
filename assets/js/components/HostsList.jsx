@@ -41,17 +41,14 @@ const HostsList = () => {
     }],
   };
 
-  let data = [];
-  console.log("hosts length", hosts.length);
-  hosts.map((host) => (
-    console.log("host", host),
-    data.push({
+  const data = hosts.map((host) => (
+    return {
       health: getHeartbeatIcon(host),
       hostname: host.hostname,
       ip: host.ip_addresses.join(', '),
       provider: host.provider,
       agent_version: host.agent_version, 
-    })
+    }
   ));
 
 
