@@ -3,6 +3,8 @@ defmodule Tronto.Monitoring do
   This module encapuslates the access to the monitoring bounded context
   """
 
+  alias Tronto.Repo
+
   alias Tronto.Monitoring.{
     ClusterReadModel,
     HostReadModel,
@@ -19,9 +21,14 @@ defmodule Tronto.Monitoring do
 
   alias Tronto.Monitoring.Integration.Discovery
 
-  alias Tronto.Repo
-
   def handle_discovery_event(event) do
+    with :ok <- do_handle_discovery_event(event),
+         {:ok, _} <- Discovery.store_discovery_event(event) do
+      :ok
+    end
+  end
+
+  defp do_handle_discovery_event(event) do
     case Discovery.handle_discovery_event(event) do
       {:ok, command} ->
         Tronto.Commanded.dispatch(command)
