@@ -4,7 +4,11 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   from the discovery bounded-context
   """
 
-  @type command :: struct
+  import Ecto.Query
+
+  alias Tronto.Repo
+
+  alias Tronto.Monitoring.Integration.DiscoveryEvent
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterCluster,
@@ -14,6 +18,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   }
 
   alias Tronto.Monitoring.Domain.SlesSubscription
+
+  @type command :: struct
 
   @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
   def handle_discovery_event(%{
@@ -83,6 +89,31 @@ defmodule Tronto.Monitoring.Integration.Discovery do
 
   def handle_discovery_event(_) do
     {:error, :invalid_payload}
+  end
+
+  def store_discovery_event(%{
+        "agent_id" => agent_id,
+        "discovery_type" => discovery_type,
+        "payload" => payload
+      }) do
+    Repo.insert(%DiscoveryEvent{
+      agent_id: agent_id,
+      discovery_type: discovery_type,
+      payload: payload
+    })
+  end
+
+  def get_current_discovery_events do
+    subquery =
+      from d in DiscoveryEvent,
+        select: max(d.id),
+        group_by: [d.agent_id, d.discovery_type]
+
+    query =
+      from d in DiscoveryEvent,
+        where: d.id in subquery(subquery)
+
+    Repo.all(query)
   end
 
   defp is_non_loopback_ipv4?("127.0.0.1"), do: false
