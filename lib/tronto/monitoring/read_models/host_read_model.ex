@@ -17,6 +17,7 @@ defmodule Tronto.Monitoring.HostReadModel do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
     field :agent_version, :string
+    field :provider, :string
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
 

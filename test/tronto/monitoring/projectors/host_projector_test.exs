@@ -13,6 +13,7 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostDetailsUpdated,
+    ProviderUpdated,
     HostAddedToCluster
   }
 
@@ -84,6 +85,20 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     assert :critical == host_projection.heartbeat
   end
 
+  test "should update the provider field when ProviderUpdated is received", %{
+    host_id: host_id
+  } do
+    event = %ProviderUpdated{
+      host_id: host_id,
+      provider: "azure"
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert "azure" == host_projection.provider
+  end
+  
   test "should update the cluster_id field when HostAddedToCluster event is received and the host was already registered",
        %{
          host_id: host_id
@@ -111,4 +126,5 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     assert event.cluster_id == host_projection.cluster_id
     assert nil == host_projection.hostname
   end
+
 end

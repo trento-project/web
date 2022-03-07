@@ -7,7 +7,8 @@ defmodule Tronto.Monitoring do
 
   alias Tronto.Monitoring.{
     ClusterReadModel,
-    HostReadModel
+    HostReadModel,
+    SlesSubscriptionReadModel
   }
 
   alias Tronto.Monitoring.Domain.CheckResult
@@ -73,4 +74,8 @@ defmodule Tronto.Monitoring do
     |> Repo.all()
     |> Repo.preload(checks_results: :host)
   end
+
+  @spec get_all_sles_subscriptions :: [SlesSubscriptionReadModel.t()]
+  def get_all_sles_subscriptions,
+    do: SlesSubscriptionReadModel |> Repo.all() |> Repo.preload(:host)
 end

@@ -47,6 +47,12 @@ const HostsList = () => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
+                    Provider
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Cluster
                   </th>
                   <th
@@ -73,6 +79,9 @@ const HostsList = () => {
                         </div>
                       ))}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                    </td>
+                      {host.provider}
                     <td className="px-6 py-4 whitespace-nowrap">
                       {host.cluster && host.cluster.name}
                     </td>

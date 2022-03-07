@@ -152,4 +152,4 @@ jobs:
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
 
       - name: Run test
-        run: mix test --trace --slowest 10
+        run: mix test --color --trace --slowest 10

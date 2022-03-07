@@ -8,8 +8,12 @@ defmodule Tronto.Monitoring.Integration.Discovery do
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterCluster,
-    RegisterHost
+    RegisterHost,
+    UpdateProvider,
+    UpdateSlesSubscriptions
   }
+
+  alias Tronto.Monitoring.Domain.SlesSubscription
 
   @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
   def handle_discovery_event(%{
@@ -51,6 +55,30 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       sid: parse_cluster_sid(payload),
       type: detect_cluster_type(payload)
     )
+  end
+
+  def handle_discovery_event(%{
+        "discovery_type" => "cloud_discovery",
+        "agent_id" => agent_id,
+        "payload" => %{
+          "Provider" => provider
+        }
+      }) do
+    UpdateProvider.new(
+      host_id: agent_id,
+      provider: provider
+    )
+  end
+
+  def handle_discovery_event(%{
+        "discovery_type" => "subscription_discovery",
+        "agent_id" => agent_id,
+        "payload" => payload
+      }) do
+    subscriptions =
+      Enum.map(payload, fn subscription -> parse_subscription_data(agent_id, subscription) end)
+
+    UpdateSlesSubscriptions.new(host_id: agent_id, subscriptions: subscriptions)
   end
 
   def handle_discovery_event(_) do
@@ -108,5 +136,43 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       _ ->
         nil
     end)
+  end
+
+  defp parse_subscription_data(host_id, %{
+         "arch" => arch,
+         "expires_at" => expires_at,
+         "identifier" => identifier,
+         "starts_at" => starts_at,
+         "status" => status,
+         "subscription_status" => subscription_status,
+         "type" => type,
+         "version" => version
+       }) do
+    SlesSubscription.new!(
+      host_id: host_id,
+      arch: arch,
+      expires_at: expires_at,
+      identifier: identifier,
+      starts_at: starts_at,
+      status: status,
+      subscription_status: subscription_status,
+      type: type,
+      version: version
+    )
+  end
+
+  defp parse_subscription_data(host_id, %{
+         "arch" => arch,
+         "identifier" => identifier,
+         "status" => status,
+         "version" => version
+       }) do
+    SlesSubscription.new!(
+      host_id: host_id,
+      arch: arch,
+      identifier: identifier,
+      status: status,
+      version: version
+    )
   end
 end
