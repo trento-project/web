@@ -14,7 +14,7 @@ const renderCells = (columns, item) => {
             key={key}
             className="px-5 py-5 border-b border-gray-200 bg-white text-sm"
           >
-            {render(content)}
+            {render(content, item)}
           </td>
         );
       })}
