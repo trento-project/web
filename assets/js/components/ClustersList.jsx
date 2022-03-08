@@ -57,7 +57,6 @@ const ClustersList = () => {
         title: 'Name',
         key: 'name',
         render: (content, item) => {
-          console.log('ITEM IS: ', item);
           return (
             <Link
               className="text-jungle-green-500 hover:opacity-75"
@@ -71,6 +70,9 @@ const ClustersList = () => {
       {
         title: 'ID',
         key: 'id',
+        render: (content) => (
+          <p className="text-gray-900 whitespace-no-wrap truncate">{content}</p>
+        ),
       },
       {
         title: 'SID',
@@ -80,7 +82,7 @@ const ClustersList = () => {
         title: 'Type',
         key: 'type',
         render: (content, item) => (
-          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate">
             {getClusterTypeLabel(item.type)}
           </span>
         ),
