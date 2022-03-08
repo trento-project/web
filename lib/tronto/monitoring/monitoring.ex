@@ -66,7 +66,6 @@ defmodule Tronto.Monitoring do
     |> where([h], not is_nil(h.hostname))
     |> Repo.all()
     |> Repo.preload(cluster: :checks_results)
-    |> Repo.preload(:provider_data)
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]

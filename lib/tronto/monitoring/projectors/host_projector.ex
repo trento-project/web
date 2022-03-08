@@ -18,7 +18,6 @@ defmodule Tronto.Monitoring.HostProjector do
   }
 
   alias Tronto.Monitoring.HostReadModel
-  alias Tronto.Monitoring.ProviderReadModel
 
   alias Tronto.Repo
 
@@ -97,27 +96,15 @@ defmodule Tronto.Monitoring.HostProjector do
   project(
     %ProviderUpdated{host_id: id, provider: provider, provider_data: provider_data},
     fn multi ->
-      host_changeset =
+      changeset =
         HostReadModel
         |> Repo.get(id)
         |> HostReadModel.changeset(%{
-          provider: provider
-        })
-
-      provider_changeset =
-        %ProviderReadModel{}
-        |> ProviderReadModel.changeset(%{
-          host_id: id,
           provider: provider,
-          data: provider_data
+          provider_data: provider_data
         })
 
-      multi
-      |> Ecto.Multi.update(:host, host_changeset)
-      |> Ecto.Multi.insert(:provider_added, provider_changeset,
-        on_conflict: :replace_all,
-        conflict_target: [:host_id]
-      )
+      Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
@@ -193,10 +180,11 @@ defmodule Tronto.Monitoring.HostProjector do
         _,
         %{host: host}
       ) do
-
-    host = HostReadModel
-    |> Repo.get(host.id)
-    |> Repo.preload(:provider_data)
+    # FIXME: Use a DTO here instead of sending the whole thing
+    host =
+      HostReadModel
+      |> Repo.get(host.id)
+      |> Repo.preload(cluster: :checks_results)
 
     TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
   end
@@ -204,7 +192,7 @@ defmodule Tronto.Monitoring.HostProjector do
   def after_update(
         %HostAddedToCluster{},
         _,
-        %{host_added_to_cluster: host} = params
+        %{host_added_to_cluster: host}
       ) do
     # FIXME: Use a DTO here instead of sending the whole thing
     host =
