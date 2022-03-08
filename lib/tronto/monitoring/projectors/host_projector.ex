@@ -11,6 +11,7 @@ defmodule Tronto.Monitoring.HostProjector do
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostAddedToCluster,
     HostDetailsUpdated,
     HostRegistered,
     ProviderUpdated
@@ -106,6 +107,26 @@ defmodule Tronto.Monitoring.HostProjector do
     end
   )
 
+  project(
+    %HostAddedToCluster{
+      host_id: id,
+      cluster_id: cluster_id
+    },
+    fn multi ->
+      changeset =
+        %HostReadModel{}
+        |> HostReadModel.changeset(%{
+          id: id,
+          cluster_id: cluster_id
+        })
+
+      Ecto.Multi.insert(multi, :host_added_to_cluster, changeset,
+        on_conflict: {:replace, [:cluster_id]},
+        conflict_target: [:id]
+      )
+    end
+  )
+
   @impl true
   def after_update(
         %HostRegistered{},
@@ -158,6 +179,20 @@ defmodule Tronto.Monitoring.HostProjector do
         _,
         %{host: host}
       ) do
+    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
+  end
+
+  def after_update(
+        %HostAddedToCluster{},
+        _,
+        %{host_added_to_cluster: host} = params
+      ) do
+    # FIXME: Use a DTO here instead of sending the whole thing
+    host =
+      HostReadModel
+      |> Repo.get(host.id)
+      |> Repo.preload(cluster: :checks_results)
+
     TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
   end
 

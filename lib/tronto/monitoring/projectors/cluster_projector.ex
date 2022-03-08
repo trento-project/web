@@ -94,6 +94,8 @@ defmodule Tronto.Monitoring.ClusterProjector do
         _,
         %{cluster: cluster}
       ) do
+    # FIXME: Use a DTO here instead of sending the whole thing
+    cluster = Repo.preload(cluster, :checks_results)
     TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_registered", cluster)
   end
 
@@ -102,6 +104,8 @@ defmodule Tronto.Monitoring.ClusterProjector do
         _,
         %{cluster: cluster}
       ) do
+    # FIXME: Use a DTO here instead of sending the whole thing
+    cluster = Repo.preload(cluster, :checks_results)
     TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_details_updated", cluster)
   end
 
