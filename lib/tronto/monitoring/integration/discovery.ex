@@ -13,7 +13,10 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     UpdateSlesSubscriptions
   }
 
-  alias Tronto.Monitoring.Domain.SlesSubscription
+  alias Tronto.Monitoring.Domain.{
+    SlesSubscription,
+    AzureProvider
+  }
 
   @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
   def handle_discovery_event(%{
@@ -67,22 +70,19 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       }) do
     UpdateProvider.new(
       host_id: agent_id,
-      provider: "azure",
+      provider: :azure,
       provider_data: parse_azure_data(payload)
     )
   end
 
   def handle_discovery_event(%{
         "discovery_type" => "cloud_discovery",
-        "agent_id" => agent_id,
-        "payload" => %{
-          "Provider" => provider
-        }
+        "agent_id" => agent_id
       }) do
     UpdateProvider.new(
       host_id: agent_id,
-      provider: provider,
-      data: %{}
+      provider: :unknown,
+      provider_data: nil
     )
   end
 
@@ -208,7 +208,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
            }
          }
        }) do
-    %{
+    AzureProvider.new!(
       provider: provider,
       vm_name: name,
       resource_group: resource_group,
@@ -217,6 +217,6 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       data_disk_number: length(data_disk),
       offer: offer,
       sku: sku
-    }
+    )
   end
 end

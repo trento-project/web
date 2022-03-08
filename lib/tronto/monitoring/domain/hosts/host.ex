@@ -3,7 +3,10 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   alias Tronto.Monitoring.Domain.Host
 
-  alias Tronto.Monitoring.Domain.SlesSubscription
+  alias Tronto.Monitoring.Domain.{
+    SlesSubscription,
+    AzureProvider
+  }
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
@@ -39,7 +42,7 @@ defmodule Tronto.Monitoring.Domain.Host do
           agent_version: String.t(),
           provider: String.t(),
           subscriptions: [SlesSubscription.t()],
-          provider_data: map,
+          provider_data: AzureProvider.t(),
           heartbeat: :passing | :critical | :unknown
         }
 
@@ -142,13 +145,6 @@ defmodule Tronto.Monitoring.Domain.Host do
   end
 
   def execute(
-        %Host{host_id: nil},
-        %UpdateSlesSubscriptions{}
-      ) do
-    {:error, :host_not_registered}
-  end
-
-  def execute(
         %Host{},
         %UpdateProvider{host_id: host_id, provider: provider, provider_data: provider_data}
       ) do
@@ -157,6 +153,13 @@ defmodule Tronto.Monitoring.Domain.Host do
       provider: provider,
       provider_data: provider_data
     }
+  end
+
+  def execute(
+        %Host{host_id: nil},
+        %UpdateSlesSubscriptions{}
+      ) do
+    {:error, :host_not_registered}
   end
 
   def execute(%Host{subscriptions: subscriptions}, %UpdateSlesSubscriptions{
