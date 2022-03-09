@@ -40,9 +40,9 @@ defmodule Tronto.Monitoring.Domain.Host do
           hostname: String.t(),
           ip_addresses: [String.t()],
           agent_version: String.t(),
-          provider: String.t(),
+          provider: :azure | :unknown,
           subscriptions: [SlesSubscription.t()],
-          provider_data: AzureProvider.t(),
+          provider_data: AzureProvider.t() | nil,
           heartbeat: :passing | :critical | :unknown
         }
 

@@ -17,7 +17,7 @@ defmodule Tronto.Monitoring.Domain.Commands.UpdateProvider do
 
     field :host_id, String.t(), enforce: true
     field :provider, provider, enforce: true
-    field :provider_data, AzureProvider.t()
+    field :provider_data, AzureProvider.t() | nil
   end
 
   use Vex.Struct

@@ -15,6 +15,6 @@ defmodule Tronto.Monitoring.Domain.Events.ProviderUpdated do
 
     field :host_id, String.t(), enforce: true
     field :provider, String.t(), enforce: true
-    field :provider_data, AzureProvider.t()
+    field :provider_data, AzureProvider.t() | nil
   end
 end

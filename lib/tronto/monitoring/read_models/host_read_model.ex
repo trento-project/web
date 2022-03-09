@@ -25,7 +25,7 @@ defmodule Tronto.Monitoring.HostReadModel do
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
 
-    field :provider, :string
+    field :provider, Ecto.Enum, values: [:azure, :unknown]
 
     field :provider_data, PolymorphicEmbed,
       types: [
