@@ -9,6 +9,7 @@ defmodule Tronto.Factory do
     ApplicationInstanceRegistered,
     ClusterRegistered,
     DatabaseInstanceRegistered,
+    DatabaseRegistered,
     HostRegistered,
     SapSystemRegistered,
     SlesSubscriptionsUpdated
@@ -86,7 +87,8 @@ defmodule Tronto.Factory do
       tenant: Keyword.get(attrs, :tenant, Faker.UUID.v4()),
       instance_number: Keyword.get(attrs, :instance_number, "00"),
       features: Faker.Pokemon.name(),
-      host_id: Faker.UUID.v4()
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      health: Keyword.get(attrs, :health, :passing)
     }
   end
 
@@ -96,7 +98,16 @@ defmodule Tronto.Factory do
       sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
       instance_number: Keyword.get(attrs, :instance_number, "00"),
       features: Faker.Pokemon.name(),
-      host_id: Faker.UUID.v4()
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      health: Keyword.get(attrs, :health, :passing)
+    }
+  end
+
+  def database_registered_event(attrs \\ []) do
+    %DatabaseRegistered{
+      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
+      sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
+      health: Keyword.get(attrs, :health, :passing)
     }
   end
 
@@ -105,7 +116,8 @@ defmodule Tronto.Factory do
       sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
       sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
       db_host: Faker.Internet.ip_v4_address(),
-      tenant: Faker.Beer.hop()
+      tenant: Faker.Beer.hop(),
+      health: Keyword.get(attrs, :health, :passing)
     }
   end
 

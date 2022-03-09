@@ -14,7 +14,8 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterApplicationInstanceTest do
         tenant: Faker.Beer.style(),
         host_id: Faker.UUID.v4(),
         instance_number: "10",
-        features: Faker.Pokemon.name()
+        features: Faker.Pokemon.name(),
+        health: :passing
       })
 
     assert not Vex.valid?(command)
@@ -29,7 +30,8 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterApplicationInstanceTest do
         tenant: Faker.Beer.style(),
         host_id: Faker.String.naughty(),
         instance_number: "10",
-        features: Faker.Pokemon.name()
+        features: Faker.Pokemon.name(),
+        health: :passing
       })
 
     assert not Vex.valid?(command)

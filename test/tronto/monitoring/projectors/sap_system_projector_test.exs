@@ -25,6 +25,7 @@ defmodule Tronto.Monitoring.SapSystemProjectorTest do
     assert event.sid == projection.sid
     assert event.tenant == projection.tenant
     assert event.db_host == projection.db_host
+    assert event.health == projection.health
   end
 
   test "should project a new application instance when ApplicationInstanceRegistered event is received" do
@@ -45,5 +46,6 @@ defmodule Tronto.Monitoring.SapSystemProjectorTest do
     assert event.instance_number == projection.instance_number
     assert event.features == projection.features
     assert event.host_id == projection.host_id
+    assert event.health == projection.health
   end
 end

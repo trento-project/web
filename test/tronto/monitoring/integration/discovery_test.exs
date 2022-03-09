@@ -37,7 +37,8 @@ defmodule Tronto.Monitoring.Integration.DiscoveryTest do
                   instance_number: "00",
                   sap_system_id: "1118a8f8-e892-5a6f-a1a8-df31260cde44",
                   sid: "PRD",
-                  tenant: "PRD"
+                  tenant: "PRD",
+                  health: :passing
                 }
               ]} =
                "sap_system_discovery_database"
@@ -55,7 +56,8 @@ defmodule Tronto.Monitoring.Integration.DiscoveryTest do
                   instance_number: "02",
                   sap_system_id: nil,
                   sid: "HA1",
-                  tenant: "PRD"
+                  tenant: "PRD",
+                  health: :passing
                 }
               ]} =
                "sap_system_discovery_application"
