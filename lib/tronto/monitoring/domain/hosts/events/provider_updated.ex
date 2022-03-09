@@ -3,9 +3,7 @@ defmodule Tronto.Monitoring.Domain.Events.ProviderUpdated do
   This event is emitted when a provider data is updated in a specific host.
   """
 
-  alias Tronto.Monitoring.Domain.{
-    AzureProvider
-  }
+  alias Tronto.Monitoring.Domain.AzureProvider
 
   use TypedStruct
 

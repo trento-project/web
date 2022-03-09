@@ -4,8 +4,8 @@ defmodule Tronto.Monitoring.Domain.Host do
   alias Tronto.Monitoring.Domain.Host
 
   alias Tronto.Monitoring.Domain.{
-    SlesSubscription,
-    AzureProvider
+    AzureProvider,
+    SlesSubscription
   }
 
   alias Tronto.Monitoring.Domain.Commands.{

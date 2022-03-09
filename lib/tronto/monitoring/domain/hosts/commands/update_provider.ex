@@ -3,9 +3,7 @@ defmodule Tronto.Monitoring.Domain.Commands.UpdateProvider do
   Update the provider to a specific host.
   """
 
-  alias Tronto.Monitoring.Domain.{
-    AzureProvider
-  }
+  alias Tronto.Monitoring.Domain.AzureProvider
 
   use TypedStruct
   use Domo

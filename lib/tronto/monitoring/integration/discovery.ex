@@ -14,8 +14,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   }
 
   alias Tronto.Monitoring.Domain.{
-    SlesSubscription,
-    AzureProvider
+    AzureProvider,
+    SlesSubscription
   }
 
   @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}

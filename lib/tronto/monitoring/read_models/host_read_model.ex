@@ -10,8 +10,8 @@ defmodule Tronto.Monitoring.HostReadModel do
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 
   alias Tronto.Monitoring.{
-    ClusterReadModel,
-    AzureProviderReadModel
+    AzureProviderReadModel,
+    ClusterReadModel
   }
 
   @type t :: %__MODULE__{}
