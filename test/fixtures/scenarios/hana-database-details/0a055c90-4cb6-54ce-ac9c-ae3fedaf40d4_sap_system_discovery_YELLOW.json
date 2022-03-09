@@ -1,0 +1,230 @@
+{
+  "agent_id": "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+  "discovery_type": "sap_system_discovery",
+  "payload": [
+    {
+      "Id": "fd44c254ccb14331e54015c720c7a1f2",
+      "SID": "HDD",
+      "Type": 1,
+      "Profile": {
+        "SAPGLOBALHOST": "vmhdbdev02",
+        "SAPSYSTEMNAME": "HDD",
+        "hdbConfigType": "DEFAULT",
+        "ssl/ciphersuites": "135:PFS:HIGH::EC_P256:EC_HIGH",
+        "HDB_LINKED_BINARIES": "yes",
+        "HDB_SHARED_BINARIES": "yes"
+      },
+      "Databases": [
+        {
+          "Host": "vmhdbdev02",
+          "User": "",
+          "Group": "",
+          "Active": "yes",
+          "UserId": "",
+          "GroupId": "",
+          "SqlPort": "31015",
+          "Database": "HDD",
+          "Container": ""
+        }
+      ],
+      "Instances": {
+        "HDB10": {
+          "Host": "vmhdbdev02",
+          "Name": "HDB10",
+          "Type": 1,
+          "SAPControl": {
+            "Instances": {
+              "vmhdbdev02": {
+                "features": "HDB|HDB_WORKER",
+                "hostname": "vmhdbdev02",
+                "httpPort": 51013,
+                "httpsPort": 51014,
+                "dispstatus": "SAPControl-YELLOW",
+                "instanceNr": 10,
+                "startPriority": "0.3"
+              }
+            },
+            "Processes": {
+              "hdbdaemon": {
+                "pid": 24133,
+                "name": "hdbdaemon",
+                "starttime": "2022 01 11 12:57:31",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Daemon",
+                "elapsedtime": "151:54:31"
+              },
+              "hdbxsengine": {
+                "pid": 24925,
+                "name": "hdbxsengine",
+                "starttime": "2022 01 11 12:57:45",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB XSEngine-HDD",
+                "elapsedtime": "151:54:17"
+              },
+              "hdbnameserver": {
+                "pid": 24153,
+                "name": "hdbnameserver",
+                "starttime": "2022 01 11 12:57:32",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Nameserver",
+                "elapsedtime": "151:54:30"
+              },
+              "hdbindexserver": {
+                "pid": 24916,
+                "name": "hdbindexserver",
+                "starttime": "2022 01 11 12:57:45",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Indexserver-HDD",
+                "elapsedtime": "151:54:17"
+              },
+              "hdbpreprocessor": {
+                "pid": 24822,
+                "name": "hdbpreprocessor",
+                "starttime": "2022 01 11 12:57:44",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Preprocessor",
+                "elapsedtime": "151:54:18"
+              },
+              "hdbcompileserver": {
+                "pid": 24819,
+                "name": "hdbcompileserver",
+                "starttime": "2022 01 11 12:57:44",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Compileserver",
+                "elapsedtime": "151:54:18"
+              },
+              "hdbwebdispatcher": {
+                "pid": 25653,
+                "name": "hdbwebdispatcher",
+                "starttime": "2022 01 11 12:57:53",
+                "dispstatus": "SAPControl-GREEN",
+                "textstatus": "Running",
+                "description": "HDB Web Dispatcher",
+                "elapsedtime": "151:54:09"
+              }
+            },
+            "Properties": {
+              "SAPSYSTEM": {
+                "value": "10",
+                "property": "SAPSYSTEM",
+                "propertytype": "Attribute"
+              },
+              "DBServices": {
+                "value": "YES",
+                "property": "DBServices",
+                "propertytype": "Attribute"
+              },
+              "HANA Roles": {
+                "value": "worker",
+                "property": "HANA Roles",
+                "propertytype": "Attribute"
+              },
+              "Webmethods": {
+                "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile",
+                "property": "Webmethods",
+                "propertytype": "Attribute"
+              },
+              "Process List": {
+                "value": "GetProcessList",
+                "property": "Process List",
+                "propertytype": "NodeWebmethod"
+              },
+              "SAPLOCALHOST": {
+                "value": "vmhdbdev02",
+                "property": "SAPLOCALHOST",
+                "propertytype": "Attribute"
+              },
+              "Access Points": {
+                "value": "GetAccessPointList",
+                "property": "Access Points",
+                "propertytype": "NodeWebmethod"
+              },
+              "INSTANCE_NAME": {
+                "value": "HDB10",
+                "property": "INSTANCE_NAME",
+                "propertytype": "Attribute"
+              },
+              "SAPSYSTEMNAME": {
+                "value": "HDD",
+                "property": "SAPSYSTEMNAME",
+                "propertytype": "Attribute"
+              },
+              "StartPriority": {
+                "value": "0.3",
+                "property": "StartPriority",
+                "propertytype": "Attribute"
+              },
+              "Protected Webmethods": {
+                "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata",
+                "property": "Protected Webmethods",
+                "propertytype": "Attribute"
+              },
+              "Parameter Documentation": {
+                "value": "http://vmhdbdev02:51013/sapparamEN.html",
+                "property": "Parameter Documentation",
+                "propertytype": "NodeURL"
+              }
+            }
+          },
+          "HdbnsutilSRstate": {
+            "mode": "sync",
+            "online": "true",
+            "site_id": "2",
+            "isSource": "false",
+            "site_name": "WDF",
+            "isConsumer": "true",
+            "replayMode": "auto",
+            "hasConsumers": "false",
+            "siteTier/NBG": "1",
+            "siteTier/WDF": "2",
+            "operation_mode": "logreplay",
+            "primary_masters": "vmhdbdev01",
+            "siteMapping/NBG": "WDF",
+            "isTakeoverActive": "false",
+            "isPrimarySuspended": "false",
+            "mapping/vmhdbdev02": ["WDF/vmhdbdev02", "NBG/vmhdbdev01"],
+            "active_primary_site": "1",
+            "isTimetravelEnabled": "false",
+            "siteOperationMode/NBG": "primary",
+            "siteOperationMode/WDF": "logreplay",
+            "siteReplicationMode/NBG": "primary",
+            "siteReplicationMode/WDF": "sync"
+          },
+          "HostConfiguration": {
+            "host": "vmhdbdev02",
+            "hostActive": "yes",
+            "hostStatus": "ok",
+            "removeStatus": "",
+            "failoverStatus": "",
+            "hostActualRoles": "worker",
+            "hostConfigRoles": "worker",
+            "storagePartition": "1",
+            "workerActualGroups": "default",
+            "workerConfigGroups": "default",
+            "failoverActualGroup": "default",
+            "failoverConfigGroup": "default",
+            "nameServerActualRole": "master",
+            "nameServerConfigRole": "master 1",
+            "indexServerActualRole": "master",
+            "indexServerConfigRole": "worker",
+            "storageActualPartition": "1",
+            "storageConfigPartition": "1"
+          },
+          "SystemReplication": {
+            "local_site_id": "2",
+            "site/2/SITE_NAME": "WDF",
+            "site/2/SOURCE_SITE_ID": "1",
+            "site/2/PRIMARY_MASTERS": "vmhdbdev01",
+            "site/2/REPLICATION_MODE": "SYNC"
+          }
+        }
+      }
+    }
+  ]
+}

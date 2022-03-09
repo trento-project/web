@@ -1,0 +1,79 @@
+[healthy-27-node-SAP-cluster]
+
+directories = ["./test/fixtures/scenarios/healthy-27-node-SAP-cluster"]
+
+[sap-system-detail-GRAY]
+
+files = ["./test/fixtures/scenarios/sap-system-details/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery_GRAY.json"]
+
+[sap-system-detail-GREEN]
+
+files = ["./test/fixtures/scenarios/sap-system-details/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery_GREEN.json"]
+
+[sap-system-detail-YELLOW]
+
+files = ["./test/fixtures/scenarios/sap-system-details/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery_YELLOW.json"]
+
+[sap-system-detail-RED]
+
+files = ["./test/fixtures/scenarios/sap-system-details/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery_RED.json"]
+
+[sap-system-detail-NEW]
+
+files = ["./test/fixtures/scenarios/sap-system-details/newagent_sap_system_discovery_new.json"]
+
+[hana-database-detail-GRAY]
+
+files = ["./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_GRAY.json"]
+
+[hana-database-detail-GREEN]
+
+files = ["./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_GREEN.json"]
+
+[hana-database-detail-YELLOW]
+
+files = ["./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_YELLOW.json"]
+
+[hana-database-detail-RED]
+
+files = ["./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_RED.json"]
+
+[hana-database-detail-NEW]
+
+files = ["./test/fixtures/scenarios/hana-database-details/newagent_sap_system_discovery_new.json"]
+
+[sap-systems-overview-GRAY]
+
+files = ["./test/fixtures/scenarios/sap-systems-overview/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery_GRAY.json"]
+
+[sap-systems-overview-YELLOW]
+
+files = ["./test/fixtures/scenarios/sap-systems-overview/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery_YELLOW.json"]
+
+[sap-systems-overview-RED]
+
+files = ["./test/fixtures/scenarios/sap-systems-overview/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery_RED.json"]
+
+[sap-systems-overview-hana-RED]
+
+files = ["./test/fixtures/scenarios/sap-systems-overview/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_sap_system_discovery_RED.json"]
+
+[sap-systems-overview-DAA]
+
+files = ["./test/fixtures/scenarios/sap-systems-overview/2ace860d-38e9-55f4-b051-faf4336e71d6_sap_system_discovery_DAA.json"]
+
+[cluster-4-SOK]
+
+files = ["./test/fixtures/scenarios/clusters-overview/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery_4_SOK.json"]
+
+[cluster-1-SOK]
+
+files = ["./test/fixtures/scenarios/clusters-overview/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery_1_SOK.json"]
+
+[cluster-4-SFAIL]
+
+files = ["./test/fixtures/scenarios/clusters-overview/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery_4_SFAIL.json"]
+
+[cluster-1-SFAIL]
+
+files = ["./test/fixtures/scenarios/clusters-overview/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_ha_cluster_discovery_1_SFAIL.json"]

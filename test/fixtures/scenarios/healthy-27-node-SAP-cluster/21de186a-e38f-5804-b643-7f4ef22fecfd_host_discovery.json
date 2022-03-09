@@ -1,0 +1,19 @@
+{
+  "agent_id": "21de186a-e38f-5804-b643-7f4ef22fecfd",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "hostname": "vmdrbddev02",
+    "cpu_count": 2,
+    "os_version": "15-SP3",
+    "ssh_address": "10.100.1.32",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.100.1.32",
+      "fe80::6245:bdff:fe8d:95f1"
+    ],
+    "socket_count": 1,
+    "agent_version": "0.7.1+git.dev42.1640084952.33229fc",
+    "total_memory_mb": 7951
+  }
+}

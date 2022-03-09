@@ -1,0 +1,20 @@
+{
+  "agent_id": "a3297d85-5e8b-5ac5-b8a3-55eebc2b8d12",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "hostname": "vmnwprd03",
+    "cpu_count": 2,
+    "os_version": "15-SP3",
+    "ssh_address": "10.80.1.23",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.80.1.23",
+      "10.80.1.27",
+      "fe80::20d:3aff:fe25:7f83"
+    ],
+    "socket_count": 1,
+    "agent_version": "0.7.1+git.dev42.1640084952.33229fc",
+    "total_memory_mb": 7951
+  }
+}

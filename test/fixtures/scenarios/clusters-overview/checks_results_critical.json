@@ -1,0 +1,434 @@
+{
+  "hosts": {
+    "vmhdbprd01": {
+      "msg": "",
+      "reachable": true
+    },
+    "vmhdbprd02": {
+      "msg": "",
+      "reachable": true
+    }
+  },
+  "checks": {
+    "00081D": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "0B6DB2": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "156F64": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "15F7A8": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "205AF7": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "21FCA6": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "222A57": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "24ABCB": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "32CFC6": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "skipped",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "skipped",
+          "premium": false
+        }
+      }
+    },
+    "33403D": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "373DB8": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "critical",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "critical",
+          "premium": false
+        }
+      }
+    },
+    "49591F": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "53D035": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "61451E": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "warning",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "warning",
+          "premium": false
+        }
+      }
+    },
+    "68626E": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "critical",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "critical",
+          "premium": false
+        }
+      }
+    },
+    "6E9B82": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "790926": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "warning",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "warning",
+          "premium": false
+        }
+      }
+    },
+    "7E0221": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "816815": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "822E47": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "845CC9": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "9FAAD0": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "9FEFB0": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "A1244C": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "A2EF8C": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "B089BE": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "critical",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "critical",
+          "premium": false
+        }
+      }
+    },
+    "C3166E": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "C620DC": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "CAEFF1": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "D028B9": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "D78671": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "DA114A": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "skipped",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "skipped",
+          "premium": false
+        }
+      }
+    },
+    "DC5429": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "F50AF5": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    },
+    "FB0E0D": {
+      "hosts": {
+        "vmhdbprd01": {
+          "result": "passing",
+          "premium": false
+        },
+        "vmhdbprd02": {
+          "result": "passing",
+          "premium": false
+        }
+      }
+    }
+  }
+}

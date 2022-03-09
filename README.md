@@ -4,20 +4,49 @@ A vaporware version of Trento - SUSE Console for SAP Applications
 
 ![tronto](https://user-images.githubusercontent.com/828651/144742801-88d49dcd-9d7d-4086-8d7e-b77db9a57de8.jpg)
 
-## Hack on the tronto
+# Table of contents
 
-### Install dependencies
+- [Hack on the tronto](#hack-on-the-tronto)
+  - [Install dependencies](#install-dependencies)
+  - [Development environment](#development-environment)
+  - [Setup tronto](#setup-tronto)
+  - [Start tronto in the repl](#start-tronto-in-the-repl)
+  - [Scenario loading with photofinish](#scenario-loading-with-photofinish)
 
-`mix deps.get`
+# Hack on the tronto
 
-### Start docker-compose development environment
+## Install dependencies
 
-`docker-compose up -d`
+```
+$> mix deps.get
+```
 
-### Setup tronto
+## Development environment
+A `docker-compose` development environment is provided.
 
-`mix setup`
+```
+$> docker-compose up -d
+```
 
-### Start tronto in the repl
+## Setup tronto
 
-`iex -S mix phx.server`
+```
+$> mix setup
+```
+
+## Start tronto in the repl
+
+```
+$> iex -S mix phx.server
+```
+
+## Scenario loading with photofinish
+
+By leveraging [photofinish](https://github.com/trento-project/photofinish) it is possible to load different scenarios for development and debugging purposes.
+
+```
+$> photofinish run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster
+```
+Several useful scenario fixtures are available in [./test/fixtures/scenarios](./test/fixtures/scenarios/), the same ones used in e2e tests.
+
+See also [.photofinish.toml](./.photofinish.toml).

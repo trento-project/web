@@ -1,0 +1,683 @@
+{
+  "agent_id": "ddcb7992-2ffb-5c10-8b39-80685f6eaaba",
+  "discovery_type": "ha_cluster_discovery",
+  "payload": {
+    "DC": false,
+    "Id": "a034a158905404befe08775682910ee1",
+    "Cib": {
+      "Configuration": {
+        "Nodes": [
+          {
+            "Id": "1",
+            "Uname": "vmdrbdqas01",
+            "InstanceAttributes": null
+          },
+          {
+            "Id": "2",
+            "Uname": "vmdrbdqas02",
+            "InstanceAttributes": null
+          }
+        ],
+        "CrmConfig": {
+          "ClusterProperties": [
+            {
+              "Id": "cib-bootstrap-options-have-watchdog",
+              "Name": "have-watchdog",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-dc-version",
+              "Name": "dc-version",
+              "Value": "2.0.5+20201202.ba59be712-4.13.1-2.0.5+20201202.ba59be712"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-infrastructure",
+              "Name": "cluster-infrastructure",
+              "Value": "corosync"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-name",
+              "Name": "cluster-name",
+              "Value": "drbd_cluster"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-enabled",
+              "Name": "stonith-enabled",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-timeout",
+              "Name": "stonith-timeout",
+              "Value": "144s"
+            },
+            {
+              "Id": "cib-bootstrap-options-maintenance-mode",
+              "Name": "maintenance-mode",
+              "Value": "false"
+            }
+          ]
+        },
+        "Resources": {
+          "Clones": [
+            {
+              "Id": "cl-nfsserver",
+              "Primitive": {
+                "Id": "nfsserver",
+                "Type": "nfs-server",
+                "Class": "systemd",
+                "Provider": "",
+                "Operations": [
+                  {
+                    "Id": "nfsserver-monitor-30s",
+                    "Name": "monitor",
+                    "Role": "",
+                    "Timeout": "",
+                    "Interval": "30s"
+                  }
+                ],
+                "MetaAttributes": null,
+                "InstanceAttributes": null
+              },
+              "MetaAttributes": [
+                {
+                  "Id": "cl-nfsserver-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ]
+            }
+          ],
+          "Groups": [
+            {
+              "Id": "g-nfs_sapdata",
+              "Primitives": [
+                {
+                  "Id": "fs_sapdata",
+                  "Type": "Filesystem",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "fs_sapdata-monitor-20",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "40s",
+                      "Interval": "20"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "fs_sapdata-instance_attributes-device",
+                      "Name": "device",
+                      "Value": "/dev/drbd1"
+                    },
+                    {
+                      "Id": "fs_sapdata-instance_attributes-directory",
+                      "Name": "directory",
+                      "Value": "/mnt_permanent/sapdata/NWQ"
+                    },
+                    {
+                      "Id": "fs_sapdata-instance_attributes-fstype",
+                      "Name": "fstype",
+                      "Value": "xfs"
+                    },
+                    {
+                      "Id": "fs_sapdata-instance_attributes-options",
+                      "Name": "options",
+                      "Value": "noatime,nodiratime"
+                    }
+                  ]
+                },
+                {
+                  "Id": "vip_sapdata_nfs",
+                  "Type": "IPaddr2",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "vip_sapdata_nfs-monitor-10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20",
+                      "Interval": "10"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "vip_sapdata_nfs-instance_attributes-ip",
+                      "Name": "ip",
+                      "Value": "10.90.1.33"
+                    },
+                    {
+                      "Id": "vip_sapdata_nfs-instance_attributes-cidr_netmask",
+                      "Name": "cidr_netmask",
+                      "Value": "32"
+                    },
+                    {
+                      "Id": "vip_sapdata_nfs-instance_attributes-nic",
+                      "Name": "nic",
+                      "Value": "eth0"
+                    }
+                  ]
+                },
+                {
+                  "Id": "exportfs_work_sapdata",
+                  "Type": "exportfs",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "exportfs_work_sapdata-monitor-30s",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "",
+                      "Interval": "30s"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "exportfs_work_sapdata-instance_attributes-directory",
+                      "Name": "directory",
+                      "Value": "/mnt_permanent/sapdata/NWQ"
+                    },
+                    {
+                      "Id": "exportfs_work_sapdata-instance_attributes-fsid",
+                      "Name": "fsid",
+                      "Value": "1"
+                    },
+                    {
+                      "Id": "exportfs_work_sapdata-instance_attributes-options",
+                      "Name": "options",
+                      "Value": "rw,no_root_squash"
+                    },
+                    {
+                      "Id": "exportfs_work_sapdata-instance_attributes-clientspec",
+                      "Name": "clientspec",
+                      "Value": "*"
+                    },
+                    {
+                      "Id": "exportfs_work_sapdata-instance_attributes-wait_for_leasetime_on_stop",
+                      "Name": "wait_for_leasetime_on_stop",
+                      "Value": "true"
+                    }
+                  ]
+                },
+                {
+                  "Id": "rsc_socat_sapdata_nfs",
+                  "Type": "azure-lb",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_socat_sapdata_nfs-monitor-10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20s",
+                      "Interval": "10"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_socat_sapdata_nfs-instance_attributes-port",
+                      "Name": "port",
+                      "Value": "61000"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "Masters": [
+            {
+              "Id": "ms_sapdata",
+              "Primitive": {
+                "Id": "drbd-sapdata",
+                "Type": "drbd",
+                "Class": "ocf",
+                "Provider": "linbit",
+                "Operations": [
+                  {
+                    "Id": "drbd-sapdata-monitor-15",
+                    "Name": "monitor",
+                    "Role": "Master",
+                    "Timeout": "",
+                    "Interval": "15"
+                  },
+                  {
+                    "Id": "drbd-sapdata-monitor-30",
+                    "Name": "monitor",
+                    "Role": "Slave",
+                    "Timeout": "",
+                    "Interval": "30"
+                  }
+                ],
+                "MetaAttributes": null,
+                "InstanceAttributes": [
+                  {
+                    "Id": "drbd-sapdata-instance_attributes-drbd_resource",
+                    "Name": "drbd_resource",
+                    "Value": "sapdata"
+                  }
+                ]
+              },
+              "MetaAttributes": [
+                {
+                  "Id": "ms_sapdata-meta_attributes-master-max",
+                  "Name": "master-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "ms_sapdata-meta_attributes-master-node-max",
+                  "Name": "master-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "ms_sapdata-meta_attributes-0-clone-max",
+                  "Name": "clone-max",
+                  "Value": "2"
+                },
+                {
+                  "Id": "ms_sapdata-meta_attributes-0-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "ms_sapdata-meta_attributes-1-notify",
+                  "Name": "notify",
+                  "Value": "true"
+                },
+                {
+                  "Id": "ms_sapdata-meta_attributes-1-target-role",
+                  "Name": "target-role",
+                  "Value": "Started"
+                }
+              ]
+            }
+          ],
+          "Primitives": [
+            {
+              "Id": "stonith-sbd",
+              "Type": "external/sbd",
+              "Class": "stonith",
+              "Provider": "",
+              "Operations": null,
+              "MetaAttributes": null,
+              "InstanceAttributes": [
+                {
+                  "Id": "stonith-sbd-instance_attributes-pcmk_delay_max",
+                  "Name": "pcmk_delay_max",
+                  "Value": "30s"
+                }
+              ]
+            }
+          ]
+        },
+        "Constraints": {
+          "RscLocations": null
+        }
+      }
+    },
+    "SBD": {
+      "Config": {
+        "SBD_DEVICE": "/dev/disk/by-id/scsi-1LIO-ORG_IBLOCK:c1c003f5-4e45-4d6f-8d81-e338f666365c",
+        "SBD_PACEMAKER": "yes",
+        "SBD_STARTMODE": "always",
+        "SBD_DELAY_START": "yes",
+        "SBD_WATCHDOG_DEV": "/dev/watchdog",
+        "SBD_TIMEOUT_ACTION": "flush,reboot",
+        "SBD_WATCHDOG_TIMEOUT": "5",
+        "SBD_MOVE_TO_ROOT_CGROUP": "auto",
+        "SBD_SYNC_RESOURCE_STARTUP": "no"
+      },
+      "Devices": [
+        {
+          "Dump": {
+            "Uuid": "f5991966-5a7f-45d6-90d1-bfcedb265df6",
+            "Slots": 255,
+            "Header": "2.1",
+            "SectorSize": 512,
+            "TimeoutLoop": 1,
+            "TimeoutMsgwait": 10,
+            "TimeoutAllocate": 2,
+            "TimeoutWatchdog": 5
+          },
+          "List": [
+            {
+              "Id": 0,
+              "Name": "vmdrbdqas01",
+              "Status": "clear"
+            },
+            {
+              "Id": 1,
+              "Name": "vmdrbdqas02",
+              "Status": "clear"
+            }
+          ],
+          "Device": "/dev/disk/by-id/scsi-1LIO-ORG_IBLOCK:c1c003f5-4e45-4d6f-8d81-e338f666365c",
+          "Status": "healthy"
+        }
+      ]
+    },
+    "Name": "drbd_cluster",
+    "Crmmon": {
+      "Nodes": [
+        {
+          "DC": false,
+          "Id": "1",
+          "Name": "vmdrbdqas01",
+          "Type": "member",
+          "Online": true,
+          "Pending": false,
+          "Standby": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "Maintenance": false,
+          "StandbyOnFail": false,
+          "ResourcesRunning": 7
+        },
+        {
+          "DC": true,
+          "Id": "2",
+          "Name": "vmdrbdqas02",
+          "Type": "member",
+          "Online": true,
+          "Pending": false,
+          "Standby": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "Maintenance": false,
+          "StandbyOnFail": false,
+          "ResourcesRunning": 2
+        }
+      ],
+      "Clones": [
+        {
+          "Id": "ms_sapdata",
+          "Failed": false,
+          "Unique": false,
+          "Managed": true,
+          "Resources": [
+            {
+              "Id": "drbd-sapdata",
+              "Node": {
+                "Id": "1",
+                "Name": "vmdrbdqas01",
+                "Cached": true
+              },
+              "Role": "Master",
+              "Agent": "ocf::linbit:drbd",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "drbd-sapdata",
+              "Node": {
+                "Id": "2",
+                "Name": "vmdrbdqas02",
+                "Cached": true
+              },
+              "Role": "Slave",
+              "Agent": "ocf::linbit:drbd",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            }
+          ],
+          "MultiState": true,
+          "FailureIgnored": false
+        },
+        {
+          "Id": "cl-nfsserver",
+          "Failed": false,
+          "Unique": false,
+          "Managed": true,
+          "Resources": [
+            {
+              "Id": "nfsserver",
+              "Node": {
+                "Id": "1",
+                "Name": "vmdrbdqas01",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "systemd:nfs-server",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "nfsserver",
+              "Node": {
+                "Id": "2",
+                "Name": "vmdrbdqas02",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "systemd:nfs-server",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            }
+          ],
+          "MultiState": false,
+          "FailureIgnored": false
+        }
+      ],
+      "Groups": [
+        {
+          "Id": "g-nfs_sapdata",
+          "Resources": [
+            {
+              "Id": "fs_sapdata",
+              "Node": {
+                "Id": "1",
+                "Name": "vmdrbdqas01",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::heartbeat:Filesystem",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "vip_sapdata_nfs",
+              "Node": {
+                "Id": "1",
+                "Name": "vmdrbdqas01",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::heartbeat:IPaddr2",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "exportfs_work_sapdata",
+              "Node": {
+                "Id": "1",
+                "Name": "vmdrbdqas01",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::heartbeat:exportfs",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "rsc_socat_sapdata_nfs",
+              "Node": {
+                "Id": "1",
+                "Name": "vmdrbdqas01",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::heartbeat:azure-lb",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            }
+          ]
+        }
+      ],
+      "Summary": {
+        "Nodes": {
+          "Number": 2
+        },
+        "Resources": {
+          "Number": 9,
+          "Blocked": 0,
+          "Disabled": 0
+        },
+        "LastChange": {
+          "Time": "Tue Jan 11 12:20:56 2022"
+        },
+        "ClusterOptions": {
+          "StonithEnabled": true
+        }
+      },
+      "Version": "2.0.5",
+      "Resources": [
+        {
+          "Id": "stonith-sbd",
+          "Node": {
+            "Id": "1",
+            "Name": "vmdrbdqas01",
+            "Cached": true
+          },
+          "Role": "Started",
+          "Agent": "stonith:external/sbd",
+          "Active": true,
+          "Failed": false,
+          "Blocked": false,
+          "Managed": true,
+          "Orphaned": false,
+          "FailureIgnored": false,
+          "NodesRunningOn": 1
+        }
+      ],
+      "NodeHistory": {
+        "Nodes": [
+          {
+            "Name": "vmdrbdqas01",
+            "ResourceHistory": [
+              {
+                "Name": "stonith-sbd",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "fs_sapdata",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "vip_sapdata_nfs",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "exportfs_work_sapdata",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_socat_sapdata_nfs",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "drbd-sapdata",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "nfsserver",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              }
+            ]
+          },
+          {
+            "Name": "vmdrbdqas02",
+            "ResourceHistory": [
+              {
+                "Name": "drbd-sapdata",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "nfsserver",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              }
+            ]
+          }
+        ]
+      },
+      "NodeAttributes": {
+        "Nodes": [
+          {
+            "Name": "vmdrbdqas01",
+            "Attributes": [
+              {
+                "Name": "master-drbd-sapdata",
+                "Value": "10000"
+              }
+            ]
+          },
+          {
+            "Name": "vmdrbdqas02",
+            "Attributes": [
+              {
+                "Name": "master-drbd-sapdata",
+                "Value": "10000"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

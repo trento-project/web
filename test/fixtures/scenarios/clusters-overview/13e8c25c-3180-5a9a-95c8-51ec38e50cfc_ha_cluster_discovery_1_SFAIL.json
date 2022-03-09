@@ -1,0 +1,789 @@
+{
+  "agent_id": "13e8c25c-3180-5a9a-95c8-51ec38e50cfc",
+  "discovery_type": "ha_cluster_discovery",
+  "payload": {
+    "DC": true,
+    "Id": "04b8f8c21f9fd8991224478e8c4362f8",
+    "Cib": {
+      "Configuration": {
+        "Nodes": [
+          {
+            "Id": "1",
+            "Uname": "vmhdbdev01",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-1-lpa_hdd_lpt",
+                "Name": "lpa_hdd_lpt",
+                "Value": "10"
+              },
+              {
+                "Id": "nodes-1-hana_hdd_vhost",
+                "Name": "hana_hdd_vhost",
+                "Value": "vmhdbdev01"
+              },
+              {
+                "Id": "nodes-1-hana_hdd_site",
+                "Name": "hana_hdd_site",
+                "Value": "NBG"
+              },
+              {
+                "Id": "nodes-1-hana_hdd_op_mode",
+                "Name": "hana_hdd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Id": "nodes-1-hana_hdd_srmode",
+                "Name": "hana_hdd_srmode",
+                "Value": "sync"
+              },
+              {
+                "Id": "nodes-1-hana_hdd_remoteHost",
+                "Name": "hana_hdd_remoteHost",
+                "Value": "vmhdbdev02"
+              }
+            ]
+          },
+          {
+            "Id": "2",
+            "Uname": "vmhdbdev02",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-2-lpa_hdd_lpt",
+                "Name": "lpa_hdd_lpt",
+                "Value": "1643125026"
+              },
+              {
+                "Id": "nodes-2-hana_hdd_op_mode",
+                "Name": "hana_hdd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Id": "nodes-2-hana_hdd_vhost",
+                "Name": "hana_hdd_vhost",
+                "Value": "vmhdbdev02"
+              },
+              {
+                "Id": "nodes-2-hana_hdd_remoteHost",
+                "Name": "hana_hdd_remoteHost",
+                "Value": "vmhdbdev01"
+              },
+              {
+                "Id": "nodes-2-hana_hdd_site",
+                "Name": "hana_hdd_site",
+                "Value": "WDF"
+              },
+              {
+                "Id": "nodes-2-hana_hdd_srmode",
+                "Name": "hana_hdd_srmode",
+                "Value": "sync"
+              }
+            ]
+          }
+        ],
+        "CrmConfig": {
+          "ClusterProperties": [
+            {
+              "Id": "cib-bootstrap-options-have-watchdog",
+              "Name": "have-watchdog",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-dc-version",
+              "Name": "dc-version",
+              "Value": "2.0.5+20201202.ba59be712-4.13.1-2.0.5+20201202.ba59be712"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-infrastructure",
+              "Name": "cluster-infrastructure",
+              "Value": "corosync"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-name",
+              "Name": "cluster-name",
+              "Value": "hana_cluster_1"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-enabled",
+              "Name": "stonith-enabled",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-timeout",
+              "Name": "stonith-timeout",
+              "Value": "144s"
+            },
+            {
+              "Id": "cib-bootstrap-options-maintenance-mode",
+              "Name": "maintenance-mode",
+              "Value": "false"
+            },
+            {
+              "Id": "SAPHanaSR-hana_hdd_site_srHook_WDF",
+              "Name": "hana_hdd_site_srHook_WDF",
+              "Value": "PRIM"
+            }
+          ]
+        },
+        "Resources": {
+          "Clones": [
+            {
+              "Id": "cln_SAPHanaTopology_HDD_HDB10",
+              "Primitive": {
+                "Id": "rsc_SAPHanaTopology_HDD_HDB10",
+                "Type": "SAPHanaTopology",
+                "Class": "ocf",
+                "Provider": "suse",
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDD_HDB10-monitor-10",
+                    "Name": "monitor",
+                    "Role": "",
+                    "Timeout": "600",
+                    "Interval": "10"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDD_HDB10-start-0",
+                    "Name": "start",
+                    "Role": "",
+                    "Timeout": "600",
+                    "Interval": "0"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDD_HDB10-stop-0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Timeout": "300",
+                    "Interval": "0"
+                  }
+                ],
+                "MetaAttributes": null,
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDD_HDB10-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "HDD"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_HDD_HDB10-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "10"
+                  }
+                ]
+              },
+              "MetaAttributes": [
+                {
+                  "Id": "cln_SAPHanaTopology_HDD_HDB10-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "cln_SAPHanaTopology_HDD_HDB10-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ]
+            }
+          ],
+          "Groups": [
+            {
+              "Id": "g_ip_HDD_HDB10",
+              "Primitives": [
+                {
+                  "Id": "rsc_ip_HDD_HDB10",
+                  "Type": "IPaddr2",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_ip_HDD_HDB10-start-0",
+                      "Name": "start",
+                      "Role": "",
+                      "Timeout": "20",
+                      "Interval": "0"
+                    },
+                    {
+                      "Id": "rsc_ip_HDD_HDB10-stop-0",
+                      "Name": "stop",
+                      "Role": "",
+                      "Timeout": "20",
+                      "Interval": "0"
+                    },
+                    {
+                      "Id": "rsc_ip_HDD_HDB10-monitor-10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20",
+                      "Interval": "10"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_ip_HDD_HDB10-instance_attributes-ip",
+                      "Name": "ip",
+                      "Value": "10.100.1.13"
+                    },
+                    {
+                      "Id": "rsc_ip_HDD_HDB10-instance_attributes-cidr_netmask",
+                      "Name": "cidr_netmask",
+                      "Value": "24"
+                    },
+                    {
+                      "Id": "rsc_ip_HDD_HDB10-instance_attributes-nic",
+                      "Name": "nic",
+                      "Value": "eth0"
+                    }
+                  ]
+                },
+                {
+                  "Id": "rsc_socat_HDD_HDB10",
+                  "Type": "azure-lb",
+                  "Class": "ocf",
+                  "Provider": "heartbeat",
+                  "Operations": [
+                    {
+                      "Id": "rsc_socat_HDD_HDB10-monitor-10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Timeout": "20",
+                      "Interval": "10"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_socat_HDD_HDB10-instance_attributes-port",
+                      "Name": "port",
+                      "Value": "62510"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "Masters": [
+            {
+              "Id": "msl_SAPHana_HDD_HDB10",
+              "Primitive": {
+                "Id": "rsc_SAPHana_HDD_HDB10",
+                "Type": "SAPHana",
+                "Class": "ocf",
+                "Provider": "suse",
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-start-0",
+                    "Name": "start",
+                    "Role": "",
+                    "Timeout": "3600",
+                    "Interval": "0"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-stop-0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Timeout": "3600",
+                    "Interval": "0"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-promote-0",
+                    "Name": "promote",
+                    "Role": "",
+                    "Timeout": "3600",
+                    "Interval": "0"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-monitor-60",
+                    "Name": "monitor",
+                    "Role": "Master",
+                    "Timeout": "700",
+                    "Interval": "60"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-monitor-61",
+                    "Name": "monitor",
+                    "Role": "Slave",
+                    "Timeout": "700",
+                    "Interval": "61"
+                  }
+                ],
+                "MetaAttributes": null,
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "HDD"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "10"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-PREFER_SITE_TAKEOVER",
+                    "Name": "PREFER_SITE_TAKEOVER",
+                    "Value": "True"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-AUTOMATED_REGISTER",
+                    "Name": "AUTOMATED_REGISTER",
+                    "Value": "False"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT",
+                    "Name": "DUPLICATE_PRIMARY_TIMEOUT",
+                    "Value": "7200"
+                  }
+                ]
+              },
+              "MetaAttributes": [
+                {
+                  "Id": "msl_SAPHana_HDD_HDB10-meta_attributes-clone-max",
+                  "Name": "clone-max",
+                  "Value": "2"
+                },
+                {
+                  "Id": "msl_SAPHana_HDD_HDB10-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHana_HDD_HDB10-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ]
+            }
+          ],
+          "Primitives": [
+            {
+              "Id": "stonith-sbd",
+              "Type": "external/sbd",
+              "Class": "stonith",
+              "Provider": "",
+              "Operations": [
+                {
+                  "Id": "stonith-sbd-monitor-15",
+                  "Name": "monitor",
+                  "Role": "",
+                  "Timeout": "15",
+                  "Interval": "15"
+                }
+              ],
+              "MetaAttributes": null,
+              "InstanceAttributes": [
+                {
+                  "Id": "stonith-sbd-instance_attributes-pcmk_delay_max",
+                  "Name": "pcmk_delay_max",
+                  "Value": "15"
+                }
+              ]
+            }
+          ]
+        },
+        "Constraints": {
+          "RscLocations": null
+        }
+      }
+    },
+    "SBD": {
+      "Config": {
+        "SBD_DEVICE": "/dev/disk/by-id/scsi-1LIO-ORG_IBLOCK:182cb1b1-a815-4b82-b538-7a166b9bbb4a",
+        "SBD_PACEMAKER": "yes",
+        "SBD_STARTMODE": "always",
+        "SBD_DELAY_START": "yes",
+        "SBD_WATCHDOG_DEV": "/dev/watchdog",
+        "SBD_TIMEOUT_ACTION": "flush,reboot",
+        "SBD_WATCHDOG_TIMEOUT": "5",
+        "SBD_MOVE_TO_ROOT_CGROUP": "auto",
+        "SBD_SYNC_RESOURCE_STARTUP": "no"
+      },
+      "Devices": [
+        {
+          "Dump": {
+            "Uuid": "cc39771e-ea2f-4fb1-8968-a6176aee3d0a",
+            "Slots": 255,
+            "Header": "2.1",
+            "SectorSize": 512,
+            "TimeoutLoop": 1,
+            "TimeoutMsgwait": 10,
+            "TimeoutAllocate": 2,
+            "TimeoutWatchdog": 5
+          },
+          "List": [
+            {
+              "Id": 0,
+              "Name": "vmhdbdev01",
+              "Status": "clear"
+            },
+            {
+              "Id": 1,
+              "Name": "vmhdbdev02",
+              "Status": "clear"
+            }
+          ],
+          "Device": "/dev/disk/by-id/scsi-1LIO-ORG_IBLOCK:182cb1b1-a815-4b82-b538-7a166b9bbb4a",
+          "Status": "healthy"
+        }
+      ]
+    },
+    "Name": "hana_cluster_1",
+    "Crmmon": {
+      "Nodes": [
+        {
+          "DC": true,
+          "Id": "1",
+          "Name": "vmhdbdev01",
+          "Type": "member",
+          "Online": true,
+          "Pending": false,
+          "Standby": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "Maintenance": false,
+          "StandbyOnFail": false,
+          "ResourcesRunning": 2
+        },
+        {
+          "DC": false,
+          "Id": "2",
+          "Name": "vmhdbdev02",
+          "Type": "member",
+          "Online": true,
+          "Pending": false,
+          "Standby": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "Maintenance": false,
+          "StandbyOnFail": false,
+          "ResourcesRunning": 4
+        }
+      ],
+      "Clones": [
+        {
+          "Id": "msl_SAPHana_HDD_HDB10",
+          "Failed": false,
+          "Unique": false,
+          "Managed": true,
+          "Resources": [
+            {
+              "Id": "rsc_SAPHana_HDD_HDB10",
+              "Node": {
+                "Id": "2",
+                "Name": "vmhdbdev02",
+                "Cached": true
+              },
+              "Role": "Master",
+              "Agent": "ocf::suse:SAPHana",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "rsc_SAPHana_HDD_HDB10",
+              "Node": null,
+              "Role": "Stopped",
+              "Agent": "ocf::suse:SAPHana",
+              "Active": false,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 0
+            }
+          ],
+          "MultiState": true,
+          "FailureIgnored": false
+        },
+        {
+          "Id": "cln_SAPHanaTopology_HDD_HDB10",
+          "Failed": false,
+          "Unique": false,
+          "Managed": true,
+          "Resources": [
+            {
+              "Id": "rsc_SAPHanaTopology_HDD_HDB10",
+              "Node": {
+                "Id": "2",
+                "Name": "vmhdbdev02",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "rsc_SAPHanaTopology_HDD_HDB10",
+              "Node": {
+                "Id": "1",
+                "Name": "vmhdbdev01",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            }
+          ],
+          "MultiState": false,
+          "FailureIgnored": false
+        }
+      ],
+      "Groups": [
+        {
+          "Id": "g_ip_HDD_HDB10",
+          "Resources": [
+            {
+              "Id": "rsc_ip_HDD_HDB10",
+              "Node": {
+                "Id": "2",
+                "Name": "vmhdbdev02",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::heartbeat:IPaddr2",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            },
+            {
+              "Id": "rsc_socat_HDD_HDB10",
+              "Node": {
+                "Id": "2",
+                "Name": "vmhdbdev02",
+                "Cached": true
+              },
+              "Role": "Started",
+              "Agent": "ocf::heartbeat:azure-lb",
+              "Active": true,
+              "Failed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Orphaned": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1
+            }
+          ]
+        }
+      ],
+      "Summary": {
+        "Nodes": {
+          "Number": 2
+        },
+        "Resources": {
+          "Number": 7,
+          "Blocked": 0,
+          "Disabled": 0
+        },
+        "LastChange": {
+          "Time": "Tue Jan 25 15:37:06 2022"
+        },
+        "ClusterOptions": {
+          "StonithEnabled": true
+        }
+      },
+      "Version": "2.0.5",
+      "Resources": [
+        {
+          "Id": "stonith-sbd",
+          "Node": {
+            "Id": "1",
+            "Name": "vmhdbdev01",
+            "Cached": true
+          },
+          "Role": "Started",
+          "Agent": "stonith:external/sbd",
+          "Active": true,
+          "Failed": false,
+          "Blocked": false,
+          "Managed": true,
+          "Orphaned": false,
+          "FailureIgnored": false,
+          "NodesRunningOn": 1
+        }
+      ],
+      "NodeHistory": {
+        "Nodes": [
+          {
+            "Name": "vmhdbdev02",
+            "ResourceHistory": [
+              {
+                "Name": "rsc_ip_HDD_HDB10",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_socat_HDD_HDB10",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_SAPHana_HDD_HDB10",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_SAPHanaTopology_HDD_HDB10",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              }
+            ]
+          },
+          {
+            "Name": "vmhdbdev01",
+            "ResourceHistory": [
+              {
+                "Name": "stonith-sbd",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_ip_HDD_HDB10",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_socat_HDD_HDB10",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_SAPHana_HDD_HDB10",
+                "FailCount": 1000000,
+                "MigrationThreshold": 5000
+              },
+              {
+                "Name": "rsc_SAPHanaTopology_HDD_HDB10",
+                "FailCount": 0,
+                "MigrationThreshold": 5000
+              }
+            ]
+          }
+        ]
+      },
+      "NodeAttributes": {
+        "Nodes": [
+          {
+            "Name": "vmhdbdev01",
+            "Attributes": [
+              {
+                "Name": "hana_hdd_clone_state",
+                "Value": "UNDEFINED"
+              },
+              {
+                "Name": "hana_hdd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Name": "hana_hdd_remoteHost",
+                "Value": "vmhdbdev02"
+              },
+              {
+                "Name": "hana_hdd_roles",
+                "Value": "1:P:master1::worker:"
+              },
+              {
+                "Name": "hana_hdd_site",
+                "Value": "NBG"
+              },
+              {
+                "Name": "hana_hdd_srmode",
+                "Value": "sync"
+              },
+              {
+                "Name": "hana_hdd_sync_state",
+                "Value": "SFAIL"
+              },
+              {
+                "Name": "hana_hdd_version",
+                "Value": "2.00.057.00.1629894416"
+              },
+              {
+                "Name": "hana_hdd_vhost",
+                "Value": "vmhdbdev01"
+              },
+              {
+                "Name": "lpa_hdd_lpt",
+                "Value": "10"
+              },
+              {
+                "Name": "master-rsc_SAPHana_HDD_HDB10",
+                "Value": "-9000"
+              }
+            ]
+          },
+          {
+            "Name": "vmhdbdev02",
+            "Attributes": [
+              {
+                "Name": "hana_hdd_clone_state",
+                "Value": "PROMOTED"
+              },
+              {
+                "Name": "hana_hdd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Name": "hana_hdd_remoteHost",
+                "Value": "vmhdbdev01"
+              },
+              {
+                "Name": "hana_hdd_roles",
+                "Value": "4:P:master1:master:worker:master"
+              },
+              {
+                "Name": "hana_hdd_site",
+                "Value": "WDF"
+              },
+              {
+                "Name": "hana_hdd_srmode",
+                "Value": "sync"
+              },
+              {
+                "Name": "hana_hdd_sync_state",
+                "Value": "PRIM"
+              },
+              {
+                "Name": "hana_hdd_version",
+                "Value": "2.00.057.00.1629894416"
+              },
+              {
+                "Name": "hana_hdd_vhost",
+                "Value": "vmhdbdev02"
+              },
+              {
+                "Name": "lpa_hdd_lpt",
+                "Value": "1643125026"
+              },
+              {
+                "Name": "master-rsc_SAPHana_HDD_HDB10",
+                "Value": "150"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
