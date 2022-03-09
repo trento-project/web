@@ -1,15 +1,21 @@
 defmodule Tronto.Router do
   use Commanded.Commands.Router
 
-  alias Tronto.Support.Middleware.Validate
+  alias Tronto.Support.Middleware.{
+    Enrich,
+    Validate
+  }
 
   alias Tronto.Monitoring.Domain.{
     Cluster,
-    Host
+    Host,
+    SapSystem
   }
 
   alias Tronto.Monitoring.Domain.Commands.{
+    RegisterApplicationInstance,
     RegisterCluster,
+    RegisterDatabaseInstance,
     RegisterHost,
     RequestChecksExecution,
     SelectChecks,
@@ -19,6 +25,7 @@ defmodule Tronto.Router do
     UpdateSlesSubscriptions
   }
 
+  middleware Enrich
   middleware Validate
 
   identify Host, by: :host_id
@@ -28,4 +35,9 @@ defmodule Tronto.Router do
 
   dispatch [RegisterCluster, RequestChecksExecution, SelectChecks, StoreChecksResults],
     to: Cluster
+
+  identify SapSystem, by: :sap_system_id
+
+  dispatch [RegisterApplicationInstance, RegisterDatabaseInstance],
+    to: SapSystem
 end

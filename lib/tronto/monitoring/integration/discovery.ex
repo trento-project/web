@@ -4,10 +4,12 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   from the discovery bounded-context
   """
 
-  @type command :: struct
+  require Logger
 
   alias Tronto.Monitoring.Domain.Commands.{
+    RegisterApplicationInstance,
     RegisterCluster,
+    RegisterDatabaseInstance,
     RegisterHost,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -18,7 +20,12 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     SlesSubscription
   }
 
-  @spec handle_discovery_event(map) :: {:error, any} | {:ok, command}
+  @type command :: struct
+
+  @database_type 1
+  @application_type 2
+
+  @spec handle_discovery_event(map) :: {:ok, command} | {:ok, [command]} | {:error, any}
   def handle_discovery_event(%{
         "discovery_type" => "host_discovery",
         "agent_id" => agent_id,
@@ -97,9 +104,23 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     UpdateSlesSubscriptions.new(host_id: agent_id, subscriptions: subscriptions)
   end
 
-  def handle_discovery_event(_) do
-    {:error, :invalid_payload}
+  def handle_discovery_event(%{
+        "discovery_type" => "sap_system_discovery",
+        "agent_id" => agent_id,
+        "payload" => payload
+      }) do
+    payload
+    |> Enum.flat_map(fn sap_system -> parse_sap_system(sap_system, agent_id) end)
+    |> Enum.reduce_while(
+      {:ok, []},
+      fn
+        {:ok, command}, {:ok, commands} -> {:cont, {:ok, commands ++ [command]}}
+        {:error, _} = error, _ -> {:halt, error}
+      end
+    )
   end
+
+  def handle_discovery_event(_), do: {:error, :invalid_payload}
 
   defp is_non_loopback_ipv4?("127.0.0.1"), do: false
 
@@ -218,5 +239,127 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       offer: offer,
       sku: sku
     )
+  end
+
+  defp parse_sap_system(
+         %{
+           "Type" => @database_type,
+           "Id" => id,
+           "SID" => sid,
+           "Databases" => databases,
+           "Instances" => instances
+         },
+         host_id
+       ) do
+    Enum.flat_map(databases, fn %{"Database" => tenant} ->
+      Enum.map(
+        instances,
+        fn {_, instance} ->
+          instance_number = parse_instance_number(instance)
+
+          RegisterDatabaseInstance.new(
+            sap_system_id: UUID.uuid5(nil, "#{id}:#{tenant}"),
+            sid: sid,
+            tenant: tenant,
+            host_id: host_id,
+            instance_number: instance_number,
+            features: parse_features(instance, instance_number),
+            health: parse_instance_health(instance, instance_number)
+          )
+        end
+      )
+    end)
+  end
+
+  defp parse_sap_system(
+         %{
+           "Type" => @application_type,
+           "SID" => sid,
+           "Instances" => instances,
+           "Profile" => %{
+             "dbs/hdb/dbname" => tenant,
+             "SAPDBHOST" => db_host
+           }
+         },
+         host_id
+       ) do
+    Enum.map(instances, fn {_, instance} ->
+      instance_number = parse_instance_number(instance)
+
+      RegisterApplicationInstance.new(
+        sid: sid,
+        tenant: tenant,
+        db_host: db_host,
+        instance_number: instance_number,
+        features: parse_features(instance, instance_number),
+        host_id: host_id,
+        health: parse_instance_health(instance, instance_number)
+      )
+    end)
+  end
+
+  defp parse_sap_system(
+         %{
+           "Type" => _
+         },
+         _
+       ),
+       do: []
+
+  @spec parse_features(map, String.t()) :: String.t()
+  defp parse_features(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "features") do
+      {:ok, features} ->
+        features
+
+      _ ->
+        ""
+    end
+  end
+
+  @spec parse_instance_number(map) :: String.t()
+  defp parse_instance_number(%{
+         "SAPControl" => %{"Properties" => %{"SAPSYSTEM" => %{"value" => instance_number}}}
+       }),
+       do: instance_number
+
+  @spec parse_instance_health(map, String.t()) :: :passing | :warning | :critical | :unknown
+  defp parse_instance_health(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "dispstatus") do
+      {:ok, dispstatus} ->
+        parse_dispstatus(dispstatus)
+
+      _ ->
+        Logger.warn("Failed to parse dispstatus for instance #{instance_number}")
+        :unknown
+    end
+  end
+
+  defp parse_dispstatus("SAPControl-GREEN"), do: :passing
+  defp parse_dispstatus("SAPControl-YELLOW"), do: :warning
+  defp parse_dispstatus("SAPControl-RED"), do: :critical
+  defp parse_dispstatus(_), do: :unknown
+
+  @spec extract_sap_control_instance_data(map, String.t(), String.t()) ::
+          {:ok, String.t()} | {:error, :key_not_found}
+  defp extract_sap_control_instance_data(
+         %{"Instances" => instances},
+         instance_number,
+         key
+       ) do
+    instances
+    |> Map.values()
+    |> Enum.find(fn %{"instanceNr" => number} ->
+      number
+      |> Integer.to_string()
+      |> String.pad_leading(2, "0") == instance_number
+    end)
+    |> case do
+      %{^key => value} ->
+        {:ok, value}
+
+      _ ->
+        {:error, :key_not_found}
+    end
   end
 end
