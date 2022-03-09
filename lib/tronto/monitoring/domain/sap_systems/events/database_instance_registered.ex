@@ -5,6 +5,8 @@ defmodule Tronto.Monitoring.Domain.Events.DatabaseInstanceRegistered do
 
   use TypedStruct
 
+  alias Tronto.Monitoring.Domain.Health
+
   @derive Jason.Encoder
   typedstruct do
     @typedoc "DatabaseInstanceRegistered event"
@@ -15,5 +17,6 @@ defmodule Tronto.Monitoring.Domain.Events.DatabaseInstanceRegistered do
     field :host_id, String.t(), enforce: true
     field :instance_number, String.t(), enforce: true
     field :features, String.t(), enforce: true
+    field :health, Health.t(), enforce: true
   end
 end

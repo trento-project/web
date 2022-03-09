@@ -13,5 +13,6 @@ defmodule Tronto.Monitoring.Domain.Events.SapSystemRegistered do
     field :sid, String.t(), enforce: true
     field :tenant, String.t(), enforce: true
     field :db_host, String.t(), enforce: true
+    field :health, Health.t(), enforce: true
   end
 end
