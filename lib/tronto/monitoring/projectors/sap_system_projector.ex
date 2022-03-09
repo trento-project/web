@@ -23,7 +23,8 @@ defmodule Tronto.Monitoring.SapSystemProjector do
       sap_system_id: sap_system_id,
       sid: sid,
       tenant: tenant,
-      db_host: db_host
+      db_host: db_host,
+      health: health
     },
     fn multi ->
       changeset =
@@ -32,7 +33,8 @@ defmodule Tronto.Monitoring.SapSystemProjector do
           id: sap_system_id,
           sid: sid,
           tenant: tenant,
-          db_host: db_host
+          db_host: db_host,
+          health: health
         })
 
       Ecto.Multi.insert(multi, :sap_system, changeset)
@@ -45,7 +47,8 @@ defmodule Tronto.Monitoring.SapSystemProjector do
       sid: sid,
       instance_number: instance_number,
       features: features,
-      host_id: host_id
+      host_id: host_id,
+      health: health
     },
     fn multi ->
       changeset =
@@ -55,7 +58,8 @@ defmodule Tronto.Monitoring.SapSystemProjector do
           sid: sid,
           instance_number: instance_number,
           features: features,
-          host_id: host_id
+          host_id: host_id,
+          health: health
         })
 
       Ecto.Multi.insert(multi, :application_instance, changeset)

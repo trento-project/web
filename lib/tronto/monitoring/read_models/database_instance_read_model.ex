@@ -20,6 +20,7 @@ defmodule Tronto.Monitoring.DatabaseInstanceReadModel do
     field :instance_number, :string, primary_key: true
     field :features, :string
     field :host_id, Ecto.UUID, primary_key: true
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
 
     has_one :host, HostReadModel, references: :host_id, foreign_key: :id
   end

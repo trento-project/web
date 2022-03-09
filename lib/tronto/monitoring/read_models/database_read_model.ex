@@ -15,6 +15,7 @@ defmodule Tronto.Monitoring.DatabaseReadModel do
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "databases" do
     field :sid, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,

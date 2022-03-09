@@ -13,7 +13,21 @@ defmodule Tronto.Monitoring.DatabaseProjector do
     DatabaseReadModel
   }
 
-  alias Tronto.Monitoring.Domain.Events.DatabaseInstanceRegistered
+  alias Tronto.Monitoring.Domain.Events.{
+    DatabaseInstanceRegistered,
+    DatabaseRegistered
+  }
+
+  project(
+    %DatabaseRegistered{sap_system_id: sap_system_id, sid: sid, health: health},
+    fn multi ->
+      database_changeset =
+        %DatabaseReadModel{}
+        |> DatabaseReadModel.changeset(%{id: sap_system_id, sid: sid, health: health})
+
+      Ecto.Multi.insert(multi, :database, database_changeset)
+    end
+  )
 
   project(
     %DatabaseInstanceRegistered{
@@ -22,13 +36,10 @@ defmodule Tronto.Monitoring.DatabaseProjector do
       instance_number: instance_number,
       tenant: tenant,
       features: features,
-      host_id: host_id
+      host_id: host_id,
+      health: health
     },
     fn multi ->
-      database_changeset =
-        %DatabaseReadModel{}
-        |> DatabaseReadModel.changeset(%{id: sap_system_id, sid: sid})
-
       database_instance_changeset =
         %DatabaseInstanceReadModel{}
         |> DatabaseInstanceReadModel.changeset(%{
@@ -37,12 +48,11 @@ defmodule Tronto.Monitoring.DatabaseProjector do
           instance_number: instance_number,
           tenant: tenant,
           features: features,
-          host_id: host_id
+          host_id: host_id,
+          health: health
         })
 
-      multi
-      |> Ecto.Multi.insert(:database, database_changeset, on_conflict: :nothing)
-      |> Ecto.Multi.insert(:database_instance, database_instance_changeset)
+      Ecto.Multi.insert(multi, :database_instance, database_instance_changeset)
     end
   )
 end
