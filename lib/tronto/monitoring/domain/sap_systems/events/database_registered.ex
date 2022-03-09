@@ -3,6 +3,8 @@ defmodule Tronto.Monitoring.Domain.Events.DatabaseRegistered do
   This event is emitted when a database is registered.
   """
 
+  alias Tronto.Monitoring.Domain.Health
+
   use TypedStruct
 
   @derive Jason.Encoder

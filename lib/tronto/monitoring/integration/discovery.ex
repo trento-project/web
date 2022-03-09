@@ -265,7 +265,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     end
   end
 
-  @spec parse_instance_number(map) :: non_neg_integer()
+  @spec parse_instance_number(map) :: String.t()
   defp parse_instance_number(%{
          "SAPControl" => %{"Properties" => %{"SAPSYSTEM" => %{"value" => instance_number}}}
        }),

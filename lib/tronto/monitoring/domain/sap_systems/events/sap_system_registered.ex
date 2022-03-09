@@ -3,6 +3,8 @@ defmodule Tronto.Monitoring.Domain.Events.SapSystemRegistered do
   This event is emitted when a sap system is registered.
   """
 
+  alias Tronto.Monitoring.Domain.Health
+
   use TypedStruct
 
   @derive Jason.Encoder

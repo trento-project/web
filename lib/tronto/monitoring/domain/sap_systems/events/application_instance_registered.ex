@@ -3,6 +3,8 @@ defmodule Tronto.Monitoring.Domain.Events.ApplicationInstanceRegistered do
   This event is emitted when a database application is registered to the SAP system.
   """
 
+  alias Tronto.Monitoring.Domain.Health
+
   use TypedStruct
 
   @derive Jason.Encoder
