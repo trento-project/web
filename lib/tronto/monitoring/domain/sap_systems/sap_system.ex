@@ -46,7 +46,7 @@ defmodule Tronto.Monitoring.Domain.SapSystem do
           health: Health.t()
         }
 
-  # First time that a DatbaseInstance is registered, the SAP System starts its registration process.
+  # First time that a Datbase instance is registered, the SAP System starts its registration process.
   # When an Application is discovered, the SAP System completes the registration process.
   def execute(
         %SapSystem{sap_system_id: nil},
@@ -78,6 +78,9 @@ defmodule Tronto.Monitoring.Domain.SapSystem do
     ]
   end
 
+  # When a RegisterDatabaseInstance command is received by an existing SAP System aggregate,
+  # the SAP System aggregate registers the Database instance if it is not already registered
+  # and updates the health when needed.
   def execute(
         %SapSystem{
           database: %Database{instances: instances}
@@ -133,6 +136,7 @@ defmodule Tronto.Monitoring.Domain.SapSystem do
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
+  # When an Application is discovered, the SAP System completes the registration process.
   def execute(
         %SapSystem{application: nil},
         %RegisterApplicationInstance{
@@ -165,6 +169,9 @@ defmodule Tronto.Monitoring.Domain.SapSystem do
     ]
   end
 
+  # When a RegisterApplicationInstance command is received by an existing SAP System aggregate,
+  # the SAP System aggregate registers the Application instance if it is not already registered
+  # and updates the health when needed.
   def execute(
         %SapSystem{application: %Application{instances: instances}} = sap_system,
         %RegisterApplicationInstance{
@@ -385,6 +392,8 @@ defmodule Tronto.Monitoring.Domain.SapSystem do
     }
   end
 
+  # Returns a DatabaseHealthChanged event if the newly computed aggregated health of all the instances
+  # is different from the previous Database health.
   defp maybe_emit_database_health_changed_event(%SapSystem{
          sap_system_id: sap_system_id,
          database: %Database{instances: instances, health: health}
@@ -402,8 +411,11 @@ defmodule Tronto.Monitoring.Domain.SapSystem do
     end
   end
 
+  # Do not emit health changed event as the SAP system is not completely registered yet
   defp maybe_emit_sap_system_health_changed_event(%SapSystem{application: nil}), do: nil
 
+  # Returns a SapSystemHealthChanged event when the aggregated health of the application instances
+  # and database is different from the previous SAP system health.
   defp maybe_emit_sap_system_health_changed_event(%SapSystem{
          sap_system_id: sap_system_id,
          health: health,
