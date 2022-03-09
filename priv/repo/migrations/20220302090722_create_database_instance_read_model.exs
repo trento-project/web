@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddDatabaseInstanceReadModel do
+defmodule Tronto.Repo.Migrations.CreateDatabaseInstanceReadModel do
   use Ecto.Migration
 
   def change do
@@ -9,6 +9,7 @@ defmodule Tronto.Repo.Migrations.AddDatabaseInstanceReadModel do
       add :sid, :string
       add :tenant, :string
       add :features, :string
+      add :health, :string
     end
 
     create index(:database_instances, [:host_id])
