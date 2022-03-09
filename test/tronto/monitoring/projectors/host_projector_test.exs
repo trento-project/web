@@ -5,6 +5,7 @@ defmodule Tronto.Monitoring.HostProjectorTest do
   import Tronto.Factory
 
   alias Tronto.Monitoring.{
+    AzureProviderReadModel,
     HostProjector,
     HostReadModel
   }
@@ -85,18 +86,40 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     assert :critical == host_projection.heartbeat
   end
 
-  test "should update the provider field when ProviderUpdated is received", %{
-    host_id: host_id
-  } do
+  test "should update the provider field when ProviderUpdated is received with Azure provider type",
+       %{
+         host_id: host_id
+       } do
     event = %ProviderUpdated{
       host_id: host_id,
-      provider: "azure"
+      provider: :azure,
+      provider_data: %{
+        provider: :azure,
+        vm_name: "vmhdbdev01",
+        data_disk_number: 7,
+        location: "westeurope",
+        offer: "sles-sap-15-sp3-byos",
+        resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
+        sku: "gen2",
+        vm_size: "Standard_E4s_v3"
+      }
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
 
-    assert "azure" == host_projection.provider
+    expected_azure_model = %AzureProviderReadModel{
+      vm_name: "vmhdbdev01",
+      data_disk_number: 7,
+      location: "westeurope",
+      offer: "sles-sap-15-sp3-byos",
+      resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
+      sku: "gen2",
+      vm_size: "Standard_E4s_v3"
+    }
+
+    assert :azure == host_projection.provider
+    assert expected_azure_model == host_projection.provider_data
   end
 
   test "should update the cluster_id field when HostAddedToCluster event is received and the host was already registered",

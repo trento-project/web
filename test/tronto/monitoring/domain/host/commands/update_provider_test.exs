@@ -9,7 +9,7 @@ defmodule Tronto.Monitoring.Domain.Commands.UpdateProviderTest do
     command =
       UpdateProvider.new!(%{
         host_id: Faker.StarWars.character(),
-        provider: Faker.StarWars.character()
+        provider: :azure
       })
 
     assert not Vex.valid?(command)

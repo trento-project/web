@@ -257,12 +257,11 @@ defmodule Tronto.Monitoring.HostTest do
   describe "provider" do
     test "should return an error if the host is not registered" do
       host_id = Faker.UUID.v4()
-      provider = Faker.StarWars.character()
 
       assert_error(
         UpdateProvider.new!(
           host_id: host_id,
-          provider: provider
+          provider: :azure
         ),
         {:error, :host_not_registered}
       )
@@ -270,7 +269,6 @@ defmodule Tronto.Monitoring.HostTest do
 
     test "should update provider" do
       host_id = Faker.UUID.v4()
-      provider = Faker.StarWars.character()
 
       initial_events = [
         host_registered_event(host_id: host_id)
@@ -280,29 +278,28 @@ defmodule Tronto.Monitoring.HostTest do
         initial_events,
         UpdateProvider.new!(
           host_id: host_id,
-          provider: provider
+          provider: :azure
         ),
         %ProviderUpdated{
           host_id: host_id,
-          provider: provider
+          provider: :azure
         }
       )
     end
 
     test "should not update provider if the same provider is registered" do
       host_id = Faker.UUID.v4()
-      provider = Faker.StarWars.character()
 
       initial_events = [
         host_registered_event(host_id: host_id),
-        %ProviderUpdated{host_id: host_id, provider: provider}
+        %ProviderUpdated{host_id: host_id, provider: :azure}
       ]
 
       assert_events(
         initial_events,
         UpdateProvider.new!(
           host_id: host_id,
-          provider: provider
+          provider: :azure
         ),
         []
       )

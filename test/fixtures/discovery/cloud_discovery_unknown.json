@@ -1,0 +1,9 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+  "payload": {
+    "other_provider": {
+      "key": "value"
+    }
+  }
+}
