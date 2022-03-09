@@ -254,6 +254,14 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     end)
   end
 
+  defp parse_sap_system(
+         %{
+           "Type" => _
+         },
+         _
+       ),
+       do: []
+
   @spec parse_features(map, String.t()) :: String.t()
   defp parse_features(%{"SAPControl" => sap_control}, instance_number) do
     case extract_sap_control_instance_data(sap_control, instance_number, "features") do
