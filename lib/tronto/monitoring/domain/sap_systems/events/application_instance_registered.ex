@@ -3,6 +3,8 @@ defmodule Tronto.Monitoring.Domain.Events.ApplicationInstanceRegistered do
   This event is emitted when a database application is registered to the SAP system.
   """
 
+  alias Tronto.Monitoring.Domain.Health
+
   use TypedStruct
 
   @derive Jason.Encoder
@@ -14,5 +16,6 @@ defmodule Tronto.Monitoring.Domain.Events.ApplicationInstanceRegistered do
     field :host_id, String.t(), enforce: true
     field :instance_number, String.t(), enforce: true
     field :features, String.t(), enforce: true
+    field :health, Health.t(), enforce: true
   end
 end

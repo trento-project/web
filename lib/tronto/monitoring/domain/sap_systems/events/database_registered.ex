@@ -1,6 +1,6 @@
-defmodule Tronto.Monitoring.Domain.Events.SapSystemRegistered do
+defmodule Tronto.Monitoring.Domain.Events.DatabaseRegistered do
   @moduledoc """
-  This event is emitted when a sap system is registered.
+  This event is emitted when a database is registered.
   """
 
   alias Tronto.Monitoring.Domain.Health
@@ -9,12 +9,10 @@ defmodule Tronto.Monitoring.Domain.Events.SapSystemRegistered do
 
   @derive Jason.Encoder
   typedstruct do
-    @typedoc "SapSystemRegistered event"
+    @typedoc "DatabaseRegistered event"
 
     field :sap_system_id, String.t(), enforce: true
     field :sid, String.t(), enforce: true
-    field :tenant, String.t(), enforce: true
-    field :db_host, String.t(), enforce: true
     field :health, Health.t(), enforce: true
   end
 end

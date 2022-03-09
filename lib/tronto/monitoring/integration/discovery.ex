@@ -4,10 +4,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   from the discovery bounded-context
   """
 
-  @type command :: struct
-
-  @database_type 1
-  @application_type 2
+  require Logger
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterApplicationInstance,
@@ -22,6 +19,11 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     AzureProvider,
     SlesSubscription
   }
+
+  @type command :: struct
+
+  @database_type 1
+  @application_type 2
 
   @spec handle_discovery_event(map) :: {:ok, command} | {:ok, [command]} | {:error, any}
   def handle_discovery_event(%{
@@ -113,7 +115,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       {:ok, []},
       fn
         {:ok, command}, {:ok, commands} -> {:cont, {:ok, commands ++ [command]}}
-        {:error, _}, _ = error -> {:halt, error}
+        {:error, _} = error, _ -> {:halt, error}
       end
     )
   end
@@ -261,7 +263,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
             tenant: tenant,
             host_id: host_id,
             instance_number: instance_number,
-            features: parse_features(instance_number, instance)
+            features: parse_features(instance, instance_number),
+            health: parse_instance_health(instance, instance_number)
           )
         end
       )
@@ -288,13 +291,62 @@ defmodule Tronto.Monitoring.Integration.Discovery do
         tenant: tenant,
         db_host: db_host,
         instance_number: instance_number,
-        features: parse_features(instance_number, instance),
-        host_id: host_id
+        features: parse_features(instance, instance_number),
+        host_id: host_id,
+        health: parse_instance_health(instance, instance_number)
       )
     end)
   end
 
-  defp parse_features(instance_number, %{"SAPControl" => %{"Instances" => instances}}) do
+  defp parse_sap_system(
+         %{
+           "Type" => _
+         },
+         _
+       ),
+       do: []
+
+  @spec parse_features(map, String.t()) :: String.t()
+  defp parse_features(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "features") do
+      {:ok, features} ->
+        features
+
+      _ ->
+        ""
+    end
+  end
+
+  @spec parse_instance_number(map) :: String.t()
+  defp parse_instance_number(%{
+         "SAPControl" => %{"Properties" => %{"SAPSYSTEM" => %{"value" => instance_number}}}
+       }),
+       do: instance_number
+
+  @spec parse_instance_health(map, String.t()) :: :passing | :warning | :critical | :unknown
+  defp parse_instance_health(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "dispstatus") do
+      {:ok, dispstatus} ->
+        parse_dispstatus(dispstatus)
+
+      _ ->
+        Logger.warn("Failed to parse dispstatus for instance #{instance_number}")
+        :unknown
+    end
+  end
+
+  defp parse_dispstatus("SAPControl-GREEN"), do: :passing
+  defp parse_dispstatus("SAPControl-YELLOW"), do: :warning
+  defp parse_dispstatus("SAPControl-RED"), do: :critical
+  defp parse_dispstatus(_), do: :unknown
+
+  @spec extract_sap_control_instance_data(map, String.t(), String.t()) ::
+          {:ok, String.t()} | {:error, :key_not_found}
+  defp extract_sap_control_instance_data(
+         %{"Instances" => instances},
+         instance_number,
+         key
+       ) do
     instances
     |> Map.values()
     |> Enum.find(fn %{"instanceNr" => number} ->
@@ -303,16 +355,11 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       |> String.pad_leading(2, "0") == instance_number
     end)
     |> case do
-      %{"features" => features} ->
-        features
+      %{^key => value} ->
+        {:ok, value}
 
       _ ->
-        []
+        {:error, :key_not_found}
     end
   end
-
-  defp parse_instance_number(%{
-         "SAPControl" => %{"Properties" => %{"SAPSYSTEM" => %{"value" => instance_number}}}
-       }),
-       do: instance_number
 end

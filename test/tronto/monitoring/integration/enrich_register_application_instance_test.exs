@@ -22,7 +22,8 @@ defmodule Tronto.Monitoring.EnrichRegisterApplicationInstanceTest do
         tenant: tenant,
         instance_number: "00",
         features: Faker.Pokemon.name(),
-        host_id: Faker.UUID.v4()
+        host_id: Faker.UUID.v4(),
+        health: :passing
       )
 
     assert {:ok, %RegisterApplicationInstance{sap_system_id: ^sap_system_id}} =
@@ -44,7 +45,8 @@ defmodule Tronto.Monitoring.EnrichRegisterApplicationInstanceTest do
         tenant: tenant,
         instance_number: "00",
         features: Faker.Pokemon.name(),
-        host_id: Faker.UUID.v4()
+        host_id: Faker.UUID.v4(),
+        health: :passing
       )
 
     assert {:ok, %RegisterApplicationInstance{sap_system_id: ^sap_system_id}} =
@@ -64,7 +66,8 @@ defmodule Tronto.Monitoring.EnrichRegisterApplicationInstanceTest do
         tenant: tenant,
         instance_number: "00",
         features: Faker.Pokemon.name(),
-        host_id: Faker.UUID.v4()
+        host_id: Faker.UUID.v4(),
+        health: :passing
       )
 
     assert {:error, :database_not_found} = Enrichable.enrich(command, %{})

@@ -3,15 +3,17 @@ defmodule Tronto.Monitoring.Domain.SapSystem.Database do
   This module represents a SAP System database.
   """
 
+  alias Tronto.Monitoring.Domain.Health
+
   defstruct [
     :sid,
-    :tenant,
-    instances: []
+    instances: [],
+    health: :unknown
   ]
 
   @type t :: %__MODULE__{
           sid: String.t(),
-          tenant: String.t(),
-          instances: [Instance]
+          instances: [Instance],
+          health: Health.t()
         }
 end

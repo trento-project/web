@@ -20,6 +20,7 @@ defmodule Tronto.Monitoring.SapSystemReadModel do
     field :sid, :string
     field :tenant, :string
     field :db_host, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,

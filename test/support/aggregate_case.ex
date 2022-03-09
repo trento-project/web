@@ -39,7 +39,7 @@ defmodule Tronto.AggregateCase do
            )
            when is_function(fun, 1) do
         assert {:ok, state, _} = aggregate_run(initial_events, commands)
-        assert fun.(state)
+        fun.(state)
       end
 
       defp assert_state(initial_events, commands, expected_state) do

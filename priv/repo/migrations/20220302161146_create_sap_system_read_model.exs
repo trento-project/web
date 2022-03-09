@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddSapSystemReadModel do
+defmodule Tronto.Repo.Migrations.CreateSapSystemReadModel do
   use Ecto.Migration
 
   def change do
@@ -7,6 +7,7 @@ defmodule Tronto.Repo.Migrations.AddSapSystemReadModel do
       add :sid, :string
       add :tenant, :string
       add :db_host, :string
+      add :health, :string
     end
   end
 end

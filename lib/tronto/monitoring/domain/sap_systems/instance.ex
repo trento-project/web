@@ -3,17 +3,21 @@ defmodule Tronto.Monitoring.Domain.SapSystem.Instance do
   This module represents a SAP System instance.
   """
 
+  alias Tronto.Monitoring.Domain.Health
+
   defstruct [
     :sid,
     :instance_number,
     :features,
-    :host_id
+    :host_id,
+    :health
   ]
 
   @type t :: %__MODULE__{
           sid: String.t(),
           instance_number: String.t(),
           features: String.t(),
-          host_id: String.t()
+          host_id: String.t(),
+          health: Health.t()
         }
 end

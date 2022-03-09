@@ -11,6 +11,7 @@ defimpl Tronto.Support.Middleware.Enrichable,
   @spec enrich(RegisterApplicationInstance.t(), map) :: {:ok, map} | {:error, any}
   def enrich(%RegisterApplicationInstance{db_host: db_host, tenant: tenant} = command, _) do
     # TODO: Move this to a separate service
+    # TODO: change condition to use dbaddress
     query =
       from d in DatabaseInstanceReadModel,
         join: h in HostReadModel,
