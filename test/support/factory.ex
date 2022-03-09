@@ -35,11 +35,15 @@ defmodule Tronto.Factory do
   end
 
   def host_projection(attrs \\ []) do
+    cluster_projection = cluster_projection()
+
     Repo.insert!(%HostReadModel{
       id: Keyword.get(attrs, :id, Faker.UUID.v4()),
       hostname: Faker.StarWars.character(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: Faker.StarWars.planet(),
+      cluster_id: cluster_projection.id,
+      cluster: cluster_projection,
       heartbeat: :unknown
     })
   end
