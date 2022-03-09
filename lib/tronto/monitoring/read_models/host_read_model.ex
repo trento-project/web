@@ -7,7 +7,12 @@ defmodule Tronto.Monitoring.HostReadModel do
 
   import Ecto.Changeset
 
-  alias Tronto.Monitoring.ClusterReadModel
+  import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
+
+  alias Tronto.Monitoring.{
+    AzureProviderReadModel,
+    ClusterReadModel
+  }
 
   @type t :: %__MODULE__{}
 
@@ -17,15 +22,26 @@ defmodule Tronto.Monitoring.HostReadModel do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
     field :agent_version, :string
-    field :provider, :string
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
+
+    field :provider, Ecto.Enum, values: [:azure, :unknown]
+
+    field :provider_data, PolymorphicEmbed,
+      types: [
+        azure: AzureProviderReadModel
+      ],
+      type_field: :provider,
+      on_type_not_found: :nilify,
+      on_replace: :update
 
     has_one :cluster, ClusterReadModel, references: :cluster_id, foreign_key: :id
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(host, attrs) do
-    cast(host, attrs, __MODULE__.__schema__(:fields))
+    host
+    |> cast(attrs, List.delete(__MODULE__.__schema__(:fields), :provider_data))
+    |> cast_polymorphic_embed(:provider_data, required: false)
   end
 end

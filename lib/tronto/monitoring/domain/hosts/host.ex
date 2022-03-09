@@ -3,7 +3,10 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   alias Tronto.Monitoring.Domain.Host
 
-  alias Tronto.Monitoring.Domain.SlesSubscription
+  alias Tronto.Monitoring.Domain.{
+    AzureProvider,
+    SlesSubscription
+  }
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterHost,
@@ -28,7 +31,8 @@ defmodule Tronto.Monitoring.Domain.Host do
     :agent_version,
     :provider,
     :heartbeat,
-    :subscriptions
+    :subscriptions,
+    :provider_data
   ]
 
   @type t :: %__MODULE__{
@@ -36,8 +40,9 @@ defmodule Tronto.Monitoring.Domain.Host do
           hostname: String.t(),
           ip_addresses: [String.t()],
           agent_version: String.t(),
-          provider: String.t(),
+          provider: :azure | :unknown,
           subscriptions: [SlesSubscription.t()],
+          provider_data: AzureProvider.t() | nil,
           heartbeat: :passing | :critical | :unknown
         }
 
@@ -133,10 +138,21 @@ defmodule Tronto.Monitoring.Domain.Host do
   end
 
   def execute(
-        %Host{provider: provider},
-        %UpdateProvider{provider: provider}
+        %Host{provider: provider, provider_data: provider_data},
+        %UpdateProvider{provider: provider, provider_data: provider_data}
       ) do
     []
+  end
+
+  def execute(
+        %Host{},
+        %UpdateProvider{host_id: host_id, provider: provider, provider_data: provider_data}
+      ) do
+    %ProviderUpdated{
+      host_id: host_id,
+      provider: provider,
+      provider_data: provider_data
+    }
   end
 
   def execute(
@@ -144,16 +160,6 @@ defmodule Tronto.Monitoring.Domain.Host do
         %UpdateSlesSubscriptions{}
       ) do
     {:error, :host_not_registered}
-  end
-
-  def execute(
-        %Host{},
-        %UpdateProvider{host_id: host_id, provider: provider}
-      ) do
-    %ProviderUpdated{
-      host_id: host_id,
-      provider: provider
-    }
   end
 
   def execute(%Host{subscriptions: subscriptions}, %UpdateSlesSubscriptions{
@@ -232,11 +238,12 @@ defmodule Tronto.Monitoring.Domain.Host do
 
   def apply(
         %Host{} = host,
-        %ProviderUpdated{provider: provider}
+        %ProviderUpdated{provider: provider, provider_data: provider_data}
       ) do
     %Host{
       host
-      | provider: provider
+      | provider: provider,
+        provider_data: provider_data
     }
   end
 

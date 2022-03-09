@@ -8,8 +8,8 @@ defmodule Tronto.Monitoring.Integration.SubscriptionsTest do
 
   alias Tronto.Monitoring.Integration.Discovery
 
-  describe "cloud_discovery" do
-    test "cloud_discovery payload with azure provider should return the expected commands" do
+  describe "subscription_discovery" do
+    test "subscription_discovery payload should return the expected commands" do
       assert {
                :ok,
                %UpdateSlesSubscriptions{
@@ -81,7 +81,7 @@ defmodule Tronto.Monitoring.Integration.SubscriptionsTest do
                      type: nil,
                      version: "15.3"
                    },
-                   %Tronto.Monitoring.Domain.SlesSubscription{
+                   %SlesSubscription{
                      arch: "x86_64",
                      expires_at: nil,
                      host_id: "0fc07435-7ee2-54ca-b0de-fb27ffdc5deb",

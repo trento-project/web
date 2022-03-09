@@ -67,6 +67,7 @@ defmodule Tronto.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.17.1"},
       {:plug_cowboy, "~> 2.5"},
+      {:polymorphic_embed, "~> 1.9.0"},
       {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.26"},
       {:quantum, ">= 1.8.0"},
