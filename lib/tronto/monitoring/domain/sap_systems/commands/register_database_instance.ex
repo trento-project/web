@@ -6,6 +6,8 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterDatabaseInstance do
   use TypedStruct
   use Domo
 
+  alias Tronto.Monitoring.Domain.Health
+
   typedstruct do
     @typedoc "RegisterDatabaseInstance command"
 
@@ -15,6 +17,7 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterDatabaseInstance do
     field :host_id, String.t(), enforce: true
     field :instance_number, String.t(), enforce: true
     field :features, String.t(), enforce: true
+    field :health, Health.t(), enforce: true
   end
 
   use Vex.Struct
