@@ -6,10 +6,14 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
 
   alias Tronto.Monitoring.{
     ClusterProjector,
-    ClusterReadModel
+    ClusterReadModel,
+    HostReadModel
   }
 
-  alias Tronto.Monitoring.Domain.Events.ClusterDetailsUpdated
+  alias Tronto.Monitoring.Domain.Events.{
+    ClusterDetailsUpdated,
+    HostAddedToCluster
+  }
 
   alias Tronto.ProjectorTestHelper
   alias Tronto.Repo
@@ -50,5 +54,41 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
     assert cluster_details_updated_event.name == cluster_projection.name
     assert cluster_details_updated_event.sid == cluster_projection.sid
     assert cluster_details_updated_event.type == cluster_projection.type
+  end
+
+  test "should update the cluster_id field when HostAddedToCluster event is received and the host was already registered" do
+    host_projection(
+      id: host_id = UUID.uuid4(),
+      hostname: hostname = Faker.StarWars.character(),
+      cluster: nil
+    )
+
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
+
+    event = %HostAddedToCluster{
+      host_id: host_id,
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert event.cluster_id == host_projection.cluster_id
+    assert hostname == host_projection.hostname
+  end
+
+  test "should project a new host with no additional properties when HostAddedToCluster event is received" do
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
+
+    event = %HostAddedToCluster{
+      host_id: Faker.UUID.v4(),
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert event.cluster_id == host_projection.cluster_id
+    assert nil == host_projection.hostname
   end
 end

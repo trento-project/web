@@ -59,7 +59,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
           } = payload
       }) do
     RegisterCluster.new(
-      cluster_id: id,
+      cluster_id: UUID.uuid5(nil, id),
       host_id: agent_id,
       name: name,
       sid: parse_cluster_sid(payload),
@@ -75,11 +75,13 @@ defmodule Tronto.Monitoring.Integration.Discovery do
             "Provider" => "azure"
           } = payload
       }) do
-    UpdateProvider.new(
-      host_id: agent_id,
-      provider: :azure,
-      provider_data: parse_azure_data(payload)
-    )
+    with {:ok, azure_data} <- parse_azure_data(payload) do
+      UpdateProvider.new(
+        host_id: agent_id,
+        provider: :azure,
+        provider_data: azure_data
+      )
+    end
   end
 
   def handle_discovery_event(%{
@@ -134,6 +136,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     end
   end
 
+  defp detect_cluster_type(%{"Crmmon" => %{"Clones" => nil}}), do: :unknown
+
   defp detect_cluster_type(%{"Crmmon" => %{"Clones" => clones}}) do
     has_sap_hana_topology =
       Enum.any?(clones, fn %{"Resources" => resources} ->
@@ -156,6 +160,9 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   defp do_detect_cluster_type(true, true, _), do: :hana_scale_up
   defp do_detect_cluster_type(true, _, true), do: :hana_scale_out
   defp do_detect_cluster_type(_, _, _), do: :unknown
+
+  defp parse_cluster_sid(%{"Cib" => %{"Configuration" => %{"Resources" => %{"Clones" => nil}}}}),
+    do: nil
 
   defp parse_cluster_sid(%{"Cib" => %{"Configuration" => %{"Resources" => %{"Clones" => clones}}}}) do
     clones
@@ -213,33 +220,35 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     )
   end
 
+  @spec parse_azure_data(map) :: {:ok, AzureProvider.t()} | {:error, any}
   defp parse_azure_data(%{
-         "Provider" => provider,
          "Metadata" => %{
            "compute" => %{
              "name" => name,
              "resourceId" => resource_group,
              "location" => location,
              "vmSize" => vm_size,
-             "storageProfile" => %{
-               "dataDisks" => data_disk
-             },
+             "storageProfile" => storage_profile,
              "offer" => offer,
              "sku" => sku
            }
          }
        }) do
-    AzureProvider.new!(
-      provider: provider,
+    AzureProvider.new(
       vm_name: name,
       resource_group: resource_group,
       location: location,
       vm_size: vm_size,
-      data_disk_number: length(data_disk),
+      data_disk_number: parse_data_disk_number(storage_profile),
       offer: offer,
       sku: sku
     )
   end
+
+  @spec parse_data_disk_number(map) :: non_neg_integer()
+  defp parse_data_disk_number(%{"dataDisks" => data_disks}), do: length(data_disks)
+
+  defp parse_data_disk_number(_), do: 0
 
   defp parse_sap_system(
          %{

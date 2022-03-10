@@ -25,7 +25,6 @@ defmodule Tronto.Monitoring.Integration.DiscoveryTest do
                    data_disk_number: 7,
                    location: "westeurope",
                    offer: "sles-sap-15-sp3-byos",
-                   provider: "azure",
                    resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
                    sku: "gen2",
                    vm_size: "Standard_E4s_v3"
