@@ -1,0 +1,160 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "0fc07435-7ee2-54ca-b0de-fb27ffdc5deb",
+  "payload": {
+    "Provider": "azure",
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000",
+        "vmId": "a7321bd7-c191-4650-b368-9c0b7bf04de6",
+        "platformFaultDomain": "0",
+        "osType": "Linux",
+        "sku": "gen2",
+        "osProfile": {
+          "adminUsername": "cloudadmin",
+          "computerName": "vmnwprd04",
+          "disablePasswordAuthentication": "true"
+        },
+        "tags": "fake-tags",
+        "version": "2021.12.19",
+        "location": "westeurope",
+        "provider": "Microsoft.Compute",
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "offer": "sles-sap-15-sp3-byos",
+        "platformUpdateDomain": "1",
+        "plan": {},
+        "publisher": "SUSE",
+        "name": "vmnwprd04",
+        "storageProfile": {
+          "imageReference": {
+            "sku": "gen2",
+            "publisher": "SUSE",
+            "version": "latest",
+            "offer": "sles-sap-15-sp3-byos"
+          },
+          "osDisk": {
+            "diffDiskSettings": {
+              "option": ""
+            },
+            "name": "disk-netweaver04-Os",
+            "writeAcceleratorEnabled": "false",
+            "diskSizeGB": "30",
+            "image": {
+              "uri": ""
+            },
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000"
+            },
+            "encryptionSettings": {
+              "enabled": "false"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "osType": "Linux",
+            "vhd": {
+              "uri": ""
+            }
+          },
+          "dataDisks": [
+            {
+              "name": "disk-netweaver02-App",
+              "writeAcceleratorEnabled": "false",
+              "image": {
+                "uri": ""
+              },
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS",
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000"
+              },
+              "diskSizeGB": "128",
+              "createOption": "Attach",
+              "caching": "ReadWrite",
+              "vhd": {
+                "uri": ""
+              },
+              "lun": "0"
+            }
+          ]
+        },
+        "vmSize": "Standard_D2s_v3",
+        "resourceGroupName": "resourceGroupName",
+        "publicKeys": [
+          {
+            "path": "ssh-no-see",
+            "keyData": "ssh-no-see"
+          }
+        ],
+        "isHostCompatibilityLayerVm": "false",
+        "securityProfile": {
+          "virtualTpmEnabled": "false",
+          "secureBootEnabled": "false"
+        },
+        "tagsList": [
+          {
+            "name": "Cost Center",
+            "value": "00000000"
+          },
+          {
+            "name": "Department",
+            "value": "EI"
+          },
+          {
+            "name": "Environment",
+            "value": "Development"
+          },
+          {
+            "name": "Finance Business Partner",
+            "value": "John Doe"
+          },
+          {
+            "name": "General Ledger Code",
+            "value": "100000000"
+          },
+          {
+            "name": "Group",
+            "value": "SAP Solutions"
+          },
+          {
+            "name": "Owner",
+            "value": "John Doe"
+          },
+          {
+            "name": "Stakeholder",
+            "value": "John Doe"
+          },
+          {
+            "name": "workspace",
+            "value": "xxxxxxx"
+          }
+        ]
+      },
+      "network": {
+        "interface": [
+          {
+            "macAddress": "000D3A2E8FAD",
+            "ipv4": {
+              "subnet": [
+                {
+                  "prefix": "24",
+                  "address": "10.80.1.0"
+                }
+              ],
+              "ipAddress": [
+                {
+                  "privateIpAddress": "10.80.1.24",
+                  "publicIpAddress": "XX.XXX.XX.XXX"
+                },
+                {
+                  "privateIpAddress": "10.80.1.28"
+                }
+              ]
+            },
+            "ipv6": {}
+          }
+        ]
+      }
+    }
+  }
+}

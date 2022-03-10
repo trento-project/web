@@ -1,0 +1,50 @@
+{
+  "checks": {
+    "C620DC": {
+      "hosts": {
+        "vmhdbprd01": {
+          "msg": "",
+          "result": "passing"
+        },
+        "vmhdbprd02": {
+          "msg": "",
+          "result": "passing"
+        }
+      }
+    },
+    "00081D": {
+      "hosts": {
+        "vmhdbprd01": {
+          "msg": "",
+          "result": "warning"
+        },
+        "vmhdbprd02": {
+          "msg": "",
+          "result": "warning"
+        }
+      }
+    },
+    "0B6DB2": {
+      "hosts": {
+        "vmhdbprd01": {
+          "msg": "",
+          "result": "critical"
+        },
+        "vmhdbprd02": {
+          "msg": "",
+          "result": "critical"
+        }
+      }
+    }
+  },
+  "hosts": {
+    "vmhdbprd01": {
+      "msg": "",
+      "reachable": true
+    },
+    "vmhdbprd02": {
+      "msg": "",
+      "reachable": true
+    }
+  }
+}

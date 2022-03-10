@@ -1,0 +1,48 @@
+{
+  "agent_id": "81e9b629-c1e7-538f-bff1-47d3a6580522",
+  "discovery_type": "subscription_discovery",
+  "payload": [
+    {
+      "arch": "x86_64",
+      "status": "Not Registered",
+      "version": "15.3",
+      "identifier": "SLES_SAP"
+    },
+    {
+      "arch": "x86_64",
+      "status": "Not Registered",
+      "version": "15.3",
+      "identifier": "sle-module-basesystem"
+    },
+    {
+      "arch": "x86_64",
+      "status": "Not Registered",
+      "version": "15.3",
+      "identifier": "sle-module-desktop-applications"
+    },
+    {
+      "arch": "x86_64",
+      "status": "Not Registered",
+      "version": "15.3",
+      "identifier": "sle-module-server-applications"
+    },
+    {
+      "arch": "x86_64",
+      "status": "Not Registered",
+      "version": "15.3",
+      "identifier": "sle-ha"
+    },
+    {
+      "arch": "x86_64",
+      "status": "Not Registered",
+      "version": "15.3",
+      "identifier": "sle-module-sap-applications"
+    },
+    {
+      "arch": "x86_64",
+      "status": "Not Registered",
+      "version": "15.3",
+      "identifier": "sle-module-public-cloud"
+    }
+  ]
+}

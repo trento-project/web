@@ -1,0 +1,19 @@
+{
+  "agent_id": "9a26b6d0-6e72-597c-9fe5-152a6875f214",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "hostname": "vmiscsi01",
+    "cpu_count": 1,
+    "os_version": "15-SP3",
+    "ssh_address": "10.80.1.4",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.80.1.4",
+      "fe80::20d:3aff:fe2e:835a"
+    ],
+    "socket_count": 1,
+    "agent_version": "0.7.1+git.dev42.1640084952.33229fc",
+    "total_memory_mb": 3421
+  }
+}

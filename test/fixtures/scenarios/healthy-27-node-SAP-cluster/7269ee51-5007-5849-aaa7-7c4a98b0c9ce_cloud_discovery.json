@@ -1,0 +1,137 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "7269ee51-5007-5849-aaa7-7c4a98b0c9ce",
+  "payload": {
+    "Provider": "azure",
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000",
+        "vmId": "84e20bce-76e8-4d55-bdea-7ec3faff60f2",
+        "platformFaultDomain": "1",
+        "osType": "Linux",
+        "sku": "gen2",
+        "osProfile": {
+          "adminUsername": "cloudadmin",
+          "computerName": "vmnwdev01",
+          "disablePasswordAuthentication": "true"
+        },
+        "tags": "fake-tags",
+        "version": "2021.12.19",
+        "location": "westeurope",
+        "provider": "Microsoft.Compute",
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "offer": "sles-sap-15-sp3-byos",
+        "platformUpdateDomain": "0",
+        "plan": {},
+        "publisher": "SUSE",
+        "name": "vmnwdev01",
+        "storageProfile": {
+          "imageReference": {
+            "sku": "gen2",
+            "publisher": "SUSE",
+            "version": "latest",
+            "offer": "sles-sap-15-sp3-byos"
+          },
+          "osDisk": {
+            "diffDiskSettings": {
+              "option": ""
+            },
+            "name": "disk-netweaver01-Os",
+            "writeAcceleratorEnabled": "false",
+            "diskSizeGB": "30",
+            "image": {
+              "uri": ""
+            },
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS",
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000"
+            },
+            "encryptionSettings": {
+              "enabled": "false"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "osType": "Linux",
+            "vhd": {
+              "uri": ""
+            }
+          }
+        },
+        "vmSize": "Standard_D2s_v3",
+        "resourceGroupName": "resourceGroupName",
+        "publicKeys": [
+          {
+            "path": "ssh-no-see",
+            "keyData": "ssh-no-see"
+          }
+        ],
+        "isHostCompatibilityLayerVm": "false",
+        "securityProfile": {
+          "virtualTpmEnabled": "false",
+          "secureBootEnabled": "false"
+        },
+        "tagsList": [
+          {
+            "name": "Cost Center",
+            "value": "00000000"
+          },
+          {
+            "name": "Department",
+            "value": "EI"
+          },
+          {
+            "name": "Environment",
+            "value": "Development"
+          },
+          {
+            "name": "Finance Business Partner",
+            "value": "John Doe"
+          },
+          {
+            "name": "General Ledger Code",
+            "value": "100000000"
+          },
+          {
+            "name": "Group",
+            "value": "SAP Solutions"
+          },
+          {
+            "name": "Owner",
+            "value": "John Doe"
+          },
+          {
+            "name": "Stakeholder",
+            "value": "John Doe"
+          },
+          {
+            "name": "workspace",
+            "value": "xxxxxxx"
+          }
+        ]
+      },
+      "network": {
+        "interface": [
+          {
+            "macAddress": "6045BD8A5CE7",
+            "ipv4": {
+              "subnet": [
+                {
+                  "prefix": "24",
+                  "address": "10.100.1.0"
+                }
+              ],
+              "ipAddress": [
+                {
+                  "privateIpAddress": "10.100.1.21",
+                  "publicIpAddress": "XX.XXX.XX.XXX"
+                }
+              ]
+            },
+            "ipv6": {}
+          }
+        ]
+      }
+    }
+  }
+}
