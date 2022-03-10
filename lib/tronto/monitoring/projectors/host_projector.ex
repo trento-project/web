@@ -13,7 +13,6 @@ defmodule Tronto.Monitoring.HostProjector do
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
-    HostAddedToCluster,
     HostDetailsUpdated,
     HostRegistered,
     ProviderUpdated
