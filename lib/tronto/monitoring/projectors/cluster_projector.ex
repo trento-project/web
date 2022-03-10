@@ -8,6 +8,8 @@ defmodule Tronto.Monitoring.ClusterProjector do
     repo: Tronto.Repo,
     name: "cluster_projector"
 
+  import Tronto.Support.DataMapper
+
   alias Tronto.Monitoring.Domain.Events.{
     ChecksSelected,
     ClusterDetailsUpdated,
@@ -94,9 +96,11 @@ defmodule Tronto.Monitoring.ClusterProjector do
         _,
         %{cluster: cluster}
       ) do
-    # FIXME: Use a DTO here instead of sending the whole thing
-    cluster = Repo.preload(cluster, :checks_results)
-    TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_registered", cluster)
+    TrontoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "cluster_registered",
+      cluster |> Repo.preload(:checks_results) |> to_map()
+    )
   end
 
   def after_update(
@@ -104,9 +108,11 @@ defmodule Tronto.Monitoring.ClusterProjector do
         _,
         %{cluster: cluster}
       ) do
-    # FIXME: Use a DTO here instead of sending the whole thing
-    cluster = Repo.preload(cluster, :checks_results)
-    TrontoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_details_updated", cluster)
+    TrontoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "cluster_details_updated",
+      to_map(cluster)
+    )
   end
 
   def after_update(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, _, _) do
