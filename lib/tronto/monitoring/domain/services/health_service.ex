@@ -5,11 +5,19 @@ defmodule Tronto.Monitoring.Domain.HealthService do
 
   alias Tronto.Monitoring.Domain.Health
 
-  @spec compute_aggregated_health([Health.t()]) :: Health.t()
+  @spec compute_aggregated_health([Health.t() | String.t()]) :: Health.t()
   def compute_aggregated_health([]), do: :unknown
 
   def compute_aggregated_health(healths) do
     healths
+    # FIXME: this will be removed once we have event casting to structs in place
+    |> Enum.map(fn
+      health when is_binary(health) ->
+        String.to_existing_atom(health)
+
+      health ->
+        health
+    end)
     |> Enum.map(&{&1, health_weight(&1)})
     |> Enum.max_by(fn {_, weight} -> weight end)
     |> elem(0)
