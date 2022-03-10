@@ -14,6 +14,40 @@ defmodule TrontoWeb.ClusterController do
     json(conn, clusters)
   end
 
+  def create_tag(conn, %{
+        "id" => resource_id,
+        "value" => value
+      }) do
+    case Monitoring.Tags.create_tag(value, resource_id, "cluster") do
+      {:ok, _} ->
+        conn
+        |> put_status(:accepted)
+        |> json(%{})
+
+      {:error, _, reason, _} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: reason})
+    end
+  end
+
+  def delete_tag(conn, %{
+        "id" => resource_id,
+        "value" => value
+      }) do
+    case Monitoring.Tags.delete_tag(value, resource_id) do
+      {0, _} ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{})
+
+      {_affected, _} ->
+        conn
+        |> put_status(:accepted)
+        |> json(%{})
+    end
+  end
+
   @spec store_checks_results(Plug.Conn.t(), map) :: Plug.Conn.t()
   def store_checks_results(
         conn,

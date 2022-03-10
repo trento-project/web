@@ -58,6 +58,12 @@ defmodule Tronto.Monitoring do
     |> Repo.preload(cluster: :checks_results)
   end
 
+  @spec get_all_tags :: [TagReadModel.t()]
+  def get_all_tags do
+    TagReadModel
+    |> Repo.all()
+  end
+
   @spec get_all_clusters :: [ClusterReadModel.t()]
   def get_all_clusters do
     ClusterReadModel
