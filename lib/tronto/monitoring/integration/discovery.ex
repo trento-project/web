@@ -59,7 +59,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
           } = payload
       }) do
     RegisterCluster.new(
-      cluster_id: id,
+      cluster_id: UUID.uuid5(:nil, id),
       host_id: agent_id,
       name: name,
       sid: parse_cluster_sid(payload),
@@ -136,6 +136,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     end
   end
 
+  defp detect_cluster_type(%{"Crmmon" => %{"Clones" => nil}}), do: :unknown
+
   defp detect_cluster_type(%{"Crmmon" => %{"Clones" => clones}}) do
     has_sap_hana_topology =
       Enum.any?(clones, fn %{"Resources" => resources} ->
@@ -158,6 +160,9 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   defp do_detect_cluster_type(true, true, _), do: :hana_scale_up
   defp do_detect_cluster_type(true, _, true), do: :hana_scale_out
   defp do_detect_cluster_type(_, _, _), do: :unknown
+
+  defp parse_cluster_sid(%{"Cib" => %{"Configuration" => %{"Resources" => %{"Clones" => nil}}}}),
+    do: nil
 
   defp parse_cluster_sid(%{"Cib" => %{"Configuration" => %{"Resources" => %{"Clones" => clones}}}}) do
     clones
@@ -215,6 +220,73 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     )
   end
 
+  %{
+    "Metadata" => %{
+      "compute" => %{
+        "name" => "vmnwdev02",
+        "location" => "westeurope",
+        "offer" => "sles-sap-15-sp3-byos",
+        "sku" => "gen2",
+        "resourceId" => "/subscriptions/00000000-0000-0000-0000-000000000000",
+        "storageProfile" => %{
+          "imageReference" => %{
+            "offer" => "sles-sap-15-sp3-byos",
+            "publisher" => "SUSE",
+            "sku" => "gen2",
+            "version" => "latest"
+          },
+          "osDisk" => %{
+            "caching" => "ReadWrite",
+            "createOption" => "FromImage",
+            "diffDiskSettings" => %{"option" => ""},
+            "diskSizeGB" => "30",
+            "encryptionSettings" => %{"enabled" => "false"},
+            "image" => %{"uri" => ""},
+            "managedDisk" => %{
+              "id" => "/subscriptions/00000000-0000-0000-0000-000000000000",
+              "storageAccountType" => "Premium_LRS"
+            },
+            "name" => "disk-netweaver02-Os",
+            "osType" => "Linux",
+            "vhd" => %{"uri" => ""},
+            "writeAcceleratorEnabled" => "false"
+          }
+        },
+        "subscriptionId" => "00000000-0000-0000-0000-000000000000",
+        "tags" => "fake-tags",
+        "tagsList" => [
+          %{"name" => "Cost Center", "value" => "00000000"},
+          %{"name" => "Department", "value" => "EI"},
+          %{"name" => "Environment", "value" => "Development"},
+          %{"name" => "Finance Business Partner", "value" => "John Doe"},
+          %{"name" => "General Ledger Code", "value" => "100000000"},
+          %{"name" => "Group", "value" => "SAP Solutions"},
+          %{"name" => "Owner", "value" => "John Doe"},
+          %{"name" => "Stakeholder", "value" => "John Doe"},
+          %{"name" => "workspace", "value" => "xxxxxxx"}
+        ],
+        "version" => "2021.12.19",
+        "vmId" => "84f224b2-ad29-41a7-94ae-26ced84cdace",
+        "vmSize" => "Standard_D2s_v3"
+      },
+      "network" => %{
+        "interface" => [
+          %{
+            "ipv4" => %{
+              "ipAddress" => [
+                %{"privateIpAddress" => "10.100.1.22", "publicIpAddress" => "XX.XXX.XX.XXX"}
+              ],
+              "subnet" => [%{"address" => "10.100.1.0", "prefix" => "24"}]
+            },
+            "ipv6" => %{},
+            "macAddress" => "6045BD8D9C7D"
+          }
+        ]
+      }
+    },
+    "Provider" => "azure"
+  }
+
   @spec parse_azure_data(map) :: {:ok, AzureProvider.t()} | {:error, any}
   defp parse_azure_data(%{
          "Metadata" => %{
@@ -223,9 +295,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
              "resourceId" => resource_group,
              "location" => location,
              "vmSize" => vm_size,
-             "storageProfile" => %{
-               "dataDisks" => data_disk
-             },
+             "storageProfile" => storage_profile,
              "offer" => offer,
              "sku" => sku
            }
@@ -236,11 +306,22 @@ defmodule Tronto.Monitoring.Integration.Discovery do
       resource_group: resource_group,
       location: location,
       vm_size: vm_size,
-      data_disk_number: length(data_disk),
+      data_disk_number: parse_data_disk_number(storage_profile),
       offer: offer,
       sku: sku
     )
   end
+
+  @spec parse_data_disk_number(map) :: non_neg_integer()
+  defp parse_data_disk_number(%{
+         "storageProfile" => %{
+           "dataDisks" => data_disks
+         }
+       }),
+       do: length(data_disks)
+
+  defp parse_data_disk_number(_),
+    do: 0
 
   defp parse_sap_system(
          %{
