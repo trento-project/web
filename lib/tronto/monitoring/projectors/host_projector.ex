@@ -8,6 +8,8 @@ defmodule Tronto.Monitoring.HostProjector do
     repo: Tronto.Repo,
     name: "host_projector"
 
+  import Tronto.Support.DataMapper
+
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
@@ -40,7 +42,10 @@ defmodule Tronto.Monitoring.HostProjector do
           heartbeat: heartbeat
         })
 
-      Ecto.Multi.insert(multi, :host, changeset)
+      Ecto.Multi.insert(multi, :host, changeset,
+        on_conflict: :replace_all,
+        conflict_target: [:id]
+      )
     end
   )
 
@@ -121,7 +126,7 @@ defmodule Tronto.Monitoring.HostProjector do
           cluster_id: cluster_id
         })
 
-      Ecto.Multi.insert(multi, :host_added_to_cluster, changeset,
+      Ecto.Multi.insert(multi, :host, changeset,
         on_conflict: {:replace, [:cluster_id]},
         conflict_target: [:id]
       )
@@ -134,7 +139,7 @@ defmodule Tronto.Monitoring.HostProjector do
         _,
         %{host: host}
       ) do
-    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_registered", host)
+    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_registered", to_map(host))
   end
 
   def after_update(
@@ -142,7 +147,7 @@ defmodule Tronto.Monitoring.HostProjector do
         _,
         %{host: host}
       ) do
-    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
+    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", to_map(host))
   end
 
   def after_update(
@@ -178,29 +183,32 @@ defmodule Tronto.Monitoring.HostProjector do
   def after_update(
         %ProviderUpdated{},
         _,
-        %{host: host}
+        %{host: %HostReadModel{id: id, provider: provider, provider_data: provider_data}}
       ) do
-    # FIXME: Use a DTO here instead of sending the whole thing
-    host =
-      HostReadModel
-      |> Repo.get(host.id)
-      |> Repo.preload(cluster: :checks_results)
-
-    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
+    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", %{
+      id: id,
+      provider: provider,
+      provider_data: provider_data
+    })
   end
 
   def after_update(
         %HostAddedToCluster{},
         _,
-        %{host_added_to_cluster: host}
+        %{host: host}
       ) do
-    # FIXME: Use a DTO here instead of sending the whole thing
-    host =
-      HostReadModel
-      |> Repo.get(host.id)
-      |> Repo.preload(cluster: :checks_results)
+    %HostReadModel{id: id, cluster_id: cluster_id, cluster: cluster} =
+      Repo.preload(host, :cluster)
 
-    TrontoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", host)
+    TrontoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_details_updated",
+      %{
+        id: id,
+        cluster_id: cluster_id,
+        cluster: to_map(cluster)
+      }
+    )
   end
 
   def after_update(_, _, _), do: :ok
