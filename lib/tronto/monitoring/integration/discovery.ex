@@ -75,11 +75,13 @@ defmodule Tronto.Monitoring.Integration.Discovery do
             "Provider" => "azure"
           } = payload
       }) do
-    UpdateProvider.new(
-      host_id: agent_id,
-      provider: :azure,
-      provider_data: parse_azure_data(payload)
-    )
+    with {:ok, azure_data} <- parse_azure_data(payload) do
+      UpdateProvider.new(
+        host_id: agent_id,
+        provider: :azure,
+        provider_data: azure_data
+      )
+    end
   end
 
   def handle_discovery_event(%{
@@ -213,8 +215,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
     )
   end
 
+  @spec parse_azure_data(map) :: {:ok, AzureProvider.t()} | {:error, any}
   defp parse_azure_data(%{
-         "Provider" => provider,
          "Metadata" => %{
            "compute" => %{
              "name" => name,
@@ -229,8 +231,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
            }
          }
        }) do
-    AzureProvider.new!(
-      provider: provider,
+    AzureProvider.new(
       vm_name: name,
       resource_group: resource_group,
       location: location,

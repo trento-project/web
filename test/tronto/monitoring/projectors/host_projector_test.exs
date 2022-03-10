@@ -94,7 +94,6 @@ defmodule Tronto.Monitoring.HostProjectorTest do
       host_id: host_id,
       provider: :azure,
       provider_data: %{
-        provider: :azure,
         vm_name: "vmhdbdev01",
         data_disk_number: 7,
         location: "westeurope",

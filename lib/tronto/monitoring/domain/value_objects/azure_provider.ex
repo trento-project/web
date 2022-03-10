@@ -10,7 +10,6 @@ defmodule Tronto.Monitoring.Domain.AzureProvider do
   typedstruct do
     @typedoc "AzureProvider value object"
 
-    field :provider, String.t()
     field :vm_name, String.t()
     field :resource_group, String.t()
     field :location, String.t()
