@@ -13,7 +13,7 @@ defmodule Tronto.Repo.Migrations.CreateSlesSubscriptionReadModel do
       add :starts_at, :string
       add :expires_at, :string
 
-      timestamps
+      timestamps()
     end
 
     create index(:sles_subscriptions, [:host_id])
