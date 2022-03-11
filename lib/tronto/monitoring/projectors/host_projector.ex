@@ -105,7 +105,7 @@ defmodule Tronto.Monitoring.HostProjector do
         |> Repo.get(id)
         |> HostReadModel.changeset(%{
           provider: provider,
-          provider_data: Map.put(provider_data, :provider, provider)
+          provider_data: provider_data |> Map.from_struct() |> Map.put(:provider, provider)
         })
 
       Ecto.Multi.update(multi, :host, changeset)

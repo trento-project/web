@@ -55,7 +55,7 @@ config :tronto, Tronto.Commanded,
   pubsub: :local,
   registry: :local
 
-config :tronto, Tronto.EventStore, serializer: Commanded.Serialization.JsonSerializer
+config :tronto, Tronto.EventStore, serializer: EventStore.TermSerializer
 
 config :tronto, event_stores: [Tronto.EventStore]
 

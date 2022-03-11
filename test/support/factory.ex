@@ -5,6 +5,8 @@ defmodule Tronto.Factory do
 
   alias Tronto.Repo
 
+  alias Tronto.Monitoring.Domain.SlesSubscription
+
   alias Tronto.Monitoring.Domain.Events.{
     ApplicationInstanceRegistered,
     ClusterRegistered,
@@ -80,7 +82,7 @@ defmodule Tronto.Factory do
     %SlesSubscriptionsUpdated{
       host_id: host_id,
       subscriptions: [
-        %{
+        %SlesSubscription{
           host_id: host_id,
           identifier: Faker.StarWars.planet(),
           version: Faker.StarWars.character(),

@@ -8,7 +8,7 @@ defmodule Tronto.Repo.Migrations.CreateCheckResultReadModel do
       add :check_id, :string, primary_key: true
       add :result, :string
 
-      timestamps
+      timestamps()
     end
   end
 end
