@@ -1,4 +1,6 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
+
+import { TableFilters } from './filters';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
@@ -7,7 +9,7 @@ const defaultCellRender = (content) => (
 const renderCells = (columns, item) => {
   return (
     <Fragment>
-      {columns.map(({ title, key, render = defaultCellRender }) => {
+      {columns.map(({ key, render = defaultCellRender }) => {
         const content = item[key];
         return (
           <td
@@ -24,9 +26,31 @@ const renderCells = (columns, item) => {
 
 const Table = ({ config, data = [] }) => {
   const { columns } = config;
+  const [filters, setFilters] = useState([]);
+
+  const renderedData = filters
+    .map(({ value, filterFunction }) => {
+      if (value.length === 0) {
+        return () => true;
+      }
+      return filterFunction;
+    })
+    .reduce((data, filterFunction) => {
+      return data.filter(filterFunction);
+    }, data);
 
   return (
     <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
+      <div className="flex items-center">
+        <TableFilters
+          config={config}
+          data={data}
+          filters={filters}
+          onChange={(newFilters) => {
+            setFilters(newFilters);
+          }}
+        />
+      </div>
       <div className="py-8">
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
           <div className="inline-block min-w-fit shadow rounded-lg">
@@ -45,7 +69,7 @@ const Table = ({ config, data = [] }) => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((item, index) => (
+                {renderedData.map((item, index) => (
                   <tr key={index}>{renderCells(columns, item)}</tr>
                 ))}
               </tbody>
