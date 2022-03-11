@@ -11,11 +11,12 @@ defmodule Tronto.Monitoring.Integration.DiscoveryTest do
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterApplicationInstance,
+    RegisterClusterHost,
     RegisterDatabaseInstance
   }
 
   describe "cloud_discovery" do
-    test "cloud_discovery payload with azure provider should return the expected commands" do
+    test "cloud_discovery payload with azure provider should return the expected command" do
       assert {
                :ok,
                %UpdateProvider{
@@ -37,7 +38,7 @@ defmodule Tronto.Monitoring.Integration.DiscoveryTest do
                |> Discovery.handle_discovery_event()
     end
 
-    test "cloud_discovery payload with unknown provider should return the expected commands" do
+    test "cloud_discovery payload with unknown provider should return the expected command" do
       assert {
                :ok,
                %UpdateProvider{
@@ -52,8 +53,22 @@ defmodule Tronto.Monitoring.Integration.DiscoveryTest do
     end
   end
 
+  describe "ha_cluster_discovery" do
+    test "ha_cluster_discovery payload of type HANA Scale-up should return the expected command" do
+      assert {
+               :ok,
+               %RegisterClusterHost{
+                 designated_controller: true
+               }
+             } =
+               "ha_cluster_discovery_hana_scale_up"
+               |> load_discovery_event_fixture()
+               |> Discovery.handle_discovery_event()
+    end
+  end
+
   describe "sap_system_discovery" do
-    test "sap_system_discovery payload of type database parsing should return the expected commands" do
+    test "sap_system_discovery payload of type database should return the expected commands" do
       assert {:ok,
               [
                 %RegisterDatabaseInstance{
