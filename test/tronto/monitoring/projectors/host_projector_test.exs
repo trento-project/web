@@ -10,6 +10,8 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     HostReadModel
   }
 
+  alias Tronto.Monitoring.Domain.AzureProvider
+
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
@@ -92,7 +94,7 @@ defmodule Tronto.Monitoring.HostProjectorTest do
     event = %ProviderUpdated{
       host_id: host_id,
       provider: :azure,
-      provider_data: %{
+      provider_data: %AzureProvider{
         vm_name: "vmhdbdev01",
         data_disk_number: 7,
         location: "westeurope",

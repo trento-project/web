@@ -28,7 +28,7 @@ defmodule Tronto.Monitoring.SlesSubscriptionsProjector do
       |> Enum.map(fn subscription ->
         SlesSubscriptionReadModel.changeset(
           %SlesSubscriptionReadModel{},
-          subscription
+          Map.from_struct(subscription)
         )
       end)
       |> Enum.reduce(multi, fn %{changes: %{host_id: host_id, identifier: identifier}} = changeset,
