@@ -12,6 +12,8 @@
 
 import Tronto.Seeds.Helpers
 
+FunWithFlags.enable(:convert_agent_ids)
+
 %Tronto.Accounts.User{}
 |> Tronto.Accounts.User.changeset(%{
   email: "chiecks@tronto.io",

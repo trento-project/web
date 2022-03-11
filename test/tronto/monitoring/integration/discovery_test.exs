@@ -1,5 +1,6 @@
 defmodule Tronto.Monitoring.Integration.DiscoveryTest do
   use ExUnit.Case
+  use Tronto.DataCase
 
   import Tronto.DiscoveryFixturesHelper
 
@@ -59,7 +60,7 @@ defmodule Tronto.Monitoring.Integration.DiscoveryTest do
                   features: "HDB|HDB_WORKER",
                   host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                   instance_number: "00",
-                  sap_system_id: "1118a8f8-e892-5a6f-a1a8-df31260cde44",
+                  sap_system_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
                   sid: "PRD",
                   tenant: "PRD",
                   health: :passing

@@ -80,11 +80,24 @@ config :tronto, Tronto.Scheduler,
   ],
   debug_logging: false
 
+config :tronto,
+  uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc"
+
 config :vex,
   sources: [
     [uuid: Tronto.Support.UUIDValidator],
     Vex.Validators
   ]
+
+config :fun_with_flags,
+       :persistence,
+       adapter: FunWithFlags.Store.Persistent.Ecto,
+       repo: Tronto.Repo
+
+config :fun_with_flags, :cache_bust_notifications,
+  enabled: true,
+  adapter: FunWithFlags.Notifications.PhoenixPubSub,
+  client: Tronto.PubSub
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
