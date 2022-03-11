@@ -40,7 +40,7 @@ jobs:
         with:
           path: |
             deps
-            _build
+            _build/test/lib
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
 
