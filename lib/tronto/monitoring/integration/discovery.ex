@@ -22,6 +22,8 @@ defmodule Tronto.Monitoring.Integration.Discovery do
 
   @type command :: struct
 
+  @uuid_namespace Application.fetch_env!(:tronto, :uuid_namespace)
+
   @database_type 1
   @application_type 2
 
@@ -58,8 +60,15 @@ defmodule Tronto.Monitoring.Integration.Discovery do
             }
           } = payload
       }) do
+    id =
+      if FunWithFlags.enabled?(:convert_agent_ids) do
+        UUID.uuid5(@uuid_namespace, id)
+      else
+        id
+      end
+
     RegisterCluster.new(
-      cluster_id: UUID.uuid5(nil, id),
+      cluster_id: UUID.uuid5(@uuid_namespace, id),
       host_id: agent_id,
       name: name,
       sid: parse_cluster_sid(payload),
@@ -261,13 +270,20 @@ defmodule Tronto.Monitoring.Integration.Discovery do
          host_id
        ) do
     Enum.flat_map(databases, fn %{"Database" => tenant} ->
+      id =
+        if FunWithFlags.enabled?(:convert_agent_ids) do
+          UUID.uuid5(@uuid_namespace, "#{id}:#{tenant}")
+        else
+          id
+        end
+
       Enum.map(
         instances,
         fn {_, instance} ->
           instance_number = parse_instance_number(instance)
 
           RegisterDatabaseInstance.new(
-            sap_system_id: UUID.uuid5(nil, "#{id}:#{tenant}"),
+            sap_system_id: UUID.uuid5(@uuid_namespace, id),
             sid: sid,
             tenant: tenant,
             host_id: host_id,

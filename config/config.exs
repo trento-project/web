@@ -80,6 +80,9 @@ config :tronto, Tronto.Scheduler,
   ],
   debug_logging: false
 
+config :tronto,
+  uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc"
+
 config :vex,
   sources: [
     [uuid: Tronto.Support.UUIDValidator],
