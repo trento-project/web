@@ -6,6 +6,7 @@
       "Id": "7b65dc281f9fae2c8e68e6cab669993e",
       "SID": "HA1",
       "Type": 2,
+      "DBAddress": "10.74.1.12",
       "Profile": {
         "SAPDBHOST": "10.74.1.12",
         "gw/acl_mode": "1",
