@@ -22,7 +22,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
 
   @type command :: struct
 
-  @uuid_namespace Application.fetch_env!(:tronto, :uuid_namespace)
+  @uuid_namespace Application.compile_env!(:tronto, :uuid_namespace)
 
   @database_type 1
   @application_type 2
