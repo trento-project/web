@@ -8,7 +8,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterApplicationInstance,
-    RegisterCluster,
+    RegisterClusterHost,
     RegisterDatabaseInstance,
     RegisterHost,
     UpdateProvider,
@@ -52,6 +52,7 @@ defmodule Tronto.Monitoring.Integration.Discovery do
           %{
             "Id" => id,
             "Name" => name,
+            "DC" => designated_controller,
             "Crmmon" => %{
               "Summary" => %{
                 "Resources" => %{"Number" => _resources_number},
@@ -67,12 +68,13 @@ defmodule Tronto.Monitoring.Integration.Discovery do
         id
       end
 
-    RegisterCluster.new(
+    RegisterClusterHost.new(
       cluster_id: UUID.uuid5(@uuid_namespace, id),
       host_id: agent_id,
       name: name,
       sid: parse_cluster_sid(payload),
-      type: detect_cluster_type(payload)
+      type: detect_cluster_type(payload),
+      designated_controller: designated_controller
     )
   end
 
