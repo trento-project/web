@@ -56,6 +56,8 @@ defmodule Tronto.MixProject do
       {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:floki, ">= 0.30.0", only: :test},
+      {:fun_with_flags, "~> 1.8.1"},
+      {:fun_with_flags_ui, "~> 0.7.2"},
       {:gettext, "~> 0.18"},
       {:gen_smtp, "~> 1.1.1"},
       {:jason, "~> 1.2"},
