@@ -299,11 +299,11 @@ defmodule Tronto.Monitoring.Integration.Discovery do
   defp parse_sap_system(
          %{
            "Type" => @application_type,
+           "DBAddress" => db_host,
            "SID" => sid,
            "Instances" => instances,
            "Profile" => %{
-             "dbs/hdb/dbname" => tenant,
-             "SAPDBHOST" => db_host
+             "dbs/hdb/dbname" => tenant
            }
          },
          host_id
