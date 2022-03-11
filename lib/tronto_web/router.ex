@@ -26,6 +26,11 @@ defmodule TrontoWeb.Router do
     pow_session_routes()
   end
 
+  scope "/feature-flags" do
+    pipe_through :browser
+    forward "/", FunWithFlags.UI.Router, namespace: "feature-flags"
+  end
+
   scope "/api", TrontoWeb do
     pipe_through :api
 
