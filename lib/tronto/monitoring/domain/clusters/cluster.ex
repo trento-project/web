@@ -9,7 +9,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
   }
 
   alias Tronto.Monitoring.Domain.Commands.{
-    RegisterCluster,
+    RegisterClusterHost,
     RequestChecksExecution,
     SelectChecks,
     StoreChecksResults
@@ -47,15 +47,17 @@ defmodule Tronto.Monitoring.Domain.Cluster do
           hosts_checks_results: %{String.t() => [CheckResult.t()]}
         }
 
-  # New cluster registered
+  # When a DC cluster node is registered for the first time, a cluster is registered
+  # and the host of the node is added to the cluster
   def execute(
         %Cluster{cluster_id: nil},
-        %RegisterCluster{
+        %RegisterClusterHost{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
           type: type,
-          sid: sid
+          sid: sid,
+          designated_controller: true
         }
       ) do
     [
@@ -72,48 +74,57 @@ defmodule Tronto.Monitoring.Domain.Cluster do
     ]
   end
 
-  # Cluster exists but details didn't change
+  # If no DC node was received yet, no cluster was registered.
+  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{designated_controller: false}),
+    do: {:error, :cluster_not_found}
+
+  def execute(
+        %Cluster{} = cluster,
+        %RegisterClusterHost{
+          host_id: host_id,
+          designated_controller: false
+        }
+      ) do
+    maybe_emit_host_added_to_cluster_event(cluster, host_id)
+  end
+
+  # Cluster exists and details didn't change.
   def execute(
         %Cluster{
           cluster_id: cluster_id,
           name: name,
           type: type,
           sid: sid
-        } = cluster,
-        %RegisterCluster{
+        },
+        %RegisterClusterHost{
           cluster_id: cluster_id,
-          host_id: host_id,
           name: name,
           type: type,
-          sid: sid
+          sid: sid,
+          designated_controller: true
         }
       ) do
-    maybe_emit_host_added_to_cluster_event(cluster, host_id)
+    []
   end
 
   # Cluster exists but details changed
   def execute(
-        %Cluster{} = cluster,
-        %RegisterCluster{
+        %Cluster{},
+        %RegisterClusterHost{
           cluster_id: cluster_id,
-          host_id: host_id,
           name: name,
           type: type,
-          sid: sid
+          sid: sid,
+          designated_controller: true
         }
       ) do
-    [
-      %ClusterDetailsUpdated{
-        cluster_id: cluster_id,
-        name: name,
-        type: type,
-        sid: sid
-      }
-    ] ++ maybe_emit_host_added_to_cluster_event(cluster, host_id)
+    %ClusterDetailsUpdated{
+      cluster_id: cluster_id,
+      name: name,
+      type: type,
+      sid: sid
+    }
   end
-
-  # Cluster does not exist
-  def execute(%Cluster{cluster_id: nil}, _), do: {:error, :cluster_does_not_exist}
 
   # Checks selected
   def execute(
