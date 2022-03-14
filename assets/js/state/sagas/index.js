@@ -22,6 +22,12 @@ import {
   stopClustersLoading,
 } from '../clusters';
 
+import {
+  startSapSystemsLoading,
+  stopSapSystemsLoading,
+  setSapSystems,
+} from '../sap_systems';
+
 import { setCatalog } from '../catalog';
 
 import { appendEntryToLiveFeed } from '../liveFeed';
@@ -51,6 +57,11 @@ function* initialDataFetch() {
   const { data: clusters } = yield call(get, '/api/clusters');
   yield put(setClusters(clusters));
   yield put(stopClustersLoading());
+
+  yield put(startSapSystemsLoading());
+  const { data: sap_systems } = yield call(get, '/api/sap_systems');
+  yield put(setSapSystems(sap_systems));
+  yield put(stopSapSystemsLoading());
 
   const { data: catalog } = yield call(get, '/api/checks/catalog');
   yield put(setCatalog(catalog));
