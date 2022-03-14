@@ -24,7 +24,8 @@ defmodule Tronto.Factory do
     DatabaseInstanceReadModel,
     DatabaseReadModel,
     HostReadModel,
-    SapSystemReadModel
+    SapSystemReadModel,
+    SlesSubscriptionReadModel
   }
 
   def host_registered_event(attrs \\ []) do
@@ -72,6 +73,16 @@ defmodule Tronto.Factory do
       cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4())
     }
+  end
+
+  def subscription_projection(attrs \\ []) do
+    host_projection = host_projection(id: Keyword.get(attrs, :host_id, Faker.UUID.v4()))
+
+    Repo.insert!(%SlesSubscriptionReadModel{
+      host_id: host_projection.id,
+      identifier: Keyword.get(attrs, :identifier, Faker.Airports.iata()),
+      version: Keyword.get(attrs, :version, Faker.App.semver())
+    })
   end
 
   def cluster_projection(attrs \\ []) do
