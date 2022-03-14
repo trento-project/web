@@ -119,6 +119,8 @@ defmodule Tronto.Monitoring.ClusterTest do
         }
       ]
 
+      details = hana_cluster_details_value_object()
+
       assert_events_and_state(
         initial_events,
         RegisterClusterHost.new!(
@@ -127,19 +129,22 @@ defmodule Tronto.Monitoring.ClusterTest do
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
+          details: details,
           designated_controller: true
         ),
         %ClusterDetailsUpdated{
           cluster_id: cluster_id,
           name: new_name,
           sid: new_sid,
-          type: :hana_scale_up
+          type: :hana_scale_up,
+          details: details
         },
         %Cluster{
           cluster_id: cluster_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
+          details: details,
           hosts: [host_id]
         }
       )
