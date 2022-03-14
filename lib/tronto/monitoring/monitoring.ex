@@ -81,9 +81,21 @@ defmodule Tronto.Monitoring do
     |> Repo.preload(checks_results: :host)
   end
 
-  @spec get_all_sles_subscriptions :: [SlesSubscriptionReadModel.t()]
-  def get_all_sles_subscriptions,
-    do: SlesSubscriptionReadModel |> Repo.all() |> Repo.preload(:host)
+  @spec get_all_sles_subscriptions :: non_neg_integer()
+  def get_all_sles_subscriptions do
+    query =
+      from s in SlesSubscriptionReadModel,
+        where: s.identifier == "SLES_SAP",
+        select: count()
+
+    case Repo.one(query) do
+      nil ->
+        0
+
+      subscription_count ->
+        subscription_count
+    end
+  end
 
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
   def get_all_sap_systems do

@@ -4,14 +4,15 @@ defmodule TrontoWeb.AboutController do
   alias Tronto.Monitoring
 
   @version Mix.Project.config()[:version]
+  # TODO determine Flavor
+  @flavor "Community"
 
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
-    sles_subscriptions = Monitoring.get_all_sles_subscriptions()
-
     json(conn, %{
-      sles_subscriptions: sles_subscriptions,
-      version: @version
+      flavor: @flavor,
+      version: @version,
+      sles_subscriptions: Monitoring.get_all_sles_subscriptions()
     })
   end
 end

@@ -22,9 +22,6 @@ defimpl Tronto.Support.Middleware.Enrichable,
 
       nil ->
         {:error, :database_not_found}
-
-      {:error, _} = error ->
-        error
     end
   end
 end
