@@ -9,6 +9,7 @@ import ListView from '@components/ListView';
 import Pill from '@components/Pill';
 
 const AboutPage = () => {
+  const [flavor, setFlavor] = useState('N/A');
   const [subscriptions, setSubscriptions] = useState(0);
   const [version, setVersion] = useState('v0.0.0');
   const [loading, setLoading] = useState(false);
@@ -16,10 +17,11 @@ const AboutPage = () => {
   useEffect(() => {
     setLoading(true);
     get('/api/about')
-      .then(({ data: { version, sles_subscriptions } }) => {
+      .then(({ data: { flavor, version, sles_subscriptions } }) => {
         setLoading(false);
+        undefined !== flavor && setFlavor(flavor);
         setVersion(version);
-        setSubscriptions(sles_subscriptions.length);
+        setSubscriptions(sles_subscriptions);
       })
       .catch((error) => {
         logError(error);
@@ -42,7 +44,10 @@ const AboutPage = () => {
             className="text-sm"
             orientation="horizontal"
             data={[
-              { title: 'Trento flavor', content: 'Community' },
+              {
+                title: 'Trento flavor',
+                content: loading ? 'Loading...' : flavor,
+              },
               {
                 title: 'Server version',
                 content: loading ? 'Loading...' : version,
