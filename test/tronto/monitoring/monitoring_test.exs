@@ -85,7 +85,7 @@ defmodule Tronto.MonitoringTest do
         subscription_projection(identifier: "sle-module-server-applications")
       end)
 
-      assert 12 = Repo.all(SlesSubscriptionReadModel) |> length()
+      assert 12 = SlesSubscriptionReadModel |> Repo.all() |> length()
       assert 6 = Monitoring.get_all_sles_subscriptions()
     end
   end

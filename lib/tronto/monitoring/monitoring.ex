@@ -81,7 +81,7 @@ defmodule Tronto.Monitoring do
     |> Repo.preload(checks_results: :host)
   end
 
-  @spec get_all_sles_subscriptions :: non_neg_integer() | {:error, any}
+  @spec get_all_sles_subscriptions :: non_neg_integer()
   def get_all_sles_subscriptions do
     query =
       from s in SlesSubscriptionReadModel,
@@ -89,9 +89,6 @@ defmodule Tronto.Monitoring do
         select: count()
 
     case Repo.one(query) do
-      {:error, _} = error ->
-        error
-
       nil ->
         0
 
