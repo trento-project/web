@@ -8,7 +8,7 @@ defmodule Tronto.Monitoring.ClusterProjector do
     repo: Tronto.Repo,
     name: "cluster_projector"
 
-  import Tronto.Support.DataMapper
+  import Tronto.Support.StructHelper
 
   alias Tronto.Monitoring.Domain.Events.{
     ChecksSelected,
@@ -52,7 +52,8 @@ defmodule Tronto.Monitoring.ClusterProjector do
       cluster_id: id,
       name: name,
       sid: sid,
-      type: type
+      type: type,
+      details: details
     },
     fn multi ->
       changeset =
@@ -61,7 +62,8 @@ defmodule Tronto.Monitoring.ClusterProjector do
         |> ClusterReadModel.changeset(%{
           name: name,
           sid: sid,
-          type: type
+          type: type,
+          details: details
         })
 
       Ecto.Multi.update(multi, :cluster, changeset)
