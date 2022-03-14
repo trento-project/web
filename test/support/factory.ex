@@ -12,6 +12,7 @@ defmodule Tronto.Factory do
     ClusterRegistered,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
+    HostAddedToCluster,
     HostRegistered,
     SapSystemRegistered,
     SlesSubscriptionsUpdated
@@ -63,6 +64,13 @@ defmodule Tronto.Factory do
       name: Keyword.get(attrs, :name, Faker.StarWars.character()),
       sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
       type: Keyword.get(attrs, :type, :hana_scale_up)
+    }
+  end
+
+  def host_added_to_cluster_event(attrs \\ []) do
+    %HostAddedToCluster{
+      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4())
     }
   end
 

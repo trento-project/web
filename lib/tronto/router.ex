@@ -14,7 +14,7 @@ defmodule Tronto.Router do
 
   alias Tronto.Monitoring.Domain.Commands.{
     RegisterApplicationInstance,
-    RegisterCluster,
+    RegisterClusterHost,
     RegisterDatabaseInstance,
     RegisterHost,
     RequestChecksExecution,
@@ -33,7 +33,7 @@ defmodule Tronto.Router do
 
   identify Cluster, by: :cluster_id
 
-  dispatch [RegisterCluster, RequestChecksExecution, SelectChecks, StoreChecksResults],
+  dispatch [RegisterClusterHost, RequestChecksExecution, SelectChecks, StoreChecksResults],
     to: Cluster
 
   identify SapSystem, by: :sap_system_id
