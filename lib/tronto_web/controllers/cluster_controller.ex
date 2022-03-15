@@ -24,26 +24,27 @@ defmodule TrontoWeb.ClusterController do
         |> put_status(:accepted)
         |> json(%{})
 
-      {:error, _, reason, _} ->
+      {:error, _} ->
         conn
         |> put_status(:bad_request)
-        |> json(%{error: reason})
+        |> json(%{error: "tag creation failed"})
     end
   end
 
+  @spec delete_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
   def delete_tag(conn, %{
         "id" => resource_id,
         "value" => value
       }) do
     case Monitoring.Tags.delete_tag(value, resource_id) do
-      {0, _} ->
-        conn
-        |> put_status(:not_found)
-        |> json(%{})
-
-      {_affected, _} ->
+      :ok ->
         conn
         |> put_status(:accepted)
+        |> json(%{})
+
+      {:error, _} = error ->
+        conn
+        |> put_status(:not_found)
         |> json(%{})
     end
   end
