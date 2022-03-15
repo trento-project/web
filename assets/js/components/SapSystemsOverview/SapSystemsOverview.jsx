@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import HealthIcon from '../Health';
 import Table from '../Table';
+import SAPSystemItemOverview from './SAPSystemItemOverview';
 
 const SapSystemsOverview = () => {
   const { sapSystems, loading } = useSelector((state) => state.sapSystemsList);
@@ -20,6 +21,16 @@ const SapSystemsOverview = () => {
       {
         title: 'SID',
         key: 'sid',
+        render: (content, item) => {
+          return (
+            <Link
+              className="text-jungle-green-500 hover:opacity-75"
+              to={`/sap-systems/${item.id}`}
+            >
+              {content}
+            </Link>
+          );
+        },
       },
       {
         title: 'Attached RDBMS',
@@ -44,6 +55,9 @@ const SapSystemsOverview = () => {
         key: 'dbAddress',
       },
     ],
+    collapsibleDetailRenderer: (sapSystem) => (
+      <SAPSystemItemOverview sapSystem={sapSystem} />
+    ),
   };
 
   const data = sapSystems.map((sapSystem) => {
@@ -51,9 +65,11 @@ const SapSystemsOverview = () => {
       id: sapSystem.id,
       health: sapSystem.health,
       sid: sapSystem.sid,
-      attachedRdbms: sapSystem.database_instances[0].tenant,
+      attachedRdbms: sapSystem.tenant,
       tenant: sapSystem.tenant,
       dbAddress: sapSystem.db_host,
+      applicationInstances: sapSystem.application_instances,
+      databaseInstances: sapSystem.database_instances,
     };
   });
 
