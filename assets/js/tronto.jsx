@@ -16,6 +16,7 @@ import ClustersList from '@components/ClustersList';
 import ChecksSelection from '@components/ChecksSelection';
 import ChecksResults from '@components/ChecksResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
+import HostDetails from '@components/HostDetails';
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
                 path="clusters/:clusterID/checks/results"
                 element={<ChecksResults />}
               />
+              <Route path="hosts/:hostID" element={<HostDetails />} />
             </Route>
           </Routes>
         </BrowserRouter>
