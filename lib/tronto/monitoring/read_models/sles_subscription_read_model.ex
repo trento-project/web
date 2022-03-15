@@ -24,7 +24,6 @@ defmodule Tronto.Monitoring.SlesSubscriptionReadModel do
     field :starts_at, :string
     field :expires_at, :string
 
-    has_one :host, HostReadModel, references: :host_id, foreign_key: :id
     timestamps()
   end
 

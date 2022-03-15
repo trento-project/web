@@ -4,6 +4,7 @@ defmodule TrontoWeb.SapSystemController do
   alias Tronto.Monitoring
   alias Tronto.Support.StructHelper
 
+  ## TODO Fix sanitization
   def list(conn, _) do
     sap_systems =
       Monitoring.get_all_sap_systems()
