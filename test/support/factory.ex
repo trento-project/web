@@ -5,7 +5,10 @@ defmodule Tronto.Factory do
 
   alias Tronto.Repo
 
-  alias Tronto.Monitoring.Domain.SlesSubscription
+  alias Tronto.Monitoring.Domain.{
+    HanaClusterDetails,
+    SlesSubscription
+  }
 
   alias Tronto.Monitoring.Domain.Events.{
     ApplicationInstanceRegistered,
@@ -150,6 +153,48 @@ defmodule Tronto.Factory do
       db_host: Faker.Internet.ip_v4_address(),
       tenant: Faker.Beer.hop(),
       health: Keyword.get(attrs, :health, :passing)
+    }
+  end
+
+  def hana_cluster_details_value_object(attrs \\ []) do
+    %HanaClusterDetails{
+      fencing_type: "external/sbd",
+      nodes: [
+        %HanaClusterDetails.Node{
+          attributes: %{"attribute" => Faker.Beer.name()},
+          hana_status: "Secondary",
+          name: Faker.StarWars.character(),
+          resources: [
+            %HanaClusterDetails.Resource{
+              fail_count: Enum.random(0..100),
+              id: Faker.Pokemon.name(),
+              role: "Started",
+              status: "Active",
+              type: "ocf::heartbeat:Dummy"
+            }
+          ],
+          site: Faker.StarWars.planet()
+        }
+      ],
+      sbd_devices: [
+        %HanaClusterDetails.SbdDevice{
+          device: "/dev/vdc",
+          status: "healthy"
+        }
+      ],
+      secondary_sync_state: "SOK",
+      sr_health_state: "4",
+      stopped_resources: [
+        %HanaClusterDetails.Resource{
+          fail_count: nil,
+          id: Faker.Pokemon.name(),
+          role: "Stopped",
+          status: nil,
+          type: "ocf::heartbeat:Dummy"
+        }
+      ],
+      system_replication_mode: "sync",
+      system_replication_operation_mode: "logreplay"
     }
   end
 

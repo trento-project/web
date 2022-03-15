@@ -18,6 +18,8 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
   alias Tronto.ProjectorTestHelper
   alias Tronto.Repo
 
+  alias Tronto.Support.StructHelper
+
   @moduletag :integration
 
   test "should project a new cluster when ClusterRegistered event is received" do
@@ -35,25 +37,27 @@ defmodule Tronto.Monitoring.ClusterProjectorTest do
   test "should update the cluster details when ClusterDetailsUpdated is received" do
     cluster_projection(id: cluster_id = Faker.UUID.v4())
 
-    cluster_details_updated_event = %ClusterDetailsUpdated{
+    event = %ClusterDetailsUpdated{
       cluster_id: cluster_id,
       name: Faker.StarWars.character(),
       sid: Faker.StarWars.planet(),
-      type: :hana_scale_up
+      type: :hana_scale_up,
+      details: hana_cluster_details_value_object()
     }
 
     ProjectorTestHelper.project(
       ClusterProjector,
-      cluster_details_updated_event,
+      event,
       "cluster_projector"
     )
 
     cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
 
-    assert cluster_details_updated_event.cluster_id == cluster_projection.id
-    assert cluster_details_updated_event.name == cluster_projection.name
-    assert cluster_details_updated_event.sid == cluster_projection.sid
-    assert cluster_details_updated_event.type == cluster_projection.type
+    assert event.cluster_id == cluster_projection.id
+    assert event.name == cluster_projection.name
+    assert event.sid == cluster_projection.sid
+    assert event.type == cluster_projection.type
+    assert StructHelper.to_map(event.details) == cluster_projection.details
   end
 
   test "should update the cluster_id field when HostAddedToCluster event is received and the host was already registered" do

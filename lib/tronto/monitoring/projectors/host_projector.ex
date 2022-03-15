@@ -8,7 +8,7 @@ defmodule Tronto.Monitoring.HostProjector do
     repo: Tronto.Repo,
     name: "host_projector"
 
-  import Tronto.Support.DataMapper
+  import Tronto.Support.StructHelper
 
   alias Tronto.Monitoring.Domain.Events.{
     HeartbeatFailed,

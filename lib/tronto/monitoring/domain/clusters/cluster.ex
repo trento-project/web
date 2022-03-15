@@ -5,7 +5,8 @@ defmodule Tronto.Monitoring.Domain.Cluster do
 
   alias Tronto.Monitoring.Domain.{
     CheckResult,
-    Cluster
+    Cluster,
+    HanaClusterDetails
   }
 
   alias Tronto.Monitoring.Domain.Commands.{
@@ -30,6 +31,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
     :name,
     :type,
     :sid,
+    :details,
     health: :unknown,
     hosts: [],
     selected_checks: [],
@@ -42,6 +44,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
           type: :hana_scale_up | :hana_scale_out | :unknown,
           health: :passing | :warning | :critical | :pending | :unknown,
           sid: String.t(),
+          details: HanaClusterDetails.t() | nil,
           hosts: [String.t()],
           selected_checks: [String.t()],
           hosts_checks_results: %{String.t() => [CheckResult.t()]}
@@ -94,13 +97,15 @@ defmodule Tronto.Monitoring.Domain.Cluster do
           cluster_id: cluster_id,
           name: name,
           type: type,
-          sid: sid
+          sid: sid,
+          details: details
         },
         %RegisterClusterHost{
           cluster_id: cluster_id,
           name: name,
           type: type,
           sid: sid,
+          details: details,
           designated_controller: true
         }
       ) do
@@ -115,6 +120,7 @@ defmodule Tronto.Monitoring.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          details: details,
           designated_controller: true
         }
       ) do
@@ -122,7 +128,8 @@ defmodule Tronto.Monitoring.Domain.Cluster do
       cluster_id: cluster_id,
       name: name,
       type: type,
-      sid: sid
+      sid: sid,
+      details: details
     }
   end
 
@@ -214,14 +221,16 @@ defmodule Tronto.Monitoring.Domain.Cluster do
         %ClusterDetailsUpdated{
           name: name,
           type: type,
-          sid: sid
+          sid: sid,
+          details: details
         }
       ) do
     %Cluster{
       cluster
       | name: name,
         type: type,
-        sid: sid
+        sid: sid,
+        details: details
     }
   end
 

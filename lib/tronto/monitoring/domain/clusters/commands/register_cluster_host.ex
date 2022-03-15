@@ -2,9 +2,10 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterClusterHost do
   @moduledoc """
   Register a cluster node to the monitoring system.
   """
-
   use TypedStruct
   use Domo
+
+  alias Tronto.Monitoring.Domain.HanaClusterDetails
 
   typedstruct do
     @typedoc "RegisterClusterHost command"
@@ -14,6 +15,7 @@ defmodule Tronto.Monitoring.Domain.Commands.RegisterClusterHost do
     field :name, String.t(), enforce: true
     field :type, :hana_scale_up | :hana_scale_out | :unknown, enforce: true
     field :sid, String.t() | nil, enforce: true
+    field :details, HanaClusterDetails.t() | nil
     field :designated_controller, boolean, enforce: true
   end
 
