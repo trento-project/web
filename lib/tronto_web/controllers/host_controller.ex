@@ -6,7 +6,7 @@ defmodule TrontoWeb.HostController do
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
 
   def list(conn, _) do
-    hosts = Monitoring.get_all_hosts() |> to_map
+    hosts = Monitoring.get_all_hosts()
 
     json(conn, hosts)
   end

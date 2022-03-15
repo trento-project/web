@@ -37,7 +37,10 @@ defmodule Tronto.Monitoring.HostReadModel do
       on_replace: :update
 
     has_one :cluster, ClusterReadModel, references: :cluster_id, foreign_key: :id
-    has_many :sles_subscription, SlesSubscriptionReadModel, references: :id, foreign_key: :host_id
+
+    has_many :sles_subscriptions, SlesSubscriptionReadModel,
+      references: :id,
+      foreign_key: :host_id
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 const ListView = ({
   className,
@@ -9,8 +10,8 @@ const ListView = ({
   <div
     className={
       orientation === 'vertical'
-        ? `${className} grid grid-flow-col gap-5 auto-cols-fr grid-rows-${rows}`
-        : `${className} grid grid-flow-row gap-5`
+        ? classNames(className, 'grid grid-flow-col gap-5 auto-cols-fr')
+        : classNames(className, 'grid grid-flow-row gap-5')
     }
   >
     {data.map(({ title, content, render = (content) => <span>

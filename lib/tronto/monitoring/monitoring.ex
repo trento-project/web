@@ -55,7 +55,7 @@ defmodule Tronto.Monitoring do
     |> where([h], not is_nil(h.hostname))
     |> order_by(asc: :hostname)
     |> Repo.all()
-    |> Repo.preload([:sles_subscription, cluster: :checks_results])
+    |> Repo.preload([:sles_subscriptions, cluster: :checks_results])
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
