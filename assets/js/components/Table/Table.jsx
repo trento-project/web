@@ -25,7 +25,7 @@ const renderCells = (columns, item) => {
 };
 
 const Table = ({ config, data = [] }) => {
-  const { columns } = config;
+  const { columns, collapsibleDetailRenderer = undefined } = config;
   const [filters, setFilters] = useState([]);
 
   const renderedData = filters
@@ -70,7 +70,23 @@ const Table = ({ config, data = [] }) => {
               </thead>
               <tbody>
                 {renderedData.map((item, index) => (
-                  <tr key={index}>{renderCells(columns, item)}</tr>
+                  <Fragment>
+                    <tr
+                      key={index}
+                      className={
+                        collapsibleDetailRenderer ? 'cursor-pointer' : ''
+                      }
+                    >
+                      {renderCells(columns, item)}
+                    </tr>
+                    {collapsibleDetailRenderer && (
+                      <tr>
+                        <td colspan={columns.length}>
+                          {collapsibleDetailRenderer(item)}
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 ))}
               </tbody>
             </table>
