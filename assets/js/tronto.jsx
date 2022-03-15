@@ -15,6 +15,7 @@ import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
 import ChecksSelection from '@components/ChecksSelection';
 import ChecksResults from '@components/ChecksResults';
+import SapSystemsOverview from '@components/SapSystemsOverview';
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
               <Route index element={<Home />} />
               <Route index path="hosts" element={<HostsList />} />
               <Route path="clusters" element={<ClustersList />} />
+              <Route path="sap-systems" element={<SapSystemsOverview />} />
               <Route path="about" element={<AboutPage />} />
               <Route
                 path="clusters/:clusterID/checks"

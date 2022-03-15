@@ -4,14 +4,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
 import Table from './Table';
 
-import {
-  EOS_EDIT,
-  EOS_RUN_CIRCLE,
-  EOS_LUNCH_DINING,
-  EOS_LENS_FILLED,
-} from 'eos-icons-react';
+import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
 
-import Spinner from './Spinner';
+import HealthIcon from './Health';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -21,21 +16,6 @@ const getClusterTypeLabel = (type) => {
       return 'HANA Scale Out';
     default:
       return 'Unknown';
-  }
-};
-
-const getHealthIcon = (health) => {
-  switch (health) {
-    case 'passing':
-      return <EOS_LENS_FILLED className="fill-jungle-green-500" />;
-    case 'warning':
-      return <EOS_LENS_FILLED className="fill-yellow-500" />;
-    case 'critical':
-      return <EOS_LENS_FILLED className="fill-red-500" />;
-    case 'pending':
-      return <Spinner />;
-    default:
-      return <EOS_LENS_FILLED className="fill-gray-500" />;
   }
 };
 
@@ -50,7 +30,9 @@ const ClustersList = () => {
         title: 'Health',
         key: 'health',
         render: (content) => (
-          <div className="ml-4">{getHealthIcon(content)}</div>
+          <div className="ml-4">
+            <HealthIcon health={content} />
+          </div>
         ),
       },
       {

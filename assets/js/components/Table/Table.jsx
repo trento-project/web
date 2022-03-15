@@ -40,7 +40,7 @@ const Table = ({ config, data = [] }) => {
     }, data);
 
   return (
-    <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
+    <div className="container mx-auto px-4 sm:px-8">
       <div className="flex items-center">
         <TableFilters
           config={config}
@@ -53,7 +53,7 @@ const Table = ({ config, data = [] }) => {
       </div>
       <div className="py-8">
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-          <div className="inline-block min-w-fit shadow rounded-lg">
+          <div className="min-w-fit shadow rounded-lg">
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>

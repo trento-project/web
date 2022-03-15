@@ -6,6 +6,7 @@ import {
   EOS_VIRTUAL_HOST_MANAGER,
   EOS_CLUSTER_ROLE,
   EOS_INFO,
+  EOS_SYSTEM_GROUP,
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
@@ -22,6 +23,11 @@ const navigation = [
     name: 'Clusters',
     href: '/clusters',
     icon: EOS_CLUSTER_ROLE,
+  },
+  {
+    name: 'SAP Systems',
+    href: '/sap-systems',
+    icon: EOS_SYSTEM_GROUP,
   },
   { name: 'About', href: '/about', icon: EOS_INFO },
 ];
