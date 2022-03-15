@@ -21,22 +21,7 @@ defmodule Tronto.Monitoring do
     StoreChecksResults
   }
 
-  alias Tronto.Monitoring.Integration.Discovery
-
   alias Tronto.Repo
-
-  def handle_discovery_event(event) do
-    case Discovery.handle_discovery_event(event) do
-      {:ok, commands} when is_list(commands) ->
-        dispatch_multiple_commands(commands)
-
-      {:ok, command} ->
-        Tronto.Commanded.dispatch(command)
-
-      {:error, _} = error ->
-        error
-    end
-  end
 
   def store_checks_results(cluster_id, host_id, checks_results) do
     with {:ok, checks_results} <- build_check_results(checks_results),

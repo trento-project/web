@@ -1,20 +1,21 @@
 defmodule TrontoWeb.DiscoveryController do
   use TrontoWeb, :controller
 
-  alias Tronto.Monitoring
+  alias Tronto.Monitoring.Discovery
 
   @spec collect(Plug.Conn.t(), map) :: Plug.Conn.t()
   def collect(conn, event) do
-    case Monitoring.handle_discovery_event(event) do
+    case Discovery.handle(event) do
       :ok ->
         conn
         |> put_status(:accepted)
         |> json(%{})
 
-      {:error, reason} ->
+      # TODO: distinguish between validiation and command dispatch errors
+      {:error, _} ->
         conn
         |> put_status(:bad_request)
-        |> json(%{error: reason})
+        |> json(%{error: "An error occurred in handling the discovery event."})
     end
   end
 end
