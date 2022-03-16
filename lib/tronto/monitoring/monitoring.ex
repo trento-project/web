@@ -114,20 +114,4 @@ defmodule Tronto.Monitoring do
     results ->
       {:ok, results}
   end
-
-  @spec dispatch_multiple_commands([Discovery.command()]) :: :ok | {:error, any}
-  defp dispatch_multiple_commands(commands) do
-    Enum.reduce(commands, :ok, fn command, acc ->
-      case {Tronto.Commanded.dispatch(command), acc} do
-        {:ok, :ok} ->
-          :ok
-
-        {{:error, error}, :ok} ->
-          {:error, [error]}
-
-        {{:error, error}, {:error, errors}} ->
-          {:error, [error | errors]}
-      end
-    end)
-  end
 end

@@ -31,6 +31,8 @@ defmodule Tronto.Factory do
     SlesSubscriptionReadModel
   }
 
+  alias Tronto.Monitoring.Discovery.DiscoveryEvent
+
   def host_registered_event(attrs \\ []) do
     %HostRegistered{
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
@@ -238,6 +240,14 @@ defmodule Tronto.Factory do
       features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
       host_id: host_projection.id,
       host: host_projection
+    })
+  end
+
+  def discovery_event(attrs \\ []) do
+    Repo.insert!(%DiscoveryEvent{
+      agent_id: Keyword.get(attrs, :agent_id, Faker.UUID.v4()),
+      discovery_type: Keyword.get(attrs, :discovery_type, Faker.Pokemon.name()),
+      payload: Keyword.get(attrs, :payload, %{})
     })
   end
 end
