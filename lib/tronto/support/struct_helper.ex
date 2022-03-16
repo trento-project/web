@@ -6,7 +6,7 @@ defmodule Tronto.Support.StructHelper do
   Converts struct to map.
   Saniteize struct fields by removing __meta__ and Ecto.Association.NotLoaded.t() fields.
   """
-  @spec to_map(struct) :: map
+  @spec to_map(struct | [struct]) :: map
   def to_map(structs) when is_list(structs) do
     Enum.map(structs, &to_map/1)
   end
