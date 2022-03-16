@@ -30,6 +30,10 @@ defmodule Tronto.Monitoring.Domain.Host do
     :ip_addresses,
     :agent_version,
     :provider,
+    :cpu_count,
+    :total_memory_mb,
+    :socket_count,
+    :os_version,
     :heartbeat,
     :subscriptions,
     :provider_data
@@ -41,6 +45,10 @@ defmodule Tronto.Monitoring.Domain.Host do
           ip_addresses: [String.t()],
           agent_version: String.t(),
           provider: :azure | :unknown,
+          cpu_count: non_neg_integer(),
+          total_memory_mb: non_neg_integer(),
+          socket_count: non_neg_integer(),
+          os_version: String.t(),
           subscriptions: [SlesSubscription.t()],
           provider_data: AzureProvider.t() | nil,
           heartbeat: :passing | :critical | :unknown
@@ -53,7 +61,11 @@ defmodule Tronto.Monitoring.Domain.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
-          agent_version: agent_version
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version
         }
       ) do
     %HostRegistered{
@@ -61,6 +73,10 @@ defmodule Tronto.Monitoring.Domain.Host do
       hostname: hostname,
       ip_addresses: ip_addresses,
       agent_version: agent_version,
+      cpu_count: cpu_count,
+      total_memory_mb: total_memory_mb,
+      socket_count: socket_count,
+      os_version: os_version,
       heartbeat: :unknown
     }
   end
@@ -70,12 +86,20 @@ defmodule Tronto.Monitoring.Domain.Host do
         %Host{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          agent_version: agent_version
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version
         },
         %RegisterHost{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          agent_version: agent_version
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version
         }
       ) do
     []
@@ -87,14 +111,22 @@ defmodule Tronto.Monitoring.Domain.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
-          agent_version: agent_version
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version
         }
       ) do
     %HostDetailsUpdated{
       host_id: host_id,
       hostname: hostname,
       ip_addresses: ip_addresses,
-      agent_version: agent_version
+      agent_version: agent_version,
+      cpu_count: cpu_count,
+      total_memory_mb: total_memory_mb,
+      socket_count: socket_count,
+      os_version: os_version
     }
   end
 
@@ -185,6 +217,10 @@ defmodule Tronto.Monitoring.Domain.Host do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
           heartbeat: heartbeat
         }
       ) do
@@ -194,6 +230,10 @@ defmodule Tronto.Monitoring.Domain.Host do
         hostname: hostname,
         ip_addresses: ip_addresses,
         agent_version: agent_version,
+        cpu_count: cpu_count,
+        total_memory_mb: total_memory_mb,
+        socket_count: socket_count,
+        os_version: os_version,
         heartbeat: heartbeat
     }
   end
@@ -203,14 +243,22 @@ defmodule Tronto.Monitoring.Domain.Host do
         %HostDetailsUpdated{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          agent_version: agent_version
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version
         }
       ) do
     %Host{
       host
       | hostname: hostname,
         ip_addresses: ip_addresses,
-        agent_version: agent_version
+        agent_version: agent_version,
+        cpu_count: cpu_count,
+        total_memory_mb: total_memory_mb,
+        socket_count: socket_count,
+        os_version: os_version
     }
   end
 

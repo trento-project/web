@@ -17,7 +17,6 @@ defmodule Mix.Tasks.DumpScenario do
 
   @default_path File.cwd!()
 
-  @impl
   @shortdoc "Simply calls the Hello.say/0 function."
   def run(args) do
     case OptionParser.parse(args, switches: @switches, aliases: @aliases) do

@@ -15,7 +15,8 @@ defmodule Tronto.Monitoring.ProjectorsSupervisor do
       Tronto.Monitoring.HostProjector,
       Tronto.Monitoring.SlesSubscriptionsProjector,
       Tronto.Monitoring.DatabaseProjector,
-      Tronto.Monitoring.SapSystemProjector
+      Tronto.Monitoring.SapSystemProjector,
+      Tronto.Monitoring.TelemetryProjector
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
