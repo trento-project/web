@@ -42,7 +42,7 @@ defmodule TrontoWeb.ClusterController do
         |> put_status(:accepted)
         |> json(%{})
 
-      {:error, _} = error ->
+      {:error, _} = _ ->
         conn
         |> put_status(:not_found)
         |> json(%{})
