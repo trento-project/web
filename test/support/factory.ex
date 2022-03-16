@@ -16,6 +16,7 @@ defmodule Tronto.Factory do
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     HostAddedToCluster,
+    HostDetailsUpdated,
     HostRegistered,
     SapSystemRegistered,
     SlesSubscriptionsUpdated
@@ -39,7 +40,24 @@ defmodule Tronto.Factory do
       hostname: Keyword.get(attrs, :hostname, Faker.StarWars.character()),
       ip_addresses: Keyword.get(attrs, :ip_addresses, [Faker.Internet.ip_v4_address()]),
       agent_version: Keyword.get(attrs, :agent_version, Faker.App.semver()),
+      cpu_count: Keyword.get(attrs, :cpu_count, Enum.random(1..16)),
+      total_memory_mb: Keyword.get(attrs, :total_memory_mb, Enum.random(1..128)),
+      socket_count: Keyword.get(attrs, :socket_count, Enum.random(1..16)),
+      os_version: Keyword.get(attrs, :agent_version, Faker.App.semver()),
       heartbeat: :unknown
+    }
+  end
+
+  def host_details_updated_event(attrs \\ []) do
+    %HostDetailsUpdated{
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      hostname: Keyword.get(attrs, :hostname, Faker.StarWars.character()),
+      ip_addresses: Keyword.get(attrs, :ip_addresses, [Faker.Internet.ip_v4_address()]),
+      agent_version: Keyword.get(attrs, :agent_version, Faker.App.semver()),
+      cpu_count: Keyword.get(attrs, :cpu_count, Enum.random(1..16)),
+      total_memory_mb: Keyword.get(attrs, :total_memory_mb, Enum.random(1..128)),
+      socket_count: Keyword.get(attrs, :socket_count, Enum.random(1..16)),
+      os_version: Keyword.get(attrs, :agent_version, Faker.App.semver())
     }
   end
 
@@ -158,7 +176,7 @@ defmodule Tronto.Factory do
     }
   end
 
-  def hana_cluster_details_value_object(attrs \\ []) do
+  def hana_cluster_details_value_object() do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
       nodes: [

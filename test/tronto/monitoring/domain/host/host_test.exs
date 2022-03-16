@@ -28,6 +28,10 @@ defmodule Tronto.Monitoring.HostTest do
       hostname = Faker.StarWars.character()
       ip_addresses = [Faker.Internet.ip_v4_address()]
       agent_version = Faker.Internet.slug()
+      cpu_count = Enum.random(1..16)
+      total_memory_mb = Enum.random(1..128)
+      socket_count = Enum.random(1..16)
+      os_version = Faker.App.version()
 
       assert_events_and_state(
         [],
@@ -35,13 +39,21 @@ defmodule Tronto.Monitoring.HostTest do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
-          agent_version: agent_version
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version
         ),
         %HostRegistered{
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
           heartbeat: :unknown
         },
         %Host{
@@ -49,6 +61,10 @@ defmodule Tronto.Monitoring.HostTest do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
           heartbeat: :unknown
         }
       )
@@ -59,6 +75,10 @@ defmodule Tronto.Monitoring.HostTest do
       new_hostname = Faker.StarWars.character()
       new_ip_addresses = [Faker.Internet.ip_v4_address()]
       new_agent_version = Faker.Internet.slug()
+      new_cpu_count = Enum.random(1..16)
+      new_total_memory_mb = Enum.random(1..128)
+      new_socket_count = Enum.random(1..16)
+      new_os_version = Faker.App.version()
 
       assert_events_and_state(
         host_registered_event(host_id: host_id),
@@ -66,42 +86,50 @@ defmodule Tronto.Monitoring.HostTest do
           host_id: host_id,
           hostname: new_hostname,
           ip_addresses: new_ip_addresses,
-          agent_version: new_agent_version
+          agent_version: new_agent_version,
+          cpu_count: new_cpu_count,
+          total_memory_mb: new_total_memory_mb,
+          socket_count: new_socket_count,
+          os_version: new_os_version
         ),
         %HostDetailsUpdated{
           host_id: host_id,
           hostname: new_hostname,
           ip_addresses: new_ip_addresses,
-          agent_version: new_agent_version
+          agent_version: new_agent_version,
+          cpu_count: new_cpu_count,
+          total_memory_mb: new_total_memory_mb,
+          socket_count: new_socket_count,
+          os_version: new_os_version
         },
         %Host{
           host_id: host_id,
           hostname: new_hostname,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
+          cpu_count: new_cpu_count,
+          total_memory_mb: new_total_memory_mb,
+          socket_count: new_socket_count,
+          os_version: new_os_version,
           heartbeat: :unknown
         }
       )
     end
 
     test "should not update host details if the same details were already registered" do
-      host_id = Faker.UUID.v4()
-      hostname = Faker.StarWars.character()
-      ip_addresses = [Faker.Internet.ip_v4_address()]
-      agent_version = Faker.Internet.slug()
+      host_registered_event = host_registered_event()
 
       assert_events(
-        host_registered_event(
-          host_id: host_id,
-          hostname: hostname,
-          ip_addresses: ip_addresses,
-          agent_version: agent_version
-        ),
+        host_registered_event,
         RegisterHost.new!(
-          host_id: host_id,
-          hostname: hostname,
-          ip_addresses: ip_addresses,
-          agent_version: agent_version
+          host_id: host_registered_event.host_id,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          cpu_count: host_registered_event.cpu_count,
+          total_memory_mb: host_registered_event.total_memory_mb,
+          socket_count: host_registered_event.socket_count,
+          os_version: host_registered_event.os_version
         ),
         []
       )
@@ -122,13 +150,11 @@ defmodule Tronto.Monitoring.HostTest do
         %HeartbeatSucceded{
           host_id: host_id
         },
-        %Host{
-          host_id: host_id,
-          hostname: host_registered_event.hostname,
-          ip_addresses: host_registered_event.ip_addresses,
-          agent_version: host_registered_event.agent_version,
-          heartbeat: :passing
-        }
+        fn state ->
+          assert %Host{
+                   heartbeat: :passing
+                 } = state
+        end
       )
     end
 
@@ -136,7 +162,7 @@ defmodule Tronto.Monitoring.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event = host_registered_event(host_id: host_id),
+        host_registered_event(host_id: host_id),
         %HeartbeatFailed{
           host_id: host_id
         }
@@ -151,13 +177,11 @@ defmodule Tronto.Monitoring.HostTest do
         %HeartbeatSucceded{
           host_id: host_id
         },
-        %Host{
-          host_id: host_id,
-          hostname: host_registered_event.hostname,
-          ip_addresses: host_registered_event.ip_addresses,
-          agent_version: host_registered_event.agent_version,
-          heartbeat: :passing
-        }
+        fn state ->
+          assert %Host{
+                   heartbeat: :passing
+                 } = state
+        end
       )
     end
 
@@ -185,7 +209,7 @@ defmodule Tronto.Monitoring.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event = host_registered_event(host_id: host_id),
+        host_registered_event(host_id: host_id),
         %HeartbeatSucceded{
           host_id: host_id
         }
@@ -200,13 +224,11 @@ defmodule Tronto.Monitoring.HostTest do
         %HeartbeatFailed{
           host_id: host_id
         },
-        %Host{
-          host_id: host_id,
-          hostname: host_registered_event.hostname,
-          ip_addresses: host_registered_event.ip_addresses,
-          agent_version: host_registered_event.agent_version,
-          heartbeat: :critical
-        }
+        fn state ->
+          assert %Host{
+                   heartbeat: :critical
+                 } = state
+        end
       )
     end
 
@@ -223,13 +245,11 @@ defmodule Tronto.Monitoring.HostTest do
         %HeartbeatFailed{
           host_id: host_id
         },
-        %Host{
-          host_id: host_id,
-          hostname: host_registered_event.hostname,
-          ip_addresses: host_registered_event.ip_addresses,
-          agent_version: host_registered_event.agent_version,
-          heartbeat: :critical
-        }
+        fn state ->
+          assert %Host{
+                   heartbeat: :critical
+                 } = state
+        end
       )
     end
 
@@ -324,7 +344,7 @@ defmodule Tronto.Monitoring.HostTest do
         )
 
       assert_events_and_state(
-        [host_registered_event],
+        host_registered_event,
         UpdateSlesSubscriptions.new!(
           host_id: host_id,
           subscriptions: [subscription]
@@ -333,22 +353,19 @@ defmodule Tronto.Monitoring.HostTest do
           host_id: host_id,
           subscriptions: [subscription]
         },
-        %Host{
-          host_id: host_id,
-          agent_version: host_registered_event.agent_version,
-          hostname: host_registered_event.hostname,
-          ip_addresses: host_registered_event.ip_addresses,
-          heartbeat: :unknown,
-          subscriptions: [
-            %SlesSubscription{
-              host_id: host_id,
-              identifier: identifier,
-              version: version,
-              arch: "x86_64",
-              status: "active"
-            }
-          ]
-        }
+        fn state ->
+          assert %Host{
+                   subscriptions: [
+                     %SlesSubscription{
+                       host_id: ^host_id,
+                       identifier: ^identifier,
+                       version: ^version,
+                       arch: "x86_64",
+                       status: "active"
+                     }
+                   ]
+                 } = state
+        end
       )
     end
   end

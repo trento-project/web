@@ -50,7 +50,11 @@ defmodule Tronto.Monitoring.HostProjectorTest do
       host_id: host_id,
       hostname: Faker.StarWars.character(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
-      agent_version: Faker.StarWars.planet()
+      agent_version: Faker.StarWars.planet(),
+      cpu_count: Enum.random(1..16),
+      total_memory_mb: Enum.random(1..128),
+      socket_count: Enum.random(1..16),
+      os_version: Faker.App.version()
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
