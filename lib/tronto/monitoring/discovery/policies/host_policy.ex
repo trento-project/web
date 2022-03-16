@@ -23,14 +23,22 @@ defmodule Tronto.Monitoring.Discovery.HostPolicy do
         "payload" => %{
           "hostname" => hostname,
           "ip_addresses" => ip_addresses,
-          "agent_version" => agent_version
+          "agent_version" => agent_version,
+          "cpu_count" => cpu_count,
+          "total_memory_mb" => total_memory_mb,
+          "socket_count" => socket_count,
+          "os_version" => os_version
         }
       }) do
     RegisterHost.new(
       host_id: agent_id,
       hostname: hostname,
       ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
-      agent_version: agent_version
+      agent_version: agent_version,
+      cpu_count: cpu_count,
+      total_memory_mb: total_memory_mb,
+      socket_count: socket_count,
+      os_version: os_version
     )
   end
 
