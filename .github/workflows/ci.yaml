@@ -4,6 +4,7 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch:
   repository_dispatch:
     types: [start-ci]
 
@@ -11,7 +12,7 @@ env:
   ELIXIR_VERSION: 1.13.1
   OTP_VERSION: 24
   MIX_ENV: test
-  NODE_VERSION: '16'
+  NODE_VERSION: "16"
 
 jobs:
   deps:
@@ -54,7 +55,7 @@ jobs:
           mix deps.compile
           mix dialyzer --plt
 
-  static_code_analysis:
+  static-code-analysis:
     name: Static Code Analysis
     needs: deps
     runs-on: ubuntu-latest
@@ -153,3 +154,42 @@ jobs:
 
       - name: Run test
         run: mix test --color --trace --slowest 10
+
+  build-and-push-container-images:
+    name: Build and push container images
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'master') || github.event_name == 'workflow_dispatch'
+    needs: [deps, static-code-analysis, test]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/tronto
+      IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'master' && 'rolling') || github.sha }}"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-buildx-action@v1
+      - name: Log in to the Container registry
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@e5622373a38e60fb6d795a4421e56882f2d7a681
+        with:
+          images: ${{ env.IMAGE_REPOSITORY }}
+      - name: Build and push container image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          target: tronto
+          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
