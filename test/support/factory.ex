@@ -176,7 +176,7 @@ defmodule Tronto.Factory do
     }
   end
 
-  def hana_cluster_details_value_object() do
+  def hana_cluster_details_value_object do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
       nodes: [

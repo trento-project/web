@@ -5,8 +5,8 @@ defmodule Tronto.Monitoring.TelemetryProjectorTest do
   import Tronto.Factory
 
   alias Tronto.Monitoring.{
-    TelemetryProjector,
-    HostTelemetryReadModel
+    HostTelemetryReadModel,
+    TelemetryProjector
   }
 
   alias Tronto.Monitoring.Domain.Events.ProviderUpdated
