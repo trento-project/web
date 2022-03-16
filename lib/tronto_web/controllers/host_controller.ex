@@ -2,11 +2,13 @@ defmodule TrontoWeb.HostController do
   use TrontoWeb, :controller
 
   alias Tronto.Monitoring
+  alias Tronto.Support.StructHelper
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
 
   def list(conn, _) do
-    hosts = Monitoring.get_all_hosts()
+    # TODO: replace to_map with DTO approach
+    hosts = Monitoring.get_all_hosts() |> StructHelper.to_map()
 
     json(conn, hosts)
   end

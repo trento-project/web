@@ -7,6 +7,7 @@ defmodule Tronto.Monitoring.Tag do
 
   @type t :: %__MODULE__{}
 
+  @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:id, :id, autogenerate: true}
   schema "tags" do
     field :value, :string

@@ -22,7 +22,7 @@ defmodule Tronto.Monitoring.ClusterReadModel do
     field :details, :map
 
     has_many :checks_results, CheckResultReadModel, foreign_key: :cluster_id
-    has_many :tags, Tronto.Monitoring.Tag, foreign_key: :id
+    has_many :tags, Tronto.Monitoring.Tag, foreign_key: :resource_id
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
