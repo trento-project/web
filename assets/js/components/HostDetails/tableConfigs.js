@@ -1,4 +1,4 @@
-export const SubscriptionsTableConfiguration = {
+export const subscriptionsTableConfiguration = {
   columns: [
     {
       title: 'Identifier',
@@ -36,7 +36,7 @@ export const SubscriptionsTableConfiguration = {
   ],
 };
 
-export const SapInstancesTableConfiguration = {
+export const sapInstancesTableConfiguration = {
   columns: [
     { title: 'ID', key: 'sap_system_id' },
     { title: 'SID', key: 'sid' },

@@ -10,8 +10,8 @@ require('esbuild')
     entryPoints: ['js/app.js', 'js/tronto.jsx'],
     outdir: resolvePath('../priv/static/assets'),
     bundle: true,
-    minify: true,
-    sourcemap: 'inline',
+    minify: !process.env.ESBUILD_WATCH,
+    sourcemap: process.env.ESBUILD_WATCH ? 'inline' : false,
     loader: {
       '.png': 'dataurl',
       '.svg': 'dataurl',

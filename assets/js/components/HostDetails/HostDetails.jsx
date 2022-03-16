@@ -5,9 +5,11 @@ import { useSelector } from 'react-redux';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 
+import HeartbeatPill from './HeartbeatPill';
+
 import {
-  SubscriptionsTableConfiguration,
-  SapInstancesTableConfiguration,
+  subscriptionsTableConfiguration,
+  sapInstancesTableConfiguration,
 } from './tableConfigs';
 
 const isIdByKey =
@@ -51,11 +53,15 @@ const HostDetails = () => {
 
   return (
     <div>
-      <div>
+      <div className="flex">
         <h1 className="text-3xl font-bold">Host details: {host.hostname}</h1>
+        <HeartbeatPill
+          className="self-center ml-4 shadow"
+          heartbeat={host.heartbeat}
+        />
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
           orientation="vertical"
           data={[
@@ -69,28 +75,30 @@ const HostDetails = () => {
         <div className="mb-4">
           <h2 className="text-2xl font-bold">Cloud details</h2>
         </div>
-        <ListView
-          className="grid-rows-2"
-          orientation="vertical"
-          rows={2}
-          data={[
-            {
-              title: 'Provider',
-              content: host.provider,
-              render: (content) => <p className="capitalize">{content}</p>,
-            },
-            { title: 'VM Size', content: host.provider_data.vm_name },
-            { title: 'VM Name', content: host.provider_data.vm_name },
-            {
-              title: 'Data disk number',
-              content: host.provider_data.data_disk_number,
-            },
-            { title: 'Resource group', content: host.provider_data.location },
-            { title: 'Offer', content: host.provider_data.offer },
-            { title: 'Location', content: host.provider_data.location },
-            { title: 'SKU', content: host.provider_data.sku },
-          ]}
-        />
+        <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
+          <ListView
+            className="grid-rows-2"
+            orientation="vertical"
+            rows={2}
+            data={[
+              {
+                title: 'Provider',
+                content: host.provider,
+                render: (content) => <p className="capitalize">{content}</p>,
+              },
+              { title: 'VM Size', content: host.provider_data.vm_name },
+              { title: 'VM Name', content: host.provider_data.vm_name },
+              {
+                title: 'Data disk number',
+                content: host.provider_data.data_disk_number,
+              },
+              { title: 'Resource group', content: host.provider_data.location },
+              { title: 'Offer', content: host.provider_data.offer },
+              { title: 'Location', content: host.provider_data.location },
+              { title: 'SKU', content: host.provider_data.sku },
+            ]}
+          />
+        </div>
       </div>
 
       <div className="mt-16">
@@ -98,7 +106,7 @@ const HostDetails = () => {
           <h2 className="text-2xl font-bold">SLES subscription details</h2>
         </div>
         <Table
-          config={SubscriptionsTableConfiguration}
+          config={subscriptionsTableConfiguration}
           data={host.sles_subscriptions}
         />
       </div>
@@ -107,7 +115,7 @@ const HostDetails = () => {
         <div>
           <h2 className="text-2xl font-bold">SAP instances</h2>
         </div>
-        <Table config={SapInstancesTableConfiguration} data={sapSystems} />
+        <Table config={sapInstancesTableConfiguration} data={sapSystems} />
       </div>
     </div>
   );
