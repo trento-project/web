@@ -12,7 +12,7 @@ import {
   sapInstancesTableConfiguration,
 } from './tableConfigs';
 
-import SuseLogo from '../../../static/suse_logo.svg'
+import SuseLogo from '../../../static/suse_logo.svg';
 
 const isIdByKey =
   (key, id) =>
@@ -105,8 +105,10 @@ const HostDetails = () => {
 
       <div className="mt-16">
         <div className="flex flex-direction-row">
-    <img src={SuseLogo} className="h-12" /> 
-          <h2 className="ml-2 text-2xl font-bold self-center">SLES subscription details</h2>
+          <img src={SuseLogo} className="h-12" />
+          <h2 className="ml-2 text-2xl font-bold self-center">
+            SLES subscription details
+          </h2>
         </div>
         <Table
           config={subscriptionsTableConfiguration}
