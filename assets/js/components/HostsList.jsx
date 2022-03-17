@@ -20,7 +20,6 @@ const getHeartbeatIcon = ({ heartbeat }) => {
 
 const HostsList = () => {
   const hosts = useSelector((state) => state.hostsList.hosts);
-  console.log(hosts);
 
   const config = {
     columns: [
