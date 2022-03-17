@@ -10,7 +10,7 @@
     "autoprefixer": "^10.4.3",
     "babel-loader": "^8.2.3",
     "esbuild": "^0.14.27",
-    "esbuild-plugin-path-alias": "^1.0.5",
+    "esbuild-plugin-path-alias": "^1.0.6",
     "eslint": "^8.11.0",
     "eslint-plugin-react": "^7.29.4",
     "postcss": "^8.4.11",
