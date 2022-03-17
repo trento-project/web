@@ -67,7 +67,7 @@ const HostsList = () => {
 
   const data = hosts.map((host) => {
     return {
-      health: host.health,
+      heartbeat: host.heartbeat,
       hostname: host.hostname,
       id: host.id,
       ip: host.ip_addresses,
