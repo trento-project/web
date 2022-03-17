@@ -11,6 +11,10 @@ defmodule Tronto.Support.StructHelper do
     Enum.map(structs, &to_map/1)
   end
 
+  def to_map(%NaiveDateTime{} = value), do: value
+  def to_map(%DateTime{} = value), do: value
+  def to_map(%Date{} = value), do: value
+
   def to_map(struct) when is_struct(struct) do
     struct
     |> Map.from_struct()

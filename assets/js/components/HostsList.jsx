@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import Table from './Table';
 
 import { useSelector } from 'react-redux';
@@ -18,18 +20,24 @@ const getHeartbeatIcon = ({ heartbeat }) => {
 
 const HostsList = () => {
   const hosts = useSelector((state) => state.hostsList.hosts);
+
   const config = {
     columns: [
       {
         title: 'Health',
         key: 'health',
-        render: (content, item) => (
+        render: (_content, item) => (
           <div className="ml-4">{getHeartbeatIcon(item)}</div>
         ),
       },
       {
         title: 'Hostname',
         key: 'hostname',
+        render: (content, { id }) => (
+          <span className="transition hover:text-green-600">
+            <Link to={`/hosts/${id}`}>{content}</Link>
+          </span>
+        ),
       },
       {
         title: 'IP',
@@ -61,6 +69,7 @@ const HostsList = () => {
     return {
       health: host.health,
       hostname: host.hostname,
+      id: host.id,
       ip: host.ip_addresses,
       provider: host.provider,
       agent_version: host.agent_version,
