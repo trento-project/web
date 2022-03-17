@@ -14,6 +14,7 @@ defmodule TrontoWeb.ClusterController do
     json(conn, clusters)
   end
 
+  @spec create_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
   def create_tag(conn, %{
         "id" => resource_id,
         "value" => value

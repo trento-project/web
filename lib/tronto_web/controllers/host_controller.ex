@@ -27,6 +27,7 @@ defmodule TrontoWeb.HostController do
     end
   end
 
+  @spec create_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
   def create_tag(conn, %{
         "id" => id,
         "value" => value
@@ -44,6 +45,7 @@ defmodule TrontoWeb.HostController do
     end
   end
 
+  @spec delete_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
   def delete_tag(conn, %{
         "id" => resource_id,
         "value" => value
