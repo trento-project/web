@@ -7,6 +7,7 @@ defmodule Tronto.Release do
 
   def init do
     migrate()
+    init_event_store()
     migrate_event_store()
   end
 
@@ -16,6 +17,17 @@ defmodule Tronto.Release do
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
     end
+  end
+
+  def init_event_store do
+    {:ok, _} = Application.ensure_all_started(:postgrex)
+    {:ok, _} = Application.ensure_all_started(:ssl)
+
+    load_app()
+
+    config = Tronto.EventStore.config()
+
+    :ok = EventStore.Tasks.Init.exec(config, [])
   end
 
   def migrate_event_store do
