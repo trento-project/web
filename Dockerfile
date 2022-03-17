@@ -13,7 +13,7 @@ RUN zypper -n addrepo https://download.opensuse.org/repositories/devel:/language
 RUN zypper -n --gpg-auto-import-keys ref -s
 RUN zypper -n in elixir
 ADD . /build
-COPY --from=assets-build /build/assets /build/assets
+COPY --from=assets-build /build/priv/static /build/priv/static
 WORKDIR /build
 ENV MIX_ENV=prod
 RUN mix local.rebar --force \
