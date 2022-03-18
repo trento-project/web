@@ -24,9 +24,11 @@ defmodule Trento.Tags do
       from t in Tag,
         where: ^value == t.value and ^resource_id == t.resource_id
 
-    case Repo.delete_all(query) do
-      {0, _} -> :ok
-      _ -> {:error, :not_found}
+    tag = Repo.one(query)
+
+    case Repo.delete(tag) do
+      {:ok, _} -> :ok
+      {:error, _} -> :not_found
     end
   end
 end
