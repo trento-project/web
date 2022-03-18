@@ -7,7 +7,7 @@ defmodule Trento.MonitoringTest do
   alias Trento.Monitoring
   alias Trento.Repo
 
-  alias Trento.Monitoring.{
+  alias Trento.{
     DatabaseReadModel,
     SapSystemReadModel,
     SlesSubscriptionReadModel

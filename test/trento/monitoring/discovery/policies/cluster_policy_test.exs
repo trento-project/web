@@ -1,13 +1,13 @@
-defmodule Trento.Monitoring.Discovery.ClusterPolicyTest do
+defmodule Trento.Integration.Discovery.ClusterPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  import Trento.DiscoveryFixturesHelper
+  import Trento.Integration.DiscoveryFixturesHelper
 
-  alias Trento.Monitoring.Discovery.ClusterPolicy
+  alias Trento.Integration.Discovery.ClusterPolicy
 
-  alias Trento.Monitoring.Domain.Commands.RegisterClusterHost
-  alias Trento.Monitoring.Domain.HanaClusterDetails
+  alias Trento.Domain.Commands.RegisterClusterHost
+  alias Trento.Domain.HanaClusterDetails
 
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up is handled" do
     assert {:ok,

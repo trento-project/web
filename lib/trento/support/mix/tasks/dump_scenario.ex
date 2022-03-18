@@ -4,8 +4,8 @@ defmodule Mix.Tasks.DumpScenario do
   use Mix.Task
   import Trento.Tasks.Helper
 
-  alias Trento.Monitoring.Discovery
-  alias Trento.Monitoring.Discovery.DiscoveryEvent
+  alias Trento.Integration.Discovery
+  alias Trento.Integration.Discovery.DiscoveryEvent
 
   @switches [
     path: :string

@@ -1,10 +1,10 @@
-defmodule Trento.Monitoring.DatabaseProjectorTest do
+defmodule Trento.DatabaseProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Monitoring.{
+  alias Trento.{
     DatabaseInstanceReadModel,
     DatabaseProjector,
     DatabaseReadModel

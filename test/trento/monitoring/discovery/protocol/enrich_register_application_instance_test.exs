@@ -1,10 +1,10 @@
-defmodule Trento.Monitoring.EnrichRegisterApplicationInstanceTest do
+defmodule Trento.EnrichRegisterApplicationInstanceTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Monitoring.Domain.Commands.RegisterApplicationInstance
+  alias Trento.Domain.Commands.RegisterApplicationInstance
   alias Trento.Support.Middleware.Enrichable
 
   test "should return an enriched command if the database was found by the ip and tenant" do

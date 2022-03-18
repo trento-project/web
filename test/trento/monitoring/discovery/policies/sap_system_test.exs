@@ -1,12 +1,12 @@
-defmodule Trento.Monitoring.Discovery.SapSystemPolicyTest do
+defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  import Trento.DiscoveryFixturesHelper
+  import Trento.Integration.DiscoveryFixturesHelper
 
-  alias Trento.Monitoring.Discovery.SapSystemPolicy
+  alias Trento.Integration.Discovery.SapSystemPolicy
 
-  alias Trento.Monitoring.Domain.Commands.{
+  alias Trento.Domain.Commands.{
     RegisterApplicationInstance,
     RegisterDatabaseInstance
   }

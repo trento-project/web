@@ -1,10 +1,10 @@
-defmodule Trento.Monitoring.SapSystemProjectorTest do
+defmodule Trento.SapSystemProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Monitoring.{
+  alias Trento.{
     ApplicationInstanceReadModel,
     SapSystemProjector,
     SapSystemReadModel

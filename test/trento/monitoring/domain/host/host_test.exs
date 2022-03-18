@@ -1,16 +1,16 @@
-defmodule Trento.Monitoring.HostTest do
-  use Trento.AggregateCase, aggregate: Trento.Monitoring.Domain.Host, async: true
+defmodule Trento.HostTest do
+  use Trento.AggregateCase, aggregate: Trento.Domain.Host, async: true
 
   import Trento.Factory
 
-  alias Trento.Monitoring.Domain.Commands.{
+  alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Monitoring.Domain.Events.{
+  alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
     HostDetailsUpdated,
@@ -19,8 +19,8 @@ defmodule Trento.Monitoring.HostTest do
     SlesSubscriptionsUpdated
   }
 
-  alias Trento.Monitoring.Domain.Host
-  alias Trento.Monitoring.Domain.SlesSubscription
+  alias Trento.Domain.Host
+  alias Trento.Domain.SlesSubscription
 
   describe "host registration" do
     test "should register a host" do

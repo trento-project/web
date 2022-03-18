@@ -1,7 +1,7 @@
-defmodule Trento.Monitoring.Domain.Commands.UpdateProviderTest do
+defmodule Trento.Domain.Commands.UpdateProviderTest do
   use ExUnit.Case
 
-  alias Trento.Monitoring.Domain.Commands.UpdateProvider
+  alias Trento.Domain.Commands.UpdateProvider
 
   @moduletag :unit
 

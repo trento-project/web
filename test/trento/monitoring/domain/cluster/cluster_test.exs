@@ -1,19 +1,19 @@
-defmodule Trento.Monitoring.ClusterTest do
-  use Trento.AggregateCase, aggregate: Trento.Monitoring.Domain.Cluster, async: true
+defmodule Trento.ClusterTest do
+  use Trento.AggregateCase, aggregate: Trento.Domain.Cluster, async: true
 
   import Trento.Factory
 
-  alias Trento.Monitoring.Domain.Cluster
+  alias Trento.Domain.Cluster
 
-  alias Trento.Monitoring.Domain.Commands.RegisterClusterHost
+  alias Trento.Domain.Commands.RegisterClusterHost
 
-  alias Trento.Monitoring.Domain.Events.{
+  alias Trento.Domain.Events.{
     ClusterDetailsUpdated,
     ClusterRegistered,
     HostAddedToCluster
   }
 
-  alias Trento.Monitoring.Domain.Cluster
+  alias Trento.Domain.Cluster
 
   describe "cluster registration" do
     test "should register a cluster and add the node host to the cluster if the node is a DC" do

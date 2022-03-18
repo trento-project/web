@@ -1,8 +1,8 @@
-defmodule Trento.Monitoring.Domain.Commands.UpdateSlesSubscriptionsTest do
+defmodule Trento.Domain.Commands.UpdateSlesSubscriptionsTest do
   use ExUnit.Case
 
-  alias Trento.Monitoring.Domain.Commands.UpdateSlesSubscriptions
-  alias Trento.Monitoring.Domain.SlesSubscription
+  alias Trento.Domain.Commands.UpdateSlesSubscriptions
+  alias Trento.Domain.SlesSubscription
 
   @moduletag :unit
 

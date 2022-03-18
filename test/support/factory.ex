@@ -5,12 +5,12 @@ defmodule Trento.Factory do
 
   alias Trento.Repo
 
-  alias Trento.Monitoring.Domain.{
+  alias Trento.Domain.{
     HanaClusterDetails,
     SlesSubscription
   }
 
-  alias Trento.Monitoring.Domain.Events.{
+  alias Trento.Domain.Events.{
     ApplicationInstanceRegistered,
     ClusterRegistered,
     DatabaseInstanceRegistered,
@@ -22,7 +22,7 @@ defmodule Trento.Factory do
     SlesSubscriptionsUpdated
   }
 
-  alias Trento.Monitoring.{
+  alias Trento.{
     ApplicationInstanceReadModel,
     ClusterReadModel,
     DatabaseInstanceReadModel,
@@ -32,7 +32,7 @@ defmodule Trento.Factory do
     SlesSubscriptionReadModel
   }
 
-  alias Trento.Monitoring.Discovery.DiscoveryEvent
+  alias Trento.Integration.Discovery.DiscoveryEvent
 
   def host_registered_event(attrs \\ []) do
     %HostRegistered{

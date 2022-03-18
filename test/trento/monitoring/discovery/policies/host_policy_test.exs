@@ -1,18 +1,18 @@
-defmodule Trento.Monitoring.Discovery.HostPolicyTest do
+defmodule Trento.Integration.Discovery.HostPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  import Trento.DiscoveryFixturesHelper
+  import Trento.Integration.DiscoveryFixturesHelper
 
-  alias Trento.Monitoring.Discovery.HostPolicy
+  alias Trento.Integration.Discovery.HostPolicy
 
-  alias Trento.Monitoring.Domain.Commands.{
+  alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateProvider,
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Monitoring.Domain.{
+  alias Trento.Domain.{
     AzureProvider,
     SlesSubscription
   }

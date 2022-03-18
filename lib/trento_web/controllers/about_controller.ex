@@ -1,7 +1,7 @@
 defmodule TrentoWeb.AboutController do
   use TrentoWeb, :controller
 
-  alias Trento.Monitoring
+  alias Trento.Hosts
 
   @version Mix.Project.config()[:version]
   # TODO determine Flavor
@@ -12,7 +12,7 @@ defmodule TrentoWeb.AboutController do
     json(conn, %{
       flavor: @flavor,
       version: @version,
-      sles_subscriptions: Monitoring.get_all_sles_subscriptions()
+      sles_subscriptions: Hosts.get_all_sles_subscriptions()
     })
   end
 end

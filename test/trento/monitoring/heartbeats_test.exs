@@ -1,15 +1,15 @@
-defmodule Trento.Monitoring.HeartbeatsTest do
+defmodule Trento.HeartbeatsTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Mock
 
-  alias Trento.Monitoring.{
+  alias Trento.{
     Heartbeat,
     Heartbeats
   }
 
-  alias Trento.Monitoring.Domain.Commands.UpdateHeartbeat
+  alias Trento.Domain.Commands.UpdateHeartbeat
 
   alias Trento.Repo
 

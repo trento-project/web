@@ -1,16 +1,16 @@
-defmodule Trento.Monitoring.ClusterProjectorTest do
+defmodule Trento.ClusterProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Monitoring.{
+  alias Trento.{
     ClusterProjector,
     ClusterReadModel,
     HostReadModel
   }
 
-  alias Trento.Monitoring.Domain.Events.{
+  alias Trento.Domain.Events.{
     ClusterDetailsUpdated,
     HostAddedToCluster
   }

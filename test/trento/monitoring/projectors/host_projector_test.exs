@@ -1,18 +1,18 @@
-defmodule Trento.Monitoring.HostProjectorTest do
+defmodule Trento.HostProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Monitoring.{
+  alias Trento.{
     AzureProviderReadModel,
     HostProjector,
     HostReadModel
   }
 
-  alias Trento.Monitoring.Domain.AzureProvider
+  alias Trento.Domain.AzureProvider
 
-  alias Trento.Monitoring.Domain.Events.{
+  alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
     HostDetailsUpdated,

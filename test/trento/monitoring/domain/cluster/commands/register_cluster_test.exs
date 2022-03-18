@@ -1,7 +1,7 @@
-defmodule Trento.Monitoring.Domain.Commands.RegisterClusterHostTest do
+defmodule Trento.Domain.Commands.RegisterClusterHostTest do
   use ExUnit.Case
 
-  alias Trento.Monitoring.Domain.Commands.RegisterClusterHost
+  alias Trento.Domain.Commands.RegisterClusterHost
 
   @moduletag :unit
 

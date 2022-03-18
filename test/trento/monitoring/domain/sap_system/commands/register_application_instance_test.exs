@@ -1,7 +1,7 @@
-defmodule Trento.Monitoring.Domain.Commands.RegisterApplicationInstanceTest do
+defmodule Trento.Domain.Commands.RegisterApplicationInstanceTest do
   use ExUnit.Case
 
-  alias Trento.Monitoring.Domain.Commands.RegisterApplicationInstance
+  alias Trento.Domain.Commands.RegisterApplicationInstance
 
   @moduletag :unit
 

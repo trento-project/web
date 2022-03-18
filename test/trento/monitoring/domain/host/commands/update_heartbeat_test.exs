@@ -1,7 +1,7 @@
-defmodule Trento.Monitoring.Domain.Commands.UpdateHeartbeatTest do
+defmodule Trento.Domain.Commands.UpdateHeartbeatTest do
   use ExUnit.Case
 
-  alias Trento.Monitoring.Domain.Commands.UpdateHeartbeat
+  alias Trento.Domain.Commands.UpdateHeartbeat
 
   @moduletag :unit
 

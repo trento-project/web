@@ -1,11 +1,11 @@
-defmodule Trento.Monitoring.DiscoveryTest do
+defmodule Trento.Integration.DiscoveryTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Monitoring.Discovery
-  alias Trento.Monitoring.Discovery.DiscoveryEvent
+  alias Trento.Integration.Discovery
+  alias Trento.Integration.Discovery.DiscoveryEvent
 
   test "should retrieve the current set of discovery events" do
     agent_id_1 = Faker.UUID.v4()

@@ -1,14 +1,14 @@
-defmodule Trento.Monitoring.SapSystemTest do
-  use Trento.AggregateCase, aggregate: Trento.Monitoring.Domain.SapSystem, async: true
+defmodule Trento.SapSystemTest do
+  use Trento.AggregateCase, aggregate: Trento.Domain.SapSystem, async: true
 
   import Trento.Factory
 
-  alias Trento.Monitoring.Domain.Commands.{
+  alias Trento.Domain.Commands.{
     RegisterApplicationInstance,
     RegisterDatabaseInstance
   }
 
-  alias Trento.Monitoring.Domain.Events.{
+  alias Trento.Domain.Events.{
     ApplicationInstanceHealthChanged,
     ApplicationInstanceRegistered,
     DatabaseHealthChanged,
@@ -19,7 +19,7 @@ defmodule Trento.Monitoring.SapSystemTest do
     SapSystemRegistered
   }
 
-  alias Trento.Monitoring.Domain.SapSystem
+  alias Trento.Domain.SapSystem
 
   describe "SAP System registration" do
     test "should create an incomplete SAP system aggregate and register a database instance" do

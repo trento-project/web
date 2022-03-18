@@ -12,8 +12,8 @@
 
 FunWithFlags.enable(:convert_agent_ids)
 
-%Trento.Accounts.User{}
-|> Trento.Accounts.User.changeset(%{
+%Trento.User{}
+|> Trento.User.changeset(%{
   email: "chiecks@trento.io",
   password: "secret1234",
   confirm_password: "secret1234"

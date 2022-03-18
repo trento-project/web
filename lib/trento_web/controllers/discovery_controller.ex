@@ -1,7 +1,7 @@
 defmodule TrentoWeb.DiscoveryController do
   use TrentoWeb, :controller
 
-  alias Trento.Monitoring.Discovery
+  alias Trento.Integration.Discovery
 
   @spec collect(Plug.Conn.t(), map) :: Plug.Conn.t()
   def collect(conn, event) do
