@@ -37,10 +37,9 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
                 (acc, current) => (current === tag ? acc : [...acc, current]),
                 []
               );
-              const deletedTag = renderedTags.find((t) => t === tag);
               setTags(newTagsList);
               onChange(newTagsList);
-              onRemove(deletedTag);
+              onRemove(tag);
             }}
           >
             <EOS_DELETE color="#276749" size="base" />
