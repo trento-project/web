@@ -77,7 +77,7 @@ const Table = ({ config, data = [] }) => {
                     collapsibleDetailRenderer={collapsibleDetailRenderer}
                     renderCells={renderCells}
                     columns={columns}
-                    colspan={columns.length}
+                    colSpan={columns.length}
                   />
                 ))}
               </tbody>

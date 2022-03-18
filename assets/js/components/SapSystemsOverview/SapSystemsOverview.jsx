@@ -1,11 +1,29 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import HealthIcon from '../Health';
 import Table from '../Table';
 import SAPSystemItemOverview from './SAPSystemItemOverview';
+import Tags from '../Tags';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
+
+const addTag = (tag, sapSystemId) => {
+  axios
+    .post(`/api/sap_systems/${sapSystemId}/tags`, {
+      value: tag,
+    })
+    .catch((error) => {
+      console.err('Error posting tag: ', error);
+    });
+};
+
+const removeTag = (tag, sapSystemId) => {
+  axios.delete(`/api/sap_systems/${sapSystemId}/tags/${tag}`).catch((error) => {
+    console.err('Error deleting tag: ', error);
+  });
+};
 
 const SapSystemsOverview = () => {
   const { sapSystems, applicationInstances, databaseInstances, loading } =
@@ -57,6 +75,18 @@ const SapSystemsOverview = () => {
         title: 'DB Address',
         key: 'dbAddress',
       },
+      {
+        title: 'Tags',
+        key: 'tags',
+        render: (content, item) => (
+          <Tags
+            tags={content}
+            onChange={() => {}}
+            onAdd={(tag) => addTag(tag, item.id)}
+            onRemove={(tag) => removeTag(tag, item.id)}
+          />
+        ),
+      },
     ],
     collapsibleDetailRenderer: (sapSystem) => (
       <SAPSystemItemOverview sapSystem={sapSystem} />
@@ -75,6 +105,7 @@ const SapSystemsOverview = () => {
         bySapSystem(sapSystem.id)
       ),
       databaseInstances: databaseInstances.filter(bySapSystem(sapSystem.id)),
+      tags: sapSystem.tags,
     };
   });
 

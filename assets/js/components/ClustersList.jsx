@@ -2,7 +2,9 @@ import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
+import axios from 'axios';
 import Table from './Table';
+import Tags from './Tags';
 
 import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
 
@@ -17,6 +19,22 @@ const getClusterTypeLabel = (type) => {
     default:
       return 'Unknown';
   }
+};
+
+const addTag = (tag, clusterId) => {
+  axios
+    .post(`/api/clusters/${clusterId}/tags`, {
+      value: tag,
+    })
+    .catch((error) => {
+      console.err('Error posting tag: ', error);
+    });
+};
+
+const removeTag = (tag, clusterId) => {
+  axios.delete(`/api/clusters/${clusterId}/tags/${tag}`).catch((error) => {
+    console.err('Error deleting tag: ', error);
+  });
 };
 
 const ClustersList = () => {
@@ -67,6 +85,18 @@ const ClustersList = () => {
           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate">
             {getClusterTypeLabel(item.type)}
           </span>
+        ),
+      },
+      {
+        title: 'Tags',
+        key: 'tags',
+        render: (content, item) => (
+          <Tags
+            tags={content}
+            onChange={() => {}}
+            onAdd={(tag) => addTag(tag, item.id)}
+            onRemove={(tag) => removeTag(tag, item.id)}
+          />
         ),
       },
       {
@@ -158,6 +188,7 @@ const ClustersList = () => {
       id: cluster.id,
       sid: cluster.sid,
       type: cluster.type,
+      tags: cluster.tags.map((tag) => tag.value),
     };
   });
 
