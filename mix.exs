@@ -1,9 +1,9 @@
-defmodule Tronto.MixProject do
+defmodule Trento.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :tronto,
+      app: :trento,
       version: "0.1.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -24,7 +24,7 @@ defmodule Tronto.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Tronto.Application, []},
+      mod: {Trento.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

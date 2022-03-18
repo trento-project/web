@@ -116,7 +116,7 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: tronto_test
+          POSTGRES_DB: trento_test
         ports:
           - 5433:5432
         # Set health checks to wait until postgres has started
@@ -165,7 +165,7 @@ jobs:
       packages: write
     env:
       REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/tronto
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento
       IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'master' && 'rolling') || github.sha }}"
     steps:
       - uses: actions/checkout@v3
@@ -188,7 +188,7 @@ jobs:
         with:
           context: .
           push: true
-          target: tronto
+          target: trento
           tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

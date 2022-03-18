@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateProjectionVersions do
+defmodule Trento.Repo.Migrations.CreateProjectionVersions do
   use Ecto.Migration
 
   def change do

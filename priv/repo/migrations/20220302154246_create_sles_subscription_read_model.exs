@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateSlesSubscriptionReadModel do
+defmodule Trento.Repo.Migrations.CreateSlesSubscriptionReadModel do
   use Ecto.Migration
 
   def change do

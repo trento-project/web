@@ -1,16 +1,16 @@
-defmodule Tronto.Factory do
+defmodule Trento.Factory do
   @moduledoc """
   A simple Factory helper module to be used within tests to generate test data
   """
 
-  alias Tronto.Repo
+  alias Trento.Repo
 
-  alias Tronto.Monitoring.Domain.{
+  alias Trento.Monitoring.Domain.{
     HanaClusterDetails,
     SlesSubscription
   }
 
-  alias Tronto.Monitoring.Domain.Events.{
+  alias Trento.Monitoring.Domain.Events.{
     ApplicationInstanceRegistered,
     ClusterRegistered,
     DatabaseInstanceRegistered,
@@ -22,7 +22,7 @@ defmodule Tronto.Factory do
     SlesSubscriptionsUpdated
   }
 
-  alias Tronto.Monitoring.{
+  alias Trento.Monitoring.{
     ApplicationInstanceReadModel,
     ClusterReadModel,
     DatabaseInstanceReadModel,
@@ -32,7 +32,7 @@ defmodule Tronto.Factory do
     SlesSubscriptionReadModel
   }
 
-  alias Tronto.Monitoring.Discovery.DiscoveryEvent
+  alias Trento.Monitoring.Discovery.DiscoveryEvent
 
   def host_registered_event(attrs \\ []) do
     %HostRegistered{

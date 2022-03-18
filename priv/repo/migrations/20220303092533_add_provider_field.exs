@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddProviderField do
+defmodule Trento.Repo.Migrations.AddProviderField do
   use Ecto.Migration
 
   def change do

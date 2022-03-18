@@ -1,3 +1,3 @@
 #!/bin/sh
 cd -P -- "$(dirname -- "$0")"
-exec ./tronto eval Tronto.Release.migrate
+exec ./trento eval Trento.Release.migrate

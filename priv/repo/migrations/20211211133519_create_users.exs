@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateUsers do
+defmodule Trento.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
   def change do

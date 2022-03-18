@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateHostTelemetryReadModel do
+defmodule Trento.Repo.Migrations.CreateHostTelemetryReadModel do
   use Ecto.Migration
 
   def change do

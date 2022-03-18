@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateSapSystemReadModel do
+defmodule Trento.Repo.Migrations.CreateSapSystemReadModel do
   use Ecto.Migration
 
   def change do

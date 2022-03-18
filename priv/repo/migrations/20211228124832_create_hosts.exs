@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateHosts do
+defmodule Trento.Repo.Migrations.CreateHosts do
   use Ecto.Migration
 
   def change do

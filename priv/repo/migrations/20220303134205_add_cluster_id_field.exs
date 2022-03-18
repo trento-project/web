@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddClusterIdField do
+defmodule Trento.Repo.Migrations.AddClusterIdField do
   use Ecto.Migration
 
   def change do

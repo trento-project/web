@@ -1,1 +1,1 @@
-call "%~dp0\tronto" eval Tronto.Release.migrate
+call "%~dp0\trento" eval Trento.Release.migrate

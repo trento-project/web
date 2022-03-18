@@ -7,7 +7,7 @@ const resolvePath = (p) => path.resolve(__dirname, p);
 
 require('esbuild')
   .build({
-    entryPoints: ['js/app.js', 'js/tronto.jsx'],
+    entryPoints: ['js/app.js', 'js/trento.jsx'],
     outdir: resolvePath('../priv/static/assets'),
     bundle: true,
     minify: !process.env.ESBUILD_WATCH,

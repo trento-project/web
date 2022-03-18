@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateApplicationInstanceReadModel do
+defmodule Trento.Repo.Migrations.CreateApplicationInstanceReadModel do
   use Ecto.Migration
 
   def change do

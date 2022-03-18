@@ -73,7 +73,7 @@ dump-scenario() {
     fi
 
     kubectl exec deploy/trento-server-web -- rm -rf /scenarios
-    kubectl exec -ti deploy/trento-server-web -- /app/bin/tronto eval "Tronto.Release.dump_scenario([\"$name\", \"-p\", \"/scenarios\"])"
+    kubectl exec -ti deploy/trento-server-web -- /app/bin/trento eval "Trento.Release.dump_scenario([\"$name\", \"-p\", \"/scenarios\"])"
     kubectl exec deploy/trento-server-web -- tar cf - scenarios | tar xf - -C "$path"
 }
 

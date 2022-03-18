@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddDetailsToClusterReadModel do
+defmodule Trento.Repo.Migrations.AddDetailsToClusterReadModel do
   use Ecto.Migration
 
   def change do

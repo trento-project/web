@@ -1,4 +1,4 @@
-defmodule Tronto.AggregateCase do
+defmodule Trento.AggregateCase do
   @moduledoc """
   This module defines the test case to be used by aggregate tests.
   Derived from Commanded.AggregateCase

@@ -28,11 +28,11 @@ RUN mix phx.digest
 RUN mix release
 
 
-FROM registry.suse.com/bci/bci-base:15.3 AS tronto
+FROM registry.suse.com/bci/bci-base:15.3 AS trento
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 WORKDIR /app
-COPY --from=release /build/_build/prod/rel/tronto .
+COPY --from=release /build/_build/prod/rel/trento .
 EXPOSE 4000/tcp
-ENTRYPOINT ["/app/bin/tronto"]
+ENTRYPOINT ["/app/bin/trento"]

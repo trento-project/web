@@ -1,20 +1,20 @@
 import Config
 
 # Configure your database
-config :tronto, Tronto.Repo,
+config :trento, Trento.Repo,
   username: "postgres",
   password: "postgres",
-  database: "tronto_dev",
+  database: "trento_dev",
   hostname: "localhost",
   port: 5433,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
   log: false
 
-config :tronto, Tronto.EventStore,
+config :trento, Trento.EventStore,
   username: "postgres",
   password: "postgres",
-  database: "tronto_eventstore_dev",
+  database: "trento_eventstore_dev",
   hostname: "localhost",
   port: 5433,
   pool_size: 10
@@ -25,7 +25,7 @@ config :tronto, Tronto.EventStore,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with esbuild to bundle .js and .css sources.
-config :tronto, TrontoWeb.Endpoint,
+config :trento, TrentoWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {0, 0, 0, 0}, port: 4000],
@@ -74,13 +74,13 @@ config :tronto, TrontoWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :tronto, TrontoWeb.Endpoint,
+config :trento, TrentoWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/tronto_web/(live|views)/.*(ex)$",
-      ~r"lib/tronto_web/templates/.*(eex)$"
+      ~r"lib/trento_web/(live|views)/.*(ex)$",
+      ~r"lib/trento_web/templates/.*(eex)$"
     ]
   ]
 
