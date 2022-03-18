@@ -26,7 +26,7 @@ const CollapsibleTableRow = ({
             rowExpanded ? 'visible' : 'hidden'
           } transition-all ease-in-out duration-600`}
         >
-          <td colspan={colspan}>{collapsibleDetailRenderer(item)}</td>
+          <td colSpan={colspan}>{collapsibleDetailRenderer(item)}</td>
         </tr>
       )}
     </Fragment>
