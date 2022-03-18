@@ -42,7 +42,7 @@ const renderInstance = (
   const isDatabase = () => DatabaseType === instanceType;
 
   return (
-    <div className="table-row border-b">
+    <div key={`${instanceNumber}-${hostId}`} className="table-row border-b">
       <div className="table-cell p-2">
         <HealthIcon health={health} />
       </div>
@@ -50,8 +50,8 @@ const renderInstance = (
       <div
         className={`table-cell p-2 text-gray-500 dark:text-gray-300 text-sm`}
       >
-        {features.split('|').map((feature) => (
-          <Pill>{feature}</Pill>
+        {features.split('|').map((feature, index) => (
+          <Pill key={index}>{feature}</Pill>
         ))}
       </div>
       {isDatabase() && (
@@ -94,8 +94,9 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
           <div className="table w-full">
             <div className="table-header-group bg-grey bg-gray-100">
               <div className="table-row">
-                {applicationInstanceColumns.map(({ name, cssClass }) => (
+                {applicationInstanceColumns.map(({ name, cssClass }, index) => (
                   <div
+                  key={index}
                     className={`table-cell p-2 text-left text-xs font-medium text-gray-500 uppercase ${cssClass}`}
                   >
                     {name}
@@ -121,8 +122,9 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
           <div className="table w-full">
             <div className="table-header-group bg-grey bg-gray-100">
               <div className="table-row">
-                {databaseInstanceColumns.map(({ name, cssClass }) => (
+                {databaseInstanceColumns.map(({ name, cssClass }, index) => (
                   <div
+                    key={index}
                     className={`table-cell p-2 text-left text-xs font-medium text-gray-500 uppercase ${cssClass}`}
                   >
                     {name}
