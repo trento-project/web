@@ -31,6 +31,8 @@ defmodule Tronto.Monitoring.SapSystemReadModel do
       references: :id,
       foreign_key: :sap_system_id,
       preload_order: [asc: :instance_number, asc: :host_id]
+
+    has_many :tags, Tronto.Monitoring.Tag, foreign_key: :resource_id
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

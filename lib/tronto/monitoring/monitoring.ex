@@ -55,7 +55,7 @@ defmodule Tronto.Monitoring do
     |> where([h], not is_nil(h.hostname))
     |> order_by(asc: :hostname)
     |> Repo.all()
-    |> Repo.preload([:sles_subscriptions, cluster: :checks_results])
+    |> Repo.preload([:sles_subscriptions, :tags, cluster: :checks_results])
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
@@ -63,7 +63,7 @@ defmodule Tronto.Monitoring do
     ClusterReadModel
     |> order_by(asc: :name)
     |> Repo.all()
-    |> Repo.preload(checks_results: :host)
+    |> Repo.preload([:tags, checks_results: :host])
   end
 
   @spec get_all_sles_subscriptions :: non_neg_integer()
@@ -88,6 +88,7 @@ defmodule Tronto.Monitoring do
     |> Repo.all()
     |> Repo.preload(application_instances: [host: :cluster])
     |> Repo.preload(database_instances: [host: :cluster])
+    |> Repo.preload(:tags)
   end
 
   @spec get_all_databases :: [map]

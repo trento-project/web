@@ -38,6 +38,8 @@ defmodule Tronto.Monitoring.HostReadModel do
 
     has_one :cluster, ClusterReadModel, references: :cluster_id, foreign_key: :id
 
+    has_many :tags, Tronto.Monitoring.Tag, foreign_key: :resource_id
+
     has_many :sles_subscriptions, SlesSubscriptionReadModel,
       references: :id,
       foreign_key: :host_id
