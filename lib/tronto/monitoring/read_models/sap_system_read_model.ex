@@ -25,12 +25,12 @@ defmodule Tronto.Monitoring.SapSystemReadModel do
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
       foreign_key: :sap_system_id,
-      preload_order: [asc: :host_id]
+      preload_order: [asc: :instance_number, asc: :host_id]
 
     has_many :application_instances, ApplicationInstanceReadModel,
       references: :id,
       foreign_key: :sap_system_id,
-      preload_order: [asc: :host_id]
+      preload_order: [asc: :instance_number, asc: :host_id]
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
