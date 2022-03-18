@@ -28,10 +28,10 @@ const HostDetails = () => {
   const sapSystems = useSelector((state) => {
     return state.sapSystemsList.sapSystems
       .reduce((accumulator, current) => {
-        const foundInApplicationInstances = current.application_instances.find(
+        const foundInApplicationInstances = current.application_instances?.find(
           isIdByKey('host_id', hostID)
         );
-        const foundInDatabaseInstances = current.database_instances.find(
+        const foundInDatabaseInstances = current.database_instances?.find(
           isIdByKey('host_id', hostID)
         );
         return [
@@ -88,16 +88,19 @@ const HostDetails = () => {
                 content: host.provider,
                 render: (content) => <p className="capitalize">{content}</p>,
               },
-              { title: 'VM Size', content: host.provider_data.vm_name },
-              { title: 'VM Name', content: host.provider_data.vm_name },
+              { title: 'VM Size', content: host.provider_data?.vm_name },
+              { title: 'VM Name', content: host.provider_data?.vm_name },
               {
                 title: 'Data disk number',
-                content: host.provider_data.data_disk_number,
+                content: host.provider_data?.data_disk_number,
               },
-              { title: 'Resource group', content: host.provider_data.location },
-              { title: 'Offer', content: host.provider_data.offer },
-              { title: 'Location', content: host.provider_data.location },
-              { title: 'SKU', content: host.provider_data.sku },
+              {
+                title: 'Resource group',
+                content: host.provider_data?.location,
+              },
+              { title: 'Offer', content: host.provider_data?.offer },
+              { title: 'Location', content: host.provider_data?.location },
+              { title: 'SKU', content: host.provider_data?.sku },
             ]}
           />
         </div>
