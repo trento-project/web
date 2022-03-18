@@ -104,7 +104,8 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
               </div>
             </div>
             <div className="table-row-group">
-              {applicationInstances.map(renderApplicationInstance)}
+              {applicationInstances &&
+                applicationInstances.map(renderApplicationInstance)}
             </div>
           </div>
         </div>
@@ -130,7 +131,8 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
               </div>
             </div>
             <div className="table-row-group">
-              {databaseInstances.map(renderDatabaseInstance)}
+              {databaseInstances &&
+                databaseInstances.map(renderDatabaseInstance)}
             </div>
           </div>
         </div>
