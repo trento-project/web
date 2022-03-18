@@ -96,7 +96,7 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
               <div className="table-row">
                 {applicationInstanceColumns.map(({ name, cssClass }, index) => (
                   <div
-                  key={index}
+                    key={index}
                     className={`table-cell p-2 text-left text-xs font-medium text-gray-500 uppercase ${cssClass}`}
                   >
                     {name}
