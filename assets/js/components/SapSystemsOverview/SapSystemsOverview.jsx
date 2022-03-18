@@ -5,8 +5,11 @@ import HealthIcon from '../Health';
 import Table from '../Table';
 import SAPSystemItemOverview from './SAPSystemItemOverview';
 
+const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
+
 const SapSystemsOverview = () => {
-  const { sapSystems, loading } = useSelector((state) => state.sapSystemsList);
+  const { sapSystems, applicationInstances, databaseInstances, loading } =
+    useSelector((state) => state.sapSystemsList);
   const config = {
     columns: [
       {
@@ -68,8 +71,10 @@ const SapSystemsOverview = () => {
       attachedRdbms: sapSystem.tenant,
       tenant: sapSystem.tenant,
       dbAddress: sapSystem.db_host,
-      applicationInstances: sapSystem.application_instances,
-      databaseInstances: sapSystem.database_instances,
+      applicationInstances: applicationInstances.filter(
+        bySapSystem(sapSystem.id)
+      ),
+      databaseInstances: databaseInstances.filter(bySapSystem(sapSystem.id)),
     };
   });
 

@@ -13,6 +13,8 @@ defmodule Tronto.Monitoring.SapSystemProjector do
     SapSystemRegistered
   }
 
+  alias Tronto.Support.StructHelper
+
   alias Tronto.Monitoring.{
     ApplicationInstanceReadModel,
     SapSystemReadModel
@@ -65,4 +67,31 @@ defmodule Tronto.Monitoring.SapSystemProjector do
       Ecto.Multi.insert(multi, :application_instance, changeset)
     end
   )
+
+  @impl true
+  def after_update(
+        %SapSystemRegistered{},
+        _,
+        %{sap_system: sap_system}
+      ) do
+    TrontoWeb.Endpoint.broadcast(
+      "monitoring:sap_systems",
+      "sap_system_registered",
+      StructHelper.to_map(sap_system)
+    )
+  end
+
+  def after_update(
+        %ApplicationInstanceRegistered{},
+        _,
+        %{application_instance: instance}
+      ) do
+    TrontoWeb.Endpoint.broadcast(
+      "monitoring:sap_systems",
+      "application_instance_registered",
+      StructHelper.to_map(instance)
+    )
+  end
+
+  def after_update(_, _, _), do: :ok
 end

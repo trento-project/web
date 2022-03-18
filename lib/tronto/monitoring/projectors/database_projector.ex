@@ -13,6 +13,8 @@ defmodule Tronto.Monitoring.DatabaseProjector do
     DatabaseReadModel
   }
 
+  alias Tronto.Support.StructHelper
+
   alias Tronto.Monitoring.Domain.Events.{
     DatabaseInstanceRegistered,
     DatabaseRegistered
@@ -55,4 +57,19 @@ defmodule Tronto.Monitoring.DatabaseProjector do
       Ecto.Multi.insert(multi, :database_instance, database_instance_changeset)
     end
   )
+
+  @impl true
+  def after_update(
+        %DatabaseInstanceRegistered{},
+        _,
+        %{database_instance: instance}
+      ) do
+    TrontoWeb.Endpoint.broadcast(
+      "monitoring:databases",
+      "database_instance_registered",
+      StructHelper.to_map(instance)
+    )
+  end
+
+  def after_update(_, _, _), do: :ok
 end
