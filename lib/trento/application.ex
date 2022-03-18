@@ -18,8 +18,8 @@ defmodule Trento.Application do
       TrentoWeb.Endpoint,
       Trento.Commanded,
       Trento.Scheduler,
-      Trento.Monitoring.EventHandlersSupervisor,
-      Trento.Monitoring.ProjectorsSupervisor
+      Trento.EventHandlersSupervisor,
+      Trento.ProjectorsSupervisor
       # Start a worker by calling: Trento.Worker.start_link(arg)
       # {Trento.Worker, arg}
     ]

@@ -1,7 +1,10 @@
 defmodule TrentoWeb.ClusterController do
   use TrentoWeb, :controller
 
-  alias Trento.Monitoring
+  alias Trento.{
+    Clusters,
+    Tags
+  }
 
   @json_path Path.join(File.cwd!(), "priv/data/catalog.json")
   @catalog @json_path |> File.read!() |> Jason.decode!()
@@ -9,7 +12,7 @@ defmodule TrentoWeb.ClusterController do
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
-    clusters = Monitoring.get_all_clusters()
+    clusters = Clusters.get_all_clusters()
 
     json(conn, clusters)
   end
@@ -19,7 +22,7 @@ defmodule TrentoWeb.ClusterController do
         "id" => resource_id,
         "value" => value
       }) do
-    case Monitoring.Tags.create_tag(value, resource_id, "cluster") do
+    case Tags.create_tag(value, resource_id, "cluster") do
       {:ok, _} ->
         conn
         |> put_status(:accepted)
@@ -37,7 +40,7 @@ defmodule TrentoWeb.ClusterController do
         "id" => resource_id,
         "value" => value
       }) do
-    case Monitoring.Tags.delete_tag(value, resource_id) do
+    case Tags.delete_tag(value, resource_id) do
       :ok ->
         conn
         |> put_status(:accepted)
@@ -71,7 +74,7 @@ defmodule TrentoWeb.ClusterController do
         result == :skipped
       end)
 
-    case Monitoring.store_checks_results(cluster_id, host_id, checks_results) do
+    case Clusters.store_checks_results(cluster_id, host_id, checks_results) do
       :ok ->
         conn
         |> put_status(:accepted)
@@ -86,7 +89,7 @@ defmodule TrentoWeb.ClusterController do
 
   @spec request_checks_execution(Plug.Conn.t(), map) :: Plug.Conn.t()
   def request_checks_execution(conn, %{"cluster_id" => cluster_id}) do
-    case Monitoring.request_checks_execution(cluster_id) do
+    case Clusters.request_checks_execution(cluster_id) do
       :ok ->
         conn
         |> put_status(:accepted)
@@ -106,7 +109,7 @@ defmodule TrentoWeb.ClusterController do
 
   @spec select_checks(Plug.Conn.t(), map) :: Plug.Conn.t()
   def select_checks(conn, %{"cluster_id" => cluster_id, "checks" => checks}) do
-    case Monitoring.select_checks(cluster_id, checks) do
+    case Clusters.select_checks(cluster_id, checks) do
       :ok ->
         conn
         |> put_status(:accepted)

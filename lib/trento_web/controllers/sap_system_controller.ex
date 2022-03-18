@@ -1,24 +1,37 @@
 defmodule TrentoWeb.SapSystemController do
   use TrentoWeb, :controller
 
-  alias Trento.Monitoring
+  alias Trento.{
+    SapSystems,
+    Tags
+  }
+
   alias Trento.Support.StructHelper
 
   ## TODO Fix sanitization
   def list(conn, _) do
     sap_systems =
-      Monitoring.get_all_sap_systems()
+      SapSystems.get_all_sap_systems()
       # TODO: fix me with DTOs
       |> StructHelper.to_map()
 
     json(conn, sap_systems)
   end
 
+  def list_databases(conn, _) do
+    databases =
+      SapSystems.get_all_databases()
+      # TODO: fix me with DTOs
+      |> StructHelper.to_map()
+
+    json(conn, databases)
+  end
+
   def create_tag(conn, %{
         "id" => resource_id,
         "value" => value
       }) do
-    case Monitoring.Tags.create_tag(value, resource_id, "sap_system") do
+    case Tags.create_tag(value, resource_id, "sap_system") do
       {:ok, _} ->
         conn
         |> put_status(:accepted)
@@ -36,7 +49,7 @@ defmodule TrentoWeb.SapSystemController do
         "id" => resource_id,
         "value" => value
       }) do
-    case Monitoring.Tags.delete_tag(value, resource_id) do
+    case Tags.delete_tag(value, resource_id) do
       :ok ->
         conn
         |> put_status(:accepted)
@@ -47,14 +60,5 @@ defmodule TrentoWeb.SapSystemController do
         |> put_status(:not_found)
         |> json(%{})
     end
-  end
-
-  def list_databases(conn, _) do
-    databases =
-      Monitoring.get_all_databases()
-      # TODO: fix me with DTOs
-      |> StructHelper.to_map()
-
-    json(conn, databases)
   end
 end

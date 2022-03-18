@@ -60,20 +60,20 @@ config :trento, Trento.EventStore, serializer: EventStore.TermSerializer
 config :trento, event_stores: [Trento.EventStore]
 
 config :trento, :pow,
-  user: Trento.Accounts.User,
+  user: Trento.User,
   repo: Trento.Repo,
   web_module: TrentoWeb,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
 
-config :trento, Trento.Monitoring.Heartbeats, interval: :timer.seconds(5)
+config :trento, Trento.Heartbeats, interval: :timer.seconds(5)
 
 config :trento, Trento.Scheduler,
   jobs: [
     heartbeat_check: [
       # Runs every ten seconds
       schedule: {:extended, "*/10"},
-      task: {Trento.Monitoring.Heartbeats, :dispatch_heartbeat_failed_commands, []},
+      task: {Trento.Heartbeats, :dispatch_heartbeat_failed_commands, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ]
