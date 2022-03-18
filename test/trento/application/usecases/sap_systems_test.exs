@@ -1,16 +1,14 @@
-defmodule Trento.MonitoringTest do
+defmodule Trento.SapSystemsTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Monitoring
-  alias Trento.Repo
+  alias Trento.SapSystems
 
   alias Trento.{
     DatabaseReadModel,
-    SapSystemReadModel,
-    SlesSubscriptionReadModel
+    SapSystemReadModel
   }
 
   @moduletag :integration
@@ -47,7 +45,7 @@ defmodule Trento.MonitoringTest do
                  application_instances: ^application_instances,
                  database_instances: ^database_instances
                }
-             ] = Monitoring.get_all_sap_systems()
+             ] = SapSystems.get_all_sap_systems()
     end
 
     test "should retrieve all the existing databases and the related instances" do
@@ -68,25 +66,7 @@ defmodule Trento.MonitoringTest do
                  sid: ^sid,
                  database_instances: ^database_instances
                }
-             ] = Monitoring.get_all_databases()
-    end
-  end
-
-  describe "SLES Subscriptions" do
-    test "No SLES4SAP Subscriptions detected" do
-      assert 0 = Repo.all(SlesSubscriptionReadModel) |> length
-      assert 0 = Monitoring.get_all_sles_subscriptions()
-    end
-
-    test "Detects the correct number of SLES4SAP Subscriptions" do
-      0..5
-      |> Enum.map(fn _ ->
-        subscription_projection(identifier: "SLES_SAP")
-        subscription_projection(identifier: "sle-module-server-applications")
-      end)
-
-      assert 12 = SlesSubscriptionReadModel |> Repo.all() |> length()
-      assert 6 = Monitoring.get_all_sles_subscriptions()
+             ] = SapSystems.get_all_databases()
     end
   end
 end
