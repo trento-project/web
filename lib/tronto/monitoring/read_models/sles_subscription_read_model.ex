@@ -7,8 +7,6 @@ defmodule Tronto.Monitoring.SlesSubscriptionReadModel do
 
   import Ecto.Changeset
 
-  alias Tronto.Monitoring.HostReadModel
-
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
