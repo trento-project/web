@@ -5,7 +5,7 @@ import { EOS_NEW_LABEL, EOS_DELETE } from 'eos-icons-react';
 
 import Pill from '@components/Pill';
 
-const Tags = ({ className, tags, onChange }) => {
+const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
   const [renderedTags, setTags] = useState(tags);
   const [addingTag, setAddingTag] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
@@ -39,6 +39,7 @@ const Tags = ({ className, tags, onChange }) => {
               );
               setTags(newTagsList);
               onChange(newTagsList);
+              onRemove(tag);
             }}
           >
             <EOS_DELETE color="#276749" size="base" />
@@ -61,6 +62,7 @@ const Tags = ({ className, tags, onChange }) => {
                 setAddingTag(false);
                 setNewTagValue('');
                 onChange(renderedTags);
+                onAdd(newTagValue);
               }
             }}
             value={newTagValue}

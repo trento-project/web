@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import CollapsibleTableRow from './CollapsibleTableRow';
 
 import { TableFilters } from './filters';
 
@@ -70,23 +71,14 @@ const Table = ({ config, data = [] }) => {
               </thead>
               <tbody>
                 {renderedData.map((item, index) => (
-                  <Fragment>
-                    <tr
-                      key={index}
-                      className={
-                        collapsibleDetailRenderer ? 'cursor-pointer' : ''
-                      }
-                    >
-                      {renderCells(columns, item)}
-                    </tr>
-                    {collapsibleDetailRenderer && (
-                      <tr>
-                        <td colspan={columns.length}>
-                          {collapsibleDetailRenderer(item)}
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
+                  <CollapsibleTableRow
+                    item={item}
+                    key={index}
+                    collapsibleDetailRenderer={collapsibleDetailRenderer}
+                    renderCells={renderCells}
+                    columns={columns}
+                    colspan={columns.length}
+                  />
                 ))}
               </tbody>
             </table>

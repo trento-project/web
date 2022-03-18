@@ -41,6 +41,8 @@ const processChannelEvents = (store) => {
 
   const hostsChannel = socket.channel('monitoring:hosts', {});
   const clustersChannel = socket.channel('monitoring:clusters', {});
+  const sapSystemsChannel = socket.channel('monitoring:sap_systems', {});
+  const databasesChannel = socket.channel('monitoring:databases', {});
 
   hostsChannel.on('host_registered', (payload) =>
     store.dispatch({ type: 'HOST_REGISTERED', payload })
@@ -82,8 +84,22 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'CLUSTER_HEALTH_CHANGED', payload })
   );
 
+  sapSystemsChannel.on('sap_system_registered', (payload) =>
+    store.dispatch({ type: 'SAP_SYSTEM_REGISTERED', payload })
+  );
+
+  sapSystemsChannel.on('application_instance_registered', (payload) =>
+    store.dispatch({ type: 'APPLICATION_INSTANCE_REGISTERED', payload })
+  );
+
+  databasesChannel.on('database_instance_registered', (payload) =>
+    store.dispatch({ type: 'DATABASE_INSTANCE_REGISTERED', payload })
+  );
+
   joinChannel(hostsChannel);
   joinChannel(clustersChannel);
+  joinChannel(sapSystemsChannel);
+  joinChannel(databasesChannel);
 };
 
 processChannelEvents(store);

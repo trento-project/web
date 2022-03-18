@@ -7,8 +7,6 @@ defmodule Tronto.Monitoring.SlesSubscriptionReadModel do
 
   import Ecto.Changeset
 
-  alias Tronto.Monitoring.HostReadModel
-
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -24,7 +22,6 @@ defmodule Tronto.Monitoring.SlesSubscriptionReadModel do
     field :starts_at, :string
     field :expires_at, :string
 
-    has_one :host, HostReadModel, references: :host_id, foreign_key: :id
     timestamps()
   end
 

@@ -1,3 +1,7 @@
-*/node_modules
-deps
-_build
+/_build/
+/assets/node_modules/
+/deps/
+/doc/
+/priv/static/assets
+/test/
+/tmp/

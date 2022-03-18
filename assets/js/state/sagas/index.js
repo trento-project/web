@@ -26,6 +26,9 @@ import {
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
+  appendSapsystem,
+  appendDatabaseInstance,
+  appendApplicationInstance,
 } from '../sap_systems';
 
 import { setCatalog } from '../catalog';
@@ -46,6 +49,20 @@ const getClusterName = (clusterID) => (state) => {
     return acc;
   }, '');
 };
+
+// TODO: in order to make this reactive, move it to the React component
+function* getHost(id) {
+  return yield select((state) => {
+    return state.hostsList.hosts.find((host) => host.id === id);
+  });
+}
+
+// TODO: in order to make this reactive, move it to the React component
+function* getCluster(id) {
+  return yield select((state) => {
+    return state.clustersList.clusters.find((cluster) => cluster.id === id);
+  });
+}
 
 function* initialDataFetch() {
   yield put(startHostsLoading());
@@ -268,6 +285,68 @@ function* watchClusterHealthChanged() {
   yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
 }
 
+function* sapSystemRegistered({ payload }) {
+  yield put(appendSapsystem(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.sid,
+      message: 'New SAP System registered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `A new SAP System, ${payload.sid}, has been discovered.`,
+      icon: '🖖',
+    })
+  );
+}
+
+function* applicationInstanceRegistered({ payload }) {
+  payload.host = yield getHost(payload.host_id);
+  // TODO: investigate and fix why cluster does not get populated
+  payload.host.cluster = yield getCluster(payload.host.cluster_id);
+
+  yield put(appendApplicationInstance(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.sid,
+      message: 'New Application instance registered.',
+    })
+  );
+}
+
+function* watchSapSystemRegistered() {
+  yield takeEvery('SAP_SYSTEM_REGISTERED', sapSystemRegistered);
+  yield takeEvery(
+    'APPLICATION_INSTANCE_REGISTERED',
+    applicationInstanceRegistered
+  );
+}
+
+function* databaseInstanceRegistered({ payload }) {
+  payload.host = yield getHost(payload.host_id);
+  // TODO: investigate and fix why cluster does not get populated
+  payload.host.cluster = yield getCluster(payload.host.cluster_id);
+
+  yield put(appendDatabaseInstance(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.sid,
+      message: 'New Database instance registered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `A new Database instance, ${payload.sid}, has been discovered.`,
+      icon: '🖖',
+    })
+  );
+}
+
+function* watchDatabaseInstanceRegistered() {
+  yield takeEvery('DATABASE_INSTANCE_REGISTERED', databaseInstanceRegistered);
+}
+
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
@@ -284,5 +363,7 @@ export default function* rootSaga() {
     watchChecksExecutionCompleted(),
     watchChecksResultsUpdated(),
     watchClusterHealthChanged(),
+    watchSapSystemRegistered(),
+    watchDatabaseInstanceRegistered(),
   ]);
 }
