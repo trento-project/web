@@ -7,14 +7,14 @@
 # General application configuration
 import Config
 
-config :tronto,
-  ecto_repos: [Tronto.Repo]
+config :trento,
+  ecto_repos: [Trento.Repo]
 
 # Configures the endpoint
-config :tronto, TrontoWeb.Endpoint,
+config :trento, TrentoWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: TrontoWeb.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: Tronto.PubSub,
+  render_errors: [view: TrentoWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: Trento.PubSub,
   live_view: [signing_salt: "4tNZ+tm7"]
 
 # Configures the mailer
@@ -24,7 +24,7 @@ config :tronto, TrontoWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :tronto, Tronto.Mailer, adapter: Swoosh.Adapters.Local
+config :trento, Trento.Mailer, adapter: Swoosh.Adapters.Local
 
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
@@ -34,7 +34,7 @@ config :esbuild,
   version: "0.12.18",
   default: [
     args:
-      ~w(js/app.js js/tronto.jsx --bundle --target=es2016 --loader:.svg=dataurl --loader:.png=dataurl --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js js/trento.jsx --bundle --target=es2016 --loader:.svg=dataurl --loader:.png=dataurl --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
@@ -47,57 +47,57 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :tronto, Tronto.Commanded,
+config :trento, Trento.Commanded,
   event_store: [
     adapter: Commanded.EventStore.Adapters.EventStore,
-    event_store: Tronto.EventStore
+    event_store: Trento.EventStore
   ],
   pubsub: :local,
   registry: :local
 
-config :tronto, Tronto.EventStore, serializer: EventStore.TermSerializer
+config :trento, Trento.EventStore, serializer: EventStore.TermSerializer
 
-config :tronto, event_stores: [Tronto.EventStore]
+config :trento, event_stores: [Trento.EventStore]
 
-config :tronto, :pow,
-  user: Tronto.Accounts.User,
-  repo: Tronto.Repo,
-  web_module: TrontoWeb,
+config :trento, :pow,
+  user: Trento.Accounts.User,
+  repo: Trento.Repo,
+  web_module: TrentoWeb,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
 
-config :tronto, Tronto.Monitoring.Heartbeats, interval: :timer.seconds(5)
+config :trento, Trento.Monitoring.Heartbeats, interval: :timer.seconds(5)
 
-config :tronto, Tronto.Scheduler,
+config :trento, Trento.Scheduler,
   jobs: [
     heartbeat_check: [
       # Runs every ten seconds
       schedule: {:extended, "*/10"},
-      task: {Tronto.Monitoring.Heartbeats, :dispatch_heartbeat_failed_commands, []},
+      task: {Trento.Monitoring.Heartbeats, :dispatch_heartbeat_failed_commands, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ]
   ],
   debug_logging: false
 
-config :tronto,
+config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc"
 
 config :vex,
   sources: [
-    [uuid: Tronto.Support.UUIDValidator],
+    [uuid: Trento.Support.UUIDValidator],
     Vex.Validators
   ]
 
 config :fun_with_flags,
        :persistence,
        adapter: FunWithFlags.Store.Persistent.Ecto,
-       repo: Tronto.Repo
+       repo: Trento.Repo
 
 config :fun_with_flags, :cache_bust_notifications,
   enabled: true,
   adapter: FunWithFlags.Notifications.PhoenixPubSub,
-  client: Tronto.PubSub
+  client: Trento.PubSub
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

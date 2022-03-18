@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateFeatureFlags do
+defmodule Trento.Repo.Migrations.CreateFeatureFlags do
   use Ecto.Migration
 
   def up do

@@ -1,19 +1,19 @@
-# tronto
+# trento
 
 A vaporware version of Trento - SUSE Console for SAP Applications
 
-![tronto](https://user-images.githubusercontent.com/828651/144742801-88d49dcd-9d7d-4086-8d7e-b77db9a57de8.jpg)
+![trento](https://user-images.githubusercontent.com/828651/144742801-88d49dcd-9d7d-4086-8d7e-b77db9a57de8.jpg)
 
 # Table of contents
 
-- [Hack on the tronto](#hack-on-the-tronto)
+- [Hack on the trento](#hack-on-the-trento)
   - [Install dependencies](#install-dependencies)
   - [Development environment](#development-environment)
-  - [Setup tronto](#setup-tronto)
-  - [Start tronto in the repl](#start-tronto-in-the-repl)
+  - [Setup trento](#setup-trento)
+  - [Start trento in the repl](#start-trento-in-the-repl)
   - [Scenario loading with photofinish](#scenario-loading-with-photofinish)
 
-# Hack on the tronto
+# Hack on the trento
 
 ## Install dependencies
 
@@ -28,13 +28,13 @@ A `docker-compose` development environment is provided.
 $> docker-compose up -d
 ```
 
-## Setup tronto
+## Setup trento
 
 ```
 $> mix setup
 ```
 
-## Start tronto in the repl
+## Start trento in the repl
 
 ```
 $> iex -S mix phx.server

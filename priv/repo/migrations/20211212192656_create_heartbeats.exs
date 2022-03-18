@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.CreateHeartbeats do
+defmodule Trento.Repo.Migrations.CreateHeartbeats do
   use Ecto.Migration
 
   def change do

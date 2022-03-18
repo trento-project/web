@@ -1,4 +1,4 @@
-defmodule TrontoWeb.ConnCase do
+defmodule TrentoWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule TrontoWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use TrontoWeb.ConnCase, async: true`, although
+  by setting `use TrentoWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -24,17 +24,17 @@ defmodule TrontoWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import TrontoWeb.ConnCase
+      import TrentoWeb.ConnCase
 
-      alias TrontoWeb.Router.Helpers, as: Routes
+      alias TrentoWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint TrontoWeb.Endpoint
+      @endpoint TrentoWeb.Endpoint
     end
   end
 
   setup tags do
-    pid = Sandbox.start_owner!(Tronto.Repo, shared: not tags[:async])
+    pid = Sandbox.start_owner!(Trento.Repo, shared: not tags[:async])
     on_exit(fn -> Sandbox.stop_owner(pid) end)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

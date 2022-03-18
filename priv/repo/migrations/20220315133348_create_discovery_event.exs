@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddDiscoveryEvent do
+defmodule Trento.Repo.Migrations.AddDiscoveryEvent do
   use Ecto.Migration
 
   def change do

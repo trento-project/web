@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddClusterHealthField do
+defmodule Trento.Repo.Migrations.AddClusterHealthField do
   use Ecto.Migration
 
   def change do

@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddSelectedChecksToCluster do
+defmodule Trento.Repo.Migrations.AddSelectedChecksToCluster do
   use Ecto.Migration
 
   def change do

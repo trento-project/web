@@ -5,17 +5,17 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     Tronto.Repo.insert!(%Tronto.SomeSchema{})
+#     Trento.Repo.insert!(%Trento.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
 FunWithFlags.enable(:convert_agent_ids)
 
-%Tronto.Accounts.User{}
-|> Tronto.Accounts.User.changeset(%{
-  email: "chiecks@tronto.io",
+%Trento.Accounts.User{}
+|> Trento.Accounts.User.changeset(%{
+  email: "chiecks@trento.io",
   password: "secret1234",
   confirm_password: "secret1234"
 })
-|> Tronto.Repo.insert!()
+|> Trento.Repo.insert!()

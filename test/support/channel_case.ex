@@ -1,4 +1,4 @@
-defmodule TrontoWeb.ChannelCase do
+defmodule TrentoWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -11,7 +11,7 @@ defmodule TrontoWeb.ChannelCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use TrontoWeb.ChannelCase, async: true`, although
+  by setting `use TrentoWeb.ChannelCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -23,15 +23,15 @@ defmodule TrontoWeb.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       import Phoenix.ChannelTest
-      import TrontoWeb.ChannelCase
+      import TrentoWeb.ChannelCase
 
       # The default endpoint for testing
-      @endpoint TrontoWeb.Endpoint
+      @endpoint TrentoWeb.Endpoint
     end
   end
 
   setup tags do
-    pid = Sandbox.start_owner!(Tronto.Repo, shared: not tags[:async])
+    pid = Sandbox.start_owner!(Trento.Repo, shared: not tags[:async])
     on_exit(fn -> Sandbox.stop_owner(pid) end)
     :ok
   end

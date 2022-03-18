@@ -1,4 +1,4 @@
-defmodule Tronto.Repo.Migrations.AddTags do
+defmodule Trento.Repo.Migrations.AddTags do
   use Ecto.Migration
 
   def change do

@@ -1,4 +1,4 @@
-defmodule Tronto.ProjectorTestHelper do
+defmodule Trento.ProjectorTestHelper do
   @moduledoc """
   This module contains helper functions for testing projectors
   """
@@ -17,7 +17,7 @@ defmodule Tronto.ProjectorTestHelper do
   defp last_seen_event_number(projector, projection_name) do
     projector
     |> Module.concat(ProjectionVersion)
-    |> Tronto.Repo.get(projection_name)
+    |> Trento.Repo.get(projection_name)
     |> case do
       nil ->
         0

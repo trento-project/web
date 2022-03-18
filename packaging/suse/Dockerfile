@@ -17,8 +17,8 @@ RUN mix local.rebar --force \
 RUN mix release
 
 
-FROM registry.suse.com/bci/bci-base:15.3 AS tronto
+FROM registry.suse.com/bci/bci-base:15.3 AS trento
 WORKDIR /app
-COPY --from=elixir-build /build/_build/dev/rel/tronto/ .
+COPY --from=elixir-build /build/_build/dev/rel/trento/ .
 EXPOSE 4000/tcp
-ENTRYPOINT ["/app/bin/tronto"]
+ENTRYPOINT ["/app/bin/trento"]
