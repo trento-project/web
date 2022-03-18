@@ -7,7 +7,7 @@
     "@storybook/addon-links": "^6.4.19",
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
-    "autoprefixer": "^10.4.3",
+    "autoprefixer": "^10.4.4",
     "babel-loader": "^8.2.3",
     "esbuild": "^0.14.27",
     "esbuild-plugin-path-alias": "^1.0.5",
