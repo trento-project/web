@@ -10,21 +10,32 @@ defmodule Trento.SapSystemProjectorTest do
     SapSystemReadModel
   }
 
+  alias Trento.Domain.Events.SapSystemHealthChanged
+
   alias Trento.ProjectorTestHelper
   alias Trento.Repo
 
   @moduletag :integration
 
-  test "should project a new SAP System when a SAPSystemRegistered event is received" do
+  test "should project a new SAP System when a SapSystemRegistered event is received" do
     event = sap_system_registered_event()
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
     projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
 
-    assert event.sap_system_id == projection.id
     assert event.sid == projection.sid
     assert event.tenant == projection.tenant
     assert event.db_host == projection.db_host
+    assert event.health == projection.health
+  end
+
+  test "should update the health of a SAP System when a SapSystemHealthChanged event is received" do
+    sap_system_projection(id: sap_system_id = Faker.UUID.v4())
+    event = %SapSystemHealthChanged{sap_system_id: sap_system_id, health: :critical}
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+    projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
+
     assert event.health == projection.health
   end
 
@@ -41,7 +52,6 @@ defmodule Trento.SapSystemProjectorTest do
         host_id: event.host_id
       )
 
-    assert event.sap_system_id == projection.sap_system_id
     assert event.sid == projection.sid
     assert event.instance_number == projection.instance_number
     assert event.features == projection.features
