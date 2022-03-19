@@ -16,6 +16,7 @@ defmodule Trento.DatabaseProjector do
   alias Trento.Support.StructHelper
 
   alias Trento.Domain.Events.{
+    DatabaseHealthChanged,
     DatabaseInstanceRegistered,
     DatabaseRegistered
   }
@@ -23,11 +24,25 @@ defmodule Trento.DatabaseProjector do
   project(
     %DatabaseRegistered{sap_system_id: sap_system_id, sid: sid, health: health},
     fn multi ->
-      database_changeset =
+      changeset =
         %DatabaseReadModel{}
         |> DatabaseReadModel.changeset(%{id: sap_system_id, sid: sid, health: health})
 
-      Ecto.Multi.insert(multi, :database, database_changeset)
+      Ecto.Multi.insert(multi, :database, changeset)
+    end
+  )
+
+  project(
+    %DatabaseHealthChanged{
+      sap_system_id: sap_system_id,
+      health: health
+    },
+    fn multi ->
+      changeset =
+        %DatabaseReadModel{id: sap_system_id}
+        |> DatabaseReadModel.changeset(%{health: health})
+
+      Ecto.Multi.update(multi, :database, changeset)
     end
   )
 
