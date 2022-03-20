@@ -52,7 +52,7 @@ jobs:
           mix local.rebar --force
           mix local.hex --force
           mix deps.get
-          mix deps.compile
+          mix deps.compile --warnings-as-errors 
           mix dialyzer --plt
 
   static-code-analysis:
