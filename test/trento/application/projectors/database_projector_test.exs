@@ -10,6 +10,8 @@ defmodule Trento.DatabaseProjectorTest do
     DatabaseReadModel
   }
 
+  alias Trento.Domain.Events.DatabaseHealthChanged
+
   alias Trento.ProjectorTestHelper
   alias Trento.Repo
 
@@ -24,6 +26,16 @@ defmodule Trento.DatabaseProjectorTest do
     assert event.sap_system_id == database_projection.id
     assert event.sid == database_projection.sid
     assert event.health == database_projection.health
+  end
+
+  test "should update the health of a Database when a DatabaseHealthChanged event is received" do
+    database_projection(id: sap_system_id = Faker.UUID.v4())
+    event = %DatabaseHealthChanged{sap_system_id: sap_system_id, health: :critical}
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+    projection = Repo.get!(DatabaseReadModel, event.sap_system_id)
+
+    assert event.health == projection.health
   end
 
   test "should project a new database instance when DatabaseInstanceRegistered event is received" do

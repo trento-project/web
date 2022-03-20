@@ -10,6 +10,7 @@ defmodule Trento.SapSystemProjector do
 
   alias Trento.Domain.Events.{
     ApplicationInstanceRegistered,
+    SapSystemHealthChanged,
     SapSystemRegistered
   }
 
@@ -40,6 +41,20 @@ defmodule Trento.SapSystemProjector do
         })
 
       Ecto.Multi.insert(multi, :sap_system, changeset)
+    end
+  )
+
+  project(
+    %SapSystemHealthChanged{
+      sap_system_id: sap_system_id,
+      health: health
+    },
+    fn multi ->
+      changeset =
+        %SapSystemReadModel{id: sap_system_id}
+        |> SapSystemReadModel.changeset(%{health: health})
+
+      Ecto.Multi.update(multi, :sap_system, changeset)
     end
   )
 
