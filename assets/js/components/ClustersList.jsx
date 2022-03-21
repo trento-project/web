@@ -190,7 +190,7 @@ const ClustersList = () => {
       id: cluster.id,
       sid: cluster.sid,
       type: cluster.type,
-      tags: cluster.tags.map((tag) => tag.value),
+      tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
     };
   });
 
