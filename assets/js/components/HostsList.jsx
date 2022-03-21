@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
 import Table from './Table';
+import Tags from './Tags';
 
 import { useSelector } from 'react-redux';
 
@@ -16,6 +17,22 @@ const getHeartbeatIcon = ({ heartbeat }) => {
     default:
       return <EOS_LENS_FILLED className="fill-gray-500" />;
   }
+};
+
+const addTag = (tag, hostId) => {
+  axios
+    .post(`/api/hosts/${hostId}/tags`, {
+      value: tag,
+    })
+    .catch((error) => {
+      console.err('Error posting tag: ', error);
+    });
+};
+
+const removeTag = (tag, hostId) => {
+  axios.delete(`/api/hosts/${hostId}/tags/${tag}`).catch((error) => {
+    console.err('Error deleting tag: ', error);
+  });
 };
 
 const HostsList = () => {
@@ -62,6 +79,18 @@ const HostsList = () => {
           </span>
         ),
       },
+      {
+        title: 'Tags',
+        key: 'tags',
+        render: (content, item) => (
+          <Tags
+            tags={content}
+            onChange={() => {}}
+            onAdd={(tag) => addTag(tag, item.id)}
+            onRemove={(tag) => removeTag(tag, item.id)}
+          />
+        ),
+      },
     ],
   };
 
@@ -69,10 +98,11 @@ const HostsList = () => {
     return {
       heartbeat: host.heartbeat,
       hostname: host.hostname,
-      id: host.id,
       ip: host.ip_addresses,
       provider: host.provider,
       agent_version: host.agent_version,
+      id: host.id,
+      tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
     };
   });
 

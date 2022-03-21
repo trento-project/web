@@ -40,15 +40,15 @@ defmodule TrentoWeb.Router do
 
     get "/hosts", HostController, :list
     post "/hosts/:id/heartbeat", HostController, :heartbeat
-    post "/hosts/:id/tag", HostController, :create_tag
+    post "/hosts/:id/tags", HostController, :create_tag
     delete "/hosts/:id/tags/:value", HostController, :delete_tag
 
     get "/clusters", ClusterController, :list
-    post "/clusters/:id/tag", ClusterController, :create_tag
+    post "/clusters/:id/tags", ClusterController, :create_tag
     delete "/clusters/:id/tags/:value", ClusterController, :delete_tag
 
     get "/sap_systems", SapSystemController, :list
-    post "/sap_systems/:id/tag", SapSystemController, :create_tag
+    post "/sap_systems/:id/tags", SapSystemController, :create_tag
     delete "/sap_systems/:id/tags/:value", SapSystemController, :delete_tag
     get "/databases", SapSystemController, :list_databases
 

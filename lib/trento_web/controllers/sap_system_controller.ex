@@ -55,7 +55,7 @@ defmodule TrentoWeb.SapSystemController do
         |> put_status(:accepted)
         |> json(%{})
 
-      {:error, _} = _ ->
+      :not_found ->
         conn
         |> put_status(:not_found)
         |> json(%{})
