@@ -28,6 +28,7 @@ defmodule Trento.Factory do
     DatabaseInstanceReadModel,
     DatabaseReadModel,
     HostReadModel,
+    HostTelemetryReadModel,
     SapSystemReadModel,
     SlesSubscriptionReadModel
   }
@@ -105,6 +106,17 @@ defmodule Trento.Factory do
       host_id: host_projection.id,
       identifier: Keyword.get(attrs, :identifier, Faker.Airports.iata()),
       version: Keyword.get(attrs, :version, Faker.App.semver())
+    })
+  end
+
+  def host_telemetry_projection(attrs \\ []) do
+    Repo.insert!(%HostTelemetryReadModel{
+      agent_id: Keyword.get(attrs, :agent_id, Faker.UUID.v4()),
+      hostname: Keyword.get(attrs, :hostname, Faker.StarWars.character()),
+      cpu_count: Keyword.get(attrs, :cpu_usage, Enum.random(0..100)),
+      socket_count: Keyword.get(attrs, :memory_usage, Enum.random(0..100)),
+      total_memory_mb: Keyword.get(attrs, :total_memory_mb, Enum.random(0..100)),
+      sles_version: Keyword.get(attrs, :total_memory_mb, Faker.App.version())
     })
   end
 
