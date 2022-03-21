@@ -11,10 +11,12 @@ import Pill from '../Pill/Pill';
 const ApplicationType = 'application';
 const DatabaseType = 'database';
 
-const ApplicationInstance = ({ instance }) =>
-  <Instance instanceType={ApplicationType} instance={instance} />;
-const DatabaseInstance = ({ instance }) =>
-  <Instance instanceType={DatabaseType} instance={instance} />;
+const ApplicationInstance = ({ instance }) => (
+  <Instance instanceType={ApplicationType} instance={instance} />
+);
+const DatabaseInstance = ({ instance }) => (
+  <Instance instanceType={DatabaseType} instance={instance} />
+);
 
 const instanceColumns = [
   { name: 'Health', cssClass: 'w-20' },
@@ -29,8 +31,10 @@ const applicationInstanceColumns = [...instanceColumns];
 const databaseInstanceColumns = [...instanceColumns];
 databaseInstanceColumns.splice(3, 0, { name: 'System Replication' });
 
-const getHost = (id) => (state) => state.hostsList.hosts.find((host) => host.id === id);
-const getCluster = (id) => (state) => state.clustersList.clusters.find((cluster) => cluster.id === id);
+const getHost = (id) => (state) =>
+  state.hostsList.hosts.find((host) => host.id === id);
+const getCluster = (id) => (state) =>
+  state.clustersList.clusters.find((cluster) => cluster.id === id);
 
 const Instance = ({
   instanceType,
@@ -40,12 +44,12 @@ const Instance = ({
     instance_number: instanceNumber,
     features,
     host_id: hostId,
-  } }
-) => {
+  },
+}) => {
   const isDatabase = DatabaseType === instanceType;
 
-  const host = useSelector(getHost(hostId))
-  const cluster = useSelector(getCluster(host?.cluster_id))
+  const host = useSelector(getHost(hostId));
+  const cluster = useSelector(getCluster(host?.cluster_id));
 
   return (
     <div className="table-row border-b">
@@ -60,9 +64,7 @@ const Instance = ({
           <Pill key={index}>{feature}</Pill>
         ))}
       </div>
-      {isDatabase && (
-        <div className="table-cell p-2">{systemReplication}</div>
-      )}
+      {isDatabase && <div className="table-cell p-2">{systemReplication}</div>}
       <div className="table-cell p-2">
         {cluster ? (
           cluster.name
@@ -113,7 +115,9 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
             <div className="table-row-group">
               {applicationInstances &&
                 applicationInstances.map((instance, index) => {
-                  return <ApplicationInstance key={index} instance={instance} />
+                  return (
+                    <ApplicationInstance key={index} instance={instance} />
+                  );
                 })}
             </div>
           </div>
@@ -143,7 +147,7 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
             <div className="table-row-group">
               {databaseInstances &&
                 databaseInstances.map((instance, index) => {
-                  return <DatabaseInstance key={index} instance={instance} />
+                  return <DatabaseInstance key={index} instance={instance} />;
                 })}
             </div>
           </div>

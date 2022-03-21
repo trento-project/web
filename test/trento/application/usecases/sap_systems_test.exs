@@ -26,6 +26,7 @@ defmodule Trento.SapSystemsTest do
         0..4
         |> Enum.map(fn _ ->
           application_instance_projection(sap_system_id: sap_system_id)
+          |> Map.delete(:host)
         end)
         |> Enum.sort_by(&{&1.instance_number, &1.host_id})
 
@@ -33,6 +34,7 @@ defmodule Trento.SapSystemsTest do
         0..4
         |> Enum.map(fn _ ->
           database_instance_projection(sap_system_id: sap_system_id)
+          |> Map.delete(:host)
         end)
         |> Enum.sort_by(&{&1.instance_number, &1.host_id})
 
