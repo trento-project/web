@@ -50,6 +50,7 @@ const HostsList = () => {
       {
         title: 'Hostname',
         key: 'hostname',
+        filter: true,
         render: (content, { id }) => (
           <span className="transition hover:text-green-600">
             <Link to={`/hosts/${id}`}>{content}</Link>
@@ -59,6 +60,8 @@ const HostsList = () => {
       {
         title: 'IP',
         key: 'ip',
+        filter: (filter, key) => (element) =>
+          element[key].some((ip) => filter.includes(ip)),
         render: (content) =>
           content.map((ip) => (
             <div key={ip} className="text-sm text-gray-900">
