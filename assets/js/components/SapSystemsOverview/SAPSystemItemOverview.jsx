@@ -3,19 +3,13 @@ import {
   EOS_DATABASE_OUTLINED,
 } from 'eos-icons-react';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import HealthIcon from '../Health';
-import Pill from '../Pill/Pill';
+import { DatabaseInstance } from '../DatabasesOverview/DatabaseItemOverview';
+import InstanceOverview from '../InstanceOverview';
 
 const ApplicationType = 'application';
-const DatabaseType = 'database';
 
 const ApplicationInstance = ({ instance }) => (
-  <Instance instanceType={ApplicationType} instance={instance} />
-);
-const DatabaseInstance = ({ instance }) => (
-  <Instance instanceType={DatabaseType} instance={instance} />
+  <InstanceOverview instanceType={ApplicationType} instance={instance} />
 );
 
 const instanceColumns = [
@@ -30,61 +24,6 @@ const applicationInstanceColumns = [...instanceColumns];
 
 const databaseInstanceColumns = [...instanceColumns];
 databaseInstanceColumns.splice(3, 0, { name: 'System Replication' });
-
-const getHost = (id) => (state) =>
-  state.hostsList.hosts.find((host) => host.id === id);
-const getCluster = (id) => (state) =>
-  state.clustersList.clusters.find((cluster) => cluster.id === id);
-
-const Instance = ({
-  instanceType,
-  instance: {
-    health,
-    systemReplication,
-    instance_number: instanceNumber,
-    features,
-    host_id: hostId,
-  },
-}) => {
-  const isDatabase = DatabaseType === instanceType;
-
-  const host = useSelector(getHost(hostId));
-  const cluster = useSelector(getCluster(host?.cluster_id));
-
-  return (
-    <div className="table-row border-b">
-      <div className="table-cell p-2">
-        <HealthIcon health={health} />
-      </div>
-      <div className="table-cell p-2 text-center">{instanceNumber}</div>
-      <div
-        className={`table-cell p-2 text-gray-500 dark:text-gray-300 text-sm`}
-      >
-        {features.split('|').map((feature, index) => (
-          <Pill key={index}>{feature}</Pill>
-        ))}
-      </div>
-      {isDatabase && <div className="table-cell p-2">{systemReplication}</div>}
-      <div className="table-cell p-2">
-        {cluster ? (
-          cluster.name
-        ) : (
-          <p className="text-gray-500 dark:text-gray-300 text-sm">
-            not available
-          </p>
-        )}
-      </div>
-      <div className="table-cell p-2">
-        <Link
-          className="ml-auto hidden md:block text-sm text-gray-500 dark:text-gray-300 underline"
-          to={`/hosts/${hostId}`}
-        >
-          {host && host.hostname}
-        </Link>
-      </div>
-    </div>
-  );
-};
 
 const SAPSystemItemOverview = ({ sapSystem }) => {
   const { applicationInstances, databaseInstances } = sapSystem;
