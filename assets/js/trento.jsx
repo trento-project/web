@@ -17,6 +17,7 @@ import ChecksSelection from '@components/ChecksSelection';
 import ChecksResults from '@components/ChecksResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails from '@components/HostDetails';
+import ClusterDetails from '@components/ClusterDetails';
 import DatabasesOverview from '@components/DatabasesOverview';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import DatabaseDetails from './components/DatabaseDetails';
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="hosts/:hostID" element={<HostDetails />} />
               <Route path="sap-systems/:id" element={<SapSystemDetails />} />
               <Route path="databases/:id" element={<DatabaseDetails />} />
+              <Route path="clusters/:clusterID" element={<ClusterDetails />} />
             </Route>
           </Routes>
         </BrowserRouter>
