@@ -29,7 +29,13 @@ import {
   appendSapsystem,
   appendDatabaseInstance,
   appendApplicationInstance,
-} from '../sap_systems';
+} from '../sapSystems';
+
+import {
+  setDatabases,
+  startDatabasesLoading,
+  stopDatabasesLoading,
+} from '../databases';
 
 import { setCatalog } from '../catalog';
 
@@ -62,9 +68,14 @@ function* initialDataFetch() {
   yield put(stopClustersLoading());
 
   yield put(startSapSystemsLoading());
-  const { data: sap_systems } = yield call(get, '/api/sap_systems');
-  yield put(setSapSystems(sap_systems));
+  const { data: sapSystems } = yield call(get, '/api/sap_systems');
+  yield put(setSapSystems(sapSystems));
   yield put(stopSapSystemsLoading());
+
+  yield put(startDatabasesLoading());
+  const { data: databases } = yield call(get, '/api/databases');
+  yield put(setDatabases(databases));
+  yield put(stopDatabasesLoading());
 
   const { data: catalog } = yield call(get, '/api/checks/catalog');
   yield put(setCatalog(catalog));

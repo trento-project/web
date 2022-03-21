@@ -6,7 +6,8 @@ import { logMessage, logError } from '@lib/log';
 
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
-import sapSystemListReducer from './sap_systems';
+import sapSystemListReducer from './sapSystems';
+import databasesListReducer from './databases';
 import catalogReducer from './catalog';
 import liveFeedReducer from './liveFeed';
 
@@ -19,6 +20,7 @@ export const store = configureStore({
     hostsList: hostsListReducer,
     clustersList: clustersListReducer,
     sapSystemsList: sapSystemListReducer,
+    databasesList: databasesListReducer,
     catalog: catalogReducer,
     liveFeed: liveFeedReducer,
   },
