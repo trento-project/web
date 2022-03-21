@@ -1,4 +1,8 @@
 defmodule Trento.Installation do
+  @moduledoc """
+  Provides a set of functions of installation related usecases.
+  """
+
   import Ecto.Query
 
   alias Trento.Repo

@@ -1,4 +1,8 @@
 defmodule Trento.Integration.Telemetry.Gen do
+  @moduledoc """
+  Behaviour of a telemetry adapter.
+  """
+
   alias Trento.HostTelemetryReadModel
 
   @type installation_id :: String.t()

@@ -1,4 +1,8 @@
 defmodule Trento.Integration.Telemetry do
+  @moduledoc """
+  Telmetry service integration
+  """
+
   alias Trento.Repo
 
   alias Trento.HostTelemetryReadModel

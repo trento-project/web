@@ -1,4 +1,8 @@
 defmodule Trento.Integration.Telemetry.Suse do
+  @moduledoc """
+  Adapter for the SUSE telemetry service.
+  """
+
   @behaviour Trento.Integration.Telemetry.Gen
 
   @telemetry_url "https://telemetry.trento.suse.com"
