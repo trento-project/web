@@ -6,8 +6,8 @@ const Pill = ({ className, children, onClick = () => {} }) => (
     className={classNames(
       'px-2 py-1 inline-flex text-sm leading-5 font-semibold rounded-full',
       {
-        'bg-green-100': !Boolean(className),
-        'text-green-800': !Boolean(className),
+        'bg-green-100': !className,
+        'text-green-800': !className,
       },
       className
     )}

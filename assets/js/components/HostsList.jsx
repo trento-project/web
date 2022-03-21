@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
+import {logError} from '@lib/log'
+
 const getHeartbeatIcon = ({ heartbeat }) => {
   switch (heartbeat) {
     case 'passing':
@@ -25,13 +27,13 @@ const addTag = (tag, hostId) => {
       value: tag,
     })
     .catch((error) => {
-      console.err('Error posting tag: ', error);
+      logError('Error posting tag: ', error);
     });
 };
 
 const removeTag = (tag, hostId) => {
   axios.delete(`/api/hosts/${hostId}/tags/${tag}`).catch((error) => {
-    console.err('Error deleting tag: ', error);
+    logError('Error deleting tag: ', error);
   });
 };
 
