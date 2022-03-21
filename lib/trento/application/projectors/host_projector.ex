@@ -57,8 +57,7 @@ defmodule Trento.HostProjector do
     },
     fn multi ->
       changeset =
-        HostReadModel
-        |> Repo.get(id)
+        %HostReadModel{id: id}
         |> HostReadModel.changeset(%{
           hostname: hostname,
           ip_addresses: ip_addresses,
@@ -73,8 +72,7 @@ defmodule Trento.HostProjector do
     %HeartbeatSucceded{host_id: id},
     fn multi ->
       changeset =
-        HostReadModel
-        |> Repo.get(id)
+        %HostReadModel{id: id}
         |> HostReadModel.changeset(%{
           heartbeat: :passing
         })
@@ -87,8 +85,7 @@ defmodule Trento.HostProjector do
     %HeartbeatFailed{host_id: id},
     fn multi ->
       changeset =
-        HostReadModel
-        |> Repo.get(id)
+        %HostReadModel{id: id}
         |> HostReadModel.changeset(%{
           heartbeat: :critical
         })
@@ -101,8 +98,7 @@ defmodule Trento.HostProjector do
     %ProviderUpdated{host_id: id, provider: provider, provider_data: provider_data},
     fn multi ->
       changeset =
-        HostReadModel
-        |> Repo.get(id)
+        %HostReadModel{id: id}
         |> HostReadModel.changeset(%{
           provider: provider,
           provider_data: provider_data |> Map.from_struct() |> Map.put(:provider, provider)
