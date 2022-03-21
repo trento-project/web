@@ -14,8 +14,8 @@ defmodule Trento.SapSystems do
   def get_all_sap_systems do
     SapSystemReadModel
     |> Repo.all()
-    |> Repo.preload(application_instances: [host: :cluster])
-    |> Repo.preload(database_instances: [host: :cluster])
+    |> Repo.preload(:application_instances)
+    |> Repo.preload(:database_instances)
     |> Repo.preload(:tags)
   end
 
@@ -23,6 +23,6 @@ defmodule Trento.SapSystems do
   def get_all_databases do
     DatabaseReadModel
     |> Repo.all()
-    |> Repo.preload(database_instances: [host: :cluster])
+    |> Repo.preload(:database_instances)
   end
 end

@@ -50,20 +50,6 @@ const getClusterName = (clusterID) => (state) => {
   }, '');
 };
 
-// TODO: in order to make this reactive, move it to the React component
-function* getHost(id) {
-  return yield select((state) => {
-    return state.hostsList.hosts.find((host) => host.id === id);
-  });
-}
-
-// TODO: in order to make this reactive, move it to the React component
-function* getCluster(id) {
-  return yield select((state) => {
-    return state.clustersList.clusters.find((cluster) => cluster.id === id);
-  });
-}
-
 function* initialDataFetch() {
   yield put(startHostsLoading());
   const { data: hosts } = yield call(get, '/api/hosts');
@@ -302,10 +288,6 @@ function* sapSystemRegistered({ payload }) {
 }
 
 function* applicationInstanceRegistered({ payload }) {
-  payload.host = yield getHost(payload.host_id);
-  // TODO: investigate and fix why cluster does not get populated
-  payload.host.cluster = yield getCluster(payload.host.cluster_id);
-
   yield put(appendApplicationInstance(payload));
   yield put(
     appendEntryToLiveFeed({
@@ -324,10 +306,6 @@ function* watchSapSystemRegistered() {
 }
 
 function* databaseInstanceRegistered({ payload }) {
-  payload.host = yield getHost(payload.host_id);
-  // TODO: investigate and fix why cluster does not get populated
-  payload.host.cluster = yield getCluster(payload.host.cluster_id);
-
   yield put(appendDatabaseInstance(payload));
   yield put(
     appendEntryToLiveFeed({

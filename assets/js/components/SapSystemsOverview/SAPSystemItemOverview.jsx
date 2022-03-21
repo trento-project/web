@@ -3,6 +3,7 @@ import {
   EOS_DATABASE_OUTLINED,
 } from 'eos-icons-react';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import HealthIcon from '../Health';
 import Pill from '../Pill/Pill';
@@ -10,10 +11,12 @@ import Pill from '../Pill/Pill';
 const ApplicationType = 'application';
 const DatabaseType = 'database';
 
-const renderApplicationInstance = (instance) =>
-  renderInstance(ApplicationType, instance);
-const renderDatabaseInstance = (instance) =>
-  renderInstance(DatabaseType, instance);
+const ApplicationInstance = ({ instance }) => (
+  <Instance instanceType={ApplicationType} instance={instance} />
+);
+const DatabaseInstance = ({ instance }) => (
+  <Instance instanceType={DatabaseType} instance={instance} />
+);
 
 const instanceColumns = [
   { name: 'Health', cssClass: 'w-20' },
@@ -28,21 +31,28 @@ const applicationInstanceColumns = [...instanceColumns];
 const databaseInstanceColumns = [...instanceColumns];
 databaseInstanceColumns.splice(3, 0, { name: 'System Replication' });
 
-const renderInstance = (
+const getHost = (id) => (state) =>
+  state.hostsList.hosts.find((host) => host.id === id);
+const getCluster = (id) => (state) =>
+  state.clustersList.clusters.find((cluster) => cluster.id === id);
+
+const Instance = ({
   instanceType,
-  {
+  instance: {
     health,
     systemReplication,
     instance_number: instanceNumber,
     features,
     host_id: hostId,
-    host: { hostname: hostName, cluster },
-  }
-) => {
-  const isDatabase = () => DatabaseType === instanceType;
+  },
+}) => {
+  const isDatabase = DatabaseType === instanceType;
+
+  const host = useSelector(getHost(hostId));
+  const cluster = useSelector(getCluster(host?.cluster_id));
 
   return (
-    <div key={`${instanceNumber}-${hostId}`} className="table-row border-b">
+    <div className="table-row border-b">
       <div className="table-cell p-2">
         <HealthIcon health={health} />
       </div>
@@ -54,9 +64,7 @@ const renderInstance = (
           <Pill key={index}>{feature}</Pill>
         ))}
       </div>
-      {isDatabase() && (
-        <div className="table-cell p-2">{systemReplication}</div>
-      )}
+      {isDatabase && <div className="table-cell p-2">{systemReplication}</div>}
       <div className="table-cell p-2">
         {cluster ? (
           cluster.name
@@ -71,7 +79,7 @@ const renderInstance = (
           className="ml-auto hidden md:block text-sm text-gray-500 dark:text-gray-300 underline"
           to={`/hosts/${hostId}`}
         >
-          {hostName}
+          {host && host.hostname}
         </Link>
       </div>
     </div>
@@ -79,7 +87,7 @@ const renderInstance = (
 };
 
 const SAPSystemItemOverview = ({ sapSystem }) => {
-  const { sid, tenant, applicationInstances, databaseInstances } = sapSystem;
+  const { applicationInstances, databaseInstances } = sapSystem;
 
   return (
     <div className="p-2">
@@ -106,7 +114,11 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
             </div>
             <div className="table-row-group">
               {applicationInstances &&
-                applicationInstances.map(renderApplicationInstance)}
+                applicationInstances.map((instance, index) => {
+                  return (
+                    <ApplicationInstance key={index} instance={instance} />
+                  );
+                })}
             </div>
           </div>
         </div>
@@ -134,7 +146,9 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
             </div>
             <div className="table-row-group">
               {databaseInstances &&
-                databaseInstances.map(renderDatabaseInstance)}
+                databaseInstances.map((instance, index) => {
+                  return <DatabaseInstance key={index} instance={instance} />;
+                })}
             </div>
           </div>
         </div>

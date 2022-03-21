@@ -234,6 +234,17 @@ defmodule Trento.Factory do
     })
   end
 
+  def database_instance_projection_without_host(attrs \\ []) do
+    Repo.insert!(%DatabaseInstanceReadModel{
+      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
+      sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
+      tenant: Keyword.get(attrs, :tenant, Faker.UUID.v4()),
+      instance_number: Keyword.get(attrs, :instance_number, "00"),
+      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4())
+    })
+  end
+
   def database_instance_projection(attrs \\ []) do
     host_projection = host_projection()
 
@@ -245,6 +256,16 @@ defmodule Trento.Factory do
       features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
       host_id: host_projection.id,
       host: host_projection
+    })
+  end
+
+  def application_instance_projection_without_host(attrs \\ []) do
+    Repo.insert!(%ApplicationInstanceReadModel{
+      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
+      sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
+      instance_number: Keyword.get(attrs, :instance_number, "00"),
+      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4())
     })
   end
 
