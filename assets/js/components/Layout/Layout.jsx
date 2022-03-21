@@ -7,6 +7,7 @@ import {
   EOS_CLUSTER_ROLE,
   EOS_INFO,
   EOS_SYSTEM_GROUP,
+  EOS_STORAGE,
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
@@ -28,6 +29,11 @@ const navigation = [
     name: 'SAP Systems',
     href: '/sap-systems',
     icon: EOS_SYSTEM_GROUP,
+  },
+  {
+    name: 'HANA Databases',
+    href: '/databases',
+    icon: EOS_STORAGE,
   },
   { name: 'About', href: '/about', icon: EOS_INFO },
 ];
