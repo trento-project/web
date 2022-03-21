@@ -10,6 +10,7 @@ defmodule Trento.HostTelemetryReadModel do
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
+  @timestamps_opts [type: :utc_datetime]
   @primary_key {:agent_id, :binary_id, autogenerate: false}
   schema "hosts_telemetry" do
     field :hostname, :string
