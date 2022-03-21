@@ -107,7 +107,7 @@ const SapSystemsOverview = () => {
         bySapSystem(sapSystem.id)
       ),
       databaseInstances: databaseInstances.filter(bySapSystem(sapSystem.id)),
-      tags: sapSystem.tags,
+      tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],
     };
   });
 
