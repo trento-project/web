@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 import Spinner from './Spinner';
@@ -136,22 +136,24 @@ const ChecksResults = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {sortChecksResults(checksResults[c], group).map((checkResult) => (
-                      <tr key={checkResult.check_id} className="animate-fade">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {group(checkResult.check_id)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {checkResult.check_id}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {description(checkResult.check_id)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap content-center">
-                          {getResultIcon(checkResult.result)}
-                        </td>
-                      </tr>
-                    ))}
+                    {sortChecksResults(checksResults[c], group).map(
+                      (checkResult) => (
+                        <tr key={checkResult.check_id} className="animate-fade">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {group(checkResult.check_id)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {checkResult.check_id}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {description(checkResult.check_id)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap content-center">
+                            {getResultIcon(checkResult.result)}
+                          </td>
+                        </tr>
+                      )
+                    )}
                   </tbody>
                 </table>
               </div>

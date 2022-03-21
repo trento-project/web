@@ -8,7 +8,7 @@ import Tags from './Tags';
 
 import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
 
-import {logError} from '@lib/log'
+import { logError } from '@lib/log';
 
 import HealthIcon from './Health';
 

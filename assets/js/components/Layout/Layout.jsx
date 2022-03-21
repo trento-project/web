@@ -51,7 +51,7 @@ const Layout = () => {
                 {navigation.map((item, index) => {
                   return (
                     <Link
-                    key={index}
+                      key={index}
                       className={`w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
                         isCurrentRoute(item.href)
                           ? 'border-l-4 border-jungle-green-500'

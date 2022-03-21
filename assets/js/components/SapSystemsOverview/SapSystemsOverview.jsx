@@ -7,7 +7,7 @@ import Table from '../Table';
 import SAPSystemItemOverview from './SAPSystemItemOverview';
 import Tags from '../Tags';
 
-import {logError} from '@lib/log'
+import { logError } from '@lib/log';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 

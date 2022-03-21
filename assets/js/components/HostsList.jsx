@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
-import {logError} from '@lib/log'
+import { logError } from '@lib/log';
 
 const getHeartbeatIcon = ({ heartbeat }) => {
   switch (heartbeat) {
