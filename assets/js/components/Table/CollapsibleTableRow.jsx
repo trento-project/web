@@ -5,7 +5,7 @@ const CollapsibleTableRow = ({
   item,
   collapsibleDetailRenderer,
   renderCells = () => {},
-  colspan = 1,
+  colSpan = 1,
 }) => {
   const [rowExpanded, toggleRow] = useState(false);
   return (
@@ -26,7 +26,7 @@ const CollapsibleTableRow = ({
             rowExpanded ? 'visible' : 'hidden'
           } transition-all ease-in-out duration-600`}
         >
-          <td colSpan={colspan}>{collapsibleDetailRenderer(item)}</td>
+          <td colSpan={colSpan}>{collapsibleDetailRenderer(item)}</td>
         </tr>
       )}
     </Fragment>

@@ -7,6 +7,8 @@ import Table from '../Table';
 import SAPSystemItemOverview from './SAPSystemItemOverview';
 import Tags from '../Tags';
 
+import { logError } from '@lib/log';
+
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 
 const addTag = (tag, sapSystemId) => {
@@ -15,13 +17,13 @@ const addTag = (tag, sapSystemId) => {
       value: tag,
     })
     .catch((error) => {
-      console.err('Error posting tag: ', error);
+      logError('Error posting tag: ', error);
     });
 };
 
 const removeTag = (tag, sapSystemId) => {
   axios.delete(`/api/sap_systems/${sapSystemId}/tags/${tag}`).catch((error) => {
-    console.err('Error deleting tag: ', error);
+    logError('Error deleting tag: ', error);
   });
 };
 

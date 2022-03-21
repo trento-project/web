@@ -8,6 +8,8 @@ import Tags from './Tags';
 
 import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
 
+import { logError } from '@lib/log';
+
 import HealthIcon from './Health';
 
 const getClusterTypeLabel = (type) => {
@@ -27,13 +29,13 @@ const addTag = (tag, clusterId) => {
       value: tag,
     })
     .catch((error) => {
-      console.err('Error posting tag: ', error);
+      logError('Error posting tag: ', error);
     });
 };
 
 const removeTag = (tag, clusterId) => {
   axios.delete(`/api/clusters/${clusterId}/tags/${tag}`).catch((error) => {
-    console.err('Error deleting tag: ', error);
+    logError('Error deleting tag: ', error);
   });
 };
 

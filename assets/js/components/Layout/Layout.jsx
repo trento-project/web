@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 import {
@@ -32,12 +32,6 @@ const navigation = [
   { name: 'About', href: '/about', icon: EOS_INFO },
 ];
 
-const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
-];
-
 const Layout = () => {
   const { pathname } = useLocation();
   const isCurrentRoute = (route) => pathname === route;
@@ -54,9 +48,10 @@ const Layout = () => {
             </div>
             <nav className="mt-6">
               <div>
-                {navigation.map((item) => {
+                {navigation.map((item, index) => {
                   return (
                     <Link
+                      key={index}
                       className={`w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
                         isCurrentRoute(item.href)
                           ? 'border-l-4 border-jungle-green-500'
