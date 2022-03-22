@@ -44,7 +44,7 @@ export const sapSystemsListSlice = createSlice({
     },
     // When a new DatabaseInstanceRegistered comes in,
     // it need to be appended to the list of the database instances of the relative sap system
-    appendDatabaseInstance: (state, action) => {
+    appendDatabaseInstanceToSapSystem: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
     },
   },
@@ -56,7 +56,7 @@ export const {
   setSapSystems,
   appendSapsystem,
   appendApplicationInstance,
-  appendDatabaseInstance,
+  appendDatabaseInstanceToSapSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;
