@@ -60,6 +60,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          details: details,
           designated_controller: true
         }
       ) do
@@ -68,7 +69,8 @@ defmodule Trento.Domain.Cluster do
         cluster_id: cluster_id,
         name: name,
         type: type,
-        sid: sid
+        sid: sid,
+        details: details
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,

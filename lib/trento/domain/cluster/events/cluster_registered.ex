@@ -13,5 +13,6 @@ defmodule Trento.Domain.Events.ClusterRegistered do
     field :name, String.t(), enforce: true
     field :type, :hana_scale_up | :hana_scale_out | :unknown, enforce: true
     field :sid, String.t() | nil, enforce: true
+    field :details, HanaClusterDetails.t() | nil, enforce: true
   end
 end
