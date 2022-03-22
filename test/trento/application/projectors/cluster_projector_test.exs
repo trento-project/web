@@ -31,7 +31,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
     assert event.sid == cluster_projection.sid
-    assert event.details == cluster_projection.details
+    assert StructHelper.to_map(event.details) == cluster_projection.details
     assert event.type == cluster_projection.type
   end
 
