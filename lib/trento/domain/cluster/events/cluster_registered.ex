@@ -5,6 +5,8 @@ defmodule Trento.Domain.Events.ClusterRegistered do
 
   use TypedStruct
 
+  alias Trento.Domain.HanaClusterDetails
+
   @derive Jason.Encoder
   typedstruct do
     @typedoc "ClusterRegistered event"
