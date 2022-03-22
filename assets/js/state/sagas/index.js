@@ -27,11 +27,13 @@ import {
   stopSapSystemsLoading,
   setSapSystems,
   appendSapsystem,
-  appendDatabaseInstance,
+  appendDatabaseInstanceToSapSystem,
   appendApplicationInstance,
 } from '../sapSystems';
 
 import {
+  appendDatabase,
+  appendDatabaseInstance,
   setDatabases,
   startDatabasesLoading,
   stopDatabasesLoading,
@@ -308,7 +310,7 @@ function* applicationInstanceRegistered({ payload }) {
   );
 }
 
-function* watchSapSystemRegistered() {
+function* watchSapSystem() {
   yield takeEvery('SAP_SYSTEM_REGISTERED', sapSystemRegistered);
   yield takeEvery(
     'APPLICATION_INSTANCE_REGISTERED',
@@ -316,8 +318,25 @@ function* watchSapSystemRegistered() {
   );
 }
 
+function* databaseRegistered({ payload }) {
+  yield put(appendDatabase(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.sid,
+      message: 'New Databse registered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `A new Database, ${payload.sid}, has been discovered.`,
+      icon: '🖖',
+    })
+  );
+}
+
 function* databaseInstanceRegistered({ payload }) {
   yield put(appendDatabaseInstance(payload));
+  yield put(appendDatabaseInstanceToSapSystem(payload));
   yield put(
     appendEntryToLiveFeed({
       source: payload.sid,
@@ -332,7 +351,8 @@ function* databaseInstanceRegistered({ payload }) {
   );
 }
 
-function* watchDatabaseInstanceRegistered() {
+function* watchDatabase() {
+  yield takeEvery('DATABASE_REGISTERED', databaseRegistered);
   yield takeEvery('DATABASE_INSTANCE_REGISTERED', databaseInstanceRegistered);
 }
 
@@ -352,7 +372,7 @@ export default function* rootSaga() {
     watchChecksExecutionCompleted(),
     watchChecksResultsUpdated(),
     watchClusterHealthChanged(),
-    watchSapSystemRegistered(),
-    watchDatabaseInstanceRegistered(),
+    watchSapSystem(),
+    watchDatabase(),
   ]);
 }

@@ -23,10 +23,21 @@ export const databasesListSlice = createSlice({
     stopDatabasesLoading: (state) => {
       state.loading = false;
     },
+    appendDatabase: (state, action) => {
+      state.databases = [...state.databases, action.payload];
+    },
+    appendDatabaseInstance: (state, action) => {
+      state.databaseInstances = [...state.databaseInstances, action.payload];
+    },
   },
 });
 
-export const { startDatabasesLoading, stopDatabasesLoading, setDatabases } =
-  databasesListSlice.actions;
+export const {
+  startDatabasesLoading,
+  stopDatabasesLoading,
+  setDatabases,
+  appendDatabase,
+  appendDatabaseInstance,
+} = databasesListSlice.actions;
 
 export default databasesListSlice.reducer;

@@ -94,6 +94,10 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'APPLICATION_INSTANCE_REGISTERED', payload })
   );
 
+  databasesChannel.on('database_registered', (payload) =>
+    store.dispatch({ type: 'DATABASE_REGISTERED', payload })
+  );
+
   databasesChannel.on('database_instance_registered', (payload) =>
     store.dispatch({ type: 'DATABASE_INSTANCE_REGISTERED', payload })
   );
