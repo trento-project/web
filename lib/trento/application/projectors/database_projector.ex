@@ -75,6 +75,19 @@ defmodule Trento.DatabaseProjector do
 
   @impl true
   def after_update(
+        %DatabaseRegistered{},
+        _,
+        %{database: database}
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:databases",
+      "database_registered",
+      StructHelper.to_map(database)
+    )
+  end
+
+  @impl true
+  def after_update(
         %DatabaseInstanceRegistered{},
         _,
         %{database_instance: instance}
