@@ -31,6 +31,7 @@ defmodule Trento.ClusterTest do
           name: name,
           sid: sid,
           type: type,
+          details: nil,
           designated_controller: true
         ),
         [
@@ -38,7 +39,8 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             name: name,
             sid: sid,
-            type: type
+            type: type,
+            details: nil
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,

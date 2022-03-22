@@ -88,6 +88,7 @@ defmodule Trento.Factory do
       cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
       name: Keyword.get(attrs, :name, Faker.StarWars.character()),
       sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
+      details: Keyword.get(attrs, :details, hana_cluster_details_value_object()),
       type: Keyword.get(attrs, :type, :hana_scale_up)
     }
   end
