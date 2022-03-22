@@ -84,6 +84,15 @@ config :trento, TrentoWeb.Endpoint,
     ]
   ]
 
+config :trento, Trento.Scheduler,
+  jobs: [
+    publish_telemetry: [
+      schedule: {:extended, "@hourly"}
+    ]
+  ]
+
+config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

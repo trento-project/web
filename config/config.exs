@@ -76,12 +76,21 @@ config :trento, Trento.Scheduler,
       task: {Trento.Heartbeats, :dispatch_heartbeat_failed_commands, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
+    ],
+    publish_telemetry: [
+      schedule: {:extended, "@daily"},
+      task: {Trento.Integration.Telemetry, :publish, []},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
     ]
   ],
   debug_logging: false
 
+config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
+
 config :trento,
-  uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc"
+  uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",
+  flavor: System.get_env("FLAVOR", "Community")
 
 config :vex,
   sources: [
