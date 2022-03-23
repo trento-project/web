@@ -20,8 +20,6 @@ defmodule Trento.HostProjector do
 
   alias Trento.HostReadModel
 
-  alias Trento.Repo
-
   project(
     %HostRegistered{
       host_id: id,
