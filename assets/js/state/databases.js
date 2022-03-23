@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { maybeUpdateInstanceHealth } from './instances';
 
 const initialState = {
   loading: false,
@@ -29,6 +30,19 @@ export const databasesListSlice = createSlice({
     appendDatabaseInstance: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
     },
+    updateDatabaseHealth: (state, action) => {
+      state.databases = state.databases.map((database) => {
+        if (database.id === action.payload.id) {
+          database.health = action.payload.health;
+        }
+        return database;
+      });
+    },
+    updateDatabaseInstanceHealth: (state, action) => {
+      state.databaseInstances = state.databaseInstances.map((instance) => {
+        return maybeUpdateInstanceHealth(action.payload, instance);
+      });
+    },
   },
 });
 
@@ -38,6 +52,8 @@ export const {
   setDatabases,
   appendDatabase,
   appendDatabaseInstance,
+  updateDatabaseHealth,
+  updateDatabaseInstanceHealth,
 } = databasesListSlice.actions;
 
 export default databasesListSlice.reducer;

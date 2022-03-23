@@ -9,6 +9,7 @@ defmodule Trento.SapSystemProjector do
     name: "sap_system_projector"
 
   alias Trento.Domain.Events.{
+    ApplicationInstanceHealthChanged,
     ApplicationInstanceRegistered,
     SapSystemHealthChanged,
     SapSystemRegistered
@@ -83,30 +84,95 @@ defmodule Trento.SapSystemProjector do
     end
   )
 
+  project(
+    %ApplicationInstanceHealthChanged{
+      sap_system_id: sap_system_id,
+      host_id: host_id,
+      instance_number: instance_number,
+      health: health
+    },
+    fn multi ->
+      changeset =
+        %ApplicationInstanceReadModel{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number
+        }
+        |> ApplicationInstanceReadModel.changeset(%{health: health})
+
+      Ecto.Multi.update(multi, :application_instance, changeset)
+    end
+  )
+
+  @sap_systems_topic "monitoring:sap_systems"
+
   @impl true
   def after_update(
         %SapSystemRegistered{},
         _,
-        %{sap_system: sap_system}
+        %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:sap_systems",
+      @sap_systems_topic,
       "sap_system_registered",
       StructHelper.to_map(sap_system)
     )
   end
 
+  @impl true
+  def after_update(
+        %SapSystemHealthChanged{},
+        _,
+        %{sap_system: %SapSystemReadModel{id: id, health: health}}
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_health_changed",
+      %{
+        id: id,
+        health: health
+      }
+    )
+  end
+
+  @impl true
   def after_update(
         %ApplicationInstanceRegistered{},
         _,
-        %{application_instance: instance}
+        %{application_instance: %ApplicationInstanceReadModel{} = instance}
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:sap_systems",
+      @sap_systems_topic,
       "application_instance_registered",
       StructHelper.to_map(instance)
     )
   end
 
+  @impl true
+  def after_update(
+        %ApplicationInstanceHealthChanged{},
+        _,
+        %{
+          application_instance: %ApplicationInstanceReadModel{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            health: health
+          }
+        }
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "application_instance_health_changed",
+      %{
+        sap_system_id: sap_system_id,
+        host_id: host_id,
+        instance_number: instance_number,
+        health: health
+      }
+    )
+  end
+
+  @impl true
   def after_update(_, _, _), do: :ok
 end
