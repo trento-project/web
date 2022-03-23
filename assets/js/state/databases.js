@@ -29,6 +29,14 @@ export const databasesListSlice = createSlice({
     appendDatabaseInstance: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
     },
+    updateDatabaseHealth: (state, action) => {
+      state.databases = state.databases.map((database) => {
+        if (database.id === action.payload.id) {
+          database.health = action.payload.health;
+        }
+        return database;
+      });
+    },
   },
 });
 
@@ -38,6 +46,7 @@ export const {
   setDatabases,
   appendDatabase,
   appendDatabaseInstance,
+  updateDatabaseHealth,
 } = databasesListSlice.actions;
 
 export default databasesListSlice.reducer;

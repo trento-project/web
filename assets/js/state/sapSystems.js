@@ -47,6 +47,14 @@ export const sapSystemsListSlice = createSlice({
     appendDatabaseInstanceToSapSystem: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
     },
+    updateSapSystemHealth: (state, action) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === action.payload.id) {
+          sapSystem.health = action.payload.health;
+        }
+        return sapSystem;
+      });
+    },
   },
 });
 
@@ -57,6 +65,7 @@ export const {
   appendSapsystem,
   appendApplicationInstance,
   appendDatabaseInstanceToSapSystem,
+  updateSapSystemHealth,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;

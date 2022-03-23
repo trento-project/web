@@ -29,6 +29,7 @@ import {
   appendSapsystem,
   appendDatabaseInstanceToSapSystem,
   appendApplicationInstance,
+  updateSapSystemHealth,
 } from '../sapSystems';
 
 import {
@@ -37,12 +38,14 @@ import {
   setDatabases,
   startDatabasesLoading,
   stopDatabasesLoading,
+  updateDatabaseHealth,
 } from '../databases';
 
 import { setCatalog } from '../catalog';
 
 import { appendEntryToLiveFeed } from '../liveFeed';
 import { watchNotifications } from './notifications';
+import { findDatabase, findSapSystem } from '../selectors';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
@@ -300,6 +303,25 @@ function* sapSystemRegistered({ payload }) {
   );
 }
 
+function* sapSystemHealthChanged({ payload }) {
+  const sid =
+    (yield select(findSapSystem(payload.id)))?.sid || 'unable to determine SID';
+
+  yield put(updateSapSystemHealth(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: sid,
+      message: `SAP System Health changed to ${payload.health}`,
+    })
+  );
+  yield put(
+    notify({
+      text: `The SAP System ${sid} health is ${payload.health}!`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 function* applicationInstanceRegistered({ payload }) {
   yield put(appendApplicationInstance(payload));
   yield put(
@@ -312,6 +334,7 @@ function* applicationInstanceRegistered({ payload }) {
 
 function* watchSapSystem() {
   yield takeEvery('SAP_SYSTEM_REGISTERED', sapSystemRegistered);
+  yield takeEvery('SAP_SYSTEM_HEALTH_CHANGED', sapSystemHealthChanged);
   yield takeEvery(
     'APPLICATION_INSTANCE_REGISTERED',
     applicationInstanceRegistered
@@ -330,6 +353,25 @@ function* databaseRegistered({ payload }) {
     notify({
       text: `A new Database, ${payload.sid}, has been discovered.`,
       icon: '🖖',
+    })
+  );
+}
+
+function* databaseHealthChanged({ payload }) {
+  const sid =
+    (yield select(findDatabase(payload.id)))?.sid || 'unable to determine SID';
+
+  yield put(updateDatabaseHealth(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: sid,
+      message: `Database Health changed to ${payload.health}`,
+    })
+  );
+  yield put(
+    notify({
+      text: `The Database ${sid} health is ${payload.health}!`,
+      icon: 'ℹ️',
     })
   );
 }
@@ -353,6 +395,7 @@ function* databaseInstanceRegistered({ payload }) {
 
 function* watchDatabase() {
   yield takeEvery('DATABASE_REGISTERED', databaseRegistered);
+  yield takeEvery('DATABASE_HEALTH_CHANGED', databaseHealthChanged);
   yield takeEvery('DATABASE_INSTANCE_REGISTERED', databaseInstanceRegistered);
 }
 

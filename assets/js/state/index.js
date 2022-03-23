@@ -90,16 +90,32 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'SAP_SYSTEM_REGISTERED', payload })
   );
 
+  sapSystemsChannel.on('sap_system_health_changed', (payload) =>
+    store.dispatch({ type: 'SAP_SYSTEM_HEALTH_CHANGED', payload })
+  );
+
   sapSystemsChannel.on('application_instance_registered', (payload) =>
     store.dispatch({ type: 'APPLICATION_INSTANCE_REGISTERED', payload })
+  );
+
+  sapSystemsChannel.on('application_instance_health_changed', (payload) =>
+    store.dispatch({ type: 'APPLICATION_INSTANCE_HEALTH_CHANGED', payload })
   );
 
   databasesChannel.on('database_registered', (payload) =>
     store.dispatch({ type: 'DATABASE_REGISTERED', payload })
   );
 
+  databasesChannel.on('database_health_changed', (payload) =>
+    store.dispatch({ type: 'DATABASE_HEALTH_CHANGED', payload })
+  );
+
   databasesChannel.on('database_instance_registered', (payload) =>
     store.dispatch({ type: 'DATABASE_INSTANCE_REGISTERED', payload })
+  );
+
+  databasesChannel.on('database_instance_health_changed', (payload) =>
+    store.dispatch({ type: 'DATABASE_INSTANCE_HEALTH_CHANGED', payload })
   );
 
   joinChannel(hostsChannel);
