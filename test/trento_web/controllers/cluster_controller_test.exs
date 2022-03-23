@@ -3,7 +3,10 @@ defmodule TrentoWeb.ClusterControllerTest do
 
   import Trento.Factory
 
-  alias Trento.Tag
+  alias Trento.{
+    ClusterReadModel,
+    Tag
+  }
 
   describe "tags" do
     test "add a tag to a cluster", %{conn: conn} do
@@ -39,6 +42,16 @@ defmodule TrentoWeb.ClusterControllerTest do
       conn = delete(conn, Routes.cluster_path(conn, :delete_tag, resource_id, "non-existing-tag"))
 
       assert 404 == conn.status
+    end
+  end
+
+  describe "list" do
+    test "list all clusters", %{conn: conn} do
+      %ClusterReadModel{} = cluster_projection()
+
+      conn = get(conn, Routes.cluster_path(conn, :list))
+
+      assert 200 == conn.status
     end
   end
 end

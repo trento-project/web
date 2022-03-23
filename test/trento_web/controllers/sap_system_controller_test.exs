@@ -3,7 +3,10 @@ defmodule TrentoWeb.SapSystemControllerTest do
 
   import Trento.Factory
 
-  alias Trento.Tag
+  alias Trento.{
+    SapSystemReadModel,
+    Tag
+  }
 
   describe "tags" do
     test "add a tag to a sap system", %{conn: conn} do
@@ -40,6 +43,16 @@ defmodule TrentoWeb.SapSystemControllerTest do
         delete(conn, Routes.sap_system_path(conn, :delete_tag, resource_id, "non-existing-tag"))
 
       assert 404 == conn.status
+    end
+  end
+
+  describe "list" do
+    test "list all sap systems", %{conn: conn} do
+      %SapSystemReadModel{} = sap_system_projection()
+
+      conn = get(conn, Routes.sap_system_path(conn, :list))
+
+      assert 200 == conn.status
     end
   end
 end
