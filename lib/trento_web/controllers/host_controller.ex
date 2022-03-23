@@ -38,8 +38,8 @@ defmodule TrentoWeb.HostController do
     case Tags.create_tag(value, id, "host") do
       {:ok, _} ->
         conn
-        |> put_status(:accepted)
-        |> json(%{})
+        |> put_status(:created)
+        |> json(%{value: value})
 
       {:error, _} ->
         conn
@@ -55,14 +55,10 @@ defmodule TrentoWeb.HostController do
       }) do
     case Tags.delete_tag(value, resource_id) do
       :ok ->
-        conn
-        |> put_status(:accepted)
-        |> json(%{})
+        send_resp(conn, :no_content, "")
 
       :not_found ->
-        conn
-        |> put_status(:not_found)
-        |> json(%{})
+        send_resp(conn, :not_found, "")
     end
   end
 end
