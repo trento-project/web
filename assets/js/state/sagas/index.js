@@ -30,6 +30,8 @@ import {
   appendDatabaseInstanceToSapSystem,
   appendApplicationInstance,
   updateSapSystemHealth,
+  updateSAPSystemDatabaseInstanceHealth,
+  updateApplicationInstanceHealth,
 } from '../sapSystems';
 
 import {
@@ -39,6 +41,7 @@ import {
   startDatabasesLoading,
   stopDatabasesLoading,
   updateDatabaseHealth,
+  updateDatabaseInstanceHealth,
 } from '../databases';
 
 import { setCatalog } from '../catalog';
@@ -332,12 +335,20 @@ function* applicationInstanceRegistered({ payload }) {
   );
 }
 
+function* applicationInstanceHealthChanged({ payload }) {
+  yield put(updateApplicationInstanceHealth(payload));
+}
+
 function* watchSapSystem() {
   yield takeEvery('SAP_SYSTEM_REGISTERED', sapSystemRegistered);
   yield takeEvery('SAP_SYSTEM_HEALTH_CHANGED', sapSystemHealthChanged);
   yield takeEvery(
     'APPLICATION_INSTANCE_REGISTERED',
     applicationInstanceRegistered
+  );
+  yield takeEvery(
+    'APPLICATION_INSTANCE_HEALTH_CHANGED',
+    applicationInstanceHealthChanged
   );
 }
 
@@ -393,10 +404,19 @@ function* databaseInstanceRegistered({ payload }) {
   );
 }
 
+function* databaseInstanceHealthChanged({ payload }) {
+  yield put(updateDatabaseInstanceHealth(payload));
+  yield put(updateSAPSystemDatabaseInstanceHealth(payload));
+}
+
 function* watchDatabase() {
   yield takeEvery('DATABASE_REGISTERED', databaseRegistered);
   yield takeEvery('DATABASE_HEALTH_CHANGED', databaseHealthChanged);
   yield takeEvery('DATABASE_INSTANCE_REGISTERED', databaseInstanceRegistered);
+  yield takeEvery(
+    'DATABASE_INSTANCE_HEALTH_CHANGED',
+    databaseInstanceHealthChanged
+  );
 }
 
 export default function* rootSaga() {

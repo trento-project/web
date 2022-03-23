@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { maybeUpdateInstanceHealth } from './instances';
 
 const initialState = {
   loading: false,
@@ -55,6 +56,18 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
+    updateApplicationInstanceHealth: (state, action) => {
+      state.applicationInstances = state.applicationInstances.map(
+        (instance) => {
+          return maybeUpdateInstanceHealth(action.payload, instance);
+        }
+      );
+    },
+    updateSAPSystemDatabaseInstanceHealth: (state, action) => {
+      state.databaseInstances = state.databaseInstances.map((instance) => {
+        return maybeUpdateInstanceHealth(action.payload, instance);
+      });
+    },
   },
 });
 
@@ -66,6 +79,8 @@ export const {
   appendApplicationInstance,
   appendDatabaseInstanceToSapSystem,
   updateSapSystemHealth,
+  updateApplicationInstanceHealth,
+  updateSAPSystemDatabaseInstanceHealth,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;
