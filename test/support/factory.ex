@@ -30,7 +30,8 @@ defmodule Trento.Factory do
     HostReadModel,
     HostTelemetryReadModel,
     SapSystemReadModel,
-    SlesSubscriptionReadModel
+    SlesSubscriptionReadModel,
+    Tag
   }
 
   alias Trento.Integration.Discovery.DiscoveryEvent
@@ -300,6 +301,14 @@ defmodule Trento.Factory do
       agent_id: Keyword.get(attrs, :agent_id, Faker.UUID.v4()),
       discovery_type: Keyword.get(attrs, :discovery_type, Faker.Pokemon.name()),
       payload: Keyword.get(attrs, :payload, %{})
+    })
+  end
+
+  def tag(attrs \\ []) do
+    Repo.insert!(%Tag{
+      value: Keyword.get(attrs, :value, Faker.Beer.hop()),
+      resource_id: Keyword.get(attrs, :resource_id, Faker.UUID.v4()),
+      resource_type: Keyword.get(attrs, :resource_type, "resource")
     })
   end
 end
