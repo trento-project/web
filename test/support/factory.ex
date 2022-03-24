@@ -64,22 +64,12 @@ defmodule Trento.Factory do
   end
 
   def host_projection(attrs \\ []) do
-    cluster_projection = Keyword.get(attrs, :cluster, cluster_projection())
-
-    cluster_id =
-      if cluster_projection do
-        cluster_projection.id
-      else
-        nil
-      end
-
     Repo.insert!(%HostReadModel{
       id: Keyword.get(attrs, :id, Faker.UUID.v4()),
       hostname: Keyword.get(attrs, :hostname, Faker.StarWars.character()),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: Faker.StarWars.planet(),
-      cluster_id: cluster_id,
-      cluster: cluster_projection,
+      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
       heartbeat: :unknown
     })
   end
