@@ -15,7 +15,11 @@ defmodule Trento.Domain.Events.ApplicationInstanceRegistered do
     field :sid, String.t(), enforce: true
     field :host_id, String.t(), enforce: true
     field :instance_number, String.t(), enforce: true
+    field :instance_hostname, String.t(), enforce: true
     field :features, String.t(), enforce: true
+    field :http_port, integer, enforce: true
+    field :https_port, integer, enforce: true
+    field :start_priority, String.t(), enforce: true
     field :health, Health.t(), enforce: true
   end
 end
