@@ -3,6 +3,8 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstanceTest do
 
   alias Trento.Domain.Commands.RegisterApplicationInstance
 
+  import Trento.Factory
+
   @moduletag :unit
 
   test "should not validate if sap_system_id is not a valid uuid" do
@@ -14,7 +16,11 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstanceTest do
         tenant: Faker.Beer.style(),
         host_id: Faker.UUID.v4(),
         instance_number: "10",
+        instance_hostname: "theinstancename",
         features: Faker.Pokemon.name(),
+        http_port: 8080,
+        https_port: 8443,
+        start_priority: "0.2",
         health: :passing
       })
 
@@ -22,17 +28,7 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstanceTest do
   end
 
   test "should not validate if host_id is not a valid uuid" do
-    command =
-      RegisterApplicationInstance.new!(%{
-        sap_system_id: Faker.UUID.v4(),
-        sid: Faker.StarWars.planet(),
-        db_host: Faker.Internet.ip_v4_address(),
-        tenant: Faker.Beer.style(),
-        host_id: Faker.String.naughty(),
-        instance_number: "10",
-        features: Faker.Pokemon.name(),
-        health: :passing
-      })
+    command = register_application_instance_command(host_id: Faker.String.naughty())
 
     assert not Vex.valid?(command)
   end

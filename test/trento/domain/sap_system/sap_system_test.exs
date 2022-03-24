@@ -27,6 +27,7 @@ defmodule Trento.SapSystemTest do
       sid = Faker.StarWars.planet()
       tenant = Faker.Beer.style()
       instance_number = "00"
+      instance_hostname = Faker.Airports.iata()
       features = Faker.Pokemon.name()
       host_id = Faker.UUID.v4()
 
@@ -37,6 +38,7 @@ defmodule Trento.SapSystemTest do
           sid: sid,
           tenant: tenant,
           instance_number: instance_number,
+          instance_hostname: instance_hostname,
           features: features,
           host_id: host_id,
           health: :passing
@@ -52,6 +54,7 @@ defmodule Trento.SapSystemTest do
             sid: sid,
             tenant: tenant,
             instance_number: instance_number,
+            instance_hostname: instance_hostname,
             features: features,
             host_id: host_id,
             health: :passing
@@ -170,6 +173,7 @@ defmodule Trento.SapSystemTest do
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
       tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
       features = Faker.Pokemon.name()
       host_id = Faker.UUID.v4()
 
@@ -193,6 +197,7 @@ defmodule Trento.SapSystemTest do
           db_host: db_host,
           tenant: tenant,
           instance_number: "00",
+          instance_hostname: instance_hostname,
           features: features,
           host_id: host_id,
           health: :passing
@@ -209,6 +214,7 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             sid: sid,
             instance_number: "00",
+            instance_hostname: instance_hostname,
             features: features,
             host_id: host_id,
             health: :passing
