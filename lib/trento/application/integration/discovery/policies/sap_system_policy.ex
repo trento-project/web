@@ -149,7 +149,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end
   end
 
-  @spec parse_start_priority(map, String.t()) :: String.t()
+  @spec parse_start_priority(map, String.t()) :: String.t() | nil
   defp parse_start_priority(%{"SAPControl" => sap_control}, instance_number) do
     case extract_sap_control_instance_data(sap_control, instance_number, "startPriority") do
       {:ok, start_priority} ->
