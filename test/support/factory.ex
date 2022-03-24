@@ -22,6 +22,11 @@ defmodule Trento.Factory do
     SlesSubscriptionsUpdated
   }
 
+  alias Trento.Domain.Commands.{
+    RegisterApplicationInstance,
+    RegisterDatabaseInstance
+  }
+
   alias Trento.{
     ApplicationInstanceReadModel,
     ClusterReadModel,
@@ -145,7 +150,11 @@ defmodule Trento.Factory do
       sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
       tenant: Keyword.get(attrs, :tenant, Faker.UUID.v4()),
       instance_number: Keyword.get(attrs, :instance_number, "00"),
-      features: Faker.Pokemon.name(),
+      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
+      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
+      http_port: Keyword.get(attrs, :http_port, 8080),
+      https_port: Keyword.get(attrs, :https_port, 8443),
+      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
       health: Keyword.get(attrs, :health, :passing)
     }
@@ -156,7 +165,11 @@ defmodule Trento.Factory do
       sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
       sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
       instance_number: Keyword.get(attrs, :instance_number, "00"),
-      features: Faker.Pokemon.name(),
+      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
+      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
+      http_port: Keyword.get(attrs, :http_port, 8080),
+      https_port: Keyword.get(attrs, :https_port, 8443),
+      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
       health: Keyword.get(attrs, :health, :passing)
     }
@@ -300,5 +313,38 @@ defmodule Trento.Factory do
       resource_id: Keyword.get(attrs, :resource_id, Faker.UUID.v4()),
       resource_type: Keyword.get(attrs, :resource_type, "resource")
     })
+  end
+
+  def register_application_instance_command(attrs \\ []) do
+    RegisterApplicationInstance.new!(
+      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
+      sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
+      db_host: Keyword.get(attrs, :db_host, Faker.Internet.ip_v4_address()),
+      tenant: Keyword.get(attrs, :tenant, Faker.Beer.hop()),
+      instance_number: Keyword.get(attrs, :instance_number, "00"),
+      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
+      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
+      http_port: Keyword.get(attrs, :http_port, 8080),
+      https_port: Keyword.get(attrs, :https_port, 8443),
+      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      health: Keyword.get(attrs, :health, :passing)
+    )
+  end
+
+  def register_database_instance_command(attrs \\ []) do
+    RegisterDatabaseInstance.new!(
+      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
+      sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
+      tenant: Keyword.get(attrs, :tenant, Faker.Beer.hop()),
+      instance_number: Keyword.get(attrs, :instance_number, "00"),
+      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
+      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
+      http_port: Keyword.get(attrs, :http_port, 8080),
+      https_port: Keyword.get(attrs, :https_port, 8443),
+      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      health: Keyword.get(attrs, :health, :passing)
+    )
   end
 end
