@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
+import Button from '@components/Button';
 import ListView from '@components/ListView';
 import Pill from '@components/Pill';
 import Table from '@components/Table';
@@ -9,7 +10,19 @@ import Table from '@components/Table';
 const siteDetailsConfig = {
   columns: [
     { title: 'Hostname', key: 'name' },
-    { title: 'role', key: 'hana_status' },
+    { title: 'Role', key: 'hana_status' },
+    {
+      title: '',
+      key: '',
+      render: (_, item) => {
+        console.log(item);
+        return (
+          <Button size="small" type="primary">
+            Details
+          </Button>
+        );
+      },
+    },
   ],
 };
 
