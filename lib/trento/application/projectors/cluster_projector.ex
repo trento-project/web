@@ -17,10 +17,7 @@ defmodule Trento.ClusterProjector do
     ClusterRegistered
   }
 
-  alias Trento.{
-    ClusterReadModel,
-    HostReadModel
-  }
+  alias Trento.ClusterReadModel
 
   alias Trento.Repo
 
