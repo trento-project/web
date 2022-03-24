@@ -56,7 +56,11 @@ defmodule Trento.Domain.SapSystem do
           tenant: tenant,
           host_id: host_id,
           instance_number: instance_number,
+          instance_hostname: instance_hostname,
           features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
           health: health
         }
       ) do
@@ -71,7 +75,11 @@ defmodule Trento.Domain.SapSystem do
         sid: sid,
         tenant: tenant,
         instance_number: instance_number,
+        instance_hostname: instance_hostname,
         features: features,
+        http_port: http_port,
+        https_port: https_port,
+        start_priority: start_priority,
         host_id: host_id,
         health: health
       }
@@ -90,7 +98,11 @@ defmodule Trento.Domain.SapSystem do
           sid: sid,
           tenant: tenant,
           instance_number: instance_number,
+          instance_hostname: instance_hostname,
           features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
           host_id: host_id,
           health: health
         }
@@ -123,7 +135,11 @@ defmodule Trento.Domain.SapSystem do
             sid: sid,
             tenant: tenant,
             instance_number: instance_number,
+            instance_hostname: instance_hostname,
             features: features,
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
             host_id: host_id,
             health: health
           }
@@ -143,9 +159,13 @@ defmodule Trento.Domain.SapSystem do
           sap_system_id: sap_system_id,
           sid: sid,
           instance_number: instance_number,
+          instance_hostname: instance_hostname,
           tenant: tenant,
           db_host: db_host,
           features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
           host_id: host_id,
           health: health
         }
@@ -162,7 +182,11 @@ defmodule Trento.Domain.SapSystem do
         sap_system_id: sap_system_id,
         sid: sid,
         instance_number: instance_number,
+        instance_hostname: instance_hostname,
         features: features,
+        http_port: http_port,
+        https_port: https_port,
+        start_priority: start_priority,
         host_id: host_id,
         health: health
       }
@@ -178,7 +202,11 @@ defmodule Trento.Domain.SapSystem do
           sap_system_id: sap_system_id,
           sid: sid,
           instance_number: instance_number,
+          instance_hostname: instance_hostname,
           features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
           host_id: host_id,
           health: health
         }
@@ -210,7 +238,11 @@ defmodule Trento.Domain.SapSystem do
             sap_system_id: sap_system_id,
             sid: sid,
             instance_number: instance_number,
+            instance_hostname: instance_hostname,
             features: features,
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
             host_id: host_id,
             health: health
           }

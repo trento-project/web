@@ -65,7 +65,11 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
             tenant: tenant,
             host_id: host_id,
             instance_number: instance_number,
+            instance_hostname: parse_instance_hostname(instance, instance_number),
             features: parse_features(instance, instance_number),
+            http_port: parse_http_port(instance, instance_number),
+            https_port: parse_https_port(instance, instance_number),
+            start_priority: parse_start_priority(instance, instance_number),
             health: parse_instance_health(instance, instance_number)
           )
         end
@@ -93,7 +97,11 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         tenant: tenant,
         db_host: db_host,
         instance_number: instance_number,
+        instance_hostname: parse_instance_hostname(instance, instance_number),
         features: parse_features(instance, instance_number),
+        http_port: parse_http_port(instance, instance_number),
+        https_port: parse_https_port(instance, instance_number),
+        start_priority: parse_start_priority(instance, instance_number),
         host_id: host_id,
         health: parse_instance_health(instance, instance_number)
       )
@@ -107,6 +115,50 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          _
        ),
        do: []
+
+  @spec parse_instance_hostname(map, String.t()) :: String.t()
+  defp parse_instance_hostname(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "hostname") do
+      {:ok, instance_hostname} ->
+        instance_hostname
+
+      _ ->
+        ""
+    end
+  end
+
+  @spec parse_http_port(map, String.t()) :: integer() | nil
+  defp parse_http_port(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "httpPort") do
+      {:ok, instance_http_port} ->
+        instance_http_port
+
+      _ ->
+        nil
+    end
+  end
+
+  @spec parse_https_port(map, String.t()) :: integer() | nil
+  defp parse_https_port(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "httpsPort") do
+      {:ok, instance_https_port} ->
+        instance_https_port
+
+      _ ->
+        nil
+    end
+  end
+
+  @spec parse_start_priority(map, String.t()) :: String.t()
+  defp parse_start_priority(%{"SAPControl" => sap_control}, instance_number) do
+    case extract_sap_control_instance_data(sap_control, instance_number, "startPriority") do
+      {:ok, start_priority} ->
+        start_priority
+
+      _ ->
+        nil
+    end
+  end
 
   @spec parse_features(map, String.t()) :: String.t()
   defp parse_features(%{"SAPControl" => sap_control}, instance_number) do
