@@ -14,14 +14,10 @@ defmodule Trento.ClusterProjector do
     ChecksSelected,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
-    ClusterRegistered,
-    HostAddedToCluster
+    ClusterRegistered
   }
 
-  alias Trento.{
-    ClusterReadModel,
-    HostReadModel
-  }
+  alias Trento.ClusterReadModel
 
   alias Trento.Repo
 
@@ -95,26 +91,6 @@ defmodule Trento.ClusterProjector do
     Ecto.Multi.update(multi, :cluster, changeset)
   end)
 
-  project(
-    %HostAddedToCluster{
-      host_id: id,
-      cluster_id: cluster_id
-    },
-    fn multi ->
-      changeset =
-        %HostReadModel{}
-        |> HostReadModel.changeset(%{
-          id: id,
-          cluster_id: cluster_id
-        })
-
-      Ecto.Multi.insert(multi, :host, changeset,
-        on_conflict: {:replace, [:cluster_id]},
-        conflict_target: [:id]
-      )
-    end
-  )
-
   @impl true
   def after_update(
         %ClusterRegistered{},
@@ -145,25 +121,6 @@ defmodule Trento.ClusterProjector do
       cluster_id: cluster_id,
       health: health
     })
-  end
-
-  def after_update(
-        %HostAddedToCluster{},
-        _,
-        %{host: host}
-      ) do
-    %HostReadModel{id: id, cluster_id: cluster_id, cluster: cluster} =
-      Repo.preload(host, :cluster)
-
-    TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
-      "host_details_updated",
-      %{
-        id: id,
-        cluster_id: cluster_id,
-        cluster: to_map(cluster)
-      }
-    )
   end
 
   def after_update(_, _, _), do: :ok

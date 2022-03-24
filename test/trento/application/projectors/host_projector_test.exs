@@ -15,6 +15,7 @@ defmodule Trento.HostProjectorTest do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostAddedToCluster,
     HostDetailsUpdated,
     ProviderUpdated
   }
@@ -41,6 +42,42 @@ defmodule Trento.HostProjectorTest do
     assert event.ip_addresses == host_projection.ip_addresses
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat
+  end
+
+  test "should update the cluster_id field when HostAddedToCluster event is received and the host was already registered" do
+    host_projection(
+      id: host_id = UUID.uuid4(),
+      hostname: hostname = Faker.StarWars.character(),
+      cluster: nil
+    )
+
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
+
+    event = %HostAddedToCluster{
+      host_id: host_id,
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert event.cluster_id == host_projection.cluster_id
+    assert hostname == host_projection.hostname
+  end
+
+  test "should project a new host with no additional properties when HostAddedToCluster event is received" do
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
+
+    event = %HostAddedToCluster{
+      host_id: Faker.UUID.v4(),
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert event.cluster_id == host_projection.cluster_id
+    assert nil == host_projection.hostname
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{

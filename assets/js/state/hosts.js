@@ -13,7 +13,9 @@ export const hostsListSlice = createSlice({
       state.hosts = action.payload;
     },
     appendHost: (state, action) => {
-      state.hosts = [...state.hosts, action.payload];
+      state.hosts = [...state.hosts, action.payload].sort((a, b) =>
+        a.hostname > b.hostname ? 1 : -1
+      );
     },
     updateHost: (state, action) => {
       state.hosts = state.hosts.map((host) => {
