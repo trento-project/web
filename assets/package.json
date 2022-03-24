@@ -28,9 +28,11 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.2.0",
+    "react-markdown": "^8.0.1",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.2",
-    "redux-saga": "^1.1.3"
+    "redux-saga": "^1.1.3",
+    "remark-gfm": "^3.0.1"
   },
   "scripts": {
     "tailwind:build": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css",
