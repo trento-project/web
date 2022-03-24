@@ -27,7 +27,11 @@ defmodule Trento.SapSystemTest do
       sid = Faker.StarWars.planet()
       tenant = Faker.Beer.style()
       instance_number = "00"
+      instance_hostname = Faker.Airports.iata()
       features = Faker.Pokemon.name()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
       host_id = Faker.UUID.v4()
 
       assert_events_and_state(
@@ -37,7 +41,11 @@ defmodule Trento.SapSystemTest do
           sid: sid,
           tenant: tenant,
           instance_number: instance_number,
+          instance_hostname: instance_hostname,
           features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
           host_id: host_id,
           health: :passing
         ),
@@ -52,7 +60,11 @@ defmodule Trento.SapSystemTest do
             sid: sid,
             tenant: tenant,
             instance_number: instance_number,
+            instance_hostname: instance_hostname,
             features: features,
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
             host_id: host_id,
             health: :passing
           }
@@ -102,7 +114,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterDatabaseInstance.new!(
+        register_database_instance_command(
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -111,7 +123,7 @@ defmodule Trento.SapSystemTest do
           host_id: host_id,
           health: :passing
         ),
-        %DatabaseInstanceRegistered{
+        database_instance_registered_event(
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -119,7 +131,7 @@ defmodule Trento.SapSystemTest do
           features: features,
           host_id: host_id,
           health: :passing
-        },
+        ),
         fn state ->
           assert %SapSystem{
                    database: %SapSystem.Database{
@@ -152,7 +164,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events(
         initial_events,
-        RegisterDatabaseInstance.new!(
+        register_database_instance_command(
           sap_system_id: database_registered_event.sap_system_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
@@ -170,7 +182,11 @@ defmodule Trento.SapSystemTest do
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
       tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
       features = Faker.Pokemon.name()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -193,7 +209,11 @@ defmodule Trento.SapSystemTest do
           db_host: db_host,
           tenant: tenant,
           instance_number: "00",
+          instance_hostname: instance_hostname,
           features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
           host_id: host_id,
           health: :passing
         ),
@@ -209,7 +229,11 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             sid: sid,
             instance_number: "00",
+            instance_hostname: instance_hostname,
             features: features,
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
             host_id: host_id,
             health: :passing
           }
@@ -253,7 +277,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterApplicationInstance.new!(
+        register_application_instance_command(
           sap_system_id: sap_system_id,
           sid: sid,
           db_host: new_instance_db_host,
@@ -263,14 +287,14 @@ defmodule Trento.SapSystemTest do
           host_id: new_instance_host_id,
           health: :passing
         ),
-        %ApplicationInstanceRegistered{
+        application_instance_registered_event(
           sap_system_id: sap_system_id,
           sid: sid,
           instance_number: new_instance_number,
           features: new_instance_features,
           host_id: new_instance_host_id,
           health: :passing
-        },
+        ),
         fn state ->
           assert %SapSystem{
                    application: %SapSystem.Application{
@@ -306,7 +330,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events(
         initial_events,
-        RegisterApplicationInstance.new!(
+        register_application_instance_command(
           sap_system_id: application_instance_registered_event.sap_system_id,
           sid: application_instance_registered_event.sid,
           db_host: Faker.Internet.ip_v4_address(),
@@ -337,7 +361,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterDatabaseInstance.new!(
+        register_database_instance_command(
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -347,7 +371,7 @@ defmodule Trento.SapSystemTest do
           health: :critical
         ),
         [
-          %DatabaseInstanceRegistered{
+          database_instance_registered_event(
             sap_system_id: sap_system_id,
             sid: sid,
             tenant: tenant,
@@ -355,7 +379,7 @@ defmodule Trento.SapSystemTest do
             features: features,
             host_id: host_id,
             health: :critical
-          },
+          ),
           %DatabaseHealthChanged{
             sap_system_id: sap_system_id,
             health: :critical
@@ -398,7 +422,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterDatabaseInstance.new!(
+        register_database_instance_command(
           sap_system_id: sap_system_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
@@ -457,7 +481,7 @@ defmodule Trento.SapSystemTest do
       assert_events_and_state(
         initial_events,
         [
-          RegisterDatabaseInstance.new!(
+          register_database_instance_command(
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
@@ -466,7 +490,7 @@ defmodule Trento.SapSystemTest do
             host_id: database_instance_registered_event.host_id,
             health: :warning
           ),
-          RegisterDatabaseInstance.new!(
+          register_database_instance_command(
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
@@ -477,7 +501,7 @@ defmodule Trento.SapSystemTest do
           )
         ],
         [
-          %DatabaseInstanceRegistered{
+          database_instance_registered_event(
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
@@ -485,7 +509,7 @@ defmodule Trento.SapSystemTest do
             features: new_instance_features,
             host_id: new_instance_host_id,
             health: :warning
-          }
+          )
         ],
         fn state ->
           assert %SapSystem{
@@ -521,7 +545,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterApplicationInstance.new!(
+        register_application_instance_command(
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -539,14 +563,14 @@ defmodule Trento.SapSystemTest do
             tenant: tenant,
             health: :critical
           },
-          %ApplicationInstanceRegistered{
+          application_instance_registered_event(
             sap_system_id: sap_system_id,
             sid: sid,
             instance_number: instance_number,
             features: features,
             host_id: host_id,
             health: :critical
-          }
+          )
         ],
         fn state ->
           assert %SapSystem{
@@ -580,7 +604,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterApplicationInstance.new!(
+        register_application_instance_command(
           sap_system_id: sap_system_id,
           sid: application_instance_registered.sid,
           tenant: sap_system_registered_event.tenant,
@@ -646,7 +670,7 @@ defmodule Trento.SapSystemTest do
       assert_events_and_state(
         initial_events,
         [
-          RegisterApplicationInstance.new!(
+          register_application_instance_command(
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
             tenant: sap_system_registered_event.tenant,
@@ -656,7 +680,7 @@ defmodule Trento.SapSystemTest do
             host_id: application_instance_registered_event.host_id,
             health: :warning
           ),
-          RegisterApplicationInstance.new!(
+          register_application_instance_command(
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
             tenant: sap_system_registered_event.tenant,
@@ -668,14 +692,14 @@ defmodule Trento.SapSystemTest do
           )
         ],
         [
-          %ApplicationInstanceRegistered{
+          application_instance_registered_event(
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
             instance_number: new_instance_number,
             features: new_instance_features,
             host_id: new_instance_host_id,
             health: :warning
-          }
+          )
         ],
         fn state ->
           assert %SapSystem{
@@ -712,7 +736,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterDatabaseInstance.new!(
+        register_database_instance_command(
           sap_system_id: sap_system_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
@@ -722,7 +746,7 @@ defmodule Trento.SapSystemTest do
           health: :warning
         ),
         [
-          %DatabaseInstanceRegistered{
+          database_instance_registered_event(
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
@@ -730,7 +754,7 @@ defmodule Trento.SapSystemTest do
             features: new_instance_features,
             host_id: new_instance_host_id,
             health: :warning
-          },
+          ),
           %DatabaseHealthChanged{
             sap_system_id: sap_system_id,
             health: :warning

@@ -52,8 +52,12 @@ defmodule Trento.DatabaseProjector do
       sap_system_id: sap_system_id,
       sid: sid,
       instance_number: instance_number,
+      instance_hostname: instance_hostname,
       tenant: tenant,
       features: features,
+      http_port: http_port,
+      https_port: https_port,
+      start_priority: start_priority,
       host_id: host_id,
       health: health
     },
@@ -64,8 +68,12 @@ defmodule Trento.DatabaseProjector do
           sap_system_id: sap_system_id,
           sid: sid,
           instance_number: instance_number,
+          instance_hostname: instance_hostname,
           tenant: tenant,
           features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
           host_id: host_id,
           health: health
         })
