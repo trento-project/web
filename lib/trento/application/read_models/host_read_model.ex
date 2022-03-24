@@ -11,7 +11,6 @@ defmodule Trento.HostReadModel do
 
   alias Trento.{
     AzureProviderReadModel,
-    ClusterReadModel,
     SlesSubscriptionReadModel
   }
 
@@ -35,8 +34,6 @@ defmodule Trento.HostReadModel do
       type_field: :provider,
       on_type_not_found: :nilify,
       on_replace: :update
-
-    has_one :cluster, ClusterReadModel, references: :cluster_id, foreign_key: :id
 
     has_many :tags, Trento.Tag, foreign_key: :resource_id
 

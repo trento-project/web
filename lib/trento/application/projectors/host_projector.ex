@@ -10,9 +10,12 @@ defmodule Trento.HostProjector do
 
   import Trento.Support.StructHelper
 
+  alias Trento.Repo
+
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostAddedToCluster,
     HostDetailsUpdated,
     HostRegistered,
     ProviderUpdated
@@ -30,9 +33,8 @@ defmodule Trento.HostProjector do
     },
     fn multi ->
       changeset =
-        %HostReadModel{}
+        %HostReadModel{id: id}
         |> HostReadModel.changeset(%{
-          id: id,
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
@@ -40,7 +42,26 @@ defmodule Trento.HostProjector do
         })
 
       Ecto.Multi.insert(multi, :host, changeset,
-        on_conflict: :replace_all,
+        on_conflict: {:replace_all_except, [:cluster_id]},
+        conflict_target: [:id]
+      )
+    end
+  )
+
+  project(
+    %HostAddedToCluster{
+      host_id: id,
+      cluster_id: cluster_id
+    },
+    fn multi ->
+      changeset =
+        %HostReadModel{id: id}
+        |> HostReadModel.changeset(%{
+          cluster_id: cluster_id
+        })
+
+      Ecto.Multi.insert(multi, :host, changeset,
+        on_conflict: {:replace, [:cluster_id]},
         conflict_target: [:id]
       )
     end
@@ -108,11 +129,40 @@ defmodule Trento.HostProjector do
 
   @impl true
   def after_update(
-        %HostRegistered{},
+        %HostRegistered{host_id: id},
         _,
-        %{host: host}
+        _
       ) do
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_registered", to_map(host))
+    # We need to hit the database to get the cluster_id
+    host = Repo.get!(HostReadModel, id)
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_registered",
+      host |> to_map()
+    )
+  end
+
+  def after_update(
+        %HostAddedToCluster{host_id: id, cluster_id: cluster_id},
+        _,
+        _
+      ) do
+    case Repo.get!(HostReadModel, id) do
+      # In case the host was not registered yet, we don't want to broadcast
+      %HostReadModel{hostname: nil} ->
+        :ok
+
+      %HostReadModel{} ->
+        TrentoWeb.Endpoint.broadcast(
+          "monitoring:hosts",
+          "host_details_updated",
+          %{
+            id: id,
+            cluster_id: cluster_id
+          }
+        )
+    end
   end
 
   def after_update(
@@ -120,7 +170,11 @@ defmodule Trento.HostProjector do
         _,
         %{host: host}
       ) do
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", to_map(host))
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_details_updated",
+      host |> to_map() |> Map.delete("cluster_id")
+    )
   end
 
   def after_update(
