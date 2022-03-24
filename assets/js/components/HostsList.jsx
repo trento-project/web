@@ -39,6 +39,7 @@ const removeTag = (tag, hostId) => {
 
 const HostsList = () => {
   const hosts = useSelector((state) => state.hostsList.hosts);
+  const clusters = useSelector((state) => state.clustersList.clusters);
 
   const config = {
     columns: [
@@ -76,6 +77,13 @@ const HostsList = () => {
         key: 'provider',
       },
       {
+        title: 'Cluster',
+        key: 'cluster',
+        render: (cluster) => {
+          return cluster?.name;
+        },
+      },
+      {
         title: 'Agent version',
         key: 'agent_version',
         render: (content) => (
@@ -105,6 +113,7 @@ const HostsList = () => {
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
+      cluster: clusters.find((cluster) => cluster.id === host.cluster_id),
       agent_version: host.agent_version,
       id: host.id,
       tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
