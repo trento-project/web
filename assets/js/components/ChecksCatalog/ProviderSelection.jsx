@@ -1,10 +1,9 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 
 import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 
-const ProviderSelection = ({providers, selected, setSelected}) => {
-
+const ProviderSelection = ({ providers, selected, setSelected }) => {
   return (
     <div className="w-72 pb-4">
       <Listbox value={selected} onChange={setSelected}>

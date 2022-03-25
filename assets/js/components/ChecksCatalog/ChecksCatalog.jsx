@@ -3,27 +3,31 @@ import { useSelector } from 'react-redux';
 
 import { Disclosure, Transition } from '@headlessui/react';
 
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import ProviderSelection from './ProviderSelection';
 
 const ChecksCatalog = () => {
-
   const catalog = useSelector((state) => state.catalog.catalog);
-  const providers = catalog.map(provider => provider.provider)
-  const [selected, setSelected] = useState(providers[0])
+  const providers = catalog.map((provider) => provider.provider);
+  const [selected, setSelected] = useState(providers[0]);
 
   useEffect(() => {
-     setSelected(providers[0])
-  },[providers[0]])
+    setSelected(providers[0]);
+  }, [providers[0]]);
 
   return (
     <div>
-      <ProviderSelection providers={providers} selected={selected} setSelected={setSelected}/>
-      {catalog.filter(provider => provider.provider == selected)
-        .map(({provider, groups}) =>
-          groups.map(({group, checks}) =>
+      <ProviderSelection
+        providers={providers}
+        selected={selected}
+        setSelected={setSelected}
+      />
+      {catalog
+        .filter((provider) => provider.provider == selected)
+        .map(({ _, groups }) =>
+          groups.map(({ group, checks }) => (
             <div
               key={group.id}
               className="bg-white shadow overflow-hidden sm:rounded-md mb-8"
@@ -37,27 +41,33 @@ const ChecksCatalog = () => {
                 {checks.map((check) => (
                   <li key={check.id}>
                     <Disclosure>
-                      <Disclosure.Button as="div" className="flex justify-between w-full cursor-pointer hover:bg-gray-100">
+                      <Disclosure.Button
+                        as="div"
+                        className="flex justify-between w-full cursor-pointer hover:bg-gray-100"
+                      >
                         <div className="px-4 py-4 sm:px-6">
                           <div className="flex items-center">
                             <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                               {check.id}
                             </p>
-                            {check.premium > 0 &&
+                            {check.premium > 0 && (
                               <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                 Premium
                               </p>
-                            }
+                            )}
                           </div>
                           <div className="mt-2 sm:flex sm:justify-between">
                             <div className="sm:flex">
                               <p className="flex items-center text-sm">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]} children={check.description} />
+                                <ReactMarkdown
+                                  remarkPlugins={[remarkGfm]}
+                                >
+                                  {check.description}
+                                </ReactMarkdown>
                               </p>
                             </div>
                           </div>
                         </div>
-
                       </Disclosure.Button>
                       <Transition
                         enter="transition duration-100 ease-out"
@@ -70,7 +80,12 @@ const ChecksCatalog = () => {
                         <Disclosure.Panel className="border-none">
                           <div className="px-8 py-4 sm:px-8">
                             <div className="px-4 py-4 sm:px-4 bg-slate-100 rounded">
-                              <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]} children={check.remediation} />
+                              <ReactMarkdown
+                                className="markdown"
+                                remarkPlugins={[remarkGfm]}
+                              >
+                                {check.remediation}
+                              </ReactMarkdown>
                             </div>
                           </div>
                         </Disclosure.Panel>
@@ -80,9 +95,8 @@ const ChecksCatalog = () => {
                 ))}
               </ul>
             </div>
-          )
-        )
-      }
+          ))
+        )}
     </div>
   );
 };

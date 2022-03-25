@@ -39,7 +39,7 @@ const navigation = [
   {
     name: 'Checks catalog',
     href: '/catalog',
-    icon: EOS_LIST
+    icon: EOS_LIST,
   },
   { name: 'About', href: '/about', icon: EOS_INFO },
 ];
