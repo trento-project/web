@@ -22,7 +22,7 @@ const ChecksCatalog = () => {
       <ProviderSelection
         providers={providers}
         selected={selected}
-        setSelected={setSelected}
+        onChange={setSelected}
       />
       {catalog
         .filter((provider) => provider.provider == selected)
