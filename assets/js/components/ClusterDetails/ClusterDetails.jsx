@@ -2,10 +2,11 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import Button from '@components/Button';
 import ListView from '@components/ListView';
 import Pill from '@components/Pill';
 import Table from '@components/Table';
+
+import SiteDetails from './SiteDetails';
 
 const siteDetailsConfig = {
   columns: [
@@ -15,12 +16,8 @@ const siteDetailsConfig = {
       title: '',
       key: '',
       render: (_, item) => {
-        console.log(item);
-        return (
-          <Button size="small" type="primary">
-            Details
-          </Button>
-        );
+        const { attributes, resources } = item;
+        return <SiteDetails attributes={attributes} resources={resources} />;
       },
     },
   ],
