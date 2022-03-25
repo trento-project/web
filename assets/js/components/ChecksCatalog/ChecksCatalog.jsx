@@ -60,6 +60,7 @@ const ChecksCatalog = () => {
                             <div className="sm:flex">
                               <p className="flex items-center text-sm">
                                 <ReactMarkdown
+                                  className="markdown"
                                   remarkPlugins={[remarkGfm]}
                                 >
                                   {check.description}
