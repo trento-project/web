@@ -18,6 +18,8 @@ import ChecksResults from '@components/ChecksResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails from '@components/HostDetails';
 import DatabasesOverview from '@components/DatabasesOverview';
+import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
+import DatabaseDetails from './components/DatabaseDetails';
 
 const App = () => {
   return (
@@ -42,6 +44,8 @@ const App = () => {
                 element={<ChecksResults />}
               />
               <Route path="hosts/:hostID" element={<HostDetails />} />
+              <Route path="sap-systems/:id" element={<SapSystemDetails />} />
+              <Route path="databases/:id" element={<DatabaseDetails />} />
             </Route>
           </Routes>
         </BrowserRouter>
