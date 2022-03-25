@@ -7,7 +7,7 @@ import {
   sapHostsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
-import { getSapSystemDetail } from '../../state/selectors';
+import { getSapSystemDetail } from '@state/selectors';
 
 const SapSystemDetails = () => {
   const { id } = useParams();

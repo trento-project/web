@@ -2,10 +2,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import HealthIcon from '../Health';
-import Table from '../Table';
+import HealthIcon from '@components/Health';
+import Table from '@components/Table';
 import DatabaseItemOverview from './DatabaseItemOverview';
-import Tags from '../Tags';
+import Tags from '@components/Tags';
 
 import { logError } from '@lib/log';
 

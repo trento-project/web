@@ -7,7 +7,7 @@ import {
   databaseHostsTableConfiguration,
   databaseInstancesTableConfiguration,
 } from './tableConfigs';
-import { getDatabaseDetail } from '../../state/selectors';
+import { getDatabaseDetail } from '@state/selectors';
 
 const DatabaseDetails = () => {
   const { id } = useParams();

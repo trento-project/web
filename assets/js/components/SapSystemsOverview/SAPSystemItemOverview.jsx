@@ -1,7 +1,7 @@
 import { EOS_APPLICATION_OUTLINED } from 'eos-icons-react';
 import React from 'react';
-import DatabaseItemOverview from '../DatabasesOverview/DatabaseItemOverview';
-import InstanceOverview from '../InstanceOverview';
+import DatabaseItemOverview from '@components/DatabasesOverview/DatabaseItemOverview';
+import InstanceOverview from '@components/InstanceOverview';
 
 const ApplicationInstance = ({ instance }) => (
   <InstanceOverview instanceType={'application'} instance={instance} />

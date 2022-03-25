@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { EOS_DATABASE_OUTLINED } from 'eos-icons-react';
 import React from 'react';
-import InstanceOverview from '../InstanceOverview';
+import InstanceOverview from '@components/InstanceOverview';
 
 export const DatabaseInstance = ({ instance }) => (
   <InstanceOverview instanceType={'database'} instance={instance} />

@@ -21,7 +21,11 @@ export const getSapSystemDetail = (id) => (state) => {
 
   if (!system) return null;
 
-  instances = enrichInstances(state.sapSystemsList.applicationInstances, system.id, state);
+  const instances = enrichInstances(
+    state.sapSystemsList.applicationInstances,
+    system.id,
+    state
+  );
 
   return {
     ...system,
@@ -35,7 +39,11 @@ export const getDatabaseDetail = (id) => (state) => {
 
   if (!database) return null;
 
-  instances = enrichInstances(state.sapSystemsList.databaseInstances, database.id, state);
+  const instances = enrichInstances(
+    state.sapSystemsList.databaseInstances,
+    database.id,
+    state
+  );
 
   return {
     ...database,
@@ -62,5 +70,5 @@ const enrichInstances = (instances, sapSystemId, state) =>
 
 export const isIdByKey =
   (key, id) =>
-    ({ [key]: keyToLookup }) =>
-      keyToLookup === id;
+  ({ [key]: keyToLookup }) =>
+    keyToLookup === id;

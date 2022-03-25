@@ -13,7 +13,7 @@ import {
 } from './tableConfigs';
 
 import SuseLogo from '../../../static/suse_logo.svg';
-import { isIdByKey } from '../../state/selectors';
+import { isIdByKey } from '@state/selectors';
 
 const HostDetails = () => {
   const { hostID } = useParams();
