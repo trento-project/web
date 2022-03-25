@@ -13,11 +13,7 @@ import {
 } from './tableConfigs';
 
 import SuseLogo from '../../../static/suse_logo.svg';
-
-const isIdByKey =
-  (key, id) =>
-  ({ [key]: keyToLookup }) =>
-    keyToLookup === id;
+import { isIdByKey } from '../../state/selectors';
 
 const HostDetails = () => {
   const { hostID } = useParams();

@@ -1,4 +1,5 @@
 export const subscriptionsTableConfiguration = {
+  usePadding: false,
   columns: [
     {
       title: 'Identifier',
@@ -37,6 +38,7 @@ export const subscriptionsTableConfiguration = {
 };
 
 export const sapInstancesTableConfiguration = {
+  usePadding: false,
   columns: [
     { title: 'ID', key: 'sap_system_id' },
     { title: 'SID', key: 'sid' },
