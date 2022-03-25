@@ -49,7 +49,7 @@ const DatabasesOverview = () => {
           return (
             <Link
               className="text-jungle-green-500 hover:opacity-75"
-              to={`/sap-systems/${item.id}`}
+              to={`/databases/${item.id}`}
             >
               {content}
             </Link>
