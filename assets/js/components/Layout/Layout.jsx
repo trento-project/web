@@ -8,6 +8,7 @@ import {
   EOS_INFO,
   EOS_SYSTEM_GROUP,
   EOS_STORAGE,
+  EOS_LIST,
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
@@ -34,6 +35,11 @@ const navigation = [
     name: 'HANA Databases',
     href: '/databases',
     icon: EOS_STORAGE,
+  },
+  {
+    name: 'Checks catalog',
+    href: '/catalog',
+    icon: EOS_LIST,
   },
   { name: 'About', href: '/about', icon: EOS_INFO },
 ];

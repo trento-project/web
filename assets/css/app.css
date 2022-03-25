@@ -1,4 +1,6 @@
 /* This file is for your main application CSS */
+@import './markdown.scss';
+
 @tailwind base;
 
 @tailwind components;

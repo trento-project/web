@@ -20,6 +20,7 @@ import HostDetails from '@components/HostDetails';
 import DatabasesOverview from '@components/DatabasesOverview';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import DatabaseDetails from './components/DatabaseDetails';
+import ChecksCatalog from '@components/ChecksCatalog';
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
               <Route path="clusters" element={<ClustersList />} />
               <Route path="sap-systems" element={<SapSystemsOverview />} />
               <Route path="databases" element={<DatabasesOverview />} />
+              <Route path="catalog" element={<ChecksCatalog />} />
               <Route path="about" element={<AboutPage />} />
               <Route
                 path="clusters/:clusterID/checks"
