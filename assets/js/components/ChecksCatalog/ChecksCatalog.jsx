@@ -70,7 +70,7 @@ const ChecksCatalog = () => {
                         <Disclosure.Panel className="border-none">
                           <div className="px-8 py-4 sm:px-8">
                             <div className="px-4 py-4 sm:px-4 bg-slate-100 rounded">
-                              <ReactMarkdown remarkPlugins={[remarkGfm]} children={check.remediation} />
+                              <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]} children={check.remediation} />
                             </div>
                           </div>
                         </Disclosure.Panel>
