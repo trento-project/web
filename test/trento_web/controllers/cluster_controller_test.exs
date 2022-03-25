@@ -3,22 +3,19 @@ defmodule TrentoWeb.ClusterControllerTest do
 
   import Trento.Factory
 
-  alias Trento.{
-    ClusterReadModel,
-    Tag
-  }
+  alias Trento.Tag
 
   describe "tags" do
-    test "add a tag to a cluster", %{conn: conn} do
+    test "should add a tag to a cluster", %{conn: conn} do
       conn =
         post(conn, Routes.cluster_path(conn, :create_tag, Faker.UUID.v4()), %{
-          "value" => Faker.Beer.style()
+          "value" => tag_value = Faker.Beer.style()
         })
 
-      assert 201 == conn.status
+      assert json_response(conn, 201)["value"] == tag_value
     end
 
-    test "remove a tag from a cluster", %{conn: conn} do
+    test "should remove a tag from a cluster", %{conn: conn} do
       %Tag{
         id: _id,
         value: value,
@@ -31,7 +28,7 @@ defmodule TrentoWeb.ClusterControllerTest do
       assert 204 == conn.status
     end
 
-    test "remove a non existing tag from a cluster", %{conn: conn} do
+    test "should fail when attempting to remove a non existing tag from a cluster", %{conn: conn} do
       %Tag{
         id: _id,
         value: _value,
@@ -46,12 +43,32 @@ defmodule TrentoWeb.ClusterControllerTest do
   end
 
   describe "list" do
-    test "list all clusters", %{conn: conn} do
-      %ClusterReadModel{} = cluster_projection()
+    test "should list all clusters", %{conn: conn} do
+      [
+        %{id: cluster_id_1, name: cluster_name_1},
+        %{id: cluster_id_2, name: cluster_name_2},
+        %{id: cluster_id_3, name: cluster_name_3}
+      ] =
+        0..2
+        |> Enum.map(fn _ -> cluster_projection() end)
+        |> Enum.sort_by(& &1.name)
 
       conn = get(conn, Routes.cluster_path(conn, :list))
 
-      assert 200 == conn.status
+      assert [
+               %{
+                 "id" => ^cluster_id_1,
+                 "name" => ^cluster_name_1
+               },
+               %{
+                 "id" => ^cluster_id_2,
+                 "name" => ^cluster_name_2
+               },
+               %{
+                 "id" => ^cluster_id_3,
+                 "name" => ^cluster_name_3
+               }
+             ] = json_response(conn, 200)
     end
   end
 end

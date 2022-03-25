@@ -3,13 +3,10 @@ defmodule TrentoWeb.HostControllerTest do
 
   import Trento.Factory
 
-  alias Trento.{
-    HostReadModel,
-    Tag
-  }
+  alias Trento.Tag
 
   describe "tags" do
-    test "add a tag to a host", %{conn: conn} do
+    test "should add a tag to a host", %{conn: conn} do
       conn =
         post(conn, Routes.host_path(conn, :create_tag, Faker.UUID.v4()), %{
           "value" => Faker.Beer.style()
@@ -18,7 +15,7 @@ defmodule TrentoWeb.HostControllerTest do
       assert 201 == conn.status
     end
 
-    test "remove a tag from a host", %{conn: conn} do
+    test "should remove a tag from a host", %{conn: conn} do
       %Tag{
         id: _id,
         value: value,
@@ -31,7 +28,7 @@ defmodule TrentoWeb.HostControllerTest do
       assert 204 == conn.status
     end
 
-    test "remove a non existing tag from a host", %{conn: conn} do
+    test "should fail when attempting to remove a non existing tag from a host", %{conn: conn} do
       %Tag{
         id: _id,
         value: _value,
@@ -46,12 +43,32 @@ defmodule TrentoWeb.HostControllerTest do
   end
 
   describe "list" do
-    test "list all hosts", %{conn: conn} do
-      %HostReadModel{} = host_projection()
+    test "should list all hosts", %{conn: conn} do
+      [
+        %{id: host_id_1, hostname: host_name_1},
+        %{id: host_id_2, hostname: host_name_2},
+        %{id: host_id_3, hostname: host_name_3}
+      ] =
+        0..2
+        |> Enum.map(fn _ -> host_projection() end)
+        |> Enum.sort_by(& &1.hostname)
 
       conn = get(conn, Routes.host_path(conn, :list))
 
-      assert 200 == conn.status
+      assert [
+               %{
+                 "id" => ^host_id_1,
+                 "hostname" => ^host_name_1
+               },
+               %{
+                 "id" => ^host_id_2,
+                 "hostname" => ^host_name_2
+               },
+               %{
+                 "id" => ^host_id_3,
+                 "hostname" => ^host_name_3
+               }
+             ] = json_response(conn, 200)
     end
   end
 end

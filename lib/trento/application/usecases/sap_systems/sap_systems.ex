@@ -3,6 +3,8 @@ defmodule Trento.SapSystems do
   Provides a set of functions to interact with SAP systems and HANA Databases.
   """
 
+  import Ecto.Query
+
   alias Trento.{
     DatabaseReadModel,
     SapSystemReadModel
@@ -13,6 +15,7 @@ defmodule Trento.SapSystems do
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
   def get_all_sap_systems do
     SapSystemReadModel
+    |> order_by(asc: :sid)
     |> Repo.all()
     |> Repo.preload(:application_instances)
     |> Repo.preload(:database_instances)

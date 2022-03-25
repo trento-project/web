@@ -3,13 +3,10 @@ defmodule TrentoWeb.SapSystemControllerTest do
 
   import Trento.Factory
 
-  alias Trento.{
-    SapSystemReadModel,
-    Tag
-  }
+  alias Trento.Tag
 
   describe "tags" do
-    test "add a tag to a sap system", %{conn: conn} do
+    test "should add a tag to a sap system", %{conn: conn} do
       conn =
         post(conn, Routes.sap_system_path(conn, :create_tag, Faker.UUID.v4()), %{
           "value" => Faker.Beer.style()
@@ -18,7 +15,7 @@ defmodule TrentoWeb.SapSystemControllerTest do
       assert 201 == conn.status
     end
 
-    test "remove a tag from a sap system", %{conn: conn} do
+    test "should remove a tag from a sap system", %{conn: conn} do
       %Tag{
         id: _id,
         value: value,
@@ -31,7 +28,9 @@ defmodule TrentoWeb.SapSystemControllerTest do
       assert 204 == conn.status
     end
 
-    test "remove a non existing tag from a sap system", %{conn: conn} do
+    test "should fail when attempting to remove a non existing tag from a sap system", %{
+      conn: conn
+    } do
       %Tag{
         id: _id,
         value: _value,
@@ -47,12 +46,41 @@ defmodule TrentoWeb.SapSystemControllerTest do
   end
 
   describe "list" do
-    test "list all sap systems", %{conn: conn} do
-      %SapSystemReadModel{} = sap_system_projection()
+    test "should list all sap_systems", %{conn: conn} do
+      [
+        %{
+          id: sap_system_id_1,
+          sid: sap_system_sid_1
+        },
+        %{
+          id: sap_system_id_2,
+          sid: sap_system_sid_2
+        },
+        %{
+          id: sap_system_id_3,
+          sid: sap_system_sid_3
+        }
+      ] =
+        0..2
+        |> Enum.map(fn _ -> sap_system_projection() end)
+        |> Enum.sort_by(& &1.sid)
 
       conn = get(conn, Routes.sap_system_path(conn, :list))
 
-      assert 200 == conn.status
+      assert [
+               %{
+                 "id" => ^sap_system_id_1,
+                 "sid" => ^sap_system_sid_1
+               },
+               %{
+                 "id" => ^sap_system_id_2,
+                 "sid" => ^sap_system_sid_2
+               },
+               %{
+                 "id" => ^sap_system_id_3,
+                 "sid" => ^sap_system_sid_3
+               }
+             ] = json_response(conn, 200)
     end
   end
 end
