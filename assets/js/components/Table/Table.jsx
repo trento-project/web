@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, { Fragment, useState } from 'react';
 import CollapsibleTableRow from './CollapsibleTableRow';
 
@@ -26,7 +27,11 @@ const renderCells = (columns, item) => {
 };
 
 const Table = ({ config, data = [] }) => {
-  const { columns, collapsibleDetailRenderer = undefined } = config;
+  const {
+    columns,
+    collapsibleDetailRenderer = undefined,
+    usePadding = true,
+  } = config;
   const [filters, setFilters] = useState([]);
 
   const renderedData = filters
@@ -41,7 +46,11 @@ const Table = ({ config, data = [] }) => {
     }, data);
 
   return (
-    <div className="container mx-auto px-4 sm:px-8">
+    <div
+      className={classNames('container mx-auto', {
+        'px-4 sm:px-8': usePadding,
+      })}
+    >
       <div className="flex items-center">
         <TableFilters
           config={config}
