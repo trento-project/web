@@ -2,25 +2,27 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
   @moduledoc """
   Register a cluster node to the monitoring system.
   """
-  use TypedStruct
-  use Domo
+
+  @required_fields [
+    :cluster_id,
+    :host_id,
+    :name,
+    :type,
+    :designated_controller
+  ]
+
+  use Trento.Command
 
   alias Trento.Domain.HanaClusterDetails
 
-  typedstruct do
-    @typedoc "RegisterClusterHost command"
+  defcommand do
+    field :cluster_id, Ecto.UUID
+    field :host_id, Ecto.UUID
+    field :name, :string
+    field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
+    field :sid, :string
+    field :designated_controller, :boolean
 
-    field :cluster_id, String.t(), enforce: true
-    field :host_id, String.t(), enforce: true
-    field :name, String.t(), enforce: true
-    field :type, :hana_scale_up | :hana_scale_out | :unknown, enforce: true
-    field :sid, String.t() | nil, enforce: true
-    field :details, HanaClusterDetails.t() | nil
-    field :designated_controller, boolean, enforce: true
+    embeds_one :details, HanaClusterDetails
   end
-
-  use Vex.Struct
-
-  validates :cluster_id, uuid: true
-  validates :host_id, uuid: true
 end

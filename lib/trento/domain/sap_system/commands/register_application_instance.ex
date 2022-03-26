@@ -3,30 +3,37 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
   Register an application instance to the monitoring system.
   """
 
-  use TypedStruct
-  use Domo
+  @required_fields [
+    :host_id,
+    :instance_number,
+    :health,
+    :sid,
+    :db_host,
+    :tenant,
+    :host_id,
+    :instance_number,
+    :instance_hostname,
+    :features,
+    :http_port,
+    :https_port,
+    :start_priority,
+    :health
+  ]
 
-  alias Trento.Domain.Health
+  use Trento.Command
 
-  typedstruct do
-    @typedoc "RegisterApplicationInstance command"
-
-    field :sap_system_id, String.t() | nil
-    field :sid, String.t(), enforce: true
-    field :db_host, String.t(), enforce: true
-    field :tenant, String.t(), enforce: true
-    field :host_id, String.t(), enforce: true
-    field :instance_number, String.t(), enforce: true
-    field :instance_hostname, String.t(), enforce: true
-    field :features, String.t(), enforce: true
-    field :http_port, integer, enforce: true
-    field :https_port, integer, enforce: true
-    field :start_priority, String.t(), enforce: true
-    field :health, Health.t(), enforce: true
+  defcommand do
+    field :sap_system_id, Ecto.UUID
+    field :sid, :string
+    field :db_host, :string
+    field :tenant, :string
+    field :host_id, :string
+    field :instance_number, :string
+    field :instance_hostname, :string
+    field :features, :string
+    field :http_port, :integer
+    field :https_port, :integer
+    field :start_priority, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
-
-  use Vex.Struct
-
-  validates :sap_system_id, uuid: true
-  validates :host_id, uuid: true
 end
