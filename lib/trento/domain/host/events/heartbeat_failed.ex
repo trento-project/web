@@ -3,12 +3,9 @@ defmodule Trento.Domain.Events.HeartbeatFailed do
   Heartbeat failed event
   """
 
-  use TypedStruct
+  use Trento.Event
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "HeartbeatFailed event"
-
-    field :host_id, String.t(), enforce: true
+  defevent do
+    field :host_id, Ecto.UUID
   end
 end

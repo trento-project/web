@@ -3,16 +3,11 @@ defmodule Trento.Domain.Events.DatabaseRegistered do
   This event is emitted when a database is registered.
   """
 
-  alias Trento.Domain.Health
+  use Trento.Event
 
-  use TypedStruct
-
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "DatabaseRegistered event"
-
-    field :sap_system_id, String.t(), enforce: true
-    field :sid, String.t(), enforce: true
-    field :health, Health.t(), enforce: true
+  defevent do
+    field :sap_system_id, Ecto.UUID
+    field :sid, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
 end

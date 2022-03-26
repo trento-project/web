@@ -5,13 +5,10 @@ defmodule Trento.Domain.Events.SlesSubscriptionsUpdated do
 
   alias Trento.Domain.SlesSubscription
 
-  use TypedStruct
+  use Trento.Event
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "SubscriptionsUpdated event"
-
-    field :host_id, String.t(), enforce: true
-    field :subscriptions, [SlesSubscription.t()], enforce: true
+  defevent do
+    field :host_id, Ecto.UUID
+    embeds_many :subscriptions, SlesSubscription
   end
 end

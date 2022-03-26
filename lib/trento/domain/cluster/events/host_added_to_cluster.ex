@@ -3,13 +3,10 @@ defmodule Trento.Domain.Events.HostAddedToCluster do
   This event is emitted when a host is added to a cluster
   """
 
-  use TypedStruct
+  use Trento.Event
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "HostAddedToCluster event"
-
-    field :cluster_id, String.t(), enforce: true
-    field :host_id, String.t(), enforce: true
+  defevent do
+    field :cluster_id, :string
+    field :host_id, :string
   end
 end

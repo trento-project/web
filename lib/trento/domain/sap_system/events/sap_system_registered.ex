@@ -3,18 +3,13 @@ defmodule Trento.Domain.Events.SapSystemRegistered do
   This event is emitted when a sap system is registered.
   """
 
-  alias Trento.Domain.Health
+  use Trento.Event
 
-  use TypedStruct
-
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "SapSystemRegistered event"
-
-    field :sap_system_id, String.t(), enforce: true
-    field :sid, String.t(), enforce: true
-    field :tenant, String.t(), enforce: true
-    field :db_host, String.t(), enforce: true
-    field :health, Health.t(), enforce: true
+  defevent do
+    field :sap_system_id, Ecto.UUID
+    field :sid, :string
+    field :tenant, :string
+    field :db_host, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
 end

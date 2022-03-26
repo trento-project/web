@@ -3,15 +3,10 @@ defmodule Trento.Domain.Events.ClusterHealthChanged do
   ClusterHealthChanged event
   """
 
-  use TypedStruct
+  use Trento.Event
 
-  @type health :: :passing | :warning | :critical | :pending
-
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "ClusterHealthChanged event"
-
-    field :cluster_id, String.t(), enforce: true
-    field :health, health, enforce: true
+  defevent do
+    field :cluster_id, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :pending]
   end
 end
