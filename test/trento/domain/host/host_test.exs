@@ -35,7 +35,7 @@ defmodule Trento.HostTest do
 
       assert_events_and_state(
         [],
-        RegisterHost.new!(
+        RegisterHost.new!(%{
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
@@ -44,7 +44,7 @@ defmodule Trento.HostTest do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version
-        ),
+        }),
         %HostRegistered{
           host_id: host_id,
           hostname: hostname,
@@ -82,7 +82,7 @@ defmodule Trento.HostTest do
 
       assert_events_and_state(
         host_registered_event(host_id: host_id),
-        RegisterHost.new!(
+        RegisterHost.new!(%{
           host_id: host_id,
           hostname: new_hostname,
           ip_addresses: new_ip_addresses,
@@ -91,7 +91,7 @@ defmodule Trento.HostTest do
           total_memory_mb: new_total_memory_mb,
           socket_count: new_socket_count,
           os_version: new_os_version
-        ),
+        }),
         %HostDetailsUpdated{
           host_id: host_id,
           hostname: new_hostname,
@@ -121,7 +121,7 @@ defmodule Trento.HostTest do
 
       assert_events(
         host_registered_event,
-        RegisterHost.new!(
+        RegisterHost.new!(%{
           host_id: host_registered_event.host_id,
           hostname: host_registered_event.hostname,
           ip_addresses: host_registered_event.ip_addresses,
@@ -130,7 +130,7 @@ defmodule Trento.HostTest do
           total_memory_mb: host_registered_event.total_memory_mb,
           socket_count: host_registered_event.socket_count,
           os_version: host_registered_event.os_version
-        ),
+        }),
         []
       )
     end
@@ -143,10 +143,10 @@ defmodule Trento.HostTest do
 
       assert_events_and_state(
         host_registered_event,
-        UpdateHeartbeat.new!(
+        UpdateHeartbeat.new!(%{
           host_id: host_id,
           heartbeat: :passing
-        ),
+        }),
         %HeartbeatSucceded{
           host_id: host_id
         },
@@ -170,10 +170,10 @@ defmodule Trento.HostTest do
 
       assert_events_and_state(
         initial_events,
-        UpdateHeartbeat.new!(
+        UpdateHeartbeat.new!(%{
           host_id: host_id,
           heartbeat: :passing
-        ),
+        }),
         %HeartbeatSucceded{
           host_id: host_id
         },
@@ -197,10 +197,10 @@ defmodule Trento.HostTest do
 
       assert_events(
         initial_events,
-        UpdateHeartbeat.new!(
+        UpdateHeartbeat.new!(%{
           host_id: host_id,
           heartbeat: :passing
-        ),
+        }),
         []
       )
     end
@@ -217,10 +217,10 @@ defmodule Trento.HostTest do
 
       assert_events_and_state(
         initial_events,
-        UpdateHeartbeat.new!(
+        UpdateHeartbeat.new!(%{
           host_id: host_id,
           heartbeat: :critical
-        ),
+        }),
         %HeartbeatFailed{
           host_id: host_id
         },
@@ -238,10 +238,10 @@ defmodule Trento.HostTest do
 
       assert_events_and_state(
         host_registered_event,
-        UpdateHeartbeat.new!(
+        UpdateHeartbeat.new!(%{
           host_id: host_id,
           heartbeat: :critical
-        ),
+        }),
         %HeartbeatFailed{
           host_id: host_id
         },
@@ -265,10 +265,10 @@ defmodule Trento.HostTest do
 
       assert_events(
         initial_events,
-        UpdateHeartbeat.new!(
+        UpdateHeartbeat.new!(%{
           host_id: host_id,
           heartbeat: :critical
-        ),
+        }),
         []
       )
     end
@@ -279,10 +279,10 @@ defmodule Trento.HostTest do
       host_id = Faker.UUID.v4()
 
       assert_error(
-        UpdateProvider.new!(
+        UpdateProvider.new!(%{
           host_id: host_id,
           provider: :azure
-        ),
+        }),
         {:error, :host_not_registered}
       )
     end
@@ -296,10 +296,10 @@ defmodule Trento.HostTest do
 
       assert_events(
         initial_events,
-        UpdateProvider.new!(
+        UpdateProvider.new!(%{
           host_id: host_id,
           provider: :azure
-        ),
+        }),
         %ProviderUpdated{
           host_id: host_id,
           provider: :azure
@@ -317,10 +317,10 @@ defmodule Trento.HostTest do
 
       assert_events(
         initial_events,
-        UpdateProvider.new!(
+        UpdateProvider.new!(%{
           host_id: host_id,
           provider: :azure
-        ),
+        }),
         []
       )
     end
@@ -334,24 +334,23 @@ defmodule Trento.HostTest do
 
       host_registered_event = host_registered_event(host_id: host_id)
 
-      subscription =
-        SlesSubscription.new!(
-          host_id: host_id,
-          identifier: identifier,
-          version: version,
-          arch: "x86_64",
-          status: "active"
-        )
+      subscription_data = %{
+        host_id: host_id,
+        identifier: identifier,
+        version: version,
+        arch: "x86_64",
+        status: "active"
+      }
 
       assert_events_and_state(
         host_registered_event,
-        UpdateSlesSubscriptions.new!(
+        UpdateSlesSubscriptions.new!(%{
           host_id: host_id,
-          subscriptions: [subscription]
-        ),
+          subscriptions: [subscription_data]
+        }),
         %SlesSubscriptionsUpdated{
           host_id: host_id,
-          subscriptions: [subscription]
+          subscriptions: [SlesSubscription.new!(subscription_data)]
         },
         fn state ->
           assert %Host{
