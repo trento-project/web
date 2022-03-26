@@ -3,21 +3,25 @@ defmodule Trento.Domain.SlesSubscription do
   SLES subscriptions value object
   """
 
-  use TypedStruct
-  use Domo
+  @required_fields [
+    :host_id,
+    :identifier,
+    :version,
+    :arch,
+    :status
+  ]
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "SlesSubscription value object"
+  use Trento.Type
 
-    field :host_id, String.t(), enforce: true
-    field :identifier, String.t(), enforce: true
-    field :version, String.t(), enforce: true
-    field :arch, String.t(), enforce: true
-    field :status, String.t(), enforce: true
-    field :subscription_status, String.t()
-    field :type, String.t()
-    field :starts_at, String.t()
-    field :expires_at, String.t()
+  deftype do
+    field :host_id, :string
+    field :identifier, :string
+    field :version, :string
+    field :arch, :string
+    field :status, :string
+    field :subscription_status, :string
+    field :type, :string
+    field :starts_at, :string
+    field :expires_at, :string
   end
 end

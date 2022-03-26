@@ -2,16 +2,13 @@ defmodule Trento.Domain.CheckResult do
   @moduledoc """
   Check result value object
   """
-  use TypedStruct
-  use Domo
 
-  @type result :: :passing | :warning | :critical | :running
+  @required_fields [:check_id, :result]
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "CheckResult value object"
+  use Trento.Type
 
-    field :check_id, String.t(), enforce: true
-    field :result, result, enforce: true
+  deftype do
+    field :check_id, :string
+    field :result, Ecto.Enum, values: [:passing, :warning, :critical, :running]
   end
 end
