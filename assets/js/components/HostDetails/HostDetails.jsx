@@ -13,38 +13,12 @@ import {
 } from './tableConfigs';
 
 import SuseLogo from '../../../static/suse_logo.svg';
-import { isIdByKey } from '@state/selectors';
-import { ApplicationType, DatabaseType } from '@lib/model';
+import { findInstancesOnHost, getHost } from '@state/selectors';
 
 const HostDetails = () => {
   const { hostID } = useParams();
-  const host = useSelector((state) =>
-    state.hostsList.hosts.find(isIdByKey('id', hostID))
-  );
-
-  const sapSystems = useSelector((state) => {
-    return state.sapSystemsList.sapSystems
-      .reduce((accumulator, current) => {
-        const foundInApplicationInstances = current.application_instances?.find(
-          isIdByKey('host_id', hostID)
-        );
-        const foundInDatabaseInstances = current.database_instances?.find(
-          isIdByKey('host_id', hostID)
-        );
-        return [
-          ...accumulator,
-          foundInApplicationInstances && {
-            ...foundInApplicationInstances,
-            type: ApplicationType,
-          },
-          foundInDatabaseInstances && {
-            ...foundInDatabaseInstances,
-            type: DatabaseType,
-          },
-        ];
-      }, [])
-      .filter((elem) => elem !== undefined);
-  });
+  const host = useSelector(getHost(hostID));
+  const sapSystems = useSelector(findInstancesOnHost(hostID));
 
   if (!host) {
     return <div>Not Found</div>;

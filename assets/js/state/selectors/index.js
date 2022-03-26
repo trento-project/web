@@ -1,4 +1,5 @@
 import { keysToCamel } from '@lib/serialization';
+import { ApplicationType, DatabaseType } from '@lib/model';
 
 export const getHost = (id) => (state) =>
   state.hostsList.hosts.find((host) => host.id === id);
@@ -67,6 +68,20 @@ const enrichInstances = (instances, sapSystemId, state) =>
         },
       };
     });
+
+export const findInstancesOnHost = (hostId) => (state) => {
+  const { databaseInstances, applicationInstances } = state.sapSystemsList;
+
+  const foundDatabaseInstances = databaseInstances
+    .filter(isIdByKey('host_id', hostId))
+    .map((instance) => ({ ...instance, type: DatabaseType }));
+
+  const foundApplicationInstances = applicationInstances
+    .filter(isIdByKey('host_id', hostId))
+    .map((instance) => ({ ...instance, type: ApplicationType }));
+
+  return [...foundApplicationInstances, ...foundDatabaseInstances];
+};
 
 export const isIdByKey =
   (key, id) =>
