@@ -20,25 +20,25 @@ defmodule Trento.Clusters do
   def store_checks_results(cluster_id, host_id, checks_results) do
     with {:ok, checks_results} <- build_check_results(checks_results),
          {:ok, command} <-
-           StoreChecksResults.new(
+           StoreChecksResults.new(%{
              cluster_id: cluster_id,
              host_id: host_id,
              checks_results: build_check_results(checks_results)
-           ) do
+           }) do
       Trento.Commanded.dispatch(command)
     end
   end
 
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(cluster_id, checks) do
-    with {:ok, command} <- SelectChecks.new(cluster_id: cluster_id, checks: checks) do
+    with {:ok, command} <- SelectChecks.new(%{cluster_id: cluster_id, checks: checks}) do
       Trento.Commanded.dispatch(command)
     end
   end
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    with {:ok, command} <- RequestChecksExecution.new(cluster_id: cluster_id) do
+    with {:ok, command} <- RequestChecksExecution.new(%{cluster_id: cluster_id}) do
       Trento.Commanded.dispatch(command)
     end
   end
