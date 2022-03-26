@@ -14,6 +14,7 @@ import {
 
 import SuseLogo from '../../../static/suse_logo.svg';
 import { isIdByKey } from '@state/selectors';
+import { ApplicationType, DatabaseType } from '@lib/model';
 
 const HostDetails = () => {
   const { hostID } = useParams();
@@ -34,11 +35,11 @@ const HostDetails = () => {
           ...accumulator,
           foundInApplicationInstances && {
             ...foundInApplicationInstances,
-            type: 'application',
+            type: ApplicationType,
           },
           foundInDatabaseInstances && {
             ...foundInDatabaseInstances,
-            type: 'database',
+            type: DatabaseType,
           },
         ];
       }, [])

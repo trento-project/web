@@ -1,5 +1,5 @@
 import React from 'react';
-import Spinner from '../Spinner';
+import Spinner from '@components/Spinner';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 

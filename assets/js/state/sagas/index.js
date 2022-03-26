@@ -9,7 +9,7 @@ import {
   stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
-} from '../hosts';
+} from '@state/hosts';
 
 import {
   setClusters,
@@ -20,7 +20,7 @@ import {
   updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
-} from '../clusters';
+} from '@state/clusters';
 
 import {
   startSapSystemsLoading,
@@ -32,7 +32,7 @@ import {
   updateSapSystemHealth,
   updateSAPSystemDatabaseInstanceHealth,
   updateApplicationInstanceHealth,
-} from '../sapSystems';
+} from '@state/sapSystems';
 
 import {
   appendDatabase,
@@ -42,13 +42,13 @@ import {
   stopDatabasesLoading,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
-} from '../databases';
+} from '@state/databases';
 
-import { setCatalog } from '../catalog';
+import { setCatalog } from '@state/catalog';
 
-import { appendEntryToLiveFeed } from '../liveFeed';
-import { watchNotifications } from './notifications';
-import { findDatabase, findSapSystem } from '../selectors';
+import { appendEntryToLiveFeed } from '@state/liveFeed';
+import { watchNotifications } from '@state/sagas/notifications';
+import { findDatabase, findSapSystem } from '@state/selectors';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
