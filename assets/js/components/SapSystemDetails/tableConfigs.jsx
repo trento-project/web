@@ -1,20 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Features, InstanceStatus } from './GenericSystemDetail';
 
-export const sapInstancesTableConfiguration = {
+export const systemInstancesTableConfiguration = {
   usePadding: false,
   columns: [
     { title: 'Hostname', key: 'instanceHostname' },
     { title: 'Instance Number', key: 'instanceNumber' },
-    { title: 'Features', key: 'features' },
+    {
+      title: 'Features',
+      key: 'features',
+      render: (content) => {
+        return <Features features={content} />;
+      },
+    },
     { title: 'Http Port', key: 'httpPort' },
     { title: 'Https Port', key: 'httpsPort' },
     { title: 'Start Priority', key: 'startPriority' },
-    { title: 'Status', key: 'health' },
+    {
+      title: 'Status',
+      key: 'health',
+      render: (content) => {
+        return <InstanceStatus health={content} />;
+      },
+    },
   ],
 };
 
-export const sapHostsTableConfiguration = {
+export const systemHostsTableConfiguration = {
   usePadding: false,
   columns: [
     {

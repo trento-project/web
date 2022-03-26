@@ -2,9 +2,10 @@ import { EOS_APPLICATION_OUTLINED } from 'eos-icons-react';
 import React from 'react';
 import DatabaseItemOverview from '@components/DatabasesOverview/DatabaseItemOverview';
 import InstanceOverview from '@components/InstanceOverview';
+import { ApplicationType } from '@lib/model';
 
 const ApplicationInstance = ({ instance }) => (
-  <InstanceOverview instanceType={'application'} instance={instance} />
+  <InstanceOverview instanceType={ApplicationType} instance={instance} />
 );
 
 const applicationInstanceColumns = [
@@ -15,7 +16,7 @@ const applicationInstanceColumns = [
   { name: 'Host' },
 ];
 
-const SAPSystemItemOverview = ({ sapSystem }) => {
+const SapSystemItemOverview = ({ sapSystem }) => {
   const { applicationInstances, databaseInstances } = sapSystem;
 
   return (
@@ -60,4 +61,4 @@ const SAPSystemItemOverview = ({ sapSystem }) => {
   );
 };
 
-export default SAPSystemItemOverview;
+export default SapSystemItemOverview;
