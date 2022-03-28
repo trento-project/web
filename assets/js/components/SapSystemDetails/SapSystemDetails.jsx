@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getSapSystemDetail } from '@state/selectors';
-import GenericSystemDetails from './GenericSystemDetail';
+import { GenericSystemDetails } from '@components/SapSystemDetails';
 import { APPLICATION_TYPE } from '@lib/model';
 
 const SapSystemDetails = () => {

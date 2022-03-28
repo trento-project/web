@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Features, InstanceStatus } from './GenericSystemDetail';
+import { Features, InstanceStatus } from './GenericSystemDetails';
 
 export const systemInstancesTableConfiguration = {
   usePadding: false,

@@ -12,7 +12,7 @@ import {
 } from 'eos-icons-react';
 import { APPLICATION_TYPE } from '@lib/model';
 
-const GenericSystemDetails = ({ title, type, system }) => {
+export const GenericSystemDetails = ({ title, type, system }) => {
   if (!system) {
     return <div>Not Found</div>;
   }
@@ -119,5 +119,3 @@ export const Features = ({ features }) => {
     </div>
   );
 };
-
-export default GenericSystemDetails;

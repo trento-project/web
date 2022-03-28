@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getCluster, getHost } from '@state/selectors';
 import HealthIcon from '@components/Health';
-import { Features } from '@components/SapSystemDetails/GenericSystemDetail';
+import { Features } from '@components/SapSystemDetails';
 import { DATABASE_TYPE } from '@lib/model';
 
 const InstanceOverview = ({
