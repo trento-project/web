@@ -1,13 +1,7 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import classNames from 'classnames';
 
-const ListView = ({
-  className,
-  orientation = 'horizontal',
-  data,
-  rows = 1,
-}) => (
+const ListView = ({ className, orientation = 'horizontal', data }) => (
   <div
     className={
       orientation === 'vertical'

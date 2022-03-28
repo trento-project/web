@@ -73,7 +73,9 @@ const ClustersList = () => {
         title: 'ID',
         key: 'id',
         render: (content) => (
-          <p className="text-gray-900 whitespace-no-wrap truncate">{content}</p>
+          <span className="transition hover:text-green-600">
+            <Link to={`/clusters/${content}`}>{content}</Link>
+          </span>
         ),
       },
       {

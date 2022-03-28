@@ -1,5 +1,6 @@
-import classNames from 'classnames';
 import React, { Fragment, useState } from 'react';
+import classNames from 'classnames';
+
 import CollapsibleTableRow from './CollapsibleTableRow';
 
 import { TableFilters } from './filters';
@@ -11,12 +12,15 @@ const defaultCellRender = (content) => (
 const renderCells = (columns, item) => {
   return (
     <Fragment>
-      {columns.map(({ key, render = defaultCellRender }) => {
+      {columns.map(({ key, className, render = defaultCellRender }) => {
         const content = item[key];
         return (
           <td
             key={key}
-            className="px-5 py-5 border-b border-gray-200 bg-white text-sm"
+            className={classNames(
+              'px-5 py-5 border-b border-gray-200 bg-white text-sm',
+              className
+            )}
           >
             {render(content, item)}
           </td>
@@ -67,11 +71,14 @@ const Table = ({ config, data = [] }) => {
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
-                  {columns.map(({ title }) => (
+                  {columns.map(({ title, className }) => (
                     <th
                       key={title}
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className={classNames(
+                        'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+                        className
+                      )}
                     >
                       {title}
                     </th>

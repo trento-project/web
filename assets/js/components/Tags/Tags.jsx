@@ -23,6 +23,8 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
         <Pill
           key={index}
           className={classNames({
+            'text-green-800': true,
+            'bg-green-100': true,
             'ml-2': index !== 0,
             group: true,
             flex: true,
@@ -47,7 +49,7 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
         </Pill>
       ))}
       {addingTag ? (
-        <Pill className="ml-2">
+        <Pill className="ml-2 bg-green-100 text-green-800">
           <input
             ref={inputRef}
             className="bg-green-100"
@@ -71,6 +73,8 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
       ) : (
         <Pill
           className={classNames({
+            'text-green-800': true,
+            'bg-green-100': true,
             'ml-2': renderedTags.length !== 0,
             flex: true,
             'items-center': true,
