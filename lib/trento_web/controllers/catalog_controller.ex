@@ -8,9 +8,7 @@ defmodule TrentoWeb.CatalogController do
     runner_url = "http://localhost:8080"
     case Checks.get_catalog(runner_url) do
       {:ok, catalog} ->
-        conn
-        |> put_status(:accepted)
-        |> json(catalog.providers)
+        json(conn, catalog.providers)
 
       {:error, reason} ->
         conn

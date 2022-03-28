@@ -11,7 +11,7 @@ defmodule Trento.Integration.Checks.Runner do
 
   @impl true
   def request_execution(_execution_id, _cluster_id, _hosts, _selected_checks) do
-    {:ok}
+    :ok
   end
 
   @impl true
@@ -26,10 +26,9 @@ defmodule Trento.Integration.Checks.Runner do
 
   defp is_catalog_ready(runner_url) do
     case HTTPoison.get("#{runner_url}/api/ready") do
-      {:ok, %HTTPoison.Response{status_code: 200, body: %{"ready" => true}}} ->
-        :ok
-      {:ok, %HTTPoison.Response{status_code: 200, body: %{"ready" => false}}} ->
-        {:error, "The catalog is still being built."}
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        handler_catalog_ready(Jason.decode!(body))
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error(
           "Failed getting the runner 'ready' state. Reason: #{reason}",
@@ -43,10 +42,14 @@ defmodule Trento.Integration.Checks.Runner do
     end
   end
 
+  defp handler_catalog_ready(%{"ready" => true}), do: :ok
+
+  defp handler_catalog_ready(%{"ready" => false}), do: {:error, "The catalog is still being built."}
+
   defp get_catalog_from_runner(runner_url) do
     case HTTPoison.get("#{runner_url}/api/catalog") do
       {:ok, %HTTPoison.Response{status_code: 200, body: catalog_raw}} ->
-        normalize_catalog(catalog_raw)
+        normalize_catalog(Jason.decode!(catalog_raw))
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error(
