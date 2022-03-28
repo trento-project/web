@@ -3,17 +3,12 @@ defmodule Trento.Domain.Events.ApplicationInstanceHealthChanged do
   This event is emitted when a application instance health has changed.
   """
 
-  use TypedStruct
+  use Trento.Event
 
-  alias Trento.Domain.Health
-
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "ApplicationInstanceHealthChanged event"
-
-    field :sap_system_id, String.t(), enforce: true
-    field :host_id, String.t(), enforce: true
-    field :instance_number, String.t(), enforce: true
-    field :health, Health.t(), enforce: true
+  defevent do
+    field :sap_system_id, Ecto.UUID
+    field :host_id, Ecto.UUID
+    field :instance_number, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
 end

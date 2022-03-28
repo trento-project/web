@@ -3,14 +3,11 @@ defmodule Trento.Domain.Events.ChecksExecutionRequested do
   Event of the request of a checks execution.
   """
 
-  use TypedStruct
+  use Trento.Event
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "ChecksExecutionRequested event"
-
-    field :cluster_id, String.t(), enforce: true
-    field :hosts, [String.t()], enforce: true
-    field :checks, [String.t()], enforce: true
+  defevent do
+    field :cluster_id, :string
+    field :hosts, {:array, :string}
+    field :checks, {:array, :string}
   end
 end

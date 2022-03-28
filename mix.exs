@@ -7,7 +7,7 @@ defmodule Trento.MixProject do
       version: "0.1.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext, :domo_compiler] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -48,7 +48,6 @@ defmodule Trento.MixProject do
       {:commanded_eventstore_adapter, "~> 1.2"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:domo, "~> 1.5"},
       {:ecto_sql, "~> 3.6"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:eventstore, "~> 1.1",
@@ -77,9 +76,7 @@ defmodule Trento.MixProject do
       {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 1.0"},
-      {:typed_struct, "~> 0.3.0"},
-      {:vex, "~> 0.9.0"}
+      {:telemetry_poller, "~> 1.0"}
     ]
   end
 

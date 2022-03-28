@@ -3,22 +3,16 @@ defmodule Trento.Domain.Commands.UpdateProvider do
   Update the provider to a specific host.
   """
 
+  @required_fields [:host_id]
+
+  use Trento.Command
+
   alias Trento.Domain.AzureProvider
 
-  use TypedStruct
-  use Domo
+  defcommand do
+    field :host_id, Ecto.UUID
+    field :provider, Ecto.Enum, values: [:azure, :unknown]
 
-  @type provider :: :azure | :unknown
-
-  typedstruct do
-    @typedoc "UpdateProvider command"
-
-    field :host_id, String.t(), enforce: true
-    field :provider, provider, enforce: true
-    field :provider_data, AzureProvider.t() | nil
+    embeds_one :provider_data, AzureProvider
   end
-
-  use Vex.Struct
-
-  validates :host_id, uuid: true
 end

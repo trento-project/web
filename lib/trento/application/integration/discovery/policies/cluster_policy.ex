@@ -4,7 +4,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   """
 
   alias Trento.Domain.Commands.RegisterClusterHost
-  alias Trento.Domain.HanaClusterDetails
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
@@ -34,7 +33,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     cluster_type = detect_cluster_type(payload)
     sid = parse_cluster_sid(payload)
 
-    RegisterClusterHost.new(
+    RegisterClusterHost.new(%{
       cluster_id: UUID.uuid5(@uuid_namespace, id),
       host_id: agent_id,
       name: name,
@@ -42,7 +41,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       type: cluster_type,
       designated_controller: designated_controller,
       details: parse_cluster_details(payload, cluster_type, sid)
-    )
+    })
   end
 
   defp detect_cluster_type(%{"Crmmon" => %{"Clones" => nil}}), do: :unknown
@@ -99,7 +98,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
        when cluster_type in [:hana_scale_up, :hana_scale_out] do
     nodes = parse_cluster_nodes(payload, sid)
 
-    HanaClusterDetails.new!(
+    %{
       system_replication_mode: parse_system_replication_mode(nodes, sid),
       system_replication_operation_mode: parse_system_replication_operation_mode(nodes, sid),
       secondary_sync_state: parse_secondary_sync_state(nodes, sid),
@@ -108,7 +107,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: nodes,
       sbd_devices: parse_sbd_devices(sbd)
-    )
+    }
   end
 
   defp parse_cluster_details(_, _, _), do: nil
@@ -130,16 +129,15 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
           Map.put(acc, name, value)
         end)
 
-      node =
-        HanaClusterDetails.Node.new!(
-          name: name,
-          attributes: attributes,
-          resources: parse_node_resources(name, crmmon),
-          site: Map.get(attributes, "hana_#{String.downcase(sid)}_site", ""),
-          hana_status: "Unknown"
-        )
+      node = %{
+        name: name,
+        attributes: attributes,
+        resources: parse_node_resources(name, crmmon),
+        site: Map.get(attributes, "hana_#{String.downcase(sid)}_site", ""),
+        hana_status: "Unknown"
+      }
 
-      %HanaClusterDetails.Node{node | hana_status: parse_hana_status(node, sid)}
+      %{node | hana_status: parse_hana_status(node, sid)}
     end)
   end
 
@@ -154,24 +152,24 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
         false
     end)
     |> Enum.map(fn %{"Id" => id, "Agent" => type, "Role" => role} = resource ->
-      HanaClusterDetails.Resource.new!(
+      %{
         id: id,
         type: type,
         role: role,
         status: parse_resource_status(resource),
         fail_count: parse_fail_count(node_name, id, crmmon)
-      )
+      }
     end)
   end
 
-  defp parse_system_replication_mode([%HanaClusterDetails.Node{attributes: attributes} | _], sid) do
+  defp parse_system_replication_mode([%{attributes: attributes} | _], sid) do
     Map.get(attributes, "hana_#{String.downcase(sid)}_srmode", "")
   end
 
   defp parse_system_replication_mode(_, _), do: ""
 
   defp parse_system_replication_operation_mode(
-         [%HanaClusterDetails.Node{attributes: attributes} | _],
+         [%{attributes: attributes} | _],
          sid
        ) do
     Map.get(attributes, "hana_#{String.downcase(sid)}_op_mode", "")
@@ -180,7 +178,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_secondary_sync_state returns the secondary sync state of the HANA cluster
   defp parse_secondary_sync_state(nodes, sid) do
     nodes
-    |> Enum.find_value(fn %HanaClusterDetails.Node{attributes: attributes} = node ->
+    |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
           Map.get(attributes, "hana_#{String.downcase(sid)}_sync_state")
@@ -198,7 +196,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_hana_sr_health_state returns the secondary sync state of the HANA cluster
   defp parse_hana_sr_health_state(nodes, sid) do
     nodes
-    |> Enum.find_value(fn %HanaClusterDetails.Node{attributes: attributes} = node ->
+    |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
           attributes
@@ -220,7 +218,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # Possible values: Primary, Secondary, Failed, Unknown
   # e.g. 4:P:master1:master:worker:master returns Primary (second element)
   # e.g. PRIM
-  defp parse_hana_status(%HanaClusterDetails.Node{attributes: attributes}, sid) do
+  defp parse_hana_status(%{attributes: attributes}, sid) do
     status =
       case Map.get(attributes, "hana_#{String.downcase(sid)}_roles") do
         nil ->
@@ -306,16 +304,16 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
         false
     end)
     |> Enum.map(fn %{"Id" => id, "Agent" => type, "Role" => role} ->
-      HanaClusterDetails.Resource.new!(id: id, type: type, role: role)
+      %{id: id, type: type, role: role}
     end)
   end
 
   defp parse_sbd_devices(%{"Devices" => devices}) do
     Enum.map(devices, fn %{"Device" => device, "Status" => status} ->
-      HanaClusterDetails.SbdDevice.new!(
+      %{
         device: device,
         status: status
-      )
+      }
     end)
   end
 end

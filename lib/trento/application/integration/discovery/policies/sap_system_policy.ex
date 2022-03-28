@@ -59,7 +59,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         fn {_, instance} ->
           instance_number = parse_instance_number(instance)
 
-          RegisterDatabaseInstance.new(
+          RegisterDatabaseInstance.new(%{
             sap_system_id: UUID.uuid5(@uuid_namespace, id),
             sid: sid,
             tenant: tenant,
@@ -71,7 +71,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
             https_port: parse_https_port(instance, instance_number),
             start_priority: parse_start_priority(instance, instance_number),
             health: parse_instance_health(instance, instance_number)
-          )
+          })
         end
       )
     end)
@@ -92,7 +92,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     Enum.map(instances, fn {_, instance} ->
       instance_number = parse_instance_number(instance)
 
-      RegisterApplicationInstance.new(
+      RegisterApplicationInstance.new(%{
         sid: sid,
         tenant: tenant,
         db_host: db_host,
@@ -104,7 +104,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         start_priority: parse_start_priority(instance, instance_number),
         host_id: host_id,
         health: parse_instance_health(instance, instance_number)
-      )
+      })
     end)
   end
 

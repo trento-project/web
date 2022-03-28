@@ -3,29 +3,21 @@ defmodule Trento.Domain.Commands.RegisterDatabaseInstance do
   Register a database instance to the monitoring system.
   """
 
-  use TypedStruct
-  use Domo
+  @required_fields :all
 
-  alias Trento.Domain.Health
+  use Trento.Command
 
-  typedstruct do
-    @typedoc "RegisterDatabaseInstance command"
-
-    field :sap_system_id, String.t(), enforce: true
-    field :sid, String.t(), enforce: true
-    field :tenant, String.t(), enforce: true
-    field :host_id, String.t(), enforce: true
-    field :instance_number, String.t(), enforce: true
-    field :instance_hostname, String.t(), enforce: true
-    field :features, String.t(), enforce: true
-    field :http_port, integer, enforce: true
-    field :https_port, integer, enforce: true
-    field :start_priority, String.t(), enforce: true
-    field :health, Health.t(), enforce: true
+  defcommand do
+    field :sap_system_id, Ecto.UUID
+    field :sid, :string
+    field :tenant, :string
+    field :host_id, :string
+    field :instance_number, :string
+    field :instance_hostname, :string
+    field :features, :string
+    field :http_port, :integer
+    field :https_port, :integer
+    field :start_priority, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
-
-  use Vex.Struct
-
-  validates :sap_system_id, uuid: true
-  validates :host_id, uuid: true
 end

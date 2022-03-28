@@ -36,7 +36,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         [],
-        RegisterDatabaseInstance.new!(
+        RegisterDatabaseInstance.new!(%{
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -48,7 +48,7 @@ defmodule Trento.SapSystemTest do
           start_priority: start_priority,
           host_id: host_id,
           health: :passing
-        ),
+        }),
         [
           %DatabaseRegistered{
             sap_system_id: sap_system_id,
@@ -203,7 +203,7 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterApplicationInstance.new!(
+        RegisterApplicationInstance.new!(%{
           sap_system_id: sap_system_id,
           sid: sid,
           db_host: db_host,
@@ -216,7 +216,7 @@ defmodule Trento.SapSystemTest do
           start_priority: start_priority,
           host_id: host_id,
           health: :passing
-        ),
+        }),
         [
           %SapSystemRegistered{
             sap_system_id: sap_system_id,

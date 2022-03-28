@@ -3,16 +3,14 @@ defmodule Trento.Domain.Events.ChecksResultsStored do
   Event of the checks results stored after an execution
   """
 
-  use TypedStruct
+  use Trento.Event
 
   alias Trento.Domain.CheckResult
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "ChecksResultsStored event"
+  defevent do
+    field :cluster_id, :string
+    field :host_id, :string
 
-    field :cluster_id, String.t(), enforce: true
-    field :host_id, String.t(), enforce: true
-    field :checks_results, [CheckResult.t()], enforce: true
+    embeds_many :checks_results, CheckResult
   end
 end

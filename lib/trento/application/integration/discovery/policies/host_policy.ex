@@ -9,11 +9,6 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Domain.{
-    AzureProvider,
-    SlesSubscription
-  }
-
   @spec handle(map) ::
           {:ok, RegisterHost.t() | UpdateProvider.t() | UpdateSlesSubscriptions.t()}
           | {:error, any}
@@ -30,7 +25,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
           "os_version" => os_version
         }
       }) do
-    RegisterHost.new(
+    RegisterHost.new(%{
       host_id: agent_id,
       hostname: hostname,
       ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
@@ -39,7 +34,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       total_memory_mb: total_memory_mb,
       socket_count: socket_count,
       os_version: os_version
-    )
+    })
   end
 
   def handle(%{
@@ -50,24 +45,22 @@ defmodule Trento.Integration.Discovery.HostPolicy do
             "Provider" => "azure"
           } = payload
       }) do
-    with {:ok, azure_data} <- parse_azure_data(payload) do
-      UpdateProvider.new(
-        host_id: agent_id,
-        provider: :azure,
-        provider_data: azure_data
-      )
-    end
+    UpdateProvider.new(%{
+      host_id: agent_id,
+      provider: :azure,
+      provider_data: parse_azure_data(payload)
+    })
   end
 
   def handle(%{
         "discovery_type" => "cloud_discovery",
         "agent_id" => agent_id
       }) do
-    UpdateProvider.new(
+    UpdateProvider.new(%{
       host_id: agent_id,
       provider: :unknown,
       provider_data: nil
-    )
+    })
   end
 
   def handle(%{
@@ -78,7 +71,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     subscriptions =
       Enum.map(payload, fn subscription -> parse_subscription_data(agent_id, subscription) end)
 
-    UpdateSlesSubscriptions.new(host_id: agent_id, subscriptions: subscriptions)
+    UpdateSlesSubscriptions.new(%{host_id: agent_id, subscriptions: subscriptions})
   end
 
   @spec is_non_loopback_ipv4?(String.t()) :: boolean
@@ -94,7 +87,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     end
   end
 
-  @spec parse_subscription_data(String.t(), map) :: SlesSubscription.t()
+  @spec parse_subscription_data(String.t(), map) :: map
   defp parse_subscription_data(host_id, %{
          "arch" => arch,
          "expires_at" => expires_at,
@@ -105,7 +98,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          "type" => type,
          "version" => version
        }) do
-    SlesSubscription.new!(
+    %{
       host_id: host_id,
       arch: arch,
       expires_at: expires_at,
@@ -115,7 +108,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       subscription_status: subscription_status,
       type: type,
       version: version
-    )
+    }
   end
 
   defp parse_subscription_data(host_id, %{
@@ -124,16 +117,16 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          "status" => status,
          "version" => version
        }) do
-    SlesSubscription.new!(
+    %{
       host_id: host_id,
       arch: arch,
       identifier: identifier,
       status: status,
       version: version
-    )
+    }
   end
 
-  @spec parse_azure_data(map) :: {:ok, AzureProvider.t()} | {:error, any}
+  @spec parse_azure_data(map) :: map
   defp parse_azure_data(%{
          "Metadata" => %{
            "compute" => %{
@@ -147,7 +140,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            }
          }
        }) do
-    AzureProvider.new(
+    %{
       vm_name: name,
       resource_group: resource_group,
       location: location,
@@ -155,7 +148,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       data_disk_number: parse_data_disk_number(storage_profile),
       offer: offer,
       sku: sku
-    )
+    }
   end
 
   @spec parse_data_disk_number(map) :: non_neg_integer()

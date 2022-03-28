@@ -3,13 +3,10 @@ defmodule Trento.Domain.Events.ChecksSelected do
   Event of the checks selected in a cluster.
   """
 
-  use TypedStruct
+  use Trento.Event
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "SelecteChecks event"
-
-    field :cluster_id, String.t(), enforce: true
-    field :checks, [String.t()], enforce: true
+  defevent do
+    field :cluster_id, :string
+    field :checks, {:array, :string}
   end
 end

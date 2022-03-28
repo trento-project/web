@@ -3,17 +3,12 @@ defmodule Trento.Domain.Commands.SelectChecks do
   Select the checks to be executed in the cluster.
   """
 
-  use TypedStruct
-  use Domo
+  @required_fields :all
 
-  typedstruct do
-    @typedoc "SelecteChecks command"
+  use Trento.Command
 
-    field :cluster_id, String.t(), enforce: true
-    field :checks, [String.t()], enforce: true
+  defcommand do
+    field :cluster_id, :string
+    field :checks, {:array, :string}
   end
-
-  use Vex.Struct
-
-  validates :cluster_id, uuid: true
 end

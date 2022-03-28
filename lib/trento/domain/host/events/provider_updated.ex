@@ -3,16 +3,13 @@ defmodule Trento.Domain.Events.ProviderUpdated do
   This event is emitted when a provider data is updated in a specific host.
   """
 
+  use Trento.Event
+
   alias Trento.Domain.AzureProvider
 
-  use TypedStruct
-
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "ProviderUpdated event"
-
-    field :host_id, String.t(), enforce: true
-    field :provider, String.t(), enforce: true
-    field :provider_data, AzureProvider.t() | nil
+  defevent do
+    field :host_id, Ecto.UUID
+    field :provider, Ecto.Enum, values: [:azure, :unknown]
+    embeds_one :provider_data, AzureProvider
   end
 end

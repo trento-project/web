@@ -1,10 +1,7 @@
 defmodule Trento.Router do
   use Commanded.Commands.Router
 
-  alias Trento.Support.Middleware.{
-    Enrich,
-    Validate
-  }
+  alias Trento.Support.Middleware.Enrich
 
   alias Trento.Domain.{
     Cluster,
@@ -26,7 +23,6 @@ defmodule Trento.Router do
   }
 
   middleware Enrich
-  middleware Validate
 
   identify Host, by: :host_id
   dispatch [RegisterHost, UpdateHeartbeat, UpdateProvider, UpdateSlesSubscriptions], to: Host

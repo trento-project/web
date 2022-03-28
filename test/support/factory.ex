@@ -6,7 +6,10 @@ defmodule Trento.Factory do
   alias Trento.Repo
 
   alias Trento.Domain.{
+    ClusterNode,
+    ClusterResource,
     HanaClusterDetails,
+    SbdDevice,
     SlesSubscription
   }
 
@@ -197,12 +200,12 @@ defmodule Trento.Factory do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
       nodes: [
-        %HanaClusterDetails.Node{
+        %ClusterNode{
           attributes: %{"attribute" => Faker.Beer.name()},
           hana_status: "Secondary",
           name: Faker.StarWars.character(),
           resources: [
-            %HanaClusterDetails.Resource{
+            %ClusterResource{
               fail_count: Enum.random(0..100),
               id: Faker.Pokemon.name(),
               role: "Started",
@@ -214,7 +217,7 @@ defmodule Trento.Factory do
         }
       ],
       sbd_devices: [
-        %HanaClusterDetails.SbdDevice{
+        %SbdDevice{
           device: "/dev/vdc",
           status: "healthy"
         }
@@ -222,7 +225,7 @@ defmodule Trento.Factory do
       secondary_sync_state: "SOK",
       sr_health_state: "4",
       stopped_resources: [
-        %HanaClusterDetails.Resource{
+        %ClusterResource{
           fail_count: nil,
           id: Faker.Pokemon.name(),
           role: "Stopped",
@@ -316,7 +319,7 @@ defmodule Trento.Factory do
   end
 
   def register_application_instance_command(attrs \\ []) do
-    RegisterApplicationInstance.new!(
+    RegisterApplicationInstance.new!(%{
       sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
       sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
       db_host: Keyword.get(attrs, :db_host, Faker.Internet.ip_v4_address()),
@@ -329,11 +332,11 @@ defmodule Trento.Factory do
       start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
       health: Keyword.get(attrs, :health, :passing)
-    )
+    })
   end
 
   def register_database_instance_command(attrs \\ []) do
-    RegisterDatabaseInstance.new!(
+    RegisterDatabaseInstance.new!(%{
       sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
       sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
       tenant: Keyword.get(attrs, :tenant, Faker.Beer.hop()),
@@ -345,6 +348,6 @@ defmodule Trento.Factory do
       start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
       health: Keyword.get(attrs, :health, :passing)
-    )
+    })
   end
 end

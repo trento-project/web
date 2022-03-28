@@ -3,15 +3,10 @@ defmodule Trento.Domain.Events.SapSystemHealthChanged do
   This event is emitted when the SAP System health has changed.
   """
 
-  use TypedStruct
+  use Trento.Event
 
-  alias Trento.Domain.Health
-
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "SapSystemHealthChanged event"
-
-    field :sap_system_id, String.t(), enforce: true
-    field :health, Health.t(), enforce: true
+  defevent do
+    field :sap_system_id, Ecto.UUID
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
 end

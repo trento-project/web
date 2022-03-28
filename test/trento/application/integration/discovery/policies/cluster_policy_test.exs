@@ -7,7 +7,13 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
   alias Trento.Integration.Discovery.ClusterPolicy
 
   alias Trento.Domain.Commands.RegisterClusterHost
-  alias Trento.Domain.HanaClusterDetails
+
+  alias Trento.Domain.{
+    ClusterNode,
+    ClusterResource,
+    HanaClusterDetails,
+    SbdDevice
+  }
 
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up is handled" do
     assert {:ok,
@@ -17,7 +23,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               details: %HanaClusterDetails{
                 fencing_type: "external/sbd",
                 nodes: [
-                  %HanaClusterDetails.Node{
+                  %ClusterNode{
                     attributes: %{
                       "hana_prd_clone_state" => "PROMOTED",
                       "hana_prd_op_mode" => "logreplay",
@@ -34,56 +40,56 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                     hana_status: "Primary",
                     name: "node01",
                     resources: [
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: 0,
                         id: "stonith-sbd",
                         role: "Started",
                         status: "Active",
                         type: "stonith:external/sbd"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: 2,
                         id: "rsc_ip_PRD_HDB00",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:IPaddr2"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: 1_000_000,
                         id: "rsc_SAPHana_PRD_HDB00",
                         role: "Master",
                         status: "Active",
                         type: "ocf::suse:SAPHana"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: 0,
                         id: "rsc_SAPHanaTopology_PRD_HDB00",
                         role: "Started",
                         status: "Active",
                         type: "ocf::suse:SAPHanaTopology"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "clusterfs",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:Filesystem"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "rsc_ip_HA1_ASCS00",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:IPaddr2"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "rsc_fs_HA1_ASCS00",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:Filesystem"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "rsc_sap_HA1_ASCS00",
                         role: "Started",
@@ -93,7 +99,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                     ],
                     site: "PRIMARY_SITE_NAME"
                   },
-                  %HanaClusterDetails.Node{
+                  %ClusterNode{
                     attributes: %{
                       "hana_prd_clone_state" => "DEMOTED",
                       "hana_prd_op_mode" => "logreplay",
@@ -110,49 +116,49 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                     hana_status: "Secondary",
                     name: "node02",
                     resources: [
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: 0,
                         id: "test",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:Dummy"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: 300,
                         id: "rsc_SAPHana_PRD_HDB00",
                         role: "Slave",
                         status: "Active",
                         type: "ocf::suse:SAPHana"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: 0,
                         id: "rsc_SAPHanaTopology_PRD_HDB00",
                         role: "Started",
                         status: "Active",
                         type: "ocf::suse:SAPHanaTopology"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "clusterfs",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:Filesystem"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "rsc_ip_HA1_ERS10",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:IPaddr2"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "rsc_fs_HA1_ERS10",
                         role: "Started",
                         status: "Active",
                         type: "ocf::heartbeat:Filesystem"
                       },
-                      %HanaClusterDetails.Resource{
+                      %ClusterResource{
                         fail_count: nil,
                         id: "rsc_sap_HA1_ERS10",
                         role: "Started",
@@ -164,11 +170,11 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                   }
                 ],
                 sbd_devices: [
-                  %HanaClusterDetails.SbdDevice{
+                  %SbdDevice{
                     device: "/dev/vdc",
                     status: "healthy"
                   },
-                  %HanaClusterDetails.SbdDevice{
+                  %SbdDevice{
                     device: "/dev/vdb",
                     status: "healthy"
                   }
@@ -176,21 +182,21 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                 secondary_sync_state: "SOK",
                 sr_health_state: "4",
                 stopped_resources: [
-                  %HanaClusterDetails.Resource{
+                  %ClusterResource{
                     fail_count: nil,
                     id: "test-stop",
                     role: "Stopped",
                     status: nil,
                     type: "ocf::heartbeat:Dummy"
                   },
-                  %HanaClusterDetails.Resource{
+                  %ClusterResource{
                     fail_count: nil,
                     id: "clusterfs",
                     role: "Stopped",
                     status: nil,
                     type: "ocf::heartbeat:Filesystem"
                   },
-                  %HanaClusterDetails.Resource{
+                  %ClusterResource{
                     fail_count: nil,
                     id: "clusterfs",
                     role: "Stopped",

@@ -3,17 +3,12 @@ defmodule Trento.Domain.Commands.UpdateHeartbeat do
   Updated the host heartbeat.
   """
 
-  use TypedStruct
-  use Domo
+  @required_fields :all
 
-  typedstruct do
-    @typedoc "UpdateHeartbeat command"
+  use Trento.Command
 
-    field :host_id, String.t(), enforce: true
-    field :heartbeat, :passing | :critical, enforce: true
+  defcommand do
+    field :host_id, :string
+    field :heartbeat, Ecto.Enum, values: [:passing, :critical]
   end
-
-  use Vex.Struct
-
-  validates :host_id, uuid: true
 end

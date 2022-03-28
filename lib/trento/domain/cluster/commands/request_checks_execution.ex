@@ -3,16 +3,11 @@ defmodule Trento.Domain.Commands.RequestChecksExecution do
   Request a checks execution.
   """
 
-  use TypedStruct
-  use Domo
+  @required_fields :all
 
-  typedstruct do
-    @typedoc "RequestChecksExecution command"
+  use Trento.Command
 
-    field :cluster_id, String.t(), enforce: true
+  defcommand do
+    field :cluster_id, Ecto.UUID
   end
-
-  use Vex.Struct
-
-  validates :cluster_id, uuid: true
 end

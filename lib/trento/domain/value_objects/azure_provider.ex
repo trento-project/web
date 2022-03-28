@@ -3,19 +3,17 @@ defmodule Trento.Domain.AzureProvider do
   Azure provider value object
   """
 
-  use TypedStruct
-  use Domo
+  @required_fields nil
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "AzureProvider value object"
+  use Trento.Type
 
-    field :vm_name, String.t()
-    field :resource_group, String.t()
-    field :location, String.t()
-    field :vm_size, String.t()
-    field :data_disk_number, non_neg_integer()
-    field :offer, String.t()
-    field :sku, String.t()
+  deftype do
+    field :vm_name, :string
+    field :resource_group, :string
+    field :location, :string
+    field :vm_size, :string
+    field :data_disk_number, :integer
+    field :offer, :string
+    field :sku, :string
   end
 end

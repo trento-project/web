@@ -3,18 +3,16 @@ defmodule Trento.Domain.Events.ClusterRegistered do
   This event is emitted when a cluster is registered.
   """
 
-  use TypedStruct
+  use Trento.Event
 
   alias Trento.Domain.HanaClusterDetails
 
-  @derive Jason.Encoder
-  typedstruct do
-    @typedoc "ClusterRegistered event"
+  defevent do
+    field :cluster_id, :string
+    field :name, :string
+    field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
+    field :sid, :string
 
-    field :cluster_id, String.t(), enforce: true
-    field :name, String.t(), enforce: true
-    field :type, :hana_scale_up | :hana_scale_out | :unknown, enforce: true
-    field :sid, String.t() | nil, enforce: true
-    field :details, HanaClusterDetails.t() | nil, enforce: true
+    embeds_one :details, HanaClusterDetails
   end
 end

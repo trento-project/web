@@ -42,7 +42,7 @@ config :esbuild,
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [:request_id, :error]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
@@ -55,7 +55,10 @@ config :trento, Trento.Commanded,
   pubsub: :local,
   registry: :local
 
-config :trento, Trento.EventStore, serializer: EventStore.TermSerializer
+config :trento, Trento.EventStore,
+  serializer: Trento.JsonbSerializer,
+  column_data_type: "jsonb",
+  types: EventStore.PostgresTypes
 
 config :trento, event_stores: [Trento.EventStore]
 
@@ -91,12 +94,6 @@ config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Teleme
 config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",
   flavor: System.get_env("FLAVOR", "Community")
-
-config :vex,
-  sources: [
-    [uuid: Trento.Support.UUIDValidator],
-    Vex.Validators
-  ]
 
 config :fun_with_flags,
        :persistence,

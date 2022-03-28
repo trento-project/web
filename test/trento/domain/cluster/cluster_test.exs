@@ -3,6 +3,8 @@ defmodule Trento.ClusterTest do
 
   import Trento.Factory
 
+  alias Trento.Support.StructHelper
+
   alias Trento.Domain.Cluster
 
   alias Trento.Domain.Commands.RegisterClusterHost
@@ -25,7 +27,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [],
-        RegisterClusterHost.new!(
+        RegisterClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
@@ -33,7 +35,7 @@ defmodule Trento.ClusterTest do
           type: type,
           details: nil,
           designated_controller: true
-        ),
+        }),
         [
           %ClusterRegistered{
             cluster_id: cluster_id,
@@ -68,14 +70,14 @@ defmodule Trento.ClusterTest do
           cluster_registered_event(cluster_id: cluster_id),
           host_added_to_cluster_event(cluster_id: cluster_id)
         ],
-        RegisterClusterHost.new!(
+        RegisterClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
           sid: sid,
           type: :hana_scale_up,
           designated_controller: false
-        ),
+        }),
         [
           %HostAddedToCluster{
             cluster_id: cluster_id,
@@ -93,14 +95,14 @@ defmodule Trento.ClusterTest do
     test "should return an error if the cluster was not registered yet and a command from a non-DC is received" do
       assert_error(
         [],
-        RegisterClusterHost.new!(
+        RegisterClusterHost.new!(%{
           cluster_id: Faker.UUID.v4(),
           host_id: Faker.UUID.v4(),
           name: Faker.StarWars.character(),
           sid: Faker.StarWars.planet(),
           type: :hana_scale_up,
           designated_controller: false
-        ),
+        }),
         {:error, :cluster_not_found}
       )
     end
@@ -125,15 +127,15 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterClusterHost.new!(
+        RegisterClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
-          details: details,
+          details: StructHelper.to_map(details),
           designated_controller: true
-        ),
+        }),
         %ClusterDetailsUpdated{
           cluster_id: cluster_id,
           name: new_name,
@@ -165,14 +167,14 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         initial_events,
-        RegisterClusterHost.new!(
+        RegisterClusterHost.new!(%{
           cluster_id: cluster_id,
           host_id: host_id,
           name: name,
           sid: sid,
           type: :hana_scale_up,
           designated_controller: true
-        ),
+        }),
         [],
         fn cluster ->
           assert %Cluster{
