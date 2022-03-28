@@ -31,8 +31,15 @@ defmodule Trento.Type do
       @spec new(map) :: {:ok, t()} | {:error, any}
       def new(params) do
         case changeset(struct(__MODULE__), params) do
-          %{valid?: true} = changes -> {:ok, apply_changes(changes)}
-          %{errors: errors} -> {:error, errors}
+          %{valid?: true} = changes ->
+            {:ok, apply_changes(changes)}
+
+          changes ->
+            {:error,
+             Ecto.Changeset.traverse_errors(
+               changes,
+               fn {msg, _} -> msg end
+             )}
         end
       end
 
@@ -43,7 +50,7 @@ defmodule Trento.Type do
       def new!(params) do
         case new(params) do
           {:ok, struct} -> struct
-          {:error, reason} -> raise RuntimeError, message: reason
+          {:error, reason} -> raise RuntimeError, message: inspect(reason)
         end
       end
 
