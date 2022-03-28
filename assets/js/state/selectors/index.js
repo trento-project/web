@@ -7,18 +7,18 @@ export const getHost = (id) => (state) =>
 export const getCluster = (id) => (state) =>
   state.clustersList.clusters.find((cluster) => cluster.id === id);
 
-export const findSapSystem = (id) => (state) => {
+export const getSapSystem = (id) => (state) => {
   return state.sapSystemsList.sapSystems.find(
     (sapSystem) => id === sapSystem.id
   );
 };
 
-export const findDatabase = (id) => (state) => {
+export const getDatabase = (id) => (state) => {
   return state.databasesList.databases.find((database) => id === database.id);
 };
 
 export const getSapSystemDetail = (id) => (state) => {
-  const system = keysToCamel(findSapSystem(id)(state));
+  const system = keysToCamel(getSapSystem(id)(state));
 
   if (!system) return null;
 
@@ -36,7 +36,7 @@ export const getSapSystemDetail = (id) => (state) => {
 };
 
 export const getDatabaseDetail = (id) => (state) => {
-  const database = keysToCamel(findDatabase(id)(state));
+  const database = keysToCamel(getDatabase(id)(state));
 
   if (!database) return null;
 
@@ -69,7 +69,7 @@ const enrichInstances = (instances, sapSystemId, state) =>
       };
     });
 
-export const findInstancesOnHost = (hostId) => (state) => {
+export const getInstancesOnHost = (hostId) => (state) => {
   const { databaseInstances, applicationInstances } = state.sapSystemsList;
 
   const foundDatabaseInstances = databaseInstances

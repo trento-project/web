@@ -13,12 +13,12 @@ import {
 } from './tableConfigs';
 
 import SuseLogo from '../../../static/suse_logo.svg';
-import { findInstancesOnHost, getHost } from '@state/selectors';
+import { getInstancesOnHost, getHost } from '@state/selectors';
 
 const HostDetails = () => {
   const { hostID } = useParams();
   const host = useSelector(getHost(hostID));
-  const sapSystems = useSelector(findInstancesOnHost(hostID));
+  const sapSystems = useSelector(getInstancesOnHost(hostID));
 
   if (!host) {
     return <div>Not Found</div>;

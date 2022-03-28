@@ -48,7 +48,7 @@ import { setCatalog } from '@state/catalog';
 
 import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { watchNotifications } from '@state/sagas/notifications';
-import { findDatabase, findSapSystem } from '@state/selectors';
+import { getDatabase, getSapSystem } from '@state/selectors';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
@@ -308,7 +308,7 @@ function* sapSystemRegistered({ payload }) {
 
 function* sapSystemHealthChanged({ payload }) {
   const sid =
-    (yield select(findSapSystem(payload.id)))?.sid || 'unable to determine SID';
+    (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
 
   yield put(updateSapSystemHealth(payload));
   yield put(
@@ -370,7 +370,7 @@ function* databaseRegistered({ payload }) {
 
 function* databaseHealthChanged({ payload }) {
   const sid =
-    (yield select(findDatabase(payload.id)))?.sid || 'unable to determine SID';
+    (yield select(getDatabase(payload.id)))?.sid || 'unable to determine SID';
 
   yield put(updateDatabaseHealth(payload));
   yield put(
