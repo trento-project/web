@@ -49,5 +49,5 @@ defmodule Trento.Installation do
   end
 
   @spec flavor :: String.t()
-  defp flavor, do: Application.get_env(:trento, :flavor)
+  def flavor, do: Application.get_env(:trento, :flavor)
 end

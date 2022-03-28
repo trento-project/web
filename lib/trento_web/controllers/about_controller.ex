@@ -4,13 +4,11 @@ defmodule TrentoWeb.AboutController do
   alias Trento.Hosts
 
   @version Mix.Project.config()[:version]
-  # TODO determine Flavor
-  @flavor "Community"
 
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
     json(conn, %{
-      flavor: @flavor,
+      flavor: Trento.Installation.flavor(),
       version: @version,
       sles_subscriptions: Hosts.get_all_sles_subscriptions()
     })
