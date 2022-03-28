@@ -1,4 +1,7 @@
 defmodule Trento.Integration.Checks do
+
+  alias Trento.Domain.Catalog
+
   @moduledoc """
   Checks runner service integration
   """
@@ -6,6 +9,11 @@ defmodule Trento.Integration.Checks do
           :ok | {:error, any}
   def request_execution(execution_id, cluster_id, hosts, selected_checks),
     do: adapter().request_execution(execution_id, cluster_id, hosts, selected_checks)
+
+  @spec get_catalog() ::
+          {:ok, [Catalog.t()]} | {:error, any}
+  def get_catalog(),
+    do: adapter().get_catalog()
 
   defp adapter,
     do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
