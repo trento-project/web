@@ -1,6 +1,6 @@
-defmodule Trento.Domain.Catalog do
+defmodule Trento.Integration.Checks.Models.Provider do
   @moduledoc """
-  Checks catalog entry value object
+  Catalog entry by provider
   """
 
   @required_fields [
@@ -10,11 +10,11 @@ defmodule Trento.Domain.Catalog do
 
   use Trento.Type
 
-  alias Trento.Domain.CheckCatalogGroup
+  alias Trento.Integration.Checks.Models.Group
 
   deftype do
     field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
 
-    embeds_many  :groups, CheckCatalogGroup
+    embeds_many  :groups, Group
   end
 end

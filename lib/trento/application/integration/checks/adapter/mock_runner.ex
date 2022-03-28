@@ -9,7 +9,7 @@ defmodule Trento.Integration.Checks.MockRunner do
 
   require Logger
 
-  alias Trento.Domain.Catalog
+  alias Trento.Integration.Checks.Models.Catalog
 
   @json_path Path.join(File.cwd!(), "priv/data/catalog.json")
   @catalog @json_path |> File.read!() |> Jason.decode!()
@@ -67,9 +67,8 @@ defmodule Trento.Integration.Checks.MockRunner do
   end
 
   @impl true
-  def get_catalog() do
-    {:ok, Enum.map(@catalog, fn provider_checks ->
-      %Catalog{provider: provider_checks["provider"], groups: provider_checks["groups"]} end)}
+  def get_catalog(_runner_url) do
+    Catalog.new(%{providers: @catalog})
   end
 
   @doc """

@@ -1,10 +1,10 @@
-defmodule Trento.Domain.CheckCatalog do
+defmodule Trento.Integration.Checks.Models.Check do
   @moduledoc """
-  Checks catalog entry value object
+  Catalog check
   """
 
   @required_fields [
-    :check_id,
+    :id,
     :name,
     :description,
     :remediation,
@@ -15,7 +15,7 @@ defmodule Trento.Domain.CheckCatalog do
   use Trento.Type
 
   deftype do
-    field :check_id, :string
+    field :id, :string
     field :name, :string
     field :description, :string
     field :remediation, :string
