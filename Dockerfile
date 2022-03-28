@@ -32,6 +32,8 @@ FROM registry.suse.com/bci/bci-base:15.3 AS trento
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+# tar is required by kubectl cp
+RUN zypper -n in tar
 WORKDIR /app
 COPY --from=release /build/_build/prod/rel/trento .
 EXPOSE 4000/tcp
