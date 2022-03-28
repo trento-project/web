@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getSapSystemDetail } from '@state/selectors';
 import GenericSystemDetails from './GenericSystemDetail';
-import { ApplicationType } from '@lib/model';
+import { APPLICATION_TYPE } from '@lib/model';
 
 const SapSystemDetails = () => {
   const { id } = useParams();
@@ -16,7 +16,7 @@ const SapSystemDetails = () => {
   return (
     <GenericSystemDetails
       title={'SAP System Details'}
-      type={ApplicationType}
+      type={APPLICATION_TYPE}
       system={sapSystem}
     />
   );

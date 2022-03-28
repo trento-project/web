@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getDatabaseDetail } from '@state/selectors';
 import GenericSystemDetails from '@components/SapSystemDetails/GenericSystemDetail';
-import { DatabaseType } from '@lib/model';
+import { DATABASE_TYPE } from '@lib/model';
 
 const DatabaseDetails = () => {
   const { id } = useParams();
@@ -16,7 +16,7 @@ const DatabaseDetails = () => {
   return (
     <GenericSystemDetails
       title={'HANA Database details'}
-      type={DatabaseType}
+      type={DATABASE_TYPE}
       system={database}
     />
   );

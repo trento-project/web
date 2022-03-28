@@ -10,7 +10,7 @@ import {
   EOS_APPLICATION_OUTLINED,
   EOS_DATABASE_OUTLINED,
 } from 'eos-icons-react';
-import { ApplicationType } from '@lib/model';
+import { APPLICATION_TYPE } from '@lib/model';
 
 const GenericSystemDetails = ({ title, type, system }) => {
   if (!system) {
@@ -18,7 +18,7 @@ const GenericSystemDetails = ({ title, type, system }) => {
   }
 
   const renderType = (type) => {
-    return type === ApplicationType ? 'Application server' : 'HANA Database';
+    return type === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
   };
 
   return (
@@ -42,7 +42,7 @@ const GenericSystemDetails = ({ title, type, system }) => {
               render: (content) => {
                 return (
                   <div className="float-right">
-                    {content === ApplicationType ? (
+                    {content === APPLICATION_TYPE ? (
                       <EOS_APPLICATION_OUTLINED
                         size={25}
                         className="fill-blue-500"

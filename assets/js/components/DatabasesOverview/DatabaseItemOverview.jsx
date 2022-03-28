@@ -2,10 +2,10 @@ import classNames from 'classnames';
 import { EOS_DATABASE_OUTLINED } from 'eos-icons-react';
 import React from 'react';
 import InstanceOverview from '@components/InstanceOverview';
-import { DatabaseType } from '@lib/model';
+import { DATABASE_TYPE } from '@lib/model';
 
 export const DatabaseInstance = ({ instance }) => (
-  <InstanceOverview instanceType={DatabaseType} instance={instance} />
+  <InstanceOverview instanceType={DATABASE_TYPE} instance={instance} />
 );
 
 const databaseInstanceColumns = [

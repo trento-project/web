@@ -1,5 +1,5 @@
 import { keysToCamel } from '@lib/serialization';
-import { ApplicationType, DatabaseType } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 
 export const getHost = (id) => (state) =>
   state.hostsList.hosts.find((host) => host.id === id);
@@ -74,11 +74,11 @@ export const getInstancesOnHost = (hostId) => (state) => {
 
   const foundDatabaseInstances = databaseInstances
     .filter(isIdByKey('host_id', hostId))
-    .map((instance) => ({ ...instance, type: DatabaseType }));
+    .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
 
   const foundApplicationInstances = applicationInstances
     .filter(isIdByKey('host_id', hostId))
-    .map((instance) => ({ ...instance, type: ApplicationType }));
+    .map((instance) => ({ ...instance, type: APPLICATION_TYPE }));
 
   return [...foundApplicationInstances, ...foundDatabaseInstances];
 };

@@ -2,10 +2,10 @@ import { EOS_APPLICATION_OUTLINED } from 'eos-icons-react';
 import React from 'react';
 import DatabaseItemOverview from '@components/DatabasesOverview/DatabaseItemOverview';
 import InstanceOverview from '@components/InstanceOverview';
-import { ApplicationType } from '@lib/model';
+import { APPLICATION_TYPE } from '@lib/model';
 
 const ApplicationInstance = ({ instance }) => (
-  <InstanceOverview instanceType={ApplicationType} instance={instance} />
+  <InstanceOverview instanceType={APPLICATION_TYPE} instance={instance} />
 );
 
 const applicationInstanceColumns = [

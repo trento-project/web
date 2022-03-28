@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { getCluster, getHost } from '@state/selectors';
 import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails/GenericSystemDetail';
-import { DatabaseType } from '@lib/model';
+import { DATABASE_TYPE } from '@lib/model';
 
 const InstanceOverview = ({
   instanceType,
@@ -16,7 +16,7 @@ const InstanceOverview = ({
     host_id: hostId,
   },
 }) => {
-  const isDatabase = DatabaseType === instanceType;
+  const isDatabase = DATABASE_TYPE === instanceType;
 
   const host = useSelector(getHost(hostId));
   const cluster = useSelector(getCluster(host?.cluster_id));
