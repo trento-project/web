@@ -35,6 +35,7 @@ const SapSystemsOverview = () => {
       {
         title: 'Health',
         key: 'health',
+        filter: true,
         render: (content) => (
           <div className="ml-4">
             <HealthIcon health={content} />
@@ -44,6 +45,7 @@ const SapSystemsOverview = () => {
       {
         title: 'SID',
         key: 'sid',
+        filter: true,
         render: (content, item) => {
           return (
             <Link

@@ -10,9 +10,9 @@ const getLabel = (value, placeholder) =>
 const Filter = ({ options, title, value, onChange }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredOptions = options
+    .filter((option) => option !== undefined && option !== null)
+    .filter((option) => option.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <div className="w-64 w-72 top-16 mr-4">

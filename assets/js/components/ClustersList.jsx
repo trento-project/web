@@ -49,6 +49,7 @@ const ClustersList = () => {
       {
         title: 'Health',
         key: 'health',
+        filter: true,
         render: (content) => (
           <div className="ml-4">
             <HealthIcon health={content} />
@@ -58,6 +59,7 @@ const ClustersList = () => {
       {
         title: 'Name',
         key: 'name',
+        filter: true,
         render: (content, item) => {
           return (
             <Link
@@ -81,6 +83,7 @@ const ClustersList = () => {
       {
         title: 'SID',
         key: 'sid',
+        filter: true,
       },
       {
         title: 'Type',
