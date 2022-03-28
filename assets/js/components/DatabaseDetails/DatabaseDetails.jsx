@@ -1,13 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import ListView from '@components/ListView';
-import Table from '@components/Table';
-import {
-  databaseHostsTableConfiguration,
-  databaseInstancesTableConfiguration,
-} from './tableConfigs';
 import { getDatabaseDetail } from '@state/selectors';
+import { GenericSystemDetails } from '@components/SapSystemDetails';
+import { DATABASE_TYPE } from '@lib/model';
 
 const DatabaseDetails = () => {
   const { id } = useParams();
@@ -18,38 +14,11 @@ const DatabaseDetails = () => {
   }
 
   return (
-    <div>
-      <div className="flex">
-        <h1 className="text-3xl font-bold">HANA Database details</h1>
-      </div>
-
-      <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
-        <ListView
-          orientation="vertical"
-          data={[
-            { title: 'Name', content: database.sid },
-            { title: 'Type', content: 'HANA Database' },
-          ]}
-        />
-      </div>
-
-      <div className="mt-16">
-        <div className="flex flex-direction-row">
-          <h2 className="text-2xl font-bold self-center">Layout</h2>
-        </div>
-        <Table
-          config={databaseInstancesTableConfiguration}
-          data={database.instances}
-        />
-      </div>
-
-      <div className="mt-8">
-        <div>
-          <h2 className="text-2xl font-bold">Hosts</h2>
-        </div>
-        <Table config={databaseHostsTableConfiguration} data={database.hosts} />
-      </div>
-    </div>
+    <GenericSystemDetails
+      title={'HANA Database details'}
+      type={DATABASE_TYPE}
+      system={database}
+    />
   );
 };
 

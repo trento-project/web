@@ -1,3 +1,6 @@
+import React from 'react';
+import { Features } from '@components/SapSystemDetails';
+
 export const subscriptionsTableConfiguration = {
   usePadding: false,
   columns: [
@@ -43,7 +46,13 @@ export const sapInstancesTableConfiguration = {
     { title: 'ID', key: 'sap_system_id' },
     { title: 'SID', key: 'sid' },
     { title: 'Type', key: 'type' },
-    { title: 'Features', key: 'features' },
+    {
+      title: 'Features',
+      key: 'features',
+      render: (content) => {
+        return <Features features={content} />;
+      },
+    },
     { title: 'Instance Number', key: 'instance_number' },
   ],
 };
