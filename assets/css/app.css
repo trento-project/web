@@ -6,3 +6,15 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.table-col-xs {
+  width: 9rem;
+}
+
+.table-col-s {
+  width: 14rem;
+}
+
+.table-col-m {
+  width: 20rem;
+}

@@ -13,8 +13,15 @@ const siteDetailsConfig = {
     { title: 'Hostname', key: 'name' },
     { title: 'Role', key: 'hana_status' },
     {
+      title: 'IP',
+      key: 'ips',
+      className: 'table-col-m',
+      render: (content) => content?.join(', '),
+    },
+    {
       title: '',
       key: '',
+      className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
         return <SiteDetails attributes={attributes} resources={resources} />;
@@ -36,9 +43,22 @@ const ClusterDetails = () => {
     state.clustersList.clusters.find(({ id }) => id === clusterID)
   );
 
+  const ips = useSelector((state) =>
+    state.hostsList.hosts.reduce((accumulator, current) => {
+      if (current.cluster_id === clusterID) {
+        return { ...accumulator, [current.hostname]: current.ip_addresses };
+      }
+      return accumulator;
+    }, {})
+  );
+
   if (!cluster) {
     return <div>Loading...</div>;
   }
+
+  const renderedNodes = cluster.details?.nodes?.map((node) =>
+    ips[node.name] ? { ...node, ips: ips[node.name] } : node
+  );
 
   return (
     <div>
@@ -113,12 +133,12 @@ const ClusterDetails = () => {
         <h3 className="text-l font-bold">NBG</h3>
         <Table
           config={siteDetailsConfig}
-          data={cluster.details.nodes.filter(({ site }) => site === 'NBG')}
+          data={renderedNodes.filter(({ site }) => site === 'NBG')}
         />
         <h3 className="text-l font-bold">WDF</h3>
         <Table
           config={siteDetailsConfig}
-          data={cluster.details.nodes.filter(({ site }) => site === 'WDF')}
+          data={renderedNodes.filter(({ site }) => site === 'WDF')}
         />
       </div>
 
