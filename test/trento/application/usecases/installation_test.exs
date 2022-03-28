@@ -16,4 +16,12 @@ defmodule Trento.InstallationTest do
   test "should return premium active if flavor is premium and at least one SLES_SAP subscription exist" do
     assert Installation.premium_active?()
   end
+
+  test "should give the flavor for the current installation" do
+    Application.put_env(:trento, :flavor, "Premium")
+    assert Installation.flavor() === "Premium"
+
+    Application.put_env(:trento, :flavor, "Community")
+    assert Installation.flavor() === "Community"
+  end
 end
