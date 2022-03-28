@@ -6,10 +6,6 @@ defmodule TrentoWeb.ClusterController do
     Tags
   }
 
-  @json_path Path.join(File.cwd!(), "priv/data/catalog.json")
-  @catalog @json_path |> File.read!() |> Jason.decode!()
-  @external_resource @json_path
-
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
     clusters = Clusters.get_all_clusters()
@@ -96,11 +92,6 @@ defmodule TrentoWeb.ClusterController do
         |> put_status(:bad_request)
         |> json(%{error: reason})
     end
-  end
-
-  @spec checks_catalog(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def checks_catalog(conn, _) do
-    json(conn, @catalog)
   end
 
   @spec select_checks(Plug.Conn.t(), map) :: Plug.Conn.t()
