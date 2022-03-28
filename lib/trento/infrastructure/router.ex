@@ -23,7 +23,6 @@ defmodule Trento.Router do
   }
 
   middleware Enrich
-  # middleware Validate
 
   identify Host, by: :host_id
   dispatch [RegisterHost, UpdateHeartbeat, UpdateProvider, UpdateSlesSubscriptions], to: Host
