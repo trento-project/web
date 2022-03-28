@@ -5,8 +5,7 @@ defmodule TrentoWeb.CatalogController do
 
   @spec checks_catalog(Plug.Conn.t(), map) :: Plug.Conn.t()
   def checks_catalog(conn, _) do
-    runner_url = "http://localhost:8080"
-    case Checks.get_catalog(runner_url) do
+    case Checks.get_catalog() do
       {:ok, catalog} ->
         json(conn, catalog.providers)
 
@@ -16,5 +15,4 @@ defmodule TrentoWeb.CatalogController do
         |> json(%{error: reason})
       end
   end
-
 end

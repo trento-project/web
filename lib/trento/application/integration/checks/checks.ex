@@ -10,11 +10,15 @@ defmodule Trento.Integration.Checks do
   def request_execution(execution_id, cluster_id, hosts, selected_checks),
     do: adapter().request_execution(execution_id, cluster_id, hosts, selected_checks)
 
-  @spec get_catalog(String.t()) ::
+  @spec get_catalog() ::
           {:ok, Catalog.t()} | {:error, any}
-  def get_catalog(runner_url),
-    do: adapter().get_catalog(runner_url)
+  def get_catalog(),
+    do: adapter().get_catalog(runner_url())
 
   defp adapter,
     do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
+
+  defp runner_url,
+    do: Application.fetch_env!(:trento, __MODULE__)[:runner_url]
+
 end

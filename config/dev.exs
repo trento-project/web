@@ -92,7 +92,9 @@ config :trento, Trento.Scheduler,
   ]
 
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
-config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.MockRunner
+config :trento, Trento.Integration.Checks,
+  adapter: Trento.Integration.Checks.MockRunner,
+  runner_url: ""
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
