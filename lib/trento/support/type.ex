@@ -93,6 +93,8 @@ defmodule Trento.Type do
 
       def validate_required_fields(changeset, required_fields),
         do: Ecto.Changeset.validate_required(changeset, required_fields)
+
+      defoverridable changeset: 2
     end
   end
 end
