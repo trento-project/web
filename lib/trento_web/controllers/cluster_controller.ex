@@ -6,6 +6,8 @@ defmodule TrentoWeb.ClusterController do
     Tags
   }
 
+  alias Trento.Integration.Checks
+
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
     clusters = Clusters.get_all_clusters()
@@ -91,6 +93,20 @@ defmodule TrentoWeb.ClusterController do
         conn
         |> put_status(:bad_request)
         |> json(%{error: reason})
+    end
+  end
+
+  def runner_callback(conn, params) do
+    case Checks.handle_callback(params) do
+      :ok ->
+        conn
+        |> put_status(:accepted)
+        |> json(%{})
+
+      {:error, _} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: "runner callback failed"})
     end
   end
 

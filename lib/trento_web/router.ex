@@ -57,6 +57,8 @@ defmodule TrentoWeb.Router do
     post "/checks/:cluster_id/results", ClusterController, :store_checks_results
     post "/clusters/:cluster_id/checks", ClusterController, :select_checks
 
+    post "/runner/callback", ClusterController, :runner_callback
+
     post "/clusters/:cluster_id/checks/request_execution",
          ClusterController,
          :request_checks_execution
