@@ -9,10 +9,6 @@ defmodule Trento.Integration.Checks.MockRunner do
 
   require Logger
 
-  alias Trento.Integration.Checks.Models.Catalog
-
-  import Trento.Integration.Checks.Runner, only: [normalize_catalog: 1]
-
   @json_path Path.join(File.cwd!(), "priv/data/catalog.json")
   @catalog @json_path |> File.read!() |> Jason.decode!()
   @external_resource @json_path
@@ -69,8 +65,13 @@ defmodule Trento.Integration.Checks.MockRunner do
   end
 
   @impl true
-  def get_catalog(_runner_url) do
-    normalize_catalog(@catalog)
+  def get_runner_ready_content(_runner_url) do
+    {:ok, %{"ready" => true}}
+  end
+
+  @impl true
+  def get_catalog_content(_runner_url) do
+    {:ok, @catalog}
   end
 
   @doc """
