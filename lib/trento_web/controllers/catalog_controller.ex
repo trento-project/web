@@ -13,6 +13,6 @@ defmodule TrentoWeb.CatalogController do
         conn
         |> put_status(:bad_request)
         |> json(%{error: reason})
-      end
+    end
   end
 end

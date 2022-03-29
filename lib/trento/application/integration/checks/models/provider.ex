@@ -15,6 +15,6 @@ defmodule Trento.Integration.Checks.Models.Provider do
   deftype do
     field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :dev, :unknown]
 
-    embeds_many  :groups, Group
+    embeds_many :groups, Group
   end
 end

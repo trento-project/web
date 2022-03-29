@@ -1,5 +1,4 @@
 defmodule Trento.Integration.Checks do
-
   alias Trento.Integration.Checks.Models.Catalog
 
   @moduledoc """
@@ -16,6 +15,7 @@ defmodule Trento.Integration.Checks do
     case is_catalog_ready(runner_url()) do
       :ok ->
         get_catalog_content(runner_url())
+
       {:error, reason} ->
         {:error, reason}
     end
@@ -49,12 +49,14 @@ defmodule Trento.Integration.Checks do
 
   defp handle_catalog_ready(%{"ready" => true}), do: :ok
 
-  defp handle_catalog_ready(%{"ready" => false}), do: {:error, "The catalog is still being built."}
+  defp handle_catalog_ready(%{"ready" => false}),
+    do: {:error, "The catalog is still being built."}
 
   defp normalize_catalog(catalog_raw) do
-    normalized_catalog = catalog_raw
-    |> Enum.group_by(&Map.take(&1, ["provider"]), &Map.drop(&1, ["provider"]))
-    |> Enum.map(fn {key, value} -> Map.put(key, "groups", group_by_groups(value)) end)
+    normalized_catalog =
+      catalog_raw
+      |> Enum.group_by(&Map.take(&1, ["provider"]), &Map.drop(&1, ["provider"]))
+      |> Enum.map(fn {key, value} -> Map.put(key, "groups", group_by_groups(value)) end)
 
     Catalog.new(%{providers: normalized_catalog})
   end
@@ -70,5 +72,4 @@ defmodule Trento.Integration.Checks do
 
   defp runner_url,
     do: Application.fetch_env!(:trento, __MODULE__)[:runner_url]
-
 end

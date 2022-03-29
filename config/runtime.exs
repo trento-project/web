@@ -61,8 +61,7 @@ if config_env() == :prod do
       For example: http://localhost:8080
       """
 
-  config :trento, Trento.Integration.Checks,
-    runner_url: runner_url
+  config :trento, Trento.Integration.Checks, runner_url: runner_url
 
   # ## Using releases
   #

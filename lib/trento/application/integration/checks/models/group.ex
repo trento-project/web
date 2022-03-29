@@ -15,6 +15,6 @@ defmodule Trento.Integration.Checks.Models.Group do
   deftype do
     field :group, :string
 
-    embeds_many  :checks, Check
+    embeds_many :checks, Check
   end
 end

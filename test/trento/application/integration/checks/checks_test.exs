@@ -5,6 +5,7 @@ defmodule Trento.Integration.ChecksTest do
   import Mox
 
   alias Trento.Integration.Checks
+
   alias Trento.Integration.Checks.Models.{
     Catalog,
     Provider,
@@ -52,132 +53,131 @@ defmodule Trento.Integration.ChecksTest do
     |> expect(:get_runner_ready_content, fn _runner_url -> {:ok, %{"ready" => true}} end)
     |> expect(:get_catalog_content, fn _runner_url -> {:ok, raw_catalog} end)
 
-    normalized_catalog =
-      %Catalog{
-        providers: [
-          %Provider{
-            groups: [
-              %Group{
-                checks: [
-                  %Check{
-                    description: "description 1",
-                    id: "1",
-                    implementation: "implementation 1",
-                    labels: "labels",
-                    name: "test 1",
-                    remediation: "remediation 1"
-                  },
-                  %Check{
-                    description: "description 2",
-                    id: "2",
-                    implementation: "implementation 2",
-                    labels: "labels",
-                    name: "test 2",
-                    remediation: "remediation 2"
-                  }
-                ],
-                group: "Group 1"
-              },
-              %Group{
-                checks: [
-                  %Check{
-                    description: "description 3",
-                    id: "3",
-                    implementation: "implementation 3",
-                    labels: "labels",
-                    name: "test 3",
-                    remediation: "remediation 3"
-                  },
-                  %Check{
-                    description: "description 4",
-                    id: "4",
-                    implementation: "implementation 4",
-                    labels: "labels",
-                    name: "test 4",
-                    remediation: "remediation 4"
-                  }
-                ],
-                group: "Group 2"
-              },
-              %Group{
-                checks: [
-                  %Check{
-                    description: "description 5",
-                    id: "5",
-                    implementation: "implementation 5",
-                    labels: "labels",
-                    name: "test 5",
-                    remediation: "remediation 5"
-                  }
-                ],
-                group: "Group 3"
-              }
-              ],
-              provider: :aws
-            },
-            %Provider{
-              groups: [
-                %Group{
-                  checks: [
-                    %Check{
-                      description: "description 1",
-                      id: "1",
-                      implementation: "implementation 1",
-                      labels: "labels",
-                      name: "test 1",
-                      remediation: "remediation 1"
-                    },
-                    %Check{
-                      description: "description 2",
-                      id: "2",
-                      implementation: "implementation 2",
-                      labels: "labels",
-                      name: "test 2",
-                      remediation: "remediation 2"
-                    }
-                  ],
-                  group: "Group 1"
+    normalized_catalog = %Catalog{
+      providers: [
+        %Provider{
+          groups: [
+            %Group{
+              checks: [
+                %Check{
+                  description: "description 1",
+                  id: "1",
+                  implementation: "implementation 1",
+                  labels: "labels",
+                  name: "test 1",
+                  remediation: "remediation 1"
                 },
-                %Group{
-                  checks: [
-                    %Check{
-                      description: "description 3",
-                      id: "3",
-                      implementation: "implementation 3",
-                      labels: "labels",
-                      name: "test 3",
-                      remediation: "remediation 3"
-                    },
-                    %Check{
-                      description: "description 4",
-                      id: "4",
-                      implementation: "implementation 4",
-                      labels: "labels",
-                      name: "test 4",
-                      remediation: "remediation 4"
-                    }
-                  ],
-                  group: "Group 2"
-                },
-                %Group{
-                  checks: [
-                    %Check{
-                      description: "description 5",
-                      id: "5",
-                      implementation: "implementation 5",
-                      labels: "labels",
-                      name: "test 5",
-                      remediation: "remediation 5"
-                    }
-                  ],
-                  group: "Group 3"
+                %Check{
+                  description: "description 2",
+                  id: "2",
+                  implementation: "implementation 2",
+                  labels: "labels",
+                  name: "test 2",
+                  remediation: "remediation 2"
                 }
               ],
-              provider: :azure
+              group: "Group 1"
+            },
+            %Group{
+              checks: [
+                %Check{
+                  description: "description 3",
+                  id: "3",
+                  implementation: "implementation 3",
+                  labels: "labels",
+                  name: "test 3",
+                  remediation: "remediation 3"
+                },
+                %Check{
+                  description: "description 4",
+                  id: "4",
+                  implementation: "implementation 4",
+                  labels: "labels",
+                  name: "test 4",
+                  remediation: "remediation 4"
+                }
+              ],
+              group: "Group 2"
+            },
+            %Group{
+              checks: [
+                %Check{
+                  description: "description 5",
+                  id: "5",
+                  implementation: "implementation 5",
+                  labels: "labels",
+                  name: "test 5",
+                  remediation: "remediation 5"
+                }
+              ],
+              group: "Group 3"
             }
-          ]
+          ],
+          provider: :aws
+        },
+        %Provider{
+          groups: [
+            %Group{
+              checks: [
+                %Check{
+                  description: "description 1",
+                  id: "1",
+                  implementation: "implementation 1",
+                  labels: "labels",
+                  name: "test 1",
+                  remediation: "remediation 1"
+                },
+                %Check{
+                  description: "description 2",
+                  id: "2",
+                  implementation: "implementation 2",
+                  labels: "labels",
+                  name: "test 2",
+                  remediation: "remediation 2"
+                }
+              ],
+              group: "Group 1"
+            },
+            %Group{
+              checks: [
+                %Check{
+                  description: "description 3",
+                  id: "3",
+                  implementation: "implementation 3",
+                  labels: "labels",
+                  name: "test 3",
+                  remediation: "remediation 3"
+                },
+                %Check{
+                  description: "description 4",
+                  id: "4",
+                  implementation: "implementation 4",
+                  labels: "labels",
+                  name: "test 4",
+                  remediation: "remediation 4"
+                }
+              ],
+              group: "Group 2"
+            },
+            %Group{
+              checks: [
+                %Check{
+                  description: "description 5",
+                  id: "5",
+                  implementation: "implementation 5",
+                  labels: "labels",
+                  name: "test 5",
+                  remediation: "remediation 5"
+                }
+              ],
+              group: "Group 3"
+            }
+          ],
+          provider: :azure
         }
+      ]
+    }
 
-      assert {:ok, normalized_catalog} == Checks.get_catalog()
+    assert {:ok, normalized_catalog} == Checks.get_catalog()
   end
 end
