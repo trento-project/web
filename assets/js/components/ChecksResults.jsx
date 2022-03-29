@@ -19,30 +19,6 @@ const getChecksResults = (cluster) => {
   return {};
 };
 
-const getDescriptionFromCatalog =
-  (catalog = []) =>
-  (check_id) => {
-    return catalog.reduce((acc, check) => {
-      if (check.id === check_id) {
-        return check.description;
-      }
-
-      return acc;
-    }, '');
-  };
-
-const getGroupFromCatalog =
-  (catalog = []) =>
-  (checkId) => {
-    return catalog.reduce((acc, check) => {
-      if (check.id === checkId) {
-        return check.group;
-      }
-
-      return acc;
-    }, '');
-  };
-
 const getHostname =
   (hosts = []) =>
   (hostId) => {
@@ -54,6 +30,12 @@ const getHostname =
       return acc;
     }, '');
   };
+
+const getCatalogByProvider = (catalogProvider) => (state) => {
+  return state.catalog.catalog.find(
+    ({ provider }) => provider === catalogProvider
+  );
+};
 
 const sortChecksResults = (checksResults = [], group) => {
   return checksResults.sort((a, b) => {
@@ -83,16 +65,18 @@ const ChecksResults = () => {
     state.clustersList.clusters.find((cluster) => cluster.id === clusterID)
   );
 
-  const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
-
-  const catalog = useSelector((state) => state.catalog.catalog).flatMap(
-    ({ checks }) => checks
-  );
-
   const checksResults = getChecksResults(cluster);
 
-  const description = getDescriptionFromCatalog(catalog);
-  const group = getGroupFromCatalog(catalog);
+  const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
+
+  // FIXME: Check the provider by cluster
+  const catalog = useSelector(getCatalogByProvider('azure'));
+
+  const description = (checkId) => {
+    return catalog?.groups
+      ?.flatMap(({ checks }) => checks)
+      .find(({ id }) => id === checkId).description;
+  };
 
   return (
     <div>
@@ -109,12 +93,6 @@ const ChecksResults = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        Group
-                      </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -136,24 +114,19 @@ const ChecksResults = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {sortChecksResults(checksResults[c], group).map(
-                      (checkResult) => (
-                        <tr key={checkResult.check_id} className="animate-fade">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {group(checkResult.check_id)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {checkResult.check_id}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {description(checkResult.check_id)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap content-center">
-                            {getResultIcon(checkResult.result)}
-                          </td>
-                        </tr>
-                      )
-                    )}
+                    {sortChecksResults(checksResults[c]).map((checkResult) => (
+                      <tr key={checkResult.check_id} className="animate-fade">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {checkResult.check_id}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {description(checkResult.check_id)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap content-center">
+                          {getResultIcon(checkResult.result)}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
