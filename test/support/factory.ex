@@ -15,6 +15,7 @@ defmodule Trento.Factory do
 
   alias Trento.Domain.Events.{
     ApplicationInstanceRegistered,
+    ChecksExecutionRequested,
     ClusterRegistered,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
@@ -32,6 +33,7 @@ defmodule Trento.Factory do
 
   alias Trento.{
     ApplicationInstanceReadModel,
+    CheckResultReadModel,
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
@@ -348,6 +350,23 @@ defmodule Trento.Factory do
       start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
       health: Keyword.get(attrs, :health, :passing)
+    })
+  end
+
+  def checks_execution_requested_event(attrs \\ []) do
+    %ChecksExecutionRequested{
+      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
+      hosts: Keyword.get(attrs, :hosts, [Faker.UUID.v4()]),
+      checks: Keyword.get(attrs, :checks, Enum.map(0..4, fn _ -> Faker.Cat.name() end))
+    }
+  end
+
+  def check_result_projection(attrs \\ []) do
+    Repo.insert!(%CheckResultReadModel{
+      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      check_id: Keyword.get(attrs, :check_id, Faker.UUID.v4()),
+      result: Keyword.get(attrs, :result, :passing)
     })
   end
 end
