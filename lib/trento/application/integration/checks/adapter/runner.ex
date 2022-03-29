@@ -64,7 +64,7 @@ defmodule Trento.Integration.Checks.Runner do
     end
   end
 
-  defp normalize_catalog(catalog_raw) do
+  def normalize_catalog(catalog_raw) do
     normalized_catalog = catalog_raw
     |> Enum.group_by(&Map.take(&1, ["provider"]), &Map.drop(&1, ["provider"]))
     |> Enum.map(fn {key, value} -> Map.put(key, "groups", group_by_groups(value)) end)
