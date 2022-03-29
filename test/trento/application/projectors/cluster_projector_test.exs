@@ -9,7 +9,12 @@ defmodule Trento.ClusterProjectorTest do
     ClusterReadModel
   }
 
-  alias Trento.Domain.Events.ClusterDetailsUpdated
+  alias Trento.Domain.Events.{
+    ChecksExecutionCompleted,
+    ChecksExecutionRequested,
+    ChecksExecutionStarted,
+    ClusterDetailsUpdated
+  }
 
   alias Trento.ProjectorTestHelper
   alias Trento.Repo
@@ -55,5 +60,59 @@ defmodule Trento.ClusterProjectorTest do
     assert event.sid == cluster_projection.sid
     assert event.type == cluster_projection.type
     assert StructHelper.to_map(event.details) == cluster_projection.details
+  end
+
+  test "should update the cluster checks execution status when ChecksExecutionRequested is received" do
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
+
+    event = %ChecksExecutionRequested{
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(
+      ClusterProjector,
+      event,
+      "cluster_projector"
+    )
+
+    cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
+
+    assert :requested == cluster_projection.checks_execution
+  end
+
+  test "should update the cluster checks execution status when ChecksExecutionStarted is received" do
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
+
+    event = %ChecksExecutionStarted{
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(
+      ClusterProjector,
+      event,
+      "cluster_projector"
+    )
+
+    cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
+
+    assert :running == cluster_projection.checks_execution
+  end
+
+  test "should update the cluster checks execution status when ChecksExecutionCompleted is received" do
+    cluster_projection(id: cluster_id = Faker.UUID.v4())
+
+    event = %ChecksExecutionCompleted{
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(
+      ClusterProjector,
+      event,
+      "cluster_projector"
+    )
+
+    cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
+
+    assert :not_running == cluster_projection.checks_execution
   end
 end
