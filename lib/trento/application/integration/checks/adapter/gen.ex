@@ -12,8 +12,8 @@ defmodule Trento.Integration.Checks.Gen do
               :ok | {:error, any}
 
   @callback get_runner_ready_content(runner_url :: String.t()) ::
-              {:ok, map} | {:error, any}
+              {:ok, term} | {:error, any}
 
   @callback get_catalog_content(runner_url :: String.t()) ::
-              {:ok, map} | {:error, any}
+              {:ok, term} | {:error, any}
 end

@@ -9,9 +9,9 @@ defmodule Trento.Integration.Checks do
   def request_execution(execution_id, cluster_id, hosts, selected_checks),
     do: adapter().request_execution(execution_id, cluster_id, hosts, selected_checks)
 
-  @spec get_catalog() ::
+  @spec get_catalog ::
           {:ok, Catalog.t()} | {:error, any}
-  def get_catalog() do
+  def get_catalog do
     case is_catalog_ready(runner_url()) do
       :ok ->
         get_catalog_content(runner_url())

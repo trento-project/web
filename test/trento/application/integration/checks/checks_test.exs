@@ -8,9 +8,9 @@ defmodule Trento.Integration.ChecksTest do
 
   alias Trento.Integration.Checks.Models.{
     Catalog,
-    Provider,
+    Check,
     Group,
-    Check
+    Provider
   }
 
   @runner_fixtures_path File.cwd!() <> "/test/fixtures/runner"
