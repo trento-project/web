@@ -7,22 +7,24 @@ defmodule Trento.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Start the Ecto repository
-      Trento.Repo,
-      # Start the Telemetry supervisor
-      TrentoWeb.Telemetry,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: Trento.PubSub},
-      # Start the Endpoint (http/https)
-      TrentoWeb.Endpoint,
-      Trento.Commanded,
-      Trento.Scheduler,
-      Trento.EventHandlersSupervisor,
-      Trento.ProjectorsSupervisor
-      # Start a worker by calling: Trento.Worker.start_link(arg)
-      # {Trento.Worker, arg}
-    ]
+    children =
+      [
+        # Start the Ecto repository
+        Trento.Repo,
+        # Start the Telemetry supervisor
+        TrentoWeb.Telemetry,
+        # Start the PubSub system
+        {Phoenix.PubSub, name: Trento.PubSub},
+        # Start the Endpoint (http/https)
+        TrentoWeb.Endpoint,
+        Trento.Commanded,
+        Trento.Scheduler,
+        Trento.EventHandlersSupervisor,
+        Trento.ProjectorsSupervisor
+        # Start a worker by calling: Trento.Worker.start_link(arg)
+        # {Trento.Worker, arg}
+      ] ++
+        Application.get_env(:trento, :extra_children, [])
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
