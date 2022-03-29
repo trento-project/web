@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';
 
@@ -8,14 +8,17 @@ const getLabel = (value, placeholder) =>
   value.length === 0 ? placeholder : value.join(', ');
 
 const Filter = ({ options, title, value, onChange }) => {
+  const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+
   const filteredOptions = options
     .filter((option) => option !== undefined && option !== null)
     .filter((option) => option.toLowerCase().includes(query.toLowerCase()));
 
+  useOnClickOutside(ref, () => setOpen(false));
   return (
-    <div className="w-64 w-72 top-16 mr-4">
+    <div className="w-64 w-72 top-16 mr-4" ref={ref}>
       <div className="mt-1 relative">
         <button
           type="button"
@@ -109,5 +112,26 @@ const Filter = ({ options, title, value, onChange }) => {
     </div>
   );
 };
+
+function useOnClickOutside(ref, handler) {
+  useEffect(() => {
+    const listener = (event) => {
+      // Do nothing if clicking ref's element or descendent elements
+      if (!ref.current || ref.current.contains(event.target)) {
+        return;
+      }
+
+      handler(event);
+    };
+
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', listener);
+
+    return () => {
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchstart', listener);
+    };
+  }, [ref, handler]);
+}
 
 export default Filter;
