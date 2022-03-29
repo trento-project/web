@@ -1,6 +1,6 @@
-defmodule Trento.Domain.Events.ChecksResultsStored do
+defmodule Trento.Domain.Events.HostChecksExecutionCompleted do
   @moduledoc """
-  Event of the checks results stored after an execution
+  Event of the checks execution completed of a host.
   """
 
   use Trento.Event

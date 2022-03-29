@@ -7,12 +7,23 @@ defmodule Trento.ClusterTest do
 
   alias Trento.Domain.Cluster
 
-  alias Trento.Domain.Commands.RegisterClusterHost
+  alias Trento.Domain.Commands.{
+    CompleteChecksExecution,
+    RegisterClusterHost,
+    RequestChecksExecution,
+    StartChecksExecution
+  }
 
   alias Trento.Domain.Events.{
+    ChecksExecutionCompleted,
+    ChecksExecutionRequested,
+    ChecksExecutionStarted,
+    ChecksSelected,
     ClusterDetailsUpdated,
+    ClusterHealthChanged,
     ClusterRegistered,
-    HostAddedToCluster
+    HostAddedToCluster,
+    HostChecksExecutionCompleted
   }
 
   alias Trento.Domain.Cluster
@@ -181,6 +192,121 @@ defmodule Trento.ClusterTest do
                    name: ^name,
                    sid: ^sid,
                    type: :hana_scale_up
+                 } = cluster
+        end
+      )
+    end
+  end
+
+  describe "checks execution" do
+    test "should request a checks execution with the selected checks" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          cluster_registered_event(cluster_id: cluster_id),
+          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          }
+        ],
+        RequestChecksExecution.new!(%{
+          cluster_id: cluster_id
+        }),
+        [
+          %ChecksExecutionRequested{
+            cluster_id: cluster_id,
+            hosts: [host_id],
+            checks: selected_checks
+          },
+          %ClusterHealthChanged{
+            cluster_id: cluster_id,
+            health: :unknown
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   health: :unknown,
+                   checks_execution: :requested
+                 } = cluster
+        end
+      )
+    end
+
+    test "should start a checks execution" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          cluster_registered_event(cluster_id: cluster_id),
+          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          }
+        ],
+        StartChecksExecution.new!(%{
+          cluster_id: cluster_id
+        }),
+        [
+          %ChecksExecutionStarted{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   checks_execution: :running
+                 } = cluster
+        end
+      )
+    end
+
+    test "should complete a checks execution" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+      checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :passing})
+
+      assert_events_and_state(
+        [
+          cluster_registered_event(cluster_id: cluster_id),
+          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          }
+        ],
+        CompleteChecksExecution.new!(%{
+          cluster_id: cluster_id,
+          hosts_executions: [
+            %{
+              host_id: host_id,
+              checks_results: checks_results
+            }
+          ]
+        }),
+        [
+          HostChecksExecutionCompleted.new!(%{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            checks_results: checks_results
+          }),
+          %ChecksExecutionCompleted{
+            cluster_id: cluster_id
+          },
+          %ClusterHealthChanged{
+            cluster_id: cluster_id,
+            health: :passing
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   checks_execution: :not_running
                  } = cluster
         end
       )
