@@ -8,21 +8,26 @@ defmodule Trento.ChecksEventHandler do
     name: "checks_event_handler"
 
   alias Trento.Domain.Events.ChecksExecutionRequested
+  alias Trento.Integration.Checks
+
+  require Logger
 
   def handle(
         %ChecksExecutionRequested{cluster_id: cluster_id, hosts: hosts, checks: checks},
-        _metadata
+        %{correlation_id: execution_id}
       ) do
-    Enum.each(hosts, fn host ->
-      TrentoWeb.Endpoint.broadcast("monitoring:agent_" <> host, "checks_execution_requested", %{
-        host_id: host,
-        cluster_id: cluster_id,
-        checks: checks
-      })
-    end)
+    case Checks.request_execution(execution_id, cluster_id, hosts, checks) do
+      :ok ->
+        TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_execution_requested", %{
+          cluster_id: cluster_id
+        })
 
-    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_execution_started", %{
-      cluster_id: cluster_id
-    })
+      {:error, reason} = error ->
+        Logger.error("Failed to request checks execution for cluster #{cluster_id}: #{reason}",
+          error: reason
+        )
+
+        error
+    end
   end
 end
