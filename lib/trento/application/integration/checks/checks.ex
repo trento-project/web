@@ -51,7 +51,7 @@ defmodule Trento.Integration.Checks do
 
   defp handle_catalog_ready(%{"ready" => false}), do: {:error, "The catalog is still being built."}
 
-  def normalize_catalog(catalog_raw) do
+  defp normalize_catalog(catalog_raw) do
     normalized_catalog = catalog_raw
     |> Enum.group_by(&Map.take(&1, ["provider"]), &Map.drop(&1, ["provider"]))
     |> Enum.map(fn {key, value} -> Map.put(key, "groups", group_by_groups(value)) end)
