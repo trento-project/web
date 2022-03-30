@@ -6,7 +6,7 @@ import axios from 'axios';
 import Table from './Table';
 import Tags from './Tags';
 
-import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
+import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_MORE_HORIZ } from 'eos-icons-react';
 
 import { logError } from '@lib/log';
 
@@ -21,6 +21,21 @@ const getClusterTypeLabel = (type) => {
     default:
       return 'Unknown';
   }
+};
+
+const getClusterLink = (cluster, text) => {
+  if (cluster.hasDetails) {
+    return (
+      <Link
+        className="text-jungle-green-500 hover:opacity-75"
+        to={`/clusters/${cluster.id}`}
+      >
+        {text || cluster.name}
+      </Link>
+    );
+  }
+
+  return cluster.name;
 };
 
 const addTag = (tag, clusterId) => {
@@ -60,25 +75,12 @@ const ClustersList = () => {
         title: 'Name',
         key: 'name',
         filter: true,
-        render: (content, item) => {
-          return (
-            <Link
-              className="text-jungle-green-500 hover:opacity-75"
-              to={`/clusters/${item.id}/checks`}
-            >
-              {content}
-            </Link>
-          );
-        },
+        render: (content, item) => getClusterLink(item),
       },
       {
         title: 'ID',
         key: 'id',
-        render: (content) => (
-          <span className="transition hover:text-green-600">
-            <Link to={`/clusters/${content}`}>{content}</Link>
-          </span>
-        ),
+        render: (content, item) => getClusterLink(item, content),
       },
       {
         title: 'SID',
@@ -107,83 +109,91 @@ const ClustersList = () => {
         ),
       },
       {
-        title: 'Check results',
+        title: 'Actions',
         key: 'check_results',
-        render: (content, item) => (
-          <Menu as="div" className="relative inline-block text-left">
-            <div>
-              <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-green-100 rounded-md hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-                <EOS_LUNCH_DINING />
-              </Menu.Button>
-            </div>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute z-10 right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div className="px-1 py-1 ">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        className={`${
-                          active
-                            ? 'bg-jungle-green-500 text-white'
-                            : 'text-gray-900'
-                        } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                        onClick={() => navigate(`/clusters/${item.id}/checks`)}
-                      >
-                        <span className="pr-1">
-                          {active ? (
-                            <EOS_EDIT color="white" />
-                          ) : (
-                            <EOS_EDIT color="black" />
-                          )}
-                        </span>
-                        Edit checks
-                      </button>
-                    )}
-                  </Menu.Item>
+        render: (content, item) => {
+          if (item.type == 'hana_scale_up') {
+            return (
+              <Menu as="div" className="relative inline-block text-left">
+                <div>
+                  <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-green-100 rounded-md hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                    <EOS_MORE_HORIZ />
+                  </Menu.Button>
                 </div>
-                <div className="px-1 py-1">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        className={`${
-                          active
-                            ? 'bg-jungle-green-500 text-white'
-                            : 'text-gray-900'
-                        } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                        onClick={() => {
-                          dispatch({
-                            type: 'REQUEST_CHECKS_EXECUTION',
-                            payload: {
-                              clusterID: item.id,
-                            },
-                          });
-                          navigate(`/clusters/${item.id}/checks/results`);
-                        }}
-                      >
-                        <span className="pr-1">
-                          {active ? (
-                            <EOS_RUN_CIRCLE color="white" />
-                          ) : (
-                            <EOS_RUN_CIRCLE color="black" />
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute z-10 right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1 ">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active
+                                ? 'bg-jungle-green-500 text-white'
+                                : 'text-gray-900'
+                            } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                            onClick={() =>
+                              navigate(`/clusters/${item.id}/checks`)
+                            }
+                          >
+                            <span className="pr-1">
+                              {active ? (
+                                <EOS_EDIT color="white" />
+                              ) : (
+                                <EOS_EDIT color="black" />
+                              )}
+                            </span>
+                            Edit checks
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+                    {item.selected_checks?.length > 0 && (
+                      <div className="px-1 py-1">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <button
+                              className={`${
+                                active
+                                  ? 'bg-jungle-green-500 text-white'
+                                  : 'text-gray-900'
+                              } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                              onClick={() => {
+                                dispatch({
+                                  type: 'REQUEST_CHECKS_EXECUTION',
+                                  payload: {
+                                    clusterID: item.id,
+                                  },
+                                });
+                                navigate(`/clusters/${item.id}/checks/results`);
+                              }}
+                            >
+                              <span className="pr-1">
+                                {active ? (
+                                  <EOS_RUN_CIRCLE color="white" />
+                                ) : (
+                                  <EOS_RUN_CIRCLE color="black" />
+                                )}
+                              </span>
+                              Start execution
+                            </button>
                           )}
-                        </span>
-                        Start execution
-                      </button>
+                        </Menu.Item>
+                      </div>
                     )}
-                  </Menu.Item>
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        ),
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            );
+          }
+        },
       },
     ],
   };
@@ -195,6 +205,7 @@ const ClustersList = () => {
       id: cluster.id,
       sid: cluster.sid,
       type: cluster.type,
+      hasDetails: cluster.details != null,
       tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
     };
   });
