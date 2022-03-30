@@ -34,7 +34,7 @@ defmodule Trento.AlertsEventHandler do
       ) do
     %HostReadModel{hostname: hostname} = Trento.Repo.get!(HostReadModel, host_id)
 
-    email = Trento.AlertEmail.alert("Host #{hostname} hearbeat failed")
+    email = Trento.AlertEmail.alert("Host #{hostname} heartbeat failed")
     Trento.Mailer.deliver(email)
   end
 end
