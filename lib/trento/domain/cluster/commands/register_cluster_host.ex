@@ -8,8 +8,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
     :host_id,
     :name,
     :type,
-    :designated_controller,
-    :cib_last_written
+    :designated_controller
   ]
 
   use Trento.Command

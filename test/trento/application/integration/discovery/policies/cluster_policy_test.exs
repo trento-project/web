@@ -18,6 +18,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up is handled" do
     assert {:ok,
             %RegisterClusterHost{
+              cib_last_written: "Fri Oct 18 11:48:22 2019",
               cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
               designated_controller: true,
               details: %HanaClusterDetails{
