@@ -45,7 +45,7 @@ const HostsList = () => {
     columns: [
       {
         title: 'Health',
-        key: 'health',
+        key: 'heartbeat',
         filter: true,
         render: (_content, item) => (
           <div className="ml-4">{getHeartbeatIcon(item)}</div>
@@ -110,7 +110,7 @@ const HostsList = () => {
 
   const data = hosts.map((host) => {
     return {
-      health: host.heartbeat,
+      heartbeat: host.heartbeat,
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
