@@ -357,7 +357,7 @@ defmodule Trento.Factory do
     %ChecksExecutionRequested{
       cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
       hosts: Keyword.get(attrs, :hosts, [Faker.UUID.v4()]),
-      checks: Keyword.get(attrs, :checks, Enum.map(0..4, fn _ -> Faker.Cat.name() end))
+      checks: Keyword.get(attrs, :checks, Enum.map(0..4, fn _ -> Faker.UUID.v4() end))
     }
   end
 
