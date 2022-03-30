@@ -65,12 +65,7 @@ defmodule Trento.Integration.Checks.MockRunner do
   end
 
   @impl true
-  def get_runner_ready_content(_runner_url) do
-    {:ok, %{"ready" => true}}
-  end
-
-  @impl true
-  def get_catalog_content(_runner_url) do
+  def get_catalog do
     {:ok, @catalog}
   end
 

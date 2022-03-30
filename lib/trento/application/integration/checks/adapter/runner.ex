@@ -5,48 +5,37 @@ defmodule Trento.Integration.Checks.Runner do
 
   @behaviour Trento.Integration.Checks.Gen
 
-  require Logger
-
   @impl true
   def request_execution(_execution_id, _cluster_id, _hosts, _selected_checks) do
     :ok
   end
 
   @impl true
-  def get_runner_ready_content(runner_url) do
-    case HTTPoison.get("#{runner_url}/api/ready") do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        Jason.decode(body)
+  def get_catalog do
+    runner_url = runner_url()
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error(
-          "Failed getting the runner 'ready' state. Reason: #{reason}",
-          error: reason
-        )
-
-        {:error, reason}
-
-      _ ->
-        {:error, :unexpected_response}
-    end
-  end
-
-  @impl true
-  def get_catalog_content(runner_url) do
     case HTTPoison.get("#{runner_url}/api/catalog") do
-      {:ok, %HTTPoison.Response{status_code: 200, body: catalog_raw}} ->
-        Jason.decode(catalog_raw)
+      {:ok, %HTTPoison.Response{status_code: 200, body: catalog}} ->
+        Jason.decode(catalog)
+
+      {:ok, %HTTPoison.Response{status_code: 204}} ->
+        {:error, :not_ready}
+
+      {:error, %HTTPoison.Error{reason: :econnrefused}} ->
+        {:error, "Connection to the runner component on #{runner_url} was refused."}
+
+      {:error, %HTTPoison.Error{reason: :nxdomain}} ->
+        {:error,
+         "Connection url to the runner component host on #{runner_url} could not be resolved."}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error(
-          "Failed to get the checks catalog from the runner. Reason: #{reason}",
-          error: reason
-        )
-
         {:error, reason}
 
       _ ->
         {:error, :unexpected_response}
     end
   end
+
+  defp runner_url,
+    do: Application.fetch_env!(:trento, __MODULE__)[:runner_url]
 end

@@ -4,8 +4,20 @@ defmodule TrentoWeb.CatalogController do
   alias Trento.Integration.Checks
 
   @spec checks_catalog(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def checks_catalog(conn, _) do
+  def checks_catalog(conn, %{"flat" => ""}) do
     case Checks.get_catalog() do
+      {:ok, catalog} ->
+        json(conn, catalog.checks)
+
+      {:error, reason} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: reason})
+    end
+  end
+
+  def checks_catalog(conn, _) do
+    case Checks.get_catalog_by_provider() do
       {:ok, catalog} ->
         json(conn, catalog.providers)
 
