@@ -3,8 +3,8 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 
 import {
   EOS_HOME_OUTLINED,
-  EOS_VIRTUAL_HOST_MANAGER,
-  EOS_CLUSTER_ROLE,
+  EOS_DESKTOP_WINDOWS,
+  EOS_COLLOCATION,
   EOS_INFO,
   EOS_SYSTEM_GROUP,
   EOS_STORAGE,
@@ -19,12 +19,12 @@ const navigation = [
   {
     name: 'Hosts',
     href: '/hosts',
-    icon: EOS_VIRTUAL_HOST_MANAGER,
+    icon: EOS_DESKTOP_WINDOWS,
   },
   {
     name: 'Clusters',
     href: '/clusters',
-    icon: EOS_CLUSTER_ROLE,
+    icon: EOS_COLLOCATION,
   },
   {
     name: 'SAP Systems',
