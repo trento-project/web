@@ -43,6 +43,24 @@ export const databasesListSlice = createSlice({
         return maybeUpdateInstanceHealth(action.payload, instance);
       });
     },
+    addTagToDatabase: (state, action) => {
+      state.databases = state.databases.map((database) => {
+        if (database.id === action.payload.id) {
+          database.tags = [...database.tags, ...action.payload.tags];
+        }
+        return database;
+      });
+    },
+    removeTagFromDatabase: (state, action) => {
+      state.databases = state.databases.map((database) => {
+        if (database.id === action.payload.id) {
+          database.tags = database.tags.filter(
+            (tag) => tag.value !== action.payload.tags[0].value
+          );
+        }
+        return database;
+      });
+    },
   },
 });
 
@@ -54,6 +72,8 @@ export const {
   appendDatabaseInstance,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
+  addTagToDatabase,
+  removeTagFromDatabase,
 } = databasesListSlice.actions;
 
 export default databasesListSlice.reducer;

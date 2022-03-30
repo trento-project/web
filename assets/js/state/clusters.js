@@ -23,6 +23,24 @@ export const clustersListSlice = createSlice({
         return cluster;
       });
     },
+    addTagToCluster: (state, action) => {
+      state.clusters = state.clusters.map((cluster) => {
+        if (cluster.id === action.payload.id) {
+          cluster.tags = [...cluster.tags, ...action.payload.tags];
+        }
+        return cluster;
+      });
+    },
+    removeTagFromCluster: (state, action) => {
+      state.clusters = state.clusters.map((cluster) => {
+        if (cluster.id === action.payload.id) {
+          cluster.tags = cluster.tags.filter(
+            (tag) => tag.value !== action.payload.tags[0].value
+          );
+        }
+        return cluster;
+      });
+    },
     updateSelectedChecks: (state, action) => {
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.clusterID) {
@@ -65,6 +83,8 @@ export const {
   setClusters,
   appendCluster,
   updateCluster,
+  addTagToCluster,
+  removeTagFromCluster,
   updateSelectedChecks,
   updateChecksResults,
   updateClusterHealth,
