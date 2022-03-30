@@ -70,7 +70,6 @@ export const sapSystemsListSlice = createSlice({
     },
     addTagToSAPSystem: (state, action) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
-        console.log('sapSystem: ', sapSystem);
         if (sapSystem.id === action.payload.id) {
           sapSystem.tags = [...sapSystem.tags, ...action.payload.tags];
         }
@@ -79,7 +78,6 @@ export const sapSystemsListSlice = createSlice({
     },
     removeTagFromSAPSystem: (state, action) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
-        console.log('sapSystem: ', sapSystem);
         if (sapSystem.id === action.payload.id) {
           sapSystem.tags = sapSystem.tags.filter(
             (tag) => tag.value !== action.payload.tags[0].value

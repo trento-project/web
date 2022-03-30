@@ -5,6 +5,7 @@ import { Menu, Transition } from '@headlessui/react';
 import axios from 'axios';
 import Table from './Table';
 import Tags from './Tags';
+import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 
 import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_LUNCH_DINING } from 'eos-icons-react';
 
@@ -101,8 +102,18 @@ const ClustersList = () => {
           <Tags
             tags={content}
             onChange={() => {}}
-            onAdd={(tag) => addTag(tag, item.id)}
-            onRemove={(tag) => removeTag(tag, item.id)}
+            onAdd={(tag) => {
+              addTag(tag, item.id);
+              dispatch(
+                addTagToCluster({ tags: [{ value: tag }], id: item.id })
+              );
+            }}
+            onRemove={(tag) => {
+              removeTag(tag, item.id);
+              dispatch(
+                removeTagFromCluster({ tags: [{ value: tag }], id: item.id })
+              );
+            }}
           />
         ),
       },

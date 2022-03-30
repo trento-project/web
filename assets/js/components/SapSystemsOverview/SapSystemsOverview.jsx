@@ -1,11 +1,13 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import SAPSystemItemOverview from '@components/SapSystemsOverview/SapSystemItemOverview';
 import Tags from '@components/Tags';
+
+import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
 
 import { logError } from '@lib/log';
 
@@ -30,6 +32,7 @@ const removeTag = (tag, sapSystemId) => {
 const SapSystemsOverview = () => {
   const { sapSystems, applicationInstances, databaseInstances, loading } =
     useSelector((state) => state.sapSystemsList);
+  const dispatch = useDispatch();
   const config = {
     columns: [
       {
@@ -86,8 +89,14 @@ const SapSystemsOverview = () => {
           <Tags
             tags={content}
             onChange={() => {}}
-            onAdd={(tag) => addTag(tag, item.id)}
-            onRemove={(tag) => removeTag(tag, item.id)}
+            onAdd={(tag) => {
+              addTag(tag, item.id);
+              dispatch(addTagToSAPSystem(tag, item.id));
+            }}
+            onRemove={(tag) => {
+              removeTag(tag, item.id);
+              dispatch(removeTagFromSAPSystem(tag, item.id));
+            }}
           />
         ),
       },
