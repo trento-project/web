@@ -118,6 +118,10 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'DATABASE_INSTANCE_HEALTH_CHANGED', payload })
   );
 
+  databasesChannel.on('cluster_cib_last_written_updated', (payload) =>
+    store.dispatch({ type: 'CLUSTER_CIB_LAST_WRITTEN_UPDATED', payload })
+  );
+
   joinChannel(hostsChannel);
   joinChannel(clustersChannel);
   joinChannel(sapSystemsChannel);

@@ -15,6 +15,7 @@ import {
   setClusters,
   appendCluster,
   updateCluster,
+  updateCibLastWritten,
   updateSelectedChecks,
   updateChecksResults,
   updateClusterHealth,
@@ -163,6 +164,14 @@ function* clusterRegistered({ payload }) {
 
 function* watchClusterRegistered() {
   yield takeEvery('CLUSTER_REGISTERED', clusterRegistered);
+}
+
+function* cibLastWrittenUpdated({ payload }) {
+  yield put(updateCibLastWritten(payload));
+}
+
+function* watchClusterCibLastWrittenUpdated() {
+  yield takeEvery('CLUSTER_CIB_LAST_WRITTEN_UPDATED', cibLastWrittenUpdated);
 }
 
 function* clusterDetailsUpdated({ payload }) {
@@ -428,6 +437,7 @@ export default function* rootSaga() {
     watchHeartbeatFailed(),
     watchClusterRegistered(),
     watchClusterDetailsUpdated(),
+    watchClusterCibLastWrittenUpdated(),
     watchNotifications(),
     watchChecksSelected(),
     watchRequestChecksExecution(),

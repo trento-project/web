@@ -17,6 +17,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
             "DC" => designated_controller,
             "Crmmon" => %{
               "Summary" => %{
+                "LastChange" => %{"Time" => cib_last_written},
                 "Resources" => %{"Number" => _resources_number},
                 "Nodes" => %{"Number" => _hosts_number}
               }
@@ -33,7 +34,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       sid: sid,
       type: cluster_type,
       designated_controller: designated_controller,
-      details: parse_cluster_details(payload, cluster_type, sid)
+      details: parse_cluster_details(payload, cluster_type, sid),
+      cib_last_written: cib_last_written
     })
   end
 
