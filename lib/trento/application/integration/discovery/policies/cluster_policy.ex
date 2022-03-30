@@ -23,13 +23,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
             }
           } = payload
       }) do
-    id =
-      if FunWithFlags.enabled?(:convert_agent_ids) do
-        UUID.uuid5(@uuid_namespace, id)
-      else
-        id
-      end
-
     cluster_type = detect_cluster_type(payload)
     sid = parse_cluster_sid(payload)
 

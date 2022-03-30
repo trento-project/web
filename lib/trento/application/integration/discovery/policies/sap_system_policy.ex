@@ -47,13 +47,6 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          host_id
        ) do
     Enum.flat_map(databases, fn %{"Database" => tenant} ->
-      id =
-        if FunWithFlags.enabled?(:convert_agent_ids) do
-          UUID.uuid5(@uuid_namespace, "#{id}:#{tenant}")
-        else
-          id
-        end
-
       Enum.map(
         instances,
         fn {_, instance} ->
