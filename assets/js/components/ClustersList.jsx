@@ -218,6 +218,7 @@ const ClustersList = () => {
       type: cluster.type,
       hasDetails: cluster.details != null,
       checks_execution: cluster.checks_execution,
+      selected_checks: cluster.selected_checks,
       tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
     };
   });
