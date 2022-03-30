@@ -23,6 +23,21 @@ const getClusterTypeLabel = (type) => {
   }
 };
 
+const getClusterLink = (cluster, text) => {
+  if (cluster.hasDetails) {
+    return (
+      <Link
+        className="text-jungle-green-500 hover:opacity-75"
+        to={`/clusters/${cluster.id}`}
+      >
+        {text || cluster.name}
+      </Link>
+    );
+  }
+
+  return cluster.name;
+};
+
 const addTag = (tag, clusterId) => {
   axios
     .post(`/api/clusters/${clusterId}/tags`, {
@@ -60,25 +75,12 @@ const ClustersList = () => {
         title: 'Name',
         key: 'name',
         filter: true,
-        render: (content, item) => {
-          return (
-            <Link
-              className="text-jungle-green-500 hover:opacity-75"
-              to={`/clusters/${item.id}/checks`}
-            >
-              {content}
-            </Link>
-          );
-        },
+        render: (content, item) => getClusterLink(item),
       },
       {
         title: 'ID',
         key: 'id',
-        render: (content) => (
-          <span className="transition hover:text-green-600">
-            <Link to={`/clusters/${content}`}>{content}</Link>
-          </span>
-        ),
+        render: (content, item) => getClusterLink(item, content),
       },
       {
         title: 'SID',
@@ -195,6 +197,7 @@ const ClustersList = () => {
       id: cluster.id,
       sid: cluster.sid,
       type: cluster.type,
+      hasDetails: cluster.details != null,
       tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
     };
   });
