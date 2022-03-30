@@ -178,10 +178,12 @@ defmodule Trento.HostProjector do
   end
 
   def after_update(
-        %HeartbeatSucceded{},
+        %HeartbeatSucceded{host_id: id},
         _,
-        %{host: %HostReadModel{id: id, hostname: hostname}}
+        _
       ) do
+    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
+
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_succeded",
@@ -193,10 +195,12 @@ defmodule Trento.HostProjector do
   end
 
   def after_update(
-        %HeartbeatFailed{},
+        %HeartbeatFailed{host_id: id},
         _,
-        %{host: %HostReadModel{id: id, hostname: hostname}}
+        _
       ) do
+    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
+
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_failed",
