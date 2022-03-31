@@ -61,7 +61,7 @@ defmodule TrentoWeb.Router do
          ClusterController,
          :request_checks_execution
 
-    get "/checks/catalog", ClusterController, :checks_catalog
+    get "/checks/catalog", CatalogController, :checks_catalog
   end
 
   # Other scopes may use custom stacks.

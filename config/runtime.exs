@@ -54,6 +54,15 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  runner_url =
+    System.get_env("RUNNER_URL") ||
+      raise """
+      environment variable RUNNER_URL is missing.
+      For example: http://localhost:8080
+      """
+
+  config :trento, Trento.Integration.Checks.Runner, runner_url: runner_url
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix

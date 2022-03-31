@@ -90,6 +90,7 @@ config :trento, Trento.Scheduler,
   debug_logging: false
 
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
+config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Runner
 
 config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",

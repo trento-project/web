@@ -1,7 +1,9 @@
 defmodule Trento.Integration.Checks.Gen do
   @moduledoc """
-  Behaviour of a telemetry adapter.
+  Behaviour of a runner adapter.
   """
+
+  alias Trento.Integration.Checks.Models.FlatCatalog
 
   @callback request_execution(
               execution_id :: String.t(),
@@ -10,4 +12,7 @@ defmodule Trento.Integration.Checks.Gen do
               selected_checks :: [String.t()]
             ) ::
               :ok | {:error, any}
+
+  @callback get_catalog() ::
+              {:ok, FlatCatalog.t()} | {:error, any}
 end

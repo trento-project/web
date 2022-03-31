@@ -1,626 +1,702 @@
 [
   {
+    "id": "156F64",
+    "name": "1.1.1",
+    "group": "Corosync",
     "provider": "azure",
-    "groups": [
-      {
-        "group": "Corosync",
-        "checks": [
-          {
-            "id": "156F64",
-            "name": "1.1.1",
-            "description": "Corosync `token` timeout is set to `30000`\n",
-            "remediation": "## Abstract\nThe value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "53D035",
-            "name": "1.1.1.runtime",
-            "description": "Corosync is running with `token` timeout set to `30000`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.1']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "A1244C",
-            "name": "1.1.2",
-            "description": "Corosync `consensus` timeout is set to `36000`\n",
-            "remediation": "## Remediation\nAdjust the Corosync `consensus` timeout as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "FB0E0D",
-            "name": "1.1.2.runtime",
-            "description": "Corosync is running with `consensus` timeout set to `36000`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `consensus` timeout is not set as recommended.\n\n## Remediation\nAdjust the corosync `consensus` timeout as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.consensus (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.2']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "845CC9",
-            "name": "1.1.3",
-            "description": "Corosync `max_messages` is set to `20`\n",
-            "remediation": "## Remediation\nAdjust the Corosync `max_messages` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "00081D",
-            "name": "1.1.3.runtime",
-            "description": "Corosync is running with `max_messages` set to `20`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `max_messages` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `max_messages` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.max_messages (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.3']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "24ABCB",
-            "name": "1.1.4",
-            "group": "Corosync",
-            "description": "Corosync `join` is set to `60`\n",
-            "remediation": "## Remediation\nAdjust the Corosync `join` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "822E47",
-            "name": "1.1.4.runtime",
-            "description": "Corosync is running with `join` set to `60`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `join` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `join` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.join (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.4']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "21FCA6",
-            "name": "1.1.5",
-            "description": "Corosync `token_retransmits_before_loss_const` is set to: `10`\n",
-            "remediation": "## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter to `10` as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "15F7A8",
-            "name": "1.1.5.runtime",
-            "description": "Corosync is running with `token_retransmits_before_loss_const` set to `10`\n",
-            "remediation": "## Abstract\nThe runtime value of the corosync `token_retransmits_before_loss_const` parameter is not set as recommended\n\n## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter as recommended on the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token_retransmits_before_loss_const (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.5']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "33403D",
-            "name": "1.1.6",
-            "description": "Corosync `transport` is set to `udpu`\n",
-            "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "7E0221",
-            "name": "1.1.6.runtime",
-            "description": "Corosync is running with `transport` set to `udpu`\n",
-            "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"totem.transport (str) = \" | sed \"s/.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.6']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "C620DC",
-            "name": "1.1.7",
-            "description": "Corosync `expected_votes` is set to `2`\n",
-            "remediation": "## Remediation\nAdjust the corosync `expected_votes` parameter to `2` to make sure pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "6E9B82",
-            "name": "1.1.8",
-            "group": "Corosync",
-            "description": "Corosync `two_node` is set to `1`\n",
-            "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync two_node parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "D78671",
-            "name": "1.1.8.runtime",
-            "description": "Corosync is running with `two_node` set to `1`\n",
-            "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `two_node` parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster,\nand reload the Corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.votequorum.two_node (u8) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.8']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "DA114A",
-            "name": "1.1.9",
-            "group": "Corosync",
-            "description": "Corosync has at least 2 rings configured\n",
-            "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(cat /etc/corosync/corosync.conf | grep interface | wc -l)\n    [[ $INTERFACE_COUNT -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "32CFC6",
-            "name": "1.1.9.runtime",
-            "description": "Corosync is running with at least 2 rings\n",
-            "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(corosync-cmapctl | grep totem.interface\\\\..*\\.ttl | wc -l)\n    [[ ${INTERFACE_COUNT} -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "Pacemaker",
-        "checks": [
-          {
-            "id": "205AF7",
-            "name": "1.2.1",
-            "description": "Fencing is enabled in the cluster attributes\n",
-            "remediation": "## Abstract\nFencing is mandatory to guarantee data integrity for your SAP Applications.\nRunning a HA Cluster without fencing is not supported and might cause data loss.\n\n## Remediation\nExecute the following command to enable it:\n```\ncrm configure property stonith-enabled=true\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-fencing.html#sec-ha-fencing-recommend\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  command: 'crm_attribute -t crm_config -G -n stonith-enabled --quiet'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "373DB8",
-            "name": "1.2.2",
-            "description": "Cluster fencing timeout is configured correctly\n",
-            "remediation": "## Abstract\nThe fencing timeout (`stonith-timeout`) determines the time Pacemaker will wait for fencing to succeed.\nThe recommended values on Azure are `144` seconds for SBD only or `900` seconds when using SBD combined with the Azure Fence agent.\n\n## Remediation\nExecute the following command to adjust the timeout for your usecase:\n```crm configure property stonith-timeout=144```\nor\n```crm configure property stonith-timeout=900```\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n   timeout=$(crm_attribute -t crm_config -G -n stonith-timeout --quiet)\n   if [[cibadmin -Q --xpath \"//primitive[@type='fence_azure_arm']/@type\" > /dev/null 2>&1 ]]; then\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.fence_azure_arm'] }}s?$ ]])\n   else\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.sbd'] }}s?$ ]])\n   fi\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "SBD",
-        "checks": [
-          {
-            "id": "0B6DB2",
-            "name": "1.3.1",
-            "description": "`SBD_PACEMAKER` value is correctly set in SBD configuration\n",
-            "remediation": "## Abstract\nFor proper SBD fencing, make sure that the integration with Pacemaker is enabled.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n3. Set the SBD_PACEMAKER parameter to `yes` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_PACEMAKER=\"yes\"\n   [...]\n   ```\n4. Restart the cluster:\n   ```crm cluster start```\n5. Put cluster out of maintenance mode\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_PACEMAKER='\n    line: 'SBD_PACEMAKER={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "49591F",
-            "name": "1.3.2",
-            "description": "`SBD_STARTMODE` is set to `always`\n",
-            "remediation": "## Abstract\nIf not set to always, SBD will not automatically start if the node was previously fenced as it will expect the cluster in a clean state.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n2. Set the SBD_STARTMODE parameter to `always` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_STARTMODE=\"always\"\n   [...]\n   ```\n3. Restart the cluster:\n   ```crm cluster start```\n4. Put cluster out of maintenance mode:\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_STARTMODE='\n    line: 'SBD_STARTMODE={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "816815",
-            "name": "1.3.3",
-            "description": "SBD service is enabled\n",
-            "remediation": "## Abstract\nIf not enabled, SBD service will not start automatically after reboots, affecting the correct cluster startup.\n\n## Remediation\nTo enable the service, run:\n```\nsystemctl enable sbd\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html#pro-ha-storage-protect-sbd-services\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  systemd:\n    name: sbd\n    enabled: true\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "61451E",
-            "name": "1.3.4",
-            "description": "Multiple SBD devices are configured\n",
-            "remediation": "## Abstract\nIt is recommended to configure 3 SBD devices for production environments.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue: https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    echo \"$device_count\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "B089BE",
-            "name": "1.3.5",
-            "description": "SBD watchdog timeout is set to `60`\n",
-            "remediation": "## Remediation\nMake sure you configure your SBD Watchdog Timeout to `60` seconds as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_WDTIMEOUT={{ expected[name] }}\n    result_wdtimeout=${DEF_WDTIMEOUT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      wdtimeout=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(watchdog\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${wdtimeout}\" -ne \"${DEF_WDTIMEOUT}\" ]]; then\n        result_wdtimeout=\"${wdtimeout}\"\n      fi\n    done\n    echo \"${result_wdtimeout}\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "68626E",
-            "name": "1.3.6",
-            "description": "SBD `msgwait` timeout value is two times the watchdog timeout\n",
-            "remediation": "## Remediation\nMake sure you configure your the SBD msgwait to 2 * (SBD Watchdog Timeout) as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_MSGWAIT={{ expected[name] }}\n    result_msgwait=${DEF_MSGWAIT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      msgwait=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(msgwait\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${msgwait}\" -ne \"${DEF_MSGWAIT}\" ]]; then\n        result_msgwait=\"${msgwait}\"\n      fi\n    done\n    echo $result_msgwait\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "A2EF8C",
-            "name": "1.3.7",
-            "description": "The 2 nodes cluster has either disk-based SBD or Qdevice\n",
-            "remediation": "## Remediation\nHA cluster with 2 nodes must either have a disk-based SBD or a Qdevice.\n\n## References\n- section 2 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    if [[ $(crm_node -l | wc -l) != \"2\" ]]; then\n      exit 0\n    fi\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    # If there is at least 1 device and there is an sbd device used by pacemaker\n    if [[ $device_count != \"0\" ]] && crm conf show | grep -q \"stonith:external/sbd\"; then\n      exit 0\n    fi\n    # If the qdevice is configured it\\'s also good\n    if corosync-quorumtool | tail -n1 | grep -i qdevice; then\n      exit 0\n    fi\n    exit 1\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "Miscellaneous",
-        "checks": [
-          {
-            "id": "790926",
-            "name": "1.5.2",
-            "description": "The `hacluster` user password has been changed from the default value `linux`\n",
-            "remediation": "## Abstract\nThe password of the `hacluster` user should be changed after setting up the cluster\n\n## Remediation\n```sudo passwd hacluster```\n\n## References\n- section 9.1.2 https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # if hacluster passwd is linux, fail\n    salt=$(sudo getent shadow hacluster | cut -d$ -f3)\n    epassword=$(sudo getent shadow hacluster | cut -d: -f2)\n    match=$(python3 -c 'import crypt; print(crypt.crypt(\"linux\", \"$6$'${salt}'\"))')\n    [[ ${match} == ${epassword} ]] && exit 1\n    exit 0\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "OS and package versions",
-        "checks": [
-          {
-            "id": "CAEFF1",
-            "name": "2.2.1",
-            "description": "Operative system vendor is supported\n",
-            "remediation": "## Abstract\nSAPHanaSR is only supported on SUSE Linux Enterprise Server for SAP Applications.\n\n## Remediation\nPlease use SUSE Linux Enterprise Server for SAP Applications.\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution is version(expected[name], '==') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "D028B9",
-            "name": "2.2.2",
-            "description": "Operative system version is supported\n",
-            "remediation": "## Abstract\nYou need at least SUSE Linux Enterprise Server for SAP Applications 15 SP1 or newer\n\n## Remediation\nPlease install or upgrade to a supported OS version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution_version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "9FEFB0",
-            "name": "2.2.3",
-            "description": "Pacemaker version is supported\n",
-            "remediation": "## Abstract\nInstalled Pacemaker version must be equal or higher than 2.0.3\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'pacemaker' in ansible_facts.packages and ansible_facts.packages['pacemaker'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "9FAAD0",
-            "name": "2.2.3.exclude",
-            "description": "Pacemaker version is not 2.0.3+20200511.2b248d828\n",
-            "remediation": "## Abstract\nInstalled Pacemaker version must not be equal than 2.0.3+20200511.2b248d828\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the pacemaker version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" pacemaker || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "DC5429",
-            "name": "2.2.4",
-            "description": "Corosync version is supported\n",
-            "remediation": "## Abstract\nInstalled Corosync version must be equal or higher than 2.4.5\n\n## Remediation\nInstall or upgrade to a supported Corosync version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'corosync' in ansible_facts.packages and ansible_facts.packages['corosync'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "222A57",
-            "name": "2.2.5",
-            "description": "SBD version is supported\n",
-            "remediation": "## Abstract\nInstalled SBD version must be equal or higher than 1.4.0\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'sbd' in ansible_facts.packages and ansible_facts.packages['sbd'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "C3166E",
-            "name": "2.2.5.exclude",
-            "description": "SBD version is not 1.4.0+20190326.c38c5e6\n",
-            "remediation": "## Abstract\nInstalled SBD version must not be equal than 1.4.0+20190326.c38c5e6\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the sbd version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" sbd || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "F50AF5",
-            "name": "2.2.7",
-            "description": "Python3 version is supported\n",
-            "remediation": "## Abstract\nInstalled Python3 version must be equal or higher than 3.6.5\n\n## Remediation\nInstall or upgrade to a supported Python3 version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'python3' in ansible_facts.packages and ansible_facts.packages['python3'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          }
-        ]
-      }
-    ]
+    "description": "Corosync `token` timeout is set to `30000`\n",
+    "remediation": "## Abstract\nThe value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
   },
   {
+    "id": "53D035",
+    "name": "1.1.1.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with `token` timeout set to `30000`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.1']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "A1244C",
+    "name": "1.1.2",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync `consensus` timeout is set to `36000`\n",
+    "remediation": "## Remediation\nAdjust the Corosync `consensus` timeout as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "FB0E0D",
+    "name": "1.1.2.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with `consensus` timeout set to `36000`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `consensus` timeout is not set as recommended.\n\n## Remediation\nAdjust the corosync `consensus` timeout as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.consensus (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.2']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "845CC9",
+    "name": "1.1.3",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync `max_messages` is set to `20`\n",
+    "remediation": "## Remediation\nAdjust the Corosync `max_messages` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "00081D",
+    "name": "1.1.3.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with `max_messages` set to `20`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `max_messages` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `max_messages` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.max_messages (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.3']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "24ABCB",
+    "name": "1.1.4",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync `join` is set to `60`\n",
+    "remediation": "## Remediation\nAdjust the Corosync `join` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "822E47",
+    "name": "1.1.4.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with `join` set to `60`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `join` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `join` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.join (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.4']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "21FCA6",
+    "name": "1.1.5",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync `token_retransmits_before_loss_const` is set to: `10`\n",
+    "remediation": "## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter to `10` as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "15F7A8",
+    "name": "1.1.5.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with `token_retransmits_before_loss_const` set to `10`\n",
+    "remediation": "## Abstract\nThe runtime value of the corosync `token_retransmits_before_loss_const` parameter is not set as recommended\n\n## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter as recommended on the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token_retransmits_before_loss_const (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.5']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "33403D",
+    "name": "1.1.6",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync `transport` is set to `udpu`\n",
+    "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "7E0221",
+    "name": "1.1.6.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with `transport` set to `udpu`\n",
+    "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"totem.transport (str) = \" | sed \"s/.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.6']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "C620DC",
+    "name": "1.1.7",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync `expected_votes` is set to `2`\n",
+    "remediation": "## Remediation\nAdjust the corosync `expected_votes` parameter to `2` to make sure pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "6E9B82",
+    "name": "1.1.8",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync `two_node` is set to `1`\n",
+    "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync two_node parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "D78671",
+    "name": "1.1.8.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with `two_node` set to `1`\n",
+    "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `two_node` parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster,\nand reload the Corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.votequorum.two_node (u8) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.8']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "DA114A",
+    "name": "1.1.9",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync has at least 2 rings configured\n",
+    "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(cat /etc/corosync/corosync.conf | grep interface | wc -l)\n    [[ $INTERFACE_COUNT -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "32CFC6",
+    "name": "1.1.9.runtime",
+    "group": "Corosync",
+    "provider": "azure",
+    "description": "Corosync is running with at least 2 rings\n",
+    "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(corosync-cmapctl | grep totem.interface\\\\..*\\.ttl | wc -l)\n    [[ ${INTERFACE_COUNT} -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "205AF7",
+    "name": "1.2.1",
+    "group": "Pacemaker",
+    "provider": "azure",
+    "description": "Fencing is enabled in the cluster attributes\n",
+    "remediation": "## Abstract\nFencing is mandatory to guarantee data integrity for your SAP Applications.\nRunning a HA Cluster without fencing is not supported and might cause data loss.\n\n## Remediation\nExecute the following command to enable it:\n```\ncrm configure property stonith-enabled=true\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-fencing.html#sec-ha-fencing-recommend\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  command: 'crm_attribute -t crm_config -G -n stonith-enabled --quiet'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "373DB8",
+    "name": "1.2.2",
+    "group": "Pacemaker",
+    "provider": "azure",
+    "description": "Cluster fencing timeout is configured correctly\n",
+    "remediation": "## Abstract\nThe fencing timeout (`stonith-timeout`) determines the time Pacemaker will wait for fencing to succeed.\nThe recommended values on Azure are `144` seconds for SBD only or `900` seconds when using SBD combined with the Azure Fence agent.\n\n## Remediation\nExecute the following command to adjust the timeout for your usecase:\n```crm configure property stonith-timeout=144```\nor\n```crm configure property stonith-timeout=900```\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n   timeout=$(crm_attribute -t crm_config -G -n stonith-timeout --quiet)\n   if [[cibadmin -Q --xpath \"//primitive[@type='fence_azure_arm']/@type\" > /dev/null 2>&1 ]]; then\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.fence_azure_arm'] }}s?$ ]])\n   else\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.sbd'] }}s?$ ]])\n   fi\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "0B6DB2",
+    "name": "1.3.1",
+    "group": "SBD",
+    "provider": "azure",
+    "description": "`SBD_PACEMAKER` value is correctly set in SBD configuration\n",
+    "remediation": "## Abstract\nFor proper SBD fencing, make sure that the integration with Pacemaker is enabled.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n3. Set the SBD_PACEMAKER parameter to `yes` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_PACEMAKER=\"yes\"\n   [...]\n   ```\n4. Restart the cluster:\n   ```crm cluster start```\n5. Put cluster out of maintenance mode\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_PACEMAKER='\n    line: 'SBD_PACEMAKER={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "49591F",
+    "name": "1.3.2",
+    "group": "SBD",
+    "provider": "azure",
+    "description": "`SBD_STARTMODE` is set to `always`\n",
+    "remediation": "## Abstract\nIf not set to always, SBD will not automatically start if the node was previously fenced as it will expect the cluster in a clean state.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n2. Set the SBD_STARTMODE parameter to `always` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_STARTMODE=\"always\"\n   [...]\n   ```\n3. Restart the cluster:\n   ```crm cluster start```\n4. Put cluster out of maintenance mode:\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_STARTMODE='\n    line: 'SBD_STARTMODE={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "816815",
+    "name": "1.3.3",
+    "group": "SBD",
+    "provider": "azure",
+    "description": "SBD service is enabled\n",
+    "remediation": "## Abstract\nIf not enabled, SBD service will not start automatically after reboots, affecting the correct cluster startup.\n\n## Remediation\nTo enable the service, run:\n```\nsystemctl enable sbd\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html#pro-ha-storage-protect-sbd-services\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  systemd:\n    name: sbd\n    enabled: true\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "61451E",
+    "name": "1.3.4",
+    "group": "SBD",
+    "provider": "azure",
+    "description": "Multiple SBD devices are configured\n",
+    "remediation": "## Abstract\nIt is recommended to configure 3 SBD devices for production environments.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue: https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    echo \"$device_count\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "B089BE",
+    "name": "1.3.5",
+    "group": "SBD",
+    "provider": "azure",
+    "description": "SBD watchdog timeout is set to `60`\n",
+    "remediation": "## Remediation\nMake sure you configure your SBD Watchdog Timeout to `60` seconds as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_WDTIMEOUT={{ expected[name] }}\n    result_wdtimeout=${DEF_WDTIMEOUT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      wdtimeout=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(watchdog\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${wdtimeout}\" -ne \"${DEF_WDTIMEOUT}\" ]]; then\n        result_wdtimeout=\"${wdtimeout}\"\n      fi\n    done\n    echo \"${result_wdtimeout}\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "68626E",
+    "name": "1.3.6",
+    "group": "SBD",
+    "provider": "azure",
+    "description": "SBD `msgwait` timeout value is two times the watchdog timeout\n",
+    "remediation": "## Remediation\nMake sure you configure your the SBD msgwait to 2 * (SBD Watchdog Timeout) as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_MSGWAIT={{ expected[name] }}\n    result_msgwait=${DEF_MSGWAIT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      msgwait=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(msgwait\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${msgwait}\" -ne \"${DEF_MSGWAIT}\" ]]; then\n        result_msgwait=\"${msgwait}\"\n      fi\n    done\n    echo $result_msgwait\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "A2EF8C",
+    "name": "1.3.7",
+    "group": "SBD",
+    "provider": "azure",
+    "description": "The 2 nodes cluster has either disk-based SBD or Qdevice\n",
+    "remediation": "## Remediation\nHA cluster with 2 nodes must either have a disk-based SBD or a Qdevice.\n\n## References\n- section 2 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    if [[ $(crm_node -l | wc -l) != \"2\" ]]; then\n      exit 0\n    fi\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    # If there is at least 1 device and there is an sbd device used by pacemaker\n    if [[ $device_count != \"0\" ]] && crm conf show | grep -q \"stonith:external/sbd\"; then\n      exit 0\n    fi\n    # If the qdevice is configured it\\'s also good\n    if corosync-quorumtool | tail -n1 | grep -i qdevice; then\n      exit 0\n    fi\n    exit 1\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "790926",
+    "name": "1.5.2",
+    "group": "Miscellaneous",
+    "provider": "azure",
+    "description": "The `hacluster` user password has been changed from the default value `linux`\n",
+    "remediation": "## Abstract\nThe password of the `hacluster` user should be changed after setting up the cluster\n\n## Remediation\n```sudo passwd hacluster```\n\n## References\n- section 9.1.2 https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # if hacluster passwd is linux, fail\n    salt=$(sudo getent shadow hacluster | cut -d$ -f3)\n    epassword=$(sudo getent shadow hacluster | cut -d: -f2)\n    match=$(python3 -c 'import crypt; print(crypt.crypt(\"linux\", \"$6$'${salt}'\"))')\n    [[ ${match} == ${epassword} ]] && exit 1\n    exit 0\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "CAEFF1",
+    "name": "2.2.1",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "Operative system vendor is supported\n",
+    "remediation": "## Abstract\nSAPHanaSR is only supported on SUSE Linux Enterprise Server for SAP Applications.\n\n## Remediation\nPlease use SUSE Linux Enterprise Server for SAP Applications.\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution is version(expected[name], '==') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "D028B9",
+    "name": "2.2.2",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "Operative system version is supported\n",
+    "remediation": "## Abstract\nYou need at least SUSE Linux Enterprise Server for SAP Applications 15 SP1 or newer\n\n## Remediation\nPlease install or upgrade to a supported OS version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution_version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "9FEFB0",
+    "name": "2.2.3",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "Pacemaker version is supported\n",
+    "remediation": "## Abstract\nInstalled Pacemaker version must be equal or higher than 2.0.3\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'pacemaker' in ansible_facts.packages and ansible_facts.packages['pacemaker'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "9FAAD0",
+    "name": "2.2.3.exclude",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "Pacemaker version is not 2.0.3+20200511.2b248d828\n",
+    "remediation": "## Abstract\nInstalled Pacemaker version must not be equal than 2.0.3+20200511.2b248d828\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the pacemaker version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" pacemaker || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "DC5429",
+    "name": "2.2.4",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "Corosync version is supported\n",
+    "remediation": "## Abstract\nInstalled Corosync version must be equal or higher than 2.4.5\n\n## Remediation\nInstall or upgrade to a supported Corosync version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'corosync' in ansible_facts.packages and ansible_facts.packages['corosync'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "222A57",
+    "name": "2.2.5",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "SBD version is supported\n",
+    "remediation": "## Abstract\nInstalled SBD version must be equal or higher than 1.4.0\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'sbd' in ansible_facts.packages and ansible_facts.packages['sbd'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "C3166E",
+    "name": "2.2.5.exclude",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "SBD version is not 1.4.0+20190326.c38c5e6\n",
+    "remediation": "## Abstract\nInstalled SBD version must not be equal than 1.4.0+20190326.c38c5e6\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the sbd version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" sbd || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "F50AF5",
+    "name": "2.2.7",
+    "group": "OS and package versions",
+    "provider": "azure",
+    "description": "Python3 version is supported\n",
+    "remediation": "## Abstract\nInstalled Python3 version must be equal or higher than 3.6.5\n\n## Remediation\nInstall or upgrade to a supported Python3 version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'python3' in ansible_facts.packages and ansible_facts.packages['python3'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "156F64",
+    "name": "1.1.1",
+    "group": "Corosync",
     "provider": "aws",
-    "groups": [
-      {
-        "group": "Corosync",
-        "checks": [
-          {
-            "id": "156F64",
-            "name": "1.1.1",
-            "description": "Corosync `token` timeout is set to `5000`\n",
-            "remediation": "## Abstract\nThe value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "53D035",
-            "name": "1.1.1.runtime",
-            "description": "Corosync is running with `token` timeout set to `5000`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.1']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "A1244C",
-            "name": "1.1.2",
-            "description": "Corosync `consensus` timeout is set to `6000`\n",
-            "remediation": "## Remediation\nAdjust the Corosync `consensus` timeout as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "FB0E0D",
-            "name": "1.1.2.runtime",
-            "description": "Corosync is running with `consensus` timeout set to `6000`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `consensus` timeout is not set as recommended.\n\n## Remediation\nAdjust the corosync `consensus` timeout as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.consensus (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.2']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "845CC9",
-            "name": "1.1.3",
-            "description": "Corosync `max_messages` is set to `20`\n",
-            "remediation": "## Remediation\nAdjust the Corosync `max_messages` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "00081D",
-            "name": "1.1.3.runtime",
-            "description": "Corosync is running with `max_messages` set to `20`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `max_messages` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `max_messages` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.max_messages (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.3']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "24ABCB",
-            "name": "1.1.4",
-            "description": "Corosync `join` is set to `60`\n",
-            "remediation": "## Remediation\nAdjust the Corosync `join` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "822E47",
-            "name": "1.1.4.runtime",
-            "description": "Corosync is running with `join` set to `60`\n",
-            "remediation": "## Abstract\nThe runtime value of the Corosync `join` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `join` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.join (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.4']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "21FCA6",
-            "name": "1.1.5",
-            "description": "Corosync `token_retransmits_before_loss_const` is set to: `10`\n",
-            "remediation": "## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter to `10` as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "15F7A8",
-            "name": "1.1.5.runtime",
-            "description": "Corosync is running with `token_retransmits_before_loss_const` set to `10`\n",
-            "remediation": "## Abstract\nThe runtime value of the corosync `token_retransmits_before_loss_const` parameter is not set as recommended\n\n## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter as recommended on the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token_retransmits_before_loss_const (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.5']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "33403D",
-            "name": "1.1.6",
-            "description": "Corosync `transport` is set to `udpu`\n",
-            "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "7E0221",
-            "name": "1.1.6.runtime",
-            "description": "Corosync is running with `transport` set to `udpu`\n",
-            "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"totem.transport (str) = \" | sed \"s/.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.6']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "C620DC",
-            "name": "1.1.7",
-            "description": "Corosync `expected_votes` is set to `2`\n",
-            "remediation": "## Remediation\nAdjust the corosync `expected_votes` parameter to `2` to make sure pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "6E9B82",
-            "name": "1.1.8",
-            "description": "Corosync `two_node` is set to `1`\n",
-            "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync two_node parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "D78671",
-            "name": "1.1.8.runtime",
-            "description": "Corosync is running with `two_node` set to `1`\n",
-            "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `two_node` parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster,\nand reload the Corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.votequorum.two_node (u8) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.8']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "DA114A",
-            "name": "1.1.9",
-            "description": "Corosync has at least 2 rings configured\n",
-            "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(cat /etc/corosync/corosync.conf | grep interface | wc -l)\n    [[ $INTERFACE_COUNT -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "32CFC6",
-            "name": "1.1.9.runtime",
-            "description": "Corosync is running with at least 2 rings\n",
-            "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(corosync-cmapctl | grep totem.interface\\\\..*\\.ttl | wc -l)\n    [[ ${INTERFACE_COUNT} -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "Pacemaker",
-        "checks": [
-          {
-            "id": "205AF7",
-            "name": "1.2.1",
-            "description": "Fencing is enabled in the cluster attributes\n",
-            "remediation": "## Abstract\nFencing is mandatory to guarantee data integrity for your SAP Applications.\nRunning a HA Cluster without fencing is not supported and might cause data loss.\n\n## Remediation\nExecute the following command to enable it:\n```\ncrm configure property stonith-enabled=true\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-fencing.html#sec-ha-fencing-recommend\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  command: 'crm_attribute -t crm_config -G -n stonith-enabled --quiet'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "373DB8",
-            "name": "1.2.2",
-            "description": "Cluster fencing timeout is configured correctly\n",
-            "remediation": "## Abstract\nThe fencing timeout (`stonith-timeout`) determines the time Pacemaker will wait for fencing to succeed.\nThe recommended values on Azure are `144` seconds for SBD only or `900` seconds when using SBD combined with the Azure Fence agent.\n\n## Remediation\nExecute the following command to adjust the timeout for your usecase:\n```crm configure property stonith-timeout=144```\nor\n```crm configure property stonith-timeout=900```\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n   timeout=$(crm_attribute -t crm_config -G -n stonith-timeout --quiet)\n   if [[cibadmin -Q --xpath \"//primitive[@type='fence_azure_arm']/@type\" > /dev/null 2>&1 ]]; then\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.fence_azure_arm'] }}s?$ ]])\n   else\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.sbd'] }}s?$ ]])\n   fi\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "SBD",
-        "checks": [
-          {
-            "id": "0B6DB2",
-            "name": "1.3.1",
-            "description": "`SBD_PACEMAKER` value is correctly set in SBD configuration\n",
-            "remediation": "## Abstract\nFor proper SBD fencing, make sure that the integration with Pacemaker is enabled.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n3. Set the SBD_PACEMAKER parameter to `yes` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_PACEMAKER=\"yes\"\n   [...]\n   ```\n4. Restart the cluster:\n   ```crm cluster start```\n5. Put cluster out of maintenance mode\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_PACEMAKER='\n    line: 'SBD_PACEMAKER={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "49591F",
-            "name": "1.3.2",
-            "description": "`SBD_STARTMODE` is set to `always`\n",
-            "remediation": "## Abstract\nIf not set to always, SBD will not automatically start if the node was previously fenced as it will expect the cluster in a clean state.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n2. Set the SBD_STARTMODE parameter to `always` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_STARTMODE=\"always\"\n   [...]\n   ```\n3. Restart the cluster:\n   ```crm cluster start```\n4. Put cluster out of maintenance mode:\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_STARTMODE='\n    line: 'SBD_STARTMODE={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "816815",
-            "name": "1.3.3",
-            "description": "SBD service is enabled\n",
-            "remediation": "## Abstract\nIf not enabled, SBD service will not start automatically after reboots, affecting the correct cluster startup.\n\n## Remediation\nTo enable the service, run:\n```\nsystemctl enable sbd\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html#pro-ha-storage-protect-sbd-services\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  systemd:\n    name: sbd\n    enabled: true\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "61451E",
-            "name": "1.3.4",
-            "description": "Multiple SBD devices are configured\n",
-            "remediation": "## Abstract\nIt is recommended to configure 3 SBD devices for production environments.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue: https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    echo \"$device_count\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "B089BE",
-            "name": "1.3.5",
-            "description": "SBD watchdog timeout is set to `15`\n",
-            "remediation": "## Remediation\nMake sure you configure your SBD Watchdog Timeout to `15` seconds as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_WDTIMEOUT={{ expected[name] }}\n    result_wdtimeout=${DEF_WDTIMEOUT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      wdtimeout=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(watchdog\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${wdtimeout}\" -ne \"${DEF_WDTIMEOUT}\" ]]; then\n        result_wdtimeout=\"${wdtimeout}\"\n      fi\n    done\n    echo \"${result_wdtimeout}\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "68626E",
-            "name": "1.3.6",
-            "description": "SBD `msgwait` timeout value is two times the watchdog timeout\n",
-            "remediation": "## Remediation\nMake sure you configure your the SBD msgwait to 2 * (SBD Watchdog Timeout) as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_MSGWAIT={{ expected[name] }}\n    result_msgwait=${DEF_MSGWAIT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      msgwait=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(msgwait\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${msgwait}\" -ne \"${DEF_MSGWAIT}\" ]]; then\n        result_msgwait=\"${msgwait}\"\n      fi\n    done\n    echo $result_msgwait\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          },
-          {
-            "id": "A2EF8C",
-            "name": "1.3.7",
-            "description": "The 2 nodes cluster has either disk-based SBD or Qdevice\n",
-            "remediation": "## Remediation\nHA cluster with 2 nodes must either have a disk-based SBD or a Qdevice.\n\n## References\n- section 2 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    if [[ $(crm_node -l | wc -l) != \"2\" ]]; then\n      exit 0\n    fi\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    # If there is at least 1 device and there is an sbd device used by pacemaker\n    if [[ $device_count != \"0\" ]] && crm conf show | grep -q \"stonith:external/sbd\"; then\n      exit 0\n    fi\n    # If the qdevice is configured it\\'s also good\n    if corosync-quorumtool | tail -n1 | grep -i qdevice; then\n      exit 0\n    fi\n    exit 1\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "Miscellaneous",
-        "checks": [
-          {
-            "id": "790926",
-            "name": "1.5.2",
-            "description": "The `hacluster` user password has been changed from the default value `linux`\n",
-            "remediation": "## Abstract\nThe password of the `hacluster` user should be changed after setting up the cluster\n\n## Remediation\n```sudo passwd hacluster```\n\n## References\n- section 9.1.2 https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # if hacluster passwd is linux, fail\n    salt=$(sudo getent shadow hacluster | cut -d$ -f3)\n    epassword=$(sudo getent shadow hacluster | cut -d: -f2)\n    match=$(python3 -c 'import crypt; print(crypt.crypt(\"linux\", \"$6$'${salt}'\"))')\n    [[ ${match} == ${epassword} ]] && exit 1\n    exit 0\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "generic"
-          }
-        ]
-      },
-      {
-        "group": "OS and package versions",
-        "checks": [
-          {
-            "id": "CAEFF1",
-            "name": "2.2.1",
-            "description": "Operative system vendor is supported\n",
-            "remediation": "## Abstract\nSAPHanaSR is only supported on SUSE Linux Enterprise Server for SAP Applications.\n\n## Remediation\nPlease use SUSE Linux Enterprise Server for SAP Applications.\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution is version(expected[name], '==') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "D028B9",
-            "name": "2.2.2",
-            "description": "Operative system version is supported\n",
-            "remediation": "## Abstract\nYou need at least SUSE Linux Enterprise Server for SAP Applications 15 SP1 or newer\n\n## Remediation\nPlease install or upgrade to a supported OS version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution_version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "9FEFB0",
-            "name": "2.2.3",
-            "group": "OS and package versions",
-            "description": "Pacemaker version is supported\n",
-            "remediation": "## Abstract\nInstalled Pacemaker version must be equal or higher than 2.0.3\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'pacemaker' in ansible_facts.packages and ansible_facts.packages['pacemaker'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "9FAAD0",
-            "name": "2.2.3.exclude",
-            "description": "Pacemaker version is not 2.0.3+20200511.2b248d828\n",
-            "remediation": "## Abstract\nInstalled Pacemaker version must not be equal than 2.0.3+20200511.2b248d828\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the pacemaker version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" pacemaker || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "DC5429",
-            "name": "2.2.4",
-            "description": "Corosync version is supported\n",
-            "remediation": "## Abstract\nInstalled Corosync version must be equal or higher than 2.4.5\n\n## Remediation\nInstall or upgrade to a supported Corosync version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'corosync' in ansible_facts.packages and ansible_facts.packages['corosync'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "222A57",
-            "name": "2.2.5",
-            "description": "SBD version is supported\n",
-            "remediation": "## Abstract\nInstalled SBD version must be equal or higher than 1.4.0\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'sbd' in ansible_facts.packages and ansible_facts.packages['sbd'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "C3166E",
-            "name": "2.2.5.exclude",
-            "description": "SBD version is not 1.4.0+20190326.c38c5e6\n",
-            "remediation": "## Abstract\nInstalled SBD version must not be equal than 1.4.0+20190326.c38c5e6\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the sbd version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" sbd || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
-            "labels": "hana"
-          },
-          {
-            "id": "F50AF5",
-            "name": "2.2.7",
-            "description": "Python3 version is supported\n",
-            "remediation": "## Abstract\nInstalled Python3 version must be equal or higher than 3.6.5\n\n## Remediation\nInstall or upgrade to a supported Python3 version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
-            "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'python3' in ansible_facts.packages and ansible_facts.packages['python3'][0].version is version(expected[name], '>=') }}\"",
-            "labels": "hana"
-          }
-        ]
-      }
-    ]
+    "description": "Corosync `token` timeout is set to `5000`\n",
+    "remediation": "## Abstract\nThe value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "53D035",
+    "name": "1.1.1.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with `token` timeout set to `5000`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `token` timeout is not set as recommended.\n\n## Remediation\n\nAdjust the corosync `token` timeout as recommended on the best practices, and reload the corosync configuration\n\n\n1. Set the correct `token` timeout in the totem session in the corosync config file `/etc/corosync/corosync.conf`. This action must be repeated in all nodes of the cluster.\n   ```\n   [...]\n   totem { \n          token: <timeout value> \n         }\n   [...]\n   ```   \n2. Reload the corosync configuration:\n   `crm corosync reload`\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.1']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "A1244C",
+    "name": "1.1.2",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync `consensus` timeout is set to `6000`\n",
+    "remediation": "## Remediation\nAdjust the Corosync `consensus` timeout as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "FB0E0D",
+    "name": "1.1.2.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with `consensus` timeout set to `6000`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `consensus` timeout is not set as recommended.\n\n## Remediation\nAdjust the corosync `consensus` timeout as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.consensus (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.2']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "845CC9",
+    "name": "1.1.3",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync `max_messages` is set to `20`\n",
+    "remediation": "## Remediation\nAdjust the Corosync `max_messages` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "00081D",
+    "name": "1.1.3.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with `max_messages` set to `20`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `max_messages` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `max_messages` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.max_messages (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.3']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "24ABCB",
+    "name": "1.1.4",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync `join` is set to `60`\n",
+    "remediation": "## Remediation\nAdjust the Corosync `join` parameter as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "822E47",
+    "name": "1.1.4.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with `join` set to `60`\n",
+    "remediation": "## Abstract\nThe runtime value of the Corosync `join` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `join` parameter as recommended by the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.join (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.4']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "21FCA6",
+    "name": "1.1.5",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync `token_retransmits_before_loss_const` is set to: `10`\n",
+    "remediation": "## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter to `10` as recommended by the Azure best practices.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "15F7A8",
+    "name": "1.1.5.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with `token_retransmits_before_loss_const` set to `10`\n",
+    "remediation": "## Abstract\nThe runtime value of the corosync `token_retransmits_before_loss_const` parameter is not set as recommended\n\n## Remediation\nAdjust the corosync `token_retransmits_before_loss_const` parameter as recommended on the Azure best practices, and reload the corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.config.totem.token_retransmits_before_loss_const (u32) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.5']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "33403D",
+    "name": "1.1.6",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync `transport` is set to `udpu`\n",
+    "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'totem {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "7E0221",
+    "name": "1.1.6.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with `transport` set to `udpu`\n",
+    "remediation": "## Remediation\nTo change the corosync MCAST transport to UCAST edit the /etc/corosync/corosync.conf\nas in the example\n```\n    max_messages: 20\n    interface {\n        ringnumber: 0\n-       bindnetaddr: 10.162.32.167\n-       mcastaddr: 239.11.100.41\n        mcastport: 5405\n        ttl: 1\n    }\n+   transport: udpu\n...\n+nodelist {\n+       node {\n+               ring0_addr: 10.162.32.167\n+               nodeid: 1\n+       }\n+\n+       node {\n+               ring0_addr: 10.162.32.89\n+               nodeid: 2\n+       }\n+\n+}\n```\n1. stop the already running cluster by using **systemctl stop pacemaker**\n2. In the totem section, in the interface subsection remove the\nkeys-value pairs **bindnetaddr** and **mcastaddr**\n3. In the totem section add key-value pair **transport: udpu**\n4. Add section nodelist and subsections node for each nodes of the\ncluster, where the **ring0_addr** is the IP address of the node\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"totem.transport (str) = \" | sed \"s/.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.6']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "C620DC",
+    "name": "1.1.7",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync `expected_votes` is set to `2`\n",
+    "remediation": "## Remediation\nAdjust the corosync `expected_votes` parameter to `2` to make sure pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "6E9B82",
+    "name": "1.1.8",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync `two_node` is set to `1`\n",
+    "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync two_node parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/corosync/corosync.conf\n    regexp: '^(\\s+){{ key_name }}:'\n    line: \"\\t{{ key_name }}: {{ expected[name] }}\"\n    insertafter: 'quorum {'\n  register: config_updated\n  when: ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "D78671",
+    "name": "1.1.8.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with `two_node` set to `1`\n",
+    "remediation": "## Abstract\nThe runtime value of the corosync `two_node` parameter is not set as recommended.\n\n## Remediation\nAdjust the corosync `two_node` parameter to `1` to make sure Pacemaker calculates the actions properly for a two-node cluster,\nand reload the Corosync service.\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: 'corosync-cmapctl | grep \"runtime.votequorum.two_node (u8) = \" | sed \"s/^.*= //\"'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected['1.1.8']\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "DA114A",
+    "name": "1.1.9",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync has at least 2 rings configured\n",
+    "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(cat /etc/corosync/corosync.conf | grep interface | wc -l)\n    [[ $INTERFACE_COUNT -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "32CFC6",
+    "name": "1.1.9.runtime",
+    "group": "Corosync",
+    "provider": "aws",
+    "description": "Corosync is running with at least 2 rings\n",
+    "remediation": "## Abstract\nIt is strongly recommended to add a second ring to the corosync communication.\n\n## References\n- section 9.1.3 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/#id-adapting-the-corosync-and-sbd-configuration\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    INTERFACE_COUNT=$(corosync-cmapctl | grep totem.interface\\\\..*\\.ttl | wc -l)\n    [[ ${INTERFACE_COUNT} -ge \"2\" ]] && exit 0\n    exit 1\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "205AF7",
+    "name": "1.2.1",
+    "group": "Pacemaker",
+    "provider": "aws",
+    "description": "Fencing is enabled in the cluster attributes\n",
+    "remediation": "## Abstract\nFencing is mandatory to guarantee data integrity for your SAP Applications.\nRunning a HA Cluster without fencing is not supported and might cause data loss.\n\n## Remediation\nExecute the following command to enable it:\n```\ncrm configure property stonith-enabled=true\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-fencing.html#sec-ha-fencing-recommend\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  command: 'crm_attribute -t crm_config -G -n stonith-enabled --quiet'\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "373DB8",
+    "name": "1.2.2",
+    "group": "Pacemaker",
+    "provider": "aws",
+    "description": "Cluster fencing timeout is configured correctly\n",
+    "remediation": "## Abstract\nThe fencing timeout (`stonith-timeout`) determines the time Pacemaker will wait for fencing to succeed.\nThe recommended values on Azure are `144` seconds for SBD only or `900` seconds when using SBD combined with the Azure Fence agent.\n\n## Remediation\nExecute the following command to adjust the timeout for your usecase:\n```crm configure property stonith-timeout=144```\nor\n```crm configure property stonith-timeout=900```\n\n## References\n- https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n   timeout=$(crm_attribute -t crm_config -G -n stonith-timeout --quiet)\n   if [[cibadmin -Q --xpath \"//primitive[@type='fence_azure_arm']/@type\" > /dev/null 2>&1 ]]; then\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.fence_azure_arm'] }}s?$ ]])\n   else\n     exit $([[ \"${timeout}\" =~ {{ expected[name + '.sbd'] }}s?$ ]])\n   fi\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "0B6DB2",
+    "name": "1.3.1",
+    "group": "SBD",
+    "provider": "aws",
+    "description": "`SBD_PACEMAKER` value is correctly set in SBD configuration\n",
+    "remediation": "## Abstract\nFor proper SBD fencing, make sure that the integration with Pacemaker is enabled.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n3. Set the SBD_PACEMAKER parameter to `yes` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_PACEMAKER=\"yes\"\n   [...]\n   ```\n4. Restart the cluster:\n   ```crm cluster start```\n5. Put cluster out of maintenance mode\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_PACEMAKER='\n    line: 'SBD_PACEMAKER={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "49591F",
+    "name": "1.3.2",
+    "group": "SBD",
+    "provider": "aws",
+    "description": "`SBD_STARTMODE` is set to `always`\n",
+    "remediation": "## Abstract\nIf not set to always, SBD will not automatically start if the node was previously fenced as it will expect the cluster in a clean state.\n**IMPORTANT**: Always verify these steps in a testing environment before doing so in production ones!\n\n## Remediation\nRun the following commands in order:\n\n1. Put cluster into maintenance mode:\n   ```crm configure property maintenance-mode=true```\n2. Stop the cluster:\n   ```crm cluster stop```\n2. Set the SBD_STARTMODE parameter to `always` on `/etc/sysconfig/sbd`:\n   ```\n   [...]\n   SBD_STARTMODE=\"always\"\n   [...]\n   ```\n3. Restart the cluster:\n   ```crm cluster start```\n4. Put cluster out of maintenance mode:\n   ```crm configure property maintenance-mode=false```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  lineinfile:\n    path: /etc/sysconfig/sbd\n    regexp: '^SBD_STARTMODE='\n    line: 'SBD_STARTMODE={{ expected[name] }}'\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "816815",
+    "name": "1.3.3",
+    "group": "SBD",
+    "provider": "aws",
+    "description": "SBD service is enabled\n",
+    "remediation": "## Abstract\nIf not enabled, SBD service will not start automatically after reboots, affecting the correct cluster startup.\n\n## Remediation\nTo enable the service, run:\n```\nsystemctl enable sbd\n```\n\n## References\n- https://documentation.suse.com/sle-ha/15-SP3/html/SLE-HA-all/cha-ha-storage-protect.html#pro-ha-storage-protect-sbd-services\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  systemd:\n    name: sbd\n    enabled: true\n  register: config_updated\n  when:\n    - ansible_check_mode\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "61451E",
+    "name": "1.3.4",
+    "group": "SBD",
+    "provider": "aws",
+    "description": "Multiple SBD devices are configured\n",
+    "remediation": "## Abstract\nIt is recommended to configure 3 SBD devices for production environments.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue: https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    echo \"$device_count\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "B089BE",
+    "name": "1.3.5",
+    "group": "SBD",
+    "provider": "aws",
+    "description": "SBD watchdog timeout is set to `15`\n",
+    "remediation": "## Remediation\nMake sure you configure your SBD Watchdog Timeout to `15` seconds as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_WDTIMEOUT={{ expected[name] }}\n    result_wdtimeout=${DEF_WDTIMEOUT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      wdtimeout=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(watchdog\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${wdtimeout}\" -ne \"${DEF_WDTIMEOUT}\" ]]; then\n        result_wdtimeout=\"${wdtimeout}\"\n      fi\n    done\n    echo \"${result_wdtimeout}\"\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "68626E",
+    "name": "1.3.6",
+    "group": "SBD",
+    "provider": "aws",
+    "description": "SBD `msgwait` timeout value is two times the watchdog timeout\n",
+    "remediation": "## Remediation\nMake sure you configure your the SBD msgwait to 2 * (SBD Watchdog Timeout) as recommended on the best practices.\n\n## References\n-  https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-suse-pacemaker#set-up-sbd-device\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    DEF_MSGWAIT={{ expected[name] }}\n    result_msgwait=${DEF_MSGWAIT}\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    for i in \"${sbdarray[@]}\"\n    do\n      msgwait=$(/usr/sbin/sbd -d ${i} dump | grep -oP 'Timeout \\(msgwait\\)  *: \\K\\d+')|| echo \"\"\n      if [[ \"${msgwait}\" -ne \"${DEF_MSGWAIT}\" ]]; then\n        result_msgwait=\"${msgwait}\"\n      fi\n    done\n    echo $result_msgwait\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.stdout != expected[name]\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "A2EF8C",
+    "name": "1.3.7",
+    "group": "SBD",
+    "provider": "aws",
+    "description": "The 2 nodes cluster has either disk-based SBD or Qdevice\n",
+    "remediation": "## Remediation\nHA cluster with 2 nodes must either have a disk-based SBD or a Qdevice.\n\n## References\n- section 2 in https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    if [[ $(crm_node -l | wc -l) != \"2\" ]]; then\n      exit 0\n    fi\n    sbdarray=$(grep -E '^SBD_DEVICE=' /etc/sysconfig/sbd  | grep -oP 'SBD_DEVICE=\\K[^.]+' | sed 's/\\\"//g')\n    IFS=';' sbdarray=( $sbdarray )\n    # convoluted, but normal count method does not work with jinja2\n    # issue https://github.com/ansible/ansible/issues/16968\n    temp_ar=(${!sbdarray[@]});  device_count=`expr ${temp_ar[-1]} + 1`\n    # If there is at least 1 device and there is an sbd device used by pacemaker\n    if [[ $device_count != \"0\" ]] && crm conf show | grep -q \"stonith:external/sbd\"; then\n      exit 0\n    fi\n    # If the qdevice is configured it\\'s also good\n    if corosync-quorumtool | tail -n1 | grep -i qdevice; then\n      exit 0\n    fi\n    exit 1\n  register: config_updated\n  check_mode: false\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "790926",
+    "name": "1.5.2",
+    "group": "Miscellaneous",
+    "provider": "aws",
+    "description": "The `hacluster` user password has been changed from the default value `linux`\n",
+    "remediation": "## Abstract\nThe password of the `hacluster` user should be changed after setting up the cluster\n\n## Remediation\n```sudo passwd hacluster```\n\n## References\n- section 9.1.2 https://documentation.suse.com/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # if hacluster passwd is linux, fail\n    salt=$(sudo getent shadow hacluster | cut -d$ -f3)\n    epassword=$(sudo getent shadow hacluster | cut -d: -f2)\n    match=$(python3 -c 'import crypt; print(crypt.crypt(\"linux\", \"$6$'${salt}'\"))')\n    [[ ${match} == ${epassword} ]] && exit 1\n    exit 0\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.rc != 0\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "generic"
+  },
+  {
+    "id": "CAEFF1",
+    "name": "2.2.1",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "Operative system vendor is supported\n",
+    "remediation": "## Abstract\nSAPHanaSR is only supported on SUSE Linux Enterprise Server for SAP Applications.\n\n## Remediation\nPlease use SUSE Linux Enterprise Server for SAP Applications.\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution is version(expected[name], '==') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "D028B9",
+    "name": "2.2.2",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "Operative system version is supported\n",
+    "remediation": "## Abstract\nYou need at least SUSE Linux Enterprise Server for SAP Applications 15 SP1 or newer\n\n## Remediation\nPlease install or upgrade to a supported OS version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ ansible_distribution_version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "9FEFB0",
+    "name": "2.2.3",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "Pacemaker version is supported\n",
+    "remediation": "## Abstract\nInstalled Pacemaker version must be equal or higher than 2.0.3\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'pacemaker' in ansible_facts.packages and ansible_facts.packages['pacemaker'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "9FAAD0",
+    "name": "2.2.3.exclude",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "Pacemaker version is not 2.0.3+20200511.2b248d828\n",
+    "remediation": "## Abstract\nInstalled Pacemaker version must not be equal than 2.0.3+20200511.2b248d828\n\n## Remediation\nInstall or upgrade to a supported Pacemaker version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the pacemaker version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" pacemaker || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "DC5429",
+    "name": "2.2.4",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "Corosync version is supported\n",
+    "remediation": "## Abstract\nInstalled Corosync version must be equal or higher than 2.4.5\n\n## Remediation\nInstall or upgrade to a supported Corosync version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'corosync' in ansible_facts.packages and ansible_facts.packages['corosync'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "222A57",
+    "name": "2.2.5",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "SBD version is supported\n",
+    "remediation": "## Abstract\nInstalled SBD version must be equal or higher than 1.4.0\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'sbd' in ansible_facts.packages and ansible_facts.packages['sbd'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "C3166E",
+    "name": "2.2.5.exclude",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "SBD version is not 1.4.0+20190326.c38c5e6\n",
+    "remediation": "## Abstract\nInstalled SBD version must not be equal than 1.4.0+20190326.c38c5e6\n\n## Remediation\nInstall or upgrade to a supported SBD version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- name: \"{{ name }}.check\"\n  shell: |\n    # Check the sbd version IS NOT\n    # If not installed, exit with error\n    rpm -q --qf \"%{VERSION}\\n\" sbd || exit 2\n  check_mode: false\n  register: config_updated\n  changed_when: config_updated.stdout is version(expected[name], '=')\n  failed_when: config_updated.rc > 1\n\n- block:\n    - name: Post results\n      import_role:\n        name: post-results\n  when:\n    - ansible_check_mode\n  vars:\n    status: \"{{ config_updated is not changed }}\"",
+    "labels": "hana"
+  },
+  {
+    "id": "F50AF5",
+    "name": "2.2.7",
+    "group": "OS and package versions",
+    "provider": "aws",
+    "description": "Python3 version is supported\n",
+    "remediation": "## Abstract\nInstalled Python3 version must be equal or higher than 3.6.5\n\n## Remediation\nInstall or upgrade to a supported Python3 version\n\n## Reference\n- https://documentation.suse.com/en-us/sbp/all/single-html/SLES4SAP-hana-sr-guide-PerfOpt-15/\n",
+    "implementation": "---\n\n- block:\n    - name: \"{{ name }} Post results\"\n      import_role:\n        name: post-results\n  vars:\n    status: \"{{ 'python3' in ansible_facts.packages and ansible_facts.packages['python3'][0].version is version(expected[name], '>=') }}\"",
+    "labels": "hana"
   }
 ]
