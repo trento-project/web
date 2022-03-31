@@ -47,7 +47,9 @@ defmodule Trento.Integration.Checks do
   def handle_callback(%{
         "event" => "execution_started",
         "execution_id" => execution_id,
-        "cluster_id" => cluster_id
+        "payload" => %{
+          "cluster_id" => cluster_id
+        }
       }) do
     case StartChecksExecution.new(%{cluster_id: cluster_id}) do
       {:ok, command} ->

@@ -47,40 +47,6 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
-  @spec store_checks_results(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def store_checks_results(
-        conn,
-        %{"cluster_id" => cluster_id, "hosts" => hosts, "checks" => checks}
-      ) do
-    [host_id] = Map.keys(hosts)
-
-    checks_results =
-      Enum.map(
-        checks,
-        fn {check_id, %{"hosts" => %{^host_id => %{"result" => result}}}} ->
-          %{
-            check_id: check_id,
-            result: String.to_atom(result)
-          }
-        end
-      )
-      |> Enum.reject(fn %{result: result} ->
-        result == :skipped
-      end)
-
-    case Clusters.store_checks_results(cluster_id, host_id, checks_results) do
-      :ok ->
-        conn
-        |> put_status(:accepted)
-        |> json(%{})
-
-      {:error, reason} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: reason})
-    end
-  end
-
   @spec request_checks_execution(Plug.Conn.t(), map) :: Plug.Conn.t()
   def request_checks_execution(conn, %{"cluster_id" => cluster_id}) do
     case Clusters.request_checks_execution(cluster_id) do

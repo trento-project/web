@@ -52,17 +52,13 @@ defmodule TrentoWeb.Router do
     delete "/sap_systems/:id/tags/:value", SapSystemController, :delete_tag
     get "/databases", SapSystemController, :list_databases
 
-    # TODO: this url is weird because the ansible callback expect so
-    # let's maybe change it in the future when we will change the agent as well
-    post "/checks/:cluster_id/results", ClusterController, :store_checks_results
     post "/clusters/:cluster_id/checks", ClusterController, :select_checks
-
-    post "/runner/callback", ClusterController, :runner_callback
 
     post "/clusters/:cluster_id/checks/request_execution",
          ClusterController,
          :request_checks_execution
 
+    post "/runner/callback", ClusterController, :runner_callback
     get "/checks/catalog", CatalogController, :checks_catalog
   end
 

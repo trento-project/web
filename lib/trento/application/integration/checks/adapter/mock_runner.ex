@@ -90,8 +90,10 @@ defmodule Trento.Integration.Checks.MockRunner do
       "http://localhost:4000/api/runner/callback",
       Jason.encode!(%{
         "event" => "execution_started",
-        "cluster_id" => cluster_id,
-        "execution_id" => execution_id
+        "execution_id" => execution_id,
+        "payload" => %{
+          "cluster_id" => cluster_id
+        }
       }),
       [{"Content-type", "application/json"}]
     )
