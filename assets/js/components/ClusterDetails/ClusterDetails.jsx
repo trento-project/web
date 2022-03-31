@@ -89,6 +89,10 @@ const ClusterDetails = () => {
               content: cluster.details && cluster.details.sr_health_state,
             },
             {
+              title: 'CIB last written',
+              content: cluster.cib_last_written || '-',
+            },
+            {
               title: 'HANA system replication mode',
               content:
                 cluster.details && cluster.details.system_replication_mode,

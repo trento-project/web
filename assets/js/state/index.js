@@ -86,6 +86,10 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'CLUSTER_HEALTH_CHANGED', payload })
   );
 
+  clustersChannel.on('cluster_cib_last_written_updated', (payload) =>
+    store.dispatch({ type: 'CLUSTER_CIB_LAST_WRITTEN_UPDATED', payload })
+  );
+
   sapSystemsChannel.on('sap_system_registered', (payload) =>
     store.dispatch({ type: 'SAP_SYSTEM_REGISTERED', payload })
   );

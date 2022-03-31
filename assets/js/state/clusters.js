@@ -58,6 +58,17 @@ export const clustersListSlice = createSlice({
     stopClustersLoading: (state) => {
       state.loading = false;
     },
+    updateCibLastWritten: (state, action) => {
+      const {
+        payload: { cluster_id, cib_last_written },
+      } = action;
+      state.clusters = state.clusters.map((cluster) => {
+        if (cluster.id === cluster_id) {
+          return { ...cluster, cib_last_written };
+        }
+        return cluster;
+      });
+    },
   },
 });
 
@@ -68,6 +79,7 @@ export const {
   updateSelectedChecks,
   updateChecksResults,
   updateClusterHealth,
+  updateCibLastWritten,
   startClustersLoading,
   stopClustersLoading,
 } = clustersListSlice.actions;
