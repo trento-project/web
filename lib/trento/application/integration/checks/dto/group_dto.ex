@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.Models.Group do
+defmodule Trento.Integration.Checks.GroupDto do
   @moduledoc """
   Catalog entry by group
   """
@@ -10,11 +10,11 @@ defmodule Trento.Integration.Checks.Models.Group do
 
   use Trento.Type
 
-  alias Trento.Integration.Checks.Models.Check
+  alias Trento.Integration.Checks.CheckDto
 
   deftype do
     field :group, :string
 
-    embeds_many :checks, Check
+    embeds_many :checks, CheckDto
   end
 end

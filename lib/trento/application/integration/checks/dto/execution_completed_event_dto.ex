@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.ExecutionCompletedEvent do
+defmodule Trento.Integration.Checks.ExecutionCompletedEventDto do
   @moduledoc """
   Schema of the checks execution completed integration event emitted by the runner.
   """

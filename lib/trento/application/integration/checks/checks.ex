@@ -3,16 +3,15 @@ defmodule Trento.Integration.Checks do
   Checks runner service integration
   """
 
-  alias Trento.Integration.Checks.ExecutionCompletedEvent
-
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
     StartChecksExecution
   }
 
-  alias Trento.Integration.Checks.Models.{
-    Catalog,
-    FlatCatalog
+  alias Trento.Integration.Checks.{
+    CatalogDto,
+    ExecutionCompletedEventDto,
+    FlatCatalogDto
   }
 
   @spec request_execution(String.t(), String.t(), [String.t()], [String.t()]) ::
@@ -21,7 +20,7 @@ defmodule Trento.Integration.Checks do
     do: adapter().request_execution(execution_id, cluster_id, hosts, selected_checks)
 
   @spec get_catalog ::
-          {:ok, FlatCatalog.t()} | {:error, any}
+          {:ok, FlatCatalogDto.t()} | {:error, any}
   def get_catalog do
     case adapter().get_catalog() do
       {:ok, catalog} ->
@@ -33,7 +32,7 @@ defmodule Trento.Integration.Checks do
   end
 
   @spec get_catalog_by_provider ::
-          {:ok, Catalog.t()} | {:error, any}
+          {:ok, CatalogDto.t()} | {:error, any}
   def get_catalog_by_provider do
     case get_catalog() do
       {:ok, content} ->
@@ -65,7 +64,7 @@ defmodule Trento.Integration.Checks do
         "execution_id" => execution_id,
         "payload" => payload
       }) do
-    with {:ok, execution_completed_event} <- ExecutionCompletedEvent.new(payload),
+    with {:ok, execution_completed_event} <- ExecutionCompletedEventDto.new(payload),
          {:ok, command} <-
            build_complete_checks_execution_command(execution_completed_event) do
       Trento.Commanded.dispatch(command, correlation_id: execution_id)
@@ -84,7 +83,7 @@ defmodule Trento.Integration.Checks do
       |> Enum.group_by(&Map.take(&1, [:provider]), &Map.drop(&1, [:provider]))
       |> Enum.map(fn {key, value} -> Map.put(key, :groups, group_by_group(value)) end)
 
-    Catalog.new(%{providers: normalized_catalog})
+    CatalogDto.new(%{providers: normalized_catalog})
   end
 
   defp group_by_group(groups) do
@@ -93,7 +92,7 @@ defmodule Trento.Integration.Checks do
     |> Enum.map(fn {key, value} -> Map.put(key, :checks, value) end)
   end
 
-  defp build_complete_checks_execution_command(%ExecutionCompletedEvent{
+  defp build_complete_checks_execution_command(%ExecutionCompletedEventDto{
          cluster_id: cluster_id,
          hosts: hosts
        }) do
