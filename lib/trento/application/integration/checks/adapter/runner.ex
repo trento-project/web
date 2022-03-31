@@ -23,13 +23,6 @@ defmodule Trento.Integration.Checks.Runner do
       {:ok, %HTTPoison.Response{status_code: 204}} ->
         {:error, :not_ready}
 
-      {:error, %HTTPoison.Error{reason: :econnrefused}} ->
-        {:error, "Connection to the runner component on #{runner_url} was refused."}
-
-      {:error, %HTTPoison.Error{reason: :nxdomain}} ->
-        {:error,
-         "Connection url to the runner component host on #{runner_url} could not be resolved."}
-
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
 

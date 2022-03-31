@@ -19,9 +19,6 @@ defmodule Trento.Integration.Checks do
       {:ok, catalog} ->
         {:ok, catalog}
 
-      {:error, :not_ready} ->
-        {:error, "The catalog is still being built. Try again in some moments"}
-
       {:error, reason} ->
         {:error, reason}
     end

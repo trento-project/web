@@ -37,8 +37,7 @@ defmodule Trento.Integration.ChecksTest do
       {:error, :not_ready}
     end)
 
-    assert {:error, "The catalog is still being built. Try again in some moments"} =
-             Checks.get_catalog()
+    assert {:error, :not_ready} = Checks.get_catalog()
   end
 
   test "should return a flat catalog" do
