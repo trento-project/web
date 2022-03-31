@@ -9,6 +9,7 @@ defmodule Trento.Domain.Events.HostRegistered do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}
+    field :ssh_address, :string
     field :agent_version, :string
     field :cpu_count, :integer
     field :total_memory_mb, :integer

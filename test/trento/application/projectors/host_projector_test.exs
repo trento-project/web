@@ -40,6 +40,7 @@ defmodule Trento.HostProjectorTest do
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
     assert event.ip_addresses == host_projection.ip_addresses
+    assert event.ssh_address == host_projection.ssh_address
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat
   end
@@ -87,6 +88,7 @@ defmodule Trento.HostProjectorTest do
       host_id: host_id,
       hostname: Faker.StarWars.character(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
+      ssh_address: Faker.Internet.ip_v4_address(),
       agent_version: Faker.StarWars.planet(),
       cpu_count: Enum.random(1..16),
       total_memory_mb: Enum.random(1..128),
@@ -100,6 +102,7 @@ defmodule Trento.HostProjectorTest do
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
     assert event.ip_addresses == host_projection.ip_addresses
+    assert event.ssh_address == host_projection.ssh_address
     assert event.agent_version == host_projection.agent_version
   end
 
