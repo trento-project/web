@@ -68,6 +68,24 @@ export const sapSystemsListSlice = createSlice({
         return maybeUpdateInstanceHealth(action.payload, instance);
       });
     },
+    addTagToSAPSystem: (state, action) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === action.payload.id) {
+          sapSystem.tags = [...sapSystem.tags, ...action.payload.tags];
+        }
+        return sapSystem;
+      });
+    },
+    removeTagFromSAPSystem: (state, action) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === action.payload.id) {
+          sapSystem.tags = sapSystem.tags.filter(
+            (tag) => tag.value !== action.payload.tags[0].value
+          );
+        }
+        return sapSystem;
+      });
+    },
   },
 });
 
@@ -81,6 +99,8 @@ export const {
   updateSapSystemHealth,
   updateApplicationInstanceHealth,
   updateSAPSystemDatabaseInstanceHealth,
+  addTagToSAPSystem,
+  removeTagFromSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;

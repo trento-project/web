@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Table from './Table';
 import Tags from './Tags';
+import { addTagToHost, removeTagFromHost } from '@state/hosts';
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
@@ -40,6 +41,7 @@ const removeTag = (tag, hostId) => {
 const HostsList = () => {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
+  const dispatch = useDispatch();
 
   const config = {
     columns: [
@@ -100,8 +102,16 @@ const HostsList = () => {
           <Tags
             tags={content}
             onChange={() => {}}
-            onAdd={(tag) => addTag(tag, item.id)}
-            onRemove={(tag) => removeTag(tag, item.id)}
+            onAdd={(tag) => {
+              addTag(tag, item.id);
+              dispatch(addTagToHost({ tags: [{ value: tag }], id: item.id }));
+            }}
+            onRemove={(tag) => {
+              removeTag(tag, item.id);
+              dispatch(
+                removeTagFromHost({ tags: [{ value: tag }], id: item.id })
+              );
+            }}
           />
         ),
       },

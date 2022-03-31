@@ -25,6 +25,24 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
+    addTagToHost: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.id) {
+          host.tags = [...host.tags, ...action.payload.tags];
+        }
+        return host;
+      });
+    },
+    removeTagFromHost: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.id) {
+          host.tags = host.tags.filter(
+            (tag) => tag.value !== action.payload.tags[0].value
+          );
+        }
+        return host;
+      });
+    },
     setHeartbeatPassing: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
@@ -54,6 +72,8 @@ export const {
   setHosts,
   appendHost,
   updateHost,
+  addTagToHost,
+  removeTagFromHost,
   startHostsLoading,
   stopHostsLoading,
   setHeartbeatPassing,

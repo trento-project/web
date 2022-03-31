@@ -1,11 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import DatabaseItemOverview from './DatabaseItemOverview';
 import Tags from '@components/Tags';
+import { addTagToDatabase, removeTagFromDatabase } from '@state/databases';
 
 import { logError } from '@lib/log';
 
@@ -31,6 +32,7 @@ const DatabasesOverview = () => {
   const { databases, databaseInstances, loading } = useSelector(
     (state) => state.databasesList
   );
+  const dispatch = useDispatch();
   const config = {
     columns: [
       {
@@ -101,8 +103,14 @@ const DatabasesOverview = () => {
           <Tags
             tags={content}
             onChange={() => {}}
-            onAdd={(tag) => addTag(tag, item.id)}
-            onRemove={(tag) => removeTag(tag, item.id)}
+            onAdd={(tag) => {
+              addTag(tag, item.id);
+              dispatch(addTagToDatabase(tag, item.id));
+            }}
+            onRemove={(tag) => {
+              removeTag(tag, item.id);
+              dispatch(removeTagFromDatabase(tag, item.id));
+            }}
           />
         ),
       },
