@@ -14,12 +14,11 @@ defmodule TrentoWeb.PrometheusControllerTest do
     assert Enum.all?(hosts, fn host ->
              %{
                "targets" => ["#{host.ssh_address}:9100"],
-               "labels" =>
-                 %{
-                   "host_id" => "#{host.id}",
-                   "hostname" => "#{host.hostname}",
-                   "exporter_name" => "Node Exporter"
-                 }
+               "labels" => %{
+                 "host_id" => "#{host.id}",
+                 "hostname" => "#{host.hostname}",
+                 "exporter_name" => "Node Exporter"
+               }
              } in response
            end)
   end

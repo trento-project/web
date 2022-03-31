@@ -10,6 +10,7 @@ defmodule Trento.Integration.Prometheus do
   @node_exporter_port 9100
   @node_exporter_name "Node Exporter"
 
+  @spec get_targets :: [map]
   def get_targets do
     HostReadModel
     |> Repo.all()
