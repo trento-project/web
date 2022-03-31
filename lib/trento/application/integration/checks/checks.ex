@@ -1,12 +1,20 @@
 defmodule Trento.Integration.Checks do
+  @moduledoc """
+  Checks runner service integration
+  """
+
+  alias Trento.Integration.Checks.ExecutionCompletedEvent
+
+  alias Trento.Domain.Commands.{
+    CompleteChecksExecution,
+    StartChecksExecution
+  }
+
   alias Trento.Integration.Checks.Models.{
     Catalog,
     FlatCatalog
   }
 
-  @moduledoc """
-  Checks runner service integration
-  """
   @spec request_execution(String.t(), String.t(), [String.t()], [String.t()]) ::
           :ok | {:error, any}
   def request_execution(execution_id, cluster_id, hosts, selected_checks),
@@ -36,6 +44,39 @@ defmodule Trento.Integration.Checks do
     end
   end
 
+  def handle_callback(%{
+        "event" => "execution_started",
+        "execution_id" => execution_id,
+        "payload" => %{
+          "cluster_id" => cluster_id
+        }
+      }) do
+    case StartChecksExecution.new(%{cluster_id: cluster_id}) do
+      {:ok, command} ->
+        Trento.Commanded.dispatch(command, correlation_id: execution_id)
+
+      error ->
+        error
+    end
+  end
+
+  def handle_callback(%{
+        "event" => "execution_completed",
+        "execution_id" => execution_id,
+        "payload" => payload
+      }) do
+    with {:ok, execution_completed_event} <- ExecutionCompletedEvent.new(payload),
+         {:ok, command} <-
+           build_complete_checks_execution_command(execution_completed_event) do
+      Trento.Commanded.dispatch(command, correlation_id: execution_id)
+    end
+  end
+
+  def handle_callback(_), do: {:error, :invalid_payload}
+
+  defp adapter,
+    do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
+
   defp group_by_provider_by_group(flat_catalog) do
     normalized_catalog =
       flat_catalog
@@ -52,6 +93,19 @@ defmodule Trento.Integration.Checks do
     |> Enum.map(fn {key, value} -> Map.put(key, :checks, value) end)
   end
 
-  defp adapter,
-    do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
+  defp build_complete_checks_execution_command(%ExecutionCompletedEvent{
+         cluster_id: cluster_id,
+         hosts: hosts
+       }) do
+    CompleteChecksExecution.new(%{
+      cluster_id: cluster_id,
+      hosts_executions:
+        Enum.map(hosts, fn %{host_id: host_id, results: results} ->
+          %{
+            host_id: host_id,
+            checks_results: Enum.map(results, &Map.from_struct/1)
+          }
+        end)
+    })
+  end
 end

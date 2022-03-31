@@ -10,9 +10,9 @@ defmodule Trento.Clusters do
   alias Trento.Domain.CheckResult
 
   alias Trento.Domain.Commands.{
+    CompleteChecksExecution,
     RequestChecksExecution,
-    SelectChecks,
-    StoreChecksResults
+    SelectChecks
   }
 
   alias Trento.Repo
@@ -20,7 +20,7 @@ defmodule Trento.Clusters do
   def store_checks_results(cluster_id, host_id, checks_results) do
     with {:ok, checks_results} <- build_check_results(checks_results),
          {:ok, command} <-
-           StoreChecksResults.new(%{
+           CompleteChecksExecution.new(%{
              cluster_id: cluster_id,
              host_id: host_id,
              checks_results: build_check_results(checks_results)
@@ -48,7 +48,7 @@ defmodule Trento.Clusters do
     ClusterReadModel
     |> order_by(asc: :name)
     |> Repo.all()
-    |> Repo.preload([:tags, checks_results: :host])
+    |> Repo.preload([:tags, :checks_results])
   end
 
   @spec build_check_results([String.t()]) :: {:ok, [CheckResult.t()]} | {:error, any}

@@ -9,7 +9,7 @@ defmodule Trento.Integration.Checks.Gen do
               execution_id :: String.t(),
               cluster_id :: [String.t()],
               hosts :: String.t(),
-              selected_checks :: [String.t()]
+              checks :: [String.t()]
             ) ::
               :ok | {:error, any}
 

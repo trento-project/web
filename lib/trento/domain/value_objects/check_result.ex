@@ -9,6 +9,6 @@ defmodule Trento.Domain.CheckResult do
 
   deftype do
     field :check_id, :string
-    field :result, Ecto.Enum, values: [:passing, :warning, :critical, :running]
+    field :result, Ecto.Enum, values: [:passing, :warning, :critical]
   end
 end

@@ -5,9 +5,9 @@ defmodule Trento.TypeTest do
     assert {:error, %{embedded: %{id: ["is invalid"]}}} =
              TestData.new(%{
                id: Faker.UUID.v4(),
-               name: Faker.StarWars.character(),
+               name: "a",
                embedded: %{
-                 id: Faker.StarWars.character(),
+                 id: 1,
                  name: Faker.StarWars.planet()
                }
              })
@@ -17,9 +17,9 @@ defmodule Trento.TypeTest do
     assert_raise RuntimeError, "%{embedded: %{id: [\"is invalid\"]}}", fn ->
       TestData.new!(%{
         id: Faker.UUID.v4(),
-        name: Faker.StarWars.character(),
+        name: "a",
         embedded: %{
-          id: Faker.StarWars.character(),
+          id: 2,
           name: Faker.StarWars.planet()
         }
       })

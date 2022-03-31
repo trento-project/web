@@ -18,8 +18,9 @@ defmodule Trento.ClusterReadModel do
     field :sid, :string
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_down, :unknown]
     field :selected_checks, {:array, :string}, default: []
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :pending, :unknown]
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
     field :details, :map
+    field :checks_execution, Ecto.Enum, values: [:not_running, :requested, :running]
 
     has_many :checks_results, CheckResultReadModel, foreign_key: :cluster_id
     has_many :tags, Trento.Tag, foreign_key: :resource_id

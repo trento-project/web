@@ -6,24 +6,28 @@ defmodule Trento.Domain.Cluster do
   alias Trento.Domain.{
     CheckResult,
     Cluster,
-    HanaClusterDetails
+    HanaClusterDetails,
+    HealthService
   }
 
   alias Trento.Domain.Commands.{
+    CompleteChecksExecution,
     RegisterClusterHost,
     RequestChecksExecution,
     SelectChecks,
-    StoreChecksResults
+    StartChecksExecution
   }
 
   alias Trento.Domain.Events.{
+    ChecksExecutionCompleted,
     ChecksExecutionRequested,
-    ChecksResultsStored,
+    ChecksExecutionStarted,
     ChecksSelected,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
     ClusterRegistered,
-    HostAddedToCluster
+    HostAddedToCluster,
+    HostChecksExecutionCompleted
   }
 
   defstruct [
@@ -35,19 +39,21 @@ defmodule Trento.Domain.Cluster do
     health: :unknown,
     hosts: [],
     selected_checks: [],
-    hosts_checks_results: %{}
+    hosts_checks_results: %{},
+    checks_execution: :not_running
   ]
 
   @type t :: %__MODULE__{
           cluster_id: String.t(),
           name: [String.t()],
           type: :hana_scale_up | :hana_scale_out | :unknown,
-          health: :passing | :warning | :critical | :pending | :unknown,
+          health: :passing | :warning | :critical | :unknown,
           sid: String.t(),
           details: HanaClusterDetails.t() | nil,
           hosts: [String.t()],
           selected_checks: [String.t()],
-          hosts_checks_results: %{String.t() => [CheckResult.t()]}
+          hosts_checks_results: %{String.t() => [CheckResult.t()]},
+          checks_execution: :not_running | :requested | :running
         }
 
   # When a DC cluster node is registered for the first time, a cluster is registered
@@ -155,7 +161,7 @@ defmodule Trento.Domain.Cluster do
         hosts: hosts,
         checks: selected_checks
       },
-      %ClusterHealthChanged{cluster_id: cluster_id, health: :pending}
+      %ClusterHealthChanged{cluster_id: cluster_id, health: :unknown}
     ]
   end
 
@@ -174,8 +180,20 @@ defmodule Trento.Domain.Cluster do
         hosts: hosts,
         checks: selected_checks
       },
-      %ClusterHealthChanged{cluster_id: cluster_id, health: :pending}
+      %ClusterHealthChanged{cluster_id: cluster_id, health: :unknown}
     ]
+  end
+
+  # Start the checks execution
+  def execute(
+        %Cluster{
+          cluster_id: cluster_id
+        },
+        %StartChecksExecution{cluster_id: cluster_id}
+      ) do
+    %ChecksExecutionStarted{
+      cluster_id: cluster_id
+    }
   end
 
   # Store checks results
@@ -183,20 +201,24 @@ defmodule Trento.Domain.Cluster do
         %Cluster{
           cluster_id: cluster_id
         } = cluster,
-        %StoreChecksResults{
-          host_id: host_id,
-          checks_results: checks_results
+        %CompleteChecksExecution{
+          hosts_executions: hosts_executions
         }
       ) do
-    cluster
-    |> Multi.new()
-    |> Multi.execute(fn _ ->
-      %ChecksResultsStored{
-        cluster_id: cluster_id,
-        host_id: host_id,
-        checks_results: checks_results
-      }
-    end)
+    hosts_executions
+    |> Enum.reduce(
+      Multi.new(cluster),
+      fn %{host_id: host_id, checks_results: results}, multi ->
+        Multi.execute(multi, fn _ ->
+          %HostChecksExecutionCompleted{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            checks_results: results
+          }
+        end)
+      end
+    )
+    |> Multi.execute(fn _ -> %ChecksExecutionCompleted{cluster_id: cluster_id} end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
 
@@ -270,20 +292,41 @@ defmodule Trento.Domain.Cluster do
           acc,
           host,
           Enum.map(selected_checks, fn check_id ->
-            %CheckResult{check_id: check_id, result: :running}
+            %CheckResult{check_id: check_id, result: :unknown}
           end)
         )
       end)
 
     %Cluster{
       cluster
-      | hosts_checks_results: hosts_checks_results
+      | hosts_checks_results: hosts_checks_results,
+        checks_execution: :requested
+    }
+  end
+
+  def apply(
+        %Cluster{} = cluster,
+        %ChecksExecutionStarted{}
+      ) do
+    %Cluster{
+      cluster
+      | checks_execution: :running
+    }
+  end
+
+  def apply(
+        %Cluster{} = cluster,
+        %ChecksExecutionCompleted{}
+      ) do
+    %Cluster{
+      cluster
+      | checks_execution: :not_running
     }
   end
 
   def apply(
         %Cluster{hosts_checks_results: hosts_checks_results} = cluster,
-        %ChecksResultsStored{host_id: host_id, checks_results: checks_results}
+        %HostChecksExecutionCompleted{host_id: host_id, checks_results: checks_results}
       ) do
     %Cluster{
       cluster
@@ -316,32 +359,14 @@ defmodule Trento.Domain.Cluster do
          hosts_checks_results: hosts_checks_results,
          health: health
        }) do
-    checks_results_list =
-      hosts_checks_results
-      |> Enum.flat_map(fn {_, checks_results} -> checks_results end)
-
     new_health =
-      cond do
-        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :critical end) ->
-          :critical
-
-        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :warning end) ->
-          :warning
-
-        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :passing end) ->
-          :passing
-
-        Enum.any?(checks_results_list, fn %CheckResult{result: result} -> result == :running end) ->
-          :pending
-
-        true ->
-          :unknown
-      end
+      hosts_checks_results
+      |> Enum.flat_map(fn {_, results} -> results end)
+      |> Enum.map(fn %{result: result} -> result end)
+      |> HealthService.compute_aggregated_health()
 
     if new_health != health do
       %ClusterHealthChanged{cluster_id: cluster_id, health: new_health}
-    else
-      []
     end
   end
 end

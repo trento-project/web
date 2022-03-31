@@ -10,7 +10,8 @@ import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_MORE_HORIZ } from 'eos-icons-react';
 
 import { logError } from '@lib/log';
 
-import HealthIcon from './Health';
+import HealthIcon from '@components/Health';
+import Spinner from '@components/Spinner';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -65,11 +66,21 @@ const ClustersList = () => {
         title: 'Health',
         key: 'health',
         filter: true,
-        render: (content) => (
-          <div className="ml-4">
-            <HealthIcon health={content} />
-          </div>
-        ),
+        render: (content, { checks_execution }) => {
+          if (checks_execution === 'not_running') {
+            return (
+              <div className="ml-4">
+                <HealthIcon health={content} />
+              </div>
+            );
+          } else {
+            return (
+              <div className="ml-4">
+                <Spinner></Spinner>
+              </div>
+            );
+          }
+        },
       },
       {
         title: 'Name',
@@ -206,6 +217,8 @@ const ClustersList = () => {
       sid: cluster.sid,
       type: cluster.type,
       hasDetails: cluster.details != null,
+      checks_execution: cluster.checks_execution,
+      selected_checks: cluster.selected_checks,
       tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
     };
   });

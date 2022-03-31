@@ -12,7 +12,7 @@ defmodule Trento.CheckResultProjector do
 
   alias Trento.Domain.Events.{
     ChecksExecutionRequested,
-    ChecksResultsStored
+    HostChecksExecutionCompleted
   }
 
   alias Trento.CheckResultReadModel
@@ -41,7 +41,7 @@ defmodule Trento.CheckResultProjector do
               check_id: check_id,
               cluster_id: cluster_id,
               host_id: host_id,
-              result: :running
+              result: :unknown
             }
           )
         end)
@@ -55,7 +55,7 @@ defmodule Trento.CheckResultProjector do
   )
 
   project(
-    %ChecksResultsStored{
+    %HostChecksExecutionCompleted{
       cluster_id: cluster_id,
       host_id: host_id,
       checks_results: checks_results
@@ -97,7 +97,7 @@ defmodule Trento.CheckResultProjector do
         host_id: host_id,
         checks_results:
           Enum.map(checks, fn check_id ->
-            %{host_id: host_id, check_id: check_id, result: :running}
+            %{host_id: host_id, check_id: check_id, result: :unknown}
           end)
       })
     end)
@@ -105,7 +105,7 @@ defmodule Trento.CheckResultProjector do
 
   @impl true
   def after_update(
-        %ChecksResultsStored{
+        %HostChecksExecutionCompleted{
           cluster_id: cluster_id,
           host_id: host_id,
           checks_results: checks_results

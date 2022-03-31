@@ -7,8 +7,6 @@ defmodule Trento.CheckResultReadModel do
 
   import Ecto.Changeset
 
-  alias Trento.HostReadModel
-
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -17,9 +15,8 @@ defmodule Trento.CheckResultReadModel do
     field :cluster_id, Ecto.UUID, primary_key: true
     field :host_id, Ecto.UUID, primary_key: true
     field :check_id, :string, primary_key: true
-    field :result, Ecto.Enum, values: [:passing, :warning, :critical, :running]
+    field :result, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
 
-    has_one :host, HostReadModel, references: :host_id, foreign_key: :id
     timestamps()
   end
 

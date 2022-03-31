@@ -7,6 +7,6 @@ defmodule Trento.Domain.Events.ClusterHealthChanged do
 
   defevent do
     field :cluster_id, :string
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :pending]
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
 end

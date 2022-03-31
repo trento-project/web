@@ -10,13 +10,14 @@ defmodule Trento.Router do
   }
 
   alias Trento.Domain.Commands.{
+    CompleteChecksExecution,
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
     RegisterHost,
     RequestChecksExecution,
     SelectChecks,
-    StoreChecksResults,
+    StartChecksExecution,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -29,8 +30,14 @@ defmodule Trento.Router do
 
   identify Cluster, by: :cluster_id
 
-  dispatch [RegisterClusterHost, RequestChecksExecution, SelectChecks, StoreChecksResults],
-    to: Cluster
+  dispatch [
+             RegisterClusterHost,
+             SelectChecks,
+             RequestChecksExecution,
+             StartChecksExecution,
+             CompleteChecksExecution
+           ],
+           to: Cluster
 
   identify SapSystem, by: :sap_system_id
 

@@ -11,6 +11,9 @@ defmodule Trento.ClusterProjector do
   import Trento.Support.StructHelper
 
   alias Trento.Domain.Events.{
+    ChecksExecutionCompleted,
+    ChecksExecutionRequested,
+    ChecksExecutionStarted,
     ChecksSelected,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
@@ -38,10 +41,56 @@ defmodule Trento.ClusterProjector do
           sid: sid,
           type: type,
           details: details,
-          health: :unknown
+          health: :unknown,
+          checks_execution: :not_running
         })
 
       Ecto.Multi.insert(multi, :cluster, changeset)
+    end
+  )
+
+  project(
+    %ChecksExecutionRequested{
+      cluster_id: id
+    },
+    fn multi ->
+      changeset =
+        %ClusterReadModel{id: id}
+        |> ClusterReadModel.changeset(%{
+          checks_execution: :requested
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
+
+  project(
+    %ChecksExecutionStarted{
+      cluster_id: id
+    },
+    fn multi ->
+      changeset =
+        %ClusterReadModel{id: id}
+        |> ClusterReadModel.changeset(%{
+          checks_execution: :running
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
+
+  project(
+    %ChecksExecutionCompleted{
+      cluster_id: id
+    },
+    fn multi ->
+      changeset =
+        %ClusterReadModel{id: id}
+        |> ClusterReadModel.changeset(%{
+          checks_execution: :not_running
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
     end
   )
 
@@ -104,15 +153,24 @@ defmodule Trento.ClusterProjector do
     )
   end
 
+  # TODO: broadcast a more specific event
   def after_update(
-        %ClusterDetailsUpdated{},
+        %event{},
         _,
-        %{cluster: cluster}
-      ) do
+        %{cluster: %{id: id, checks_execution: checks_execution}}
+      )
+      when event in [
+             ChecksExecutionRequested,
+             ChecksExecutionStarted,
+             ChecksExecutionCompleted
+           ] do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
       "cluster_details_updated",
-      to_map(cluster)
+      %{
+        id: id,
+        checks_execution: checks_execution
+      }
     )
   end
 
