@@ -60,6 +60,8 @@ defmodule TrentoWeb.Router do
 
     post "/runner/callback", ClusterController, :runner_callback
     get "/checks/catalog", CatalogController, :checks_catalog
+
+    get "/prometheus/targets", PrometheusController, :targets
   end
 
   # Other scopes may use custom stacks.
