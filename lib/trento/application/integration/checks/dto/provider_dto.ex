@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.Models.Provider do
+defmodule Trento.Integration.Checks.ProviderDto do
   @moduledoc """
   Catalog entry by provider
   """
@@ -10,11 +10,11 @@ defmodule Trento.Integration.Checks.Models.Provider do
 
   use Trento.Type
 
-  alias Trento.Integration.Checks.Models.Group
+  alias Trento.Integration.Checks.GroupDto
 
   deftype do
     field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :dev, :unknown]
 
-    embeds_many :groups, Group
+    embeds_many :groups, GroupDto
   end
 end

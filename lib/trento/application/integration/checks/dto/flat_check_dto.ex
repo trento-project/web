@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.Models.FlatCheck do
+defmodule Trento.Integration.Checks.FlatCheckDto do
   @moduledoc """
   Flat catalog check
   """

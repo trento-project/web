@@ -6,13 +6,13 @@ defmodule Trento.Integration.ChecksTest do
 
   alias Trento.Integration.Checks
 
-  alias Trento.Integration.Checks.Models.{
-    Catalog,
-    Check,
-    FlatCatalog,
-    FlatCheck,
-    Group,
-    Provider
+  alias Trento.Integration.Checks.{
+    CatalogDto,
+    CheckDto,
+    FlatCatalogDto,
+    FlatCheckDto,
+    GroupDto,
+    ProviderDto
   }
 
   @runner_fixtures_path File.cwd!() <> "/test/fixtures/runner"
@@ -44,11 +44,11 @@ defmodule Trento.Integration.ChecksTest do
     raw_catalog = load_runner_fixture("catalog")
 
     Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalog.new(%{checks: raw_catalog}) end)
+    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
 
-    flat_catalog = %FlatCatalog{
+    flat_catalog = %FlatCatalogDto{
       checks: [
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 1",
           group: "Group 1",
           id: "1",
@@ -58,7 +58,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :azure,
           remediation: "remediation 1"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 2",
           group: "Group 1",
           id: "2",
@@ -68,7 +68,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :azure,
           remediation: "remediation 2"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 3",
           group: "Group 2",
           id: "3",
@@ -78,7 +78,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :azure,
           remediation: "remediation 3"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 4",
           group: "Group 2",
           id: "4",
@@ -88,7 +88,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :azure,
           remediation: "remediation 4"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 5",
           group: "Group 3",
           id: "5",
@@ -98,7 +98,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :azure,
           remediation: "remediation 5"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 1",
           group: "Group 1",
           id: "1",
@@ -108,7 +108,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :aws,
           remediation: "remediation 1"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 2",
           group: "Group 1",
           id: "2",
@@ -118,7 +118,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :aws,
           remediation: "remediation 2"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 3",
           group: "Group 2",
           id: "3",
@@ -128,7 +128,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :aws,
           remediation: "remediation 3"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 4",
           group: "Group 2",
           id: "4",
@@ -138,7 +138,7 @@ defmodule Trento.Integration.ChecksTest do
           provider: :aws,
           remediation: "remediation 4"
         },
-        %FlatCheck{
+        %FlatCheckDto{
           description: "description 5",
           group: "Group 3",
           id: "5",
@@ -158,15 +158,15 @@ defmodule Trento.Integration.ChecksTest do
     raw_catalog = load_runner_fixture("catalog")
 
     Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalog.new(%{checks: raw_catalog}) end)
+    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
 
-    catalog_by_provider = %Catalog{
+    catalog_by_provider = %CatalogDto{
       providers: [
-        %Provider{
+        %ProviderDto{
           groups: [
-            %Group{
+            %GroupDto{
               checks: [
-                %Check{
+                %CheckDto{
                   description: "description 1",
                   id: "1",
                   implementation: "implementation 1",
@@ -174,7 +174,7 @@ defmodule Trento.Integration.ChecksTest do
                   name: "test 1",
                   remediation: "remediation 1"
                 },
-                %Check{
+                %CheckDto{
                   description: "description 2",
                   id: "2",
                   implementation: "implementation 2",
@@ -185,9 +185,9 @@ defmodule Trento.Integration.ChecksTest do
               ],
               group: "Group 1"
             },
-            %Group{
+            %GroupDto{
               checks: [
-                %Check{
+                %CheckDto{
                   description: "description 3",
                   id: "3",
                   implementation: "implementation 3",
@@ -195,7 +195,7 @@ defmodule Trento.Integration.ChecksTest do
                   name: "test 3",
                   remediation: "remediation 3"
                 },
-                %Check{
+                %CheckDto{
                   description: "description 4",
                   id: "4",
                   implementation: "implementation 4",
@@ -206,9 +206,9 @@ defmodule Trento.Integration.ChecksTest do
               ],
               group: "Group 2"
             },
-            %Group{
+            %GroupDto{
               checks: [
-                %Check{
+                %CheckDto{
                   description: "description 5",
                   id: "5",
                   implementation: "implementation 5",
@@ -222,11 +222,11 @@ defmodule Trento.Integration.ChecksTest do
           ],
           provider: :aws
         },
-        %Provider{
+        %ProviderDto{
           groups: [
-            %Group{
+            %GroupDto{
               checks: [
-                %Check{
+                %CheckDto{
                   description: "description 1",
                   id: "1",
                   implementation: "implementation 1",
@@ -234,7 +234,7 @@ defmodule Trento.Integration.ChecksTest do
                   name: "test 1",
                   remediation: "remediation 1"
                 },
-                %Check{
+                %CheckDto{
                   description: "description 2",
                   id: "2",
                   implementation: "implementation 2",
@@ -245,9 +245,9 @@ defmodule Trento.Integration.ChecksTest do
               ],
               group: "Group 1"
             },
-            %Group{
+            %GroupDto{
               checks: [
-                %Check{
+                %CheckDto{
                   description: "description 3",
                   id: "3",
                   implementation: "implementation 3",
@@ -255,7 +255,7 @@ defmodule Trento.Integration.ChecksTest do
                   name: "test 3",
                   remediation: "remediation 3"
                 },
-                %Check{
+                %CheckDto{
                   description: "description 4",
                   id: "4",
                   implementation: "implementation 4",
@@ -266,9 +266,9 @@ defmodule Trento.Integration.ChecksTest do
               ],
               group: "Group 2"
             },
-            %Group{
+            %GroupDto{
               checks: [
-                %Check{
+                %CheckDto{
                   description: "description 5",
                   id: "5",
                   implementation: "implementation 5",
