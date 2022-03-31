@@ -3,6 +3,8 @@ defmodule TrentoWeb.CatalogControllerTest do
 
   import Mox
 
+  alias Trento.Integration.Checks.Models.FlatCatalog
+
   @runner_fixtures_path File.cwd!() <> "/test/fixtures/runner"
 
   def load_runner_fixture(name) do
@@ -16,7 +18,7 @@ defmodule TrentoWeb.CatalogControllerTest do
     raw_catalog = load_runner_fixture("catalog")
 
     Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> {:ok, raw_catalog} end)
+    |> expect(:get_catalog, fn -> FlatCatalog.new(%{checks: raw_catalog}) end)
 
     conn = get(conn, Routes.catalog_path(conn, :checks_catalog))
 
@@ -150,7 +152,7 @@ defmodule TrentoWeb.CatalogControllerTest do
     raw_catalog = load_runner_fixture("catalog")
 
     Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> {:ok, raw_catalog} end)
+    |> expect(:get_catalog, fn -> FlatCatalog.new(%{checks: raw_catalog}) end)
 
     conn =
       get(conn, Routes.catalog_path(conn, :checks_catalog), %{

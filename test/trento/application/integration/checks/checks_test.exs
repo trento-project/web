@@ -45,7 +45,7 @@ defmodule Trento.Integration.ChecksTest do
     raw_catalog = load_runner_fixture("catalog")
 
     Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> {:ok, raw_catalog} end)
+    |> expect(:get_catalog, fn -> FlatCatalog.new(%{checks: raw_catalog}) end)
 
     flat_catalog = %FlatCatalog{
       checks: [
@@ -159,7 +159,7 @@ defmodule Trento.Integration.ChecksTest do
     raw_catalog = load_runner_fixture("catalog")
 
     Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> {:ok, raw_catalog} end)
+    |> expect(:get_catalog, fn -> FlatCatalog.new(%{checks: raw_catalog}) end)
 
     catalog_by_provider = %Catalog{
       providers: [

@@ -17,16 +17,13 @@ defmodule Trento.Integration.Checks do
   def get_catalog do
     case adapter().get_catalog() do
       {:ok, catalog} ->
-        FlatCatalog.new(%{checks: catalog})
+        {:ok, catalog}
 
       {:error, :not_ready} ->
         {:error, "The catalog is still being built. Try again in some moments"}
 
       {:error, reason} ->
         {:error, reason}
-
-      _ ->
-        {:error, :unexpected_responses}
     end
   end
 

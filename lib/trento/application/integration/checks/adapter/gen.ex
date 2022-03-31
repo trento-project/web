@@ -3,6 +3,8 @@ defmodule Trento.Integration.Checks.Gen do
   Behaviour of a runner adapter.
   """
 
+  alias Trento.Integration.Checks.Models.FlatCatalog
+
   @callback request_execution(
               execution_id :: String.t(),
               cluster_id :: [String.t()],
@@ -12,5 +14,5 @@ defmodule Trento.Integration.Checks.Gen do
               :ok | {:error, any}
 
   @callback get_catalog() ::
-              {:ok, any} | {:error, any}
+              {:ok, FlatCatalog.t()} | {:error, any}
 end

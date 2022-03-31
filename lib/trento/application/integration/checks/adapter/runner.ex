@@ -5,6 +5,8 @@ defmodule Trento.Integration.Checks.Runner do
 
   @behaviour Trento.Integration.Checks.Gen
 
+  alias Trento.Integration.Checks.Models.FlatCatalog
+
   @impl true
   def request_execution(_execution_id, _cluster_id, _hosts, _selected_checks) do
     :ok
@@ -16,7 +18,7 @@ defmodule Trento.Integration.Checks.Runner do
 
     case HTTPoison.get("#{runner_url}/api/catalog") do
       {:ok, %HTTPoison.Response{status_code: 200, body: catalog}} ->
-        Jason.decode(catalog)
+        FlatCatalog.new(%{checks: Jason.decode(catalog)})
 
       {:ok, %HTTPoison.Response{status_code: 204}} ->
         {:error, :not_ready}

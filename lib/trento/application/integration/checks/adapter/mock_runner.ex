@@ -9,6 +9,8 @@ defmodule Trento.Integration.Checks.MockRunner do
 
   require Logger
 
+  alias Trento.Integration.Checks.Models.FlatCatalog
+
   @json_path Path.join(File.cwd!(), "priv/data/catalog.json")
   @catalog @json_path |> File.read!() |> Jason.decode!()
   @external_resource @json_path
@@ -66,7 +68,7 @@ defmodule Trento.Integration.Checks.MockRunner do
 
   @impl true
   def get_catalog do
-    {:ok, @catalog}
+    FlatCatalog.new(%{checks: @catalog})
   end
 
   @doc """
