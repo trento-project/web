@@ -79,6 +79,7 @@ export const {
   updateSelectedChecks,
   updateChecksResults,
   updateClusterHealth,
+  updateCibLastWritten,
   startClustersLoading,
   stopClustersLoading,
 } = clustersListSlice.actions;
