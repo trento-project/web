@@ -17,8 +17,11 @@ defmodule Trento.Integration.Checks.Runner do
     runner_url = runner_url()
 
     case HTTPoison.get("#{runner_url}/api/catalog") do
-      {:ok, %HTTPoison.Response{status_code: 200, body: catalog}} ->
-        FlatCatalog.new(%{checks: Jason.decode(catalog)})
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        case Jason.decode(body) do
+          {:ok, catalog_json} -> FlatCatalog.new(%{checks: catalog_json})
+          {:error, reason} -> {:error, reason}
+        end
 
       {:ok, %HTTPoison.Response{status_code: 204}} ->
         {:error, :not_ready}
