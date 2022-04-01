@@ -4,6 +4,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { Switch } from '@headlessui/react';
 
+import NotificationBox from './NotificationBox';
+import LoadingBox from './LoadingBox';
+
+import { EOS_ERROR } from 'eos-icons-react';
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -21,6 +26,7 @@ const ChecksSelection = () => {
   const catalog = useSelector((state) => state.catalog);
   const catalogData = catalog.data;
   const catalogError = catalog.error;
+  const loading = catalog.loading;
 
   const clusters = useSelector((state) => state.clustersList.clusters);
   const cluster = clusters.find((cluster) => cluster.id === clusterID);
@@ -32,6 +38,12 @@ const ChecksSelection = () => {
   const isSelected = (check_id) =>
     selectedChecks ? selectedChecks.includes(check_id) : false;
 
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });
+  }
+
   useEffect(() => {
     if (cluster) {
       setSelectedChecks(cluster.selected_checks ? cluster.selected_checks : []);
@@ -39,10 +51,23 @@ const ChecksSelection = () => {
   }, [cluster]);
 
   useEffect(() => {
-    dispatch({
-      type: 'UPDATE_CATALOG',
-    });
+    dispatchUpdateCatalog();
   }, [dispatch]);
+
+  if (loading) {
+    return <LoadingBox text="Loading checks catalog..." />;
+  }
+
+  if (catalogError) {
+    return (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={catalogError}
+        buttonText="Try again"
+        buttonOnClick={dispatchUpdateCatalog}
+      />
+    );
+  }
 
   return (
     <div>

@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch  } from 'react-redux';
 
-import { EOS_LENS_FILLED } from 'eos-icons-react';
+import { EOS_LENS_FILLED, EOS_ERROR } from 'eos-icons-react';
 import Spinner from './Spinner';
+
+import NotificationBox from './NotificationBox';
+import LoadingBox from './LoadingBox';
 
 const getChecksResults = (cluster) => {
   if (cluster) {
@@ -69,6 +72,13 @@ const ChecksResults = () => {
   const catalog = useSelector((state) => state.catalog);
   const catalogData = catalog.data;
   const catalogError = catalog.error;
+  const loading = catalog.loading;
+
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });
+  }
 
   const checksResults = getChecksResults(cluster);
 
@@ -78,10 +88,23 @@ const ChecksResults = () => {
   const catalogByProvider = getCatalogByProvider(catalogData, 'azure');
 
   useEffect(() => {
-    dispatch({
-      type: 'UPDATE_CATALOG',
-    });
+    dispatchUpdateCatalog();
   }, [dispatch]);
+
+  if (loading) {
+    return <LoadingBox text="Loading checks catalog..." />;
+  }
+
+  if (catalogError) {
+    return (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={catalogError}
+        buttonText="Try again"
+        buttonOnClick={dispatchUpdateCatalog}
+      />
+    );
+  }
 
   const description = (checkId) => {
     return catalogByProvider?.groups
