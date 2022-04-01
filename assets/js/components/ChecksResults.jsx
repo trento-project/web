@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch  } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 import Spinner from './Spinner';
@@ -31,8 +31,8 @@ const getHostname =
     }, '');
   };
 
-const getCatalogByProvider = (catalogProvider) => (state) => {
-  return state.catalog.catalog.find(
+const getCatalogByProvider = (catalog, catalogProvider) => {
+  return catalog.find(
     ({ provider }) => provider === catalogProvider
   );
 };
@@ -60,20 +60,31 @@ const getResultIcon = (result) => {
 };
 
 const ChecksResults = () => {
+  const dispatch = useDispatch();
   const { clusterID } = useParams();
   const cluster = useSelector((state) =>
     state.clustersList.clusters.find((cluster) => cluster.id === clusterID)
   );
+
+  const catalog = useSelector((state) => state.catalog);
+  const catalogData = catalog.data;
+  const catalogError = catalog.error;
 
   const checksResults = getChecksResults(cluster);
 
   const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
 
   // FIXME: Check the provider by cluster
-  const catalog = useSelector(getCatalogByProvider('azure'));
+  const catalogByProvider = getCatalogByProvider(catalogData, 'azure');
+
+  useEffect(() => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });
+  }, [dispatch]);
 
   const description = (checkId) => {
-    return catalog?.groups
+    return catalogByProvider?.groups
       ?.flatMap(({ checks }) => checks)
       .find(({ id }) => id === checkId).description;
   };

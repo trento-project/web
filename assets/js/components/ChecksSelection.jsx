@@ -18,7 +18,10 @@ const ChecksSelection = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const catalog = useSelector((state) => state.catalog.catalog);
+  const catalog = useSelector((state) => state.catalog);
+  const catalogData = catalog.data;
+  const catalogError = catalog.error;
+
   const clusters = useSelector((state) => state.clustersList.clusters);
   const cluster = clusters.find((cluster) => cluster.id === clusterID);
 
@@ -35,9 +38,15 @@ const ChecksSelection = () => {
     }
   }, [cluster]);
 
+  useEffect(() => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });
+  }, [dispatch]);
+
   return (
     <div>
-      {catalog
+      {catalogData
         .flatMap(({ _provider, groups }) => groups)
         .map(({ group, checks }) => (
           <div
