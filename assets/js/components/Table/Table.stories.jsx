@@ -101,6 +101,10 @@ const data = [
 
 export const Populated = () => <Table config={config} data={data} />;
 
+export const Paginated = () => (
+  <Table config={{ ...config, pagination: true }} data={data} />
+);
+
 export const WithFilters = (args) => (
   <Table config={filteredConfig} data={data} {...args} />
 );

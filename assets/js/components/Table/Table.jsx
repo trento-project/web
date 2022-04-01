@@ -1,9 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import classNames from 'classnames';
 
-import CollapsibleTableRow from './CollapsibleTableRow';
+import { page, pages } from '@lib/lists';
 
+import CollapsibleTableRow from './CollapsibleTableRow';
 import { TableFilters } from './filters';
+import Pagination from './Pagination';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
@@ -34,11 +36,14 @@ const Table = ({ config, data = [] }) => {
   const {
     columns,
     collapsibleDetailRenderer = undefined,
+    pagination,
     usePadding = true,
   } = config;
-  const [filters, setFilters] = useState([]);
 
-  const renderedData = filters
+  const [filters, setFilters] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredData = filters
     .map(({ value, filterFunction }) => {
       if (value.length === 0) {
         return () => true;
@@ -48,6 +53,11 @@ const Table = ({ config, data = [] }) => {
     .reduce((data, filterFunction) => {
       return data.filter(filterFunction);
     }, data);
+
+  const totalPages = pages(filteredData);
+  const renderedData = pagination
+    ? page(currentPage, filteredData)
+    : filteredData;
 
   return (
     <div
@@ -98,6 +108,13 @@ const Table = ({ config, data = [] }) => {
                 ))}
               </tbody>
             </table>
+            {pagination && (
+              <Pagination
+                pages={totalPages}
+                currentPage={currentPage}
+                onSelect={(page) => setCurrentPage(page)}
+              />
+            )}
           </div>
         </div>
       </div>
