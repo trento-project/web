@@ -7,6 +7,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import ProviderSelection from './ProviderSelection';
+import NotificationBox from '../NotificationBox';
+import LoadingBox from '../LoadingBox';
+
+import { EOS_ERROR } from 'eos-icons-react';
 
 const ChecksCatalog = () => {
   const dispatch = useDispatch();
@@ -16,16 +20,37 @@ const ChecksCatalog = () => {
   const catalogError = catalog.error;
   const providers = catalogData.map((provider) => provider.provider);
   const [selected, setSelected] = useState(providers[0]);
+  const [loading, setLoading] = useState(true);
+
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });
+  }
 
   useEffect(() => {
+    setLoading(false);
     setSelected(providers[0]);
   }, [providers[0]]);
 
   useEffect(() => {
-    dispatch({
-      type: 'UPDATE_CATALOG',
-    });;
+    dispatchUpdateCatalog();
   }, [dispatch]);
+
+  if (loading) {
+    return <LoadingBox text="Loading checks catalog..." />;
+  }
+
+  if (catalogError) {
+    return (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={catalogError}
+        buttonText="Try again"
+        buttonOnClick={dispatchUpdateCatalog}
+      />
+    );
+  }
 
   return (
     <div>
