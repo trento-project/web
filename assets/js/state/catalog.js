@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const errorMessages = {
+  not_ready: 'The catalog is being built. Try again in some few moments',
+  default: 'Unexpected error happened trying to get the checks catalog',
+};
+
 const initialState = {
   loading: false,
   data: [],
@@ -12,7 +17,7 @@ export const catalogSlice = createSlice({
   reducers: {
     setCatalog: (state, action) => {
       if (action.payload.error) {
-        state.error = action.payload.error;
+        state.error = errorMessages[action.payload.error] || errorMessages["default"];
         state.data = [];
       } else {
         state.error = "";
