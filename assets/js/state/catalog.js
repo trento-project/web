@@ -16,13 +16,21 @@ export const catalogSlice = createSlice({
   initialState,
   reducers: {
     setCatalog: (state, action) => {
+      if (action.payload.loading) {
+        state.loading = true;
+        return
+      }
+
+      state.loading = false;
+
       if (action.payload.error) {
         state.error = errorMessages[action.payload.error] || errorMessages["default"];
         state.data = [];
-      } else {
-        state.error = "";
-        state.data = action.payload;
+        return
       }
+
+      state.error = "";
+      state.data = action.payload;
     },
   },
 });

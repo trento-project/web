@@ -426,6 +426,7 @@ function* watchDatabase() {
 }
 
 function* updateCatalog() {
+  yield put(setCatalog({loading: true}))
   try {
     const { data: catalog } = yield call(get, '/api/checks/catalog');
     yield put(setCatalog(catalog));

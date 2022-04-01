@@ -18,9 +18,9 @@ const ChecksCatalog = () => {
   const catalog = useSelector((state) => state.catalog);
   const catalogData = catalog.data;
   const catalogError = catalog.error;
+  const loading = catalog.loading;
   const providers = catalogData.map((provider) => provider.provider);
   const [selected, setSelected] = useState(providers[0]);
-  const [loading, setLoading] = useState(true);
 
   const dispatchUpdateCatalog = () => {
     dispatch({
@@ -29,7 +29,6 @@ const ChecksCatalog = () => {
   }
 
   useEffect(() => {
-    setLoading(false);
     setSelected(providers[0]);
   }, [providers[0]]);
 
