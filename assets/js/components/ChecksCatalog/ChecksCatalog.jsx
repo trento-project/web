@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Disclosure, Transition } from '@headlessui/react';
 
@@ -9,13 +9,23 @@ import remarkGfm from 'remark-gfm';
 import ProviderSelection from './ProviderSelection';
 
 const ChecksCatalog = () => {
-  const catalog = useSelector((state) => state.catalog.catalog);
-  const providers = catalog.map((provider) => provider.provider);
+  const dispatch = useDispatch();
+
+  const catalog = useSelector((state) => state.catalog);
+  const catalogData = catalog.data;
+  const catalogError = catalog.error;
+  const providers = catalogData.map((provider) => provider.provider);
   const [selected, setSelected] = useState(providers[0]);
 
   useEffect(() => {
     setSelected(providers[0]);
   }, [providers[0]]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });;
+  }, [dispatch]);
 
   return (
     <div>
@@ -24,7 +34,7 @@ const ChecksCatalog = () => {
         selected={selected}
         onChange={setSelected}
       />
-      {catalog
+      {catalogData
         .filter((provider) => provider.provider == selected)
         .map(({ _, groups }) =>
           groups.map(({ group, checks }) => (

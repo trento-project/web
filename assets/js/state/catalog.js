@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loading: false,
-  catalog: [],
+  data: [],
+  error: "",
 };
 
 export const catalogSlice = createSlice({
@@ -10,7 +11,13 @@ export const catalogSlice = createSlice({
   initialState,
   reducers: {
     setCatalog: (state, action) => {
-      state.catalog = action.payload;
+      if (action.payload.error) {
+        state.error = action.payload.error;
+        state.data = [];
+      } else {
+        state.error = "";
+        state.data = action.payload;
+      }
     },
   },
 });
