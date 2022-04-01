@@ -33,14 +33,17 @@ const ChecksSelection = () => {
   const isSelected = (check_id) =>
     selectedChecks ? selectedChecks.includes(check_id) : false;
 
-  const [catalogData, catalogError, loading] = useSelector(
-    (state) => ([state.catalog.data, state.catalog.error, state.catalog.loading]))
+  const [catalogData, catalogError, loading] = useSelector((state) => [
+    state.catalog.data,
+    state.catalog.error,
+    state.catalog.loading,
+  ]);
 
   const dispatchUpdateCatalog = () => {
     dispatch({
       type: 'UPDATE_CATALOG',
     });
-  }
+  };
 
   useEffect(() => {
     if (cluster) {

@@ -426,16 +426,15 @@ function* watchDatabase() {
 }
 
 function* updateCatalog() {
-  yield put(setCatalog({loading: true}))
+  yield put(setCatalog({ loading: true }));
   try {
     const { data: catalog } = yield call(get, '/api/checks/catalog');
     yield put(setCatalog(catalog));
-  }
-  catch(error) {
+  } catch (error) {
     yield put(
       setCatalog({
         error: error.response.data.error,
-      }),
+      })
     );
   }
 }

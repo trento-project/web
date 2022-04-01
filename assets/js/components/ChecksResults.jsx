@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector, useDispatch  } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LENS_FILLED, EOS_ERROR } from 'eos-icons-react';
 import Spinner from './Spinner';
@@ -35,9 +35,7 @@ const getHostname =
   };
 
 const getCatalogByProvider = (catalog, catalogProvider) => {
-  return catalog.find(
-    ({ provider }) => provider === catalogProvider
-  );
+  return catalog.find(({ provider }) => provider === catalogProvider);
 };
 
 const sortChecksResults = (checksResults = [], group) => {
@@ -69,14 +67,17 @@ const ChecksResults = () => {
     state.clustersList.clusters.find((cluster) => cluster.id === clusterID)
   );
 
-  const [catalogData, catalogError, loading] = useSelector(
-    (state) => ([state.catalog.data, state.catalog.error, state.catalog.loading]))
+  const [catalogData, catalogError, loading] = useSelector((state) => [
+    state.catalog.data,
+    state.catalog.error,
+    state.catalog.loading,
+  ]);
 
   const dispatchUpdateCatalog = () => {
     dispatch({
       type: 'UPDATE_CATALOG',
     });
-  }
+  };
 
   const checksResults = getChecksResults(cluster);
 
