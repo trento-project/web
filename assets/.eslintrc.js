@@ -4,6 +4,7 @@ module.exports = {
     browser: true,
     es2021: true,
     jquery: true,
+    'jest/globals': true,
   },
   extends: ['eslint:recommended', 'plugin:react/recommended'],
   parserOptions: {
@@ -13,7 +14,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['react'],
+  plugins: ['react', 'jest'],
   rules: {
     'no-console': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
