@@ -27,5 +27,6 @@ defmodule Trento.SapSystems do
     DatabaseReadModel
     |> Repo.all()
     |> Repo.preload(:database_instances)
+    |> Repo.preload(:tags)
   end
 end
