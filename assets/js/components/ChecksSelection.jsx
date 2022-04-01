@@ -23,11 +23,6 @@ const ChecksSelection = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const catalog = useSelector((state) => state.catalog);
-  const catalogData = catalog.data;
-  const catalogError = catalog.error;
-  const loading = catalog.loading;
-
   const clusters = useSelector((state) => state.clustersList.clusters);
   const cluster = clusters.find((cluster) => cluster.id === clusterID);
 
@@ -37,6 +32,9 @@ const ChecksSelection = () => {
 
   const isSelected = (check_id) =>
     selectedChecks ? selectedChecks.includes(check_id) : false;
+
+  const [catalogData, catalogError, loading] = useSelector(
+    (state) => ([state.catalog.data, state.catalog.error, state.catalog.loading]))
 
   const dispatchUpdateCatalog = () => {
     dispatch({
@@ -71,7 +69,7 @@ const ChecksSelection = () => {
 
   return (
     <div>
-      {catalogData
+      {catalogData //FIXME: Catalog must be filtered by this cluster provider
         .flatMap(({ _provider, groups }) => groups)
         .map(({ group, checks }) => (
           <div

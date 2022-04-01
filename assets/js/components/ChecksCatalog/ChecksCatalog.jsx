@@ -15,10 +15,9 @@ import { EOS_ERROR } from 'eos-icons-react';
 const ChecksCatalog = () => {
   const dispatch = useDispatch();
 
-  const catalog = useSelector((state) => state.catalog);
-  const catalogData = catalog.data;
-  const catalogError = catalog.error;
-  const loading = catalog.loading;
+  const [catalogData, catalogError, loading] = useSelector(
+    (state) => ([state.catalog.data, state.catalog.error, state.catalog.loading]))
+
   const providers = catalogData.map((provider) => provider.provider);
   const [selected, setSelected] = useState(providers[0]);
 
