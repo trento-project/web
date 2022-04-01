@@ -34,6 +34,7 @@ const DatabasesOverview = () => {
   );
   const dispatch = useDispatch();
   const config = {
+    pagination: true,
     columns: [
       {
         title: 'Health',

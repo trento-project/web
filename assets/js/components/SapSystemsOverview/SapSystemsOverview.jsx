@@ -34,6 +34,7 @@ const SapSystemsOverview = () => {
     useSelector((state) => state.sapSystemsList);
   const dispatch = useDispatch();
   const config = {
+    pagination: true,
     columns: [
       {
         title: 'Health',

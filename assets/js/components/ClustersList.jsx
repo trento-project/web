@@ -62,6 +62,7 @@ const ClustersList = () => {
   const navigate = useNavigate();
 
   const config = {
+    pagination: true,
     columns: [
       {
         title: 'Health',
