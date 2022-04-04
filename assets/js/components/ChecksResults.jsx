@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { EOS_LENS_FILLED } from 'eos-icons-react';
+import { EOS_LENS_FILLED, EOS_ERROR } from 'eos-icons-react';
 import Spinner from './Spinner';
+
+import NotificationBox from './NotificationBox';
+import LoadingBox from './LoadingBox';
 
 const getChecksResults = (cluster) => {
   if (cluster) {
@@ -31,10 +34,8 @@ const getHostname =
     }, '');
   };
 
-const getCatalogByProvider = (catalogProvider) => (state) => {
-  return state.catalog.catalog.find(
-    ({ provider }) => provider === catalogProvider
-  );
+const getCatalogByProvider = (catalog, catalogProvider) => {
+  return catalog.find(({ provider }) => provider === catalogProvider);
 };
 
 const sortChecksResults = (checksResults = [], group) => {
@@ -60,20 +61,52 @@ const getResultIcon = (result) => {
 };
 
 const ChecksResults = () => {
+  const dispatch = useDispatch();
   const { clusterID } = useParams();
   const cluster = useSelector((state) =>
     state.clustersList.clusters.find((cluster) => cluster.id === clusterID)
   );
+
+  const [catalogData, catalogError, loading] = useSelector((state) => [
+    state.catalog.data,
+    state.catalog.error,
+    state.catalog.loading,
+  ]);
+
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });
+  };
 
   const checksResults = getChecksResults(cluster);
 
   const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
 
   // FIXME: Check the provider by cluster
-  const catalog = useSelector(getCatalogByProvider('azure'));
+  const catalogByProvider = getCatalogByProvider(catalogData, 'azure');
+
+  useEffect(() => {
+    dispatchUpdateCatalog();
+  }, [dispatch]);
+
+  if (loading) {
+    return <LoadingBox text="Loading checks catalog..." />;
+  }
+
+  if (catalogError) {
+    return (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={catalogError}
+        buttonText="Try again"
+        buttonOnClick={dispatchUpdateCatalog}
+      />
+    );
+  }
 
   const description = (checkId) => {
-    return catalog?.groups
+    return catalogByProvider?.groups
       ?.flatMap(({ checks }) => checks)
       .find(({ id }) => id === checkId).description;
   };

@@ -85,9 +85,6 @@ function* initialDataFetch() {
   const { data: databases } = yield call(get, '/api/databases');
   yield put(setDatabases(databases));
   yield put(stopDatabasesLoading());
-
-  const { data: catalog } = yield call(get, '/api/checks/catalog');
-  yield put(setCatalog(catalog));
 }
 
 function* hostRegistered({ payload }) {
@@ -428,6 +425,24 @@ function* watchDatabase() {
   );
 }
 
+function* updateCatalog() {
+  yield put(setCatalog({ loading: true }));
+  try {
+    const { data: catalog } = yield call(get, '/api/checks/catalog');
+    yield put(setCatalog(catalog));
+  } catch (error) {
+    yield put(
+      setCatalog({
+        error: error.response.data.error,
+      })
+    );
+  }
+}
+
+function* watchCatalogUpdate() {
+  yield takeEvery('UPDATE_CATALOG', updateCatalog);
+}
+
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
@@ -447,5 +462,6 @@ export default function* rootSaga() {
     watchClusterHealthChanged(),
     watchSapSystem(),
     watchDatabase(),
+    watchCatalogUpdate(),
   ]);
 }

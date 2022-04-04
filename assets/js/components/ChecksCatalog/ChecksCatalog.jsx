@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Disclosure, Transition } from '@headlessui/react';
 
@@ -7,15 +7,51 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import ProviderSelection from './ProviderSelection';
+import NotificationBox from '@components/NotificationBox';
+import LoadingBox from '@components/LoadingBox';
+
+import { EOS_ERROR } from 'eos-icons-react';
 
 const ChecksCatalog = () => {
-  const catalog = useSelector((state) => state.catalog.catalog);
-  const providers = catalog.map((provider) => provider.provider);
+  const dispatch = useDispatch();
+
+  const [catalogData, catalogError, loading] = useSelector((state) => [
+    state.catalog.data,
+    state.catalog.error,
+    state.catalog.loading,
+  ]);
+
+  const providers = catalogData.map((provider) => provider.provider);
   const [selected, setSelected] = useState(providers[0]);
+
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG',
+    });
+  };
 
   useEffect(() => {
     setSelected(providers[0]);
   }, [providers[0]]);
+
+  useEffect(() => {
+    dispatchUpdateCatalog();
+  }, [dispatch]);
+
+  if (loading) {
+    return <LoadingBox text="Loading checks catalog..." />;
+  }
+
+  if (catalogError) {
+    return (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={catalogError}
+        buttonText="Try again"
+        buttonOnClick={dispatchUpdateCatalog}
+      />
+    );
+  }
 
   return (
     <div>
@@ -24,7 +60,7 @@ const ChecksCatalog = () => {
         selected={selected}
         onChange={setSelected}
       />
-      {catalog
+      {catalogData
         .filter((provider) => provider.provider == selected)
         .map(({ _, groups }) =>
           groups.map(({ group, checks }) => (
