@@ -31,7 +31,7 @@ defmodule Trento.Integration.Grafana do
         create_dashboard(content, @retries - 1)
 
       {:error, reason} = error ->
-        Logger.error("Fail to load grafana dashboard #{dashboard_name}", error: reason)
+        Logger.error("Failed to load grafana dashboard #{dashboard_name}", error: reason)
         error
     end
   end
@@ -47,7 +47,7 @@ defmodule Trento.Integration.Grafana do
       :ok
     else
       {:error, reason} ->
-        Logger.error("Failed to created grafana dashboard, retrying...", error: inspect(reason))
+        Logger.error("Failed to create grafana dashboard, retrying...", error: inspect(reason))
         Process.sleep(@retry_after)
         create_dashboard(content, retry - 1)
     end
