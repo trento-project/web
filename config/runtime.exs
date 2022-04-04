@@ -66,7 +66,7 @@ if config_env() == :prod do
   config :trento, Trento.Integration.Grafana,
     user: System.get_env("GRAFANA_USER") || "admin",
     password: System.get_env("GRAFANA_PASSWORD") || "admin",
-    api_url: System.get_env("GRAFANA_API_URL") || "http://localhost:3000/api",
+    api_url: System.get_env("GRAFANA_API_URL") || "http://localhost:3000/api"
 
   # ## Using releases
   #
