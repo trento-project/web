@@ -92,6 +92,12 @@ config :trento, Trento.Scheduler,
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Runner
 
+config :trento, Trento.Integration.Grafana,
+  user: "admin",
+  password: "admin",
+  api_url: "http://localhost:3000/api",
+  dashboards: ["node_exporter"]
+
 config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",
   flavor: System.get_env("FLAVOR", "Community")
