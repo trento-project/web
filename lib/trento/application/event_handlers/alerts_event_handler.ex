@@ -1,6 +1,6 @@
 defmodule Trento.AlertsEventHandler do
   @moduledoc """
-  This event hanlder is responsible to forward checks execution request to the agent.
+  This event handler is responsible to forward checks execution request to the agent.
   """
 
   use Commanded.Event.Handler,
@@ -9,32 +9,41 @@ defmodule Trento.AlertsEventHandler do
 
   alias Trento.Domain.Events.{
     ClusterHealthChanged,
-    HeartbeatFailed
+    DatabaseHealthChanged,
+    HeartbeatFailed,
+    SapSystemHealthChanged
   }
 
-  alias Trento.{
-    ClusterReadModel,
-    HostReadModel
-  }
-
-  def handle(
-        %ClusterHealthChanged{cluster_id: cluster_id, health: health},
-        _metadata
-      )
-      when health in [:warning, :critical] do
-    %ClusterReadModel{name: name} = Trento.Repo.get!(ClusterReadModel, cluster_id)
-
-    email = Trento.AlertEmail.alert("Cluster #{name} health is now in #{health} state")
-    Trento.Mailer.deliver(email)
-  end
+  alias Trento.Application.UseCases.Alerting
 
   def handle(
         %HeartbeatFailed{host_id: host_id},
         _metadata
       ) do
-    %HostReadModel{hostname: hostname} = Trento.Repo.get!(HostReadModel, host_id)
+    Alerting.notify_host_heartbeating_failure(host_id)
+  end
 
-    email = Trento.AlertEmail.alert("Host #{hostname} heartbeat failed")
-    Trento.Mailer.deliver(email)
+  def handle(
+        %ClusterHealthChanged{cluster_id: cluster_id, health: health},
+        _metadata
+      )
+      when health == :critical do
+    Alerting.notify_critical_cluster_health(cluster_id)
+  end
+
+  def handle(
+        %DatabaseHealthChanged{sap_system_id: sap_system_id, health: health},
+        _metadata
+      )
+      when health == :critical do
+    Alerting.notify_critical_database_health(sap_system_id)
+  end
+
+  def handle(
+        %SapSystemHealthChanged{sap_system_id: sap_system_id, health: health},
+        _metadata
+      )
+      when health == :critical do
+    Alerting.notify_critical_sap_system_health(sap_system_id)
   end
 end
