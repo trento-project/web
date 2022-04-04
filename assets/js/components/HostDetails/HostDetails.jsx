@@ -20,6 +20,9 @@ const HostDetails = () => {
   const host = useSelector(getHost(hostID));
   const sapSystems = useSelector(getInstancesOnHost(hostID));
 
+    // eslint-disable-next-line no-undef
+    const { grafanaPublicUrl } = config;
+
   if (!host) {
     return <div>Not Found</div>;
   }
@@ -46,7 +49,7 @@ const HostDetails = () => {
 
       <div className="mt-8 bg-white shadow rounded-lg py-4 px-8">
         <iframe
-          src={`${config.grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=77&var-host_id=${host.id}`}
+          src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=77&var-host_id=${host.id}`}
           width="100%"
           height="200"
           frameBorder="0"
@@ -54,7 +57,7 @@ const HostDetails = () => {
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <iframe
-          src={`${config.grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=78&var-host_id=${host.id}`}
+          src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=78&var-host_id=${host.id}`}
           width="100%"
           height="200"
           frameBorder="0"
