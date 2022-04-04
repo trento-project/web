@@ -25,7 +25,9 @@ defmodule Trento.SapSystems do
   @spec get_all_databases :: [map]
   def get_all_databases do
     DatabaseReadModel
+    |> order_by(asc: :sid)
     |> Repo.all()
     |> Repo.preload(:database_instances)
+    |> Repo.preload(:tags)
   end
 end

@@ -57,4 +57,22 @@ defmodule TrentoWeb.SapSystemController do
         send_resp(conn, :not_found, "")
     end
   end
+
+  # FIXME: refactor tags api, we just need a generic tag API
+  def create_database_tag(conn, %{
+        "id" => resource_id,
+        "value" => value
+      }) do
+    case Tags.create_tag(value, resource_id, "database") do
+      {:ok, _} ->
+        conn
+        |> put_status(:created)
+        |> json(%{value: value})
+
+      {:error, _} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: "tag creation failed"})
+    end
+  end
 end

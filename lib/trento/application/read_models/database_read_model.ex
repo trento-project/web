@@ -17,6 +17,8 @@ defmodule Trento.DatabaseReadModel do
     field :sid, :string
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
 
+    has_many :tags, Trento.Tag, foreign_key: :resource_id
+
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
       foreign_key: :sap_system_id,
