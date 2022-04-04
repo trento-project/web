@@ -7,8 +7,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import ProviderSelection from './ProviderSelection';
-import NotificationBox from '../NotificationBox';
-import LoadingBox from '../LoadingBox';
+import NotificationBox from '@components/NotificationBox';
+import LoadingBox from '@components/LoadingBox';
 
 import { EOS_ERROR } from 'eos-icons-react';
 
