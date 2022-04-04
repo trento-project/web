@@ -95,9 +95,10 @@ config :trento, Trento.Scheduler,
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Runner
 
-config :trento, Trento.Integration.Grafana,
+config :trento, :grafana,
   user: "admin",
   password: "admin",
+  public_url: "http://localhost:3000",
   api_url: "http://localhost:3000/api",
   dashboards: ["node_exporter"]
 
