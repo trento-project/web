@@ -52,7 +52,7 @@ defmodule TrentoWeb.Router do
     delete "/sap_systems/:id/tags/:value", SapSystemController, :delete_tag
 
     get "/databases", SapSystemController, :list_databases
-    post "/databases/:id/tags", SapSystemController, :create_db_tag
+    post "/databases/:id/tags", SapSystemController, :create_database_tag
     delete "/databases/:id/tags/:value", SapSystemController, :delete_tag
 
     post "/clusters/:cluster_id/checks", ClusterController, :select_checks

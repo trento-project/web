@@ -59,7 +59,7 @@ defmodule TrentoWeb.SapSystemController do
   end
 
   # FIXME: refactor tags api, we just need a generic tag API
-  def create_db_tag(conn, %{
+  def create_database_tag(conn, %{
         "id" => resource_id,
         "value" => value
       }) do
