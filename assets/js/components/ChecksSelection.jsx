@@ -73,8 +73,8 @@ const ChecksSelection = () => {
 
   return (
     <div>
-      {catalogData[0]?.groups
-        .map(({ group, checks }) => (
+      {catalogData[0]?.groups &&
+        catalogData[0].groups.map(({ group, checks }) => (
           <div
             key={group.id}
             className="bg-white shadow overflow-hidden sm:rounded-md mb-8"
