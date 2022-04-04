@@ -13,3 +13,14 @@ export const remove = (elements, list) =>
   list.filter((value) => !elements.includes(value));
 
 export const uniq = (list) => [...new Set(list)];
+
+export const pages = (list) => {
+  const hasRest = Boolean(list.length % 10);
+  return hasRest ? ~~(list.length / 10) + 1 : ~~(list.length / 10);
+};
+
+export const page = (page, list) => {
+  const start = 10 * (page - 1);
+  const end = start + 10;
+  return list.slice(start, end);
+};

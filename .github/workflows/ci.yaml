@@ -152,8 +152,17 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - run: cd assets && npm install
       - name: Run test
         run: mix test --color --trace --slowest 10
+
+      - name: Run JS tests
+        run: cd assets && npm test
 
   build-and-push-container-images:
     name: Build and push container images
