@@ -32,7 +32,7 @@ defmodule TrentoWeb.CatalogController do
   end
 
   defp get_catalog(_) do
-    case Checks.get_catalog_by_provider() do
+    case Checks.get_catalog_grouped_by_provider() do
       {:ok, catalog} ->
         {:ok, catalog.providers}
 
