@@ -9,6 +9,7 @@ defmodule Trento.Release do
     migrate()
     init_event_store()
     migrate_event_store()
+    init_grafana_dashboards()
   end
 
   def migrate do
@@ -50,6 +51,12 @@ defmodule Trento.Release do
     load_app()
 
     Mix.Tasks.DumpScenario.run(args)
+  end
+
+  def init_grafana_dashboards do
+    load_app()
+
+    Trento.Integration.Grafana.init_dashboards()
   end
 
   defp repos do
