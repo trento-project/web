@@ -42,6 +42,7 @@ const ChecksSelection = () => {
   const dispatchUpdateCatalog = () => {
     dispatch({
       type: 'UPDATE_CATALOG',
+      payload: { provider: 'azure' }, //FIXME: Get provider properly
     });
   };
 
@@ -72,8 +73,7 @@ const ChecksSelection = () => {
 
   return (
     <div>
-      {catalogData //FIXME: Catalog must be filtered by this cluster provider
-        .flatMap(({ _provider, groups }) => groups)
+      {catalogData[0]?.groups
         .map(({ group, checks }) => (
           <div
             key={group.id}

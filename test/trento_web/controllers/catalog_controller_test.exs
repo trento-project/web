@@ -148,6 +148,74 @@ defmodule TrentoWeb.CatalogControllerTest do
     assert expected_json == json_response(conn, 200)
   end
 
+  test "should return a filtered flat catalog", %{conn: conn} do
+    raw_catalog = load_runner_fixture("catalog")
+
+    Trento.Integration.Checks.Mock
+    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+
+    conn =
+      get(conn, Routes.catalog_path(conn, :checks_catalog), %{
+        "flat" => "",
+        "provider" => "azure"
+      })
+
+    expected_json = [
+      %{
+        "provider" => "azure",
+        "description" => "description 1",
+        "group" => "Group 1",
+        "id" => "1",
+        "implementation" => "implementation 1",
+        "labels" => "labels",
+        "name" => "test 1",
+        "remediation" => "remediation 1"
+      },
+      %{
+        "provider" => "azure",
+        "description" => "description 2",
+        "group" => "Group 1",
+        "id" => "2",
+        "implementation" => "implementation 2",
+        "labels" => "labels",
+        "name" => "test 2",
+        "remediation" => "remediation 2"
+      },
+      %{
+        "description" => "description 3",
+        "group" => "Group 2",
+        "id" => "3",
+        "implementation" => "implementation 3",
+        "labels" => "labels",
+        "name" => "test 3",
+        "provider" => "azure",
+        "remediation" => "remediation 3"
+      },
+      %{
+        "description" => "description 4",
+        "group" => "Group 2",
+        "id" => "4",
+        "implementation" => "implementation 4",
+        "labels" => "labels",
+        "name" => "test 4",
+        "provider" => "azure",
+        "remediation" => "remediation 4"
+      },
+      %{
+        "description" => "description 5",
+        "group" => "Group 3",
+        "id" => "5",
+        "implementation" => "implementation 5",
+        "labels" => "labels",
+        "name" => "test 5",
+        "provider" => "azure",
+        "remediation" => "remediation 5"
+      }
+    ]
+
+    assert expected_json == json_response(conn, 200)
+  end
+
   test "should return a flat catalog", %{conn: conn} do
     raw_catalog = load_runner_fixture("catalog")
 
