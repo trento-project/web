@@ -8,10 +8,8 @@ defmodule Trento.Integration.Grafana do
   @retries 10
   @retry_after 1_000
 
-  @grafana_dashboards_path File.cwd!() <> "/priv/data/grafana/"
-
   def init_dashboards do
-    dashboards = Application.fetch_env!(:trento, Trento.Integration.Grafana)[:dashboards]
+    dashboards = Application.fetch_env!(:trento, :grafana)[:dashboards]
 
     dashboards
     |> Enum.reduce_while(:ok, fn dashboard_name, _ ->
@@ -54,7 +52,9 @@ defmodule Trento.Integration.Grafana do
   end
 
   defp load_dashboard(name) do
-    @grafana_dashboards_path
+    grafana_dashboards_path = Application.app_dir(:trento, "/priv/data/grafana/")
+
+    grafana_dashboards_path
     |> Path.join("#{name}.json")
     |> File.read()
   end
@@ -67,9 +67,9 @@ defmodule Trento.Integration.Grafana do
         "secondsToLive" => 60
       })
 
-    api_url = Application.fetch_env!(:trento, Trento.Integration.Grafana)[:api_url]
-    user = Application.fetch_env!(:trento, Trento.Integration.Grafana)[:user]
-    password = Application.fetch_env!(:trento, Trento.Integration.Grafana)[:password]
+    api_url = Application.fetch_env!(:trento, :grafana)[:api_url]
+    user = Application.fetch_env!(:trento, :grafana)[:user]
+    password = Application.fetch_env!(:trento, :grafana)[:password]
     credentials = Base.encode64("#{user}:#{password}")
 
     with {:ok, %HTTPoison.Response{body: body, status_code: 200}} <-
@@ -95,8 +95,10 @@ defmodule Trento.Integration.Grafana do
   end
 
   defp post_dashboard(content, token) do
+    api_url = Application.fetch_env!(:trento, :grafana)[:api_url]
+
     case HTTPoison.post(
-           "http://localhost:3000/api/dashboards/db",
+           "#{api_url}/dashboards/db",
            content,
            [{"Content-type", "application/json"}, {"Authorization", "Bearer #{token}"}]
          ) do
