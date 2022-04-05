@@ -28,4 +28,16 @@ defmodule Trento.HostsTest do
       assert 6 = Hosts.get_all_sles_subscriptions()
     end
   end
+
+  describe "Connection settings" do
+    test "Returns connection settings map" do
+      host_id = Faker.UUID.v4()
+      host_projection(id: host_id, ssh_address: "192.168.1.1")
+
+      host_connection_settings_projection(id: host_id, user: "root")
+
+      assert %{host_id: host_id, ssh_address: "192.168.1.1", user: "root"} ==
+               Hosts.get_connection_settings(host_id)
+    end
+  end
 end

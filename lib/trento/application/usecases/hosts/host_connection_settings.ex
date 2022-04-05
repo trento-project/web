@@ -7,7 +7,7 @@ defmodule Trento.HostConnectionSettings do
 
   @type t :: %__MODULE__{}
 
-  @primary_key {:id, :string, autogenerate: false}
+  @primary_key {:id, :binary_id, autogenerate: false}
   schema "host_connection_settings" do
     field :user, :string
   end

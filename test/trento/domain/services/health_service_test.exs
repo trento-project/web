@@ -6,8 +6,9 @@ defmodule Trento.Domain.HealthServiceTest do
   @test_cases [
     {[:passing, :warning, :critical], :critical},
     {[:passing, :warning, :passing], :warning},
-    {[:passing, :passing, :passing], :passing},
-    {[:passing, :passing, :critical, :unknown], :unknown}
+    {[:passing, :passing, :passing, :skipped], :passing},
+    {[:passing, :passing, :critical, :unknown], :unknown},
+    {[:skipped, :skipped, :skipped], :skipped}
   ]
 
   for {healths, expected_aggregated_health} <- @test_cases do

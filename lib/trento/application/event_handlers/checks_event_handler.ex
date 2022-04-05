@@ -17,16 +17,15 @@ defmodule Trento.ChecksEventHandler do
         %ChecksExecutionRequested{cluster_id: cluster_id, hosts: hosts, checks: checks},
         %{correlation_id: execution_id}
       ) do
-
     hosts_settings =
       Enum.map(hosts, fn host -> Hosts.get_connection_settings(host) end)
       |> Enum.filter(fn host -> host != nil end)
 
     case Checks.request_execution(execution_id, cluster_id, hosts_settings, checks) do
       :ok ->
-         TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_execution_requested", %{
-           cluster_id: cluster_id
-         })
+        TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_execution_requested", %{
+          cluster_id: cluster_id
+        })
 
       {:error, reason} ->
         Logger.error("Failed to request checks execution for cluster #{cluster_id}: #{reason}",

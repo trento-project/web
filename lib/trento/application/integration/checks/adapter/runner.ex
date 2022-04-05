@@ -53,6 +53,7 @@ defmodule Trento.Integration.Checks.Runner do
       clusters: [
         %{
           cluster_id: cluster_id,
+          # TODO: Use the correct provider
           provider: :azure,
           checks: selected_checks,
           hosts:
