@@ -1,5 +1,6 @@
 import { get, post } from 'axios';
 import { put, all, call, takeEvery, select } from 'redux-saga/effects';
+import { urlEncode } from '@lib/serialization';
 
 import {
   setHosts,
@@ -425,10 +426,13 @@ function* watchDatabase() {
   );
 }
 
-function* updateCatalog() {
+function* updateCatalog({ payload }) {
   yield put(setCatalog({ loading: true }));
   try {
-    const { data: catalog } = yield call(get, '/api/checks/catalog');
+    const { data: catalog } = yield call(
+      get,
+      `/api/checks/catalog?${urlEncode(payload)}`
+    );
     yield put(setCatalog(catalog));
   } catch (error) {
     yield put(

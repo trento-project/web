@@ -31,9 +31,9 @@ defmodule Trento.Integration.Checks do
     end
   end
 
-  @spec get_catalog_by_provider ::
+  @spec get_catalog_grouped_by_provider ::
           {:ok, CatalogDto.t()} | {:error, any}
-  def get_catalog_by_provider do
+  def get_catalog_grouped_by_provider do
     case get_catalog() do
       {:ok, content} ->
         group_by_provider_by_group(content.checks)

@@ -27,6 +27,7 @@ const ChecksCatalog = () => {
   const dispatchUpdateCatalog = () => {
     dispatch({
       type: 'UPDATE_CATALOG',
+      payload: {},
     });
   };
 
@@ -63,7 +64,7 @@ const ChecksCatalog = () => {
       {catalogData
         .filter((provider) => provider.provider == selected)
         .map(({ _, groups }) =>
-          groups.map(({ group, checks }) => (
+          groups?.map(({ group, checks }) => (
             <div
               key={group.id}
               className="bg-white shadow overflow-hidden sm:rounded-md mb-8"

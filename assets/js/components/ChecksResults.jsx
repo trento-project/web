@@ -34,10 +34,6 @@ const getHostname =
     }, '');
   };
 
-const getCatalogByProvider = (catalog, catalogProvider) => {
-  return catalog.find(({ provider }) => provider === catalogProvider);
-};
-
 const sortChecksResults = (checksResults = [], group) => {
   return checksResults.sort((a, b) => {
     if (a.check_id === b.check_id) {
@@ -76,15 +72,13 @@ const ChecksResults = () => {
   const dispatchUpdateCatalog = () => {
     dispatch({
       type: 'UPDATE_CATALOG',
+      payload: { flat: '', provider: 'azure' }, //FIXME: Get provider properly
     });
   };
 
   const checksResults = getChecksResults(cluster);
 
   const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
-
-  // FIXME: Check the provider by cluster
-  const catalogByProvider = getCatalogByProvider(catalogData, 'azure');
 
   useEffect(() => {
     dispatchUpdateCatalog();
@@ -106,9 +100,7 @@ const ChecksResults = () => {
   }
 
   const description = (checkId) => {
-    return catalogByProvider?.groups
-      ?.flatMap(({ checks }) => checks)
-      .find(({ id }) => id === checkId).description;
+    return catalogData.find(({ id }) => id === checkId)?.description;
   };
 
   return (

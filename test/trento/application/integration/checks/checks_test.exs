@@ -285,6 +285,6 @@ defmodule Trento.Integration.ChecksTest do
       ]
     }
 
-    assert {:ok, catalog_by_provider} == Checks.get_catalog_by_provider()
+    assert {:ok, catalog_by_provider} == Checks.get_catalog_grouped_by_provider()
   end
 end
