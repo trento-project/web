@@ -363,6 +363,7 @@ defmodule Trento.Domain.Cluster do
       hosts_checks_results
       |> Enum.flat_map(fn {_, results} -> results end)
       |> Enum.map(fn %{result: result} -> result end)
+      |> Enum.reject(fn result -> result == :skipped end)
       |> HealthService.compute_aggregated_health()
 
     if new_health != health do
