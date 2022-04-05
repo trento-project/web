@@ -30,7 +30,9 @@ config :trento, Trento.Mailer, adapter: Swoosh.Adapters.Local
 config :swoosh, :api_client, false
 
 # configure the recipient for alert notifications
-config :trento, :alerting, recipient: "admin@trento.io"
+config :trento, :alerting,
+  enabled: true,
+  recipient: "admin@trento.io"
 
 # Configure esbuild (the version is required)
 config :esbuild,
