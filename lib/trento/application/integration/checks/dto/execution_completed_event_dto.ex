@@ -15,7 +15,7 @@ defmodule Trento.Integration.Checks.ExecutionCompletedEventDto do
 
       embeds_many :results, Result do
         field :check_id, :string
-        field :result, Ecto.Enum, values: [:passing, :warning, :critical]
+        field :result, Ecto.Enum, values: [:passing, :warning, :critical, :skipped]
       end
     end
   end

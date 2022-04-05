@@ -10,7 +10,9 @@ import LoadingBox from './LoadingBox';
 
 const getChecksResults = (cluster) => {
   if (cluster) {
-    return cluster.checks_results.reduce((acc, checkResult) => {
+    return cluster.checks_results
+      .filter(check_result => check_result.result != "skipped") // Filter "skipped" results by now
+      .reduce((acc, checkResult) => {
       acc[checkResult.host_id] = [
         ...(acc[checkResult.host_id] || []),
         checkResult,

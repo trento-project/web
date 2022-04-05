@@ -15,8 +15,9 @@ defmodule Trento.Domain.HealthService do
     |> elem(0)
   end
 
-  defp health_weight(:unknown), do: 3
-  defp health_weight(:critical), do: 2
-  defp health_weight(:warning), do: 1
-  defp health_weight(:passing), do: 0
+  defp health_weight(:unknown), do: 4
+  defp health_weight(:critical), do: 3
+  defp health_weight(:warning), do: 2
+  defp health_weight(:passing), do: 1
+  defp health_weight(:skipped), do: 0
 end
