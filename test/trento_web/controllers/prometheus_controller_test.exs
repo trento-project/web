@@ -15,7 +15,7 @@ defmodule TrentoWeb.PrometheusControllerTest do
              %{
                "targets" => ["#{host.ssh_address}:9100"],
                "labels" => %{
-                 "host_id" => "#{host.id}",
+                 "agentID" => "#{host.id}",
                  "hostname" => "#{host.hostname}",
                  "exporter_name" => "Node Exporter"
                }
