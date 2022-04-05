@@ -15,15 +15,15 @@ defmodule Trento.Application.UseCases.Alerting do
 
   require Logger
 
-  @spec notify_host_heartbeating_failure(binary()) :: :ok | {:error, any}
-  def notify_host_heartbeating_failure(host_id) do
+  @spec notify_heartbeat_failed(String.t()) :: :ok
+  def notify_heartbeat_failed(host_id) do
     %HostReadModel{hostname: hostname} = Trento.Repo.get!(HostReadModel, host_id)
 
     EmailAlert.alert("Host", "hostname", hostname, "heartbeat failed")
     |> deliver_notification()
   end
 
-  @spec notify_critical_cluster_health(binary()) :: :ok | {:error, any}
+  @spec notify_critical_cluster_health(String.t()) :: :ok
   def notify_critical_cluster_health(cluster_id) do
     %ClusterReadModel{name: name} = Trento.Repo.get!(ClusterReadModel, cluster_id)
 
@@ -31,7 +31,7 @@ defmodule Trento.Application.UseCases.Alerting do
     |> deliver_notification()
   end
 
-  @spec notify_critical_database_health(binary()) :: :ok | {:error, any}
+  @spec notify_critical_database_health(String.t()) :: :ok
   def notify_critical_database_health(id) do
     %DatabaseReadModel{sid: sid} = Trento.Repo.get!(DatabaseReadModel, id)
 
@@ -39,7 +39,7 @@ defmodule Trento.Application.UseCases.Alerting do
     |> deliver_notification()
   end
 
-  @spec notify_critical_sap_system_health(binary()) :: :ok | {:error, any}
+  @spec notify_critical_sap_system_health(String.t()) :: :ok
   def notify_critical_sap_system_health(id) do
     %SapSystemReadModel{sid: sid} = Trento.Repo.get!(SapSystemReadModel, id)
 
@@ -47,19 +47,28 @@ defmodule Trento.Application.UseCases.Alerting do
     |> deliver_notification()
   end
 
-  defp deliver_notification(%Swoosh.Email{subject: subject} = notification) do
+  @spec deliver_notification(Swoosh.Email.t()) :: :ok
+  defp deliver_notification(%Swoosh.Email{} = notification) do
+    maybe_deliver_notification(Application.fetch_env!(:trento, :alerting)[:enabled], notification)
+  end
+
+  @spec maybe_deliver_notification(false, Swoosh.Email.t()) :: :ok
+  defp maybe_deliver_notification(false, _), do: :ok
+
+  @spec maybe_deliver_notification(true, Swoosh.Email.t()) :: :ok
+  defp maybe_deliver_notification(true, %Swoosh.Email{subject: subject} = notification) do
     notification
     |> Mailer.deliver()
     |> case do
       {:ok, _} ->
         :ok
 
-      {:error, reason} = error ->
+      {:error, reason} ->
         Logger.error("Failed to send alert notification with subject \"#{subject}\": #{reason}",
           error: reason
         )
 
-        error
+        :ok
     end
   end
 end

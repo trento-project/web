@@ -20,7 +20,7 @@ defmodule Trento.AlertsEventHandler do
         %HeartbeatFailed{host_id: host_id},
         _metadata
       ) do
-    Alerting.notify_host_heartbeating_failure(host_id)
+    Alerting.notify_heartbeat_failed(host_id)
   end
 
   def handle(
