@@ -8,8 +8,21 @@ defmodule Trento.Integration.Checks.Runner do
   alias Trento.Integration.Checks.FlatCatalogDto
 
   @impl true
-  def request_execution(_execution_id, _cluster_id, _hosts, _selected_checks) do
-    :ok
+  def request_execution(execution_id, cluster_id, hosts_settings, selected_checks) do
+    runner_url = runner_url()
+
+    payload = build_payload(execution_id, cluster_id, hosts_settings, selected_checks)
+
+    case HTTPoison.post("#{runner_url}/api/execute", payload) do
+      {:ok, %HTTPoison.Response{status_code: 202}} ->
+        :ok
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, reason}
+
+      _ ->
+        {:error, :unexpected_response}
+    end
   end
 
   @impl true
@@ -32,6 +45,28 @@ defmodule Trento.Integration.Checks.Runner do
       _ ->
         {:error, :unexpected_response}
     end
+  end
+
+  defp build_payload(execution_id, cluster_id, host_settings, selected_checks) do
+    %{
+      execution_id: execution_id,
+      clusters: [
+        %{
+          cluster_id: cluster_id,
+          provider: :azure,
+          checks: selected_checks,
+          hosts:
+            Enum.map(host_settings, fn host ->
+              %{
+                host_id: host.host_id,
+                address: host.ssh_address,
+                user: host.user || "root"
+              }
+            end)
+        }
+      ]
+    }
+    |> Jason.encode!()
   end
 
   defp runner_url,
