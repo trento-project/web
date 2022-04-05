@@ -15,7 +15,7 @@ defmodule Trento.Application.UseCases.AlertingTest do
       host_id = Faker.UUID.v4()
       host = host_projection(id: host_id)
 
-      Alerting.notify_host_heartbeating_failure(host_id)
+      Alerting.notify_heartbeat_failed(host_id)
       assert_email_sent(subject: "Trento Alert: Host #{host.hostname} needs attention.")
     end
 

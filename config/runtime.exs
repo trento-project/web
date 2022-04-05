@@ -97,38 +97,17 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
-  smtp_server =
-    System.get_env("SMTP_SERVER") ||
-      raise """
-      environment variable SMTP_SERVER is missing.
-      For example: smtp.yourserver.com
-      """
-
-  smtp_user =
-    System.get_env("SMTP_USER") ||
-      raise "environment variable SMTP_USER is missing."
-
-  smtp_password =
-    System.get_env("SMTP_PASSWORD") ||
-      raise "environment variable SMTP_PASSWORD is missing."
-
-  smtp_port =
-    System.get_env("SMTP_PORT") ||
-      raise "environment variable SMTP_PORT is missing."
+  config :trento, :alerting,
+    enabled: System.get_env("ENABLE_ALERTING", "false") == "true",
+    recipient: System.get_env("ALERT_RECIPIENT") || ""
 
   config :trento, Trento.Mailer,
     adapter: Swoosh.Adapters.SMTP,
-    relay: smtp_server,
-    username: smtp_user,
-    password: smtp_password,
-    port: smtp_port,
+    relay: System.get_env("SMTP_SERVER") || "",
+    port: System.get_env("SMTP_PORT") || "",
+    username: System.get_env("SMTP_USER") || "",
+    password: System.get_env("SMTP_PASSWORD") || "",
     auth: :always,
     ssl: :if_available,
     tls: :if_available
-
-  alert_recipient =
-    System.get_env("ALERT_RECIPIENT") ||
-      raise "environment variable ALERT_RECIPIENT is missing."
-
-  config :trento, :alerting, recipient: alert_recipient
 end
