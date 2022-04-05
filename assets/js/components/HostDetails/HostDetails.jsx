@@ -20,8 +20,8 @@ const HostDetails = () => {
   const host = useSelector(getHost(hostID));
   const sapSystems = useSelector(getInstancesOnHost(hostID));
 
-    // eslint-disable-next-line no-undef
-    const { grafanaPublicUrl } = config;
+  // eslint-disable-next-line no-undef
+  const { grafanaPublicUrl } = config;
 
   if (!host) {
     return <div>Not Found</div>;
