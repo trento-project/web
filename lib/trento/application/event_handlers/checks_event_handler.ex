@@ -18,8 +18,9 @@ defmodule Trento.ChecksEventHandler do
         %{correlation_id: execution_id}
       ) do
     hosts_settings =
-      Enum.map(hosts, fn host -> Hosts.get_connection_settings(host) end)
-      |> Enum.filter(fn host -> host != nil end)
+      hosts
+      |> Enum.map(fn host -> Hosts.get_connection_settings(host) end)
+      |> Enum.filter(& &1)
 
     case Checks.request_execution(execution_id, cluster_id, hosts_settings, checks) do
       :ok ->
