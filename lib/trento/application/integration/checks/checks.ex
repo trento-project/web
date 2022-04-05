@@ -14,10 +14,10 @@ defmodule Trento.Integration.Checks do
     FlatCatalogDto
   }
 
-  @spec request_execution(String.t(), String.t(), [String.t()], [String.t()]) ::
+  @spec request_execution(String.t(), String.t(), [map], [String.t()]) ::
           :ok | {:error, any}
-  def request_execution(execution_id, cluster_id, hosts, selected_checks),
-    do: adapter().request_execution(execution_id, cluster_id, hosts, selected_checks)
+  def request_execution(execution_id, cluster_id, host_settings, selected_checks),
+    do: adapter().request_execution(execution_id, cluster_id, host_settings, selected_checks)
 
   @spec get_catalog ::
           {:ok, FlatCatalogDto.t()} | {:error, any}

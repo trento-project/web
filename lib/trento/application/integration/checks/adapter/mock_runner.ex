@@ -36,7 +36,7 @@ defmodule Trento.Integration.Checks.MockRunner do
 
   @impl true
   def handle_cast(
-        {:request_execution, execution_id, cluster_id, hosts, checks},
+        {:request_execution, execution_id, cluster_id, hosts_settings, checks},
         %__MODULE__{
           expected_results: expected_results
         }
@@ -49,7 +49,7 @@ defmodule Trento.Integration.Checks.MockRunner do
       send_execution_completed_event(
         execution_id,
         cluster_id,
-        hosts,
+        Enum.map(hosts_settings, fn host -> host.host_id end),
         checks,
         expected_results
       )
@@ -65,10 +65,10 @@ defmodule Trento.Integration.Checks.MockRunner do
   end
 
   @impl true
-  def request_execution(execution_id, cluster_id, hosts, checks) do
+  def request_execution(execution_id, cluster_id, hosts_settings, checks) do
     GenServer.cast(
       __MODULE__,
-      {:request_execution, execution_id, cluster_id, hosts, checks}
+      {:request_execution, execution_id, cluster_id, hosts_settings, checks}
     )
   end
 

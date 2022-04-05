@@ -7,8 +7,8 @@ defmodule Trento.Integration.Checks.Gen do
 
   @callback request_execution(
               execution_id :: String.t(),
-              cluster_id :: [String.t()],
-              hosts :: String.t(),
+              cluster_id :: String.t(),
+              hosts_settings :: [map],
               checks :: [String.t()]
             ) ::
               :ok | {:error, any}

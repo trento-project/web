@@ -15,7 +15,7 @@ defmodule Trento.CheckResultReadModel do
     field :cluster_id, Ecto.UUID, primary_key: true
     field :host_id, Ecto.UUID, primary_key: true
     field :check_id, :string, primary_key: true
-    field :result, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :result, Ecto.Enum, values: [:passing, :warning, :critical, :skipped, :unknown]
 
     timestamps()
   end

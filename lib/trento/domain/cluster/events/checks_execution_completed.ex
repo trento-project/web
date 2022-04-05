@@ -6,6 +6,6 @@ defmodule Trento.Domain.Events.ChecksExecutionCompleted do
   use Trento.Event
 
   defevent do
-    field :cluster_id, :string
+    field :cluster_id, Ecto.UUID
   end
 end

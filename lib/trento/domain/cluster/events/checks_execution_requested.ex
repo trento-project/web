@@ -6,8 +6,8 @@ defmodule Trento.Domain.Events.ChecksExecutionRequested do
   use Trento.Event
 
   defevent do
-    field :cluster_id, :string
-    field :hosts, {:array, :string}
+    field :cluster_id, Ecto.UUID
+    field :hosts, {:array, Ecto.UUID}
     field :checks, {:array, :string}
   end
 end
