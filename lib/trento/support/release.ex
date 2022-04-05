@@ -56,7 +56,7 @@ defmodule Trento.Release do
   def init_grafana_dashboards do
     load_app()
 
-    Trento.Integration.Grafana.init_dashboards()
+    Mix.Tasks.InitGrafanaDashboards.run([])
   end
 
   defp repos do

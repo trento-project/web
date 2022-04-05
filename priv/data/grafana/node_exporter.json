@@ -1001,7 +1001,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",agentID=\"$agentID\",job=\"$job\"}[5m])) * 100",
+            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",host_id=\"$host_id\",job=\"$job\"}[5m])) * 100",
             "format": "time_series",
             "hide": false,
             "interval": "",
@@ -1016,7 +1016,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',agentID=\"$agentID\",job=\"$job\"}[5m])) * 100",
+            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',host_id=\"$host_id\",job=\"$job\"}[5m])) * 100",
             "format": "time_series",
             "hide": false,
             "interval": "",
@@ -1031,7 +1031,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',agentID=\"$agentID\",job=\"$job\"}[5m])) * 100",
+            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',host_id=\"$host_id\",job=\"$job\"}[5m])) * 100",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1045,7 +1045,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",agentID=\"$agentID\",job=\"$job\"}[5m])) * 100",
+            "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",host_id=\"$host_id\",job=\"$job\"}[5m])) * 100",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1059,7 +1059,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',agentID=\"$agentID\",job=\"$job\"}[5m])) * 100",
+            "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',host_id=\"$host_id\",job=\"$job\"}[5m])) * 100",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1073,7 +1073,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',agentID=\"$agentID\",job=\"$job\"}[5m])) * 100",
+            "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',host_id=\"$host_id\",job=\"$job\"}[5m])) * 100",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1219,7 +1219,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "node_memory_MemTotal_bytes{agentID=\"$agentID\",job=\"$job\"}",
+            "expr": "node_memory_MemTotal_bytes{host_id=\"$host_id\",job=\"$job\"}",
             "format": "time_series",
             "hide": false,
             "interval": "",
@@ -1234,7 +1234,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "node_memory_MemTotal_bytes{agentID=\"$agentID\",job=\"$job\"} - node_memory_MemFree_bytes{agentID=\"$agentID\",job=\"$job\"} - (node_memory_Cached_bytes{agentID=\"$agentID\",job=\"$job\"} + node_memory_Buffers_bytes{agentID=\"$agentID\",job=\"$job\"})",
+            "expr": "node_memory_MemTotal_bytes{host_id=\"$host_id\",job=\"$job\"} - node_memory_MemFree_bytes{host_id=\"$host_id\",job=\"$job\"} - (node_memory_Cached_bytes{host_id=\"$host_id\",job=\"$job\"} + node_memory_Buffers_bytes{host_id=\"$host_id\",job=\"$job\"})",
             "format": "time_series",
             "hide": false,
             "interval": "",
@@ -1249,7 +1249,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "node_memory_Cached_bytes{agentID=\"$agentID\",job=\"$job\"} + node_memory_Buffers_bytes{agentID=\"$agentID\",job=\"$job\"}",
+            "expr": "node_memory_Cached_bytes{host_id=\"$host_id\",job=\"$job\"} + node_memory_Buffers_bytes{host_id=\"$host_id\",job=\"$job\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1263,7 +1263,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "node_memory_MemFree_bytes{agentID=\"$agentID\",job=\"$job\"}",
+            "expr": "node_memory_MemFree_bytes{host_id=\"$host_id\",job=\"$job\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1277,7 +1277,7 @@
               "uid": "PBFA97CFB590B2093"
             },
             "exemplar": true,
-            "expr": "(node_memory_SwapTotal_bytes{agentID=\"$agentID\",job=\"$job\"} - node_memory_SwapFree_bytes{agentID=\"$agentID\",job=\"$job\"})",
+            "expr": "(node_memory_SwapTotal_bytes{host_id=\"$host_id\",job=\"$job\"} - node_memory_SwapFree_bytes{host_id=\"$host_id\",job=\"$job\"})",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -12912,15 +12912,15 @@
             "type": "datasource",
             "uid": "${DS_PROMETHEUS}"
           },
-          "definition": "label_values(up, agentID)",
+          "definition": "label_values(up, host_id)",
           "hide": 0,
           "includeAll": false,
           "label": "Agent ID:",
           "multi": false,
-          "name": "agentID",
+          "name": "host_id",
           "options": [],
           "query": {
-            "query": "label_values(up, agentID)",
+            "query": "label_values(up, host_id)",
             "refId": "StandardVariableQuery"
           },
           "refresh": 1,
