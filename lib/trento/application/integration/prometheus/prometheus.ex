@@ -18,7 +18,8 @@ defmodule Trento.Integration.Prometheus do
       %{
         "targets" => ["#{host.ssh_address}:#{@node_exporter_port}"],
         "labels" => %{
-          "host_id" => "#{host.id}",
+          # TODO: in the future renaeme this label which also is used by node_exporter json
+          "agentID" => "#{host.id}",
           "hostname" => "#{host.hostname}",
           "exporter_name" => @node_exporter_name
         }
