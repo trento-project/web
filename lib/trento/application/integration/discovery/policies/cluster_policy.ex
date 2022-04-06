@@ -26,6 +26,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       }) do
     cluster_type = detect_cluster_type(payload)
     sid = parse_cluster_sid(payload)
+    details = parse_cluster_details(payload, cluster_type, sid)
 
     RegisterClusterHost.new(%{
       cluster_id: UUID.uuid5(@uuid_namespace, id),
@@ -34,7 +35,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       sid: sid,
       type: cluster_type,
       designated_controller: designated_controller,
-      details: parse_cluster_details(payload, cluster_type, sid),
+      details: details,
+      discovered_health: parse_cluster_health(details, cluster_type),
       cib_last_written: cib_last_written
     })
   end
@@ -94,14 +96,14 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     nodes = parse_cluster_nodes(payload, sid)
 
     %{
-      system_replication_mode: parse_system_replication_mode(nodes, sid),
-      system_replication_operation_mode: parse_system_replication_operation_mode(nodes, sid),
-      secondary_sync_state: parse_secondary_sync_state(nodes, sid),
-      sr_health_state: parse_hana_sr_health_state(nodes, sid),
-      fencing_type: parse_cluster_fencing_type(crmmon),
-      stopped_resources: parse_cluster_stopped_resources(crmmon),
-      nodes: nodes,
-      sbd_devices: parse_sbd_devices(sbd)
+      "system_replication_mode" => parse_system_replication_mode(nodes, sid),
+      "system_replication_operation_mode" => parse_system_replication_operation_mode(nodes, sid),
+      "secondary_sync_state" => parse_secondary_sync_state(nodes, sid),
+      "sr_health_state" => parse_hana_sr_health_state(nodes, sid),
+      "fencing_type" => parse_cluster_fencing_type(crmmon),
+      "stopped_resources" => parse_cluster_stopped_resources(crmmon),
+      "nodes" => nodes,
+      "sbd_devices" => parse_sbd_devices(sbd)
     }
   end
 
@@ -311,4 +313,21 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       }
     end)
   end
+
+  defp parse_cluster_health(details, cluster_type)
+       when cluster_type in [:hana_scale_up, :hana_scale_out],
+       do: parse_hana_cluster_health(details)
+
+  defp parse_cluster_health(_, _), do: :unknown
+
+  # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
+  # If data is not present for some reason the state goes to unknown
+  defp parse_hana_cluster_health(%{"sr_health_state" => "4", "secondary_sync_state" => "SOK"}),
+    do: :passing
+
+  defp parse_hana_cluster_health(%{"sr_health_state" => "", "secondary_sync_state" => ""}),
+    do: :unknown
+
+  defp parse_hana_cluster_health(%{"sr_health_state" => _, "secondary_sync_state" => _}),
+    do: :critical
 end
