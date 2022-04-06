@@ -30,7 +30,8 @@ defmodule Trento.ClusterProjector do
       name: name,
       sid: sid,
       type: type,
-      details: details
+      details: details,
+      health: health
     },
     fn multi ->
       changeset =
@@ -41,7 +42,7 @@ defmodule Trento.ClusterProjector do
           sid: sid,
           type: type,
           details: details,
-          health: :unknown,
+          health: health,
           checks_execution: :not_running
         })
 
