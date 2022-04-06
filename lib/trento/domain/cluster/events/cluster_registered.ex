@@ -12,6 +12,7 @@ defmodule Trento.Domain.Events.ClusterRegistered do
     field :name, :string
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
     field :sid, :string
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
 
     embeds_one :details, HanaClusterDetails
   end
