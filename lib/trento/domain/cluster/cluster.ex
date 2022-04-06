@@ -24,6 +24,7 @@ defmodule Trento.Domain.Cluster do
     ChecksExecutionStarted,
     ChecksSelected,
     ClusterDetailsUpdated,
+    ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
     HostAddedToCluster,
@@ -36,6 +37,7 @@ defmodule Trento.Domain.Cluster do
     :type,
     :sid,
     :details,
+    discovered_health: :unknown,
     health: :unknown,
     hosts: [],
     selected_checks: [],
@@ -47,6 +49,7 @@ defmodule Trento.Domain.Cluster do
           cluster_id: String.t(),
           name: [String.t()],
           type: :hana_scale_up | :hana_scale_out | :unknown,
+          discovered_health: :passing | :warning | :critical | :unknown,
           health: :passing | :warning | :critical | :unknown,
           sid: String.t(),
           details: HanaClusterDetails.t() | nil,
@@ -67,6 +70,7 @@ defmodule Trento.Domain.Cluster do
           type: type,
           sid: sid,
           details: details,
+          discovered_health: health,
           designated_controller: true
         }
       ) do
@@ -76,6 +80,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        health: health,
         details: details
       },
       %HostAddedToCluster{
@@ -99,46 +104,19 @@ defmodule Trento.Domain.Cluster do
     maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
-  # Cluster exists and details didn't change.
   def execute(
-        %Cluster{
-          cluster_id: cluster_id,
-          name: name,
-          type: type,
-          sid: sid,
-          details: details
-        },
+        %Cluster{} = cluster,
         %RegisterClusterHost{
-          cluster_id: cluster_id,
-          name: name,
-          type: type,
-          sid: sid,
-          details: details,
           designated_controller: true
-        }
+        } = command
       ) do
-    []
-  end
-
-  # Cluster exists but details changed
-  def execute(
-        %Cluster{},
-        %RegisterClusterHost{
-          cluster_id: cluster_id,
-          name: name,
-          type: type,
-          sid: sid,
-          details: details,
-          designated_controller: true
-        }
-      ) do
-    %ClusterDetailsUpdated{
-      cluster_id: cluster_id,
-      name: name,
-      type: type,
-      sid: sid,
-      details: details
-    }
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_discovered_health_changed_event(cluster, command)
+    end)
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
   end
 
   # Checks selected
@@ -228,7 +206,9 @@ defmodule Trento.Domain.Cluster do
           cluster_id: cluster_id,
           name: name,
           type: type,
-          sid: sid
+          sid: sid,
+          details: details,
+          health: health
         }
       ) do
     %Cluster{
@@ -236,7 +216,19 @@ defmodule Trento.Domain.Cluster do
       | cluster_id: cluster_id,
         name: name,
         type: type,
-        sid: sid
+        sid: sid,
+        details: details,
+        discovered_health: health,
+        health: health
+    }
+  end
+
+  def apply(%Cluster{} = cluster, %ClusterDiscoveredHealthChanged{
+        discovered_health: discovered_health
+      }) do
+    %Cluster{
+      cluster
+      | discovered_health: discovered_health
     }
   end
 
@@ -354,9 +346,62 @@ defmodule Trento.Domain.Cluster do
     end
   end
 
+  defp maybe_emit_cluster_details_updated_event(
+         %Cluster{
+           name: name,
+           type: type,
+           sid: sid,
+           details: details
+         },
+         %RegisterClusterHost{
+           name: name,
+           type: type,
+           sid: sid,
+           details: details
+         }
+       ) do
+    nil
+  end
+
+  defp maybe_emit_cluster_details_updated_event(
+         %Cluster{},
+         %RegisterClusterHost{
+           cluster_id: cluster_id,
+           name: name,
+           type: type,
+           sid: sid,
+           details: details
+         }
+       ) do
+    %ClusterDetailsUpdated{
+      cluster_id: cluster_id,
+      name: name,
+      type: type,
+      sid: sid,
+      details: details
+    }
+  end
+
+  defp maybe_emit_cluster_discovered_health_changed_event(
+         %Cluster{discovered_health: discovered_health},
+         %RegisterClusterHost{discovered_health: discovered_health}
+       ),
+       do: nil
+
+  defp maybe_emit_cluster_discovered_health_changed_event(
+         %Cluster{cluster_id: cluster_id},
+         %RegisterClusterHost{discovered_health: discovered_health}
+       ) do
+    %ClusterDiscoveredHealthChanged{
+      cluster_id: cluster_id,
+      discovered_health: discovered_health
+    }
+  end
+
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
          hosts_checks_results: hosts_checks_results,
+         discovered_health: discovered_health,
          health: health
        }) do
     new_health =
@@ -364,6 +409,7 @@ defmodule Trento.Domain.Cluster do
       |> Enum.flat_map(fn {_, results} -> results end)
       |> Enum.map(fn %{result: result} -> result end)
       |> Enum.reject(fn result -> result == :skipped end)
+      |> Kernel.++([discovered_health])
       |> HealthService.compute_aggregated_health()
 
     if new_health != health do
