@@ -84,7 +84,7 @@ defmodule Trento.Factory do
       ssh_address: Keyword.get(attrs, :ssh_address, Faker.Internet.ip_v4_address()),
       agent_version: Faker.StarWars.planet(),
       cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
-      heartbeat: :unknown
+      heartbeat: Keyword.get(attrs, :heartbeat, :unknown)
     })
   end
 
@@ -263,7 +263,8 @@ defmodule Trento.Factory do
       id: Keyword.get(attrs, :id, Faker.UUID.v4()),
       sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
       tenant: Keyword.get(attrs, :sid, Faker.Beer.hop()),
-      db_host: Keyword.get(attrs, :sid, Faker.Internet.ip_v4_address())
+      db_host: Keyword.get(attrs, :sid, Faker.Internet.ip_v4_address()),
+      health: Keyword.get(attrs, :health, :unknown)
     })
   end
 
@@ -274,7 +275,8 @@ defmodule Trento.Factory do
       tenant: Keyword.get(attrs, :tenant, Faker.UUID.v4()),
       instance_number: Keyword.get(attrs, :instance_number, "00"),
       features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4())
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      health: Keyword.get(attrs, :health, :unknown)
     })
   end
 
@@ -298,7 +300,8 @@ defmodule Trento.Factory do
       sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
       instance_number: Keyword.get(attrs, :instance_number, "00"),
       features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4())
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      health: Keyword.get(attrs, :health, :unknown)
     })
   end
 
@@ -379,5 +382,57 @@ defmodule Trento.Factory do
       check_id: Keyword.get(attrs, :check_id, Faker.UUID.v4()),
       result: Keyword.get(attrs, :result, :passing)
     })
+  end
+
+  def sap_system_with_cluster_and_hosts do
+    %ClusterReadModel{id: cluster_id} = cluster_projection(type: :hana_scale_up, health: :passing)
+
+    %ClusterReadModel{id: another_cluster_id} =
+      cluster_projection(type: :hana_scale_up, health: :warning)
+
+    %HostReadModel{id: host_1_id} = host_projection(cluster_id: cluster_id, heartbeat: :unknown)
+
+    %HostReadModel{id: host_2_id} =
+      host_projection(cluster_id: another_cluster_id, heartbeat: :passing)
+
+    database_sid = "HDD"
+
+    %SapSystemReadModel{
+      id: sap_system_id,
+      sid: sid
+    } = sap_system_projection(health: :passing)
+
+    database_instance_projection_without_host(
+      sap_system_id: sap_system_id,
+      sid: database_sid,
+      host_id: host_1_id,
+      health: :warning
+    )
+
+    database_instance_projection_without_host(
+      sap_system_id: sap_system_id,
+      sid: database_sid,
+      host_id: host_2_id,
+      health: :critical
+    )
+
+    application_instance_projection_without_host(
+      sap_system_id: sap_system_id,
+      sid: sid,
+      host_id: host_1_id,
+      health: :passing
+    )
+
+    application_instance_projection_without_host(
+      sap_system_id: sap_system_id,
+      sid: sid,
+      host_id: host_2_id,
+      health: :warning
+    )
+
+    %{
+      sap_system_id: sap_system_id,
+      sid: sid
+    }
   end
 end

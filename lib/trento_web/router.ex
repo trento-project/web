@@ -51,6 +51,8 @@ defmodule TrentoWeb.Router do
     post "/sap_systems/:id/tags", SapSystemController, :create_tag
     delete "/sap_systems/:id/tags/:value", SapSystemController, :delete_tag
 
+    get "/sap_systems/health", HealthOverviewController, :overview
+
     get "/databases", SapSystemController, :list_databases
     post "/databases/:id/tags", SapSystemController, :create_database_tag
     delete "/databases/:id/tags/:value", SapSystemController, :delete_tag
