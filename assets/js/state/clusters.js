@@ -58,6 +58,13 @@ export const clustersListSlice = createSlice({
             }),
             ...action.payload.checks_results,
           ];
+
+          cluster.hosts_executions = [
+            ...cluster.hosts_executions.filter((host_execution) => {
+              return host_execution.host_id !== action.payload.host_id;
+            }),
+            ...action.payload.hosts_executions,
+          ];
         }
         return cluster;
       });

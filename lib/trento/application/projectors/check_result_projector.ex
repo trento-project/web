@@ -97,7 +97,7 @@ defmodule Trento.CheckResultProjector do
         %HostChecksExecutionsReadModel{cluster_id: cluster_id, host_id: host_id}
         |> HostChecksExecutionsReadModel.changeset(%{reachable: reachable, msg: msg})
 
-      Ecto.Multi.update(multi, :hosts_executions, hosts_executions_changeset)
+      multi = Ecto.Multi.update(multi, :hosts_executions, hosts_executions_changeset)
 
       checks_results
       |> Enum.map(fn %{
@@ -133,6 +133,7 @@ defmodule Trento.CheckResultProjector do
       TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_results_updated", %{
         cluster_id: cluster_id,
         host_id: host_id,
+        hosts_executions: [%{cluster_id: cluster_id, host_id: host_id, reachable: true, msg: ""}],
         checks_results:
           Enum.map(checks, fn check_id ->
             %{host_id: host_id, check_id: check_id, result: :unknown}
@@ -156,8 +157,7 @@ defmodule Trento.CheckResultProjector do
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_results_updated", %{
       cluster_id: cluster_id,
       host_id: host_id,
-      reachable: reachable,
-      msg: msg,
+      hosts_executions: [%{cluster_id: cluster_id, host_id: host_id, reachable: reachable, msg: msg}],
       checks_results:
         Enum.map(checks_results, fn %{check_id: check_id, result: result} ->
           %{host_id: host_id, check_id: check_id, result: result}
