@@ -12,10 +12,14 @@ defmodule Trento.CheckResultProjector do
 
   alias Trento.Domain.Events.{
     ChecksExecutionRequested,
-    HostChecksExecutionCompleted
+    HostChecksExecutionCompleted,
+    HostChecksExecutionUnreachable
   }
 
-  alias Trento.CheckResultReadModel
+  alias Trento.{
+    CheckResultReadModel,
+    HostChecksResultsReadModel
+  }
 
   project(
     %ChecksExecutionRequested{
@@ -24,13 +28,40 @@ defmodule Trento.CheckResultProjector do
       checks: checks
     },
     fn multi ->
+      # Delete old hosts executions states
+      multi =
+        Ecto.Multi.delete_all(
+          multi,
+          :delete_old_hosts_executions,
+          from(c in CheckResultReadModel, where: c.cluster_id == ^cluster_id)
+        )
+
       # Delete old results
       multi =
         Ecto.Multi.delete_all(
           multi,
           :delete_old_checks_results,
-          from(c in CheckResultReadModel, where: c.cluster_id == ^cluster_id)
+          from(h in HostChecksResultsReadModel, where: h.cluster_id == ^cluster_id)
         )
+
+      multi =
+        hosts
+        |> Enum.map(fn host_id ->
+          HostChecksResultsReadModel.changeset(
+            %HostChecksResultsReadModel{},
+            %{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              reachable: true,
+              msg: ""
+            }
+          )
+        end)
+        |> List.flatten()
+        |> Enum.reduce(multi, fn %{changes: %{cluster_id: cluster_id, host_id: host_id}} = changeset,
+                                 acc ->
+          Ecto.Multi.insert(acc, "#{cluster_id}_#{host_id}", changeset)
+        end)
 
       hosts
       |> Enum.map(fn host_id ->
@@ -61,6 +92,12 @@ defmodule Trento.CheckResultProjector do
       checks_results: checks_results
     },
     fn multi ->
+      hosts_executions_changeset =
+        %HostChecksResultsReadModel{cluster_id: cluster_id, host_id: host_id}
+        |> HostChecksResultsReadModel.changeset(%{reachable: true, msg: ""})
+
+      Ecto.Multi.update(multi, :hosts_executions, hosts_executions_changeset)
+
       checks_results
       |> Enum.map(fn %{
                        check_id: check_id,
@@ -82,6 +119,21 @@ defmodule Trento.CheckResultProjector do
           conflict_target: [:cluster_id, :host_id, :check_id]
         )
       end)
+    end
+  )
+
+  project(
+    %HostChecksExecutionUnreachable{
+      cluster_id: cluster_id,
+      host_id: host_id,
+      msg: msg
+    },
+    fn multi ->
+      hosts_executions_changeset =
+        %HostChecksResultsReadModel{cluster_id: cluster_id, host_id: host_id}
+        |> HostChecksResultsReadModel.changeset(%{reachable: false, msg: msg})
+
+      Ecto.Multi.update(multi, :hosts_executions, hosts_executions_changeset)
     end
   )
 
