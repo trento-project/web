@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { EOS_LENS_FILLED, EOS_ERROR } from 'eos-icons-react';
+import { EOS_LENS_FILLED, EOS_ERROR, EOS_SCHEDULE } from 'eos-icons-react';
 import Spinner from './Spinner';
 
 import NotificationBox from './NotificationBox';
@@ -45,7 +45,14 @@ const sortChecksResults = (checksResults = [], group) => {
   });
 };
 
-const getResultIcon = (result) => {
+const getResultIcon = (checks_execution, result) => {
+  switch (checks_execution) {
+    case 'requested':
+     return <EOS_SCHEDULE className="fill-gray-500" />;
+    case 'running':
+     return <Spinner></Spinner>;
+  }
+
   switch (result) {
     case 'passing':
       return <EOS_LENS_FILLED className="fill-jungle-green-500" />;
@@ -54,7 +61,7 @@ const getResultIcon = (result) => {
     case 'critical':
       return <EOS_LENS_FILLED className="fill-red-500" />;
     default:
-      return <Spinner></Spinner>;
+      return <EOS_LENS_FILLED className="fill-gray-500" />;
   }
 };
 
@@ -150,7 +157,7 @@ const ChecksResults = () => {
                           {description(checkResult.check_id)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap content-center">
-                          {getResultIcon(checkResult.result)}
+                          {getResultIcon(cluster.checks_execution, checkResult.result)}
                         </td>
                       </tr>
                     ))}
