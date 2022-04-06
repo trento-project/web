@@ -99,9 +99,11 @@ defmodule Trento.Integration.Checks do
     CompleteChecksExecution.new(%{
       cluster_id: cluster_id,
       hosts_executions:
-        Enum.map(hosts, fn %{host_id: host_id, results: results} ->
+        Enum.map(hosts, fn %{host_id: host_id, reachable: reachable, msg: msg, results: results} ->
           %{
             host_id: host_id,
+            reachable: reachable,
+            msg: msg, 
             checks_results: Enum.map(results, &Map.from_struct/1)
           }
         end)
