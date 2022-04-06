@@ -18,7 +18,7 @@ defmodule Trento.CheckResultProjector do
 
   alias Trento.{
     CheckResultReadModel,
-    HostChecksResultsReadModel
+    HostChecksExecutionsReadModel
   }
 
   project(
@@ -41,14 +41,14 @@ defmodule Trento.CheckResultProjector do
         Ecto.Multi.delete_all(
           multi,
           :delete_old_checks_results,
-          from(h in HostChecksResultsReadModel, where: h.cluster_id == ^cluster_id)
+          from(h in HostChecksExecutionsReadModel, where: h.cluster_id == ^cluster_id)
         )
 
       multi =
         hosts
         |> Enum.map(fn host_id ->
-          HostChecksResultsReadModel.changeset(
-            %HostChecksResultsReadModel{},
+          HostChecksExecutionsReadModel.changeset(
+            %HostChecksExecutionsReadModel{},
             %{
               cluster_id: cluster_id,
               host_id: host_id,
@@ -93,8 +93,8 @@ defmodule Trento.CheckResultProjector do
     },
     fn multi ->
       hosts_executions_changeset =
-        %HostChecksResultsReadModel{cluster_id: cluster_id, host_id: host_id}
-        |> HostChecksResultsReadModel.changeset(%{reachable: true, msg: ""})
+        %HostChecksExecutionsReadModel{cluster_id: cluster_id, host_id: host_id}
+        |> HostChecksExecutionsReadModel.changeset(%{reachable: true, msg: ""})
 
       Ecto.Multi.update(multi, :hosts_executions, hosts_executions_changeset)
 
@@ -130,8 +130,8 @@ defmodule Trento.CheckResultProjector do
     },
     fn multi ->
       hosts_executions_changeset =
-        %HostChecksResultsReadModel{cluster_id: cluster_id, host_id: host_id}
-        |> HostChecksResultsReadModel.changeset(%{reachable: false, msg: msg})
+        %HostChecksExecutionsReadModel{cluster_id: cluster_id, host_id: host_id}
+        |> HostChecksExecutionsReadModel.changeset(%{reachable: false, msg: msg})
 
       Ecto.Multi.update(multi, :hosts_executions, hosts_executions_changeset)
     end

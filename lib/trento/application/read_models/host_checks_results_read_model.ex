@@ -1,13 +1,11 @@
-defmodule Trento.HostChecksResultsReadModel do
+defmodule Trento.HostChecksExecutionsReadModel do
   @moduledoc """
-  Host checks results read model
+  Host checks executions read model
   """
 
   use Ecto.Schema
 
   import Ecto.Changeset
-
-  alias Trento.CheckResultReadModel
 
   @type t :: %__MODULE__{}
 
@@ -18,10 +16,6 @@ defmodule Trento.HostChecksResultsReadModel do
     field :host_id, Ecto.UUID, primary_key: true
     field :reachable, :boolean
     field :msg, :string
-
-    has_many :checks_results, CheckResultReadModel,
-      references: :host_id,
-      foreign_key: :host_id
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
