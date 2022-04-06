@@ -7,7 +7,8 @@ defmodule Trento.Domain.Cluster do
     CheckResult,
     Cluster,
     HanaClusterDetails,
-    HealthService
+    HealthService,
+    HostExecution
   }
 
   alias Trento.Domain.Commands.{
@@ -44,7 +45,7 @@ defmodule Trento.Domain.Cluster do
     health: :unknown,
     hosts: [],
     selected_checks: [],
-    hosts_checks_results: %{},
+    hosts_executions: %{},
     checks_execution: :not_running
   ]
 
@@ -58,7 +59,7 @@ defmodule Trento.Domain.Cluster do
           details: HanaClusterDetails.t() | nil,
           hosts: [String.t()],
           selected_checks: [String.t()],
-          hosts_checks_results: %{String.t() => [CheckResult.t()]},
+          hosts_executions: %{String.t() => HostExecution.t()},
           checks_execution: :not_running | :requested | :running
         }
 
@@ -285,20 +286,24 @@ defmodule Trento.Domain.Cluster do
         %Cluster{selected_checks: selected_checks, hosts: hosts} = cluster,
         %ChecksExecutionRequested{}
       ) do
-    hosts_checks_results =
-      Enum.reduce(hosts, %{}, fn host, acc ->
+    hosts_executions =
+      Enum.reduce(hosts, %{}, fn host_id, acc ->
         Map.put(
           acc,
-          host,
-          Enum.map(selected_checks, fn check_id ->
-            %CheckResult{check_id: check_id, result: :unknown}
-          end)
+          host_id,
+          %HostExecution{
+            host_id: host_id,
+            reachable: true,
+            checks_results: Enum.map(selected_checks, fn check_id ->
+              %CheckResult{check_id: check_id, result: :unknown}
+            end)
+          }
         )
       end)
 
     %Cluster{
       cluster
-      | hosts_checks_results: hosts_checks_results,
+      | hosts_executions: hosts_executions,
         checks_execution: :requested
     }
   end
@@ -324,27 +329,35 @@ defmodule Trento.Domain.Cluster do
   end
 
   def apply(
-        %Cluster{hosts_checks_results: hosts_checks_results} = cluster,
+        %Cluster{hosts_executions: hosts_executions} = cluster,
         %HostChecksExecutionCompleted{host_id: host_id, checks_results: checks_results}
       ) do
     %Cluster{
       cluster
-      | hosts_checks_results: Map.put(hosts_checks_results, host_id, checks_results)
+      | hosts_executions: Map.put(hosts_executions, host_id,
+        %HostExecution{
+          host_id: host_id,
+          reachable: true,
+          checks_results: checks_results
+        }
+      )
     }
   end
 
   def apply(
-        %Cluster{hosts_checks_results: hosts_checks_results} = cluster,
-        %HostChecksExecutionUnreachable{host_id: host_id}
+        %Cluster{hosts_executions: hosts_executions} = cluster,
+        %HostChecksExecutionUnreachable{host_id: host_id, msg: msg}
       ) do
-    {_, hosts_checks_results} =
-    Map.get_and_update(hosts_checks_results, host_id, fn checks ->
-      {host_id, Enum.map(checks, fn check -> %CheckResult{check_id: check.check_id, result: :unknown} end)}
-    end)
-
     %Cluster{
       cluster
-      | hosts_checks_results: hosts_checks_results
+      | hosts_executions: Map.update(hosts_executions, host_id, %HostExecution{}, fn host ->
+        %HostExecution{
+          host_id: host_id,
+          reachable: false,
+          msg: msg,
+          checks_results: host.checks_results
+        }
+      end)
     }
   end
 
@@ -430,13 +443,14 @@ defmodule Trento.Domain.Cluster do
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
-         hosts_checks_results: hosts_checks_results,
+         hosts_executions: hosts_executions,
          discovered_health: discovered_health,
          health: health
        }) do
     new_health =
-      hosts_checks_results
-      |> Enum.flat_map(fn {_, results} -> results end)
+      hosts_executions
+      |> Enum.map(fn {_, hosts} -> hosts end)
+      |> Enum.flat_map(fn %{checks_results: checks_results} -> checks_results end)
       |> Enum.map(fn %{result: result} -> result end)
       |> Enum.reject(fn result -> result == :skipped end)
       |> Kernel.++([discovered_health])
