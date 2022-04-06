@@ -29,8 +29,7 @@ defmodule Trento.Domain.Cluster do
     ClusterHealthChanged,
     ClusterRegistered,
     HostAddedToCluster,
-    HostChecksExecutionCompleted,
-    HostChecksExecutionUnreachable
+    HostChecksExecutionCompleted
   }
 
   defstruct [
@@ -185,7 +184,8 @@ defmodule Trento.Domain.Cluster do
   # Store checks results
   def execute(
         %Cluster{
-          cluster_id: cluster_id
+          cluster_id: cluster_id,
+          hosts_executions: old_hosts_executions
         } = cluster,
         %CompleteChecksExecution{
           hosts_executions: hosts_executions
@@ -194,7 +194,7 @@ defmodule Trento.Domain.Cluster do
     hosts_executions
     |> Enum.reduce(
       Multi.new(cluster),
-      &handle_hosts_execution_data(&1, &2, cluster_id)
+      &handle_hosts_execution_data(&1, &2, cluster_id, old_hosts_executions)
     )
     |> Multi.execute(fn _ -> %ChecksExecutionCompleted{cluster_id: cluster_id} end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
@@ -330,14 +330,16 @@ defmodule Trento.Domain.Cluster do
 
   def apply(
         %Cluster{hosts_executions: hosts_executions} = cluster,
-        %HostChecksExecutionCompleted{host_id: host_id, checks_results: checks_results}
-      ) do
+        %HostChecksExecutionCompleted{host_id: host_id, reachable: reachable, msg: msg, checks_results: checks_results}
+      )
+      when reachable == true do
     %Cluster{
       cluster
       | hosts_executions: Map.put(hosts_executions, host_id,
         %HostExecution{
           host_id: host_id,
-          reachable: true,
+          reachable: reachable,
+          msg: msg,
           checks_results: checks_results
         }
       )
@@ -346,14 +348,15 @@ defmodule Trento.Domain.Cluster do
 
   def apply(
         %Cluster{hosts_executions: hosts_executions} = cluster,
-        %HostChecksExecutionUnreachable{host_id: host_id, msg: msg}
-      ) do
+        %HostChecksExecutionCompleted{host_id: host_id, reachable: reachable, msg: msg}
+      )
+      when reachable == false do
     %Cluster{
       cluster
       | hosts_executions: Map.update(hosts_executions, host_id, %HostExecution{}, fn host ->
         %HostExecution{
           host_id: host_id,
-          reachable: false,
+          reachable: reachable,
           msg: msg,
           checks_results: host.checks_results
         }
@@ -462,26 +465,32 @@ defmodule Trento.Domain.Cluster do
   end
 
   defp handle_hosts_execution_data(
-      %{host_id: host_id, reachable: false, msg: msg}, multi, cluster_id) do
-
-    multi
-    |> Multi.execute(fn _ ->
-      %HostChecksExecutionUnreachable{
-        cluster_id: cluster_id,
-        host_id: host_id,
-        msg: msg
-      }
-    end)
-  end
-
-  defp handle_hosts_execution_data(
-      %{host_id: host_id, reachable: true, checks_results: results}, multi, cluster_id) do
+      %{host_id: host_id, reachable: reachable, msg: msg}, multi, cluster_id, hosts_executions)
+    when reachable == false do
 
     multi
     |> Multi.execute(fn _ ->
       %HostChecksExecutionCompleted{
         cluster_id: cluster_id,
         host_id: host_id,
+        reachable: reachable,
+        msg: msg,
+        checks_results: Map.get(hosts_executions, host_id).checks_results
+      }
+    end)
+  end
+
+  defp handle_hosts_execution_data(
+      %{host_id: host_id, reachable: reachable, msg: msg, checks_results: results}, multi, cluster_id, _hosts_executions)
+    when reachable == true do
+
+    multi
+    |> Multi.execute(fn _ ->
+      %HostChecksExecutionCompleted{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        reachable: reachable,
+        msg: msg,
         checks_results: results
       }
     end)
