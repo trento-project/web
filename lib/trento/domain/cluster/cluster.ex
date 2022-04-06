@@ -28,7 +28,8 @@ defmodule Trento.Domain.Cluster do
     ClusterHealthChanged,
     ClusterRegistered,
     HostAddedToCluster,
-    HostChecksExecutionCompleted
+    HostChecksExecutionCompleted,
+    HostChecksExecutionUnreachable
   }
 
   defstruct [
@@ -192,15 +193,7 @@ defmodule Trento.Domain.Cluster do
     hosts_executions
     |> Enum.reduce(
       Multi.new(cluster),
-      fn %{host_id: host_id, checks_results: results}, multi ->
-        Multi.execute(multi, fn _ ->
-          %HostChecksExecutionCompleted{
-            cluster_id: cluster_id,
-            host_id: host_id,
-            checks_results: results
-          }
-        end)
-      end
+      &handle_hosts_execution_data(&1, &2, cluster_id)
     )
     |> Multi.execute(fn _ -> %ChecksExecutionCompleted{cluster_id: cluster_id} end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
@@ -340,6 +333,21 @@ defmodule Trento.Domain.Cluster do
     }
   end
 
+  def apply(
+        %Cluster{hosts_checks_results: hosts_checks_results} = cluster,
+        %HostChecksExecutionUnreachable{host_id: host_id}
+      ) do
+    {_, hosts_checks_results} =
+    Map.get_and_update(hosts_checks_results, host_id, fn checks ->
+      {host_id, Enum.map(checks, fn check -> %CheckResult{check_id: check.check_id, result: :unknown} end)}
+    end)
+
+    %Cluster{
+      cluster
+      | hosts_checks_results: hosts_checks_results
+    }
+  end
+
   def apply(%Cluster{} = cluster, %ClusterHealthChanged{health: health}) do
     %Cluster{cluster | health: health}
   end
@@ -437,5 +445,31 @@ defmodule Trento.Domain.Cluster do
     if new_health != health do
       %ClusterHealthChanged{cluster_id: cluster_id, health: new_health}
     end
+  end
+
+  defp handle_hosts_execution_data(
+      %{host_id: host_id, reachable: false, msg: msg}, multi, cluster_id) do
+
+    multi
+    |> Multi.execute(fn _ ->
+      %HostChecksExecutionUnreachable{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        msg: msg
+      }
+    end)
+  end
+
+  defp handle_hosts_execution_data(
+      %{host_id: host_id, reachable: true, checks_results: results}, multi, cluster_id) do
+
+    multi
+    |> Multi.execute(fn _ ->
+      %HostChecksExecutionCompleted{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        checks_results: results
+      }
+    end)
   end
 end
