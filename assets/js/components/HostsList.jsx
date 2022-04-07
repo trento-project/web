@@ -51,7 +51,7 @@ const HostsList = () => {
         key: 'heartbeat',
         filter: true,
         render: (_content, item) => (
-          <div className="ml-4">{getHeartbeatIcon(item)}</div>
+          <div className="tn-healthicon ml-4">{getHeartbeatIcon(item)}</div>
         ),
       },
       {
