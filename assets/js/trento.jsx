@@ -58,4 +58,7 @@ const App = () => {
   );
 };
 
-render(<App />, document.getElementById('trento'));
+var trento = document.getElementById('trento');
+if (trento) {
+  render(<App />, trento);
+}

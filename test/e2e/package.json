@@ -1,0 +1,14 @@
+{
+  "name": "trento-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E testing for Trento",
+  "scripts": {
+    "cypress:open": "cypress open"
+  },
+  "devDependencies": {
+    "cypress": "^9.2.1",
+    "prettier": "2.5.1",
+    "eslint": "8.7.0",
+    "eslint-plugin-cypress": "^2.12.1"
+  }
+}

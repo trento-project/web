@@ -51,7 +51,7 @@ const HostsList = () => {
         key: 'heartbeat',
         filter: true,
         render: (_content, item) => (
-          <div className="ml-4">{getHeartbeatIcon(item)}</div>
+          <div className="tn-healthicon ml-4">{getHeartbeatIcon(item)}</div>
         ),
       },
       {
@@ -60,7 +60,7 @@ const HostsList = () => {
         className: 'w-40',
         filter: true,
         render: (content, { id }) => (
-          <span className="text-jungle-green-500 hover:opacity-75">
+          <span className="tn-hostname text-jungle-green-500 hover:opacity-75">
             <Link to={`/hosts/${id}`}>{content}</Link>
           </span>
         ),

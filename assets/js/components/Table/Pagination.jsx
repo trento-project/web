@@ -13,6 +13,7 @@ const Pagination = ({ pages, currentPage, onSelect }) => {
             const isFirst = pageNumber === 1;
             const isLast = pageNumber === pages;
             const classes = classNames(
+              'tn-page-item',
               'w-full',
               'px-4',
               'py-2',
