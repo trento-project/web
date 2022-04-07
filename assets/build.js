@@ -29,6 +29,7 @@ require('esbuild')
         '@components': resolvePath('./js/components'),
         '@state': resolvePath('./js/state'),
         '@lib': resolvePath('./js/lib'),
+        '@hooks': resolvePath('./js/hooks'),
       }),
     ],
   })
