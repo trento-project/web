@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
 import { logError } from '@lib/log';
-import ComponentHealthSummary from '@components/HealthSummary';
+import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const getHeartbeatIcon = ({ heartbeat }) => {
   switch (heartbeat) {

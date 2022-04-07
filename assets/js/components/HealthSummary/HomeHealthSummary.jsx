@@ -3,7 +3,7 @@ import Table from '@components/Table';
 import HealthIcon from '../Health/HealthIcon';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import HealthSummary from './HealthSummary';
+import HealthSummary from '@components/HealthSummary';
 
 const healthSummaryTableConfig = {
   usePadding: false,
@@ -28,7 +28,7 @@ const healthSummaryTableConfig = {
     },
     {
       title: 'Database',
-      key: 'databasehealth',
+      key: 'databaseHealth',
       className: 'text-center',
       render: (content) => {
         return <HealthIcon health={content} centered={true} />;

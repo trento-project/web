@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HomeHealthSummary from '@components/HealthSummary';
+import { HomeHealthSummary } from '@components/HealthSummary';
 
 const Home = () => {
   return <HomeHealthSummary />;

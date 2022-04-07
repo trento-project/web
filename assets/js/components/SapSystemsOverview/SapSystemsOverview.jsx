@@ -10,7 +10,7 @@ import Tags from '@components/Tags';
 import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
 
 import { logError } from '@lib/log';
-import ComponentHealthSummary from '@components/HealthSummary';
+import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 

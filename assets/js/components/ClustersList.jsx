@@ -13,7 +13,7 @@ import { logError } from '@lib/log';
 
 import HealthIcon from '@components/Health';
 import Spinner from '@components/Spinner';
-import ComponentHealthSummary from '@components/HealthSummary';
+import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
