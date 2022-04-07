@@ -1,40 +1,39 @@
 import {
-    allHostNames,
-    agents,
-  } from '../fixtures/hosts-overview/available_hosts';
-  
-  context('Hosts Overview', () => {
-    const availableHosts = allHostNames();
-    before(() => {
-      cy.loadScenario('healthy-27-node-SAP-cluster');
-      cy.task('startAgentHeartbeat', agents());
-      cy.login('chiecks@trento.io', 'secret1234');
+  allHostNames,
+  agents,
+} from "../fixtures/hosts-overview/available_hosts";
 
-      cy.visit('/hosts');
-      cy.url().should('include', '/hosts');
-    });
-  
-    describe('Registered Hosts are shown in the list', () => {
-      it('should show 10 of the 27 registered hosts', () => {
-        cy.get('.tn-hostname').its('length').should('eq', 10);
-      });
-      it('should show the 10 visible hosts as healthy', () => {
-        cy.get('.tn-healthicon').its('length').should('eq', 10);
-      });
-      it('should have 3 pages', () => {
-        cy.get('.tn-page-item').its('length').should('eq', 3);
-      });
-    });
+context("Hosts Overview", () => {
+  const availableHosts = allHostNames();
+  before(() => {
+    cy.loadScenario("healthy-27-node-SAP-cluster");
+    cy.task("startAgentHeartbeat", agents());
+    cy.login();
 
-    describe('Discovered hostnames are the expected ones', () => {
-      availableHosts.forEach((hostName) => {
-        it(`should have a host named ${hostName}`, () => {
-          cy.get('.tn-hostname a').each(($link) => {
-            const displayedHostName = $link.text().trim();
-            expect(availableHosts).to.include(displayedHostName);
-          });
+    cy.visit("/hosts");
+    cy.url().should("include", "/hosts");
+  });
+
+  describe("Registered Hosts are shown in the list", () => {
+    it("should show 10 of the 27 registered hosts", () => {
+      cy.get(".tn-hostname").its("length").should("eq", 10);
+    });
+    it("should show the 10 visible hosts as healthy", () => {
+      cy.get(".tn-healthicon").its("length").should("eq", 10);
+    });
+    it("should have 3 pages", () => {
+      cy.get(".tn-page-item").its("length").should("eq", 3);
+    });
+  });
+
+  describe("Discovered hostnames are the expected ones", () => {
+    availableHosts.forEach((hostName) => {
+      it(`should have a host named ${hostName}`, () => {
+        cy.get(".tn-hostname a").each(($link) => {
+          const displayedHostName = $link.text().trim();
+          expect(availableHosts).to.include(displayedHostName);
         });
       });
     });
   });
-  
+});

@@ -24,20 +24,20 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('login', (username, password) => {
-  cy.visit('/login')
-  cy.get('#user_email').type(username)
-  cy.get('#user_password').type(password)
-  cy.get(':nth-child(5) > .w-full').click()
-  cy.url().should('include', '/')
+Cypress.Commands.add("login", (username, password) => {
+  cy.visit("/login");
+  cy.get("#user_email").type(username);
+  cy.get("#user_password").type(password);
+  cy.get(":nth-child(5) > .w-full").click();
+  cy.url().should("include", "/");
 });
 
-Cypress.Commands.add('loadScenario', (scenario) => {
+Cypress.Commands.add("loadScenario", (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
-    Cypress.env('project_root'),
-    Cypress.env('photofinish_binary'),
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
+    Cypress.env("project_root"),
+    Cypress.env("photofinish_binary"),
+    Cypress.env("web_api_host"),
+    Cypress.env("web_api_port"),
   ];
   cy.log(`Loading scenario "${scenario}"...`);
   cy.exec(
