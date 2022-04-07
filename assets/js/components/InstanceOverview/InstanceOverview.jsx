@@ -5,6 +5,7 @@ import { getCluster, getHost } from '@state/selectors';
 import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails';
 import { DATABASE_TYPE } from '@lib/model';
+import ClusterLink from '@components/ClusterLink';
 
 const InstanceOverview = ({
   instanceType,
@@ -35,7 +36,7 @@ const InstanceOverview = ({
       {isDatabase && <div className="table-cell p-2">{systemReplication}</div>}
       <div className="table-cell p-2">
         {cluster ? (
-          cluster.name
+          <ClusterLink cluster={cluster}>{cluster.name}</ClusterLink>
         ) : (
           <p className="text-gray-500 dark:text-gray-300 text-sm">
             not available
@@ -44,7 +45,7 @@ const InstanceOverview = ({
       </div>
       <div className="table-cell p-2">
         <Link
-          className="ml-auto hidden md:block text-sm text-gray-500 dark:text-gray-300 underline"
+          className="text-jungle-green-500 hover:opacity-75"
           to={`/hosts/${hostId}`}
         >
           {host && host.hostname}
