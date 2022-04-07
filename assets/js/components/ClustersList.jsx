@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
 import axios from 'axios';
 import Table from './Table';
 import Tags from './Tags';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
-
+import ClusterLink from '@components/ClusterLink';
 import { EOS_EDIT, EOS_RUN_CIRCLE, EOS_MORE_HORIZ } from 'eos-icons-react';
 
 import { logError } from '@lib/log';
@@ -23,21 +23,6 @@ const getClusterTypeLabel = (type) => {
     default:
       return 'Unknown';
   }
-};
-
-const getClusterLink = (cluster, text) => {
-  if (cluster.hasDetails) {
-    return (
-      <Link
-        className="text-jungle-green-500 hover:opacity-75"
-        to={`/clusters/${cluster.id}`}
-      >
-        {text || cluster.name}
-      </Link>
-    );
-  }
-
-  return cluster.name;
 };
 
 const addTag = (tag, clusterId) => {
@@ -88,12 +73,9 @@ const ClustersList = () => {
         title: 'Name',
         key: 'name',
         filter: true,
-        render: (content, item) => getClusterLink(item),
-      },
-      {
-        title: 'ID',
-        key: 'id',
-        render: (content, item) => getClusterLink(item, content),
+        render: (content, item) => (
+          <ClusterLink cluster={item}>{content}</ClusterLink>
+        ),
       },
       {
         title: 'SID',
@@ -103,6 +85,7 @@ const ClustersList = () => {
       {
         title: 'Type',
         key: 'type',
+        filter: true,
         render: (content, item) => (
           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate">
             {getClusterTypeLabel(item.type)}
@@ -112,6 +95,8 @@ const ClustersList = () => {
       {
         title: 'Tags',
         key: 'tags',
+        filter: (filter, key) => (element) =>
+          element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}

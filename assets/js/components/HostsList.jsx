@@ -4,7 +4,7 @@ import axios from 'axios';
 import Table from './Table';
 import Tags from './Tags';
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
-
+import ClusterLink from '@components/ClusterLink';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
@@ -67,8 +67,6 @@ const HostsList = () => {
       {
         title: 'IP',
         key: 'ip',
-        filter: (filter, key) => (element) =>
-          element[key].some((ip) => filter.includes(ip)),
         render: (content) =>
           content.map((ip) => (
             <div key={ip} className="text-sm text-gray-900">
@@ -88,6 +86,14 @@ const HostsList = () => {
         },
       },
       {
+        title: 'SID',
+        key: 'sid',
+        filter: true,
+        render: (content, { cluster }) => (
+          <ClusterLink cluster={cluster}>{content}</ClusterLink>
+        ),
+      },
+      {
         title: 'Agent version',
         key: 'agent_version',
         render: (content) => (
@@ -99,6 +105,8 @@ const HostsList = () => {
       {
         title: 'Tags',
         key: 'tags',
+        filter: (filter, key) => (element) =>
+          element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
@@ -120,12 +128,15 @@ const HostsList = () => {
   };
 
   const data = hosts.map((host) => {
+    const cluster = clusters.find((cluster) => cluster.id === host.cluster_id);
+
     return {
       heartbeat: host.heartbeat,
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
-      cluster: clusters.find((cluster) => cluster.id === host.cluster_id),
+      sid: cluster?.sid,
+      cluster: cluster,
       agent_version: host.agent_version,
       id: host.id,
       tags: (host.tags && host.tags.map((tag) => tag.value)) || [],

@@ -86,6 +86,8 @@ const SapSystemsOverview = () => {
       {
         title: 'Tags',
         key: 'tags',
+        filter: (filter, key) => (element) =>
+          element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
