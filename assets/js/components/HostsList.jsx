@@ -59,7 +59,7 @@ const HostsList = () => {
         key: 'hostname',
         filter: true,
         render: (content, { id }) => (
-          <span className="text-jungle-green-500 hover:opacity-75">
+          <span className="tn-hostname text-jungle-green-500 hover:opacity-75">
             <Link to={`/hosts/${id}`}>{content}</Link>
           </span>
         ),
