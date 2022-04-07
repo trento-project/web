@@ -20,6 +20,7 @@ defmodule Trento.ClusterTest do
     ChecksExecutionStarted,
     ChecksSelected,
     ClusterDetailsUpdated,
+    ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
     HostAddedToCluster,
@@ -45,6 +46,7 @@ defmodule Trento.ClusterTest do
           sid: sid,
           type: type,
           details: nil,
+          discovered_health: :passing,
           designated_controller: true
         }),
         [
@@ -53,6 +55,7 @@ defmodule Trento.ClusterTest do
             name: name,
             sid: sid,
             type: type,
+            health: :passing,
             details: nil
           },
           %HostAddedToCluster{
@@ -65,7 +68,9 @@ defmodule Trento.ClusterTest do
           name: name,
           sid: sid,
           type: type,
-          hosts: [host_id]
+          hosts: [host_id],
+          discovered_health: :passing,
+          health: :passing
         }
       )
     end
@@ -87,6 +92,7 @@ defmodule Trento.ClusterTest do
           name: name,
           sid: sid,
           type: :hana_scale_up,
+          discovered_health: :unknown,
           designated_controller: false
         }),
         [
@@ -111,6 +117,7 @@ defmodule Trento.ClusterTest do
           host_id: Faker.UUID.v4(),
           name: Faker.StarWars.character(),
           sid: Faker.StarWars.planet(),
+          discovered_health: :unknown,
           type: :hana_scale_up,
           designated_controller: false
         }),
@@ -144,6 +151,7 @@ defmodule Trento.ClusterTest do
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
+          discovered_health: :passing,
           details: StructHelper.to_map(details),
           designated_controller: true
         }),
@@ -154,14 +162,14 @@ defmodule Trento.ClusterTest do
           type: :hana_scale_up,
           details: details
         },
-        %Cluster{
-          cluster_id: cluster_id,
-          name: new_name,
-          sid: new_sid,
-          type: :hana_scale_up,
-          details: details,
-          hosts: [host_id]
-        }
+        fn cluster ->
+          %Cluster{
+            cluster_id: ^cluster_id,
+            name: ^new_name,
+            sid: ^new_sid,
+            details: ^details
+          } = cluster
+        end
       )
     end
 
@@ -172,7 +180,7 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        cluster_registered_event(cluster_id: cluster_id, name: name, sid: sid),
+        cluster_registered_event(cluster_id: cluster_id, name: name, sid: sid, details: nil),
         host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id)
       ]
 
@@ -183,7 +191,9 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: name,
           sid: sid,
+          details: nil,
           type: :hana_scale_up,
+          discovered_health: :passing,
           designated_controller: true
         }),
         [],
@@ -270,7 +280,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
-      checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :passing})
+      checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :critical})
 
       assert_events_and_state(
         [
@@ -301,13 +311,90 @@ defmodule Trento.ClusterTest do
           },
           %ClusterHealthChanged{
             cluster_id: cluster_id,
-            health: :passing
+            health: :critical
           }
         ],
         fn cluster ->
           assert %Cluster{
                    checks_execution: :not_running
                  } = cluster
+        end
+      )
+    end
+  end
+
+  describe "discovered health" do
+    test "should change the discovered health and the cluster aggregated health" do
+      cluster_registered_event = cluster_registered_event(health: :passing)
+
+      host_added_to_cluster_event =
+        host_added_to_cluster_event(cluster_id: cluster_registered_event.cluster_id)
+
+      assert_events_and_state(
+        [
+          cluster_registered_event,
+          %HostAddedToCluster{
+            cluster_id: cluster_registered_event.cluster_id,
+            host_id: host_added_to_cluster_event.host_id
+          }
+        ],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_registered_event.cluster_id,
+          host_id: host_added_to_cluster_event.host_id,
+          name: cluster_registered_event.name,
+          sid: cluster_registered_event.sid,
+          type: cluster_registered_event.type,
+          discovered_health: :critical,
+          details: StructHelper.to_map(cluster_registered_event.details),
+          designated_controller: true
+        }),
+        [
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_registered_event.cluster_id,
+            discovered_health: :critical
+          },
+          %ClusterHealthChanged{
+            cluster_id: cluster_registered_event.cluster_id,
+            health: :critical
+          }
+        ],
+        fn cluster ->
+          %Cluster{
+            discovered_health: :critical
+          } = cluster
+        end
+      )
+    end
+
+    test "should not change the discovered health" do
+      cluster_registered_event = cluster_registered_event(health: :passing)
+
+      host_added_to_cluster_event =
+        host_added_to_cluster_event(cluster_id: cluster_registered_event.cluster_id)
+
+      assert_events_and_state(
+        [
+          cluster_registered_event,
+          %HostAddedToCluster{
+            cluster_id: cluster_registered_event.cluster_id,
+            host_id: host_added_to_cluster_event.host_id
+          }
+        ],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_registered_event.cluster_id,
+          host_id: host_added_to_cluster_event.host_id,
+          name: cluster_registered_event.name,
+          sid: cluster_registered_event.sid,
+          type: cluster_registered_event.type,
+          discovered_health: :passing,
+          details: StructHelper.to_map(cluster_registered_event.details),
+          designated_controller: true
+        }),
+        [],
+        fn cluster ->
+          %Cluster{
+            discovered_health: :passing
+          } = cluster
         end
       )
     end

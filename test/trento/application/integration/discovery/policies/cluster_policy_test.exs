@@ -211,7 +211,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
               name: "hana_cluster",
               sid: "PRD",
-              type: :hana_scale_up
+              type: :hana_scale_up,
+              discovered_health: :passing
             }} ==
              "ha_cluster_discovery_hana_scale_up"
              |> load_discovery_event_fixture()
