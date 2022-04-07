@@ -1,6 +1,6 @@
 import { get, post } from 'axios';
 import { put, all, call, takeEvery, select } from 'redux-saga/effects';
-import { urlEncode } from '@lib/serialization';
+import { urlEncode, keysToCamel } from '@lib/serialization';
 
 import {
   setHosts,
@@ -37,6 +37,12 @@ import {
 } from '@state/sapSystems';
 
 import {
+  startHealthSummaryLoading,
+  stopHealthSummaryLoading,
+  setHealthSummary,
+} from '@state/healthSummary';
+
+import {
   appendDatabase,
   appendDatabaseInstance,
   setDatabases,
@@ -66,7 +72,17 @@ const getClusterName = (clusterID) => (state) => {
   }, '');
 };
 
+function* loadSapSystemsHealthSummary() {
+  yield put(startHealthSummaryLoading());
+  const { data: healthSummary } = yield call(get, '/api/sap_systems/health');
+
+  yield put(setHealthSummary(keysToCamel(healthSummary)));
+  yield put(stopHealthSummaryLoading());
+}
+
 function* initialDataFetch() {
+  yield loadSapSystemsHealthSummary();
+
   yield put(startHostsLoading());
   const { data: hosts } = yield call(get, '/api/hosts');
   yield put(setHosts(hosts));
@@ -447,6 +463,14 @@ function* watchCatalogUpdate() {
   yield takeEvery('UPDATE_CATALOG', updateCatalog);
 }
 
+function* refreshHealthSummaryOnComnponentsHealthChange() {
+  yield takeEvery('HEARTBEAT_FAILED', loadSapSystemsHealthSummary);
+  yield takeEvery('HEARTBEAT_SUCCEDED', loadSapSystemsHealthSummary);
+  yield takeEvery('DATABASE_HEALTH_CHANGED', loadSapSystemsHealthSummary);
+  yield takeEvery('SAP_SYSTEM_HEALTH_CHANGED', loadSapSystemsHealthSummary);
+  yield takeEvery('CLUSTER_HEALTH_CHANGED', loadSapSystemsHealthSummary);
+}
+
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
@@ -467,5 +491,6 @@ export default function* rootSaga() {
     watchSapSystem(),
     watchDatabase(),
     watchCatalogUpdate(),
+    refreshHealthSummaryOnComnponentsHealthChange(),
   ]);
 }

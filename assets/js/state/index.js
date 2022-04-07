@@ -4,6 +4,7 @@ import { Socket } from 'phoenix';
 
 import { logMessage, logError } from '@lib/log';
 
+import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
 import sapSystemListReducer from './sapSystems';
@@ -17,6 +18,7 @@ const sagaMiddleware = createSagaMiddleware();
 
 export const store = configureStore({
   reducer: {
+    sapSystemsHealthSummary: sapSystemsHealthSummaryReducer,
     hostsList: hostsListReducer,
     clustersList: clustersListReducer,
     sapSystemsList: sapSystemListReducer,
