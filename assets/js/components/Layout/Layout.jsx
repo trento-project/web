@@ -51,7 +51,7 @@ const Layout = () => {
   return (
     <main className="bg-gray-100 dark:bg-gray-800 h-screen overflow-hidden relative">
       <div className="flex items-start justify-between">
-        <div className="h-screen hidden lg:block shadow-lg relative w-80">
+        <div className="h-screen hidden lg:block shadow-lg relative w-64 flex-shrink-0">
           <div className="bg-white h-full dark:bg-gray-700">
             <div className="flex items-center justify-center pt-6">
               <div className="self-center">
