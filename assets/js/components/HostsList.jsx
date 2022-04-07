@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Table from './Table';
@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
 import { logError } from '@lib/log';
+import ComponentHealthSummary from '@components/HealthSummary';
 
 const getHeartbeatIcon = ({ heartbeat }) => {
   switch (heartbeat) {
@@ -45,6 +46,7 @@ const HostsList = () => {
 
   const config = {
     pagination: true,
+    usePadding: false,
     columns: [
       {
         title: 'Health',
@@ -143,7 +145,12 @@ const HostsList = () => {
     };
   });
 
-  return <Table config={config} data={data} />;
+  return (
+    <Fragment>
+      <ComponentHealthSummary data={data} />
+      <Table config={config} data={data} />
+    </Fragment>
+  );
 };
 
 export default HostsList;
