@@ -17,6 +17,10 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
     }
   }, [addingTag]);
 
+  useEffect(() => {
+    setTags(tags);
+  }, [tags]);
+
   return (
     <span className={classNames('flex', 'items-center', className)}>
       {renderedTags.map((tag, index) => (
