@@ -57,6 +57,7 @@ const HostsList = () => {
       {
         title: 'Hostname',
         key: 'hostname',
+        className: 'w-40',
         filter: true,
         render: (content, { id }) => (
           <span className="text-jungle-green-500 hover:opacity-75">
@@ -81,6 +82,7 @@ const HostsList = () => {
       {
         title: 'Cluster',
         key: 'cluster',
+        className: 'w-40',
         render: (cluster) => {
           return cluster?.name;
         },
@@ -105,6 +107,7 @@ const HostsList = () => {
       {
         title: 'Tags',
         key: 'tags',
+        className: 'w-80',
         filter: (filter, key) => (element) =>
           element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (

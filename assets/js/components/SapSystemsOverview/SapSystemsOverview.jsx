@@ -64,6 +64,7 @@ const SapSystemsOverview = () => {
       {
         title: 'Attached RDBMS',
         key: 'attachedRdbms',
+
         render: (content, item) => {
           return (
             <Link
@@ -86,6 +87,7 @@ const SapSystemsOverview = () => {
       {
         title: 'Tags',
         key: 'tags',
+        className: 'w-80',
         filter: (filter, key) => (element) =>
           element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (

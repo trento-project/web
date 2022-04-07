@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 
-import { EOS_NEW_LABEL, EOS_DELETE } from 'eos-icons-react';
+import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
 
 import Pill from '@components/Pill';
 
@@ -22,14 +22,22 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
   }, [tags]);
 
   return (
-    <span className={classNames('flex', 'items-center', className)}>
+    <span
+      className={classNames(
+        'flex',
+        'items-center',
+        'flex-wrap',
+        'gap-y-2',
+        'gap-x-1.5',
+        className
+      )}
+    >
       {renderedTags.map((tag, index) => (
         <Pill
           key={index}
           className={classNames({
             'text-green-800': true,
             'bg-green-100': true,
-            'ml-2': index !== 0,
             group: true,
             flex: true,
             'items-center': true,
@@ -37,7 +45,7 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
         >
           {tag}
           <span
-            className="hidden ml-2 cursor-pointer group-hover:inline"
+            className="ml-2 cursor-pointer group-hover:opacity-60"
             onClick={() => {
               const newTagsList = renderedTags.reduce(
                 (acc, current) => (current === tag ? acc : [...acc, current]),
@@ -48,7 +56,7 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
               onRemove(tag);
             }}
           >
-            <EOS_DELETE color="#276749" size="base" />
+            <EOS_CLOSE color="#276749" size="base" />
           </span>
         </Pill>
       ))}
@@ -79,7 +87,7 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
           className={classNames({
             'text-green-800': true,
             'bg-green-100': true,
-            'ml-2': renderedTags.length !== 0,
+
             flex: true,
             'items-center': true,
             'cursor-pointer': true,
