@@ -1,9 +1,9 @@
 import React from 'react';
 
-import HealthSummary from '@components/HealthSummary';
+import HomeHealthSummary from '@components/HealthSummary';
 
 const Home = () => {
-  return <HealthSummary />;
+  return <HomeHealthSummary />;
 };
 
 export default Home;
