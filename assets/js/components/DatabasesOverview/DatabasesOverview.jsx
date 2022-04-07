@@ -108,11 +108,15 @@ const DatabasesOverview = () => {
             onChange={() => {}}
             onAdd={(tag) => {
               addTag(tag, item.id);
-              dispatch(addTagToDatabase(tag, item.id));
+              dispatch(
+                addTagToDatabase({ tags: [{ value: tag }], id: item.id })
+              );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
-              dispatch(removeTagFromDatabase(tag, item.id));
+              dispatch(
+                removeTagFromDatabase({ tags: [{ value: tag }], id: item.id })
+              );
             }}
           />
         ),

@@ -94,11 +94,15 @@ const SapSystemsOverview = () => {
             onChange={() => {}}
             onAdd={(tag) => {
               addTag(tag, item.id);
-              dispatch(addTagToSAPSystem(tag, item.id));
+              dispatch(
+                addTagToSAPSystem({ tags: [{ value: tag }], id: item.id })
+              );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
-              dispatch(removeTagFromSAPSystem(tag, item.id));
+              dispatch(
+                removeTagFromSAPSystem({ tags: [{ value: tag }], id: item.id })
+              );
             }}
           />
         ),
