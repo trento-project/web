@@ -1,9 +1,9 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { GlobalHealth } from './GlobalHealth';
 import Table from '@components/Table';
 import HealthIcon from '../Health/HealthIcon';
-import { get } from 'axios';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const any = (predicate, label) =>
   Object.keys(predicate).reduce((accumulator, key) => {
@@ -13,101 +13,94 @@ const any = (predicate, label) =>
     return predicate[key] === label;
   }, false);
 
-const getCounters = (data) =>
-  data.reduce(
-    (accumulator, element) => {
-      if (any(element, 'critical')) {
-        return { ...accumulator, critical: accumulator.critical + 1 };
-      }
+const getCounters = (data) => {
+  const defaultCounter = { critical: 0, warning: 0, passing: 0, unknown: 0 };
 
-      if (any(element, 'warning')) {
-        return { ...accumulator, warning: accumulator.warning + 1 };
-      }
+  if (0 === data.length) {
+    return defaultCounter;
+  }
 
-      if (any(element, 'unknown')) {
-        return { ...accumulator, unknown: accumulator.unknown + 1 };
-      }
+  return data.reduce((accumulator, element) => {
+    if (any(element, 'critical')) {
+      return { ...accumulator, critical: accumulator.critical + 1 };
+    }
 
-      if (any(element, 'passing')) {
-        return { ...accumulator, passing: accumulator.passing + 1 };
-      }
-      return accumulator;
-    },
-    { critical: 0, warning: 0, passing: 0, unknown: 0 }
-  );
+    if (any(element, 'warning')) {
+      return { ...accumulator, warning: accumulator.warning + 1 };
+    }
 
-const healthOverviewTableConfig = {
+    if (any(element, 'unknown')) {
+      return { ...accumulator, unknown: accumulator.unknown + 1 };
+    }
+
+    if (any(element, 'passing')) {
+      return { ...accumulator, passing: accumulator.passing + 1 };
+    }
+    return accumulator;
+  }, defaultCounter);
+};
+
+const healthSummaryTableConfig = {
   usePadding: false,
   columns: [
     {
       title: 'SID',
       key: 'sid',
-      render: (content, item) => <Link
-        className="text-jungle-green-500 hover:opacity-75"
-        to={`/sap-systems/${item.id}`}
-      >
-        {content}
-      </Link>
+      render: (content, item) => (
+        <Link
+          className="text-jungle-green-500 hover:opacity-75"
+          to={`/sap-systems/${item.id}`}
+        >
+          {content}
+        </Link>
+      ),
     },
     {
       title: 'SAP Instances',
-      key: 'sapsystem_health',
-      className: "text-center",
+      key: 'sapsystemHealth',
+      className: 'text-center',
       render: (content) => <HealthIcon health={content} centered={true} />,
     },
     {
       title: 'Database',
-      key: 'database_health',
-      className: "text-center",
+      key: 'databasehealth',
+      className: 'text-center',
       render: (content) => {
         return <HealthIcon health={content} centered={true} />;
       },
     },
     {
       title: 'Pacemaker Clusters',
-      key: 'clusters_health',
-      className: "text-center",
+      key: 'clustersHealth',
+      className: 'text-center',
       render: (content) => {
         return <HealthIcon health={content} centered={true} />;
       },
     },
     {
       title: 'Hosts',
-      key: 'hosts_health',
-      className: "text-center",
+      key: 'hostsHealth',
+      className: 'text-center',
       render: (content) => {
         return <HealthIcon health={content} centered={true} />;
       },
-    }
+    },
   ],
 };
 
 const HealthSummary = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { loading, sapSystemsHealth } = useSelector(
+    (state) => state.sapSystemsHealthSummary
+  );
 
-  const counters = getCounters(data);
-
-  useEffect(() => {
-    setLoading(true);
-    get('/api/sap_systems/health')
-      .then(({ data }) => {
-        setLoading(false);
-        data ? setData(data) : setData([]);
-      })
-      .catch((error) => {
-        setLoading(false);
-        logError(error);
-        setData([]);
-      });
-  }, []);
+  const counters = getCounters(sapSystemsHealth);
 
   return loading ? (
     <div>Loading...</div>
   ) : (
     <Fragment>
       <GlobalHealth counters={counters} />
-      <Table config={healthOverviewTableConfig} data={data} />
+      <Table config={healthSummaryTableConfig} data={sapSystemsHealth} />
     </Fragment>
   );
 };
