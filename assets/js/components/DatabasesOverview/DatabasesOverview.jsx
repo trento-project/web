@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import Tags from '@components/Tags';
 import { addTagToDatabase, removeTagFromDatabase } from '@state/databases';
 
 import { logError } from '@lib/log';
+import ComponentHealthSummary from '@components/HealthSummary';
 
 const byDatabase = (id) => (instance) => instance.sap_system_id === id;
 
@@ -35,6 +36,7 @@ const DatabasesOverview = () => {
   const dispatch = useDispatch();
   const config = {
     pagination: true,
+    usePadding: false,
     columns: [
       {
         title: 'Health',
@@ -143,7 +145,10 @@ const DatabasesOverview = () => {
   return loading ? (
     'Loading HANA Databases...'
   ) : (
-    <Table config={config} data={data} />
+    <Fragment>
+      <ComponentHealthSummary data={data} />
+      <Table config={config} data={data} />
+    </Fragment>
   );
 };
 
