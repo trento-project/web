@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
-import { GlobalHealth } from './GlobalHealth';
-import Table from '@components/Table';
-import HealthIcon from '../Health/HealthIcon';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React from 'react';
+import {
+  EOS_CHECK_CIRCLE_OUTLINED,
+  EOS_ERROR_OUTLINED,
+  EOS_WARNING_OUTLINED,
+} from 'eos-icons-react';
 
 const any = (predicate, label) =>
   Object.keys(predicate).reduce((accumulator, key) => {
@@ -16,7 +16,7 @@ const any = (predicate, label) =>
 const getCounters = (data) => {
   const defaultCounter = { critical: 0, warning: 0, passing: 0, unknown: 0 };
 
-  if (0 === data.length) {
+  if (!data || 0 === data.length) {
     return defaultCounter;
   }
 
@@ -40,68 +40,45 @@ const getCounters = (data) => {
   }, defaultCounter);
 };
 
-const healthSummaryTableConfig = {
-  usePadding: false,
-  columns: [
-    {
-      title: 'SID',
-      key: 'sid',
-      render: (content, item) => (
-        <Link
-          className="text-jungle-green-500 hover:opacity-75"
-          to={`/sap-systems/${item.id}`}
-        >
-          {content}
-        </Link>
-      ),
-    },
-    {
-      title: 'SAP Instances',
-      key: 'sapsystemHealth',
-      className: 'text-center',
-      render: (content) => <HealthIcon health={content} centered={true} />,
-    },
-    {
-      title: 'Database',
-      key: 'databasehealth',
-      className: 'text-center',
-      render: (content) => {
-        return <HealthIcon health={content} centered={true} />;
-      },
-    },
-    {
-      title: 'Pacemaker Clusters',
-      key: 'clustersHealth',
-      className: 'text-center',
-      render: (content) => {
-        return <HealthIcon health={content} centered={true} />;
-      },
-    },
-    {
-      title: 'Hosts',
-      key: 'hostsHealth',
-      className: 'text-center',
-      render: (content) => {
-        return <HealthIcon health={content} centered={true} />;
-      },
-    },
-  ],
-};
+const HealthSummary = ({ data }) => {
+  const { passing, warning, critical } = getCounters(data);
 
-const HealthSummary = () => {
-  const { loading, sapSystemsHealth } = useSelector(
-    (state) => state.sapSystemsHealthSummary
-  );
-
-  const counters = getCounters(sapSystemsHealth);
-
-  return loading ? (
-    <div>Loading...</div>
-  ) : (
-    <Fragment>
-      <GlobalHealth counters={counters} />
-      <Table config={healthSummaryTableConfig} data={sapSystemsHealth} />
-    </Fragment>
+  return (
+    <div className="flex flex-row">
+      <div className="w-1/3 px-8 bg-green-200 border-green-600 border-l-4 text-green-600 shadow rounded-lg my-2 mr-4">
+        <div className="flex items-center rounded justify-between p-3 text-2xl">
+          <span className="rounded-lg p-2">
+            <EOS_CHECK_CIRCLE_OUTLINED size={25} className="fill-green-600" />
+          </span>
+          <div className="flex w-full ml-2 items-center justify-between">
+            <p>Passing</p>
+            <p className="font-semibold">{passing}</p>
+          </div>
+        </div>
+      </div>
+      <div className="w-1/3 px-8 bg-yellow-200 border-yellow-600 border-l-4 text-yellow-600 shadow rounded-lg my-2">
+        <div className="flex items-center rounded justify-between p-3 text-2xl">
+          <span className="rounded-lg p-2">
+            <EOS_WARNING_OUTLINED size={25} className="fill-yellow-600" />
+          </span>
+          <div className="flex w-full ml-2 items-center justify-between">
+            <p>Warning</p>
+            <p className="font-semibold">{warning}</p>
+          </div>
+        </div>
+      </div>
+      <div className="w-1/3 px-8 bg-red-200 border-red-600 border-l-4 text-red-600 shadow rounded-lg my-2 ml-4">
+        <div className="flex items-center rounded justify-between p-3 text-2xl">
+          <span className="rounded-lg p-2">
+            <EOS_ERROR_OUTLINED size={25} className="fill-red-600" />
+          </span>
+          <div className="flex w-full ml-2 items-center justify-between">
+            <p>Critical</p>
+            <p className="font-semibold">{critical}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
