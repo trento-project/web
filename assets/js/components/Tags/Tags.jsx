@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
 
 import Pill from '@components/Pill';
+import useOnClickOutside from '@hooks/useOnClickOutside';
 
 const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
   const [renderedTags, setTags] = useState(tags);
@@ -20,6 +21,8 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
   useEffect(() => {
     setTags(tags);
   }, [tags]);
+
+  useOnClickOutside(inputRef, () => setAddingTag(false));
 
   return (
     <span
@@ -41,7 +44,14 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
             group: true,
             flex: true,
             'items-center': true,
+            'hover:scale-110': true,
+            transition: true,
+            'ease-in-out': true,
+            'delay-50': true,
           })}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
         >
           {tag}
           <span
@@ -51,6 +61,7 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
                 (acc, current) => (current === tag ? acc : [...acc, current]),
                 []
               );
+
               setTags(newTagsList);
               onChange(newTagsList);
               onRemove(tag);
@@ -61,7 +72,7 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
         </Pill>
       ))}
       {addingTag ? (
-        <Pill className="ml-2 bg-green-100 text-green-800">
+        <Pill className="ml-2 bg-green-100 text-green-800 animate-fade">
           <input
             ref={inputRef}
             className="bg-green-100"
@@ -87,12 +98,18 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
           className={classNames({
             'text-green-800': true,
             'bg-green-100': true,
-
             flex: true,
             'items-center': true,
             'cursor-pointer': true,
+            'hover:scale-110': true,
+            transition: true,
+            'ease-in-out': true,
+            'delay-50': true,
           })}
-          onClick={() => setAddingTag(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setAddingTag(true);
+          }}
         >
           <EOS_NEW_LABEL color="#276749" size="base" /> Add Tag
         </Pill>
