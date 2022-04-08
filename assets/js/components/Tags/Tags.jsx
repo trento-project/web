@@ -56,7 +56,7 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
           {tag}
           <span
             className="ml-2 cursor-pointer group-hover:opacity-60"
-            onClick={(e) => {
+            onClick={() => {
               const newTagsList = renderedTags.reduce(
                 (acc, current) => (current === tag ? acc : [...acc, current]),
                 []
