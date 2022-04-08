@@ -86,6 +86,12 @@ By leveraging [photofinish](https://github.com/trento-project/photofinish) it is
 $> photofinish run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster
 ```
 
+It's possible to use Photofinish' docker image too:
+
+```
+$> docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run healthy-27-node-SAP-cluster -u http://localhost:4000/api/collect
+```
+
 Several useful scenario fixtures are available in [./test/fixtures/scenarios](./test/fixtures/scenarios/), the same ones used in e2e tests.
 
 See also [.photofinish.toml](./.photofinish.toml).
