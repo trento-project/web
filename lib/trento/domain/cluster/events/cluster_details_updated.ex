@@ -12,6 +12,8 @@ defmodule Trento.Domain.Events.ClusterDetailsUpdated do
     field :name, :string
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
     field :sid, :string
+    field :resources_number, :integer
+    field :hosts_number, :integer
 
     embeds_one :details, HanaClusterDetails
   end
