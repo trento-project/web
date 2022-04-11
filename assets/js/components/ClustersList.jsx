@@ -13,6 +13,7 @@ import { logError } from '@lib/log';
 
 import HealthIcon from '@components/Health';
 import Spinner from '@components/Spinner';
+import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -48,6 +49,7 @@ const ClustersList = () => {
 
   const config = {
     pagination: true,
+    usePadding: false,
     columns: [
       {
         title: 'Health',
@@ -223,7 +225,12 @@ const ClustersList = () => {
     };
   });
 
-  return <Table config={config} data={data} />;
+  return (
+    <Fragment>
+      <ComponentHealthSummary data={data} />
+      <Table config={config} data={data} />
+    </Fragment>
+  );
 };
 
 export default ClustersList;

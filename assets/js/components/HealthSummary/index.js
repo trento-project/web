@@ -1,5 +1,6 @@
 import HealthSummary from './HealthSummary';
 
-export { GlobalHealth } from './GlobalHealth';
+export { HomeHealthSummary } from './HomeHealthSummary';
+export { ComponentHealthSummary } from './ComponentHealthSummary';
 
 export default HealthSummary;
