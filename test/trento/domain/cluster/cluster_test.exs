@@ -151,6 +151,8 @@ defmodule Trento.ClusterTest do
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
+          resources_number: 2,
+          hosts_number: 1,
           discovered_health: :passing,
           details: StructHelper.to_map(details),
           designated_controller: true
@@ -160,6 +162,8 @@ defmodule Trento.ClusterTest do
           name: new_name,
           sid: new_sid,
           type: :hana_scale_up,
+          resources_number: 2,
+          hosts_number: 1,
           details: details
         },
         fn cluster ->
@@ -167,6 +171,8 @@ defmodule Trento.ClusterTest do
             cluster_id: ^cluster_id,
             name: ^new_name,
             sid: ^new_sid,
+            resources_number: 2,
+            hosts_number: 1,
             details: ^details
           } = cluster
         end
@@ -191,6 +197,8 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: name,
           sid: sid,
+          resources_number: 8,
+          hosts_number: 2,
           details: nil,
           type: :hana_scale_up,
           discovered_health: :passing,
@@ -344,9 +352,11 @@ defmodule Trento.ClusterTest do
           name: cluster_registered_event.name,
           sid: cluster_registered_event.sid,
           type: cluster_registered_event.type,
-          discovered_health: :critical,
+          resources_number: cluster_registered_event.resources_number,
+          hosts_number: cluster_registered_event.hosts_number,
           details: StructHelper.to_map(cluster_registered_event.details),
-          designated_controller: true
+          designated_controller: true,
+          discovered_health: :critical
         }),
         [
           %ClusterDiscoveredHealthChanged{
@@ -386,6 +396,8 @@ defmodule Trento.ClusterTest do
           name: cluster_registered_event.name,
           sid: cluster_registered_event.sid,
           type: cluster_registered_event.type,
+          resources_number: cluster_registered_event.resources_number,
+          hosts_number: cluster_registered_event.hosts_number,
           discovered_health: :passing,
           details: StructHelper.to_map(cluster_registered_event.details),
           designated_controller: true

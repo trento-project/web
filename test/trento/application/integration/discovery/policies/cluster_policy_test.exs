@@ -212,6 +212,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               name: "hana_cluster",
               sid: "PRD",
               type: :hana_scale_up,
+              hosts_number: 2,
+              resources_number: 8,
               discovered_health: :passing
             }} ==
              "ha_cluster_discovery_hana_scale_up"

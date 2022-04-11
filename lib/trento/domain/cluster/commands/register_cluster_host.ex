@@ -23,6 +23,8 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
     field :sid, :string
     field :designated_controller, :boolean
+    field :resources_number, :integer
+    field :hosts_number, :integer
     field :discovered_health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
     field :cib_last_written, :string
 

@@ -37,6 +37,8 @@ defmodule Trento.Domain.Cluster do
     :type,
     :sid,
     :details,
+    :resources_number,
+    :hosts_number,
     discovered_health: :unknown,
     health: :unknown,
     hosts: [],
@@ -69,6 +71,8 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
           details: details,
           discovered_health: health,
           designated_controller: true
@@ -80,8 +84,10 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
-        health: health,
-        details: details
+        resources_number: resources_number,
+        hosts_number: hosts_number,
+        details: details,
+        health: health
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
@@ -207,6 +213,8 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
           details: details,
           health: health
         }
@@ -217,6 +225,8 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        resources_number: resources_number,
+        hosts_number: hosts_number,
         details: details,
         discovered_health: health,
         health: health
@@ -238,6 +248,8 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
           details: details
         }
       ) do
@@ -246,6 +258,8 @@ defmodule Trento.Domain.Cluster do
       | name: name,
         type: type,
         sid: sid,
+        resources_number: resources_number,
+        hosts_number: hosts_number,
         details: details
     }
   end
@@ -351,12 +365,16 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           resources_number: resources_number,
+           hosts_number: hosts_number,
            details: details
          },
          %RegisterClusterHost{
            name: name,
            type: type,
            sid: sid,
+           resources_number: resources_number,
+           hosts_number: hosts_number,
            details: details
          }
        ) do
@@ -370,6 +388,8 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           resources_number: resources_number,
+           hosts_number: hosts_number,
            details: details
          }
        ) do
@@ -378,6 +398,8 @@ defmodule Trento.Domain.Cluster do
       name: name,
       type: type,
       sid: sid,
+      resources_number: resources_number,
+      hosts_number: hosts_number,
       details: details
     }
   end

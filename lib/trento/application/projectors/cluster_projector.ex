@@ -30,6 +30,8 @@ defmodule Trento.ClusterProjector do
       name: name,
       sid: sid,
       type: type,
+      resources_number: resources_number,
+      hosts_number: hosts_number,
       details: details,
       health: health
     },
@@ -41,6 +43,8 @@ defmodule Trento.ClusterProjector do
           name: name,
           sid: sid,
           type: type,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
           details: details,
           health: health,
           checks_execution: :not_running
@@ -101,6 +105,8 @@ defmodule Trento.ClusterProjector do
       name: name,
       sid: sid,
       type: type,
+      resources_number: resources_number,
+      hosts_number: hosts_number,
       details: details
     },
     fn multi ->
@@ -110,6 +116,8 @@ defmodule Trento.ClusterProjector do
           name: name,
           sid: sid,
           type: type,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
           details: details
         })
 
