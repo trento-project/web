@@ -22,12 +22,14 @@ import DatabasesOverview from '@components/DatabasesOverview';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import DatabaseDetails from './components/DatabaseDetails';
 import ChecksCatalog from '@components/ChecksCatalog';
+import FeedbackCollector from '@components/FeedbackCollector';
 
 const App = () => {
   return (
     <div>
       <Provider store={store}>
         <Toaster position="top-right" />
+        <FeedbackCollector />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>

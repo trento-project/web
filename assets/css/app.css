@@ -18,3 +18,23 @@
 .table-col-m {
   width: 20rem;
 }
+
+.feedback-tool-button {
+  background-color: #0c322c;
+  color: #fff;
+  position: fixed;
+  top: 50%;
+  right: -55px;
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  z-index: 1;
+}
+
+.feedback-tool-button:hover,
+.feedback-tool-button:focus {
+  color: #fff;
+  background-color: #0c322c;
+}
