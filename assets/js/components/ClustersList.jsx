@@ -85,6 +85,14 @@ const ClustersList = () => {
         filter: true,
       },
       {
+        title: 'Hosts',
+        key: 'hosts_number'
+      },
+      {
+        title: 'Resources',
+        key: 'resources_number'
+      },
+      {
         title: 'Type',
         key: 'type',
         filter: true,
@@ -216,7 +224,8 @@ const ClustersList = () => {
       id: cluster.id,
       sid: cluster.sid,
       type: cluster.type,
-      hasDetails: cluster.details != null,
+      hosts_number: cluster.hosts_number,
+      resources_number: cluster.resources_number,
       checks_execution: cluster.checks_execution,
       selected_checks: cluster.selected_checks,
       tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
