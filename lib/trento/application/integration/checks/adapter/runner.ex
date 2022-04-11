@@ -50,22 +50,18 @@ defmodule Trento.Integration.Checks.Runner do
   defp build_payload(execution_id, cluster_id, host_settings, selected_checks) do
     %{
       execution_id: execution_id,
-      clusters: [
-        %{
-          cluster_id: cluster_id,
-          # TODO: Use the correct provider
-          provider: :azure,
-          checks: selected_checks,
-          hosts:
-            Enum.map(host_settings, fn host ->
-              %{
-                host_id: host.host_id,
-                address: host.ssh_address,
-                user: host.user || "root"
-              }
-            end)
-        }
-      ]
+      cluster_id: cluster_id,
+      # TODO: Use the correct provider
+      provider: :azure,
+      checks: selected_checks,
+      hosts:
+        Enum.map(host_settings, fn host ->
+          %{
+            host_id: host.host_id,
+            address: host.ssh_address,
+            user: host.user || "root"
+          }
+        end)
     }
     |> Jason.encode!()
   end
