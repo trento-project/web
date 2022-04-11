@@ -57,7 +57,8 @@ defmodule Trento.CheckResultProjector do
           )
         end)
         |> List.flatten()
-        |> Enum.reduce(multi, fn %{changes: %{cluster_id: cluster_id, host_id: host_id}} = changeset,
+        |> Enum.reduce(multi, fn %{changes: %{cluster_id: cluster_id, host_id: host_id}} =
+                                   changeset,
                                  acc ->
           Ecto.Multi.insert(acc, "#{cluster_id}_#{host_id}", changeset)
         end)
@@ -157,7 +158,9 @@ defmodule Trento.CheckResultProjector do
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_results_updated", %{
       cluster_id: cluster_id,
       host_id: host_id,
-      hosts_executions: [%{cluster_id: cluster_id, host_id: host_id, reachable: reachable, msg: msg}],
+      hosts_executions: [
+        %{cluster_id: cluster_id, host_id: host_id, reachable: reachable, msg: msg}
+      ],
       checks_results:
         Enum.map(checks_results, fn %{check_id: check_id, result: result} ->
           %{host_id: host_id, check_id: check_id, result: result}

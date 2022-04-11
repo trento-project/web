@@ -103,7 +103,7 @@ defmodule Trento.Integration.Checks do
           %{
             host_id: host_id,
             reachable: reachable,
-            msg: msg, 
+            msg: msg,
             checks_results: Enum.map(results, &Map.from_struct/1)
           }
         end)
