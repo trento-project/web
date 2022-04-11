@@ -5,8 +5,6 @@ defmodule Trento.ClusterTest do
 
   alias Trento.Support.StructHelper
 
-  alias Trento.Domain.Cluster
-
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
     RegisterClusterHost,
@@ -27,7 +25,11 @@ defmodule Trento.ClusterTest do
     HostChecksExecutionCompleted
   }
 
-  alias Trento.Domain.Cluster
+  alias Trento.Domain.{
+    CheckResult,
+    Cluster,
+    HostExecution
+  }
 
   describe "cluster registration" do
     test "should register a cluster and add the node host to the cluster if the node is a DC" do
@@ -221,6 +223,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+      checks_results = Enum.map(selected_checks, &%CheckResult{check_id: &1, result: :unknown})
 
       assert_events_and_state(
         [
@@ -248,7 +251,14 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert %Cluster{
                    health: :unknown,
-                   checks_execution: :requested
+                   checks_execution: :requested,
+                   hosts_executions: %{
+                     ^host_id => %HostExecution{
+                       host_id: ^host_id,
+                       reachable: true,
+                       checks_results: ^checks_results
+                     }
+                   }
                  } = cluster
         end
       )
@@ -289,6 +299,8 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
       checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :critical})
+      expected_results = Enum.map(checks_results, &CheckResult.new!(&1))
+      msg = Faker.StarWars.planet()
 
       assert_events_and_state(
         [
@@ -304,6 +316,8 @@ defmodule Trento.ClusterTest do
           hosts_executions: [
             %{
               host_id: host_id,
+              reachable: true,
+              msg: msg,
               checks_results: checks_results
             }
           ]
@@ -312,6 +326,8 @@ defmodule Trento.ClusterTest do
           HostChecksExecutionCompleted.new!(%{
             cluster_id: cluster_id,
             host_id: host_id,
+            reachable: true,
+            msg: msg,
             checks_results: checks_results
           }),
           %ChecksExecutionCompleted{
@@ -324,7 +340,72 @@ defmodule Trento.ClusterTest do
         ],
         fn cluster ->
           assert %Cluster{
-                   checks_execution: :not_running
+                   checks_execution: :not_running,
+                   hosts_executions: %{
+                     ^host_id => %HostExecution{
+                       host_id: ^host_id,
+                       reachable: true,
+                       checks_results: ^expected_results
+                     }
+                   }
+                 } = cluster
+        end
+      )
+    end
+
+    test "should complete a checks execution when reachable is false" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+      checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :unknown})
+      expected_results = Enum.map(checks_results, &CheckResult.new!(&1))
+      msg = Faker.StarWars.planet()
+
+      assert_events_and_state(
+        [
+          cluster_registered_event(cluster_id: cluster_id),
+          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          },
+          checks_execution_requested_event(
+            cluster_id: cluster_id,
+            hosts: [host_id],
+            checks: selected_checks
+          )
+        ],
+        CompleteChecksExecution.new!(%{
+          cluster_id: cluster_id,
+          hosts_executions: [
+            %{
+              host_id: host_id,
+              reachable: false,
+              msg: msg
+            }
+          ]
+        }),
+        [
+          HostChecksExecutionCompleted.new!(%{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            reachable: false,
+            msg: msg,
+            checks_results: checks_results
+          }),
+          %ChecksExecutionCompleted{
+            cluster_id: cluster_id
+          },
+          %ClusterHealthChanged{cluster_id: cluster_id, health: :unknown}
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   checks_execution: :not_running,
+                   hosts_executions: %{
+                     ^host_id => %HostExecution{
+                       checks_results: ^expected_results
+                     }
+                   }
                  } = cluster
         end
       )
