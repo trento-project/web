@@ -86,11 +86,11 @@ const ClustersList = () => {
       },
       {
         title: 'Hosts',
-        key: 'hosts_number'
+        key: 'hosts_number',
       },
       {
         title: 'Resources',
-        key: 'resources_number'
+        key: 'resources_number',
       },
       {
         title: 'Type',
