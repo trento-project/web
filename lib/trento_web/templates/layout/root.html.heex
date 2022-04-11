@@ -10,8 +10,19 @@
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/trento.js")}></script>
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+    <script type="text/javascript" src="https://jira.suse.com/s/877593e00a5410f68265b1789b66ab41-T/-wlvlrq/820006/wx2wit/13b4b3966e88791ab7cd4b59585fc33e/_/download/contextbatch/js/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/batch.js?locale=en&collectorId=c57990d6"></script>
   </head>
   <body>
     <%= @inner_content %>
+    <script type="text/javascript">
+        window.ATL_JQ_PAGE_PROPS =  {
+            "triggerFunction": function(showCollectorDialog) {
+                jQuery("#feedback-button").click(function(e) {
+                    e.preventDefault();
+                    showCollectorDialog();
+                });
+            }
+        };
+    </script>
   </body>
 </html>
