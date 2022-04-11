@@ -19,6 +19,8 @@ defmodule Trento.ClusterReadModel do
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_down, :unknown]
     field :selected_checks, {:array, :string}, default: []
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :resources_number, :integer
+    field :hosts_number, :integer
     field :details, :map
     field :checks_execution, Ecto.Enum, values: [:not_running, :requested, :running]
 
