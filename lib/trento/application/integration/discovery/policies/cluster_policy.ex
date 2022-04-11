@@ -18,8 +18,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
             "Crmmon" => %{
               "Summary" => %{
                 "LastChange" => %{"Time" => cib_last_written},
-                "Resources" => %{"Number" => _resources_number},
-                "Nodes" => %{"Number" => _hosts_number}
+                "Resources" => %{"Number" => resources_number},
+                "Nodes" => %{"Number" => hosts_number}
               }
             }
           } = payload
@@ -35,6 +35,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       sid: sid,
       type: cluster_type,
       designated_controller: designated_controller,
+      resources_number: resources_number,
+      hosts_number: hosts_number,
       details: details,
       discovered_health: parse_cluster_health(details, cluster_type),
       cib_last_written: cib_last_written
