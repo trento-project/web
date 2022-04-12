@@ -6,6 +6,8 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
 
+import { ErrorBoundary } from 'react-error-boundary';
+
 import { store } from './state';
 
 import Layout from '@components/Layout';
@@ -23,13 +25,19 @@ import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import DatabaseDetails from './components/DatabaseDetails';
 import ChecksCatalog from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
+import SomethingWentWrong from '@components/SomethingWentWrong';
 
 const App = () => {
   return (
-    <div>
-      <Provider store={store}>
-        <Toaster position="top-right" />
-        <BrowserRouter>
+    <Provider store={store}>
+      <Toaster position="top-right" />
+      <BrowserRouter>
+        <ErrorBoundary
+          FallbackComponent={SomethingWentWrong}
+          onReset={() => {
+            store.dispatch({ type: 'RESET_STATE' });
+          }}
+        >
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
@@ -54,9 +62,9 @@ const App = () => {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </Provider>
-    </div>
+        </ErrorBoundary>
+      </BrowserRouter>
+    </Provider>
   );
 };
 
