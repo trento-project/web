@@ -27,11 +27,13 @@ import ChecksCatalog from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
 import Settings from '@components/Settings';
+import Eula from '@components/Eula';
 
 const App = () => {
   return (
     <Provider store={store}>
       <Toaster position="top-right" />
+      <Eula />
       <BrowserRouter>
         <ErrorBoundary
           FallbackComponent={SomethingWentWrong}

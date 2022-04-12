@@ -55,7 +55,11 @@ import {
 import { setCatalog } from '@state/catalog';
 
 import { appendEntryToLiveFeed } from '@state/liveFeed';
+import { setEulaVisible } from '@state/settings';
+
 import { watchNotifications } from '@state/sagas/notifications';
+import { watchAcceptEula } from '@state/sagas/eula';
+
 import { getDatabase, getSapSystem } from '@state/selectors';
 
 const notify = ({ text, icon }) => ({
@@ -82,6 +86,14 @@ function* loadSapSystemsHealthSummary() {
 
 function* initialDataFetch() {
   yield loadSapSystemsHealthSummary();
+
+  const {
+    data: { eula_accepted, premium_subscription },
+  } = yield call(get, '/api/settings');
+
+  if (!eula_accepted && premium_subscription) {
+    yield put(setEulaVisible());
+  }
 
   yield put(startHostsLoading());
   const { data: hosts } = yield call(get, '/api/hosts');
@@ -496,6 +508,7 @@ export default function* rootSaga() {
     watchSapSystem(),
     watchDatabase(),
     watchCatalogUpdate(),
+    watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
   ]);
 }

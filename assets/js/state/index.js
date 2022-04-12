@@ -11,6 +11,7 @@ import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
 import catalogReducer from './catalog';
 import liveFeedReducer from './liveFeed';
+import settingsReducer from './settings';
 
 import rootSaga from './sagas';
 
@@ -25,6 +26,7 @@ export const store = configureStore({
     databasesList: databasesListReducer,
     catalog: catalogReducer,
     liveFeed: liveFeedReducer,
+    settings: settingsReducer,
   },
   middleware: [sagaMiddleware],
 });
