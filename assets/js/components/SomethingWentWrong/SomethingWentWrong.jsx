@@ -17,7 +17,6 @@ const SomethingWentWrong = () => {
             </h1>
             <Button
               className="px-2 py-2 w-36 mt-16"
-              type="secondary"
               onClick={() => {
                 navigate(`/`);
               }}
