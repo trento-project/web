@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 import {
@@ -47,12 +47,29 @@ const navigation = [
 const Layout = () => {
   const { pathname } = useLocation();
   const isCurrentRoute = (route) => pathname === route;
+  const [isCollapsed, setCollapsed] = useState(
+    localStorage.getItem('sidebar-collapsed')
+  );
+
+  const handleSidebar = () => {
+    if (isCollapsed) {
+      setCollapsed(false);
+      localStorage.removeItem('sidebar-collapsed');
+      return;
+    }
+    localStorage.setItem('sidebar-collapsed', true);
+    setCollapsed(true);
+  };
 
   return (
     <>
       <main className="bg-gray-100 dark:bg-gray-800 h-screen overflow-hidden relative">
         <div className="flex items-start justify-between">
-          <div className="h-screen hidden lg:block shadow-lg relative w-64 flex-shrink-0">
+          <div
+            className={`h-screen block shadow-lg relative w-64 flex-shrink-0 ${
+              isCollapsed ? 'hidden' : ''
+            }`}
+          >
             <div className="bg-white h-full dark:bg-gray-700">
               <div className="flex items-center justify-center pt-6">
                 <div className="self-center">
@@ -87,8 +104,8 @@ const Layout = () => {
           </div>
           <div className="flex flex-col w-full md:space-y-4">
             <header className="w-full h-16 z-40 flex items-center justify-between">
-              <div className="block lg:hidden ml-6">
-                <button className="flex p-2 items-center rounded-full bg-white shadow text-gray-500 text-md">
+              <div className="block ml-6">
+                <button className="flex p-2 items-center rounded-full bg-white shadow text-gray-500 text-md" onClick={handleSidebar}>
                   <svg
                     width="20"
                     height="20"
