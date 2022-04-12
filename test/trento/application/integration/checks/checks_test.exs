@@ -3,6 +3,7 @@ defmodule Trento.Integration.ChecksTest do
   use Trento.DataCase
 
   import Mox
+  # TODO: Remove Mock usage
   import Mock
 
   alias Trento.Integration.Checks
