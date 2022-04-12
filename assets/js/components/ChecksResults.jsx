@@ -100,7 +100,7 @@ const ChecksResults = () => {
   return (
     <div>
       {sortHosts(cluster?.hosts_executions.slice()).map(
-        ({ cluster_id, host_id, reachable, msg }) => (
+        ({ _cluster_id, host_id, reachable, msg }) => (
           <div key="c" className="flex flex-col">
             <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -111,7 +111,7 @@ const ChecksResults = () => {
                     </h3>
                     {reachable == false && (
                       <div
-                        class="bg-yellow-200 border-yellow-600 text-yellow-600 border-l-4 p-4"
+                        className="bg-yellow-200 border-yellow-600 text-yellow-600 border-l-4 p-4"
                         role="alert"
                       >
                         <p>{msg}</p>
