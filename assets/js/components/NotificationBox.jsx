@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Button from '@components/Button';
+
 const NotificationBox = ({ icon, text, buttonText, buttonOnClick }) => {
   return (
     <div className="shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-1/2 m-auto">
@@ -10,14 +12,10 @@ const NotificationBox = ({ icon, text, buttonText, buttonOnClick }) => {
             {text}
           </p>
           {buttonText ? (
-            <div className="flex items-center justify-between gap-4 mt-8">
-              <button
-                type="button"
-                onClick={buttonOnClick}
-                className="py-2 px-4 bg-sky-400 text-white w-32 text-center text-base font-semibold shadow-md rounded-lg m-auto"
-              >
+            <div className="flex items-center justify-center gap-4 mt-8">
+              <Button type="primary" className="w-32" onClick={buttonOnClick}>
                 {buttonText}
-              </button>
+              </Button>
             </div>
           ) : null}
         </div>
