@@ -13,9 +13,9 @@ const getSizeClasses = (size) => {
 const getButtonClasses = (type) => {
   switch (type) {
     case 'secondary':
-      return 'bg-jungle-green-500 hover:bg-jungle-green-500 focus:ring-jungle-green-500 focus:ring-offset-white text-white w-full transition ease-in duration-200 text-center font-semibold shadow focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg';
+      return 'bg-persimmon hover:opacity-75 focus:outline-none  text-gray-800 w-full transition ease-in duration-200 text-center font-semibold rounded shadow';
     default:
-      return 'bg-persimmon hover:bg-persimmon focus:ring-persimmon focus:ring-offset-white text-gray-800 w-full transition ease-in duration-200 text-center font-semibold shadow focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg';
+      return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-full transition ease-in duration-200 text-center font-semibold rounded shadow';
   }
 };
 
