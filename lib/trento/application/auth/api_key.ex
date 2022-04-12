@@ -13,8 +13,8 @@ defmodule Trento.Application.Auth.ApiKey do
   end
 
   @spec verify(String.t()) :: {:ok, any()} | {:error, :unauthenticated}
-  def verify(token) do
-    case Phoenix.Token.verify(TrentoWeb.Endpoint, @signing_salt, token) do
+  def verify(api_key) do
+    case Phoenix.Token.verify(TrentoWeb.Endpoint, @signing_salt, api_key) do
       {:ok, data} -> {:ok, data}
       _error -> {:error, :unauthenticated}
     end
