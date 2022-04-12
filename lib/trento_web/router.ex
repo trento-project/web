@@ -100,6 +100,9 @@ defmodule TrentoWeb.Router do
 
     post "/runner/callback", ClusterController, :runner_callback
     get "/prometheus/targets", PrometheusController, :targets
+
+    get "/settings", SettingsController, :settings
+    post "/accept_eula", SettingsController, :accept_eula
   end
 
   # Other scopes may use custom stacks.
