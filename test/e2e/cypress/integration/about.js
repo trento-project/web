@@ -2,7 +2,7 @@ describe("User account page", () => {
   before(() => {
     cy.loadScenario("healthy-27-node-SAP-cluster");
     cy.login();
-    cy.visit("/about");
+    cy.navigateToItem('About');
     cy.url().should("include", "/about");
   });
 

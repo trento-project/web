@@ -6,7 +6,7 @@ describe("Dashboard page", () => {
     cy.loadScenario("healthy-27-node-SAP-cluster");
     cy.task("startAgentHeartbeat", agents());
     cy.login();
-    cy.visit("/");
+    cy.navigateToItem('Dashboard');
     cy.url().should("include", "/");
   });
 

@@ -65,7 +65,7 @@ const Layout = () => {
                     return (
                       <Link
                         key={index}
-                        className={`w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
+                        className={`tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
                           isCurrentRoute(item.href)
                             ? 'border-l-4 border-jungle-green-500'
                             : 'hover:border-l-4 hover:border-jungle-green-500'

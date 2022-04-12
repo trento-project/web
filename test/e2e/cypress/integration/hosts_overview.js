@@ -10,7 +10,7 @@ context("Hosts Overview", () => {
     cy.task("startAgentHeartbeat", agents());
     cy.login();
 
-    cy.visit("/hosts");
+    cy.navigateToItem('Hosts');
     cy.url().should("include", "/hosts");
   });
 

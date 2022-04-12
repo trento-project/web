@@ -3,16 +3,17 @@ import {
     allClusterIds,
     clusterIdByName,
   } from '../fixtures/clusters-overview/available_clusters';
-  
+
   context('Clusters Overview', () => {
     const availableClusters = allClusterNames();
     const availableClustersId = allClusterIds();
     before(() => {
       cy.loadScenario('healthy-27-node-SAP-cluster');
       cy.login();
-      cy.visit('/clusters');
+      cy.navigateToItem('Clusters');
+      cy.url().should("include", "/clusters");
     });
-  
+
     describe('Registered Clusters should be available in the overview', () => {
       it('should show all of the registered clusters', () => {
         cy.get('.tn-clustername')
@@ -34,4 +35,3 @@ import {
       });
     });
   });
-  
