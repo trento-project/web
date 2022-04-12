@@ -1,15 +1,19 @@
+import {
+  agents
+} from "../fixtures/hosts-overview/available_hosts";
 describe("Dashboard page", () => {
   before(() => {
     cy.loadScenario("healthy-27-node-SAP-cluster");
+    cy.task("startAgentHeartbeat", agents());
     cy.login();
     cy.visit("/");
     cy.url().should("include", "/");
   });
 
   describe("The current state should be available in a summary", () => {
-    it("should display 27 hosts and 9 clusters", () => {
-      cy.get(".mr-4 > div > .mt-2").should("contain", "27");
-      cy.get(":nth-child(2) > div > .mt-2").should("contain", "9");
+    it("should display 2 Passing clusters and 1 critical", () => {
+      cy.get(".bg-green-200 > .rounded > .flex > .font-semibold").should("contain", "2");
+      cy.get(".bg-red-200 > .rounded > .flex > .font-semibold").should("contain", "1");
     });
   });
 });
