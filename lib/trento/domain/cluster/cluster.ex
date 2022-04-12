@@ -194,7 +194,7 @@ defmodule Trento.Domain.Cluster do
     hosts_executions
     |> Enum.reduce(
       Multi.new(cluster),
-      &handle_hosts_execution_data(&1, &2, cluster_id, old_hosts_executions)
+      &emit_host_execution_completed_event(&1, &2, cluster_id, old_hosts_executions)
     )
     |> Multi.execute(fn _ -> %ChecksExecutionCompleted{cluster_id: cluster_id} end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
@@ -470,38 +470,36 @@ defmodule Trento.Domain.Cluster do
     end
   end
 
-  defp handle_hosts_execution_data(
-         %{host_id: host_id, reachable: reachable, msg: msg},
+  defp emit_host_execution_completed_event(
+         %{host_id: host_id, reachable: false, msg: msg},
          multi,
          cluster_id,
          hosts_executions
-       )
-       when reachable == false do
+       ) do
     multi
     |> Multi.execute(fn _ ->
       %HostChecksExecutionCompleted{
         cluster_id: cluster_id,
         host_id: host_id,
-        reachable: reachable,
+        reachable: false,
         msg: msg,
         checks_results: Map.get(hosts_executions, host_id).checks_results
       }
     end)
   end
 
-  defp handle_hosts_execution_data(
-         %{host_id: host_id, reachable: reachable, msg: msg, checks_results: results},
+  defp emit_host_execution_completed_event(
+         %{host_id: host_id, reachable: true, msg: msg, checks_results: results},
          multi,
          cluster_id,
          _hosts_executions
-       )
-       when reachable == true do
+       ) do
     multi
     |> Multi.execute(fn _ ->
       %HostChecksExecutionCompleted{
         cluster_id: cluster_id,
         host_id: host_id,
-        reachable: reachable,
+        reachable: true,
         msg: msg,
         checks_results: results
       }
