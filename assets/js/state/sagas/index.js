@@ -104,6 +104,10 @@ function* initialDataFetch() {
   yield put(stopDatabasesLoading());
 }
 
+function* watchResetState() {
+  yield takeEvery('RESET_STATE', initialDataFetch);
+}
+
 function* hostRegistered({ payload }) {
   yield put(appendHost(payload));
   yield put(
@@ -474,6 +478,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
+    watchResetState(),
     watchHostRegistered(),
     watchHostDetailsUpdated(),
     watchHeartbeatSucceded(),
