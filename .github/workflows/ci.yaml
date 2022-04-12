@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [add-e2e-actions]
   pull_request:
   workflow_dispatch:
   repository_dispatch:
@@ -17,7 +17,7 @@ env:
 jobs:
   deps:
     name: Dependencies
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -34,6 +34,8 @@ jobs:
         with:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
+        env:
+          ImageOS: ubuntu20
 
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
@@ -58,7 +60,8 @@ jobs:
   static-code-analysis:
     name: Static Code Analysis
     needs: deps
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -75,6 +78,8 @@ jobs:
         with:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
+        env:
+          ImageOS: ubuntu20
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -110,7 +115,8 @@ jobs:
   test:
     name: Test
     needs: deps
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+
     services:
       postgres:
         image: postgres
@@ -201,3 +207,87 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  test-e2e:
+    name: End to end tests
+    needs: deps
+    runs-on: ubuntu-20.04
+    env:
+      MIX_ENV: dev
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: trento_dev
+        ports:
+          - 5433:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      grafana:
+        image: grafana/grafana:8.3.5
+        ports:
+          - 3000:3000
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+        env:
+          ImageOS: ubuntu20
+
+      - name: Get mix deps
+        run: mix deps.clean --all && mix deps.get
+
+      - name: Mix setup
+        run: mix setup
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install assets
+        run: cd assets && npm install
+
+      - name: Run trento detached
+        run: mix phx.server &
+
+      - name: Get Photofinish for e2e testing
+        run: |
+          set -x
+          wget -P /tmp https://github.com/trento-project/photofinish/releases/download/v1.1.0/photofinish
+          chmod +x /tmp/photofinish
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        env:
+          cypress_db_host: postgres
+          cypress_db_port: 5432
+          cypress_photofinish_binary: /tmp/photofinish
+        with:
+          working-directory: test/e2e
+          headless: true
+          wait-on-timeout: 30
+          config: baseUrl=http://localhost:4000
+
+      - name: Upload cypress test videos
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: e2e-videos
+          path: test/e2e/cypress/videos/
