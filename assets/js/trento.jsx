@@ -22,6 +22,7 @@ import DatabasesOverview from '@components/DatabasesOverview';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import DatabaseDetails from './components/DatabaseDetails';
 import ChecksCatalog from '@components/ChecksCatalog';
+import NotFound from '@components/NotFound';
 
 const App = () => {
   return (
@@ -51,6 +52,7 @@ const App = () => {
               <Route path="databases/:id" element={<DatabaseDetails />} />
               <Route path="clusters/:clusterID" element={<ClusterDetails />} />
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </Provider>

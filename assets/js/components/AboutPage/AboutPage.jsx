@@ -54,7 +54,7 @@ const AboutPage = () => {
               },
               {
                 title: 'GitHub repository',
-                content: 'https://github.com/trento-project/trento',
+                content: 'https://github.com/trento-project/web',
                 render: (content) => <a href={content}>{content}</a>,
               },
               {
