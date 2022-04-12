@@ -286,7 +286,7 @@ jobs:
           config: baseUrl=http://localhost:4000
 
       - name: Upload cypress test videos
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: e2e-videos
