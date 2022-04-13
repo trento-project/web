@@ -26,6 +26,7 @@ import DatabaseDetails from './components/DatabaseDetails';
 import ChecksCatalog from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
+import Settings from '@components/Settings';
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="sap-systems" element={<SapSystemsOverview />} />
               <Route path="databases" element={<DatabasesOverview />} />
               <Route path="catalog" element={<ChecksCatalog />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="about" element={<AboutPage />} />
               <Route
                 path="clusters/:clusterID/checks"

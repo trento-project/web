@@ -9,6 +9,7 @@ import {
   EOS_SYSTEM_GROUP,
   EOS_STORAGE,
   EOS_LIST,
+  EOS_SETTINGS,
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
@@ -40,6 +41,11 @@ const navigation = [
     name: 'Checks catalog',
     href: '/catalog',
     icon: EOS_LIST,
+  },
+  {
+    name: 'Settings',
+    href: '/settings',
+    icon: EOS_SETTINGS,
   },
   { name: 'About', href: '/about', icon: EOS_INFO },
 ];
