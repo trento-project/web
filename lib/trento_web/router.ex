@@ -20,6 +20,20 @@ defmodule TrentoWeb.Router do
       error_handler: Pow.Phoenix.PlugErrorHandler
   end
 
+  pipeline :protected_api do
+    if Mix.env() != :test do
+      plug Pow.Plug.RequireAuthenticated,
+        error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
+    end
+  end
+
+  pipeline :apikey_authenticated do
+    if Mix.env() != :test do
+      plug Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug,
+        error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
+    end
+  end
+
   scope "/" do
     pipe_through :browser
 
@@ -32,14 +46,14 @@ defmodule TrentoWeb.Router do
   end
 
   scope "/api", TrentoWeb do
-    pipe_through :api
-
-    post "/collect", DiscoveryController, :collect
+    pipe_through [:api, :protected_api]
 
     get "/about", AboutController, :info
 
+    get "/installation/api-key", InstallationController, :get_api_key
+
     get "/hosts", HostController, :list
-    post "/hosts/:id/heartbeat", HostController, :heartbeat
+
     post "/hosts/:id/tags", HostController, :create_tag
     delete "/hosts/:id/tags/:value", HostController, :delete_tag
 
@@ -63,9 +77,28 @@ defmodule TrentoWeb.Router do
          ClusterController,
          :request_checks_execution
 
-    post "/runner/callback", ClusterController, :runner_callback
     get "/checks/catalog", CatalogController, :checks_catalog
+  end
 
+  scope "/api", TrentoWeb do
+    pipe_through [:api, :apikey_authenticated]
+
+    # TODO: enable following two here and remove from following scope
+    # post "/collect", DiscoveryController, :collect
+    # post "/hosts/:id/heartbeat", HostController, :heartbeat
+
+    # TODO: remove me, just for testing purposes
+    get "/test", AboutController, :info
+  end
+
+  scope "/api", TrentoWeb do
+    pipe_through :api
+
+    # TODO: remove following two from here and enable in previous scope
+    post "/collect", DiscoveryController, :collect
+    post "/hosts/:id/heartbeat", HostController, :heartbeat
+
+    post "/runner/callback", ClusterController, :runner_callback
     get "/prometheus/targets", PrometheusController, :targets
   end
 
