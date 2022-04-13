@@ -24,6 +24,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+const initializeOpenSidebar = () => cy.setCookie('sidebar-collapsed', 'false');
+
 Cypress.Commands.add("login", () => {
   const [username, password] = [
     Cypress.env("login_user"),
@@ -47,4 +49,10 @@ Cypress.Commands.add("loadScenario", (scenario) => {
   cy.exec(
     `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/collect" ${scenario}`
   );
+});
+
+Cypress.Commands.add('navigateToItem', (item) => {
+  initializeOpenSidebar();
+  const items = Array.isArray(item) ? item : [item];
+  items.forEach((it) => cy.get('.tn-menu-item').contains(it).click());
 });
