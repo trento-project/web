@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 import {
@@ -13,6 +13,8 @@ import {
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
 import HammeringStefano from '../../../static/hammering_stefano.png';
+
+import classNames from 'classnames';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -51,24 +53,22 @@ const Layout = () => {
     localStorage.getItem('sidebar-collapsed')
   );
 
-  const handleSidebar = () => {
-    if (isCollapsed) {
-      setCollapsed(false);
-      localStorage.removeItem('sidebar-collapsed');
-      return;
-    }
-    localStorage.setItem('sidebar-collapsed', true);
-    setCollapsed(true);
-  };
+  const handleSidebar = useCallback(() => {
+    setCollapsed(!isCollapsed);
+    isCollapsed
+      ? localStorage.removeItem('sidebar-collapsed')
+      : localStorage.setItem('sidebar-collapsed', true);
+  }, [isCollapsed]);
 
   return (
     <>
       <main className="bg-gray-100 dark:bg-gray-800 h-screen overflow-hidden relative">
         <div className="flex items-start justify-between">
           <div
-            className={`h-screen block shadow-lg relative w-64 flex-shrink-0 ${
-              isCollapsed ? 'hidden' : ''
-            }`}
+            className={classNames(
+              'h-screen block shadow-lg relative w-64 flex-shrink-0',
+              { hidden: isCollapsed }
+            )}
           >
             <div className="bg-white h-full dark:bg-gray-700">
               <div className="flex items-center justify-center pt-6">
@@ -105,7 +105,10 @@ const Layout = () => {
           <div className="flex flex-col w-full md:space-y-4">
             <header className="w-full h-16 z-40 flex items-center justify-between">
               <div className="block ml-6">
-                <button className="flex p-2 items-center rounded-full bg-white shadow text-gray-500 text-md" onClick={handleSidebar}>
+                <button
+                  className="flex p-2 items-center rounded-full bg-white shadow text-gray-500 text-md"
+                  onClick={handleSidebar}
+                >
                   <svg
                     width="20"
                     height="20"
