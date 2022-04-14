@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { get } from 'axios';
-
-import Button from '@components/Button';
-
-import { logError } from '@lib/log';
-
 import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
+
+import { get } from 'axios';
+import Button from '@components/Button';
+import { logError } from '@lib/log';
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
@@ -26,7 +24,7 @@ const Settings = () => {
       });
   }, []);
 
-  const hasApiKey = apiKey !== null;
+  const hasApiKey = Boolean(apiKey);
 
   return (
     <section>
