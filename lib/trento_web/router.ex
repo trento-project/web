@@ -85,6 +85,9 @@ defmodule TrentoWeb.Router do
 
     post "/collect", DiscoveryController, :collect
     post "/hosts/:id/heartbeat", HostController, :heartbeat
+
+    get "/settings", SettingsController, :settings
+    post "/accept_eula", SettingsController, :accept_eula
   end
 
   scope "/api", TrentoWeb do
@@ -92,9 +95,6 @@ defmodule TrentoWeb.Router do
 
     post "/runner/callback", ClusterController, :runner_callback
     get "/prometheus/targets", PrometheusController, :targets
-
-    get "/settings", SettingsController, :settings
-    post "/accept_eula", SettingsController, :accept_eula
   end
 
   # Other scopes may use custom stacks.
