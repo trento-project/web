@@ -21,14 +21,14 @@ defmodule TrentoWeb.Router do
   end
 
   pipeline :protected_api do
-    if Mix.env() != :test do
+    if Application.fetch_env!(:trento, :api_key_authentication)[:enabled] do
       plug Pow.Plug.RequireAuthenticated,
         error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
     end
   end
 
   pipeline :apikey_authenticated do
-    if Mix.env() != :test do
+    if Application.fetch_env!(:trento, :api_key_authentication)[:enabled] do
       plug Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug,
         error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
     end
