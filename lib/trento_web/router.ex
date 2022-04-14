@@ -78,6 +78,9 @@ defmodule TrentoWeb.Router do
          :request_checks_execution
 
     get "/checks/catalog", CatalogController, :checks_catalog
+
+    get "/settings", SettingsController, :settings
+    post "/accept_eula", SettingsController, :accept_eula
   end
 
   scope "/api", TrentoWeb do
@@ -85,9 +88,6 @@ defmodule TrentoWeb.Router do
 
     post "/collect", DiscoveryController, :collect
     post "/hosts/:id/heartbeat", HostController, :heartbeat
-
-    get "/settings", SettingsController, :settings
-    post "/accept_eula", SettingsController, :accept_eula
   end
 
   scope "/api", TrentoWeb do
