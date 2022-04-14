@@ -74,6 +74,8 @@ config :trento, :pow,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
 
+config :trento, :api_key_authentication, enabled: true
+
 config :trento, Trento.Heartbeats, interval: :timer.seconds(5)
 
 config :trento, Trento.Scheduler,

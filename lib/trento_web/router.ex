@@ -21,14 +21,14 @@ defmodule TrentoWeb.Router do
   end
 
   pipeline :protected_api do
-    if Mix.env() != :test do
+    if Application.fetch_env!(:trento, :api_key_authentication)[:enabled] do
       plug Pow.Plug.RequireAuthenticated,
         error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
     end
   end
 
   pipeline :apikey_authenticated do
-    if Mix.env() != :test do
+    if Application.fetch_env!(:trento, :api_key_authentication)[:enabled] do
       plug Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug,
         error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
     end
@@ -83,20 +83,12 @@ defmodule TrentoWeb.Router do
   scope "/api", TrentoWeb do
     pipe_through [:api, :apikey_authenticated]
 
-    # TODO: enable following two here and remove from following scope
-    # post "/collect", DiscoveryController, :collect
-    # post "/hosts/:id/heartbeat", HostController, :heartbeat
-
-    # TODO: remove me, just for testing purposes
-    get "/test", AboutController, :info
+    post "/collect", DiscoveryController, :collect
+    post "/hosts/:id/heartbeat", HostController, :heartbeat
   end
 
   scope "/api", TrentoWeb do
     pipe_through :api
-
-    # TODO: remove following two from here and enable in previous scope
-    post "/collect", DiscoveryController, :collect
-    post "/hosts/:id/heartbeat", HostController, :heartbeat
 
     post "/runner/callback", ClusterController, :runner_callback
     get "/prometheus/targets", PrometheusController, :targets
