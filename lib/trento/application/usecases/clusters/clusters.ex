@@ -48,7 +48,7 @@ defmodule Trento.Clusters do
     ClusterReadModel
     |> order_by(asc: :name)
     |> Repo.all()
-    |> Repo.preload([:tags, :checks_results])
+    |> Repo.preload([:tags, :hosts_executions, :checks_results])
   end
 
   @spec build_check_results([String.t()]) :: {:ok, [CheckResult.t()]} | {:error, any}

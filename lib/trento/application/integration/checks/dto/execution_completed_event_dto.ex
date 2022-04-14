@@ -12,6 +12,8 @@ defmodule Trento.Integration.Checks.ExecutionCompletedEventDto do
 
     embeds_many :hosts, Host do
       field :host_id, Ecto.UUID
+      field :reachable, :boolean
+      field :msg, :string
 
       embeds_many :results, Result do
         field :check_id, :string
@@ -29,7 +31,7 @@ defmodule Trento.Integration.Checks.ExecutionCompletedEventDto do
 
   defp host_changeset(host, attrs) do
     host
-    |> cast(attrs, [:host_id])
+    |> cast(attrs, [:host_id, :reachable, :msg])
     |> cast_embed(:results, with: &result_changeset/2)
     |> validate_required([:host_id])
   end

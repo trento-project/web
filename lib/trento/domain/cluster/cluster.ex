@@ -7,7 +7,8 @@ defmodule Trento.Domain.Cluster do
     CheckResult,
     Cluster,
     HanaClusterDetails,
-    HealthService
+    HealthService,
+    HostExecution
   }
 
   alias Trento.Domain.Commands.{
@@ -43,7 +44,7 @@ defmodule Trento.Domain.Cluster do
     health: :unknown,
     hosts: [],
     selected_checks: [],
-    hosts_checks_results: %{},
+    hosts_executions: %{},
     checks_execution: :not_running
   ]
 
@@ -57,7 +58,7 @@ defmodule Trento.Domain.Cluster do
           details: HanaClusterDetails.t() | nil,
           hosts: [String.t()],
           selected_checks: [String.t()],
-          hosts_checks_results: %{String.t() => [CheckResult.t()]},
+          hosts_executions: %{String.t() => HostExecution.t()},
           checks_execution: :not_running | :requested | :running
         }
 
@@ -183,7 +184,8 @@ defmodule Trento.Domain.Cluster do
   # Store checks results
   def execute(
         %Cluster{
-          cluster_id: cluster_id
+          cluster_id: cluster_id,
+          hosts_executions: old_hosts_executions
         } = cluster,
         %CompleteChecksExecution{
           hosts_executions: hosts_executions
@@ -192,15 +194,7 @@ defmodule Trento.Domain.Cluster do
     hosts_executions
     |> Enum.reduce(
       Multi.new(cluster),
-      fn %{host_id: host_id, checks_results: results}, multi ->
-        Multi.execute(multi, fn _ ->
-          %HostChecksExecutionCompleted{
-            cluster_id: cluster_id,
-            host_id: host_id,
-            checks_results: results
-          }
-        end)
-      end
+      &emit_host_execution_completed_event(&1, &2, cluster_id, old_hosts_executions)
     )
     |> Multi.execute(fn _ -> %ChecksExecutionCompleted{cluster_id: cluster_id} end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
@@ -292,20 +286,25 @@ defmodule Trento.Domain.Cluster do
         %Cluster{selected_checks: selected_checks, hosts: hosts} = cluster,
         %ChecksExecutionRequested{}
       ) do
-    hosts_checks_results =
-      Enum.reduce(hosts, %{}, fn host, acc ->
+    hosts_executions =
+      Enum.reduce(hosts, %{}, fn host_id, acc ->
         Map.put(
           acc,
-          host,
-          Enum.map(selected_checks, fn check_id ->
-            %CheckResult{check_id: check_id, result: :unknown}
-          end)
+          host_id,
+          %HostExecution{
+            host_id: host_id,
+            reachable: true,
+            checks_results:
+              Enum.map(selected_checks, fn check_id ->
+                %CheckResult{check_id: check_id, result: :unknown}
+              end)
+          }
         )
       end)
 
     %Cluster{
       cluster
-      | hosts_checks_results: hosts_checks_results,
+      | hosts_executions: hosts_executions,
         checks_execution: :requested
     }
   end
@@ -331,12 +330,43 @@ defmodule Trento.Domain.Cluster do
   end
 
   def apply(
-        %Cluster{hosts_checks_results: hosts_checks_results} = cluster,
-        %HostChecksExecutionCompleted{host_id: host_id, checks_results: checks_results}
-      ) do
+        %Cluster{hosts_executions: hosts_executions} = cluster,
+        %HostChecksExecutionCompleted{
+          host_id: host_id,
+          reachable: reachable,
+          msg: msg,
+          checks_results: checks_results
+        }
+      )
+      when reachable == true do
     %Cluster{
       cluster
-      | hosts_checks_results: Map.put(hosts_checks_results, host_id, checks_results)
+      | hosts_executions:
+          Map.put(hosts_executions, host_id, %HostExecution{
+            host_id: host_id,
+            reachable: reachable,
+            msg: msg,
+            checks_results: checks_results
+          })
+    }
+  end
+
+  def apply(
+        %Cluster{hosts_executions: hosts_executions} = cluster,
+        %HostChecksExecutionCompleted{host_id: host_id, reachable: reachable, msg: msg}
+      )
+      when reachable == false do
+    %Cluster{
+      cluster
+      | hosts_executions:
+          Map.update(hosts_executions, host_id, %HostExecution{}, fn host ->
+            %HostExecution{
+              host_id: host_id,
+              reachable: reachable,
+              msg: msg,
+              checks_results: host.checks_results
+            }
+          end)
     }
   end
 
@@ -422,13 +452,14 @@ defmodule Trento.Domain.Cluster do
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
-         hosts_checks_results: hosts_checks_results,
+         hosts_executions: hosts_executions,
          discovered_health: discovered_health,
          health: health
        }) do
     new_health =
-      hosts_checks_results
-      |> Enum.flat_map(fn {_, results} -> results end)
+      hosts_executions
+      |> Enum.map(fn {_, hosts} -> hosts end)
+      |> Enum.flat_map(fn %{checks_results: checks_results} -> checks_results end)
       |> Enum.map(fn %{result: result} -> result end)
       |> Enum.reject(fn result -> result == :skipped end)
       |> Kernel.++([discovered_health])
@@ -437,5 +468,41 @@ defmodule Trento.Domain.Cluster do
     if new_health != health do
       %ClusterHealthChanged{cluster_id: cluster_id, health: new_health}
     end
+  end
+
+  defp emit_host_execution_completed_event(
+         %{host_id: host_id, reachable: false, msg: msg},
+         multi,
+         cluster_id,
+         hosts_executions
+       ) do
+    multi
+    |> Multi.execute(fn _ ->
+      %HostChecksExecutionCompleted{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        reachable: false,
+        msg: msg,
+        checks_results: Map.get(hosts_executions, host_id).checks_results
+      }
+    end)
+  end
+
+  defp emit_host_execution_completed_event(
+         %{host_id: host_id, reachable: true, msg: msg, checks_results: results},
+         multi,
+         cluster_id,
+         _hosts_executions
+       ) do
+    multi
+    |> Multi.execute(fn _ ->
+      %HostChecksExecutionCompleted{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        reachable: true,
+        msg: msg,
+        checks_results: results
+      }
+    end)
   end
 end

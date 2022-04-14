@@ -10,6 +10,8 @@ defmodule Trento.Domain.Events.HostChecksExecutionCompleted do
   defevent do
     field :cluster_id, :string
     field :host_id, :string
+    field :reachable, :boolean
+    field :msg, :string
 
     embeds_many :checks_results, CheckResult
   end

@@ -37,6 +37,7 @@ defmodule Trento.Factory do
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
+    HostChecksExecutionsReadModel,
     HostConnectionSettings,
     HostReadModel,
     HostTelemetryReadModel,
@@ -384,6 +385,15 @@ defmodule Trento.Factory do
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
       check_id: Keyword.get(attrs, :check_id, Faker.UUID.v4()),
       result: Keyword.get(attrs, :result, :passing)
+    })
+  end
+
+  def host_checks_result_projection(attrs \\ []) do
+    Repo.insert!(%HostChecksExecutionsReadModel{
+      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
+      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      reachable: Keyword.get(attrs, :reachable, true),
+      msg: Keyword.get(attrs, :msg, Faker.StarWars.planet())
     })
   end
 
