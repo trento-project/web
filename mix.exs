@@ -58,7 +58,7 @@ defmodule Trento.MixProject do
       {:fun_with_flags, "~> 1.8.1"},
       {:fun_with_flags_ui, "~> 0.8.0"},
       {:gettext, "~> 0.18"},
-      {:gen_smtp, "~> 1.1.1"},
+      {:gen_smtp, "~> 1.2.0"},
       {:httpoison, "~> 1.8"},
       {:jason, "~> 1.2"},
       {:mock, "~> 0.3.0", only: :test},
