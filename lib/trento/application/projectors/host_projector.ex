@@ -177,7 +177,7 @@ defmodule Trento.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_details_updated",
-      host |> to_map() |> Map.delete("cluster_id")
+      host |> to_map() |> Map.delete("cluster_id") |> Map.delete("heartbeat")
     )
   end
 
