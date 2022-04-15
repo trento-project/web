@@ -11,9 +11,9 @@ defmodule Trento.Tags do
 
   @type taggable_resource :: :host | :cluster | :sap_system | :database
 
-  @spec create_tag(String.t(), Ecto.UUID.t(), taggable_resource) ::
+  @spec add_tag(String.t(), Ecto.UUID.t(), taggable_resource) ::
           {:ok, Ecto.Schema.t()} | {:error, any}
-  def create_tag(value, resource_id, resource_type) do
+  def add_tag(value, resource_id, resource_type) do
     changeset =
       Tag.changeset(%Tag{}, %{
         value: String.trim(value),
