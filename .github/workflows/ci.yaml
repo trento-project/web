@@ -43,7 +43,7 @@ jobs:
         with:
           path: |
             deps
-            _build/test/lib
+            _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
 
@@ -93,7 +93,7 @@ jobs:
         with:
           path: |
             deps
-            _build/test/lib
+            _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
 
@@ -154,7 +154,7 @@ jobs:
         with:
           path: |
             deps
-            _build/test/lib
+            _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
 
