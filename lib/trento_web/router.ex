@@ -53,23 +53,10 @@ defmodule TrentoWeb.Router do
     get "/installation/api-key", InstallationController, :get_api_key
 
     get "/hosts", HostController, :list
-
-    post "/hosts/:id/tags", HostController, :create_tag
-    delete "/hosts/:id/tags/:value", HostController, :delete_tag
-
     get "/clusters", ClusterController, :list
-    post "/clusters/:id/tags", ClusterController, :create_tag
-    delete "/clusters/:id/tags/:value", ClusterController, :delete_tag
-
     get "/sap_systems", SapSystemController, :list
-    post "/sap_systems/:id/tags", SapSystemController, :create_tag
-    delete "/sap_systems/:id/tags/:value", SapSystemController, :delete_tag
-
     get "/sap_systems/health", HealthOverviewController, :overview
-
     get "/databases", SapSystemController, :list_databases
-    post "/databases/:id/tags", SapSystemController, :create_database_tag
-    delete "/databases/:id/tags/:value", SapSystemController, :delete_tag
 
     post "/clusters/:cluster_id/checks", ClusterController, :select_checks
 
@@ -78,6 +65,30 @@ defmodule TrentoWeb.Router do
          :request_checks_execution
 
     get "/checks/catalog", CatalogController, :checks_catalog
+
+    post "/hosts/:id/tags", TagsController, :add_tag,
+      assigns: %{resource_type: :host},
+      as: :hosts_tagging
+
+    delete "/hosts/:id/tags/:value", TagsController, :remove_tag, as: :hosts_tagging
+
+    post "/clusters/:id/tags", TagsController, :add_tag,
+      assigns: %{resource_type: :cluster},
+      as: :clusters_tagging
+
+    delete "/clusters/:id/tags/:value", TagsController, :remove_tag, as: :clusters_tagging
+
+    post "/sap_systems/:id/tags", TagsController, :add_tag,
+      assigns: %{resource_type: :sap_system},
+      as: :sap_systems_tagging
+
+    delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag, as: :sap_systems_tagging
+
+    post "/databases/:id/tags", TagsController, :add_tag,
+      assigns: %{resource_type: :database},
+      as: :databases_tagging
+
+    delete "/databases/:id/tags/:value", TagsController, :remove_tag, as: :databases_tagging
 
     get "/settings", SettingsController, :settings
     post "/accept_eula", SettingsController, :accept_eula
