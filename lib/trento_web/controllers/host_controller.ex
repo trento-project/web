@@ -3,8 +3,7 @@ defmodule TrentoWeb.HostController do
 
   alias Trento.{
     Heartbeats,
-    Hosts,
-    Tags
+    Hosts
   }
 
   alias Trento.Support.StructHelper
@@ -27,38 +26,6 @@ defmodule TrentoWeb.HostController do
         conn
         |> put_status(:bad_request)
         |> json(%{error: reason})
-    end
-  end
-
-  @spec create_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def create_tag(conn, %{
-        "id" => id,
-        "value" => value
-      }) do
-    case Tags.create_tag(value, id, "host") do
-      {:ok, _} ->
-        conn
-        |> put_status(:created)
-        |> json(%{value: value})
-
-      {:error, _} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: "tag creation failed"})
-    end
-  end
-
-  @spec delete_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def delete_tag(conn, %{
-        "id" => resource_id,
-        "value" => value
-      }) do
-    case Tags.delete_tag(value, resource_id) do
-      :ok ->
-        send_resp(conn, :no_content, "")
-
-      :not_found ->
-        send_resp(conn, :not_found, "")
     end
   end
 end

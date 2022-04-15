@@ -3,45 +3,6 @@ defmodule TrentoWeb.HostControllerTest do
 
   import Trento.Factory
 
-  alias Trento.Tag
-
-  describe "tags" do
-    test "should add a tag to a host", %{conn: conn} do
-      conn =
-        post(conn, Routes.host_path(conn, :create_tag, Faker.UUID.v4()), %{
-          "value" => Faker.Beer.style()
-        })
-
-      assert 201 == conn.status
-    end
-
-    test "should remove a tag from a host", %{conn: conn} do
-      %Tag{
-        id: _id,
-        value: value,
-        resource_id: resource_id,
-        resource_type: _resource_type
-      } = tag()
-
-      conn = delete(conn, Routes.host_path(conn, :delete_tag, resource_id, value))
-
-      assert 204 == conn.status
-    end
-
-    test "should fail when attempting to remove a non existing tag from a host", %{conn: conn} do
-      %Tag{
-        id: _id,
-        value: _value,
-        resource_id: resource_id,
-        resource_type: _resource_type
-      } = tag()
-
-      conn = delete(conn, Routes.host_path(conn, :delete_tag, resource_id, "non-existing-tag"))
-
-      assert 404 == conn.status
-    end
-  end
-
   describe "list" do
     test "should list all hosts", %{conn: conn} do
       [
