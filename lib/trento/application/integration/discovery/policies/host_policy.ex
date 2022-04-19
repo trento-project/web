@@ -133,7 +133,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          "Metadata" => %{
            "compute" => %{
              "name" => name,
-             "resourceId" => resource_group,
+             "resourceGroupName" => resource_group,
              "location" => location,
              "vmSize" => vm_size,
              "storageProfile" => storage_profile,
