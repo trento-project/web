@@ -24,14 +24,6 @@ const getHeartbeatIcon = ({ heartbeat }) => {
   }
 };
 
-const getSAPInstanceFromSID = (sid, sapSystems) => {
-  const instance = sapSystems.find(
-    (instance) => instance.instance?.sid === sid
-  );
-
-  return instance;
-};
-
 const getSapSystemsByHost = (sapSystems, hostId) => {
   const appInstances = sapSystems
     .flatMap((sapSystem) => sapSystem.application_instances)
@@ -119,15 +111,14 @@ const HostsList = () => {
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
         render: (sids, { sap_systems }) => {
-          let sidsArray = sids.map((sid, index) => [
+          let sidsArray = sap_systems.map((instance, index) => [
             index > 0 && ', ',
             <SapSystemLink
-              systemType={getSAPInstanceFromSID(sid, sap_systems).type}
-              sapSystemId={
-                getSAPInstanceFromSID(sid, sap_systems).instance?.sap_system_id
-              }
+              key={index}
+              systemType={instance.type}
+              sapSystemId={instance.instance?.sap_system_id}
             >
-              {sid}
+              {instance.instance?.sid}
             </SapSystemLink>,
           ]);
 
@@ -172,15 +163,14 @@ const HostsList = () => {
   const data = hosts.map((host) => {
     const cluster = clusters.find((cluster) => cluster.id === host.cluster_id);
     const sapSystemList = getSapSystemsByHost(sapSystems, host.id);
-    const sids = sapSystemList.map((sapSystem) => {
-      return sapSystem.instance.sid;
-    });
     return {
       heartbeat: host.heartbeat,
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
-      sid: sids,
+      sid: sapSystemList.map((sapSystem) => {
+        return sapSystem.instance.sid;
+      }),
       cluster: cluster,
       agent_version: host.agent_version,
       id: host.id,
