@@ -32,7 +32,7 @@ Cypress.Commands.add("login", () => {
     Cypress.env("login_password")
   ];
   cy.visit("/login");
-  cy.get("#user_email").type(username);
+  cy.get("#user_username").type(username);
   cy.get("#user_password").type(password);
   cy.get(":nth-child(5) > .w-full").click();
   cy.url().should("include", "/");

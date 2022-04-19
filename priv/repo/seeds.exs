@@ -12,8 +12,8 @@
 
 %Trento.User{}
 |> Trento.User.changeset(%{
-  email: "chiecks@trento.io",
-  password: "secret1234",
-  confirm_password: "secret1234"
+  username: "admin",
+  password: "adminpassword",
+  confirm_password: "adminpassword"
 })
 |> Trento.Repo.insert!()
