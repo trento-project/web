@@ -5,6 +5,7 @@ import Table from './Table';
 import Tags from './Tags';
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import ClusterLink from '@components/ClusterLink';
+import SapSystemLink from '@components/SapSystemLink';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
@@ -21,6 +22,19 @@ const getHeartbeatIcon = ({ heartbeat }) => {
     default:
       return <EOS_LENS_FILLED className="fill-gray-500" />;
   }
+};
+
+const getSapSystemsByHost = (sapSystems, hostId) => {
+  const appInstances = sapSystems
+    .flatMap((sapSystem) => sapSystem.application_instances)
+    .filter((sapSystem) => sapSystem.host_id === hostId)
+    .map((sapSystem) => ({ type: 'sap-systems', instance: sapSystem }));
+  const dbInstances = sapSystems
+    .flatMap((sapSystem) => sapSystem.database_instances)
+    .filter((sapSystem) => sapSystem.host_id === hostId)
+    .map((sapSystem) => ({ type: 'databases', instance: sapSystem }));
+
+  return appInstances.concat(dbInstances);
 };
 
 const addTag = (tag, hostId) => {
@@ -42,6 +56,8 @@ const removeTag = (tag, hostId) => {
 const HostsList = () => {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
+  const sapSystems = useSelector((state) => state.sapSystemsList.sapSystems);
+
   const dispatch = useDispatch();
 
   const config = {
@@ -86,16 +102,28 @@ const HostsList = () => {
         key: 'cluster',
         className: 'w-40',
         render: (cluster) => {
-          return cluster?.name;
+          return <ClusterLink cluster={cluster}>{cluster?.name}</ClusterLink>;
         },
       },
       {
         title: 'SID',
         key: 'sid',
-        filter: true,
-        render: (content, { cluster }) => (
-          <ClusterLink cluster={cluster}>{content}</ClusterLink>
-        ),
+        filter: (filter, key) => (element) =>
+          element[key].some((sid) => filter.includes(sid)),
+        render: (sids, { sap_systems }) => {
+          let sidsArray = sap_systems.map((instance, index) => [
+            index > 0 && ', ',
+            <SapSystemLink
+              key={index}
+              systemType={instance.type}
+              sapSystemId={instance.instance?.sap_system_id}
+            >
+              {instance.instance?.sid}
+            </SapSystemLink>,
+          ]);
+
+          return sidsArray;
+        },
       },
       {
         title: 'Agent version',
@@ -134,17 +162,20 @@ const HostsList = () => {
 
   const data = hosts.map((host) => {
     const cluster = clusters.find((cluster) => cluster.id === host.cluster_id);
-
+    const sapSystemList = getSapSystemsByHost(sapSystems, host.id);
     return {
       heartbeat: host.heartbeat,
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
-      sid: cluster?.sid,
+      sid: sapSystemList.map((sapSystem) => {
+        return sapSystem.instance.sid;
+      }),
       cluster: cluster,
       agent_version: host.agent_version,
       id: host.id,
       tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
+      sap_systems: sapSystemList,
     };
   });
 
