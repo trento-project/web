@@ -15,6 +15,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
             "Id" => id,
             "Name" => name,
             "DC" => designated_controller,
+            "CloudProvider" => cloud_provider,
             "Crmmon" => %{
               "Summary" => %{
                 "LastChange" => %{"Time" => cib_last_written},
@@ -39,7 +40,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       hosts_number: hosts_number,
       details: details,
       discovered_health: parse_cluster_health(details, cluster_type),
-      cib_last_written: cib_last_written
+      cib_last_written: cib_last_written,
+      cloud_provider: parse_cloud_provider(cloud_provider)
     })
   end
 
@@ -332,4 +334,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   defp parse_hana_cluster_health(%{"sr_health_state" => _, "secondary_sync_state" => _}),
     do: :critical
+
+  defp parse_cloud_provider("azure"), do: :azure
+  defp parse_cloud_provider("aws"), do: :aws
+  defp parse_cloud_provider("gcp"), do: :gcp
+  defp parse_cloud_provider(_), do: :unknown
 end

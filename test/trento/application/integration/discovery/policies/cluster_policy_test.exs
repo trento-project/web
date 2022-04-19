@@ -214,7 +214,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               type: :hana_scale_up,
               hosts_number: 2,
               resources_number: 8,
-              discovered_health: :passing
+              discovered_health: :passing,
+              cloud_provider: :azure
             }} ==
              "ha_cluster_discovery_hana_scale_up"
              |> load_discovery_event_fixture()

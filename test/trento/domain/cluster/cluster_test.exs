@@ -49,7 +49,8 @@ defmodule Trento.ClusterTest do
           type: type,
           details: nil,
           discovered_health: :passing,
-          designated_controller: true
+          designated_controller: true,
+          cloud_provider: :azure
         }),
         [
           %ClusterRegistered{
@@ -95,7 +96,8 @@ defmodule Trento.ClusterTest do
           sid: sid,
           type: :hana_scale_up,
           discovered_health: :unknown,
-          designated_controller: false
+          designated_controller: false,
+          cloud_provider: :azure
         }),
         [
           %HostAddedToCluster{
@@ -121,7 +123,8 @@ defmodule Trento.ClusterTest do
           sid: Faker.StarWars.planet(),
           discovered_health: :unknown,
           type: :hana_scale_up,
-          designated_controller: false
+          designated_controller: false,
+          cloud_provider: :azure
         }),
         {:error, :cluster_not_found}
       )
@@ -157,7 +160,8 @@ defmodule Trento.ClusterTest do
           hosts_number: 1,
           discovered_health: :passing,
           details: StructHelper.to_map(details),
-          designated_controller: true
+          designated_controller: true,
+          cloud_provider: :azure
         }),
         %ClusterDetailsUpdated{
           cluster_id: cluster_id,
@@ -204,7 +208,8 @@ defmodule Trento.ClusterTest do
           details: nil,
           type: :hana_scale_up,
           discovered_health: :passing,
-          designated_controller: true
+          designated_controller: true,
+          cloud_provider: :azure
         }),
         [],
         fn cluster ->
@@ -439,7 +444,8 @@ defmodule Trento.ClusterTest do
           hosts_number: cluster_registered_event.hosts_number,
           details: StructHelper.to_map(cluster_registered_event.details),
           designated_controller: true,
-          discovered_health: :critical
+          discovered_health: :critical,
+          cloud_provider: :azure
         }),
         [
           %ClusterDiscoveredHealthChanged{
@@ -483,7 +489,8 @@ defmodule Trento.ClusterTest do
           hosts_number: cluster_registered_event.hosts_number,
           discovered_health: :passing,
           details: StructHelper.to_map(cluster_registered_event.details),
-          designated_controller: true
+          designated_controller: true,
+          cloud_provider: :azure
         }),
         [],
         fn cluster ->
