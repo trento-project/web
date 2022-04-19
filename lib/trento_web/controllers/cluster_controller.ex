@@ -1,10 +1,7 @@
 defmodule TrentoWeb.ClusterController do
   use TrentoWeb, :controller
 
-  alias Trento.{
-    Clusters,
-    Tags
-  }
+  alias Trento.Clusters
 
   alias Trento.Integration.Checks
 
@@ -13,38 +10,6 @@ defmodule TrentoWeb.ClusterController do
     clusters = Clusters.get_all_clusters()
 
     json(conn, clusters)
-  end
-
-  @spec create_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def create_tag(conn, %{
-        "id" => resource_id,
-        "value" => value
-      }) do
-    case Tags.create_tag(value, resource_id, "cluster") do
-      {:ok, _} ->
-        conn
-        |> put_status(:created)
-        |> json(%{value: value})
-
-      {:error, _} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: "tag creation failed"})
-    end
-  end
-
-  @spec delete_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def delete_tag(conn, %{
-        "id" => resource_id,
-        "value" => value
-      }) do
-    case Tags.delete_tag(value, resource_id) do
-      :ok ->
-        send_resp(conn, :no_content, "")
-
-      :not_found ->
-        send_resp(conn, :not_found, "")
-    end
   end
 
   @spec request_checks_execution(Plug.Conn.t(), map) :: Plug.Conn.t()

@@ -9,13 +9,32 @@ defmodule Trento.Tags do
 
   alias Trento.Repo
 
-  @spec create_tag(String.t(), Ecto.UUID.t(), String.t()) ::
-          {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
-  def create_tag(value, resource_id, resource_type) do
-    Repo.insert(%Tag{value: value, resource_id: resource_id, resource_type: resource_type},
-      conflict_target: [:value, :resource_id],
-      on_conflict: :nothing
-    )
+  @type taggable_resource :: :host | :cluster | :sap_system | :database
+
+  @spec add_tag(String.t(), Ecto.UUID.t(), taggable_resource) ::
+          {:ok, Ecto.Schema.t()} | {:error, any}
+  def add_tag(value, resource_id, resource_type) do
+    changeset =
+      Tag.changeset(%Tag{}, %{
+        value: String.trim(value),
+        resource_id: resource_id,
+        resource_type: resource_type
+      })
+
+    case Repo.insert(changeset,
+           conflict_target: [:value, :resource_id],
+           on_conflict: :nothing
+         ) do
+      {:ok, _} = result ->
+        result
+
+      {:error, changeset} ->
+        {:error,
+         Ecto.Changeset.traverse_errors(
+           changeset,
+           fn {msg, _} -> msg end
+         )}
+    end
   end
 
   @spec delete_tag(String.t(), Ecto.UUID.t()) :: :ok | :not_found

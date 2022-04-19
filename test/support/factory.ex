@@ -334,7 +334,7 @@ defmodule Trento.Factory do
     Repo.insert!(%Tag{
       value: Keyword.get(attrs, :value, Faker.Beer.hop()),
       resource_id: Keyword.get(attrs, :resource_id, Faker.UUID.v4()),
-      resource_type: Keyword.get(attrs, :resource_type, "resource")
+      resource_type: Keyword.get(attrs, :resource_type, :host)
     })
   end
 
