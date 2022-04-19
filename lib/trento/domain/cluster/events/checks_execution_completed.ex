@@ -7,5 +7,6 @@ defmodule Trento.Domain.Events.ChecksExecutionCompleted do
 
   defevent do
     field :cluster_id, Ecto.UUID
+    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
 end

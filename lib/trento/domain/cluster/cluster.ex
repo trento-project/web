@@ -40,7 +40,8 @@ defmodule Trento.Domain.Cluster do
     :details,
     :resources_number,
     :hosts_number,
-    discovered_health: :unknown,
+    discovered_health: nil,
+    checks_health: nil,
     health: :unknown,
     hosts: [],
     selected_checks: [],
@@ -52,7 +53,8 @@ defmodule Trento.Domain.Cluster do
           cluster_id: String.t(),
           name: [String.t()],
           type: :hana_scale_up | :hana_scale_out | :unknown,
-          discovered_health: :passing | :warning | :critical | :unknown,
+          discovered_health: nil | :passing | :warning | :critical | :unknown,
+          checks_health: nil | :passing | :warning | :critical | :unknown,
           health: :passing | :warning | :critical | :unknown,
           sid: String.t(),
           details: HanaClusterDetails.t() | nil,
@@ -196,7 +198,17 @@ defmodule Trento.Domain.Cluster do
       Multi.new(cluster),
       &emit_host_execution_completed_event(&1, &2, cluster_id, old_hosts_executions)
     )
-    |> Multi.execute(fn _ -> %ChecksExecutionCompleted{cluster_id: cluster_id} end)
+    |> Multi.execute(fn _ ->
+      %ChecksExecutionCompleted{
+        cluster_id: cluster_id,
+        health:
+          hosts_executions
+          |> Enum.flat_map(fn %{checks_results: checks_results} -> checks_results end)
+          |> Enum.map(fn %{result: result} -> result end)
+          |> Enum.reject(fn result -> result == :skipped end)
+          |> HealthService.compute_aggregated_health()
+      }
+    end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
 
@@ -321,11 +333,14 @@ defmodule Trento.Domain.Cluster do
 
   def apply(
         %Cluster{} = cluster,
-        %ChecksExecutionCompleted{}
+        %ChecksExecutionCompleted{
+          health: health
+        }
       ) do
     %Cluster{
       cluster
-      | checks_execution: :not_running
+      | checks_execution: :not_running,
+        checks_health: health
     }
   end
 
@@ -452,17 +467,13 @@ defmodule Trento.Domain.Cluster do
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
-         hosts_executions: hosts_executions,
          discovered_health: discovered_health,
+         checks_health: checks_health,
          health: health
        }) do
     new_health =
-      hosts_executions
-      |> Enum.map(fn {_, hosts} -> hosts end)
-      |> Enum.flat_map(fn %{checks_results: checks_results} -> checks_results end)
-      |> Enum.map(fn %{result: result} -> result end)
-      |> Enum.reject(fn result -> result == :skipped end)
-      |> Kernel.++([discovered_health])
+      [discovered_health, checks_health]
+      |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
 
     if new_health != health do

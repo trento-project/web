@@ -331,7 +331,8 @@ defmodule Trento.ClusterTest do
             checks_results: checks_results
           }),
           %ChecksExecutionCompleted{
-            cluster_id: cluster_id
+            cluster_id: cluster_id,
+            health: :critical
           },
           %ClusterHealthChanged{
             cluster_id: cluster_id,
@@ -394,7 +395,8 @@ defmodule Trento.ClusterTest do
             checks_results: checks_results
           }),
           %ChecksExecutionCompleted{
-            cluster_id: cluster_id
+            cluster_id: cluster_id,
+            health: :unknown
           },
           %ClusterHealthChanged{cluster_id: cluster_id, health: :unknown}
         ],
