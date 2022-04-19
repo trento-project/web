@@ -9,6 +9,7 @@ import Table from '@components/Table';
 import SiteDetails from './SiteDetails';
 
 const siteDetailsConfig = {
+  usePadding: false,
   columns: [
     { title: 'Hostname', key: 'name' },
     { title: 'Role', key: 'hana_status' },
@@ -17,6 +18,12 @@ const siteDetailsConfig = {
       key: 'ips',
       className: 'table-col-m',
       render: (content) => content?.join(', '),
+    },
+    {
+      title: 'Virtual IP',
+      key: '',
+      className: 'table-col-m',
+      render: (_, _item) => "Where to get this?",
     },
     {
       title: '',
@@ -114,11 +121,11 @@ const ClusterDetails = () => {
       {cluster.details && cluster.details.stopped_resources.length > 0 && (
         <div className="mt-16">
           <div className="flex flex-direction-row">
-            <h2 className="ml-2 text-2xl font-bold self-center">
+            <h2 className="text-2xl font-bold self-center">
               Stopped resources
             </h2>
           </div>
-          <div className="mt-2 ml-2">
+          <div className="mt-2">
             {cluster.details.stopped_resources.map(({ id }) => (
               <Pill className="bg-gray-200 text-gray-800" key={id}>
                 {id}
@@ -133,7 +140,7 @@ const ClusterDetails = () => {
           <h2 className="text-2xl font-bold">Pacemaker Site details</h2>
         </div>
       </div>
-      <div className="mt-2 ml-2">
+      <div className="mt-2">
         <h3 className="text-l font-bold">NBG</h3>
         <Table
           config={siteDetailsConfig}
@@ -151,7 +158,7 @@ const ClusterDetails = () => {
           <h2 className="text-2xl font-bold">SBD/Fencing</h2>
         </div>
       </div>
-      <div className="mt-2 ml-2 bg-white shadow rounded-lg py-4 px-8">
+      <div className="mt-2 bg-white shadow rounded-lg py-4 px-8">
         {cluster.details.sbd_devices.map(({ device, status }) => (
           <div key={device}>
             {getStatusPill(status)} {device}

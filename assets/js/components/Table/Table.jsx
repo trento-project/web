@@ -75,7 +75,7 @@ const Table = ({ config, data = [] }) => {
           }}
         />
       </div>
-      <div className="py-4">
+      <div className="">
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
           <div className="min-w-fit shadow rounded-lg">
             <table className="min-w-full leading-normal table-fixed">

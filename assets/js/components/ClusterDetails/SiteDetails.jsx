@@ -8,6 +8,7 @@ const SiteDetails = ({ attributes, resources }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const attributesTableConfig = {
+    usePadding: false,
     columns: [
       { title: 'Attribute', key: 'attribute' },
       { title: 'Value', key: 'value' },
@@ -17,12 +18,13 @@ const SiteDetails = ({ attributes, resources }) => {
   const resourcesTableConfig =
     resources.length > 0
       ? {
-          columns: Object.keys(resources[0]).map((key) => ({
-            title: key,
-            key,
-          })),
-        }
-      : { columns: [] };
+        usePadding: false,
+        columns: Object.keys(resources[0]).map((key) => ({
+          title: key,
+          key,
+        })),
+      }
+      : { usePAdding: false, columns: [] };
 
   return (
     <Fragment>
@@ -34,6 +36,7 @@ const SiteDetails = ({ attributes, resources }) => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       >
+        <h3 className="font-medium">Attributes</h3>
         <Table
           config={attributesTableConfig}
           data={Object.keys(attributes).map((key) => ({
@@ -42,6 +45,7 @@ const SiteDetails = ({ attributes, resources }) => {
           }))}
         />
 
+        <h3 className="font-medium">Resources</h3>
         <Table config={resourcesTableConfig} data={resources} />
       </Modal>
     </Fragment>
