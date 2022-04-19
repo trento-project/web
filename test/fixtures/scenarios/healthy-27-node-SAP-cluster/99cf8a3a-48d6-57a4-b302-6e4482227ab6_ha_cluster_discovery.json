@@ -3,7 +3,7 @@
   "discovery_type": "ha_cluster_discovery",
   "payload": {
     "DC": true,
-    "CloudProvider": "azure",
+    "Provider": "azure",
     "Id": "4e905d706da85f5be14f85fa947c1e39",
     "Cib": {
       "Configuration": {

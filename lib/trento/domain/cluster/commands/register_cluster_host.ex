@@ -10,7 +10,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
     :type,
     :designated_controller,
     :discovered_health,
-    :cloud_provider
+    :provider
   ]
 
   use Trento.Command
@@ -28,7 +28,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
     field :hosts_number, :integer
     field :discovered_health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
     field :cib_last_written, :string
-    field :cloud_provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
+    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
 
     embeds_one :details, HanaClusterDetails
   end
