@@ -50,7 +50,7 @@ defmodule Trento.ClusterTest do
           details: nil,
           discovered_health: :passing,
           designated_controller: true,
-          cloud_provider: :azure
+          provider: :azure
         }),
         [
           %ClusterRegistered{
@@ -97,7 +97,7 @@ defmodule Trento.ClusterTest do
           type: :hana_scale_up,
           discovered_health: :unknown,
           designated_controller: false,
-          cloud_provider: :azure
+          provider: :azure
         }),
         [
           %HostAddedToCluster{
@@ -124,7 +124,7 @@ defmodule Trento.ClusterTest do
           discovered_health: :unknown,
           type: :hana_scale_up,
           designated_controller: false,
-          cloud_provider: :azure
+          provider: :azure
         }),
         {:error, :cluster_not_found}
       )
@@ -161,7 +161,7 @@ defmodule Trento.ClusterTest do
           discovered_health: :passing,
           details: StructHelper.to_map(details),
           designated_controller: true,
-          cloud_provider: :azure
+          provider: :azure
         }),
         %ClusterDetailsUpdated{
           cluster_id: cluster_id,
@@ -209,7 +209,7 @@ defmodule Trento.ClusterTest do
           type: :hana_scale_up,
           discovered_health: :passing,
           designated_controller: true,
-          cloud_provider: :azure
+          provider: :azure
         }),
         [],
         fn cluster ->
@@ -445,7 +445,7 @@ defmodule Trento.ClusterTest do
           details: StructHelper.to_map(cluster_registered_event.details),
           designated_controller: true,
           discovered_health: :critical,
-          cloud_provider: :azure
+          provider: :azure
         }),
         [
           %ClusterDiscoveredHealthChanged{
@@ -490,7 +490,7 @@ defmodule Trento.ClusterTest do
           discovered_health: :passing,
           details: StructHelper.to_map(cluster_registered_event.details),
           designated_controller: true,
-          cloud_provider: :azure
+          provider: :azure
         }),
         [],
         fn cluster ->

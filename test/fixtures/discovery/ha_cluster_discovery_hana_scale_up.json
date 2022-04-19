@@ -1033,6 +1033,6 @@
     "Id": "47d1190ffb4f781974c8356d7f863b03",
     "Name": "hana_cluster",
     "DC": true,
-    "CloudProvider": "azure"
+    "Provider": "azure"
   }
 }
