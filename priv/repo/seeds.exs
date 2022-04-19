@@ -12,7 +12,6 @@
 
 %Trento.User{}
 |> Trento.User.changeset(%{
-  email: "admin@trento-project.io",
   username: "admin",
   password: "adminpassword",
   confirm_password: "adminpassword"

@@ -14,4 +14,10 @@ defmodule Trento.User do
 
     timestamps()
   end
+
+  def changeset(user, attrs) do
+    user
+    |> pow_changeset(attrs)
+    |> pow_extension_changeset(attrs)
+  end
 end

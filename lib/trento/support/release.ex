@@ -3,6 +3,9 @@ defmodule Trento.Release do
   Used for executing DB release tasks when run in production without Mix
   installed.
   """
+
+  alias Pow.Ecto.Schema.Password
+
   @app :trento
 
   def init do
@@ -10,6 +13,7 @@ defmodule Trento.Release do
     init_event_store()
     migrate_event_store()
     init_grafana_dashboards()
+    init_admin_user()
   end
 
   def migrate do
@@ -57,6 +61,26 @@ defmodule Trento.Release do
     load_app()
 
     Mix.Tasks.InitGrafanaDashboards.run([])
+  end
+
+  def init_admin_user do
+    load_app()
+    Enum.each([:postgrex, :ecto], &Application.ensure_all_started/1)
+    Trento.Repo.start_link()
+
+    admin_user = System.get_env("ADMIN_USER", "admin")
+    admin_password = System.get_env("ADMIN_PASSWORD", "adminpassword")
+
+    %Trento.User{}
+    |> Trento.User.changeset(%{
+      username: admin_user,
+      password: admin_password,
+      confirm_password: admin_password
+    })
+    |> Trento.Repo.insert!(
+      on_conflict: [set: [password_hash: Password.pbkdf2_hash(admin_password)]],
+      conflict_target: :username
+    )
   end
 
   defp repos do
