@@ -79,7 +79,7 @@ const HostDetails = () => {
                 content: host.provider,
                 render: (content) => <p className="capitalize">{content}</p>,
               },
-              { title: 'VM Size', content: host.provider_data?.vm_name },
+              { title: 'VM Size', content: host.provider_data?.vm_size },
               { title: 'VM Name', content: host.provider_data?.vm_name },
               {
                 title: 'Data disk number',
@@ -87,7 +87,7 @@ const HostDetails = () => {
               },
               {
                 title: 'Resource group',
-                content: host.provider_data?.location,
+                content: host.provider_data?.resource_group,
               },
               { title: 'Offer', content: host.provider_data?.offer },
               { title: 'Location', content: host.provider_data?.location },

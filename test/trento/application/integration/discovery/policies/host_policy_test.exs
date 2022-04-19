@@ -43,7 +43,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                  data_disk_number: 7,
                  location: "westeurope",
                  offer: "sles-sap-15-sp3-byos",
-                 resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
+                 resource_group: "resourceGroupName",
                  sku: "gen2",
                  vm_size: "Standard_E4s_v3"
                }
