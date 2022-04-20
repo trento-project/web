@@ -68,5 +68,36 @@ defmodule Trento.SapSystemsTest do
                }
              ] = SapSystems.get_all_databases()
     end
+
+    test "should add the system replication status to the secondary instance and should remove it from the primary one" do
+      %DatabaseReadModel{
+        id: sap_system_id
+      } = database_projection()
+
+      database_instance_projection_without_host(
+        sap_system_id: sap_system_id,
+        system_replication: "Primary",
+        system_replication_status: "ACTIVE"
+      )
+
+      database_instance_projection_without_host(
+        sap_system_id: sap_system_id,
+        system_replication: "Secondary",
+        system_replication_status: ""
+      )
+
+      [%{database_instances: database_instances}] = SapSystems.get_all_databases()
+
+      assert Enum.any?(database_instances, fn
+               %{
+                 system_replication: "Secondary",
+                 system_replication_status: "ACTIVE"
+               } ->
+                 true
+
+               _ ->
+                 false
+             end)
+    end
   end
 end
