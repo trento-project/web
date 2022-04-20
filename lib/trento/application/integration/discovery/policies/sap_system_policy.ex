@@ -46,28 +46,23 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          },
          host_id
        ) do
-    # credo:disable-for-lines:10 Credo.Check.Refactor.Nesting
     Enum.flat_map(databases, fn %{"Database" => tenant} ->
       Enum.map(instances, fn instance ->
-        case parse_instance_number(instance) do
-          {:ok, instance_number} ->
-            RegisterDatabaseInstance.new(%{
-              sap_system_id: UUID.uuid5(@uuid_namespace, id),
-              sid: sid,
-              tenant: tenant,
-              host_id: host_id,
-              instance_number: instance_number,
-              instance_hostname: parse_instance_hostname(instance, instance_number),
-              features: parse_features(instance, instance_number),
-              http_port: parse_http_port(instance, instance_number),
-              https_port: parse_https_port(instance, instance_number),
-              start_priority: parse_start_priority(instance, instance_number),
-              health: parse_instance_health(instance, instance_number)
-            })
+        instance_number = parse_instance_number(instance)
 
-          {:error, reason} ->
-            {:error, reason}
-        end
+        RegisterDatabaseInstance.new(%{
+          sap_system_id: UUID.uuid5(@uuid_namespace, id),
+          sid: sid,
+          tenant: tenant,
+          host_id: host_id,
+          instance_number: instance_number,
+          instance_hostname: parse_instance_hostname(instance, instance_number),
+          features: parse_features(instance, instance_number),
+          http_port: parse_http_port(instance, instance_number),
+          https_port: parse_https_port(instance, instance_number),
+          start_priority: parse_start_priority(instance, instance_number),
+          health: parse_instance_health(instance, instance_number)
+        })
       end)
     end)
   end
@@ -85,25 +80,21 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          host_id
        ) do
     Enum.map(instances, fn instance ->
-      case parse_instance_number(instance) do
-        {:ok, instance_number} ->
-          RegisterApplicationInstance.new(%{
-            sid: sid,
-            tenant: tenant,
-            db_host: db_host,
-            instance_number: instance_number,
-            instance_hostname: parse_instance_hostname(instance, instance_number),
-            features: parse_features(instance, instance_number),
-            http_port: parse_http_port(instance, instance_number),
-            https_port: parse_https_port(instance, instance_number),
-            start_priority: parse_start_priority(instance, instance_number),
-            host_id: host_id,
-            health: parse_instance_health(instance, instance_number)
-          })
+      instance_number = parse_instance_number(instance)
 
-        {:error, reason} ->
-          {:error, reason}
-      end
+      RegisterApplicationInstance.new(%{
+        sid: sid,
+        tenant: tenant,
+        db_host: db_host,
+        instance_number: instance_number,
+        instance_hostname: parse_instance_hostname(instance, instance_number),
+        features: parse_features(instance, instance_number),
+        http_port: parse_http_port(instance, instance_number),
+        https_port: parse_https_port(instance, instance_number),
+        start_priority: parse_start_priority(instance, instance_number),
+        host_id: host_id,
+        health: parse_instance_health(instance, instance_number)
+      })
     end)
   end
 
@@ -170,21 +161,15 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end
   end
 
-  @spec parse_instance_number(map) :: {:ok, String.t()} | {:error, any}
+  @spec parse_instance_number(map) :: String.t() | nil
   defp parse_instance_number(%{
          "SAPControl" => %{"Properties" => properties}
        }) do
     properties
-    |> Enum.find(fn %{"property" => property} ->
-      property == "SAPSYSTEM"
+    |> Enum.find_value(fn
+      %{"property" => "SAPSYSTEM", "value" => value} -> value
+      _ -> nil
     end)
-    |> case do
-      %{"value" => value} ->
-        {:ok, value}
-
-      _ ->
-        {:error, :key_not_found}
-    end
   end
 
   @spec parse_instance_health(map, String.t()) :: :passing | :warning | :critical | :unknown
