@@ -61,6 +61,8 @@ defmodule Trento.Domain.SapSystem do
           http_port: http_port,
           https_port: https_port,
           start_priority: start_priority,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status,
           health: health
         }
       ) do
@@ -81,6 +83,8 @@ defmodule Trento.Domain.SapSystem do
         https_port: https_port,
         start_priority: start_priority,
         host_id: host_id,
+        system_replication: system_replication,
+        system_replication_status: system_replication_status,
         health: health
       }
     ]
@@ -104,6 +108,8 @@ defmodule Trento.Domain.SapSystem do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status,
           health: health
         }
       ) do
@@ -141,6 +147,8 @@ defmodule Trento.Domain.SapSystem do
             https_port: https_port,
             start_priority: start_priority,
             host_id: host_id,
+            system_replication: system_replication,
+            system_replication_status: system_replication_status,
             health: health
           }
       end

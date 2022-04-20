@@ -59,6 +59,8 @@ defmodule Trento.DatabaseProjector do
       https_port: https_port,
       start_priority: start_priority,
       host_id: host_id,
+      system_replication: system_replication,
+      system_replication_status: system_replication_status,
       health: health
     },
     fn multi ->
@@ -75,6 +77,8 @@ defmodule Trento.DatabaseProjector do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status,
           health: health
         })
 

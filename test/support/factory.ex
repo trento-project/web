@@ -176,6 +176,8 @@ defmodule Trento.Factory do
       https_port: Keyword.get(attrs, :https_port, 8443),
       start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      system_replication: Keyword.get(attrs, :system_replication, "Primary"),
+      system_replication_status: Keyword.get(attrs, :system_replication_status, "ACTIVE"),
       health: Keyword.get(attrs, :health, :passing)
     }
   end
@@ -280,6 +282,8 @@ defmodule Trento.Factory do
       instance_number: Keyword.get(attrs, :instance_number, "00"),
       features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      system_replication: Keyword.get(attrs, :system_replication, ""),
+      system_replication_status: Keyword.get(attrs, :system_replication_status, ""),
       health: Keyword.get(attrs, :health, :unknown)
     })
   end
@@ -293,6 +297,8 @@ defmodule Trento.Factory do
       tenant: Keyword.get(attrs, :tenant, Faker.UUID.v4()),
       instance_number: Keyword.get(attrs, :instance_number, "00"),
       features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
+      system_replication: Keyword.get(attrs, :system_replication, ""),
+      system_replication_status: Keyword.get(attrs, :system_replication_status, ""),
       host_id: host_projection.id,
       host: host_projection
     })
@@ -367,6 +373,8 @@ defmodule Trento.Factory do
       https_port: Keyword.get(attrs, :https_port, 8443),
       start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      system_replication: Keyword.get(attrs, :system_replication, "Primary"),
+      system_replication_status: Keyword.get(attrs, :system_replication_status, "ACTIVE"),
       health: Keyword.get(attrs, :health, :passing)
     })
   end

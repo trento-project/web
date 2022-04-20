@@ -63,6 +63,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
             http_port: parse_http_port(instance, instance_number),
             https_port: parse_https_port(instance, instance_number),
             start_priority: parse_start_priority(instance, instance_number),
+            system_replication: parse_system_replication(instance),
+            system_replication_status: parse_system_replication_status(instance),
             health: parse_instance_health(instance, instance_number)
           })
         end
@@ -208,4 +210,28 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         {:error, :key_not_found}
     end
   end
+
+  defp parse_system_replication(%{
+         "SystemReplication" => %{"local_site_id" => local_site_id} = system_replication
+       }) do
+    case Map.get(system_replication, "site/#{local_site_id}/REPLICATION_MODE") do
+      "PRIMARY" ->
+        "Primary"
+
+      mode when mode in ["SYNC", "SYNCMEM", "ASYNC", "UNKNOWN"] ->
+        "Secondary"
+
+      _ ->
+        ""
+    end
+  end
+
+  # Find status information at:
+  # https://help.sap.com/viewer/4e9b18c116aa42fc84c7dbfd02111aba/2.0.04/en-US/aefc55a27003440792e34ece2125dc89.html
+  defp parse_system_replication_status(%{
+         "SystemReplication" => %{"overall_replication_status" => status}
+       }),
+       do: status
+
+  defp parse_system_replication_status(_), do: ""
 end

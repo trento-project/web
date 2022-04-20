@@ -47,6 +47,8 @@ defmodule Trento.SapSystemTest do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
+          system_replication: "Primary",
+          system_replication_status: "ACTIVE",
           health: :passing
         }),
         [
@@ -66,6 +68,8 @@ defmodule Trento.SapSystemTest do
             https_port: https_port,
             start_priority: start_priority,
             host_id: host_id,
+            system_replication: "Primary",
+            system_replication_status: "ACTIVE",
             health: :passing
           }
         ],
