@@ -21,6 +21,17 @@ export const GenericSystemDetails = ({ title, type, system }) => {
     return type === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
   };
 
+  const getUniqueHosts = (hosts) => {
+    return Array.from(
+      hosts
+        .reduce(function (hostsMap, host) {
+          if (!hostsMap.has(host.id)) hostsMap.set(host.id, host);
+          return hostsMap;
+        }, new Map())
+        .values()
+    );
+  };
+
   return (
     <div>
       <div className="flex">
@@ -75,7 +86,10 @@ export const GenericSystemDetails = ({ title, type, system }) => {
         <div>
           <h2 className="text-2xl font-bold">Hosts</h2>
         </div>
-        <Table config={systemHostsTableConfiguration} data={system.hosts} />
+        <Table
+          config={systemHostsTableConfiguration}
+          data={getUniqueHosts(system.hosts)}
+        />
       </div>
     </div>
   );

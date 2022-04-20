@@ -47,28 +47,25 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          host_id
        ) do
     Enum.flat_map(databases, fn %{"Database" => tenant} ->
-      Enum.map(
-        instances,
-        fn {_, instance} ->
-          instance_number = parse_instance_number(instance)
+      Enum.map(instances, fn instance ->
+        instance_number = parse_instance_number(instance)
 
-          RegisterDatabaseInstance.new(%{
-            sap_system_id: UUID.uuid5(@uuid_namespace, id),
-            sid: sid,
-            tenant: tenant,
-            host_id: host_id,
-            instance_number: instance_number,
-            instance_hostname: parse_instance_hostname(instance, instance_number),
-            features: parse_features(instance, instance_number),
-            http_port: parse_http_port(instance, instance_number),
-            https_port: parse_https_port(instance, instance_number),
-            start_priority: parse_start_priority(instance, instance_number),
-            system_replication: parse_system_replication(instance),
-            system_replication_status: parse_system_replication_status(instance),
-            health: parse_instance_health(instance, instance_number)
-          })
-        end
-      )
+        RegisterDatabaseInstance.new(%{
+          sap_system_id: UUID.uuid5(@uuid_namespace, id),
+          sid: sid,
+          tenant: tenant,
+          host_id: host_id,
+          instance_number: instance_number,
+          instance_hostname: parse_instance_hostname(instance, instance_number),
+          features: parse_features(instance, instance_number),
+          http_port: parse_http_port(instance, instance_number),
+          https_port: parse_https_port(instance, instance_number),
+          start_priority: parse_start_priority(instance, instance_number),
+          system_replication: parse_system_replication(instance),
+          system_replication_status: parse_system_replication_status(instance),
+          health: parse_instance_health(instance, instance_number)
+        })
+      end)
     end)
   end
 
@@ -84,7 +81,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          },
          host_id
        ) do
-    Enum.map(instances, fn {_, instance} ->
+    Enum.map(instances, fn instance ->
       instance_number = parse_instance_number(instance)
 
       RegisterApplicationInstance.new(%{
@@ -166,11 +163,16 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end
   end
 
-  @spec parse_instance_number(map) :: String.t()
+  @spec parse_instance_number(map) :: String.t() | nil
   defp parse_instance_number(%{
-         "SAPControl" => %{"Properties" => %{"SAPSYSTEM" => %{"value" => instance_number}}}
-       }),
-       do: instance_number
+         "SAPControl" => %{"Properties" => properties}
+       }) do
+    properties
+    |> Enum.find_value(fn
+      %{"property" => "SAPSYSTEM", "value" => value} -> value
+      _ -> nil
+    end)
+  end
 
   @spec parse_instance_health(map, String.t()) :: :passing | :warning | :critical | :unknown
   defp parse_instance_health(%{"SAPControl" => sap_control}, instance_number) do
@@ -196,7 +198,6 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          key
        ) do
     instances
-    |> Map.values()
     |> Enum.find(fn %{"instanceNr" => number} ->
       number
       |> Integer.to_string()

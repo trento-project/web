@@ -41,14 +41,14 @@
         "icm/HTTP/ASJava/disable_url_session_tracking": "TRUE"
       },
       "Databases": null,
-      "Instances": {
-        "D01": {
+      "Instances": [
+        {
           "Host": "vmnwdev03",
           "Name": "D01",
           "Type": 2,
           "SAPControl": {
-            "Instances": {
-              "sapnwdas": {
+            "Instances": [
+              {
                 "features": "MESSAGESERVER|ENQUE",
                 "hostname": "sapnwdas",
                 "httpPort": 50013,
@@ -57,7 +57,7 @@
                 "instanceNr": 0,
                 "startPriority": "1"
               },
-              "sapnwder": {
+              {
                 "features": "ENQREP",
                 "hostname": "sapnwder",
                 "httpPort": 51013,
@@ -66,7 +66,7 @@
                 "instanceNr": 10,
                 "startPriority": "0.5"
               },
-              "sapnwdpas": {
+              {
                 "features": "ABAP|GATEWAY|ICMAN|IGS",
                 "hostname": "sapnwdpas",
                 "httpPort": 50113,
@@ -75,7 +75,7 @@
                 "instanceNr": 1,
                 "startPriority": "3"
               },
-              "sapnwdaas1": {
+              {
                 "features": "ABAP|GATEWAY|ICMAN|IGS",
                 "hostname": "sapnwdaas1",
                 "httpPort": 50213,
@@ -84,9 +84,9 @@
                 "instanceNr": 2,
                 "startPriority": "3"
               }
-            },
-            "Processes": {
-              "gwrd": {
+            ],
+            "Processes": [
+              {
                 "pid": 27224,
                 "name": "gwrd",
                 "starttime": "2022 01 11 13:03:58",
@@ -95,7 +95,7 @@
                 "description": "Gateway",
                 "elapsedtime": "151:48:10"
               },
-              "icman": {
+              {
                 "pid": 27225,
                 "name": "icman",
                 "starttime": "2022 01 11 13:03:58",
@@ -104,7 +104,7 @@
                 "description": "ICM",
                 "elapsedtime": "151:48:10"
               },
-              "igswd_mt": {
+              {
                 "pid": 26907,
                 "name": "igswd_mt",
                 "starttime": "2022 01 11 13:03:55",
@@ -113,7 +113,7 @@
                 "description": "IGS Watchdog",
                 "elapsedtime": "151:48:13"
               },
-              "disp+work": {
+              {
                 "pid": 26906,
                 "name": "disp+work",
                 "starttime": "2022 01 11 13:03:55",
@@ -122,135 +122,135 @@
                 "description": "Dispatcher",
                 "elapsedtime": "151:48:13"
               }
-            },
-            "Properties": {
-              "ICM": {
+            ],
+            "Properties": [
+              {
                 "value": "HTTP://sapnwdpas:0/sap/admin/public/index.html",
                 "property": "ICM",
                 "propertytype": "NodeURL"
               },
-              "IGS": {
+              {
                 "value": "http://sapnwdpas:40180",
                 "property": "IGS",
                 "propertytype": "NodeURL"
               },
-              "Syslog": {
+              {
                 "value": "ABAPReadSyslog",
                 "property": "Syslog",
                 "propertytype": "NodeWebmethod"
               },
-              "ICM Cache": {
+              {
                 "value": "ICMGetCacheEntries",
                 "property": "ICM Cache",
                 "propertytype": "NodeWebmethod"
               },
-              "SAPSYSTEM": {
+              {
                 "value": "01",
                 "property": "SAPSYSTEM",
                 "propertytype": "Attribute"
               },
-              "Webmethods": {
+              {
                 "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,ABAPSetServerInactive,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile",
                 "property": "Webmethods",
                 "propertytype": "Attribute"
               },
-              "ICM Threads": {
+              {
                 "value": "ICMGetThreadList",
                 "property": "ICM Threads",
                 "propertytype": "NodeWebmethod"
               },
-              "Open Alerts": {
+              {
                 "value": "GetAlertTree",
                 "property": "Open Alerts",
                 "propertytype": "NodeWebmethod"
               },
-              "Process List": {
+              {
                 "value": "GetProcessList",
                 "property": "Process List",
                 "propertytype": "NodeWebmethod"
               },
-              "SAPLOCALHOST": {
+              {
                 "value": "sapnwdpas",
                 "property": "SAPLOCALHOST",
                 "propertytype": "Attribute"
               },
-              "ABAP WP Table": {
+              {
                 "value": "ABAPGetWPTable",
                 "property": "ABAP WP Table",
                 "propertytype": "NodeWebmethod"
               },
-              "Access Points": {
+              {
                 "value": "GetAccessPointList",
                 "property": "Access Points",
                 "propertytype": "NodeWebmethod"
               },
-              "INSTANCE_NAME": {
+              {
                 "value": "D01",
                 "property": "INSTANCE_NAME",
                 "propertytype": "Attribute"
               },
-              "Kernel Update": {
-                "value": "https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943\u0026_EVENT=DISPHIER\u0026HEADER=Y\u0026FUNCTIONBAR=N\u0026EVENT=TREE\u0026NE=NAVIGATE\u0026ENR=73554900100200005858\u0026V=MAINT",
+              {
+                "value": "https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943&_EVENT=DISPHIER&HEADER=Y&FUNCTIONBAR=N&EVENT=TREE&NE=NAVIGATE&ENR=73554900100200005858&V=MAINT",
                 "property": "Kernel Update",
                 "propertytype": "NodeURL"
               },
-              "SAPSYSTEMNAME": {
+              {
                 "value": "NWD",
                 "property": "SAPSYSTEMNAME",
                 "propertytype": "Attribute"
               },
-              "StartPriority": {
+              {
                 "value": "3",
                 "property": "StartPriority",
                 "propertytype": "Attribute"
               },
-              "Current Status": {
+              {
                 "value": "GetAlertTree",
                 "property": "Current Status",
                 "propertytype": "NodeWebmethod"
               },
-              "Gateway Clients": {
+              {
                 "value": "GWGetClientList",
                 "property": "Gateway Clients",
                 "propertytype": "NodeWebmethod"
               },
-              "ICM Connections": {
+              {
                 "value": "ICMGetConnectionList",
                 "property": "ICM Connections",
                 "propertytype": "NodeWebmethod"
               },
-              "Queue Statistic": {
+              {
                 "value": "GetQueueStatistic",
                 "property": "Queue Statistic",
                 "propertytype": "NodeWebmethod"
               },
-              "Gateway Connections": {
+              {
                 "value": "GWGetConnectionList",
                 "property": "Gateway Connections",
                 "propertytype": "NodeWebmethod"
               },
-              "Protected Webmethods": {
+              {
                 "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,ABAPSetServerInactive,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata",
                 "property": "Protected Webmethods",
                 "propertytype": "Attribute"
               },
-              "ICM Proxy Connections": {
+              {
                 "value": "ICMGetProxyConnectionList",
                 "property": "ICM Proxy Connections",
                 "propertytype": "NodeWebmethod"
               },
-              "Parameter Documentation": {
+              {
                 "value": "http://sapnwdpas:50113/sapparamEN.html",
                 "property": "Parameter Documentation",
                 "propertytype": "NodeURL"
               }
-            }
+            ]
           },
           "HdbnsutilSRstate": null,
           "HostConfiguration": null,
           "SystemReplication": null
         }
-      }
+      ]
     }
   ]
 }
