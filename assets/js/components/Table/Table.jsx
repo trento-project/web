@@ -14,11 +14,11 @@ const defaultCellRender = (content) => (
 const renderCells = (columns, item) => {
   return (
     <Fragment>
-      {columns.map(({ key, className, render = defaultCellRender }) => {
+      {columns.map(({ key, className, render = defaultCellRender }, idx) => {
         const content = item[key];
         return (
           <td
-            key={key}
+            key={idx}
             className={classNames(
               'px-5 py-5 border-b border-gray-200 bg-white text-sm',
               className
