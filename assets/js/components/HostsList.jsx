@@ -24,6 +24,22 @@ const getHeartbeatIcon = ({ heartbeat }) => {
   }
 };
 
+const getInstancesByHost = (
+  applicationInstances,
+  databaseInstances,
+  hostId
+) => {
+  return applicationInstances
+    .map((instance) => ({ ...instance, type: 'sap-systems' }))
+    .concat(
+      databaseInstances.map((instance) => ({
+        ...instance,
+        type: 'databases',
+      }))
+    )
+    .filter((instance) => instance.host_id === hostId);
+};
+
 const addTag = (tag, hostId) => {
   axios
     .post(`/api/hosts/${hostId}/tags`, {
@@ -104,10 +120,10 @@ const HostsList = () => {
             index > 0 && ', ',
             <SapSystemLink
               key={index}
-              systemType={instance.type}
-              sapSystemId={instance.sap_system_id}
+              systemType={instance?.type}
+              sapSystemId={instance?.sap_system_id}
             >
-              {instance.sid}
+              {instance?.sid}
             </SapSystemLink>,
           ]);
 
@@ -151,15 +167,11 @@ const HostsList = () => {
 
   const data = hosts.map((host) => {
     const cluster = clusters.find((cluster) => cluster.id === host.cluster_id);
-    const sapSystemList = applicationInstances
-      .map((instance) => ({ ...instance, type: 'sap-systems' }))
-      .concat(
-        databaseInstances.map((instance) => ({
-          ...instance,
-          type: 'databases',
-        }))
-      )
-      .filter((instance) => instance.host_id === host.id);
+    const sapSystemList = getInstancesByHost(
+      applicationInstances,
+      databaseInstances,
+      host.id
+    );
 
     return {
       heartbeat: host.heartbeat,
