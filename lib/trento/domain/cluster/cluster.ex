@@ -40,8 +40,9 @@ defmodule Trento.Domain.Cluster do
     :details,
     :resources_number,
     :hosts_number,
-    discovered_health: nil,
-    checks_health: nil,
+    :provider,
+    :discovered_health,
+    :checks_health,
     health: :unknown,
     hosts: [],
     selected_checks: [],
@@ -53,6 +54,7 @@ defmodule Trento.Domain.Cluster do
           cluster_id: String.t(),
           name: [String.t()],
           type: :hana_scale_up | :hana_scale_out | :unknown,
+          provider: :azure | :aws | :gcp | :unknown,
           discovered_health: nil | :passing | :warning | :critical | :unknown,
           checks_health: nil | :passing | :warning | :critical | :unknown,
           health: :passing | :warning | :critical | :unknown,
@@ -74,6 +76,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
@@ -87,6 +90,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
         details: details,
@@ -156,6 +160,7 @@ defmodule Trento.Domain.Cluster do
   def execute(
         %Cluster{
           cluster_id: cluster_id,
+          provider: provider,
           hosts: hosts,
           selected_checks: selected_checks
         },
@@ -164,6 +169,7 @@ defmodule Trento.Domain.Cluster do
     [
       %ChecksExecutionRequested{
         cluster_id: cluster_id,
+        provider: provider,
         hosts: hosts,
         checks: selected_checks
       },
@@ -219,6 +225,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
@@ -231,6 +238,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
         details: details,
@@ -254,6 +262,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details
@@ -264,6 +273,7 @@ defmodule Trento.Domain.Cluster do
       | name: name,
         type: type,
         sid: sid,
+        provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
         details: details
@@ -410,6 +420,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
            details: details
@@ -418,6 +429,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
            details: details
@@ -433,6 +445,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
            details: details
@@ -443,6 +456,7 @@ defmodule Trento.Domain.Cluster do
       name: name,
       type: type,
       sid: sid,
+      provider: provider,
       resources_number: resources_number,
       hosts_number: hosts_number,
       details: details
