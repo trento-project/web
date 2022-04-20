@@ -135,8 +135,7 @@ defmodule Trento.Domain.Cluster do
   # Checks selected
   def execute(
         %Cluster{
-          cluster_id: cluster_id,
-          hosts: hosts
+          cluster_id: cluster_id
         },
         %SelectChecks{
           checks: selected_checks
@@ -146,13 +145,7 @@ defmodule Trento.Domain.Cluster do
       %ChecksSelected{
         cluster_id: cluster_id,
         checks: selected_checks
-      },
-      %ChecksExecutionRequested{
-        cluster_id: cluster_id,
-        hosts: hosts,
-        checks: selected_checks
-      },
-      %ClusterHealthChanged{cluster_id: cluster_id, health: :unknown}
+      }
     ]
   end
 

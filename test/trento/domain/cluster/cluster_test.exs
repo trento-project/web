@@ -9,6 +9,7 @@ defmodule Trento.ClusterTest do
     CompleteChecksExecution,
     RegisterClusterHost,
     RequestChecksExecution,
+    SelectChecks,
     StartChecksExecution
   }
 
@@ -229,6 +230,30 @@ defmodule Trento.ClusterTest do
   end
 
   describe "checks execution" do
+    test "should select desired checks" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [cluster_registered_event(cluster_id: cluster_id)],
+        SelectChecks.new!(%{
+          cluster_id: cluster_id,
+          checks: selected_checks
+        }),
+        [
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   selected_checks: ^selected_checks
+                 } = cluster
+        end
+      )
+    end
+
     test "should request a checks execution with the selected checks" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
