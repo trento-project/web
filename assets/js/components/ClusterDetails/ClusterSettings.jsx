@@ -4,10 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { EOS_ARROW_BACK } from 'eos-icons-react';
 import Button from '@components/Button';
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+import classNames from 'classnames';
 
 import { Tab } from '@headlessui/react';
 import { ChecksSelection } from './ChecksSelection';
