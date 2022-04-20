@@ -40,10 +40,12 @@ defmodule Trento.ChecksEventHandlerTest do
 
     expect(Trento.Integration.Checks.Mock, :request_execution, fn execution_id,
                                                                   cluster_id,
+                                                                  provider,
                                                                   hosts,
                                                                   checks ->
       assert correlation_id == execution_id
       assert event.cluster_id == cluster_id
+      assert event.provider == provider
       assert expected_hosts == hosts
       assert event.checks == checks
       :ok
