@@ -46,32 +46,29 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          },
          host_id
        ) do
+    # credo:disable-for-lines:10 Credo.Check.Refactor.Nesting
     Enum.flat_map(databases, fn %{"Database" => tenant} ->
-      Enum.map(
-        instances,
-        fn instance ->
-          case parse_instance_number(instance) do
-            {:ok, instance_number} ->
+      Enum.map(instances, fn instance ->
+        case parse_instance_number(instance) do
+          {:ok, instance_number} ->
+            RegisterDatabaseInstance.new(%{
+              sap_system_id: UUID.uuid5(@uuid_namespace, id),
+              sid: sid,
+              tenant: tenant,
+              host_id: host_id,
+              instance_number: instance_number,
+              instance_hostname: parse_instance_hostname(instance, instance_number),
+              features: parse_features(instance, instance_number),
+              http_port: parse_http_port(instance, instance_number),
+              https_port: parse_https_port(instance, instance_number),
+              start_priority: parse_start_priority(instance, instance_number),
+              health: parse_instance_health(instance, instance_number)
+            })
 
-              RegisterDatabaseInstance.new(%{
-                sap_system_id: UUID.uuid5(@uuid_namespace, id),
-                sid: sid,
-                tenant: tenant,
-                host_id: host_id,
-                instance_number: instance_number,
-                instance_hostname: parse_instance_hostname(instance, instance_number),
-                features: parse_features(instance, instance_number),
-                http_port: parse_http_port(instance, instance_number),
-                https_port: parse_https_port(instance, instance_number),
-                start_priority: parse_start_priority(instance, instance_number),
-                health: parse_instance_health(instance, instance_number)
-              })
-
-            {:error, reason} ->
-              {:error, reason}
-            end
+          {:error, reason} ->
+            {:error, reason}
         end
-      )
+      end)
     end)
   end
 
@@ -173,24 +170,21 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end
   end
 
-  @spec parse_instance_number(map) :: String.t()
+  @spec parse_instance_number(map) :: {:ok, String.t()} | {:error, any}
   defp parse_instance_number(%{
          "SAPControl" => %{"Properties" => properties}
-       })
-       do
+       }) do
+    properties
+    |> Enum.find(fn %{"property" => property} ->
+      property == "SAPSYSTEM"
+    end)
+    |> case do
+      %{"value" => value} ->
+        {:ok, value}
 
-       properties
-       |> Enum.find(fn %{"property" => property} ->
-         property == "SAPSYSTEM"
-       end)
-       |> case do
-         %{"value" => value} ->
-           {:ok, value}
-
-         _ ->
-           {:error, :key_not_found}
-       end
-
+      _ ->
+        {:error, :key_not_found}
+    end
   end
 
   @spec parse_instance_health(map, String.t()) :: :passing | :warning | :critical | :unknown

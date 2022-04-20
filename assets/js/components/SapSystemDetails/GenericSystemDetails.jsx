@@ -22,11 +22,15 @@ export const GenericSystemDetails = ({ title, type, system }) => {
   };
 
   const getUniqueHosts = (hosts) => {
-    return Array.from(hosts.reduce(function(hostsMap, host) {
-      if (!hostsMap.has(host.id)) hostsMap.set(host.id, host);
-      return hostsMap;
-    }, new Map()).values());
-  }
+    return Array.from(
+      hosts
+        .reduce(function (hostsMap, host) {
+          if (!hostsMap.has(host.id)) hostsMap.set(host.id, host);
+          return hostsMap;
+        }, new Map())
+        .values()
+    );
+  };
 
   return (
     <div>
@@ -82,7 +86,10 @@ export const GenericSystemDetails = ({ title, type, system }) => {
         <div>
           <h2 className="text-2xl font-bold">Hosts</h2>
         </div>
-        <Table config={systemHostsTableConfiguration} data={getUniqueHosts(system.hosts)} />
+        <Table
+          config={systemHostsTableConfiguration}
+          data={getUniqueHosts(system.hosts)}
+        />
       </div>
     </div>
   );
