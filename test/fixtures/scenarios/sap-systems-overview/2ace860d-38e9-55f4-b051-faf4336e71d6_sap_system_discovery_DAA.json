@@ -8,14 +8,14 @@
       "Type": 3,
       "Profile": {},
       "Databases": null,
-      "Instances": {
-        "SMDA98": {
+      "Instances": [
+        {
           "Host": "vmhana01",
           "Name": "SMDA98",
           "Type": 3,
           "SAPControl": {
-            "Instances": {
-              "vmhana01": {
+            "Instances": [
+              {
                 "features": "SMDAGENT",
                 "hostname": "vmhana01",
                 "httpPort": 59813,
@@ -23,9 +23,9 @@
                 "instanceNr": 98,
                 "startPriority": "3"
               }
-            },
-            "Processes": {
-              "jstart": {
+            ],
+            "Processes": [
+              {
                 "pid": 5197,
                 "name": "jstart",
                 "starttime": "2022 03 01 15:39:27",
@@ -34,80 +34,80 @@
                 "description": "J2EE Server",
                 "elapsedtime": "17:06:31"
               }
-            },
-            "Properties": {
-              "SAPSYSTEM": {
+            ],
+            "Properties": [
+              {
                 "value": "98",
                 "property": "SAPSYSTEM",
                 "propertytype": "Attribute"
               },
-              "Webmethods": {
+              {
                 "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,ABAPSetServerInactive,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile",
                 "property": "Webmethods",
                 "propertytype": "Attribute"
               },
-              "Process List": {
+              {
                 "value": "GetProcessList",
                 "property": "Process List",
                 "propertytype": "NodeWebmethod"
               },
-              "SAPLOCALHOST": {
+              {
                 "value": "vmhana01",
                 "property": "SAPLOCALHOST",
                 "propertytype": "Attribute"
               },
-              "Access Points": {
+              {
                 "value": "GetAccessPointList",
                 "property": "Access Points",
                 "propertytype": "NodeWebmethod"
               },
-              "INSTANCE_NAME": {
+              {
                 "value": "SMDA98",
                 "property": "INSTANCE_NAME",
                 "propertytype": "Attribute"
               },
-              "SAPSYSTEMNAME": {
+              {
                 "value": "DAA",
                 "property": "SAPSYSTEMNAME",
                 "propertytype": "Attribute"
               },
-              "StartPriority": {
+              {
                 "value": "3",
                 "property": "StartPriority",
                 "propertytype": "Attribute"
               },
-              "J2EE GC History": {
+              {
                 "value": "J2EEGetVMGCHistory2,J2EEGetVMGCHistory",
                 "property": "J2EE GC History",
                 "propertytype": "NodeWebmethod"
               },
-              "J2EE Heap Memory": {
+              {
                 "value": "J2EEGetVMHeapInfo",
                 "property": "J2EE Heap Memory",
                 "propertytype": "NodeWebmethod"
               },
-              "J2EE Process Table": {
+              {
                 "value": "J2EEGetProcessList2,J2EEGetProcessList",
                 "property": "J2EE Process Table",
                 "propertytype": "NodeWebmethod"
               },
-              "Protected Webmethods": {
+              {
                 "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,ABAPSetServerInactive,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata",
                 "property": "Protected Webmethods",
                 "propertytype": "Attribute"
               },
-              "Parameter Documentation": {
+              {
                 "value": "http://vmhana01:59813/sapparamEN.html",
                 "property": "Parameter Documentation",
                 "propertytype": "NodeURL"
               }
-            }
+            ]
           },
           "HdbnsutilSRstate": null,
           "HostConfiguration": null,
           "SystemReplication": null
         }
-      }
+      ]
     }
   ]
 }

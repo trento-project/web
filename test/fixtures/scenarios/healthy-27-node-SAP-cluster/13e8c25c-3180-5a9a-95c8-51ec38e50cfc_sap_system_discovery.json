@@ -27,14 +27,14 @@
           "Container": ""
         }
       ],
-      "Instances": {
-        "HDB10": {
+      "Instances": [
+        {
           "Host": "vmhdbdev01",
           "Name": "HDB10",
           "Type": 1,
           "SAPControl": {
-            "Instances": {
-              "vmhdbdev01": {
+            "Instances": [
+              {
                 "features": "HDB|HDB_WORKER",
                 "hostname": "vmhdbdev01",
                 "httpPort": 51013,
@@ -43,9 +43,9 @@
                 "instanceNr": 10,
                 "startPriority": "0.3"
               }
-            },
-            "Processes": {
-              "hdbdaemon": {
+            ],
+            "Processes": [
+              {
                 "pid": 18862,
                 "name": "hdbdaemon",
                 "starttime": "2022 01 11 12:56:11",
@@ -54,7 +54,7 @@
                 "description": "HDB Daemon",
                 "elapsedtime": "151:55:49"
               },
-              "hdbxsengine": {
+              {
                 "pid": 20257,
                 "name": "hdbxsengine",
                 "starttime": "2022 01 11 12:56:29",
@@ -63,7 +63,7 @@
                 "description": "HDB XSEngine-HDD",
                 "elapsedtime": "151:55:31"
               },
-              "hdbnameserver": {
+              {
                 "pid": 18893,
                 "name": "hdbnameserver",
                 "starttime": "2022 01 11 12:56:12",
@@ -72,7 +72,7 @@
                 "description": "HDB Nameserver",
                 "elapsedtime": "151:55:48"
               },
-              "hdbindexserver": {
+              {
                 "pid": 20254,
                 "name": "hdbindexserver",
                 "starttime": "2022 01 11 12:56:29",
@@ -81,7 +81,7 @@
                 "description": "HDB Indexserver-HDD",
                 "elapsedtime": "151:55:31"
               },
-              "hdbpreprocessor": {
+              {
                 "pid": 20161,
                 "name": "hdbpreprocessor",
                 "starttime": "2022 01 11 12:56:29",
@@ -90,7 +90,7 @@
                 "description": "HDB Preprocessor",
                 "elapsedtime": "151:55:31"
               },
-              "hdbcompileserver": {
+              {
                 "pid": 20158,
                 "name": "hdbcompileserver",
                 "starttime": "2022 01 11 12:56:29",
@@ -99,7 +99,7 @@
                 "description": "HDB Compileserver",
                 "elapsedtime": "151:55:31"
               },
-              "hdbwebdispatcher": {
+              {
                 "pid": 22620,
                 "name": "hdbwebdispatcher",
                 "starttime": "2022 01 11 12:56:58",
@@ -108,69 +108,69 @@
                 "description": "HDB Web Dispatcher",
                 "elapsedtime": "151:55:02"
               }
-            },
-            "Properties": {
-              "SAPSYSTEM": {
+            ],
+            "Properties": [
+              {
                 "value": "10",
                 "property": "SAPSYSTEM",
                 "propertytype": "Attribute"
               },
-              "DBServices": {
+              {
                 "value": "YES",
                 "property": "DBServices",
                 "propertytype": "Attribute"
               },
-              "HANA Roles": {
+              {
                 "value": "worker",
                 "property": "HANA Roles",
                 "propertytype": "Attribute"
               },
-              "Webmethods": {
+              {
                 "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile",
                 "property": "Webmethods",
                 "propertytype": "Attribute"
               },
-              "Process List": {
+              {
                 "value": "GetProcessList",
                 "property": "Process List",
                 "propertytype": "NodeWebmethod"
               },
-              "SAPLOCALHOST": {
+              {
                 "value": "vmhdbdev01",
                 "property": "SAPLOCALHOST",
                 "propertytype": "Attribute"
               },
-              "Access Points": {
+              {
                 "value": "GetAccessPointList",
                 "property": "Access Points",
                 "propertytype": "NodeWebmethod"
               },
-              "INSTANCE_NAME": {
+              {
                 "value": "HDB10",
                 "property": "INSTANCE_NAME",
                 "propertytype": "Attribute"
               },
-              "SAPSYSTEMNAME": {
+              {
                 "value": "HDD",
                 "property": "SAPSYSTEMNAME",
                 "propertytype": "Attribute"
               },
-              "StartPriority": {
+              {
                 "value": "0.3",
                 "property": "StartPriority",
                 "propertytype": "Attribute"
               },
-              "Protected Webmethods": {
+              {
                 "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata",
                 "property": "Protected Webmethods",
                 "propertytype": "Attribute"
               },
-              "Parameter Documentation": {
+              {
                 "value": "http://vmhdbdev01:51013/sapparamEN.html",
                 "property": "Parameter Documentation",
                 "propertytype": "NodeURL"
               }
-            }
+            ]
           },
           "HdbnsutilSRstate": {
             "mode": "primary",
@@ -186,7 +186,10 @@
             "siteMapping/NBG": "WDF",
             "isTakeoverActive": "false",
             "isPrimarySuspended": "false",
-            "mapping/vmhdbdev01": ["WDF/vmhdbdev02", "NBG/vmhdbdev01"],
+            "mapping/vmhdbdev01": [
+              "WDF/vmhdbdev02",
+              "NBG/vmhdbdev01"
+            ],
             "siteOperationMode/NBG": "primary",
             "siteOperationMode/WDF": "logreplay",
             "siteReplicationMode/NBG": "primary",
@@ -373,7 +376,7 @@
             "service/vmhdbdev01/31007/SHIPPED_LAST_DELTA_REPLICA_START_TIME": "-"
           }
         }
-      }
+      ]
     }
   ]
 }
