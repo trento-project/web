@@ -176,6 +176,8 @@ defmodule Trento.Factory do
       https_port: Keyword.get(attrs, :https_port, 8443),
       start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      system_replication: Keyword.get(attrs, :system_replication, "Primary"),
+      system_replication_status: Keyword.get(attrs, :system_replication_status, "ACTIVE"),
       health: Keyword.get(attrs, :health, :passing)
     }
   end
@@ -367,6 +369,8 @@ defmodule Trento.Factory do
       https_port: Keyword.get(attrs, :https_port, 8443),
       start_priority: Keyword.get(attrs, :start_priority, "0.3"),
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
+      system_replication: Keyword.get(attrs, :system_replication, "Primary"),
+      system_replication_status: Keyword.get(attrs, :system_replication_status, "ACTIVE"),
       health: Keyword.get(attrs, :health, :passing)
     })
   end
