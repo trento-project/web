@@ -18,12 +18,12 @@ const SiteDetails = ({ attributes, resources }) => {
   const resourcesTableConfig =
     resources.length > 0
       ? {
-        usePadding: false,
-        columns: Object.keys(resources[0]).map((key) => ({
-          title: key,
-          key,
-        })),
-      }
+          usePadding: false,
+          columns: Object.keys(resources[0]).map((key) => ({
+            title: key,
+            key,
+          })),
+        }
       : { usePAdding: false, columns: [] };
 
   return (
