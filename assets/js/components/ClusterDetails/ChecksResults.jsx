@@ -1,12 +1,19 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { EOS_LENS_FILLED, EOS_ERROR, EOS_SCHEDULE } from 'eos-icons-react';
-import Spinner from './Spinner';
+import {
+  EOS_LENS_FILLED,
+  EOS_ERROR,
+  EOS_SCHEDULE,
+  EOS_ARROW_BACK,
+} from 'eos-icons-react';
+import Spinner from '../Spinner';
 
-import NotificationBox from './NotificationBox';
-import LoadingBox from './LoadingBox';
+import NotificationBox from '../NotificationBox';
+import LoadingBox from '../LoadingBox';
+
+import Button from '@components/Button';
 
 const getHostname =
   (hosts = []) =>
@@ -52,8 +59,9 @@ const getResultIcon = (checks_execution, result) => {
   }
 };
 
-const ChecksResults = () => {
+export const ChecksResults = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { clusterID } = useParams();
   const cluster = useSelector((state) =>
     state.clustersList.clusters.find((cluster) => cluster.id === clusterID)
@@ -99,9 +107,16 @@ const ChecksResults = () => {
 
   return (
     <div>
+      <Button
+        type="secondary"
+        size="small"
+        onClick={() => navigate(`/clusters/${clusterID}`)}
+      >
+        <EOS_ARROW_BACK className="inline-block" /> Back to Cluster
+      </Button>
       {sortHosts(cluster?.hosts_executions.slice()).map(
-        ({ _cluster_id, host_id, reachable, msg }) => (
-          <div key="c" className="flex flex-col">
+        ({ _cluster_id, host_id, reachable, msg }, idx) => (
+          <div key={idx} className="flex flex-col">
             <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -179,5 +194,3 @@ const ChecksResults = () => {
     </div>
   );
 };
-
-export default ChecksResults;
