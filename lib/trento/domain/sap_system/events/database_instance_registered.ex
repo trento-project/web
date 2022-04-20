@@ -16,6 +16,8 @@ defmodule Trento.Domain.Events.DatabaseInstanceRegistered do
     field :http_port, :integer
     field :https_port, :integer
     field :start_priority, :string
+    field :system_replication, :string
+    field :system_replication_status, :string
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
   end
 end
