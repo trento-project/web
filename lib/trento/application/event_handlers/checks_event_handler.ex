@@ -14,7 +14,12 @@ defmodule Trento.ChecksEventHandler do
   require Logger
 
   def handle(
-        %ChecksExecutionRequested{cluster_id: cluster_id, hosts: hosts, checks: checks},
+        %ChecksExecutionRequested{
+          cluster_id: cluster_id,
+          provider: provider,
+          hosts: hosts,
+          checks: checks
+        },
         %{correlation_id: execution_id}
       ) do
     hosts_settings =
@@ -22,7 +27,7 @@ defmodule Trento.ChecksEventHandler do
       |> Enum.map(fn host -> Hosts.get_connection_settings(host) end)
       |> Enum.filter(& &1)
 
-    case Checks.request_execution(execution_id, cluster_id, hosts_settings, checks) do
+    case Checks.request_execution(execution_id, cluster_id, provider, hosts_settings, checks) do
       :ok ->
         TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_execution_requested", %{
           cluster_id: cluster_id
