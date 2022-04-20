@@ -24,17 +24,20 @@ const getHeartbeatIcon = ({ heartbeat }) => {
   }
 };
 
-const getSapSystemsByHost = (sapSystems, hostId) => {
-  const appInstances = sapSystems
-    .flatMap((sapSystem) => sapSystem.application_instances)
-    .filter((sapSystem) => sapSystem.host_id === hostId)
-    .map((sapSystem) => ({ type: 'sap-systems', instance: sapSystem }));
-  const dbInstances = sapSystems
-    .flatMap((sapSystem) => sapSystem.database_instances)
-    .filter((sapSystem) => sapSystem.host_id === hostId)
-    .map((sapSystem) => ({ type: 'databases', instance: sapSystem }));
-
-  return appInstances.concat(dbInstances);
+const getInstancesByHost = (
+  applicationInstances,
+  databaseInstances,
+  hostId
+) => {
+  return applicationInstances
+    .map((instance) => ({ ...instance, type: 'sap-systems' }))
+    .concat(
+      databaseInstances.map((instance) => ({
+        ...instance,
+        type: 'databases',
+      }))
+    )
+    .filter((instance) => instance.host_id === hostId);
 };
 
 const addTag = (tag, hostId) => {
@@ -56,7 +59,9 @@ const removeTag = (tag, hostId) => {
 const HostsList = () => {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const sapSystems = useSelector((state) => state.sapSystemsList.sapSystems);
+  const { applicationInstances, databaseInstances } = useSelector(
+    (state) => state.sapSystemsList
+  );
 
   const dispatch = useDispatch();
 
@@ -115,10 +120,10 @@ const HostsList = () => {
             index > 0 && ', ',
             <SapSystemLink
               key={index}
-              systemType={instance.type}
-              sapSystemId={instance.instance?.sap_system_id}
+              systemType={instance?.type}
+              sapSystemId={instance?.sap_system_id}
             >
-              {instance.instance?.sid}
+              {instance?.sid}
             </SapSystemLink>,
           ]);
 
@@ -162,14 +167,19 @@ const HostsList = () => {
 
   const data = hosts.map((host) => {
     const cluster = clusters.find((cluster) => cluster.id === host.cluster_id);
-    const sapSystemList = getSapSystemsByHost(sapSystems, host.id);
+    const sapSystemList = getInstancesByHost(
+      applicationInstances,
+      databaseInstances,
+      host.id
+    );
+
     return {
       heartbeat: host.heartbeat,
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
       sid: sapSystemList.map((sapSystem) => {
-        return sapSystem.instance.sid;
+        return sapSystem.sid;
       }),
       cluster: cluster,
       agent_version: host.agent_version,
