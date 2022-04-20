@@ -14,11 +14,11 @@ const defaultCellRender = (content) => (
 const renderCells = (columns, item) => {
   return (
     <Fragment>
-      {columns.map(({ key, className, render = defaultCellRender }) => {
+      {columns.map(({ key, className, render = defaultCellRender }, idx) => {
         const content = item[key];
         return (
           <td
-            key={key}
+            key={idx}
             className={classNames(
               'px-5 py-5 border-b border-gray-200 bg-white text-sm',
               className
@@ -75,7 +75,7 @@ const Table = ({ config, data = [] }) => {
           }}
         />
       </div>
-      <div className="py-4">
+      <div className="">
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
           <div className="min-w-fit shadow rounded-lg">
             <table className="min-w-full leading-normal table-fixed">

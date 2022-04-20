@@ -4,8 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { Switch } from '@headlessui/react';
 
-import NotificationBox from './NotificationBox';
-import LoadingBox from './LoadingBox';
+import NotificationBox from '../NotificationBox';
+import LoadingBox from '../LoadingBox';
 
 import { EOS_ERROR } from 'eos-icons-react';
 
@@ -18,7 +18,7 @@ const toggle = (list, element) =>
     ? list.filter((string) => string !== element)
     : [...list, element];
 
-const ChecksSelection = () => {
+export const ChecksSelection = () => {
   const { clusterID } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -74,9 +74,9 @@ const ChecksSelection = () => {
   return (
     <div>
       {catalogData[0]?.groups &&
-        catalogData[0].groups.map(({ group, checks }) => (
+        catalogData[0].groups.map(({ group, checks }, idx) => (
           <div
-            key={group.id}
+            key={idx}
             className="bg-white shadow overflow-hidden sm:rounded-md mb-8"
           >
             <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
@@ -152,5 +152,3 @@ const ChecksSelection = () => {
     </div>
   );
 };
-
-export default ChecksSelection;
