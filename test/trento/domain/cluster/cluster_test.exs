@@ -46,17 +46,18 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: name,
           sid: sid,
+          provider: :azure,
           type: type,
           details: nil,
           discovered_health: :passing,
-          designated_controller: true,
-          provider: :azure
+          designated_controller: true
         }),
         [
           %ClusterRegistered{
             cluster_id: cluster_id,
             name: name,
             sid: sid,
+            provider: :azure,
             type: type,
             health: :passing,
             details: nil
@@ -71,6 +72,7 @@ defmodule Trento.ClusterTest do
           name: name,
           sid: sid,
           type: type,
+          provider: :azure,
           hosts: [host_id],
           discovered_health: :passing,
           health: :passing
@@ -155,18 +157,19 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: new_name,
           sid: new_sid,
+          provider: :gcp,
           type: :hana_scale_up,
           resources_number: 2,
           hosts_number: 1,
           discovered_health: :passing,
           details: StructHelper.to_map(details),
-          designated_controller: true,
-          provider: :azure
+          designated_controller: true
         }),
         %ClusterDetailsUpdated{
           cluster_id: cluster_id,
           name: new_name,
           sid: new_sid,
+          provider: :gcp,
           type: :hana_scale_up,
           resources_number: 2,
           hosts_number: 1,
@@ -177,6 +180,7 @@ defmodule Trento.ClusterTest do
             cluster_id: ^cluster_id,
             name: ^new_name,
             sid: ^new_sid,
+            provider: :gcp,
             resources_number: 2,
             hosts_number: 1,
             details: ^details
@@ -203,19 +207,20 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: name,
           sid: sid,
+          provider: :azure,
           resources_number: 8,
           hosts_number: 2,
           details: nil,
           type: :hana_scale_up,
           discovered_health: :passing,
-          designated_controller: true,
-          provider: :azure
+          designated_controller: true
         }),
         [],
         fn cluster ->
           assert %Cluster{
                    name: ^name,
                    sid: ^sid,
+                   provider: :azure,
                    type: :hana_scale_up
                  } = cluster
         end
@@ -246,7 +251,8 @@ defmodule Trento.ClusterTest do
           %ChecksExecutionRequested{
             cluster_id: cluster_id,
             hosts: [host_id],
-            checks: selected_checks
+            checks: selected_checks,
+            provider: :azure
           },
           %ClusterHealthChanged{
             cluster_id: cluster_id,
@@ -439,13 +445,13 @@ defmodule Trento.ClusterTest do
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
           sid: cluster_registered_event.sid,
+          provider: :azure,
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
           details: StructHelper.to_map(cluster_registered_event.details),
           designated_controller: true,
-          discovered_health: :critical,
-          provider: :azure
+          discovered_health: :critical
         }),
         [
           %ClusterDiscoveredHealthChanged{

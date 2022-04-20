@@ -8,10 +8,10 @@ defmodule Trento.Integration.Checks.Runner do
   alias Trento.Integration.Checks.FlatCatalogDto
 
   @impl true
-  def request_execution(execution_id, cluster_id, hosts_settings, selected_checks) do
+  def request_execution(execution_id, cluster_id, provider, hosts_settings, selected_checks) do
     runner_url = runner_url()
 
-    payload = build_payload(execution_id, cluster_id, hosts_settings, selected_checks)
+    payload = build_payload(execution_id, cluster_id, provider, hosts_settings, selected_checks)
 
     case HTTPoison.post("#{runner_url}/api/execute", payload) do
       {:ok, %HTTPoison.Response{status_code: 202}} ->
@@ -47,12 +47,11 @@ defmodule Trento.Integration.Checks.Runner do
     end
   end
 
-  defp build_payload(execution_id, cluster_id, host_settings, selected_checks) do
+  defp build_payload(execution_id, cluster_id, provider, host_settings, selected_checks) do
     %{
       execution_id: execution_id,
       cluster_id: cluster_id,
-      # TODO: Use the correct provider
-      provider: :azure,
+      provider: provider,
       checks: selected_checks,
       hosts:
         Enum.map(host_settings, fn host ->
