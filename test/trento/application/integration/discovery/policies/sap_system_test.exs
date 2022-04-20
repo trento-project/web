@@ -21,6 +21,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
                 sap_system_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
                 sid: "PRD",
                 tenant: "PRD",
+                system_replication: "Primary",
+                system_replication_status: "ERROR",
                 health: :passing
               }
             ]} =

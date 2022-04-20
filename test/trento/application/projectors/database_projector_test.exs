@@ -57,6 +57,11 @@ defmodule Trento.DatabaseProjectorTest do
     assert event.instance_number == database_instance_projection.instance_number
     assert event.features == database_instance_projection.features
     assert event.host_id == database_instance_projection.host_id
+    assert event.system_replication == database_instance_projection.system_replication
+
+    assert event.system_replication_status ==
+             database_instance_projection.system_replication_status
+
     assert event.health == database_instance_projection.health
   end
 end

@@ -24,6 +24,8 @@ defmodule Trento.DatabaseInstanceReadModel do
     field :https_port, :integer
     field :start_priority, :string
     field :host_id, Ecto.UUID, primary_key: true
+    field :system_replication, :string
+    field :system_replication_status, :string
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
 
     has_one :host, HostReadModel, references: :host_id, foreign_key: :id
