@@ -245,7 +245,7 @@ defmodule Trento.ClusterTest do
           }
         ],
         RequestChecksExecution.new!(%{
-          cluster_id: cluster_id,
+          cluster_id: cluster_id
         }),
         [
           %ChecksExecutionRequested{
