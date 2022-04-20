@@ -32,6 +32,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
     assert event.sid == cluster_projection.sid
+    assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
     assert event.hosts_number == cluster_projection.hosts_number
@@ -46,6 +47,7 @@ defmodule Trento.ClusterProjectorTest do
       cluster_id: cluster_id,
       name: Faker.StarWars.character(),
       sid: Faker.StarWars.planet(),
+      provider: :gcp,
       type: :hana_scale_up,
       resources_number: 8,
       hosts_number: 2,
@@ -63,6 +65,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
     assert event.sid == cluster_projection.sid
+    assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
     assert event.hosts_number == cluster_projection.hosts_number
