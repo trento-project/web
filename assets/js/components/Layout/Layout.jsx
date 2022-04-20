@@ -13,7 +13,6 @@ import {
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
-import HammeringStefano from '../../../static/hammering_stefano.png';
 
 import classNames from 'classnames';
 
@@ -127,7 +126,7 @@ const Layout = () => {
                   </svg>
                 </button>
               </div>
-              <div className="relative z-20 flex flex-col justify-end h-full px-3 md:w-full">
+              {/* <div className="relative z-20 flex flex-col justify-end h-full px-3 md:w-full">
                 <div className="relative p-1 flex items-center w-full space-x-4 justify-end">
                   <button className="flex p-2 items-center rounded-full text-gray-400 hover:text-gray-700 bg-white shadow text-md">
                     <svg
@@ -156,12 +155,12 @@ const Layout = () => {
                   <span className="w-1 h-8 rounded-lg bg-gray-200"></span>
                   <a href="#" className="block relative">
                     <img
-                      src={HammeringStefano}
+                      src={user.avatar}
                       className="mx-auto object-cover rounded-full h-10 w-10 "
                     />
                   </a>
                   <button className="flex items-center text-gray-500 dark:text-white text-md">
-                    Hammering Stefano
+                    
                     <svg
                       width="20"
                       height="20"
@@ -174,7 +173,7 @@ const Layout = () => {
                     </svg>
                   </button>
                 </div>
-              </div>
+              </div> */}
             </header>
             <div className="overflow-auto h-screen pb-24 px-4 md:px-6">
               <div className="py-6">
