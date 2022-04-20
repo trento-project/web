@@ -81,9 +81,13 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
             }}
             onKeyDown={({ key }) => {
               if (key === 'Enter') {
-                if (newTagValue !== '' && !renderedTags.includes(newTagValue)) {
-                  renderedTags.push(newTagValue);
+                if (
+                  newTagValue.length === 0 ||
+                  renderedTags.includes(newTagValue)
+                ) {
+                  return;
                 }
+                renderedTags.push(newTagValue);
                 setAddingTag(false);
                 setNewTagValue('');
                 onChange(renderedTags);
