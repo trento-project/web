@@ -6,12 +6,13 @@ import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails';
 import { DATABASE_TYPE } from '@lib/model';
 import ClusterLink from '@components/ClusterLink';
-
+import Pill from '@components/Pill';
 const InstanceOverview = ({
   instanceType,
   instance: {
     health,
-    systemReplication,
+    system_replication: systemReplication,
+    system_replication_status: systemReplicationStatus,
     instance_number: instanceNumber,
     features,
     host_id: hostId,
@@ -33,7 +34,12 @@ const InstanceOverview = ({
       >
         <Features features={features} />
       </div>
-      {isDatabase && <div className="table-cell p-2">{systemReplication}</div>}
+      {isDatabase && (
+        <div className="table-cell p-2">
+          {systemReplication && `HANA ${systemReplication}`}{' '}
+          {systemReplicationStatus && <Pill>{systemReplicationStatus}</Pill>}
+        </div>
+      )}
       <div className="table-cell p-2">
         {cluster ? (
           <ClusterLink cluster={cluster}>{cluster.name}</ClusterLink>
