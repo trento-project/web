@@ -84,7 +84,7 @@ defmodule TrentoWeb.ClusterControllerTest do
 
       resp =
         conn
-        |> post(
+        |> put(
           Routes.cluster_path(conn, :save_connection_settings, cluster_id),
           %{
             "settings" => [
