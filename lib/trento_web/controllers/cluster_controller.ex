@@ -80,9 +80,7 @@ defmodule TrentoWeb.ClusterController do
     get_connection_settings(conn, %{"cluster_id" => cluster_id})
   end
 
-  defp map_to_struct(map) do
-    for {key, val} <- map, into: %{} do
-      {String.to_atom(key), val}
-    end
+  defp map_to_struct(%{"host_id" => host_id, "user" => user}) do
+    %{host_id: host_id, user: user}
   end
 end
