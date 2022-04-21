@@ -50,7 +50,7 @@ export const ChecksSelection = () => {
     if (cluster) {
       setSelectedChecks(cluster.selected_checks ? cluster.selected_checks : []);
     }
-  }, [cluster]);
+  }, [cluster?.selected_checks]);
 
   useEffect(() => {
     dispatchUpdateCatalog();
