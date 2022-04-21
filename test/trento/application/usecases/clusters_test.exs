@@ -34,12 +34,14 @@ defmodule Trento.ClustersTest do
                %{
                  host_id: ^a_host_id,
                  hostname: ^a_hostname,
-                 user: "root"
+                 default_user: "root",
+                 user: nil
                },
                %{
                  host_id: ^another_host_id,
                  hostname: ^another_hostname,
-                 user: "root"
+                 default_user: "root",
+                 user: nil
                }
              ] = settings
     end
@@ -60,12 +62,14 @@ defmodule Trento.ClustersTest do
                %{
                  host_id: ^a_host_id,
                  hostname: ^a_hostname,
-                 user: "cloudadmin"
+                 default_user: "cloudadmin",
+                 user: nil
                },
                %{
                  host_id: ^another_host_id,
                  hostname: ^another_hostname,
-                 user: "cloudadmin"
+                 default_user: "cloudadmin",
+                 user: nil
                }
              ] = settings
     end
@@ -77,16 +81,18 @@ defmodule Trento.ClustersTest do
         %{id: another_host_id, hostname: another_hostname, cluster_id: cluster_id}
       ]
     } do
-      connection_user = "cloudadmin"
+      connection_user = "luke"
 
       new_settings = [
         %{
           host_id: a_host_id,
-          user: connection_user
+          user: connection_user,
+          default_user: "root"
         },
         %{
           host_id: another_host_id,
-          user: connection_user
+          user: connection_user,
+          default_user: "root"
         }
       ]
 
