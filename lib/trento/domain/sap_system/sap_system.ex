@@ -94,68 +94,17 @@ defmodule Trento.Domain.SapSystem do
   # the SAP System aggregate registers the Database instance if it is not already registered
   # and updates the health when needed.
   def execute(
-        %SapSystem{
-          database: %Database{instances: instances}
-        } = sap_system,
-        %RegisterDatabaseInstance{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          tenant: tenant,
-          instance_number: instance_number,
-          instance_hostname: instance_hostname,
-          features: features,
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          system_replication: system_replication,
-          system_replication_status: system_replication_status,
-          health: health
-        }
+        %SapSystem{} = sap_system,
+        %RegisterDatabaseInstance{} = command
       ) do
-    instance =
-      Enum.find(instances, fn
-        %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
-          true
-
-        _ ->
-          false
-      end)
-
-    event =
-      case instance do
-        %Instance{health: ^health} ->
-          nil
-
-        %Instance{host_id: host_id, instance_number: instance_number} ->
-          %DatabaseInstanceHealthChanged{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number,
-            health: health
-          }
-
-        nil ->
-          %DatabaseInstanceRegistered{
-            sap_system_id: sap_system_id,
-            sid: sid,
-            tenant: tenant,
-            instance_number: instance_number,
-            instance_hostname: instance_hostname,
-            features: features,
-            http_port: http_port,
-            https_port: https_port,
-            start_priority: start_priority,
-            host_id: host_id,
-            system_replication: system_replication,
-            system_replication_status: system_replication_status,
-            health: health
-          }
-      end
-
     sap_system
     |> Multi.new()
-    |> Multi.execute(fn _ -> event end)
+    |> Multi.execute(fn state ->
+      maybe_emit_database_instance_health_changed_event(state, command)
+    end)
+    |> Multi.execute(fn state ->
+      maybe_emit_database_instance_registered_event(state, command)
+    end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
@@ -432,6 +381,73 @@ defmodule Trento.Domain.SapSystem do
     }
   end
 
+  defp maybe_emit_database_instance_health_changed_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           database: %Database{instances: instances}
+         },
+         %RegisterDatabaseInstance{
+           host_id: host_id,
+           instance_number: instance_number,
+           health: health
+         }
+       ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{health: ^health} ->
+        nil
+
+      %Instance{host_id: host_id, instance_number: instance_number} ->
+        %DatabaseInstanceHealthChanged{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          health: health
+        }
+
+      nil ->
+        nil
+    end
+  end
+
+  defp maybe_emit_database_instance_registered_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           database: %Database{instances: instances}
+         },
+         %RegisterDatabaseInstance{
+           sid: sid,
+           tenant: tenant,
+           instance_number: instance_number,
+           instance_hostname: instance_hostname,
+           features: features,
+           http_port: http_port,
+           https_port: https_port,
+           start_priority: start_priority,
+           host_id: host_id,
+           system_replication: system_replication,
+           system_replication_status: system_replication_status,
+           health: health
+         }
+       ) do
+    unless get_instance(instances, host_id, instance_number) do
+      %DatabaseInstanceRegistered{
+        sap_system_id: sap_system_id,
+        sid: sid,
+        tenant: tenant,
+        instance_number: instance_number,
+        instance_hostname: instance_hostname,
+        features: features,
+        http_port: http_port,
+        https_port: https_port,
+        start_priority: start_priority,
+        host_id: host_id,
+        system_replication: system_replication,
+        system_replication_status: system_replication_status,
+        health: health
+      }
+    end
+  end
+
   # Returns a DatabaseHealthChanged event if the newly computed aggregated health of all the instances
   # is different from the previous Database health.
   defp maybe_emit_database_health_changed_event(%SapSystem{
@@ -474,5 +490,15 @@ defmodule Trento.Domain.SapSystem do
         health: new_health
       }
     end
+  end
+
+  defp get_instance(instances, host_id, instance_number) do
+    Enum.find(instances, fn
+      %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
+        true
+
+      _ ->
+        false
+    end)
   end
 end
