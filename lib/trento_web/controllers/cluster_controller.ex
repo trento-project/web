@@ -55,4 +55,32 @@ defmodule TrentoWeb.ClusterController do
         |> json(%{error: reason})
     end
   end
+
+  @spec get_connection_settings(Plug.Conn.t(), map) :: Plug.Conn.t()
+  def get_connection_settings(conn, %{"cluster_id" => cluster_id}) do
+    settings = Clusters.get_hosts_connection_settings(cluster_id)
+
+    conn
+    |> put_status(:ok)
+    |> json(settings)
+  end
+
+  @spec save_connection_settings(Plug.Conn.t(), map) :: Plug.Conn.t()
+  def save_connection_settings(
+        conn,
+        %{
+          "settings" => [_ | _] = settings,
+          "cluster_id" => cluster_id
+        }
+      ) do
+    settings
+    |> Enum.map(&map_to_struct/1)
+    |> Clusters.save_hosts_connection_settings()
+
+    get_connection_settings(conn, %{"cluster_id" => cluster_id})
+  end
+
+  defp map_to_struct(%{"host_id" => host_id, "user" => user}) do
+    %{host_id: host_id, user: user}
+  end
 end

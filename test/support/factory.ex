@@ -85,7 +85,8 @@ defmodule Trento.Factory do
       ssh_address: Keyword.get(attrs, :ssh_address, Faker.Internet.ip_v4_address()),
       agent_version: Faker.StarWars.planet(),
       cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
-      heartbeat: Keyword.get(attrs, :heartbeat, :unknown)
+      heartbeat: Keyword.get(attrs, :heartbeat, :unknown),
+      provider: Keyword.get(attrs, :provider, :unknown)
     })
   end
 
