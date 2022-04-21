@@ -17,8 +17,6 @@ defmodule Trento.Heartbeats do
   @heartbeat_interval Application.compile_env!(:trento, __MODULE__)[:interval]
 
   def heartbeat(agent_id) do
-    heartbeat = Repo.get(Heartbeat, agent_id)
-
     changeset =
       Heartbeat.changeset(
         %Heartbeat{},
@@ -34,13 +32,7 @@ defmodule Trento.Heartbeats do
       on_conflict: {:replace, [:timestamp]}
     )
     |> Multi.run(:command, fn _, _ ->
-      case heartbeat do
-        nil ->
-          dispatch_command(agent_id, :passing)
-
-        %Heartbeat{} ->
-          {:ok, :noop}
-      end
+      dispatch_command(agent_id, :passing)
     end)
     |> Repo.transaction()
   end
@@ -48,13 +40,8 @@ defmodule Trento.Heartbeats do
   @spec dispatch_heartbeat_failed_commands :: :ok
   def dispatch_heartbeat_failed_commands do
     get_all_expired_heartbeats()
-    |> Enum.each(fn heartbeat ->
-      Multi.new()
-      |> Multi.delete(:delete, heartbeat)
-      |> Multi.run(:command, fn _, %{delete: %Heartbeat{agent_id: agent_id}} ->
-        dispatch_command(agent_id, :critical)
-      end)
-      |> Repo.transaction()
+    |> Enum.each(fn %{agent_id: agent_id} ->
+      dispatch_command(agent_id, :critical)
     end)
   end
 
@@ -66,7 +53,7 @@ defmodule Trento.Heartbeats do
     Repo.all(query)
   end
 
-  @spec dispatch_command(any(), :passing | :critical) :: {:ok, :done}
+  @spec dispatch_command(any(), :passing | :critical) :: {:ok, :done} | {:error, :any}
   defp dispatch_command(agent_id, heartbeat) do
     case %{host_id: agent_id, heartbeat: heartbeat}
          |> UpdateHeartbeat.new!()
