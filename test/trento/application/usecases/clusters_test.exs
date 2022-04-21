@@ -34,12 +34,38 @@ defmodule Trento.ClustersTest do
                %{
                  host_id: ^a_host_id,
                  hostname: ^a_hostname,
-                 user: nil
+                 user: "root"
                },
                %{
                  host_id: ^another_host_id,
                  hostname: ^another_hostname,
-                 user: nil
+                 user: "root"
+               }
+             ] = settings
+    end
+
+    test "should retrieve default connection user for a specific cloud platform" do
+      cluster_id = Faker.UUID.v4()
+      cluster_projection(id: cluster_id)
+
+      %{id: a_host_id, hostname: a_hostname} =
+        host_projection(hostname: "A-01", cluster_id: cluster_id, provider: :azure)
+
+      %{id: another_host_id, hostname: another_hostname} =
+        host_projection(hostname: "B-01", cluster_id: cluster_id, provider: :azure)
+
+      settings = Clusters.get_hosts_connection_settings(cluster_id)
+
+      assert [
+               %{
+                 host_id: ^a_host_id,
+                 hostname: ^a_hostname,
+                 user: "cloudadmin"
+               },
+               %{
+                 host_id: ^another_host_id,
+                 hostname: ^another_hostname,
+                 user: "cloudadmin"
                }
              ] = settings
     end

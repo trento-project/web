@@ -64,15 +64,34 @@ defmodule Trento.Clusters do
         ]
   def get_hosts_connection_settings(cluster_id) do
     query =
-      from h in HostReadModel,
+      from(h in HostReadModel,
         left_join: s in HostConnectionSettings,
         on: h.id == s.id,
-        select: %{host_id: h.id, hostname: h.hostname, user: s.user},
+        select: %{host_id: h.id, hostname: h.hostname, user: s.user, provider: h.provider},
         where: h.cluster_id == ^cluster_id,
         order_by: [asc: h.hostname]
+      )
 
     Repo.all(query)
+    |> Enum.map(&determine_host_connection_user/1)
   end
+
+  defp determine_host_connection_user(%{
+         host_id: host_id,
+         hostname: hostname,
+         user: user,
+         provider: provider
+       }) do
+    %{
+      host_id: host_id,
+      hostname: hostname,
+      user: determine_host_connection_user(provider, user)
+    }
+  end
+
+  defp determine_host_connection_user(:azure, nil), do: "cloudadmin"
+  defp determine_host_connection_user(_, nil), do: "root"
+  defp determine_host_connection_user(_, user), do: user
 
   @spec save_hosts_connection_settings([
           %{

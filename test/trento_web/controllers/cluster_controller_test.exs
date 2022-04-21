@@ -63,11 +63,11 @@ defmodule TrentoWeb.ClusterControllerTest do
       assert [
                %{
                  "host_id" => ^a_host_id,
-                 "user" => nil
+                 "user" => "root"
                },
                %{
                  "host_id" => ^another_host_id,
-                 "user" => nil
+                 "user" => "root"
                }
              ] = resp
     end
