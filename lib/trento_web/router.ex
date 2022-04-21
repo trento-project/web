@@ -64,6 +64,12 @@ defmodule TrentoWeb.Router do
          ClusterController,
          :request_checks_execution
 
+    get "/clusters/:cluster_id/connection-settings", ClusterController, :get_connection_settings
+
+    post "/clusters/:cluster_id/connection-settings",
+         ClusterController,
+         :save_connection_settings
+
     get "/checks/catalog", CatalogController, :checks_catalog
 
     post "/hosts/:id/tags", TagsController, :add_tag,
