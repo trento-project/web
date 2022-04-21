@@ -7,7 +7,7 @@ defmodule TrentoWeb.SettingsController do
     conn
     |> json(%{
       eula_accepted: Installation.eula_accepted?(),
-      premium_subscription: Installation.premium_active?()
+      premium_subscription: Installation.premium?()
     })
   end
 

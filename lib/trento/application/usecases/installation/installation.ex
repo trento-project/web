@@ -33,6 +33,10 @@ defmodule Trento.Installation do
     :ok
   end
 
+  def premium? do
+    flavor() == "Premium"
+  end
+
   @spec premium_active? :: boolean
   def premium_active? do
     flavor() == "Premium" && has_premium_subscription?()
