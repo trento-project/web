@@ -5,7 +5,11 @@ defmodule Trento.Clusters do
 
   import Ecto.Query
 
-  alias Trento.ClusterReadModel
+  alias Trento.{
+    ClusterReadModel,
+    HostConnectionSettings,
+    HostReadModel
+  }
 
   alias Trento.Domain.CheckResult
 
@@ -49,6 +53,48 @@ defmodule Trento.Clusters do
     |> order_by(asc: :name)
     |> Repo.all()
     |> Repo.preload([:tags, :hosts_executions, :checks_results])
+  end
+
+  @spec get_hosts_connection_settings(String.t()) :: [
+          %{
+            host_id: String.t(),
+            hostname: String.t(),
+            user: String.t()
+          }
+        ]
+  def get_hosts_connection_settings(cluster_id) do
+    query =
+      from h in HostReadModel,
+        left_join: s in HostConnectionSettings,
+        on: h.id == s.id,
+        select: %{host_id: h.id, hostname: h.hostname, user: s.user},
+        where: h.cluster_id == ^cluster_id,
+        order_by: [asc: h.hostname]
+
+    Repo.all(query)
+  end
+
+  @spec save_hosts_connection_settings([
+          %{
+            host_id: String.t(),
+            user: String.t()
+          }
+        ]) :: :ok
+  def save_hosts_connection_settings(settings) do
+    settings =
+      Enum.map(settings, fn %{host_id: host_id, user: user} ->
+        %{
+          id: host_id,
+          user: user
+        }
+      end)
+
+    Repo.insert_all(HostConnectionSettings, settings,
+      on_conflict: :replace_all,
+      conflict_target: [:id]
+    )
+
+    :ok
   end
 
   @spec build_check_results([String.t()]) :: {:ok, [CheckResult.t()]} | {:error, any}
