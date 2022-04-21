@@ -56,7 +56,7 @@ defmodule Trento.HeartbeatsTest do
 
       assert heartbeat.timestamp == now
 
-      assert_not_called Trento.Commanded.dispatch(:_)
+      assert_called Trento.Commanded.dispatch(:_)
     end
   end
 
@@ -79,8 +79,6 @@ defmodule Trento.HeartbeatsTest do
       {Trento.Commanded, [:passthrough], dispatch: fn _ -> :ok end}
     ] do
       Heartbeats.dispatch_heartbeat_failed_commands()
-
-      assert [] == Repo.all(Heartbeat)
 
       assert_called Trento.Commanded.dispatch(%UpdateHeartbeat{
                       host_id: agent_id,
