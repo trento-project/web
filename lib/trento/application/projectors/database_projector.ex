@@ -19,6 +19,7 @@ defmodule Trento.DatabaseProjector do
     DatabaseHealthChanged,
     DatabaseInstanceHealthChanged,
     DatabaseInstanceRegistered,
+    DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered
   }
 
@@ -106,6 +107,30 @@ defmodule Trento.DatabaseProjector do
     end
   )
 
+  project(
+    %DatabaseInstanceSystemReplicationChanged{
+      sap_system_id: sap_system_id,
+      host_id: host_id,
+      instance_number: instance_number,
+      system_replication: system_replication,
+      system_replication_status: system_replication_status
+    },
+    fn multi ->
+      changeset =
+        %DatabaseInstanceReadModel{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number
+        }
+        |> DatabaseInstanceReadModel.changeset(%{
+          system_replication: system_replication,
+          system_replication_status: system_replication_status
+        })
+
+      Ecto.Multi.update(multi, :database_instance, changeset)
+    end
+  )
+
   @databases_topic "monitoring:databases"
 
   @impl true
@@ -171,6 +196,33 @@ defmodule Trento.DatabaseProjector do
         host_id: host_id,
         instance_number: instance_number,
         health: health
+      }
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseInstanceSystemReplicationChanged{},
+        _,
+        %{
+          database_instance: %DatabaseInstanceReadModel{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            system_replication: system_replication,
+            system_replication_status: system_replication_status
+          }
+        }
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_instance_system_replication_changed",
+      %{
+        sap_system_id: sap_system_id,
+        host_id: host_id,
+        instance_number: instance_number,
+        system_replication: system_replication,
+        system_replication_status: system_replication_status
       }
     )
   end
