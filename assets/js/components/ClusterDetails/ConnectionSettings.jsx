@@ -126,7 +126,10 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
                 <span
                   aria-hidden="true"
                   className={classNames(
-                    item.isDefaultUser ? 'translate-x-5' : 'translate-x-0',
+                    {
+                      'translate-x-5': item.isDefaultUser,
+                      'translate-x-0': !item.isDefaultUser,
+                    },
                     'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
                   )}
                 />
@@ -146,7 +149,7 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
           disabled={saving}
           className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
           onClick={() => {
-            const ls = localSettings.map((hostSettings) => {
+            const newSettings = localSettings.map((hostSettings) => {
               if (hostSettings.isDefaultUser) {
                 return { ...hostSettings, user: null };
               }
@@ -157,7 +160,7 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
               type: 'SAVE_CLUSTER_CONNECTION_SETTINGS',
               payload: {
                 cluster: cluster?.id,
-                settings: ls,
+                settings: newSettings,
               },
             });
             // dispatch({
