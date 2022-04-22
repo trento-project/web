@@ -102,6 +102,7 @@ defmodule Trento.Clusters do
   def save_hosts_connection_settings(settings) do
     settings =
       Enum.map(settings, fn %{host_id: host_id, user: user} ->
+        # TODO: use changeset to properly validate input
         %{
           id: host_id,
           user: user
