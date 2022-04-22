@@ -14,6 +14,7 @@ defmodule Trento.SapSystemTest do
     DatabaseHealthChanged,
     DatabaseInstanceHealthChanged,
     DatabaseInstanceRegistered,
+    DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     SapSystemHealthChanged,
     SapSystemRegistered
@@ -178,6 +179,44 @@ defmodule Trento.SapSystemTest do
           health: :passing
         ),
         []
+      )
+    end
+
+    test "should change the system replication of a database instance" do
+      database_registered_event = database_registered_event()
+
+      database_instance_registered_event =
+        database_instance_registered_event(
+          sap_system_id: database_registered_event.sap_system_id,
+          system_replication: "Secondary",
+          system_replication_status: ""
+        )
+
+      initial_events = [
+        database_registered_event,
+        database_instance_registered_event
+      ]
+
+      assert_events(
+        initial_events,
+        register_database_instance_command(
+          sap_system_id: database_registered_event.sap_system_id,
+          sid: database_instance_registered_event.sid,
+          tenant: database_instance_registered_event.tenant,
+          instance_number: database_instance_registered_event.instance_number,
+          features: database_instance_registered_event.features,
+          host_id: database_instance_registered_event.host_id,
+          system_replication: "Primary",
+          system_replication_status: "ACTIVE",
+          health: :passing
+        ),
+        %DatabaseInstanceSystemReplicationChanged{
+          sap_system_id: database_registered_event.sap_system_id,
+          host_id: database_instance_registered_event.host_id,
+          instance_number: database_instance_registered_event.instance_number,
+          system_replication: "Primary",
+          system_replication_status: "ACTIVE"
+        }
       )
     end
 
