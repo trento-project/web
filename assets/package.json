@@ -9,7 +9,7 @@
     "@storybook/addon-interactions": "^6.4.22",
     "@storybook/addon-links": "^6.4.22",
     "@storybook/react": "^6.4.22",
-    "@storybook/testing-library": "^0.0.10",
+    "@storybook/testing-library": "^0.0.11",
     "autoprefixer": "^10.4.4",
     "babel-jest": "^27.5.1",
     "babel-loader": "^8.2.5",
