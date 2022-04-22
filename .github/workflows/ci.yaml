@@ -54,7 +54,7 @@ jobs:
           mix local.rebar --force
           mix local.hex --force
           mix deps.get
-          mix deps.compile --warnings-as-errors 
+          mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
   static-code-analysis:
@@ -291,3 +291,67 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  obs-commit:
+    name: Commit the project on OBS
+    runs-on: ubuntu-20.04
+    #if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    #needs: [deps, static-code-analysis, test, test-e2e]
+    needs: [deps]
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:master
+      env:
+        GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DEST_FOLDER: "/tmp/osc_project"
+        NAME: trento-web-image
+        OBS_USER: ${{ secrets.OBS_USER }}
+        OBS_PASS: ${{ secrets.OBS_PASS }}
+        OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        run: |
+          ssl_verify=host zypper in -y wget unzip
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install assets
+        run: cd assets && npm install
+
+      - name: Get mix deps
+        run: mix local.hex --force && mix deps.clean --all && mix deps.get
+
+      - name: Set version
+        run: |
+          VERSION=$(./hack/get_version_from_git.sh)
+          sed -i 's~%%VERSION%%~'"${VERSION}"'~' packaging/suse/Dockerfile
+
+      - name: Configure OSC
+        # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
+        # that is used to run osc commands
+        run: |
+          /scripts/init_osc_creds.sh
+          mkdir -p $HOME/.config/osc
+          cp /root/.config/osc/oscrc $HOME/.config/osc
+
+      - name: Commit on OBS
+        run: |
+          OBS_PACKAGE=$OBS_PROJECT/$NAME
+          osc checkout $OBS_PACKAGE -o $DEST_FOLDER
+          cp -r packaging/suse/* $DEST_FOLDER
+          tar -zcvf $DEST_FOLDER/web.tar.gz --exclude=.git ./
+          cd $DEST_FOLDER
+          osc ar
+          osc commit -m "New development version of $NAME released"

@@ -1,6 +1,6 @@
 #!BuildTag: trento/trento-web:latest
-#!BuildTag: trento/trento-web:1.0.0
-#!BuildTag: trento/trento-web:1.0.0-build%RELEASE%
+#!BuildTag: trento/trento-web:%%VERSION%%
+#!BuildTag: trento/trento-web:%%VERSION%%-build%RELEASE%
 #!UseOBSRepositories
 
 FROM bci/nodejs:16 AS assets-build
