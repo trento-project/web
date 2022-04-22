@@ -126,6 +126,15 @@ const processChannelEvents = (store) => {
     store.dispatch({ type: 'DATABASE_INSTANCE_HEALTH_CHANGED', payload })
   );
 
+  databasesChannel.on(
+    'database_instance_system_replication_changed',
+    (payload) =>
+      store.dispatch({
+        type: 'DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED',
+        payload,
+      })
+  );
+
   joinChannel(hostsChannel);
   joinChannel(clustersChannel);
   joinChannel(sapSystemsChannel);

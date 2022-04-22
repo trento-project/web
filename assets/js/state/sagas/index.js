@@ -33,6 +33,7 @@ import {
   appendApplicationInstance,
   updateSapSystemHealth,
   updateSAPSystemDatabaseInstanceHealth,
+  updateSAPSystemDatabaseInstanceSystemReplication,
   updateApplicationInstanceHealth,
 } from '@state/sapSystems';
 
@@ -50,6 +51,7 @@ import {
   stopDatabasesLoading,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
+  updateDatabaseInstanceSystemReplication,
 } from '@state/databases';
 
 import { setCatalog } from '@state/catalog';
@@ -448,6 +450,11 @@ function* databaseInstanceHealthChanged({ payload }) {
   yield put(updateSAPSystemDatabaseInstanceHealth(payload));
 }
 
+function* databaseInstanceSystemReplicationChanged({ payload }) {
+  yield put(updateDatabaseInstanceSystemReplication(payload));
+  yield put(updateSAPSystemDatabaseInstanceSystemReplication(payload));
+}
+
 function* watchDatabase() {
   yield takeEvery('DATABASE_REGISTERED', databaseRegistered);
   yield takeEvery('DATABASE_HEALTH_CHANGED', databaseHealthChanged);
@@ -455,6 +462,10 @@ function* watchDatabase() {
   yield takeEvery(
     'DATABASE_INSTANCE_HEALTH_CHANGED',
     databaseInstanceHealthChanged
+  );
+  yield takeEvery(
+    'DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED',
+    databaseInstanceSystemReplicationChanged
   );
 }
 

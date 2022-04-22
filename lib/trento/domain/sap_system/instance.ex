@@ -10,7 +10,9 @@ defmodule Trento.Domain.SapSystem.Instance do
     :instance_number,
     :features,
     :host_id,
-    :health
+    :health,
+    :system_replication,
+    :system_replication_status
   ]
 
   @type t :: %__MODULE__{
@@ -18,6 +20,8 @@ defmodule Trento.Domain.SapSystem.Instance do
           instance_number: String.t(),
           features: String.t(),
           host_id: String.t(),
-          health: Health.t()
+          health: Health.t(),
+          system_replication: String.t(),
+          system_replication_status: String.t()
         }
 end

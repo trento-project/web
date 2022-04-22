@@ -68,6 +68,20 @@ export const sapSystemsListSlice = createSlice({
         return maybeUpdateInstanceHealth(action.payload, instance);
       });
     },
+    updateSAPSystemDatabaseInstanceSystemReplication: (state, action) => {
+      state.databaseInstances = state.databaseInstances.map((instance) => {
+        if (
+          action.payload.sap_system_id === instance.sap_system_id &&
+          action.payload.host_id === instance.host_id &&
+          action.payload.instance_number === instance.instance_number
+        ) {
+          instance.system_replication = action.payload.system_replication;
+          instance.system_replication_status =
+            action.payload.system_replication;
+        }
+        return instance;
+      });
+    },
     addTagToSAPSystem: (state, action) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
         if (sapSystem.id === action.payload.id) {
@@ -99,6 +113,7 @@ export const {
   updateSapSystemHealth,
   updateApplicationInstanceHealth,
   updateSAPSystemDatabaseInstanceHealth,
+  updateSAPSystemDatabaseInstanceSystemReplication,
   addTagToSAPSystem,
   removeTagFromSAPSystem,
 } = sapSystemsListSlice.actions;

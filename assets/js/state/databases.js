@@ -43,6 +43,20 @@ export const databasesListSlice = createSlice({
         return maybeUpdateInstanceHealth(action.payload, instance);
       });
     },
+    updateDatabaseInstanceSystemReplication: (state, action) => {
+      state.databaseInstances = state.databaseInstances.map((instance) => {
+        if (
+          action.payload.sap_system_id === instance.sap_system_id &&
+          action.payload.host_id === instance.host_id &&
+          action.payload.instance_number === instance.instance_number
+        ) {
+          instance.system_replication = action.payload.system_replication;
+          instance.system_replication_status =
+            action.payload.system_replication;
+        }
+        return instance;
+      });
+    },
     addTagToDatabase: (state, action) => {
       state.databases = state.databases.map((database) => {
         if (database.id === action.payload.id) {
@@ -72,6 +86,7 @@ export const {
   appendDatabaseInstance,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
+  updateDatabaseInstanceSystemReplication,
   addTagToDatabase,
   removeTagFromDatabase,
 } = databasesListSlice.actions;
