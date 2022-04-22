@@ -1,24 +1,42 @@
-FROM registry.suse.com/bci/nodejs:16 AS assets-build
-ADD assets /build/assets
-WORKDIR /build/assets
-RUN npm install
+#!BuildTag: trento/trento-web:latest
+#!BuildTag: trento/trento-web:1.0.0
+#!BuildTag: trento/trento-web:1.0.0-build%RELEASE%
+#!UseOBSRepositories
 
-FROM registry.suse.com/bci/bci-base:15.3 AS elixir-build 
-RUN zypper -n addrepo https://download.opensuse.org/repositories/devel:/languages:/erlang/SLE_15_SP3/devel:languages:erlang.repo
-RUN zypper -n --gpg-auto-import-keys ref -s
-RUN zypper -n in elixir
-ADD . /build
-COPY --from=assets-build /build/assets /build/assets
-WORKDIR /build
-ENV MIX_ENV=dev
-RUN mix local.rebar --force \
-    && mix local.hex --force \
-    && mix deps.get
+FROM bci/nodejs:16 AS assets-build
+ADD web.tar.gz /build/
+WORKDIR /build/web/assets
+RUN npm run tailwind:build
+RUN npm run build
+
+FROM suse/sle15:15.3 AS release
+# FLAVOR defined in prjconf, e.g.
+#  BuildFlags: dockerarg:FLAVOR=Community
+ARG FLAVOR=Community
+# # Workaround for https://github.com/openSUSE/obs-build/issues/487
+RUN zypper --non-interactive in sles-release
+RUN zypper -n in elixir elixir-hex erlang-rebar3
+COPY --from=assets-build /build /build
+WORKDIR /build/web/
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+ENV MIX_ENV=prod
+ENV MIX_HOME=/usr/bin
+ENV FLAVOR="$FLAVOR"
+RUN mix phx.digest
 RUN mix release
 
-
-FROM registry.suse.com/bci/bci-base:15.3 AS trento
+FROM suse/sle15:15.3 AS trento
+# Define labels according to https://en.opensuse.org/Building_derived_containers
+# labelprefix=com.suse.trento
+LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+# tar is required by kubectl cp
+RUN zypper -n in tar
 WORKDIR /app
-COPY --from=elixir-build /build/_build/dev/rel/trento/ .
+COPY --from=release /build/web/_build/prod/rel/trento .
 EXPOSE 4000/tcp
 ENTRYPOINT ["/app/bin/trento"]
