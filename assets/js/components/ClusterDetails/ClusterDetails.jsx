@@ -92,7 +92,8 @@ const ClusterDetails = () => {
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
           >
-            <EOS_CLEAR_ALL className="inline-block fill-white" /> Show Check Results
+            <EOS_CLEAR_ALL className="inline-block fill-white" /> Show Check
+            Results
           </Button>
         </div>
       </div>
