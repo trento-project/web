@@ -81,20 +81,18 @@ const ClusterDetails = () => {
         </h1>
         <div className="flex w-1/2 justify-end">
           <Button
-            className="w-1/3 mr-1"
-            type="secondary"
+            className="w-1/3 mr-1 bg-waterhole-blue"
             size="small"
-            onClick={() => navigate(`/clusters/${clusterID}/checks`)}
+            onClick={() => navigate(`/clusters/${clusterID}/settings`)}
           >
-            <EOS_SETTINGS className="inline-block" /> Settings
+            <EOS_SETTINGS className="inline-block fill-white" /> Settings
           </Button>
           <Button
-            className="w-1/3 ml-1"
-            type="secondary"
+            className="w-1/3 ml-1 bg-waterhole-blue"
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
           >
-            <EOS_CLEAR_ALL className="inline-block" /> Show Check Results
+            <EOS_CLEAR_ALL className="inline-block fill-white" /> Show Check Results
           </Button>
         </div>
       </div>
