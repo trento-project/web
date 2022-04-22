@@ -85,6 +85,8 @@ defmodule Trento.SapSystemTest do
             instances: [
               %SapSystem.Instance{
                 sid: sid,
+                system_replication: "Primary",
+                system_replication_status: "ACTIVE",
                 instance_number: instance_number,
                 features: features,
                 host_id: host_id,
@@ -176,6 +178,8 @@ defmodule Trento.SapSystemTest do
           instance_number: database_instance_registered_event.instance_number,
           features: database_instance_registered_event.features,
           host_id: database_instance_registered_event.host_id,
+          system_replication: database_instance_registered_event.system_replication,
+          system_replication_status: database_instance_registered_event.system_replication_status,
           health: :passing
         ),
         []
