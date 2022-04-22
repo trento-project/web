@@ -51,7 +51,7 @@ const App = () => {
               <Route path="settings" element={<Settings />} />
               <Route path="about" element={<AboutPage />} />
               <Route
-                path="clusters/:clusterID/checks"
+                path="clusters/:clusterID/settings"
                 element={<ClusterSettings />}
               />
               <Route
