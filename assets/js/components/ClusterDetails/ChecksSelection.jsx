@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Switch } from '@headlessui/react';
 
@@ -18,13 +18,9 @@ const toggle = (list, element) =>
     ? list.filter((string) => string !== element)
     : [...list, element];
 
-export const ChecksSelection = () => {
-  const { clusterID } = useParams();
+export const ChecksSelection = ({ cluster }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const clusters = useSelector((state) => state.clustersList.clusters);
-  const cluster = clusters.find((cluster) => cluster.id === clusterID);
 
   const [selectedChecks, setSelectedChecks] = useState(
     cluster ? cluster.selected_checks : []
@@ -141,12 +137,12 @@ export const ChecksSelection = () => {
           onClick={() => {
             dispatch({
               type: 'CHECKS_SELECTED',
-              payload: { checks: selectedChecks, clusterID: clusterID },
+              payload: { checks: selectedChecks, clusterID: cluster.id },
             });
-            navigate(`/clusters/${clusterID}/checks/results`);
+            navigate(`/clusters/${cluster.id}/checks/results`);
           }}
         >
-          Save
+          Save Selected Checks
         </button>
       </div>
     </div>

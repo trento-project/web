@@ -73,10 +73,10 @@ defmodule Trento.Clusters do
       )
 
     Repo.all(query)
-    |> Enum.map(&determine_host_connection_user/1)
+    |> Enum.map(&enrich_with_default_user/1)
   end
 
-  defp determine_host_connection_user(%{
+  defp enrich_with_default_user(%{
          host_id: host_id,
          hostname: hostname,
          user: user,
@@ -85,13 +85,13 @@ defmodule Trento.Clusters do
     %{
       host_id: host_id,
       hostname: hostname,
-      user: determine_host_connection_user(provider, user)
+      user: user,
+      default_user: determine_default_connection_user(provider)
     }
   end
 
-  defp determine_host_connection_user(:azure, nil), do: "cloudadmin"
-  defp determine_host_connection_user(_, nil), do: "root"
-  defp determine_host_connection_user(_, user), do: user
+  defp determine_default_connection_user(:azure), do: "cloudadmin"
+  defp determine_default_connection_user(_), do: "root"
 
   @spec save_hosts_connection_settings([
           %{
@@ -102,6 +102,7 @@ defmodule Trento.Clusters do
   def save_hosts_connection_settings(settings) do
     settings =
       Enum.map(settings, fn %{host_id: host_id, user: user} ->
+        # TODO: use changeset to properly validate input
         %{
           id: host_id,
           user: user

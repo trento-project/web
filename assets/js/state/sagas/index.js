@@ -1,4 +1,4 @@
-import { get, post } from 'axios';
+import { get, post, put as PUT } from 'axios';
 import { put, all, call, takeEvery, select } from 'redux-saga/effects';
 import { urlEncode, keysToCamel } from '@lib/serialization';
 
@@ -63,6 +63,15 @@ import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
+import {
+  setClusterConnectionSettings,
+  setClusterConnectionSettingsLoadingError,
+  startLoadingClusterConnectionSettings,
+  stopLoadingClusterConnectionSettings,
+  startSavingClusterConnectionSettings,
+  stopSavingClusterConnectionSettings,
+  setClusterConnectionSettingsSavingError,
+} from '@state/clusterConnectionSettings';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
@@ -498,6 +507,55 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   yield takeEvery('CLUSTER_HEALTH_CHANGED', loadSapSystemsHealthSummary);
 }
 
+function* loadClusterConnectionSettings({ payload: { cluster } }) {
+  yield put(startLoadingClusterConnectionSettings());
+  try {
+    const { data: settings } = yield call(
+      get,
+      `/api/clusters/${cluster}/connection-settings`
+    );
+    yield put(setClusterConnectionSettings({ settings }));
+  } catch (error) {
+    yield put(setClusterConnectionSettingsLoadingError());
+  }
+  yield put(stopLoadingClusterConnectionSettings());
+}
+
+function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
+  yield put(startSavingClusterConnectionSettings());
+  try {
+    const { data: newSettings } = yield call(
+      PUT,
+      `/api/clusters/${cluster}/connection-settings`,
+      {
+        settings: settings.map((hostSettings) => ({
+          host_id: hostSettings.host_id,
+          user: hostSettings.user,
+        })),
+      }
+    );
+    yield put(
+      setClusterConnectionSettings({
+        settings: newSettings,
+      })
+    );
+  } catch (error) {
+    yield put(setClusterConnectionSettingsSavingError());
+  }
+  yield put(stopSavingClusterConnectionSettings());
+}
+
+function* watchClustrConnectionSettings() {
+  yield takeEvery(
+    'LOAD_CLUSTER_CONNECTION_SETTINGS',
+    loadClusterConnectionSettings
+  );
+  yield takeEvery(
+    'SAVE_CLUSTER_CONNECTION_SETTINGS',
+    saveClusterConnectionSettings
+  );
+}
+
 export default function* rootSaga() {
   yield all([
     initialDataFetch(),
@@ -521,5 +579,6 @@ export default function* rootSaga() {
     watchCatalogUpdate(),
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
+    watchClustrConnectionSettings(),
   ]);
 }
