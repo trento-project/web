@@ -110,4 +110,12 @@ if config_env() == :prod do
     auth: :always,
     ssl: :if_available,
     tls: :if_available
+
+  config :trento, Trento.Scheduler,
+    jobs: [
+      clusters_checks_execution: [
+        # Runs every five minutes by default
+        schedule: "*/#{System.get_env("RUNNER_INTERVAL", "5")} * * * *"
+      ]
+    ]
 end
