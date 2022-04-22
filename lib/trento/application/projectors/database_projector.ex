@@ -23,6 +23,8 @@ defmodule Trento.DatabaseProjector do
     DatabaseRegistered
   }
 
+  @databases_topic "monitoring:databases"
+
   project(
     %DatabaseRegistered{sap_system_id: sap_system_id, sid: sid, health: health},
     fn multi ->
@@ -130,8 +132,6 @@ defmodule Trento.DatabaseProjector do
       Ecto.Multi.update(multi, :database_instance, changeset)
     end
   )
-
-  @databases_topic "monitoring:databases"
 
   @impl true
   def after_update(
