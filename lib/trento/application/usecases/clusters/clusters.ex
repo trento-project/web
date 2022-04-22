@@ -21,6 +21,8 @@ defmodule Trento.Clusters do
 
   alias Trento.Repo
 
+  require Logger
+
   def store_checks_results(cluster_id, host_id, checks_results) do
     with {:ok, checks_results} <- build_check_results(checks_results),
          {:ok, command} <-
@@ -74,6 +76,27 @@ defmodule Trento.Clusters do
 
     Repo.all(query)
     |> Enum.map(&enrich_with_default_user/1)
+  end
+
+  @spec request_clusters_checks_execution :: :ok | {:error, any}
+  def request_clusters_checks_execution do
+    query =
+      from(c in ClusterReadModel,
+        select: c.id,
+        where: c.type == :hana_scale_up or c.type == :hana_scale_out
+      )
+
+    query
+    |> Repo.all()
+    |> Enum.each(fn cluster_id ->
+      case request_checks_execution(cluster_id) do
+        :ok ->
+          :ok
+
+        {:error, reason} ->
+          Logger.error("Failed to request checks execution for cluster #{cluster_id}: #{reason}")
+      end
+    end)
   end
 
   defp enrich_with_default_user(%{
