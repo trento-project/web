@@ -17,8 +17,6 @@ export const ClusterSettings = () => {
   const clusters = useSelector((state) => state.clustersList.clusters);
   const cluster = clusters.find((cluster) => cluster.id === clusterID);
 
-  console.log('ClusterSettings', cluster);
-
   const tabsSettings = {
     'Checks Selection': (
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
@@ -41,7 +39,8 @@ export const ClusterSettings = () => {
             size="small"
             onClick={() => navigate(`/clusters/${cluster.id}`)}
           >
-            <EOS_ARROW_BACK className="inline-block fill-white" /> Back to Cluster
+            <EOS_ARROW_BACK className="inline-block fill-white" /> Back to
+            Cluster
           </Button>
         </div>
       </div>
