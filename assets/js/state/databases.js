@@ -52,7 +52,7 @@ export const databasesListSlice = createSlice({
         ) {
           instance.system_replication = action.payload.system_replication;
           instance.system_replication_status =
-            action.payload.system_replication;
+            action.payload.system_replication_status;
         }
         return instance;
       });
