@@ -115,6 +115,11 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   defp parse_cluster_nodes(
          %{
+           "Cib" => %{
+             "Configuration" => %{
+               "Resources" => resources
+             }
+           },
            "Crmmon" =>
              %{
                "NodeAttributes" => %{
@@ -130,12 +135,20 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
           Map.put(acc, name, value)
         end)
 
+      node_resources = parse_node_resources(name, crmmon)
+
+      virtual_ip =
+        resources
+        |> extract_cluster_primitives_from_cib
+        |> parse_virtual_ip(node_resources)
+
       node = %{
         name: name,
         attributes: attributes,
-        resources: parse_node_resources(name, crmmon),
+        resources: node_resources,
         site: Map.get(attributes, "hana_#{String.downcase(sid)}_site", ""),
-        hana_status: "Unknown"
+        hana_status: "Unknown",
+        virtual_ip: virtual_ip
       }
 
       %{node | hana_status: parse_hana_status(node, sid)}
@@ -255,6 +268,16 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     end)
   end
 
+  defp extract_cluster_primitives_from_cib(%{
+         "Primitives" => primitives,
+         "Groups" => groups,
+         "Clones" => clones
+       }) do
+    primitives ++
+      Enum.flat_map(clones, &Map.get(&1, "Primitives", [])) ++
+      Enum.flat_map(groups, &Map.get(&1, "Primitives", []))
+  end
+
   defp extract_cluster_resources(%{
          "Resources" => resources,
          "Groups" => groups,
@@ -339,4 +362,32 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   defp parse_provider("aws"), do: :aws
   defp parse_provider("gcp"), do: :gcp
   defp parse_provider(_), do: :unknown
+
+  defp parse_virtual_ip(primitives, node_resources) do
+    virtual_ip_resource_id =
+      node_resources
+      |> Enum.find_value(nil, fn
+        %{type: "ocf::heartbeat:IPaddr2", id: id} ->
+          id
+
+        _ ->
+          nil
+      end)
+
+    primitives
+    |> Enum.find_value([], fn
+      %{"Type" => "IPaddr2", "Id" => ^virtual_ip_resource_id, "InstanceAttributes" => attributes} ->
+        attributes
+
+      _ ->
+        nil
+    end)
+    |> Enum.find_value(nil, fn
+      %{"Name" => "ip", "Value" => value} when value != "" ->
+        value
+
+      _ ->
+        nil
+    end)
+  end
 end

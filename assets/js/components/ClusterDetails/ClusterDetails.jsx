@@ -25,9 +25,8 @@ const siteDetailsConfig = {
     },
     {
       title: 'Virtual IP',
-      key: '',
+      key: 'virtual_ip',
       className: 'table-col-m',
-      render: (_, _item) => 'Where to get this?',
     },
     {
       title: '',

@@ -19,6 +19,7 @@ defmodule Trento.Domain.ClusterNode do
     field :site, :string
     field :hana_status, :string
     field :attributes, {:map, :string}
+    field :virtual_ip, :string
 
     embeds_many :resources, ClusterResource
   end
