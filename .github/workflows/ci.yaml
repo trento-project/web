@@ -352,7 +352,7 @@ jobs:
           osc checkout $OBS_PACKAGE -o $DEST_FOLDER
           cp -r packaging/suse/* $DEST_FOLDER
           cp Dockerfile $DEST_FOLDER
-          tar --transform 's,^./,/web/,' -zcvf $DEST_FOLDER/web.tar.gz --exclude=.git ./*
+          tar --transform 's,^./,/web/,' -zcvf $DEST_FOLDER/web.tar.gz --exclude=./.git ./*
           cd $DEST_FOLDER
           osc ar
           osc commit -m "New development version of $NAME released"
