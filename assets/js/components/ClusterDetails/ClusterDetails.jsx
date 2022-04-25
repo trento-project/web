@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '@components/Button';
 
@@ -10,7 +10,9 @@ import Table from '@components/Table';
 
 import SiteDetails from './SiteDetails';
 
-import { EOS_SETTINGS, EOS_CLEAR_ALL } from 'eos-icons-react';
+import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
+import { getCluster } from '@state/selectors';
+import classNames from 'classnames';
 
 const siteDetailsConfig = {
   usePadding: false,
@@ -51,9 +53,7 @@ const ClusterDetails = () => {
   const { clusterID } = useParams();
   const navigate = useNavigate();
 
-  const cluster = useSelector((state) =>
-    state.clustersList.clusters.find(({ id }) => id === clusterID)
-  );
+  const cluster = useSelector(getCluster(clusterID));
 
   const ips = useSelector((state) =>
     state.hostsList.hosts.reduce((accumulator, current) => {
@@ -72,6 +72,8 @@ const ClusterDetails = () => {
     ips[node.name] ? { ...node, ips: ips[node.name] } : node
   );
 
+  const hasSelectedChecks = cluster.selected_checks.length > 0;
+
   return (
     <div>
       <div className="flex">
@@ -80,20 +82,34 @@ const ClusterDetails = () => {
         </h1>
         <div className="flex w-1/2 justify-end">
           <Button
-            className="w-1/3 mr-1 bg-waterhole-blue"
+            className="w-1/4 mx-0.5 bg-waterhole-blue"
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/settings`)}
           >
             <EOS_SETTINGS className="inline-block fill-white" /> Settings
           </Button>
           <Button
-            className="w-1/3 ml-1 bg-waterhole-blue"
+            className="w-1/4 mx-0.5 bg-waterhole-blue"
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
           >
-            <EOS_CLEAR_ALL className="inline-block fill-white" /> Show Check
-            Results
+            <EOS_CLEAR_ALL className="inline-block fill-white" /> Show Results
           </Button>
+          <TriggerChecksExecutionRequest
+            cssClasses="rounded relative w-1/4 ml-0.5 bg-waterhole-blue disabled:bg-slate-50 disabled:text-slate-500"
+            clusterId={clusterID}
+            disabled={!hasSelectedChecks}
+          >
+            <EOS_PLAY_CIRCLE
+              className={classNames('inline-block fill-white', {
+                'fill-slate-500': !hasSelectedChecks,
+              })}
+            />{' '}
+            Start Execution
+            {!hasSelectedChecks && (
+              <Tooltip tooltipText="Select some Checks first!" />
+            )}
+          </TriggerChecksExecutionRequest>
         </div>
       </div>
 
@@ -192,3 +208,66 @@ const ClusterDetails = () => {
 };
 
 export default ClusterDetails;
+
+export const TriggerChecksExecutionRequest = ({
+  clusterId,
+  cssClasses,
+  children,
+  ...props
+}) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  return (
+    <button
+      className={classNames(
+        'items-center text-sm px-2 bg-jungle-green-500 text-white hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow',
+        cssClasses
+      )}
+      onClick={() => {
+        dispatch({
+          type: 'REQUEST_CHECKS_EXECUTION',
+          payload: {
+            clusterID: clusterId,
+          },
+        });
+        navigate(`/clusters/${clusterId}/checks/results`);
+      }}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+export const Tooltip = ({ children, tooltipText }) => {
+  const tipRef = React.createRef(null);
+  const handleMouseEnter = () => {
+    tipRef.current.style.opacity = 1;
+    tipRef.current.style.marginTop = '10px';
+  };
+  const handleMouseLeave = () => {
+    tipRef.current.style.opacity = 0;
+    tipRef.current.style.marginTop = '5px';
+  };
+  return (
+    <div
+      className="w-full h-full absolute inset-0 flex justify-center items-center z-10"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div
+        className="w-full absolute whitespace-no-wrap bg-gradient-to-r from-black to-gray-700 text-white px-4 py-2 rounded flex items-center transition-all duration-150"
+        style={{ top: '100%', opacity: 0 }}
+        ref={tipRef}
+      >
+        <div
+          className="bg-black h-3 w-3 absolute"
+          style={{ top: '-6px', right: '50%', transform: 'rotate(45deg)' }}
+        />
+        {tooltipText}
+      </div>
+      {children}
+    </div>
+  );
+};
