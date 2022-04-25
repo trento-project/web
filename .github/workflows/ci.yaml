@@ -297,7 +297,6 @@ jobs:
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [deps, static-code-analysis, test, test-e2e]
-    needs: [deps]
     container:
       image: ghcr.io/trento-project/continuous-delivery:master
       env:
