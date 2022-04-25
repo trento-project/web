@@ -72,6 +72,13 @@ import {
   stopSavingClusterConnectionSettings,
   setClusterConnectionSettingsSavingError,
 } from '@state/clusterConnectionSettings';
+import {
+  setClusterChecksSelectionSavingError,
+  setClusterChecksSelectionSavingSuccess,
+  startSavingClusterChecksSelection,
+  stopSavingClusterChecksSelection,
+} from '@state/clusterChecksSelection';
+import { setClusterConnectionSettingsSavingSuccess } from '@state/clusterConnectionSettings';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
@@ -224,26 +231,33 @@ function* watchClusterDetailsUpdated() {
 }
 
 function* checksSelected({ payload }) {
-  yield put(updateSelectedChecks(payload));
+  yield put(startSavingClusterChecksSelection());
 
-  yield call(post, `/api/clusters/${payload.clusterID}/checks`, {
-    checks: payload.checks,
-  });
+  try {
+    yield call(post, `/api/clusters/${payload.clusterID}/checks`, {
+      checks: payload.checks,
+    });
+    yield put(updateSelectedChecks(payload));
 
-  const clusterName = yield select(getClusterName(payload.clusterID));
-  yield put(
-    appendEntryToLiveFeed({
-      source: clusterName,
-      message: 'Checks selection changed.',
-    })
-  );
+    const clusterName = yield select(getClusterName(payload.clusterID));
+    yield put(
+      appendEntryToLiveFeed({
+        source: clusterName,
+        message: 'Checks selection changed.',
+      })
+    );
 
-  yield put(
-    notify({
-      text: `Checks selection saved`,
-      icon: '💾',
-    })
-  );
+    yield put(
+      notify({
+        text: `Checks selection saved`,
+        icon: '💾',
+      })
+    );
+    yield put(setClusterChecksSelectionSavingSuccess());
+  } catch (error) {
+    yield put(setClusterChecksSelectionSavingError());
+  }
+  yield put(stopSavingClusterChecksSelection());
 }
 
 function* watchChecksSelected() {
@@ -252,9 +266,6 @@ function* watchChecksSelected() {
 
 function* requestChecksExecution({ payload }) {
   const clusterName = yield select(getClusterName(payload.clusterID));
-
-  yield put(updateSelectedChecks(payload));
-
   yield call(
     post,
     `/api/clusters/${payload.clusterID}/checks/request_execution`,
@@ -539,6 +550,7 @@ function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
         settings: newSettings,
       })
     );
+    yield put(setClusterConnectionSettingsSavingSuccess());
   } catch (error) {
     yield put(setClusterConnectionSettingsSavingError());
   }
