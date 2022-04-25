@@ -92,6 +92,13 @@ config :trento, Trento.Scheduler,
       task: {Trento.Integration.Telemetry, :publish, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
+    ],
+    clusters_checks_execution: [
+      # Runs every five minutes
+      schedule: "*/5 * * * *",
+      task: {Trento.Clusters, :request_clusters_checks_execution, []},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
     ]
   ],
   debug_logging: false

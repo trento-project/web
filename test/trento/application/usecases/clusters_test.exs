@@ -4,23 +4,25 @@ defmodule Trento.ClustersTest do
   use Trento.DataCase
 
   import Trento.Factory
+  import Mock
 
   alias Trento.Clusters
-
-  setup do
-    cluster_id = Faker.UUID.v4()
-    cluster_projection(id: cluster_id)
-
-    %{
-      cluster_id: cluster_id,
-      hosts: [
-        host_projection(hostname: "A-01", cluster_id: cluster_id),
-        host_projection(hostname: "B-01", cluster_id: cluster_id)
-      ]
-    }
-  end
+  alias Trento.Domain.Commands.RequestChecksExecution
 
   describe "Connection Settings Management for the Hosts of a Cluster" do
+    setup do
+      cluster_id = Faker.UUID.v4()
+      cluster_projection(id: cluster_id)
+
+      %{
+        cluster_id: cluster_id,
+        hosts: [
+          host_projection(hostname: "A-01", cluster_id: cluster_id),
+          host_projection(hostname: "B-01", cluster_id: cluster_id)
+        ]
+      }
+    end
+
     test "should retrieve connection settings for a given cluster", %{
       cluster_id: cluster_id,
       hosts: [
@@ -112,6 +114,23 @@ defmodule Trento.ClustersTest do
                  user: ^connection_user
                }
              ] = stored_settings
+    end
+  end
+
+  describe "checks execution" do
+    test "should dispatch checks execution requests for each cluster" do
+      # TODO: use Mox and beavhiours to test this
+      with_mock Trento.Commanded, dispatch: fn _ -> :ok end do
+        clusters = Enum.map(0..4, fn _ -> cluster_projection() end)
+
+        :ok = Clusters.request_clusters_checks_execution()
+
+        Enum.each(clusters, fn cluster ->
+          assert_called Trento.Commanded.dispatch(%RequestChecksExecution{
+                          cluster_id: cluster.id
+                        })
+        end)
+      end
     end
   end
 end

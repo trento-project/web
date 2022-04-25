@@ -88,6 +88,9 @@ config :trento, Trento.Scheduler,
   jobs: [
     publish_telemetry: [
       schedule: {:extended, "@hourly"}
+    ],
+    clusters_checks_execution: [
+      schedule: {:extended, "@hourly"}
     ]
   ]
 
