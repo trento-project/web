@@ -64,9 +64,9 @@ const ChecksCatalog = () => {
       {catalogData
         .filter((provider) => provider.provider == selected)
         .map(({ _, groups }) =>
-          groups?.map(({ group, checks }) => (
+          groups?.map(({ group, checks }, idx) => (
             <div
-              key={group.id}
+              key={idx}
               className="bg-white shadow overflow-hidden sm:rounded-md mb-8"
             >
               <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
