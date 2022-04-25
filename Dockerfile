@@ -3,13 +3,17 @@
 #!BuildTag: trento/trento-web:%%VERSION%%-build%RELEASE%
 #!UseOBSRepositories
 
-FROM bci/nodejs:16 AS assets-build
+# REGISTRY defined in prjconf, e.g.
+#  BuildFlags: dockerarg:REGISTRY=
+ARG REGISTRY=registry.suse.com/
+
+FROM ${REGISTRY}bci/nodejs:16 AS assets-build
 ADD web.tar.gz /build/
 WORKDIR /build/web/assets
 RUN npm run tailwind:build
 RUN npm run build
 
-FROM suse/sle15:15.3 AS release
+FROM ${REGISTRY}bci/bci-base:15.3 AS release
 # FLAVOR defined in prjconf, e.g.
 #  BuildFlags: dockerarg:FLAVOR=Community
 ARG FLAVOR=Community
@@ -27,7 +31,7 @@ ENV FLAVOR="$FLAVOR"
 RUN mix phx.digest
 RUN mix release
 
-FROM suse/sle15:15.3 AS trento
+FROM ${REGISTRY}bci/bci-base:15.3 AS trento
 # Define labels according to https://en.opensuse.org/Building_derived_containers
 # labelprefix=com.suse.trento
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
