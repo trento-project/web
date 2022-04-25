@@ -98,7 +98,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                         type: "ocf::heartbeat:SAPInstance"
                       }
                     ],
-                    site: "PRIMARY_SITE_NAME"
+                    site: "PRIMARY_SITE_NAME",
+                    virtual_ip: "192.168.123.200"
                   },
                   %ClusterNode{
                     attributes: %{
@@ -167,7 +168,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                         type: "ocf::heartbeat:SAPInstance"
                       }
                     ],
-                    site: "SECONDARY_SITE_NAME"
+                    site: "SECONDARY_SITE_NAME",
+                    virtual_ip: nil
                   }
                 ],
                 sbd_devices: [
