@@ -335,7 +335,7 @@ jobs:
       - name: Set version
         run: |
           VERSION=$(./hack/get_version_from_git.sh)
-          sed -i 's~%%VERSION%%~'"${VERSION}"'~' Dockerfile
+          sed -i 's~%%VERSION%%~'"${VERSION}"'~' packaging/suse/Dockerfile
 
       - name: Configure OSC
         # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
@@ -350,7 +350,6 @@ jobs:
           OBS_PACKAGE=$OBS_PROJECT/$NAME
           osc checkout $OBS_PACKAGE -o $DEST_FOLDER
           cp -r packaging/suse/* $DEST_FOLDER
-          cp Dockerfile $DEST_FOLDER
           tar --transform 's,^./,/web/,' -zcvf $DEST_FOLDER/web.tar.gz --exclude=./.git ./*
           cd $DEST_FOLDER
           osc ar
