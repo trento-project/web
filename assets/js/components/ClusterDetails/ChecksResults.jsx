@@ -32,7 +32,7 @@ const getHostname =
     }, '');
   };
 
-const sortChecksResults = (checksResults = []) => {
+const sortChecks = (checksResults = []) => {
   return checksResults.sort((a, b) => {
     return a.check_id > b.check_id ? 1 : -1;
   });
@@ -166,27 +166,26 @@ export const ChecksResults = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {sortChecksResults(cluster?.checks_results.slice())
-                      .filter((check_result) => check_result.host_id == host_id)
-                      .filter(
-                        (check_result) => check_result.result != 'skipped'
-                      ) // Filter "skipped" results by now
-                      .map((checkResult) => (
-                        <tr key={checkResult.check_id} className="animate-fade">
+                    {sortChecks(cluster?.selected_checks.slice()).map(
+                      (checkId) => (
+                        <tr key={checkId} className="animate-fade">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {checkResult.check_id}
+                            {checkId}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {description(checkResult.check_id)}
+                            {description(checkId)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap content-center">
                             {getResultIcon(
                               cluster.checks_execution,
-                              checkResult.result
+                              cluster?.checks_results.find(
+                                (result) => result.check_id === checkId
+                              )?.result
                             )}
                           </td>
                         </tr>
-                      ))}
+                      )
+                    )}
                   </tbody>
                 </table>
               </div>
