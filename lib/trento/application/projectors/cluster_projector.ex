@@ -191,6 +191,13 @@ defmodule Trento.ClusterProjector do
     )
   end
 
+  def after_update(%ChecksSelected{cluster_id: cluster_id, checks: checks}, _, _) do
+    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_details_updated", %{
+      id: cluster_id,
+      selected_checks: checks
+    })
+  end
+
   def after_update(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, _, _) do
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_changed", %{
       cluster_id: cluster_id,
