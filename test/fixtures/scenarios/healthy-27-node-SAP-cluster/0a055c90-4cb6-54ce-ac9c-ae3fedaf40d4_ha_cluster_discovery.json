@@ -222,7 +222,7 @@
                     {
                       "Id": "rsc_ip_HDD_HDB10-instance_attributes-ip",
                       "Name": "ip",
-                      "Value": "10.100.1.13"
+                      "Value": "10.100.1.1347"
                     },
                     {
                       "Id": "rsc_ip_HDD_HDB10-instance_attributes-cidr_netmask",
@@ -266,41 +266,41 @@
             {
               "Id": "msl_SAPHana_HDD_HDB10",
               "Primitive": {
-                "Id": "rsc_SAPHana_HDD_HDB10",
+                "Id": "rsc_SAPHana_HDD_HDB112321412431241",
                 "Type": "SAPHana",
                 "Class": "ocf",
                 "Provider": "suse",
                 "Operations": [
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-start-0",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-start-0",
                     "Name": "start",
                     "Role": "",
                     "Timeout": "3600",
                     "Interval": "0"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-stop-0",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-stop-0",
                     "Name": "stop",
                     "Role": "",
                     "Timeout": "3600",
                     "Interval": "0"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-promote-0",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-promote-0",
                     "Name": "promote",
                     "Role": "",
                     "Timeout": "3600",
                     "Interval": "0"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-monitor-60",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-monitor-60",
                     "Name": "monitor",
                     "Role": "Master",
                     "Timeout": "700",
                     "Interval": "60"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-monitor-61",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-monitor-61",
                     "Name": "monitor",
                     "Role": "Slave",
                     "Timeout": "700",
@@ -310,27 +310,27 @@
                 "MetaAttributes": null,
                 "InstanceAttributes": [
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-SID",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-instance_attributes-SID",
                     "Name": "SID",
                     "Value": "HDD"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-InstanceNumber",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-instance_attributes-InstanceNumber",
                     "Name": "InstanceNumber",
                     "Value": "10"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-PREFER_SITE_TAKEOVER",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-instance_attributes-PREFER_SITE_TAKEOVER",
                     "Name": "PREFER_SITE_TAKEOVER",
                     "Value": "True"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-AUTOMATED_REGISTER",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-instance_attributes-AUTOMATED_REGISTER",
                     "Name": "AUTOMATED_REGISTER",
                     "Value": "False"
                   },
                   {
-                    "Id": "rsc_SAPHana_HDD_HDB10-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT",
+                    "Id": "rsc_SAPHana_HDD_HDB112321412431241-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT",
                     "Name": "DUPLICATE_PRIMARY_TIMEOUT",
                     "Value": "7200"
                   }
@@ -469,7 +469,7 @@
           "Managed": true,
           "Resources": [
             {
-              "Id": "rsc_SAPHana_HDD_HDB10",
+              "Id": "rsc_SAPHana_HDD_HDB112321412431241",
               "Node": {
                 "Id": "2",
                 "Name": "vmhdbdev02",
@@ -486,7 +486,7 @@
               "NodesRunningOn": 1
             },
             {
-              "Id": "rsc_SAPHana_HDD_HDB10",
+              "Id": "rsc_SAPHana_HDD_HDB112321412431241",
               "Node": null,
               "Role": "Stopped",
               "Agent": "ocf::suse:SAPHana",
@@ -640,7 +640,7 @@
                 "MigrationThreshold": 5000
               },
               {
-                "Name": "rsc_SAPHana_HDD_HDB10",
+                "Name": "rsc_SAPHana_HDD_HDB112321412431241",
                 "FailCount": 0,
                 "MigrationThreshold": 5000
               },
@@ -670,7 +670,7 @@
                 "MigrationThreshold": 5000
               },
               {
-                "Name": "rsc_SAPHana_HDD_HDB10",
+                "Name": "rsc_SAPHana_HDD_HDB112321412431241",
                 "FailCount": 1000000,
                 "MigrationThreshold": 5000
               },
@@ -729,7 +729,7 @@
                 "Value": "10"
               },
               {
-                "Name": "master-rsc_SAPHana_HDD_HDB10",
+                "Name": "master-rsc_SAPHana_HDD_HDB112321412431241",
                 "Value": "-9000"
               }
             ]
@@ -778,7 +778,7 @@
                 "Value": "1643125026"
               },
               {
-                "Name": "master-rsc_SAPHana_HDD_HDB10",
+                "Name": "master-rsc_SAPHana_HDD_HDB112321412431241",
                 "Value": "150"
               }
             ]
