@@ -1,7 +1,7 @@
 defmodule TrentoWeb.ClusterController do
   use TrentoWeb, :controller
 
-  alias Trento.Clusters
+  alias Trento.{Clusters, Hosts}
 
   alias Trento.Integration.Checks
 
@@ -58,7 +58,7 @@ defmodule TrentoWeb.ClusterController do
 
   @spec get_connection_settings(Plug.Conn.t(), map) :: Plug.Conn.t()
   def get_connection_settings(conn, %{"cluster_id" => cluster_id}) do
-    settings = Clusters.get_hosts_connection_settings(cluster_id)
+    settings = Hosts.get_all_connection_settings_by_cluster_id(cluster_id)
 
     conn
     |> put_status(:ok)
@@ -75,7 +75,7 @@ defmodule TrentoWeb.ClusterController do
       ) do
     settings
     |> Enum.map(&map_to_struct/1)
-    |> Clusters.save_hosts_connection_settings()
+    |> Hosts.save_hosts_connection_settings()
 
     get_connection_settings(conn, %{"cluster_id" => cluster_id})
   end
