@@ -7,7 +7,10 @@ defmodule Trento.HostsTest do
   alias Trento.Hosts
   alias Trento.Repo
 
-  alias Trento.SlesSubscriptionReadModel
+  alias Trento.{
+    AzureProviderReadModel,
+    SlesSubscriptionReadModel
+  }
 
   @moduletag :integration
 
@@ -91,10 +94,20 @@ defmodule Trento.HostsTest do
       cluster_projection(id: cluster_id)
 
       %{id: a_host_id, hostname: a_hostname} =
-        host_projection(hostname: "A-01", cluster_id: cluster_id, provider: :azure)
+        host_projection(
+          hostname: "A-01",
+          cluster_id: cluster_id,
+          provider: :azure,
+          provider_data: %AzureProviderReadModel{admin_username: "adminuser123"}
+        )
 
       %{id: another_host_id, hostname: another_hostname} =
-        host_projection(hostname: "B-01", cluster_id: cluster_id, provider: :azure)
+        host_projection(
+          hostname: "B-01",
+          cluster_id: cluster_id,
+          provider: :azure,
+          provider_data: %AzureProviderReadModel{admin_username: "adminuser345"}
+        )
 
       settings = Hosts.get_all_connection_settings_by_cluster_id(cluster_id)
 
@@ -102,13 +115,13 @@ defmodule Trento.HostsTest do
                %{
                  host_id: ^a_host_id,
                  hostname: ^a_hostname,
-                 default_user: "cloudadmin",
+                 default_user: "adminuser123",
                  user: nil
                },
                %{
                  host_id: ^another_host_id,
                  hostname: ^another_hostname,
-                 default_user: "cloudadmin",
+                 default_user: "adminuser345",
                  user: nil
                }
              ] = settings
