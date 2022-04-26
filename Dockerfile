@@ -34,6 +34,6 @@ ENV LC_ALL en_US.UTF-8
 # tar is required by kubectl cp
 RUN zypper -n in tar
 WORKDIR /app
-COPY --from=release /build/web/_build/prod/rel/trento .
+COPY --from=release /build/_build/prod/rel/trento .
 EXPOSE 4000/tcp
 ENTRYPOINT ["/app/bin/trento"]
