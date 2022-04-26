@@ -18,6 +18,9 @@ import {
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 const toggle = (list, element) =>
   list.includes(element)
     ? list.filter((string) => string !== element)
@@ -211,7 +214,12 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                                       <div className="mt-2 sm:flex sm:justify-between">
                                         <div className="sm:flex">
                                           <p className="flex items-center text-sm text-gray-500">
-                                            {check.description}
+                                            <ReactMarkdown
+                                              className="markdown"
+                                              remarkPlugins={[remarkGfm]}
+                                            >
+                                              {check.description}
+                                            </ReactMarkdown>
                                           </p>
                                         </div>
                                         <Switch.Group
