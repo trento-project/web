@@ -165,4 +165,38 @@ defmodule Trento.HostProjectorTest do
     assert :azure == host_projection.provider
     assert expected_azure_model == host_projection.provider_data
   end
+
+  test "should update the provider field when ProviderUpdated is received with AWS provider type",
+       %{
+         host_id: host_id
+       } do
+    event = %ProviderUpdated{
+      host_id: host_id,
+      provider: :aws,
+      provider_data: nil
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert :aws == host_projection.provider
+    assert nil == host_projection.provider_data
+  end
+
+  test "should update the provider field when ProviderUpdated is received with GCP provider type",
+       %{
+         host_id: host_id
+       } do
+    event = %ProviderUpdated{
+      host_id: host_id,
+      provider: :gcp,
+      provider_data: nil
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert :gcp == host_projection.provider
+    assert nil == host_projection.provider_data
+  end
 end
