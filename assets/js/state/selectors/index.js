@@ -41,7 +41,7 @@ export const getDatabaseDetail = (id) => (state) => {
   if (!database) return null;
 
   const instances = enrichInstances(
-    state.sapSystemsList.databaseInstances,
+    state.databasesList.databaseInstances,
     database.id,
     state
   );
