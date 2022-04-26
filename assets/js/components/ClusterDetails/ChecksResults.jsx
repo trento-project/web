@@ -20,6 +20,9 @@ import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
 import { TriggerChecksExecutionRequest } from './ClusterDetails';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 const getHostname =
   (hosts = []) =>
   (hostId) => {
@@ -173,7 +176,12 @@ export const ChecksResults = () => {
                             {checkId}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {description(checkId)}
+                            <ReactMarkdown
+                              className="markdown"
+                              remarkPlugins={[remarkGfm]}
+                            >
+                              {description(checkId)}
+                            </ReactMarkdown>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap content-center">
                             {getResultIcon(
