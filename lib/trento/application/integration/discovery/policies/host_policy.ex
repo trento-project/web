@@ -138,7 +138,10 @@ defmodule Trento.Integration.Discovery.HostPolicy do
              "vmSize" => vm_size,
              "storageProfile" => storage_profile,
              "offer" => offer,
-             "sku" => sku
+             "sku" => sku,
+             "osProfile" => %{
+               "adminUsername" => admin_username
+             }
            }
          }
        }) do
@@ -149,7 +152,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       vm_size: vm_size,
       data_disk_number: parse_data_disk_number(storage_profile),
       offer: offer,
-      sku: sku
+      sku: sku,
+      admin_username: admin_username
     }
   end
 

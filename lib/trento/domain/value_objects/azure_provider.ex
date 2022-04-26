@@ -15,5 +15,6 @@ defmodule Trento.Domain.AzureProvider do
     field :data_disk_number, :integer
     field :offer, :string
     field :sku, :string
+    field :admin_username, :string
   end
 end

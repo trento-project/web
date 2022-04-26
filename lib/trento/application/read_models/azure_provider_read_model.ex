@@ -20,6 +20,7 @@ defmodule Trento.AzureProviderReadModel do
     field :data_disk_number, :integer
     field :offer, :string
     field :sku, :string
+    field :admin_username, :string
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

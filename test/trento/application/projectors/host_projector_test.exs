@@ -145,7 +145,8 @@ defmodule Trento.HostProjectorTest do
         offer: "sles-sap-15-sp3-byos",
         resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
         sku: "gen2",
-        vm_size: "Standard_E4s_v3"
+        vm_size: "Standard_E4s_v3",
+        admin_username: "cloudadmin"
       }
     }
 
@@ -159,7 +160,8 @@ defmodule Trento.HostProjectorTest do
       offer: "sles-sap-15-sp3-byos",
       resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
       sku: "gen2",
-      vm_size: "Standard_E4s_v3"
+      vm_size: "Standard_E4s_v3",
+      admin_username: "cloudadmin"
     }
 
     assert :azure == host_projection.provider
