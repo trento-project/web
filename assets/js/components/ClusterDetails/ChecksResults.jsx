@@ -74,11 +74,14 @@ export const ChecksResults = () => {
   const cluster = useSelector(getCluster(clusterID));
   const [hasAlreadyChecksResults, setHasAlreadyChecksResults] = useState(false);
 
-  const [catalogData, catalogError, loading] = useSelector((state) => [
-    state.catalog.data,
-    state.catalog.error,
-    state.catalog.loading,
-  ]);
+  const [catalogData, catalogErrorCode, catalogError, loading] = useSelector(
+    (state) => [
+      state.catalog.data,
+      state.catalog.errorCode,
+      state.catalog.error,
+      state.catalog.loading,
+    ]
+  );
 
   const dispatchUpdateCatalog = () => {
     dispatch({
@@ -101,23 +104,36 @@ export const ChecksResults = () => {
     return <LoadingBox text="Loading checks catalog..." />;
   }
 
-  if (catalogError) {
-    return (
-      <NotificationBox
-        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-        text={catalogError}
-        buttonText="Try again"
-        buttonOnClick={dispatchUpdateCatalog}
-      />
-    );
-  }
+  let pageContent;
 
   const description = (checkId) => {
     return catalogData.find(({ id }) => id === checkId)?.description;
   };
 
-  let pageContent;
-  if (!hasAlreadyChecksResults) {
+  if (catalogError) {
+    if (catalogErrorCode == 'not_found') {
+      pageContent = (
+        <NotificationBox
+          icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+          text={
+            <ReactMarkdown
+              className="markdown"
+              remarkPlugins={[remarkGfm]}
+            >{`Provider \`${cluster?.provider}\` does not support checks execution`}</ReactMarkdown>
+          }
+        />
+      );
+    } else {
+      pageContent = (
+        <NotificationBox
+          icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+          text={catalogError}
+          buttonText="Try again"
+          buttonOnClick={dispatchUpdateCatalog}
+        />
+      );
+    }
+  } else if (!hasAlreadyChecksResults) {
     pageContent = (
       <HintForChecksSelection
         clusterId={clusterID}
