@@ -170,6 +170,37 @@ defmodule Trento.ClusterProjector do
     )
   end
 
+  @impl true
+  def after_update(
+        %ClusterDetailsUpdated{
+          cluster_id: id,
+          name: name,
+          type: type,
+          sid: sid,
+          provider: provider,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
+          details: details
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "cluster_details_updated",
+      %{
+        id: id,
+        name: name,
+        type: type,
+        sid: sid,
+        provider: provider,
+        resources_number: resources_number,
+        hosts_number: hosts_number,
+        details: details
+      }
+    )
+  end
+
   # TODO: broadcast a more specific event
   def after_update(
         %event{},
