@@ -14,7 +14,7 @@ context("Hosts Overview", () => {
     cy.url().should("include", "/hosts");
   });
 
-  describe("Registered Hosts are shown in the list", () => {
+  describe("Registered Hosts are shown in the list", () => {    
     it("should show 10 of the 27 registered hosts", () => {
       cy.get(".tn-hostname").its("length").should("eq", 10);
     });
@@ -23,6 +23,13 @@ context("Hosts Overview", () => {
     });
     it("should have 3 pages", () => {
       cy.get(".tn-page-item").its("length").should("eq", 3);
+    });
+    it("should have all of its hosts running on azure", () => {
+      cy.get('tr').each(($row, index) => {
+        if (index !== 0) {
+          expect($row.text()).to.contain("azure");          
+        }
+      })
     });
   });
 

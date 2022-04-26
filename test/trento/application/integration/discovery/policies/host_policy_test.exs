@@ -55,6 +55,34 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
+  test "should return the expected commands when a cloud_discovery payload with an aws provider is handled" do
+    assert {
+             :ok,
+             %UpdateProvider{
+               host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+               provider: :aws,
+               provider_data: nil
+             }
+           } ==
+             "cloud_discovery_aws"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a cloud_discovery payload with an gcp provider is handled" do
+    assert {
+             :ok,
+             %UpdateProvider{
+               host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+               provider: :gcp,
+               provider_data: nil
+             }
+           } ==
+             "cloud_discovery_gcp"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
   test "should return the expected commands when a cloud_discovery payload with an unknown provider is handled" do
     assert {
              :ok,

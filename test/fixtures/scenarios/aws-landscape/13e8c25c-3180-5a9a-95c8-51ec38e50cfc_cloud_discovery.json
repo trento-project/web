@@ -1,0 +1,8 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "13e8c25c-3180-5a9a-95c8-51ec38e50cfc",
+  "payload": {
+    "Provider": "aws",
+    "Metadata": null
+  }
+}

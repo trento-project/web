@@ -26,7 +26,7 @@ defmodule Trento.HostReadModel do
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
 
-    field :provider, Ecto.Enum, values: [:azure, :unknown]
+    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
 
     field :provider_data, PolymorphicEmbed,
       types: [
