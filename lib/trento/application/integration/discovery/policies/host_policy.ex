@@ -56,6 +56,34 @@ defmodule Trento.Integration.Discovery.HostPolicy do
 
   def handle(%{
         "discovery_type" => "cloud_discovery",
+        "agent_id" => agent_id,
+        "payload" => %{
+          "Provider" => "aws"
+        }
+      }) do
+    UpdateProvider.new(%{
+      host_id: agent_id,
+      provider: :aws,
+      provider_data: nil
+    })
+  end
+
+  def handle(%{
+        "discovery_type" => "cloud_discovery",
+        "agent_id" => agent_id,
+        "payload" => %{
+          "Provider" => "gcp"
+        }
+      }) do
+    UpdateProvider.new(%{
+      host_id: agent_id,
+      provider: :gcp,
+      provider_data: nil
+    })
+  end
+
+  def handle(%{
+        "discovery_type" => "cloud_discovery",
         "agent_id" => agent_id
       }) do
     UpdateProvider.new(%{
