@@ -2,20 +2,21 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { EOS_ARROW_BACK } from 'eos-icons-react';
+import { EOS_ARROW_BACK, EOS_CANCEL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import Button from '@components/Button';
 import classNames from 'classnames';
 
 import { Tab } from '@headlessui/react';
 import { ChecksSelection } from './ChecksSelection';
 import { ConnectionSettings } from './ConnectionSettings';
+import { getCluster } from '@state/selectors';
+import { TriggerChecksExecutionRequest } from './ClusterDetails';
 
 export const ClusterSettings = () => {
   const { clusterID } = useParams();
   const navigate = useNavigate();
 
-  const clusters = useSelector((state) => state.clustersList.clusters);
-  const cluster = clusters.find((cluster) => cluster.id === clusterID);
+  const cluster = useSelector(getCluster(clusterID));
 
   const tabsSettings = {
     'Checks Selection': (
@@ -77,6 +78,50 @@ export const ClusterSettings = () => {
           ))}
         </Tab.Panels>
       </Tab.Group>
+    </div>
+  );
+};
+
+export const SavingFailedAlert = ({ onClose = () => {}, children }) => {
+  return (
+    <div
+      className="rounded relative bg-red-200 border-red-600 text-red-600 border-l-4 p-2 ml-2 pr-10"
+      role="alert"
+    >
+      {children}
+      <button
+        className="absolute top-0 bottom-0 right-0 pr-2"
+        onClick={() => onClose()}
+      >
+        <EOS_CANCEL size={14} className="fill-red-600" />
+      </button>
+    </div>
+  );
+};
+
+export const SuggestTriggeringChecksExecutionAfterSettingsUpdated = ({
+  clusterId,
+  onClose = () => {},
+}) => {
+  return (
+    <div>
+      <div
+        className="flex first-letter:rounded relative bg-green-200 border-green-600 text-green-600 border-l-4 p-2 ml-2"
+        role="alert"
+      >
+        <p className="mr-1">
+          Well done! To start execution now, click here 👉{' '}
+        </p>
+        <TriggerChecksExecutionRequest
+          cssClasses="rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
+          clusterId={clusterId}
+        >
+          <EOS_PLAY_CIRCLE color="green" />
+        </TriggerChecksExecutionRequest>
+        <button className="ml-1" onClick={() => onClose()}>
+          <EOS_CANCEL size={14} className="fill-green-600" />
+        </button>
+      </div>
     </div>
   );
 };

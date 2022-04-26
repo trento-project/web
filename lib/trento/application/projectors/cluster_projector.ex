@@ -136,7 +136,11 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        %ClusterReadModel{id: id}
+        ClusterReadModel
+        |> Repo.get(id)
+        # TODO: couldn't make it work with Ecto.Multi
+        # With following line when we receive an empty list of selected checks, the readmodel does not get updated
+        # %ClusterReadModel{id: id}
         |> ClusterReadModel.changeset(%{
           selected_checks: checks
         })

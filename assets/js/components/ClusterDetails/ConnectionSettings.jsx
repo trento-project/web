@@ -1,4 +1,4 @@
-import { EOS_CANCEL, EOS_ERROR, EOS_LOADING_ANIMATED } from 'eos-icons-react';
+import { EOS_ERROR, EOS_LOADING_ANIMATED } from 'eos-icons-react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingBox from '../LoadingBox';
@@ -7,15 +7,19 @@ import Table from '@components/Table';
 import { Switch } from '@headlessui/react';
 
 import classNames from 'classnames';
+import {
+  SavingFailedAlert,
+  SuggestTriggeringChecksExecutionAfterSettingsUpdated,
+} from './ClusterSettings';
 
 export const ConnectionSettings = ({ clusterId, cluster }) => {
-  const { loading, saving, error, settings, savingError } = useSelector(
-    (state) => state.clusterConnectionSettings
-  );
+  const dispatch = useDispatch();
+
+  const { loading, saving, error, settings, savingError, savingSuccess } =
+    useSelector((state) => state.clusterConnectionSettings);
   const [localSettings, setLocalSettings] = useState([]);
   const [localSavingError, setLocalSavingError] = useState(null);
-
-  const dispatch = useDispatch();
+  const [localSavingSuccess, setLocalSavingSuccess] = useState(null);
 
   const loadConnectionSettings = () => {
     dispatch({
@@ -25,21 +29,22 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
   };
 
   useEffect(loadConnectionSettings, [dispatch]);
-  useEffect(
-    () =>
-      setLocalSettings(
-        settings.map((hostSettings) => ({
-          ...hostSettings,
-          isDefaultUser:
-            hostSettings.user === hostSettings.default_user ||
-            !hostSettings.user,
-        }))
-      ),
-    [settings]
-  );
+  useEffect(() => {
+    setLocalSavingSuccess(null);
+  }, [localSettings]);
+  useEffect(() => {
+    setLocalSettings(
+      settings.map((hostSettings) => ({
+        ...hostSettings,
+        isDefaultUser:
+          hostSettings.user === hostSettings.default_user || !hostSettings.user,
+      }))
+    );
+  }, [settings]);
   useEffect(() => {
     setLocalSavingError(savingError);
-  }, [savingError]);
+    setLocalSavingSuccess(savingSuccess);
+  }, [savingError, savingSuccess]);
 
   if (loading) {
     return <LoadingBox text="Loading Cluster Connection Settings..." />;
@@ -163,11 +168,6 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
                 settings: newSettings,
               },
             });
-            // dispatch({
-            //     type: 'CHECKS_SELECTED',
-            //     payload: { checks: selectedChecks, clusterID: clusterID },
-            // });
-            // navigate(`/clusters/${clusterID}/checks/results`);
           }}
         >
           {saving ? (
@@ -175,22 +175,19 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
               <EOS_LOADING_ANIMATED color="green" size={25} />
             </span>
           ) : (
-            'Save Connection Settings'
+            'Apply Connection Settings'
           )}
         </button>
         {localSavingError && (
-          <div
-            className="rounded relative bg-red-200 border-red-600 text-red-600 border-l-4 p-2 ml-2 pr-10"
-            role="alert"
-          >
+          <SavingFailedAlert onClose={() => setLocalSavingError(null)}>
             <p>{savingError}</p>
-            <button
-              className="absolute top-0 bottom-0 right-0 pr-2"
-              onClick={() => setLocalSavingError(null)}
-            >
-              <EOS_CANCEL size={14} className="fill-red-600" />
-            </button>
-          </div>
+          </SavingFailedAlert>
+        )}
+        {localSavingSuccess && cluster.selected_checks.length > 0 && (
+          <SuggestTriggeringChecksExecutionAfterSettingsUpdated
+            clusterId={clusterId}
+            onClose={() => setLocalSavingSuccess(null)}
+          />
         )}
       </div>
     </div>

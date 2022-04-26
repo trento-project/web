@@ -6,6 +6,7 @@ const initialState = {
   settings: [],
   error: null,
   savingError: null,
+  savingSuccess: null,
 };
 
 export const clusterConnectionsSettingsSlice = createSlice({
@@ -16,6 +17,7 @@ export const clusterConnectionsSettingsSlice = createSlice({
       state.loading = true;
       state.error = null;
       state.savingError = null;
+      state.savingSuccess = null;
     },
     stopLoadingClusterConnectionSettings: (state) => {
       state.loading = false;
@@ -30,6 +32,7 @@ export const clusterConnectionsSettingsSlice = createSlice({
     startSavingClusterConnectionSettings: (state) => {
       state.saving = true;
       state.savingError = null;
+      state.savingSuccess = null;
     },
     stopSavingClusterConnectionSettings: (state) => {
       state.saving = false;
@@ -37,6 +40,9 @@ export const clusterConnectionsSettingsSlice = createSlice({
     setClusterConnectionSettingsSavingError: (state) => {
       state.savingError =
         'An unexpected error happened while saving your connection settings';
+    },
+    setClusterConnectionSettingsSavingSuccess: (state) => {
+      state.savingSuccess = true;
     },
   },
 });
@@ -49,6 +55,7 @@ export const {
   startSavingClusterConnectionSettings,
   stopSavingClusterConnectionSettings,
   setClusterConnectionSettingsSavingError,
+  setClusterConnectionSettingsSavingSuccess,
 } = clusterConnectionsSettingsSlice.actions;
 
 export default clusterConnectionsSettingsSlice.reducer;
