@@ -86,7 +86,8 @@ defmodule Trento.Factory do
       agent_version: Faker.StarWars.planet(),
       cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
       heartbeat: Keyword.get(attrs, :heartbeat, :unknown),
-      provider: Keyword.get(attrs, :provider, :unknown)
+      provider: Keyword.get(attrs, :provider, :unknown),
+      provider_data: Keyword.get(attrs, :provider_data)
     })
   end
 

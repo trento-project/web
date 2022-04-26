@@ -45,10 +45,11 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                  offer: "sles-sap-15-sp3-byos",
                  resource_group: "resourceGroupName",
                  sku: "gen2",
-                 vm_size: "Standard_E4s_v3"
+                 vm_size: "Standard_E4s_v3",
+                 admin_username: "cloudadmin"
                }
              }
-           } =
+           } ==
              "cloud_discovery_azure"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()

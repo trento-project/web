@@ -6,6 +6,7 @@ defmodule Trento.Hosts do
   import Ecto.Query
 
   alias Trento.{
+    AzureProviderReadModel,
     HostConnectionSettings,
     HostReadModel,
     SlesSubscriptionReadModel
@@ -50,7 +51,7 @@ defmodule Trento.Hosts do
           hostname: h.hostname,
           user: s.user,
           ssh_address: h.ssh_address,
-          provider: h.provider
+          provider_data: h.provider_data
         },
         where: h.id == ^host_id
 
@@ -76,13 +77,14 @@ defmodule Trento.Hosts do
           hostname: h.hostname,
           user: s.user,
           ssh_address: h.ssh_address,
-          provider: h.provider
+          provider_data: h.provider_data
         },
         where: h.cluster_id == ^cluster_id,
         order_by: [asc: h.hostname]
       )
 
-    Repo.all(query)
+    query
+    |> Repo.all()
     |> Enum.map(&enrich_with_default_user/1)
   end
 
@@ -114,18 +116,22 @@ defmodule Trento.Hosts do
          host_id: host_id,
          hostname: hostname,
          user: user,
-         provider: provider,
-         ssh_address: ssh_address
+         ssh_address: ssh_address,
+         provider_data: provider_data
        }) do
     %{
       host_id: host_id,
       hostname: hostname,
       user: user,
       ssh_address: ssh_address,
-      default_user: determine_default_connection_user(provider)
+      default_user: determine_default_connection_user(provider_data)
     }
   end
 
-  defp determine_default_connection_user(:azure), do: "cloudadmin"
+  defp determine_default_connection_user(%AzureProviderReadModel{
+         admin_username: admin_username
+       }),
+       do: admin_username
+
   defp determine_default_connection_user(_), do: "root"
 end
