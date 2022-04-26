@@ -8,6 +8,8 @@ import ListView from '@components/ListView';
 import Pill from '@components/Pill';
 import Table from '@components/Table';
 
+import { groupBy } from '@lib/lists';
+
 import SiteDetails from './SiteDetails';
 
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
@@ -178,17 +180,19 @@ const ClusterDetails = () => {
           <h2 className="text-2xl font-bold">Pacemaker Site details</h2>
         </div>
       </div>
+
       <div className="mt-2">
-        <h3 className="text-l font-bold">NBG</h3>
-        <Table
-          config={siteDetailsConfig}
-          data={renderedNodes.filter(({ site }) => site === 'NBG')}
-        />
-        <h3 className="text-l font-bold">WDF</h3>
-        <Table
-          config={siteDetailsConfig}
-          data={renderedNodes.filter(({ site }) => site === 'WDF')}
-        />
+        {Object.entries(groupBy(cluster.details.nodes, 'site')).map(
+          ([siteName]) => (
+            <div key={siteName}>
+              <h3 className="text-l font-bold">{siteName}</h3>
+              <Table
+                config={siteDetailsConfig}
+                data={renderedNodes.filter(({ site }) => site === siteName)}
+              />
+            </div>
+          )
+        )}
       </div>
 
       <div className="mt-8">
