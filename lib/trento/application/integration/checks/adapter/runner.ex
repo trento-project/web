@@ -58,7 +58,7 @@ defmodule Trento.Integration.Checks.Runner do
           %{
             host_id: host.host_id,
             address: host.ssh_address,
-            user: host.user || "root"
+            user: host.user || host.default_user
           }
         end)
     }

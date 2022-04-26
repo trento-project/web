@@ -40,13 +40,92 @@ defmodule Trento.Hosts do
 
   @spec get_connection_settings(String.t()) :: map | {:error, any}
   def get_connection_settings(host_id) do
+    # TODO: refactor to a comon query
     query =
       from h in HostReadModel,
         left_join: s in HostConnectionSettings,
         on: h.id == s.id,
-        select: %{host_id: h.id, ssh_address: h.ssh_address, user: s.user},
+        select: %{
+          host_id: h.id,
+          hostname: h.hostname,
+          user: s.user,
+          ssh_address: h.ssh_address,
+          provider: h.provider
+        },
         where: h.id == ^host_id
 
-    Repo.one(query)
+    query
+    |> Repo.one()
+    |> enrich_with_default_user()
   end
+
+  @spec get_all_connection_settings_by_cluster_id(String.t()) :: [
+          %{
+            host_id: String.t(),
+            hostname: String.t(),
+            user: String.t()
+          }
+        ]
+  def get_all_connection_settings_by_cluster_id(cluster_id) do
+    query =
+      from(h in HostReadModel,
+        left_join: s in HostConnectionSettings,
+        on: h.id == s.id,
+        select: %{
+          host_id: h.id,
+          hostname: h.hostname,
+          user: s.user,
+          ssh_address: h.ssh_address,
+          provider: h.provider
+        },
+        where: h.cluster_id == ^cluster_id,
+        order_by: [asc: h.hostname]
+      )
+
+    Repo.all(query)
+    |> Enum.map(&enrich_with_default_user/1)
+  end
+
+  @spec save_hosts_connection_settings([
+          %{
+            host_id: String.t(),
+            user: String.t()
+          }
+        ]) :: :ok
+  def save_hosts_connection_settings(settings) do
+    settings =
+      Enum.map(settings, fn %{host_id: host_id, user: user} ->
+        # TODO: use changeset to properly validate input
+        %{
+          id: host_id,
+          user: user
+        }
+      end)
+
+    Repo.insert_all(HostConnectionSettings, settings,
+      on_conflict: :replace_all,
+      conflict_target: [:id]
+    )
+
+    :ok
+  end
+
+  defp enrich_with_default_user(%{
+         host_id: host_id,
+         hostname: hostname,
+         user: user,
+         provider: provider,
+         ssh_address: ssh_address
+       }) do
+    %{
+      host_id: host_id,
+      hostname: hostname,
+      user: user,
+      ssh_address: ssh_address,
+      default_user: determine_default_connection_user(provider)
+    }
+  end
+
+  defp determine_default_connection_user(:azure), do: "cloudadmin"
+  defp determine_default_connection_user(_), do: "root"
 end

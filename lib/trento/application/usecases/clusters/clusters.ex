@@ -5,11 +5,7 @@ defmodule Trento.Clusters do
 
   import Ecto.Query
 
-  alias Trento.{
-    ClusterReadModel,
-    HostConnectionSettings,
-    HostReadModel
-  }
+  alias Trento.ClusterReadModel
 
   alias Trento.Domain.CheckResult
 
@@ -57,27 +53,6 @@ defmodule Trento.Clusters do
     |> Repo.preload([:tags, :hosts_executions, :checks_results])
   end
 
-  @spec get_hosts_connection_settings(String.t()) :: [
-          %{
-            host_id: String.t(),
-            hostname: String.t(),
-            user: String.t()
-          }
-        ]
-  def get_hosts_connection_settings(cluster_id) do
-    query =
-      from(h in HostReadModel,
-        left_join: s in HostConnectionSettings,
-        on: h.id == s.id,
-        select: %{host_id: h.id, hostname: h.hostname, user: s.user, provider: h.provider},
-        where: h.cluster_id == ^cluster_id,
-        order_by: [asc: h.hostname]
-      )
-
-    Repo.all(query)
-    |> Enum.map(&enrich_with_default_user/1)
-  end
-
   @spec request_clusters_checks_execution :: :ok | {:error, any}
   def request_clusters_checks_execution do
     query =
@@ -97,47 +72,6 @@ defmodule Trento.Clusters do
           Logger.error("Failed to request checks execution for cluster #{cluster_id}: #{reason}")
       end
     end)
-  end
-
-  defp enrich_with_default_user(%{
-         host_id: host_id,
-         hostname: hostname,
-         user: user,
-         provider: provider
-       }) do
-    %{
-      host_id: host_id,
-      hostname: hostname,
-      user: user,
-      default_user: determine_default_connection_user(provider)
-    }
-  end
-
-  defp determine_default_connection_user(:azure), do: "cloudadmin"
-  defp determine_default_connection_user(_), do: "root"
-
-  @spec save_hosts_connection_settings([
-          %{
-            host_id: String.t(),
-            user: String.t()
-          }
-        ]) :: :ok
-  def save_hosts_connection_settings(settings) do
-    settings =
-      Enum.map(settings, fn %{host_id: host_id, user: user} ->
-        # TODO: use changeset to properly validate input
-        %{
-          id: host_id,
-          user: user
-        }
-      end)
-
-    Repo.insert_all(HostConnectionSettings, settings,
-      on_conflict: :replace_all,
-      conflict_target: [:id]
-    )
-
-    :ok
   end
 
   @spec build_check_results([String.t()]) :: {:ok, [CheckResult.t()]} | {:error, any}
