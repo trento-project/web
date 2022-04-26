@@ -24,3 +24,10 @@ export const page = (page, list) => {
   const end = start + 10;
   return list.slice(start, end);
 };
+
+export const groupBy = (list, key) => {
+  return list.reduce(function (rv, x) {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
