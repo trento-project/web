@@ -69,7 +69,7 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
           return {
             ...hostSettings,
             user,
-            isDefaultUser: user === hostSettings.default_user,
+            isDefaultUser: user === hostSettings.default_user || !user,
           };
         }
         return hostSettings;
