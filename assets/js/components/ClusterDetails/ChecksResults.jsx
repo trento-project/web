@@ -203,7 +203,9 @@ export const ChecksResults = () => {
                             {getResultIcon(
                               cluster.checks_execution,
                               cluster?.checks_results.find(
-                                (result) => result.check_id === checkId
+                                (result) =>
+                                  result.check_id === checkId &&
+                                  result.host_id === host_id
                               )?.result
                             )}
                           </td>
