@@ -149,7 +149,7 @@ function* hostRegistered({ payload }) {
   yield put(
     notify({
       text: `A new host, ${payload.hostname}, has been discovered.`,
-      icon: '🖖',
+      icon: 'ℹ️',
     })
   );
 }
@@ -205,7 +205,7 @@ function* clusterRegistered({ payload }) {
   yield put(
     notify({
       text: `A new cluster, ${payload.name}, has been discovered.`,
-      icon: '🖖',
+      icon: 'ℹ️',
     })
   );
 }
@@ -362,7 +362,7 @@ function* sapSystemRegistered({ payload }) {
   yield put(
     notify({
       text: `A new SAP System, ${payload.sid}, has been discovered.`,
-      icon: '🖖',
+      icon: 'ℹ️',
     })
   );
 }
@@ -424,7 +424,7 @@ function* databaseRegistered({ payload }) {
   yield put(
     notify({
       text: `A new Database, ${payload.sid}, has been discovered.`,
-      icon: '🖖',
+      icon: 'ℹ️',
     })
   );
 }
@@ -460,7 +460,7 @@ function* databaseInstanceRegistered({ payload }) {
   yield put(
     notify({
       text: `A new Database instance, ${payload.sid}, has been discovered.`,
-      icon: '🖖',
+      icon: 'ℹ️',
     })
   );
 }
