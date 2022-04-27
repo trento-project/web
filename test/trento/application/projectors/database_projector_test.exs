@@ -84,7 +84,7 @@ defmodule Trento.DatabaseProjectorTest do
       instance_number: instance_number,
       host_id: host_id,
       system_replication: "Primary",
-      system_replication_status: "ACTIVE"
+      system_replication_status: "Active"
     }
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
@@ -98,5 +98,37 @@ defmodule Trento.DatabaseProjectorTest do
 
     assert event.system_replication == projection.system_replication
     assert event.system_replication_status == projection.system_replication_status
+  end
+
+  test "should update the system replication when DatabaseInstanceSystemReplicationChanged with nil values is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    } =
+      database_instance_projection_without_host(
+        system_replication: "Secondary",
+        system_replication_status: ""
+      )
+
+    event = %DatabaseInstanceSystemReplicationChanged{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      system_replication: nil,
+      system_replication_status: nil
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    projection =
+      Repo.get_by!(DatabaseInstanceReadModel,
+        sap_system_id: sap_system_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert nil == projection.system_replication
+    assert nil == projection.system_replication_status
   end
 end
