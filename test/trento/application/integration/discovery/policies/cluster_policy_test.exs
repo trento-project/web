@@ -223,4 +223,265 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
              |> load_discovery_event_fixture()
              |> ClusterPolicy.handle()
   end
+
+  test "should return the expected commands when a ha_cluster_discovery payload with aws provider" do
+    assert {
+             :ok,
+             %Trento.Domain.Commands.RegisterClusterHost{
+               cib_last_written: "Wed Apr 27 07:42:23 2022",
+               cluster_id: "3e83b9d1-00e8-544d-9e29-7a66d9ed7c1e",
+               designated_controller: true,
+               details: %Trento.Domain.HanaClusterDetails{
+                 fencing_type: "external/ec2",
+                 nodes: [
+                   %Trento.Domain.ClusterNode{
+                     attributes: %{
+                       "hana_prd_clone_state" => "PROMOTED",
+                       "hana_prd_op_mode" => "logreplay",
+                       "hana_prd_remoteHost" => "vmhana02",
+                       "hana_prd_roles" => "4:P:master1:master:worker:master",
+                       "hana_prd_site" => "Site1",
+                       "hana_prd_srmode" => "sync",
+                       "hana_prd_sync_state" => "PRIM",
+                       "hana_prd_version" => "2.00.052.00.1599235305",
+                       "hana_prd_vhost" => "vmhana01",
+                       "lpa_prd_lpt" => "1651045343",
+                       "master-rsc_SAPHana_PRD_HDB00" => "150"
+                     },
+                     hana_status: "Primary",
+                     name: "vmhana01",
+                     resources: [
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_aws_stonith_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "stonith:external/ec2"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_ip_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "ocf::suse:aws-vpc-move-ip"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_exporter_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "systemd:prometheus-hanadb_exporter@PRD_HDB00"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_SAPHana_PRD_HDB00",
+                         role: "Master",
+                         status: "Active",
+                         type: "ocf::suse:SAPHana"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_SAPHanaTopology_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "ocf::suse:SAPHanaTopology"
+                       }
+                     ],
+                     site: "Site1",
+                     virtual_ip: "192.168.1.10"
+                   },
+                   %Trento.Domain.ClusterNode{
+                     attributes: %{
+                       "hana_prd_clone_state" => "DEMOTED",
+                       "hana_prd_op_mode" => "logreplay",
+                       "hana_prd_remoteHost" => "vmhana01",
+                       "hana_prd_roles" => "4:S:master1:master:worker:master",
+                       "hana_prd_site" => "Site2",
+                       "hana_prd_srmode" => "sync",
+                       "hana_prd_sync_state" => "SOK",
+                       "hana_prd_version" => "2.00.052.00.1599235305",
+                       "hana_prd_vhost" => "vmhana02",
+                       "lpa_prd_lpt" => "30",
+                       "master-rsc_SAPHana_PRD_HDB00" => "100"
+                     },
+                     hana_status: "Secondary",
+                     name: "vmhana02",
+                     resources: [
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_SAPHana_PRD_HDB00",
+                         role: "Slave",
+                         status: "Active",
+                         type: "ocf::suse:SAPHana"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_SAPHanaTopology_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "ocf::suse:SAPHanaTopology"
+                       }
+                     ],
+                     site: "Site2",
+                     virtual_ip: nil
+                   }
+                 ],
+                 sbd_devices: [],
+                 secondary_sync_state: "SOK",
+                 sr_health_state: "4",
+                 stopped_resources: [],
+                 system_replication_mode: "sync",
+                 system_replication_operation_mode: "logreplay"
+               },
+               discovered_health: :passing,
+               host_id: "a3279fd0-0443-1234-9354-2d7909fd6bc6",
+               hosts_number: 2,
+               name: "hana_cluster",
+               provider: :aws,
+               resources_number: 7,
+               sid: "PRD",
+               type: :hana_scale_up
+             }
+           } ==
+             "ha_cluster_discovery_aws"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle()
+  end
+
+  test "should return the expected commands when a ha_cluster_discovery payload with gcp provider" do
+    assert {
+             :ok,
+             %Trento.Domain.Commands.RegisterClusterHost{
+               cib_last_written: "Wed Apr 27 07:02:35 2022",
+               cluster_id: "61b4f40d-5e1e-5b58-bdc1-7b855dd7ede2",
+               designated_controller: true,
+               details: %Trento.Domain.HanaClusterDetails{
+                 fencing_type: "fence_gce",
+                 nodes: [
+                   %Trento.Domain.ClusterNode{
+                     attributes: %{
+                       "hana_prd_clone_state" => "UNDEFINED",
+                       "hana_prd_op_mode" => "logreplay",
+                       "hana_prd_remoteHost" => "vmhana02",
+                       "hana_prd_roles" => "1:P:master1::worker:",
+                       "hana_prd_site" => "Site1",
+                       "hana_prd_srmode" => "sync",
+                       "hana_prd_version" => "2.00.057.00.1629894416",
+                       "hana_prd_vhost" => "vmhana01",
+                       "lpa_prd_lpt" => "1650871168",
+                       "master-rsc_SAPHana_PRD_HDB00" => "-9000"
+                     },
+                     hana_status: "Unknown",
+                     name: "vmhana01",
+                     resources: [
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_SAPHanaTopology_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "ocf::suse:SAPHanaTopology"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_ip_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "ocf::heartbeat:IPaddr2"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_socat_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "ocf::heartbeat:anything"
+                       }
+                     ],
+                     site: "Site1",
+                     virtual_ip: "10.0.0.12"
+                   },
+                   %Trento.Domain.ClusterNode{
+                     attributes: %{
+                       "hana_prd_clone_state" => "DEMOTED",
+                       "hana_prd_op_mode" => "logreplay",
+                       "hana_prd_remoteHost" => "vmhana01",
+                       "hana_prd_roles" => "4:S:master1:master:worker:master",
+                       "hana_prd_site" => "Site2",
+                       "hana_prd_srmode" => "sync",
+                       "hana_prd_version" => "2.00.057.00.1629894416",
+                       "hana_prd_vhost" => "vmhana02",
+                       "lpa_prd_lpt" => "30",
+                       "master-rsc_SAPHana_PRD_HDB00" => "-INFINITY"
+                     },
+                     hana_status: "Unknown",
+                     name: "vmhana02",
+                     resources: [
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_SAPHana_PRD_HDB00",
+                         role: "Slave",
+                         status: "Active",
+                         type: "ocf::suse:SAPHana"
+                       },
+                       %Trento.Domain.ClusterResource{
+                         fail_count: 0,
+                         id: "rsc_SAPHanaTopology_PRD_HDB00",
+                         role: "Started",
+                         status: "Active",
+                         type: "ocf::suse:SAPHanaTopology"
+                       }
+                     ],
+                     site: "Site2",
+                     virtual_ip: nil
+                   }
+                 ],
+                 sbd_devices: [],
+                 secondary_sync_state: "Unknown",
+                 sr_health_state: "Unknown",
+                 stopped_resources: [
+                   %Trento.Domain.ClusterResource{
+                     fail_count: nil,
+                     id: "rsc_gcp_stonith_PRD_HDB00_vmhana01",
+                     role: "Stopped",
+                     status: nil,
+                     type: "stonith:fence_gce"
+                   },
+                   %Trento.Domain.ClusterResource{
+                     fail_count: nil,
+                     id: "rsc_exporter_PRD_HDB00",
+                     role: "Stopped",
+                     status: nil,
+                     type: "systemd:prometheus-hanadb_exporter@PRD_HDB00"
+                   },
+                   %Trento.Domain.ClusterResource{
+                     fail_count: nil,
+                     id: "rsc_gcp_stonith_PRD_HDB00_vmhana02",
+                     role: "Stopped",
+                     status: nil,
+                     type: "stonith:fence_gce"
+                   },
+                   %Trento.Domain.ClusterResource{
+                     fail_count: nil,
+                     id: "rsc_SAPHana_PRD_HDB00",
+                     role: "Stopped",
+                     status: nil,
+                     type: "ocf::suse:SAPHana"
+                   }
+                 ],
+                 system_replication_mode: "sync",
+                 system_replication_operation_mode: "logreplay"
+               },
+               discovered_health: :critical,
+               host_id: "1dc79771-0a96-1234-b5b6-cd4d0aef6acc",
+               hosts_number: 2,
+               name: "hana_cluster",
+               provider: :gcp,
+               resources_number: 9,
+               sid: "PRD",
+               type: :hana_scale_up
+             }
+           } ==
+             "ha_cluster_discovery_gcp"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle()
+  end
 end

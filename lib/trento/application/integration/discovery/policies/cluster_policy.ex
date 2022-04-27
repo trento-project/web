@@ -115,6 +115,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   defp parse_cluster_nodes(
          %{
+           "Provider" => provider,
            "Cib" => %{
              "Configuration" => %{
                "Resources" => resources
@@ -129,7 +130,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          },
          sid
        ) do
-    Enum.map(nodes, fn %{"Name" => name, "Attributes" => attributes} ->
+    nodes
+    |> to_list
+    |> Enum.map(fn %{"Name" => name, "Attributes" => attributes} ->
       attributes =
         Enum.reduce(attributes, %{}, fn %{"Name" => name, "Value" => value}, acc ->
           Map.put(acc, name, value)
@@ -140,7 +143,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       virtual_ip =
         resources
         |> extract_cluster_primitives_from_cib
-        |> parse_virtual_ip(node_resources)
+        |> parse_virtual_ip(node_resources, provider)
 
       node = %{
         name: name,
@@ -192,6 +195,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_secondary_sync_state returns the secondary sync state of the HANA cluster
   defp parse_secondary_sync_state(nodes, sid) do
     nodes
+    |> to_list
     |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
@@ -210,6 +214,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_hana_sr_health_state returns the secondary sync state of the HANA cluster
   defp parse_hana_sr_health_state(nodes, sid) do
     nodes
+    |> to_list
     |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
@@ -259,7 +264,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   defp do_parse_hana_status(_, _), do: "Unknown"
 
   defp parse_cluster_fencing_type(%{"Resources" => resources}) do
-    Enum.find_value(resources, "", fn
+    resources
+    |> to_list
+    |> Enum.find_value("", fn
       %{"Agent" => "stonith:" <> fencing_type} ->
         fencing_type
 
@@ -273,9 +280,12 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          "Groups" => groups,
          "Clones" => clones
        }) do
-    primitives ++
-      Enum.flat_map(clones, &Map.get(&1, "Primitives", [])) ++
-      Enum.flat_map(groups, &Map.get(&1, "Primitives", []))
+    primitives
+    |> to_list
+    |> Enum.concat(
+      Enum.flat_map(clones |> to_list, &Map.get(&1, "Primitives", [])) ++
+        Enum.flat_map(groups |> to_list, &Map.get(&1, "Primitives", []))
+    )
   end
 
   defp extract_cluster_resources(%{
@@ -283,9 +293,12 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          "Groups" => groups,
          "Clones" => clones
        }) do
-    resources ++
-      Enum.flat_map(clones, &Map.get(&1, "Resources", [])) ++
-      Enum.flat_map(groups, &Map.get(&1, "Resources", []))
+    resources
+    |> to_list
+    |> Enum.concat(
+      Enum.flat_map(clones |> to_list, &Map.get(&1, "Resources", [])) ++
+        Enum.flat_map(groups |> to_list, &Map.get(&1, "Resources", []))
+    )
   end
 
   defp parse_fail_count(node_name, resource_id, %{
@@ -294,6 +307,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          }
        }) do
     nodes
+    |> to_list
     |> Enum.find_value([], fn
       %{"Name" => ^node_name, "ResourceHistory" => resource_history} ->
         resource_history
@@ -333,7 +347,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   end
 
   defp parse_sbd_devices(%{"Devices" => devices}) do
-    Enum.map(devices, fn %{"Device" => device, "Status" => status} ->
+    devices
+    |> to_list
+    |> Enum.map(fn %{"Device" => device, "Status" => status} ->
       %{
         device: device,
         status: status
@@ -363,21 +379,23 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   defp parse_provider("gcp"), do: :gcp
   defp parse_provider(_), do: :unknown
 
-  defp parse_virtual_ip(primitives, node_resources) do
+  defp parse_virtual_ip(primitives, node_resources, provider) do
+    virtual_ip_type_suffix = get_virtual_ip_type_suffix_by_provider(provider)
+
     virtual_ip_resource_id =
       node_resources
-      |> Enum.find_value(nil, fn
-        %{type: "ocf::heartbeat:IPaddr2", id: id} ->
-          id
-
-        _ ->
-          nil
+      |> Enum.find_value(nil, fn %{type: virtual_ip_type, id: id} ->
+        if String.ends_with?(virtual_ip_type, virtual_ip_type_suffix), do: id
       end)
 
     primitives
     |> Enum.find_value([], fn
-      %{"Type" => "IPaddr2", "Id" => ^virtual_ip_resource_id, "InstanceAttributes" => attributes} ->
-        attributes
+      %{
+        "Type" => virtual_ip_type,
+        "Id" => ^virtual_ip_resource_id,
+        "InstanceAttributes" => attributes
+      } ->
+        if String.ends_with?(virtual_ip_type, virtual_ip_type_suffix), do: attributes
 
       _ ->
         nil
@@ -390,4 +408,13 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
         nil
     end)
   end
+
+  defp get_virtual_ip_type_suffix_by_provider("azure"), do: "IPaddr2"
+  defp get_virtual_ip_type_suffix_by_provider("aws"), do: "aws-vpc-move-ip"
+  defp get_virtual_ip_type_suffix_by_provider("gcp"), do: "IPaddr2"
+  defp get_virtual_ip_type_suffix_by_provider(_), do: "IPaddr2"
+
+  # TODO: Refactor the parsing code to validate the incoming data in a DTO
+  defp to_list(list) when is_list(list), do: list
+  defp to_list(_), do: []
 end
