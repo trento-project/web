@@ -72,7 +72,12 @@ const enrichInstances = (instances, sapSystemId, state) =>
 export const getInstancesOnHost = (hostId) => (state) => {
   const { databaseInstances, applicationInstances } = state.sapSystemsList;
 
-  const foundDatabaseInstances = databaseInstances
+  const availableDatabaseInstances =
+    databaseInstances.length > 0
+      ? databaseInstances
+      : state.databasesList.databaseInstances;
+
+  const foundDatabaseInstances = availableDatabaseInstances
     .filter(isIdByKey('host_id', hostId))
     .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
 
