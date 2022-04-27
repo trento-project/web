@@ -71,11 +71,11 @@ const Layout = () => {
 
   return (
     <>
-      <main className="bg-gray-100 dark:bg-gray-800 relative">
+      <main className="bg-gray-100 dark:bg-gray-800 h-screen overflow-hidden relative">
         <div className="flex items-start justify-between">
           <div
             className={classNames(
-              'h-screen block shadow-lg fixed w-64 flex-shrink-0',
+              'h-screen block shadow-lg relative w-64 flex-shrink-0',
               { hidden: isCollapsed }
             )}
           >
@@ -113,12 +113,7 @@ const Layout = () => {
           </div>
           <div className="flex flex-col w-full md:space-y-4">
             <header className="w-full h-16 z-40 flex items-center justify-between">
-              <div
-                className={classNames('block', {
-                  'ml-72': !isCollapsed,
-                  'ml-6': isCollapsed,
-                })}
-              >
+              <div className="block ml-6">
                 <button
                   className="flex p-2 items-center rounded-full bg-white shadow text-gray-500 text-md"
                   onClick={handleSidebar}
@@ -150,11 +145,7 @@ const Layout = () => {
                 </div>
               </div>
             </header>
-            <div
-              className={classNames('pb-24 px-4 md:px-6', {
-                'ml-64': !isCollapsed,
-              })}
-            >
+            <div className="overflow-auto h-screen pb-24 px-4 md:px-6">
               <div className="py-6">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
                   <div className="py-4">
@@ -165,16 +156,16 @@ const Layout = () => {
             </div>
           </div>
         </div>
-        <footer className="p-4 z-10 fixed bottom-0 w-full bg-white shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
-          <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-            © 2020-2022 SUSE LLC
-          </span>
-          <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-            This tool is free software released under the Apache License,
-            Version 2.0
-          </span>
-        </footer>
       </main>
+      <footer className="p-4 bg-white rounded-lg shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
+        <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+          © 2020-2022 SUSE LLC
+        </span>
+        <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+          This tool is free software released under the Apache License, Version
+          2.0
+        </span>
+      </footer>
     </>
   );
 };
