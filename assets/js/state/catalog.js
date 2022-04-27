@@ -8,6 +8,7 @@ const errorMessages = {
 const initialState = {
   loading: false,
   data: [],
+  errorCode: '',
   error: '',
 };
 
@@ -24,12 +25,13 @@ export const catalogSlice = createSlice({
       state.loading = false;
 
       if (Object.prototype.hasOwnProperty.call(action.payload, 'error')) {
+        state.errorCode = action.payload.error;
         state.error =
           errorMessages[action.payload.error] || errorMessages['default'];
         state.data = [];
         return;
       }
-
+      state.errorCode = '';
       state.error = '';
       state.data = action.payload;
     },
