@@ -7,7 +7,7 @@ defmodule Trento.Application.UseCases.Alerting.EmailAlert do
 
   def alert(component, identified_by, identifier, reason) do
     new()
-    |> from({"Trento Alerts", "alerts@trento.io"})
+    |> from({"Trento Alerts", "alerts@trento-project.io"})
     |> to({"Trento Admin", Application.fetch_env!(:trento, :alerting)[:recipient]})
     |> subject("Trento Alert: #{component} #{identifier} needs attention.")
     |> render_body("critical.html", %{

@@ -99,7 +99,7 @@ if config_env() == :prod do
 
   config :trento, :alerting,
     enabled: System.get_env("ENABLE_ALERTING", "false") == "true",
-    recipient: System.get_env("ALERT_RECIPIENT") || ""
+    recipient: System.get_env("ALERT_RECIPIENT") || "admin@trento-project.io"
 
   config :trento, Trento.Mailer,
     adapter: Swoosh.Adapters.SMTP,
