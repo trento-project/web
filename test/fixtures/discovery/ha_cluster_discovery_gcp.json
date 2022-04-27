@@ -1,0 +1,861 @@
+{
+  "agent_id": "1dc79771-0a96-1234-b5b6-cd4d0aef6acc",
+  "discovery_type": "ha_cluster_discovery",
+  "payload": {
+    "Cib": {
+      "Configuration": {
+        "CrmConfig": {
+          "ClusterProperties": [
+            {
+              "Id": "cib-bootstrap-options-have-watchdog",
+              "Name": "have-watchdog",
+              "Value": "false"
+            },
+            {
+              "Id": "cib-bootstrap-options-dc-version",
+              "Name": "dc-version",
+              "Value": "2.0.5+20201202.ba59be712-150300.4.16.1-2.0.5+20201202.ba59be712"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-infrastructure",
+              "Name": "cluster-infrastructure",
+              "Value": "corosync"
+            },
+            {
+              "Id": "cib-bootstrap-options-cluster-name",
+              "Name": "cluster-name",
+              "Value": "hana_cluster"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-enabled",
+              "Name": "stonith-enabled",
+              "Value": "true"
+            },
+            {
+              "Id": "cib-bootstrap-options-stonith-timeout",
+              "Name": "stonith-timeout",
+              "Value": "150s"
+            }
+          ]
+        },
+        "Nodes": [
+          {
+            "Id": "1",
+            "Uname": "vmhana01",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-1-lpa_prd_lpt",
+                "Name": "lpa_prd_lpt",
+                "Value": "1650871168"
+              },
+              {
+                "Id": "nodes-1-hana_prd_vhost",
+                "Name": "hana_prd_vhost",
+                "Value": "vmhana01"
+              },
+              {
+                "Id": "nodes-1-hana_prd_site",
+                "Name": "hana_prd_site",
+                "Value": "Site1"
+              },
+              {
+                "Id": "nodes-1-hana_prd_op_mode",
+                "Name": "hana_prd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Id": "nodes-1-hana_prd_srmode",
+                "Name": "hana_prd_srmode",
+                "Value": "sync"
+              },
+              {
+                "Id": "nodes-1-hana_prd_remoteHost",
+                "Name": "hana_prd_remoteHost",
+                "Value": "vmhana02"
+              }
+            ]
+          },
+          {
+            "Id": "2",
+            "Uname": "vmhana02",
+            "InstanceAttributes": [
+              {
+                "Id": "nodes-2-lpa_prd_lpt",
+                "Name": "lpa_prd_lpt",
+                "Value": "30"
+              },
+              {
+                "Id": "nodes-2-hana_prd_op_mode",
+                "Name": "hana_prd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Id": "nodes-2-hana_prd_vhost",
+                "Name": "hana_prd_vhost",
+                "Value": "vmhana02"
+              },
+              {
+                "Id": "nodes-2-hana_prd_remoteHost",
+                "Name": "hana_prd_remoteHost",
+                "Value": "vmhana01"
+              },
+              {
+                "Id": "nodes-2-hana_prd_site",
+                "Name": "hana_prd_site",
+                "Value": "Site2"
+              },
+              {
+                "Id": "nodes-2-hana_prd_srmode",
+                "Name": "hana_prd_srmode",
+                "Value": "sync"
+              }
+            ]
+          }
+        ],
+        "Resources": {
+          "Primitives": [
+            {
+              "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana01",
+              "Class": "stonith",
+              "Type": "fence_gce",
+              "Provider": "",
+              "InstanceAttributes": [
+                {
+                  "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana01-instance_attributes-plug",
+                  "Name": "plug",
+                  "Value": "vmhana01"
+                },
+                {
+                  "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana01-instance_attributes-pcmk_host_map",
+                  "Name": "pcmk_host_map",
+                  "Value": "vmhana01:vmhana01"
+                }
+              ],
+              "MetaAttributes": [
+                {
+                  "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana01-meta_attributes-target-role",
+                  "Name": "target-role",
+                  "Value": "Started"
+                }
+              ],
+              "Operations": null
+            },
+            {
+              "Id": "rsc_exporter_PRD_HDB00",
+              "Class": "systemd",
+              "Type": "prometheus-hanadb_exporter@PRD_HDB00",
+              "Provider": "",
+              "InstanceAttributes": null,
+              "MetaAttributes": [
+                {
+                  "Id": "rsc_exporter_PRD_HDB00-meta_attributes-resource-stickiness",
+                  "Name": "resource-stickiness",
+                  "Value": "0"
+                },
+                {
+                  "Id": "rsc_exporter_PRD_HDB00-meta_attributes-0-target-role",
+                  "Name": "target-role",
+                  "Value": "Started"
+                }
+              ],
+              "Operations": [
+                {
+                  "Id": "rsc_exporter_PRD_HDB00-start-0",
+                  "Name": "start",
+                  "Role": "",
+                  "Interval": "0",
+                  "Timeout": "100"
+                },
+                {
+                  "Id": "rsc_exporter_PRD_HDB00-stop-0",
+                  "Name": "stop",
+                  "Role": "",
+                  "Interval": "0",
+                  "Timeout": "100"
+                },
+                {
+                  "Id": "rsc_exporter_PRD_HDB00-monitor-10",
+                  "Name": "monitor",
+                  "Role": "",
+                  "Interval": "10",
+                  "Timeout": ""
+                }
+              ]
+            },
+            {
+              "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana02",
+              "Class": "stonith",
+              "Type": "fence_gce",
+              "Provider": "",
+              "InstanceAttributes": [
+                {
+                  "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana02-instance_attributes-plug",
+                  "Name": "plug",
+                  "Value": "vmhana02"
+                },
+                {
+                  "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana02-instance_attributes-pcmk_host_map",
+                  "Name": "pcmk_host_map",
+                  "Value": "vmhana02:vmhana02"
+                }
+              ],
+              "MetaAttributes": [
+                {
+                  "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana02-meta_attributes-target-role",
+                  "Name": "target-role",
+                  "Value": "Started"
+                }
+              ],
+              "Operations": null
+            }
+          ],
+          "Masters": [
+            {
+              "Id": "msl_SAPHana_PRD_HDB00",
+              "MetaAttributes": [
+                {
+                  "Id": "msl_SAPHana_PRD_HDB00-meta_attributes-clone-max",
+                  "Name": "clone-max",
+                  "Value": "2"
+                },
+                {
+                  "Id": "msl_SAPHana_PRD_HDB00-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHana_PRD_HDB00-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                },
+                {
+                  "Id": "msl_SAPHana_PRD_HDB00-meta_attributes-maintenance",
+                  "Name": "maintenance",
+                  "Value": "false"
+                }
+              ],
+              "Primitive": {
+                "Id": "rsc_SAPHana_PRD_HDB00",
+                "Class": "ocf",
+                "Type": "SAPHana",
+                "Provider": "suse",
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "PRD"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "00"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-instance_attributes-PREFER_SITE_TAKEOVER",
+                    "Name": "PREFER_SITE_TAKEOVER",
+                    "Value": "True"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-instance_attributes-AUTOMATED_REGISTER",
+                    "Name": "AUTOMATED_REGISTER",
+                    "Value": "False"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT",
+                    "Name": "DUPLICATE_PRIMARY_TIMEOUT",
+                    "Value": "7200"
+                  }
+                ],
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-start-0",
+                    "Name": "start",
+                    "Role": "",
+                    "Interval": "0",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-stop-0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Interval": "0",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-promote-0",
+                    "Name": "promote",
+                    "Role": "",
+                    "Interval": "0",
+                    "Timeout": "3600"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-monitor-60",
+                    "Name": "monitor",
+                    "Role": "Master",
+                    "Interval": "60",
+                    "Timeout": "700"
+                  },
+                  {
+                    "Id": "rsc_SAPHana_PRD_HDB00-monitor-61",
+                    "Name": "monitor",
+                    "Role": "Slave",
+                    "Interval": "61",
+                    "Timeout": "700"
+                  }
+                ]
+              }
+            }
+          ],
+          "Clones": [
+            {
+              "Id": "cln_SAPHanaTopology_PRD_HDB00",
+              "MetaAttributes": [
+                {
+                  "Id": "cln_SAPHanaTopology_PRD_HDB00-meta_attributes-is-managed",
+                  "Name": "is-managed",
+                  "Value": "true"
+                },
+                {
+                  "Id": "cln_SAPHanaTopology_PRD_HDB00-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "cln_SAPHanaTopology_PRD_HDB00-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ],
+              "Primitive": {
+                "Id": "rsc_SAPHanaTopology_PRD_HDB00",
+                "Class": "ocf",
+                "Type": "SAPHanaTopology",
+                "Provider": "suse",
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB00-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "PRD"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB00-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "00"
+                  }
+                ],
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB00-monitor-10",
+                    "Name": "monitor",
+                    "Role": "",
+                    "Interval": "10",
+                    "Timeout": "600"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB00-start-0",
+                    "Name": "start",
+                    "Role": "",
+                    "Interval": "0",
+                    "Timeout": "600"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaTopology_PRD_HDB00-stop-0",
+                    "Name": "stop",
+                    "Role": "",
+                    "Interval": "0",
+                    "Timeout": "300"
+                  }
+                ]
+              }
+            }
+          ],
+          "Groups": [
+            {
+              "Id": "g_ip_PRD_HDB00",
+              "Primitives": [
+                {
+                  "Id": "rsc_ip_PRD_HDB00",
+                  "Class": "ocf",
+                  "Type": "IPaddr2",
+                  "Provider": "heartbeat",
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_ip_PRD_HDB00-instance_attributes-ip",
+                      "Name": "ip",
+                      "Value": "10.0.0.12"
+                    },
+                    {
+                      "Id": "rsc_ip_PRD_HDB00-instance_attributes-cidr_netmask",
+                      "Name": "cidr_netmask",
+                      "Value": "32"
+                    },
+                    {
+                      "Id": "rsc_ip_PRD_HDB00-instance_attributes-nic",
+                      "Name": "nic",
+                      "Value": "eth0"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "Operations": [
+                    {
+                      "Id": "rsc_ip_PRD_HDB00-monitor-10s",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Interval": "10s",
+                      "Timeout": "20s"
+                    }
+                  ]
+                },
+                {
+                  "Id": "rsc_socat_PRD_HDB00",
+                  "Class": "ocf",
+                  "Type": "anything",
+                  "Provider": "heartbeat",
+                  "InstanceAttributes": [
+                    {
+                      "Id": "rsc_socat_PRD_HDB00-instance_attributes-binfile",
+                      "Name": "binfile",
+                      "Value": "/usr/bin/socat"
+                    },
+                    {
+                      "Id": "rsc_socat_PRD_HDB00-instance_attributes-cmdline_options",
+                      "Name": "cmdline_options",
+                      "Value": "-U TCP-LISTEN:62500,backlog=10,fork,reuseaddr /dev/null"
+                    }
+                  ],
+                  "MetaAttributes": null,
+                  "Operations": [
+                    {
+                      "Id": "rsc_socat_PRD_HDB00-monitor-10",
+                      "Name": "monitor",
+                      "Role": "",
+                      "Interval": "10",
+                      "Timeout": "20s"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Constraints": {
+          "RscLocations": [
+            {
+              "Id": "SAPHana_PRD_HDB00_not_on_majority_maker",
+              "Node": "None",
+              "Resource": "msl_SAPHana_PRD_HDB00",
+              "Role": "",
+              "Score": "-INFINITY"
+            },
+            {
+              "Id": "SAPHanaTopology_PRD_HDB00_not_on_majority_maker",
+              "Node": "None",
+              "Resource": "cln_SAPHanaTopology_PRD_HDB00",
+              "Role": "",
+              "Score": "-INFINITY"
+            },
+            {
+              "Id": "exporter_PRD_HDB00_not_on_majority_maker",
+              "Node": "None",
+              "Resource": "rsc_exporter_PRD_HDB00",
+              "Role": "",
+              "Score": "-INFINITY"
+            }
+          ]
+        }
+      }
+    },
+    "Crmmon": {
+      "Version": "2.0.5",
+      "Summary": {
+        "Nodes": {
+          "Number": 2
+        },
+        "LastChange": {
+          "Time": "Wed Apr 27 07:02:35 2022"
+        },
+        "Resources": {
+          "Number": 9,
+          "Disabled": 0,
+          "Blocked": 0
+        },
+        "ClusterOptions": {
+          "StonithEnabled": true
+        }
+      },
+      "Nodes": [
+        {
+          "Name": "vmhana01",
+          "Id": "1",
+          "Online": true,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Maintenance": false,
+          "Pending": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "DC": true,
+          "ResourcesRunning": 3,
+          "Type": "member"
+        },
+        {
+          "Name": "vmhana02",
+          "Id": "2",
+          "Online": true,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Maintenance": false,
+          "Pending": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "DC": false,
+          "ResourcesRunning": 2,
+          "Type": "member"
+        }
+      ],
+      "NodeAttributes": {
+        "Nodes": [
+          {
+            "Name": "vmhana01",
+            "Attributes": [
+              {
+                "Name": "hana_prd_clone_state",
+                "Value": "UNDEFINED"
+              },
+              {
+                "Name": "hana_prd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Name": "hana_prd_remoteHost",
+                "Value": "vmhana02"
+              },
+              {
+                "Name": "hana_prd_roles",
+                "Value": "1:P:master1::worker:"
+              },
+              {
+                "Name": "hana_prd_site",
+                "Value": "Site1"
+              },
+              {
+                "Name": "hana_prd_srmode",
+                "Value": "sync"
+              },
+              {
+                "Name": "hana_prd_version",
+                "Value": "2.00.057.00.1629894416"
+              },
+              {
+                "Name": "hana_prd_vhost",
+                "Value": "vmhana01"
+              },
+              {
+                "Name": "lpa_prd_lpt",
+                "Value": "1650871168"
+              },
+              {
+                "Name": "master-rsc_SAPHana_PRD_HDB00",
+                "Value": "-9000"
+              }
+            ]
+          },
+          {
+            "Name": "vmhana02",
+            "Attributes": [
+              {
+                "Name": "hana_prd_clone_state",
+                "Value": "DEMOTED"
+              },
+              {
+                "Name": "hana_prd_op_mode",
+                "Value": "logreplay"
+              },
+              {
+                "Name": "hana_prd_remoteHost",
+                "Value": "vmhana01"
+              },
+              {
+                "Name": "hana_prd_roles",
+                "Value": "4:S:master1:master:worker:master"
+              },
+              {
+                "Name": "hana_prd_site",
+                "Value": "Site2"
+              },
+              {
+                "Name": "hana_prd_srmode",
+                "Value": "sync"
+              },
+              {
+                "Name": "hana_prd_version",
+                "Value": "2.00.057.00.1629894416"
+              },
+              {
+                "Name": "hana_prd_vhost",
+                "Value": "vmhana02"
+              },
+              {
+                "Name": "lpa_prd_lpt",
+                "Value": "30"
+              },
+              {
+                "Name": "master-rsc_SAPHana_PRD_HDB00",
+                "Value": "-INFINITY"
+              }
+            ]
+          }
+        ]
+      },
+      "NodeHistory": {
+        "Nodes": [
+          {
+            "Name": "vmhana01",
+            "ResourceHistory": [
+              {
+                "Name": "rsc_exporter_PRD_HDB00",
+                "MigrationThreshold": 5000,
+                "FailCount": 1000000
+              },
+              {
+                "Name": "rsc_SAPHana_PRD_HDB00",
+                "MigrationThreshold": 5000,
+                "FailCount": 1000000
+              },
+              {
+                "Name": "rsc_SAPHanaTopology_PRD_HDB00",
+                "MigrationThreshold": 5000,
+                "FailCount": 0
+              },
+              {
+                "Name": "rsc_socat_PRD_HDB00",
+                "MigrationThreshold": 5000,
+                "FailCount": 0
+              },
+              {
+                "Name": "rsc_ip_PRD_HDB00",
+                "MigrationThreshold": 5000,
+                "FailCount": 0
+              },
+              {
+                "Name": "rsc_gcp_stonith_PRD_HDB00_vmhana01",
+                "MigrationThreshold": 5000,
+                "FailCount": 1000000
+              },
+              {
+                "Name": "rsc_gcp_stonith_PRD_HDB00_vmhana02",
+                "MigrationThreshold": 5000,
+                "FailCount": 1000000
+              }
+            ]
+          },
+          {
+            "Name": "vmhana02",
+            "ResourceHistory": [
+              {
+                "Name": "rsc_gcp_stonith_PRD_HDB00_vmhana01",
+                "MigrationThreshold": 5000,
+                "FailCount": 1000000
+              },
+              {
+                "Name": "rsc_SAPHana_PRD_HDB00",
+                "MigrationThreshold": 5000,
+                "FailCount": 0
+              },
+              {
+                "Name": "rsc_SAPHanaTopology_PRD_HDB00",
+                "MigrationThreshold": 5000,
+                "FailCount": 0
+              },
+              {
+                "Name": "rsc_gcp_stonith_PRD_HDB00_vmhana02",
+                "MigrationThreshold": 5000,
+                "FailCount": 1000000
+              }
+            ]
+          }
+        ]
+      },
+      "Resources": [
+        {
+          "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana01",
+          "Agent": "stonith:fence_gce",
+          "Role": "Stopped",
+          "Active": false,
+          "Orphaned": false,
+          "Blocked": false,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "NodesRunningOn": 0,
+          "Node": null
+        },
+        {
+          "Id": "rsc_exporter_PRD_HDB00",
+          "Agent": "systemd:prometheus-hanadb_exporter@PRD_HDB00",
+          "Role": "Stopped",
+          "Active": false,
+          "Orphaned": false,
+          "Blocked": false,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "NodesRunningOn": 0,
+          "Node": null
+        },
+        {
+          "Id": "rsc_gcp_stonith_PRD_HDB00_vmhana02",
+          "Agent": "stonith:fence_gce",
+          "Role": "Stopped",
+          "Active": false,
+          "Orphaned": false,
+          "Blocked": false,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "NodesRunningOn": 0,
+          "Node": null
+        }
+      ],
+      "Clones": [
+        {
+          "Id": "msl_SAPHana_PRD_HDB00",
+          "MultiState": true,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "Unique": false,
+          "Resources": [
+            {
+              "Id": "rsc_SAPHana_PRD_HDB00",
+              "Agent": "ocf::suse:SAPHana",
+              "Role": "Slave",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana02",
+                "Id": "2",
+                "Cached": true
+              }
+            },
+            {
+              "Id": "rsc_SAPHana_PRD_HDB00",
+              "Agent": "ocf::suse:SAPHana",
+              "Role": "Stopped",
+              "Active": false,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 0,
+              "Node": null
+            }
+          ]
+        },
+        {
+          "Id": "cln_SAPHanaTopology_PRD_HDB00",
+          "MultiState": false,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "Unique": false,
+          "Resources": [
+            {
+              "Id": "rsc_SAPHanaTopology_PRD_HDB00",
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana01",
+                "Id": "1",
+                "Cached": true
+              }
+            },
+            {
+              "Id": "rsc_SAPHanaTopology_PRD_HDB00",
+              "Agent": "ocf::suse:SAPHanaTopology",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana02",
+                "Id": "2",
+                "Cached": true
+              }
+            }
+          ]
+        }
+      ],
+      "Groups": [
+        {
+          "Id": "g_ip_PRD_HDB00",
+          "Resources": [
+            {
+              "Id": "rsc_ip_PRD_HDB00",
+              "Agent": "ocf::heartbeat:IPaddr2",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana01",
+                "Id": "1",
+                "Cached": true
+              }
+            },
+            {
+              "Id": "rsc_socat_PRD_HDB00",
+              "Agent": "ocf::heartbeat:anything",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana01",
+                "Id": "1",
+                "Cached": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "SBD": {
+      "Devices": null,
+      "Config": null
+    },
+    "Id": "986ded1c87d1b24ec731b009adf679f4",
+    "Name": "hana_cluster",
+    "DC": true,
+    "Provider": "gcp"
+  }
+}
