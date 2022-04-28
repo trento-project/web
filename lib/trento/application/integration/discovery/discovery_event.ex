@@ -14,6 +14,6 @@ defmodule Trento.Integration.Discovery.DiscoveryEvent do
     field :discovery_type, :string
     field :payload, Ecto.Payload
 
-    timestamps([type: :utc_datetime_usec])
+    timestamps(type: :utc_datetime_usec)
   end
 end

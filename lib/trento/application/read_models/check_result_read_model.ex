@@ -17,7 +17,7 @@ defmodule Trento.CheckResultReadModel do
     field :check_id, :string, primary_key: true
     field :result, Ecto.Enum, values: [:passing, :warning, :critical, :skipped, :unknown]
 
-    timestamps([type: :utc_datetime_usec])
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
