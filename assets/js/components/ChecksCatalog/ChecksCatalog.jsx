@@ -95,14 +95,12 @@ const ChecksCatalog = () => {
                           </div>
                           <div className="mt-2 sm:flex sm:justify-between">
                             <div className="sm:flex">
-                              <p className="flex items-center text-sm">
-                                <ReactMarkdown
-                                  className="markdown"
-                                  remarkPlugins={[remarkGfm]}
-                                >
-                                  {check.description}
-                                </ReactMarkdown>
-                              </p>
+                              <ReactMarkdown
+                                className="markdown text-sm"
+                                remarkPlugins={[remarkGfm]}
+                              >
+                                {check.description}
+                              </ReactMarkdown>
                             </div>
                           </div>
                         </div>
