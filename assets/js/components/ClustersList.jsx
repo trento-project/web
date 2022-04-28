@@ -50,13 +50,10 @@ const ClustersList = () => {
         title: 'Health',
         key: 'health',
         filter: true,
-        render: (health, { checks_execution }) => {
+        render: (health, { checks_execution: checksExecution }) => {
           return (
             <div className="ml-4">
-              <ExecutionIcon
-                health={health}
-                execution_state={checks_execution}
-              />
+              <ExecutionIcon health={health} executionState={checksExecution} />
             </div>
           );
         },

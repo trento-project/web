@@ -3,9 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
-  EOS_LENS_FILLED,
   EOS_ERROR,
-  EOS_SCHEDULE,
   EOS_ARROW_BACK,
   EOS_SETTINGS,
   EOS_PLAY_CIRCLE,
@@ -47,8 +45,8 @@ const sortHosts = (hosts = []) => {
   });
 };
 
-const getResultIcon = (execution_state, health) => {
-  return <ExecutionIcon health={health} execution_state={execution_state} />;
+const getResultIcon = (executionState, health) => {
+  return <ExecutionIcon health={health} executionState={executionState} />;
 };
 
 export const ChecksResults = () => {
