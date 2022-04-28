@@ -1,5 +1,12 @@
 import { get, post, put as PUT } from 'axios';
-import { put, all, call, takeEvery, select } from 'redux-saga/effects';
+import {
+  put,
+  all,
+  call,
+  takeEvery,
+  takeLatest,
+  select,
+} from 'redux-saga/effects';
 import { urlEncode, keysToCamel } from '@lib/serialization';
 
 import {
@@ -511,11 +518,15 @@ function* watchCatalogUpdate() {
 }
 
 function* refreshHealthSummaryOnComnponentsHealthChange() {
-  yield takeEvery('HEARTBEAT_FAILED', loadSapSystemsHealthSummary);
-  yield takeEvery('HEARTBEAT_SUCCEDED', loadSapSystemsHealthSummary);
-  yield takeEvery('DATABASE_HEALTH_CHANGED', loadSapSystemsHealthSummary);
-  yield takeEvery('SAP_SYSTEM_HEALTH_CHANGED', loadSapSystemsHealthSummary);
-  yield takeEvery('CLUSTER_HEALTH_CHANGED', loadSapSystemsHealthSummary);
+  yield takeLatest('HOST_REGISTERED', loadSapSystemsHealthSummary);
+  yield takeLatest('CLUSTER_REGISTERED', loadSapSystemsHealthSummary);
+  yield takeLatest('DATABASE_REGISTERED', loadSapSystemsHealthSummary);
+  yield takeLatest('SAP_SYSTEM_REGISTERED', loadSapSystemsHealthSummary);
+  yield takeLatest('HEARTBEAT_FAILED', loadSapSystemsHealthSummary);
+  yield takeLatest('HEARTBEAT_SUCCEDED', loadSapSystemsHealthSummary);
+  yield takeLatest('DATABASE_HEALTH_CHANGED', loadSapSystemsHealthSummary);
+  yield takeLatest('SAP_SYSTEM_HEALTH_CHANGED', loadSapSystemsHealthSummary);
+  yield takeLatest('CLUSTER_HEALTH_CHANGED', loadSapSystemsHealthSummary);
 }
 
 function* loadClusterConnectionSettings({ payload: { cluster } }) {
