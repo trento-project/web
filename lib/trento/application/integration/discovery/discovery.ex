@@ -48,6 +48,18 @@ defmodule Trento.Integration.Discovery do
     Repo.all(query)
   end
 
+  @spec prune_events(number) :: non_neg_integer()
+  def prune_events(days) do
+    end_datetime = Timex.shift(DateTime.utc_now(), days: -days)
+
+    {events_number, nil} =
+      DiscoveryEvent
+      |> where([d], d.inserted_at <= ^end_datetime)
+      |> Repo.delete_all()
+
+    events_number
+  end
+
   @spec store_discovery_event(map) :: {:ok, DiscoveryEvent.t()} | {:error, any}
   defp store_discovery_event(%{
          "agent_id" => agent_id,

@@ -336,7 +336,8 @@ defmodule Trento.Factory do
     Repo.insert!(%DiscoveryEvent{
       agent_id: Keyword.get(attrs, :agent_id, Faker.UUID.v4()),
       discovery_type: Keyword.get(attrs, :discovery_type, Faker.Pokemon.name()),
-      payload: Keyword.get(attrs, :payload, %{})
+      payload: Keyword.get(attrs, :payload, %{}),
+      inserted_at: Keyword.get(attrs, :inserted_at, DateTime.utc_now())
     })
   end
 
