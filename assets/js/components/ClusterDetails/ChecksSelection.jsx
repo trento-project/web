@@ -93,17 +93,15 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
 
   useEffect(() => {
     setLocalSavingError(savingError);
-    if (selectedChecks.length > 0) {
-      setLocalSavingSuccess(savingSuccess);
-    }
-  }, [savingError, savingSuccess, selectedChecks]);
+    setLocalSavingSuccess(savingSuccess);
+  }, [savingError, savingSuccess]);
 
   useEffect(() => {
     if (loading === true) {
       setLocalSavingError(null);
+      setLocalSavingSuccess(null);
     }
-    setLocalSavingSuccess(null);
-  }, [loading, selectedChecks]);
+  }, [loading]);
 
   if (catalogErrorCode == 'not_found') {
     return (
@@ -172,6 +170,7 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                                 remove(groupChecks, selectedChecks)
                               );
                             }
+                            setLocalSavingSuccess(null);
                           }}
                         >
                           <span
@@ -230,14 +229,12 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                                       </div>
                                       <div className="mt-2 sm:flex sm:justify-between">
                                         <div className="sm:flex">
-                                          <p className="flex items-center text-sm text-gray-500">
-                                            <ReactMarkdown
-                                              className="markdown"
-                                              remarkPlugins={[remarkGfm]}
-                                            >
-                                              {check.description}
-                                            </ReactMarkdown>
-                                          </p>
+                                          <ReactMarkdown
+                                            className="markdown"
+                                            remarkPlugins={[remarkGfm]}
+                                          >
+                                            {check.description}
+                                          </ReactMarkdown>
                                         </div>
                                         <Switch.Group
                                           as="div"
@@ -255,6 +252,7 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                                               setSelectedChecks(
                                                 toggle(selectedChecks, check.id)
                                               );
+                                              setLocalSavingSuccess(null);
                                             }}
                                           >
                                             <span
