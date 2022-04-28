@@ -77,7 +77,8 @@ defmodule Trento.MixProject do
       {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 1.0"}
+      {:telemetry_poller, "~> 1.0"},
+      {:timex, "~> 3.7.7"}
     ]
   end
 

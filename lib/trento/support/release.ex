@@ -57,6 +57,12 @@ defmodule Trento.Release do
     Mix.Tasks.DumpScenario.run(args)
   end
 
+  def prune_events(args) do
+    load_app()
+
+    Mix.Tasks.PruneEvents.run(args)
+  end
+
   def init_grafana_dashboards do
     load_app()
 

@@ -40,4 +40,18 @@ defmodule Trento.Integration.DiscoveryTest do
       %DiscoveryEvent{agent_id: ^agent_id_3, payload: %{"key" => 9}}
     ] = discovery_events
   end
+
+  test "should delete events older than the specified days" do
+    for _ <- 0..9 do
+      discovery_event(
+        agent_id: Faker.UUID.v4(),
+        discovery_type: "discovery_type",
+        payload: %{},
+        inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
+      )
+    end
+
+    assert 10 == Discovery.prune_events(10)
+    assert 0 == DiscoveryEvent |> Trento.Repo.all() |> length()
+  end
 end
