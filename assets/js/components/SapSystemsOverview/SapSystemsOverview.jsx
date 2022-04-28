@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import SAPSystemItemOverview from '@components/SapSystemsOverview/SapSystemItemOverview';
@@ -9,25 +8,19 @@ import Tags from '@components/Tags';
 
 import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
 
-import { logError } from '@lib/log';
+import { axiosPost, axiosDelete } from '@lib/network';
 import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 
 const addTag = (tag, sapSystemId) => {
-  axios
-    .post(`/api/sap_systems/${sapSystemId}/tags`, {
-      value: tag,
-    })
-    .catch((error) => {
-      logError('Error posting tag: ', error);
-    });
+  axiosPost(`/api/sap_systems/${sapSystemId}/tags`, {
+    value: tag,
+  });
 };
 
 const removeTag = (tag, sapSystemId) => {
-  axios.delete(`/api/sap_systems/${sapSystemId}/tags/${tag}`).catch((error) => {
-    logError('Error deleting tag: ', error);
-  });
+  axiosDelete(`/api/sap_systems/${sapSystemId}/tags/${tag}`);
 };
 
 const SapSystemsOverview = () => {

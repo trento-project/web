@@ -1,15 +1,12 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
 import Table from './Table';
 import Tags from './Tags';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
-
-import { logError } from '@lib/log';
-
 import { ExecutionIcon } from '@components/ClusterDetails';
 import { ComponentHealthSummary } from '@components/HealthSummary';
+import { axiosPost, axiosDelete } from '@lib/network';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -23,19 +20,13 @@ const getClusterTypeLabel = (type) => {
 };
 
 const addTag = (tag, clusterId) => {
-  axios
-    .post(`/api/clusters/${clusterId}/tags`, {
-      value: tag,
-    })
-    .catch((error) => {
-      logError('Error posting tag: ', error);
-    });
+  axiosPost(`/api/clusters/${clusterId}/tags`, {
+    value: tag,
+  });
 };
 
 const removeTag = (tag, clusterId) => {
-  axios.delete(`/api/clusters/${clusterId}/tags/${tag}`).catch((error) => {
-    logError('Error deleting tag: ', error);
-  });
+  axiosDelete(`/api/clusters/${clusterId}/tags/${tag}`);
 };
 
 const ClustersList = () => {
