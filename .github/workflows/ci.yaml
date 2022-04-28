@@ -317,10 +317,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup
-        run: |
-          ssl_verify=host zypper in -y wget unzip
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
