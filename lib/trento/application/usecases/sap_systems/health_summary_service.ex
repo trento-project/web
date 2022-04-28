@@ -18,7 +18,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
 
   import Ecto.Query
 
-  @type instancesList :: [DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]
+  @type instance_list :: [DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]
 
   @spec get_health_summary :: [HealthSummaryDto.t()]
   def get_health_summary do
@@ -58,7 +58,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
     |> HealthService.compute_aggregated_health()
   end
 
-  @spec compute_clusters_health(instancesList) ::
+  @spec compute_clusters_health(instance_list) ::
           Health.t()
   defp compute_clusters_health(instances) do
     instances
@@ -69,9 +69,10 @@ defmodule Trento.SapSystems.HealthSummaryService do
     |> HealthService.compute_aggregated_health()
   end
 
-  @spec clusters_from_instance(instancesList) :: [ClusterReadModel.t()]
+  @spec clusters_from_instance(instance_list) :: [ClusterReadModel.t()]
   defp clusters_from_instance(instances) do
     instances
+    |> Enum.filter(fn %{host: host} -> host end)
     |> Enum.map(fn %{host: %{cluster_id: cluster_id}} -> cluster_id end)
     |> Enum.uniq()
     |> Enum.map(fn cluster_id -> Repo.get!(ClusterReadModel, cluster_id) end)
@@ -82,7 +83,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
     Enum.map(clusters, fn %ClusterReadModel{health: health} -> health end)
   end
 
-  @spec reject_unclustered_instances(instancesList) :: instancesList
+  @spec reject_unclustered_instances(instance_list) :: instance_list
   defp reject_unclustered_instances(instances) do
     Enum.reject(instances, fn
       %{host: %{cluster_id: nil}} -> true
@@ -98,10 +99,12 @@ defmodule Trento.SapSystems.HealthSummaryService do
     end)
   end
 
-  @spec compute_hosts_health(instancesList) :: Health.t()
+  @spec compute_hosts_health(instance_list) :: Health.t()
   defp compute_hosts_health(instances) do
     instances
+    |> Enum.filter(fn %{host: host} -> host end)
     |> Enum.map(fn %{host: %{heartbeat: heartbeat}} -> heartbeat end)
+    |> Enum.filter(& &1)
     |> HealthService.compute_aggregated_health()
   end
 end
