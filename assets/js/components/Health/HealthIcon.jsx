@@ -1,31 +1,28 @@
 import React from 'react';
-import Spinner from '@components/Spinner';
-import classNames from 'classnames';
+import { computedIconCssClass } from '@lib/icon';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
-const HealthIcon = ({ health = undefined, centered = false }) => {
-  const computedCssClass = (fillColor, centered) => {
-    return classNames(fillColor, { 'mx-auto': centered });
-  };
+import Spinner from '@components/Spinner';
 
+const HealthIcon = ({ health = undefined, centered = false }) => {
   switch (health) {
     case 'passing':
       return (
         <EOS_LENS_FILLED
-          className={computedCssClass('fill-jungle-green-500', centered)}
+          className={computedIconCssClass('fill-jungle-green-500', centered)}
         />
       );
     case 'warning':
       return (
         <EOS_LENS_FILLED
-          className={computedCssClass('fill-yellow-500', centered)}
+          className={computedIconCssClass('fill-yellow-500', centered)}
         />
       );
     case 'critical':
       return (
         <EOS_LENS_FILLED
-          className={computedCssClass('fill-red-500', centered)}
+          className={computedIconCssClass('fill-red-500', centered)}
         />
       );
     case 'pending':
@@ -33,7 +30,7 @@ const HealthIcon = ({ health = undefined, centered = false }) => {
     default:
       return (
         <EOS_LENS_FILLED
-          className={computedCssClass('fill-gray-500', centered)}
+          className={computedIconCssClass('fill-gray-500', centered)}
         />
       );
   }
