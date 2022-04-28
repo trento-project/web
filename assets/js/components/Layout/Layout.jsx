@@ -68,10 +68,10 @@ const Layout = () => {
   return (
     <>
       <main className="bg-gray-100 dark:bg-gray-800 relative">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col h-screen items-start justify-between">
           <div
             className={classNames(
-              'h-screen block shadow-lg fixed w-64 flex-shrink-0',
+              'h-screen block shadow-lg fixed w-64 flex-shrink-0 z-20',
               { hidden: isCollapsed }
             )}
           >
@@ -181,7 +181,7 @@ const Layout = () => {
               </div> */}
             </header>
             <div
-              className={classNames('pb-24 px-4 md:px-6', {
+              className={classNames('pb-24 inset-x-0 bottom-0 px-4 md:px-6', {
                 'ml-64': !isCollapsed,
               })}
             >
@@ -194,16 +194,16 @@ const Layout = () => {
               </div>
             </div>
           </div>
+          <footer className="p-4 z-30 relative bottom-0 w-full bg-white shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
+            <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+              © 2020-2022 SUSE LLC
+            </span>
+            <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+              This tool is free software released under the Apache License,
+              Version 2.0
+            </span>
+          </footer>
         </div>
-        <footer className="p-4 z-10 fixed bottom-0 w-full bg-white shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
-          <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-            © 2020-2022 SUSE LLC
-          </span>
-          <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-            This tool is free software released under the Apache License,
-            Version 2.0
-          </span>
-        </footer>
       </main>
     </>
   );
