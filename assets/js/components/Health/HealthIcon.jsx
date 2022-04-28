@@ -1,5 +1,4 @@
 import React from 'react';
-import Spinner from '@components/Spinner';
 import classNames from 'classnames';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
@@ -29,7 +28,11 @@ const HealthIcon = ({ health = undefined, centered = false }) => {
         />
       );
     case 'pending':
-      return <Spinner />;
+      return (
+        <EOS_LOADING_ANIMATED
+          className={computedCssClass('fill-jungle-green-500', centered)}
+        />
+      );
     default:
       return (
         <EOS_LENS_FILLED

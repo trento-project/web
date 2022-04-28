@@ -8,8 +8,7 @@ import ClusterLink from '@components/ClusterLink';
 
 import { logError } from '@lib/log';
 
-import HealthIcon from '@components/Health';
-import Spinner from '@components/Spinner';
+import { ExecutionIcon } from '@components/ClusterDetails';
 import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const getClusterTypeLabel = (type) => {
@@ -51,20 +50,15 @@ const ClustersList = () => {
         title: 'Health',
         key: 'health',
         filter: true,
-        render: (content, { checks_execution }) => {
-          if (checks_execution === 'not_running') {
-            return (
-              <div className="ml-4">
-                <HealthIcon health={content} />
-              </div>
-            );
-          } else {
-            return (
-              <div className="ml-4">
-                <Spinner></Spinner>
-              </div>
-            );
-          }
+        render: (health, { checks_execution }) => {
+          return (
+            <div className="ml-4">
+              <ExecutionIcon
+                health={health}
+                execution_state={checks_execution}
+              />
+            </div>
+          );
         },
       },
       {

@@ -10,7 +10,6 @@ import {
   EOS_SETTINGS,
   EOS_PLAY_CIRCLE,
 } from 'eos-icons-react';
-import Spinner from '../Spinner';
 
 import NotificationBox from '../NotificationBox';
 import LoadingBox from '../LoadingBox';
@@ -19,6 +18,7 @@ import Button from '@components/Button';
 import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
 import { TriggerChecksExecutionRequest } from './ClusterDetails';
+import { ExecutionIcon } from './ExecutionIcon';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -47,24 +47,8 @@ const sortHosts = (hosts = []) => {
   });
 };
 
-const getResultIcon = (checks_execution, result) => {
-  switch (checks_execution) {
-    case 'requested':
-      return <EOS_SCHEDULE className="fill-gray-500" />;
-    case 'running':
-      return <Spinner></Spinner>;
-  }
-
-  switch (result) {
-    case 'passing':
-      return <EOS_LENS_FILLED className="fill-jungle-green-500" />;
-    case 'warning':
-      return <EOS_LENS_FILLED className="fill-yellow-500" />;
-    case 'critical':
-      return <EOS_LENS_FILLED className="fill-red-500" />;
-    default:
-      return <EOS_LENS_FILLED className="fill-gray-500" />;
-  }
+const getResultIcon = (execution_state, health) => {
+  return <ExecutionIcon health={health} execution_state={execution_state} />;
 };
 
 export const ChecksResults = () => {
