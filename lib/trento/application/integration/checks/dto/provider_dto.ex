@@ -13,7 +13,7 @@ defmodule Trento.Integration.Checks.ProviderDto do
   alias Trento.Integration.Checks.GroupDto
 
   deftype do
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :dev, :unknown]
+    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :default, :unknown]
 
     embeds_many :groups, GroupDto
   end

@@ -18,7 +18,7 @@ defmodule Trento.Integration.Checks.FlatCheckDto do
 
   deftype do
     field :id, :string
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :dev, :unknown]
+    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :default, :unknown]
     field :group, :string
     field :name, :string
     field :description, :string
