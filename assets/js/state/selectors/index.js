@@ -69,6 +69,11 @@ const enrichInstances = (instances, sapSystemId, state) =>
       };
     });
 
+export const getClusterByHost = (hostId) => (state) => {
+  const host = state.hostsList.hosts.find((host) => host.id === hostId);
+  return state.clustersList.clusters.find(isIdByKey('id', host?.cluster_id));
+};
+
 export const getInstancesOnHost = (hostId) => (state) => {
   const { databaseInstances, applicationInstances } = state.sapSystemsList;
 

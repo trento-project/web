@@ -7,17 +7,24 @@ import Table from '@components/Table';
 
 import HeartbeatPill from './HeartbeatPill';
 
+import ClusterLink from '@components/ClusterLink';
+
 import {
   subscriptionsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
 
 import SuseLogo from '../../../static/suse_logo.svg';
-import { getInstancesOnHost, getHost } from '@state/selectors';
+import {
+  getInstancesOnHost,
+  getClusterByHost,
+  getHost,
+} from '@state/selectors';
 
 const HostDetails = () => {
   const { hostID } = useParams();
   const host = useSelector(getHost(hostID));
+  const cluster = useSelector(getClusterByHost(hostID));
   const sapSystems = useSelector(getInstancesOnHost(hostID));
 
   // eslint-disable-next-line no-undef
@@ -41,7 +48,12 @@ const HostDetails = () => {
           orientation="vertical"
           data={[
             { title: 'Name', content: host.hostname },
-            { title: 'Cluster', content: host.cluster && host.cluster.name },
+            {
+              title: 'Cluster',
+              content: (
+                <ClusterLink cluster={cluster}>{cluster?.name}</ClusterLink>
+              ),
+            },
             { title: 'Agent version', content: host.agent_version },
           ]}
         />
