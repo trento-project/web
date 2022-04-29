@@ -49,6 +49,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     Enum.flat_map(databases, fn %{"Database" => tenant} ->
       Enum.map(instances, fn instance ->
         instance_number = parse_instance_number(instance)
+        instance_hostname = parse_instance_hostname(instance)
 
         RegisterDatabaseInstance.new(%{
           sap_system_id: UUID.uuid5(@uuid_namespace, id),
@@ -56,14 +57,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
           tenant: tenant,
           host_id: host_id,
           instance_number: instance_number,
-          instance_hostname: parse_instance_hostname(instance, instance_number),
-          features: parse_features(instance, instance_number),
-          http_port: parse_http_port(instance, instance_number),
-          https_port: parse_https_port(instance, instance_number),
-          start_priority: parse_start_priority(instance, instance_number),
+          instance_hostname: instance_hostname,
+          features: parse_features(instance, instance_number, instance_hostname),
+          http_port: parse_http_port(instance, instance_number, instance_hostname),
+          https_port: parse_https_port(instance, instance_number, instance_hostname),
+          start_priority: parse_start_priority(instance, instance_number, instance_hostname),
           system_replication: parse_system_replication(instance),
           system_replication_status: parse_system_replication_status(instance),
-          health: parse_instance_health(instance, instance_number)
+          health: parse_instance_health(instance, instance_number, instance_hostname)
         })
       end)
     end)
@@ -83,19 +84,20 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
        ) do
     Enum.map(instances, fn instance ->
       instance_number = parse_instance_number(instance)
+      instance_hostname = parse_instance_hostname(instance)
 
       RegisterApplicationInstance.new(%{
         sid: sid,
         tenant: tenant,
         db_host: db_host,
         instance_number: instance_number,
-        instance_hostname: parse_instance_hostname(instance, instance_number),
-        features: parse_features(instance, instance_number),
-        http_port: parse_http_port(instance, instance_number),
-        https_port: parse_https_port(instance, instance_number),
-        start_priority: parse_start_priority(instance, instance_number),
+        instance_hostname: instance_hostname,
+        features: parse_features(instance, instance_number, instance_hostname),
+        http_port: parse_http_port(instance, instance_number, instance_hostname),
+        https_port: parse_https_port(instance, instance_number, instance_hostname),
+        start_priority: parse_start_priority(instance, instance_number, instance_hostname),
         host_id: host_id,
-        health: parse_instance_health(instance, instance_number)
+        health: parse_instance_health(instance, instance_number, instance_hostname)
       })
     end)
   end
@@ -108,20 +110,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
        ),
        do: []
 
-  @spec parse_instance_hostname(map, String.t()) :: String.t()
-  defp parse_instance_hostname(%{"SAPControl" => sap_control}, instance_number) do
-    case extract_sap_control_instance_data(sap_control, instance_number, "hostname") do
-      {:ok, instance_hostname} ->
-        instance_hostname
-
-      _ ->
-        ""
-    end
-  end
-
-  @spec parse_http_port(map, String.t()) :: integer() | nil
-  defp parse_http_port(%{"SAPControl" => sap_control}, instance_number) do
-    case extract_sap_control_instance_data(sap_control, instance_number, "httpPort") do
+  @spec parse_http_port(map, String.t(), String.t()) :: integer() | nil
+  defp parse_http_port(%{"SAPControl" => sap_control}, instance_number, instance_hostname) do
+    case extract_sap_control_instance_data(
+           sap_control,
+           instance_number,
+           instance_hostname,
+           "httpPort"
+         ) do
       {:ok, instance_http_port} ->
         instance_http_port
 
@@ -130,9 +126,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end
   end
 
-  @spec parse_https_port(map, String.t()) :: integer() | nil
-  defp parse_https_port(%{"SAPControl" => sap_control}, instance_number) do
-    case extract_sap_control_instance_data(sap_control, instance_number, "httpsPort") do
+  @spec parse_https_port(map, String.t(), String.t()) :: integer() | nil
+  defp parse_https_port(%{"SAPControl" => sap_control}, instance_number, instance_hostname) do
+    case extract_sap_control_instance_data(
+           sap_control,
+           instance_number,
+           instance_hostname,
+           "httpsPort"
+         ) do
       {:ok, instance_https_port} ->
         instance_https_port
 
@@ -141,9 +142,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end
   end
 
-  @spec parse_start_priority(map, String.t()) :: String.t() | nil
-  defp parse_start_priority(%{"SAPControl" => sap_control}, instance_number) do
-    case extract_sap_control_instance_data(sap_control, instance_number, "startPriority") do
+  @spec parse_start_priority(map, String.t(), String.t()) :: String.t() | nil
+  defp parse_start_priority(%{"SAPControl" => sap_control}, instance_number, instance_hostname) do
+    case extract_sap_control_instance_data(
+           sap_control,
+           instance_number,
+           instance_hostname,
+           "startPriority"
+         ) do
       {:ok, start_priority} ->
         start_priority
 
@@ -152,9 +158,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end
   end
 
-  @spec parse_features(map, String.t()) :: String.t()
-  defp parse_features(%{"SAPControl" => sap_control}, instance_number) do
-    case extract_sap_control_instance_data(sap_control, instance_number, "features") do
+  @spec parse_features(map, String.t(), String.t()) :: String.t()
+  defp parse_features(%{"SAPControl" => sap_control}, instance_number, instance_hostname) do
+    case extract_sap_control_instance_data(
+           sap_control,
+           instance_number,
+           instance_hostname,
+           "features"
+         ) do
       {:ok, features} ->
         features
 
@@ -174,9 +185,26 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end)
   end
 
-  @spec parse_instance_health(map, String.t()) :: :passing | :warning | :critical | :unknown
-  defp parse_instance_health(%{"SAPControl" => sap_control}, instance_number) do
-    case extract_sap_control_instance_data(sap_control, instance_number, "dispstatus") do
+  @spec parse_instance_hostname(map) :: String.t() | nil
+  defp parse_instance_hostname(%{
+         "SAPControl" => %{"Properties" => properties}
+       }) do
+    properties
+    |> Enum.find_value(fn
+      %{"property" => "SAPLOCALHOST", "value" => value} -> value
+      _ -> nil
+    end)
+  end
+
+  @spec parse_instance_health(map, String.t(), String.t()) ::
+          :passing | :warning | :critical | :unknown
+  defp parse_instance_health(%{"SAPControl" => sap_control}, instance_number, instance_hostname) do
+    case extract_sap_control_instance_data(
+           sap_control,
+           instance_number,
+           instance_hostname,
+           "dispstatus"
+         ) do
       {:ok, dispstatus} ->
         parse_dispstatus(dispstatus)
 
@@ -190,18 +218,23 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   defp parse_dispstatus("SAPControl-RED"), do: :critical
   defp parse_dispstatus(_), do: :unknown
 
-  @spec extract_sap_control_instance_data(map, String.t(), String.t()) ::
+  @spec extract_sap_control_instance_data(map, String.t(), String.t(), String.t()) ::
           {:ok, String.t()} | {:error, :key_not_found}
   defp extract_sap_control_instance_data(
          %{"Instances" => instances},
          instance_number,
+         instance_hostname,
          key
        ) do
     instances
-    |> Enum.find(fn %{"instanceNr" => number} ->
-      number
-      |> Integer.to_string()
-      |> String.pad_leading(2, "0") == instance_number
+    |> Enum.find(fn
+      %{"instanceNr" => number, "hostname" => hostname} ->
+        number
+        |> Integer.to_string()
+        |> String.pad_leading(2, "0") == instance_number && hostname == instance_hostname
+
+      _ ->
+        nil
     end)
     |> case do
       %{^key => value} ->
