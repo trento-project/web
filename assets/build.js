@@ -19,7 +19,7 @@ require('esbuild')
     watch: Boolean(process.env.ESBUILD_WATCH),
     plugins: [
       alias({
-        phoenix: resolvePath('../deps/phoenix/priv/static/phoenix.esm.js'),
+        phoenix: resolvePath('../deps/phoenix/priv/static/phoenix.mjs'),
         phoenix_html: resolvePath(
           '../deps/phoenix_html/priv/static/phoenix_html.js'
         ),
