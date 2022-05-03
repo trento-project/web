@@ -1,4 +1,4 @@
-import { get, post, put as PUT } from 'axios';
+import { axiosGet, axiosPost, axiosPut } from '@lib/network';
 import {
   put,
   all,
@@ -103,7 +103,10 @@ const getClusterName = (clusterID) => (state) => {
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
-  const { data: healthSummary } = yield call(get, '/api/sap_systems/health');
+  const { data: healthSummary } = yield call(
+    axiosGet,
+    '/api/sap_systems/health'
+  );
 
   yield put(setHealthSummary(keysToCamel(healthSummary)));
   yield put(stopHealthSummaryLoading());
@@ -114,29 +117,29 @@ function* initialDataFetch() {
 
   const {
     data: { eula_accepted, premium_subscription },
-  } = yield call(get, '/api/settings');
+  } = yield call(axiosGet, '/api/settings');
 
   if (!eula_accepted && premium_subscription) {
     yield put(setEulaVisible());
   }
 
   yield put(startHostsLoading());
-  const { data: hosts } = yield call(get, '/api/hosts');
+  const { data: hosts } = yield call(axiosGet, '/api/hosts');
   yield put(setHosts(hosts));
   yield put(stopHostsLoading());
 
   yield put(startClustersLoading());
-  const { data: clusters } = yield call(get, '/api/clusters');
+  const { data: clusters } = yield call(axiosGet, '/api/clusters');
   yield put(setClusters(clusters));
   yield put(stopClustersLoading());
 
   yield put(startSapSystemsLoading());
-  const { data: sapSystems } = yield call(get, '/api/sap_systems');
+  const { data: sapSystems } = yield call(axiosGet, '/api/sap_systems');
   yield put(setSapSystems(sapSystems));
   yield put(stopSapSystemsLoading());
 
   yield put(startDatabasesLoading());
-  const { data: databases } = yield call(get, '/api/databases');
+  const { data: databases } = yield call(axiosGet, '/api/databases');
   yield put(setDatabases(databases));
   yield put(stopDatabasesLoading());
 }
@@ -241,7 +244,7 @@ function* checksSelected({ payload }) {
   yield put(startSavingClusterChecksSelection());
 
   try {
-    yield call(post, `/api/clusters/${payload.clusterID}/checks`, {
+    yield call(axiosPost, `/api/clusters/${payload.clusterID}/checks`, {
       checks: payload.checks,
     });
     yield put(updateSelectedChecks(payload));
@@ -274,7 +277,7 @@ function* watchChecksSelected() {
 function* requestChecksExecution({ payload }) {
   const clusterName = yield select(getClusterName(payload.clusterID));
   yield call(
-    post,
+    axiosPost,
     `/api/clusters/${payload.clusterID}/checks/request_execution`,
     {}
   );
@@ -500,7 +503,7 @@ function* updateCatalog({ payload }) {
   yield put(setCatalog({ loading: true }));
   try {
     const { data: catalog } = yield call(
-      get,
+      axiosGet,
       `/api/checks/catalog?${urlEncode(payload)}`
     );
     yield put(setCatalog(catalog));
@@ -533,7 +536,7 @@ function* loadClusterConnectionSettings({ payload: { cluster } }) {
   yield put(startLoadingClusterConnectionSettings());
   try {
     const { data: settings } = yield call(
-      get,
+      axiosGet,
       `/api/clusters/${cluster}/connection-settings`
     );
     yield put(setClusterConnectionSettings({ settings }));
@@ -547,7 +550,7 @@ function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
   yield put(startSavingClusterConnectionSettings());
   try {
     const { data: newSettings } = yield call(
-      PUT,
+      axiosPut,
       `/api/clusters/${cluster}/connection-settings`,
       {
         settings: settings.map((hostSettings) => ({
@@ -556,6 +559,7 @@ function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
         })),
       }
     );
+
     yield put(
       setClusterConnectionSettings({
         settings: newSettings,

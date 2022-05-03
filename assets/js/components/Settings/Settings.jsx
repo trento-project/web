@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
 
-import { get } from 'axios';
 import Button from '@components/Button';
 import { logError } from '@lib/log';
+import { axiosGet } from '@lib/network';
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ const Settings = () => {
 
   useEffect(() => {
     setLoading(true);
-    get('/api/installation/api-key')
+    axiosGet('/api/installation/api-key')
       .then(({ data: { api_key: apiKey } }) => {
         apiKey !== undefined && setApiKey(apiKey);
         setLoading(false);

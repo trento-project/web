@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import Table from './Table';
 import Tags from './Tags';
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
@@ -10,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
-import { logError } from '@lib/log';
+import { axiosPost, axiosDelete } from '@lib/network';
 import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const getHeartbeatIcon = ({ heartbeat }) => {
@@ -41,19 +40,13 @@ const getInstancesByHost = (
 };
 
 const addTag = (tag, hostId) => {
-  axios
-    .post(`/api/hosts/${hostId}/tags`, {
-      value: tag,
-    })
-    .catch((error) => {
-      logError('Error posting tag: ', error);
-    });
+  axiosPost(`/api/hosts/${hostId}/tags`, {
+    value: tag,
+  });
 };
 
 const removeTag = (tag, hostId) => {
-  axios.delete(`/api/hosts/${hostId}/tags/${tag}`).catch((error) => {
-    logError('Error deleting tag: ', error);
-  });
+  axiosDelete(`/api/hosts/${hostId}/tags/${tag}`);
 };
 
 const HostsList = () => {

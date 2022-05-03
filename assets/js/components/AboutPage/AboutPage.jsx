@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { get } from 'axios';
 
 import TrentoLogo from '../../../static/trento-icon.png';
 
+import { axiosGet } from '@lib/network';
 import { logError } from '@lib/log';
 
 import ListView from '@components/ListView';
@@ -16,7 +16,7 @@ const AboutPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    get('/api/about')
+    axiosGet('/api/about')
       .then(({ data: { flavor, version, sles_subscriptions } }) => {
         setLoading(false);
         undefined !== flavor && setFlavor(flavor);
