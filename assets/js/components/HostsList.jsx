@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
-import { axiosPost, axiosDelete } from '@lib/network';
+import { post, del } from '@lib/network';
 import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const getHeartbeatIcon = ({ heartbeat }) => {
@@ -40,13 +40,13 @@ const getInstancesByHost = (
 };
 
 const addTag = (tag, hostId) => {
-  axiosPost(`/api/hosts/${hostId}/tags`, {
+  post(`/api/hosts/${hostId}/tags`, {
     value: tag,
   });
 };
 
 const removeTag = (tag, hostId) => {
-  axiosDelete(`/api/hosts/${hostId}/tags/${tag}`);
+  del(`/api/hosts/${hostId}/tags/${tag}`);
 };
 
 const HostsList = () => {

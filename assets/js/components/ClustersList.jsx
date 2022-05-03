@@ -6,7 +6,7 @@ import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
 import { ComponentHealthSummary } from '@components/HealthSummary';
-import { axiosPost, axiosDelete } from '@lib/network';
+import { post, del } from '@lib/network';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -20,13 +20,13 @@ const getClusterTypeLabel = (type) => {
 };
 
 const addTag = (tag, clusterId) => {
-  axiosPost(`/api/clusters/${clusterId}/tags`, {
+  post(`/api/clusters/${clusterId}/tags`, {
     value: tag,
   });
 };
 
 const removeTag = (tag, clusterId) => {
-  axiosDelete(`/api/clusters/${clusterId}/tags/${tag}`);
+  del(`/api/clusters/${clusterId}/tags/${tag}`);
 };
 
 const ClustersList = () => {

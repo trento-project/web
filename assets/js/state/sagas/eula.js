@@ -1,12 +1,12 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
-import { axiosPost } from '@lib/network';
+import { post } from '@lib/network';
 
 import { acceptEula } from '@state/settings';
 import { logError } from '@lib/log';
 
 export function* acceptEulaSaga() {
   try {
-    yield call(axiosPost, '/api/accept_eula', {});
+    yield call(post, '/api/accept_eula', {});
 
     yield put(acceptEula());
   } catch (error) {
