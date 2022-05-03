@@ -95,6 +95,7 @@ defmodule Trento.MixProject do
         "setup",
         "phx.server"
       ],
+      "start.full": [ "docker-compose up -d postgres grafana runner", "start"],
       install: ["deps.get", "cmd --cd assets npm install"],
       setup: ["event_store.setup", "ecto.setup", "init_grafana_dashboards"],
       reset: ["event_store.reset", "ecto.reset"],
