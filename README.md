@@ -84,7 +84,7 @@ Please check the specific [Agent](https://github.com/trento-project/agent) and [
 
 If you intend to install Trento on a k8s cluster, you may be interested in our [helm-charts](https://github.com/trento-project/helm-charts) repo for detailed instructions.
 
-If otherwise you want to play around with the current repository, go ahead,  [hack on the trento](./docs/development/hack_on_the_trento.md) and **have a lot of fun**!
+If otherwise you want to play around with the current repository, go ahead,  [hack on the trento](./docs/development/hacking_trento.md) and **have a lot of fun**!
 
 # Support
 
