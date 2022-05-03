@@ -2,22 +2,12 @@ import Config
 
 # Configure your database
 config :trento, Trento.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "trento_dev",
-  hostname: "localhost",
-  port: 5433,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10,
   log: false
 
 config :trento, Trento.EventStore,
-  username: "postgres",
-  password: "postgres",
-  database: "trento_eventstore_dev",
-  hostname: "localhost",
-  port: 5433,
-  pool_size: 10
+  show_sensitive_data_on_connection_error: true,
+  log: false
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

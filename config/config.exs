@@ -12,7 +12,6 @@ config :trento,
 
 # Configures the endpoint
 config :trento, TrentoWeb.Endpoint,
-  url: [host: "localhost"],
   render_errors: [view: TrentoWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Trento.PubSub,
   live_view: [signing_salt: "4tNZ+tm7"]
@@ -107,10 +106,6 @@ config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Teleme
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Runner
 
 config :trento, :grafana,
-  user: "admin",
-  password: "admin",
-  public_url: "http://localhost:3000",
-  api_url: "http://localhost:3000/api",
   dashboards: ["node_exporter"]
 
 config :trento,
