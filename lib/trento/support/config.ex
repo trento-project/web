@@ -1,4 +1,5 @@
 import Config
+
 defmodule Trento.Config do
   def db_name(name, env \\ config_env()) do
     if env == :prod do

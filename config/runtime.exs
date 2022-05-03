@@ -8,11 +8,14 @@ import Trento.Config
 # any compile-time configuration in here, as it won't be applied.
 
 config :trento, Trento.Repo,
-  url: System.get_env("DATABASE_URL") || "postgres://postgres@localhost:5433/#{db_name("trento")}",
+  url:
+    System.get_env("DATABASE_URL") || "postgres://postgres@localhost:5433/#{db_name("trento")}",
   pool_size: String.to_integer(System.get_env("DATABASE_POOL_SIZE") || "10")
 
 config :trento, Trento.EventStore,
-  url: System.get_env("EVENTSTORE_URL") || "postgres://postgres@localhost:5433/#{db_name("trento_eventstore")}",
+  url:
+    System.get_env("EVENTSTORE_URL") ||
+      "postgres://postgres@localhost:5433/#{db_name("trento_eventstore")}",
   pool_size: String.to_integer(System.get_env("EVENTSTORE_POOL_SIZE") || "10")
 
 if config_env() == :prod do
@@ -27,8 +30,8 @@ if config_env() == :prod do
       environment variable SECRET_KEY_BASE is missing.
       You can generate one by calling: mix phx.gen.secret
       """
-  config :trento, TrentoWeb.Endpoint,
-    secret_key_base: secret_key_base
+
+  config :trento, TrentoWeb.Endpoint, secret_key_base: secret_key_base
 end
 
 config :trento, TrentoWeb.Endpoint,
