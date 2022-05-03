@@ -2,6 +2,10 @@
 
 We're really glad you're reading this, because we need volunteer developers to help this project come to fruition.
 
+## Getting started
+
+Please refer to the [development notes](docs/development/hacking_trento.md) for more information.
+
 ## Submitting changes
 
 Please send a [GitHub Pull Request to Trento](https://github.com/trento-project/web/pull/new/main) with a clear list of what you've done (read more about [pull requests](http://help.github.com/pull-requests/)).
