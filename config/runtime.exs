@@ -18,22 +18,6 @@ config :trento, Trento.EventStore,
       "postgres://postgres@localhost:5433/#{db_name("trento_eventstore")}",
   pool_size: String.to_integer(System.get_env("EVENTSTORE_POOL_SIZE") || "10")
 
-if config_env() == :prod do
-  # The secret key base is used to sign/encrypt cookies and other secrets.
-  # A default value is used in config/dev.exs and config/test.exs but you
-  # want to use a different value for prod and you most likely don't want
-  # to check this value into version control, so we use an environment
-  # variable instead.
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
-
-  config :trento, TrentoWeb.Endpoint, secret_key_base: secret_key_base
-end
-
 config :trento, TrentoWeb.Endpoint,
   http: [
     # Enable IPv6 and bind on all interfaces.
@@ -82,18 +66,13 @@ config :trento, :grafana,
 # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
 config :trento, :alerting,
-  enabled: System.get_env("ENABLE_ALERTING") == "true",
   recipient: System.get_env("ALERT_RECIPIENT") || "admin@trento-project.io"
 
 config :trento, Trento.Mailer,
-  adapter: Swoosh.Adapters.SMTP,
   relay: System.get_env("SMTP_SERVER") || "",
   port: System.get_env("SMTP_PORT") || "",
   username: System.get_env("SMTP_USER") || "",
-  password: System.get_env("SMTP_PASSWORD") || "",
-  auth: :always,
-  ssl: :if_available,
-  tls: :if_available
+  password: System.get_env("SMTP_PASSWORD") || ""
 
 config :trento, Trento.Scheduler,
   jobs: [
@@ -102,3 +81,23 @@ config :trento, Trento.Scheduler,
       schedule: "*/#{System.get_env("RUNNER_INTERVAL", "5")} * * * *"
     ]
   ]
+
+# prod specific semantics
+if config_env() == :prod do
+  # The secret key base is used to sign/encrypt cookies and other secrets.
+  # A default value is used in config/dev.exs and config/test.exs but you
+  # want to use a different value for prod and you most likely don't want
+  # to check this value into version control, so we use an environment
+  # variable instead.
+  secret_key_base =
+    System.get_env("SECRET_KEY_BASE") ||
+      raise """
+      environment variable SECRET_KEY_BASE is missing.
+      You can generate one by calling: mix phx.gen.secret
+      """
+
+  config :trento, TrentoWeb.Endpoint, secret_key_base: secret_key_base
+
+  # alerting is usually enabled by default, but it's the opposite in prod
+  config :trento, :alerting, enabled: System.get_env("ENABLE_ALERTING") == "true"
+end
