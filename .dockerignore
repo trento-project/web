@@ -1,8 +1,7 @@
+/.github
+/.pgdata/
 /_build/
 /assets/node_modules/
 /deps/
-/doc/
 /priv/static/assets
-/test/
 /tmp/
-/.pgdata/
