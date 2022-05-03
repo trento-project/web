@@ -1,4 +1,4 @@
-# Hack on the trento
+# Hacking Trento
 
 - [Requirements](#requirements)
 - [Install dependencies](#install-dependencies)
@@ -14,35 +14,74 @@ In order to run the trento web, you need
 
 1. [Elixir](https://elixir-lang.org/)
 2. [Erlang OTP](https://www.erlang.org/)
-3. [Docker](https://docs.docker.com/get-docker/)
-4. [Docker Compose](https://docs.docker.com/compose/install/)
+3. [NodeJS](https://www.nodejs.org/)
+4. [Docker](https://docs.docker.com/get-docker/)
+5. [Docker Compose](https://docs.docker.com/compose/install/)
+
 
 ## Development environment
 
+The entire environment can be set up with [asdf](http://asdf-vm.com/).
+
+After you installed the `asdf` CLI tool, you need to install all the relevant plugins, and then the requirements.
+
+```shell
+asdf plugin add erlang 
+asdf plugin add elixir
+asdf plugin add nodejs
+asdf install
+```
+
+This will install local versions of all the above. Docker is 
+
+
+## Docker and docker-compose
+
 A `docker-compose` development environment is provided.
 
-```
-$> docker-compose up -d
-```
-
-It will start a **postgres** database and a **grafana** instance, for storage and monitoring.
-## Install dependencies
-
-```
-$> mix deps.get
+```shell
+docker-compose up -d
 ```
 
-## Setup trento
+It will start all the services required to run the application.
 
-```
-$> mix setup
+It also provides a `web` service that you can use to run Elixir within a development container.
+This service does nothing by default (i.e. it invokes `bash` with no command), so you will need to attach to it explicitly via an interactive terminal, or run mix commands with it.
+
+E.g. to start an interactive containerized terminal session:
+```shell
+docker-compose run -ti -p 4000:4000 web
 ```
 
-## Start trento in the repl
 
+## Mix tasks
+
+There are many `mix` tasks. You can see them all with `mix help`.
+
+The fastes way to get started is `mix start`, which expands to the following three sections.
+
+### Install dependencies
+
+```shell
+mix install
 ```
-$> iex -S mix phx.server
+
+> Note: this will take care of both Mix and NPM dependencies.
+
+### Setup persistence
+
+```shell
+mix setup
 ```
+
+### Start the web server in the repl
+
+```shell
+iex -S mix phx.server
+```
+
+> Note: all the mix commands can be executed either within or outside this container.
+
 
 ## Environment Variables
 
@@ -53,13 +92,13 @@ See [environment_variables](./environment_variables.md)
 
 By leveraging [photofinish](https://github.com/trento-project/photofinish) it is possible to load different scenarios for development and debugging purposes.
 
-```
-$> photofinish run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster
+```shell
+photofinish run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster
 ```
 It's possible to use Photofinish' docker image too:
 
-```
-$> docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run healthy-27-node-SAP-cluster -u http://localhost:4000/api/collect
+```shell
+docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run healthy-27-node-SAP-cluster -u http://localhost:4000/api/collect
 ```
 
 Several useful scenario fixtures are available in [./test/fixtures/scenarios](../../test/fixtures/scenarios/), the same ones used in e2e tests.
