@@ -314,8 +314,12 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
+
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: latest-tag
         with:
-          fetch-depth: 0
+          semver_only: true
+          initial_version: 0.0.1
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -330,7 +334,7 @@ jobs:
 
       - name: Set version
         run: |
-          VERSION=$(./hack/get_version_from_git.sh)
+          VERSION=${{ steps.latest-tag.outputs.tag }}
           sed -i 's~%%VERSION%%~'"${VERSION}"'~' packaging/suse/Dockerfile
 
       - name: Configure OSC
