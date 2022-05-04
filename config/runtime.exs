@@ -9,13 +9,13 @@ import Trento.Config
 
 config :trento, Trento.Repo,
   url:
-    System.get_env("DATABASE_URL") || "postgres://postgres@localhost:5433/#{db_name("trento")}",
+    System.get_env("DATABASE_URL") || "postgres://postgres@localhost:5432/#{db_name("trento")}",
   pool_size: String.to_integer(System.get_env("DATABASE_POOL_SIZE") || "10")
 
 config :trento, Trento.EventStore,
   url:
     System.get_env("EVENTSTORE_URL") ||
-      "postgres://postgres@localhost:5433/#{db_name("trento_eventstore")}",
+      "postgres://postgres@localhost:5432/#{db_name("trento_eventstore")}",
   pool_size: String.to_integer(System.get_env("EVENTSTORE_POOL_SIZE") || "10")
 
 config :trento, TrentoWeb.Endpoint,
