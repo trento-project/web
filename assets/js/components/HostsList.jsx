@@ -29,7 +29,7 @@ const getInstancesByHost = (
   hostId
 ) => {
   return applicationInstances
-    .map((instance) => ({ ...instance, type: 'sap-systems' }))
+    .map((instance) => ({ ...instance, type: 'sap_systems' }))
     .concat(
       databaseInstances.map((instance) => ({
         ...instance,
