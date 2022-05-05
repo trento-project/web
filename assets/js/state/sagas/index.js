@@ -534,7 +534,7 @@ function* loadClusterConnectionSettings({ payload: { cluster } }) {
   try {
     const { data: settings } = yield call(
       get,
-      `/api/clusters/${cluster}/connection-settings`
+      `/api/clusters/${cluster}/connection_settings`
     );
     yield put(setClusterConnectionSettings({ settings }));
   } catch (error) {
@@ -548,7 +548,7 @@ function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
   try {
     const { data: newSettings } = yield call(
       PUT,
-      `/api/clusters/${cluster}/connection-settings`,
+      `/api/clusters/${cluster}/connection_settings`,
       {
         settings: settings.map((hostSettings) => ({
           host_id: hostSettings.host_id,

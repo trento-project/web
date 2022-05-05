@@ -64,9 +64,9 @@ defmodule TrentoWeb.Router do
          ClusterController,
          :request_checks_execution
 
-    get "/clusters/:cluster_id/connection-settings", ClusterController, :get_connection_settings
+    get "/clusters/:cluster_id/connection_settings", ClusterController, :get_connection_settings
 
-    put "/clusters/:cluster_id/connection-settings",
+    put "/clusters/:cluster_id/connection_settings",
         ClusterController,
         :save_connection_settings
 

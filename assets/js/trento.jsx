@@ -45,7 +45,7 @@ const App = () => {
               <Route index element={<Home />} />
               <Route index path="hosts" element={<HostsList />} />
               <Route path="clusters" element={<ClustersList />} />
-              <Route path="sap-systems" element={<SapSystemsOverview />} />
+              <Route path="sap_systems" element={<SapSystemsOverview />} />
               <Route path="databases" element={<DatabasesOverview />} />
               <Route path="catalog" element={<ChecksCatalog />} />
               <Route path="settings" element={<Settings />} />
@@ -59,7 +59,7 @@ const App = () => {
                 element={<ChecksResults />}
               />
               <Route path="hosts/:hostID" element={<HostDetails />} />
-              <Route path="sap-systems/:id" element={<SapSystemDetails />} />
+              <Route path="sap_systems/:id" element={<SapSystemDetails />} />
               <Route path="databases/:id" element={<DatabaseDetails />} />
               <Route path="clusters/:clusterID" element={<ClusterDetails />} />
             </Route>

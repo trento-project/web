@@ -30,7 +30,7 @@ const navigation = [
   },
   {
     name: 'SAP Systems',
-    href: '/sap-systems',
+    href: '/sap_systems',
     icon: EOS_SYSTEM_GROUP,
   },
   {
