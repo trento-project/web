@@ -11,6 +11,7 @@ import { ChecksSelection } from './ChecksSelection';
 import { ConnectionSettings } from './ConnectionSettings';
 import { getCluster } from '@state/selectors';
 import { TriggerChecksExecutionRequest } from './ClusterDetails';
+import { getClusterName } from '@components/ClusterLink';
 
 export const ClusterSettings = () => {
   const { clusterID } = useParams();
@@ -32,7 +33,7 @@ export const ClusterSettings = () => {
       <div className="flex mb-2">
         <h1 className="text-3xl w-1/2">
           <span className="font-medium">Cluster Settings for</span>{' '}
-          <span className="font-bold">{cluster && cluster.name}</span>
+          <span className="font-bold">{getClusterName(cluster)}</span>
         </h1>
         <div className="flex w-1/2 justify-end text-white">
           <Button

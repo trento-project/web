@@ -100,7 +100,7 @@ const HostsList = () => {
         key: 'cluster',
         className: 'w-40',
         render: (cluster) => {
-          return <ClusterLink cluster={cluster}>{cluster?.name}</ClusterLink>;
+          return <ClusterLink cluster={cluster} />;
         },
       },
       {

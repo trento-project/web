@@ -12,6 +12,8 @@ import { groupBy } from '@lib/lists';
 
 import SiteDetails from './SiteDetails';
 
+import { getClusterName } from '@components/ClusterLink';
+
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
@@ -80,7 +82,7 @@ const ClusterDetails = () => {
     <div>
       <div className="flex">
         <h1 className="text-3xl font-bold w-1/2">
-          Pacemaker cluster details: {cluster.name}
+          Pacemaker cluster details: {getClusterName(cluster)}
         </h1>
         <div className="flex w-1/2 justify-end">
           <Button

@@ -50,9 +50,7 @@ const HostDetails = () => {
             { title: 'Name', content: host.hostname },
             {
               title: 'Cluster',
-              content: (
-                <ClusterLink cluster={cluster}>{cluster?.name}</ClusterLink>
-              ),
+              content: <ClusterLink cluster={cluster} />,
             },
             { title: 'Agent version', content: host.agent_version },
           ]}

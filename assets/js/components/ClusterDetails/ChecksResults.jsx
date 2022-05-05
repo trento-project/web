@@ -17,6 +17,7 @@ import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
 import { TriggerChecksExecutionRequest } from './ClusterDetails';
 import { ExecutionIcon } from './ExecutionIcon';
+import { getClusterName } from '@components/ClusterLink';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -209,7 +210,7 @@ export const ChecksResults = () => {
       <div className="flex mb-4">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
-          <span className="font-bold">{cluster && cluster.name}</span>
+          <span className="font-bold">{getClusterName(cluster)}</span>
         </h1>
         <div className="flex w-2/5 justify-end text-white">
           <Button
