@@ -1,4 +1,4 @@
-import { get, post, put } from '@lib/network';
+import { get, post, put as PUT } from '@lib/network';
 import {
   put,
   all,
@@ -547,7 +547,7 @@ function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
   yield put(startSavingClusterConnectionSettings());
   try {
     const { data: newSettings } = yield call(
-      put,
+      PUT,
       `/api/clusters/${cluster}/connection-settings`,
       {
         settings: settings.map((hostSettings) => ({
