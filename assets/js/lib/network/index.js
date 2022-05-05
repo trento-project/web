@@ -7,7 +7,7 @@ const conf = {
   },
 };
 
-export const axiosPost = function (url, data) {
+export const post = function (url, data) {
   return axios
     .post(url, data, conf)
     .then(handleResponseStatus)
@@ -16,7 +16,7 @@ export const axiosPost = function (url, data) {
     });
 };
 
-export const axiosDelete = function (url) {
+export const del = function (url) {
   return axios
     .delete(url, conf)
     .then(handleResponseStatus)
@@ -25,7 +25,7 @@ export const axiosDelete = function (url) {
     });
 };
 
-export const axiosPut = function (url, data) {
+export const put = function (url, data) {
   return axios
     .put(url, data, conf)
     .then(handleResponseStatus)
@@ -34,7 +34,7 @@ export const axiosPut = function (url, data) {
     });
 };
 
-export const axiosGet = function (url) {
+export const get = function (url) {
   return axios
     .get(url, conf)
     .then(handleResponseStatus)

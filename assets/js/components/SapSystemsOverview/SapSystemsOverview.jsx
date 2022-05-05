@@ -8,19 +8,19 @@ import Tags from '@components/Tags';
 
 import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
 
-import { axiosPost, axiosDelete } from '@lib/network';
+import { post, del } from '@lib/network';
 import { ComponentHealthSummary } from '@components/HealthSummary';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 
 const addTag = (tag, sapSystemId) => {
-  axiosPost(`/api/sap_systems/${sapSystemId}/tags`, {
+  post(`/api/sap_systems/${sapSystemId}/tags`, {
     value: tag,
   });
 };
 
 const removeTag = (tag, sapSystemId) => {
-  axiosDelete(`/api/sap_systems/${sapSystemId}/tags/${tag}`);
+  del(`/api/sap_systems/${sapSystemId}/tags/${tag}`);
 };
 
 const SapSystemsOverview = () => {

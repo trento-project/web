@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import Button from '@components/Button';
 import { logError } from '@lib/log';
-import { axiosGet } from '@lib/network';
+import { get } from '@lib/network';
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ const Settings = () => {
 
   useEffect(() => {
     setLoading(true);
-    axiosGet('/api/installation/api-key')
+    get('/api/installation/api-key')
       .then(({ data: { api_key: apiKey } }) => {
         apiKey !== undefined && setApiKey(apiKey);
         setLoading(false);
