@@ -37,4 +37,19 @@ defmodule Trento.SlesSubscriptionsProjector do
       end)
     end
   )
+
+  def after_update(
+        %SlesSubscriptionsUpdated{host_id: id, subscriptions: subscriptions},
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_details_updated",
+      %{
+        id: id,
+        sles_subscriptions: subscriptions
+      }
+    )
+  end
 end
