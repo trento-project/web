@@ -10,6 +10,38 @@ defmodule Trento.Application.UseCases.AlertingTest do
 
   @moduletag :integration
 
+  describe "Enabling/Disabling Alerting Feature" do
+    setup do
+      on_exit(fn ->
+        Application.put_env(:trento, :alerting,
+          enabled: true,
+          recipient: "some.recipient@email.com"
+        )
+      end)
+    end
+
+    test "No email should be sent when alerting is disabled" do
+      Application.put_env(:trento, :alerting, enabled: false)
+      host_id = Faker.UUID.v4()
+
+      Alerting.notify_heartbeat_failed(host_id)
+
+      assert_no_email_sent()
+    end
+
+    test "An error should be raised when alerting is enabled but no recipient was provided" do
+      Application.put_env(:trento, :alerting, enabled: true)
+      sap_system_id = Faker.UUID.v4()
+      sap_system_projection(id: sap_system_id)
+
+      assert_raise ArgumentError,
+                   ~r/Unexpected tuple format, {"Trento Admin", nil} cannot be formatted into a Recipient./,
+                   fn -> Alerting.notify_critical_sap_system_health(sap_system_id) end
+
+      assert_no_email_sent()
+    end
+  end
+
   describe "Alerting the configured recipient about crucial facts with email notifications" do
     test "Notify Host heartbeating failure" do
       host_id = Faker.UUID.v4()
