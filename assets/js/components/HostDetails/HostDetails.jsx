@@ -109,6 +109,13 @@ const HostDetails = () => {
         </div>
       </div>
 
+      <div className="mt-8">
+        <div>
+          <h2 className="text-2xl font-bold">SAP instances</h2>
+        </div>
+        <Table config={sapInstancesTableConfiguration} data={sapSystems} />
+      </div>
+
       <div className="mt-16">
         <div className="flex flex-direction-row">
           <img src={SuseLogo} className="h-12" />
@@ -120,13 +127,6 @@ const HostDetails = () => {
           config={subscriptionsTableConfiguration}
           data={host.sles_subscriptions}
         />
-      </div>
-
-      <div className="mt-8">
-        <div>
-          <h2 className="text-2xl font-bold">SAP instances</h2>
-        </div>
-        <Table config={sapInstancesTableConfiguration} data={sapSystems} />
       </div>
     </div>
   );
