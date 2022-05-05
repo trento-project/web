@@ -6,7 +6,6 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
   @required_fields [
     :cluster_id,
     :host_id,
-    :name,
     :type,
     :designated_controller,
     :discovered_health,
