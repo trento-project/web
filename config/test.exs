@@ -44,5 +44,4 @@ config :trento, :grafana,
 
 config :trento, Trento.Integration.Checks.Runner, runner_url: "http://localhost:8080"
 
-config :trento, :alerting,
-  recipient: "mail@domain.tld"
+config :trento, :alerting, recipient: "mail@domain.tld"

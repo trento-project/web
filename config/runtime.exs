@@ -45,6 +45,7 @@ enable_alerting =
   end
 
 alert_recipient = System.get_env("ALERT_RECIPIENT") || fallback([:alerting, :recipient])
+
 if enable_alerting and is_nil(alert_recipient) do
   raise("Missing required environment variable: ALERT_RECIPIENT")
 end
