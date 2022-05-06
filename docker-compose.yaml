@@ -16,8 +16,8 @@ services:
       GRAFANA_API_URL: http://grafana:3000/api
       RUNNER_URL: http://runner:8000
     volumes:
-      - .:/app
-      - build_cache:/app/_build
+      - .:/source
+      - build_cache:/source/_build
     ports:
       - 4000:4000
 
