@@ -2,22 +2,14 @@ import Config
 
 # Configure your database
 config :trento, Trento.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "trento_dev",
-  hostname: "localhost",
-  port: 5433,
+  url: "postgres://postgres@localhost:5432/trento_dev",
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10,
   log: false
 
 config :trento, Trento.EventStore,
-  username: "postgres",
-  password: "postgres",
-  database: "trento_eventstore_dev",
-  hostname: "localhost",
-  port: 5433,
-  pool_size: 10
+  url: "postgres://postgres@localhost:5432/trento_eventstore_dev",
+  show_sensitive_data_on_connection_error: true,
+  log: false
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -26,13 +18,11 @@ config :trento, Trento.EventStore,
 # watchers to your application. For example, we use it
 # with esbuild to bundle .js and .css sources.
 config :trento, TrentoWeb.Endpoint,
-  # Binding to loopback ipv4 address prevents access from other machines.
-  # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",
+  live_view: [signing_salt: "4tNZ+tm7"],
   watchers: [
     node: [
       "build.js",
@@ -110,3 +100,13 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :trento, :api_key_authentication, enabled: false
+
+config :trento, :grafana,
+  user: "admin",
+  password: "admin",
+  public_url: "http://localhost:3000",
+  api_url: "http://localhost:3000/api"
+
+config :trento, Trento.Integration.Checks.Runner, runner_url: "http://localhost:8080"
+
+config :trento, :alerting, recipient: "mail@domain.tld"
