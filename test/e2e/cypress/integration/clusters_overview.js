@@ -40,8 +40,7 @@ import {
 
         it('Unnamed clusters should use the ID as details page link', () => {
           const clusterID = clusterIdByName('hana_cluster_1')
-          const truncatedLength = 14;
-          cy.get(`a:contains(${clusterID.slice(0, truncatedLength)})`).should('be.visible')
+          cy.get(`a:contains(${clusterID})`).should('be.visible')
         });
       });
     });

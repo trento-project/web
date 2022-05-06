@@ -18,6 +18,10 @@ import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
 
+export const truncatedClusterNameClasses = classNames(
+  'font-bold truncate w-60 inline-block align-top'
+);
+
 const siteDetailsConfig = {
   usePadding: false,
   columns: [
@@ -82,7 +86,10 @@ const ClusterDetails = () => {
     <div>
       <div className="flex">
         <h1 className="text-3xl font-bold w-1/2">
-          Pacemaker cluster details: {getClusterName(cluster)}
+          Pacemaker cluster details:{' '}
+          <span className={truncatedClusterNameClasses}>
+            {getClusterName(cluster)}
+          </span>
         </h1>
         <div className="flex w-1/2 justify-end">
           <Button

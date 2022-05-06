@@ -1,14 +1,17 @@
 import React from 'react';
 
 import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 
-const truncatedLength = 14; // Using 14 as it cuts the uuid format after the 2nd -
 export const getClusterName = (cluster) => {
-  return cluster?.name || cluster?.id.slice(0, truncatedLength) + '...';
+  return cluster?.name || cluster?.id;
 };
 
 const ClusterLink = ({ cluster }) => {
   const clusterName = getClusterName(cluster);
+  const truncatedClasses = classNames(
+    'truncate w-32 inline-block align-middle'
+  );
 
   if (cluster?.type == 'hana_scale_up' || cluster?.type == 'hana_scale_out') {
     return (
@@ -16,12 +19,12 @@ const ClusterLink = ({ cluster }) => {
         className="text-jungle-green-500 hover:opacity-75"
         to={`/clusters/${cluster.id}`}
       >
-        {clusterName}
+        <span className={truncatedClasses}>{clusterName}</span>
       </Link>
     );
   }
 
-  return <span>{clusterName}</span>;
+  return <span className={truncatedClasses}>{clusterName}</span>;
 };
 
 export default ClusterLink;

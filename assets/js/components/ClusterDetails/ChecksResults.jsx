@@ -15,7 +15,10 @@ import LoadingBox from '../LoadingBox';
 import Button from '@components/Button';
 import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
-import { TriggerChecksExecutionRequest } from './ClusterDetails';
+import {
+  TriggerChecksExecutionRequest,
+  truncatedClusterNameClasses,
+} from './ClusterDetails';
 import { ExecutionIcon } from './ExecutionIcon';
 import { getClusterName } from '@components/ClusterLink';
 
@@ -210,7 +213,9 @@ export const ChecksResults = () => {
       <div className="flex mb-4">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
-          <span className="font-bold">{getClusterName(cluster)}</span>
+          <span className={`font-bold ${truncatedClusterNameClasses}`}>
+            {getClusterName(cluster)}
+          </span>
         </h1>
         <div className="flex w-2/5 justify-end text-white">
           <Button
