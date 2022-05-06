@@ -14,4 +14,7 @@ config :trento, Trento.Mailer,
 config :swoosh, local: false
 
 # Do not print debug messages in production
-# config :logger, level: :info
+config :logger, level: :info
+
+# alerting is usually enabled by default, but it's the opposite in prod
+config :trento, :alerting, enabled: false

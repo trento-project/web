@@ -5,7 +5,14 @@ import Config
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
-config :trento, Trento.Repo, pool: Ecto.Adapters.SQL.Sandbox
+# Configure your database
+config :trento, Trento.Repo,
+  pool: Ecto.Adapters.SQL.Sandbox,
+  url: "postgres://postgres@localhost:5432/trento_test#{System.get_env("MIX_TEST_PARTITION")}"
+
+config :trento, Trento.EventStore,
+  url:
+    "postgres://postgres@localhost:5432/trento_eventstore_test#{System.get_env("MIX_TEST_PARTITION")}"
 
 config :trento, Trento.Commanded,
   event_store: [
@@ -28,3 +35,14 @@ config :logger, level: :warn
 config :phoenix, :plug_init_mode, :runtime
 
 config :trento, :api_key_authentication, enabled: false
+
+config :trento, :grafana,
+  user: "admin",
+  password: "admin",
+  public_url: "http://localhost:3000",
+  api_url: "http://localhost:3000/api"
+
+config :trento, Trento.Integration.Checks.Runner, runner_url: "http://localhost:8080"
+
+config :trento, :alerting,
+  recipient: "mail@domain.tld"

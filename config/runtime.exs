@@ -9,43 +9,49 @@ import Trento.Config
 
 config :trento, Trento.Repo,
   url:
-    System.get_env("DATABASE_URL") || "postgres://postgres@localhost:5432/#{db_name("trento")}",
-  pool_size: String.to_integer(System.get_env("DATABASE_POOL_SIZE") || "10")
+    System.get_env("DATABASE_URL") || fallback([Trento.Repo, :url]) ||
+      raise("Missing required environment variable: DATABASE_URL"),
+  pool_size: get_env_int("DATABASE_POOL_SIZE") || fallback([Trento.Repo, :pool_size])
 
 config :trento, Trento.EventStore,
   url:
-    System.get_env("EVENTSTORE_URL") ||
-      "postgres://postgres@localhost:5432/#{db_name("trento_eventstore")}",
-  pool_size: String.to_integer(System.get_env("EVENTSTORE_POOL_SIZE") || "10")
+    System.get_env("EVENTSTORE_URL") || fallback([Trento.EventStore, :url]) ||
+      raise("Missing required environment variable: EVENTSTORE_URL"),
+  pool_size: get_env_int("EVENTSTORE_POOL_SIZE") || fallback([Trento.EventStore, :pool_size])
 
 config :trento, TrentoWeb.Endpoint,
   http: [
-    # Enable IPv6 and bind on all interfaces.
-    # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-    # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
-    # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-    ip: {0, 0, 0, 0, 0, 0, 0, 0},
-    port: String.to_integer(System.get_env("PORT") || "4000")
-  ]
+    port: get_env_int("PORT") || fallback([TrentoWeb.Endpoint, :http, :port])
+  ],
+  secret_key_base:
+    System.get_env("SECRET_KEY_BASE") || fallback([TrentoWeb.Endpoint, :secret_key_base]) ||
+      raise("Missing required environment variable: SECRET_KEY_BASE")
 
 config :trento, Trento.Integration.Checks.Runner,
-  runner_url: System.get_env("RUNNER_URL") || "http://localhost:8080"
+  runner_url:
+    System.get_env("RUNNER_URL") || fallback([Trento.Integration.Checks.Runner, :runner_url]) ||
+      raise("Missing required environment variable: RUNNER_URL")
 
 config :trento, :grafana,
-  user: System.get_env("GRAFANA_USER") || "admin",
-  password: System.get_env("GRAFANA_PASSWORD") || "admin",
-  public_url: System.get_env("GRAFANA_PUBLIC_URL") || "http://localhost:3000",
-  api_url: System.get_env("GRAFANA_API_URL") || "http://localhost:3000/api"
+  user: System.get_env("GRAFANA_USER") || fallback([:grafana, :user]),
+  password: System.get_env("GRAFANA_PASSWORD") || fallback([:grafana, :password]),
+  public_url: System.get_env("GRAFANA_PUBLIC_URL") || fallback([:grafana, :public_url]),
+  api_url: System.get_env("GRAFANA_API_URL") || fallback([:grafana, :api_url])
 
-# ## Using releases
-#
-# If you are doing OTP releases, you need to instruct Phoenix
-# to start each relevant endpoint:
-#
-#     config :trento, TrentoWeb.Endpoint, server: true
-#
-# Then you can assemble a release by calling `mix release`.
-# See `mix help release` for more information.
+enable_alerting =
+  case get_env_bool("ENABLE_ALERTING") do
+    value when is_bool(value) -> value
+    nil -> fallback([:alerting, :enabled])
+  end
+
+alert_recipient = System.get_env("ALERT_RECIPIENT") || fallback([:alerting, :recipient])
+if enable_alerting and is_nil(alert_recipient) do
+  raise("Missing required environment variable: ALERT_RECIPIENT")
+end
+
+config :trento, :alerting,
+  enabled: enable_alerting,
+  recipient: alert_recipient
 
 # ## Configuring the mailer
 #
@@ -64,40 +70,23 @@ config :trento, :grafana,
 #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
 #
 # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
-
-config :trento, :alerting,
-  recipient: System.get_env("ALERT_RECIPIENT") || "admin@trento-project.io"
-
 config :trento, Trento.Mailer,
-  relay: System.get_env("SMTP_SERVER") || "",
-  port: System.get_env("SMTP_PORT") || "",
-  username: System.get_env("SMTP_USER") || "",
-  password: System.get_env("SMTP_PASSWORD") || ""
+  relay: System.get_env("SMTP_SERVER") || fallback([Trento.Mailer, :relay]),
+  port: System.get_env("SMTP_PORT") || fallback([Trento.Mailer, :port]),
+  username: System.get_env("SMTP_USER") || fallback([Trento.Mailer, :username]),
+  password: System.get_env("SMTP_PASSWORD") || fallback([Trento.Mailer, :password])
+
+# RUNNER_INTERVAL env var is always expressed in minutes, but fallback values are different
+# so we need to do some interpolation in the crontab format
+runner_schedule =
+  case get_env_int("RUNNER_INTERVAL") do
+    value when is_int(value) -> "*/#{value} * * * *"
+    nil -> fallback([Trento.Scheduler, :jobs, :clusters_checks_execution, :schedule])
+  end
 
 config :trento, Trento.Scheduler,
   jobs: [
     clusters_checks_execution: [
-      # Runs every five minutes by default
-      schedule: "*/#{System.get_env("RUNNER_INTERVAL", "5")} * * * *"
+      schedule: runner_schedule
     ]
   ]
-
-# prod specific semantics
-if config_env() == :prod do
-  # The secret key base is used to sign/encrypt cookies and other secrets.
-  # A default value is used in config/dev.exs and config/test.exs but you
-  # want to use a different value for prod and you most likely don't want
-  # to check this value into version control, so we use an environment
-  # variable instead.
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
-
-  config :trento, TrentoWeb.Endpoint, secret_key_base: secret_key_base
-
-  # alerting is usually enabled by default, but it's the opposite in prod
-  config :trento, :alerting, enabled: System.get_env("ENABLE_ALERTING") == "true"
-end
