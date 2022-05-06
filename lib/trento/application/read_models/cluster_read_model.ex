@@ -17,7 +17,7 @@ defmodule Trento.ClusterReadModel do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "clusters" do
-    field :name, :string
+    field :name, :string, default: ""
     field :sid, :string
     field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
