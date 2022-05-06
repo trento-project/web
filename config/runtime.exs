@@ -40,7 +40,7 @@ config :trento, :grafana,
 
 enable_alerting =
   case get_env_bool("ENABLE_ALERTING") do
-    value when is_bool(value) -> value
+    value when is_boolean(value) -> value
     nil -> fallback([:alerting, :enabled])
   end
 
@@ -81,7 +81,7 @@ config :trento, Trento.Mailer,
 # so we need to do some interpolation in the crontab format
 runner_schedule =
   case get_env_int("RUNNER_INTERVAL") do
-    value when is_int(value) -> "*/#{value} * * * *"
+    value when is_integer(value) -> "*/#{value} * * * *"
     nil -> fallback([Trento.Scheduler, :jobs, :clusters_checks_execution, :schedule])
   end
 
