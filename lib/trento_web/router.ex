@@ -98,6 +98,8 @@ defmodule TrentoWeb.Router do
 
     get "/settings", SettingsController, :settings
     post "/accept_eula", SettingsController, :accept_eula
+
+    get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
   end
 
   scope "/api", TrentoWeb do
