@@ -1,0 +1,9 @@
+export const selectedHost = {
+  agentId: '9cd46919-5f19-59aa-993e-cf3736c71053',
+  hostName: 'vmhdbprd01',
+  sapSystem: 'HDP',
+  clusterName: 'hana_cluster_3',
+  resourceGroup: 'resourceGroupName',
+  sapInstanceId: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
+  clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
+};
