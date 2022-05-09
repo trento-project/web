@@ -7,7 +7,8 @@
     "description": "description 1",
     "remediation": "remediation 1",
     "implementation": "implementation 1",
-    "labels": "labels"
+    "labels": "labels",
+    "premium": true
   },
   {
     "id": "2",
@@ -57,7 +58,8 @@
     "description": "description 1",
     "remediation": "remediation 1",
     "implementation": "implementation 1",
-    "labels": "labels"
+    "labels": "labels",
+    "premium": true
   },
   {
     "id": "2",
