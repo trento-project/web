@@ -63,6 +63,7 @@ defmodule Trento.MixProject do
       {:jason, "~> 1.2"},
       {:mock, "~> 0.3.0", only: :test},
       {:mox, "~> 1.0", only: :test},
+      {:open_api_spex, "~> 3.11"},
       {:phoenix, "~> 1.6.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
