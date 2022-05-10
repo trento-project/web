@@ -13,6 +13,7 @@ defmodule TrentoWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.ApiSpec
   end
 
   pipeline :protected do
@@ -36,6 +37,8 @@ defmodule TrentoWeb.Router do
 
   scope "/" do
     pipe_through :browser
+
+    get "/api/doc", OpenApiSpex.Plug.SwaggerUI, path: "/api/openapi"
 
     pow_session_routes()
   end
@@ -114,6 +117,11 @@ defmodule TrentoWeb.Router do
 
     post "/runner/callback", ClusterController, :runner_callback
     get "/prometheus/targets", PrometheusController, :targets
+  end
+
+  scope "/api" do
+    pipe_through :api
+    get "/openapi", OpenApiSpex.Plug.RenderSpec, []
   end
 
   # Other scopes may use custom stacks.
