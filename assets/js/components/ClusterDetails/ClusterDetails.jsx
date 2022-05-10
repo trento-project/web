@@ -129,7 +129,7 @@ const ClusterDetails = () => {
           className="grid-rows-3"
           orientation="vertical"
           data={[
-            { title: 'Cluster name', content: cluster.name },
+            { title: 'Cluster name', content: cluster.name || 'Not defined' },
             { title: 'SID', content: cluster.sid },
             {
               title: 'Fencing type',
