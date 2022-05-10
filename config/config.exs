@@ -7,18 +7,15 @@
 # General application configuration
 import Config
 
+config :trento,
+  ecto_repos: [Trento.Repo]
+
 # Configures the endpoint
 config :trento, TrentoWeb.Endpoint,
-  http: [
-    # Enable IPv6 and bind on all interfaces.
-    # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-    # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
-    # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-    ip: {0, 0, 0, 0, 0, 0, 0, 0},
-    port: 4000
-  ],
+  url: [host: "localhost"],
   render_errors: [view: TrentoWeb.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: Trento.PubSub
+  pubsub_server: Trento.PubSub,
+  live_view: [signing_salt: "4tNZ+tm7"]
 
 # Configures the mailer
 #
@@ -32,7 +29,10 @@ config :trento, Trento.Mailer, adapter: Swoosh.Adapters.Local
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
 
-config :trento, :alerting, enabled: true
+# configure the recipient for alert notifications
+config :trento, :alerting,
+  enabled: true,
+  recipient: "admin@trento.io"
 
 # Configure esbuild (the version is required)
 config :esbuild,
@@ -60,16 +60,10 @@ config :trento, Trento.Commanded,
   pubsub: :local,
   registry: :local
 
-config :trento,
-  ecto_repos: [Trento.Repo]
-
-config :trento, Trento.Repo, pool_size: 10
-
 config :trento, Trento.EventStore,
   serializer: Trento.JsonbSerializer,
   column_data_type: "jsonb",
-  types: EventStore.PostgresTypes,
-  pool_size: 10
+  types: EventStore.PostgresTypes
 
 config :trento, event_stores: [Trento.EventStore]
 
@@ -112,7 +106,12 @@ config :trento, Trento.Scheduler,
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Runner
 
-config :trento, :grafana, dashboards: ["node_exporter"]
+config :trento, :grafana,
+  user: "admin",
+  password: "admin",
+  public_url: "http://localhost:3000",
+  api_url: "http://localhost:3000/api",
+  dashboards: ["node_exporter"]
 
 config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",

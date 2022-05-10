@@ -121,10 +121,10 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: trento_test
         ports:
-          - 5432:5432
+          - 5433:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -180,10 +180,10 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: trento_dev
         ports:
-          - 5432:5432
+          - 5433:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
