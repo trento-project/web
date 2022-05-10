@@ -3,7 +3,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
   OpenApi specification entry point
   """
 
-  alias OpenApiSpex.{Info, OpenApi, Paths, Server}
+  alias OpenApiSpex.{Info, OpenApi, Paths, Server, Tag}
   alias TrentoWeb.{Endpoint, Router}
   @behaviour OpenApi
 
@@ -22,7 +22,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       # Populate the paths from a phoenix router
       paths: Paths.from_router(Router),
       tags: [
-        %{
+        %Tag{
           name: "Landscape",
           description: "Providing access to the discovered target infrastructure"
         }
