@@ -106,6 +106,11 @@ config :trento, Trento.Scheduler,
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Runner
 
+config :trento, Trento.Integration.Prometheus,
+  adapter: Trento.Integration.Prometheus.PrometheusApi
+
+config :trento, Trento.Integration.Prometheus.PrometheusApi, url: "http://localhost:9090"
+
 config :trento, :grafana,
   user: "admin",
   password: "admin",
