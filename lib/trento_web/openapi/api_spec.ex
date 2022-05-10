@@ -21,7 +21,12 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       },
       # Populate the paths from a phoenix router
       paths: Paths.from_router(Router),
-      tags: [%{name: "frontend", description: "Frontend oriented APIs"}]
+      tags: [
+        %{
+          name: "Landscape",
+          description: "Providing access to the discovered target infrastructure"
+        }
+      ]
     }
     # Discover request/response schemas from path specs
     |> OpenApiSpex.resolve_schema_modules()

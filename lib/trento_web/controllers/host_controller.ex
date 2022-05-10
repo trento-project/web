@@ -10,7 +10,7 @@ defmodule TrentoWeb.HostController do
 
   use OpenApiSpex.ControllerSpecs
 
-  tags ["frontend"]
+  tags ["Landscape"]
 
   operation :list,
     summary: "List hosts",
