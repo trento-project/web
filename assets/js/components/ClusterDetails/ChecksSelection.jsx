@@ -150,6 +150,7 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                         className="flex items-center hover:bg-white pl-2"
                       >
                         <Switch
+                          checked={allSelected}
                           className={classNames(
                             {
                               'bg-jungle-green-500': allSelected,
