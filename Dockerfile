@@ -1,32 +1,32 @@
-FROM registry.opensuse.org/opensuse/leap:15.4 AS system
+FROM opensuse/leap AS elixir-build
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-RUN zypper -n addrepo https://download.opensuse.org/repositories/devel:/languages:/erlang/15.4/devel:languages:erlang.repo &&\
-    zypper -n --gpg-auto-import-keys ref -s &&\
-    zypper -n in inotify-tools elixir nodejs16 npm16
-WORKDIR /source
-RUN mix local.rebar --force &&\
-    mix local.hex --force
-
-FROM system AS deps
+RUN zypper -n addrepo https://download.opensuse.org/repositories/devel:/languages:/erlang/SLE_15_SP3/devel:languages:erlang.repo
+RUN zypper -n --gpg-auto-import-keys ref -s
+RUN zypper -n in elixir
+COPY . /build
+WORKDIR /build
 ENV MIX_ENV=prod
-COPY ./mix.* /source/
-COPY assets/package*.json /source/assets/
-RUN mix install
+RUN mix local.rebar --force \
+    && mix local.hex --force \
+    && mix deps.get
 
-FROM deps AS full
-LABEL org.opencontainers.image.version="rolling-full"
-LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
-COPY . /source
-RUN mix assets.deploy &&\
-    mix release --path /app
-WORKDIR /app
-EXPOSE 4000/tcp
-ENTRYPOINT ["/app/bin/trento"]
+FROM registry.suse.com/bci/nodejs:16 AS assets-build
+COPY --from=elixir-build /build /build
+WORKDIR /build/assets
+RUN npm install
+RUN npm run tailwind:build
+RUN npm run build
 
-FROM registry.suse.com/bci/bci-base:15.4 AS minimal
-LABEL org.opencontainers.image.version="rolling"
+FROM elixir-build AS release
+COPY --from=assets-build /build /build
+WORKDIR /build
+ENV MIX_ENV=prod
+RUN mix phx.digest
+RUN mix release
+
+FROM registry.suse.com/bci/bci-base:15.3 AS trento
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
@@ -34,6 +34,6 @@ ENV LC_ALL en_US.UTF-8
 # tar is required by kubectl cp
 RUN zypper -n in tar
 WORKDIR /app
-COPY --from=full /app .
+COPY --from=release /build/_build/prod/rel/trento .
 EXPOSE 4000/tcp
 ENTRYPOINT ["/app/bin/trento"]
