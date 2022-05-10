@@ -8,14 +8,28 @@ defmodule TrentoWeb.HostController do
 
   alias Trento.Support.StructHelper
 
-  @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
+  use OpenApiSpex.ControllerSpecs
 
+  tags ["frontend"]
+
+  operation :list,
+    summary: "List hosts",
+    description: "List all the discovered hosts on the target infrastructure",
+    responses: [
+      ok:
+        {"A collection of the discovered hosts", "application/json",
+         TrentoWeb.OpenApi.Schema.Host.Collection}
+    ]
+
+  @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
     # TODO: replace to_map with DTO approach
     hosts = Hosts.get_all_hosts() |> StructHelper.to_map()
 
     json(conn, hosts)
   end
+
+  operation :heartbeat, false
 
   def heartbeat(conn, %{"id" => id}) do
     case Heartbeats.heartbeat(id) do
