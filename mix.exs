@@ -91,13 +91,14 @@ defmodule Trento.MixProject do
   defp aliases do
     [
       start: [
-        "install",
-        "setup",
+        "cmd docker-compose up -d",
+        "deps.get",
+        "ecto.create",
+        "ecto.migrate",
+        "event_store.setup",
         "phx.server"
       ],
-      install: ["deps.get", "cmd --cd assets npm install"],
-      setup: ["event_store.setup", "ecto.setup", "init_grafana_dashboards"],
-      reset: ["event_store.reset", "ecto.reset"],
+      setup: ["deps.get", "event_store.setup", "ecto.setup", "init_grafana_dashboards"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "event_store.setup": ["event_store.create", "event_store.init"],
