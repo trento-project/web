@@ -54,9 +54,9 @@ const ClustersList = () => {
         key: 'name',
         filter: true,
         render: (content, item) => (
-          <ClusterLink cluster={item}>
-            <span className="tn-clustername">{content}</span>
-          </ClusterLink>
+          <span className="tn-clustername">
+            <ClusterLink cluster={item} />
+          </span>
         ),
       },
       {

@@ -42,7 +42,7 @@ const InstanceOverview = ({
       )}
       <div className="table-cell p-2">
         {cluster ? (
-          <ClusterLink cluster={cluster}>{cluster.name}</ClusterLink>
+          <ClusterLink cluster={cluster} />
         ) : (
           <p className="text-gray-500 dark:text-gray-300 text-sm">
             not available

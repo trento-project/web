@@ -52,7 +52,7 @@ defmodule Trento.Domain.Cluster do
 
   @type t :: %__MODULE__{
           cluster_id: String.t(),
-          name: [String.t()],
+          name: String.t(),
           type: :hana_scale_up | :hana_scale_out | :unknown,
           provider: :azure | :aws | :gcp | :unknown,
           discovered_health: nil | :passing | :warning | :critical | :unknown,

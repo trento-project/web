@@ -33,5 +33,15 @@ import {
           });
         });
       });
+      describe('Unnamed cluster', () => {
+        before(() => {
+          cy.loadScenario('cluster-unnamed');
+        });
+
+        it('Unnamed clusters should use the ID as details page link', () => {
+          const clusterID = clusterIdByName('hana_cluster_1')
+          cy.get(`a:contains(${clusterID})`).should('be.visible')
+        });
+      });
     });
   });
