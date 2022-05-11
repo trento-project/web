@@ -82,7 +82,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 2",
           provider: :azure,
           remediation: "remediation 2",
-          premium: nil
+          premium: false
         },
         %FlatCheckDto{
           description: "description 3",
@@ -93,7 +93,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 3",
           provider: :azure,
           remediation: "remediation 3",
-          premium: nil
+          premium: false
         },
         %FlatCheckDto{
           description: "description 4",
@@ -104,7 +104,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 4",
           provider: :azure,
           remediation: "remediation 4",
-          premium: nil
+          premium: false
         },
         %FlatCheckDto{
           description: "description 5",
@@ -115,7 +115,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 5",
           provider: :azure,
           remediation: "remediation 5",
-          premium: nil
+          premium: false
         },
         %FlatCheckDto{
           description: "description 1",
@@ -137,7 +137,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 2",
           provider: :aws,
           remediation: "remediation 2",
-          premium: nil
+          premium: false
         },
         %FlatCheckDto{
           description: "description 3",
@@ -148,7 +148,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 3",
           provider: :aws,
           remediation: "remediation 3",
-          premium: nil
+          premium: false
         },
         %FlatCheckDto{
           description: "description 4",
@@ -159,7 +159,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 4",
           provider: :aws,
           remediation: "remediation 4",
-          premium: nil
+          premium: false
         },
         %FlatCheckDto{
           description: "description 5",
@@ -170,7 +170,7 @@ defmodule Trento.Integration.ChecksTest do
           name: "test 5",
           provider: :aws,
           remediation: "remediation 5",
-          premium: nil
+          premium: false
         }
       ]
     }
@@ -206,7 +206,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 2",
                   remediation: "remediation 2",
-                  premium: nil
+                  premium: false
                 }
               ],
               group: "Group 1"
@@ -220,7 +220,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 3",
                   remediation: "remediation 3",
-                  premium: nil
+                  premium: false
                 },
                 %CheckDto{
                   description: "description 4",
@@ -229,7 +229,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 4",
                   remediation: "remediation 4",
-                  premium: nil
+                  premium: false
                 }
               ],
               group: "Group 2"
@@ -243,7 +243,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 5",
                   remediation: "remediation 5",
-                  premium: nil
+                  premium: false
                 }
               ],
               group: "Group 3"
@@ -271,7 +271,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 2",
                   remediation: "remediation 2",
-                  premium: nil
+                  premium: false
                 }
               ],
               group: "Group 1"
@@ -285,7 +285,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 3",
                   remediation: "remediation 3",
-                  premium: nil
+                  premium: false
                 },
                 %CheckDto{
                   description: "description 4",
@@ -294,7 +294,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 4",
                   remediation: "remediation 4",
-                  premium: nil
+                  premium: false
                 }
               ],
               group: "Group 2"
@@ -308,7 +308,7 @@ defmodule Trento.Integration.ChecksTest do
                   labels: "labels",
                   name: "test 5",
                   remediation: "remediation 5",
-                  premium: nil
+                  premium: false
                 }
               ],
               group: "Group 3"

@@ -43,7 +43,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 2",
                 "remediation" => "remediation 2",
-                "premium" => nil
+                "premium" => false
               }
             ],
             "group" => "Group 1"
@@ -57,7 +57,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 3",
                 "remediation" => "remediation 3",
-                "premium" => nil
+                "premium" => false
               },
               %{
                 "description" => "description 4",
@@ -66,7 +66,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 4",
                 "remediation" => "remediation 4",
-                "premium" => nil
+                "premium" => false
               }
             ],
             "group" => "Group 2"
@@ -80,7 +80,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 5",
                 "remediation" => "remediation 5",
-                "premium" => nil
+                "premium" => false
               }
             ],
             "group" => "Group 3"
@@ -108,7 +108,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 2",
                 "remediation" => "remediation 2",
-                "premium" => nil
+                "premium" => false
               }
             ],
             "group" => "Group 1"
@@ -122,7 +122,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 3",
                 "remediation" => "remediation 3",
-                "premium" => nil
+                "premium" => false
               },
               %{
                 "description" => "description 4",
@@ -131,7 +131,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 4",
                 "remediation" => "remediation 4",
-                "premium" => nil
+                "premium" => false
               }
             ],
             "group" => "Group 2"
@@ -145,7 +145,7 @@ defmodule TrentoWeb.CatalogControllerTest do
                 "labels" => "labels",
                 "name" => "test 5",
                 "remediation" => "remediation 5",
-                "premium" => nil
+                "premium" => false
               }
             ],
             "group" => "Group 3"
@@ -191,7 +191,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "labels" => "labels",
         "name" => "test 2",
         "remediation" => "remediation 2",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 3",
@@ -202,7 +202,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 3",
         "provider" => "azure",
         "remediation" => "remediation 3",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 4",
@@ -213,7 +213,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 4",
         "provider" => "azure",
         "remediation" => "remediation 4",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 5",
@@ -224,7 +224,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 5",
         "provider" => "azure",
         "remediation" => "remediation 5",
-        "premium" => nil
+        "premium" => false
       }
     ]
 
@@ -263,7 +263,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "labels" => "labels",
         "name" => "test 2",
         "remediation" => "remediation 2",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 3",
@@ -274,7 +274,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 3",
         "provider" => "azure",
         "remediation" => "remediation 3",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 4",
@@ -285,7 +285,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 4",
         "provider" => "azure",
         "remediation" => "remediation 4",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 5",
@@ -296,7 +296,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 5",
         "provider" => "azure",
         "remediation" => "remediation 5",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 1",
@@ -318,7 +318,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 2",
         "provider" => "aws",
         "remediation" => "remediation 2",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 3",
@@ -329,7 +329,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 3",
         "provider" => "aws",
         "remediation" => "remediation 3",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 4",
@@ -340,7 +340,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 4",
         "provider" => "aws",
         "remediation" => "remediation 4",
-        "premium" => nil
+        "premium" => false
       },
       %{
         "description" => "description 5",
@@ -351,7 +351,7 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 5",
         "provider" => "aws",
         "remediation" => "remediation 5",
-        "premium" => nil
+        "premium" => false
       }
     ]
 
