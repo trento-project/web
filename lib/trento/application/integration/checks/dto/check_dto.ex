@@ -21,5 +21,6 @@ defmodule Trento.Integration.Checks.CheckDto do
     field :remediation, :string
     field :implementation, :string
     field :labels, :string
+    field :premium, :boolean, default: false
   end
 end
