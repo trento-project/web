@@ -18,7 +18,7 @@ defmodule TrentoWeb.HostController do
     responses: [
       ok:
         {"A collection of the discovered hosts", "application/json",
-         TrentoWeb.OpenApi.Schema.Host.Collection}
+         TrentoWeb.OpenApi.Schema.Host.HostsCollection}
     ]
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()

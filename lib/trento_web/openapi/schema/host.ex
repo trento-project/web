@@ -24,7 +24,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
     })
   end
 
-  defmodule Item do
+  defmodule HostItem do
     @moduledoc false
 
     OpenApiSpex.schema(%{
@@ -33,7 +33,6 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
       type: :object,
       properties: %{
         id: %Schema{type: :integer, description: "Host ID"},
-        # pattern: ~r/[a-zA-Z][a-zA-Z0-9_]+/
         hostname: %Schema{type: :string, description: "Host name"},
         ip_addresses: %Schema{
           type: :array,
@@ -80,18 +79,17 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
           items: TrentoWeb.OpenApi.Schema.SlesSubscription
         }
       }
-      # required: [:name, :email],
     })
   end
 
-  defmodule Collection do
+  defmodule HostsCollection do
     @moduledoc false
 
     OpenApiSpex.schema(%{
       title: "HostsCollection",
       description: "A list of the discovered hosts",
       type: :array,
-      items: Item
+      items: HostItem
     })
   end
 end
