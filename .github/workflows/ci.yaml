@@ -45,7 +45,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
 
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
@@ -95,7 +95,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
 
       - name: Check Code Format
         run: mix format --check-formatted
@@ -156,7 +156,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.exs') }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
 
       - name: Setup Node
         uses: actions/setup-node@v3
