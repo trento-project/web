@@ -149,7 +149,7 @@ const ClusterDetails = () => {
               content: cluster.cib_last_written || '-',
             },
             {
-              title: 'HANA system replication mode',
+              title: 'HANA log replication mode',
               content:
                 cluster.details && cluster.details.system_replication_mode,
             },
@@ -158,7 +158,7 @@ const ClusterDetails = () => {
               content: cluster.details && cluster.details.secondary_sync_state,
             },
             {
-              title: 'HANA system replication mode',
+              title: 'HANA log operation mode',
               content:
                 cluster.details &&
                 cluster.details.system_replication_operation_mode,
