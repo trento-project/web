@@ -67,7 +67,7 @@ const ChecksCatalog = () => {
           groups?.map(({ group, checks }, idx) => (
             <div
               key={idx}
-              className="bg-white shadow overflow-hidden sm:rounded-md mb-8"
+              className="check-group bg-white shadow overflow-hidden sm:rounded-md mb-8"
             >
               <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
@@ -82,7 +82,7 @@ const ChecksCatalog = () => {
                         as="div"
                         className="flex justify-between w-full cursor-pointer hover:bg-gray-100"
                       >
-                        <div className="px-4 py-4 sm:px-6">
+                        <div className="check-row px-4 py-4 sm:px-6">
                           <div className="flex items-center">
                             <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                               {check.id}
