@@ -1,5 +1,5 @@
 [
-  import_deps: [:ecto, :phoenix, :commanded],
+  import_deps: [:ecto, :phoenix, :commanded, :open_api_spex],
   locals_without_parens: [
     # mock
     assert_called: :*,
