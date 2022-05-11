@@ -4,8 +4,8 @@ import {
   all,
   call,
   takeEvery,
-  takeLatest,
   select,
+  debounce,
 } from 'redux-saga/effects';
 import { urlEncode, keysToCamel } from '@lib/serialization';
 
@@ -518,15 +518,53 @@ function* watchCatalogUpdate() {
 }
 
 function* refreshHealthSummaryOnComnponentsHealthChange() {
-  yield takeLatest('HOST_REGISTERED', loadSapSystemsHealthSummary);
-  yield takeLatest('CLUSTER_REGISTERED', loadSapSystemsHealthSummary);
-  yield takeLatest('DATABASE_REGISTERED', loadSapSystemsHealthSummary);
-  yield takeLatest('SAP_SYSTEM_REGISTERED', loadSapSystemsHealthSummary);
-  yield takeLatest('HEARTBEAT_FAILED', loadSapSystemsHealthSummary);
-  yield takeLatest('HEARTBEAT_SUCCEDED', loadSapSystemsHealthSummary);
-  yield takeLatest('DATABASE_HEALTH_CHANGED', loadSapSystemsHealthSummary);
-  yield takeLatest('SAP_SYSTEM_HEALTH_CHANGED', loadSapSystemsHealthSummary);
-  yield takeLatest('CLUSTER_HEALTH_CHANGED', loadSapSystemsHealthSummary);
+  const debounceDuration = 5000;
+
+  yield debounce(
+    debounceDuration,
+    'HOST_REGISTERED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'CLUSTER_REGISTERED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'DATABASE_REGISTERED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'SAP_SYSTEM_REGISTERED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'HEARTBEAT_FAILED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'HEARTBEAT_SUCCEDED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'DATABASE_HEALTH_CHANGED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'SAP_SYSTEM_HEALTH_CHANGED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    'CLUSTER_HEALTH_CHANGED',
+    loadSapSystemsHealthSummary
+  );
 }
 
 function* loadClusterConnectionSettings({ payload: { cluster } }) {
