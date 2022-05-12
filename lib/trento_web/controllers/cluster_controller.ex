@@ -5,6 +5,19 @@ defmodule TrentoWeb.ClusterController do
 
   alias Trento.Integration.Checks
 
+  use OpenApiSpex.ControllerSpecs
+
+  tags ["Landscape"]
+
+  operation :list,
+    summary: "List Pacemaker Clusters",
+    description: "List all the discovered Pacemaker Clusters on the target infrastructure",
+    responses: [
+      ok:
+        {"A collection of the discovered Pacemaker Clusters", "application/json",
+         TrentoWeb.OpenApi.Schema.Cluster.PacemakerClustersCollection}
+    ]
+
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
     clusters = Clusters.get_all_clusters()
@@ -12,6 +25,7 @@ defmodule TrentoWeb.ClusterController do
     json(conn, clusters)
   end
 
+  operation :request_checks_execution, false
   @spec request_checks_execution(Plug.Conn.t(), map) :: Plug.Conn.t()
   def request_checks_execution(conn, %{"cluster_id" => cluster_id}) do
     case Clusters.request_checks_execution(cluster_id) do
@@ -27,6 +41,8 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
+  operation :runner_callback, false
+  @spec runner_callback(Plug.Conn.t(), map) :: Plug.Conn.t()
   def runner_callback(conn, params) do
     case Checks.handle_callback(params) do
       :ok ->
@@ -41,6 +57,7 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
+  operation :select_checks, false
   @spec select_checks(Plug.Conn.t(), map) :: Plug.Conn.t()
   def select_checks(conn, %{"cluster_id" => cluster_id, "checks" => checks}) do
     case Clusters.select_checks(cluster_id, checks) do
@@ -56,6 +73,7 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
+  operation :get_connection_settings, false
   @spec get_connection_settings(Plug.Conn.t(), map) :: Plug.Conn.t()
   def get_connection_settings(conn, %{"cluster_id" => cluster_id}) do
     settings = Hosts.get_all_connection_settings_by_cluster_id(cluster_id)
@@ -65,6 +83,7 @@ defmodule TrentoWeb.ClusterController do
     |> json(settings)
   end
 
+  operation :save_connection_settings, false
   @spec save_connection_settings(Plug.Conn.t(), map) :: Plug.Conn.t()
   def save_connection_settings(
         conn,
