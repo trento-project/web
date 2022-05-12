@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+
+import axios from 'axios';
 
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 
-import HeartbeatPill from './HeartbeatPill';
+import StatusPill from './HeartbeatPill';
 
 import ClusterLink from '@components/ClusterLink';
 
@@ -30,6 +32,17 @@ const HostDetails = () => {
   // eslint-disable-next-line no-undef
   const { grafanaPublicUrl } = config;
 
+  const [exportersStatus, setExportersStatus] = useState([]);
+
+  const getExportersStatus = async () => {
+    const { data } = await axios.get(`/api/hosts/${hostID}/exporters_status`);
+    setExportersStatus(data);
+  };
+
+  useEffect(() => {
+    getExportersStatus();
+  }, []);
+
   if (!host) {
     return <div>Not Found</div>;
   }
@@ -38,10 +51,24 @@ const HostDetails = () => {
     <div>
       <div className="flex">
         <h1 className="text-3xl font-bold">Host details: {host.hostname}</h1>
-        <HeartbeatPill
+        <StatusPill
           className="self-center ml-4 shadow"
           heartbeat={host.heartbeat}
-        />
+        >
+          Agent
+        </StatusPill>
+
+        {Object.entries(exportersStatus).map(
+          ([exporterName, exporterStatus]) => (
+            <StatusPill
+              key={exporterName}
+              className="self-center ml-4 shadow"
+              heartbeat={exporterStatus}
+            >
+              {exporterName}
+            </StatusPill>
+          )
+        )}
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
