@@ -214,28 +214,28 @@ context('SAP Systems Overview', () => {
         });
       });
     });
-  });
 
-  describe('Filtering by tags', () => {
-    before(() => {
-      cy.get('span').contains('Filter Tags').parent().parent().click();
-    });
-    after(() => {
-      cy.get('span').contains('Filter Tags').parent().parent().click();
-    });
-    availableSAPSystems.forEach(({ sid, tag }) => {
-      it(`should have SAP Systems ${sid} tagged with tag '${tag}'`, () => {
-        cy.get('li > div > span.ml-3.block').contains(tag).click();
-        cy.get('table.table-fixed > tbody > tr').should('have.length', 2)
-        cy.get('td')
-          .contains(tag)
-          .parent('span')
-          .parent('td')
-          .parent('tr')
-          .within(() => {
-            cy.get('td').eq(1).contains(sid);
-          });
-        cy.get('li > div > span.ml-3.block').contains(tag).click();
+    describe('Filtering by tags', () => {
+      before(() => {
+        cy.get('span').contains('Filter Tags').parent().parent().click();
+      });
+      after(() => {
+        cy.get('span').contains('Filter Tags').parent().parent().click();
+      });
+      availableSAPSystems.forEach(({ sid, tag }) => {
+        it(`should have SAP Systems ${sid} tagged with tag '${tag}'`, () => {
+          cy.get('li > div > span.ml-3.block').contains(tag).click();
+          cy.get('table.table-fixed > tbody > tr').should('have.length', 2)
+          cy.get('td')
+            .contains(tag)
+            .parent('span')
+            .parent('td')
+            .parent('tr')
+            .within(() => {
+              cy.get('td').eq(1).contains(sid);
+            });
+          cy.get('li > div > span.ml-3.block').contains(tag).click();
+        });
       });
     });
   });
@@ -252,10 +252,22 @@ context('SAP Systems Overview', () => {
 
         cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).find('td').eq(0).get('svg').should('have.class', health)
         instancesRow.get('div.table-row-group > div.table-row').eq(index)
-            .get('div.table-cell').eq(0).get('svg').should('have.class', health)
+          .get('div.table-cell').eq(0).get('svg').should('have.class', health);
 
         cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
       });
+    });
+
+    it(`should have RED health in SAP system and when HANA instance when SAPControl-RED state is received`, () => {
+      cy.loadScenario(`sap-systems-overview-hana-RED`);
+
+      const healthClasses = healthMap['RED'];
+      cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
+      const instancesRow = cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).next();
+      instancesRow.get('div.table-row-group > div.table-row').eq(5)
+        .get('div.table-cell').eq(0).get('svg').should('have.class', healthClasses);
+
+      cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
     });
   });
 
