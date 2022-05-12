@@ -4,15 +4,14 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  defmodule ProviderData do
+  defmodule SupportedProviders do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "ProviderMetadata",
-      description: "Detected metadata for any provider",
-      oneOf: [
-        TrentoWeb.OpenApi.Schema.Provider.AzureProviderData
-      ]
+      title: "SupportedProviders",
+      type: :string,
+      description: "Detected Provider where the resource is running",
+      enum: [:azure, :aws, :gcp, :unknown]
     })
   end
 
@@ -32,6 +31,18 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
         sku: %Schema{type: :string},
         admin_username: %Schema{type: :string}
       }
+    })
+  end
+
+  defmodule ProviderData do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "ProviderMetadata",
+      description: "Detected metadata for any provider",
+      oneOf: [
+        AzureProviderData
+      ]
     })
   end
 end

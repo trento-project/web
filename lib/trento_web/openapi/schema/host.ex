@@ -4,6 +4,8 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  alias TrentoWeb.OpenApi.Schema.{Provider, SlesSubscription, Tag}
+
   defmodule IPv4 do
     @moduledoc false
 
@@ -45,7 +47,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
             ]
           }
         },
-        ssh_address: TrentoWeb.OpenApi.Schema.Host.IPv4,
+        ssh_address: IPv4,
         agent_version: %Schema{
           type: :string,
           description: "Version of the agent installed on the host"
@@ -60,23 +62,19 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
           description: "Host's last heartbeat status",
           enum: [:critical, :passing, :unknown]
         },
-        provider: %Schema{
-          type: :string,
-          description: "Detected Provider on which the host is running",
-          enum: [:azure, :aws, :gcp, :unknown]
-        },
-        provider_data: TrentoWeb.OpenApi.Schema.Provider.ProviderData,
+        provider: Provider.SupportedProviders,
+        provider_data: Provider.ProviderData,
         tags: %Schema{
           title: "Tags",
           description: "A list of tags attached to a resource",
           type: :array,
-          items: TrentoWeb.OpenApi.Schema.Tag
+          items: Tag
         },
         sles_subscriptions: %Schema{
           title: "SlesSubscriptions",
           description: "A list of the available SLES Subscriptions on a host",
           type: :array,
-          items: TrentoWeb.OpenApi.Schema.SlesSubscription
+          items: SlesSubscription
         }
       }
     })
