@@ -55,7 +55,13 @@ context('Host Details', () => {
 
   describe("Trento agent status should be 'running'", () => {
     it("should show the status as 'running'", () => {
-      cy.get(':nth-child(1) > :nth-child(1) > .px-2').should('contain', 'running');
+      cy.get('span').should('contain', 'Agent: running');
+    });
+  });
+
+  describe("Node exporter status should be 'running'", () => {
+    it("should show the status as 'running'", () => {
+      cy.get('span').should('contain', 'Node Exporter: running');
     });
   });
 });
