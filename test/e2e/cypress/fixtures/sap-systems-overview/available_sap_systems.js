@@ -4,10 +4,10 @@ const HANASystemReplicationModes = {
 };
 
 export const healthMap = {
-  GREY: 'fill-jungle-green-500',
   GREEN: 'fill-jungle-green-500',
-  YELLOW: 'fill-jungle-green-500',
-  RED: 'fill-jungle-green-500',
+  YELLOW: 'fill-yellow-500',
+  RED: 'fill-red-500',
+  GRAY: 'fill-gray-500',
 };
 
 export const isHanaInstace = (instance) =>

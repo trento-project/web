@@ -8,7 +8,7 @@ import {
 
 context('SAP Systems Overview', () => {
   before(() => {
-    //cy.loadScenario('healthy-27-node-SAP-cluster');
+    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.login();
 
     cy.visit('/');
@@ -163,4 +163,23 @@ context('SAP Systems Overview', () => {
       });
     });
   });
+  
+  describe('Health states are updated', () => {
+    Object.entries(healthMap).forEach(([state, health], index) => {
+      it(`should have ${state} health in SAP system and instance ${
+        index + 1
+      } when SAPControl-${state} state is received`, () => {
+        cy.loadScenario(`sap-systems-overview-${state}`);
+
+        cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
+        const instancesRow = cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).next();
+
+        cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).find('td').eq(0).get('svg').should('have.class', health)
+        instancesRow.get('div.table-row-group > div.table-row').eq(index)
+            .get('div.table-cell').eq(0).get('svg').should('have.class', health)
+
+        cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
+      });
+    });
+  })
 });
