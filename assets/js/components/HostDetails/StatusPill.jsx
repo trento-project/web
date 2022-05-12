@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import Pill from '@components/Pill';
 
-const StatusPill = ({ className, children, heartbeat}) => {
+const StatusPill = ({ className, children, heartbeat }) => {
   switch (heartbeat) {
     case 'passing':
       return (
