@@ -69,6 +69,9 @@ if config_env() == :prod do
     public_url: System.get_env("GRAFANA_PUBLIC_URL") || "http://localhost:3000",
     api_url: System.get_env("GRAFANA_API_URL") || "http://localhost:3000/api"
 
+  config :trento, Trento.Integration.Prometheus.PrometheusApi,
+    url: System.get_env("PROMETHEUS_URL") || "http://localhost:9090"
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix
