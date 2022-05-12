@@ -163,6 +163,82 @@ context('SAP Systems Overview', () => {
       });
     });
   });
+  
+  describe('SAP Systems Tagging', () => {
+    before(() => {
+      cy.get('body').then(($body) => {
+        const deleteTag = 'span.ml-2.cursor-pointer';
+        if ($body.find(deleteTag).length > 0) {
+          cy.get(deleteTag).then(($deleteTag) =>
+            cy.wrap($deleteTag).click({ multiple: true })
+          );
+        }
+      });
+    });
+
+    availableSAPSystems.forEach(({ sid, tag }) => {
+      describe(`Add tag '${tag}' to SAP System with sid: '${sid}'`, () => {
+        it(`should tag SAP System '${sid}'`, () => {
+          cy.get('td')
+            .contains(sid)
+            .parent('td')
+            .parent('tr')
+            .within(() => {
+              cy.get('span').contains('Add Tag').type(`${tag}{enter}`);
+            });
+        });
+      });
+    });
+  });
+
+  describe('Filtering the SAP Systems overview', () => {
+    describe('Filtering by SIDs', () => {
+      before(() => {
+        cy.get('span').contains('Filter SID').parent().parent().click();
+      });
+      after(() => {
+        cy.get('span').contains('Filter SID').parent().parent().click();
+      });
+      availableSAPSystems.forEach(({ sid }) => {
+        it(`should have SAP Systems ${sid}'`, () => {
+          cy.get('li > div > span.ml-3.block').contains(sid).click();
+          cy.get('table.table-fixed > tbody > tr').should('have.length', 2)
+          cy.get('td')
+            .contains(sid)
+            .parent('td')
+            .parent('tr')
+            .within(() => {
+              cy.get('td').eq(1).contains(sid);
+            });
+          cy.get('li > div > span.ml-3.block').contains(sid).click();
+        });
+      });
+    });
+  });
+
+  describe('Filtering by tags', () => {
+    before(() => {
+      cy.get('span').contains('Filter Tags').parent().parent().click();
+    });
+    after(() => {
+      cy.get('span').contains('Filter Tags').parent().parent().click();
+    });
+    availableSAPSystems.forEach(({ sid, tag }) => {
+      it(`should have SAP Systems ${sid} tagged with tag '${tag}'`, () => {
+        cy.get('li > div > span.ml-3.block').contains(tag).click();
+        cy.get('table.table-fixed > tbody > tr').should('have.length', 2)
+        cy.get('td')
+          .contains(tag)
+          .parent('span')
+          .parent('td')
+          .parent('tr')
+          .within(() => {
+            cy.get('td').eq(1).contains(sid);
+          });
+        cy.get('li > div > span.ml-3.block').contains(tag).click();
+      });
+    });
+  });
 
   describe('Health states are updated', () => {
     Object.entries(healthMap).forEach(([state, health], index) => {
