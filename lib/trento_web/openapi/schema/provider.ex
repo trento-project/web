@@ -4,6 +4,17 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule SupportedProviders do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "SupportedProviders",
+      type: :string,
+      description: "Detected Provider where the resource is running",
+      enum: [:azure, :aws, :gcp, :unknown]
+    })
+  end
+
   defmodule ProviderData do
     @moduledoc false
 

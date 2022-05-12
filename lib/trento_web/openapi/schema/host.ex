@@ -60,11 +60,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
           description: "Host's last heartbeat status",
           enum: [:critical, :passing, :unknown]
         },
-        provider: %Schema{
-          type: :string,
-          description: "Detected Provider on which the host is running",
-          enum: [:azure, :aws, :gcp, :unknown]
-        },
+        provider: TrentoWeb.OpenApi.Schema.Provider.SupportedProviders,
         provider_data: TrentoWeb.OpenApi.Schema.Provider.ProviderData,
         tags: %Schema{
           title: "Tags",
