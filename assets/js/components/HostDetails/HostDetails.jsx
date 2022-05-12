@@ -7,7 +7,7 @@ import axios from 'axios';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 
-import StatusPill from './HeartbeatPill';
+import StatusPill from './StatusPill';
 
 import ClusterLink from '@components/ClusterLink';
 
