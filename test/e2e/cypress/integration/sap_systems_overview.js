@@ -163,7 +163,7 @@ context('SAP Systems Overview', () => {
       });
     });
   });
-  
+
   describe('Health states are updated', () => {
     Object.entries(healthMap).forEach(([state, health], index) => {
       it(`should have ${state} health in SAP system and instance ${
@@ -181,5 +181,12 @@ context('SAP Systems Overview', () => {
         cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
       });
     });
-  })
+  });
+
+  describe('SAP diagnostics agent', () => {
+    it(`should skip SAP diagnostics agent discovery visualization`, () => {
+      cy.loadScenario('sap-systems-overview-DAA');
+      cy.get('table.table-fixed').should('not.contain', 'DAA');
+    });
+  });
 });
