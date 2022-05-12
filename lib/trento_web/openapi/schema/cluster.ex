@@ -4,6 +4,8 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  alias TrentoWeb.OpenApi.Schema.{Checks, Provider, Tag}
+
   defmodule ClusterResource do
     @moduledoc false
 
@@ -121,7 +123,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
         id: %Schema{type: :integer, description: "Cluster ID"},
         name: %Schema{type: :string, description: "Cluster name"},
         sid: %Schema{type: :string, description: "SID"},
-        provider: TrentoWeb.OpenApi.Schema.Provider.SupportedProviders,
+        provider: Provider.SupportedProviders,
         type: %Schema{
           type: :string,
           description: "Detected type of the cluster",
@@ -150,19 +152,19 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
           title: "HostChecksExecutions",
           description: "A list of tags attached to a resource",
           type: :array,
-          items: TrentoWeb.OpenApi.Schema.Checks.HostChecksExecution
+          items: Checks.HostChecksExecution
         },
         checks_results: %Schema{
           title: "CheckResults",
           description: "A list of tags attached to a resource",
           type: :array,
-          items: TrentoWeb.OpenApi.Schema.Checks.CheckResult
+          items: Checks.CheckResult
         },
         tags: %Schema{
           title: "Tags",
           description: "A list of tags attached to a resource",
           type: :array,
-          items: TrentoWeb.OpenApi.Schema.Tag
+          items: Tag
         }
       }
     })

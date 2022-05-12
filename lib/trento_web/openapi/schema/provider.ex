@@ -15,18 +15,6 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
     })
   end
 
-  defmodule ProviderData do
-    @moduledoc false
-
-    OpenApiSpex.schema(%{
-      title: "ProviderMetadata",
-      description: "Detected metadata for any provider",
-      oneOf: [
-        TrentoWeb.OpenApi.Schema.Provider.AzureProviderData
-      ]
-    })
-  end
-
   defmodule AzureProviderData do
     @moduledoc false
 
@@ -43,6 +31,18 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
         sku: %Schema{type: :string},
         admin_username: %Schema{type: :string}
       }
+    })
+  end
+
+  defmodule ProviderData do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "ProviderMetadata",
+      description: "Detected metadata for any provider",
+      oneOf: [
+        AzureProviderData
+      ]
     })
   end
 end
