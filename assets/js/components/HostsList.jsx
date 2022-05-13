@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import Table from './Table';
 import Tags from './Tags';
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
+import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import { useSelector, useDispatch } from 'react-redux';
@@ -75,14 +75,7 @@ const HostsList = () => {
         key: 'hostname',
         className: 'w-40',
         filter: true,
-        render: (content, { id }) => (
-          <span
-            id={`host-${id}`}
-            className="tn-hostname text-jungle-green-500 hover:opacity-75"
-          >
-            <Link to={`/hosts/${id}`}>{content}</Link>
-          </span>
-        ),
+        render: (content, { id }) => <HostLink hostId={id}>{content}</HostLink>,
       },
       {
         title: 'IP',

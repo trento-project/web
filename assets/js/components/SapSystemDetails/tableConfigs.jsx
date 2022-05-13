@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import HostLink from '@components/HostLink';
 import { Features, InstanceStatus } from './GenericSystemDetails';
 
 export const systemInstancesTableConfiguration = {
@@ -33,11 +33,7 @@ export const systemHostsTableConfiguration = {
     {
       title: 'Hostname',
       key: 'hostname',
-      render: (content, { id }) => (
-        <span className="transition hover:text-green-600">
-          <Link to={`/hosts/${id}`}>{content}</Link>
-        </span>
-      ),
+      render: (content, { id }) => <HostLink hostId={id}>{content}</HostLink>,
     },
     {
       title: 'IP',

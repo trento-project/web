@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { getCluster, getHost } from '@state/selectors';
 import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails';
 import { DATABASE_TYPE } from '@lib/model';
+import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import Pill from '@components/Pill';
 const InstanceOverview = ({
@@ -50,12 +50,7 @@ const InstanceOverview = ({
         )}
       </div>
       <div className="table-cell p-2">
-        <Link
-          className="text-jungle-green-500 hover:opacity-75"
-          to={`/hosts/${hostId}`}
-        >
-          {host && host.hostname}
-        </Link>
+        <HostLink hostId={hostId}>{host && host.hostname}</HostLink>
       </div>
     </div>
   );
