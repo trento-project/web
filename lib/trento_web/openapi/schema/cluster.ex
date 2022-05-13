@@ -120,7 +120,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
       description: "A discovered Pacemaker Cluster on the target infrastructure",
       type: :object,
       properties: %{
-        id: %Schema{type: :integer, description: "Cluster ID", format: :uuid},
+        id: %Schema{type: :string, description: "Cluster ID", format: :uuid},
         name: %Schema{type: :string, description: "Cluster name"},
         sid: %Schema{type: :string, description: "SID"},
         provider: Provider.SupportedProviders,

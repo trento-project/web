@@ -14,7 +14,7 @@ defmodule TrentoWeb.OpenApi.Schema.SAPSystem do
       description: "A discovered Application Instance on the target infrastructure",
       type: :object,
       properties: %{
-        sap_system_id: %Schema{type: :integer, description: "SAP System ID", format: :uuid},
+        sap_system_id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
         instance_number: %Schema{type: :string, description: "Instance Number"},
         instance_hostname: %Schema{type: :string, description: "Instance Hostname"},
@@ -40,7 +40,7 @@ defmodule TrentoWeb.OpenApi.Schema.SAPSystem do
       description: "A discovered SAP System on the target infrastructure",
       type: :object,
       properties: %{
-        id: %Schema{type: :integer, description: "SAP System ID", format: :uuid},
+        id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
         tenant: %Schema{type: :string, description: "Tenant"},
         db_host: %Schema{type: :string, description: "Address of the connected Database"},

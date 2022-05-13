@@ -14,7 +14,7 @@ defmodule TrentoWeb.OpenApi.Schema.Database do
       description: "A discovered HANA Database Instance on the target infrastructure",
       type: :object,
       properties: %{
-        sap_system_id: %Schema{type: :integer, description: "SAP System ID", format: :uuid},
+        sap_system_id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
         tenant: %Schema{type: :string, description: "Tenant"},
         instance_number: %Schema{type: :string, description: "Instance Number"},
@@ -58,7 +58,7 @@ defmodule TrentoWeb.OpenApi.Schema.Database do
       description: "A discovered HANA Database on the target infrastructure",
       type: :object,
       properties: %{
-        id: %Schema{type: :integer, description: "Database ID", format: :uuid},
+        id: %Schema{type: :string, description: "Database ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
         health: ResourceHealth,
         database_instances: DatabaseInstances,
@@ -72,7 +72,7 @@ defmodule TrentoWeb.OpenApi.Schema.Database do
 
     OpenApiSpex.schema(%{
       title: "DatabasesCollection",
-      description: "A list of the discovered SAP Systems",
+      description: "A list of the discovered HANA Databases",
       type: :array,
       items: DatabaseItem
     })
