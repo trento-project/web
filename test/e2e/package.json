@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "E2E testing for Trento",
   "scripts": {
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "lint": "eslint . --ext js,jsx",
+    "format:check": "prettier --check .",
+    "format": "prettier --write ."
   },
   "devDependencies": {
-    "cypress": "^9.2.1",
-    "prettier": "2.5.1",
-    "eslint": "8.7.0",
-    "eslint-plugin-cypress": "^2.12.1"
+    "cypress": "^9.6.1",
+    "eslint": "^8.15.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "prettier": "2.6.2"
+  },
+  "dependencies": {
+    "npm": "^8.10.0"
   }
 }

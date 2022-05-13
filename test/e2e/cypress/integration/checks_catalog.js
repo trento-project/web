@@ -1,4 +1,7 @@
-import { availableChecks, checkDataByProvider } from '../fixtures/checks-catalog/available_checks';
+import {
+  availableChecks,
+  checkDataByProvider,
+} from '../fixtures/checks-catalog/available_checks';
 
 context('Checks catalog', () => {
   before(() => {
@@ -32,22 +35,34 @@ context('Checks catalog', () => {
   describe('Provider selection', () => {
     checkDataByProvider.forEach((checkData, provider) => {
       it(`should include the correct check data '${checkData} for provider '${provider}'`, () => {
-        cy.get('#headlessui-listbox-button-2').click()
-        cy.get('#headlessui-listbox-button-2').get('span').contains(provider).click()
-        cy.get('div.check-row').first().should('contain', checkData)
+        cy.get('#headlessui-listbox-button-2').click();
+        cy.get('#headlessui-listbox-button-2')
+          .get('span')
+          .contains(provider)
+          .click();
+        cy.get('div.check-row').first().should('contain', checkData);
       });
     });
   });
 
   describe('Individual checks data is expanded', () => {
     it('should expand check data when clicked', () => {
-      cy.get('div.check-row').first().parent().invoke('attr', 'id').then((firstCheckDivID) => {
-        const firstCheckDivIDNumber = parseInt(firstCheckDivID.split("-")[3])+1;
-        cy.get('div.check-row').first().click();
-        cy.get(`#headlessui-disclosure-panel-${firstCheckDivIDNumber}`).should('exist');
-        cy.get('div.check-row').first().click();
-        cy.get(`#headlessui-disclosure-panel-${firstCheckDivIDNumber}`).should('not.exist');
-      });
+      cy.get('div.check-row')
+        .first()
+        .parent()
+        .invoke('attr', 'id')
+        .then((firstCheckDivID) => {
+          const firstCheckDivIDNumber =
+            parseInt(firstCheckDivID.split('-')[3]) + 1;
+          cy.get('div.check-row').first().click();
+          cy.get(
+            `#headlessui-disclosure-panel-${firstCheckDivIDNumber}`
+          ).should('exist');
+          cy.get('div.check-row').first().click();
+          cy.get(
+            `#headlessui-disclosure-panel-${firstCheckDivIDNumber}`
+          ).should('not.exist');
+        });
     });
   });
 });
