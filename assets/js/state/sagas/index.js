@@ -425,7 +425,7 @@ function* databaseRegistered({ payload }) {
   yield put(
     appendEntryToLiveFeed({
       source: payload.sid,
-      message: 'New Databse registered.',
+      message: 'New Database registered.',
     })
   );
   yield put(

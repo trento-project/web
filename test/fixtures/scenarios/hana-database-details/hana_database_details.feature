@@ -41,7 +41,7 @@ Feature: HANA database details view
     Scenario: New instance is discovered in the HANA database
         Given I navigate to a specific HANA database ('/databases/fd44c254ccb14331e54015c720c7a1f2')
         When a new instance is discovered in a new agent
-        Then the new instace is added in the layout table
+        Then the new instance is added in the layout table
 
     Scenario: The hosts table shows all associated hosts
         Given I navigate to a specific HANA database ('/databases/fd44c254ccb14331e54015c720c7a1f2')

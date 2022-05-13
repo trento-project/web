@@ -47,7 +47,7 @@ defmodule Trento.Domain.SapSystem do
           health: Health.t()
         }
 
-  # First time that a Datbase instance is registered, the SAP System starts its registration process.
+  # First time that a Database instance is registered, the SAP System starts its registration process.
   # When an Application is discovered, the SAP System completes the registration process.
   def execute(
         %SapSystem{sap_system_id: nil},

@@ -40,7 +40,7 @@ defmodule Trento.Hosts do
 
   @spec get_connection_settings(String.t()) :: map | {:error, any}
   def get_connection_settings(host_id) do
-    # TODO: refactor to a comon query
+    # TODO: refactor to a common query
     query =
       from h in HostReadModel,
         left_join: s in HostConnectionSettings,

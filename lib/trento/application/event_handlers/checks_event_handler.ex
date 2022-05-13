@@ -1,6 +1,6 @@
 defmodule Trento.ChecksEventHandler do
   @moduledoc """
-  This event hanlder is responsible to forward checks execution request to the agent.
+  This event handler is responsible to forward checks execution request to the agent.
   """
 
   use Commanded.Event.Handler,

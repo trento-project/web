@@ -37,7 +37,7 @@ Feature: SAP system details view
     Scenario: New instance is discovered in the SAP system
         Given I navigate to a specific SAP system ('/sap_systems/f534a4ad-cef7-5234-b196-e67082ffb50c')
         When a new instance is discovered in a new agent
-        Then the new instace is added in the layout table
+        Then the new instance is added in the layout table
 
     Scenario: The hosts table shows all associated hosts
         Given I navigate to a specific SAP system ('/sap_systems/f534a4ad-cef7-5234-b196-e67082ffb50c')

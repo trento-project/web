@@ -21,7 +21,7 @@ The control plane Discovery integration securely accepts published discoveries, 
 ## Scenario Detection
 The control plane discovery integration leverages specific policies to determine the scenario to be triggered based on the discovered information.
 
-That means we need to be able to determine wich command to dispath in the application.
+That means we need to be able to determine which command to dispatch in the application.
 _(RegisterHost, RegisterDatabaseInstance and so forth...)_
 
 ---

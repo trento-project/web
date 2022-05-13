@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Events.HeartbeatSucceded do
   @moduledoc """
-  Heartbeat succeded event
+  Heartbeat succeeded event
   """
 
   use Trento.Event

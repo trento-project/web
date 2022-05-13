@@ -36,7 +36,7 @@ defmodule Trento.CheckResultProjectorTest do
            end)
   end
 
-  test "should project hosts executions with emtpy data when a ChecksExecutionRequested event is received" do
+  test "should project hosts executions with empty data when a ChecksExecutionRequested event is received" do
     insert(
       :host_checks_result,
       cluster_id: cluster_id = Faker.UUID.v4(),

@@ -20,12 +20,12 @@ Feature: Pacemaker Clusters Overview
     Scenario: Clusters health state matches the cluster health and checks results outcome
         Given I am in the Pacemaker Clusters Overview
         When the SR state is 4 and sync state is SOK and checks are passing
-        Then the cluster with id '04b8f8c21f9fd8991224478e8c4362f8' is in Pasing status
+        Then the cluster with id '04b8f8c21f9fd8991224478e8c4362f8' is in Passing status
         When the SR state is 1 and sync state is SFAIL and checks are passing
         Then the cluster with id '04b8f8c21f9fd8991224478e8c4362f8' is in Critical status
-        When the SR state is 4 and sycn state is SOK and checs are in Warning
+        When the SR state is 4 and sync state is SOK and checs are in Warning
         Then the cluster with id '04b8f8c21f9fd8991224478e8c4362f8' is in Warning status
-        When the SR state is 4 and sycn state is SOK and checs are in Critical
+        When the SR state is 4 and sync state is SOK and checs are in Critical
         Then the cluster with id '04b8f8c21f9fd8991224478e8c4362f8' is in Critical status
 
     Scenario: Clusters that are not HANA type have unknown health state

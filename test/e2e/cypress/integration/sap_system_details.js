@@ -74,7 +74,7 @@ context('SAP system details', () => {
     });
 
     Object.entries(healthMap).forEach(([state, health]) => {
-      it(`should show ${state} badge in instace when SAPControl-${state} state is received`, () => {
+      it(`should show ${state} badge in instance when SAPControl-${state} state is received`, () => {
         cy.loadScenario(`sap-system-detail-${state}`);
         // using row 3 as the changed instance is the 3rd in order based on instance_number
         cy.get('table.table-fixed')

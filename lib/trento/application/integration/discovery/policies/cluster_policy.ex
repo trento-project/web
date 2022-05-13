@@ -253,7 +253,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   defp do_parse_hana_status(nil, _), do: "Unknown"
   defp do_parse_hana_status(_, nil), do: "Unknown"
-  # Noraml primary state
+  # Normal primary state
   defp do_parse_hana_status("P", "PRIM"), do: "Primary"
   # This happens when there is an initial failover
   defp do_parse_hana_status("P", _), do: "Failed"
