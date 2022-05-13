@@ -16,6 +16,6 @@ defmodule Trento.Domain.Commands.RegisterHost do
     field :cpu_count, :integer
     field :total_memory_mb, :integer
     field :socket_count, :integer
-    field :os_version, :string
+    field :os_version, :string, default: "Unknown"
   end
 end

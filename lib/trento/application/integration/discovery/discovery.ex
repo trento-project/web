@@ -28,7 +28,7 @@ defmodule Trento.Integration.Discovery do
     else
       # TODO improve error handling, bubbling up validation / command dispatch errors
       {:error, reason} = error ->
-        Logger.error("Failed to handle discovery event", error: reason)
+        Logger.error("Failed to handle discovery event", error: inspect(reason))
 
         error
     end
