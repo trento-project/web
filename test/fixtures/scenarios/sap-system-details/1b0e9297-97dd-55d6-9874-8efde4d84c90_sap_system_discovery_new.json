@@ -1,5 +1,5 @@
 {
-  "agent_id": "newagent",
+  "agent_id": "1b0e9297-97dd-55d6-9874-8efde4d84c90",
   "discovery_type": "sap_system_discovery",
   "payload": [
     {
@@ -43,8 +43,8 @@
       "Databases": null,
       "Instances": [
         {
-          "Host": "vmnwdev04",
-          "Name": "D02",
+          "Host": "sapnwdaas1",
+          "Name": "D99",
           "Type": 2,
           "SAPControl": {
             "Instances": [
@@ -86,7 +86,7 @@
               },
               {
                 "features": "ABAP|GATEWAY|ICMAN|IGS",
-                "hostname": "newinstance",
+                "hostname": "sapnwdaas1",
                 "httpPort": 12345,
                 "httpsPort": 12345,
                 "dispstatus": "SAPControl-GRAY",
@@ -194,7 +194,7 @@
                 "propertytype": "NodeWebmethod"
               },
               {
-                "value": "D02",
+                "value": "D99",
                 "property": "INSTANCE_NAME",
                 "propertytype": "Attribute"
               },
