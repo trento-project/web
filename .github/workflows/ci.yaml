@@ -57,9 +57,35 @@ jobs:
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
+  codespell:
+    name: Check common misspellings
+    runs-on: ubuntu-20.04
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install codespell
+        run: |
+          sudo apt-get install -y git python3 python3-pip
+          python3 -m pip install codespell
+      - name: codespell
+        run: codespell -S priv*,*package*json,deps*,*node_modules*,*svg,*.git,*.app -L enque,daa
+
   static-code-analysis:
     name: Static Code Analysis
-    needs: deps
+    needs: [deps, codespell]
     runs-on: ubuntu-20.04
 
     steps:
@@ -114,7 +140,7 @@ jobs:
 
   test:
     name: Test
-    needs: deps
+    needs: static-code-analysis
     runs-on: ubuntu-20.04
 
     services:
@@ -172,7 +198,7 @@ jobs:
 
   test-e2e:
     name: End to end tests
-    needs: deps
+    needs: test
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: dev
