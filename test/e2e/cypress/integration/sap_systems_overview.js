@@ -24,11 +24,11 @@ context('SAP Systems Overview', () => {
         });
       });
     });
-    
+
     describe('System healths are the expected ones', () => {
       availableSAPSystems.forEach(({ sid: sid, health: health }, index) => {
         it(`should have a health ${health} for sid ${sid}`, () => {
-          const healthClasses = healthMap[health]
+          const healthClasses = healthMap[health];
           cy.get('.table-fixed')
             .eq(0)
             .find('tr')
@@ -36,7 +36,10 @@ context('SAP Systems Overview', () => {
             .eq(index + 1)
             .find('td')
             .as('tableCell');
-          cy.get('@tableCell').eq(0).get('svg').should('have.class', healthClasses)
+          cy.get('@tableCell')
+            .eq(0)
+            .get('svg')
+            .should('have.class', healthClasses);
         });
       });
     });
@@ -78,27 +81,44 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Instances are the expected ones', () => {
-      availableSAPSystems.forEach(({ id: id, sid: sid, instances: instances }, index) => {
+      availableSAPSystems.forEach(({ instances: instances }, index) => {
         it(`should show the expected instances details`, () => {
-          cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).click();
-          const instancesRow = cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).next();
-          instancesRow.find('div.table-row-group > div.table-row')
-             .each((row, instanceIndex) => {
+          cy.get('table.table-fixed > tbody > tr')
+            .filter(':visible')
+            .eq(index)
+            .click();
+          cy.get('table.table-fixed > tbody > tr')
+            .filter(':visible')
+            .eq(index)
+            .next()
+            .find('div.table-row-group > div.table-row')
+            .each((row, instanceIndex) => {
               cy.wrap(row).within(() => {
-                const healthClasses = healthMap[instances[instanceIndex].health]
-                cy.get('div.table-cell').eq(0).get('svg').should('have.class', healthClasses)
-                cy.get('div.table-cell').eq(1).should('contain', instances[instanceIndex].instanceNumber);
-                instances[instanceIndex].features.split("|").forEach((feature) => {
-                  cy.get('div.table-cell').eq(2).should('contain', feature);
-                });
+                const healthClasses =
+                  healthMap[instances[instanceIndex].health];
+                cy.get('div.table-cell')
+                  .eq(0)
+                  .get('svg')
+                  .should('have.class', healthClasses);
+                cy.get('div.table-cell')
+                  .eq(1)
+                  .should('contain', instances[instanceIndex].instanceNumber);
+                instances[instanceIndex].features
+                  .split('|')
+                  .forEach((feature) => {
+                    cy.get('div.table-cell').eq(2).should('contain', feature);
+                  });
                 let columnIndex = 3; // the difference starts at column 3
                 if (isHanaInstace(instances[instanceIndex])) {
                   cy.get('div.table-cell')
                     .eq(columnIndex)
-                    .should('contain', instances[instanceIndex].systemReplication);
-                  
+                    .should(
+                      'contain',
+                      instances[instanceIndex].systemReplication
+                    );
+
                   columnIndex = columnIndex + 1;
-                };
+                }
                 if (isHanaPrimary(instances[instanceIndex])) {
                   cy.get('div.table-cell')
                     .eq(columnIndex)
@@ -116,54 +136,70 @@ context('SAP Systems Overview', () => {
                     );
                 }
                 cy.get('div')
-                  .eq(columnIndex+1)
+                  .eq(columnIndex + 1)
                   .should('contain', instances[instanceIndex].clusterName);
-                cy.get('div').eq(columnIndex+2).should('contain', instances[instanceIndex].hostname);
+                cy.get('div')
+                  .eq(columnIndex + 2)
+                  .should('contain', instances[instanceIndex].hostname);
               });
             });
-            // close the collapsable
-            cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).click();
+          // close the collapsable
+          cy.get('table.table-fixed > tbody > tr')
+            .filter(':visible')
+            .eq(index)
+            .click();
         });
         it(`should have a link to known type clusters`, () => {
-          cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).click();
-          const instancesRow = cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).next();
-          instancesRow.find('div.table-row-group > div.table-row')
-             .each((row, instanceIndex) => {
-              let columnIndex = 4;
-              if (!isHanaInstace(instances[instanceIndex])) {  
+          cy.get('table.table-fixed > tbody > tr')
+            .filter(':visible')
+            .eq(index)
+            .click();
+          cy.get('table.table-fixed > tbody > tr')
+            .filter(':visible')
+            .eq(index)
+            .next()
+            .find('div.table-row-group > div.table-row')
+            .each((row, instanceIndex) => {
+              if (!isHanaInstace(instances[instanceIndex])) {
                 return;
-              };
-              cy.wrap(row).get('div.table-cell').contains(instances[instanceIndex].clusterName)
-              .click({ force: true });
+              }
+              cy.wrap(row)
+                .get('div.table-cell')
+                .contains(instances[instanceIndex].clusterName)
+                .click({ force: true });
               cy.location('pathname').should(
                 'eq',
                 `/clusters/${instances[instanceIndex].clusterID}`
               );
               cy.go('back');
-             });
+            });
         });
         it(`should have a link to the hosts`, () => {
-          cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).click();
-          const instancesRow = cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).next();
-          instancesRow.find('div.table-row-group > div.table-row')
-             .each((row, instanceIndex) => {
-              let columnIndex = 4;
-              if (isHanaInstace(instances[instanceIndex])) {  
-                columnIndex = columnIndex + 1;
-              };
-              cy.wrap(row).get('div.table-cell').contains(instances[instanceIndex].hostname)
-              .click({ force: true });
+          cy.get('table.table-fixed > tbody > tr')
+            .filter(':visible')
+            .eq(index)
+            .click();
+          cy.get('table.table-fixed > tbody > tr')
+            .filter(':visible')
+            .eq(index)
+            .next()
+            .find('div.table-row-group > div.table-row')
+            .each((row, instanceIndex) => {
+              cy.wrap(row)
+                .get('div.table-cell')
+                .contains(instances[instanceIndex].hostname)
+                .click({ force: true });
               cy.location('pathname').should(
                 'eq',
                 `/hosts/${instances[instanceIndex].hostID}`
               );
               cy.go('back');
-             });
+            });
         });
       });
     });
   });
-  
+
   describe('SAP Systems Tagging', () => {
     before(() => {
       cy.get('body').then(($body) => {
@@ -202,7 +238,7 @@ context('SAP Systems Overview', () => {
       availableSAPSystems.forEach(({ sid }) => {
         it(`should have SAP Systems ${sid}'`, () => {
           cy.get('li > div > span.ml-3.block').contains(sid).click();
-          cy.get('table.table-fixed > tbody > tr').should('have.length', 2)
+          cy.get('table.table-fixed > tbody > tr').should('have.length', 2);
           cy.get('td')
             .contains(sid)
             .parent('td')
@@ -225,7 +261,7 @@ context('SAP Systems Overview', () => {
       availableSAPSystems.forEach(({ sid, tag }) => {
         it(`should have SAP Systems ${sid} tagged with tag '${tag}'`, () => {
           cy.get('li > div > span.ml-3.block').contains(tag).click();
-          cy.get('table.table-fixed > tbody > tr').should('have.length', 2)
+          cy.get('table.table-fixed > tbody > tr').should('have.length', 2);
           cy.get('td')
             .contains(tag)
             .parent('span')
@@ -247,14 +283,33 @@ context('SAP Systems Overview', () => {
       } when SAPControl-${state} state is received`, () => {
         cy.loadScenario(`sap-systems-overview-${state}`);
 
-        cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
-        const instancesRow = cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(index).next();
+        cy.get('table.table-fixed > tbody > tr')
+          .filter(':visible')
+          .eq(0)
+          .click();
 
-        cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).find('td').eq(0).get('svg').should('have.class', health)
-        instancesRow.get('div.table-row-group > div.table-row').eq(index)
-          .get('div.table-cell').eq(0).get('svg').should('have.class', health);
+        cy.get('table.table-fixed > tbody > tr')
+          .filter(':visible')
+          .eq(0)
+          .find('td')
+          .eq(0)
+          .get('svg')
+          .should('have.class', health);
+        cy.get('table.table-fixed > tbody > tr')
+          .filter(':visible')
+          .eq(index)
+          .next()
+          .get('div.table-row-group > div.table-row')
+          .eq(index)
+          .get('div.table-cell')
+          .eq(0)
+          .get('svg')
+          .should('have.class', health);
 
-        cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
+        cy.get('table.table-fixed > tbody > tr')
+          .filter(':visible')
+          .eq(0)
+          .click();
       });
     });
 
@@ -263,9 +318,16 @@ context('SAP Systems Overview', () => {
 
       const healthClasses = healthMap['RED'];
       cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
-      const instancesRow = cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).next();
-      instancesRow.get('div.table-row-group > div.table-row').eq(5)
-        .get('div.table-cell').eq(0).get('svg').should('have.class', healthClasses);
+      cy.get('table.table-fixed > tbody > tr')
+        .filter(':visible')
+        .eq(0)
+        .next()
+        .get('div.table-row-group > div.table-row')
+        .eq(5)
+        .get('div.table-cell')
+        .eq(0)
+        .get('svg')
+        .should('have.class', healthClasses);
 
       cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
     });

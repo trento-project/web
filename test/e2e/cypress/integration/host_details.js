@@ -24,10 +24,9 @@ context('Host Details', () => {
 
   describe('SAP instances for this host should be displayed', () => {
     it(`should show SAP instance with ID ${selectedHost.sapInstanceId}`, () => {
-      cy.get(':nth-child(6) > .container > :nth-child(2) > .-mx-4 > .min-w-fit > .min-w-full > tbody > tr > :nth-child(1) > .text-gray-900').should(
-        'contain',
-        selectedHost.sapInstanceId
-      );
+      cy.get(
+        ':nth-child(6) > .container > :nth-child(2) > .-mx-4 > .min-w-fit > .min-w-full > tbody > tr > :nth-child(1) > .text-gray-900'
+      ).should('contain', selectedHost.sapInstanceId);
     });
   });
 
@@ -42,14 +41,16 @@ context('Host Details', () => {
 
   describe('Cloud details for this host should be displayed', () => {
     it(`should show ${selectedHost.hostName} under the VM Name`, () => {
-      cy.get(
-        '.grid-rows-2 > :nth-child(3) > :nth-child(2) > span'
-      ).should('contain', selectedHost.hostName);
+      cy.get('.grid-rows-2 > :nth-child(3) > :nth-child(2) > span').should(
+        'contain',
+        selectedHost.hostName
+      );
     });
     it(`should show ${selectedHost.resourceGroup} under the Resource group label`, () => {
-      cy.get(
-        ':nth-child(5) > :nth-child(2) > span'
-      ).should('contain', selectedHost.resourceGroup);
+      cy.get(':nth-child(5) > :nth-child(2) > span').should(
+        'contain',
+        selectedHost.resourceGroup
+      );
     });
   });
 

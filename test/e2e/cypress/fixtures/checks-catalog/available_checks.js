@@ -43,5 +43,5 @@ export const availableChecks = new Map([
 
 export const checkDataByProvider = new Map([
   ['aws', '5000'],
-  ['azure', '30000']
+  ['azure', '30000'],
 ]);
