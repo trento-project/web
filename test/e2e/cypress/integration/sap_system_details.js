@@ -87,7 +87,8 @@ context('SAP system details', () => {
         cy.get('@tableCell').eq(6).find('span').should('have.class', health);
       });
     });
-
+    /* This test is commented because there is not any option to remove added SAP instances or
+    resetting the database afterwards, and it affects the rest of the test suite.
     it(`should show a new instance when an event with a new SAP instance is received`, () => {
       cy.loadScenario(`sap-system-detail-NEW`);
       cy.get('table.table-fixed').eq(0).find('tr').should('have.length', 6);
@@ -100,6 +101,7 @@ context('SAP system details', () => {
       cy.get('@tableCell').eq(0).should('contain', 'sapnwdaas1');
       cy.get('@tableCell').eq(1).should('contain', '99');
     });
+    */
   });
 
   describe('The hosts table shows the attached hosts to this SAP system', () => {
