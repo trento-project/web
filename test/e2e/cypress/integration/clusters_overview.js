@@ -1,12 +1,10 @@
 import {
   allClusterNames,
-  allClusterIds,
   clusterIdByName,
 } from '../fixtures/clusters-overview/available_clusters';
 
 context('Clusters Overview', () => {
   const availableClusters = allClusterNames();
-  const availableClustersId = allClusterIds();
   before(() => {
     cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.login();
