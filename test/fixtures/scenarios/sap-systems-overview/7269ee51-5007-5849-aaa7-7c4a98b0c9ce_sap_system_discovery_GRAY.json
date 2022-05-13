@@ -170,7 +170,7 @@
                 "propertytype": "NodeWebmethod"
               },
               {
-                "value": "sapnwdaas1",
+                "value": "sapnwdas",
                 "property": "SAPLOCALHOST",
                 "propertytype": "Attribute"
               },
