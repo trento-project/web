@@ -9,34 +9,20 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     UpdateSlesSubscriptions
   }
 
+  alias Trento.Integration.Discovery.HostDiscoveryPayload
+
   @spec handle(map) ::
           {:ok, RegisterHost.t() | UpdateProvider.t() | UpdateSlesSubscriptions.t()}
           | {:error, any}
   def handle(%{
         "discovery_type" => "host_discovery",
         "agent_id" => agent_id,
-        "payload" => %{
-          "hostname" => hostname,
-          "ip_addresses" => ip_addresses,
-          "ssh_address" => ssh_address,
-          "agent_version" => agent_version,
-          "cpu_count" => cpu_count,
-          "total_memory_mb" => total_memory_mb,
-          "socket_count" => socket_count,
-          "os_version" => os_version
-        }
+        "payload" => payload
       }) do
-    RegisterHost.new(%{
-      host_id: agent_id,
-      hostname: hostname,
-      ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
-      ssh_address: ssh_address,
-      agent_version: agent_version,
-      cpu_count: cpu_count,
-      total_memory_mb: total_memory_mb,
-      socket_count: socket_count,
-      os_version: os_version
-    })
+    case HostDiscoveryPayload.new(payload) do
+      {:ok, decoded_payload} -> build_register_host_command(agent_id, decoded_payload)
+      error -> error
+    end
   end
 
   def handle(%{
@@ -103,6 +89,29 @@ defmodule Trento.Integration.Discovery.HostPolicy do
 
     UpdateSlesSubscriptions.new(%{host_id: agent_id, subscriptions: subscriptions})
   end
+
+  defp build_register_host_command(agent_id, %HostDiscoveryPayload{
+         hostname: hostname,
+         ip_addresses: ip_addresses,
+         ssh_address: ssh_address,
+         agent_version: agent_version,
+         cpu_count: cpu_count,
+         total_memory_mb: total_memory_mb,
+         socket_count: socket_count,
+         os_version: os_version
+       }),
+       do:
+         RegisterHost.new(%{
+           host_id: agent_id,
+           hostname: hostname,
+           ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
+           ssh_address: ssh_address,
+           agent_version: agent_version,
+           cpu_count: cpu_count,
+           total_memory_mb: total_memory_mb,
+           socket_count: socket_count,
+           os_version: os_version
+         })
 
   @spec is_non_loopback_ipv4?(String.t()) :: boolean
   defp is_non_loopback_ipv4?("127.0.0.1"), do: false
