@@ -89,8 +89,8 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          cluster_registered_event(cluster_id: cluster_id),
-          host_added_to_cluster_event(cluster_id: cluster_id)
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id)
         ],
         RegisterClusterHost.new!(%{
           cluster_id: cluster_id,
@@ -142,7 +142,7 @@ defmodule Trento.ClusterTest do
       new_sid = Faker.StarWars.planet()
 
       initial_events = [
-        cluster_registered_event(cluster_id: cluster_id),
+        build(:cluster_registered_event, cluster_id: cluster_id),
         %HostAddedToCluster{
           cluster_id: cluster_id,
           host_id: host_id
@@ -197,8 +197,13 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        cluster_registered_event(cluster_id: cluster_id, name: name, sid: sid, details: nil),
-        host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id)
+        build(:cluster_registered_event,
+          cluster_id: cluster_id,
+          name: name,
+          sid: sid,
+          details: nil
+        ),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id)
       ]
 
       assert_events_and_state(
@@ -235,7 +240,7 @@ defmodule Trento.ClusterTest do
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
 
       assert_events_and_state(
-        [cluster_registered_event(cluster_id: cluster_id)],
+        [build(:cluster_registered_event, cluster_id: cluster_id)],
         SelectChecks.new!(%{
           cluster_id: cluster_id,
           checks: selected_checks
@@ -262,8 +267,8 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          cluster_registered_event(cluster_id: cluster_id),
-          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
@@ -307,8 +312,8 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          cluster_registered_event(cluster_id: cluster_id),
-          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
@@ -340,8 +345,8 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          cluster_registered_event(cluster_id: cluster_id),
-          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
@@ -400,13 +405,14 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          cluster_registered_event(cluster_id: cluster_id),
-          host_added_to_cluster_event(cluster_id: cluster_id, host_id: host_id),
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
           },
-          checks_execution_requested_event(
+          build(
+            :checks_execution_requested_event,
             cluster_id: cluster_id,
             hosts: [host_id],
             checks: selected_checks
@@ -452,10 +458,10 @@ defmodule Trento.ClusterTest do
 
   describe "discovered health" do
     test "should change the discovered health and the cluster aggregated health" do
-      cluster_registered_event = cluster_registered_event(health: :passing)
+      cluster_registered_event = build(:cluster_registered_event, health: :passing)
 
       host_added_to_cluster_event =
-        host_added_to_cluster_event(cluster_id: cluster_registered_event.cluster_id)
+        build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
 
       assert_events_and_state(
         [
@@ -497,10 +503,10 @@ defmodule Trento.ClusterTest do
     end
 
     test "should not change the discovered health" do
-      cluster_registered_event = cluster_registered_event(health: :passing)
+      cluster_registered_event = build(:cluster_registered_event, health: :passing)
 
       host_added_to_cluster_event =
-        host_added_to_cluster_event(cluster_id: cluster_registered_event.cluster_id)
+        build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
 
       assert_events_and_state(
         [

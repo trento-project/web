@@ -20,19 +20,19 @@ defmodule Trento.SapSystemsTest do
         sid: sid,
         tenant: tenant,
         db_host: db_host
-      } = sap_system_projection()
+      } = insert(:sap_system)
 
       application_instances =
         0..4
         |> Enum.map(fn _ ->
-          application_instance_projection_without_host(sap_system_id: sap_system_id)
+          insert(:application_instance_without_host, sap_system_id: sap_system_id)
         end)
         |> Enum.sort_by(&{&1.instance_number, &1.host_id})
 
       database_instances =
         0..4
         |> Enum.map(fn _ ->
-          database_instance_projection_without_host(sap_system_id: sap_system_id)
+          insert(:database_instance_without_host, sap_system_id: sap_system_id)
         end)
         |> Enum.sort_by(&{&1.instance_number, &1.host_id})
 
@@ -52,12 +52,12 @@ defmodule Trento.SapSystemsTest do
       %DatabaseReadModel{
         id: sap_system_id,
         sid: sid
-      } = database_projection()
+      } = insert(:database)
 
       database_instances =
         0..4
         |> Enum.map(fn _ ->
-          database_instance_projection_without_host(sap_system_id: sap_system_id)
+          insert(:database_instance_without_host, sap_system_id: sap_system_id)
         end)
         |> Enum.sort_by(& &1.host_id)
 
@@ -72,15 +72,17 @@ defmodule Trento.SapSystemsTest do
     test "should add the system replication status to the secondary instance and should remove it from the primary one" do
       %DatabaseReadModel{
         id: sap_system_id
-      } = database_projection()
+      } = insert(:database)
 
-      database_instance_projection_without_host(
+      insert(
+        :database_instance_without_host,
         sap_system_id: sap_system_id,
         system_replication: "Primary",
         system_replication_status: "ACTIVE"
       )
 
-      database_instance_projection_without_host(
+      insert(
+        :database_instance_without_host,
         sap_system_id: sap_system_id,
         system_replication: "Secondary",
         system_replication_status: ""

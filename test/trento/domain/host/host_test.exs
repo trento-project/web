@@ -86,7 +86,7 @@ defmodule Trento.HostTest do
       new_os_version = Faker.App.version()
 
       assert_events_and_state(
-        host_registered_event(host_id: host_id),
+        build(:host_registered_event, host_id: host_id),
         RegisterHost.new!(%{
           host_id: host_id,
           hostname: new_hostname,
@@ -125,7 +125,7 @@ defmodule Trento.HostTest do
     end
 
     test "should not update host details if the same details were already registered" do
-      host_registered_event = host_registered_event()
+      host_registered_event = build(:host_registered_event)
 
       assert_events(
         host_registered_event,
@@ -148,7 +148,7 @@ defmodule Trento.HostTest do
   describe "heartbeat" do
     test "should emit an HeartbeatSucceded event if the Host never received an heartbeat already" do
       host_id = Faker.UUID.v4()
-      host_registered_event = host_registered_event(host_id: host_id)
+      host_registered_event = build(:host_registered_event, host_id: host_id)
 
       assert_events_and_state(
         host_registered_event,
@@ -171,7 +171,7 @@ defmodule Trento.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event(host_id: host_id),
+        build(:host_registered_event, host_id: host_id),
         %HeartbeatFailed{
           host_id: host_id
         }
@@ -198,7 +198,7 @@ defmodule Trento.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event(host_id: host_id),
+        build(:host_registered_event, host_id: host_id),
         %HeartbeatSucceded{
           host_id: host_id
         }
@@ -218,7 +218,7 @@ defmodule Trento.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event(host_id: host_id),
+        build(:host_registered_event, host_id: host_id),
         %HeartbeatSucceded{
           host_id: host_id
         }
@@ -243,7 +243,7 @@ defmodule Trento.HostTest do
 
     test "should emit an HeartbeatFailed event if the Host is in a passing status" do
       host_id = Faker.UUID.v4()
-      host_registered_event = host_registered_event(host_id: host_id)
+      host_registered_event = build(:host_registered_event, host_id: host_id)
 
       assert_events_and_state(
         host_registered_event,
@@ -266,7 +266,7 @@ defmodule Trento.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event(host_id: host_id),
+        build(:host_registered_event, host_id: host_id),
         %HeartbeatFailed{
           host_id: host_id
         }
@@ -300,7 +300,7 @@ defmodule Trento.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event(host_id: host_id)
+        build(:host_registered_event, host_id: host_id)
       ]
 
       assert_events(
@@ -320,7 +320,7 @@ defmodule Trento.HostTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        host_registered_event(host_id: host_id),
+        build(:host_registered_event, host_id: host_id),
         %ProviderUpdated{host_id: host_id, provider: :azure}
       ]
 
@@ -341,7 +341,7 @@ defmodule Trento.HostTest do
       identifier = Faker.StarWars.planet()
       version = Faker.StarWars.character()
 
-      host_registered_event = host_registered_event(host_id: host_id)
+      host_registered_event = build(:host_registered_event, host_id: host_id)
 
       subscription_data = %{
         host_id: host_id,

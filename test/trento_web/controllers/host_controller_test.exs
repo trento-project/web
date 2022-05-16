@@ -11,7 +11,7 @@ defmodule TrentoWeb.HostControllerTest do
         %{id: host_id_3, hostname: host_name_3}
       ] =
         0..2
-        |> Enum.map(fn _ -> host_projection() end)
+        |> Enum.map(fn _ -> insert(:host) end)
         |> Enum.sort_by(& &1.hostname)
 
       conn = get(conn, Routes.host_path(conn, :list))

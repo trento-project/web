@@ -36,7 +36,7 @@ defmodule TrentoWeb.TagsControllerTest do
         value: value,
         resource_id: resource_id,
         resource_type: _resource_type
-      } = tag(resource_type: :sap_system)
+      } = insert(:tag, resource_type: :sap_system)
 
       conn = delete(conn, Routes.sap_systems_tagging_path(conn, :remove_tag, resource_id, value))
 
@@ -51,7 +51,7 @@ defmodule TrentoWeb.TagsControllerTest do
         value: _value,
         resource_id: resource_id,
         resource_type: _resource_type
-      } = tag(resource_type: :sap_system)
+      } = insert(:tag, resource_type: :sap_system)
 
       conn =
         delete(
@@ -77,7 +77,7 @@ defmodule TrentoWeb.TagsControllerTest do
         value: value,
         resource_id: resource_id,
         resource_type: _resource_type
-      } = tag(resource_type: :database)
+      } = insert(:tag, resource_type: :database)
 
       conn = delete(conn, Routes.databases_tagging_path(conn, :remove_tag, resource_id, value))
 
@@ -101,7 +101,7 @@ defmodule TrentoWeb.TagsControllerTest do
         value: value,
         resource_id: resource_id,
         resource_type: _resource_type
-      } = tag(resource_type: :cluster)
+      } = insert(:tag, resource_type: :cluster)
 
       conn = delete(conn, Routes.clusters_tagging_path(conn, :remove_tag, resource_id, value))
 
@@ -114,7 +114,7 @@ defmodule TrentoWeb.TagsControllerTest do
         value: _value,
         resource_id: resource_id,
         resource_type: _resource_type
-      } = tag(resource_type: :cluster)
+      } = insert(:tag, resource_type: :cluster)
 
       conn =
         delete(
@@ -142,7 +142,7 @@ defmodule TrentoWeb.TagsControllerTest do
         value: value,
         resource_id: resource_id,
         resource_type: _resource_type
-      } = tag(resource_type: :host)
+      } = insert(:tag, resource_type: :host)
 
       conn = delete(conn, Routes.hosts_tagging_path(conn, :remove_tag, resource_id, value))
 
@@ -155,7 +155,7 @@ defmodule TrentoWeb.TagsControllerTest do
         value: _value,
         resource_id: resource_id,
         resource_type: _resource_type
-      } = tag(resource_type: :host)
+      } = insert(:tag, resource_type: :host)
 
       conn =
         delete(

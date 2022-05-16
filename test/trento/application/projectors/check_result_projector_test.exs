@@ -18,7 +18,7 @@ defmodule Trento.CheckResultProjectorTest do
   }
 
   test "should project checks results with result unknown when a ChecksExecutionRequested event is received" do
-    event = checks_execution_requested_event()
+    event = build(:checks_execution_requested_event)
 
     ProjectorTestHelper.project(
       CheckResultProjector,
@@ -37,7 +37,8 @@ defmodule Trento.CheckResultProjectorTest do
   end
 
   test "should project hosts executions with emtpy data when a ChecksExecutionRequested event is received" do
-    host_checks_result_projection(
+    insert(
+      :host_checks_result,
       cluster_id: cluster_id = Faker.UUID.v4(),
       host_id: host_id = Faker.UUID.v4(),
       reachable: true,
@@ -67,7 +68,8 @@ defmodule Trento.CheckResultProjectorTest do
   end
 
   test "should update a check result when HostChecksExecutionCompleted event is received" do
-    check_result_projection(
+    insert(
+      :check_result,
       cluster_id: cluster_id = Faker.UUID.v4(),
       host_id: host_id = Faker.UUID.v4(),
       check_id: check_id = Faker.UUID.v4()
@@ -97,7 +99,8 @@ defmodule Trento.CheckResultProjectorTest do
   end
 
   test "should update a host execution when HostChecksExecutionCompleted event is received" do
-    host_checks_result_projection(
+    insert(
+      :host_checks_result,
       cluster_id: cluster_id = Faker.UUID.v4(),
       host_id: host_id = Faker.UUID.v4(),
       reachable: true,

@@ -17,7 +17,7 @@ defmodule Trento.TelemetryProjectorTest do
   @moduletag :integration
 
   test "should project host telemetry data when an HostRegistered event is received" do
-    event = host_registered_event()
+    event = build(:host_registered_event)
 
     ProjectorTestHelper.project(TelemetryProjector, event, "telemetry_projector")
     host_telemetry_projection = Repo.get!(HostTelemetryReadModel, event.host_id)
@@ -29,8 +29,8 @@ defmodule Trento.TelemetryProjectorTest do
   end
 
   test "should project host telemetry data when an HostUpdated event is received" do
-    %{id: agent_id} = host_projection()
-    event = host_details_updated_event(agent_id: agent_id)
+    insert(:host)
+    event = build(:host_details_updated_event)
 
     ProjectorTestHelper.project(TelemetryProjector, event, "telemetry_projector")
     host_telemetry_projection = Repo.get!(HostTelemetryReadModel, event.host_id)
@@ -42,7 +42,7 @@ defmodule Trento.TelemetryProjectorTest do
   end
 
   test "should project host telemetry data when an ProviderUpdated event is received" do
-    %{id: host_id} = host_projection()
+    %{id: host_id} = insert(:host)
 
     event = %ProviderUpdated{host_id: host_id, provider: :azure}
 

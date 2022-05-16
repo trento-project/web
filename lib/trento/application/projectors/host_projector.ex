@@ -124,18 +124,18 @@ defmodule Trento.HostProjector do
         %HostReadModel{id: id}
         |> HostReadModel.changeset(%{
           provider: provider,
-          provider_data: handle_provider_data(provider, provider_data)
+          provider_data: handle_provider_data(provider_data)
         })
 
       Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
-  def handle_provider_data(provider, provider_data) when is_map(provider_data) do
-    provider_data |> Map.from_struct() |> Map.put(:provider, provider)
+  def handle_provider_data(provider_data) when is_map(provider_data) do
+    provider_data |> Map.from_struct()
   end
 
-  def handle_provider_data(_, _), do: nil
+  def handle_provider_data(_), do: nil
 
   @impl true
   @spec after_update(any, any, any) :: :ok | {:error, any}

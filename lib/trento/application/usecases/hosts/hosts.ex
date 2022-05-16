@@ -6,7 +6,6 @@ defmodule Trento.Hosts do
   import Ecto.Query
 
   alias Trento.{
-    AzureProviderReadModel,
     HostConnectionSettings,
     HostReadModel,
     SlesSubscriptionReadModel
@@ -128,8 +127,8 @@ defmodule Trento.Hosts do
     }
   end
 
-  defp determine_default_connection_user(%AzureProviderReadModel{
-         admin_username: admin_username
+  defp determine_default_connection_user(%{
+         "admin_username" => admin_username
        }),
        do: admin_username
 

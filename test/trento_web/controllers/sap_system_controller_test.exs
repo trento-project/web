@@ -20,7 +20,7 @@ defmodule TrentoWeb.SapSystemControllerTest do
         }
       ] =
         0..2
-        |> Enum.map(fn _ -> sap_system_projection() end)
+        |> Enum.map(fn _ -> insert(:sap_system) end)
         |> Enum.sort_by(& &1.sid)
 
       conn = get(conn, Routes.sap_system_path(conn, :list))
@@ -57,7 +57,7 @@ defmodule TrentoWeb.SapSystemControllerTest do
         }
       ] =
         0..2
-        |> Enum.map(fn _ -> database_projection() end)
+        |> Enum.map(fn _ -> insert(:database) end)
         |> Enum.sort_by(& &1.sid)
 
       conn = get(conn, Routes.sap_system_path(conn, :list_databases))

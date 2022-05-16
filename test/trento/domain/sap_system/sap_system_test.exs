@@ -107,11 +107,13 @@ defmodule Trento.SapSystemTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        database_registered_event(
+        build(
+          :database_registered_event,
           sap_system_id: sap_system_id,
           sid: sid
         ),
-        database_instance_registered_event(
+        build(
+          :database_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -121,7 +123,8 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        register_database_instance_command(
+        build(
+          :register_database_instance_command,
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -130,7 +133,8 @@ defmodule Trento.SapSystemTest do
           host_id: host_id,
           health: :passing
         ),
-        database_instance_registered_event(
+        build(
+          :database_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -159,10 +163,13 @@ defmodule Trento.SapSystemTest do
     end
 
     test "should not add a database instance if the database instance was already registered" do
-      database_registered_event = database_registered_event()
+      database_registered_event = build(:database_registered_event)
 
       database_instance_registered_event =
-        database_instance_registered_event(sap_system_id: database_registered_event.sap_system_id)
+        build(
+          :database_instance_registered_event,
+          sap_system_id: database_registered_event.sap_system_id
+        )
 
       initial_events = [
         database_registered_event,
@@ -171,7 +178,8 @@ defmodule Trento.SapSystemTest do
 
       assert_events(
         initial_events,
-        register_database_instance_command(
+        build(
+          :register_database_instance_command,
           sap_system_id: database_registered_event.sap_system_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
@@ -187,10 +195,11 @@ defmodule Trento.SapSystemTest do
     end
 
     test "should change the system replication of a database instance" do
-      database_registered_event = database_registered_event()
+      database_registered_event = build(:database_registered_event)
 
       database_instance_registered_event =
-        database_instance_registered_event(
+        build(
+          :database_instance_registered_event,
           sap_system_id: database_registered_event.sap_system_id,
           system_replication: "Secondary",
           system_replication_status: ""
@@ -203,7 +212,8 @@ defmodule Trento.SapSystemTest do
 
       assert_events(
         initial_events,
-        register_database_instance_command(
+        build(
+          :register_database_instance_command,
           sap_system_id: database_registered_event.sap_system_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
@@ -237,11 +247,13 @@ defmodule Trento.SapSystemTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        database_registered_event(
+        build(
+          :database_registered_event,
           sap_system_id: sap_system_id,
           sid: sid
         ),
-        database_instance_registered_event(
+        build(
+          :database_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant
@@ -310,10 +322,10 @@ defmodule Trento.SapSystemTest do
       sid = Faker.StarWars.planet()
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id, sid: sid),
-        database_instance_registered_event(sap_system_id: sap_system_id, sid: sid),
-        sap_system_registered_event(sap_system_id: sap_system_id, sid: sid),
-        application_instance_registered_event(sap_system_id: sap_system_id, sid: sid)
+        build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
+        build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
+        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid),
+        build(:application_instance_registered_event, sap_system_id: sap_system_id, sid: sid)
       ]
 
       new_instance_db_host = Faker.Internet.ip_v4_address()
@@ -324,7 +336,8 @@ defmodule Trento.SapSystemTest do
 
       assert_events_and_state(
         initial_events,
-        register_application_instance_command(
+        build(
+          :register_application_instance_command,
           sap_system_id: sap_system_id,
           sid: sid,
           db_host: new_instance_db_host,
@@ -334,7 +347,8 @@ defmodule Trento.SapSystemTest do
           host_id: new_instance_host_id,
           health: :passing
         ),
-        application_instance_registered_event(
+        build(
+          :application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
           instance_number: new_instance_number,
@@ -366,18 +380,19 @@ defmodule Trento.SapSystemTest do
       sap_system_id = Faker.UUID.v4()
 
       application_instance_registered_event =
-        application_instance_registered_event(sap_system_id: sap_system_id)
+        build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id),
-        database_instance_registered_event(sap_system_id: sap_system_id),
-        sap_system_registered_event(sap_system_id: sap_system_id),
+        build(:database_registered_event, sap_system_id: sap_system_id),
+        build(:database_instance_registered_event, sap_system_id: sap_system_id),
+        build(:sap_system_registered_event, sap_system_id: sap_system_id),
         application_instance_registered_event
       ]
 
       assert_events(
         initial_events,
-        register_application_instance_command(
+        build(
+          :register_application_instance_command,
           sap_system_id: application_instance_registered_event.sap_system_id,
           sid: application_instance_registered_event.sid,
           db_host: Faker.Internet.ip_v4_address(),
@@ -402,13 +417,14 @@ defmodule Trento.SapSystemTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id),
-        database_instance_registered_event(sap_system_id: sap_system_id)
+        build(:database_registered_event, sap_system_id: sap_system_id),
+        build(:database_instance_registered_event, sap_system_id: sap_system_id)
       ]
 
       assert_events_and_state(
         initial_events,
-        register_database_instance_command(
+        build(
+          :register_database_instance_command,
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -418,7 +434,8 @@ defmodule Trento.SapSystemTest do
           health: :critical
         ),
         [
-          database_instance_registered_event(
+          build(
+            :database_instance_registered_event,
             sap_system_id: sap_system_id,
             sid: sid,
             tenant: tenant,
@@ -456,20 +473,22 @@ defmodule Trento.SapSystemTest do
       instance_number = "00"
 
       database_instance_registered_event =
-        database_instance_registered_event(
+        build(
+          :database_instance_registered_event,
           sap_system_id: sap_system_id,
           host_id: host_id,
           instance_number: instance_number
         )
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id),
+        build(:database_registered_event, sap_system_id: sap_system_id),
         database_instance_registered_event
       ]
 
       assert_events_and_state(
         initial_events,
-        register_database_instance_command(
+        build(
+          :register_database_instance_command,
           sap_system_id: sap_system_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
@@ -515,20 +534,22 @@ defmodule Trento.SapSystemTest do
       new_instance_host_id = Faker.UUID.v4()
 
       database_instance_registered_event =
-        database_instance_registered_event(
+        build(
+          :database_instance_registered_event,
           sap_system_id: sap_system_id,
           health: :warning
         )
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id, health: :warning),
+        build(:database_registered_event, sap_system_id: sap_system_id, health: :warning),
         database_instance_registered_event
       ]
 
       assert_events_and_state(
         initial_events,
         [
-          register_database_instance_command(
+          build(
+            :register_database_instance_command,
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
@@ -537,7 +558,8 @@ defmodule Trento.SapSystemTest do
             host_id: database_instance_registered_event.host_id,
             health: :warning
           ),
-          register_database_instance_command(
+          build(
+            :register_database_instance_command,
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
@@ -548,7 +570,8 @@ defmodule Trento.SapSystemTest do
           )
         ],
         [
-          database_instance_registered_event(
+          build(
+            :database_instance_registered_event,
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
@@ -586,13 +609,14 @@ defmodule Trento.SapSystemTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id),
-        database_instance_registered_event(sap_system_id: sap_system_id)
+        build(:database_registered_event, sap_system_id: sap_system_id),
+        build(:database_instance_registered_event, sap_system_id: sap_system_id)
       ]
 
       assert_events_and_state(
         initial_events,
-        register_application_instance_command(
+        build(
+          :register_application_instance_command,
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -610,7 +634,8 @@ defmodule Trento.SapSystemTest do
             tenant: tenant,
             health: :critical
           },
-          application_instance_registered_event(
+          build(
+            :application_instance_registered_event,
             sap_system_id: sap_system_id,
             sid: sid,
             instance_number: instance_number,
@@ -638,20 +663,22 @@ defmodule Trento.SapSystemTest do
       sap_system_id = Faker.UUID.v4()
 
       application_instance_registered =
-        application_instance_registered_event(sap_system_id: sap_system_id)
+        build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
-      sap_system_registered_event = sap_system_registered_event(sap_system_id: sap_system_id)
+      sap_system_registered_event =
+        build(:sap_system_registered_event, sap_system_id: sap_system_id)
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id),
-        database_instance_registered_event(sap_system_id: sap_system_id),
+        build(:database_registered_event, sap_system_id: sap_system_id),
+        build(:database_instance_registered_event, sap_system_id: sap_system_id),
         application_instance_registered,
         sap_system_registered_event
       ]
 
       assert_events_and_state(
         initial_events,
-        register_application_instance_command(
+        build(
+          :register_application_instance_command,
           sap_system_id: sap_system_id,
           sid: application_instance_registered.sid,
           tenant: sap_system_registered_event.tenant,
@@ -696,17 +723,19 @@ defmodule Trento.SapSystemTest do
       new_instance_host_id = Faker.UUID.v4()
 
       application_instance_registered_event =
-        application_instance_registered_event(
+        build(
+          :application_instance_registered_event,
           sap_system_id: sap_system_id,
           health: :warning
         )
 
       sap_system_registered_event =
-        sap_system_registered_event(sap_system_id: sap_system_id, health: :warning)
+        build(:sap_system_registered_event, sap_system_id: sap_system_id, health: :warning)
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id),
-        database_instance_registered_event(
+        build(:database_registered_event, sap_system_id: sap_system_id),
+        build(
+          :database_instance_registered_event,
           sap_system_id: sap_system_id,
           health: :warning
         ),
@@ -717,7 +746,8 @@ defmodule Trento.SapSystemTest do
       assert_events_and_state(
         initial_events,
         [
-          register_application_instance_command(
+          build(
+            :register_application_instance_command,
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
             tenant: sap_system_registered_event.tenant,
@@ -727,7 +757,8 @@ defmodule Trento.SapSystemTest do
             host_id: application_instance_registered_event.host_id,
             health: :warning
           ),
-          register_application_instance_command(
+          build(
+            :register_application_instance_command,
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
             tenant: sap_system_registered_event.tenant,
@@ -739,7 +770,8 @@ defmodule Trento.SapSystemTest do
           )
         ],
         [
-          application_instance_registered_event(
+          build(
+            :application_instance_registered_event,
             sap_system_id: sap_system_id,
             sid: application_instance_registered_event.sid,
             instance_number: new_instance_number,
@@ -774,16 +806,17 @@ defmodule Trento.SapSystemTest do
       new_instance_host_id = Faker.UUID.v4()
 
       initial_events = [
-        database_registered_event(sap_system_id: sap_system_id),
+        build(:database_registered_event, sap_system_id: sap_system_id),
         database_instance_registered_event =
-          database_instance_registered_event(sap_system_id: sap_system_id),
-        sap_system_registered_event(sap_system_id: sap_system_id),
-        application_instance_registered_event(sap_system_id: sap_system_id)
+          build(:database_instance_registered_event, sap_system_id: sap_system_id),
+        build(:sap_system_registered_event, sap_system_id: sap_system_id),
+        build(:application_instance_registered_event, sap_system_id: sap_system_id)
       ]
 
       assert_events_and_state(
         initial_events,
-        register_database_instance_command(
+        build(
+          :register_database_instance_command,
           sap_system_id: sap_system_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
@@ -793,7 +826,8 @@ defmodule Trento.SapSystemTest do
           health: :warning
         ),
         [
-          database_instance_registered_event(
+          build(
+            :database_instance_registered_event,
             sap_system_id: sap_system_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
