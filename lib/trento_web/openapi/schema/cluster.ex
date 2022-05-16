@@ -4,7 +4,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.Schema.{Checks, Provider, Tag}
+  alias TrentoWeb.OpenApi.Schema.{Checks, Provider, ResourceHealth, Tags}
 
   defmodule ClusterResource do
     @moduledoc false
@@ -120,7 +120,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
       description: "A discovered Pacemaker Cluster on the target infrastructure",
       type: :object,
       properties: %{
-        id: %Schema{type: :integer, description: "Cluster ID"},
+        id: %Schema{type: :string, description: "Cluster ID", format: :uuid},
         name: %Schema{type: :string, description: "Cluster name"},
         sid: %Schema{type: :string, description: "SID"},
         provider: Provider.SupportedProviders,
@@ -135,11 +135,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
           type: :array,
           items: %Schema{type: :string}
         },
-        health: %Schema{
-          type: :string,
-          description: "Detected health of the cluster",
-          enum: [:passing, :warning, :critical, :unknown]
-        },
+        health: ResourceHealth,
         resources_number: %Schema{type: :integer, description: "Resource number"},
         hosts_number: %Schema{type: :integer, description: "Hosts number"},
         details: Details,
@@ -160,12 +156,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
           type: :array,
           items: Checks.CheckResult
         },
-        tags: %Schema{
-          title: "Tags",
-          description: "A list of tags attached to a resource",
-          type: :array,
-          items: Tag
-        }
+        tags: Tags
       }
     })
   end

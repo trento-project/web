@@ -4,7 +4,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.Schema.{Provider, SlesSubscription, Tag}
+  alias TrentoWeb.OpenApi.Schema.{Provider, SlesSubscription, Tags}
 
   defmodule IPv4 do
     @moduledoc false
@@ -34,7 +34,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
       description: "A discovered host on the target infrastructure",
       type: :object,
       properties: %{
-        id: %Schema{type: :integer, description: "Host ID"},
+        id: %Schema{type: :string, description: "Host ID", format: :uuid},
         hostname: %Schema{type: :string, description: "Host name"},
         ip_addresses: %Schema{
           type: :array,
@@ -64,12 +64,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
         },
         provider: Provider.SupportedProviders,
         provider_data: Provider.ProviderData,
-        tags: %Schema{
-          title: "Tags",
-          description: "A list of tags attached to a resource",
-          type: :array,
-          items: Tag
-        },
+        tags: Tags,
         sles_subscriptions: %Schema{
           title: "SlesSubscriptions",
           description: "A list of the available SLES Subscriptions on a host",
