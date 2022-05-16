@@ -85,7 +85,7 @@ jobs:
 
   static-code-analysis:
     name: Static Code Analysis
-    needs: [deps, codespell]
+    needs: deps
     runs-on: ubuntu-20.04
 
     steps:
@@ -140,7 +140,7 @@ jobs:
 
   test:
     name: Test
-    needs: static-code-analysis
+    needs: deps
     runs-on: ubuntu-20.04
 
     services:
@@ -198,7 +198,7 @@ jobs:
 
   test-e2e:
     name: End to end tests
-    needs: test
+    needs: deps
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: dev
