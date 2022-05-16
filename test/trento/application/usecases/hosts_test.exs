@@ -7,10 +7,7 @@ defmodule Trento.HostsTest do
   alias Trento.Hosts
   alias Trento.Repo
 
-  alias Trento.{
-    AzureProviderReadModel,
-    SlesSubscriptionReadModel
-  }
+  alias Trento.SlesSubscriptionReadModel
 
   @moduletag :integration
 
@@ -23,8 +20,8 @@ defmodule Trento.HostsTest do
     test "Detects the correct number of SLES4SAP Subscriptions" do
       0..5
       |> Enum.map(fn _ ->
-        subscription_projection(identifier: "SLES_SAP")
-        subscription_projection(identifier: "sle-module-server-applications")
+        insert(:sles_subscription, identifier: "SLES_SAP")
+        insert(:sles_subscription, identifier: "sle-module-server-applications")
       end)
 
       assert 12 = SlesSubscriptionReadModel |> Repo.all() |> length()
@@ -35,9 +32,9 @@ defmodule Trento.HostsTest do
   describe "Connection settings" do
     test "Returns connection settings map" do
       host_id = Faker.UUID.v4()
-      host = host_projection(id: host_id, ssh_address: "192.168.1.1")
+      host = insert(:host, id: host_id, ssh_address: "192.168.1.1")
 
-      host_connection_settings_projection(id: host_id, user: "root")
+      insert(:host_connection_settings, id: host_id, user: "root")
 
       assert %{
                host_id: host_id,
@@ -53,13 +50,13 @@ defmodule Trento.HostsTest do
   describe "Connection Settings Management for the Hosts of a Cluster" do
     setup do
       cluster_id = Faker.UUID.v4()
-      cluster_projection(id: cluster_id)
+      insert(:cluster, id: cluster_id)
 
       %{
         cluster_id: cluster_id,
         hosts: [
-          host_projection(hostname: "A-01", cluster_id: cluster_id),
-          host_projection(hostname: "B-01", cluster_id: cluster_id)
+          insert(:host, hostname: "A-01", cluster_id: cluster_id),
+          insert(:host, hostname: "B-01", cluster_id: cluster_id)
         ]
       }
     end
@@ -91,22 +88,24 @@ defmodule Trento.HostsTest do
 
     test "should retrieve default connection user for a specific cloud platform" do
       cluster_id = Faker.UUID.v4()
-      cluster_projection(id: cluster_id)
+      insert(:cluster, id: cluster_id)
 
       %{id: a_host_id, hostname: a_hostname} =
-        host_projection(
+        insert(
+          :host,
           hostname: "A-01",
           cluster_id: cluster_id,
           provider: :azure,
-          provider_data: %AzureProviderReadModel{admin_username: "adminuser123"}
+          provider_data: %{admin_username: "adminuser123"}
         )
 
       %{id: another_host_id, hostname: another_hostname} =
-        host_projection(
+        insert(
+          :host,
           hostname: "B-01",
           cluster_id: cluster_id,
           provider: :azure,
-          provider_data: %AzureProviderReadModel{admin_username: "adminuser345"}
+          provider_data: %{admin_username: "adminuser345"}
         )
 
       settings = Hosts.get_all_connection_settings_by_cluster_id(cluster_id)

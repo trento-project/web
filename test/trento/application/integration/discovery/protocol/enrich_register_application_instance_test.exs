@@ -12,7 +12,7 @@ defmodule Trento.EnrichRegisterApplicationInstanceTest do
       sap_system_id: sap_system_id,
       tenant: tenant,
       host: %{ip_addresses: [ip]}
-    } = database_instance_projection()
+    } = insert(:database_instance)
 
     command =
       register_application_instance_command(
@@ -33,7 +33,7 @@ defmodule Trento.EnrichRegisterApplicationInstanceTest do
   test "should return an error if the database was not found" do
     %{
       tenant: tenant
-    } = database_instance_projection()
+    } = insert(:database_instance)
 
     command =
       register_application_instance_command(

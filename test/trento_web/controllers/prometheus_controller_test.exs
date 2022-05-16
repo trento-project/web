@@ -5,7 +5,7 @@ defmodule TrentoWeb.PrometheusControllerTest do
   import Trento.Factory
 
   test "should return the exepcted targets", %{conn: conn} do
-    hosts = Enum.map(0..2, fn _ -> host_projection() end)
+    hosts = Enum.map(0..2, fn _ -> insert(:host) end)
 
     response =
       conn

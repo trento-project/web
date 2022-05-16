@@ -5,7 +5,6 @@ defmodule Trento.HostProjectorTest do
   import Trento.Factory
 
   alias Trento.{
-    AzureProviderReadModel,
     HostProjector,
     HostReadModel
   }
@@ -26,7 +25,7 @@ defmodule Trento.HostProjectorTest do
   @moduletag :integration
 
   setup do
-    %HostReadModel{id: host_id} = host_projection()
+    %HostReadModel{id: host_id} = insert(:host)
 
     %{host_id: host_id}
   end
@@ -46,13 +45,14 @@ defmodule Trento.HostProjectorTest do
   end
 
   test "should update the cluster_id field when HostAddedToCluster event is received and the host was already registered" do
-    host_projection(
+    insert(
+      :host,
       id: host_id = UUID.uuid4(),
       hostname: hostname = Faker.StarWars.character(),
-      cluster: nil
+      cluster_id: nil
     )
 
-    cluster_projection(id: cluster_id = Faker.UUID.v4())
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     event = %HostAddedToCluster{
       host_id: host_id,
@@ -67,7 +67,7 @@ defmodule Trento.HostProjectorTest do
   end
 
   test "should project a new host with no additional properties when HostAddedToCluster event is received" do
-    cluster_projection(id: cluster_id = Faker.UUID.v4())
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     event = %HostAddedToCluster{
       host_id: Faker.UUID.v4(),
@@ -153,15 +153,15 @@ defmodule Trento.HostProjectorTest do
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
 
-    expected_azure_model = %AzureProviderReadModel{
-      vm_name: "vmhdbdev01",
-      data_disk_number: 7,
-      location: "westeurope",
-      offer: "sles-sap-15-sp3-byos",
-      resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
-      sku: "gen2",
-      vm_size: "Standard_E4s_v3",
-      admin_username: "cloudadmin"
+    expected_azure_model = %{
+      "vm_name" => "vmhdbdev01",
+      "data_disk_number" => 7,
+      "location" => "westeurope",
+      "offer" => "sles-sap-15-sp3-byos",
+      "resource_group" => "/subscriptions/00000000-0000-0000-0000-000000000000",
+      "sku" => "gen2",
+      "vm_size" => "Standard_E4s_v3",
+      "admin_username" => "cloudadmin"
     }
 
     assert :azure == host_projection.provider

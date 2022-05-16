@@ -13,19 +13,22 @@ defmodule Trento.Integration.DiscoveryTest do
     agent_id_3 = Faker.UUID.v4()
 
     for index <- 0..9 do
-      discovery_event(
+      insert(
+        :discovery_event,
         agent_id: agent_id_1,
         discovery_type: "discovery_type",
         payload: %{"key" => index}
       )
 
-      discovery_event(
+      insert(
+        :discovery_event,
         agent_id: agent_id_2,
         discovery_type: "discovery_type",
         payload: %{"key" => index}
       )
 
-      discovery_event(
+      insert(
+        :discovery_event,
         agent_id: agent_id_3,
         discovery_type: "discovery_type",
         payload: %{"key" => index}
@@ -43,7 +46,8 @@ defmodule Trento.Integration.DiscoveryTest do
 
   test "should delete events older than the specified days" do
     for _ <- 0..9 do
-      discovery_event(
+      insert(
+        :discovery_event,
         agent_id: Faker.UUID.v4(),
         discovery_type: "discovery_type",
         payload: %{},

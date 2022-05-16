@@ -30,7 +30,7 @@ defmodule Trento.SapSystemProjectorTest do
   end
 
   test "should update the health of a SAP System when a SapSystemHealthChanged event is received" do
-    sap_system_projection(id: sap_system_id = Faker.UUID.v4())
+    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
     event = %SapSystemHealthChanged{sap_system_id: sap_system_id, health: :critical}
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -40,7 +40,7 @@ defmodule Trento.SapSystemProjectorTest do
   end
 
   test "should project a new application instance when ApplicationInstanceRegistered event is received" do
-    sap_system_projection(id: sap_system_id = Faker.UUID.v4())
+    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
     event = application_instance_registered_event(sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")

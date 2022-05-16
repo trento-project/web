@@ -20,20 +20,22 @@ defmodule Trento.HealthSummaryServiceTest do
     end
 
     test "should raise an exception when a cluster couldn't be loaded" do
-      %HostReadModel{id: a_host_id} = host_projection(cluster_id: Faker.UUID.v4())
+      %HostReadModel{id: a_host_id} = insert(:host, cluster_id: Faker.UUID.v4())
 
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid
-      } = sap_system_projection()
+      } = insert(:sap_system)
 
-      database_instance_projection_without_host(
+      insert(
+        :database_instance_without_host,
         sap_system_id: sap_system_id,
         sid: "HDD",
         host_id: a_host_id
       )
 
-      application_instance_projection_without_host(
+      insert(
+        :application_instance_without_host,
         sap_system_id: sap_system_id,
         sid: sid,
         host_id: a_host_id

@@ -32,7 +32,7 @@ defmodule Trento.DatabaseProjectorTest do
   end
 
   test "should update the health of a Database when a DatabaseHealthChanged event is received" do
-    database_projection(id: sap_system_id = Faker.UUID.v4())
+    insert(:database, id: sap_system_id = Faker.UUID.v4())
     event = %DatabaseHealthChanged{sap_system_id: sap_system_id, health: :critical}
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
@@ -42,7 +42,7 @@ defmodule Trento.DatabaseProjectorTest do
   end
 
   test "should project a new database instance when DatabaseInstanceRegistered event is received" do
-    database_projection(id: sap_system_id = Faker.UUID.v4())
+    insert(:database, id: sap_system_id = Faker.UUID.v4())
     event = database_instance_registered_event(sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
@@ -74,7 +74,8 @@ defmodule Trento.DatabaseProjectorTest do
       instance_number: instance_number,
       host_id: host_id
     } =
-      database_instance_projection_without_host(
+      insert(
+        :database_instance_without_host,
         system_replication: "Secondary",
         system_replication_status: ""
       )
@@ -106,7 +107,8 @@ defmodule Trento.DatabaseProjectorTest do
       instance_number: instance_number,
       host_id: host_id
     } =
-      database_instance_projection_without_host(
+      insert(
+        :database_instance_without_host,
         system_replication: "Secondary",
         system_replication_status: ""
       )

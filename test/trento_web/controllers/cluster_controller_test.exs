@@ -11,7 +11,7 @@ defmodule TrentoWeb.ClusterControllerTest do
         %{id: cluster_id_3, name: cluster_name_3}
       ] =
         0..2
-        |> Enum.map(fn _ -> cluster_projection() end)
+        |> Enum.map(fn _ -> insert(:cluster) end)
         |> Enum.sort_by(& &1.name)
 
       conn = get(conn, Routes.cluster_path(conn, :list))
@@ -36,13 +36,13 @@ defmodule TrentoWeb.ClusterControllerTest do
   describe "Connection Settings Management for the Hosts of a Cluster" do
     setup do
       cluster_id = Faker.UUID.v4()
-      cluster_projection(id: cluster_id)
+      insert(:cluster, id: cluster_id)
 
       %{
         cluster_id: cluster_id,
         hosts: [
-          host_projection(hostname: "A-01", cluster_id: cluster_id),
-          host_projection(hostname: "B-01", cluster_id: cluster_id)
+          insert(:host, hostname: "A-01", cluster_id: cluster_id),
+          insert(:host, hostname: "B-01", cluster_id: cluster_id)
         ]
       }
     end

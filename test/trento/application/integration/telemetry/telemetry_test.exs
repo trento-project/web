@@ -12,7 +12,7 @@ defmodule Trento.Integration.TelemetryTest do
 
   setup do
     Application.put_env(:trento, :flavor, "Premium")
-    subscription_projection(identifier: "SLES_SAP")
+    insert(:sles_subscription, identifier: "SLES_SAP")
     Installation.accept_eula()
 
     on_exit(fn -> Application.put_env(:trento, :flavor, "Community") end)

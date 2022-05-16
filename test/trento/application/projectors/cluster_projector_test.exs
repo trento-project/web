@@ -41,7 +41,7 @@ defmodule Trento.ClusterProjectorTest do
   end
 
   test "should update the cluster details when ClusterDetailsUpdated is received" do
-    cluster_projection(id: cluster_id = Faker.UUID.v4())
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     event = %ClusterDetailsUpdated{
       cluster_id: cluster_id,
@@ -73,7 +73,7 @@ defmodule Trento.ClusterProjectorTest do
   end
 
   test "should update the cluster checks execution status when ChecksExecutionRequested is received" do
-    cluster_projection(id: cluster_id = Faker.UUID.v4())
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     event = %ChecksExecutionRequested{
       cluster_id: cluster_id
@@ -91,7 +91,7 @@ defmodule Trento.ClusterProjectorTest do
   end
 
   test "should update the cluster checks execution status when ChecksExecutionStarted is received" do
-    cluster_projection(id: cluster_id = Faker.UUID.v4())
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     event = %ChecksExecutionStarted{
       cluster_id: cluster_id
@@ -109,7 +109,7 @@ defmodule Trento.ClusterProjectorTest do
   end
 
   test "should update the cluster checks execution status when ChecksExecutionCompleted is received" do
-    cluster_projection(id: cluster_id = Faker.UUID.v4())
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     event = %ChecksExecutionCompleted{
       cluster_id: cluster_id
