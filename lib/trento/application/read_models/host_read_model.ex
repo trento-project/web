@@ -7,12 +7,7 @@ defmodule Trento.HostReadModel do
 
   import Ecto.Changeset
 
-  import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
-
-  alias Trento.{
-    AzureProviderReadModel,
-    SlesSubscriptionReadModel
-  }
+  alias Trento.SlesSubscriptionReadModel
 
   @type t :: %__MODULE__{}
 
@@ -27,14 +22,7 @@ defmodule Trento.HostReadModel do
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
 
     field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
-
-    field :provider_data, PolymorphicEmbed,
-      types: [
-        azure: AzureProviderReadModel
-      ],
-      type_field: :provider,
-      on_type_not_found: :nilify,
-      on_replace: :update
+    field :provider_data, :map
 
     has_many :tags, Trento.Tag, foreign_key: :resource_id
 
@@ -45,8 +33,6 @@ defmodule Trento.HostReadModel do
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(host, attrs) do
-    host
-    |> cast(attrs, List.delete(__MODULE__.__schema__(:fields), :provider_data))
-    |> cast_polymorphic_embed(:provider_data, required: false)
+    cast(host, attrs, __MODULE__.__schema__(:fields))
   end
 end
