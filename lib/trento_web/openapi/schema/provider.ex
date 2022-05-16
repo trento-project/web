@@ -15,6 +15,18 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
     })
   end
 
+  defmodule FilterableProviders do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "FilterableProvider",
+      type: :string,
+      description: "A provider that can be used to filter the Catalog",
+      # default?
+      enum: [:azure, :aws, :gcp]
+    })
+  end
+
   defmodule AzureProviderData do
     @moduledoc false
 
