@@ -31,7 +31,7 @@ defmodule Trento.HostProjectorTest do
   end
 
   test "should project a new host when HostRegistered event is received" do
-    event = host_registered_event()
+    event = build(:host_registered_event)
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)

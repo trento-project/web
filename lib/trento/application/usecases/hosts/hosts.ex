@@ -118,7 +118,6 @@ defmodule Trento.Hosts do
          ssh_address: ssh_address,
          provider_data: provider_data
        }) do
-
     %{
       host_id: host_id,
       hostname: hostname,

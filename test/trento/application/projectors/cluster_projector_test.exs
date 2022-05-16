@@ -24,7 +24,7 @@ defmodule Trento.ClusterProjectorTest do
   @moduletag :integration
 
   test "should project a new cluster when ClusterRegistered event is received" do
-    event = cluster_registered_event()
+    event = build(:cluster_registered_event)
 
     ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
     cluster_projection = Repo.get!(ClusterReadModel, event.cluster_id)

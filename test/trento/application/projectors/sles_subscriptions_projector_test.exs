@@ -15,7 +15,7 @@ defmodule Trento.SlesSubscriptionsProjectorTest do
   @moduletag :integration
 
   test "should project a new subscription when SubscriptionsUpdated event is received" do
-    event = subscriptions_updated_event()
+    event = build(:subscriptions_updated_event)
     %{subscriptions: [subscription]} = event
 
     ProjectorTestHelper.project(SlesSubscriptionsProjector, event, "sles_subscription_projector")

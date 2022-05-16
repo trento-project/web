@@ -18,7 +18,7 @@ defmodule Trento.SapSystemProjectorTest do
   @moduletag :integration
 
   test "should project a new SAP System when a SapSystemRegistered event is received" do
-    event = sap_system_registered_event()
+    event = build(:sap_system_registered_event)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
     projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
@@ -41,7 +41,7 @@ defmodule Trento.SapSystemProjectorTest do
 
   test "should project a new application instance when ApplicationInstanceRegistered event is received" do
     insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
-    event = application_instance_registered_event(sap_system_id: sap_system_id)
+    event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 

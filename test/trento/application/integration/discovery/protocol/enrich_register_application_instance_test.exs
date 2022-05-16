@@ -15,7 +15,8 @@ defmodule Trento.EnrichRegisterApplicationInstanceTest do
     } = insert(:database_instance)
 
     command =
-      register_application_instance_command(
+      build(
+        :register_application_instance_command,
         sap_system_id: nil,
         sid: Faker.StarWars.planet(),
         db_host: ip,
@@ -36,7 +37,8 @@ defmodule Trento.EnrichRegisterApplicationInstanceTest do
     } = insert(:database_instance)
 
     command =
-      register_application_instance_command(
+      build(
+        :register_application_instance_command,
         sap_system_id: nil,
         sid: Faker.StarWars.planet(),
         db_host: "not_found",

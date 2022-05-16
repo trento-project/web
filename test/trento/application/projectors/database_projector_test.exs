@@ -21,7 +21,7 @@ defmodule Trento.DatabaseProjectorTest do
   @moduletag :integration
 
   test "should project a new database when DatabaseRegistered event is received" do
-    event = database_registered_event()
+    event = build(:database_registered_event)
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
     database_projection = Repo.get!(DatabaseReadModel, event.sap_system_id)
@@ -43,7 +43,7 @@ defmodule Trento.DatabaseProjectorTest do
 
   test "should project a new database instance when DatabaseInstanceRegistered event is received" do
     insert(:database, id: sap_system_id = Faker.UUID.v4())
-    event = database_instance_registered_event(sap_system_id: sap_system_id)
+    event = build(:database_instance_registered_event, sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 

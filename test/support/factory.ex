@@ -48,32 +48,32 @@ defmodule Trento.Factory do
 
   use ExMachina.Ecto, repo: Trento.Repo
 
-  def host_registered_event(attrs \\ []) do
+  def host_registered_event_factory do
     %HostRegistered{
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
-      hostname: Keyword.get(attrs, :hostname, Faker.StarWars.character()),
-      ip_addresses: Keyword.get(attrs, :ip_addresses, [Faker.Internet.ip_v4_address()]),
-      ssh_address: Keyword.get(attrs, :ssh_address, Faker.Internet.ip_v4_address()),
-      agent_version: Keyword.get(attrs, :agent_version, Faker.App.semver()),
-      cpu_count: Keyword.get(attrs, :cpu_count, Enum.random(1..16)),
-      total_memory_mb: Keyword.get(attrs, :total_memory_mb, Enum.random(1..128)),
-      socket_count: Keyword.get(attrs, :socket_count, Enum.random(1..16)),
-      os_version: Keyword.get(attrs, :agent_version, Faker.App.semver()),
+      host_id: Faker.UUID.v4(),
+      hostname: Faker.StarWars.character(),
+      ip_addresses: [Faker.Internet.ip_v4_address()],
+      ssh_address: Faker.Internet.ip_v4_address(),
+      agent_version: Faker.App.semver(),
+      cpu_count: Enum.random(1..16),
+      total_memory_mb: Enum.random(1..128),
+      socket_count: Enum.random(1..16),
+      os_version: Faker.App.semver(),
       heartbeat: :unknown
     }
   end
 
-  def host_details_updated_event(attrs \\ []) do
+  def host_details_updated_event_factory do
     %HostDetailsUpdated{
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
-      hostname: Keyword.get(attrs, :hostname, Faker.StarWars.character()),
-      ip_addresses: Keyword.get(attrs, :ip_addresses, [Faker.Internet.ip_v4_address()]),
-      ssh_address: Keyword.get(attrs, :ssh_address, Faker.Internet.ip_v4_address()),
-      agent_version: Keyword.get(attrs, :agent_version, Faker.App.semver()),
-      cpu_count: Keyword.get(attrs, :cpu_count, Enum.random(1..16)),
-      total_memory_mb: Keyword.get(attrs, :total_memory_mb, Enum.random(1..128)),
-      socket_count: Keyword.get(attrs, :socket_count, Enum.random(1..16)),
-      os_version: Keyword.get(attrs, :agent_version, Faker.App.semver())
+      host_id: Faker.UUID.v4(),
+      hostname: Faker.StarWars.character(),
+      ip_addresses: [Faker.Internet.ip_v4_address()],
+      ssh_address: Faker.Internet.ip_v4_address(),
+      agent_version: Faker.App.semver(),
+      cpu_count: Enum.random(1..16),
+      total_memory_mb: Enum.random(1..128),
+      socket_count: Enum.random(1..16),
+      os_version: Faker.App.semver()
     }
   end
 
@@ -98,24 +98,24 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_registered_event(attrs \\ []) do
+  def cluster_registered_event_factory do
     %ClusterRegistered{
-      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
-      name: Keyword.get(attrs, :name, Faker.StarWars.character()),
-      sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
-      provider: Keyword.get(attrs, :provider, :azure),
-      resources_number: Keyword.get(attrs, :resources_number, 8),
-      hosts_number: Keyword.get(attrs, :hosts_number, 2),
-      details: Keyword.get(attrs, :details, hana_cluster_details_value_object()),
-      health: Keyword.get(attrs, :health, :passing),
-      type: Keyword.get(attrs, :type, :hana_scale_up)
+      cluster_id: Faker.UUID.v4(),
+      name: Faker.StarWars.character(),
+      sid: Faker.StarWars.planet(),
+      provider: :azure,
+      resources_number: 8,
+      hosts_number: 2,
+      details: hana_cluster_details_value_object(),
+      health: :passing,
+      type: :hana_scale_up
     }
   end
 
-  def host_added_to_cluster_event(attrs \\ []) do
+  def host_added_to_cluster_event_factory do
     %HostAddedToCluster{
-      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4())
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4()
     }
   end
 
@@ -151,8 +151,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def subscriptions_updated_event(attrs \\ []) do
-    host_id = Keyword.get(attrs, :host_id, Faker.UUID.v4())
+  def subscriptions_updated_event_factory do
+    host_id = Faker.UUID.v4()
 
     %SlesSubscriptionsUpdated{
       host_id: host_id,
@@ -168,56 +168,54 @@ defmodule Trento.Factory do
     }
   end
 
-  @spec database_instance_registered_event(keyword) ::
-          Trento.Domain.Events.DatabaseInstanceRegistered.t()
-  def database_instance_registered_event(attrs \\ []) do
+  def database_instance_registered_event_factory do
     %DatabaseInstanceRegistered{
-      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
-      sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
-      tenant: Keyword.get(attrs, :tenant, Faker.UUID.v4()),
-      instance_number: Keyword.get(attrs, :instance_number, "00"),
-      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
-      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
-      http_port: Keyword.get(attrs, :http_port, 8080),
-      https_port: Keyword.get(attrs, :https_port, 8443),
-      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
-      system_replication: Keyword.get(attrs, :system_replication, "Primary"),
-      system_replication_status: Keyword.get(attrs, :system_replication_status, "ACTIVE"),
-      health: Keyword.get(attrs, :health, :passing)
+      sap_system_id: Faker.UUID.v4(),
+      sid: Faker.UUID.v4(),
+      tenant: Faker.UUID.v4(),
+      instance_number: "00",
+      instance_hostname: "an-instance-name",
+      features: Faker.Pokemon.name(),
+      http_port: 8080,
+      https_port: 8443,
+      start_priority: "0.3",
+      host_id: Faker.UUID.v4(),
+      system_replication: "Primary",
+      system_replication_status: "ACTIVE",
+      health: :passing
     }
   end
 
-  def application_instance_registered_event(attrs \\ []) do
+  def application_instance_registered_event_factory do
     %ApplicationInstanceRegistered{
-      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
-      sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
-      instance_number: Keyword.get(attrs, :instance_number, "00"),
-      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
-      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
-      http_port: Keyword.get(attrs, :http_port, 8080),
-      https_port: Keyword.get(attrs, :https_port, 8443),
-      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
-      health: Keyword.get(attrs, :health, :passing)
+      sap_system_id: Faker.UUID.v4(),
+      sid: Faker.UUID.v4(),
+      instance_number: "00",
+      instance_hostname: "an-instance-name",
+      features: Faker.Pokemon.name(),
+      http_port: 8080,
+      https_port: 8443,
+      start_priority: "0.3",
+      host_id: Faker.UUID.v4(),
+      health: :passing
     }
   end
 
-  def database_registered_event(attrs \\ []) do
+  def database_registered_event_factory do
     %DatabaseRegistered{
-      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
-      sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
-      health: Keyword.get(attrs, :health, :passing)
+      sap_system_id: Faker.UUID.v4(),
+      sid: Faker.UUID.v4(),
+      health: :passing
     }
   end
 
-  def sap_system_registered_event(attrs \\ []) do
+  def sap_system_registered_event_factory do
     %SapSystemRegistered{
-      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
-      sid: Keyword.get(attrs, :sid, Faker.UUID.v4()),
+      sap_system_id: Faker.UUID.v4(),
+      sid: Faker.UUID.v4(),
       db_host: Faker.Internet.ip_v4_address(),
       tenant: Faker.Beer.hop(),
-      health: Keyword.get(attrs, :health, :passing)
+      health: :passing
     }
   end
 
@@ -332,46 +330,46 @@ defmodule Trento.Factory do
     }
   end
 
-  def register_application_instance_command(attrs \\ []) do
+  def register_application_instance_command_factory do
     RegisterApplicationInstance.new!(%{
-      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
-      sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
-      db_host: Keyword.get(attrs, :db_host, Faker.Internet.ip_v4_address()),
-      tenant: Keyword.get(attrs, :tenant, Faker.Beer.hop()),
-      instance_number: Keyword.get(attrs, :instance_number, "00"),
-      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
-      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
-      http_port: Keyword.get(attrs, :http_port, 8080),
-      https_port: Keyword.get(attrs, :https_port, 8443),
-      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
-      health: Keyword.get(attrs, :health, :passing)
+      sap_system_id: Faker.UUID.v4(),
+      sid: Faker.StarWars.planet(),
+      db_host: Faker.Internet.ip_v4_address(),
+      tenant: Faker.Beer.hop(),
+      instance_number: "00",
+      instance_hostname: "an-instance-name",
+      features: Faker.Pokemon.name(),
+      http_port: 8080,
+      https_port: 8443,
+      start_priority: "0.3",
+      host_id: Faker.UUID.v4(),
+      health: :passing
     })
   end
 
-  def register_database_instance_command(attrs \\ []) do
+  def register_database_instance_command_factory do
     RegisterDatabaseInstance.new!(%{
-      sap_system_id: Keyword.get(attrs, :sap_system_id, Faker.UUID.v4()),
-      sid: Keyword.get(attrs, :sid, Faker.StarWars.planet()),
-      tenant: Keyword.get(attrs, :tenant, Faker.Beer.hop()),
-      instance_number: Keyword.get(attrs, :instance_number, "00"),
-      instance_hostname: Keyword.get(attrs, :instance_hostname, "an-instance-name"),
-      features: Keyword.get(attrs, :features, Faker.Pokemon.name()),
-      http_port: Keyword.get(attrs, :http_port, 8080),
-      https_port: Keyword.get(attrs, :https_port, 8443),
-      start_priority: Keyword.get(attrs, :start_priority, "0.3"),
-      host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
-      system_replication: Keyword.get(attrs, :system_replication, "Primary"),
-      system_replication_status: Keyword.get(attrs, :system_replication_status, "ACTIVE"),
-      health: Keyword.get(attrs, :health, :passing)
+      sap_system_id: Faker.UUID.v4(),
+      sid: Faker.StarWars.planet(),
+      tenant: Faker.Beer.hop(),
+      instance_number: "00",
+      instance_hostname: "an-instance-name",
+      features: Faker.Pokemon.name(),
+      http_port: 8080,
+      https_port: 8443,
+      start_priority: "0.3",
+      host_id: Faker.UUID.v4(),
+      system_replication: "Primary",
+      system_replication_status: "ACTIVE",
+      health: :passing
     })
   end
 
-  def checks_execution_requested_event(attrs \\ []) do
+  def checks_execution_requested_event_factory do
     %ChecksExecutionRequested{
-      cluster_id: Keyword.get(attrs, :cluster_id, Faker.UUID.v4()),
-      hosts: Keyword.get(attrs, :hosts, [Faker.UUID.v4()]),
-      checks: Keyword.get(attrs, :checks, Enum.map(0..4, fn _ -> Faker.UUID.v4() end))
+      cluster_id: Faker.UUID.v4(),
+      hosts: [Faker.UUID.v4()],
+      checks: Enum.map(0..4, fn _ -> Faker.UUID.v4() end)
     }
   end
 

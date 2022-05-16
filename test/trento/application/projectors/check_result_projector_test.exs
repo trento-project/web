@@ -18,7 +18,7 @@ defmodule Trento.CheckResultProjectorTest do
   }
 
   test "should project checks results with result unknown when a ChecksExecutionRequested event is received" do
-    event = checks_execution_requested_event()
+    event = build(:checks_execution_requested_event)
 
     ProjectorTestHelper.project(
       CheckResultProjector,
