@@ -54,6 +54,7 @@ defmodule Trento.MixProject do
       {:eventstore, "~> 1.1",
        [env: :prod, git: "https://github.com/commanded/eventstore.git", override: true]},
       {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
+      {:ex_machina, "~> 2.7.0", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:floki, ">= 0.30.0", only: :test},
       {:fun_with_flags, "~> 1.8.1"},

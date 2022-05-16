@@ -19,7 +19,7 @@ defmodule Trento.Integration.TelemetryTest do
   end
 
   test "should publish hosts telemetry if telemetry is enabled" do
-    host_telemetry = host_telemetry_projection()
+    host_telemetry = insert(:host_telemetry)
 
     expect(Trento.Integration.Telemetry.Mock, :publish_hosts_telemetry, fn hosts_telemetry, _ ->
       assert [host_telemetry] == hosts_telemetry
