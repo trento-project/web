@@ -3,6 +3,35 @@ defmodule TrentoWeb.CatalogController do
 
   alias Trento.Integration.Checks
 
+  alias TrentoWeb.OpenApi.Schema.{ChecksCatalog, Provider}
+
+  use OpenApiSpex.ControllerSpecs
+
+  tags(["Checks"])
+
+  operation(:checks_catalog,
+    summary: "Checks Catalog",
+    description:
+      "The list of the available checks that can be configured to run on the target SAP infrastructure",
+    parameters: [
+      flat: [
+        in: :query,
+        type: :string,
+        description:
+          "Whether to output a flat catalog or not. Just provide the flag, not the value. eg /api/checks/catalog?flat"
+      ],
+      provider: [
+        in: :query,
+        type: Provider.FilterableProviders,
+        description: "Whether to filter by a specific provider"
+      ]
+    ],
+    responses: [
+      ok: {"A Collection of the available Checks", "application/json", ChecksCatalog.Catalog},
+      not_found: {"Not found", "application/json", ChecksCatalog.CatalogNotfound}
+    ]
+  )
+
   @spec checks_catalog(Plug.Conn.t(), map) :: Plug.Conn.t()
   def checks_catalog(conn, params) do
     with {:ok, content} <- get_catalog(params),
