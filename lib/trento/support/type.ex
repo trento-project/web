@@ -63,36 +63,46 @@ defmodule Trento.Type do
       validates the required ones and returns a changeset.
       """
       def changeset(struct, params) do
-        {embedded_fields, fields} =
-          :fields
-          |> __MODULE__.__schema__()
-          |> Enum.split_with(fn field ->
-            case __MODULE__.__schema__(:type, field) do
-              {_, Ecto.Embedded, _} ->
-                true
-
-              _ ->
-                false
-            end
-          end)
-
-        changes =
+        changeset =
           struct
-          |> cast(params, fields)
+          |> cast(params, fields())
           |> validate_required_fields(@required_fields)
 
-        Enum.reduce(embedded_fields, changes, fn field, changes ->
-          cast_embed(changes, field)
+        Enum.reduce(embedded_fields(), changeset, fn field, changeset ->
+          cast_and_validate_required_embed(changeset, field, @required_fields)
         end)
       end
 
       def validate_required_fields(changeset, nil), do: changeset
 
       def validate_required_fields(changeset, :all),
-        do: Ecto.Changeset.validate_required(changeset, __MODULE__.__schema__(:fields))
+        do:
+          Ecto.Changeset.validate_required(
+            changeset,
+            fields()
+          )
 
       def validate_required_fields(changeset, required_fields),
-        do: Ecto.Changeset.validate_required(changeset, required_fields)
+        do:
+          Ecto.Changeset.validate_required(
+            changeset,
+            Enum.filter(fields(), fn field ->
+              field in required_fields
+            end)
+          )
+
+      def cast_and_validate_required_embed(changeset, field, nil),
+        do: cast_embed(changeset, field)
+
+      def cast_and_validate_required_embed(changeset, field, :all),
+        do: cast_embed(changeset, field, required: true)
+
+      def cast_and_validate_required_embed(changeset, field, required_fields),
+        do: cast_embed(changeset, field, required: field in required_fields)
+
+      defp fields, do: __MODULE__.__schema__(:fields) -- __MODULE__.__schema__(:embeds)
+
+      defp embedded_fields, do: __MODULE__.__schema__(:embeds)
 
       defoverridable changeset: 2
     end
