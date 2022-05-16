@@ -3,7 +3,7 @@ defmodule Trento.Domain.HostExecution do
   Host checks results value object
   """
 
-  @required_fields [:host_id, :reachable, :checks_results]
+  @required_fields [:host_id, :reachable]
 
   use Trento.Type
   alias Trento.Domain.CheckResult

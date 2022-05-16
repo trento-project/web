@@ -1,7 +1,7 @@
 defmodule TestData do
   @moduledoc false
 
-  @required_fields []
+  @required_fields :all
 
   use Trento.Type
 
@@ -15,7 +15,7 @@ end
 defmodule EmbeddedTestData do
   @moduledoc false
 
-  @required_fields []
+  @required_fields :all
 
   use Trento.Type
 

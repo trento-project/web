@@ -25,4 +25,12 @@ defmodule Trento.TypeTest do
       })
     end
   end
+
+  test "should validate the presence of a required embedded field" do
+    assert {:error, %{embedded: ["can't be blank"]}} ==
+             TestData.new(%{
+               id: Faker.UUID.v4(),
+               name: "a"
+             })
+  end
 end

@@ -7,9 +7,7 @@ defmodule Trento.Domain.HanaClusterDetails do
     :system_replication_mode,
     :system_replication_operation_mode,
     :sr_health_state,
-    :fencing_type,
-    :stopped_resources,
-    :sbd_devices
+    :fencing_type
   ]
 
   use Trento.Type
