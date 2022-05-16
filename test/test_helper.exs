@@ -13,7 +13,7 @@ Application.put_env(:trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.Mock
 )
 
+Application.ensure_all_started(:ex_machina, :faker)
+
 ExUnit.start()
 Ecto.Adapters.SQL.Sandbox.mode(Trento.Repo, :manual)
-
-Faker.start()

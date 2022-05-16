@@ -48,6 +48,8 @@ defmodule Trento.Factory do
 
   alias Trento.Integration.Discovery.DiscoveryEvent
 
+  use ExMachina.Ecto, repo: Trento.Repo
+
   def host_registered_event(attrs \\ []) do
     %HostRegistered{
       host_id: Keyword.get(attrs, :host_id, Faker.UUID.v4()),
@@ -129,15 +131,15 @@ defmodule Trento.Factory do
     })
   end
 
-  def host_telemetry_projection(attrs \\ []) do
-    Repo.insert!(%HostTelemetryReadModel{
-      agent_id: Keyword.get(attrs, :agent_id, Faker.UUID.v4()),
-      hostname: Keyword.get(attrs, :hostname, Faker.StarWars.character()),
-      cpu_count: Keyword.get(attrs, :cpu_usage, Enum.random(0..100)),
-      socket_count: Keyword.get(attrs, :memory_usage, Enum.random(0..100)),
-      total_memory_mb: Keyword.get(attrs, :total_memory_mb, Enum.random(0..100)),
-      sles_version: Keyword.get(attrs, :total_memory_mb, Faker.App.version())
-    })
+  def host_telemetry_factory do
+    %HostTelemetryReadModel{
+      agent_id: Faker.UUID.v4(),
+      hostname: Faker.StarWars.character(),
+      cpu_count: Enum.random(0..100),
+      socket_count: Enum.random(0..100),
+      total_memory_mb: Enum.random(0..100),
+      sles_version: Faker.App.version()
+    }
   end
 
   def cluster_projection(attrs \\ []) do
