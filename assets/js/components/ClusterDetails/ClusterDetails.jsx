@@ -13,6 +13,7 @@ import { groupBy } from '@lib/lists';
 import SiteDetails from './SiteDetails';
 
 import { getClusterName } from '@components/ClusterLink';
+import HostLink from '@components/HostLink';
 
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getCluster } from '@state/selectors';
@@ -25,7 +26,13 @@ export const truncatedClusterNameClasses = classNames(
 const siteDetailsConfig = {
   usePadding: false,
   columns: [
-    { title: 'Hostname', key: 'name' },
+    {
+      title: 'Hostname',
+      key: '',
+      render: (_, hostData) => (
+        <HostLink hostId={hostData.hostId}>{hostData.name}</HostLink>
+      ),
+    },
     { title: 'Role', key: 'hana_status' },
     {
       title: 'IP',
@@ -63,10 +70,13 @@ const ClusterDetails = () => {
 
   const cluster = useSelector(getCluster(clusterID));
 
-  const ips = useSelector((state) =>
+  const hostsData = useSelector((state) =>
     state.hostsList.hosts.reduce((accumulator, current) => {
       if (current.cluster_id === clusterID) {
-        return { ...accumulator, [current.hostname]: current.ip_addresses };
+        return {
+          ...accumulator,
+          [current.hostname]: { hostId: current.id, ips: current.ip_addresses },
+        };
       }
       return accumulator;
     }, {})
@@ -77,7 +87,13 @@ const ClusterDetails = () => {
   }
 
   const renderedNodes = cluster.details?.nodes?.map((node) =>
-    ips[node.name] ? { ...node, ips: ips[node.name] } : node
+    hostsData[node.name]
+      ? {
+          ...node,
+          ips: hostsData[node.name].ips,
+          hostId: hostsData[node.name].hostId,
+        }
+      : node
   );
 
   const hasSelectedChecks = cluster.selected_checks.length > 0;

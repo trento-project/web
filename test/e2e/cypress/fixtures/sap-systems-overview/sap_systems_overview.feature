@@ -9,7 +9,7 @@ Feature: SAP Systems Overview
 
     Scenario: Registered SAP Systems should be available in the overview
         When I navigate to the SAP Systems overview page
-        Then the discovered SID ar the expected ones
+        Then the discovered SID are the expected ones
         And the health of each of the systems is healthy
         And the links to the to the details page are working
 
@@ -42,27 +42,22 @@ Feature: SAP Systems Overview
     Scenario: System health state is changed upon new SAP system events
         Given I navigate to the SAP Systems overview page
         When a new SAP system event for the first SAP system with the 1st instance with a GRAY status is received
-        And the page is refreshed
         Then the status of the 1st instance in this SAP system is GRAY
         And the SAP system state is GRAY
         When a new SAP system event for the first SAP system with the 2nd instance with a YELLOW status is received
-        And the page is refreshed
         Then the status of the 2nd instance in this SAP system is YELLOW
         And the SAP system state is YELLOW
         When a new SAP system event for the first SAP system with the 3rd instance with a RED status is received
-        And the page is refreshed
         Then the status of the 3rd instance in this SAP system is RED
         And the SAP system state is RED
 
     Scenario: System health state is changed upon new HANA database events attached
         Given I navigate to the SAP Systems overview page
         When a new HANA database event for the first SAP system with the 1st HANA instance with a RED status is received
-        And the page is refreshed
         Then the status of the 1st HANA instance in this SAP system is RED
         And the SAP system state is RED
 
     Scenario: SAP diagnostic agent discoveries are not displayed
         Given I navigate to the SAP Systems overview page
         When a new SAP discovery with a SAP diagnostics agent is received
-        And the page is refreshed
         Then the discovery with the SAP diagnostics agent is not displayed

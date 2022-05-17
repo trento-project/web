@@ -26,7 +26,7 @@ files = ["./test/fixtures/scenarios/sap-system-details/1b0e9297-97dd-55d6-9874-8
 
 [sap-system-detail-NEW]
 
-files = ["./test/fixtures/scenarios/sap-system-details/newagent_sap_system_discovery_new.json"]
+files = ["./test/fixtures/scenarios/sap-system-details/1b0e9297-97dd-55d6-9874-8efde4d84c90_sap_system_discovery_new.json"]
 
 [hana-database-detail-GRAY]
 
