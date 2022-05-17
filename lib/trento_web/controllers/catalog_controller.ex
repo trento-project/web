@@ -28,7 +28,8 @@ defmodule TrentoWeb.CatalogController do
     ],
     responses: [
       ok: {"A Collection of the available Checks", "application/json", ChecksCatalog.Catalog},
-      not_found: {"Not found", "application/json", ChecksCatalog.CatalogNotfound}
+      not_found: {"Not found", "application/json", ChecksCatalog.CatalogNotfound},
+      bad_request: {"Bad Request", "application/json", ChecksCatalog.UnableToLoadCatalog}
     ]
   )
 

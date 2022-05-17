@@ -175,4 +175,18 @@ defmodule TrentoWeb.OpenApi.Schema.ChecksCatalog do
       example: %{error: "not_found"}
     })
   end
+
+  defmodule UnableToLoadCatalog do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "UnableToLoadCatalog",
+      description: "Something wrong happened while loading the catalog. ie: it is not ready yet",
+      type: :object,
+      properties: %{
+        error: %Schema{type: :string, description: "The error message"}
+      },
+      example: %{error: "(not_ready|some other error message)"}
+    })
+  end
 end
