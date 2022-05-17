@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.DumpScenario do
+defmodule Mix.Tasks.DumpUnacceptedEvents do
   @moduledoc "The hello mix task: `mix help hello`"
 
   use Mix.Task
@@ -7,23 +7,28 @@ defmodule Mix.Tasks.DumpScenario do
   alias Trento.Integration.Discovery
 
   @switches [
-    path: :string
+    path: :string,
+    event_number: :integer
   ]
 
   @aliases [
-    p: :path
+    p: :path,
+    n: :event_number
   ]
 
   @default_path File.cwd!()
+  @default_event_number 10
 
-  @shortdoc "Dump the current discovery scenario."
+  @shortdoc "Dump unaccepted discovery events."
   def run(args) do
     case OptionParser.parse(args, switches: @switches, aliases: @aliases) do
       {opts, [scenario_name], _} ->
         case start_repo() do
           {:ok, _} ->
-            IO.puts(IO.ANSI.green() <> "Dumping scenario #{scenario_name}...")
-            dump_scenario(scenario_name, Keyword.get(opts, :path, @default_path))
+            IO.puts(IO.ANSI.green() <> "Dumping unaccepted events #{scenario_name}...")
+            path = Keyword.get(opts, :path, @default_path)
+            event_number = Keyword.get(opts, :event_number, @default_event_number)
+            dump_unaccepted_events(scenario_name, path, event_number)
             IO.puts(IO.ANSI.green() <> "Done.")
 
           {:error, error} ->
@@ -32,14 +37,14 @@ defmodule Mix.Tasks.DumpScenario do
 
       {_, _, _} ->
         print_error(
-          "Expected dump_scenario to receive the scenario file name, " <>
+          "Expected dump_unaccepted_events to receive the scenario file name, " <>
             "got: #{inspect(Enum.join(args, " "))}"
         )
     end
   end
 
-  defp dump_scenario(scenario_name, path) do
-    Discovery.get_current_discovery_events()
+  defp dump_unaccepted_events(scenario_name, path, event_number) do
+    Discovery.get_unaccepted_events(event_number)
     |> write_events_to_files(scenario_name, path)
   end
 end

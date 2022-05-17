@@ -318,6 +318,7 @@ defmodule Trento.Factory do
       agent_id: Faker.UUID.v4(),
       discovery_type: Faker.Pokemon.name(),
       payload: %{},
+      accepted: true,
       inserted_at: DateTime.utc_now()
     }
   end

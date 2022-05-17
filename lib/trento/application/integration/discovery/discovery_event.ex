@@ -13,6 +13,7 @@ defmodule Trento.Integration.Discovery.DiscoveryEvent do
     field :agent_id, Ecto.UUID
     field :discovery_type, :string
     field :payload, Ecto.Payload
+    field :accepted, :boolean
 
     timestamps(type: :utc_datetime_usec)
   end
