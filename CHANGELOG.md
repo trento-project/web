@@ -9,7 +9,7 @@
 - EULA is only showed after a page refresh [\#397](https://github.com/trento-project/web/issues/397)
 - Add mailer for important alerts [\#58](https://github.com/trento-project/web/issues/58)
 - Suse delivery [\#408](https://github.com/trento-project/web/pull/408) ([arbulu89](https://github.com/arbulu89))
-- Implement the collapsable sidebar [\#344](https://github.com/trento-project/web/pull/344) ([arbulu89](https://github.com/arbulu89))
+- Implement the collapsible sidebar [\#344](https://github.com/trento-project/web/pull/344) ([arbulu89](https://github.com/arbulu89))
 - Update execution request payload to use one cluster [\#336](https://github.com/trento-project/web/pull/336) ([arbulu89](https://github.com/arbulu89))
 - Handle unreachable checks execution scenario [\#304](https://github.com/trento-project/web/pull/304) ([arbulu89](https://github.com/arbulu89))
 - Integrate real runner execution usage [\#300](https://github.com/trento-project/web/pull/300) ([arbulu89](https://github.com/arbulu89))

@@ -143,7 +143,7 @@ context('SAP Systems Overview', () => {
                   .should('contain', instances[instanceIndex].hostname);
               });
             });
-          // close the collapsable
+          // close the collapsible
           cy.get('table.table-fixed > tbody > tr')
             .filter(':visible')
             .eq(index)

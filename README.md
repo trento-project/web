@@ -31,7 +31,7 @@ It's made by three main components:
 [Trento Runner](https://github.com/trento-project/runner) responsible of **running the Trento configuration health checks** among the installed Trento Agents.
 
 _Trento Web_ is the **control plane of the Trento Platform**.
-In cooperation withe the Agents and the Runner dicovers, observes, monitors and checks the target SAP infrastructure.
+In cooperation with the Agents and the Runner discovers, observes, monitors and checks the target SAP infrastructure.
 
 See the [architecture document](./docs/architecture/trento-architecture.md) for additional details.
 
