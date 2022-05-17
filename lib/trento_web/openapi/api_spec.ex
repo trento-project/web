@@ -25,6 +25,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         %Tag{
           name: "Landscape",
           description: "Providing access to the discovered target infrastructure"
+        },
+        %Tag{
+          name: "Checks",
+          description: "Providing Checks related feature"
         }
       ]
     }
