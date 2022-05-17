@@ -22,8 +22,7 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
       title: "FilterableProvider",
       type: :string,
       description: "A provider that can be used to filter the Catalog",
-      # default?
-      enum: [:azure, :aws, :gcp]
+      enum: [:azure, :aws, :gcp, :default]
     })
   end
 

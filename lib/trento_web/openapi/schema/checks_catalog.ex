@@ -14,7 +14,7 @@ defmodule TrentoWeb.OpenApi.Schema.ChecksCatalog do
       description: "An available check to be executed on the target infrastructure",
       type: :object,
       properties: %{
-        sap_system_id: %Schema{type: :string, description: "Check ID", format: :uuid},
+        id: %Schema{type: :string, description: "Check ID", format: :uuid},
         name: %Schema{type: :string, description: "Check Name"},
         description: %Schema{type: :string, description: "Check Description"},
         remediation: %Schema{type: :string, description: "Check Remediation"},
@@ -71,8 +71,7 @@ defmodule TrentoWeb.OpenApi.Schema.ChecksCatalog do
           type: :string,
           description:
             "The provider determining the values for the attached checks (azure, aws ...)",
-          # ??
-          enum: [:azure, :aws, :gcp, :unknown]
+          enum: [:azure, :aws, :gcp, :default]
         },
         groups: %Schema{
           title: "ChecksGroups",
