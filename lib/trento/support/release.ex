@@ -57,12 +57,6 @@ defmodule Trento.Release do
     Mix.Tasks.DumpScenario.run(args)
   end
 
-  def dump_unaccepted_events(args) do
-    load_app()
-
-    Mix.Tasks.DumpUnacceptedEvents.run(args)
-  end
-
   def prune_events(args) do
     load_app()
 

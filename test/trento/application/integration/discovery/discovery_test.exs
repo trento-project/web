@@ -5,7 +5,10 @@ defmodule Trento.Integration.DiscoveryTest do
   import Trento.Factory
 
   alias Trento.Integration.Discovery
-  alias Trento.Integration.Discovery.DiscoveryEvent
+  alias Trento.Integration.Discovery.{
+    DiscardedEvent,
+    DiscoveryEvent
+  }
 
   test "should retrieve the current set of discovery events" do
     agent_id_1 = Faker.UUID.v4()
@@ -18,14 +21,6 @@ defmodule Trento.Integration.DiscoveryTest do
         agent_id: agent_id_1,
         discovery_type: "discovery_type",
         payload: %{"key" => index}
-      )
-
-      insert(
-        :discovery_event,
-        agent_id: agent_id_1,
-        discovery_type: "discovery_type",
-        payload: %{"key" => index, "error_filed" => "error_content"},
-        accepted: false
       )
 
       insert(
@@ -52,50 +47,36 @@ defmodule Trento.Integration.DiscoveryTest do
     ] = discovery_events
   end
 
-  test "should retrieve the unaccepted events" do
-    agent_id = Faker.UUID.v4()
-
+  test "should retrieve the discarded events" do
     insert(
-      :discovery_event,
-      agent_id: agent_id,
-      discovery_type: "discovery_type",
+      :discarded_event,
       payload: %{"key" => 1},
-      accepted: false,
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 1)
     )
 
     insert(
-      :discovery_event,
-      agent_id: agent_id,
-      discovery_type: "discovery_type",
+      :discarded_event,
       payload: %{"key" => 2},
-      accepted: true,
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 2)
     )
 
     insert(
-      :discovery_event,
-      agent_id: agent_id,
-      discovery_type: "discovery_type",
+      :discarded_event,
       payload: %{"key" => 3},
-      accepted: false,
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 3)
     )
 
     insert(
-      :discovery_event,
-      agent_id: agent_id,
-      discovery_type: "discovery_type",
+      :discarded_event,
       payload: %{"key" => 4},
-      accepted: false,
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 4)
     )
 
-    unaccepted_events = Discovery.get_unaccepted_events(2)
+    unaccepted_events = Discovery.get_discarded_events(2)
 
     [
-      %DiscoveryEvent{agent_id: ^agent_id, payload: %{"key" => 4}},
-      %DiscoveryEvent{agent_id: ^agent_id, payload: %{"key" => 3}}
+      %DiscardedEvent{payload: %{"key" => 4}},
+      %DiscardedEvent{payload: %{"key" => 3}}
     ] = unaccepted_events
   end
 
@@ -115,19 +96,19 @@ defmodule Trento.Integration.DiscoveryTest do
   end
 
   @tag capture_log: true
-  test "should use a default UUID for unaccepted events with invalid agent_id" do
+  test "should discard events with invalid agent_id" do
     event = %{
       "agent_id" => "invalid_uuid",
       "discovery_type" => "host_discovery",
-      "payload" => %{}
+      "payload" => %{"key" => "value"}
     }
 
     {:error, _} = Discovery.handle(event)
 
-    invalid_events = DiscoveryEvent |> Trento.Repo.all()
+    discarded_events = DiscardedEvent |> Trento.Repo.all()
 
     [
-      %DiscoveryEvent{agent_id: "00000000-0000-0000-0000-000000000000"}
-    ] = invalid_events
+      %DiscardedEvent{payload: ^event}
+    ] = discarded_events
   end
 end

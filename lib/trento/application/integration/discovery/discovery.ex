@@ -11,26 +11,26 @@ defmodule Trento.Integration.Discovery do
 
   alias Trento.Integration.Discovery.{
     ClusterPolicy,
+    DiscardedEvent,
     DiscoveryEvent,
     HostPolicy,
     SapSystemPolicy
   }
 
   @type command :: struct
-  @default_uuid "00000000-0000-0000-0000-000000000000"
 
   @spec handle(map) :: :ok | {:error, any}
   def handle(event) do
     # TODO: Add a cast/validation step here
     # credo:disable-for-next-line
     with {:ok, commands} <- do_handle(event),
-         {:ok, _} <- store_discovery_event(event, true) do
+         {:ok, _} <- store_discovery_event(event) do
       dispatch(commands)
     else
       # TODO improve error handling, bubbling up validation / command dispatch errors
       {:error, reason} = error ->
         Logger.error("Failed to handle discovery event", error: inspect(reason))
-        store_discovery_event(event, false)
+        store_discarded_discovery_event(event)
 
         error
     end
@@ -41,8 +41,7 @@ defmodule Trento.Integration.Discovery do
     subquery =
       from d in DiscoveryEvent,
         select: max(d.id),
-        group_by: [d.agent_id, d.discovery_type],
-        where: d.accepted == true
+        group_by: [d.agent_id, d.discovery_type]
 
     query =
       from d in DiscoveryEvent,
@@ -51,11 +50,10 @@ defmodule Trento.Integration.Discovery do
     Repo.all(query)
   end
 
-  @spec get_unaccepted_events(number) :: [DiscoveryEvent.t()]
-  def get_unaccepted_events(event_number) do
+  @spec get_discarded_events(number) :: [DiscardedEvent.t()]
+  def get_discarded_events(event_number) do
     query =
-      from d in DiscoveryEvent,
-        where: d.accepted == false,
+      from d in DiscardedEvent,
         order_by: [desc: d.inserted_at],
         limit: ^event_number
 
@@ -74,44 +72,23 @@ defmodule Trento.Integration.Discovery do
     events_number
   end
 
-  @spec store_discovery_event(map, boolean) :: {:ok, DiscoveryEvent.t()} | {:error, any}
-  defp store_discovery_event(
-         %{
-           "agent_id" => agent_id,
-           "discovery_type" => discovery_type,
-           "payload" => payload
-         },
-         accepted
-       )
-       when accepted do
+  @spec store_discovery_event(map) :: {:ok, DiscoveryEvent.t()} | {:error, any}
+  defp store_discovery_event(%{
+         "agent_id" => agent_id,
+         "discovery_type" => discovery_type,
+         "payload" => payload
+       }) do
     Repo.insert(%DiscoveryEvent{
       agent_id: agent_id,
       discovery_type: discovery_type,
-      payload: payload,
-      accepted: true
+      payload: payload
     })
   end
 
-  defp store_discovery_event(
-         %{
-           "agent_id" => agent_id,
-           "discovery_type" => discovery_type,
-           "payload" => payload
-         },
-         accepted
-       )
-       when not accepted do
-    agent_id =
-      case UUID.info(agent_id) do
-        {:ok, _} -> agent_id
-        {:error, _} -> @default_uuid
-      end
-
-    Repo.insert(%DiscoveryEvent{
-      agent_id: agent_id,
-      discovery_type: discovery_type,
-      payload: payload,
-      accepted: false
+  @spec store_discarded_discovery_event(map) :: {:ok, DiscardedEvent.t()} | {:error, any}
+  defp store_discarded_discovery_event(event_payload) do
+    Repo.insert(%DiscardedEvent{
+      payload: event_payload
     })
   end
 
