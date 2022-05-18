@@ -11,6 +11,7 @@ defmodule Trento.Integration.Discovery.DiscardedEvent do
 
   schema "discarded_events" do
     field :payload, Ecto.Payload
+    field :reason, :string
 
     timestamps(type: :utc_datetime_usec)
   end

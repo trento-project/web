@@ -5,6 +5,7 @@ defmodule Trento.Integration.DiscoveryTest do
   import Trento.Factory
 
   alias Trento.Integration.Discovery
+
   alias Trento.Integration.Discovery.{
     DiscardedEvent,
     DiscoveryEvent
@@ -63,6 +64,7 @@ defmodule Trento.Integration.DiscoveryTest do
     insert(
       :discarded_event,
       payload: %{"key" => 3},
+      reason: "invalid value",
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 3)
     )
 
@@ -76,7 +78,7 @@ defmodule Trento.Integration.DiscoveryTest do
 
     [
       %DiscardedEvent{payload: %{"key" => 4}},
-      %DiscardedEvent{payload: %{"key" => 3}}
+      %DiscardedEvent{payload: %{"key" => 3}, reason: "invalid value"}
     ] = unaccepted_events
   end
 
@@ -96,7 +98,7 @@ defmodule Trento.Integration.DiscoveryTest do
   end
 
   @tag capture_log: true
-  test "should discard events with invalid agent_id" do
+  test "should discard events with invalid payload" do
     event = %{
       "agent_id" => "invalid_uuid",
       "discovery_type" => "host_discovery",

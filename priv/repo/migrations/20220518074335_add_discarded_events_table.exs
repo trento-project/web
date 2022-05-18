@@ -4,6 +4,7 @@ defmodule Trento.Repo.Migrations.AddDiscardedEventsTable do
   def change do
     create table(:discarded_events) do
       add :payload, :map
+      add :reason, :text
 
       timestamps()
     end

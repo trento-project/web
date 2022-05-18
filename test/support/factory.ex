@@ -328,6 +328,7 @@ defmodule Trento.Factory do
   def discarded_event_factory do
     %DiscardedEvent{
       payload: %{},
+      reason: Faker.Beer.hop(),
       inserted_at: DateTime.utc_now()
     }
   end

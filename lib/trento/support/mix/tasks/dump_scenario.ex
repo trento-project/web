@@ -85,13 +85,16 @@ defmodule Mix.Tasks.DumpScenario do
     Discovery.get_discarded_events(event_number)
     |> Enum.map(fn %DiscardedEvent{
                      id: id,
-                     payload: payload
+                     payload: payload,
+                     reason: reason
                    } ->
       data = Jason.encode!(payload)
 
-      IO.puts(IO.ANSI.green() <> "Writting event #{id} to file")
       discarded_events_file
-      |> File.write!("Discarded event: #{id}\n\n#{data}\n\n", [:append])
+      |> File.write!(
+        "Discarded event: #{id}\n\nReason:\n\n#{reason}\n\nPayload:\n\n#{data}\n\n",
+        [:append]
+      )
     end)
   end
 end

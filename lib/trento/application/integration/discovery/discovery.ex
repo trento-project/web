@@ -30,7 +30,7 @@ defmodule Trento.Integration.Discovery do
       # TODO improve error handling, bubbling up validation / command dispatch errors
       {:error, reason} = error ->
         Logger.error("Failed to handle discovery event", error: inspect(reason))
-        store_discarded_discovery_event(event)
+        store_discarded_discovery_event(event, inspect(reason))
 
         error
     end
@@ -85,10 +85,12 @@ defmodule Trento.Integration.Discovery do
     })
   end
 
-  @spec store_discarded_discovery_event(map) :: {:ok, DiscardedEvent.t()} | {:error, any}
-  defp store_discarded_discovery_event(event_payload) do
+  @spec store_discarded_discovery_event(map, String.t()) ::
+          {:ok, DiscardedEvent.t()} | {:error, any}
+  defp store_discarded_discovery_event(event_payload, reason) do
     Repo.insert(%DiscardedEvent{
-      payload: event_payload
+      payload: event_payload,
+      reason: reason
     })
   end
 
