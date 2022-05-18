@@ -7,17 +7,27 @@ describe('User account page', () => {
   });
 
   it('should have the correct page title', () => {
-    cy.get('.text-5xl').should('contain', 'About Trento Console');
-  });
-
-  it('should display 27 SLES subscriptions found', () => {
-    cy.get('.px-2').should('contain', '27 found');
+    cy.get('h2.text-5xl').should('contain', 'About Trento Console');
   });
 
   it('should show the correct flavor', () => {
-    cy.get('.grid-flow-row > :nth-child(1) > :nth-child(2) > span').should(
-      'contain',
-      'Community'
-    );
+    cy.get('div')
+      .contains('Trento flavor')
+      .next()
+      .should('contain', 'Community');
+  });
+
+  it('should show the github project link', () => {
+    cy.get('div')
+      .contains('GitHub repository')
+      .next()
+      .should('contain', 'https://github.com/trento-project/web');
+  });
+
+  it('should display 27 SLES subscriptions found', () => {
+    cy.get('div')
+      .contains('SLES for SAP subscriptions')
+      .next()
+      .should('contain', '27 found');
   });
 });
