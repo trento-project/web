@@ -3,19 +3,20 @@ defmodule TrentoWeb.ClusterController do
 
   alias Trento.{Clusters, Hosts}
 
-  alias Trento.Integration.Checks
+  alias Trento.Integration.Checks, as: ChecksIntegration
+
+  alias TrentoWeb.OpenApi.Schema.{Checks, Cluster, Common}
 
   use OpenApiSpex.ControllerSpecs
 
-  tags ["Landscape"]
-
   operation :list,
     summary: "List Pacemaker Clusters",
+    tags: ["Landscape"],
     description: "List all the discovered Pacemaker Clusters on the target infrastructure",
     responses: [
       ok:
         {"A collection of the discovered Pacemaker Clusters", "application/json",
-         TrentoWeb.OpenApi.Schema.Cluster.PacemakerClustersCollection}
+         Cluster.PacemakerClustersCollection}
     ]
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -44,7 +45,7 @@ defmodule TrentoWeb.ClusterController do
   operation :runner_callback, false
   @spec runner_callback(Plug.Conn.t(), map) :: Plug.Conn.t()
   def runner_callback(conn, params) do
-    case Checks.handle_callback(params) do
+    case ChecksIntegration.handle_callback(params) do
       :ok ->
         conn
         |> put_status(:accepted)
@@ -57,7 +58,26 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
-  operation :select_checks, false
+  operation :select_checks,
+    summary: "Select Checks",
+    tags: ["Checks"],
+    description: "Select the Checks eligible for execution on the target infrastructure",
+    parameters: [
+      selected_checks: [
+        in: :body,
+        required: true,
+        type: Checks.CheckSelectionRequest
+      ]
+    ],
+    responses: [
+      accepted:
+        {"The Selection has been successfully collected", "application/json",
+         %OpenApiSpex.Schema{example: %{}}},
+      bad_request:
+        {"Something went wrong with the collection of the Checks Selection", "application/json",
+         Common.BadRequestResponse}
+    ]
+
   @spec select_checks(Plug.Conn.t(), map) :: Plug.Conn.t()
   def select_checks(conn, %{"cluster_id" => cluster_id, "checks" => checks}) do
     case Clusters.select_checks(cluster_id, checks) do
