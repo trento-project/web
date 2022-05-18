@@ -124,7 +124,7 @@ const ClusterDetails = () => {
         </div>
       </div>
 
-      <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
+      <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
           className="grid-rows-3"
           orientation="vertical"
@@ -190,12 +190,13 @@ const ClusterDetails = () => {
         </div>
       </div>
 
-      <div className="mt-2">
+      <div className="mt-2 tn-site-details">
         {Object.entries(groupBy(cluster.details.nodes, 'site')).map(
           ([siteName]) => (
-            <div key={siteName}>
-              <h3 className="text-l font-bold">{siteName}</h3>
+            <div key={siteName} className={`tn-site-details-${siteName}`}>
+              <h3 className="text-l font-bold tn-site-name">{siteName}</h3>
               <Table
+                className="tn-site-table"
                 config={siteDetailsConfig}
                 data={renderedNodes.filter(({ site }) => site === siteName)}
               />
@@ -209,7 +210,7 @@ const ClusterDetails = () => {
           <h2 className="text-2xl font-bold">SBD/Fencing</h2>
         </div>
       </div>
-      <div className="mt-2 bg-white shadow rounded-lg py-4 px-8">
+      <div className="mt-2 bg-white shadow rounded-lg py-4 px-8 tn-sbd-details">
         {cluster.details.sbd_devices.map(({ device, status }) => (
           <div key={device}>
             {getStatusPill(status)} {device}
