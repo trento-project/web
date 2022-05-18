@@ -17,6 +17,17 @@ describe('User account page', () => {
       .should('contain', 'Community');
   });
 
+  it('should show the correct server version', () => {
+    cy.exec(`cd ${Cypress.env('project_root')} && mix print_version`).then(
+      ({ stdout: version }) => {
+        cy.get('div')
+          .contains('Server version')
+          .next()
+          .should('contain', version);
+      }
+    );
+  });
+
   it('should show the github project link', () => {
     cy.get('div')
       .contains('GitHub repository')
