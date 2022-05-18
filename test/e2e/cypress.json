@@ -2,6 +2,7 @@
   "baseUrl": "http://127.0.0.1:4000",
   "viewportWidth": 1366,
   "viewportHeight": 768,
+  "defaultCommandTimeout": 10000,
   "env": {
     "web_api_host": "127.0.0.1",
     "web_api_port": 4000,

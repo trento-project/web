@@ -119,7 +119,7 @@ export const SuggestTriggeringChecksExecutionAfterSettingsUpdated = ({
           Well done! To start execution now, click here 👉{' '}
         </p>
         <TriggerChecksExecutionRequest
-          cssClasses="rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
+          cssClasses="tn-checks-start-execute rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
           clusterId={clusterId}
         >
           <EOS_PLAY_CIRCLE color="green" />

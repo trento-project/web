@@ -246,7 +246,7 @@ jobs:
         run: mix deps.clean --all && mix deps.get
 
       - name: Mix setup
-        run: mix setup
+        run: mix do ecto.drop, event_store.drop, ecto.create, ecto.migrate, setup
 
       - name: Setup Node
         uses: actions/setup-node@v3

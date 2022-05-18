@@ -56,3 +56,7 @@ Cypress.Commands.add('navigateToItem', (item) => {
   const items = Array.isArray(item) ? item : [item];
   items.forEach((it) => cy.get('.tn-menu-item').contains(it).click());
 });
+
+Cypress.Commands.add('clickOutside', () => {
+  return cy.get('body').click(0, 0); //0,0 here are the x and y coordinates
+});

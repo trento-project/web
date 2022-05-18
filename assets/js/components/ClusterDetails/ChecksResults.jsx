@@ -173,7 +173,10 @@ export const ChecksResults = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {sortChecks(cluster?.selected_checks.slice()).map(
                       (checkId) => (
-                        <tr key={checkId} className="animate-fade">
+                        <tr
+                          key={checkId}
+                          className="animate-fade tn-check-result-row"
+                        >
                           <td className="px-6 py-4 whitespace-nowrap">
                             {checkId}
                           </td>

@@ -150,13 +150,14 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                         className="flex items-center hover:bg-white pl-2"
                       >
                         <Switch
+                          checked={allSelected}
                           className={classNames(
                             {
                               'bg-jungle-green-500': allSelected,
                               'bg-green-300': someSelected,
                               'bg-gray-200': noneSelected,
                             },
-                            'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
+                            'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
                           )}
                           onChange={() => {
                             const groupChecks = checks.map((check) => check.id);
@@ -190,7 +191,7 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                         as="div"
                         className="flex justify-between w-full cursor-pointer bg-white px-4 py-5 sm:px-6 hover:bg-gray-100"
                       >
-                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                        <h3 className="tn-check-switch text-lg leading-6 font-medium text-gray-900">
                           {group}
                         </h3>
 
