@@ -19,3 +19,7 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 //
+
+before(() => {
+    cy.loadScenario('healthy-27-node-SAP-cluster');
+});

@@ -1,7 +1,6 @@
 import { agents } from '../fixtures/hosts-overview/available_hosts';
 describe('Dashboard page', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.task('startAgentHeartbeat', agents());
     cy.login();
     cy.navigateToItem('Dashboard');

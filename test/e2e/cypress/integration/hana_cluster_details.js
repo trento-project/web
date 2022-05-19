@@ -2,7 +2,6 @@ import { availableHanaCluster } from '../fixtures/hana-cluster-details/available
 
 context('HANA database details', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.login();
     cy.visit(`/clusters/${availableHanaCluster.id}`);
     cy.url().should('include', `/clusters/${availableHanaCluster.id}`);

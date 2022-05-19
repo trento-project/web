@@ -6,7 +6,6 @@ import {
 context('Clusters Overview', () => {
   const availableClusters = allClusterNames();
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.login();
     cy.navigateToItem('Clusters');
     cy.url().should('include', '/clusters');
@@ -34,6 +33,11 @@ context('Clusters Overview', () => {
     describe('Unnamed cluster', () => {
       before(() => {
         cy.loadScenario('cluster-unnamed');
+      });
+
+      // Restore cluster name
+      after(() => {
+        cy.loadScenario('cluster-4-SOK');
       });
 
       it('Unnamed clusters should use the ID as details page link', () => {

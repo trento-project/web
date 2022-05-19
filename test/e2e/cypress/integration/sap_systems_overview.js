@@ -8,7 +8,6 @@ import {
 
 context('SAP Systems Overview', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.login();
 
     cy.visit('/');

@@ -8,7 +8,6 @@ context('SAP system details', () => {
   const sessionCookie = '_trento_key';
 
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.login();
 
     cy.visit(`/sap_systems/${selectedSystem.Id}`);
@@ -47,6 +46,11 @@ context('SAP system details', () => {
     before(() => {
       cy.visit(`/sap_systems/${selectedSystem.Id}`);
       cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
+    });
+
+    after(() => {
+      // Restore instance health
+      cy.loadScenario('sap-system-detail-GREEN');
     });
 
     selectedSystem.Hosts.forEach((instance, index) => {
