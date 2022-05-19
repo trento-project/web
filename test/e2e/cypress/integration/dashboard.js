@@ -1,8 +1,13 @@
 import { agents } from '../fixtures/hosts-overview/available_hosts';
+import { allClusterIds } from '../fixtures/clusters-overview/available_clusters';
+
 describe('Dashboard page', () => {
   before(() => {
     cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.task('startAgentHeartbeat', agents());
+    allClusterIds().forEach((clusterId) => {
+      cy.selectChecks(clusterId, []);
+    });
     cy.login();
     cy.navigateToItem('Dashboard');
     cy.url().should('include', '/');
