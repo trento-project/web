@@ -5,8 +5,7 @@ import {
 
 context('Checks catalog', () => {
   before(() => {
-    cy.login();
-    cy.visit('/catalog');
+    cy.navigateToItem('Checks catalog');
     cy.url().should('include', '/catalog');
   });
 

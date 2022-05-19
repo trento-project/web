@@ -7,7 +7,6 @@ context('Hosts Overview', () => {
   const availableHosts = allHostNames();
   before(() => {
     cy.task('startAgentHeartbeat', agents());
-    cy.login();
 
     cy.navigateToItem('Hosts');
     cy.url().should('include', '/hosts');

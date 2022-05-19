@@ -8,9 +8,6 @@ import {
 
 context('SAP Systems Overview', () => {
   before(() => {
-    cy.login();
-
-    cy.visit('/');
     cy.navigateToItem('SAP Systems');
     cy.url().should('include', '/sap_systems');
   });

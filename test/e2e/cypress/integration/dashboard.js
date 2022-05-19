@@ -2,7 +2,6 @@ import { agents } from '../fixtures/hosts-overview/available_hosts';
 describe('Dashboard page', () => {
   before(() => {
     cy.task('startAgentHeartbeat', agents());
-    cy.login();
     cy.navigateToItem('Dashboard');
     cy.url().should('include', '/');
   });

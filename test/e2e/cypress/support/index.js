@@ -20,6 +20,17 @@ import './commands';
 // require('./commands')
 //
 
+const sessionCookie = '_trento_key';
+
 before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
+  cy.loadScenario('healthy-27-node-SAP-cluster');
+  cy.login();
+});
+
+after(() => {
+  cy.clearCookie(sessionCookie);
+});
+
+beforeEach(() => {
+  cy.Cookies.preserveOnce(sessionCookie);
 });

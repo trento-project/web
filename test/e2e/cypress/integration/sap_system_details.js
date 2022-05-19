@@ -5,21 +5,9 @@ import {
 } from '../fixtures/sap-system-details/selected_system';
 
 context('SAP system details', () => {
-  const sessionCookie = '_trento_key';
-
   before(() => {
-    cy.login();
-
     cy.visit(`/sap_systems/${selectedSystem.Id}`);
     cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
-  });
-
-  after(() => {
-    cy.clearCookie(sessionCookie);
-  });
-
-  beforeEach(() => {
-    cy.Cookies.preserveOnce(sessionCookie);
   });
 
   describe('SAP system details page is available', () => {

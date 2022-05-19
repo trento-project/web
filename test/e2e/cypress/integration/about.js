@@ -1,6 +1,5 @@
 describe('User account page', () => {
   before(() => {
-    cy.login();
     cy.navigateToItem('About');
     cy.url().should('include', '/about');
   });
