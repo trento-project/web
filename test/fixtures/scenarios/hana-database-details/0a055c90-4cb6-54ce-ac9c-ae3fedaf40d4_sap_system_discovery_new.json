@@ -1,5 +1,5 @@
 {
-  "agent_id": "newagent",
+  "agent_id": "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
   "discovery_type": "sap_system_discovery",
   "payload": [
     {
@@ -30,17 +30,17 @@
       "Instances": [
         {
           "Host": "vmhdbdev02",
-          "Name": "HDB10",
+          "Name": "HDB11",
           "Type": 1,
           "SAPControl": {
             "Instances": [
               {
                 "features": "HDB|HDB_WORKER",
-                "hostname": "newinstance",
+                "hostname": "vmhdbdev02",
                 "httpPort": 12345,
                 "httpsPort": 12345,
                 "dispstatus": "SAPControl-GRAY",
-                "instanceNr": 99,
+                "instanceNr": 11,
                 "startPriority": "0.3"
               }
             ],
@@ -111,7 +111,7 @@
             ],
             "Properties": [
               {
-                "value": "99",
+                "value": "11",
                 "property": "SAPSYSTEM",
                 "propertytype": "Attribute"
               },
@@ -146,7 +146,7 @@
                 "propertytype": "NodeWebmethod"
               },
               {
-                "value": "HDB10",
+                "value": "HDB11",
                 "property": "INSTANCE_NAME",
                 "propertytype": "Attribute"
               },

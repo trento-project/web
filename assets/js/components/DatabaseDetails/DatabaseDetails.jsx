@@ -15,7 +15,7 @@ const DatabaseDetails = () => {
 
   return (
     <GenericSystemDetails
-      title={'HANA Database details'}
+      title={'HANA Database Details'}
       type={DATABASE_TYPE}
       system={database}
     />
