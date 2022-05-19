@@ -364,6 +364,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         env:
+          cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: /tmp/photofinish
@@ -373,12 +374,12 @@ jobs:
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
 
-      - name: Upload cypress test videos
+      - name: Upload cypress test screenshots
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: e2e-videos
-          path: test/e2e/cypress/videos/
+          name: e2e-screenshots
+          path: test/e2e/cypress/screenshots/
 
   build-and-push-container-images:
     name: Build and push container images
