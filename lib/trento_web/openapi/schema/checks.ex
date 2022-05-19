@@ -73,11 +73,11 @@ defmodule TrentoWeb.OpenApi.Schema.Checks do
     })
   end
 
-  defmodule CheckSelectionRequest do
+  defmodule ChecksSelectionRequest do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "CheckSelectionRequest",
+      title: "ChecksSelectionRequest",
       description:
         "A list of desired checks that should be executed on the target infrastructure",
       type: :object,

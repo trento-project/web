@@ -66,7 +66,7 @@ defmodule TrentoWeb.ClusterController do
       selected_checks: [
         in: :body,
         required: true,
-        type: Checks.CheckSelectionRequest
+        type: Checks.ChecksSelectionRequest
       ]
     ],
     responses: [
