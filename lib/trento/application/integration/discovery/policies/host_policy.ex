@@ -9,7 +9,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Integration.Discovery.HostDiscoveryPayload
+  alias Trento.Integration.Discovery.{CloudDiscoveryPayload, HostDiscoveryPayload}
 
   @spec handle(map) ::
           {:ok, RegisterHost.t() | UpdateProvider.t() | UpdateSlesSubscriptions.t()}
@@ -28,44 +28,15 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   def handle(%{
         "discovery_type" => "cloud_discovery",
         "agent_id" => agent_id,
-        "payload" =>
-          %{
-            "Provider" => "azure"
-          } = payload
+        "payload" => payload
       }) do
-    UpdateProvider.new(%{
-      host_id: agent_id,
-      provider: :azure,
-      provider_data: parse_azure_data(payload)
-    })
-  end
-
-  def handle(%{
-        "discovery_type" => "cloud_discovery",
-        "agent_id" => agent_id,
-        "payload" => %{
-          "Provider" => "aws"
-        }
-      }) do
-    UpdateProvider.new(%{
-      host_id: agent_id,
-      provider: :aws,
-      provider_data: nil
-    })
-  end
-
-  def handle(%{
-        "discovery_type" => "cloud_discovery",
-        "agent_id" => agent_id,
-        "payload" => %{
-          "Provider" => "gcp"
-        }
-      }) do
-    UpdateProvider.new(%{
-      host_id: agent_id,
-      provider: :gcp,
-      provider_data: nil
-    })
+    payload
+    |> ProperCase.to_snake_case()
+    |> CloudDiscoveryPayload.new()
+    |> case do
+      {:ok, decoded_payload} -> build_update_provider_command(agent_id, decoded_payload)
+      error -> error
+    end
   end
 
   def handle(%{
@@ -112,6 +83,49 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            socket_count: socket_count,
            os_version: os_version
          })
+
+  defp build_update_provider_command(agent_id, %CloudDiscoveryPayload{
+         provider: provider,
+         metadata: metadata
+       }) do
+    UpdateProvider.new(%{
+      host_id: agent_id,
+      provider: provider,
+      provider_data:
+        case metadata do
+          %{
+            compute: %{
+              name: name,
+              resource_group_name: resource_group,
+              location: location,
+              vm_size: vm_size,
+              storage_profile: storage_profile,
+              offer: offer,
+              sku: sku,
+              os_profile: %{admin_username: admin_username}
+            }
+          } ->
+            %{
+              vm_name: name,
+              resource_group: resource_group,
+              location: location,
+              vm_size: vm_size,
+              data_disk_number:
+                case storage_profile do
+                  %{data_disks: nil} -> 0
+                  %{data_disks: data_disks} -> length(data_disks)
+                  _ -> 0
+                end,
+              offer: offer,
+              sku: sku,
+              admin_username: admin_username
+            }
+
+          generic_metadata ->
+            generic_metadata
+        end
+    })
+  end
 
   @spec is_non_loopback_ipv4?(String.t()) :: boolean
   defp is_non_loopback_ipv4?("127.0.0.1"), do: false
@@ -164,38 +178,4 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       version: version
     }
   end
-
-  @spec parse_azure_data(map) :: map
-  defp parse_azure_data(%{
-         "Metadata" => %{
-           "compute" => %{
-             "name" => name,
-             "resourceGroupName" => resource_group,
-             "location" => location,
-             "vmSize" => vm_size,
-             "storageProfile" => storage_profile,
-             "offer" => offer,
-             "sku" => sku,
-             "osProfile" => %{
-               "adminUsername" => admin_username
-             }
-           }
-         }
-       }) do
-    %{
-      vm_name: name,
-      resource_group: resource_group,
-      location: location,
-      vm_size: vm_size,
-      data_disk_number: parse_data_disk_number(storage_profile),
-      offer: offer,
-      sku: sku,
-      admin_username: admin_username
-    }
-  end
-
-  @spec parse_data_disk_number(map) :: non_neg_integer()
-  defp parse_data_disk_number(%{"dataDisks" => data_disks}), do: length(data_disks)
-
-  defp parse_data_disk_number(_), do: 0
 end
