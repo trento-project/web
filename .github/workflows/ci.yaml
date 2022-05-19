@@ -15,8 +15,8 @@ env:
   NODE_VERSION: "16"
 
 jobs:
-  deps:
-    name: Dependencies
+  elixir-deps:
+    name: Elixir dependencies
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
@@ -57,6 +57,37 @@ jobs:
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
+  npm-deps:
+    name: Npm dependencies
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}        
+
+      - name: Install NPM dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: cd assets && npm install
+
   codespell:
     name: Check common misspellings
     runs-on: ubuntu-20.04
@@ -85,7 +116,7 @@ jobs:
 
   static-code-analysis:
     name: Static Code Analysis
-    needs: deps
+    needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-20.04
 
     steps:
@@ -111,9 +142,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - run: cd assets && npm install
 
-      - name: Retrieve Cached Dependencies
+      - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
         with:
@@ -122,6 +152,14 @@ jobs:
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
 
       - name: Check Code Format
         run: mix format --check-formatted
@@ -140,7 +178,7 @@ jobs:
 
   test:
     name: Test
-    needs: deps
+    needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-20.04
 
     services:
@@ -174,6 +212,11 @@ jobs:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
@@ -184,21 +227,54 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-cache
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
 
-      - run: cd assets && npm install
       - name: Run test
         run: mix test --color --trace --slowest 10
 
       - name: Run JS tests
         run: cd assets && npm test
 
+  npm-e2e-deps:
+    name: Npm E2E dependencies
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install E2E NPM dependencies
+        if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
+        run: cd test/e2e && npm install
+
   test-e2e:
     name: End to end tests
-    needs: deps
+    needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: dev
@@ -239,21 +315,42 @@ jobs:
         env:
           ImageOS: ubuntu20
 
-      - name: Check Eslint and JS Code Format
-        run: cd test/e2e && npm install && npm run lint && npm run format:check
-
-      - name: Get mix deps
-        run: mix deps.clean --all && mix deps.get
-
-      - name: Mix setup
-        run: mix do ecto.drop, event_store.drop, ecto.create, ecto.migrate, setup
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install assets
-        run: cd assets && npm install
+
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v3
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/dev
+            priv/plts
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+
+      - name: Retrieve E2E NPM Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-e2e-cache
+        with:
+          path: |
+            test/e2e/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+
+      - name: Check Eslint and JS Code Format
+        run: cd test/e2e && npm run lint && npm run format:check
+
+      - name: Mix setup
+        run: mix setup
 
       - name: Run trento detached
         run: mix phx.server &
@@ -287,7 +384,7 @@ jobs:
     name: Build and push container images
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [deps, static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test, test-e2e]
     permissions:
       contents: read
       packages: write
@@ -325,7 +422,7 @@ jobs:
     name: Commit the project on OBS
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [deps, static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test, test-e2e]
     container:
       image: ghcr.io/trento-project/continuous-delivery:master
       env:
