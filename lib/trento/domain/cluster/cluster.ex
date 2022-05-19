@@ -136,20 +136,35 @@ defmodule Trento.Domain.Cluster do
   def execute(
         %Cluster{
           cluster_id: cluster_id
-        },
+        } = cluster,
         %SelectChecks{
           checks: selected_checks
         }
       ) do
-    [
-      %ChecksSelected{
-        cluster_id: cluster_id,
-        checks: selected_checks
-      }
-    ]
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      [
+        %ChecksSelected{
+          cluster_id: cluster_id,
+          checks: selected_checks
+        }
+      ]
+    end)
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
   end
 
   # Request checks execution
+  def execute(
+        %Cluster{
+          cluster_id: cluster_id,
+          selected_checks: selected_checks
+        },
+        %RequestChecksExecution{cluster_id: cluster_id}
+      )
+      when selected_checks == [],
+      do: nil
+
   def execute(
         %Cluster{
           cluster_id: cluster_id,
@@ -470,6 +485,18 @@ defmodule Trento.Domain.Cluster do
       cluster_id: cluster_id,
       discovered_health: discovered_health
     }
+  end
+
+  defp maybe_emit_cluster_health_changed_event(%Cluster{
+         cluster_id: cluster_id,
+         discovered_health: discovered_health,
+         selected_checks: selected_checks,
+         health: health
+       })
+       when selected_checks == [] do
+    if discovered_health != health do
+      %ClusterHealthChanged{cluster_id: cluster_id, health: discovered_health}
+    end
   end
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
