@@ -60,7 +60,7 @@ defmodule TrentoWeb.OpenApi.Schema.Checks do
         },
         result: %Schema{
           type: :string,
-          description: "Host's last heartbeat status",
+          description: "The Result of the Check",
           enum: [:passing, :warning, :critical, :skipped, :unknown]
         },
         inserted_at: %Schema{

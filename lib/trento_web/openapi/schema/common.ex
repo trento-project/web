@@ -4,6 +4,12 @@ defmodule TrentoWeb.OpenApi.Schema.Common do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule EmptyResponse do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{example: %{}})
+  end
+
   defmodule BadRequestResponse do
     @moduledoc false
 
