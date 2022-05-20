@@ -337,13 +337,13 @@ defmodule Trento.ClusterTest do
           assert %Cluster{
                    health: :unknown,
                    checks_execution: :requested,
-                   hosts_executions: %{
-                     ^host_id => %HostExecution{
+                   hosts_executions: [
+                     %HostExecution{
                        host_id: ^host_id,
                        reachable: true,
                        checks_results: ^checks_results
                      }
-                   }
+                   ]
                  } = cluster
         end
       )
@@ -402,7 +402,7 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
       checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :critical})
-      expected_results = Enum.map(checks_results, &CheckResult.new!(&1))
+      expected_results = Enum.map(checks_results, &CheckResult.new!/1)
       msg = Faker.StarWars.planet()
 
       assert_events_and_state(
@@ -412,6 +412,15 @@ defmodule Trento.ClusterTest do
           %ChecksSelected{
             cluster_id: cluster_id,
             checks: selected_checks
+          },
+          %ChecksExecutionRequested{
+            cluster_id: cluster_id,
+            hosts: [host_id],
+            checks: selected_checks,
+            provider: :azure
+          },
+          %ChecksExecutionStarted{
+            cluster_id: cluster_id
           }
         ],
         CompleteChecksExecution.new!(%{
@@ -445,13 +454,13 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert %Cluster{
                    checks_execution: :not_running,
-                   hosts_executions: %{
-                     ^host_id => %HostExecution{
+                   hosts_executions: [
+                     %HostExecution{
                        host_id: ^host_id,
                        reachable: true,
                        checks_results: ^expected_results
                      }
-                   }
+                   ]
                  } = cluster
         end
       )
@@ -507,11 +516,11 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert %Cluster{
                    checks_execution: :not_running,
-                   hosts_executions: %{
-                     ^host_id => %HostExecution{
+                   hosts_executions: [
+                     %HostExecution{
                        checks_results: ^expected_results
                      }
-                   }
+                   ]
                  } = cluster
         end
       )

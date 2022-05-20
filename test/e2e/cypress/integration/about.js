@@ -1,7 +1,5 @@
 describe('User account page', () => {
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
-    cy.login();
     cy.navigateToItem('About');
     cy.url().should('include', '/about');
   });

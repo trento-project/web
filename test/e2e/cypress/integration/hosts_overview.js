@@ -6,9 +6,7 @@ import {
 context('Hosts Overview', () => {
   const availableHosts = allHostNames();
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
     cy.task('startAgentHeartbeat', agents());
-    cy.login();
 
     cy.navigateToItem('Hosts');
     cy.url().should('include', '/hosts');

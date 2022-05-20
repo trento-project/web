@@ -5,17 +5,18 @@ defmodule TrentoWeb.ClusterController do
 
   alias Trento.Integration.Checks
 
-  use OpenApiSpex.ControllerSpecs
+  alias TrentoWeb.OpenApi.Schema
 
-  tags ["Landscape"]
+  use OpenApiSpex.ControllerSpecs
 
   operation :list,
     summary: "List Pacemaker Clusters",
+    tags: ["Landscape"],
     description: "List all the discovered Pacemaker Clusters on the target infrastructure",
     responses: [
       ok:
         {"A collection of the discovered Pacemaker Clusters", "application/json",
-         TrentoWeb.OpenApi.Schema.Cluster.PacemakerClustersCollection}
+         Schema.Cluster.PacemakerClustersCollection}
     ]
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -57,7 +58,26 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
-  operation :select_checks, false
+  operation :select_checks,
+    summary: "Select Checks",
+    tags: ["Checks"],
+    description: "Select the Checks eligible for execution on the target infrastructure",
+    parameters: [
+      selected_checks: [
+        in: :body,
+        required: true,
+        type: Schema.Checks.ChecksSelectionRequest
+      ]
+    ],
+    responses: [
+      accepted:
+        {"The Selection has been successfully collected", "application/json",
+         %OpenApiSpex.Schema{example: %{}}},
+      bad_request:
+        {"Something went wrong with the collection of the Checks Selection", "application/json",
+         Schema.Common.BadRequestResponse}
+    ]
+
   @spec select_checks(Plug.Conn.t(), map) :: Plug.Conn.t()
   def select_checks(conn, %{"cluster_id" => cluster_id, "checks" => checks}) do
     case Clusters.select_checks(cluster_id, checks) do
