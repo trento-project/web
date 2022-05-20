@@ -1,6 +1,6 @@
-defmodule Trento.Integration.Discovery.DiscardedEvent do
+defmodule Trento.Integration.Discovery.DiscardedDiscoveryEvent do
   @moduledoc """
-  This module contains the schema used to store an append log of the discarded events,
+  This module contains the schema used to store an append log of the discarded discovery events,
   for debugging and auditing purposes.
   No changeset is defined here, since the schema is used to store append-only data.
   """
@@ -9,7 +9,7 @@ defmodule Trento.Integration.Discovery.DiscardedEvent do
 
   @type t :: %__MODULE__{}
 
-  schema "discarded_events" do
+  schema "discarded_discovery_events" do
     field :payload, Ecto.Payload
     field :reason, :string
 

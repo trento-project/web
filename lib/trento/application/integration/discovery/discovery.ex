@@ -11,7 +11,7 @@ defmodule Trento.Integration.Discovery do
 
   alias Trento.Integration.Discovery.{
     ClusterPolicy,
-    DiscardedEvent,
+    DiscardedDiscoveryEvent,
     DiscoveryEvent,
     HostPolicy,
     SapSystemPolicy
@@ -50,10 +50,10 @@ defmodule Trento.Integration.Discovery do
     Repo.all(query)
   end
 
-  @spec get_discarded_events(number) :: [DiscardedEvent.t()]
-  def get_discarded_events(event_number) do
+  @spec get_discarded_discovery_events(number) :: [DiscardedDiscoveryEvent.t()]
+  def get_discarded_discovery_events(event_number) do
     query =
-      from d in DiscardedEvent,
+      from d in DiscardedDiscoveryEvent,
         order_by: [desc: d.inserted_at],
         limit: ^event_number
 
@@ -86,9 +86,9 @@ defmodule Trento.Integration.Discovery do
   end
 
   @spec store_discarded_discovery_event(map, String.t()) ::
-          {:ok, DiscardedEvent.t()} | {:error, any}
+          {:ok, DiscardedDiscoveryEvent.t()} | {:error, any}
   defp store_discarded_discovery_event(event_payload, reason) do
-    Repo.insert(%DiscardedEvent{
+    Repo.insert(%DiscardedDiscoveryEvent{
       payload: event_payload,
       reason: reason
     })

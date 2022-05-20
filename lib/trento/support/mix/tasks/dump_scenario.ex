@@ -7,7 +7,7 @@ defmodule Mix.Tasks.DumpScenario do
   alias Trento.Integration.Discovery
 
   alias Trento.Integration.Discovery.{
-    DiscardedEvent,
+    DiscardedDiscoveryEvent,
     DiscoveryEvent
   }
 
@@ -23,9 +23,9 @@ defmodule Mix.Tasks.DumpScenario do
 
   @default_path File.cwd!()
   @default_discarded_event_number 10
-  @discarded_events_file "discarded_events.txt"
+  @discarded_events_file "discarded_discovery_events.txt"
 
-  @shortdoc "Dump the current discovery scenario and discarded events."
+  @shortdoc "Dump the current discovery scenario and discarded discovery events."
   def run(args) do
     case OptionParser.parse(args, switches: @switches, aliases: @aliases) do
       {opts, [scenario_name], _} ->
@@ -82,8 +82,8 @@ defmodule Mix.Tasks.DumpScenario do
     discarded_events_file = Path.join(scenario_path, @discarded_events_file)
     File.rm(discarded_events_file)
 
-    Discovery.get_discarded_events(event_number)
-    |> Enum.map(fn %DiscardedEvent{
+    Discovery.get_discarded_discovery_events(event_number)
+    |> Enum.map(fn %DiscardedDiscoveryEvent{
                      id: id,
                      payload: payload,
                      reason: reason

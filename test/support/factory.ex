@@ -45,7 +45,7 @@ defmodule Trento.Factory do
   }
 
   alias Trento.Integration.Discovery.{
-    DiscardedEvent,
+    DiscardedDiscoveryEvent,
     DiscoveryEvent
   }
 
@@ -325,8 +325,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def discarded_event_factory do
-    %DiscardedEvent{
+  def discarded_discovery_event_factory do
+    %DiscardedDiscoveryEvent{
       payload: %{},
       reason: Faker.Beer.hop(),
       inserted_at: DateTime.utc_now()

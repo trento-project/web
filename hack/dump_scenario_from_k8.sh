@@ -8,7 +8,7 @@ usage() {
     cat <<-EOF
     usage: dump_scenario_from_k8s.sh options
 
-    Dump the current scenario and discarded events from a running trento-server installation on the k8s cluster
+    Dump the current scenario and discarded discovery events from a running trento-server installation on the k8s cluster
 
     OPTIONS:
         -n, --name            The name to use for the scenario. Defaults to "current".

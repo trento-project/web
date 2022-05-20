@@ -7,7 +7,7 @@ defmodule Trento.Integration.DiscoveryTest do
   alias Trento.Integration.Discovery
 
   alias Trento.Integration.Discovery.{
-    DiscardedEvent,
+    DiscardedDiscoveryEvent,
     DiscoveryEvent
   }
 
@@ -48,38 +48,38 @@ defmodule Trento.Integration.DiscoveryTest do
     ] = discovery_events
   end
 
-  test "should retrieve the discarded events" do
+  test "should retrieve the discarded discovery events" do
     insert(
-      :discarded_event,
+      :discarded_discovery_event,
       payload: %{"key" => 1},
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 1)
     )
 
     insert(
-      :discarded_event,
+      :discarded_discovery_event,
       payload: %{"key" => 2},
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 2)
     )
 
     insert(
-      :discarded_event,
+      :discarded_discovery_event,
       payload: %{"key" => 3},
       reason: "invalid value",
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 3)
     )
 
     insert(
-      :discarded_event,
+      :discarded_discovery_event,
       payload: %{"key" => 4},
       inserted_at: Timex.shift(DateTime.utc_now(), seconds: 4)
     )
 
-    unaccepted_events = Discovery.get_discarded_events(2)
+    discarded_events = Discovery.get_discarded_discovery_events(2)
 
     [
-      %DiscardedEvent{payload: %{"key" => 4}},
-      %DiscardedEvent{payload: %{"key" => 3}, reason: "invalid value"}
-    ] = unaccepted_events
+      %DiscardedDiscoveryEvent{payload: %{"key" => 4}},
+      %DiscardedDiscoveryEvent{payload: %{"key" => 3}, reason: "invalid value"}
+    ] = discarded_events
   end
 
   test "should delete events older than the specified days" do
@@ -98,7 +98,7 @@ defmodule Trento.Integration.DiscoveryTest do
   end
 
   @tag capture_log: true
-  test "should discard events with invalid payload" do
+  test "should discard discovery events with invalid payload" do
     event = %{
       "agent_id" => "invalid_uuid",
       "discovery_type" => "host_discovery",
@@ -107,10 +107,10 @@ defmodule Trento.Integration.DiscoveryTest do
 
     {:error, _} = Discovery.handle(event)
 
-    discarded_events = DiscardedEvent |> Trento.Repo.all()
+    discarded_events = DiscardedDiscoveryEvent |> Trento.Repo.all()
 
     [
-      %DiscardedEvent{payload: ^event}
+      %DiscardedDiscoveryEvent{payload: ^event}
     ] = discarded_events
   end
 end
