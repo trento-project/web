@@ -29,6 +29,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         %Tag{
           name: "Checks",
           description: "Providing Checks related feature"
+        },
+        %Tag{
+          name: "Platform",
+          description: "Providing access to Trento Platform features"
         }
       ]
     }
