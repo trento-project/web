@@ -6,22 +6,9 @@ import {
 } from '../fixtures/hana-database-details/selected_database';
 
 context('HANA database details', () => {
-  const sessionCookie = '_trento_key';
-
   before(() => {
-    cy.loadScenario('healthy-27-node-SAP-cluster');
-    cy.login();
-
     cy.visit(`/databases/${selectedDatabase.Id}`);
     cy.url().should('include', `/databases/${selectedDatabase.Id}`);
-  });
-
-  after(() => {
-    cy.clearCookie(sessionCookie);
-  });
-
-  beforeEach(() => {
-    cy.Cookies.preserveOnce(sessionCookie);
   });
 
   describe('HANA database details page is available', () => {
@@ -48,6 +35,11 @@ context('HANA database details', () => {
     before(() => {
       cy.visit(`/databases/${selectedDatabase.Id}`);
       cy.url().should('include', `/databases/${selectedDatabase.Id}`);
+    });
+
+    after(() => {
+      // Restore instance health
+      cy.loadScenario('hana-database-detail-GREEN');
     });
 
     selectedDatabase.Hosts.forEach((instance, index) => {
