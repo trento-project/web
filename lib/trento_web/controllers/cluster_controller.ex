@@ -9,6 +9,12 @@ defmodule TrentoWeb.ClusterController do
 
   use OpenApiSpex.ControllerSpecs
 
+  @cluster_id_schema [
+    in: :path,
+    required: true,
+    type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+  ]
+
   operation :list,
     summary: "List Pacemaker Clusters",
     tags: ["Landscape"],
@@ -26,7 +32,22 @@ defmodule TrentoWeb.ClusterController do
     json(conn, clusters)
   end
 
-  operation :request_checks_execution, false
+  operation :request_checks_execution,
+    summary: "Request Checks Execution for a Cluster",
+    tags: ["Checks"],
+    description: "Trigger execution of the latest Checks Selection on the target infrastructure",
+    parameters: [
+      cluster_id: @cluster_id_schema
+    ],
+    responses: [
+      accepted:
+        {"The Command has been accepted and the Requested execution is scheduled",
+         "application/json", %OpenApiSpex.Schema{example: %{}}},
+      bad_request:
+        {"Something went wrong while triggering an Execution Request", "application/json",
+         Schema.Common.BadRequestResponse}
+    ]
+
   @spec request_checks_execution(Plug.Conn.t(), map) :: Plug.Conn.t()
   def request_checks_execution(conn, %{"cluster_id" => cluster_id}) do
     case Clusters.request_checks_execution(cluster_id) do
@@ -63,6 +84,7 @@ defmodule TrentoWeb.ClusterController do
     tags: ["Checks"],
     description: "Select the Checks eligible for execution on the target infrastructure",
     parameters: [
+      cluster_id: @cluster_id_schema,
       selected_checks: [
         in: :body,
         required: true,
