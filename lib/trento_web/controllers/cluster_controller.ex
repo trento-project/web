@@ -42,7 +42,7 @@ defmodule TrentoWeb.ClusterController do
     responses: [
       accepted:
         {"The Command has been accepted and the Requested execution is scheduled",
-         "application/json", %OpenApiSpex.Schema{example: %{}}},
+         "application/json", Schema.Common.EmptyResponse},
       bad_request:
         {"Something went wrong while triggering an Execution Request", "application/json",
          Schema.Common.BadRequestResponse}
@@ -63,7 +63,27 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
-  operation :runner_callback, false
+  operation :runner_callback,
+    summary: "Hook for Checks Execution progress updates",
+    tags: ["Checks"],
+    description:
+      "The Runner executing the Checks Selection on the target infrastructure, publishes updates about the progress of the Execution.",
+    parameters: [
+      callback_event: [
+        in: :body,
+        required: true,
+        type: Schema.Runner.CallbackEvent
+      ]
+    ],
+    responses: [
+      accepted:
+        {"The Operation has been accepted, and the proper followup processes will trigger",
+         "application/json", Schema.Common.EmptyResponse},
+      bad_request:
+        {"Something went wrong during the operation", "application/json",
+         Schema.Common.BadRequestResponse}
+    ]
+
   @spec runner_callback(Plug.Conn.t(), map) :: Plug.Conn.t()
   def runner_callback(conn, params) do
     case Checks.handle_callback(params) do
@@ -94,7 +114,7 @@ defmodule TrentoWeb.ClusterController do
     responses: [
       accepted:
         {"The Selection has been successfully collected", "application/json",
-         %OpenApiSpex.Schema{example: %{}}},
+         Schema.Common.EmptyResponse},
       bad_request:
         {"Something went wrong with the collection of the Checks Selection", "application/json",
          Schema.Common.BadRequestResponse}
