@@ -16,6 +16,7 @@ defmodule Trento.Router do
     RegisterDatabaseInstance,
     RegisterHost,
     RequestChecksExecution,
+    RollupCluster,
     SelectChecks,
     StartChecksExecution,
     UpdateHeartbeat,
@@ -31,13 +32,15 @@ defmodule Trento.Router do
   identify Cluster, by: :cluster_id
 
   dispatch [
+             RollupCluster,
              RegisterClusterHost,
              SelectChecks,
              RequestChecksExecution,
              StartChecksExecution,
              CompleteChecksExecution
            ],
-           to: Cluster
+           to: Cluster,
+           lifespan: Cluster.Lifespan
 
   identify SapSystem, by: :sap_system_id
 
