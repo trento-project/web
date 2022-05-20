@@ -23,7 +23,7 @@ defmodule Mix.Tasks.DumpScenario do
 
   @default_path File.cwd!()
   @default_discarded_event_number 10
-  @discarded_events_file "discarded_discovery_events.txt"
+  @discarded_events_file "discarded_discovery_events.json"
 
   @shortdoc "Dump the current discovery scenario and discarded discovery events."
   def run(args) do
@@ -82,19 +82,19 @@ defmodule Mix.Tasks.DumpScenario do
     discarded_events_file = Path.join(scenario_path, @discarded_events_file)
     File.rm(discarded_events_file)
 
-    Discovery.get_discarded_discovery_events(event_number)
-    |> Enum.map(fn %DiscardedDiscoveryEvent{
-                     id: id,
-                     payload: payload,
-                     reason: reason
-                   } ->
-      data = Jason.encode!(payload)
+    json_data =
+      Discovery.get_discarded_discovery_events(event_number)
+      |> Enum.map(fn %DiscardedDiscoveryEvent{
+                       id: id,
+                       payload: payload,
+                       reason: reason,
+                       inserted_at: inserted_at
+                     } ->
+        %{id: id, reason: reason, payload: payload, inserted_at: inserted_at}
+      end)
+      |> Jason.encode!(pretty: true)
 
-      discarded_events_file
-      |> File.write!(
-        "Discarded event: #{id}\n\nReason:\n\n#{reason}\n\nPayload:\n\n#{data}\n\n",
-        [:append]
-      )
-    end)
+    discarded_events_file
+    |> File.write!(json_data, [:append])
   end
 end
