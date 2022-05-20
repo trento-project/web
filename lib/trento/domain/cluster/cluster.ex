@@ -136,20 +136,34 @@ defmodule Trento.Domain.Cluster do
   def execute(
         %Cluster{
           cluster_id: cluster_id
-        },
+        } = cluster,
         %SelectChecks{
           checks: selected_checks
         }
       ) do
-    [
-      %ChecksSelected{
-        cluster_id: cluster_id,
-        checks: selected_checks
-      }
-    ]
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      [
+        %ChecksSelected{
+          cluster_id: cluster_id,
+          checks: selected_checks
+        }
+      ]
+    end)
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
   end
 
   # Request checks execution
+  def execute(
+        %Cluster{
+          cluster_id: cluster_id,
+          selected_checks: []
+        },
+        %RequestChecksExecution{cluster_id: cluster_id}
+      ),
+      do: nil
+
   def execute(
         %Cluster{
           cluster_id: cluster_id,
@@ -478,14 +492,19 @@ defmodule Trento.Domain.Cluster do
     }
   end
 
+  defp maybe_add_checks_health(healths, _, []), do: healths
+  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
+
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
          discovered_health: discovered_health,
          checks_health: checks_health,
+         selected_checks: selected_checks,
          health: health
        }) do
     new_health =
-      [discovered_health, checks_health]
+      [discovered_health]
+      |> maybe_add_checks_health(checks_health, selected_checks)
       |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
 

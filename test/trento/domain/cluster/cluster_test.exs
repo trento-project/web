@@ -259,6 +259,50 @@ defmodule Trento.ClusterTest do
       )
     end
 
+    test "should use discovered cluster health when no checks are selected" do
+      cluster_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+      sid = Faker.StarWars.planet()
+
+      assert_events_and_state(
+        [
+          build(
+            :cluster_registered_event,
+            cluster_id: cluster_id,
+            name: name,
+            sid: sid,
+            details: nil
+          )
+        ],
+        [
+          build(
+            :register_cluster_host,
+            cluster_id: cluster_id,
+            name: name,
+            sid: sid,
+            details: nil,
+            discovered_health: :passing
+          ),
+          SelectChecks.new!(%{
+            cluster_id: cluster_id,
+            checks: []
+          })
+        ],
+        [
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: []
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   selected_checks: [],
+                   health: :passing
+                 } = cluster
+        end
+      )
+    end
+
     test "should request a checks execution with the selected checks" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
@@ -302,6 +346,24 @@ defmodule Trento.ClusterTest do
                    ]
                  } = cluster
         end
+      )
+    end
+
+    test "should not start a checks execution if no checks are selected" do
+      cluster_id = Faker.UUID.v4()
+
+      assert_events(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: []
+          }
+        ],
+        RequestChecksExecution.new!(%{
+          cluster_id: cluster_id
+        }),
+        []
       )
     end
 
@@ -475,9 +537,14 @@ defmodule Trento.ClusterTest do
       assert_events_and_state(
         [
           cluster_registered_event,
-          %HostAddedToCluster{
+          host_added_to_cluster_event,
+          %ChecksExecutionCompleted{
             cluster_id: cluster_registered_event.cluster_id,
-            host_id: host_added_to_cluster_event.host_id
+            health: :unknown
+          },
+          %ChecksSelected{
+            cluster_id: cluster_registered_event.cluster_id,
+            checks: []
           }
         ],
         RegisterClusterHost.new!(%{
@@ -491,21 +558,23 @@ defmodule Trento.ClusterTest do
           hosts_number: cluster_registered_event.hosts_number,
           details: StructHelper.to_map(cluster_registered_event.details),
           designated_controller: true,
-          discovered_health: :critical
+          discovered_health: :warning
         }),
         [
           %ClusterDiscoveredHealthChanged{
             cluster_id: cluster_registered_event.cluster_id,
-            discovered_health: :critical
+            discovered_health: :warning
           },
           %ClusterHealthChanged{
             cluster_id: cluster_registered_event.cluster_id,
-            health: :critical
+            health: :warning
           }
         ],
         fn cluster ->
           %Cluster{
-            discovered_health: :critical
+            discovered_health: :warning,
+            checks_health: :unknown,
+            health: :warning
           } = cluster
         end
       )
@@ -542,6 +611,58 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           %Cluster{
             discovered_health: :passing
+          } = cluster
+        end
+      )
+    end
+
+    test "should not change the the cluster aggregated health if checks health is worst" do
+      cluster_registered_event = build(:cluster_registered_event, health: :passing)
+
+      host_added_to_cluster_event =
+        build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
+
+      assert_events_and_state(
+        [
+          cluster_registered_event,
+          host_added_to_cluster_event,
+          %ChecksSelected{
+            cluster_id: cluster_registered_event.cluster_id,
+            checks: [Faker.Cat.name()]
+          },
+          %ChecksExecutionCompleted{
+            cluster_id: cluster_registered_event.cluster_id,
+            health: :critical
+          },
+          %ClusterHealthChanged{
+            cluster_id: cluster_registered_event.cluster_id,
+            health: :critical
+          }
+        ],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_registered_event.cluster_id,
+          host_id: host_added_to_cluster_event.host_id,
+          name: cluster_registered_event.name,
+          sid: cluster_registered_event.sid,
+          provider: :azure,
+          type: cluster_registered_event.type,
+          resources_number: cluster_registered_event.resources_number,
+          hosts_number: cluster_registered_event.hosts_number,
+          details: StructHelper.to_map(cluster_registered_event.details),
+          designated_controller: true,
+          discovered_health: :warning
+        }),
+        [
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_registered_event.cluster_id,
+            discovered_health: :warning
+          }
+        ],
+        fn cluster ->
+          %Cluster{
+            discovered_health: :warning,
+            checks_health: :critical,
+            health: :critical
           } = cluster
         end
       )

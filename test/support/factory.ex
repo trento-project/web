@@ -26,6 +26,7 @@ defmodule Trento.Factory do
 
   alias Trento.Domain.Commands.{
     RegisterApplicationInstance,
+    RegisterClusterHost,
     RegisterDatabaseInstance
   }
 
@@ -95,6 +96,22 @@ defmodule Trento.Factory do
     %HostConnectionSettings{
       id: Faker.UUID.v4(),
       user: Faker.StarWars.character()
+    }
+  end
+
+  def register_cluster_host_factory do
+    %RegisterClusterHost{
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
+      name: Faker.StarWars.character(),
+      sid: Faker.StarWars.planet(),
+      provider: :azure,
+      resources_number: 8,
+      hosts_number: 2,
+      details: hana_cluster_details_value_object(),
+      type: :hana_scale_up,
+      discovered_health: :passing,
+      designated_controller: true
     }
   end
 
