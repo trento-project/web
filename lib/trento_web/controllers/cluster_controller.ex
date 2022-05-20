@@ -41,7 +41,7 @@ defmodule TrentoWeb.ClusterController do
     ],
     responses: [
       accepted:
-        {"The Command has been accepted and the Requested execution will start shortly",
+        {"The Command has been accepted and the Requested execution is scheduled",
          "application/json", %OpenApiSpex.Schema{example: %{}}},
       bad_request:
         {"Something went wrong while triggering an Execution Request", "application/json",
