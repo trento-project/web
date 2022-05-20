@@ -80,7 +80,7 @@ defmodule TrentoWeb.OpenApi.Schema.Runner do
           type: :string,
           format: :uuid,
           description:
-            "The identifier of an execution. It has been provided on exectution request."
+            "The identifier of an execution. It has been provided on execution request."
         },
         payload: %Schema{
           oneOf: [
