@@ -15,6 +15,7 @@ defmodule Trento.Domain.Cluster do
     CompleteChecksExecution,
     RegisterClusterHost,
     RequestChecksExecution,
+    RollupCluster,
     SelectChecks,
     StartChecksExecution
   }
@@ -28,10 +29,12 @@ defmodule Trento.Domain.Cluster do
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
+    ClusterRolledUp,
     HostAddedToCluster,
     HostChecksExecutionCompleted
   }
 
+  @derive Jason.Encoder
   defstruct [
     :cluster_id,
     :name,
@@ -47,7 +50,8 @@ defmodule Trento.Domain.Cluster do
     hosts: [],
     selected_checks: [],
     hosts_executions: [],
-    checks_execution: :not_running
+    checks_execution: :not_running,
+    rolling_up: false
   ]
 
   @type t :: %__MODULE__{
@@ -63,8 +67,11 @@ defmodule Trento.Domain.Cluster do
           hosts: [String.t()],
           selected_checks: [String.t()],
           hosts_executions: [HostExecution.t()],
-          checks_execution: :not_running | :requested | :running
+          checks_execution: :not_running | :requested | :running,
+          rolling_up: boolean()
         }
+
+  def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
 
   # When a DC cluster node is registered for the first time, a cluster is registered
   # and the host of the node is added to the cluster
@@ -131,6 +138,9 @@ defmodule Trento.Domain.Cluster do
     end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
   end
+
+  def execute(%Cluster{cluster_id: nil}, _),
+    do: {:error, :cluster_not_found}
 
   # Checks selected
   def execute(
@@ -223,6 +233,44 @@ defmodule Trento.Domain.Cluster do
       }
     end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
+  end
+
+  def execute(
+        %Cluster{
+          cluster_id: cluster_id,
+          name: name,
+          type: type,
+          sid: sid,
+          provider: provider,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
+          details: details,
+          health: health,
+          hosts: hosts,
+          selected_checks: selected_checks,
+          discovered_health: discovered_health,
+          checks_health: checks_health,
+          hosts_executions: hosts_executions
+        },
+        %RollupCluster{}
+      ) do
+    %ClusterRolledUp{
+      cluster_id: cluster_id,
+      name: name,
+      type: type,
+      sid: sid,
+      provider: provider,
+      resources_number: resources_number,
+      hosts_number: hosts_number,
+      details: details,
+      health: health,
+      hosts: hosts,
+      selected_checks: selected_checks,
+      discovered_health: discovered_health,
+      checks_health: checks_health,
+      hosts_executions: hosts_executions,
+      applied: false
+    }
   end
 
   def apply(
@@ -410,6 +458,45 @@ defmodule Trento.Domain.Cluster do
 
   def apply(%Cluster{} = cluster, %ClusterHealthChanged{health: health}) do
     %Cluster{cluster | health: health}
+  end
+
+  def apply(%Cluster{} = cluster, %ClusterRolledUp{applied: false}) do
+    %Cluster{cluster | rolling_up: true}
+  end
+
+  def apply(%Cluster{}, %ClusterRolledUp{
+        cluster_id: cluster_id,
+        name: name,
+        type: type,
+        sid: sid,
+        provider: provider,
+        resources_number: resources_number,
+        hosts_number: hosts_number,
+        details: details,
+        health: health,
+        hosts: hosts,
+        selected_checks: selected_checks,
+        discovered_health: discovered_health,
+        checks_health: checks_health,
+        hosts_executions: hosts_executions,
+        applied: true
+      }) do
+    %Cluster{
+      cluster_id: cluster_id,
+      name: name,
+      type: type,
+      sid: sid,
+      provider: provider,
+      resources_number: resources_number,
+      hosts_number: hosts_number,
+      details: details,
+      health: health,
+      hosts: hosts,
+      selected_checks: selected_checks,
+      discovered_health: discovered_health,
+      checks_health: checks_health,
+      hosts_executions: hosts_executions
+    }
   end
 
   defp maybe_emit_host_added_to_cluster_event(

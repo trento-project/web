@@ -9,6 +9,7 @@ defmodule Trento.ClusterTest do
     CompleteChecksExecution,
     RegisterClusterHost,
     RequestChecksExecution,
+    RollupCluster,
     SelectChecks,
     StartChecksExecution
   }
@@ -22,6 +23,7 @@ defmodule Trento.ClusterTest do
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
+    ClusterRolledUp,
     HostAddedToCluster,
     HostChecksExecutionCompleted
   }
@@ -235,6 +237,13 @@ defmodule Trento.ClusterTest do
   end
 
   describe "checks execution" do
+    test "should not accept start check execution command if a cluster was not registered yet" do
+      assert_error(
+        StartChecksExecution.new!(%{cluster_id: Faker.UUID.v4()}),
+        {:error, :cluster_not_found}
+      )
+    end
+
     test "should select desired checks" do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
@@ -665,6 +674,129 @@ defmodule Trento.ClusterTest do
             health: :critical
           } = cluster
         end
+      )
+    end
+  end
+
+  describe "rollup" do
+    test "should not accept a rollup command if a cluster was not registered yet" do
+      assert_error(
+        RollupCluster.new!(%{cluster_id: Faker.UUID.v4()}),
+        {:error, :cluster_not_found}
+      )
+    end
+
+    test "should change the cluster state to rolling up" do
+      cluster_id = Faker.UUID.v4()
+      cluster_registered_event = build(:cluster_registered_event, cluster_id: cluster_id)
+
+      assert_events_and_state(
+        cluster_registered_event,
+        RollupCluster.new!(%{cluster_id: cluster_id}),
+        %ClusterRolledUp{
+          cluster_id: cluster_id,
+          name: cluster_registered_event.name,
+          type: cluster_registered_event.type,
+          sid: cluster_registered_event.sid,
+          provider: cluster_registered_event.provider,
+          resources_number: cluster_registered_event.resources_number,
+          hosts_number: cluster_registered_event.hosts_number,
+          details: cluster_registered_event.details,
+          health: cluster_registered_event.health,
+          hosts: [],
+          selected_checks: [],
+          discovered_health: :passing,
+          checks_health: nil,
+          hosts_executions: [],
+          applied: false
+        },
+        fn %Cluster{rolling_up: rolling_up} ->
+          assert rolling_up
+        end
+      )
+    end
+
+    test "should apply the rollup event" do
+      cluster_id = Faker.UUID.v4()
+      cluster_registered_event = build(:cluster_registered_event, cluster_id: cluster_id)
+
+      assert_state(
+        [
+          cluster_registered_event,
+          %ClusterRolledUp{
+            cluster_id: cluster_id,
+            name: cluster_registered_event.name,
+            type: cluster_registered_event.type,
+            sid: cluster_registered_event.sid,
+            provider: cluster_registered_event.provider,
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: cluster_registered_event.details,
+            health: cluster_registered_event.health,
+            hosts: [],
+            selected_checks: [],
+            discovered_health: :passing,
+            checks_health: nil,
+            hosts_executions: [],
+            applied: true
+          }
+        ],
+        [],
+        fn cluster ->
+          assert not cluster.rolling_up
+          assert cluster.name == cluster_registered_event.name
+          assert cluster.type == cluster_registered_event.type
+          assert cluster.sid == cluster_registered_event.sid
+          assert cluster.provider == cluster_registered_event.provider
+          assert cluster.resources_number == cluster_registered_event.resources_number
+          assert cluster.hosts_number == cluster_registered_event.hosts_number
+          assert cluster.details == cluster_registered_event.details
+          assert cluster.health == cluster_registered_event.health
+          assert cluster.hosts == []
+          assert cluster.selected_checks == []
+          assert cluster.discovered_health == :passing
+          assert cluster.checks_health == nil
+          assert cluster.hosts_executions == []
+        end
+      )
+    end
+
+    test "should not accept commands if a cluster is in rolling up state" do
+      cluster_id = Faker.UUID.v4()
+
+      events = [
+        build(:cluster_registered_event, cluster_id: cluster_id),
+        %ClusterRolledUp{
+          cluster_id: cluster_id,
+          applied: false
+        }
+      ]
+
+      assert_error(
+        events,
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: Faker.UUID.v4(),
+          name: Faker.StarWars.character(),
+          sid: Faker.StarWars.planet(),
+          discovered_health: :unknown,
+          type: :hana_scale_up,
+          designated_controller: false,
+          provider: :azure
+        }),
+        {:error, :cluster_rolling_up}
+      )
+
+      assert_error(
+        events,
+        StartChecksExecution.new!(%{cluster_id: cluster_id}),
+        {:error, :cluster_rolling_up}
+      )
+
+      assert_error(
+        events,
+        RollupCluster.new!(%{cluster_id: cluster_id}),
+        {:error, :cluster_rolling_up}
       )
     end
   end

@@ -11,7 +11,8 @@ defmodule Trento.EventHandlersSupervisor do
   def init(_init_arg) do
     children = [
       Trento.AlertsEventHandler,
-      Trento.ChecksEventHandler
+      Trento.ChecksEventHandler,
+      Trento.RollupEventHandler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
