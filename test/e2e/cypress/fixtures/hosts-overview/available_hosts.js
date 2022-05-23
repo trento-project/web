@@ -141,15 +141,23 @@ export const availableHosts = [
   },
   {
     id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+    name: 'vmnwdev01',
+    sapSystemSid: 'NWD',
   },
   {
     id: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
+    name: 'vmnwdev02',
+    sapSystemSid: 'NWD',
   },
   {
     id: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+    name: 'vmnwdev03',
+    sapSystemSid: 'NWD',
   },
   {
     id: '1b0e9297-97dd-55d6-9874-8efde4d84c90',
+    name: 'vmnwdev04',
+    sapSystemSid: 'NWD',
   },
   {
     id: '69f4dcbb-efa2-5a16-8bc8-01df7dbb7384',

@@ -157,10 +157,64 @@ context('Hosts Overview', () => {
         }).should('contain', 27);
       });
 
-      it('should show a critical health on the hosts when the agents are sending the heartbeat', () => {
+      it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
         cy.get('.tn-healthicon > svg.fill-red-500')
           .its('length')
           .should('eq', 10);
+      });
+    });
+  });
+
+  describe('Filtering', () => {
+    describe('Health', () => {
+      const firstHost = availableHosts[0];
+
+      before(() => {
+        cy.task('startAgentHeartbeat', [firstHost.id]);
+        cy.get('span').contains('Filter Health').parent().parent().click();
+      });
+
+      after(() => {
+        cy.task('stopAgentsHeartbeat');
+        cy.get('span').contains('Filter Health').parent().parent().click();
+      });
+
+      it('should only show the passing host when hosts are filtered by only passing entries', () => {
+        cy.get('li > div > span.ml-3.block').contains('passing').click();
+        cy.get('.tn-hostname').its('length').should('eq', 1);
+        cy.get('.tn-hostname').should('contain', firstHost.name);
+        cy.get('li > div > span.ml-3.block').contains('passing').click();
+      });
+
+      it('should only show the critical hosts when hosts are filtered by only critical entries', () => {
+        cy.get('li > div > span.ml-3.block').contains('critical').click();
+        cy.get('.tn-hostname').its('length').should('eq', 10);
+        cy.get('.tn-hostname').should('not.contain', firstHost.name);
+        cy.get('li > div > span.ml-3.block').contains('critical').click();
+      });
+    });
+
+    describe('SID', () => {
+      before(() => {
+        cy.get('span').contains('Filter SID').parent().parent().click();
+      });
+
+      after(() => {
+        cy.get('span').contains('Filter SID').parent().parent().click();
+      });
+
+      ['HDD', 'NWD'].forEach((sid) => {
+        it(`should only show the host with the filtered SID ${sid}`, () => {
+          const hosts = availableHosts.filter(
+            (host) => host.sapSystemSid == sid
+          );
+          cy.get('li > div > span.ml-3.block').contains(sid).click();
+          cy.get('.tn-hostname').its('length').should('eq', hosts.length);
+          hosts.forEach((host) => {
+            cy.get('.tn-hostname').should('contain', host.name);
+          });
+          cy.get('li > div > span.ml-3.block').contains(sid).click();
+        });
       });
     });
   });
