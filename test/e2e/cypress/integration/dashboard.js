@@ -11,6 +11,10 @@ describe('Dashboard page', () => {
     cy.url().should('include', '/');
   });
 
+  after(() => {
+    cy.task('stopAgentsHeartbeat');
+  });
+
   describe('The current state should be available in a summary', () => {
     it('should display 2 Passing clusters and 1 critical', () => {
       cy.get('.bg-green-200 > .rounded > .flex > .font-semibold').should(

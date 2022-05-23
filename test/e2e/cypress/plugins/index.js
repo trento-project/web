@@ -18,6 +18,7 @@
 // eslint-disable-next-line no-unused-vars
 
 const http = require('http');
+let heartbeatsIntervals = [];
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
@@ -37,7 +38,20 @@ module.exports = (on, config) => {
 
       agents.forEach((agentId) => {
         heartbeat(agentId);
-        setInterval(() => heartbeat(agentId), heartbeat_interval);
+        let interval = setInterval(
+          () => heartbeat(agentId),
+          heartbeat_interval
+        );
+        heartbeatsIntervals.push(interval);
+      });
+      return null;
+    },
+  });
+
+  on('task', {
+    stopAgentsHeartbeat() {
+      heartbeatsIntervals.forEach((interval) => {
+        clearInterval(interval);
       });
       return null;
     },

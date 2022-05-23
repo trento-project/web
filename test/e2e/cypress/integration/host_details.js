@@ -9,6 +9,10 @@ context('Host Details', () => {
     cy.url().should('include', `/hosts/${selectedHost.agentId}`);
   });
 
+  after(() => {
+    cy.task('stopAgentsHeartbeat');
+  });
+
   describe('Detailed view for a specific host should be available', () => {
     it('should show the host I clicked on in the overview', () => {
       cy.get('.grid-flow-col > :nth-child(1) > :nth-child(2) > span').should(
