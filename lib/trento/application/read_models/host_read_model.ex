@@ -28,7 +28,8 @@ defmodule Trento.HostReadModel do
 
     has_many :sles_subscriptions, SlesSubscriptionReadModel,
       references: :id,
-      foreign_key: :host_id
+      foreign_key: :host_id,
+      preload_order: [desc: :identifier]
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

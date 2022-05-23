@@ -33,7 +33,7 @@ export const selectedHost = {
       expiresAt: '2026-10-18 06:23:46 UTC',
     },
     {
-      id: 'sle-module-basesystem',
+      id: 'sle-module-server-applications',
       arch: 'x86_64',
       version: '15.3',
       type: '',
