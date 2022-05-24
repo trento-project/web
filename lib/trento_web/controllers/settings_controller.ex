@@ -7,7 +7,13 @@ defmodule TrentoWeb.SettingsController do
 
   use OpenApiSpex.ControllerSpecs
 
-  operation :settings, false
+  operation :settings,
+    summary: "Platform Settings",
+    tags: ["Platform"],
+    description: "Provides the Platform Settings for the current installation.",
+    responses: [
+      ok: {"Platform Settings", "application/json", Schema.Platform.Settings}
+    ]
 
   @spec settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def settings(conn, _) do
