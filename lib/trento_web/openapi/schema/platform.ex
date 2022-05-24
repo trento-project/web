@@ -23,4 +23,29 @@ defmodule TrentoWeb.OpenApi.Schema.Platform do
       }
     })
   end
+
+  defmodule GeneralInformation do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "GeneralInformation",
+      description: "General information about the current installation",
+      type: :object,
+      properties: %{
+        flavor: %Schema{
+          type: :string,
+          description: "Flavor of the current installation",
+          enum: ["Community", "Premium"]
+        },
+        version: %Schema{
+          type: :string,
+          description: "Version of the current server component installation"
+        },
+        sles_subscriptions: %Schema{
+          type: :integer,
+          description: "The number of SLES Subscription discovered on the target infrastructure"
+        }
+      }
+    })
+  end
 end
