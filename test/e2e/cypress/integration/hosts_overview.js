@@ -217,5 +217,40 @@ context('Hosts Overview', () => {
         });
       });
     });
+
+    describe('Tags', () => {
+      before(() => {
+        cy.removeTagsFromView();
+      });
+
+      availableHosts1stPage.forEach(({ name, tag }) => {
+        it(`Add tag '${tag}' to host with name: '${name}'`, () => {
+          cy.addTagByColumnValue(name, tag);
+        });
+      });
+
+      describe('Filter by tags', () => {
+        before(() => {
+          cy.get('span').contains('Filter Tags').parent().parent().click();
+        });
+
+        after(() => {
+          cy.get('span').contains('Filter Tags').parent().parent().click();
+        });
+
+        ['env1', 'env2', 'env3'].forEach((tag) => {
+          it(`should have hosts tagged with tag '${tag}'`, () => {
+            const hosts = availableHosts.filter((host) => host.tag == tag);
+
+            cy.get('li > div > span.ml-3.block').contains(tag).click();
+            cy.get('.tn-hostname').should('have.length', hosts.length);
+            hosts.forEach((host) => {
+              cy.get('.tn-hostname').should('contain', host.name);
+            });
+            cy.get('li > div > span.ml-3.block').contains(tag).click();
+          });
+        });
+      });
+    });
   });
 });

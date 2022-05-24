@@ -9,6 +9,7 @@ export const availableHosts = [
     sapSystemSid: '',
     sapSystemId: '',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env1',
   },
   {
     id: '21de186a-e38f-5804-b643-7f4ef22fecfd',
@@ -20,6 +21,7 @@ export const availableHosts = [
     sapSystemSid: '',
     sapSystemId: '',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env1',
   },
   {
     id: 'a09d9cf3-46c1-505c-8fb8-4b0a71a9114e',
@@ -31,6 +33,7 @@ export const availableHosts = [
     sapSystemSid: '',
     sapSystemId: '',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env2',
   },
   {
     id: '927901fa-2c87-524e-b18c-3ef5187f504f',
@@ -42,6 +45,7 @@ export const availableHosts = [
     sapSystemSid: '',
     sapSystemId: '',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env2',
   },
   {
     id: 'ddcb7992-2ffb-5c10-8b39-80685f6eaaba',
@@ -53,6 +57,7 @@ export const availableHosts = [
     sapSystemSid: '',
     sapSystemId: '',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env3',
   },
   {
     id: '422686d6-b2d1-5092-93e8-a744854f5085',
@@ -64,6 +69,7 @@ export const availableHosts = [
     sapSystemSid: '',
     sapSystemId: '',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env3',
   },
   {
     id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
@@ -75,6 +81,7 @@ export const availableHosts = [
     sapSystemSid: 'HDD',
     sapSystemId: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env1',
   },
   {
     id: '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
@@ -86,6 +93,7 @@ export const availableHosts = [
     sapSystemSid: 'HDD',
     sapSystemId: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env1',
   },
   {
     id: '9cd46919-5f19-59aa-993e-cf3736c71053',
@@ -97,6 +105,7 @@ export const availableHosts = [
     sapSystemSid: 'HDP',
     sapSystemId: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env2',
   },
   {
     id: 'b767b3e9-e802-587e-a442-541d093b86b9',
@@ -108,6 +117,7 @@ export const availableHosts = [
     sapSystemSid: 'HDP',
     sapSystemId: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     agentVersion: '0.7.1+git.dev42.1640084952.33229fc',
+    tag: 'env2',
   },
   {
     id: '116d49bd-85e1-5e59-b820-83f66db8800c',

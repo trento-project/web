@@ -77,3 +77,23 @@ Cypress.Commands.add('selectChecks', (clusterId, checks) => {
   const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks`;
   cy.request({ method: 'POST', url: url, body: checksBody, headers: headers });
 });
+
+Cypress.Commands.add('removeTagsFromView', () => {
+  cy.get('body').then(($body) => {
+    const deleteTag = 'span.ml-2.cursor-pointer';
+    if ($body.find(deleteTag).length > 0) {
+      cy.get(deleteTag).then(($deleteTag) =>
+        cy.wrap($deleteTag).click({ multiple: true })
+      );
+    }
+  });
+});
+
+Cypress.Commands.add('addTagByColumnValue', (columnValue, tagValue) => {
+  cy.get('td')
+    .contains(columnValue)
+    .parents('tr')
+    .within(() => {
+      cy.get('span').contains('Add Tag').type(`${tagValue}{enter}`);
+    });
+});
