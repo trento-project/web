@@ -97,6 +97,19 @@ defmodule Trento.Integration.DiscoveryTest do
     assert 0 == DiscoveryEvent |> Trento.Repo.all() |> length()
   end
 
+  test "should delete discarded events older than the specified days" do
+    for _ <- 0..9 do
+      insert(
+        :discarded_discovery_event,
+        payload: %{},
+        inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
+      )
+    end
+
+    assert 10 == Discovery.prune_discarded_discovery_events(10)
+    assert 0 == DiscardedDiscoveryEvent |> Trento.Repo.all() |> length()
+  end
+
   @tag capture_log: true
   test "should discard discovery events with invalid payload" do
     event = %{
