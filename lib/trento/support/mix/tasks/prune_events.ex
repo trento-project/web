@@ -22,9 +22,12 @@ defmodule Mix.Tasks.PruneEvents do
 
     case start_repo() do
       {:ok, _} ->
+        days = Keyword.get(opts, :days, @default_older_than)
         IO.puts(IO.ANSI.green() <> "Pruning events...")
-        events_number = Discovery.prune_events(Keyword.get(opts, :days, @default_older_than))
+        events_number = Discovery.prune_events(days)
         IO.puts(IO.ANSI.green() <> "Deleted #{events_number} events.")
+        discarded_events_number = Discovery.prune_discarded_discovery_events(days)
+        IO.puts(IO.ANSI.green() <> "Deleted #{discarded_events_number} discarded events.")
 
       {:error, error} ->
         print_error("Could not start repo: #{error}")

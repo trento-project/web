@@ -37,6 +37,7 @@ defmodule TrentoWeb.PrometheusControllerTest do
     assert %{"Node Exporter" => "passing"} == response
   end
 
+  @tag capture_log: true
   test "should return a 500 if the exporters status cannot be fetched", %{conn: conn} do
     expect(Trento.Integration.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:error, :reason}

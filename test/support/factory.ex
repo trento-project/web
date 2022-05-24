@@ -45,7 +45,10 @@ defmodule Trento.Factory do
     Tag
   }
 
-  alias Trento.Integration.Discovery.DiscoveryEvent
+  alias Trento.Integration.Discovery.{
+    DiscardedDiscoveryEvent,
+    DiscoveryEvent
+  }
 
   use ExMachina.Ecto, repo: Trento.Repo
 
@@ -335,6 +338,14 @@ defmodule Trento.Factory do
       agent_id: Faker.UUID.v4(),
       discovery_type: Faker.Pokemon.name(),
       payload: %{},
+      inserted_at: DateTime.utc_now()
+    }
+  end
+
+  def discarded_discovery_event_factory do
+    %DiscardedDiscoveryEvent{
+      payload: %{},
+      reason: Faker.Beer.hop(),
       inserted_at: DateTime.utc_now()
     }
   end
