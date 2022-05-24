@@ -67,4 +67,33 @@ defmodule TrentoWeb.OpenApi.Schema.SAPSystem do
       items: SAPSystemItem
     })
   end
+
+  defmodule SAPSystemHealthOverview do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "SAPSystemHealthOverview",
+      description: "An overview of the health of a discovered SAP System and its components",
+      type: :object,
+      properties: %{
+        id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
+        sid: %Schema{type: :string, description: "SID"},
+        sapsystem_health: ResourceHealth,
+        database_health: ResourceHealth,
+        hosts_health: ResourceHealth,
+        clusters_health: ResourceHealth
+      }
+    })
+  end
+
+  defmodule HealthOverview do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "HealthOverview",
+      description: "A list of health summaries for the discovered SAP Systems",
+      type: :array,
+      items: SAPSystemHealthOverview
+    })
+  end
 end
