@@ -14,11 +14,13 @@ config :trento, Trento.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
-config :trento, Trento.Commanded,
-  event_store: [
-    adapter: Commanded.EventStore.Adapters.InMemory,
-    serializer: Commanded.Serialization.JsonSerializer
-  ]
+config :trento, Trento.EventStore,
+  username: "postgres",
+  password: "postgres",
+  database: "trento_eventstore_test#{System.get_env("MIX_TEST_PARTITION")}",
+  hostname: "localhost",
+  port: 5433,
+  pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
