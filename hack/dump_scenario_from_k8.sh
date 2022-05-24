@@ -11,13 +11,13 @@ usage() {
     Dump the current scenario and discarded discovery events from a running trento-server installation on the k8s cluster
 
     OPTIONS:
-        -n, --name            The name to use for the scenario. Defaults to "current".
-        -p, --path            The path where the scenario should be saved. Defaults to the current directory.
-        -d, --event-number    Then number of discarded events to dump. Default to 10.
-        -h, --help            Print this help.
+        -n, --name                      The name to use for the scenario. Defaults to "current".
+        -p, --path                      The path where the scenario should be saved. Defaults to the current directory.
+        -d, --discarded-event-number    Then number of discarded events to dump. Default to 100.
+        -h, --help                      Print this help.
 
     Example:
-        dump_scenario_from_k8s.sh --name failover --path /tmp --event-number 5
+        dump_scenario_from_k8s.sh --name failover --path /tmp --discarded-event-number 5
 EOF
 }
 
@@ -29,7 +29,7 @@ cmdline() {
         case "$arg" in
         --name) args="${args}-n " ;;
         --path) args="${args}-p " ;;
-        --event-number) args="${args}-d " ;;
+        --discarded-event-number) args="${args}-d " ;;
         --help) args="${args}-h " ;;
 
         # pass through anything else
@@ -55,7 +55,7 @@ cmdline() {
             readonly EXPORT_PATH=$OPTARG
             ;;
         p)
-            readonly EVENT_NUMBER=$OPTARG
+            readonly DISCARDED_EVENT_NUMBER=$OPTARG
             ;;
         *)
             usage
@@ -70,7 +70,7 @@ cmdline() {
 dump-scenario() {
     local name=${NAME:-current}
     local path="${EXPORT_PATH:-$PWD}"
-    local event_number="${EVENT_NUMBER:-10}"
+    local discarded_event_number="${DISCARDED_EVENT_NUMBER:-100}"
 
     if [[ -d "$path/scenarios/$name" ]]; then
         echo "The scenario $name already exists in $path/scenarios/$name"
@@ -79,7 +79,7 @@ dump-scenario() {
     fi
 
     kubectl exec deploy/trento-server-web -- rm -rf /scenarios
-    kubectl exec -ti deploy/trento-server-web -- /app/bin/trento eval "Trento.Release.dump_scenario([\"$name\", \"-p\", \"/scenarios\", \"-d\", \"$event_number\"])"
+    kubectl exec -ti deploy/trento-server-web -- /app/bin/trento eval "Trento.Release.dump_scenario([\"$name\", \"-p\", \"/scenarios\", \"-d\", \"$discarded_event_number\"])"
     kubectl exec deploy/trento-server-web -- tar cf - /scenarios | tar xf - -C "$path"
 }
 

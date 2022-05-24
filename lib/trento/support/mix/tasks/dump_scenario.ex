@@ -22,7 +22,7 @@ defmodule Mix.Tasks.DumpScenario do
   ]
 
   @default_path File.cwd!()
-  @default_discarded_event_number 10
+  @default_discarded_event_number 100
   @discarded_events_file "discarded_discovery_events.json"
 
   @shortdoc "Dump the current discovery scenario and discarded discovery events."
