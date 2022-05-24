@@ -198,26 +198,13 @@ context('SAP Systems Overview', () => {
 
   describe('SAP Systems Tagging', () => {
     before(() => {
-      cy.get('body').then(($body) => {
-        const deleteTag = 'span.ml-2.cursor-pointer';
-        if ($body.find(deleteTag).length > 0) {
-          cy.get(deleteTag).then(($deleteTag) =>
-            cy.wrap($deleteTag).click({ multiple: true })
-          );
-        }
-      });
+      cy.removeTagsFromView();
     });
 
     availableSAPSystems.forEach(({ sid, tag }) => {
       describe(`Add tag '${tag}' to SAP System with sid: '${sid}'`, () => {
         it(`should tag SAP System '${sid}'`, () => {
-          cy.get('td')
-            .contains(sid)
-            .parent('td')
-            .parent('tr')
-            .within(() => {
-              cy.get('span').contains('Add Tag').type(`${tag}{enter}`);
-            });
+          cy.addTagByColumnValue(sid, tag);
         });
       });
     });
@@ -260,9 +247,7 @@ context('SAP Systems Overview', () => {
           cy.get('table.table-fixed > tbody > tr').should('have.length', 2);
           cy.get('td')
             .contains(tag)
-            .parent('span')
-            .parent('td')
-            .parent('tr')
+            .parents('tr')
             .within(() => {
               cy.get('td').eq(1).contains(sid);
             });
