@@ -3,10 +3,6 @@ defmodule Trento.RollupTest do
 
   alias Trento.Rollup
 
-  test "should rollback if no stream was found" do
-    {:error, :rollback} = Rollup.rollup_aggregate(Faker.UUID.v4(), %TestRollupEvent{})
-  end
-
   test "should rollup and append an applied rollup event", %{conn: conn} do
     stream_id = Faker.UUID.v4()
     event = %TestRollupEvent{data: "data"}
@@ -35,5 +31,10 @@ defmodule Trento.RollupTest do
                 data: %TestRollupEvent{data: "data", applied: true}
               }
             ]} = Trento.EventStore.read_stream_forward(stream_id)
+  end
+
+  @tag capture_log: true
+  test "should rollback if no stream was found" do
+    {:error, :rollback} = Rollup.rollup_aggregate(Faker.UUID.v4(), %TestRollupEvent{})
   end
 end

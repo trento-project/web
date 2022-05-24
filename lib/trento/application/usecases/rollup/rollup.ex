@@ -1,6 +1,6 @@
 defmodule Trento.Rollup do
   @moduledoc """
-  Probides the rollup functionality
+  Provides the rollup functionality
   """
 
   def rollup_aggregate(aggregate_id, event) do
