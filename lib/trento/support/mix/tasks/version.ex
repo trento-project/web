@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.PrintVersion do
+defmodule Mix.Tasks.Version do
   @moduledoc "The hello mix task: `mix help hello`"
 
   use Mix.Task

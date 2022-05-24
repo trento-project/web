@@ -18,7 +18,7 @@ describe('User account page', () => {
   });
 
   it('should show the correct server version', () => {
-    cy.exec(`cd ${Cypress.env('project_root')} && mix print_version`).then(
+    cy.exec(`cd ${Cypress.env('project_root')} && mix version`).then(
       ({ stdout: version }) => {
         cy.get('div')
           .contains('Server version')
