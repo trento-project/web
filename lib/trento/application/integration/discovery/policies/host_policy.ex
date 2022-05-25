@@ -9,7 +9,11 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Integration.Discovery.{CloudDiscoveryPayload, HostDiscoveryPayload}
+  alias Trento.Integration.Discovery.{
+    CloudDiscoveryPayload,
+    HostDiscoveryPayload,
+    SubscriptionDiscoveryPayload
+  }
 
   @spec handle(map) ::
           {:ok, RegisterHost.t() | UpdateProvider.t() | UpdateSlesSubscriptions.t()}
@@ -56,7 +60,12 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         "payload" => payload
       }) do
     subscriptions =
-      Enum.map(payload, fn subscription -> parse_subscription_data(agent_id, subscription) end)
+      payload
+      |> Enum.map(fn subscription -> SubscriptionDiscoveryPayload.new(subscription) end)
+      |> Enum.reject(fn {tag, _} -> tag != :ok end)
+      |> Enum.map(fn {:ok, subscription} ->
+        subscription |> Map.from_struct() |> Map.put(:host_id, agent_id)
+      end)
 
     UpdateSlesSubscriptions.new(%{host_id: agent_id, subscriptions: subscriptions})
   end
@@ -141,43 +150,4 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp parse_storage_profile(%{data_disks: nil}), do: 0
   defp parse_storage_profile(%{data_disks: data_disks}), do: length(data_disks)
   defp parse_storage_profile(_), do: 0
-
-  @spec parse_subscription_data(String.t(), map) :: map
-  defp parse_subscription_data(host_id, %{
-         "arch" => arch,
-         "expires_at" => expires_at,
-         "identifier" => identifier,
-         "starts_at" => starts_at,
-         "status" => status,
-         "subscription_status" => subscription_status,
-         "type" => type,
-         "version" => version
-       }) do
-    %{
-      host_id: host_id,
-      arch: arch,
-      expires_at: expires_at,
-      identifier: identifier,
-      starts_at: starts_at,
-      status: status,
-      subscription_status: subscription_status,
-      type: type,
-      version: version
-    }
-  end
-
-  defp parse_subscription_data(host_id, %{
-         "arch" => arch,
-         "identifier" => identifier,
-         "status" => status,
-         "version" => version
-       }) do
-    %{
-      host_id: host_id,
-      arch: arch,
-      identifier: identifier,
-      status: status,
-      version: version
-    }
-  end
 end
