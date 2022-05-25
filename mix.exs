@@ -80,7 +80,9 @@ defmodule Trento.MixProject do
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:timex, "~> 3.7.7"}
+      {:timex, "~> 3.7.7"},
+      {:proper_case, "~> 1.3.1"},
+      {:polymorphic_embed, "~> 1.9.0"}
     ]
   end
 
