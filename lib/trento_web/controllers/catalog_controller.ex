@@ -7,10 +7,9 @@ defmodule TrentoWeb.CatalogController do
 
   use OpenApiSpex.ControllerSpecs
 
-  tags(["Checks"])
-
-  operation(:checks_catalog,
+  operation :checks_catalog,
     summary: "Checks Catalog",
+    tags: ["Checks"],
     description:
       "The list of the available checks that can be configured to run on the target SAP infrastructure",
     parameters: [
@@ -31,7 +30,6 @@ defmodule TrentoWeb.CatalogController do
       not_found: {"Not found", "application/json", ChecksCatalog.CatalogNotfound},
       bad_request: {"Bad Request", "application/json", ChecksCatalog.UnableToLoadCatalog}
     ]
-  )
 
   @spec checks_catalog(Plug.Conn.t(), map) :: Plug.Conn.t()
   def checks_catalog(conn, params) do
