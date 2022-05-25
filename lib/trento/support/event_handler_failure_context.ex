@@ -4,7 +4,8 @@ defmodule Trento.Support.EventHandlerFailureContext do
 
   max_retries: max retries before the event handler is shut down (defauklt: 3)
   retry_after: time between retries in ms (default: 0)
-  callback: callback to be called when the max retries are reached
+  after_retry: callback to be called after reach retry
+  after_max_retries_reached: callback to be called when the max retries are reached
   skip: if skip is true, the event will be skipped, otherwise the process will stop (default: false)
   """
 
