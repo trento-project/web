@@ -91,39 +91,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     UpdateProvider.new(%{
       host_id: agent_id,
       provider: provider,
-      provider_data:
-        case metadata do
-          %{
-            compute: %{
-              name: name,
-              resource_group_name: resource_group,
-              location: location,
-              vm_size: vm_size,
-              storage_profile: storage_profile,
-              offer: offer,
-              sku: sku,
-              os_profile: %{admin_username: admin_username}
-            }
-          } ->
-            %{
-              vm_name: name,
-              resource_group: resource_group,
-              location: location,
-              vm_size: vm_size,
-              data_disk_number:
-                case storage_profile do
-                  %{data_disks: nil} -> 0
-                  %{data_disks: data_disks} -> length(data_disks)
-                  _ -> 0
-                end,
-              offer: offer,
-              sku: sku,
-              admin_username: admin_username
-            }
-
-          generic_metadata ->
-            generic_metadata
-        end
+      provider_data: parse_cloud_provider_metadata(provider, metadata)
     })
   end
 
@@ -139,6 +107,40 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         false
     end
   end
+
+  @spec parse_cloud_provider_metadata(:azure | :aws | :gcp | :unknown, map) :: map
+  defp parse_cloud_provider_metadata(
+         :azure,
+         %{
+           compute: %{
+             name: name,
+             resource_group_name: resource_group,
+             location: location,
+             vm_size: vm_size,
+             storage_profile: storage_profile,
+             offer: offer,
+             sku: sku,
+             os_profile: %{admin_username: admin_username}
+           }
+         }
+       ),
+       do: %{
+         vm_name: name,
+         resource_group: resource_group,
+         location: location,
+         vm_size: vm_size,
+         data_disk_number: parse_storage_profile(storage_profile),
+         offer: offer,
+         sku: sku,
+         admin_username: admin_username
+       }
+
+  defp parse_cloud_provider_metadata(_, generic_metadata), do: generic_metadata
+
+  @spec parse_storage_profile(map) :: non_neg_integer()
+  defp parse_storage_profile(%{data_disks: nil}), do: 0
+  defp parse_storage_profile(%{data_disks: data_disks}), do: length(data_disks)
+  defp parse_storage_profile(_), do: 0
 
   @spec parse_subscription_data(String.t(), map) :: map
   defp parse_subscription_data(host_id, %{
