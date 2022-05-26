@@ -97,3 +97,40 @@ Cypress.Commands.add('addTagByColumnValue', (columnValue, tagValue) => {
       cy.get('span').contains('Add Tag').type(`${tagValue}{enter}`);
     });
 });
+
+Cypress.Commands.add('setMockRunnerExpectedResult', (result) => {
+  const [webAPIHost, webAPIPort] = [
+    Cypress.env('web_api_host'),
+    Cypress.env('web_api_port'),
+  ];
+
+  const requestResultBody = JSON.stringify({
+    expected_results: result,
+  });
+
+  const headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+  };
+
+  const url = `http://${webAPIHost}:${webAPIPort}/api/mockrunner/expected_result`;
+  cy.request({
+    method: 'POST',
+    url: url,
+    body: requestResultBody,
+    headers: headers,
+  });
+});
+
+Cypress.Commands.add('requestChecksExecution', (clusterId) => {
+  const [webAPIHost, webAPIPort] = [
+    Cypress.env('web_api_host'),
+    Cypress.env('web_api_port'),
+  ];
+
+  const headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+  };
+
+  const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks/request_execution`;
+  cy.request({ method: 'POST', url: url, headers: headers });
+});

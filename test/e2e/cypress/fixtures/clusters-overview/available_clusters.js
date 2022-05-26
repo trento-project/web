@@ -18,3 +18,25 @@ export const clusterIdByName = (clusterName) =>
   availableClusters.find(([, name]) => name === clusterName)[0];
 export const clusterNameById = (clusterId) =>
   availableClusters.find(([id]) => id === clusterId)[1];
+
+export const healthyClusterScenario = {
+  clusterName: 'hana_cluster_2',
+  checks: ['156F64'],
+  hostIds: [
+    '99cf8a3a-48d6-57a4-b302-6e4482227ab6',
+    'e0c182db-32ff-55c6-a9eb-2b82dd21bc8b',
+  ],
+  result: 'passing',
+  executionId: '8d840ba1-828f-4cb8-bce0-6e34224fe4f8',
+};
+
+export const unhealthyClusterScenario = {
+  clusterName: 'hana_cluster_3',
+  checks: ['156F64'],
+  hostIds: [
+    '9cd46919-5f19-59aa-993e-cf3736c71053',
+    'b767b3e9-e802-587e-a442-541d093b86b9',
+  ],
+  result: 'critical',
+  executionId: '8d840ba1-828f-4cb8-bce0-6e34224fe4f9',
+};
