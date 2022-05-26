@@ -100,6 +100,19 @@ defmodule Trento.Type do
       def cast_and_validate_required_embed(changeset, field, required_fields),
         do: cast_embed(changeset, field, required: field in required_fields)
 
+      def from_list(list_of_structs) do
+        list_of_structs
+        |> Enum.map(fn item -> __MODULE__.new(item) end)
+        |> Enum.group_by(
+          fn {is_valid, _} -> is_valid end,
+          fn {_, decoding_value} -> decoding_value end
+        )
+        |> decoding_results()
+      end
+
+      defp decoding_results(%{error: decoding_errors}), do: {:error, decoding_errors}
+      defp decoding_results(%{ok: decoding_results}), do: {:ok, decoding_results}
+
       defp fields, do: __MODULE__.__schema__(:fields) -- __MODULE__.__schema__(:embeds)
 
       defp embedded_fields, do: __MODULE__.__schema__(:embeds)
