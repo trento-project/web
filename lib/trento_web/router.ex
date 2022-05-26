@@ -150,15 +150,20 @@ defmodule TrentoWeb.Router do
     end
   end
 
-  # Enables the Swoosh mailbox preview in development.
-  #
-  # Note that preview only shows emails that were sent by the same
-  # node running the Phoenix server.
   if Mix.env() == :dev do
+    # Enables the Swoosh mailbox preview in development.
+    #
+    # Note that preview only shows emails that were sent by the same
+    # node running the Phoenix server.
     scope "/dev" do
       pipe_through :browser
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+
+    scope "/api", TrentoWeb do
+      pipe_through :api
+      post "/mockrunner/expected_result", MockRunnerController, :set_expected_results
     end
   end
 
