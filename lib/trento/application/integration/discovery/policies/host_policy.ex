@@ -12,7 +12,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   alias Trento.Integration.Discovery.{
     CloudDiscoveryPayload,
     HostDiscoveryPayload,
-    SubscriptionDiscoveryPayload
+    SlesSubscriptionDiscoveryPayload
   }
 
   @spec handle(map) ::
@@ -59,15 +59,12 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         "agent_id" => agent_id,
         "payload" => payload
       }) do
-    subscriptions =
-      payload
-      |> Enum.map(fn subscription -> SubscriptionDiscoveryPayload.new(subscription) end)
-      |> Enum.reject(fn {tag, _} -> tag != :ok end)
-      |> Enum.map(fn {:ok, subscription} ->
-        subscription |> Map.from_struct() |> Map.put(:host_id, agent_id)
-      end)
-
-    UpdateSlesSubscriptions.new(%{host_id: agent_id, subscriptions: subscriptions})
+    payload
+    |> SlesSubscriptionDiscoveryPayload.from_list()
+    |> case do
+      {:ok, decoded_payload} -> build_update_sles_subscriptions_command(agent_id, decoded_payload)
+      error -> error
+    end
   end
 
   defp build_register_host_command(agent_id, %HostDiscoveryPayload{
@@ -103,6 +100,16 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       provider_data: parse_cloud_provider_metadata(provider, metadata)
     })
   end
+
+  defp build_update_sles_subscriptions_command(agent_id, subscriptions),
+    do:
+      UpdateSlesSubscriptions.new(%{
+        host_id: agent_id,
+        subscriptions:
+          Enum.map(subscriptions, fn subscription ->
+            subscription |> Map.from_struct() |> Map.put(:host_id, agent_id)
+          end)
+      })
 
   @spec is_non_loopback_ipv4?(String.t()) :: boolean
   defp is_non_loopback_ipv4?("127.0.0.1"), do: false
