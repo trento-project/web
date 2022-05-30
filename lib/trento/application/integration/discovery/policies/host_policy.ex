@@ -9,7 +9,11 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Integration.Discovery.{CloudDiscoveryPayload, HostDiscoveryPayload}
+  alias Trento.Integration.Discovery.{
+    CloudDiscoveryPayload,
+    HostDiscoveryPayload,
+    SlesSubscriptionDiscoveryPayload
+  }
 
   @spec handle(map) ::
           {:ok, RegisterHost.t() | UpdateProvider.t() | UpdateSlesSubscriptions.t()}
@@ -55,10 +59,12 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         "agent_id" => agent_id,
         "payload" => payload
       }) do
-    subscriptions =
-      Enum.map(payload, fn subscription -> parse_subscription_data(agent_id, subscription) end)
-
-    UpdateSlesSubscriptions.new(%{host_id: agent_id, subscriptions: subscriptions})
+    payload
+    |> SlesSubscriptionDiscoveryPayload.from_list()
+    |> case do
+      {:ok, decoded_payload} -> build_update_sles_subscriptions_command(agent_id, decoded_payload)
+      error -> error
+    end
   end
 
   defp build_register_host_command(agent_id, %HostDiscoveryPayload{
@@ -94,6 +100,16 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       provider_data: parse_cloud_provider_metadata(provider, metadata)
     })
   end
+
+  defp build_update_sles_subscriptions_command(agent_id, subscriptions),
+    do:
+      UpdateSlesSubscriptions.new(%{
+        host_id: agent_id,
+        subscriptions:
+          Enum.map(subscriptions, fn subscription ->
+            subscription |> Map.from_struct() |> Map.put(:host_id, agent_id)
+          end)
+      })
 
   @spec is_non_loopback_ipv4?(String.t()) :: boolean
   defp is_non_loopback_ipv4?("127.0.0.1"), do: false
@@ -141,43 +157,4 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp parse_storage_profile(%{data_disks: nil}), do: 0
   defp parse_storage_profile(%{data_disks: data_disks}), do: length(data_disks)
   defp parse_storage_profile(_), do: 0
-
-  @spec parse_subscription_data(String.t(), map) :: map
-  defp parse_subscription_data(host_id, %{
-         "arch" => arch,
-         "expires_at" => expires_at,
-         "identifier" => identifier,
-         "starts_at" => starts_at,
-         "status" => status,
-         "subscription_status" => subscription_status,
-         "type" => type,
-         "version" => version
-       }) do
-    %{
-      host_id: host_id,
-      arch: arch,
-      expires_at: expires_at,
-      identifier: identifier,
-      starts_at: starts_at,
-      status: status,
-      subscription_status: subscription_status,
-      type: type,
-      version: version
-    }
-  end
-
-  defp parse_subscription_data(host_id, %{
-         "arch" => arch,
-         "identifier" => identifier,
-         "status" => status,
-         "version" => version
-       }) do
-    %{
-      host_id: host_id,
-      arch: arch,
-      identifier: identifier,
-      status: status,
-      version: version
-    }
-  end
 end
