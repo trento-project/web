@@ -110,9 +110,9 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
 
   defp parse_instance_hostname(instance), do: parse_sap_control_property("SAPLOCALHOST", instance)
 
-  def parse_sap_control_property(property, %Instance{
-        SAPControl: %SapControl{Properties: properties}
-      }) do
+  defp parse_sap_control_property(property, %Instance{
+         SAPControl: %SapControl{Properties: properties}
+       }) do
     properties
     |> Enum.find_value(fn
       %{property: ^property, value: value} -> value

@@ -179,7 +179,7 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
       |> validate_required_fields(@required_fields)
     end
 
-    def find_property(property, %{"Properties" => properties}) do
+    defp find_property(property, %{"Properties" => properties}) do
       properties
       |> Enum.find_value(fn
         %{"property" => ^property, "value" => value} -> value
@@ -187,7 +187,7 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
       end)
     end
 
-    def find_property(_, _), do: nil
+    defp find_property(_, _), do: nil
   end
 
   defmodule SapControlProperty do
@@ -340,8 +340,8 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
       |> validate_replication_mode(local_site_id)
     end
 
-    def parse_local_site_id(%{"local_site_id" => local_site_id}), do: local_site_id
-    def parse_local_site_id(_), do: 1
+    defp parse_local_site_id(%{"local_site_id" => local_site_id}), do: local_site_id
+    defp parse_local_site_id(_), do: 1
 
     defp validate_replication_mode(changeset, local_site_id) do
       changeset
