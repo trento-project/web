@@ -68,13 +68,7 @@ defmodule TrentoWeb.ClusterController do
     tags: ["Checks"],
     description:
       "The Runner executing the Checks Selection on the target infrastructure, publishes updates about the progress of the Execution.",
-    parameters: [
-      callback_event: [
-        in: :body,
-        required: true,
-        type: Schema.Runner.CallbackEvent
-      ]
-    ],
+    request_body: {"Callback Event", "application/json", Schema.Runner.CallbackEvent},
     responses: [
       accepted:
         {"The Operation has been accepted, and the proper followup processes will trigger",
@@ -104,13 +98,9 @@ defmodule TrentoWeb.ClusterController do
     tags: ["Checks"],
     description: "Select the Checks eligible for execution on the target infrastructure",
     parameters: [
-      cluster_id: @cluster_id_schema,
-      selected_checks: [
-        in: :body,
-        required: true,
-        type: Schema.Checks.ChecksSelectionRequest
-      ]
+      cluster_id: @cluster_id_schema
     ],
+    request_body: {"Checks Selection", "application/json", Schema.Checks.ChecksSelectionRequest},
     responses: [
       accepted:
         {"The Selection has been successfully collected", "application/json",
