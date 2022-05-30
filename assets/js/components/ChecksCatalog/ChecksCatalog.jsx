@@ -113,7 +113,7 @@ const ChecksCatalog = () => {
                         leaveFrom="transform opacity-100"
                         leaveTo="transform opacity-0"
                       >
-                        <Disclosure.Panel className="border-none">
+                        <Disclosure.Panel className="check-panel border-none">
                           <div className="px-8 py-4 sm:px-8">
                             <div className="px-4 py-4 sm:px-4 bg-slate-100 rounded">
                               <ReactMarkdown
