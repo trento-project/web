@@ -12,6 +12,7 @@ defmodule Trento.Domain.Cluster do
   }
 
   alias Trento.Domain.Commands.{
+    AbortClusterRollup,
     CompleteChecksExecution,
     RegisterClusterHost,
     RequestChecksExecution,
@@ -30,6 +31,7 @@ defmodule Trento.Domain.Cluster do
     ClusterHealthChanged,
     ClusterRegistered,
     ClusterRolledUp,
+    ClusterRollupFailed,
     HostAddedToCluster,
     HostChecksExecutionCompleted
   }
@@ -70,6 +72,15 @@ defmodule Trento.Domain.Cluster do
           checks_execution: :not_running | :requested | :running,
           rolling_up: boolean()
         }
+
+  def execute(%Cluster{rolling_up: false}, %AbortClusterRollup{}),
+    do: []
+
+  def execute(%Cluster{rolling_up: true}, %AbortClusterRollup{cluster_id: cluster_id}) do
+    %ClusterRollupFailed{
+      cluster_id: cluster_id
+    }
+  end
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
 
@@ -497,6 +508,10 @@ defmodule Trento.Domain.Cluster do
       checks_health: checks_health,
       hosts_executions: hosts_executions
     }
+  end
+
+  def apply(%Cluster{} = cluster, %ClusterRollupFailed{}) do
+    %Cluster{cluster | rolling_up: false}
   end
 
   defp maybe_emit_host_added_to_cluster_event(
