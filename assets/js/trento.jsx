@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
@@ -71,7 +71,8 @@ const App = () => {
   );
 };
 
-var trento = document.getElementById('trento');
-if (trento) {
-  render(<App />, trento);
+const container = document.getElementById('trento');
+if (container) {
+  const root = createRoot(container);
+  root.render(<App />);
 }

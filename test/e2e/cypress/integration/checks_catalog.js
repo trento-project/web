@@ -34,8 +34,8 @@ context('Checks catalog', () => {
   describe('Provider selection', () => {
     checkDataByProvider.forEach((checkData, provider) => {
       it(`should include the correct check data '${checkData} for provider '${provider}'`, () => {
-        cy.get('#headlessui-listbox-button-2').click();
-        cy.get('#headlessui-listbox-button-2')
+        cy.get('.cloud-provider-selection-dropdown').click();
+        cy.get('.cloud-provider-selection-dropdown')
           .get('span')
           .contains(provider)
           .click();
@@ -50,17 +50,11 @@ context('Checks catalog', () => {
         .first()
         .parent()
         .invoke('attr', 'id')
-        .then((firstCheckDivID) => {
-          const firstCheckDivIDNumber =
-            parseInt(firstCheckDivID.split('-')[3]) + 1;
+        .then(() => {
           cy.get('div.check-row').first().click();
-          cy.get(
-            `#headlessui-disclosure-panel-${firstCheckDivIDNumber}`
-          ).should('exist');
+          cy.get(`.check-panel`).should('exist');
           cy.get('div.check-row').first().click();
-          cy.get(
-            `#headlessui-disclosure-panel-${firstCheckDivIDNumber}`
-          ).should('not.exist');
+          cy.get('.check-panel').should('not.exist');
         });
     });
   });
