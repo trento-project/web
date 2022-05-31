@@ -40,7 +40,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
           type: :array,
           description: "IP addresses",
           items: %Schema{
-            title: "IP address",
+            title: "IPAddress",
             oneOf: [
               IPv4,
               IPv6
