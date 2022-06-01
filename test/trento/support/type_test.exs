@@ -52,6 +52,8 @@ defmodule Trento.TypeTest do
                }
              ])
 
+    assert {:ok, []} == TestData.from_list([])
+
     {
       :ok,
       [

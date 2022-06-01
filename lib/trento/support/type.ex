@@ -112,6 +112,7 @@ defmodule Trento.Type do
 
       defp decoding_results(%{error: decoding_errors}), do: {:error, decoding_errors}
       defp decoding_results(%{ok: decoding_results}), do: {:ok, decoding_results}
+      defp decoding_results(_), do: {:ok, []}
 
       defp fields, do: __MODULE__.__schema__(:fields) -- __MODULE__.__schema__(:embeds)
 
