@@ -17,7 +17,7 @@ defmodule TrentoWeb.ClusterController do
 
   operation :list,
     summary: "List Pacemaker Clusters",
-    tags: ["Landscape"],
+    tags: ["Target Infrastructure"],
     description: "List all the discovered Pacemaker Clusters on the target infrastructure",
     responses: [
       ok:
