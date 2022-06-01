@@ -60,7 +60,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         "payload" => payload
       }) do
     payload
-    |> SlesSubscriptionDiscoveryPayload.from_list()
+    |> SlesSubscriptionDiscoveryPayload.new()
     |> case do
       {:ok, decoded_payload} -> build_update_sles_subscriptions_command(agent_id, decoded_payload)
       error -> error
