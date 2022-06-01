@@ -23,7 +23,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       paths: Paths.from_router(Router),
       tags: [
         %Tag{
-          name: "Landscape",
+          name: "Target Infrastructure",
           description: "Providing access to the discovered target infrastructure"
         },
         %Tag{
