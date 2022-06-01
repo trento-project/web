@@ -6,6 +6,7 @@ defmodule Trento.ClusterTest do
   alias Trento.Support.StructHelper
 
   alias Trento.Domain.Commands.{
+    AbortClusterRollup,
     CompleteChecksExecution,
     RegisterClusterHost,
     RequestChecksExecution,
@@ -24,6 +25,7 @@ defmodule Trento.ClusterTest do
     ClusterHealthChanged,
     ClusterRegistered,
     ClusterRolledUp,
+    ClusterRollupFailed,
     HostAddedToCluster,
     HostChecksExecutionCompleted
   }
@@ -797,6 +799,25 @@ defmodule Trento.ClusterTest do
         events,
         RollupCluster.new!(%{cluster_id: cluster_id}),
         {:error, :cluster_rolling_up}
+      )
+    end
+
+    test "should abort the rollup process" do
+      cluster_id = Faker.UUID.v4()
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id),
+          %ClusterRolledUp{
+            cluster_id: cluster_id,
+            applied: false
+          }
+        ],
+        AbortClusterRollup.new!(%{cluster_id: cluster_id}),
+        %ClusterRollupFailed{cluster_id: cluster_id},
+        fn state ->
+          assert state.rolling_up == false
+        end
       )
     end
   end

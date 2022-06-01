@@ -10,6 +10,7 @@ defmodule Trento.Router do
   }
 
   alias Trento.Domain.Commands.{
+    AbortClusterRollup,
     CompleteChecksExecution,
     RegisterApplicationInstance,
     RegisterClusterHost,
@@ -32,6 +33,7 @@ defmodule Trento.Router do
   identify Cluster, by: :cluster_id
 
   dispatch [
+             AbortClusterRollup,
              RollupCluster,
              RegisterClusterHost,
              SelectChecks,
