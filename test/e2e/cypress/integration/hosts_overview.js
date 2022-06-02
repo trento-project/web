@@ -12,6 +12,11 @@ context('Hosts Overview', () => {
   });
 
   describe('Registered Hosts are shown in the list', () => {
+    it('should highlight the hosts sidebar entry', () => {
+      cy.get('.tn-menu-item[href="/hosts"]')
+        .invoke('attr', 'aria-current')
+        .should('eq', 'page');
+    });
     it('should show 10 of the 27 registered hosts', () => {
       cy.get('.tn-hostname').its('length').should('eq', 10);
     });

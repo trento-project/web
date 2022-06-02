@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 
 import {
   EOS_HOME_OUTLINED,
@@ -52,8 +52,6 @@ const navigation = [
 ];
 
 const Layout = () => {
-  const { pathname } = useLocation();
-  const isCurrentRoute = (route) => pathname === route;
   const [isCollapsed, setCollapsed] = useState(
     localStorage.getItem('sidebar-collapsed')
   );
@@ -89,13 +87,15 @@ const Layout = () => {
                 <div>
                   {navigation.map((item, index) => {
                     return (
-                      <Link
+                      <NavLink
                         key={index}
-                        className={`tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
-                          isCurrentRoute(item.href)
-                            ? 'border-l-4 border-jungle-green-500'
-                            : 'hover:border-l-4 hover:border-jungle-green-500'
-                        }`}
+                        className={({ isActive }) =>
+                          `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
+                            isActive
+                              ? 'border-l-4 border-jungle-green-500'
+                              : 'hover:border-l-4 hover:border-jungle-green-500'
+                          }`
+                        }
                         to={item.href}
                       >
                         <span className="text-left">
@@ -104,7 +104,7 @@ const Layout = () => {
                         <span className="mx-2 text-sm font-normal">
                           {item.name}
                         </span>
-                      </Link>
+                      </NavLink>
                     );
                   })}
                 </div>
