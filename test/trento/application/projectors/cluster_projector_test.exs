@@ -38,6 +38,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.hosts_number == cluster_projection.hosts_number
     assert StructHelper.to_map(event.details) == cluster_projection.details
     assert event.health == cluster_projection.health
+    assert event.cib_last_written == cluster_projection.cib_last_written
   end
 
   test "should update the cluster details when ClusterDetailsUpdated is received" do

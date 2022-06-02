@@ -114,7 +114,8 @@ defmodule Trento.Factory do
       details: hana_cluster_details_value_object(),
       type: :hana_scale_up,
       discovered_health: :passing,
-      designated_controller: true
+      designated_controller: true,
+      cib_last_written: Date.to_string(Faker.Date.forward(0))
     }
   end
 
@@ -128,7 +129,8 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
       health: :passing,
-      type: :hana_scale_up
+      type: :hana_scale_up,
+      cib_last_written: Date.to_string(Faker.Date.forward(0))
     }
   end
 
