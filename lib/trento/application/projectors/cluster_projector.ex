@@ -34,7 +34,8 @@ defmodule Trento.ClusterProjector do
       resources_number: resources_number,
       hosts_number: hosts_number,
       details: details,
-      health: health
+      health: health,
+      cib_last_written: cib_last_written
     },
     fn multi ->
       changeset =
@@ -49,7 +50,8 @@ defmodule Trento.ClusterProjector do
           hosts_number: hosts_number,
           details: details,
           health: health,
-          checks_execution: :not_running
+          checks_execution: :not_running,
+          cib_last_written: cib_last_written
         })
 
       Ecto.Multi.insert(multi, :cluster, changeset)

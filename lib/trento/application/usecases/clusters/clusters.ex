@@ -91,4 +91,17 @@ defmodule Trento.Clusters do
     results ->
       {:ok, results}
   end
+
+  @spec update_cib_last_written(String.t(), String.t()) :: {:ok, Ecto.Schema.t()} | {:error, any}
+  def update_cib_last_written(cluster_id, cib_last_written) do
+    case Repo.get(ClusterReadModel, cluster_id) do
+      nil ->
+        {:error, :cluster_not_found}
+
+      cluster ->
+        cluster
+        |> ClusterReadModel.changeset(%{cib_last_written: cib_last_written})
+        |> Repo.update()
+    end
+  end
 end

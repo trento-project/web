@@ -26,6 +26,7 @@ defmodule Trento.ClusterReadModel do
     field :resources_number, :integer
     field :hosts_number, :integer
     field :details, :map
+    field :cib_last_written, :string
     field :checks_execution, Ecto.Enum, values: [:not_running, :requested, :running]
 
     has_many :hosts_executions, HostChecksExecutionsReadModel, foreign_key: :cluster_id
