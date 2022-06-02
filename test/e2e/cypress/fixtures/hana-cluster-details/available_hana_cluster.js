@@ -7,7 +7,7 @@ export const availableHanaCluster = {
   fencingType: 'external/sbd',
   hanaSecondarySyncState: 'SOK',
   sapHanaSRHealthState: 4,
-  cibLastWritten: 'Jan 25, 2022 15:36:59 UTC',
+  cibLastWritten: 'Tue Jan 25 15:36:59 2022',
   hanaSystemReplicationOperationMode: 'logreplay',
   sites: [
     {
