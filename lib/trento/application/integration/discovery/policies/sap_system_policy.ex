@@ -29,7 +29,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         "agent_id" => agent_id,
         "payload" => payload
       }) do
-    case SapSystemDiscoveryPayload.from_list(payload) do
+    case SapSystemDiscoveryPayload.new(payload) do
       {:ok, sap_systems} ->
         sap_systems
         |> Enum.flat_map(fn sap_system -> build_commands(sap_system, agent_id) end)

@@ -26,9 +26,20 @@ defmodule Trento.Type do
       @derive Jason.Encoder
 
       @doc """
-      Returns `{:ok, t()}` if the params are valid, otherwise returns `{:error, errors}`.
+      Returns an ok tuple if the params are valid, otherwise returns `{:error, errors}`.
+      Accepts a map or a list of maps.
       """
-      @spec new(map) :: {:ok, t()} | {:error, any}
+      @spec new(map | [map]) :: {:ok, t() | [t()]} | {:error, any}
+      def new(structs) when is_list(structs) do
+        structs
+        |> Enum.map(fn item -> __MODULE__.new(item) end)
+        |> Enum.group_by(
+          fn {is_valid, _} -> is_valid end,
+          fn {_, decoding_value} -> decoding_value end
+        )
+        |> decoding_results()
+      end
+
       def new(params) do
         case changeset(struct(__MODULE__), params) do
           %{valid?: true} = changes ->
@@ -44,12 +55,12 @@ defmodule Trento.Type do
       end
 
       @doc """
-      Returns `t()` if the params are valid, otherwise raises a `RuntimeError`.
+      Returns new struct(s) if the params are valid, otherwise raises a `RuntimeError`.
       """
-      @spec new!(map) :: t()
+      @spec new!(map | [map]) :: t() | [t()]
       def new!(params) do
         case new(params) do
-          {:ok, struct} -> struct
+          {:ok, value} -> value
           {:error, reason} -> raise RuntimeError, message: inspect(reason)
         end
       end
@@ -99,16 +110,6 @@ defmodule Trento.Type do
 
       def cast_and_validate_required_embed(changeset, field, required_fields),
         do: cast_embed(changeset, field, required: field in required_fields)
-
-      def from_list(list_of_structs) do
-        list_of_structs
-        |> Enum.map(fn item -> __MODULE__.new(item) end)
-        |> Enum.group_by(
-          fn {is_valid, _} -> is_valid end,
-          fn {_, decoding_value} -> decoding_value end
-        )
-        |> decoding_results()
-      end
 
       defp decoding_results(%{error: decoding_errors}), do: {:error, decoding_errors}
       defp decoding_results(%{ok: decoding_results}), do: {:ok, decoding_results}
