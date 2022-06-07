@@ -14,6 +14,12 @@ context('Host Details', () => {
   });
 
   describe('Detailed view for a specific host should be available', () => {
+    it('should highlight the hosts sidebar entry', () => {
+      cy.get('.tn-menu-item[href="/hosts"]')
+        .invoke('attr', 'aria-current')
+        .should('eq', 'page');
+    });
+
     it('should show the host I clicked on in the overview', () => {
       cy.get('.grid-flow-col > :nth-child(1) > :nth-child(2) > span').should(
         'contain',
