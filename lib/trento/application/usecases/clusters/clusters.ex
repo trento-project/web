@@ -56,10 +56,22 @@ defmodule Trento.Clusters do
     |> Repo.all()
   end
 
+  @spec enrich_cluster_model_query(Ecto.Query.t()) :: Ecto.Query.t()
   def enrich_cluster_model_query(query) do
     query
     |> join(:left, [c], e in EnrichedCluster, on: c.id == e.cluster_id)
-    |> select_merge([_c, e], %{cib_last_written: e.cib_last_written})
+    |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
+  end
+
+  @spec enrich_cluster_model(ClusterReadModel.t()) :: ClusterReadModel.t()
+  def enrich_cluster_model(%ClusterReadModel{id: id} = cluster) do
+    case Repo.get(EnrichedCluster, id) do
+      nil ->
+        cluster
+
+      enriched_data ->
+        %ClusterReadModel{cluster | cib_last_written: enriched_data.cib_last_written}
+    end
   end
 
   @spec request_clusters_checks_execution :: :ok | {:error, any}

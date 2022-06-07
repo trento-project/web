@@ -24,7 +24,7 @@ defmodule Trento.ClusterProjector do
 
   alias Trento.Repo
 
-  import Trento.Clusters, only: [enrich_cluster_model_query: 1]
+  import Trento.Clusters, only: [enrich_cluster_model: 1]
 
   project(
     %ClusterRegistered{
@@ -168,10 +168,9 @@ defmodule Trento.ClusterProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
       "cluster_registered",
-      ClusterReadModel
-      |> enrich_cluster_model_query
-      |> Repo.get(cluster.id)
+      cluster
       |> Repo.preload(:checks_results)
+      |> enrich_cluster_model
       |> to_map()
     )
   end
