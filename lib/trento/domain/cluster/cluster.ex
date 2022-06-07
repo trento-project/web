@@ -99,8 +99,7 @@ defmodule Trento.Domain.Cluster do
           hosts_number: hosts_number,
           details: details,
           discovered_health: health,
-          designated_controller: true,
-          cib_last_written: cib_last_written
+          designated_controller: true
         }
       ) do
     [
@@ -113,8 +112,7 @@ defmodule Trento.Domain.Cluster do
         resources_number: resources_number,
         hosts_number: hosts_number,
         details: details,
-        health: health,
-        cib_last_written: cib_last_written
+        health: health
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,

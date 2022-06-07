@@ -43,7 +43,6 @@ defmodule Trento.ClusterTest do
       name = Faker.StarWars.character()
       type = :hana_scale_up
       sid = Faker.StarWars.planet()
-      cib_last_written = Date.to_string(Faker.Date.forward(0))
 
       assert_events_and_state(
         [],
@@ -56,8 +55,7 @@ defmodule Trento.ClusterTest do
           type: type,
           details: nil,
           discovered_health: :passing,
-          designated_controller: true,
-          cib_last_written: cib_last_written
+          designated_controller: true
         }),
         [
           %ClusterRegistered{
@@ -67,8 +65,7 @@ defmodule Trento.ClusterTest do
             provider: :azure,
             type: type,
             health: :passing,
-            details: nil,
-            cib_last_written: cib_last_written
+            details: nil
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,

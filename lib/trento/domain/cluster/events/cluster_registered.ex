@@ -16,7 +16,6 @@ defmodule Trento.Domain.Events.ClusterRegistered do
     field :resources_number, :integer
     field :hosts_number, :integer
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
-    field :cib_last_written, :string
 
     embeds_one :details, HanaClusterDetails
   end

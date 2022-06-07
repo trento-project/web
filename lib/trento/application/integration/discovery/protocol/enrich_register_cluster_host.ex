@@ -11,14 +11,12 @@ defimpl Trento.Support.Middleware.Enrichable,
         _
       ) do
     case Clusters.update_cib_last_written(cluster_id, cib_last_written) do
-      {:ok, _} ->
-        TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_cib_last_written_updated", %{
-          cluster_id: cluster_id,
-          cib_last_written: cib_last_written
-        })
-
-      {:error, :cluster_not_found} ->
-        nil
+      {:ok, cluster} ->
+        TrentoWeb.Endpoint.broadcast(
+          "monitoring:clusters",
+          "cluster_cib_last_written_updated",
+          cluster
+        )
 
       error ->
         error

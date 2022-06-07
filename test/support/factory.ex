@@ -36,6 +36,7 @@ defmodule Trento.Factory do
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
+    EnrichedCluster,
     HostChecksExecutionsReadModel,
     HostConnectionSettings,
     HostReadModel,
@@ -114,8 +115,7 @@ defmodule Trento.Factory do
       details: hana_cluster_details_value_object(),
       type: :hana_scale_up,
       discovered_health: :passing,
-      designated_controller: true,
-      cib_last_written: Date.to_string(Faker.Date.forward(0))
+      designated_controller: true
     }
   end
 
@@ -129,8 +129,7 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
       health: :passing,
-      type: :hana_scale_up,
-      cib_last_written: Date.to_string(Faker.Date.forward(0))
+      type: :hana_scale_up
     }
   end
 
@@ -170,6 +169,13 @@ defmodule Trento.Factory do
       provider: :azure,
       type: :hana_scale_up,
       health: :passing
+    }
+  end
+
+  def enriched_cluster_factory do
+    %EnrichedCluster{
+      cluster_id: Faker.UUID.v4(),
+      cib_last_written: Date.to_string(Faker.Date.forward(0))
     }
   end
 

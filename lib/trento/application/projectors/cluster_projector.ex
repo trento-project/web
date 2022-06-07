@@ -24,6 +24,8 @@ defmodule Trento.ClusterProjector do
 
   alias Trento.Repo
 
+  import Trento.Clusters, only: [enrich_cluster_model_query: 1]
+
   project(
     %ClusterRegistered{
       cluster_id: id,
@@ -34,8 +36,7 @@ defmodule Trento.ClusterProjector do
       resources_number: resources_number,
       hosts_number: hosts_number,
       details: details,
-      health: health,
-      cib_last_written: cib_last_written
+      health: health
     },
     fn multi ->
       changeset =
@@ -50,8 +51,7 @@ defmodule Trento.ClusterProjector do
           hosts_number: hosts_number,
           details: details,
           health: health,
-          checks_execution: :not_running,
-          cib_last_written: cib_last_written
+          checks_execution: :not_running
         })
 
       Ecto.Multi.insert(multi, :cluster, changeset)
@@ -168,7 +168,11 @@ defmodule Trento.ClusterProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
       "cluster_registered",
-      cluster |> Repo.preload(:checks_results) |> to_map()
+      ClusterReadModel
+      |> enrich_cluster_model_query
+      |> Repo.get(cluster.id)
+      |> Repo.preload(:checks_results)
+      |> to_map()
     )
   end
 

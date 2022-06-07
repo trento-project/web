@@ -9,6 +9,7 @@ defmodule Trento.ClustersTest do
   alias Trento.Clusters
 
   alias Trento.ClusterReadModel
+  alias Trento.EnrichedCluster
 
   alias Trento.Domain.Commands.RequestChecksExecution
 
@@ -29,19 +30,33 @@ defmodule Trento.ClustersTest do
     end
   end
 
-  describe "update cib_last_written" do
-    test "should return cluster_not_found" do
+  describe "get clusters" do
+    test "should return enriched clusters" do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
+      cluster_id = Faker.UUID.v4()
 
-      {:error, :cluster_not_found} =
-        Clusters.update_cib_last_written(Faker.UUID.v4(), cib_last_written)
+      insert(:cluster, id: cluster_id)
+      insert(:enriched_cluster, cluster_id: cluster_id)
+
+      [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
+        Clusters.get_all_clusters()
+    end
+  end
+
+  describe "update cib_last_written" do
+    test "should create a new enriched cluster entry" do
+      cib_last_written = Date.to_string(Faker.Date.forward(0))
+      cluster_id = Faker.UUID.v4()
+
+      {:ok, %EnrichedCluster{cluster_id: ^cluster_id, cib_last_written: ^cib_last_written}} =
+        Clusters.update_cib_last_written(cluster_id, cib_last_written)
     end
 
     test "should update cib_last_written field properly" do
       cluster = insert(:cluster)
       cib_last_written = Date.to_string(Faker.Date.forward(0))
 
-      {:ok, %ClusterReadModel{cib_last_written: ^cib_last_written}} =
+      {:ok, %EnrichedCluster{cib_last_written: ^cib_last_written}} =
         Clusters.update_cib_last_written(cluster.id, cib_last_written)
     end
   end
