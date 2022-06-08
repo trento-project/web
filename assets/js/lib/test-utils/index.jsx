@@ -15,5 +15,10 @@ export const withState = (component) => {
   store.dispatch(setClusters(clusters));
   store.dispatch(setSapSystems(sapSystems));
 
-  return [<Provider store={store}>{component}</Provider>, store];
+  return [
+    <Provider key="root" store={store}>
+      {component}
+    </Provider>,
+    store,
+  ];
 };
