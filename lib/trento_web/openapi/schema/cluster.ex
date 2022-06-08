@@ -138,6 +138,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
         health: ResourceHealth,
         resources_number: %Schema{type: :integer, description: "Resource number"},
         hosts_number: %Schema{type: :integer, description: "Hosts number"},
+        cib_last_written: %Schema{type: :string, description: "CIB last written date"},
         details: Details,
         checks_execution: %Schema{
           type: :string,

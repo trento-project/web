@@ -62,6 +62,13 @@ context('HANA database details', () => {
         .next()
         .contains(availableHanaCluster.hanaSystemReplicationOperationMode);
     });
+
+    it(`should have cib last written ${availableHanaCluster.cibLastWritten}`, () => {
+      cy.get('.tn-cluster-details')
+        .contains('CIB last written')
+        .next()
+        .contains(availableHanaCluster.cibLastWritten);
+    });
   });
 
   describe('Cluster sites should have the expected hosts', () => {

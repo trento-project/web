@@ -31,6 +31,9 @@ defmodule Trento.ClusterReadModel do
     has_many :hosts_executions, HostChecksExecutionsReadModel, foreign_key: :cluster_id
     has_many :checks_results, CheckResultReadModel, foreign_key: :cluster_id
     has_many :tags, Trento.Tag, foreign_key: :resource_id
+
+    # Virtually enriched fields
+    field :cib_last_written, :string, virtual: true
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

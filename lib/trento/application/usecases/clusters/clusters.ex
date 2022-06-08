@@ -5,6 +5,7 @@ defmodule Trento.Clusters do
 
   import Ecto.Query
 
+  alias Trento.ClusterEnrichmentData
   alias Trento.ClusterReadModel
 
   alias Trento.Domain.CheckResult
@@ -47,10 +48,30 @@ defmodule Trento.Clusters do
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
   def get_all_clusters do
-    ClusterReadModel
-    |> order_by(asc: :name)
+    from(c in ClusterReadModel,
+      order_by: [asc: c.name],
+      preload: [:tags, :hosts_executions, :checks_results]
+    )
+    |> enrich_cluster_model_query()
     |> Repo.all()
-    |> Repo.preload([:tags, :hosts_executions, :checks_results])
+  end
+
+  @spec enrich_cluster_model_query(Ecto.Query.t()) :: Ecto.Query.t()
+  defp enrich_cluster_model_query(query) do
+    query
+    |> join(:left, [c], e in ClusterEnrichmentData, on: c.id == e.cluster_id)
+    |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
+  end
+
+  @spec enrich_cluster_model(ClusterReadModel.t()) :: ClusterReadModel.t()
+  def enrich_cluster_model(%ClusterReadModel{id: id} = cluster) do
+    case Repo.get(ClusterEnrichmentData, id) do
+      nil ->
+        cluster
+
+      enriched_data ->
+        %ClusterReadModel{cluster | cib_last_written: enriched_data.cib_last_written}
+    end
   end
 
   @spec request_clusters_checks_execution :: :ok | {:error, any}
@@ -90,5 +111,15 @@ defmodule Trento.Clusters do
   else
     results ->
       {:ok, results}
+  end
+
+  @spec update_cib_last_written(String.t(), String.t()) :: {:ok, Ecto.Schema.t()} | {:error, any}
+  def update_cib_last_written(cluster_id, cib_last_written) do
+    case Repo.get(ClusterEnrichmentData, cluster_id) do
+      nil -> %ClusterEnrichmentData{cluster_id: cluster_id}
+      enriched_cluster -> enriched_cluster
+    end
+    |> ClusterEnrichmentData.changeset(%{cib_last_written: cib_last_written})
+    |> Repo.insert_or_update()
   end
 end

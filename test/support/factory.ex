@@ -33,6 +33,7 @@ defmodule Trento.Factory do
   alias Trento.{
     ApplicationInstanceReadModel,
     CheckResultReadModel,
+    ClusterEnrichmentData,
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
@@ -168,6 +169,13 @@ defmodule Trento.Factory do
       provider: :azure,
       type: :hana_scale_up,
       health: :passing
+    }
+  end
+
+  def cluster_enrichment_data_factory do
+    %ClusterEnrichmentData{
+      cluster_id: Faker.UUID.v4(),
+      cib_last_written: Date.to_string(Faker.Date.forward(0))
     }
   end
 
