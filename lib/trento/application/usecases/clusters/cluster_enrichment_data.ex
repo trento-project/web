@@ -1,4 +1,4 @@
-defmodule Trento.EnrichedCluster do
+defmodule Trento.ClusterEnrichmentData do
   @moduledoc """
   Enriched cluster data
   """
@@ -11,7 +11,7 @@ defmodule Trento.EnrichedCluster do
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:cluster_id, :binary_id, autogenerate: false}
-  schema "enriched_clusters" do
+  schema "clusters_enrichment_data" do
     field :cib_last_written, :string
   end
 

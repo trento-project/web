@@ -6,7 +6,7 @@ defmodule Trento.EnrichRegisterClusterHostTest do
 
   alias Trento.Support.Middleware.Enrichable
 
-  alias Trento.EnrichedCluster
+  alias Trento.ClusterEnrichmentData
   alias Trento.Repo
 
   test "should create a new enriched cluster entry on register_cluster_host command" do
@@ -22,6 +22,7 @@ defmodule Trento.EnrichRegisterClusterHostTest do
 
     Enrichable.enrich(command, %{})
 
-    %EnrichedCluster{cib_last_written: ^cib_last_written} = Repo.get(EnrichedCluster, cluster_id)
+    %ClusterEnrichmentData{cib_last_written: ^cib_last_written} =
+      Repo.get(ClusterEnrichmentData, cluster_id)
   end
 end

@@ -8,8 +8,8 @@ defmodule Trento.ClustersTest do
 
   alias Trento.Clusters
 
+  alias Trento.ClusterEnrichmentData
   alias Trento.ClusterReadModel
-  alias Trento.EnrichedCluster
 
   alias Trento.Domain.Commands.RequestChecksExecution
 
@@ -36,7 +36,7 @@ defmodule Trento.ClustersTest do
       cluster_id = Faker.UUID.v4()
 
       insert(:cluster, id: cluster_id)
-      insert(:enriched_cluster, cluster_id: cluster_id)
+      insert(:cluster_enrichment_data, cluster_id: cluster_id)
 
       [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
         Clusters.get_all_clusters()
@@ -48,7 +48,7 @@ defmodule Trento.ClustersTest do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
       cluster_id = Faker.UUID.v4()
 
-      {:ok, %EnrichedCluster{cluster_id: ^cluster_id, cib_last_written: ^cib_last_written}} =
+      {:ok, %ClusterEnrichmentData{cluster_id: ^cluster_id, cib_last_written: ^cib_last_written}} =
         Clusters.update_cib_last_written(cluster_id, cib_last_written)
     end
 
@@ -56,7 +56,7 @@ defmodule Trento.ClustersTest do
       cluster = insert(:cluster)
       cib_last_written = Date.to_string(Faker.Date.forward(0))
 
-      {:ok, %EnrichedCluster{cib_last_written: ^cib_last_written}} =
+      {:ok, %ClusterEnrichmentData{cib_last_written: ^cib_last_written}} =
         Clusters.update_cib_last_written(cluster.id, cib_last_written)
     end
   end

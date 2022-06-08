@@ -33,10 +33,10 @@ defmodule Trento.Factory do
   alias Trento.{
     ApplicationInstanceReadModel,
     CheckResultReadModel,
+    ClusterEnrichmentData,
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
-    EnrichedCluster,
     HostChecksExecutionsReadModel,
     HostConnectionSettings,
     HostReadModel,
@@ -172,8 +172,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def enriched_cluster_factory do
-    %EnrichedCluster{
+  def cluster_enrichment_data_factory do
+    %ClusterEnrichmentData{
       cluster_id: Faker.UUID.v4(),
       cib_last_written: Date.to_string(Faker.Date.forward(0))
     }
