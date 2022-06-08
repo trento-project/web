@@ -83,7 +83,12 @@ module.exports = {
   // ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  moduleNameMapper: {
+    '^@lib(.*)$': '<rootDir>/js/lib$1',
+    '^@components(.*)$': '<rootDir>/js/components$1',
+    '^@state(.*)$': '<rootDir>/js/state$1',
+    phoenix: '<rootDir>/../deps/phoenix/priv/static/phoenix.cjs.js',
+  },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
