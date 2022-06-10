@@ -41,11 +41,13 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib do
       |> Map.put("instance_attributes", ListHelper.to_list(instance_attributes))
     end
 
+    defp transform_nil_lists(attrs), do: attrs
+
     def changeset(primitive, attrs) do
-      filtered_attrs = transform_nil_lists(attrs)
+      transformed_attrs = transform_nil_lists(attrs)
 
       primitive
-      |> cast(filtered_attrs, [:id, :type, :class, :provider])
+      |> cast(transformed_attrs, fields())
       |> cast_embed(:operations, with: &operations_changeset/2)
       |> cast_embed(:instance_attributes, with: &instance_attributes_changeset/2)
       |> validate_required_fields(@required_fields)
@@ -89,10 +91,10 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib do
     end
 
     def changeset(cib_resources, attrs) do
-      filtered_attrs = transform_nil_lists(attrs)
+      transformed_attrs = transform_nil_lists(attrs)
 
       cib_resources
-      |> cast(filtered_attrs, [])
+      |> cast(transformed_attrs, [])
       |> cast_embed(:primitives)
       |> cast_embed(:clones, with: &clones_changeset/2)
       |> cast_embed(:groups, with: &groups_changeset/2)
@@ -113,10 +115,16 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib do
       |> validate_required_fields([:id])
     end
 
-    defp transform_nil_lists(%{"groups" => groups} = attrs) do
+    defp transform_nil_lists(
+           %{"groups" => groups, "primitives" => primitives, "clones" => clones} = attrs
+         ) do
       attrs
       |> Map.put("groups", ListHelper.to_list(groups))
+      |> Map.put("primitives", ListHelper.to_list(primitives))
+      |> Map.put("clones", ListHelper.to_list(clones))
     end
+
+    defp transform_nil_lists(attrs), do: attrs
   end
 
   @required_fields [:configuration]
@@ -126,6 +134,14 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib do
   deftype do
     embeds_one :configuration, Configuration do
       embeds_one :resources, CibResources
+
+      embeds_one :crm_config, CrmConfig do
+        embeds_many :cluster_properties, ClusterProperties, primary_key: false do
+          field :id, :string
+          field :name, :string
+          field :value, :string
+        end
+      end
     end
   end
 
@@ -140,6 +156,20 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib do
     configuration
     |> cast(attrs, [])
     |> cast_embed(:resources)
+    |> cast_embed(:crm_config, with: &crm_config_changeset/2)
     |> validate_required_fields([:resources])
+  end
+
+  def crm_config_changeset(crm_config, attrs) do
+    crm_config
+    |> cast(attrs, [])
+    |> cast_embed(:cluster_properties, with: &cluster_properties_changeset/2)
+    |> validate_required_fields([:cluster_properties])
+  end
+
+  def cluster_properties_changeset(cluster_properties, attrs) do
+    cluster_properties
+    |> cast(attrs, [:id, :name, :value])
+    |> validate_required_fields([:id, :name, :value])
   end
 end

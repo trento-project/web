@@ -7,8 +7,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   alias Trento.Integration.Discovery.ClusterDiscoveryPayload
 
-  alias Trento.Support.ListHelper
-
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
   def handle(%{
@@ -82,6 +80,10 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     }
   end
 
+  defp parse_cluster_details(_) do
+    nil
+  end
+
   defp parse_cluster_nodes(
          %{
            provider: provider,
@@ -100,7 +102,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          sid
        ) do
     nodes
-    |> ListHelper.to_list()
     |> Enum.map(fn %{name: name, attributes: attributes} ->
       attributes =
         Enum.reduce(attributes, %{}, fn %{name: name, value: value}, acc ->
@@ -141,7 +142,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_secondary_sync_state returns the secondary sync state of the HANA cluster
   defp parse_secondary_sync_state(nodes, sid) do
     nodes
-    |> ListHelper.to_list()
     |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
@@ -160,7 +160,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_hana_sr_health_state returns the secondary sync state of the HANA cluster
   defp parse_hana_sr_health_state(nodes, sid) do
     nodes
-    |> ListHelper.to_list()
     |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
@@ -181,7 +180,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   defp parse_cluster_fencing_type(%{resources: resources}) do
     resources
-    |> ListHelper.to_list()
     |> Enum.find_value("", fn
       %{agent: "stonith:" <> fencing_type} ->
         fencing_type
@@ -208,7 +206,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   defp parse_sbd_devices(%{devices: devices}) do
     devices
-    |> ListHelper.to_list()
     |> Enum.map(fn %{device: device, status: status} ->
       %{
         device: device,
@@ -244,10 +241,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          clones: clones
        }) do
     primitives
-    |> ListHelper.to_list()
     |> Enum.concat(
-      Enum.flat_map(clones |> ListHelper.to_list(), &Map.get(&1, :primitives, [])) ++
-        Enum.flat_map(groups |> ListHelper.to_list(), &Map.get(&1, :primitives, []))
+      Enum.flat_map(clones, &Map.get(&1, :primitives, [])) ++
+        Enum.flat_map(groups, &Map.get(&1, :primitives, []))
     )
   end
 
@@ -305,10 +301,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          clones: clones
        }) do
     resources
-    |> ListHelper.to_list()
     |> Enum.concat(
-      Enum.flat_map(clones |> ListHelper.to_list(), &Map.get(&1, :resources, [])) ++
-        Enum.flat_map(groups |> ListHelper.to_list(), &Map.get(&1, :resources, []))
+      Enum.flat_map(clones, &Map.get(&1, :resources, [])) ++
+        Enum.flat_map(groups, &Map.get(&1, :resources, []))
     )
   end
 
@@ -325,7 +320,6 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          }
        }) do
     nodes
-    |> ListHelper.to_list()
     |> Enum.find_value([], fn
       %{name: ^node_name, resource_history: resource_history} ->
         resource_history

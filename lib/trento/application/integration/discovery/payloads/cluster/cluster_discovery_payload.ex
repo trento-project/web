@@ -9,7 +9,7 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
     Sbd
   }
 
-  @required_fields [:dc, :provider, :id, :cluster_type, :sid, :cib, :sbd, :crmmon]
+  @required_fields [:dc, :provider, :id, :cluster_type, :cib, :sbd, :crmmon]
 
   @required_fields_hana [:sid]
   use Trento.Type
@@ -29,7 +29,8 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
 
   def changeset(cluster, attrs) do
     enriched_attributes =
-      enrich_cluster_type(attrs)
+      attrs
+      |> enrich_cluster_type
       |> enrich_cluster_sid
 
     cluster
