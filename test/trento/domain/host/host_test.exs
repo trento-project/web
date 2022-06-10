@@ -19,6 +19,11 @@ defmodule Trento.HostTest do
     SlesSubscriptionsUpdated
   }
 
+  alias Trento.Domain.{
+    AwsProvider,
+    AzureProvider
+  }
+
   alias Trento.Domain.Host
   alias Trento.Domain.SlesSubscription
 
@@ -296,23 +301,111 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should update provider" do
+    test "should update azure provider" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
         build(:host_registered_event, host_id: host_id)
       ]
 
-      assert_events(
+      assert_events_and_state(
         initial_events,
         UpdateProvider.new!(%{
           host_id: host_id,
-          provider: :azure
+          provider: :azure,
+          provider_data: %{
+            vm_name: "vmhdbdev01",
+            data_disk_number: 7,
+            location: "westeurope",
+            offer: "sles-sap-15-sp3-byos",
+            resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
+            sku: "gen2",
+            vm_size: "Standard_E4s_v3",
+            admin_username: "cloudadmin"
+          }
         }),
         %ProviderUpdated{
           host_id: host_id,
-          provider: :azure
-        }
+          provider: :azure,
+          provider_data: %AzureProvider{
+            vm_name: "vmhdbdev01",
+            data_disk_number: 7,
+            location: "westeurope",
+            offer: "sles-sap-15-sp3-byos",
+            resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
+            sku: "gen2",
+            vm_size: "Standard_E4s_v3",
+            admin_username: "cloudadmin"
+          }
+        },
+        fn state ->
+          assert %Host{
+                   provider_data: %AzureProvider{
+                     vm_name: "vmhdbdev01",
+                     data_disk_number: 7,
+                     location: "westeurope",
+                     offer: "sles-sap-15-sp3-byos",
+                     resource_group: "/subscriptions/00000000-0000-0000-0000-000000000000",
+                     sku: "gen2",
+                     vm_size: "Standard_E4s_v3",
+                     admin_username: "cloudadmin"
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should update aws provider" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateProvider.new!(%{
+          host_id: host_id,
+          provider: :azure,
+          provider_data: %{
+            account_id: "12345",
+            ami_id: "ami-12345",
+            availability_zone: "eu-west-1a",
+            data_disk_number: 1,
+            instance_id: "i-12345",
+            instance_type: "t3.micro",
+            region: "eu-west-1",
+            vpc_id: "vpc-12345"
+          }
+        }),
+        %ProviderUpdated{
+          host_id: host_id,
+          provider: :azure,
+          provider_data: %AwsProvider{
+            account_id: "12345",
+            ami_id: "ami-12345",
+            availability_zone: "eu-west-1a",
+            data_disk_number: 1,
+            instance_id: "i-12345",
+            instance_type: "t3.micro",
+            region: "eu-west-1",
+            vpc_id: "vpc-12345"
+          }
+        },
+        fn state ->
+          assert %Host{
+                   provider_data: %AwsProvider{
+                     account_id: "12345",
+                     ami_id: "ami-12345",
+                     availability_zone: "eu-west-1a",
+                     data_disk_number: 1,
+                     instance_id: "i-12345",
+                     instance_type: "t3.micro",
+                     region: "eu-west-1",
+                     vpc_id: "vpc-12345"
+                   }
+                 } = state
+        end
       )
     end
 

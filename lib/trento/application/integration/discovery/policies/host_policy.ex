@@ -11,6 +11,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
 
   alias Trento.Integration.Discovery.{
     CloudDiscoveryPayload,
+    CloudDiscoveryPayload.AwsMetadata,
+    CloudDiscoveryPayload.AzureMetadata,
     HostDiscoveryPayload,
     SlesSubscriptionDiscoveryPayload
   }
@@ -127,7 +129,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   @spec parse_cloud_provider_metadata(:azure | :aws | :gcp | :unknown, map) :: map
   defp parse_cloud_provider_metadata(
          :azure,
-         %{
+         %AzureMetadata{
            compute: %{
              name: name,
              resource_group_name: resource_group,
@@ -149,6 +151,30 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          offer: offer,
          sku: sku,
          admin_username: admin_username
+       }
+
+  defp parse_cloud_provider_metadata(
+         :aws,
+         %AwsMetadata{
+           account_id: account_id,
+           ami_id: ami_id,
+           availability_zone: availability_zone,
+           data_disk_number: data_disk_number,
+           instance_id: instance_id,
+           instance_type: instance_type,
+           region: region,
+           vpc_id: vpc_id
+         }
+       ),
+       do: %{
+         account_id: account_id,
+         ami_id: ami_id,
+         availability_zone: availability_zone,
+         data_disk_number: data_disk_number,
+         instance_id: instance_id,
+         instance_type: instance_type,
+         region: region,
+         vpc_id: vpc_id
        }
 
   defp parse_cloud_provider_metadata(_, generic_metadata), do: generic_metadata

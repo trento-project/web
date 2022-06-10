@@ -13,6 +13,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
   }
 
   alias Trento.Domain.{
+    AwsProvider,
     AzureProvider,
     SlesSubscription
   }
@@ -61,7 +62,16 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              %UpdateProvider{
                host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
                provider: :aws,
-               provider_data: nil
+               provider_data: %AwsProvider{
+                 account_id: "12345",
+                 ami_id: "ami-12345",
+                 availability_zone: "eu-west-1a",
+                 data_disk_number: 1,
+                 instance_id: "i-12345",
+                 instance_type: "t3.micro",
+                 region: "eu-west-1",
+                 vpc_id: "vpc-12345"
+               }
              }
            } ==
              "cloud_discovery_aws"
