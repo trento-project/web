@@ -1,140 +1,109 @@
 defmodule Trento.Integration.Discovery.ClusterPolicy do
   @moduledoc """
-  This module contains functions to trasnform cluster related integration events into commands.
+  This module contains functions to transform cluster related integration events into commands.
   """
 
   alias Trento.Domain.Commands.RegisterClusterHost
+
+  alias Trento.Integration.Discovery.ClusterDiscoveryPayload
+
+  alias Trento.Support.ListHelper
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
   def handle(%{
         "discovery_type" => "ha_cluster_discovery",
         "agent_id" => agent_id,
-        "payload" =>
-          %{
-            "Id" => id,
-            "Name" => name,
-            "DC" => designated_controller,
-            "Provider" => provider,
-            "Crmmon" => %{
-              "Summary" => %{
-                "LastChange" => %{"Time" => cib_last_written},
-                "Resources" => %{"Number" => resources_number},
-                "Nodes" => %{"Number" => hosts_number}
-              }
-            }
-          } = payload
+        "payload" => payload
       }) do
-    cluster_type = detect_cluster_type(payload)
-    sid = parse_cluster_sid(payload)
-    details = parse_cluster_details(payload, cluster_type, sid)
+    payload
+    |> ProperCase.to_snake_case()
+    |> ClusterDiscoveryPayload.new()
+    |> case do
+      {:ok, decoded_payload} -> build_register_cluster_host_command(agent_id, decoded_payload)
+      error -> error
+    end
+  end
+
+  defp build_register_cluster_host_command(
+         agent_id,
+         %ClusterDiscoveryPayload{
+           id: id,
+           name: name,
+           dc: designated_controller,
+           provider: provider,
+           cluster_type: cluster_type,
+           sid: sid
+         } = payload
+       ) do
+    cluster_details = parse_cluster_details(payload)
 
     RegisterClusterHost.new(%{
-      cluster_id: UUID.uuid5(@uuid_namespace, id),
+      cluster_id: generate_cluster_id(id),
       host_id: agent_id,
       name: name,
       sid: sid,
       type: cluster_type,
       designated_controller: designated_controller,
-      resources_number: resources_number,
-      hosts_number: hosts_number,
-      details: details,
-      discovered_health: parse_cluster_health(details, cluster_type),
-      cib_last_written: cib_last_written,
-      provider: parse_provider(provider)
+      resources_number: parse_resources_number(payload),
+      hosts_number: parse_hosts_number(payload),
+      details: cluster_details,
+      discovered_health: parse_cluster_health(cluster_details, cluster_type),
+      cib_last_written: parse_cib_last_written(payload),
+      provider: provider
     })
   end
 
-  defp detect_cluster_type(%{"Crmmon" => %{"Clones" => nil}}), do: :unknown
+  defp parse_resources_number(%{
+         crmmon: %{summary: %{resources: %{number: resources_number}}}
+       }),
+       do: resources_number
 
-  defp detect_cluster_type(%{"Crmmon" => %{"Clones" => clones}}) do
-    has_sap_hana_topology =
-      Enum.any?(clones, fn %{"Resources" => resources} ->
-        Enum.any?(resources, fn %{"Agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
-      end)
-
-    has_sap_hana =
-      Enum.any?(clones, fn %{"Resources" => resources} ->
-        Enum.any?(resources, fn %{"Agent" => agent} -> agent == "ocf::suse:SAPHana" end)
-      end)
-
-    has_sap_hana_controller =
-      Enum.any?(clones, fn %{"Resources" => resources} ->
-        Enum.any?(resources, fn %{"Agent" => agent} -> agent == "ocf::suse:SAPHanaController" end)
-      end)
-
-    do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
-  end
-
-  defp do_detect_cluster_type(true, true, _), do: :hana_scale_up
-  defp do_detect_cluster_type(true, _, true), do: :hana_scale_out
-  defp do_detect_cluster_type(_, _, _), do: :unknown
-
-  defp parse_cluster_sid(%{"Cib" => %{"Configuration" => %{"Resources" => %{"Clones" => nil}}}}),
-    do: nil
-
-  defp parse_cluster_sid(%{"Cib" => %{"Configuration" => %{"Resources" => %{"Clones" => clones}}}}) do
-    clones
-    |> Enum.find_value([], fn
-      %{"Primitive" => %{"Type" => "SAPHanaTopology", "InstanceAttributes" => attributes}} ->
-        attributes
-
-      _ ->
-        nil
-    end)
-    |> Enum.find_value(nil, fn
-      %{"Name" => "SID", "Value" => value} when value != "" ->
-        value
-
-      _ ->
-        nil
-    end)
-  end
+  defp parse_hosts_number(%{
+         crmmon: %{summary: %{nodes: %{number: nodes_number}}}
+       }),
+       do: nodes_number
 
   defp parse_cluster_details(
-         %{"Crmmon" => crmmon, "SBD" => sbd} = payload,
-         cluster_type,
-         sid
+         %{crmmon: crmmon, sbd: sbd, cluster_type: cluster_type, sid: sid} = payload
        )
        when cluster_type in [:hana_scale_up, :hana_scale_out] do
     nodes = parse_cluster_nodes(payload, sid)
 
     %{
-      "system_replication_mode" => parse_system_replication_mode(nodes, sid),
-      "system_replication_operation_mode" => parse_system_replication_operation_mode(nodes, sid),
-      "secondary_sync_state" => parse_secondary_sync_state(nodes, sid),
-      "sr_health_state" => parse_hana_sr_health_state(nodes, sid),
-      "fencing_type" => parse_cluster_fencing_type(crmmon),
-      "stopped_resources" => parse_cluster_stopped_resources(crmmon),
-      "nodes" => nodes,
-      "sbd_devices" => parse_sbd_devices(sbd)
+      system_replication_mode: parse_system_replication_mode(nodes, sid),
+      system_replication_operation_mode: parse_system_replication_operation_mode(nodes, sid),
+      secondary_sync_state: parse_secondary_sync_state(nodes, sid),
+      sr_health_state: parse_hana_sr_health_state(nodes, sid),
+      fencing_type: parse_cluster_fencing_type(crmmon),
+      stopped_resources: parse_cluster_stopped_resources(crmmon),
+      nodes: nodes,
+      sbd_devices: parse_sbd_devices(sbd)
     }
   end
 
-  defp parse_cluster_details(_, _, _), do: nil
-
   defp parse_cluster_nodes(
          %{
-           "Provider" => provider,
-           "Cib" => %{
-             "Configuration" => %{
-               "Resources" => resources
+           provider: provider,
+           cib: %{
+             configuration: %{
+               resources: resources
              }
            },
-           "Crmmon" =>
+           crmmon:
              %{
-               "NodeAttributes" => %{
-                 "Nodes" => nodes
+               node_attributes: %{
+                 nodes: nodes
                }
              } = crmmon
          },
          sid
        ) do
     nodes
-    |> to_list
-    |> Enum.map(fn %{"Name" => name, "Attributes" => attributes} ->
+    |> ListHelper.to_list()
+    |> Enum.map(fn %{name: name, attributes: attributes} ->
       attributes =
-        Enum.reduce(attributes, %{}, fn %{"Name" => name, "Value" => value}, acc ->
+        Enum.reduce(attributes, %{}, fn %{name: name, value: value}, acc ->
           Map.put(acc, name, value)
         end)
 
@@ -158,32 +127,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     end)
   end
 
-  defp parse_node_resources(node_name, crmmon) do
-    crmmon
-    |> extract_cluster_resources()
-    |> Enum.filter(fn
-      %{"Node" => %{"Name" => ^node_name}} ->
-        true
-
-      _ ->
-        false
-    end)
-    |> Enum.map(fn %{"Id" => id, "Agent" => type, "Role" => role} = resource ->
-      %{
-        id: id,
-        type: type,
-        role: role,
-        status: parse_resource_status(resource),
-        fail_count: parse_fail_count(node_name, id, crmmon)
-      }
-    end)
-  end
-
   defp parse_system_replication_mode([%{attributes: attributes} | _], sid) do
     Map.get(attributes, "hana_#{String.downcase(sid)}_srmode", "")
   end
-
-  defp parse_system_replication_mode(_, _), do: ""
 
   defp parse_system_replication_operation_mode(
          [%{attributes: attributes} | _],
@@ -195,7 +141,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_secondary_sync_state returns the secondary sync state of the HANA cluster
   defp parse_secondary_sync_state(nodes, sid) do
     nodes
-    |> to_list
+    |> ListHelper.to_list()
     |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
@@ -214,7 +160,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   # parse_hana_sr_health_state returns the secondary sync state of the HANA cluster
   defp parse_hana_sr_health_state(nodes, sid) do
     nodes
-    |> to_list
+    |> ListHelper.to_list()
     |> Enum.find_value(fn %{attributes: attributes} = node ->
       case parse_hana_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
@@ -231,6 +177,108 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       nil -> "Unknown"
       sync_state -> sync_state
     end
+  end
+
+  defp parse_cluster_fencing_type(%{resources: resources}) do
+    resources
+    |> ListHelper.to_list()
+    |> Enum.find_value("", fn
+      %{agent: "stonith:" <> fencing_type} ->
+        fencing_type
+
+      _ ->
+        false
+    end)
+  end
+
+  defp parse_cluster_stopped_resources(crmmon) do
+    crmmon
+    |> extract_cluster_resources()
+    |> Enum.filter(fn
+      %{nodes_running_on: 0, active: false} ->
+        true
+
+      _ ->
+        false
+    end)
+    |> Enum.map(fn %{id: id, agent: type, role: role} ->
+      %{id: id, type: type, role: role}
+    end)
+  end
+
+  defp parse_sbd_devices(%{devices: devices}) do
+    devices
+    |> ListHelper.to_list()
+    |> Enum.map(fn %{device: device, status: status} ->
+      %{
+        device: device,
+        status: status
+      }
+    end)
+  end
+
+  defp parse_node_resources(node_name, crmmon) do
+    crmmon
+    |> extract_cluster_resources()
+    |> Enum.filter(fn
+      %{node: %{name: ^node_name}} ->
+        true
+
+      _ ->
+        false
+    end)
+    |> Enum.map(fn %{id: id, agent: type, role: role} = resource ->
+      %{
+        id: id,
+        type: type,
+        role: role,
+        status: parse_resource_status(resource),
+        fail_count: parse_fail_count(node_name, id, crmmon)
+      }
+    end)
+  end
+
+  defp extract_cluster_primitives_from_cib(%{
+         primitives: primitives,
+         groups: groups,
+         clones: clones
+       }) do
+    primitives
+    |> ListHelper.to_list()
+    |> Enum.concat(
+      Enum.flat_map(clones |> ListHelper.to_list(), &Map.get(&1, :primitives, [])) ++
+        Enum.flat_map(groups |> ListHelper.to_list(), &Map.get(&1, :primitives, []))
+    )
+  end
+
+  defp parse_virtual_ip(primitives, node_resources, provider) do
+    virtual_ip_type_suffix = get_virtual_ip_type_suffix_by_provider(provider)
+
+    virtual_ip_resource_id =
+      node_resources
+      |> Enum.find_value(nil, fn %{type: virtual_ip_type, id: id} ->
+        if String.ends_with?(virtual_ip_type, virtual_ip_type_suffix), do: id
+      end)
+
+    primitives
+    |> Enum.find_value([], fn
+      %{
+        type: virtual_ip_type,
+        id: ^virtual_ip_resource_id,
+        instance_attributes: attributes
+      } ->
+        if String.ends_with?(virtual_ip_type, virtual_ip_type_suffix), do: attributes
+
+      _ ->
+        nil
+    end)
+    |> Enum.find_value(nil, fn
+      %{name: "ip", value: value} when value != "" ->
+        value
+
+      _ ->
+        nil
+    end)
   end
 
   # parses the hana_<SID>_roles and hana_<SID>_sync_state strings and returns the SAPHanaSR Health state
@@ -251,6 +299,54 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     do_parse_hana_status(status, sync_state)
   end
 
+  defp extract_cluster_resources(%{
+         resources: resources,
+         groups: groups,
+         clones: clones
+       }) do
+    resources
+    |> ListHelper.to_list()
+    |> Enum.concat(
+      Enum.flat_map(clones |> ListHelper.to_list(), &Map.get(&1, :resources, [])) ++
+        Enum.flat_map(groups |> ListHelper.to_list(), &Map.get(&1, :resources, []))
+    )
+  end
+
+  defp parse_resource_status(%{active: true}), do: "Active"
+  defp parse_resource_status(%{blocked: true}), do: "Blocked"
+  defp parse_resource_status(%{failed: true}), do: "Failed"
+  defp parse_resource_status(%{failure_ignored: true}), do: "FailureIgnored"
+  defp parse_resource_status(%{orphaned: true}), do: "Orphaned"
+  defp parse_resource_status(_), do: ""
+
+  defp parse_fail_count(node_name, resource_id, %{
+         node_history: %{
+           nodes: nodes
+         }
+       }) do
+    nodes
+    |> ListHelper.to_list()
+    |> Enum.find_value([], fn
+      %{name: ^node_name, resource_history: resource_history} ->
+        resource_history
+
+      _ ->
+        false
+    end)
+    |> Enum.find_value(nil, fn
+      %{name: ^resource_id, fail_count: fail_count} ->
+        fail_count
+
+      _ ->
+        false
+    end)
+  end
+
+  defp get_virtual_ip_type_suffix_by_provider(:azure), do: "IPaddr2"
+  defp get_virtual_ip_type_suffix_by_provider(:aws), do: "aws-vpc-move-ip"
+  defp get_virtual_ip_type_suffix_by_provider(:gcp), do: "IPaddr2"
+  defp get_virtual_ip_type_suffix_by_provider(_), do: "IPaddr2"
+
   defp do_parse_hana_status(nil, _), do: "Unknown"
   defp do_parse_hana_status(_, nil), do: "Unknown"
   # Normal primary state
@@ -263,99 +359,12 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   defp do_parse_hana_status("S", _), do: "Failed"
   defp do_parse_hana_status(_, _), do: "Unknown"
 
-  defp parse_cluster_fencing_type(%{"Resources" => resources}) do
-    resources
-    |> to_list
-    |> Enum.find_value("", fn
-      %{"Agent" => "stonith:" <> fencing_type} ->
-        fencing_type
+  defp parse_cib_last_written(%{
+         crmmon: %{summary: %{last_change: %{time: cib_last_written}}}
+       }),
+       do: cib_last_written
 
-      _ ->
-        false
-    end)
-  end
-
-  defp extract_cluster_primitives_from_cib(%{
-         "Primitives" => primitives,
-         "Groups" => groups,
-         "Clones" => clones
-       }) do
-    primitives
-    |> to_list
-    |> Enum.concat(
-      Enum.flat_map(clones |> to_list, &Map.get(&1, "Primitives", [])) ++
-        Enum.flat_map(groups |> to_list, &Map.get(&1, "Primitives", []))
-    )
-  end
-
-  defp extract_cluster_resources(%{
-         "Resources" => resources,
-         "Groups" => groups,
-         "Clones" => clones
-       }) do
-    resources
-    |> to_list
-    |> Enum.concat(
-      Enum.flat_map(clones |> to_list, &Map.get(&1, "Resources", [])) ++
-        Enum.flat_map(groups |> to_list, &Map.get(&1, "Resources", []))
-    )
-  end
-
-  defp parse_fail_count(node_name, resource_id, %{
-         "NodeHistory" => %{
-           "Nodes" => nodes
-         }
-       }) do
-    nodes
-    |> to_list
-    |> Enum.find_value([], fn
-      %{"Name" => ^node_name, "ResourceHistory" => resource_history} ->
-        resource_history
-
-      _ ->
-        false
-    end)
-    |> Enum.find_value(nil, fn
-      %{"Name" => ^resource_id, "FailCount" => fail_count} ->
-        fail_count
-
-      _ ->
-        false
-    end)
-  end
-
-  defp parse_resource_status(%{"Active" => true}), do: "Active"
-  defp parse_resource_status(%{"Blocked" => true}), do: "Blocked"
-  defp parse_resource_status(%{"Failed" => true}), do: "Failed"
-  defp parse_resource_status(%{"FailureIgnored" => true}), do: "FailureIgnored"
-  defp parse_resource_status(%{"Orphaned" => true}), do: "Orphaned"
-  defp parse_resource_status(_), do: ""
-
-  defp parse_cluster_stopped_resources(crmmon) do
-    crmmon
-    |> extract_cluster_resources()
-    |> Enum.filter(fn
-      %{"NodesRunningOn" => 0, "Active" => false} ->
-        true
-
-      _ ->
-        false
-    end)
-    |> Enum.map(fn %{"Id" => id, "Agent" => type, "Role" => role} ->
-      %{id: id, type: type, role: role}
-    end)
-  end
-
-  defp parse_sbd_devices(%{"Devices" => devices}) do
-    devices
-    |> to_list
-    |> Enum.map(fn %{"Device" => device, "Status" => status} ->
-      %{
-        device: device,
-        status: status
-      }
-    end)
-  end
+  defp generate_cluster_id(id), do: UUID.uuid5(@uuid_namespace, id)
 
   defp parse_cluster_health(details, cluster_type)
        when cluster_type in [:hana_scale_up, :hana_scale_out],
@@ -365,56 +374,12 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
   # If data is not present for some reason the state goes to unknown
-  defp parse_hana_cluster_health(%{"sr_health_state" => "4", "secondary_sync_state" => "SOK"}),
+  defp parse_hana_cluster_health(%{sr_health_state: "4", secondary_sync_state: "SOK"}),
     do: :passing
 
-  defp parse_hana_cluster_health(%{"sr_health_state" => "", "secondary_sync_state" => ""}),
+  defp parse_hana_cluster_health(%{sr_health_state: "", secondary_sync_state: ""}),
     do: :unknown
 
-  defp parse_hana_cluster_health(%{"sr_health_state" => _, "secondary_sync_state" => _}),
+  defp parse_hana_cluster_health(%{sr_health_state: _, secondary_sync_state: _}),
     do: :critical
-
-  defp parse_provider("azure"), do: :azure
-  defp parse_provider("aws"), do: :aws
-  defp parse_provider("gcp"), do: :gcp
-  defp parse_provider(_), do: :unknown
-
-  defp parse_virtual_ip(primitives, node_resources, provider) do
-    virtual_ip_type_suffix = get_virtual_ip_type_suffix_by_provider(provider)
-
-    virtual_ip_resource_id =
-      node_resources
-      |> Enum.find_value(nil, fn %{type: virtual_ip_type, id: id} ->
-        if String.ends_with?(virtual_ip_type, virtual_ip_type_suffix), do: id
-      end)
-
-    primitives
-    |> Enum.find_value([], fn
-      %{
-        "Type" => virtual_ip_type,
-        "Id" => ^virtual_ip_resource_id,
-        "InstanceAttributes" => attributes
-      } ->
-        if String.ends_with?(virtual_ip_type, virtual_ip_type_suffix), do: attributes
-
-      _ ->
-        nil
-    end)
-    |> Enum.find_value(nil, fn
-      %{"Name" => "ip", "Value" => value} when value != "" ->
-        value
-
-      _ ->
-        nil
-    end)
-  end
-
-  defp get_virtual_ip_type_suffix_by_provider("azure"), do: "IPaddr2"
-  defp get_virtual_ip_type_suffix_by_provider("aws"), do: "aws-vpc-move-ip"
-  defp get_virtual_ip_type_suffix_by_provider("gcp"), do: "IPaddr2"
-  defp get_virtual_ip_type_suffix_by_provider(_), do: "IPaddr2"
-
-  # TODO: Refactor the parsing code to validate the incoming data in a DTO
-  defp to_list(list) when is_list(list), do: list
-  defp to_list(_), do: []
 end
