@@ -1,0 +1,17 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "9cd46919-5f19-59aa-993e-cf3736c71053",
+  "payload": {
+    "Provider": "aws",
+    "Metadata": {
+      "account_id": "123456",
+      "ami_id": "ami-12345",
+      "availability_zone": "eu-west-1a",
+      "data_disk_number": 1,
+      "instance_id": "i-12345",
+      "instance_type": "t3.micro",
+      "region": "eu-west-1",
+      "vpc_id": "vpc-12345"
+    }
+  }
+}

@@ -4,7 +4,7 @@ export const selectedHost = {
   hostName: 'vmhdbprd01',
   clusterName: 'hana_cluster_3',
   clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
-  cloudDetails: {
+  azureCloudDetails: {
     provider: 'azure',
     vmName: 'vmhdbprd01',
     resourceGroup: 'resourceGroupName',
@@ -13,6 +13,16 @@ export const selectedHost = {
     dataDiskNumber: '7',
     offer: 'sles-sap-15-sp3-byos',
     sku: 'gen2',
+  },
+  awsCloudDetails: {
+    provider: 'aws',
+    instanceId: 'i-12345',
+    accountId: '123456',
+    region: 'eu-west-1 (eu-west-1a)',
+    instanceType: 't3.micro',
+    dataDiskNumber: '1',
+    amiId: 'ami-12345',
+    vpcId: 'vpc-12345',
   },
   sapInstance: {
     id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',

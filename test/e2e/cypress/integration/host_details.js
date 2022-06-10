@@ -50,39 +50,84 @@ context('Host Details', () => {
   });
 
   describe('Cloud details for this host should be displayed', () => {
-    it(`should show the cloud details correctly`, () => {
+    // Restore host provider data
+    after(() => {
+      cy.loadScenario('host-details-azure');
+    });
+
+    it(`should show Azure cloud details correctly`, () => {
       cy.get('div')
         .contains('Provider')
         .next()
-        .should('contain', selectedHost.cloudDetails.provider);
+        .should('contain', selectedHost.azureCloudDetails.provider);
       cy.get('div')
         .contains('VM Name')
         .next()
-        .should('contain', selectedHost.cloudDetails.vmName);
+        .should('contain', selectedHost.azureCloudDetails.vmName);
       cy.get('div')
         .contains('Resource group')
         .next()
-        .should('contain', selectedHost.cloudDetails.resourceGroup);
+        .should('contain', selectedHost.azureCloudDetails.resourceGroup);
       cy.get('div')
         .contains('Location')
         .next()
-        .should('contain', selectedHost.cloudDetails.location);
+        .should('contain', selectedHost.azureCloudDetails.location);
       cy.get('div')
         .contains('VM Size')
         .next()
-        .should('contain', selectedHost.cloudDetails.vmSize);
+        .should('contain', selectedHost.azureCloudDetails.vmSize);
       cy.get('div')
         .contains('Data disk number')
         .next()
-        .should('contain', selectedHost.cloudDetails.dataDiskNumber);
+        .should('contain', selectedHost.azureCloudDetails.dataDiskNumber);
       cy.get('div')
         .contains('Offer')
         .next()
-        .should('contain', selectedHost.cloudDetails.offer);
+        .should('contain', selectedHost.azureCloudDetails.offer);
       cy.get('div')
         .contains('SKU')
         .next()
-        .should('contain', selectedHost.cloudDetails.sku);
+        .should('contain', selectedHost.azureCloudDetails.sku);
+    });
+
+    it(`should show AWS cloud details correctly`, () => {
+      cy.loadScenario('host-details-aws');
+
+      cy.get('div')
+      .should('contain', selectedHost.awsCloudDetails.provider);
+
+      cy.get('div')
+        .contains('Provider')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.provider);
+      cy.get('div')
+        .contains('Instance ID')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.instanceId);
+      cy.get('div')
+        .contains('Account ID')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.accountId);
+      cy.get('div')
+        .contains('Region')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.region);
+      cy.get('div')
+        .contains('Instance type')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.instanceType);
+      cy.get('div')
+        .contains('Data disk number')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.dataDiskNumber);
+      cy.get('div')
+        .contains('Ami ID')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.amiId);
+      cy.get('div')
+        .contains('Vpc ID')
+        .next()
+        .should('contain', selectedHost.awsCloudDetails.vpcId);
     });
   });
 
