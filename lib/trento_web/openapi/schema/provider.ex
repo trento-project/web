@@ -45,6 +45,26 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
     })
   end
 
+  defmodule AwsProviderData do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "AwsProviderData",
+      description: "AWS detected metadata",
+      type: :object,
+      properties: %{
+        account_id: %Schema{type: :string},
+        ami_id: %Schema{type: :string},
+        availability_zone: %Schema{type: :string},
+        data_disk_number: %Schema{type: :integer},
+        instance_id: %Schema{type: :string},
+        instance_type: %Schema{type: :string},
+        region: %Schema{type: :string},
+        vpc_id: %Schema{type: :string}
+      }
+    })
+  end
+
   defmodule ProviderData do
     @moduledoc false
 
@@ -52,6 +72,7 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
       title: "ProviderMetadata",
       description: "Detected metadata for any provider",
       oneOf: [
+        AwsProviderData,
         AzureProviderData
       ]
     })
