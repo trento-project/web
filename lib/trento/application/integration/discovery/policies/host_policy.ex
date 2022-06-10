@@ -151,6 +151,12 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          admin_username: admin_username
        }
 
+  defp parse_cloud_provider_metadata(
+         :aws,
+         aws_metadata
+       ),
+       do: aws_metadata |> Map.from_struct()
+
   defp parse_cloud_provider_metadata(_, generic_metadata), do: generic_metadata
 
   @spec parse_storage_profile(map) :: non_neg_integer()
