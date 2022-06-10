@@ -9,7 +9,10 @@ defmodule Trento.HostProjectorTest do
     HostReadModel
   }
 
-  alias Trento.Domain.AzureProvider
+  alias Trento.Domain.{
+    AwsProvider,
+    AzureProvider
+  }
 
   alias Trento.Domain.Events.{
     HeartbeatFailed,
@@ -175,14 +178,34 @@ defmodule Trento.HostProjectorTest do
     event = %ProviderUpdated{
       host_id: host_id,
       provider: :aws,
-      provider_data: nil
+      provider_data: %AwsProvider{
+        account_id: "12345",
+        ami_id: "ami-12345",
+        availability_zone: "eu-west-1a",
+        data_disk_number: 1,
+        instance_id: "i-12345",
+        instance_type: "t3.micro",
+        region: "eu-west-1",
+        vpc_id: "vpc-12345"
+      }
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
 
+    expected_aws_model = %{
+      "account_id" => "12345",
+      "ami_id" => "ami-12345",
+      "availability_zone" => "eu-west-1a",
+      "data_disk_number" => 1,
+      "instance_id" => "i-12345",
+      "instance_type" => "t3.micro",
+      "region" => "eu-west-1",
+      "vpc_id" => "vpc-12345"
+    }
+
     assert :aws == host_projection.provider
-    assert nil == host_projection.provider_data
+    assert expected_aws_model == host_projection.provider_data
   end
 
   test "should update the provider field when ProviderUpdated is received with GCP provider type",
