@@ -20,9 +20,20 @@ Feature: Host details view
         And a link to a cluster details view with name `hana_cluster_3` should be under the cluster label
         And one entry with ID '6c9208eb-a5bb-57ef-be5c-6422dedab602' should be present in the SAP instances list
 
-    Scenario: Cloud details are available in the view
+    Scenario: Azure cloud details are available in the view
         Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')
-        Then the displayed details should include all the correct cloud metadata information
+        And the host is running on Azure
+        Then the displayed details should include all the correct Azure cloud metadata information
+
+    Scenario: AWS cloud details are available in the view
+        Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')
+        And the host is running on AWS
+        Then the displayed details should include all the correct AWS cloud metadata information
+
+    Scenario: Provider details are not available
+        Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')
+        And the host is running on unknown provider platform
+        Then provider not recognized message is displayed
 
     Scenario: Agent health matches the information resulted from a successful heartbeat
         Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')

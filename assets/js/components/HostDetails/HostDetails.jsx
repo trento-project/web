@@ -8,6 +8,7 @@ import ListView from '@components/ListView';
 import Table from '@components/Table';
 
 import StatusPill from './StatusPill';
+import ProviderDetails from './ProviderDetails';
 
 import ClusterLink from '@components/ClusterLink';
 
@@ -103,35 +104,12 @@ const HostDetails = () => {
 
       <div className="mt-16">
         <div className="mb-4">
-          <h2 className="text-2xl font-bold">Cloud details</h2>
+          <h2 className="text-2xl font-bold">Provider details</h2>
         </div>
-        <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
-          <ListView
-            className="grid-rows-2"
-            orientation="vertical"
-            rows={2}
-            data={[
-              {
-                title: 'Provider',
-                content: host.provider,
-                render: (content) => <p className="capitalize">{content}</p>,
-              },
-              { title: 'VM Size', content: host.provider_data?.vm_size },
-              { title: 'VM Name', content: host.provider_data?.vm_name },
-              {
-                title: 'Data disk number',
-                content: host.provider_data?.data_disk_number,
-              },
-              {
-                title: 'Resource group',
-                content: host.provider_data?.resource_group,
-              },
-              { title: 'Offer', content: host.provider_data?.offer },
-              { title: 'Location', content: host.provider_data?.location },
-              { title: 'SKU', content: host.provider_data?.sku },
-            ]}
-          />
-        </div>
+        <ProviderDetails
+          provider={host.provider}
+          provider_data={host.provider_data}
+        />
       </div>
 
       <div className="mt-8">
