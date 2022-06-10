@@ -8,7 +8,7 @@ import ListView from '@components/ListView';
 import Table from '@components/Table';
 
 import StatusPill from './StatusPill';
-import CloudDetails from './CloudDetails';
+import ProviderDetails from './ProviderDetails';
 
 import ClusterLink from '@components/ClusterLink';
 
@@ -104,9 +104,9 @@ const HostDetails = () => {
 
       <div className="mt-16">
         <div className="mb-4">
-          <h2 className="text-2xl font-bold">Cloud details</h2>
+          <h2 className="text-2xl font-bold">Provider details</h2>
         </div>
-        <CloudDetails
+        <ProviderDetails
           provider={host.provider}
           provider_data={host.provider_data}
         />

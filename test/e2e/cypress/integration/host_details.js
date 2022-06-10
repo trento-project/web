@@ -57,7 +57,7 @@ context('Host Details', () => {
 
     it(`should show Azure cloud details correctly`, () => {
       cy.get('div')
-        .contains('Provider')
+        .contains(/^Provider$/)
         .next()
         .should('contain', selectedHost.azureCloudDetails.provider);
       cy.get('div')
@@ -93,11 +93,10 @@ context('Host Details', () => {
     it(`should show AWS cloud details correctly`, () => {
       cy.loadScenario('host-details-aws');
 
-      cy.get('div')
-      .should('contain', selectedHost.awsCloudDetails.provider);
+      cy.get('div').should('contain', selectedHost.awsCloudDetails.provider);
 
       cy.get('div')
-        .contains('Provider')
+        .contains(/^Provider$/)
         .next()
         .should('contain', selectedHost.awsCloudDetails.provider);
       cy.get('div')
@@ -128,6 +127,12 @@ context('Host Details', () => {
         .contains('Vpc ID')
         .next()
         .should('contain', selectedHost.awsCloudDetails.vpcId);
+    });
+
+    it(`should display provider not recognized message`, () => {
+      cy.loadScenario('host-details-unknown');
+
+      cy.get('div').should('contain', 'Provider not recognized');
     });
   });
 

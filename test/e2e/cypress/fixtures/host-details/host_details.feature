@@ -30,6 +30,11 @@ Feature: Host details view
         And the host is running on AWS
         Then the displayed details should include all the correct AWS cloud metadata information
 
+    Scenario: Provider details are not available
+        Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')
+        And the host is running on unknown provider platform
+        Then provider not recognized message is displayed
+
     Scenario: Agent health matches the information resulted from a successful heartbeat
         Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')
         Then the displayed details should include a Trento Agent status labeled as 'running'
