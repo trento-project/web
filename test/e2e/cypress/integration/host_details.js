@@ -120,11 +120,11 @@ context('Host Details', () => {
         .next()
         .should('contain', selectedHost.awsCloudDetails.dataDiskNumber);
       cy.get('div')
-        .contains('Ami ID')
+        .contains('AMI ID')
         .next()
         .should('contain', selectedHost.awsCloudDetails.amiId);
       cy.get('div')
-        .contains('Vpc ID')
+        .contains('VPC ID')
         .next()
         .should('contain', selectedHost.awsCloudDetails.vpcId);
     });

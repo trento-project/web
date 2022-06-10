@@ -25,12 +25,12 @@ const AwsDetails = ({ provider, provider_data }) => {
             title: 'Account ID',
             content: provider_data?.account_id,
           },
-          { title: 'Ami ID', content: provider_data?.ami_id },
+          { title: 'AMI ID', content: provider_data?.ami_id },
           {
             title: 'Region',
             content: `${provider_data?.region} (${provider_data?.availability_zone})`,
           },
-          { title: 'Vpc ID', content: provider_data?.vpc_id },
+          { title: 'VPC ID', content: provider_data?.vpc_id },
         ]}
       />
     </div>
