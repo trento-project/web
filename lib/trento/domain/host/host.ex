@@ -4,7 +4,9 @@ defmodule Trento.Domain.Host do
   alias Trento.Domain.Host
 
   alias Trento.Domain.{
+    AwsProvider,
     AzureProvider,
+    GcpProvider,
     SlesSubscription
   }
 
@@ -52,7 +54,7 @@ defmodule Trento.Domain.Host do
           socket_count: non_neg_integer(),
           os_version: String.t(),
           subscriptions: [SlesSubscription.t()],
-          provider_data: AzureProvider.t() | nil,
+          provider_data: AwsProvider.t() | AzureProvider.t() | GcpProvider.t() | nil,
           heartbeat: :passing | :critical | :unknown
         }
 

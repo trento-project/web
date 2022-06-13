@@ -7,7 +7,8 @@ defmodule Trento.Domain.Events.ProviderUpdated do
 
   alias Trento.Domain.{
     AwsProvider,
-    AzureProvider
+    AzureProvider,
+    GcpProvider
   }
 
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
@@ -19,7 +20,8 @@ defmodule Trento.Domain.Events.ProviderUpdated do
     field :provider_data, PolymorphicEmbed,
       types: [
         azure: [module: AzureProvider, identify_by_fields: [:resource_group]],
-        aws: [module: AwsProvider, identify_by_fields: [:ami_id]]
+        aws: [module: AwsProvider, identify_by_fields: [:ami_id]],
+        gcp: [module: GcpProvider, identify_by_fields: [:project_id]]
       ],
       on_replace: :update
   end

@@ -12,7 +12,11 @@ defmodule Trento.Integration.Discovery.CloudDiscoveryPayload do
     field :provider, Ecto.Enum, values: [:aws, :gcp, :azure, :unknown], default: :unknown
 
     field :metadata, PolymorphicEmbed,
-      types: [azure: __MODULE__.AzureMetadata, aws: __MODULE__.AwsMetadata],
+      types: [
+        azure: __MODULE__.AzureMetadata,
+        aws: __MODULE__.AwsMetadata,
+        gcp: __MODULE__.GcpMetadata
+      ],
       on_type_not_found: :nilify,
       on_replace: :update
   end
@@ -96,6 +100,23 @@ defmodule Trento.Integration.Discovery.CloudDiscoveryPayload do
       field :instance_type, :string
       field :region, :string
       field :vpc_id, :string
+    end
+  end
+
+  defmodule GcpMetadata do
+    @moduledoc nil
+
+    @required_fields :all
+    use Trento.Type
+
+    deftype do
+      field :disk_number, :integer
+      field :image, :string
+      field :instance_name, :string
+      field :machine_type, :string
+      field :network, :string
+      field :project_id, :string
+      field :zone, :string
     end
   end
 end
