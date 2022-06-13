@@ -65,6 +65,25 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
     })
   end
 
+  defmodule GcpProviderData do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "GcpProviderData",
+      description: "GCP detected metadata",
+      type: :object,
+      properties: %{
+        disk_number: %Schema{type: :integer},
+        image: %Schema{type: :string},
+        instance_name: %Schema{type: :string},
+        machine_type: %Schema{type: :string},
+        network: %Schema{type: :string},
+        project_id: %Schema{type: :string},
+        zone: %Schema{type: :string}
+      }
+    })
+  end
+
   defmodule ProviderData do
     @moduledoc false
 
@@ -73,7 +92,8 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
       description: "Detected metadata for any provider",
       oneOf: [
         AwsProviderData,
-        AzureProviderData
+        AzureProviderData,
+        GcpProviderData
       ]
     })
   end
