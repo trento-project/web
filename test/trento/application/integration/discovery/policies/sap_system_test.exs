@@ -31,6 +31,26 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
              |> SapSystemPolicy.handle()
   end
 
+  test "should return the expected commands when a sap_system payload of type database during a failover is handled" do
+    assert {:ok,
+            [
+              %RegisterDatabaseInstance{
+                features: "HDB|HDB_WORKER",
+                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
+                instance_number: "10",
+                sap_system_id: "6c9208eb-a5bb-57ef-be5c-6422dedab602",
+                sid: "HDP",
+                tenant: "HDP",
+                system_replication: nil,
+                system_replication_status: nil,
+                health: :unknown
+              }
+            ]} =
+             "sap_system_discovery_failover"
+             |> load_discovery_event_fixture()
+             |> SapSystemPolicy.handle()
+  end
+
   test "should return the expected commands when a sap_system payload of type application is handled" do
     assert {:ok,
             [
