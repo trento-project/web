@@ -30,6 +30,11 @@ Feature: Host details view
         And the host is running on AWS
         Then the displayed details should include all the correct AWS cloud metadata information
 
+    Scenario: GCP cloud details are available in the view
+        Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')
+        And the host is running on GCP
+        Then the displayed details should include all the correct GCP cloud metadata information
+
     Scenario: Provider details are not available
         Given I am in the host details view ('/hosts/9cd46919-5f19-59aa-993e-cf3736c71053')
         And the host is running on unknown provider platform
