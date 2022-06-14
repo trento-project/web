@@ -15,6 +15,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
+    GcpProvider,
     SlesSubscription
   }
 
@@ -85,7 +86,15 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              %UpdateProvider{
                host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
                provider: :gcp,
-               provider_data: nil
+               provider_data: %GcpProvider{
+                 disk_number: 4,
+                 image: "sles-15-sp1-sap-byos-v20220126",
+                 instance_name: "vmhana01",
+                 machine_type: "n1-highmem-8",
+                 network: "network",
+                 project_id: "123456",
+                 zone: "europe-west1-b"
+               }
              }
            } ==
              "cloud_discovery_gcp"

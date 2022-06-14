@@ -13,6 +13,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     CloudDiscoveryPayload,
     CloudDiscoveryPayload.AwsMetadata,
     CloudDiscoveryPayload.AzureMetadata,
+    CloudDiscoveryPayload.GcpMetadata,
     HostDiscoveryPayload,
     SlesSubscriptionDiscoveryPayload
   }
@@ -175,6 +176,28 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          instance_type: instance_type,
          region: region,
          vpc_id: vpc_id
+       }
+
+  defp parse_cloud_provider_metadata(
+         :gcp,
+         %GcpMetadata{
+           disk_number: disk_number,
+           image: image,
+           instance_name: instance_name,
+           machine_type: machine_type,
+           network: network,
+           project_id: project_id,
+           zone: zone
+         }
+       ),
+       do: %{
+         disk_number: disk_number,
+         image: image,
+         instance_name: instance_name,
+         machine_type: machine_type,
+         network: network,
+         project_id: project_id,
+         zone: zone
        }
 
   defp parse_cloud_provider_metadata(_, generic_metadata), do: generic_metadata

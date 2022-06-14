@@ -11,7 +11,8 @@ defmodule Trento.HostProjectorTest do
 
   alias Trento.Domain.{
     AwsProvider,
-    AzureProvider
+    AzureProvider,
+    GcpProvider
   }
 
   alias Trento.Domain.Events.{
@@ -215,13 +216,31 @@ defmodule Trento.HostProjectorTest do
     event = %ProviderUpdated{
       host_id: host_id,
       provider: :gcp,
-      provider_data: nil
+      provider_data: %GcpProvider{
+        disk_number: 4,
+        image: "sles-15-sp1-sap-byos-v20220126",
+        instance_name: "vmhana01",
+        machine_type: "n1-highmem-8",
+        network: "network",
+        project_id: "123456",
+        zone: "europe-west1-b"
+      }
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
 
+    expected_gcp_model = %{
+      "disk_number" => 4,
+      "image" => "sles-15-sp1-sap-byos-v20220126",
+      "instance_name" => "vmhana01",
+      "machine_type" => "n1-highmem-8",
+      "network" => "network",
+      "project_id" => "123456",
+      "zone" => "europe-west1-b"
+    }
+
     assert :gcp == host_projection.provider
-    assert nil == host_projection.provider_data
+    assert expected_gcp_model == host_projection.provider_data
   end
 end

@@ -21,7 +21,8 @@ defmodule Trento.HostTest do
 
   alias Trento.Domain.{
     AwsProvider,
-    AzureProvider
+    AzureProvider,
+    GcpProvider
   }
 
   alias Trento.Domain.Host
@@ -403,6 +404,57 @@ defmodule Trento.HostTest do
                      instance_type: "t3.micro",
                      region: "eu-west-1",
                      vpc_id: "vpc-12345"
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should update gcp provider" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateProvider.new!(%{
+          host_id: host_id,
+          provider: :azure,
+          provider_data: %{
+            disk_number: 4,
+            image: "sles-15-sp1-sap-byos-v20220126",
+            instance_name: "vmhana01",
+            machine_type: "n1-highmem-8",
+            network: "network",
+            project_id: "123456",
+            zone: "europe-west1-b"
+          }
+        }),
+        %ProviderUpdated{
+          host_id: host_id,
+          provider: :azure,
+          provider_data: %GcpProvider{
+            disk_number: 4,
+            image: "sles-15-sp1-sap-byos-v20220126",
+            instance_name: "vmhana01",
+            machine_type: "n1-highmem-8",
+            network: "network",
+            project_id: "123456",
+            zone: "europe-west1-b"
+          }
+        },
+        fn state ->
+          assert %Host{
+                   provider_data: %GcpProvider{
+                     disk_number: 4,
+                     image: "sles-15-sp1-sap-byos-v20220126",
+                     instance_name: "vmhana01",
+                     machine_type: "n1-highmem-8",
+                     network: "network",
+                     project_id: "123456",
+                     zone: "europe-west1-b"
                    }
                  } = state
         end
