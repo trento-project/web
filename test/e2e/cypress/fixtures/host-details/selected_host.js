@@ -24,6 +24,16 @@ export const selectedHost = {
     amiId: 'ami-12345',
     vpcId: 'vpc-12345',
   },
+  gcpCloudDetails: {
+    provider: 'gcp',
+    diskNumber: 4,
+    machineType: 'n1-highmem-8',
+    instanceName: 'vmhana01',
+    projectId: '123456',
+    image: 'sles-15-sp1-sap-byos-v20220126',
+    zone: 'europe-west1-b',
+    network: 'network',
+  },
   sapInstance: {
     id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     sid: 'HDP',

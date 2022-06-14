@@ -129,6 +129,45 @@ context('Host Details', () => {
         .should('contain', selectedHost.awsCloudDetails.vpcId);
     });
 
+    it(`should show GCP cloud details correctly`, () => {
+      cy.loadScenario('host-details-gcp');
+
+      cy.get('div').should('contain', selectedHost.gcpCloudDetails.provider);
+
+      cy.get('div')
+        .contains(/^Provider$/)
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.provider);
+      cy.get('div')
+        .contains('Instance name')
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.instanceName);
+      cy.get('div')
+        .contains('Project ID')
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.projectId);
+      cy.get('div')
+        .contains('Zone')
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.zone);
+      cy.get('div')
+        .contains('Machine type')
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.machineType);
+      cy.get('div')
+        .contains('Disk number')
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.diskNumber);
+      cy.get('div')
+        .contains('Image')
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.image);
+      cy.get('div')
+        .contains('Network')
+        .next()
+        .should('contain', selectedHost.gcpCloudDetails.network);
+    });
+
     it(`should display provider not recognized message`, () => {
       cy.loadScenario('host-details-unknown');
 
