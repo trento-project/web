@@ -335,17 +335,17 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
       system_replication
       |> cast(attrs, __MODULE__.__schema__(:fields))
       |> validate_required(@required_fields)
-      |> validate_replication_mode(local_site_id)
+      |> maybe_validate_replication_mode(local_site_id)
     end
 
     defp parse_local_site_id(%{"local_site_id" => local_site_id}), do: local_site_id
     defp parse_local_site_id(_), do: 1
 
-    defp validate_replication_mode(changeset, "0") do
+    defp maybe_validate_replication_mode(changeset, "0") do
       changeset
     end
 
-    defp validate_replication_mode(changeset, local_site_id) do
+    defp maybe_validate_replication_mode(changeset, local_site_id) do
       changeset
       |> validate_required([:"site/#{local_site_id}/REPLICATION_MODE"])
     end
