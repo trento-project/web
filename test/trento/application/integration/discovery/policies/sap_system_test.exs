@@ -31,7 +31,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
              |> SapSystemPolicy.handle()
   end
 
-  test "should return the expected commands when a sap_system payload of type database during a failover is handled" do
+  test "should return the expected commands when a sap_system payload of type database is handled in the event of a stopped instance" do
     assert {:ok,
             [
               %RegisterDatabaseInstance{
@@ -46,7 +46,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
                 health: :unknown
               }
             ]} =
-             "sap_system_discovery_failover"
+             "sap_system_discovery_database_stopped_instance"
              |> load_discovery_event_fixture()
              |> SapSystemPolicy.handle()
   end
