@@ -15,7 +15,7 @@
     "autoprefixer": "^10.4.7",
     "babel-jest": "^28.1.1",
     "babel-loader": "^8.2.5",
-    "esbuild": "^0.14.46",
+    "esbuild": "^0.14.47",
     "esbuild-plugin-path-alias": "^1.0.6",
     "eslint": "^8.18.0",
     "eslint-plugin-jest": "^26.5.3",
