@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import Table from './Table';
+import HealthIcon from '@components/Health/HealthIcon';
 import Tags from './Tags';
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import HostLink from '@components/HostLink';
@@ -7,21 +8,8 @@ import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { EOS_LENS_FILLED } from 'eos-icons-react';
-
 import { post, del } from '@lib/network';
 import { ComponentHealthSummary } from '@components/HealthSummary';
-
-const getHeartbeatIcon = ({ heartbeat }) => {
-  switch (heartbeat) {
-    case 'passing':
-      return <EOS_LENS_FILLED className="fill-jungle-green-500" />;
-    case 'critical':
-      return <EOS_LENS_FILLED className="fill-red-500" />;
-    default:
-      return <EOS_LENS_FILLED className="fill-gray-500" />;
-  }
-};
 
 const getInstancesByHost = (
   applicationInstances,
@@ -66,9 +54,9 @@ const HostsList = () => {
         title: 'Health',
         key: 'heartbeat',
         filter: true,
-        render: (_content, item) => (
-          <div className="tn-healthicon ml-4">{getHeartbeatIcon(item)}</div>
-        ),
+        render: (_content, item) => {
+          return <HealthIcon health={item.heartbeat} centered={true} />;
+        },
       },
       {
         title: 'Hostname',
