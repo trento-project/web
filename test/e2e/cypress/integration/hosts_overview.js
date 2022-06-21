@@ -147,9 +147,7 @@ context('Hosts Overview', () => {
       });
 
       it('should show a passing health on the hosts when the agents are sending the heartbeat', () => {
-        cy.get('.tn-healthicon > svg.fill-jungle-green-500')
-          .its('length')
-          .should('eq', 10);
+        cy.get('svg.fill-jungle-green-500').its('length').should('eq', 10);
       });
     });
     describe('Health is changed to critical when the heartbeat is not sent', () => {
@@ -163,9 +161,7 @@ context('Hosts Overview', () => {
       });
 
       it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
-        cy.get('.tn-healthicon > svg.fill-red-500')
-          .its('length')
-          .should('eq', 10);
+        cy.get('svg.fill-red-500').its('length').should('eq', 10);
       });
     });
   });
