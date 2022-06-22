@@ -169,7 +169,7 @@ defmodule Trento.ClusterProjector do
       "monitoring:clusters",
       "cluster_registered",
       cluster
-      |> Repo.preload(:checks_results)
+      |> Repo.preload([:checks_results, :hosts_executions])
       |> enrich_cluster_model
       |> to_map()
     )
