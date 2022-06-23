@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
+import Modal from '@components/Modal';
+
 import {
   EOS_ERROR,
   EOS_ARROW_BACK,
@@ -54,6 +56,8 @@ const getResultIcon = (executionState, health) => {
 };
 
 export const ChecksResults = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCheck, setSelectedCheck] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { clusterID } = useParams();
@@ -68,6 +72,10 @@ export const ChecksResults = () => {
       state.catalog.loading,
     ]
   );
+
+  const findCheckDataByID = (checkID) => {
+    return catalogData.find((check) => check.id === checkID);
+  };
 
   const dispatchUpdateCatalog = () => {
     dispatch({
@@ -175,7 +183,11 @@ export const ChecksResults = () => {
                       (checkId) => (
                         <tr
                           key={checkId}
-                          className="animate-fade tn-check-result-row"
+                          className="animate-fade tn-check-result-row cursor-pointer"
+                          onClick={() => {
+                            setModalOpen(true);
+                            setSelectedCheck(checkId);
+                          }}
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             {checkId}
@@ -213,6 +225,15 @@ export const ChecksResults = () => {
 
   return (
     <div>
+      <Modal
+        title={description(selectedCheck)}
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+      >
+        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+          {findCheckDataByID(selectedCheck)?.remediation}
+        </ReactMarkdown>
+      </Modal>
       <div className="flex mb-4">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
