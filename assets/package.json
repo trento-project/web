@@ -13,7 +13,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "autoprefixer": "^10.4.7",
-    "babel-jest": "^28.1.1",
+    "babel-jest": "^28.1.2",
     "babel-loader": "^8.2.5",
     "esbuild": "^0.14.47",
     "esbuild-plugin-path-alias": "^1.0.6",
