@@ -23,6 +23,7 @@ Currently **SMTP** is the **only supported delivery mechanism** for notification
 
 ```
 ENABLE_ALERTING=true
+ALERT_SENDER=sender@yourmail.com
 ALERT_RECIPIENT=recipient@yourmail.com
 
 SMTP_SERVER=your.smtp-server.com
@@ -32,4 +33,18 @@ SMTP_PASSWORD=password
 ```
 
 ## Enabling Alerting at a later stage
-If your current Trento installation has Alerting disabled, you can enable it by... (TBD)
+If your current Trento installation has Alerting disabled, you can enable it by upgrading the helm deployment.
+
+```
+helm upgrade
+   --install <THE_DEPLOYMENT> 
+   --set trento-web.adminUser.password=<ADMIN_PASSWORD>
+   --set-file trento-runner.privateKey=<PRIVATE_SSH_KEY>
+   --set trento-web.alerting.enabled=true
+   --set trento-web.alerting.smtpServer=<SMTP_SERVER> 
+   --set trento-web.alerting.smtpPort=<SMTP_PORT>
+   --set trento-web.alerting.smtpUser=<SMTP_USER>
+   --set trento-web.alerting.smtpPassword=<SMTP_PASSWORD>
+   --set trento-web.alerting.sender=<ALERT_SENDER> 
+   --set trento-web.alerting.recipient=<ALERT_RECIPIENT>
+```
