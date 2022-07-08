@@ -19,7 +19,18 @@ A fact gathering declaration contains:
 - The parameter that said function declaration accepts.
 
 ## Expectations
-T.B.D.
+Once that facts are evaluated, they get assigned to names and they can be matched against expectations. Expectations formalize a predetermined assumption that a given fact declaration matches what the user wants it to be. The match declaration can be whatever the user wants in the span of what the language itself allows.
+
+For numeric values, we aim to support:
+
+- strict equality;
+- checking if the matched value is greater than a provided value;
+- checking if the matched value is lower than a provided value.
+
+For string values, we aim to support:
+
+- strict equality;
+- checking if the matched value contains a provided string.
 
 ## Example of a check
 
@@ -45,5 +56,7 @@ check_corosync_token_timeout:
       gatherer: another_reference_to_a_gatherer
       argument: something_else
   expectations:
-    TDB: TBD
+    -
+      name: corosync_token_timeout
+      value: 80
 ```
