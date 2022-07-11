@@ -1,4 +1,5 @@
 defmodule Trento.Application.UseCases.AlertingTest do
+  @moduledoc false
   use ExUnit.Case, async: true
   use Trento.DataCase
 
@@ -10,12 +11,16 @@ defmodule Trento.Application.UseCases.AlertingTest do
 
   @moduletag :integration
 
+  @some_sender "some.sender@email.com"
+  @some_recipient "some.recipient@email.com"
+
   describe "Enabling/Disabling Alerting Feature" do
     setup do
       on_exit(fn ->
         Application.put_env(:trento, :alerting,
           enabled: true,
-          recipient: "some.recipient@email.com"
+          sender: @some_sender,
+          recipient: @some_recipient
         )
       end)
     end
@@ -30,12 +35,34 @@ defmodule Trento.Application.UseCases.AlertingTest do
     end
 
     test "An error should be raised when alerting is enabled but no recipient was provided" do
-      Application.put_env(:trento, :alerting, enabled: true)
+      Application.put_env(:trento, :alerting,
+        enabled: true,
+        sender: @some_sender
+        # no recipient set
+      )
+
       sap_system_id = Faker.UUID.v4()
       insert(:sap_system, id: sap_system_id)
 
       assert_raise ArgumentError,
                    ~r/Unexpected tuple format, {"Trento Admin", nil} cannot be formatted into a Recipient./,
+                   fn -> Alerting.notify_critical_sap_system_health(sap_system_id) end
+
+      assert_no_email_sent()
+    end
+
+    test "An error should be raised when alerting is enabled but no sender was provided" do
+      Application.put_env(:trento, :alerting,
+        enabled: true,
+        # no sender set
+        recipient: @some_recipient
+      )
+
+      sap_system_id = Faker.UUID.v4()
+      insert(:sap_system, id: sap_system_id)
+
+      assert_raise ArgumentError,
+                   ~r/Unexpected tuple format, {"Trento Alerts", nil} cannot be formatted into a Recipient./,
                    fn -> Alerting.notify_critical_sap_system_health(sap_system_id) end
 
       assert_no_email_sent()
