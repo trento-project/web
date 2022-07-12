@@ -9,7 +9,13 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
     Profile
   }
 
+  @unknown_type 0
+  @database_type 1
+  @application_type 2
+  @diagnostics_type 3
+
   @required_fields [:Id, :SID, :Type, :Profile, :Databases, :Instances]
+  @system_types [@unknown_type, @database_type, @application_type, @diagnostics_type]
 
   use Trento.Type
 
@@ -35,6 +41,7 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
     |> cast_embed(:Databases)
     |> cast_embed(:Instances)
     |> validate_required_fields(@required_fields)
+    |> validate_inclusion(:Type, @system_types)
   end
 
   defp parse_system_type(%{"Type" => system_type}), do: system_type
@@ -221,7 +228,6 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
       :features,
       :hostname,
       :httpPort,
-      :httpsPort,
       :dispstatus,
       :instanceNr,
       :startPriority

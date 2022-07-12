@@ -19,8 +19,10 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
+  @unknown_type 0
   @database_type 1
   @application_type 2
+  @diagnostics_type 3
 
   @spec handle(map) ::
           {:ok, [RegisterApplicationInstance.t() | RegisterDatabaseInstance.t()]} | {:error, any}
@@ -105,6 +107,9 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
       })
     end)
   end
+
+  defp build_commands(%SapSystemDiscoveryPayload{Type: @diagnostics_type}, _), do: []
+  defp build_commands(%SapSystemDiscoveryPayload{Type: @unknown_type}, _), do: []
 
   defp parse_instance_number(instance), do: parse_sap_control_property("SAPSYSTEM", instance)
 

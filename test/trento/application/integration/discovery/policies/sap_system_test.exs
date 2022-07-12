@@ -69,4 +69,23 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
              |> load_discovery_event_fixture()
              |> SapSystemPolicy.handle()
   end
+
+  test "should return the expected commands when a sap_system payload of type application and diagnostics is handled" do
+    assert {:ok,
+            [
+              %RegisterApplicationInstance{
+                db_host: "10.74.1.12",
+                features: "ABAP|GATEWAY|ICMAN|IGS",
+                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                instance_number: "02",
+                sap_system_id: nil,
+                sid: "HA1",
+                tenant: "PRD",
+                health: :passing
+              }
+            ]} =
+             "sap_system_discovery_application_diagnostics"
+             |> load_discovery_event_fixture()
+             |> SapSystemPolicy.handle()
+  end
 end
