@@ -72,6 +72,7 @@ const Table = ({ config, data = [] }) => {
           filters={filters}
           onChange={(newFilters) => {
             setFilters(newFilters);
+            setCurrentPage(1);
           }}
         />
       </div>

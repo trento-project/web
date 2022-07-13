@@ -251,6 +251,16 @@ context('Hosts Overview', () => {
             cy.get('li > div > span.ml-3.block').contains(tag).click();
           });
         });
+
+        it('should reset the pagination and go the 1st page when a filter is selected', () => {
+          const tag = 'env1';
+
+          cy.get('.tn-page-item').eq(2).click();
+          cy.get('span').contains('Filter Tags').parent().parent().click();
+          cy.get('li > div > span.ml-3.block').contains(tag).click();
+          cy.get('.tn-hostname').its('length').should('eq', 4);
+          cy.get('li > div > span.ml-3.block').contains(tag).click();
+        });
       });
     });
   });
