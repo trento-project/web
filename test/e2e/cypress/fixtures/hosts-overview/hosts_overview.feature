@@ -101,3 +101,11 @@ Scenario: Filtering the Host Overview by Tags
 
     When I filter by tag 'env3'
     Then 8 items should be shown
+
+Scenario: Filtering when a non 1st page is selected
+    Given all the hosts containing 'prd' in their name are tagged with 'env1'
+    And the selected page is the last one
+
+    When I filter by tag 'env1'
+    Then 8 items should be shown 
+    And the selected page is the 1st one
