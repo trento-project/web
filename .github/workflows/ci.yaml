@@ -84,7 +84,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}        
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -420,6 +420,43 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy-demo-env:
+    name: Deploy updated images to the demo environment
+    runs-on: self-hosted
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    env:
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
+      IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
+    needs: build-and-push-container-images
+    steps:
+      - name: Start a local k8s cluster
+        uses: jupyterhub/action-k3s-helm@v3
+        with:
+          k3s-channel: latest
+
+      - name: Add bitnami helm deps
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+
+      - name: Download and unzip helm chart
+        run: |
+          rm rolling.zip | true
+          rm -rf helm-charts-rolling | true
+          wget https://github.com/trento-project/helm-charts/archive/refs/tags/rolling.zip
+          unzip rolling.zip
+
+      - name: Install trento-server helm chart
+        run: |
+          cd helm-charts-rolling/charts/trento-server
+          helm dependency update
+          helm uninstall --wait trento | true
+          helm install trento . \
+            --set-file trento-runner.privateKey=/home/azureuser/.ssh/id_rsa \
+            --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
+            --set trento-web.image.repository="${IMAGE_REPOSITORY}" \
+            --set trento-web.image.tag="${IMAGE_TAG}"
 
   obs-commit:
     name: Commit the project on OBS
