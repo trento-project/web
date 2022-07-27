@@ -113,10 +113,10 @@ function* initialDataFetch() {
   yield loadSapSystemsHealthSummary();
 
   const {
-    data: { eula_accepted, premium_subscription },
+    data: { eula_accepted },
   } = yield call(get, '/api/settings');
 
-  if (!eula_accepted && premium_subscription) {
+  if (!eula_accepted) {
     yield put(setEulaVisible());
   }
 
