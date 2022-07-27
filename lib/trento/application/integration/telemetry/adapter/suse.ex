@@ -9,10 +9,10 @@ defmodule Trento.Integration.Telemetry.Suse do
 
   require Logger
 
-  def publish_hosts_telemetry(hosts_telemetry, installation_id) do
+  def publish_hosts_telemetry(hosts_telemetry, installation_id, installation_flavor) do
     case HTTPoison.post(
            "#{@telemetry_url}/api/collect/hosts",
-           build_payload(hosts_telemetry, installation_id),
+           build_payload(hosts_telemetry, installation_id, installation_flavor),
            [
              {"Content-Type", "application/json"}
            ]
@@ -41,11 +41,12 @@ defmodule Trento.Integration.Telemetry.Suse do
     end
   end
 
-  defp build_payload(hosts_telemetry, installation_id) do
+  defp build_payload(hosts_telemetry, installation_id, installation_flavor) do
     hosts_telemetry
     |> Enum.map(
       &%{
         installation_id: installation_id,
+        installation_flavor: installation_flavor,
         agent_id: &1.agent_id,
         sles_version: &1.sles_version,
         cpu_count: &1.cpu_count,

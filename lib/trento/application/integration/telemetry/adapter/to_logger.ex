@@ -8,6 +8,11 @@ defmodule Trento.Integration.Telemetry.ToLogger do
 
   require Logger
 
-  def publish_hosts_telemetry(hosts_telemetry, installation_id),
-    do: Logger.debug(hosts_telemetry: hosts_telemetry, installation_id: installation_id)
+  def publish_hosts_telemetry(hosts_telemetry, installation_id, installation_flavor),
+    do:
+      Logger.debug(
+        hosts_telemetry: hosts_telemetry,
+        installation_id: installation_id,
+        installation_flavor: installation_flavor
+      )
 end
