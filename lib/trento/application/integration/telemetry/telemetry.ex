@@ -32,7 +32,7 @@ defmodule Trento.Integration.Telemetry do
 
   @spec telemetry_enabled? :: boolean
   defp telemetry_enabled?,
-    do: Installation.premium_active?() && Installation.eula_accepted?()
+    do: Installation.eula_accepted?()
 
   defp adapter,
     do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
