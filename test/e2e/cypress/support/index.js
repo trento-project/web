@@ -25,6 +25,7 @@ const sessionCookie = '_trento_key';
 before(() => {
   cy.loadScenario('healthy-27-node-SAP-cluster');
   cy.login();
+  cy.acceptEula();
 });
 
 after(() => {

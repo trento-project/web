@@ -38,6 +38,15 @@ Cypress.Commands.add('login', () => {
   cy.url().should('include', '/');
 });
 
+Cypress.Commands.add('acceptEula', () => {
+  cy.request('/api/settings').then((response) => {
+    if (!response.body.eula_accepted) {
+      cy.get('div').should('contain', 'License agreement');
+      cy.get('button').contains('Accept').click();
+    }
+  });
+});
+
 Cypress.Commands.add('loadScenario', (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
     Cypress.env('project_root'),
