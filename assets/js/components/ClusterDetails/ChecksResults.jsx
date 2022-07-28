@@ -183,13 +183,13 @@ export const ChecksResults = () => {
                       (checkId) => (
                         <tr
                           key={checkId}
-                          className="animate-fade tn-check-result-row cursor-pointer"
+                          className="animate-fade tn-check-result-row cursor-pointer hover:bg-emerald-50 ease-in-out duration-300"
                           onClick={() => {
                             setModalOpen(true);
                             setSelectedCheck(checkId);
                           }}
                         >
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4 whitespace-nowrap text-jungle-green-500">
                             {checkId}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
