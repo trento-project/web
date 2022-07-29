@@ -78,7 +78,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          cpu_count: cpu_count,
          total_memory_mb: total_memory_mb,
          socket_count: socket_count,
-         os_version: os_version
+         os_version: os_version,
+         installation_source: installation_source
        }),
        do:
          RegisterHost.new(%{
@@ -90,7 +91,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
            socket_count: socket_count,
-           os_version: os_version
+           os_version: os_version,
+           installation_source: installation_source
          })
 
   defp build_update_provider_command(agent_id, %CloudDiscoveryPayload{

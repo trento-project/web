@@ -15,5 +15,6 @@ defmodule Trento.Domain.Events.HostDetailsUpdated do
     field :total_memory_mb, :integer
     field :socket_count, :integer
     field :os_version, :string
+    field :installation_source, :string
   end
 end

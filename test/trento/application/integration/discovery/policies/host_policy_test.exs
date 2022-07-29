@@ -26,10 +26,27 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                agent_version: "0.1.0",
                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                hostname: "suse",
-               ip_addresses: ["10.1.1.4", "10.1.1.5", "10.1.1.6"]
+               ip_addresses: ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
+               installation_source: "Unknown"
              }
            } =
              "host_discovery"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a host_discovery_with_installation_source payload is handled" do
+    assert {
+             :ok,
+             %RegisterHost{
+               agent_version: "0.1.0",
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               hostname: "suse",
+               ip_addresses: ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
+               installation_source: "Community"
+             }
+           } =
+             "host_discovery_with_installation_source"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end

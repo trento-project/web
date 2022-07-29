@@ -53,6 +53,7 @@ defmodule Trento.Integration.Telemetry.Suse do
         socket_count: &1.socket_count,
         total_memory_mb: &1.total_memory_mb,
         cloud_provider: &1.provider,
+        agent_installation_source: &1.installation_source,
         time: &1.updated_at
       }
     )

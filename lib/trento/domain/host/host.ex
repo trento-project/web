@@ -37,6 +37,7 @@ defmodule Trento.Domain.Host do
     :total_memory_mb,
     :socket_count,
     :os_version,
+    :installation_source,
     :heartbeat,
     :subscriptions,
     :provider_data
@@ -53,6 +54,7 @@ defmodule Trento.Domain.Host do
           total_memory_mb: non_neg_integer(),
           socket_count: non_neg_integer(),
           os_version: String.t(),
+          installation_source: String.t(),
           subscriptions: [SlesSubscription.t()],
           provider_data: AwsProvider.t() | AzureProvider.t() | GcpProvider.t() | nil,
           heartbeat: :passing | :critical | :unknown
@@ -70,7 +72,8 @@ defmodule Trento.Domain.Host do
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
-          os_version: os_version
+          os_version: os_version,
+          installation_source: installation_source
         }
       ) do
     %HostRegistered{
@@ -83,6 +86,7 @@ defmodule Trento.Domain.Host do
       total_memory_mb: total_memory_mb,
       socket_count: socket_count,
       os_version: os_version,
+      installation_source: installation_source,
       heartbeat: :unknown
     }
   end
@@ -97,7 +101,8 @@ defmodule Trento.Domain.Host do
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
-          os_version: os_version
+          os_version: os_version,
+          installation_source: installation_source
         },
         %RegisterHost{
           hostname: hostname,
@@ -107,7 +112,8 @@ defmodule Trento.Domain.Host do
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
-          os_version: os_version
+          os_version: os_version,
+          installation_source: installation_source
         }
       ) do
     []
@@ -124,7 +130,8 @@ defmodule Trento.Domain.Host do
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
-          os_version: os_version
+          os_version: os_version,
+          installation_source: installation_source
         }
       ) do
     %HostDetailsUpdated{
@@ -136,7 +143,8 @@ defmodule Trento.Domain.Host do
       cpu_count: cpu_count,
       total_memory_mb: total_memory_mb,
       socket_count: socket_count,
-      os_version: os_version
+      os_version: os_version,
+      installation_source: installation_source
     }
   end
 
@@ -232,6 +240,7 @@ defmodule Trento.Domain.Host do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          installation_source: installation_source,
           heartbeat: heartbeat
         }
       ) do
@@ -246,6 +255,7 @@ defmodule Trento.Domain.Host do
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
         os_version: os_version,
+        installation_source: installation_source,
         heartbeat: heartbeat
     }
   end
@@ -260,7 +270,8 @@ defmodule Trento.Domain.Host do
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
-          os_version: os_version
+          os_version: os_version,
+          installation_source: installation_source
         }
       ) do
     %Host{
@@ -272,7 +283,8 @@ defmodule Trento.Domain.Host do
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
-        os_version: os_version
+        os_version: os_version,
+        installation_source: installation_source
     }
   end
 

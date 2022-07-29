@@ -1,0 +1,15 @@
+{
+  "agent_id": "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "ssh_address": "10.2.2.22",
+    "os_version": "15-SP2",
+    "ip_addresses": ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
+    "hostname": "suse",
+    "cpu_count": 2,
+    "socket_count": 1,
+    "total_memory_mb": 4096,
+    "agent_version": "0.1.0",
+    "installation_source": "Community"
+  }
+}

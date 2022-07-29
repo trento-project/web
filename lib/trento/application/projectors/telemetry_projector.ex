@@ -23,7 +23,8 @@ defmodule Trento.TelemetryProjector do
       cpu_count: cpu_count,
       total_memory_mb: total_memory_mb,
       socket_count: socket_count,
-      os_version: sles_version
+      os_version: sles_version,
+      installation_source: installation_source
     },
     fn multi ->
       changeset =
@@ -34,7 +35,8 @@ defmodule Trento.TelemetryProjector do
           cpu_count: cpu_count,
           socket_count: socket_count,
           total_memory_mb: total_memory_mb,
-          sles_version: sles_version
+          sles_version: sles_version,
+          installation_source: installation_source
         })
 
       Ecto.Multi.insert(multi, :host_telemetry, changeset,
@@ -51,7 +53,8 @@ defmodule Trento.TelemetryProjector do
       cpu_count: cpu_count,
       socket_count: socket_count,
       total_memory_mb: total_memory_mb,
-      os_version: sles_version
+      os_version: sles_version,
+      installation_source: installation_source
     },
     fn multi ->
       changeset =
@@ -62,7 +65,8 @@ defmodule Trento.TelemetryProjector do
           cpu_count: cpu_count,
           socket_count: socket_count,
           total_memory_mb: total_memory_mb,
-          sles_version: sles_version
+          sles_version: sles_version,
+          installation_source: installation_source
         })
 
       Ecto.Multi.insert(multi, :host_telemetry, changeset,

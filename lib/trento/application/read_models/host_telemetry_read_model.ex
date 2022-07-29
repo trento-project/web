@@ -18,6 +18,7 @@ defmodule Trento.HostTelemetryReadModel do
     field :socket_count, :integer
     field :total_memory_mb, :integer
     field :sles_version, :string
+    field :installation_source, :string
     field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
 
     timestamps()
