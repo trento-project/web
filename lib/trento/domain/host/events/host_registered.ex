@@ -15,7 +15,11 @@ defmodule Trento.Domain.Events.HostRegistered do
     field :total_memory_mb, :integer
     field :socket_count, :integer
     field :os_version, :string
-    field :installation_source, :string
+
+    field :installation_source, Ecto.Enum,
+      values: [:community, :suse, :unknown],
+      default: :unknown
+
     field :heartbeat, Ecto.Enum, values: [:unknown]
   end
 end

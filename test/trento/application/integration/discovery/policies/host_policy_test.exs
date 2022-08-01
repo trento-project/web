@@ -27,7 +27,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                hostname: "suse",
                ip_addresses: ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
-               installation_source: "Unknown"
+               installation_source: :unknown
              }
            } =
              "host_discovery"
@@ -43,7 +43,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                hostname: "suse",
                ip_addresses: ["10.1.1.4", "10.1.1.5", "10.1.1.6"],
-               installation_source: "Community"
+               installation_source: :community
              }
            } =
              "host_discovery_with_installation_source"

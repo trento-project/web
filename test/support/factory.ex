@@ -64,7 +64,7 @@ defmodule Trento.Factory do
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
-      installation_source: Faker.StarWars.character(),
+      installation_source: Enum.random([:community, :suse, :unknown]),
       heartbeat: :unknown
     }
   end
@@ -80,7 +80,7 @@ defmodule Trento.Factory do
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
-      installation_source: Faker.StarWars.character()
+      installation_source: Enum.random([:community, :suse, :unknown])
     }
   end
 
@@ -160,7 +160,7 @@ defmodule Trento.Factory do
       socket_count: Enum.random(0..100),
       total_memory_mb: Enum.random(0..100),
       sles_version: Faker.App.version(),
-      installation_source: Faker.StarWars.character()
+      installation_source: Enum.random([:community, :suse, :unknown])
     }
   end
 

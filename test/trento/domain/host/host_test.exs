@@ -39,7 +39,7 @@ defmodule Trento.HostTest do
       total_memory_mb = Enum.random(1..128)
       socket_count = Enum.random(1..16)
       os_version = Faker.App.version()
-      installation_source = Faker.StarWars.character()
+      installation_source = Enum.random([:community, :suse, :unknown])
 
       assert_events_and_state(
         [],
@@ -94,7 +94,7 @@ defmodule Trento.HostTest do
       new_total_memory_mb = Enum.random(1..128)
       new_socket_count = Enum.random(1..16)
       new_os_version = Faker.App.version()
-      new_installation_source = Faker.StarWars.character()
+      new_installation_source = Enum.random([:community, :suse, :unknown])
 
       assert_events_and_state(
         build(:host_registered_event, host_id: host_id),

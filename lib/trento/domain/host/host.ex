@@ -54,7 +54,7 @@ defmodule Trento.Domain.Host do
           total_memory_mb: non_neg_integer(),
           socket_count: non_neg_integer(),
           os_version: String.t(),
-          installation_source: String.t(),
+          installation_source: :community | :suse | :unknown,
           subscriptions: [SlesSubscription.t()],
           provider_data: AwsProvider.t() | AzureProvider.t() | GcpProvider.t() | nil,
           heartbeat: :passing | :critical | :unknown
