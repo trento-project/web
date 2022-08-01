@@ -22,7 +22,7 @@ ENV MIX_ENV=prod
 ENV MIX_HOME=/usr/bin
 ENV FLAVOR="Premium"
 RUN mix phx.digest
-RUN mix release
+RUN VERSION=%%VERSION%% mix release
 
 FROM bci/bci-base:15.3 AS trento
 # Define labels according to https://en.opensuse.org/Building_derived_containers

@@ -484,7 +484,10 @@ jobs:
 
       - name: Set version
         run: |
-          VERSION=${{ steps.latest-tag.outputs.tag }}
+          git config --global --add safe.directory /__w/web/web
+          VERSION=$(./hack/get_version_from_git.sh)
+          # "+" character is not allowed in OBS dockerfile version strings
+          VERSION=${VERSION//[+]/-}
           sed -i 's~%%VERSION%%~'"${VERSION}"'~' packaging/suse/Dockerfile
 
       - name: Commit on OBS
