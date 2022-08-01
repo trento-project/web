@@ -2,19 +2,6 @@ defmodule Trento.MixProject do
   use Mix.Project
 
   @version "1.1.0"
-  defp get_version do
-    case System.get_env("VERSION") do
-      nil -> get_version_from_git()
-      version -> version
-    end
-  end
-
-  defp get_version_from_git do
-    case File.cwd!() |> Path.join("hack/get_version_from_git.sh") |> System.cmd([]) do
-      {version, 0} -> version |> String.trim("\n")
-      _ -> @version
-    end
-  end
 
   def project do
     [
@@ -135,5 +122,14 @@ defmodule Trento.MixProject do
         "phx.digest"
       ]
     ]
+  end
+
+  defp get_version, do: System.get_env("VERSION", get_version_from_git())
+
+  defp get_version_from_git do
+    case File.cwd!() |> Path.join("hack/get_version_from_git.sh") |> System.cmd([]) do
+      {version, 0} -> version |> String.trim("\n")
+      _ -> @version
+    end
   end
 end
