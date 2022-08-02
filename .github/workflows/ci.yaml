@@ -501,6 +501,9 @@ jobs:
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: deploy-demo-env
+    env:
+      TRENTO_DEMO_IP: ${{ secrets.TRENTO_DEMO_IP }}
+      TRENTO_API_KEY: ${{ secrets.TRENTO_API_KEY }}
     steps:
       - uses: actions/checkout@v3
         with:
