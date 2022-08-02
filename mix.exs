@@ -1,11 +1,13 @@
 defmodule Trento.MixProject do
   use Mix.Project
 
+  @version "1.1.0"
+
   def project do
     [
       app: :trento,
       description: "Easing your life in administering SAP applications",
-      version: "1.1.0",
+      version: get_version(),
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
@@ -120,5 +122,14 @@ defmodule Trento.MixProject do
         "phx.digest"
       ]
     ]
+  end
+
+  defp get_version, do: System.get_env("VERSION", get_version_from_git())
+
+  defp get_version_from_git do
+    case File.cwd!() |> Path.join("hack/get_version_from_git.sh") |> System.cmd([]) do
+      {version, 0} -> version |> String.trim("\n")
+      _ -> @version
+    end
   end
 end
