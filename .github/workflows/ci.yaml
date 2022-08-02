@@ -84,7 +84,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}        
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -420,6 +420,98 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  build-demo-img:
+    name: Build the docker image for the demo environment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    needs: [static-code-analysis, test, test-e2e]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      MIX_ENV: demo
+      REGISTRY: ghcr.io
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-buildx-action@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@49ed152c8eca782a232dede0303416e8f356c37b
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a
+        with:
+          images: ${{ env.IMAGE_REPOSITORY }}
+      - name: Build and push container image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}:demo
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: MIX_ENV=demo
+
+  deploy-demo-env:
+    name: Deploy updated images to the demo environment
+    runs-on: self-hosted
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    env:
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
+    needs: build-demo-img
+    steps:
+      - name: Start a local k8s cluster
+        uses: jupyterhub/action-k3s-helm@v3
+        with:
+          k3s-channel: latest
+
+      - name: Add bitnami helm deps
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+
+      - name: Download and unzip helm chart
+        run: |
+          rm rolling.zip | true
+          rm -rf helm-charts-rolling | true
+          wget https://github.com/trento-project/helm-charts/archive/refs/tags/rolling.zip
+          unzip rolling.zip
+
+      - name: Install trento-server helm chart
+        run: |
+          cd helm-charts-rolling/charts/trento-server
+          helm dependency update          
+          helm upgrade -i trento --wait . \
+            --set-file trento-runner.privateKey=/home/azureuser/.ssh/id_rsa \
+            --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
+            --set trento-web.image.pullPolicy=Always \
+            --set trento-web.image.repository="${IMAGE_REPOSITORY}" \
+            --set trento-web.image.tag="demo"
+
+  run-photofinish-demo-env:
+    name: Use photofinish to push mock data to the demo environment
+    runs-on: ubuntu-20.04
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    needs: deploy-demo-env
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get Photofinish for e2e testing
+        run: |
+          set -x
+          wget -P /tmp https://github.com/trento-project/photofinish/releases/download/v1.1.2/photofinish
+          chmod +x /tmp/photofinish
+      - name: Push data
+        run: /tmp/photofinish run healthy-27-node-SAP-cluster -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
 
   obs-commit:
     name: Commit the project on OBS
