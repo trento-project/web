@@ -5,9 +5,20 @@ defmodule Trento.Event do
 
   import Trento.Type, only: [deftype: 1]
 
-  defmacro defevent(block) do
+  defmacro defevent(opts \\ [], do: block) do
     quote do
-      deftype(unquote(block))
+      @version Keyword.get(unquote(opts), :version, 1)
+
+      deftype do
+        field :version, :integer, default: @version
+        unquote(block)
+      end
+
+      def new(params) do
+        1..@version
+        |> Enum.reduce(params, fn version, acc -> upcast(acc, version) end)
+        |> super()
+      end
     end
   end
 
@@ -16,7 +27,9 @@ defmodule Trento.Event do
       @required_fields nil
 
       use Trento.Type
-      import Trento.Event, only: [defevent: 1]
+      import Trento.Event
+
+      def upcast(params, 1), do: params
     end
   end
 end
