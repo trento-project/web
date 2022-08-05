@@ -10,7 +10,7 @@
     "@storybook/addon-links": "^6.5.10",
     "@storybook/react": "^6.5.10",
     "@storybook/testing-library": "^0.0.13",
-    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "autoprefixer": "^10.4.8",
     "babel-jest": "^28.1.3",
