@@ -119,6 +119,7 @@ defmodule Trento.Type do
 
       defp embedded_fields, do: __MODULE__.__schema__(:embeds)
 
+      defoverridable new: 1
       defoverridable changeset: 2
     end
   end
