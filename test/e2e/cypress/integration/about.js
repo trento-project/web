@@ -9,21 +9,30 @@ describe('User account page', () => {
   });
 
   it('should show the correct flavor', () => {
-    cy.get('div')
-      .contains('Trento flavor')
-      .next()
-      .should('contain', 'Community');
+    let flavour = 'Community';
+    if (Cypress.env('flavour')) {
+      flavour = Cypress.env('flavour');
+    }
+    cy.get('div').contains('Trento flavor').next().should('contain', flavour);
   });
 
   it('should show the correct server version', () => {
-    cy.exec(`cd ${Cypress.env('project_root')} && mix version`).then(
-      ({ stdout: version }) => {
-        cy.get('div')
-          .contains('Server version')
-          .next()
-          .should('contain', version);
-      }
-    );
+    cy.get('div')
+      .contains('Server version')
+      .next()
+      .then(($sv) => {
+        if (Cypress.env('version')) {
+          expect($sv).to.contain(Cypress.env('version'));
+        } else {
+          cy.exec(`cd ${Cypress.env('project_root')} && mix version`)
+            .then(({ stdout: out_version }) => {
+              return out_version;
+            })
+            .then((version) => {
+              expect($sv.text()).to.contain(version);
+            });
+        }
+      });
   });
 
   it('should show the github project link', () => {
@@ -33,10 +42,14 @@ describe('User account page', () => {
       .should('contain', 'https://github.com/trento-project/web');
   });
 
-  it('should display 27 SLES subscriptions found', () => {
+  it('should display number of SLES subscriptions found', () => {
+    let subscriptions = 27;
+    if (typeof Cypress.env('subscriptions') !== 'undefined') {
+      subscriptions = Cypress.env('subscriptions');
+    }
     cy.get('div')
       .contains('SLES for SAP subscriptions')
       .next()
-      .should('contain', '27 found');
+      .should('contain', subscriptions + ' found');
   });
 });
