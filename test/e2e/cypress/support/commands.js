@@ -54,11 +54,13 @@ Cypress.Commands.add('loadScenario', (scenario) => {
     Cypress.env('web_api_host'),
     Cypress.env('web_api_port'),
   ];
-  cy.log(`Loading scenario "${scenario}"...`);
   if (photofinishBinary) {
+    cy.log(`Loading scenario "${scenario}"...`);
     cy.exec(
       `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/collect" ${scenario}`
     );
+  } else {
+    cy.log(`Photofinish is not used.`);
   }
 });
 

@@ -17,17 +17,22 @@ describe('User account page', () => {
   });
 
   it('should show the correct server version', () => {
-    let version;
-    if (Cypress.env('version')) {
-      version = Cypress.env('version');
-    } else {
-      cy.exec(`cd ${Cypress.env('project_root')} && mix version`).then(
-        ({ stdout: out_version }) => {
-          version = out_version;
+    cy.get('div')
+      .contains('Server version')
+      .next()
+      .then(($sv) => {
+        if (Cypress.env('version')) {
+          expect($sv).to.contain(Cypress.env('version'));
+        } else {
+          cy.exec(`cd ${Cypress.env('project_root')} && mix version`)
+            .then(({ stdout: out_version }) => {
+              return out_version;
+            })
+            .then((version) => {
+              expect($sv.text()).to.contain(version);
+            });
         }
-      );
-    }
-    cy.get('div').contains('Server version').next().should('contain', version);
+      });
   });
 
   it('should show the github project link', () => {
