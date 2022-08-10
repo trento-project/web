@@ -1,3 +1,5 @@
+import { getValue } from '../support/common';
+
 describe('User account page', () => {
   before(() => {
     cy.navigateToItem('About');
@@ -9,11 +11,10 @@ describe('User account page', () => {
   });
 
   it('should show the correct flavor', () => {
-    let flavour = 'Community';
-    if (Cypress.env('flavour')) {
-      flavour = Cypress.env('flavour');
-    }
-    cy.get('div').contains('Trento flavor').next().should('contain', flavour);
+    cy.get('div')
+      .contains('Trento flavor')
+      .next()
+      .should('contain', getValue('flavor'));
   });
 
   it('should show the correct server version', () => {
@@ -43,10 +44,7 @@ describe('User account page', () => {
   });
 
   it('should display number of SLES subscriptions found', () => {
-    let subscriptions = 27;
-    if (typeof Cypress.env('subscriptions') !== 'undefined') {
-      subscriptions = Cypress.env('subscriptions');
-    }
+    const subscriptions = getValue('subscriptions');
     cy.get('div')
       .contains('SLES for SAP subscriptions')
       .next()
