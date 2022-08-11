@@ -14,7 +14,7 @@
       "fe80::6245:bdff:fe8d:c2"
     ],
     "socket_count": 1,
-    "agent_version": "0.7.1+git.dev42.1640084952.33229fc",
+    "agent_version": "1.1.0+git.dev17.1660137228.fe5ba8a",
     "total_memory_mb": 7951
   }
 }

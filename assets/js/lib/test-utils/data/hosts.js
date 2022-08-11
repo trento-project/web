@@ -1,6 +1,6 @@
 export default [
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '6bd7ec60-8cb1-5c6b-a892-29e1fd2f8380',
     heartbeat: 'unknown',
     hostname: 'vmdrbddev01',
@@ -114,7 +114,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '6bd7ec60-8cb1-5c6b-a892-29e1fd2f8380',
     heartbeat: 'unknown',
     hostname: 'vmdrbddev02',
@@ -228,7 +228,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: 'c7a1e943-bf46-590b-bd26-bfc7c78def97',
     heartbeat: 'unknown',
     hostname: 'vmdrbdprd01',
@@ -342,7 +342,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: 'c7a1e943-bf46-590b-bd26-bfc7c78def97',
     heartbeat: 'unknown',
     hostname: 'vmdrbdprd02',
@@ -456,7 +456,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '8a66f8fb-5fe9-51b3-a34c-24321271a4e3',
     heartbeat: 'unknown',
     hostname: 'vmdrbdqas01',
@@ -570,7 +570,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '8a66f8fb-5fe9-51b3-a34c-24321271a4e3',
     heartbeat: 'unknown',
     hostname: 'vmdrbdqas02',
@@ -684,7 +684,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '7965f822-0254-5858-abca-f6e8b4c27714',
     heartbeat: 'unknown',
     hostname: 'vmhdbdev01',
@@ -798,7 +798,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '7965f822-0254-5858-abca-f6e8b4c27714',
     heartbeat: 'unknown',
     hostname: 'vmhdbdev02',
@@ -912,7 +912,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '469e7be5-4e20-5007-b044-c6f540a87493',
     heartbeat: 'unknown',
     hostname: 'vmhdbprd01',
@@ -1026,7 +1026,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '469e7be5-4e20-5007-b044-c6f540a87493',
     heartbeat: 'unknown',
     hostname: 'vmhdbprd02',
@@ -1140,7 +1140,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: 'fa0d74a3-9240-5d9e-99fa-61c4137acf81',
     heartbeat: 'unknown',
     hostname: 'vmhdbqas01',
@@ -1254,7 +1254,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: 'fa0d74a3-9240-5d9e-99fa-61c4137acf81',
     heartbeat: 'unknown',
     hostname: 'vmhdbqas02',
@@ -1368,7 +1368,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmiscsi01',
@@ -1482,7 +1482,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmiscsi01',
@@ -1596,7 +1596,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmiscsi01',
@@ -1710,7 +1710,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '5284f376-c1f4-5178-8966-d490df3dab4f',
     heartbeat: 'unknown',
     hostname: 'vmnwdev01',
@@ -1824,7 +1824,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '5284f376-c1f4-5178-8966-d490df3dab4f',
     heartbeat: 'unknown',
     hostname: 'vmnwdev02',
@@ -1938,7 +1938,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmnwdev03',
@@ -2052,7 +2052,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmnwdev04',
@@ -2166,7 +2166,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '0eac831a-aa66-5f45-89a4-007fbd2c5714',
     heartbeat: 'unknown',
     hostname: 'vmnwprd01',
@@ -2280,7 +2280,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: '0eac831a-aa66-5f45-89a4-007fbd2c5714',
     heartbeat: 'unknown',
     hostname: 'vmnwprd02',
@@ -2394,7 +2394,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmnwprd03',
@@ -2508,7 +2508,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmnwprd04',
@@ -2622,7 +2622,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: 'fb861bce-d212-56b5-8786-74afd6eb58cb',
     heartbeat: 'unknown',
     hostname: 'vmnwqas01',
@@ -2736,7 +2736,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: 'fb861bce-d212-56b5-8786-74afd6eb58cb',
     heartbeat: 'unknown',
     hostname: 'vmnwqas02',
@@ -2850,7 +2850,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmnwqas03',
@@ -2955,7 +2955,7 @@ export default [
     tags: [],
   },
   {
-    agent_version: '0.7.1+git.dev42.1640084952.33229fc',
+    agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
     cluster_id: null,
     heartbeat: 'unknown',
     hostname: 'vmnwqas04',
