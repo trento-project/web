@@ -34,7 +34,7 @@ export const attachedHosts = [
     Provider: 'azure',
     Cluster: 'hana_cluster',
     ClusterId: '7965f822-0254-5858-abca-f6e8b4c27714',
-    Version: '0.7.1+git.dev42.1640084952.33229fc',
+    Version: '1.1.0+git.dev17.1660137228.fe5ba8a',
   },
   {
     Name: 'vmhdbdev01',
@@ -43,6 +43,6 @@ export const attachedHosts = [
     Provider: 'azure',
     Cluster: 'hana_cluster',
     ClusterId: '7965f822-0254-5858-abca-f6e8b4c27714',
-    Version: '0.7.1+git.dev42.1640084952.33229fc',
+    Version: '1.1.0+git.dev17.1660137228.fe5ba8a',
   },
 ];
