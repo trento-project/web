@@ -6,7 +6,7 @@ defmodule TrentoWeb.TagsControllerTest do
   alias Trento.Tag
 
   describe "Tag Validation" do
-    test "should vaidate incoming tags", %{conn: conn} do
+    test "should validate incoming tags", %{conn: conn} do
       conn =
         post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
           "value" => "     "
