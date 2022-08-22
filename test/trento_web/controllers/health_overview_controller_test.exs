@@ -3,7 +3,7 @@ defmodule TrentoWeb.HealthOverviewControllerTest do
 
   import Trento.Factory
 
-  test "should return the exepcted overview", %{conn: conn} do
+  test "should return the expected overview", %{conn: conn} do
     %{
       sap_system_id: sap_system_id,
       sid: sid

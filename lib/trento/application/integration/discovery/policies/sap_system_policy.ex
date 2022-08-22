@@ -1,6 +1,6 @@
 defmodule Trento.Integration.Discovery.SapSystemPolicy do
   @moduledoc """
-  This module contains functions to trasnform SAP system related integration events into commands..
+  This module contains functions to transform SAP system related integration events into commands..
   """
 
   alias Trento.Domain.Commands.{
