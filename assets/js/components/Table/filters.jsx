@@ -45,7 +45,10 @@ export const TableFilters = ({ config, data, filters, onChange }) => {
     .map((column) => {
       const filterValue = getFilter(column.key, filters);
       const filterOptions = uniq(
-        data.map(({ [column.key]: option }) => option).flat(Infinity)
+        data
+          .map(({ [column.key]: option }) => option)
+          .flat(Infinity)
+          .concat(filterValue)
       );
 
       return (
