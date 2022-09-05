@@ -14,10 +14,7 @@ const ChecksResultFilters = ({ onChange }) => {
     if (Object.keys(filtersForField).length >= 0) {
       const filtersToApply = Object.keys(filtersForField).reduce(
         (acc, curr) => {
-          return [
-            ...acc,
-            ...filtersForField[curr],
-          ];
+          return [...acc, ...filtersForField[curr].predicates];
         },
         []
       );
@@ -31,14 +28,17 @@ const ChecksResultFilters = ({ onChange }) => {
       <Filter
         key={RESULT_FILTER_FIELD}
         title={'checks result'}
-        options={['passing', 'warning']}
-        value={['passing', 'warning']}
+        options={['passing', 'warning', 'critical']}
+        value={filtersForField[RESULT_FILTER_FIELD]?.values || []}
         onChange={(list) => {
           setFiltersForField((existingFilters) => ({
             ...existingFilters,
-            [RESULT_FILTER_FIELD]: list.map(
-              (value) => (checks) => checks[RESULT_FILTER_FIELD] === value
-            ),
+            [RESULT_FILTER_FIELD]: {
+              predicates: list.map(
+                (value) => (checks) => checks[RESULT_FILTER_FIELD] === value
+              ),
+              values: list,
+            },
           }));
         }}
       />

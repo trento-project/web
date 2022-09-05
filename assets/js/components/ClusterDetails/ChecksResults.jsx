@@ -93,7 +93,7 @@ export const ChecksResults = () => {
 
     // console.log('filter checks', checks, predicates)
     return checks.filter((check) =>
-      predicates.every((predicate) => predicate(check))
+      predicates.some((predicate) => predicate(check))
     );
   };
 
@@ -284,7 +284,11 @@ export const ChecksResults = () => {
             {getClusterName(cluster)}
           </span>
         </h1>
-        <ChecksResultFilters onChange={(filtersPredicates) => setFiltersPredicates(filtersPredicates)}/>
+        <ChecksResultFilters
+          onChange={(filtersPredicates) =>
+            setFiltersPredicates(filtersPredicates)
+          }
+        />
       </div>
       {pageContent}
     </div>
