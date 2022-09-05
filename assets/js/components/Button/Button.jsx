@@ -12,6 +12,8 @@ const getSizeClasses = (size) => {
 
 const getButtonClasses = (type) => {
   switch (type) {
+    case 'transparent':
+      return 'bg-transparent hover:opacity-75 focus:outline-none w-full transition ease-in duration-200 font-semibold';
     case 'secondary':
       return 'bg-persimmon hover:opacity-75 focus:outline-none  text-gray-800 w-full transition ease-in duration-200 text-center font-semibold rounded shadow';
     default:
