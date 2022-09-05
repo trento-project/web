@@ -23,6 +23,8 @@ import {
 } from './ClusterDetails';
 import { ExecutionIcon } from './ExecutionIcon';
 import { getClusterName } from '@components/ClusterLink';
+import ChecksResultFilters from '@components/ClusterDetails/ChecksResultFilters';
+import uniqBy from 'lodash/uniqBy';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -63,6 +65,8 @@ export const ChecksResults = () => {
   const { clusterID } = useParams();
   const cluster = useSelector(getCluster(clusterID));
   const [hasAlreadyChecksResults, setHasAlreadyChecksResults] = useState(false);
+  const [filtersPredicates, setFiltersPredicates] = useState([]);
+  const [filteredChecks, setFilteredChecks] = useState([]);
 
   const [catalogData, catalogErrorCode, catalogError, loading] = useSelector(
     (state) => [
@@ -84,6 +88,15 @@ export const ChecksResults = () => {
     });
   };
 
+  const filterChecks = (checks, predicates) => {
+    if (predicates.length === 0) return checks;
+
+    // console.log('filter checks', checks, predicates)
+    return checks.filter((check) =>
+      predicates.every((predicate) => predicate(check))
+    );
+  };
+
   const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
 
   useEffect(() => {
@@ -93,6 +106,24 @@ export const ChecksResults = () => {
   useEffect(() => {
     setHasAlreadyChecksResults(cluster?.checks_results.length > 0);
   }, [cluster?.checks_results]);
+
+  // Initialize the checks to display, and if changes, recaculate according to filters
+  // TODO: Custom hook
+  useEffect(() => {
+    if (cluster?.checks_results.length > 0) {
+      const selectedCheckResults = uniqBy(
+        cluster?.checks_results.filter((result) =>
+          cluster?.selected_checks.includes(result?.check_id)
+        ),
+        'check_id'
+      );
+      setFilteredChecks(
+        filterChecks(selectedCheckResults, filtersPredicates).map(
+          (checkResult) => checkResult.check_id
+        )
+      );
+    }
+  }, [cluster?.checks_results, cluster?.selected_checks, filtersPredicates]);
 
   if (loading || !cluster) {
     return <LoadingBox text="Loading checks catalog..." />;
@@ -136,6 +167,7 @@ export const ChecksResults = () => {
     );
   } else {
     const lastExecution = sortHosts(cluster?.hosts_executions.slice());
+
     pageContent = lastExecution.map(
       ({ _cluster_id, host_id, reachable, msg }, idx) => (
         <div key={idx} className="flex flex-col">
@@ -179,40 +211,38 @@ export const ChecksResults = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {sortChecks(cluster?.selected_checks.slice()).map(
-                      (checkId) => (
-                        <tr
-                          key={checkId}
-                          className="animate-fade tn-check-result-row cursor-pointer hover:bg-emerald-50 ease-in-out duration-300"
-                          onClick={() => {
-                            setModalOpen(true);
-                            setSelectedCheck(checkId);
-                          }}
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap text-jungle-green-500">
-                            {checkId}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <ReactMarkdown
-                              className="markdown"
-                              remarkPlugins={[remarkGfm]}
-                            >
-                              {description(checkId)}
-                            </ReactMarkdown>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap content-center">
-                            {getResultIcon(
-                              cluster.checks_execution,
-                              cluster?.checks_results.find(
-                                (result) =>
-                                  result.check_id === checkId &&
-                                  result.host_id === host_id
-                              )?.result
-                            )}
-                          </td>
-                        </tr>
-                      )
-                    )}
+                    {sortChecks(filteredChecks.slice()).map((checkId) => (
+                      <tr
+                        key={checkId}
+                        className="animate-fade tn-check-result-row cursor-pointer hover:bg-emerald-50 ease-in-out duration-300"
+                        onClick={() => {
+                          setModalOpen(true);
+                          setSelectedCheck(checkId);
+                        }}
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-jungle-green-500">
+                          {checkId}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <ReactMarkdown
+                            className="markdown"
+                            remarkPlugins={[remarkGfm]}
+                          >
+                            {description(checkId)}
+                          </ReactMarkdown>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap content-center">
+                          {getResultIcon(
+                            cluster.checks_execution,
+                            cluster?.checks_results.find(
+                              (result) =>
+                                result.check_id === checkId &&
+                                result.host_id === host_id
+                            )?.result
+                          )}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -247,13 +277,14 @@ export const ChecksResults = () => {
           </Button>
         </div>
       </div>
-      <div className="flex mb-4">
+      <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
           <span className={`font-bold ${truncatedClusterNameClasses}`}>
             {getClusterName(cluster)}
           </span>
         </h1>
+        <ChecksResultFilters onChange={(filtersPredicates) => setFiltersPredicates(filtersPredicates)}/>
       </div>
       {pageContent}
     </div>
