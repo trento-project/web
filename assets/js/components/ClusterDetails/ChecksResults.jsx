@@ -234,6 +234,19 @@ export const ChecksResults = () => {
           {findCheckDataByID(selectedCheck)?.remediation}
         </ReactMarkdown>
       </Modal>
+      <div className="flex mb-8">
+        <div className="flex w-2/5">
+          <Button
+            className="w-2/3 text-jungle-green-500 text-left py-0 px-0"
+            size="small"
+            type="transparent"
+            onClick={() => navigate(`/clusters/${cluster.id}`)}
+          >
+            <EOS_ARROW_BACK className="inline-block fill-jungle-green-500" />{' '}
+            Back to Cluster Detail
+          </Button>
+        </div>
+      </div>
       <div className="flex mb-4">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
@@ -241,16 +254,6 @@ export const ChecksResults = () => {
             {getClusterName(cluster)}
           </span>
         </h1>
-        <div className="flex w-2/5 justify-end text-white">
-          <Button
-            className="w-1/3 bg-waterhole-blue text-white"
-            size="small"
-            onClick={() => navigate(`/clusters/${cluster.id}`)}
-          >
-            <EOS_ARROW_BACK className="inline-block fill-white" /> Back to
-            Cluster
-          </Button>
-        </div>
       </div>
       {pageContent}
     </div>
