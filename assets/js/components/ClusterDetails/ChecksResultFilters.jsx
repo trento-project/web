@@ -60,7 +60,7 @@ const ChecksResultFilters = ({ onChange }) => {
       <Filter
         key={RESULT_FILTER_FIELD}
         title={'checks result'}
-        options={['passing', 'warning', 'critical']}
+        options={['passing', 'warning', 'critical', 'unknown']}
         value={filtersForField[RESULT_FILTER_FIELD]?.values || []}
         onChange={(list) => {
           setFiltersForField((existingFilters) => ({
