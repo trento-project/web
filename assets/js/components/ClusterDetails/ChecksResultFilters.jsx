@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Filter from '@components/Table/Filter';
-import uniqBy from 'lodash/uniqBy';
 
 export const RESULT_FILTER_FIELD = 'result';
 
@@ -17,25 +16,24 @@ export const useFilteredChecks = (cluster) => {
     );
   };
 
+  const checksForHost = (hostID) =>
+    filteredChecks
+      .filter((result) => result.host_id === hostID)
+      .map((result) => result.check_id);
+
   useEffect(() => {
     if (cluster?.checks_results.length > 0) {
-      const selectedCheckResults = uniqBy(
-        cluster?.checks_results.filter((result) =>
-          cluster?.selected_checks.includes(result?.check_id)
-        ),
-        'check_id'
+      const selectedCheckResults = cluster?.checks_results.filter((result) =>
+        cluster?.selected_checks.includes(result?.check_id)
       );
-      setFilteredChecks(
-        filterChecks(selectedCheckResults, filtersPredicates).map(
-          (checkResult) => checkResult.check_id
-        )
-      );
+
+      setFilteredChecks(filterChecks(selectedCheckResults, filtersPredicates));
     }
   }, [cluster?.checks_results, cluster?.selected_checks, filtersPredicates]);
 
   return {
     setFiltersPredicates,
-    filteredChecks,
+    filteredChecksyByHost: checksForHost,
   };
 };
 

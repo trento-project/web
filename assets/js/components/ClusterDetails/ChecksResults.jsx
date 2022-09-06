@@ -88,7 +88,8 @@ export const ChecksResults = () => {
 
   const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
 
-  const { filteredChecks, setFiltersPredicates } = useFilteredChecks(cluster);
+  const { filteredChecksyByHost, setFiltersPredicates } =
+    useFilteredChecks(cluster);
 
   useEffect(() => {
     cluster?.provider && dispatchUpdateCatalog();
@@ -184,38 +185,40 @@ export const ChecksResults = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {sortChecks(filteredChecks.slice()).map((checkId) => (
-                      <tr
-                        key={checkId}
-                        className="animate-fade tn-check-result-row cursor-pointer hover:bg-emerald-50 ease-in-out duration-300"
-                        onClick={() => {
-                          setModalOpen(true);
-                          setSelectedCheck(checkId);
-                        }}
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap text-jungle-green-500">
-                          {checkId}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <ReactMarkdown
-                            className="markdown"
-                            remarkPlugins={[remarkGfm]}
-                          >
-                            {description(checkId)}
-                          </ReactMarkdown>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap content-center">
-                          {getResultIcon(
-                            cluster.checks_execution,
-                            cluster?.checks_results.find(
-                              (result) =>
-                                result.check_id === checkId &&
-                                result.host_id === host_id
-                            )?.result
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                    {sortChecks(filteredChecksyByHost(host_id)).map(
+                      (checkId) => (
+                        <tr
+                          key={checkId}
+                          className="animate-fade tn-check-result-row cursor-pointer hover:bg-emerald-50 ease-in-out duration-300"
+                          onClick={() => {
+                            setModalOpen(true);
+                            setSelectedCheck(checkId);
+                          }}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap text-jungle-green-500">
+                            {checkId}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <ReactMarkdown
+                              className="markdown"
+                              remarkPlugins={[remarkGfm]}
+                            >
+                              {description(checkId)}
+                            </ReactMarkdown>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap content-center">
+                            {getResultIcon(
+                              cluster.checks_execution,
+                              cluster?.checks_results.find(
+                                (result) =>
+                                  result.check_id === checkId &&
+                                  result.host_id === host_id
+                              )?.result
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    )}
                   </tbody>
                 </table>
               </div>
