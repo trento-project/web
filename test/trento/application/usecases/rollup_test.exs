@@ -28,9 +28,12 @@ defmodule Trento.RollupTest do
     assert {:ok,
             [
               %EventStore.RecordedEvent{
-                data: %TestRollupEvent{data: "data", applied: true}
+                data: data
               }
             ]} = Trento.EventStore.read_stream_forward(stream_id)
+
+    assert %TestRollupEvent{data: "data", applied: true} ==
+             Commanded.Event.Upcaster.upcast(data, %{})
   end
 
   @tag capture_log: true

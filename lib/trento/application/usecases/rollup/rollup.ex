@@ -17,7 +17,7 @@ defmodule Trento.Rollup do
               causation_id: UUID.uuid4(),
               correlation_id: UUID.uuid4(),
               event_type: Commanded.EventStore.TypeProvider.to_string(event),
-              data: %{event | applied: true},
+              data: Map.put(event, :applied, true),
               metadata: %{}
             }
           ],
