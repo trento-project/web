@@ -14,10 +14,21 @@ defmodule Trento.Event do
         unquote(block)
       end
 
-      def new(params) do
-        1..@version
-        |> Enum.reduce(params, fn version, acc -> upcast(acc, version) end)
-        |> super()
+      def upcast(params, metadata) do
+        params
+        |> Map.put_new("version", 1)
+        |> upcast_params(metadata)
+      end
+
+      defp upcast_params(%{"version" => @version} = params, _) do
+        params
+      end
+
+      defp upcast_params(%{"version" => version} = params, metadata) do
+        params
+        |> upcast(metadata, version + 1)
+        |> Map.put("version", version + 1)
+        |> upcast_params(metadata)
       end
     end
   end
@@ -29,7 +40,7 @@ defmodule Trento.Event do
       use Trento.Type
       import Trento.Event
 
-      def upcast(params, 1), do: params
+      def upcast(params, _, 1), do: params
     end
   end
 end
