@@ -249,7 +249,7 @@ export const ChecksResults = () => {
             onClick={() => navigate(`/clusters/${cluster.id}`)}
           >
             <EOS_ARROW_BACK className="inline-block fill-jungle-green-500" />{' '}
-            Back to Cluster Detail
+            Back to Cluster Details
           </Button>
         </div>
       </div>
