@@ -1,8 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Filter from '@components/Table/Filter';
-import { useEffect } from 'react';
+import uniqBy from 'lodash/uniqBy';
 
 export const RESULT_FILTER_FIELD = 'result';
+
+export const useFilteredChecks = (cluster) => {
+  const [filtersPredicates, setFiltersPredicates] = useState([]);
+  const [filteredChecks, setFilteredChecks] = useState([]);
+
+  const filterChecks = (checks, predicates) => {
+    if (predicates.length === 0) return checks;
+
+    // console.log('filter checks', checks, predicates)
+    return checks.filter((check) =>
+      predicates.some((predicate) => predicate(check))
+    );
+  };
+
+  useEffect(() => {
+    if (cluster?.checks_results.length > 0) {
+      const selectedCheckResults = uniqBy(
+        cluster?.checks_results.filter((result) =>
+          cluster?.selected_checks.includes(result?.check_id)
+        ),
+        'check_id'
+      );
+      setFilteredChecks(
+        filterChecks(selectedCheckResults, filtersPredicates).map(
+          (checkResult) => checkResult.check_id
+        )
+      );
+    }
+  }, [cluster?.checks_results, cluster?.selected_checks, filtersPredicates]);
+
+  return {
+    setFiltersPredicates,
+    filteredChecks,
+  };
+};
 
 const ChecksResultFilters = ({ onChange }) => {
   const [filtersForField, setFiltersForField] = useState({});

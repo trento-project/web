@@ -24,10 +24,10 @@ import {
 import { ExecutionIcon } from './ExecutionIcon';
 import { getClusterName } from '@components/ClusterLink';
 import ChecksResultFilters from '@components/ClusterDetails/ChecksResultFilters';
-import uniqBy from 'lodash/uniqBy';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useFilteredChecks } from './ChecksResultFilters';
 
 const getHostname =
   (hosts = []) =>
@@ -65,8 +65,6 @@ export const ChecksResults = () => {
   const { clusterID } = useParams();
   const cluster = useSelector(getCluster(clusterID));
   const [hasAlreadyChecksResults, setHasAlreadyChecksResults] = useState(false);
-  const [filtersPredicates, setFiltersPredicates] = useState([]);
-  const [filteredChecks, setFilteredChecks] = useState([]);
 
   const [catalogData, catalogErrorCode, catalogError, loading] = useSelector(
     (state) => [
@@ -88,16 +86,9 @@ export const ChecksResults = () => {
     });
   };
 
-  const filterChecks = (checks, predicates) => {
-    if (predicates.length === 0) return checks;
-
-    // console.log('filter checks', checks, predicates)
-    return checks.filter((check) =>
-      predicates.some((predicate) => predicate(check))
-    );
-  };
-
   const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
+
+  const { filteredChecks, setFiltersPredicates } = useFilteredChecks(cluster);
 
   useEffect(() => {
     cluster?.provider && dispatchUpdateCatalog();
@@ -106,24 +97,6 @@ export const ChecksResults = () => {
   useEffect(() => {
     setHasAlreadyChecksResults(cluster?.checks_results.length > 0);
   }, [cluster?.checks_results]);
-
-  // Initialize the checks to display, and if changes, recaculate according to filters
-  // TODO: Custom hook
-  useEffect(() => {
-    if (cluster?.checks_results.length > 0) {
-      const selectedCheckResults = uniqBy(
-        cluster?.checks_results.filter((result) =>
-          cluster?.selected_checks.includes(result?.check_id)
-        ),
-        'check_id'
-      );
-      setFilteredChecks(
-        filterChecks(selectedCheckResults, filtersPredicates).map(
-          (checkResult) => checkResult.check_id
-        )
-      );
-    }
-  }, [cluster?.checks_results, cluster?.selected_checks, filtersPredicates]);
 
   if (loading || !cluster) {
     return <LoadingBox text="Loading checks catalog..." />;
