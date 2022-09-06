@@ -531,4 +531,26 @@ defmodule Trento.HostTest do
       )
     end
   end
+
+  describe "event upcasting" do
+    test "should upcast HostRegistered event properly" do
+      assert %HostRegistered{
+               version: 2,
+               installation_source: :unknown
+             } ==
+               %{}
+               |> HostRegistered.upcast(%{})
+               |> HostRegistered.new!()
+    end
+
+    test "should upcast HostDetailsUpdated event properly" do
+      assert %HostDetailsUpdated{
+               version: 2,
+               installation_source: :unknown
+             } ==
+               %{}
+               |> HostDetailsUpdated.upcast(%{})
+               |> HostDetailsUpdated.new!()
+    end
+  end
 end
