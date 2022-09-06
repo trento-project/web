@@ -23,11 +23,13 @@ import {
 } from './ClusterDetails';
 import { ExecutionIcon } from './ExecutionIcon';
 import { getClusterName } from '@components/ClusterLink';
-import ChecksResultFilters from '@components/ClusterDetails/ChecksResultFilters';
+import {
+  ChecksResultFilters,
+  useFilteredChecks,
+} from '@components/ClusterDetails/ChecksResultFilters';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { useFilteredChecks } from './ChecksResultFilters';
 
 const getHostname =
   (hosts = []) =>
