@@ -10,7 +10,6 @@ export const useFilteredChecks = (cluster) => {
   const filterChecks = (checks, predicates) => {
     if (predicates.length === 0) return checks;
 
-    // console.log('filter checks', checks, predicates)
     return checks.filter((check) =>
       predicates.some((predicate) => predicate(check))
     );
