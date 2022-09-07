@@ -23,8 +23,7 @@ import {
 } from './ClusterDetails';
 import { ExecutionIcon } from './ExecutionIcon';
 import { getClusterName } from '@components/ClusterLink';
-import {
-  ChecksResultFilters,
+import ChecksResultFilters, {
   useFilteredChecks,
 } from '@components/ClusterDetails/ChecksResultFilters';
 
