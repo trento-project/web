@@ -23,6 +23,9 @@ import {
 } from './ClusterDetails';
 import { ExecutionIcon } from './ExecutionIcon';
 import { getClusterName } from '@components/ClusterLink';
+import ChecksResultFilters, {
+  useFilteredChecks,
+} from '@components/ClusterDetails/ChecksResultFilters';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -86,6 +89,9 @@ export const ChecksResults = () => {
 
   const hostname = getHostname(useSelector((state) => state.hostsList.hosts));
 
+  const { filteredChecksyByHost, setFiltersPredicates } =
+    useFilteredChecks(cluster);
+
   useEffect(() => {
     cluster?.provider && dispatchUpdateCatalog();
   }, [cluster?.provider]);
@@ -136,6 +142,7 @@ export const ChecksResults = () => {
     );
   } else {
     const lastExecution = sortHosts(cluster?.hosts_executions.slice());
+
     pageContent = lastExecution.map(
       ({ _cluster_id, host_id, reachable, msg }, idx) => (
         <div key={idx} className="flex flex-col">
@@ -179,7 +186,7 @@ export const ChecksResults = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {sortChecks(cluster?.selected_checks.slice()).map(
+                    {sortChecks(filteredChecksyByHost(host_id)).map(
                       (checkId) => (
                         <tr
                           key={checkId}
@@ -234,23 +241,31 @@ export const ChecksResults = () => {
           {findCheckDataByID(selectedCheck)?.remediation}
         </ReactMarkdown>
       </Modal>
-      <div className="flex mb-4">
+      <div className="flex mb-8">
+        <div className="flex w-2/5">
+          <Button
+            className="w-2/3 text-jungle-green-500 text-left py-0 px-0"
+            size="small"
+            type="transparent"
+            onClick={() => navigate(`/clusters/${cluster.id}`)}
+          >
+            <EOS_ARROW_BACK className="inline-block fill-jungle-green-500" />{' '}
+            Back to Cluster Details
+          </Button>
+        </div>
+      </div>
+      <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
           <span className={`font-bold ${truncatedClusterNameClasses}`}>
             {getClusterName(cluster)}
           </span>
         </h1>
-        <div className="flex w-2/5 justify-end text-white">
-          <Button
-            className="w-1/3 bg-waterhole-blue text-white"
-            size="small"
-            onClick={() => navigate(`/clusters/${cluster.id}`)}
-          >
-            <EOS_ARROW_BACK className="inline-block fill-white" /> Back to
-            Cluster
-          </Button>
-        </div>
+        <ChecksResultFilters
+          onChange={(filtersPredicates) =>
+            setFiltersPredicates(filtersPredicates)
+          }
+        />
       </div>
       {pageContent}
     </div>
