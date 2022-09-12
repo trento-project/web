@@ -3,16 +3,7 @@ defmodule Trento.Integration.Discovery.HostDiscoveryPayload do
   Host discovery integration event payload
   """
 
-  @required_fields [
-    :hostname,
-    :ip_addresses,
-    :ssh_address,
-    :agent_version,
-    :cpu_count,
-    :total_memory_mb,
-    :socket_count,
-    :os_version
-  ]
+  @required_fields :all
 
   use Trento.Type
 
@@ -32,9 +23,7 @@ defmodule Trento.Integration.Discovery.HostDiscoveryPayload do
   end
 
   def changeset(host, attrs) do
-    modified_attrs =
-      attrs
-      |> installation_source_to_downcase
+    modified_attrs = installation_source_to_downcase(attrs)
 
     host
     |> cast(modified_attrs, fields())

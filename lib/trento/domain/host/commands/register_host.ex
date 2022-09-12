@@ -18,8 +18,6 @@ defmodule Trento.Domain.Commands.RegisterHost do
     field :socket_count, :integer
     field :os_version, :string, default: "Unknown"
 
-    field :installation_source, Ecto.Enum,
-      values: [:community, :suse, :unknown],
-      default: :unknown
+    field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
   end
 end

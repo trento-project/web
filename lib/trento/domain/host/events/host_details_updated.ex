@@ -16,9 +16,7 @@ defmodule Trento.Domain.Events.HostDetailsUpdated do
     field :socket_count, :integer
     field :os_version, :string
 
-    field :installation_source, Ecto.Enum,
-      values: [:community, :suse, :unknown],
-      default: :unknown
+    field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
   end
 
   def upcast(params, _, 2), do: Map.put(params, "installation_source", :unknown)
