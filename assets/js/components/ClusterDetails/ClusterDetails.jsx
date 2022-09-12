@@ -18,6 +18,7 @@ import HostLink from '@components/HostLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
+import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 
 export const truncatedClusterNameClasses = classNames(
   'font-bold truncate w-60 inline-block align-top'
@@ -140,47 +141,56 @@ const ClusterDetails = () => {
         </div>
       </div>
 
-      <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 px-8">
-        <ListView
-          className="grid-rows-3"
-          orientation="vertical"
-          data={[
-            { title: 'Cluster name', content: cluster.name || 'Not defined' },
-            { title: 'SID', content: cluster.sid },
-            {
-              title: 'Fencing type',
-              content: cluster.details && cluster.details.fencing_type,
-            },
-            {
-              title: 'Cluster type',
-              content:
-                cluster.type === 'hana_scale_up' ? 'HANA scale-up' : 'Unknown',
-            },
-            {
-              title: 'SAPHanaSR health state',
-              content: cluster.details && cluster.details.sr_health_state,
-            },
-            {
-              title: 'CIB last written',
-              content: cluster.cib_last_written || '-',
-            },
-            {
-              title: 'HANA log replication mode',
-              content:
-                cluster.details && cluster.details.system_replication_mode,
-            },
-            {
-              title: 'HANA secondary sync state',
-              content: cluster.details && cluster.details.secondary_sync_state,
-            },
-            {
-              title: 'HANA log operation mode',
-              content:
-                cluster.details &&
-                cluster.details.system_replication_operation_mode,
-            },
-          ]}
-        />
+      <div className="flex">
+        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 w-[80%] mr-4">
+          <ListView
+            className="grid-rows-3"
+            titleClassName="text-lg"
+            orientation="vertical"
+            data={[
+              { title: 'Cluster name', content: cluster.name || 'Not defined' },
+              { title: 'SID', content: cluster.sid },
+              {
+                title: 'Fencing type',
+                content: cluster.details && cluster.details.fencing_type,
+              },
+              {
+                title: 'Cluster type',
+                content:
+                  cluster.type === 'hana_scale_up'
+                    ? 'HANA scale-up'
+                    : 'Unknown',
+              },
+              {
+                title: 'SAPHanaSR health state',
+                content: cluster.details && cluster.details.sr_health_state,
+              },
+              {
+                title: 'CIB last written',
+                content: cluster.cib_last_written || '-',
+              },
+              {
+                title: 'HANA log replication mode',
+                content:
+                  cluster.details && cluster.details.system_replication_mode,
+              },
+              {
+                title: 'HANA secondary sync state',
+                content:
+                  cluster.details && cluster.details.secondary_sync_state,
+              },
+              {
+                title: 'HANA log operation mode',
+                content:
+                  cluster.details &&
+                  cluster.details.system_replication_operation_mode,
+              },
+            ]}
+          />
+        </div>
+        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 w-[23%]">
+          <ChecksResultOverview />
+        </div>
       </div>
 
       {cluster.details && cluster.details.stopped_resources.length > 0 && (

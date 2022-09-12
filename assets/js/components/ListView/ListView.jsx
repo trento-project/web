@@ -1,7 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const ListView = ({ className, orientation = 'horizontal', data }) => (
+const ListView = ({
+  className,
+  orientation = 'horizontal',
+  data,
+  titleClassName,
+}) => (
   <div
     className={
       orientation === 'vertical'
@@ -20,7 +25,7 @@ const ListView = ({ className, orientation = 'horizontal', data }) => (
             : 'grid grid-flow-col auto-cols-fr gap-5'
         }
       >
-        <div className="font-bold">{title}</div>
+        <div className={classNames(titleClassName, 'font-bold')}>{title}</div>
         <div className="">{render(content)}</div>
       </div>
     ))}
