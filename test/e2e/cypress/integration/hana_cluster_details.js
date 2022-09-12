@@ -69,6 +69,21 @@ context('HANA database details', () => {
         .next()
         .contains(availableHanaCluster.cibLastWritten);
     });
+
+    it('should have the check overview component with passing checks', () => {
+      cy.get('.tn-cluster-checks-overview ')
+        .contains('Passed')
+    })
+
+    it('should have the check overview component with warning checks', () => {
+      cy.get('.tn-cluster-checks-overview ')
+        .contains('Warning')
+    })
+
+    it('should have the check overview component with critical checks', () => {
+      cy.get('.tn-cluster-checks-overview ')
+        .contains('Critical')
+    })
   });
 
   describe('Cluster sites should have the expected hosts', () => {

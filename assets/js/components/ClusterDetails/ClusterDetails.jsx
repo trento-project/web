@@ -238,7 +238,7 @@ const ClusterDetails = () => {
             ]}
           />
         </div>
-        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
+        <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
           <ChecksResultOverview
             {...checkResults}
             onCheckClick={() =>
