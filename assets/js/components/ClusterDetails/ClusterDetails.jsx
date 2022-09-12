@@ -225,7 +225,12 @@ const ClusterDetails = () => {
           />
         </div>
         <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 w-[23%]">
-          <ChecksResultOverview {...checkResults} />
+          <ChecksResultOverview
+            {...checkResults}
+            onCheckClick={() =>
+              navigate(`/clusters/${clusterID}/checks/results`)
+            }
+          />
         </div>
       </div>
 
