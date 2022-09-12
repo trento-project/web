@@ -147,7 +147,7 @@ const ClusterDetails = () => {
 
   return (
     <div>
-      <div className="flex">
+      <div className="flex mb-4">
         <h1 className="text-3xl font-bold w-1/2">
           Pacemaker cluster details:{' '}
           <span className={truncatedClusterNameClasses}>
@@ -156,26 +156,30 @@ const ClusterDetails = () => {
         </h1>
         <div className="flex w-1/2 justify-end">
           <Button
-            className="w-1/4 mx-0.5 bg-waterhole-blue"
+            type="primary-white"
+            className="w-1/4 mx-0.5 border-green-500 border"
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/settings`)}
           >
-            <EOS_SETTINGS className="inline-block fill-white" /> Settings
+            <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+            Settings
           </Button>
           <Button
-            className="w-1/4 mx-0.5 bg-waterhole-blue"
+            type="primary-white"
+            className="w-1/4 mx-0.5 border-green-500 border"
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
           >
-            <EOS_CLEAR_ALL className="inline-block fill-white" /> Show Results
+            <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
+            Show Results
           </Button>
           <TriggerChecksExecutionRequest
-            cssClasses="rounded relative w-1/4 ml-0.5 bg-waterhole-blue disabled:bg-slate-50 disabled:text-slate-500"
+            cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500"
             clusterId={clusterID}
             disabled={!hasSelectedChecks}
           >
             <EOS_PLAY_CIRCLE
-              className={classNames('inline-block fill-white', {
+              className={classNames('inline-block fill-jungle-green-500', {
                 'fill-slate-500': !hasSelectedChecks,
               })}
             />{' '}
@@ -312,7 +316,7 @@ export const TriggerChecksExecutionRequest = ({
   return (
     <button
       className={classNames(
-        'items-center text-sm px-2 bg-jungle-green-500 text-white hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow',
+        'items-center text-sm border-green-500 px-2 text-jungle-green-500 bg-white border border-green hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow',
         cssClasses
       )}
       onClick={() => {
