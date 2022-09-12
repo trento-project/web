@@ -39,6 +39,7 @@ defmodule Trento.HostTest do
       total_memory_mb = Enum.random(1..128)
       socket_count = Enum.random(1..16)
       os_version = Faker.App.version()
+      installation_source = Enum.random([:community, :suse, :unknown])
 
       assert_events_and_state(
         [],
@@ -51,7 +52,8 @@ defmodule Trento.HostTest do
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
-          os_version: os_version
+          os_version: os_version,
+          installation_source: installation_source
         }),
         %HostRegistered{
           host_id: host_id,
@@ -63,6 +65,7 @@ defmodule Trento.HostTest do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          installation_source: installation_source,
           heartbeat: :unknown
         },
         %Host{
@@ -75,6 +78,7 @@ defmodule Trento.HostTest do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          installation_source: installation_source,
           heartbeat: :unknown
         }
       )
@@ -90,6 +94,7 @@ defmodule Trento.HostTest do
       new_total_memory_mb = Enum.random(1..128)
       new_socket_count = Enum.random(1..16)
       new_os_version = Faker.App.version()
+      new_installation_source = Enum.random([:community, :suse, :unknown])
 
       assert_events_and_state(
         build(:host_registered_event, host_id: host_id),
@@ -102,7 +107,8 @@ defmodule Trento.HostTest do
           cpu_count: new_cpu_count,
           total_memory_mb: new_total_memory_mb,
           socket_count: new_socket_count,
-          os_version: new_os_version
+          os_version: new_os_version,
+          installation_source: new_installation_source
         }),
         %HostDetailsUpdated{
           host_id: host_id,
@@ -113,7 +119,8 @@ defmodule Trento.HostTest do
           cpu_count: new_cpu_count,
           total_memory_mb: new_total_memory_mb,
           socket_count: new_socket_count,
-          os_version: new_os_version
+          os_version: new_os_version,
+          installation_source: new_installation_source
         },
         %Host{
           host_id: host_id,
@@ -125,6 +132,7 @@ defmodule Trento.HostTest do
           total_memory_mb: new_total_memory_mb,
           socket_count: new_socket_count,
           os_version: new_os_version,
+          installation_source: new_installation_source,
           heartbeat: :unknown
         }
       )
@@ -144,7 +152,8 @@ defmodule Trento.HostTest do
           cpu_count: host_registered_event.cpu_count,
           total_memory_mb: host_registered_event.total_memory_mb,
           socket_count: host_registered_event.socket_count,
-          os_version: host_registered_event.os_version
+          os_version: host_registered_event.os_version,
+          installation_source: host_registered_event.installation_source
         }),
         []
       )

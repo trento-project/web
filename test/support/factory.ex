@@ -64,6 +64,7 @@ defmodule Trento.Factory do
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
+      installation_source: Enum.random([:community, :suse, :unknown]),
       heartbeat: :unknown
     }
   end
@@ -78,7 +79,8 @@ defmodule Trento.Factory do
       cpu_count: Enum.random(1..16),
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
-      os_version: Faker.App.semver()
+      os_version: Faker.App.semver(),
+      installation_source: Enum.random([:community, :suse, :unknown])
     }
   end
 
@@ -157,7 +159,8 @@ defmodule Trento.Factory do
       cpu_count: Enum.random(0..100),
       socket_count: Enum.random(0..100),
       total_memory_mb: Enum.random(0..100),
-      sles_version: Faker.App.version()
+      sles_version: Faker.App.version(),
+      installation_source: Enum.random([:community, :suse, :unknown])
     }
   end
 

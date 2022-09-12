@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.HostDetailsUpdated do
 
   use Trento.Event
 
-  defevent do
+  defevent version: 2 do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}
@@ -15,5 +15,9 @@ defmodule Trento.Domain.Events.HostDetailsUpdated do
     field :total_memory_mb, :integer
     field :socket_count, :integer
     field :os_version, :string
+
+    field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
   end
+
+  def upcast(params, _, 2), do: Map.put(params, "installation_source", :unknown)
 end
