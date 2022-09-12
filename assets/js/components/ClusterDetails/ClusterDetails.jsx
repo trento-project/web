@@ -187,8 +187,8 @@ const ClusterDetails = () => {
         </div>
       </div>
 
-      <div className="flex">
-        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 w-3/4 mr-4">
+      <div className="flex xl:flex-row flex-col">
+        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-3/4 w-full mr-4">
           <ListView
             className="grid-rows-3"
             titleClassName="text-lg"
@@ -234,7 +234,7 @@ const ClusterDetails = () => {
             ]}
           />
         </div>
-        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 w-1/4">
+        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
           <ChecksResultOverview
             {...checkResults}
             onCheckClick={() =>
