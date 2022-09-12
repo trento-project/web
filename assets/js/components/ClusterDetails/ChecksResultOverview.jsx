@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import {
   EOS_CHECK_CIRCLE_OUTLINED,
   EOS_ERROR_OUTLINED,
@@ -45,12 +46,15 @@ const ChecksResultOverview = ({
   passing = 0,
   warning = 0,
   critical = 0,
+  lastCheckExecution = new Date(),
   onCheckClick,
 }) => {
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-center text-2xl font-bold">Check Results</h1>
-      <h6 className="opacity-60 text-sm">Thu Aug 6, 16:55:24 2022</h6>
+      <h6 className="opacity-60 text-sm">
+        {format(lastCheckExecution, 'iii MMM dd, HH:MM:SS y')}
+      </h6>
 
       <div className="flex flex-col self-start w-full px-4 mt-2">
         <CheckResult onClick={onCheckClick} value={passing} result="passing" />

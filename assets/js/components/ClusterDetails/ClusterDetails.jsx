@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { parseISO, max, isValid } from 'date-fns';
 
 export const truncatedClusterNameClasses = classNames(
   'font-bold truncate w-60 inline-block align-top'
@@ -73,6 +74,7 @@ const useChecksResult = (cluster) => {
     warning: 0,
     critical: 0,
   });
+  const [lastCheckExecution, setLastCheckExecution] = useState(new Date());
 
   useEffect(() => {
     if (cluster?.checks_results?.length == 0) return;
@@ -82,6 +84,14 @@ const useChecksResult = (cluster) => {
     );
 
     if (!selectedCheckResults) return;
+
+    const lastCheckExecution = max(
+      cluster?.checks_results.map((result) => parseISO(result.updated_at))
+    );
+
+    if (isValid(lastCheckExecution)) {
+      setLastCheckExecution(lastCheckExecution);
+    }
 
     const result = selectedCheckResults.reduce(
       (acc, curr) => {
@@ -96,7 +106,7 @@ const useChecksResult = (cluster) => {
     setChecksResult(result);
   }, [cluster?.checks_results, cluster?.selected_checks]);
 
-  return checksResult;
+  return { ...checksResult, lastCheckExecution };
 };
 
 const ClusterDetails = () => {
