@@ -19,6 +19,8 @@ import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 export const truncatedClusterNameClasses = classNames(
   'font-bold truncate w-60 inline-block align-top'
@@ -65,11 +67,45 @@ const getStatusPill = (status) =>
     <Pill className="bg-red-200 text-red-800 mr-2">Unhealthy</Pill>
   );
 
+const useChecksResult = (cluster) => {
+  const [checksResult, setChecksResult] = useState({
+    passing: 0,
+    warning: 0,
+    critical: 0,
+  });
+
+  useEffect(() => {
+    if (cluster?.checks_results?.length == 0) return;
+
+    const selectedCheckResults = cluster?.checks_results.filter((result) =>
+      cluster?.selected_checks.includes(result?.check_id)
+    );
+
+    if (!selectedCheckResults) return;
+
+    const result = selectedCheckResults.reduce(
+      (acc, curr) => {
+        return {
+          ...acc,
+          [curr.result]: acc[curr.result] + 1,
+        };
+      },
+      { passing: 0, warning: 0, critical: 0 }
+    );
+
+    setChecksResult(result);
+  }, [cluster?.checks_results, cluster?.selected_checks]);
+
+  return checksResult;
+};
+
 const ClusterDetails = () => {
   const { clusterID } = useParams();
   const navigate = useNavigate();
 
   const cluster = useSelector(getCluster(clusterID));
+
+  const checkResults = useChecksResult(cluster);
 
   const hostsData = useSelector((state) =>
     state.hostsList.hosts.reduce((accumulator, current) => {
@@ -189,7 +225,7 @@ const ClusterDetails = () => {
           />
         </div>
         <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 w-[23%]">
-          <ChecksResultOverview />
+          <ChecksResultOverview {...checkResults} />
         </div>
       </div>
 
