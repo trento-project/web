@@ -71,19 +71,16 @@ context('HANA database details', () => {
     });
 
     it('should have the check overview component with passing checks', () => {
-      cy.get('.tn-cluster-checks-overview ')
-        .contains('Passed')
-    })
+      cy.get('.tn-cluster-checks-overview ').contains('Passed');
+    });
 
     it('should have the check overview component with warning checks', () => {
-      cy.get('.tn-cluster-checks-overview ')
-        .contains('Warning')
-    })
+      cy.get('.tn-cluster-checks-overview ').contains('Warning');
+    });
 
     it('should have the check overview component with critical checks', () => {
-      cy.get('.tn-cluster-checks-overview ')
-        .contains('Critical')
-    })
+      cy.get('.tn-cluster-checks-overview ').contains('Critical');
+    });
   });
 
   describe('Cluster sites should have the expected hosts', () => {
