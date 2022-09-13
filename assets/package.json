@@ -27,7 +27,7 @@
     "tailwindcss": "^3.1.8"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.0",
+    "@headlessui/react": "^1.7.1",
     "@heroicons/react": "^2.0.10",
     "@reduxjs/toolkit": "^1.8.5",
     "axios": "^0.27.2",
