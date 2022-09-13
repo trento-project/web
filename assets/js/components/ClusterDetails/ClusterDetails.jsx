@@ -173,7 +173,7 @@ const ClusterDetails = () => {
             Show Results
           </Button>
           <TriggerChecksExecutionRequest
-            cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500"
+            cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
             clusterId={clusterID}
             disabled={!hasSelectedChecks}
           >
