@@ -10,20 +10,20 @@ const uiForResult = {
   passing: {
     color: 'green',
     component: EOS_CHECK_CIRCLE_OUTLINED,
-    copy: 'Passed',
+    text: 'Passing',
   },
   warning: {
     color: 'yellow',
     component: EOS_WARNING_OUTLINED,
-    copy: 'Warning',
+    text: 'Warning',
   },
-  critical: { color: 'red', component: EOS_ERROR_OUTLINED, copy: 'Critical' },
+  critical: { color: 'red', component: EOS_ERROR_OUTLINED, text: 'Critical' },
 };
 
 const CheckResult = ({ value, result, onClick }) => {
   const color = uiForResult[result].color;
   const Component = uiForResult[result].component;
-  const copy = uiForResult[result].copy;
+  const text = uiForResult[result].text;
 
   return (
     <div
@@ -35,7 +35,7 @@ const CheckResult = ({ value, result, onClick }) => {
         <Component size={25} className={`fill-${color}-600`} />
       </span>
       <div className="flex w-full ml-2 items-center w-[65%]">
-        <p>{copy}</p>
+        <p>{text}</p>
       </div>
       <div className="flex text-2xl">{value}</div>
     </div>

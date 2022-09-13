@@ -71,7 +71,7 @@ context('HANA database details', () => {
     });
 
     it('should have the check overview component with passing checks', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Passed');
+      cy.get('.tn-cluster-checks-overview ').contains('Passing');
     });
 
     it('should have the check overview component with warning checks', () => {
