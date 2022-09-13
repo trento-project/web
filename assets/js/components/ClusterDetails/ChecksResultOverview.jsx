@@ -21,9 +21,7 @@ const uiForResult = {
 };
 
 const CheckResult = ({ value, result, onClick }) => {
-  const color = uiForResult[result].color;
-  const Component = uiForResult[result].component;
-  const text = uiForResult[result].text;
+  const { color, component: Component, text } = uiForResult[result];
 
   return (
     <div
