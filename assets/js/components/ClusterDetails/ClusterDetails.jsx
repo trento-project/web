@@ -18,6 +18,8 @@ import HostLink from '@components/HostLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
+import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
+import { useChecksResult } from '@components/ClusterDetails/hooks';
 
 export const truncatedClusterNameClasses = classNames(
   'font-bold truncate w-60 inline-block align-top'
@@ -70,6 +72,8 @@ const ClusterDetails = () => {
 
   const cluster = useSelector(getCluster(clusterID));
 
+  const checkResults = useChecksResult(cluster);
+
   const hostsData = useSelector((state) =>
     state.hostsList.hosts.reduce((accumulator, current) => {
       if (current.cluster_id === clusterID) {
@@ -100,7 +104,7 @@ const ClusterDetails = () => {
 
   return (
     <div>
-      <div className="flex">
+      <div className="flex mb-4">
         <h1 className="text-3xl font-bold w-1/2">
           Pacemaker cluster details:{' '}
           <span className={truncatedClusterNameClasses}>
@@ -109,26 +113,30 @@ const ClusterDetails = () => {
         </h1>
         <div className="flex w-1/2 justify-end">
           <Button
-            className="w-1/4 mx-0.5 bg-waterhole-blue"
+            type="primary-white"
+            className="w-1/4 mx-0.5 border-green-500 border"
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/settings`)}
           >
-            <EOS_SETTINGS className="inline-block fill-white" /> Settings
+            <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+            Settings
           </Button>
           <Button
-            className="w-1/4 mx-0.5 bg-waterhole-blue"
+            type="primary-white"
+            className="w-1/4 mx-0.5 border-green-500 border"
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
           >
-            <EOS_CLEAR_ALL className="inline-block fill-white" /> Show Results
+            <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
+            Show Results
           </Button>
           <TriggerChecksExecutionRequest
-            cssClasses="rounded relative w-1/4 ml-0.5 bg-waterhole-blue disabled:bg-slate-50 disabled:text-slate-500"
+            cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
             clusterId={clusterID}
             disabled={!hasSelectedChecks}
           >
             <EOS_PLAY_CIRCLE
-              className={classNames('inline-block fill-white', {
+              className={classNames('inline-block fill-jungle-green-500', {
                 'fill-slate-500': !hasSelectedChecks,
               })}
             />{' '}
@@ -140,47 +148,61 @@ const ClusterDetails = () => {
         </div>
       </div>
 
-      <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-4 px-8">
-        <ListView
-          className="grid-rows-3"
-          orientation="vertical"
-          data={[
-            { title: 'Cluster name', content: cluster.name || 'Not defined' },
-            { title: 'SID', content: cluster.sid },
-            {
-              title: 'Fencing type',
-              content: cluster.details && cluster.details.fencing_type,
-            },
-            {
-              title: 'Cluster type',
-              content:
-                cluster.type === 'hana_scale_up' ? 'HANA scale-up' : 'Unknown',
-            },
-            {
-              title: 'SAPHanaSR health state',
-              content: cluster.details && cluster.details.sr_health_state,
-            },
-            {
-              title: 'CIB last written',
-              content: cluster.cib_last_written || '-',
-            },
-            {
-              title: 'HANA log replication mode',
-              content:
-                cluster.details && cluster.details.system_replication_mode,
-            },
-            {
-              title: 'HANA secondary sync state',
-              content: cluster.details && cluster.details.secondary_sync_state,
-            },
-            {
-              title: 'HANA log operation mode',
-              content:
-                cluster.details &&
-                cluster.details.system_replication_operation_mode,
-            },
-          ]}
-        />
+      <div className="flex xl:flex-row flex-col">
+        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-3/4 w-full mr-4">
+          <ListView
+            className="grid-rows-3"
+            titleClassName="text-lg"
+            orientation="vertical"
+            data={[
+              { title: 'Cluster name', content: cluster.name || 'Not defined' },
+              { title: 'SID', content: cluster.sid },
+              {
+                title: 'Fencing type',
+                content: cluster.details && cluster.details.fencing_type,
+              },
+              {
+                title: 'Cluster type',
+                content:
+                  cluster.type === 'hana_scale_up'
+                    ? 'HANA scale-up'
+                    : 'Unknown',
+              },
+              {
+                title: 'SAPHanaSR health state',
+                content: cluster.details && cluster.details.sr_health_state,
+              },
+              {
+                title: 'CIB last written',
+                content: cluster.cib_last_written || '-',
+              },
+              {
+                title: 'HANA log replication mode',
+                content:
+                  cluster.details && cluster.details.system_replication_mode,
+              },
+              {
+                title: 'HANA secondary sync state',
+                content:
+                  cluster.details && cluster.details.secondary_sync_state,
+              },
+              {
+                title: 'HANA log operation mode',
+                content:
+                  cluster.details &&
+                  cluster.details.system_replication_operation_mode,
+              },
+            ]}
+          />
+        </div>
+        <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
+          <ChecksResultOverview
+            {...checkResults}
+            onCheckClick={() =>
+              navigate(`/clusters/${clusterID}/checks/results`)
+            }
+          />
+        </div>
       </div>
 
       {cluster.details && cluster.details.stopped_resources.length > 0 && (
@@ -251,7 +273,7 @@ export const TriggerChecksExecutionRequest = ({
   return (
     <button
       className={classNames(
-        'items-center text-sm px-2 bg-jungle-green-500 text-white hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow',
+        'items-center text-sm border-green-500 px-2 text-jungle-green-500 bg-white border border-green hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow',
         cssClasses
       )}
       onClick={() => {
