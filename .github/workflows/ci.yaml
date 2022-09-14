@@ -471,7 +471,7 @@ jobs:
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@v3
         with:
-          k3s-channel: latest
+          k3s-channel: v1.24.4+k3s1
 
       - name: Add bitnami helm deps
         run: |
