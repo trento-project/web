@@ -2,9 +2,9 @@
 
 Thanks for showing interest and sharing your time to contribute to this project!
 
-This guide is meant to be used as an overview on how to participate in issues by
-creating them in the 
-
+This guide is meant to be used as general guideline creating issues or
+pull requests. We encourage all first contributors to give this a read to avoid
+common mistakes and improve the quality of all contributions.
 
 
 ## Opening issues
