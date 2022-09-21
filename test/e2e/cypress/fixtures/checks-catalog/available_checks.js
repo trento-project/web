@@ -42,6 +42,8 @@ export const availableChecks = new Map([
 ]);
 
 export const checkDataByProvider = new Map([
-  ['aws', '5000'],
+  ['aws', '30000'],
   ['azure', '30000'],
+  ['default', '5000'],
+  ['gcp', '20000'],
 ]);
