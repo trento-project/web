@@ -119,6 +119,32 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
+  test "should return the expected commands when a cloud_discovery payload with an kvm provider is handled" do
+    assert {
+             :ok,
+             %UpdateProvider{
+               host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+               provider: :kvm
+             }
+           } ==
+             "cloud_discovery_kvm"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a cloud_discovery payload with an nutanix provider is handled" do
+    assert {
+             :ok,
+             %UpdateProvider{
+               host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+               provider: :nutanix
+             }
+           } ==
+             "cloud_discovery_nutanix"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
   test "should return the expected commands when a cloud_discovery payload with an unknown provider is handled" do
     assert {
              :ok,
