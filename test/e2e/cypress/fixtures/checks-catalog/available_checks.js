@@ -24,7 +24,7 @@ export const availableChecks = new Map([
     ],
   ],
   ['Pacemaker', ['373DB8']],
-  ['SBD', ['49591F', '61451E', '68626E', '816815', 'A2EF8C', 'B089BE']],
+  ['SBD', ['49591F', '61451E', '68626E', '816815', 'B089BE']],
   [
     'OS and package versions',
     [
