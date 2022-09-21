@@ -9,7 +9,9 @@ defmodule Trento.Integration.Discovery.CloudDiscoveryPayload do
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 
   deftype do
-    field :provider, Ecto.Enum, values: [:aws, :gcp, :azure, :unknown], default: :unknown
+    field :provider, Ecto.Enum,
+      values: [:aws, :gcp, :azure, :kvm, :nutanix, :unknown],
+      default: :unknown
 
     field :metadata, PolymorphicEmbed,
       types: [
