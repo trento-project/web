@@ -144,7 +144,7 @@ context('HANA database details', () => {
 
       cy.get('button').contains('Select Checks for Execution').click();
       cy.get('.tn-checks-start-execute').click();
-      cy.get('.tn-check-result-row').should('have.length', 70);
+      cy.get('.tn-check-result-row').should('have.length', 68);
     });
   });
 });

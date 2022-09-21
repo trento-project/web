@@ -14,7 +14,7 @@ context('Checks catalog', () => {
       cy.get('div.check-group').should('have.length', 5);
     });
     it('should show 35 checks in the catalog', () => {
-      cy.get('div.check-row').should('have.length', 35);
+      cy.get('div.check-row').should('have.length', 34);
     });
   });
 
