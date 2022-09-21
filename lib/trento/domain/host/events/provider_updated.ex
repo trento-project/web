@@ -15,7 +15,7 @@ defmodule Trento.Domain.Events.ProviderUpdated do
 
   defevent do
     field :host_id, Ecto.UUID
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
+    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
 
     field :provider_data, PolymorphicEmbed,
       types: [
