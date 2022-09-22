@@ -11,7 +11,7 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
       title: "SupportedProviders",
       type: :string,
       description: "Detected Provider where the resource is running",
-      enum: [:azure, :aws, :gcp, :unknown]
+      enum: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
     })
   end
 

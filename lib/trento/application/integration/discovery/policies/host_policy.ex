@@ -129,7 +129,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     end
   end
 
-  @spec parse_cloud_provider_metadata(:azure | :aws | :gcp | :unknown, map) :: map
+  @spec parse_cloud_provider_metadata(:azure | :aws | :gcp | :kvm | :nutanix | :unknown, map) ::
+          map
   defp parse_cloud_provider_metadata(
          :azure,
          %AzureMetadata{

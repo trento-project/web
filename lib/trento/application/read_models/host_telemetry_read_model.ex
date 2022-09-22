@@ -23,7 +23,7 @@ defmodule Trento.HostTelemetryReadModel do
       values: [:community, :suse, :unknown],
       default: :unknown
 
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :unknown]
+    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
 
     timestamps()
   end
