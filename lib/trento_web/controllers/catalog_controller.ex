@@ -27,20 +27,15 @@ defmodule TrentoWeb.CatalogController do
     ],
     responses: [
       ok: {"A Collection of the available Checks", "application/json", ChecksCatalog.Catalog},
-      not_found: {"Not found", "application/json", ChecksCatalog.CatalogNotfound},
       bad_request: {"Bad Request", "application/json", ChecksCatalog.UnableToLoadCatalog}
     ]
 
   @spec checks_catalog(Plug.Conn.t(), map) :: Plug.Conn.t()
   def checks_catalog(conn, params) do
-    with {:ok, content} <- get_catalog(params),
-         {:ok, filtered_content} <- filter_by_provider(content, params) do
-      json(conn, filtered_content)
-    else
-      {:error, :not_found} ->
-        conn
-        |> put_status(:not_found)
-        |> json(%{error: :not_found})
+    case get_catalog(params) do
+      {:ok, content} ->
+        filtered_content = filter_by_provider(content, params)
+        json(conn, filtered_content)
 
       {:error, reason} ->
         conn
@@ -69,18 +64,17 @@ defmodule TrentoWeb.CatalogController do
     end
   end
 
+  defp get_provider("azure"), do: "azure"
+  defp get_provider("gcp"), do: "gcp"
+  defp get_provider("aws"), do: "aws"
+  defp get_provider(_), do: "default"
+
   defp filter_by_provider(catalog, %{"provider" => provider}) do
-    filtered_catalog =
-      catalog
-      |> Enum.filter(fn x -> Atom.to_string(x.provider) == provider end)
+    provider = get_provider(provider)
 
-    case length(filtered_catalog) > 0 do
-      true -> {:ok, filtered_catalog}
-      false -> {:error, :not_found}
-    end
+    catalog
+    |> Enum.filter(fn x -> Atom.to_string(x.provider) == provider end)
   end
 
-  defp filter_by_provider(catalog, _) do
-    {:ok, catalog}
-  end
+  defp filter_by_provider(catalog, _), do: catalog
 end
