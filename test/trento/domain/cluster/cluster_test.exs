@@ -205,7 +205,8 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           name: name,
           sid: sid,
-          details: nil
+          details: nil,
+          provider: :azure
         ),
         build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id)
       ]
@@ -282,7 +283,8 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             name: name,
             sid: sid,
-            details: nil
+            details: nil,
+            provider: :azure
           )
         ],
         [
@@ -292,7 +294,8 @@ defmodule Trento.ClusterTest do
             name: name,
             sid: sid,
             details: nil,
-            discovered_health: :passing
+            discovered_health: :passing,
+            provider: :azure
           ),
           SelectChecks.new!(%{
             cluster_id: cluster_id,
@@ -322,7 +325,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id),
+          build(:cluster_registered_event, cluster_id: cluster_id, provider: :azure),
           build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
           %ChecksSelected{
             cluster_id: cluster_id,
@@ -563,7 +566,7 @@ defmodule Trento.ClusterTest do
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
           sid: cluster_registered_event.sid,
-          provider: :azure,
+          provider: cluster_registered_event.provider,
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
@@ -592,7 +595,8 @@ defmodule Trento.ClusterTest do
     end
 
     test "should not change the discovered health" do
-      cluster_registered_event = build(:cluster_registered_event, health: :passing)
+      cluster_registered_event =
+        build(:cluster_registered_event, health: :passing, provider: :azure)
 
       host_added_to_cluster_event =
         build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
@@ -628,7 +632,8 @@ defmodule Trento.ClusterTest do
     end
 
     test "should not change the the cluster aggregated health if checks health is worst" do
-      cluster_registered_event = build(:cluster_registered_event, health: :passing)
+      cluster_registered_event =
+        build(:cluster_registered_event, health: :passing, provider: :azure)
 
       host_added_to_cluster_event =
         build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)

@@ -93,7 +93,7 @@ defmodule Trento.Factory do
       agent_version: Faker.StarWars.planet(),
       cluster_id: Faker.UUID.v4(),
       heartbeat: :unknown,
-      provider: :unknown,
+      provider: Enum.random([:aws, :gcp, :azure, :nutanix, :kvm, :unknown]),
       provider_data: nil
     }
   end
@@ -111,7 +111,7 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       sid: Faker.StarWars.planet(),
-      provider: :azure,
+      provider: Enum.random([:aws, :gcp, :azure, :nutanix, :kvm, :unknown]),
       resources_number: 8,
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
@@ -126,7 +126,7 @@ defmodule Trento.Factory do
       cluster_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       sid: Faker.StarWars.planet(),
-      provider: :azure,
+      provider: Enum.random([:aws, :gcp, :azure, :nutanix, :kvm, :unknown]),
       resources_number: 8,
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
@@ -169,7 +169,7 @@ defmodule Trento.Factory do
       id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       sid: Faker.StarWars.planet(),
-      provider: :azure,
+      provider: Enum.random([:aws, :gcp, :azure, :nutanix, :kvm, :unknown]),
       type: :hana_scale_up,
       health: :passing
     }
