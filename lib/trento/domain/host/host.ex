@@ -49,7 +49,7 @@ defmodule Trento.Domain.Host do
           ip_addresses: [String.t()],
           ssh_address: String.t(),
           agent_version: String.t(),
-          provider: :azure | :aws | :gcp | :unknown,
+          provider: :azure | :aws | :gcp | :kvm | :nutanix | :unknown,
           cpu_count: non_neg_integer(),
           total_memory_mb: non_neg_integer(),
           socket_count: non_neg_integer(),

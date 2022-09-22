@@ -16,7 +16,11 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
 
   deftype do
     field :dc, :boolean
-    field :provider, Ecto.Enum, values: [:aws, :gcp, :azure, :unknown], default: :unknown
+
+    field :provider, Ecto.Enum,
+      values: [:aws, :gcp, :azure, :kvm, :nutanix, :unknown],
+      default: :unknown
+
     field :id, :string
     field :name, :string
     field :cluster_type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
