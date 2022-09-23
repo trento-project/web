@@ -6,15 +6,10 @@ dependencies that are required for this change.
 
 Fixes # (issue)
 
-## Type of change
+## Did you add the right label?
 
-Please delete options that are not relevant.
+Remember to add the right labels to this PR.
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] This change requires a documentation update
+## How was this tested?
 
-## How to test this?
-
-Describe how to test the functionality or the tests that have been added.
+Describe what kind of tests for this functionality have been added.
