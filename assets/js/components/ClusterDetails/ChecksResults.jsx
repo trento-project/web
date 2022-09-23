@@ -11,6 +11,7 @@ import LoadingBox from '../LoadingBox';
 
 import Button from '@components/Button';
 import BackButton from '@components/BackButton';
+import WarningBanner from '@components/Banners/WarningBanner';
 
 import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
@@ -236,6 +237,14 @@ export const ChecksResults = () => {
           }
         />
       </div>
+      {cluster.provider == 'unknown' && (
+        <WarningBanner>
+          The following results are valid for on-premise bare metal platforms.
+          <br />
+          If you are running your HANA cluster on a different platform, please
+          use results with caution
+        </WarningBanner>
+      )}
       {pageContent}
     </div>
   );

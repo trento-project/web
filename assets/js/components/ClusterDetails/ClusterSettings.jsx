@@ -15,6 +15,7 @@ import {
   truncatedClusterNameClasses,
 } from './ClusterDetails';
 import { getClusterName } from '@components/ClusterLink';
+import WarningBanner from '@components/Banners/WarningBanner';
 
 export const ClusterSettings = () => {
   const { clusterID } = useParams();
@@ -62,6 +63,14 @@ export const ClusterSettings = () => {
             </Tab>
           ))}
         </Tab.List>
+        {cluster.provider == 'unknown' && (
+          <WarningBanner>
+            The following catalog is valid for on-premise bare metal platforms.
+            <br />
+            If you are running your HANA cluster on a different platform, please
+            use results with caution
+          </WarningBanner>
+        )}
         <Tab.Panels className="mt-2">
           {Object.values(tabsSettings).map((tabContent, idx) => (
             <Tab.Panel
