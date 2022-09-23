@@ -3,7 +3,7 @@ import Button from '@components/Button';
 import { useNavigate } from 'react-router-dom';
 import { EOS_ARROW_BACK } from 'eos-icons-react';
 
-export const BackToCluster = ({ clusterId }) => {
+export const BackButton = ({ clusterId }) => {
   const navigate = useNavigate();
   return (
     <div className="flex mb-8">
@@ -21,3 +21,5 @@ export const BackToCluster = ({ clusterId }) => {
     </div>
   );
 };
+
+export default BackButton;

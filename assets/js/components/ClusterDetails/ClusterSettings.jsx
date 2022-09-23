@@ -5,10 +5,10 @@ import { useParams } from 'react-router-dom';
 import { EOS_CANCEL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import classNames from 'classnames';
 
+import BackButton from '@components/BackButton';
 import { Tab } from '@headlessui/react';
 import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
 import { ConnectionSettings } from '@components/ClusterDetails/ConnectionSettings';
-import { BackToCluster } from '@components/ClusterDetails/BackToCluster';
 import { getCluster } from '@state/selectors';
 import {
   TriggerChecksExecutionRequest,
@@ -32,7 +32,7 @@ export const ClusterSettings = () => {
 
   return (
     <div className="w-full px-2 sm:px-0">
-      <BackToCluster clusterId={clusterID} />
+      <BackButton clusterId={clusterID} />
       <div className="flex mb-2">
         <h1 className="text-3xl w-1/2">
           <span className="font-medium">Cluster Settings for</span>{' '}

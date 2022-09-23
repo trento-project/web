@@ -10,6 +10,8 @@ import NotificationBox from '../NotificationBox';
 import LoadingBox from '../LoadingBox';
 
 import Button from '@components/Button';
+import BackButton from '@components/BackButton';
+
 import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
 import {
@@ -21,7 +23,6 @@ import { getClusterName } from '@components/ClusterLink';
 import ChecksResultFilters, {
   useFilteredChecks,
 } from '@components/ClusterDetails/ChecksResultFilters';
-import { BackToCluster } from '@components/ClusterDetails/BackToCluster';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -236,7 +237,7 @@ export const ChecksResults = () => {
           {findCheckDataByID(selectedCheck)?.remediation}
         </ReactMarkdown>
       </Modal>
-      <BackToCluster clusterId={clusterID} />
+      <BackButton clusterId={clusterID} />
       <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
