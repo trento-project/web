@@ -17,6 +17,8 @@ import {
 import { getClusterName } from '@components/ClusterLink';
 import WarningBanner from '@components/Banners/WarningBanner';
 
+export const UNKNOWN_PROVIDER = 'unknown';
+
 export const ClusterSettings = () => {
   const { clusterID } = useParams();
 
@@ -63,7 +65,7 @@ export const ClusterSettings = () => {
             </Tab>
           ))}
         </Tab.List>
-        {cluster.provider == 'unknown' && (
+        {cluster.provider == UNKNOWN_PROVIDER && (
           <WarningBanner>
             The following catalog is valid for on-premise bare metal platforms.
             <br />

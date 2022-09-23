@@ -12,6 +12,7 @@ import LoadingBox from '../LoadingBox';
 import Button from '@components/Button';
 import BackButton from '@components/BackButton';
 import WarningBanner from '@components/Banners/WarningBanner';
+import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 
 import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
@@ -237,7 +238,7 @@ export const ChecksResults = () => {
           }
         />
       </div>
-      {cluster.provider == 'unknown' && (
+      {cluster.provider == UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following results are valid for on-premise bare metal platforms.
           <br />
