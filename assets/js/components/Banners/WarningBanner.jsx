@@ -9,7 +9,12 @@ const WarningBanner = ({ children }) => {
         <div className="flex w-0 flex-1 items-center">
           <EOS_WARNING_OUTLINED className="h-6 w-6 fill-yellow-500" />
           <p className="ml-3 truncate font-medium">
-            <span className="md:inline text-yellow-500">{children}</span>
+            <span
+              data-testid="warning-banner"
+              className="md:inline text-yellow-500"
+            >
+              {children}
+            </span>
           </p>
         </div>
       </div>
