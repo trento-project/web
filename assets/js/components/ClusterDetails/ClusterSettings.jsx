@@ -1,14 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import { EOS_ARROW_BACK, EOS_CANCEL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
-import Button from '@components/Button';
+import { EOS_CANCEL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import classNames from 'classnames';
 
+import BackButton from '@components/BackButton';
 import { Tab } from '@headlessui/react';
-import { ChecksSelection } from './ChecksSelection';
-import { ConnectionSettings } from './ConnectionSettings';
+import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
+import { ConnectionSettings } from '@components/ClusterDetails/ConnectionSettings';
 import { getCluster } from '@state/selectors';
 import {
   TriggerChecksExecutionRequest,
@@ -18,7 +18,6 @@ import { getClusterName } from '@components/ClusterLink';
 
 export const ClusterSettings = () => {
   const { clusterID } = useParams();
-  const navigate = useNavigate();
 
   const cluster = useSelector(getCluster(clusterID));
 
@@ -33,6 +32,9 @@ export const ClusterSettings = () => {
 
   return (
     <div className="w-full px-2 sm:px-0">
+      <BackButton url={`/clusters/${clusterID}`}>
+        Back to Cluster Details
+      </BackButton>
       <div className="flex mb-2">
         <h1 className="text-3xl w-1/2">
           <span className="font-medium">Cluster Settings for</span>{' '}
@@ -40,16 +42,6 @@ export const ClusterSettings = () => {
             {getClusterName(cluster)}
           </span>
         </h1>
-        <div className="flex w-1/2 justify-end text-white">
-          <Button
-            className="w-1/3 bg-waterhole-blue text-white"
-            size="small"
-            onClick={() => navigate(`/clusters/${cluster.id}`)}
-          >
-            <EOS_ARROW_BACK className="inline-block fill-white" /> Back to
-            Cluster
-          </Button>
-        </div>
       </div>
       <Tab.Group manual>
         <Tab.List className="flex p-1 space-x-1 bg-zinc-300/20 rounded">

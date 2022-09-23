@@ -4,17 +4,14 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Modal from '@components/Modal';
 
-import {
-  EOS_ERROR,
-  EOS_ARROW_BACK,
-  EOS_SETTINGS,
-  EOS_PLAY_CIRCLE,
-} from 'eos-icons-react';
+import { EOS_ERROR, EOS_SETTINGS, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import NotificationBox from '../NotificationBox';
 import LoadingBox from '../LoadingBox';
 
 import Button from '@components/Button';
+import BackButton from '@components/BackButton';
+
 import { getCluster } from '@state/selectors';
 import TrentoLogo from '../../../static/trento-icon.png';
 import {
@@ -62,7 +59,6 @@ export const ChecksResults = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState('');
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { clusterID } = useParams();
   const cluster = useSelector(getCluster(clusterID));
   const [hasAlreadyChecksResults, setHasAlreadyChecksResults] = useState(false);
@@ -241,19 +237,9 @@ export const ChecksResults = () => {
           {findCheckDataByID(selectedCheck)?.remediation}
         </ReactMarkdown>
       </Modal>
-      <div className="flex mb-8">
-        <div className="flex w-2/5">
-          <Button
-            className="w-2/3 text-jungle-green-500 text-left py-0 px-0"
-            size="small"
-            type="transparent"
-            onClick={() => navigate(`/clusters/${cluster.id}`)}
-          >
-            <EOS_ARROW_BACK className="inline-block fill-jungle-green-500" />{' '}
-            Back to Cluster Details
-          </Button>
-        </div>
-      </div>
+      <BackButton url={`/clusters/${clusterID}`}>
+        Back to Cluster Details
+      </BackButton>
       <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}
