@@ -152,6 +152,25 @@ defmodule TrentoWeb.CatalogControllerTest do
           }
         ],
         "provider" => "azure"
+      },
+      %{
+        "groups" => [
+          %{
+            "checks" => [
+              %{
+                "description" => "description default 1",
+                "id" => "1",
+                "implementation" => "implementation default 1",
+                "labels" => "labels",
+                "name" => "test default 1",
+                "remediation" => "remediation default 1",
+                "premium" => false
+              }
+            ],
+            "group" => "Group default 1"
+          }
+        ],
+        "provider" => "default"
       }
     ]
 
@@ -224,6 +243,35 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 5",
         "provider" => "azure",
         "remediation" => "remediation 5",
+        "premium" => false
+      }
+    ]
+
+    assert expected_json == json_response(conn, 200)
+  end
+
+  test "should return a default flat catalog when unknown provider is used", %{conn: conn} do
+    raw_catalog = load_runner_fixture("catalog")
+
+    Trento.Integration.Checks.Mock
+    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+
+    conn =
+      get(conn, Routes.catalog_path(conn, :checks_catalog), %{
+        "flat" => "",
+        "provider" => "unknown"
+      })
+
+    expected_json = [
+      %{
+        "provider" => "default",
+        "description" => "description default 1",
+        "group" => "Group default 1",
+        "id" => "1",
+        "implementation" => "implementation default 1",
+        "labels" => "labels",
+        "name" => "test default 1",
+        "remediation" => "remediation default 1",
         "premium" => false
       }
     ]
@@ -351,6 +399,17 @@ defmodule TrentoWeb.CatalogControllerTest do
         "name" => "test 5",
         "provider" => "aws",
         "remediation" => "remediation 5",
+        "premium" => false
+      },
+      %{
+        "provider" => "default",
+        "description" => "description default 1",
+        "group" => "Group default 1",
+        "id" => "1",
+        "implementation" => "implementation default 1",
+        "labels" => "labels",
+        "name" => "test default 1",
+        "remediation" => "remediation default 1",
         "premium" => false
       }
     ]

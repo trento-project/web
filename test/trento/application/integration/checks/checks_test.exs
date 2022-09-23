@@ -171,6 +171,17 @@ defmodule Trento.Integration.ChecksTest do
           provider: :aws,
           remediation: "remediation 5",
           premium: false
+        },
+        %FlatCheckDto{
+          description: "description default 1",
+          group: "Group default 1",
+          id: "1",
+          implementation: "implementation default 1",
+          labels: "labels",
+          name: "test default 1",
+          provider: :default,
+          remediation: "remediation default 1",
+          premium: false
         }
       ]
     }
@@ -315,6 +326,25 @@ defmodule Trento.Integration.ChecksTest do
             }
           ],
           provider: :azure
+        },
+        %ProviderDto{
+          groups: [
+            %GroupDto{
+              checks: [
+                %CheckDto{
+                  description: "description default 1",
+                  id: "1",
+                  implementation: "implementation default 1",
+                  labels: "labels",
+                  name: "test default 1",
+                  premium: false,
+                  remediation: "remediation default 1"
+                }
+              ],
+              group: "Group default 1"
+            }
+          ],
+          provider: :default
         }
       ]
     }
