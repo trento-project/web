@@ -63,14 +63,11 @@ export const ChecksResults = () => {
   const cluster = useSelector(getCluster(clusterID));
   const [hasAlreadyChecksResults, setHasAlreadyChecksResults] = useState(false);
 
-  const [catalogData, catalogErrorCode, catalogError, loading] = useSelector(
-    (state) => [
-      state.catalog.data,
-      state.catalog.errorCode,
-      state.catalog.error,
-      state.catalog.loading,
-    ]
-  );
+  const [catalogData, catalogError, loading] = useSelector((state) => [
+    state.catalog.data,
+    state.catalog.error,
+    state.catalog.loading,
+  ]);
 
   const findCheckDataByID = (checkID) => {
     return catalogData.find((check) => check.id === checkID);
@@ -107,28 +104,14 @@ export const ChecksResults = () => {
   };
 
   if (catalogError) {
-    if (catalogErrorCode == 'not_found') {
-      pageContent = (
-        <NotificationBox
-          icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-          text={
-            <ReactMarkdown
-              className="markdown"
-              remarkPlugins={[remarkGfm]}
-            >{`Provider \`${cluster?.provider}\` does not support checks execution`}</ReactMarkdown>
-          }
-        />
-      );
-    } else {
-      pageContent = (
-        <NotificationBox
-          icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-          text={catalogError}
-          buttonText="Try again"
-          buttonOnClick={dispatchUpdateCatalog}
-        />
-      );
-    }
+    pageContent = (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={catalogError}
+        buttonText="Try again"
+        buttonOnClick={dispatchUpdateCatalog}
+      />
+    );
   } else if (!hasAlreadyChecksResults) {
     pageContent = (
       <HintForChecksSelection
