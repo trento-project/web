@@ -34,9 +34,11 @@ merge your changes faster.
 4. Keep PRs as small as possible. When the PR gets too big, consider splitting
    it in multiple parts. An PR should ideally be between 100 and 500 additions.
 5. Check that the tests are passing.
-6. Commit history should be short and group changes that otherwise wouldn't
+6. Check that your code is not generating new warnings.
+7. Check that any dependent changes have been merged and published in downstream modules
+8. Commit history should be short and group changes that otherwise wouldn't
    make sense on their own.
-7. Always write a clear log message for your commits. One-line messages are 
+9. Always write a clear log message for your commits. One-line messages are 
    fine for small changes, but bigger changes should look like this:
 
     ```
@@ -44,10 +46,11 @@ merge your changes faster.
     
     A paragraph describing what changed and its impact."
     ```
-8. Write a detailed description that gives context and explains why you are
+10. Write a detailed description that gives context and explains why you are
    creating the PR.
-9. If the PR adds functionality, please add some documentation to support it.
-10. Each PR needs 1 approval to be merged. Select a reviewer in particular if
+11. If the PR adds functionality, please add some tests and documentation 
+    to support it.
+12. Each PR needs 1 approval to be merged. Select a reviewer in particular if
    you are looking for specific feedback from someone.
 
 ### Reviewers guideline
