@@ -36,14 +36,11 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
   const isSelected = (check_id) =>
     selectedChecks ? selectedChecks.includes(check_id) : false;
 
-  const [[catalogData], catalogErrorCode, catalogError, loading] = useSelector(
-    (state) => [
-      state.catalog.data,
-      state.catalog.errorCode,
-      state.catalog.error,
-      state.catalog.loading,
-    ]
-  );
+  const [[catalogData], catalogError, loading] = useSelector((state) => [
+    state.catalog.data,
+    state.catalog.error,
+    state.catalog.loading,
+  ]);
 
   const { saving, savingError, savingSuccess } = useSelector(
     (state) => state.clusterChecksSelection
@@ -102,20 +99,6 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
       setLocalSavingSuccess(null);
     }
   }, [loading]);
-
-  if (catalogErrorCode == 'not_found') {
-    return (
-      <NotificationBox
-        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-        text={
-          <ReactMarkdown
-            className="markdown"
-            remarkPlugins={[remarkGfm]}
-          >{`Provider \`${cluster?.provider}\` does not support checks execution`}</ReactMarkdown>
-        }
-      />
-    );
-  }
 
   if (catalogError) {
     return (

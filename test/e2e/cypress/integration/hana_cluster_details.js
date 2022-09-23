@@ -147,4 +147,25 @@ context('HANA database details', () => {
       cy.get('.tn-check-result-row').should('have.length', 68);
     });
   });
+
+  describe('Cluster with unknown provider', () => {
+    before(() => {
+      cy.loadScenario('cluster-unknown-provider');
+      cy.visit(`/clusters/${availableHanaCluster.id}`);
+    });
+
+    it(`should show a warning message in the check selection view`, () => {
+      cy.contains('button', 'Settings').click();
+      cy.get('[data-testid="warning-banner"]').contains(
+        'The following catalog is valid for on-premise bare metal platforms.'
+      );
+    });
+
+    it(`should show a warning message in the checks results view`, () => {
+      cy.visit(`/clusters/${availableHanaCluster.id}/checks/results`);
+      cy.get('[data-testid="warning-banner"]').contains(
+        'The following results are valid for on-premise bare metal platforms.'
+      );
+    });
+  });
 });
