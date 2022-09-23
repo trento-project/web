@@ -6,6 +6,10 @@ dependencies that are required for this change.
 
 Fixes # (issue)
 
-## How to test this?
+## Did you add the right label?
 
-Describe how to test the functionality or the tests that have been added.
+Remember to add the right labels to this PR.
+
+## How was this tested?
+
+Describe what kind of tests for this functionality have been added.
