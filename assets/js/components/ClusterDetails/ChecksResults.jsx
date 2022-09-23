@@ -237,7 +237,9 @@ export const ChecksResults = () => {
           {findCheckDataByID(selectedCheck)?.remediation}
         </ReactMarkdown>
       </Modal>
-      <BackButton clusterId={clusterID} />
+      <BackButton url={`/clusters/${clusterID}`}>
+        Back to Cluster Details
+      </BackButton>
       <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
           <span className="font-medium">Checks Results for cluster</span>{' '}

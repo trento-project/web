@@ -32,7 +32,9 @@ export const ClusterSettings = () => {
 
   return (
     <div className="w-full px-2 sm:px-0">
-      <BackButton clusterId={clusterID} />
+      <BackButton url={`/clusters/${clusterID}`}>
+        Back to Cluster Details
+      </BackButton>
       <div className="flex mb-2">
         <h1 className="text-3xl w-1/2">
           <span className="font-medium">Cluster Settings for</span>{' '}
