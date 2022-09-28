@@ -127,7 +127,12 @@ export const ChecksResults = () => {
 
     pageContent = lastExecution.map(
       ({ _cluster_id, host_id, reachable, msg }, idx) => (
-        <div key={idx} className={classNames('flex', 'flex-col', {'mb-8': idx != (cluster.hosts_executions.length - 1)})}>
+        <div
+          key={idx}
+          className={classNames('flex', 'flex-col', {
+            'mb-8': idx != cluster.hosts_executions.length - 1,
+          })}
+        >
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
               <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
