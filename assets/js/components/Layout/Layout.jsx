@@ -97,6 +97,7 @@ const Layout = () => {
                           }`
                         }
                         to={item.href}
+                        end={item.href == '/'}
                       >
                         <span className="text-left">
                           <item.icon />
