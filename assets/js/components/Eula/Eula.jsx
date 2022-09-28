@@ -6,7 +6,7 @@ import Community from '@components/Eula/Community';
 
 const Eula = () => {
   const eulaVisible = useSelector((state) => state.settings.eulaVisible);
-  const isPremium = true;
+  const isPremium = useSelector((state) => state.settings.isPremium);
   const dispatch = useDispatch();
 
   if (isPremium) {

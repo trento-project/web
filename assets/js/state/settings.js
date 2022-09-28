@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   eulaVisible: false,
+  isPremium: false,
 };
 
 export const settingsSlice = createSlice({
@@ -11,12 +12,16 @@ export const settingsSlice = createSlice({
     setEulaVisible: (state) => {
       state.eulaVisible = true;
     },
+    setIsPremium: (state) => {
+      state.isPremium = true;
+    },
     acceptEula: (state) => {
       state.eulaVisible = false;
     },
   },
 });
 
-export const { setEulaVisible, acceptEula } = settingsSlice.actions;
+export const { setEulaVisible, setIsPremium, acceptEula } =
+  settingsSlice.actions;
 
 export default settingsSlice.reducer;
