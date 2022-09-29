@@ -118,9 +118,10 @@ function* initialDataFetch() {
 
   if (!eula_accepted) {
     yield put(setEulaVisible());
-    if (premium_subscription) {
-      yield put(setIsPremium());
-    }
+  }
+
+  if (premium_subscription) {
+    yield put(setIsPremium());
   }
 
   yield put(startHostsLoading());
