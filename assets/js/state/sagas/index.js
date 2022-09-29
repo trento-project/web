@@ -64,7 +64,7 @@ import {
 import { setCatalog } from '@state/catalog';
 
 import { appendEntryToLiveFeed } from '@state/liveFeed';
-import { setEulaVisible } from '@state/settings';
+import { setEulaVisible, setIsPremium } from '@state/settings';
 
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
@@ -113,11 +113,15 @@ function* initialDataFetch() {
   yield loadSapSystemsHealthSummary();
 
   const {
-    data: { eula_accepted },
+    data: { eula_accepted, premium_subscription },
   } = yield call(get, '/api/settings');
 
   if (!eula_accepted) {
     yield put(setEulaVisible());
+  }
+
+  if (premium_subscription) {
+    yield put(setIsPremium());
   }
 
   yield put(startHostsLoading());
