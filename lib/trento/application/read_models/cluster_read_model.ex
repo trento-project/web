@@ -7,6 +7,8 @@ defmodule Trento.ClusterReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.{
     CheckResultReadModel,
     HostChecksExecutionsReadModel
@@ -19,7 +21,7 @@ defmodule Trento.ClusterReadModel do
   schema "clusters" do
     field :name, :string, default: ""
     field :sid, :string
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
+    field :provider, Ecto.Enum, values: Provider.values()
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
     field :selected_checks, {:array, :string}, default: []
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]

@@ -7,6 +7,8 @@ defmodule Trento.HostReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.SlesSubscriptionReadModel
 
   @type t :: %__MODULE__{}
@@ -21,7 +23,7 @@ defmodule Trento.HostReadModel do
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
 
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
+    field :provider, Ecto.Enum, values: Provider.values()
     field :provider_data, :map
 
     has_many :tags, Trento.Tag, foreign_key: :resource_id

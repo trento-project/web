@@ -3,6 +3,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   This module contains functions to transform host related integration events into commands.
   """
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateProvider,
@@ -129,10 +131,10 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     end
   end
 
-  @spec parse_cloud_provider_metadata(:azure | :aws | :gcp | :kvm | :nutanix | :unknown, map) ::
+  @spec parse_cloud_provider_metadata(Provider.t(), map) ::
           map
   defp parse_cloud_provider_metadata(
-         :azure,
+         Provider.azure(),
          %AzureMetadata{
            compute: %{
              name: name,
@@ -158,7 +160,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
        }
 
   defp parse_cloud_provider_metadata(
-         :aws,
+         Provider.aws(),
          %AwsMetadata{
            account_id: account_id,
            ami_id: ami_id,
@@ -182,7 +184,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
        }
 
   defp parse_cloud_provider_metadata(
-         :gcp,
+         Provider.gcp(),
          %GcpMetadata{
            disk_number: disk_number,
            image: image,

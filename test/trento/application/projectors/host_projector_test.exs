@@ -4,6 +4,8 @@ defmodule Trento.HostProjectorTest do
 
   import Trento.Factory
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.{
     HostProjector,
     HostReadModel
@@ -141,7 +143,7 @@ defmodule Trento.HostProjectorTest do
        } do
     event = %ProviderUpdated{
       host_id: host_id,
-      provider: :azure,
+      provider: Provider.azure(),
       provider_data: %AzureProvider{
         vm_name: "vmhdbdev01",
         data_disk_number: 7,
@@ -178,7 +180,7 @@ defmodule Trento.HostProjectorTest do
        } do
     event = %ProviderUpdated{
       host_id: host_id,
-      provider: :aws,
+      provider: Provider.aws(),
       provider_data: %AwsProvider{
         account_id: "12345",
         ami_id: "ami-12345",
@@ -205,7 +207,7 @@ defmodule Trento.HostProjectorTest do
       "vpc_id" => "vpc-12345"
     }
 
-    assert :aws == host_projection.provider
+    assert Provider.aws() == host_projection.provider
     assert expected_aws_model == host_projection.provider_data
   end
 
@@ -215,7 +217,7 @@ defmodule Trento.HostProjectorTest do
        } do
     event = %ProviderUpdated{
       host_id: host_id,
-      provider: :gcp,
+      provider: Provider.gcp(),
       provider_data: %GcpProvider{
         disk_number: 4,
         image: "sles-15-sp1-sap-byos-v20220126",

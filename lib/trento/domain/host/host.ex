@@ -1,6 +1,8 @@
 defmodule Trento.Domain.Host do
   @moduledoc false
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.Domain.Host
 
   alias Trento.Domain.{
@@ -49,7 +51,7 @@ defmodule Trento.Domain.Host do
           ip_addresses: [String.t()],
           ssh_address: String.t(),
           agent_version: String.t(),
-          provider: :azure | :aws | :gcp | :kvm | :nutanix | :unknown,
+          provider: Provider.t(),
           cpu_count: non_neg_integer(),
           total_memory_mb: non_neg_integer(),
           socket_count: non_neg_integer(),

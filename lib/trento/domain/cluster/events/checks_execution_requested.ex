@@ -5,10 +5,12 @@ defmodule Trento.Domain.Events.ChecksExecutionRequested do
 
   use Trento.Event
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   defevent do
     field :cluster_id, Ecto.UUID
     field :hosts, {:array, Ecto.UUID}
     field :checks, {:array, :string}
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
+    field :provider, Ecto.Enum, values: Provider.values()
   end
 end

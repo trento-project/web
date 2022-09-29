@@ -6,11 +6,14 @@ defmodule Trento.Integration.Discovery.CloudDiscoveryPayload do
   @required_fields []
 
   use Trento.Type
+
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
+
+  require Trento.Domain.Enum.Provider, as: Provider
 
   deftype do
     field :provider, Ecto.Enum,
-      values: [:aws, :gcp, :azure, :kvm, :nutanix, :unknown],
+      values: Provider.values(),
       default: :unknown
 
     field :metadata, PolymorphicEmbed,
