@@ -7,6 +7,8 @@ defmodule Trento.HostTelemetryReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -23,7 +25,7 @@ defmodule Trento.HostTelemetryReadModel do
       values: [:community, :suse, :unknown],
       default: :unknown
 
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
+    field :provider, Ecto.Enum, values: Provider.values()
 
     timestamps()
   end

@@ -3,23 +3,25 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
   Cluster discovery integration event payload
   """
 
+  @required_fields [:dc, :provider, :id, :cluster_type, :cib, :sbd, :crmmon]
+  @required_fields_hana [:sid]
+
+  use Trento.Type
+
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.Integration.Discovery.ClusterDiscoveryPayload.{
     Cib,
     Crmmon,
     Sbd
   }
 
-  @required_fields [:dc, :provider, :id, :cluster_type, :cib, :sbd, :crmmon]
-
-  @required_fields_hana [:sid]
-  use Trento.Type
-
   deftype do
     field :dc, :boolean
 
     field :provider, Ecto.Enum,
-      values: [:aws, :gcp, :azure, :kvm, :nutanix, :unknown],
-      default: :unknown
+      values: Provider.values(),
+      default: Provider.unknown()
 
     field :id, :string
     field :name, :string

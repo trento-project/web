@@ -4,6 +4,8 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
 
   import Trento.Integration.DiscoveryFixturesHelper
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.Integration.Discovery.HostPolicy
 
   alias Trento.Domain.Commands.{
@@ -56,7 +58,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              :ok,
              %UpdateProvider{
                host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
-               provider: :azure,
+               provider: Provider.azure(),
                provider_data: %AzureProvider{
                  vm_name: "vmhdbdev01",
                  data_disk_number: 7,
@@ -79,7 +81,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              :ok,
              %UpdateProvider{
                host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
-               provider: :aws,
+               provider: Provider.aws(),
                provider_data: %AwsProvider{
                  account_id: "12345",
                  ami_id: "ami-12345",
@@ -102,7 +104,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              :ok,
              %UpdateProvider{
                host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
-               provider: :gcp,
+               provider: Provider.gcp(),
                provider_data: %GcpProvider{
                  disk_number: 4,
                  image: "sles-15-sp1-sap-byos-v20220126",
@@ -124,7 +126,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              :ok,
              %UpdateProvider{
                host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
-               provider: :kvm
+               provider: Provider.kvm()
              }
            } ==
              "cloud_discovery_kvm"
@@ -150,7 +152,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              :ok,
              %UpdateProvider{
                host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
-               provider: :unknown,
+               provider: Provider.unknown(),
                provider_data: nil
              }
            } =

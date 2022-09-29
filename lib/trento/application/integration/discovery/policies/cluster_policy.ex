@@ -3,9 +3,12 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   This module contains functions to transform cluster related integration events into commands.
   """
 
-  alias Trento.Domain.Commands.RegisterClusterHost
+  require Trento.Domain.Enum.Provider, as: Provider
 
-  alias Trento.Integration.Discovery.ClusterDiscoveryPayload
+  alias Trento.{
+    Domain.Commands.RegisterClusterHost,
+    Integration.Discovery.ClusterDiscoveryPayload
+  }
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
@@ -336,9 +339,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     end)
   end
 
-  defp get_virtual_ip_type_suffix_by_provider(:azure), do: "IPaddr2"
-  defp get_virtual_ip_type_suffix_by_provider(:aws), do: "aws-vpc-move-ip"
-  defp get_virtual_ip_type_suffix_by_provider(:gcp), do: "IPaddr2"
+  defp get_virtual_ip_type_suffix_by_provider(Provider.azure()), do: "IPaddr2"
+  defp get_virtual_ip_type_suffix_by_provider(Provider.aws()), do: "aws-vpc-move-ip"
+  defp get_virtual_ip_type_suffix_by_provider(Provider.gcp()), do: "IPaddr2"
   defp get_virtual_ip_type_suffix_by_provider(_), do: "IPaddr2"
 
   defp do_parse_hana_status(nil, _), do: "Unknown"

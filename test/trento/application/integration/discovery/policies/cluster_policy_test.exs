@@ -4,6 +4,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
 
   import Trento.Integration.DiscoveryFixturesHelper
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.Integration.Discovery.ClusterPolicy
 
   alias Trento.Domain.Commands.RegisterClusterHost
@@ -217,7 +219,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               hosts_number: 2,
               resources_number: 8,
               discovered_health: :passing,
-              provider: :azure
+              provider: Provider.azure()
             }} ==
              "ha_cluster_discovery_hana_scale_up"
              |> load_discovery_event_fixture()
@@ -337,7 +339,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                host_id: "a3279fd0-0443-1234-9354-2d7909fd6bc6",
                hosts_number: 2,
                name: "hana_cluster",
-               provider: :aws,
+               provider: Provider.aws(),
                resources_number: 7,
                sid: "PRD",
                type: :hana_scale_up
@@ -474,7 +476,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                host_id: "1dc79771-0a96-1234-b5b6-cd4d0aef6acc",
                hosts_number: 2,
                name: "hana_cluster",
-               provider: :gcp,
+               provider: Provider.gcp(),
                resources_number: 9,
                sid: "PRD",
                type: :hana_scale_up
@@ -687,7 +689,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               hosts_number: 2,
               resources_number: 8,
               discovered_health: :passing,
-              provider: :azure
+              provider: Provider.azure()
             }} ==
              "ha_cluster_discovery_unnamed"
              |> load_discovery_event_fixture()

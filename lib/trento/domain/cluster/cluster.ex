@@ -1,6 +1,8 @@
 defmodule Trento.Domain.Cluster do
   @moduledoc false
 
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Commanded.Aggregate.Multi
 
   alias Trento.Domain.{
@@ -60,7 +62,7 @@ defmodule Trento.Domain.Cluster do
           cluster_id: String.t(),
           name: String.t(),
           type: :hana_scale_up | :hana_scale_out | :unknown,
-          provider: :azure | :aws | :gcp | :kvm | :nutanix | :unknown,
+          provider: Provider.t(),
           discovered_health: nil | :passing | :warning | :critical | :unknown,
           checks_health: nil | :passing | :warning | :critical | :unknown,
           health: :passing | :warning | :critical | :unknown,

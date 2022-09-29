@@ -5,17 +5,19 @@ defmodule Trento.Domain.Events.ProviderUpdated do
 
   use Trento.Event
 
+  import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
+
+  require Trento.Domain.Enum.Provider, as: Provider
+
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
     GcpProvider
   }
 
-  import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
-
   defevent do
     field :host_id, Ecto.UUID
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
+    field :provider, Ecto.Enum, values: Provider.values()
 
     field :provider_data, PolymorphicEmbed,
       types: [

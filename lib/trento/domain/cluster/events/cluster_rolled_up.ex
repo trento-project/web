@@ -5,14 +5,19 @@ defmodule Trento.Domain.Events.ClusterRolledUp do
 
   use Trento.Event
 
-  alias Trento.Domain.{HanaClusterDetails, HostExecution}
+  require Trento.Domain.Enum.Provider, as: Provider
+
+  alias Trento.Domain.{
+    HanaClusterDetails,
+    HostExecution
+  }
 
   defevent do
     field :cluster_id, :string
     field :name, :string
     field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
     field :sid, :string
-    field :provider, Ecto.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
+    field :provider, Ecto.Enum, values: Provider.values()
     field :resources_number, :integer
     field :hosts_number, :integer
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
