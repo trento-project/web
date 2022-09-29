@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import Premium from '@components/Eula/Premium';
-import Community from '@components/Eula/Community';
+import Premium from './Premium';
+import Community from './Community';
 
 const Eula = () => {
   const eulaVisible = useSelector((state) => state.settings.eulaVisible);
