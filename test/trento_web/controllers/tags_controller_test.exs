@@ -24,9 +24,10 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a sap system", %{conn: conn} do
       conn =
         post(conn, Routes.sap_systems_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => Faker.Beer.style()
+          "value" => String.replace(Faker.Beer.style(), " ", "")
         })
 
+      IO.inspect(conn)
       assert 201 == conn.status
     end
 
@@ -65,7 +66,7 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a database", %{conn: conn} do
       conn =
         post(conn, Routes.databases_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => Faker.Beer.style()
+          "value" => String.replace(Faker.Beer.style(), " ", "")
         })
 
       assert 201 == conn.status
@@ -89,7 +90,7 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a cluster", %{conn: conn} do
       conn =
         post(conn, Routes.clusters_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => tag_value = Faker.Beer.style()
+          "value" => tag_value = String.replace(Faker.Beer.style(), " ", "")
         })
 
       assert json_response(conn, 201)["value"] == tag_value
@@ -130,7 +131,7 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a host", %{conn: conn} do
       conn =
         post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => Faker.Beer.style()
+          "value" => String.replace(Faker.Beer.style(), " ", "")
         })
 
       assert 201 == conn.status
