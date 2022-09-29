@@ -4,6 +4,7 @@ defmodule Trento.Factory do
   """
 
   require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
 
   alias Trento.Domain.{
     ClusterNode,
@@ -117,7 +118,7 @@ defmodule Trento.Factory do
       resources_number: 8,
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
-      type: :hana_scale_up,
+      type: ClusterType.hana_scale_up(),
       discovered_health: :passing,
       designated_controller: true
     }
@@ -133,7 +134,7 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
       health: :passing,
-      type: :hana_scale_up
+      type: ClusterType.hana_scale_up()
     }
   end
 
@@ -172,7 +173,7 @@ defmodule Trento.Factory do
       name: Faker.StarWars.character(),
       sid: Faker.StarWars.planet(),
       provider: Enum.random(Provider.values()),
-      type: :hana_scale_up,
+      type: ClusterType.hana_scale_up(),
       health: :passing
     }
   end
@@ -433,10 +434,11 @@ defmodule Trento.Factory do
   end
 
   def sap_system_with_cluster_and_hosts do
-    %ClusterReadModel{id: cluster_id} = insert(:cluster, type: :hana_scale_up, health: :passing)
+    %ClusterReadModel{id: cluster_id} =
+      insert(:cluster, type: ClusterType.hana_scale_up(), health: :passing)
 
     %ClusterReadModel{id: another_cluster_id} =
-      insert(:cluster, type: :hana_scale_up, health: :warning)
+      insert(:cluster, type: ClusterType.hana_scale_up(), health: :warning)
 
     %HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 

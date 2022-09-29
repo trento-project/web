@@ -3,6 +3,10 @@ defmodule Trento.SapSystems.HealthSummaryService do
   Provides a set of functions to interact with SAP systems Health Summary
   """
 
+  import Ecto.Query
+
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
+
   alias Trento.{
     ApplicationInstanceReadModel,
     ClusterReadModel,
@@ -15,8 +19,6 @@ defmodule Trento.SapSystems.HealthSummaryService do
 
   alias Trento.Application.UseCases.SapSystems.HealthSummaryDto
   alias Trento.Repo
-
-  import Ecto.Query
 
   @type instance_list :: [DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]
 
@@ -94,7 +96,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
   @spec keep_only_hana_scale_up_clusters([ClusterReadModel.t()]) :: [ClusterReadModel.t()]
   defp keep_only_hana_scale_up_clusters(clusters) do
     Enum.filter(clusters, fn
-      %ClusterReadModel{type: :hana_scale_up} -> true
+      %ClusterReadModel{type: ClusterType.hana_scale_up()} -> true
       _ -> false
     end)
   end

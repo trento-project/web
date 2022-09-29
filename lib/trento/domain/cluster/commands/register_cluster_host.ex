@@ -15,6 +15,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
   use Trento.Command
 
   require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
 
   alias Trento.Domain.HanaClusterDetails
 
@@ -22,7 +23,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
     field :cluster_id, Ecto.UUID
     field :host_id, Ecto.UUID
     field :name, :string
-    field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
+    field :type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
     field :provider, Ecto.Enum, values: Provider.values()
     field :designated_controller, :boolean

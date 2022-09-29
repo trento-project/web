@@ -2,6 +2,8 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
   @moduledoc false
 
   require OpenApiSpex
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
+
   alias OpenApiSpex.Schema
 
   alias TrentoWeb.OpenApi.Schema.{Checks, Provider, ResourceHealth, Tags}
@@ -127,7 +129,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
         type: %Schema{
           type: :string,
           description: "Detected type of the cluster",
-          enum: [:hana_scale_up, :hana_scale_out, :unknown]
+          enum: ClusterType.values()
         },
         selected_checks: %Schema{
           title: "SelectedChecks",

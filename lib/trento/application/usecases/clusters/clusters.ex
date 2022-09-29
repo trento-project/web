@@ -5,6 +5,9 @@ defmodule Trento.Clusters do
 
   import Ecto.Query
 
+  require Logger
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
+
   alias Trento.ClusterEnrichmentData
   alias Trento.ClusterReadModel
 
@@ -17,8 +20,6 @@ defmodule Trento.Clusters do
   }
 
   alias Trento.Repo
-
-  require Logger
 
   def store_checks_results(cluster_id, host_id, checks_results) do
     with {:ok, checks_results} <- build_check_results(checks_results),
@@ -79,7 +80,7 @@ defmodule Trento.Clusters do
     query =
       from(c in ClusterReadModel,
         select: c.id,
-        where: c.type == :hana_scale_up or c.type == :hana_scale_out
+        where: c.type == ^ClusterType.hana_scale_up() or c.type == ^ClusterType.hana_scale_out()
       )
 
     query
