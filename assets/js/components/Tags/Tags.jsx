@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
 import Pill from '@components/Pill';
 import useOnClickOutside from '@hooks/useOnClickOutside';
-
+//eslint-disable-next-line
 const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
-const tagValidation = (char) => tagRegexValidation.test(char)
+const tagValidation = (char) => tagRegexValidation.test(char);
 
 const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
   const [renderedTags, setTags] = useState(tags);
