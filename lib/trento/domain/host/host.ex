@@ -28,39 +28,42 @@ defmodule Trento.Domain.Host do
     SlesSubscriptionsUpdated
   }
 
-  defstruct [
-    :host_id,
-    :hostname,
-    :ip_addresses,
-    :ssh_address,
-    :agent_version,
-    :provider,
-    :cpu_count,
-    :total_memory_mb,
-    :socket_count,
-    :os_version,
-    :installation_source,
-    :heartbeat,
-    :subscriptions,
-    :provider_data
-  ]
+  @required_fields []
 
-  @type t :: %__MODULE__{
-          host_id: String.t(),
-          hostname: String.t(),
-          ip_addresses: [String.t()],
-          ssh_address: String.t(),
-          agent_version: String.t(),
-          provider: Provider.t(),
-          cpu_count: non_neg_integer(),
-          total_memory_mb: non_neg_integer(),
-          socket_count: non_neg_integer(),
-          os_version: String.t(),
-          installation_source: :community | :suse | :unknown,
-          subscriptions: [SlesSubscription.t()],
-          provider_data: AwsProvider.t() | AzureProvider.t() | GcpProvider.t() | nil,
-          heartbeat: :passing | :critical | :unknown
-        }
+  use Trento.Type
+
+  import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
+
+  deftype do
+    field :host_id, Ecto.UUID
+    field :hostname, :string
+    field :ip_addresses, {:array, :string}
+    field :ssh_address, :string
+    field :agent_version, :string
+    field :cpu_count, :integer
+    field :total_memory_mb, :integer
+    field :socket_count, :integer
+    field :os_version, :string
+    field :provider, Ecto.Enum, values: Provider.values()
+    field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
+    field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
+
+    embeds_many :subscriptions, SlesSubscription
+
+    field :provider_data, PolymorphicEmbed,
+      types: [
+        azure: [module: AzureProvider, identify_by_fields: [:resource_group]],
+        aws: [module: AwsProvider, identify_by_fields: [:ami_id]],
+        gcp: [module: GcpProvider, identify_by_fields: [:project_id]]
+      ],
+      on_replace: :update
+  end
+
+  def changeset(event, attrs) do
+    event
+    |> cast(attrs, [:host_id, :provider])
+    |> cast_polymorphic_embed(:provider_data, required: false)
+  end
 
   # New host registered
   def execute(
