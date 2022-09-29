@@ -40,7 +40,6 @@ defmodule TrentoWeb.TagsControllerTest do
           "value" => String.replace(Faker.Beer.style(), " ", "")
         })
 
-      IO.inspect(conn)
       assert 201 == conn.status
     end
 
