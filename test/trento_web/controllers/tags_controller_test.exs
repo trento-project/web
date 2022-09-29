@@ -6,7 +6,7 @@ defmodule TrentoWeb.TagsControllerTest do
   alias Trento.Tag
 
   describe "Tag Validation" do
-    test "should validate incoming tags", %{conn: conn} do
+    test "should decline tag with whitespace", %{conn: conn} do
       conn =
         post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
           "value" => "     "
@@ -15,6 +15,19 @@ defmodule TrentoWeb.TagsControllerTest do
       assert %{
                "errors" => %{
                  "value" => ["can't be blank"]
+               }
+             } = json_response(conn, 400)
+    end
+
+    test "should decline tag with forbidden characters", %{conn: conn} do
+      conn =
+        post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
+          "value" => "This / is a \ wrong #tag"
+        })
+
+      assert %{
+               "errors" => %{
+                 "value" => ["has invalid format"]
                }
              } = json_response(conn, 400)
     end
