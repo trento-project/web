@@ -22,6 +22,8 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
 
   use Trento.Command
 
+  require Trento.Domain.Enum.Health, as: Health
+
   defcommand do
     field :sap_system_id, Ecto.UUID
     field :sid, :string
@@ -34,6 +36,6 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
     field :http_port, :integer
     field :https_port, :integer
     field :start_priority, :string
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
   end
 end

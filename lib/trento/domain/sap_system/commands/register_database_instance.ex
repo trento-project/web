@@ -17,6 +17,8 @@ defmodule Trento.Domain.Commands.RegisterDatabaseInstance do
 
   use Trento.Command
 
+  require Trento.Domain.Enum.Health, as: Health
+
   defcommand do
     field :sap_system_id, Ecto.UUID
     field :sid, :string
@@ -30,6 +32,6 @@ defmodule Trento.Domain.Commands.RegisterDatabaseInstance do
     field :start_priority, :string
     field :system_replication, :string
     field :system_replication_status, :string
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
   end
 end

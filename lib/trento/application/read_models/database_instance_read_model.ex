@@ -7,6 +7,8 @@ defmodule Trento.DatabaseInstanceReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enum.Health, as: Health
+
   @type t :: %__MODULE__{}
 
   alias Trento.HostReadModel
@@ -26,7 +28,7 @@ defmodule Trento.DatabaseInstanceReadModel do
     field :host_id, Ecto.UUID, primary_key: true
     field :system_replication, :string, default: ""
     field :system_replication_status, :string, default: ""
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
 
     has_one :host, HostReadModel, references: :host_id, foreign_key: :id
   end

@@ -7,6 +7,8 @@ defmodule Trento.ApplicationInstanceReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enum.Health, as: Health
+
   @type t :: %__MODULE__{}
 
   alias Trento.HostReadModel
@@ -23,7 +25,7 @@ defmodule Trento.ApplicationInstanceReadModel do
     field :https_port, :integer
     field :start_priority, :string
     field :host_id, Ecto.UUID, primary_key: true
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
 
     has_one :host, HostReadModel, references: :host_id, foreign_key: :id
   end

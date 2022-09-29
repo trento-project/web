@@ -3,6 +3,7 @@ defmodule Trento.Domain.Cluster do
 
   require Trento.Domain.Enum.Provider, as: Provider
   require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enum.Health, as: Health
 
   alias Commanded.Aggregate.Multi
 
@@ -64,9 +65,9 @@ defmodule Trento.Domain.Cluster do
           name: String.t(),
           type: ClusterType.t(),
           provider: Provider.t(),
-          discovered_health: nil | :passing | :warning | :critical | :unknown,
-          checks_health: nil | :passing | :warning | :critical | :unknown,
-          health: :passing | :warning | :critical | :unknown,
+          discovered_health: nil | Health.t(),
+          checks_health: nil | Health.t(),
+          health: Health.t(),
           sid: String.t(),
           details: HanaClusterDetails.t() | nil,
           hosts: [String.t()],

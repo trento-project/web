@@ -28,7 +28,7 @@ defmodule Trento.Domain.SapSystem do
     SapSystemRegistered
   }
 
-  alias Trento.Domain.Health
+  alias Trento.Domain.Enum.Health
   alias Trento.Domain.HealthService
 
   defstruct [

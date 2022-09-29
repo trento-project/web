@@ -9,6 +9,7 @@ defmodule Trento.ClusterReadModel do
 
   require Trento.Domain.Enum.Provider, as: Provider
   require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enum.Health, as: Health
 
   alias Trento.{
     CheckResultReadModel,
@@ -25,7 +26,7 @@ defmodule Trento.ClusterReadModel do
     field :provider, Ecto.Enum, values: Provider.values()
     field :type, Ecto.Enum, values: ClusterType.values()
     field :selected_checks, {:array, :string}, default: []
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
     field :resources_number, :integer
     field :hosts_number, :integer
     field :details, :map

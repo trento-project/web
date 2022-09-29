@@ -14,7 +14,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
     SapSystemReadModel
   }
 
-  alias Trento.Domain.Health
+  alias Trento.Domain.Enum.Health
   alias Trento.Domain.HealthService
 
   alias Trento.Application.UseCases.SapSystems.HealthSummaryDto

@@ -1,7 +1,7 @@
-defmodule Trento.Domain.Health do
+defmodule Trento.Domain.Enum.Health do
   @moduledoc """
   Type that represents the possible health values in the system.
   """
 
-  @type t :: :passing | :warning | :critical | :unknown
+  use Trento.Domain.Enum, values: [:passing, :warning, :critical, :unknown]
 end

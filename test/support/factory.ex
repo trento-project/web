@@ -5,6 +5,7 @@ defmodule Trento.Factory do
 
   require Trento.Domain.Enum.Provider, as: Provider
   require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enum.Health, as: Health
 
   alias Trento.Domain.{
     ClusterNode,
@@ -119,7 +120,7 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
       type: ClusterType.hana_scale_up(),
-      discovered_health: :passing,
+      discovered_health: Health.passing(),
       designated_controller: true
     }
   end
@@ -133,7 +134,7 @@ defmodule Trento.Factory do
       resources_number: 8,
       hosts_number: 2,
       details: hana_cluster_details_value_object(),
-      health: :passing,
+      health: Health.passing(),
       type: ClusterType.hana_scale_up()
     }
   end
@@ -174,7 +175,7 @@ defmodule Trento.Factory do
       sid: Faker.StarWars.planet(),
       provider: Enum.random(Provider.values()),
       type: ClusterType.hana_scale_up(),
-      health: :passing
+      health: Health.passing()
     }
   end
 
@@ -216,7 +217,7 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       system_replication: "Primary",
       system_replication_status: "ACTIVE",
-      health: :passing
+      health: Health.passing()
     }
   end
 
@@ -231,7 +232,7 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: :passing
+      health: Health.passing()
     }
   end
 
@@ -239,7 +240,7 @@ defmodule Trento.Factory do
     %DatabaseRegistered{
       sap_system_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
-      health: :passing
+      health: Health.passing()
     }
   end
 
@@ -249,7 +250,7 @@ defmodule Trento.Factory do
       sid: Faker.UUID.v4(),
       db_host: Faker.Internet.ip_v4_address(),
       tenant: Faker.Beer.hop(),
-      health: :passing
+      health: Health.passing()
     }
   end
 
@@ -308,7 +309,7 @@ defmodule Trento.Factory do
       sid: Faker.StarWars.planet(),
       tenant: Faker.Beer.hop(),
       db_host: Faker.Internet.ip_v4_address(),
-      health: :unknown
+      health: Health.unknown()
     }
   end
 
@@ -322,7 +323,7 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       system_replication: "",
       system_replication_status: "",
-      health: :unknown
+      health: Health.unknown()
     }
   end
 
@@ -338,7 +339,7 @@ defmodule Trento.Factory do
       instance_number: "00",
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      health: :unknown
+      health: Health.unknown()
     }
   end
 
@@ -385,7 +386,7 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: :passing
+      health: Health.passing()
     })
   end
 
@@ -403,7 +404,7 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       system_replication: "Primary",
       system_replication_status: "ACTIVE",
-      health: :passing
+      health: Health.passing()
     })
   end
 
@@ -435,10 +436,10 @@ defmodule Trento.Factory do
 
   def sap_system_with_cluster_and_hosts do
     %ClusterReadModel{id: cluster_id} =
-      insert(:cluster, type: ClusterType.hana_scale_up(), health: :passing)
+      insert(:cluster, type: ClusterType.hana_scale_up(), health: Health.passing())
 
     %ClusterReadModel{id: another_cluster_id} =
-      insert(:cluster, type: ClusterType.hana_scale_up(), health: :warning)
+      insert(:cluster, type: ClusterType.hana_scale_up(), health: Health.warning())
 
     %HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
@@ -450,14 +451,14 @@ defmodule Trento.Factory do
     %SapSystemReadModel{
       id: sap_system_id,
       sid: sid
-    } = insert(:sap_system, health: :passing)
+    } = insert(:sap_system, health: Health.passing())
 
     insert(
       :database_instance_without_host,
       sap_system_id: sap_system_id,
       sid: database_sid,
       host_id: host_1_id,
-      health: :warning
+      health: Health.warning()
     )
 
     insert(
@@ -465,7 +466,7 @@ defmodule Trento.Factory do
       sap_system_id: sap_system_id,
       sid: database_sid,
       host_id: host_2_id,
-      health: :critical
+      health: Health.critical()
     )
 
     insert(
@@ -473,7 +474,7 @@ defmodule Trento.Factory do
       sap_system_id: sap_system_id,
       sid: sid,
       host_id: host_1_id,
-      health: :passing
+      health: Health.passing()
     )
 
     insert(
@@ -481,7 +482,7 @@ defmodule Trento.Factory do
       sap_system_id: sap_system_id,
       sid: sid,
       host_id: host_2_id,
-      health: :warning
+      health: Health.warning()
     )
 
     %{

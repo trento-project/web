@@ -3,7 +3,7 @@ defmodule Trento.Domain.SapSystem.Database do
   This module represents a SAP System database.
   """
 
-  alias Trento.Domain.Health
+  alias Trento.Domain.Enum.Health
 
   defstruct [
     :sid,

@@ -7,6 +7,7 @@ defmodule Trento.Domain.Events.ClusterRegistered do
 
   require Trento.Domain.Enum.Provider, as: Provider
   require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enum.Health, as: Health
 
   alias Trento.Domain.HanaClusterDetails
 
@@ -18,7 +19,7 @@ defmodule Trento.Domain.Events.ClusterRegistered do
     field :provider, Ecto.Enum, values: Provider.values()
     field :resources_number, :integer
     field :hosts_number, :integer
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
 
     embeds_one :details, HanaClusterDetails
   end

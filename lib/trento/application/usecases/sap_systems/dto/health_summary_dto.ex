@@ -7,12 +7,14 @@ defmodule Trento.Application.UseCases.SapSystems.HealthSummaryDto do
 
   use Trento.Type
 
+  require Trento.Domain.Enum.Health, as: Health
+
   deftype do
     field :id, :string
     field :sid, :string
-    field :sapsystem_health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
-    field :database_health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
-    field :clusters_health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :sapsystem_health, Ecto.Enum, values: Health.values()
+    field :database_health, Ecto.Enum, values: Health.values()
+    field :clusters_health, Ecto.Enum, values: Health.values()
     field :hosts_health, Ecto.Enum, values: [:passing, :critical, :unknown]
   end
 end

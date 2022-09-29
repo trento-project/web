@@ -16,6 +16,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
 
   require Trento.Domain.Enum.Provider, as: Provider
   require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enum.Health, as: Health
 
   alias Trento.Domain.HanaClusterDetails
 
@@ -29,7 +30,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
     field :designated_controller, :boolean
     field :resources_number, :integer
     field :hosts_number, :integer
-    field :discovered_health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :discovered_health, Ecto.Enum, values: Health.values()
     field :cib_last_written, :string
 
     embeds_one :details, HanaClusterDetails
