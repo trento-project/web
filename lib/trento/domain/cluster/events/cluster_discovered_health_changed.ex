@@ -5,8 +5,10 @@ defmodule Trento.Domain.Events.ClusterDiscoveredHealthChanged do
 
   use Trento.Event
 
+  require Trento.Domain.Enum.Health, as: Health
+
   defevent do
     field :cluster_id, :string
-    field :discovered_health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :discovered_health, Ecto.Enum, values: Health.values()
   end
 end

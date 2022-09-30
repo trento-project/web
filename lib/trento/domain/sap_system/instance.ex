@@ -3,7 +3,7 @@ defmodule Trento.Domain.SapSystem.Instance do
   This module represents a SAP System instance.
   """
 
-  alias Trento.Domain.Health
+  alias Trento.Domain.Enum.Health
 
   defstruct [
     :sid,

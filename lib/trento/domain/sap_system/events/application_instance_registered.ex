@@ -5,6 +5,8 @@ defmodule Trento.Domain.Events.ApplicationInstanceRegistered do
 
   use Trento.Event
 
+  require Trento.Domain.Enum.Health, as: Health
+
   defevent do
     field :sap_system_id, Ecto.UUID
     field :sid, :string
@@ -15,6 +17,6 @@ defmodule Trento.Domain.Events.ApplicationInstanceRegistered do
     field :http_port, :integer
     field :https_port, :integer
     field :start_priority, :string
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
   end
 end

@@ -7,6 +7,8 @@ defmodule Trento.SapSystemReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enum.Health, as: Health
+
   alias Trento.{
     ApplicationInstanceReadModel,
     DatabaseInstanceReadModel
@@ -20,7 +22,7 @@ defmodule Trento.SapSystemReadModel do
     field :sid, :string
     field :tenant, :string
     field :db_host, :string
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,

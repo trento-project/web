@@ -7,6 +7,8 @@ defmodule Trento.DatabaseReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enum.Health, as: Health
+
   alias Trento.DatabaseInstanceReadModel
 
   @type t :: %__MODULE__{}
@@ -15,7 +17,7 @@ defmodule Trento.DatabaseReadModel do
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "databases" do
     field :sid, :string
-    field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
+    field :health, Ecto.Enum, values: Health.values()
 
     has_many :tags, Trento.Tag, foreign_key: :resource_id
 
