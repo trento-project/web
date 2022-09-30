@@ -9,6 +9,7 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
   use Trento.Type
 
   require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
 
   alias Trento.Integration.Discovery.ClusterDiscoveryPayload.{
     Cib,
@@ -25,7 +26,7 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
 
     field :id, :string
     field :name, :string
-    field :cluster_type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
+    field :cluster_type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
 
     embeds_one :cib, Cib
@@ -76,9 +77,9 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
     do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
   end
 
-  defp do_detect_cluster_type(true, true, _), do: :hana_scale_up
-  defp do_detect_cluster_type(true, _, true), do: :hana_scale_out
-  defp do_detect_cluster_type(_, _, _), do: :unknown
+  defp do_detect_cluster_type(true, true, _), do: ClusterType.hana_scale_up()
+  defp do_detect_cluster_type(true, _, true), do: ClusterType.hana_scale_out()
+  defp do_detect_cluster_type(_, _, _), do: ClusterType.unknown()
 
   defp parse_cluster_sid(%{
          "cib" => %{"configuration" => %{"resources" => %{"clones" => nil}}}
@@ -105,10 +106,10 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
     end)
   end
 
-  defp maybe_validate_required_fields(cluster, %{"cluster_type" => :hana_scale_up}),
+  defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_up()}),
     do: cluster |> validate_required(@required_fields_hana)
 
-  defp maybe_validate_required_fields(cluster, %{"cluster_type" => :hana_scale_out}),
+  defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_out()}),
     do: cluster |> validate_required(@required_fields_hana)
 
   defp maybe_validate_required_fields(cluster, _),

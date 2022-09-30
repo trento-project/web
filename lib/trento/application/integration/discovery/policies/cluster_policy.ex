@@ -4,6 +4,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   """
 
   require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
 
   alias Trento.{
     Domain.Commands.RegisterClusterHost,
@@ -68,7 +69,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   defp parse_cluster_details(
          %{crmmon: crmmon, sbd: sbd, cluster_type: cluster_type, sid: sid} = payload
        )
-       when cluster_type in [:hana_scale_up, :hana_scale_out] do
+       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     nodes = parse_cluster_nodes(payload, sid)
 
     %{
@@ -364,7 +365,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   defp generate_cluster_id(id), do: UUID.uuid5(@uuid_namespace, id)
 
   defp parse_cluster_health(details, cluster_type)
-       when cluster_type in [:hana_scale_up, :hana_scale_out],
+       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
        do: parse_hana_cluster_health(details)
 
   defp parse_cluster_health(_, _), do: :unknown

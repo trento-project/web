@@ -8,6 +8,7 @@ defmodule Trento.ClusterReadModel do
   import Ecto.Changeset
 
   require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enum.ClusterType, as: ClusterType
 
   alias Trento.{
     CheckResultReadModel,
@@ -22,7 +23,7 @@ defmodule Trento.ClusterReadModel do
     field :name, :string, default: ""
     field :sid, :string
     field :provider, Ecto.Enum, values: Provider.values()
-    field :type, Ecto.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
+    field :type, Ecto.Enum, values: ClusterType.values()
     field :selected_checks, {:array, :string}, default: []
     field :health, Ecto.Enum, values: [:passing, :warning, :critical, :unknown]
     field :resources_number, :integer
