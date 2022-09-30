@@ -2,7 +2,7 @@ defmodule TrentoWeb.TagsControllerTest do
   use TrentoWeb.ConnCase, async: true
 
   import Trento.Factory
-
+  alias Faker.Color
   alias Trento.Tag
 
   describe "Tag Validation" do
@@ -37,7 +37,7 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a sap system", %{conn: conn} do
       conn =
         post(conn, Routes.sap_systems_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => String.replace(Faker.Beer.style(), " ", "")
+          "value" => Color.En.name()
         })
 
       assert 201 == conn.status
@@ -78,7 +78,7 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a database", %{conn: conn} do
       conn =
         post(conn, Routes.databases_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => String.replace(Faker.Beer.style(), " ", "")
+          "value" => Color.En.name()
         })
 
       assert 201 == conn.status
@@ -102,7 +102,7 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a cluster", %{conn: conn} do
       conn =
         post(conn, Routes.clusters_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => tag_value = String.replace(Faker.Beer.style(), " ", "")
+          "value" => tag_value = Color.En.name()
         })
 
       assert json_response(conn, 201)["value"] == tag_value
@@ -143,7 +143,7 @@ defmodule TrentoWeb.TagsControllerTest do
     test "should add a tag to a host", %{conn: conn} do
       conn =
         post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
-          "value" => String.replace(Faker.Beer.style(), " ", "")
+          "value" => Color.En.name()
         })
 
       assert 201 == conn.status
