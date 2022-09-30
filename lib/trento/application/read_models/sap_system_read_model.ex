@@ -7,7 +7,7 @@ defmodule Trento.SapSystemReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Domain.Enum.Health, as: Health
+  require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.{
     ApplicationInstanceReadModel,

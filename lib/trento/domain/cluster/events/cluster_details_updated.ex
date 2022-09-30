@@ -5,8 +5,8 @@ defmodule Trento.Domain.Events.ClusterDetailsUpdated do
 
   use Trento.Event
 
-  require Trento.Domain.Enum.Provider, as: Provider
-  require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias Trento.Domain.HanaClusterDetails
 

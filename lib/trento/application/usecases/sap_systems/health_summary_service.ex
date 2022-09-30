@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
 
   import Ecto.Query
 
-  require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias Trento.{
     ApplicationInstanceReadModel,
@@ -14,7 +14,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
     SapSystemReadModel
   }
 
-  alias Trento.Domain.Enum.Health
+  alias Trento.Domain.Enums.Health
   alias Trento.Domain.HealthService
 
   alias Trento.Application.UseCases.SapSystems.HealthSummaryDto

@@ -7,7 +7,7 @@ defmodule Trento.HostTelemetryReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enums.Provider, as: Provider
 
   @type t :: %__MODULE__{}
 

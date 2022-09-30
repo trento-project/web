@@ -1,7 +1,7 @@
 defmodule Trento.Domain.Host do
   @moduledoc false
 
-  require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enums.Provider, as: Provider
 
   alias Trento.Domain.Host
 

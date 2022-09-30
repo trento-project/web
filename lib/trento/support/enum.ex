@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Enum do
+defmodule Trento.Support.Enum do
   @moduledoc """
   Enum  module with added macros to define a type,
   check supported values and validate possible values

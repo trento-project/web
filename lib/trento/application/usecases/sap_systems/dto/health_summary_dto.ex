@@ -7,7 +7,7 @@ defmodule Trento.Application.UseCases.SapSystems.HealthSummaryDto do
 
   use Trento.Type
 
-  require Trento.Domain.Enum.Health, as: Health
+  require Trento.Domain.Enums.Health, as: Health
 
   deftype do
     field :id, :string

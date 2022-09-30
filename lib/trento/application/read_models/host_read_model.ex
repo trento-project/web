@@ -7,7 +7,7 @@ defmodule Trento.HostReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enums.Provider, as: Provider
 
   alias Trento.SlesSubscriptionReadModel
 

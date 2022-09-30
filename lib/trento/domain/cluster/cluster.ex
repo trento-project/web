@@ -1,9 +1,9 @@
 defmodule Trento.Domain.Cluster do
   @moduledoc false
 
-  require Trento.Domain.Enum.Provider, as: Provider
-  require Trento.Domain.Enum.ClusterType, as: ClusterType
-  require Trento.Domain.Enum.Health, as: Health
+  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.Health, as: Health
 
   alias Commanded.Aggregate.Multi
 

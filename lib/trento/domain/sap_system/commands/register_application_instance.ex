@@ -22,7 +22,7 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
 
   use Trento.Command
 
-  require Trento.Domain.Enum.Health, as: Health
+  require Trento.Domain.Enums.Health, as: Health
 
   defcommand do
     field :sap_system_id, Ecto.UUID
