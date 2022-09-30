@@ -8,8 +8,8 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
 
   use Trento.Type
 
-  require Trento.Domain.Enum.Provider, as: Provider
-  require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias Trento.Integration.Discovery.ClusterDiscoveryPayload.{
     Cib,

@@ -7,7 +7,7 @@ defmodule Trento.DatabaseInstanceReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Domain.Enum.Health, as: Health
+  require Trento.Domain.Enums.Health, as: Health
 
   @type t :: %__MODULE__{}
 

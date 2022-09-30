@@ -5,9 +5,9 @@ defmodule Trento.Domain.Events.ClusterRegistered do
 
   use Trento.Event
 
-  require Trento.Domain.Enum.Provider, as: Provider
-  require Trento.Domain.Enum.ClusterType, as: ClusterType
-  require Trento.Domain.Enum.Health, as: Health
+  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.Domain.HanaClusterDetails
 

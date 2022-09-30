@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.DatabaseInstanceHealthChanged do
 
   use Trento.Event
 
-  require Trento.Domain.Enum.Health, as: Health
+  require Trento.Domain.Enums.Health, as: Health
 
   defevent do
     field :sap_system_id, Ecto.UUID

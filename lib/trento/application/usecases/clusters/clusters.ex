@@ -6,7 +6,7 @@ defmodule Trento.Clusters do
   import Ecto.Query
 
   require Logger
-  require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias Trento.ClusterEnrichmentData
   alias Trento.ClusterReadModel

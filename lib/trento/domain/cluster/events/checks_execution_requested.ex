@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.ChecksExecutionRequested do
 
   use Trento.Event
 
-  require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enums.Provider, as: Provider
 
   defevent do
     field :cluster_id, Ecto.UUID

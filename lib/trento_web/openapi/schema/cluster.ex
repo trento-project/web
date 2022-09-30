@@ -2,7 +2,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
   @moduledoc false
 
   require OpenApiSpex
-  require Trento.Domain.Enum.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias OpenApiSpex.Schema
 

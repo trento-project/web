@@ -4,7 +4,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
 
   import Trento.Integration.DiscoveryFixturesHelper
 
-  require Trento.Domain.Enum.Provider, as: Provider
+  require Trento.Domain.Enums.Provider, as: Provider
 
   alias Trento.Integration.Discovery.HostPolicy
 

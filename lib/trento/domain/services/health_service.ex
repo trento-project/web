@@ -3,7 +3,7 @@ defmodule Trento.Domain.HealthService do
   This module contains the domain logic for everything health related.
   """
 
-  alias Trento.Domain.Enum.Health
+  alias Trento.Domain.Enums.Health
 
   @spec compute_aggregated_health([Health.t()]) :: Health.t()
   def compute_aggregated_health([]), do: :unknown
