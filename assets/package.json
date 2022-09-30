@@ -16,7 +16,7 @@
     "babel-jest": "^29.1.0",
     "babel-loader": "^8.2.5",
     "esbuild": "^0.14.54",
-    "esbuild-plugin-path-alias": "^1.0.6",
+    "esbuild-plugin-path-alias": "^1.0.7",
     "eslint": "^8.24.0",
     "eslint-plugin-jest": "^27.0.4",
     "eslint-plugin-react": "^7.31.8",
