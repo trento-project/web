@@ -64,6 +64,12 @@ const Premium = ({ visible, dispatch }) => {
               </p>
 
               <p className="mt-2">
+                The SUSE team uses the collected KPIs to have a better
+                understanding of how Trento is being used and to guide future
+                development.
+              </p>
+
+              <p className="mt-2">
                 By using Trento Premium and its updates available through SUSE
                 channels you agree to these terms. In case you disagree, please
                 switch to the Community version of Trento.
