@@ -46,7 +46,6 @@ defmodule Trento.Domain.Cluster do
 
   deftype do
     field :cluster_id, Ecto.UUID
-    field :host_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
