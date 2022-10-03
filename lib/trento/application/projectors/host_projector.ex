@@ -34,8 +34,7 @@ defmodule Trento.HostProjector do
     },
     fn multi ->
       changeset =
-        %HostReadModel{id: id}
-        |> HostReadModel.changeset(%{
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
           hostname: hostname,
           ip_addresses: ip_addresses,
           ssh_address: ssh_address,
@@ -57,8 +56,7 @@ defmodule Trento.HostProjector do
     },
     fn multi ->
       changeset =
-        %HostReadModel{id: id}
-        |> HostReadModel.changeset(%{
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
           cluster_id: cluster_id
         })
 
@@ -79,8 +77,7 @@ defmodule Trento.HostProjector do
     },
     fn multi ->
       changeset =
-        %HostReadModel{id: id}
-        |> HostReadModel.changeset(%{
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
           hostname: hostname,
           ip_addresses: ip_addresses,
           ssh_address: ssh_address,
@@ -95,8 +92,7 @@ defmodule Trento.HostProjector do
     %HeartbeatSucceded{host_id: id},
     fn multi ->
       changeset =
-        %HostReadModel{id: id}
-        |> HostReadModel.changeset(%{
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
           heartbeat: :passing
         })
 
@@ -108,8 +104,7 @@ defmodule Trento.HostProjector do
     %HeartbeatFailed{host_id: id},
     fn multi ->
       changeset =
-        %HostReadModel{id: id}
-        |> HostReadModel.changeset(%{
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
           heartbeat: :critical
         })
 
@@ -121,8 +116,7 @@ defmodule Trento.HostProjector do
     %ProviderUpdated{host_id: id, provider: provider, provider_data: provider_data},
     fn multi ->
       changeset =
-        %HostReadModel{id: id}
-        |> HostReadModel.changeset(%{
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
           provider: provider,
           provider_data: handle_provider_data(provider_data)
         })
@@ -132,7 +126,7 @@ defmodule Trento.HostProjector do
   )
 
   def handle_provider_data(provider_data) when is_map(provider_data) do
-    provider_data |> Map.from_struct()
+    Map.from_struct(provider_data)
   end
 
   def handle_provider_data(_), do: nil
@@ -150,7 +144,7 @@ defmodule Trento.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_registered",
-      host |> to_map()
+      to_map(host)
     )
   end
 

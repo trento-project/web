@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
 
   @impl OpenApi
   def spec do
-    %OpenApi{
+    OpenApiSpex.resolve_schema_modules(%OpenApi{
       servers: [
         # Populate the Server info from a phoenix endpoint
         Server.from_endpoint(Endpoint)
@@ -35,8 +35,6 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
           description: "Providing access to Trento Platform features"
         }
       ]
-    }
-    # Discover request/response schemas from path specs
-    |> OpenApiSpex.resolve_schema_modules()
+    })
   end
 end

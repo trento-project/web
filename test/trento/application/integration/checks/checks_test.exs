@@ -57,8 +57,9 @@ defmodule Trento.Integration.ChecksTest do
   test "should return a flat catalog" do
     raw_catalog = load_runner_fixture("catalog")
 
-    Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+    expect(Trento.Integration.Checks.Mock, :get_catalog, fn ->
+      FlatCatalogDto.new(%{checks: raw_catalog})
+    end)
 
     flat_catalog = %FlatCatalogDto{
       checks: [
@@ -192,8 +193,9 @@ defmodule Trento.Integration.ChecksTest do
   test "should return a catalog grouped by provider" do
     raw_catalog = load_runner_fixture("catalog")
 
-    Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+    expect(Trento.Integration.Checks.Mock, :get_catalog, fn ->
+      FlatCatalogDto.new(%{checks: raw_catalog})
+    end)
 
     catalog_by_provider = %CatalogDto{
       providers: [

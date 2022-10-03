@@ -120,7 +120,7 @@ defmodule Trento.Integration.DiscoveryTest do
 
     {:error, _} = Discovery.handle(event)
 
-    discarded_events = DiscardedDiscoveryEvent |> Trento.Repo.all()
+    discarded_events = Trento.Repo.all(DiscardedDiscoveryEvent)
 
     [
       %DiscardedDiscoveryEvent{payload: ^event}

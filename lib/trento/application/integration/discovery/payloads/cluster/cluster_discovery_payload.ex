@@ -50,9 +50,9 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
   end
 
   defp enrich_cluster_type(attrs),
-    do: attrs |> Map.put("cluster_type", parse_cluster_type(attrs))
+    do: Map.put(attrs, "cluster_type", parse_cluster_type(attrs))
 
-  defp enrich_cluster_sid(attrs), do: attrs |> Map.put("sid", parse_cluster_sid(attrs))
+  defp enrich_cluster_sid(attrs), do: Map.put(attrs, "sid", parse_cluster_sid(attrs))
 
   defp parse_cluster_type(%{"crmmon" => %{"clones" => nil}}), do: :unknown
 
@@ -107,10 +107,10 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
   end
 
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_up()}),
-    do: cluster |> validate_required(@required_fields_hana)
+    do: validate_required(cluster, @required_fields_hana)
 
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_out()}),
-    do: cluster |> validate_required(@required_fields_hana)
+    do: validate_required(cluster, @required_fields_hana)
 
   defp maybe_validate_required_fields(cluster, _),
     do: cluster

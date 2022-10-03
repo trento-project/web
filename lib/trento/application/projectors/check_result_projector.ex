@@ -95,8 +95,10 @@ defmodule Trento.CheckResultProjector do
     },
     fn multi ->
       hosts_executions_changeset =
-        %HostChecksExecutionsReadModel{cluster_id: cluster_id, host_id: host_id}
-        |> HostChecksExecutionsReadModel.changeset(%{reachable: reachable, msg: msg})
+        HostChecksExecutionsReadModel.changeset(
+          %HostChecksExecutionsReadModel{cluster_id: cluster_id, host_id: host_id},
+          %{reachable: reachable, msg: msg}
+        )
 
       multi = Ecto.Multi.update(multi, :hosts_executions, hosts_executions_changeset)
 

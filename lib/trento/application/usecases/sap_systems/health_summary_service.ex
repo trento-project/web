@@ -42,15 +42,14 @@ defmodule Trento.SapSystems.HealthSummaryService do
        }) do
     all_instances = application_instances ++ database_instances
 
-    %{
+    HealthSummaryDto.new!(%{
       id: id,
       sid: sid,
       sapsystem_health: health,
       database_health: compute_database_health(database_instances),
       clusters_health: compute_clusters_health(all_instances),
       hosts_health: compute_hosts_health(all_instances)
-    }
-    |> HealthSummaryDto.new!()
+    })
   end
 
   @spec compute_database_health([DatabaseInstanceReadModel.t()]) :: Health.t()

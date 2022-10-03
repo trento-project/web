@@ -24,7 +24,7 @@ defmodule TrentoWeb.HostController do
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
     # TODO: replace to_map with DTO approach
-    hosts = Hosts.get_all_hosts() |> StructHelper.to_map()
+    hosts = StructHelper.to_map(Hosts.get_all_hosts())
 
     json(conn, hosts)
   end

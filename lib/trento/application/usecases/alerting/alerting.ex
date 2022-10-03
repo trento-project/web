@@ -38,8 +38,7 @@ defmodule Trento.Application.UseCases.Alerting do
   defp maybe_notify_heartbeat_failed(true, host_id) do
     %HostReadModel{hostname: hostname} = Trento.Repo.get!(HostReadModel, host_id)
 
-    EmailAlert.alert("Host", "hostname", hostname, "heartbeat failed")
-    |> deliver_notification()
+    deliver_notification(EmailAlert.alert("Host", "hostname", hostname, "heartbeat failed"))
   end
 
   defp maybe_notify_critical_cluster_health(false, _), do: :ok
@@ -47,8 +46,9 @@ defmodule Trento.Application.UseCases.Alerting do
   defp maybe_notify_critical_cluster_health(true, cluster_id) do
     %ClusterReadModel{name: name} = Trento.Repo.get!(ClusterReadModel, cluster_id)
 
-    EmailAlert.alert("Cluster", "name", name, "health is now in critical state")
-    |> deliver_notification()
+    deliver_notification(
+      EmailAlert.alert("Cluster", "name", name, "health is now in critical state")
+    )
   end
 
   defp maybe_notify_critical_database_health(false, _), do: :ok
@@ -56,8 +56,9 @@ defmodule Trento.Application.UseCases.Alerting do
   defp maybe_notify_critical_database_health(true, id) do
     %DatabaseReadModel{sid: sid} = Trento.Repo.get!(DatabaseReadModel, id)
 
-    EmailAlert.alert("Database", "SID", sid, "health is now in critical state")
-    |> deliver_notification()
+    deliver_notification(
+      EmailAlert.alert("Database", "SID", sid, "health is now in critical state")
+    )
   end
 
   defp maybe_notify_critical_sap_system_health(false, _), do: :ok
@@ -65,8 +66,9 @@ defmodule Trento.Application.UseCases.Alerting do
   defp maybe_notify_critical_sap_system_health(true, id) do
     %SapSystemReadModel{sid: sid} = Trento.Repo.get!(SapSystemReadModel, id)
 
-    EmailAlert.alert("Sap System", "SID", sid, "health is now in critical state")
-    |> deliver_notification()
+    deliver_notification(
+      EmailAlert.alert("Sap System", "SID", sid, "health is now in critical state")
+    )
   end
 
   @spec deliver_notification(Swoosh.Email.t()) :: :ok

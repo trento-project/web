@@ -118,8 +118,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   defp parse_sap_control_property(property, %Instance{
          SAPControl: %SapControl{Properties: properties}
        }) do
-    properties
-    |> Enum.find_value(fn
+    Enum.find_value(properties, fn
       %{property: ^property, value: value} -> value
       _ -> nil
     end)
@@ -129,8 +128,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          %Instance{SAPControl: %SapControl{Instances: instances}},
          key
        ) do
-    instances
-    |> Enum.find_value(fn
+    Enum.find_value(instances, fn
       %{current_instance: true} = current_instance -> Map.get(current_instance, key)
       _ -> nil
     end)

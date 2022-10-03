@@ -54,12 +54,13 @@ defmodule Mix.Tasks.DumpScenario do
   end
 
   defp dump_scenario(scenario_name, path) do
-    Discovery.get_current_discovery_events()
-    |> Enum.map(fn %DiscoveryEvent{
-                     agent_id: agent_id,
-                     discovery_type: discovery_type,
-                     payload: payload
-                   } ->
+    events = Discovery.get_current_discovery_events()
+
+    Enum.map(events, fn %DiscoveryEvent{
+                          agent_id: agent_id,
+                          discovery_type: discovery_type,
+                          payload: payload
+                        } ->
       data =
         Jason.encode!(%{
           agent_id: agent_id,
@@ -94,7 +95,6 @@ defmodule Mix.Tasks.DumpScenario do
       end)
       |> Jason.encode!(pretty: true)
 
-    discarded_events_file
-    |> File.write!(json_data, [:append])
+    File.write!(discarded_events_file, json_data, [:append])
   end
 end

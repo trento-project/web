@@ -39,8 +39,7 @@ defmodule Trento.Heartbeats do
 
   @spec dispatch_heartbeat_failed_commands :: :ok
   def dispatch_heartbeat_failed_commands do
-    get_all_expired_heartbeats()
-    |> Enum.each(fn %{agent_id: agent_id} ->
+    Enum.each(get_all_expired_heartbeats(), fn %{agent_id: agent_id} ->
       dispatch_command(agent_id, :critical)
     end)
   end

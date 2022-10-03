@@ -72,8 +72,7 @@ defmodule TrentoWeb.CatalogController do
   defp filter_by_provider(catalog, %{"provider" => provider}) do
     provider = get_provider(provider)
 
-    catalog
-    |> Enum.filter(fn x -> Atom.to_string(x.provider) == provider end)
+    Enum.filter(catalog, fn x -> Atom.to_string(x.provider) == provider end)
   end
 
   defp filter_by_provider(catalog, _), do: catalog

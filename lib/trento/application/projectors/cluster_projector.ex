@@ -40,8 +40,7 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        %ClusterReadModel{}
-        |> ClusterReadModel.changeset(%{
+        ClusterReadModel.changeset(%ClusterReadModel{}, %{
           id: id,
           name: name,
           sid: sid,
@@ -64,8 +63,7 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        %ClusterReadModel{id: id}
-        |> ClusterReadModel.changeset(%{
+        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
           checks_execution: :requested
         })
 
@@ -79,8 +77,7 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        %ClusterReadModel{id: id}
-        |> ClusterReadModel.changeset(%{
+        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
           checks_execution: :running
         })
 
@@ -94,8 +91,7 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        %ClusterReadModel{id: id}
-        |> ClusterReadModel.changeset(%{
+        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
           checks_execution: :not_running
         })
 
@@ -116,8 +112,7 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        %ClusterReadModel{id: id}
-        |> ClusterReadModel.changeset(%{
+        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
           name: name,
           sid: sid,
           provider: provider,
@@ -152,9 +147,7 @@ defmodule Trento.ClusterProjector do
   )
 
   project(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, fn multi ->
-    changeset =
-      %ClusterReadModel{id: cluster_id}
-      |> ClusterReadModel.changeset(%{health: health})
+    changeset = ClusterReadModel.changeset(%ClusterReadModel{id: cluster_id}, %{health: health})
 
     Ecto.Multi.update(multi, :cluster, changeset)
   end)

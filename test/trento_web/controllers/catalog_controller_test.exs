@@ -17,8 +17,9 @@ defmodule TrentoWeb.CatalogControllerTest do
   test "should return a catalog grouped by providers", %{conn: conn} do
     raw_catalog = load_runner_fixture("catalog")
 
-    Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+    expect(Trento.Integration.Checks.Mock, :get_catalog, fn ->
+      FlatCatalogDto.new(%{checks: raw_catalog})
+    end)
 
     conn = get(conn, Routes.catalog_path(conn, :checks_catalog))
 
@@ -180,8 +181,9 @@ defmodule TrentoWeb.CatalogControllerTest do
   test "should return a filtered flat catalog", %{conn: conn} do
     raw_catalog = load_runner_fixture("catalog")
 
-    Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+    expect(Trento.Integration.Checks.Mock, :get_catalog, fn ->
+      FlatCatalogDto.new(%{checks: raw_catalog})
+    end)
 
     conn =
       get(conn, Routes.catalog_path(conn, :checks_catalog), %{
@@ -253,8 +255,9 @@ defmodule TrentoWeb.CatalogControllerTest do
   test "should return a default flat catalog when unknown provider is used", %{conn: conn} do
     raw_catalog = load_runner_fixture("catalog")
 
-    Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+    expect(Trento.Integration.Checks.Mock, :get_catalog, fn ->
+      FlatCatalogDto.new(%{checks: raw_catalog})
+    end)
 
     conn =
       get(conn, Routes.catalog_path(conn, :checks_catalog), %{
@@ -282,8 +285,9 @@ defmodule TrentoWeb.CatalogControllerTest do
   test "should return a flat catalog", %{conn: conn} do
     raw_catalog = load_runner_fixture("catalog")
 
-    Trento.Integration.Checks.Mock
-    |> expect(:get_catalog, fn -> FlatCatalogDto.new(%{checks: raw_catalog}) end)
+    expect(Trento.Integration.Checks.Mock, :get_catalog, fn ->
+      FlatCatalogDto.new(%{checks: raw_catalog})
+    end)
 
     conn =
       get(conn, Routes.catalog_path(conn, :checks_catalog), %{

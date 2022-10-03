@@ -32,7 +32,6 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Sbd do
   end
 
   defp transform_nil_lists(%{"devices" => devices} = attrs) do
-    attrs
-    |> Map.put("devices", ListHelper.to_list(devices))
+    Map.put(attrs, "devices", ListHelper.to_list(devices))
   end
 end

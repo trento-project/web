@@ -105,8 +105,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          },
          sid
        ) do
-    nodes
-    |> Enum.map(fn %{name: name, attributes: attributes} ->
+    Enum.map(nodes, fn %{name: name, attributes: attributes} ->
       attributes =
         Enum.reduce(attributes, %{}, fn %{name: name, value: value}, acc ->
           Map.put(acc, name, value)
@@ -183,8 +182,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   end
 
   defp parse_cluster_fencing_type(%{resources: resources}) do
-    resources
-    |> Enum.find_value("", fn
+    Enum.find_value(resources, "", fn
       %{agent: "stonith:" <> fencing_type} ->
         fencing_type
 
@@ -209,8 +207,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   end
 
   defp parse_sbd_devices(%{devices: devices}) do
-    devices
-    |> Enum.map(fn %{device: device, status: status} ->
+    Enum.map(devices, fn %{device: device, status: status} ->
       %{
         device: device,
         status: status
@@ -244,8 +241,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          groups: groups,
          clones: clones
        }) do
-    primitives
-    |> Enum.concat(
+    Enum.concat(
+      primitives,
       Enum.flat_map(clones, &Map.get(&1, :primitives, [])) ++
         Enum.flat_map(groups, &Map.get(&1, :primitives, []))
     )
@@ -255,8 +252,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     virtual_ip_type_suffix = get_virtual_ip_type_suffix_by_provider(provider)
 
     virtual_ip_resource_id =
-      node_resources
-      |> Enum.find_value(nil, fn %{type: virtual_ip_type, id: id} ->
+      Enum.find_value(node_resources, nil, fn %{type: virtual_ip_type, id: id} ->
         if String.ends_with?(virtual_ip_type, virtual_ip_type_suffix), do: id
       end)
 
@@ -304,8 +300,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
          groups: groups,
          clones: clones
        }) do
-    resources
-    |> Enum.concat(
+    Enum.concat(
+      resources,
       Enum.flat_map(clones, &Map.get(&1, :resources, [])) ++
         Enum.flat_map(groups, &Map.get(&1, :resources, []))
     )

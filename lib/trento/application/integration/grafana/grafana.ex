@@ -11,8 +11,7 @@ defmodule Trento.Integration.Grafana do
   def init_dashboards do
     dashboards = Application.fetch_env!(:trento, :grafana)[:dashboards]
 
-    dashboards
-    |> Enum.reduce_while(:ok, fn dashboard_name, _ ->
+    Enum.reduce_while(dashboards, :ok, fn dashboard_name, _ ->
       case init_dashboard(dashboard_name) do
         :ok ->
           {:cont, :ok}
