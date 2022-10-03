@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
@@ -100,7 +100,7 @@ jobs:
 
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
@@ -123,7 +123,7 @@ jobs:
 
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
@@ -199,7 +199,7 @@ jobs:
           --health-retries 5
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
@@ -248,7 +248,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
@@ -300,7 +300,7 @@ jobs:
           - 3000:3000
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
@@ -534,7 +534,7 @@ jobs:
         REPOSITORY: ${{ github.repository }}
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.10.1
         with:
           access_token: ${{ github.token }}
 
