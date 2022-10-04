@@ -5,6 +5,7 @@ defmodule Trento.Tag do
 
   import Ecto.Changeset
 
+  @forbidden_tag_chars_regex ~r/^[\+\-=.,_:@\p{L}\w]*$/u
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -20,6 +21,7 @@ defmodule Trento.Tag do
     tag
     |> cast(attrs, [:value, :resource_id, :resource_type])
     |> validate_required([:value, :resource_id, :resource_type])
+    |> validate_format(:value, @forbidden_tag_chars_regex)
     |> unique_constraint([:resource_id, :value])
   end
 end

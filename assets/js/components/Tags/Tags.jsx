@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
-
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
-
 import Pill from '@components/Pill';
 import useOnClickOutside from '@hooks/useOnClickOutside';
+//eslint-disable-next-line
+const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
+const tagValidation = (char) => tagRegexValidation.test(char);
 
 const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
   const [renderedTags, setTags] = useState(tags);
@@ -61,7 +62,6 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
                 (acc, current) => (current === tag ? acc : [...acc, current]),
                 []
               );
-
               setTags(newTagsList);
               onChange(newTagsList);
               onRemove(tag);
@@ -77,7 +77,9 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
             ref={inputRef}
             className="bg-green-100"
             onChange={({ target: { value } }) => {
-              setNewTagValue(value);
+              if (tagValidation(value)) {
+                setNewTagValue(value);
+              }
             }}
             onKeyDown={({ key }) => {
               if (key === 'Enter') {
