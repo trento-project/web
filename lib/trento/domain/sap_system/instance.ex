@@ -12,7 +12,7 @@ defmodule Trento.Domain.SapSystem.Instance do
   deftype do
     field :sid, :string
     field :instance_number, :string
-    field :features, {:array, :string}
+    field :features, :string
     field :host_id, Ecto.UUID
     field :health, Ecto.Enum, values: Health.values()
     field :system_replication, :string
