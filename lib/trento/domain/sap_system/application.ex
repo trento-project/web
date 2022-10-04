@@ -3,13 +3,14 @@ defmodule Trento.Domain.SapSystem.Application do
   This module represents a SAP System application.
   """
 
-  defstruct [
-    :sid,
-    instances: []
-  ]
+  alias Trento.Domain.SapSystem.Instance
 
-  @type t :: %__MODULE__{
-          sid: String.t(),
-          instances: [Instance]
-        }
+  @required_fields []
+
+  use Trento.Type
+
+  deftype do
+    field :sid, :string
+    embeds_many :instances, Instance
+  end
 end

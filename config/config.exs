@@ -59,7 +59,21 @@ config :trento, Trento.Commanded,
     event_store: Trento.EventStore
   ],
   pubsub: :local,
-  registry: :local
+  registry: :local,
+  snapshotting: %{
+    Trento.Domain.Host => [
+      snapshot_every: 200,
+      snapshot_version: 1
+    ],
+    Trento.Domain.Cluster => [
+      snapshot_every: 200,
+      snapshot_version: 1
+    ],
+    Trento.Domain.SapSystem => [
+      snapshot_every: 200,
+      snapshot_version: 1
+    ]
+  }
 
 config :trento, Trento.EventStore,
   serializer: Trento.JsonbSerializer,

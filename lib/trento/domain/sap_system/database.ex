@@ -3,17 +3,17 @@ defmodule Trento.Domain.SapSystem.Database do
   This module represents a SAP System database.
   """
 
-  alias Trento.Domain.Enums.Health
+  require Trento.Domain.Enums.Health, as: Health
 
-  defstruct [
-    :sid,
-    instances: [],
-    health: :unknown
-  ]
+  alias Trento.Domain.SapSystem.Instance
 
-  @type t :: %__MODULE__{
-          sid: String.t(),
-          instances: [Instance],
-          health: Health.t()
-        }
+  @required_fields []
+
+  use Trento.Type
+
+  deftype do
+    field :sid, :string
+    embeds_many :instances, Instance
+    field :health, Ecto.Enum, values: Health.values()
+  end
 end

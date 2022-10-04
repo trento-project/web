@@ -3,25 +3,19 @@ defmodule Trento.Domain.SapSystem.Instance do
   This module represents a SAP System instance.
   """
 
-  alias Trento.Domain.Enums.Health
+  require Trento.Domain.Enums.Health, as: Health
 
-  defstruct [
-    :sid,
-    :instance_number,
-    :features,
-    :host_id,
-    :health,
-    :system_replication,
-    :system_replication_status
-  ]
+  @required_fields []
 
-  @type t :: %__MODULE__{
-          sid: String.t(),
-          instance_number: String.t(),
-          features: String.t(),
-          host_id: String.t(),
-          health: Health.t(),
-          system_replication: String.t(),
-          system_replication_status: String.t()
-        }
+  use Trento.Type
+
+  deftype do
+    field :sid, :string
+    field :instance_number, :string
+    field :features, :string
+    field :host_id, Ecto.UUID
+    field :health, Ecto.Enum, values: Health.values()
+    field :system_replication, :string
+    field :system_replication_status, :string
+  end
 end
