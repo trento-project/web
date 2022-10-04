@@ -4,8 +4,7 @@ defmodule Trento.Tasks.Helper do
   """
 
   def start_repo do
-    [:postgrex, :ecto]
-    |> Enum.each(&Application.ensure_all_started/1)
+    Enum.each([:postgrex, :ecto], &Application.ensure_all_started/1)
 
     Trento.Repo.start_link()
   end

@@ -31,9 +31,7 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
   end
 
   def changeset(sap_system, attrs) do
-    modified_attrs =
-      attrs
-      |> databases_to_list
+    modified_attrs = databases_to_list(attrs)
 
     sap_system
     |> cast(modified_attrs, fields())
@@ -79,9 +77,7 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
     end
 
     defp maybe_validate_required_fields(changeset, @application_type),
-      do:
-        changeset
-        |> validate_required(@application_required_fields)
+      do: validate_required(changeset, @application_required_fields)
 
     defp maybe_validate_required_fields(changeset, _), do: changeset
   end
@@ -187,8 +183,7 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
     end
 
     defp find_property(property, %{"Properties" => properties}) do
-      properties
-      |> Enum.find_value(fn
+      Enum.find_value(properties, fn
         %{"property" => ^property, "value" => value} -> value
         _ -> nil
       end)
@@ -352,8 +347,7 @@ defmodule Trento.Integration.Discovery.SapSystemDiscoveryPayload do
     end
 
     defp maybe_validate_replication_mode(changeset, local_site_id) do
-      changeset
-      |> validate_required([:"site/#{local_site_id}/REPLICATION_MODE"])
+      validate_required(changeset, [:"site/#{local_site_id}/REPLICATION_MODE"])
     end
   end
 end

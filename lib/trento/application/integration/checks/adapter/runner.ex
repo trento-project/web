@@ -48,7 +48,7 @@ defmodule Trento.Integration.Checks.Runner do
   end
 
   defp build_payload(execution_id, cluster_id, provider, host_settings, selected_checks) do
-    %{
+    Jason.encode!(%{
       execution_id: execution_id,
       cluster_id: cluster_id,
       provider: provider,
@@ -61,8 +61,7 @@ defmodule Trento.Integration.Checks.Runner do
             user: host.user || host.default_user
           }
         end)
-    }
-    |> Jason.encode!()
+    })
   end
 
   defp runner_url,

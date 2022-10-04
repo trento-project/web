@@ -28,16 +28,18 @@ defmodule Trento.TelemetryProjector do
     },
     fn multi ->
       changeset =
-        %HostTelemetryReadModel{}
-        |> HostTelemetryReadModel.changeset(%{
-          agent_id: agent_id,
-          hostname: hostname,
-          cpu_count: cpu_count,
-          socket_count: socket_count,
-          total_memory_mb: total_memory_mb,
-          sles_version: sles_version,
-          installation_source: installation_source
-        })
+        HostTelemetryReadModel.changeset(
+          %HostTelemetryReadModel{},
+          %{
+            agent_id: agent_id,
+            hostname: hostname,
+            cpu_count: cpu_count,
+            socket_count: socket_count,
+            total_memory_mb: total_memory_mb,
+            sles_version: sles_version,
+            installation_source: installation_source
+          }
+        )
 
       Ecto.Multi.insert(multi, :host_telemetry, changeset,
         on_conflict: :replace_all,
@@ -58,8 +60,7 @@ defmodule Trento.TelemetryProjector do
     },
     fn multi ->
       changeset =
-        %HostTelemetryReadModel{}
-        |> HostTelemetryReadModel.changeset(%{
+        HostTelemetryReadModel.changeset(%HostTelemetryReadModel{}, %{
           agent_id: agent_id,
           hostname: hostname,
           cpu_count: cpu_count,
@@ -83,8 +84,7 @@ defmodule Trento.TelemetryProjector do
     },
     fn multi ->
       changeset =
-        %HostTelemetryReadModel{}
-        |> HostTelemetryReadModel.changeset(%{
+        HostTelemetryReadModel.changeset(%HostTelemetryReadModel{}, %{
           agent_id: agent_id,
           provider: provider
         })

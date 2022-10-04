@@ -79,10 +79,10 @@ defmodule Trento.Integration.Discovery.CloudDiscoveryPayload do
             :sku
           ])
           |> cast_embed(:os_profile,
-            with: fn event, attrs -> event |> cast(attrs, [:admin_username]) end
+            with: fn event, attrs -> cast(event, attrs, [:admin_username]) end
           )
           |> cast_embed(:storage_profile,
-            with: fn event, attrs -> event |> cast(attrs, [:data_disks]) end
+            with: fn event, attrs -> cast(event, attrs, [:data_disks]) end
           )
         end
       )

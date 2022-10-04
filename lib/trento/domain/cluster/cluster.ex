@@ -625,8 +625,7 @@ defmodule Trento.Domain.Cluster do
          cluster_id,
          hosts_executions
        ) do
-    multi
-    |> Multi.execute(fn _ ->
+    Multi.execute(multi, fn _ ->
       %HostChecksExecutionCompleted{
         cluster_id: cluster_id,
         host_id: host_id,
@@ -656,8 +655,7 @@ defmodule Trento.Domain.Cluster do
          cluster_id,
          _hosts_executions
        ) do
-    multi
-    |> Multi.execute(fn _ ->
+    Multi.execute(multi, fn _ ->
       %HostChecksExecutionCompleted{
         cluster_id: cluster_id,
         host_id: host_id,

@@ -32,8 +32,7 @@ defmodule Trento.SapSystemProjector do
     },
     fn multi ->
       changeset =
-        %SapSystemReadModel{}
-        |> SapSystemReadModel.changeset(%{
+        SapSystemReadModel.changeset(%SapSystemReadModel{}, %{
           id: sap_system_id,
           sid: sid,
           tenant: tenant,
@@ -52,8 +51,7 @@ defmodule Trento.SapSystemProjector do
     },
     fn multi ->
       changeset =
-        %SapSystemReadModel{id: sap_system_id}
-        |> SapSystemReadModel.changeset(%{health: health})
+        SapSystemReadModel.changeset(%SapSystemReadModel{id: sap_system_id}, %{health: health})
 
       Ecto.Multi.update(multi, :sap_system, changeset)
     end
@@ -74,8 +72,7 @@ defmodule Trento.SapSystemProjector do
     },
     fn multi ->
       changeset =
-        %ApplicationInstanceReadModel{}
-        |> ApplicationInstanceReadModel.changeset(%{
+        ApplicationInstanceReadModel.changeset(%ApplicationInstanceReadModel{}, %{
           sap_system_id: sap_system_id,
           sid: sid,
           instance_number: instance_number,
@@ -101,12 +98,14 @@ defmodule Trento.SapSystemProjector do
     },
     fn multi ->
       changeset =
-        %ApplicationInstanceReadModel{
-          sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number
-        }
-        |> ApplicationInstanceReadModel.changeset(%{health: health})
+        ApplicationInstanceReadModel.changeset(
+          %ApplicationInstanceReadModel{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number
+          },
+          %{health: health}
+        )
 
       Ecto.Multi.update(multi, :application_instance, changeset)
     end

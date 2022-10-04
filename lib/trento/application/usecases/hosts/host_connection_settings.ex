@@ -14,7 +14,8 @@ defmodule Trento.HostConnectionSettings do
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(connection_settings, attrs) do
-    cast(connection_settings, attrs, [:id, :user])
+    connection_settings
+    |> cast(attrs, [:id, :user])
     |> validate_required([:user])
   end
 end

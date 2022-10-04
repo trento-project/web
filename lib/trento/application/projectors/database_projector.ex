@@ -29,8 +29,11 @@ defmodule Trento.DatabaseProjector do
     %DatabaseRegistered{sap_system_id: sap_system_id, sid: sid, health: health},
     fn multi ->
       changeset =
-        %DatabaseReadModel{}
-        |> DatabaseReadModel.changeset(%{id: sap_system_id, sid: sid, health: health})
+        DatabaseReadModel.changeset(%DatabaseReadModel{}, %{
+          id: sap_system_id,
+          sid: sid,
+          health: health
+        })
 
       Ecto.Multi.insert(multi, :database, changeset)
     end
@@ -43,8 +46,7 @@ defmodule Trento.DatabaseProjector do
     },
     fn multi ->
       changeset =
-        %DatabaseReadModel{id: sap_system_id}
-        |> DatabaseReadModel.changeset(%{health: health})
+        DatabaseReadModel.changeset(%DatabaseReadModel{id: sap_system_id}, %{health: health})
 
       Ecto.Multi.update(multi, :database, changeset)
     end
@@ -68,8 +70,7 @@ defmodule Trento.DatabaseProjector do
     },
     fn multi ->
       database_instance_changeset =
-        %DatabaseInstanceReadModel{}
-        |> DatabaseInstanceReadModel.changeset(%{
+        DatabaseInstanceReadModel.changeset(%DatabaseInstanceReadModel{}, %{
           sap_system_id: sap_system_id,
           sid: sid,
           instance_number: instance_number,
@@ -98,12 +99,14 @@ defmodule Trento.DatabaseProjector do
     },
     fn multi ->
       changeset =
-        %DatabaseInstanceReadModel{
-          sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number
-        }
-        |> DatabaseInstanceReadModel.changeset(%{health: health})
+        DatabaseInstanceReadModel.changeset(
+          %DatabaseInstanceReadModel{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number
+          },
+          %{health: health}
+        )
 
       Ecto.Multi.update(multi, :database_instance, changeset)
     end
@@ -119,15 +122,17 @@ defmodule Trento.DatabaseProjector do
     },
     fn multi ->
       changeset =
-        %DatabaseInstanceReadModel{
-          sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number
-        }
-        |> DatabaseInstanceReadModel.changeset(%{
-          system_replication: system_replication,
-          system_replication_status: system_replication_status
-        })
+        DatabaseInstanceReadModel.changeset(
+          %DatabaseInstanceReadModel{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number
+          },
+          %{
+            system_replication: system_replication,
+            system_replication_status: system_replication_status
+          }
+        )
 
       Ecto.Multi.update(multi, :database_instance, changeset)
     end

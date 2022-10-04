@@ -20,10 +20,8 @@ defmodule TrentoWeb.SapSystemController do
 
   ## TODO Fix sanitization
   def list(conn, _) do
-    sap_systems =
-      SapSystems.get_all_sap_systems()
-      # TODO: fix me with DTOs
-      |> StructHelper.to_map()
+    # TODO: fix me with DTOs
+    sap_systems = StructHelper.to_map(SapSystems.get_all_sap_systems())
 
     json(conn, sap_systems)
   end
@@ -38,10 +36,8 @@ defmodule TrentoWeb.SapSystemController do
     ]
 
   def list_databases(conn, _) do
-    databases =
-      SapSystems.get_all_databases()
-      # TODO: fix me with DTOs
-      |> StructHelper.to_map()
+    # TODO: fix me with DTOs
+    databases = StructHelper.to_map(SapSystems.get_all_databases())
 
     json(conn, databases)
   end
