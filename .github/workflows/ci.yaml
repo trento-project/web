@@ -56,7 +56,6 @@ jobs:
           mix local.rebar --force
           mix local.hex --force
           mix deps.get
-          mix deps.unlock --check-unused
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
@@ -163,6 +162,9 @@ jobs:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+
+      - name: Check for unused dependencies
+        run: mix deps.unlock --check-unused
 
       - name: Check Code Format
         run: mix format --check-formatted
