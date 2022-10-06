@@ -48,8 +48,24 @@ defmodule Trento.SapSystems.HealthSummaryService do
       sapsystem_health: health,
       database_health: compute_database_health(database_instances),
       clusters_health: compute_clusters_health(all_instances),
-      hosts_health: compute_hosts_health(all_instances)
+      hosts_health: compute_hosts_health(all_instances),
+      hana_cluster_id: extract_hana_cluster_id(database_instances),
+      database_id: extract_database_id(database_instances)
     })
+  end
+
+  @spec extract_database_id([DatabaseInstanceReadModel.t()]) :: binary()
+  defp extract_database_id(database_instances) do
+    database_instances
+    |> Enum.map(fn %{sap_system_id: database_id} -> database_id end)
+    |> List.first()
+  end
+
+  @spec extract_hana_cluster_id([DatabaseInstanceReadModel.t()]) :: binary()
+  defp extract_hana_cluster_id(database_instances) do
+    database_instances
+    |> Enum.map(fn %{host: %{cluster_id: hana_cluster_id}} -> hana_cluster_id end)
+    |> List.first()
   end
 
   @spec compute_database_health([DatabaseInstanceReadModel.t()]) :: Health.t()

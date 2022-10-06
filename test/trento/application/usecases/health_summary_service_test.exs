@@ -49,8 +49,9 @@ defmodule Trento.HealthSummaryServiceTest do
     test "should determine health summary for a SAP System" do
       %{
         sap_system_id: sap_system_id,
-        sid: sid
-      } = sap_system_with_cluster_and_hosts()
+        sid: sid,
+        cluster_id: cluster_id,
+      } = sap_system_with_database_hosts()
 
       assert [
                %HealthSummaryDto{
@@ -59,7 +60,9 @@ defmodule Trento.HealthSummaryServiceTest do
                  sapsystem_health: :passing,
                  database_health: :critical,
                  clusters_health: :warning,
-                 hosts_health: :unknown
+                 hosts_health: :unknown,
+                 database_id: ^sap_system_id,
+                 hana_cluster_id: ^cluster_id
                }
              ] = HealthSummaryService.get_health_summary()
     end
