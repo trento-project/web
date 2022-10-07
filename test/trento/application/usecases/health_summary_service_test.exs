@@ -85,7 +85,7 @@ defmodule Trento.HealthSummaryServiceTest do
                  clusters_health: :passing,
                  hosts_health: :unknown,
                  database_id: ^sap_system_id,
-                 hana_cluster_id: ^cluster_id
+                 cluster_id: ^cluster_id
                }
              ] = HealthSummaryService.get_health_summary()
     end
