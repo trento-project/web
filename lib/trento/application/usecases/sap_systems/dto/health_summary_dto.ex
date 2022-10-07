@@ -15,6 +15,8 @@ defmodule Trento.Application.UseCases.SapSystems.HealthSummaryDto do
     field :sapsystem_health, Ecto.Enum, values: Health.values()
     field :database_health, Ecto.Enum, values: Health.values()
     field :clusters_health, Ecto.Enum, values: Health.values()
+    field :cluster_id, Ecto.UUID
+    field :database_id, Ecto.UUID
     field :hosts_health, Ecto.Enum, values: [:passing, :critical, :unknown]
   end
 end

@@ -48,7 +48,9 @@ defmodule Trento.SapSystems.HealthSummaryService do
       sapsystem_health: health,
       database_health: compute_database_health(database_instances),
       clusters_health: compute_clusters_health(all_instances),
-      hosts_health: compute_hosts_health(all_instances)
+      hosts_health: compute_hosts_health(all_instances),
+      cluster_id: extract_cluster_id(database_instances),
+      database_id: extract_database_id(database_instances)
     })
   end
 
@@ -69,6 +71,18 @@ defmodule Trento.SapSystems.HealthSummaryService do
     |> health_from_cluster()
     |> HealthService.compute_aggregated_health()
   end
+
+  @spec extract_database_id([DatabaseInstanceReadModel.t()]) :: String.t()
+  defp extract_database_id([]), do: nil
+
+  defp extract_database_id([%DatabaseInstanceReadModel{sap_system_id: sap_system_id} | _]),
+    do: sap_system_id
+
+  @spec extract_cluster_id([DatabaseInstanceReadModel.t()]) :: String.t()
+  defp extract_cluster_id([]), do: nil
+
+  defp extract_cluster_id([%DatabaseInstanceReadModel{host: %{cluster_id: cluster_id}} | _]),
+    do: cluster_id
 
   @spec clusters_from_instance(instance_list) :: [ClusterReadModel.t()]
   defp clusters_from_instance(instances) do
