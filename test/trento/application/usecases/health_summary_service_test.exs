@@ -11,7 +11,6 @@ defmodule Trento.HealthSummaryServiceTest do
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-
   alias Trento.{
     HostReadModel,
     SapSystemReadModel
@@ -53,7 +52,8 @@ defmodule Trento.HealthSummaryServiceTest do
       %Trento.ClusterReadModel{id: cluster_id} =
         insert(:cluster, type: ClusterType.hana_scale_up(), health: Health.passing())
 
-      %Trento.HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
+      %Trento.HostReadModel{id: host_1_id} =
+        insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
       %Trento.SapSystemReadModel{
         id: sap_system_id,

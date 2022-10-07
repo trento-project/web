@@ -6,11 +6,11 @@ defmodule TrentoWeb.HealthOverviewControllerTest do
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   test "should return the expected overview", %{conn: conn} do
-
     %Trento.ClusterReadModel{id: cluster_id} =
       insert(:cluster, type: ClusterType.hana_scale_up(), health: Health.passing())
 
-    %Trento.HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
+    %Trento.HostReadModel{id: host_1_id} =
+      insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
     %Trento.SapSystemReadModel{
       id: sap_system_id,
@@ -32,7 +32,6 @@ defmodule TrentoWeb.HealthOverviewControllerTest do
       host_id: host_1_id,
       health: Health.critical()
     )
-
 
     conn = get(conn, Routes.health_overview_path(conn, :overview))
 

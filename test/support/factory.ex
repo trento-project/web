@@ -433,5 +433,4 @@ defmodule Trento.Factory do
       msg: Faker.StarWars.planet()
     }
   end
-
 end
