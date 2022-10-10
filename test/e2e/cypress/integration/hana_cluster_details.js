@@ -76,12 +76,39 @@ context('HANA database details', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Passing');
     });
 
+    it('should have a working link to the passing checks in the overview component', () => {
+      cy.get('.tn-cluster-checks-overview ').contains('Passing').click();
+      cy.url().should(
+        'include',
+        `/clusters/${availableHanaCluster.id}/checks/results?health=passing`
+      );
+      cy.go('back');
+    });
+
     it('should have the check overview component with warning checks', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Warning');
     });
 
+    it('should have a working link to the warning checks in the overview component', () => {
+      cy.get('.tn-cluster-checks-overview ').contains('Warning').click();
+      cy.url().should(
+        'include',
+        `/clusters/${availableHanaCluster.id}/checks/results?health=warning`
+      );
+      cy.go('back');
+    });
+
     it('should have the check overview component with critical checks', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Critical');
+    });
+
+    it('should have a working link to the critical checks in the overview component', () => {
+      cy.get('.tn-cluster-checks-overview ').contains('Critical').click();
+      cy.url().should(
+        'include',
+        `/clusters/${availableHanaCluster.id}/checks/results?health=critical`
+      );
+      cy.go('back');
     });
   });
 

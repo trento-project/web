@@ -55,10 +55,18 @@ const ChecksResultOverview = ({
       </h6>
 
       <div className="flex flex-col self-start w-full px-4 mt-2">
-        <CheckResult onClick={onCheckClick} value={passing} result="passing" />
-        <CheckResult onClick={onCheckClick} value={warning} result="warning" />
         <CheckResult
-          onClick={onCheckClick}
+          onClick={() => onCheckClick('passing')}
+          value={passing}
+          result="passing"
+        />
+        <CheckResult
+          onClick={() => onCheckClick('warning')}
+          value={warning}
+          result="warning"
+        />
+        <CheckResult
+          onClick={() => onCheckClick('critical')}
           value={critical}
           result="critical"
         />
