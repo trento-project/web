@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createSearchParams, useSearchParams } from 'react-router-dom';
 import Filter from '@components/Table/Filter';
 
 export const RESULT_FILTER_FIELD = 'result';
@@ -38,9 +39,22 @@ export const useFilteredChecks = (cluster) => {
 
 const ChecksResultFilters = ({ onChange }) => {
   const [filtersForField, setFiltersForField] = useState({});
-
+  const [searchParams, setSearchParams] = useSearchParams();
   // This structure is the foundation for a multi field filters
   // we can reuse later this structure in other parts of the application
+
+  useEffect(() => {
+    const selectedFilters = searchParams.getAll('health');
+
+    setFiltersForField({
+      RESULT_FILTER_FIELD: {
+        predicates: selectedFilters.map(
+          (value) => (checks) => checks[RESULT_FILTER_FIELD] === value
+        ),
+        values: selectedFilters,
+      },
+    });
+  }, [searchParams]);
 
   useEffect(() => {
     if (Object.keys(filtersForField).length >= 0) {
@@ -61,17 +75,9 @@ const ChecksResultFilters = ({ onChange }) => {
         key={RESULT_FILTER_FIELD}
         title={'checks result'}
         options={['passing', 'warning', 'critical', 'unknown']}
-        value={filtersForField[RESULT_FILTER_FIELD]?.values || []}
+        value={searchParams.getAll('health')}
         onChange={(list) => {
-          setFiltersForField((existingFilters) => ({
-            ...existingFilters,
-            [RESULT_FILTER_FIELD]: {
-              predicates: list.map(
-                (value) => (checks) => checks[RESULT_FILTER_FIELD] === value
-              ),
-              values: list,
-            },
-          }));
+          setSearchParams(createSearchParams({ health: list }));
         }}
       />
     </div>
