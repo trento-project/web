@@ -38,8 +38,11 @@ const healthSummaryTableConfig = {
       title: 'Pacemaker Clusters',
       key: 'clustersHealth',
       className: 'text-center',
-      render: (content) => {
-        return <HealthIcon health={content} centered={true} />;
+      render: (content, item) => {
+        const link_to_cluster = '/clusters/' + item.clusterId;
+        return (
+          <HealthIcon health={content} centered={true} link={link_to_cluster} />
+        );
       },
     },
     {
