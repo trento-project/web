@@ -198,8 +198,8 @@ const ClusterDetails = () => {
         <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
           <ChecksResultOverview
             {...checkResults}
-            onCheckClick={() =>
-              navigate(`/clusters/${clusterID}/checks/results`)
+            onCheckClick={(health) =>
+              navigate(`/clusters/${clusterID}/checks/results?health=${health}`)
             }
           />
         </div>
