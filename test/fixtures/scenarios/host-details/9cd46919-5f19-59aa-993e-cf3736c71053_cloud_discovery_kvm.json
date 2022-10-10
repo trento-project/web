@@ -1,0 +1,8 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "9cd46919-5f19-59aa-993e-cf3736c71053",
+  "payload": {
+    "Provider": "kvm",
+    "Metadata": {}
+  }
+}
