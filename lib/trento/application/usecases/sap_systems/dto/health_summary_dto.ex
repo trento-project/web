@@ -3,7 +3,14 @@ defmodule Trento.Application.UseCases.SapSystems.HealthSummaryDto do
   HealthSummary for SAP Systems
   """
 
-  @required_fields :all
+  @required_fields [
+    :id,
+    :sid,
+    :sapsystem_health,
+    :database_health,
+    :clusters_health,
+    :hosts_health
+  ]
 
   use Trento.Type
 
