@@ -30,8 +30,13 @@ const healthSummaryTableConfig = {
       title: 'Database',
       key: 'databaseHealth',
       className: 'text-center',
-      render: (content) => {
-        return <HealthIcon health={content} centered={true} />;
+      render: (content, item) => {
+        const linkToDatabase = `/databases/${item.databaseId}`;
+        return (
+          <Link to={linkToDatabase}>
+            <HealthIcon health={content} centered={true} />
+          </Link>
+        );
       },
     },
     {
