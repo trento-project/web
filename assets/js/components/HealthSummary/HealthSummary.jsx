@@ -1,49 +1,38 @@
 import React from 'react';
 import HealthFilterButton from './HealthFilterButton';
 
-const any = (predicate, label) =>
-  Object.keys(predicate).reduce((accumulator, key) => {
-    if (accumulator) {
-      return true;
-    }
-    return predicate[key] === label;
-  }, false);
-
-const getCounters = (data) => {
-  const defaultCounter = { critical: 0, warning: 0, passing: 0, unknown: 0 };
-
-  if (!data || 0 === data.length) {
-    return defaultCounter;
-  }
-
-  return data.reduce((accumulator, element) => {
-    if (any(element, 'critical')) {
-      return { ...accumulator, critical: accumulator.critical + 1 };
-    }
-
-    if (any(element, 'warning')) {
-      return { ...accumulator, warning: accumulator.warning + 1 };
-    }
-
-    if (any(element, 'unknown')) {
-      return { ...accumulator, unknown: accumulator.unknown + 1 };
-    }
-
-    if (any(element, 'passing')) {
-      return { ...accumulator, passing: accumulator.passing + 1 };
-    }
-    return accumulator;
-  }, defaultCounter);
-};
-
-const HealthSummary = ({ data }) => {
-  const { passing, warning, critical } = getCounters(data);
-
+const HealthSummary = ({
+  passing,
+  critical,
+  warning,
+  onFilterChange,
+  activeFilters = {
+    passing: false,
+    critical: false,
+    warning: false,
+  },
+}) => {
   return (
     <div className="tn-health-container flex flex-row justify-between">
-      <HealthFilterButton health="passing" value={passing} />
-      <HealthFilterButton health="warning" value={warning} />
-      <HealthFilterButton health="critical" value={critical} />
+      <HealthFilterButton
+        health="passing"
+        value={passing}
+        selected={activeFilters.passing}
+        onClick={onFilterChange}
+      />
+      <HealthFilterButton
+        health="warning"
+        selected={activeFilters.warning}
+        onClick={onFilterChange}
+        value={warning}
+      />
+      <HealthFilterButton
+        onClick={onFilterChange}
+        selected={activeFilters.critical}
+        style={{ marginRight: 0 }}
+        health="critical"
+        value={critical}
+      />
     </div>
   );
 };

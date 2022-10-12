@@ -47,9 +47,20 @@ const labelByHealth = {
   critical: 'Critical',
 };
 
-const HealthFilterButton = ({ health, selected, value = 0 }) => {
+const HealthFilterButton = ({
+  health,
+  selected,
+  value = 0,
+  style,
+  onClick,
+}) => {
   return (
-    <div className={styleByHealth[health](selected)} role="button">
+    <div
+      style={style}
+      className={styleByHealth[health](selected)}
+      role="button"
+      onClick={() => onClick(health)}
+    >
       <div className="flex rounded justify-between p-4 text-2xl font-semibold">
         <span className="rounded-lg p-1 mr-2 bg-white">
           {iconByHealth[health]()}
