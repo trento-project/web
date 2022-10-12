@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import Button from '@components/Button';
 
 import ListView from '@components/ListView';
 import Pill from '@components/Pill';
 import Table from '@components/Table';
+import Tooltip from '@components/Tooltip';
+import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 
 import { groupBy } from '@lib/lists';
 
@@ -260,66 +262,3 @@ const ClusterDetails = () => {
 };
 
 export default ClusterDetails;
-
-export const TriggerChecksExecutionRequest = ({
-  clusterId,
-  cssClasses,
-  children,
-  ...props
-}) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  return (
-    <button
-      className={classNames(
-        'items-center text-sm border-green-500 px-2 text-jungle-green-500 bg-white border border-green hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow',
-        cssClasses
-      )}
-      onClick={() => {
-        dispatch({
-          type: 'REQUEST_CHECKS_EXECUTION',
-          payload: {
-            clusterID: clusterId,
-          },
-        });
-        navigate(`/clusters/${clusterId}/checks/results`);
-      }}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-};
-
-export const Tooltip = ({ children, tooltipText }) => {
-  const tipRef = React.createRef(null);
-  const handleMouseEnter = () => {
-    tipRef.current.style.opacity = 1;
-    tipRef.current.style.marginTop = '10px';
-  };
-  const handleMouseLeave = () => {
-    tipRef.current.style.opacity = 0;
-    tipRef.current.style.marginTop = '5px';
-  };
-  return (
-    <div
-      className="w-full h-full absolute inset-0 flex justify-center items-center z-10"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div
-        className="w-full absolute whitespace-no-wrap bg-gradient-to-r from-black to-gray-700 text-white px-4 py-2 rounded flex items-center transition-all duration-150"
-        style={{ top: '100%', opacity: 0 }}
-        ref={tipRef}
-      >
-        <div
-          className="bg-black h-3 w-3 absolute"
-          style={{ top: '-6px', right: '50%', transform: 'rotate(45deg)' }}
-        />
-        {tooltipText}
-      </div>
-      {children}
-    </div>
-  );
-};
