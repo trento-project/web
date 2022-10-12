@@ -10,10 +10,8 @@ import { Tab } from '@headlessui/react';
 import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
 import { ConnectionSettings } from '@components/ClusterDetails/ConnectionSettings';
 import { getCluster } from '@state/selectors';
-import {
-  TriggerChecksExecutionRequest,
-  truncatedClusterNameClasses,
-} from './ClusterDetails';
+import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
+import { truncatedClusterNameClasses } from './ClusterDetails';
 import { getClusterName } from '@components/ClusterLink';
 import WarningBanner from '@components/Banners/WarningBanner';
 
