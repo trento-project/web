@@ -7,9 +7,16 @@ defmodule Trento.Messaging.Adapters.AMQP do
 
   alias Trento.Messaging.Adapters.AMQP.Publisher
 
-  @impl true
+  require Logger
 
+  @impl true
   def publish(routing_key, message) do
     Publisher.publish_message(message, routing_key)
+  end
+
+  @impl true
+  def handle_event(message) do
+    Logger.info("Received message: #{inspect(message)}")
+    :ok
   end
 end

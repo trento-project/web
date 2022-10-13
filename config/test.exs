@@ -42,3 +42,33 @@ config :logger, level: :warn
 config :phoenix, :plug_init_mode, :runtime
 
 config :trento, :api_key_authentication, enabled: false
+
+config :trento, :messaging, adapter: Trento.Messaging.Adapters.AMQP
+
+config :trento, Trento.Messaging.Adapters.AMQP,
+  consumer: [
+    queue: "trento.test.checks.results",
+    exchange: "trento.test.checks",
+    routing_key: "results",
+    prefetch_count: "10",
+    connection: "amqp://trento:trento@localhost:5672",
+    retry_delay_function: fn attempt -> :timer.sleep(2000 * attempt) end,
+    queue_options: [
+      durable: false,
+      auto_delete: true
+    ],
+    deadletter_queue_options: [
+      durable: false,
+      auto_delete: true
+    ]
+  ],
+  publisher: [
+    exchange: "trento.test.checks",
+    connection: "amqp://trento:trento@localhost:5672"
+  ]
+
+config :trento,
+  extra_children: [
+    Trento.Messaging.Adapters.AMQP.Publisher,
+    Trento.Messaging.Adapters.AMQP.Consumer
+  ]

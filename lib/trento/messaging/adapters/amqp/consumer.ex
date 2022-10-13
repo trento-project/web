@@ -17,8 +17,13 @@ defmodule Trento.Messaging.Adapters.AMQP.Consumer do
 
   @impl GenRMQ.Consumer
   def handle_message(%GenRMQ.Message{} = message) do
-    Logger.info("Received message: #{inspect(message)}")
-    GenRMQ.Consumer.ack(message)
+    case adapter().handle_event(message) do
+      :ok ->
+        GenRMQ.Consumer.ack(message)
+
+      {:error, reason} ->
+        handle_error(message, reason)
+    end
   end
 
   @impl GenRMQ.Consumer
@@ -42,4 +47,7 @@ defmodule Trento.Messaging.Adapters.AMQP.Consumer do
       shutdown: 500
     }
   end
+
+  defp adapter,
+    do: Application.fetch_env!(:trento, :messaging)[:adapter]
 end
