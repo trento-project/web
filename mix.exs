@@ -49,6 +49,9 @@ defmodule Trento.MixProject do
       {:commanded, "~> 1.3"},
       {:commanded_ecto_projections, "~> 1.2"},
       {:commanded_eventstore_adapter, "~> 1.2"},
+      # this is pinned since the 3.1.0 version requires OTP 23.2
+      # overrides gen_rmq dependency
+      {:credentials_obfuscation, "3.0.0", override: true},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.6"},
@@ -63,6 +66,7 @@ defmodule Trento.MixProject do
       {:fun_with_flags_ui, "~> 0.8.0"},
       {:gettext, "~> 0.18"},
       {:gen_smtp, "~> 1.2.0"},
+      {:gen_rmq, "~> 4.0"},
       {:httpoison, "~> 1.8"},
       {:jason, "~> 1.2"},
       {:mock, "~> 0.3.0", only: :test},
@@ -72,7 +76,7 @@ defmodule Trento.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_dashboard, "~> 0.6"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_reload, "~> 1.2", only: [:dev]},
       {:phoenix_live_view, "~> 0.17.1"},
       {:phoenix_swoosh, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
