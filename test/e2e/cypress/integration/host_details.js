@@ -171,13 +171,19 @@ context('Host Details', () => {
     it(`should show KVM cloud details correctly`, () => {
       cy.loadScenario('host-details-kvm');
 
-      cy.get('div').should('contain', selectedHost.kvmCloudDetails.provider);
+      cy.get('div')
+        .contains(/^Provider$/)
+        .next()
+        .should('contain', selectedHost.kvmCloudDetails.provider);
     });
 
     it(`should show Nutanix cloud details correctly`, () => {
       cy.loadScenario('host-details-nutanix');
 
-      cy.get('div').should('contain', selectedHost.nutanixCloudDetails.provider);
+      cy.get('div')
+        .contains(/^Provider$/)
+        .next()
+        .should('contain', selectedHost.nutanixCloudDetails.provider);
     });
 
     it(`should display provider not recognized message`, () => {
