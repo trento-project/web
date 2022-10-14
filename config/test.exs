@@ -46,6 +46,13 @@ config :trento, :api_key_authentication, enabled: false
 config :trento, :messaging, adapter: Trento.Messaging.Adapters.AMQP
 
 config :trento, Trento.Messaging.Adapters.AMQP,
+  publisher: [
+    exchange: "trento.test.checks",
+    connection: "amqp://trento:trento@localhost:5672"
+  ]
+
+config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
+  processor: GenRMQ.Processor.Mock,
   consumer: [
     queue: "trento.test.checks.results",
     exchange: "trento.test.checks",
@@ -61,14 +68,10 @@ config :trento, Trento.Messaging.Adapters.AMQP,
       durable: false,
       auto_delete: true
     ]
-  ],
-  publisher: [
-    exchange: "trento.test.checks",
-    connection: "amqp://trento:trento@localhost:5672"
   ]
 
 config :trento,
   extra_children: [
     Trento.Messaging.Adapters.AMQP.Publisher,
-    Trento.Messaging.Adapters.AMQP.Consumer
+    Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer
   ]

@@ -1,4 +1,4 @@
-defmodule Trento.Messaging.Adapters.AMQP.ConsumerTest do
+defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ConsumerTest do
   use ExUnit.Case
 
   import Mox
@@ -14,7 +14,7 @@ defmodule Trento.Messaging.Adapters.AMQP.ConsumerTest do
       pid = self()
       message = Faker.StarWars.quote()
 
-      expect(Trento.Messaging.Adapters.Mock, :handle_event, fn %{payload: payload} ->
+      expect(GenRMQ.Processor.Mock, :process, fn %{payload: payload} ->
         assert ^message = payload
         send(pid, :consumed)
         :ok
@@ -30,12 +30,14 @@ defmodule Trento.Messaging.Adapters.AMQP.ConsumerTest do
     test "should reject unknown events and move them to the dead letter queue" do
       pid = self()
 
-      expect(Trento.Messaging.Adapters.Mock, :handle_event, fn _ ->
+      expect(GenRMQ.Processor.Mock, :process, fn _ ->
         send(pid, :consumed)
         {:error, "invalid payload"}
       end)
 
-      config = Application.fetch_env!(:trento, Trento.Messaging.Adapters.AMQP)[:consumer]
+      config =
+        Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda.Messaging.AMQP)[:consumer]
+
       connection = Keyword.get(config, :connection)
       routing_key = Keyword.get(config, :routing_key)
       deadletter_queue = Keyword.get(config, :queue) <> "_error"

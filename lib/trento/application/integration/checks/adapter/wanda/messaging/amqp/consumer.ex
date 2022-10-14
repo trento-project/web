@@ -1,4 +1,4 @@
-defmodule Trento.Messaging.Adapters.AMQP.Consumer do
+defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer do
   @moduledoc """
   AMQP consumer.
   """
@@ -9,7 +9,7 @@ defmodule Trento.Messaging.Adapters.AMQP.Consumer do
 
   @impl GenRMQ.Consumer
   def init do
-    Application.fetch_env!(:trento, Trento.Messaging.Adapters.AMQP)[:consumer]
+    Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda.Messaging.AMQP)[:consumer]
   end
 
   @spec start_link(any) :: {:error, any} | {:ok, pid}
@@ -17,7 +17,7 @@ defmodule Trento.Messaging.Adapters.AMQP.Consumer do
 
   @impl GenRMQ.Consumer
   def handle_message(%GenRMQ.Message{} = message) do
-    case adapter().handle_event(message) do
+    case processor().process(message) do
       :ok ->
         GenRMQ.Consumer.ack(message)
 
@@ -48,6 +48,7 @@ defmodule Trento.Messaging.Adapters.AMQP.Consumer do
     }
   end
 
-  defp adapter,
-    do: Application.fetch_env!(:trento, :messaging)[:adapter]
+  defp processor,
+    do:
+      Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda.Messaging.AMQP)[:processor]
 end
