@@ -34,6 +34,12 @@ export const selectedHost = {
     zone: 'europe-west1-b',
     network: 'network',
   },
+  kvmCloudDetails: {
+    provider: 'kvm',
+  },
+  nutanixCloudDetails: {
+    provider: 'nutanix',
+  },
   sapInstance: {
     id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     sid: 'HDP',

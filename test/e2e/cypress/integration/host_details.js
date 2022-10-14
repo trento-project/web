@@ -168,6 +168,24 @@ context('Host Details', () => {
         .should('contain', selectedHost.gcpCloudDetails.network);
     });
 
+    it(`should show KVM cloud details correctly`, () => {
+      cy.loadScenario('host-details-kvm');
+
+      cy.get('div')
+        .contains(/^Provider$/)
+        .next()
+        .should('contain', selectedHost.kvmCloudDetails.provider);
+    });
+
+    it(`should show Nutanix cloud details correctly`, () => {
+      cy.loadScenario('host-details-nutanix');
+
+      cy.get('div')
+        .contains(/^Provider$/)
+        .next()
+        .should('contain', selectedHost.nutanixCloudDetails.provider);
+    });
+
     it(`should display provider not recognized message`, () => {
       cy.loadScenario('host-details-unknown');
 
