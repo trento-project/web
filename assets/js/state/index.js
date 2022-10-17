@@ -2,8 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import { Socket } from 'phoenix';
 
-import { logMessage, logError } from '@lib/log';
-
 import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
@@ -14,6 +12,7 @@ import databasesListReducer from './databases';
 import catalogReducer from './catalog';
 import liveFeedReducer from './liveFeed';
 import settingsReducer from './settings';
+import registerEvents from './registerSocketEvents';
 
 import rootSaga from './sagas';
 
@@ -36,26 +35,6 @@ export const store = configureStore({
 });
 
 sagaMiddleware.run(rootSaga);
-
-const joinChannel = (channel) => {
-  channel
-    .join()
-    .receive('ok', ({ messages }) => logMessage('catching up', messages))
-    .receive('error', ({ reason }) => logError('failed join', reason))
-    .receive('timeout', () => logMessage('Networking issue. Still waiting...'));
-};
-
-const registerEvents = (store, socket, channelName, events) => {
-  const channel = socket.channel(channelName, {});
-
-  for (const event of events) {
-    channel.on(event, (payload) =>
-      store.dispatch({ type: event.toUpperCase(), payload })
-    );
-  }
-
-  joinChannel(channel);
-};
 
 const processChannelEvents = (store) => {
   const socket = new Socket('/socket', {});
