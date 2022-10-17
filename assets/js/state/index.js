@@ -45,7 +45,7 @@ const joinChannel = (channel) => {
     .receive('timeout', () => logMessage('Networking issue. Still waiting...'));
 };
 
-const registerEvents = (socket, channelName, events) => {
+const registerEvents = (store, socket, channelName, events) => {
   const channel = socket.channel(channelName, {});
 
   for (const event of events) {
@@ -57,17 +57,17 @@ const registerEvents = (socket, channelName, events) => {
   joinChannel(channel);
 };
 
-const processChannelEvents = () => {
+const processChannelEvents = (store) => {
   const socket = new Socket('/socket', {});
   socket.connect();
 
-  registerEvents(socket, 'monitoring:hosts', [
+  registerEvents(store, socket, 'monitoring:hosts', [
     'host_registered',
     'host_details_updated',
     'heartbeat_succeded',
     'heartbeat_failed',
   ]);
-  registerEvents(socket, 'monitoring:clusters', [
+  registerEvents(store, socket, 'monitoring:clusters', [
     'cluster_registered',
     'cluster_details_updated',
     'checks_execution_started',
@@ -76,13 +76,13 @@ const processChannelEvents = () => {
     'cluster_health_changed',
     'cluster_cib_last_written_updated',
   ]);
-  registerEvents(socket, 'monitoring:sap_systems', [
+  registerEvents(store, socket, 'monitoring:sap_systems', [
     'sap_system_registered',
     'sap_system_health_changed',
     'application_instance_registered',
     'application_instance_health_changed',
   ]);
-  registerEvents(socket, 'monitoring:databases', [
+  registerEvents(store, socket, 'monitoring:databases', [
     'database_registered',
     'database_health_changed',
     'database_instance_registered',
