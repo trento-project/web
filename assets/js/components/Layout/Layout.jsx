@@ -10,7 +10,6 @@ import {
   EOS_STORAGE,
   EOS_LIST,
   EOS_SETTINGS,
-  EOS_DOUBLE_ARROW,
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
