@@ -13,6 +13,11 @@ Application.put_env(:trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.Mock
 )
 
+Mox.defmock(Trento.Messaging.Adapters.Mock, for: Trento.Messaging.Adapters.Behaviour)
+Application.put_env(:trento, :messaging, adapter: Trento.Messaging.Adapters.Mock)
+
+Mox.defmock(GenRMQ.Processor.Mock, for: GenRMQ.Processor)
+
 Application.ensure_all_started(:ex_machina, :faker)
 
 ExUnit.start()

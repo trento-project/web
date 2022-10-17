@@ -20,3 +20,13 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
     ports:
       - 3000:3000
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.10.5-management-alpine
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: trento
+      RABBITMQ_DEFAULT_PASS: trento
