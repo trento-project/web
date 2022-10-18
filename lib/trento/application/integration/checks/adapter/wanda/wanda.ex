@@ -14,13 +14,13 @@ defmodule Trento.Integration.Checks.Wanda do
   }
 
   @impl true
-  def request_execution(execution_id, cluster_id, provider, hosts_settings, selected_checks) do
+  def request_execution(execution_id, group_id, provider, targets, selected_checks) do
     execution_requested =
       Mapper.to_execution_requested(
         execution_id,
-        cluster_id,
+        group_id,
         provider,
-        hosts_settings,
+        targets,
         selected_checks
       )
 
