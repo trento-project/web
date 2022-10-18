@@ -13,6 +13,7 @@ import {
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
+import EosKeyboardDoubleArrowLeft from './EosKeyboardDoubleArrowLeft';
 
 import classNames from 'classnames';
 
@@ -88,19 +89,10 @@ const Layout = () => {
                 onClick={handleSidebar}
                 title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  className={classNames('text-gray-400 hover:text-gray-300', {
-                    '-scale-100': isCollapsed,
-                  })}
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M11.41 16.59L6.83 12L11.41 7.41L10 6L4 12L10 18L11.41 16.59Z" />
-                  <path d="M17.41 16.59L12.83 12L17.41 7.41L16 6L10 12L16 18L17.41 16.59Z" />
-                </svg>
+                <EosKeyboardDoubleArrowLeft
+                  className="text-gray-400 hover:text-gray-300"
+                  flip={isCollapsed}
+                />
               </button>
             </div>
             <div className="bg-white h-full dark:bg-gray-700">
