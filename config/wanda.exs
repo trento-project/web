@@ -5,6 +5,8 @@ import_config "dev.exs"
 
 config :trento, :messaging, adapter: Trento.Messaging.Adapters.AMQP
 
+config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Wanda
+
 config :trento, Trento.Messaging.Publisher, adapter: Trento.Messaging.Adapters.AMQP
 
 config :trento, Trento.Messaging.Adapters.AMQP,
