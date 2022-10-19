@@ -10,10 +10,10 @@ import {
   EOS_STORAGE,
   EOS_LIST,
   EOS_SETTINGS,
+  EOS_KEYBOARD_DOUBLE_ARROW_LEFT
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
-import EosKeyboardDoubleArrowLeft from './EosKeyboardDoubleArrowLeft';
 
 import classNames from 'classnames';
 
@@ -89,23 +89,18 @@ const Layout = () => {
                 onClick={handleSidebar}
                 title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
               >
-                <EosKeyboardDoubleArrowLeft
-                  className="text-gray-400 hover:text-gray-300"
-                  flip={isCollapsed}
-                />
+                <EOS_KEYBOARD_DOUBLE_ARROW_LEFT size="24" color="currentColor" className={classNames("text-gray-400 hover:text-gray-300", {"-scale-100" : isCollapsed})} />
               </button>
             </div>
             <div className="bg-white h-full dark:bg-gray-700">
               <div className="flex items-center justify-center pt-6">
-                <div className="self-center">
-                  <img
-                    className={classNames(
-                      'h-auto transition-scale duration-100',
-                      { 'w-12': isCollapsed, 'w-24': !isCollapsed }
-                    )}
-                    src={TrentoLogo}
-                  />{' '}
-                </div>
+                <img
+                  className={classNames(
+                    'h-auto transition-scale duration-100',
+                    { 'w-12': isCollapsed, 'w-24': !isCollapsed }
+                  )}
+                  src={TrentoLogo}
+                />{' '}
               </div>
               <nav className="mt-6">
                 <div>
