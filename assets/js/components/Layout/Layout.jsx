@@ -69,6 +69,10 @@ const Layout = () => {
     '[name~=csrf-token][content]'
   ).content;
 
+  const sidebarIconColor = 'currentColor';
+  const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
+  const sidebarIconSize = '24';
+
   return (
     <>
       <main className="bg-gray-100 dark:bg-gray-800 relative">
@@ -92,15 +96,15 @@ const Layout = () => {
               >
                 {isCollapsed ? (
                   <EOS_KEYBOARD_DOUBLE_ARROW_RIGHT
-                    size="24"
-                    color="currentColor"
-                    className={classNames('text-gray-400 hover:text-gray-300')}
+                    size={sidebarIconSize}
+                    color={sidebarIconColor}
+                    className={sidebarIconClassName}
                   />
                 ) : (
                   <EOS_KEYBOARD_DOUBLE_ARROW_LEFT
-                    size="24"
-                    color="currentColor"
-                    className={classNames('text-gray-400 hover:text-gray-300')}
+                    size={sidebarIconSize}
+                    color={sidebarIconColor}
+                    className={sidebarIconClassName}
                   />
                 )}
               </button>
