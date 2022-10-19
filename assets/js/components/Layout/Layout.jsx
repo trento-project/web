@@ -11,6 +11,7 @@ import {
   EOS_LIST,
   EOS_SETTINGS,
   EOS_KEYBOARD_DOUBLE_ARROW_LEFT,
+  EOS_KEYBOARD_DOUBLE_ARROW_RIGHT,
 } from 'eos-icons-react';
 
 import TrentoLogo from '../../../static/trento-logo-stacked.svg';
@@ -89,13 +90,19 @@ const Layout = () => {
                 onClick={handleSidebar}
                 title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
               >
-                <EOS_KEYBOARD_DOUBLE_ARROW_LEFT
-                  size="24"
-                  color="currentColor"
-                  className={classNames('text-gray-400 hover:text-gray-300', {
-                    '-scale-100': isCollapsed,
-                  })}
-                />
+                {isCollapsed ? (
+                  <EOS_KEYBOARD_DOUBLE_ARROW_RIGHT
+                    size="24"
+                    color="currentColor"
+                    className={classNames('text-gray-400 hover:text-gray-300')}
+                  />
+                ) : (
+                  <EOS_KEYBOARD_DOUBLE_ARROW_LEFT
+                    size="24"
+                    color="currentColor"
+                    className={classNames('text-gray-400 hover:text-gray-300')}
+                  />
+                )}
               </button>
             </div>
             <div className="bg-white h-full dark:bg-gray-700">
