@@ -3,6 +3,8 @@ defmodule Trento.Messaging.Adapters.AMQP.Publisher do
   AMQP publisher.
   """
 
+  alias Trento.Contracts
+
   @behaviour GenRMQ.Publisher
 
   require Logger
@@ -16,7 +18,9 @@ defmodule Trento.Messaging.Adapters.AMQP.Publisher do
   def publish_message(message, routing_key \\ "") do
     Logger.info("Publishing message #{inspect(message)}")
 
-    GenRMQ.Publisher.publish(__MODULE__, message, routing_key)
+    GenRMQ.Publisher.publish(__MODULE__, message, routing_key, [
+      {:content_type, Contracts.content_type()}
+    ])
   end
 
   def child_spec(opts) do
