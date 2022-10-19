@@ -130,11 +130,9 @@ const Layout = () => {
                         }
                         to={item.href}
                         end={item.href == '/'}
+                        title={item.name}
                       >
-                        <span
-                          className="text-left"
-                          title={isCollapsed && item.name}
-                        >
+                        <span className="text-left">
                           <item.icon />
                         </span>
                         <span
