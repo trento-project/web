@@ -122,6 +122,7 @@ config :trento, Trento.Scheduler,
 
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Runner
+config :trento, Trento.Clusters, adapter: Trento.Clusters.Runner
 
 config :trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.PrometheusApi

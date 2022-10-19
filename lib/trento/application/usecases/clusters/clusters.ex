@@ -15,7 +15,6 @@ defmodule Trento.Clusters do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
-    RequestChecksExecution,
     SelectChecks
   }
 
@@ -42,9 +41,7 @@ defmodule Trento.Clusters do
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    with {:ok, command} <- RequestChecksExecution.new(%{cluster_id: cluster_id}) do
-      commanded().dispatch(command)
-    end
+    adapter().request_checks_execution(cluster_id)
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
@@ -125,5 +122,9 @@ defmodule Trento.Clusters do
     end
     |> ClusterEnrichmentData.changeset(%{cib_last_written: cib_last_written})
     |> Repo.insert_or_update()
+  end
+
+  defp adapter do
+    Application.fetch_env!(:trento, __MODULE__)[:adapter]
   end
 end
