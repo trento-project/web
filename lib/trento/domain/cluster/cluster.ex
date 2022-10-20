@@ -18,6 +18,7 @@ defmodule Trento.Domain.Cluster do
   alias Trento.Domain.Commands.{
     AbortClusterRollup,
     CompleteChecksExecution,
+    CompleteChecksExecutionWanda,
     RegisterClusterHost,
     RequestChecksExecution,
     RollupCluster,
@@ -30,6 +31,7 @@ defmodule Trento.Domain.Cluster do
     ChecksExecutionRequested,
     ChecksExecutionStarted,
     ChecksSelected,
+    ClusterChecksHealthChanged,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
@@ -243,6 +245,20 @@ defmodule Trento.Domain.Cluster do
 
   def execute(
         %Cluster{
+          cluster_id: cluster_id
+        } = cluster,
+        %CompleteChecksExecutionWanda{
+          cluster_id: cluster_id
+        } = command
+      ) do
+    cluster
+    |> Multi.new()
+    |> Multi.execute(&maybe_emit_cluster_checks_health_changed_event(&1, command))
+    |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
+  end
+
+  def execute(
+        %Cluster{
           cluster_id: cluster_id,
           name: name,
           type: type,
@@ -314,6 +330,15 @@ defmodule Trento.Domain.Cluster do
     %Cluster{
       cluster
       | discovered_health: discovered_health
+    }
+  end
+
+  def apply(%Cluster{} = cluster, %ClusterChecksHealthChanged{
+        checks_health: checks_health
+      }) do
+    %Cluster{
+      cluster
+      | checks_health: checks_health
     }
   end
 
@@ -586,6 +611,22 @@ defmodule Trento.Domain.Cluster do
     %ClusterDiscoveredHealthChanged{
       cluster_id: cluster_id,
       discovered_health: discovered_health
+    }
+  end
+
+  defp maybe_emit_cluster_checks_health_changed_event(
+         %Cluster{checks_health: checks_health},
+         %CompleteChecksExecutionWanda{health: checks_health}
+       ),
+       do: nil
+
+  defp maybe_emit_cluster_checks_health_changed_event(
+         %Cluster{cluster_id: cluster_id},
+         %CompleteChecksExecutionWanda{health: checks_health}
+       ) do
+    %ClusterChecksHealthChanged{
+      cluster_id: cluster_id,
+      checks_health: checks_health
     }
   end
 

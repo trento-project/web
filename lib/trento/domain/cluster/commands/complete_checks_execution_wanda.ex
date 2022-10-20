@@ -1,0 +1,16 @@
+defmodule Trento.Domain.Commands.CompleteChecksExecutionWanda do
+  @moduledoc """
+  Complete the checks execution with the incomfing result
+  """
+
+  @required_fields :all
+
+  use Trento.Command
+
+  require Trento.Domain.Enums.Health, as: Health
+
+  defcommand do
+    field :cluster_id, Ecto.UUID
+    field :health, Ecto.Enum, values: Health.values()
+  end
+end

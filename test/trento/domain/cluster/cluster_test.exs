@@ -8,6 +8,7 @@ defmodule Trento.ClusterTest do
   alias Trento.Domain.Commands.{
     AbortClusterRollup,
     CompleteChecksExecution,
+    CompleteChecksExecutionWanda,
     RegisterClusterHost,
     RequestChecksExecution,
     RollupCluster,
@@ -20,6 +21,7 @@ defmodule Trento.ClusterTest do
     ChecksExecutionRequested,
     ChecksExecutionStarted,
     ChecksSelected,
+    ClusterChecksHealthChanged,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
@@ -35,6 +37,8 @@ defmodule Trento.ClusterTest do
     Cluster,
     HostExecution
   }
+
+  require Trento.Domain.Enums.Health, as: Health
 
   describe "cluster registration" do
     test "should register a cluster and add the node host to the cluster if the node is a DC" do
@@ -535,6 +539,115 @@ defmodule Trento.ClusterTest do
                        checks_results: ^expected_results
                      }
                    ]
+                 } = cluster
+        end
+      )
+    end
+  end
+
+  describe "checks execution using wanda" do
+    test "should change health state when checks health changes" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.passing()),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          }
+        ],
+        CompleteChecksExecutionWanda.new!(%{
+          cluster_id: cluster_id,
+          health: Health.critical()
+        }),
+        [
+          %ClusterChecksHealthChanged{
+            cluster_id: cluster_id,
+            checks_health: Health.critical()
+          },
+          %ClusterHealthChanged{
+            cluster_id: cluster_id,
+            health: Health.critical()
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   cluster_id: ^cluster_id,
+                   health: Health.critical(),
+                   checks_health: Health.critical()
+                 } = cluster
+        end
+      )
+    end
+
+    test "should not change the the cluster aggregated health if discovery health is worst" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.critical()),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          },
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_id,
+            discovered_health: Health.critical()
+          }
+        ],
+        CompleteChecksExecutionWanda.new!(%{
+          cluster_id: cluster_id,
+          health: Health.warning()
+        }),
+        [
+          %ClusterChecksHealthChanged{
+            cluster_id: cluster_id,
+            checks_health: Health.warning()
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   cluster_id: ^cluster_id,
+                   health: Health.critical(),
+                   checks_health: Health.warning()
+                 } = cluster
+        end
+      )
+    end
+
+    test "should not change health if it is already critical" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.critical()),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          },
+          %ClusterChecksHealthChanged{
+            cluster_id: cluster_id,
+            checks_health: Health.critical()
+          },
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_id,
+            discovered_health: Health.critical()
+          }
+        ],
+        CompleteChecksExecutionWanda.new!(%{
+          cluster_id: cluster_id,
+          health: Health.critical()
+        }),
+        [],
+        fn cluster ->
+          assert %Cluster{
+                   cluster_id: ^cluster_id,
+                   health: Health.critical(),
+                   checks_health: Health.critical()
                  } = cluster
         end
       )
