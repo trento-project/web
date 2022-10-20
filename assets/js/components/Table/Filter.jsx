@@ -25,7 +25,7 @@ const Filter = ({ options, title, value, onChange }) => {
         {value != '' && (
           <button
             className="block absolute z-20 right-0 h-full pr-2 flex items-center"
-            onClick={() => onChange((value = []))}
+            onClick={() => onChange([])}
           >
             <EOS_CLOSE
               size="20"
