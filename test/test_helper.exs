@@ -20,6 +20,14 @@ Application.put_env(:trento, Trento.Integration.Prometheus,
 Mox.defmock(Trento.Messaging.Adapters.Mock, for: Trento.Messaging.Adapters.Behaviour)
 Application.put_env(:trento, :messaging, adapter: Trento.Messaging.Adapters.Mock)
 
+Mox.defmock(Trento.Integration.Checks.Wanda.Policy.Mock,
+  for: Trento.Integration.Checks.Wanda.Behaviour
+)
+
+Application.put_env(:trento, Trento.Integration.Checks.Wanda,
+  policy: Trento.Integration.Checks.Wanda.Policy.Mock
+)
+
 Mox.defmock(GenRMQ.Processor.Mock, for: GenRMQ.Processor)
 
 Mox.defmock(Trento.Support.DateService.Mock, for: Trento.Support.DateService)

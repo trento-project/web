@@ -3,36 +3,62 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
   use ExUnit.Case, async: true
   use Trento.DataCase
 
+  import Mox
   import Mock
 
   alias Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor
 
   alias Trento.Checks.V1.ExecutionCompleted
   alias Trento.Contracts
-  alias Trento.Domain.Commands.CompleteChecksExecutionWanda
-
-  require Trento.Domain.Enums.Health, as: Health
 
   describe "process" do
-    test "should process ExecutionCompleted event" do
-      execution_id = UUID.uuid4()
-      cluster_id = UUID.uuid4()
-
-      with_mock Trento.Commanded, dispatch: fn _, _ -> :ok end do
-        execution_completed = Contracts.to_event(%ExecutionCompleted{
-          execution_id: execution_id,
-          group_id: cluster_id,
+    test "should process valid event and dispatch command" do
+      execution_completed =
+        Contracts.to_event(%ExecutionCompleted{
+          execution_id: UUID.uuid4(),
+          group_id: UUID.uuid4(),
           result: :PASSING
         })
-        message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
 
+      message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
+      command = "some-command"
+      opts = [correlation_id: UUID.uuid4()]
+
+      expect(Trento.Integration.Checks.Wanda.Policy.Mock, :handle, fn _ ->
+        {:ok, command, opts}
+      end)
+
+      with_mock Trento.Commanded, dispatch: fn _, _ -> :ok end do
         assert :ok = Processor.process(message)
 
-        assert_called Trento.Commanded.dispatch(%CompleteChecksExecutionWanda{
-                        cluster_id: cluster_id,
-                        health: Health.passing()
-                      }, correlation_id: execution_id)
+        assert_called Trento.Commanded.dispatch(
+                        command,
+                        opts
+                      )
       end
+    end
+
+    test "should return error if the event handling fails" do
+      execution_completed =
+        Contracts.to_event(%ExecutionCompleted{
+          execution_id: UUID.uuid4(),
+          group_id: UUID.uuid4(),
+          result: :PASSING
+        })
+
+      message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
+
+      expect(Trento.Integration.Checks.Wanda.Policy.Mock, :handle, fn _ ->
+        {:error, :handling_error}
+      end)
+
+      assert {:error, :handling_error} = Processor.process(message)
+    end
+
+    @tag capture_log: true
+    test "should return error if the event cannot be decoded" do
+      message = %GenRMQ.Message{payload: "bad-payload", attributes: %{}, channel: nil}
+      assert {:error, :decoding_error} = Processor.process(message)
     end
   end
 end
