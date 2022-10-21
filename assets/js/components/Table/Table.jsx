@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import classNames from 'classnames';
-import { getDefaultFilterFunction, setFilter as createFilter } from './filters';
+import { getDefaultFilterFunction, createFilter } from './filters';
 import { page, pages } from '@lib/lists';
 
 import CollapsibleTableRow from './CollapsibleTableRow';
