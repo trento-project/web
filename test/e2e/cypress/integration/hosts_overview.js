@@ -135,6 +135,7 @@ context('Hosts Overview', () => {
   describe('Health Detection', () => {
     describe('Health Container shows the health overview of the deployed landscape', () => {
       before(() => {
+        cy.visit('/hosts');
         cy.task('startAgentHeartbeat', agents());
       });
 
@@ -152,6 +153,7 @@ context('Hosts Overview', () => {
     });
     describe('Health is changed to critical when the heartbeat is not sent', () => {
       before(() => {
+        cy.visit('/hosts');
         cy.task('stopAgentsHeartbeat');
       });
       it('should show health status of the entire cluster of 27 hosts with critical health', () => {
@@ -171,6 +173,7 @@ context('Hosts Overview', () => {
       const firstHost = availableHosts[0];
 
       before(() => {
+        cy.visit('/hosts');
         cy.task('startAgentHeartbeat', [firstHost.id]);
         cy.get('span').contains('Filter Health').parent().parent().click();
       });
@@ -217,10 +220,23 @@ context('Hosts Overview', () => {
           cy.get('li > div > span.ml-3.block').contains(sid).click();
         });
       });
+
+      it('should extract HDD and HWD from query string and put in sid filter', () => {
+        cy.visit('/hosts?sid=HDD&sid=NWD');
+        cy.get(
+          ':nth-child(3) > .mt-1 > .relative > :nth-child(1) > .ml-3'
+        ).contains('HDD, NWD');
+
+        // clear
+        cy.get('.z-20 > [data-testid="eos-svg-component"]').click();
+
+        cy.url('eq', '/hosts');
+      });
     });
 
     describe('Tags', () => {
       before(() => {
+        cy.visit('/hosts');
         cy.removeTagsFromView();
       });
 
@@ -232,6 +248,7 @@ context('Hosts Overview', () => {
 
       describe('Filter by tags', () => {
         before(() => {
+          cy.visit('/hosts');
           cy.get('span').contains('Filter Tags').parent().parent().click();
         });
 
@@ -260,6 +277,16 @@ context('Hosts Overview', () => {
           cy.get('li > div > span.ml-3.block').contains(tag).click();
           cy.get('.tn-hostname').its('length').should('eq', 4);
           cy.get('li > div > span.ml-3.block').contains(tag).click();
+        });
+
+        it('should extract tag1 and tag2 from query string and put in tag filter', () => {
+          cy.visit('/hosts?tags=tag1&tags=tag2');
+          cy.get(
+            ':nth-child(4) > .mt-1 > .relative > :nth-child(1) > .ml-3'
+          ).contains('tag1, tag2');
+
+          // clear
+          cy.get('.z-20 > [data-testid="eos-svg-component"]').click();
         });
       });
     });
