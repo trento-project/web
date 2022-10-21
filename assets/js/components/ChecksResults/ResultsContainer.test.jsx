@@ -23,7 +23,7 @@ describe('ChecksResults ResultsContainer component', () => {
     expect(screen.getByRole('button')).toHaveTextContent('Select Checks now!');
   });
 
-  it('should render an hello', () => {
+  it('should render a hello', () => {
     renderWithRouter(
       <ResultsContainer catalogError={false} hasAlreadyChecksResults={true}>
         <span data-testid="hello">Hello World!</span>
