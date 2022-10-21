@@ -221,7 +221,7 @@ context('Hosts Overview', () => {
         });
       });
 
-      it('should exctract HDD and HWD from query string and put in sid filter', () => {
+      it('should extract HDD and HWD from query string and put in sid filter', () => {
         cy.visit('/hosts?sid=HDD&sid=NWD');
         cy.get(
           ':nth-child(3) > .mt-1 > .relative > :nth-child(1) > .ml-3'
@@ -279,7 +279,7 @@ context('Hosts Overview', () => {
           cy.get('li > div > span.ml-3.block').contains(tag).click();
         });
 
-        it('should exctract tag1 and tag2 from query string and put in tag filter', () => {
+        it('should extract tag1 and tag2 from query string and put in tag filter', () => {
           cy.visit('/hosts?tags=tag1&tags=tag2');
           cy.get(
             ':nth-child(4) > .mt-1 > .relative > :nth-child(1) > .ml-3'
