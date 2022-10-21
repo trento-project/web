@@ -5,7 +5,7 @@ import NotificationBox from '@components/NotificationBox';
 
 import ChecksSelectionHints from './ChecksSelectionHints';
 
-const Content = ({
+const HintingProvider = ({
   catalogError,
   children,
   clusterID,
@@ -34,4 +34,4 @@ const Content = ({
   }
 };
 
-export default Content;
+export default HintingProvider;

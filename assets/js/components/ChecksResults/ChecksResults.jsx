@@ -19,7 +19,7 @@ import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import { getClusterName } from '@components/ClusterLink';
 
 import ChecksResultFilters, { useFilteredChecks } from './ChecksResultFilters';
-import Content from './Content';
+import HintingProvider from './HintingProvider';
 import CheckResult from './CheckResult';
 import HostResultsWrapper from './HostResultsWrapper';
 import {
@@ -112,7 +112,7 @@ const ChecksResults = () => {
           use results with caution
         </WarningBanner>
       )}
-      <Content
+      <HintingProvider
         catalogError={catalogError}
         clusterID={clusterID}
         hasAlreadyChecksResults={hasAlreadyChecksResults}
@@ -148,7 +148,7 @@ const ChecksResults = () => {
             })}
           </HostResultsWrapper>
         ))}
-      </Content>
+      </HintingProvider>
     </div>
   );
 };
