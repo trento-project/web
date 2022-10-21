@@ -33,6 +33,18 @@ const renderCells = (columns, item) => {
   );
 };
 
+const updateSearchParams = (searchParams, values) => {
+  values.forEach((f) => {
+    searchParams.delete(f.key);
+
+    f.value.forEach((v) => {
+      searchParams.append(f.key, v);
+    });
+  });
+
+  return searchParams;
+};
+
 const Table = ({ config, data = [], searchParams, setSearchParams }) => {
   const {
     columns,
@@ -46,37 +58,28 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
 
   const searchParamsEnabled = searchParams && setSearchParams;
 
-  const columnFiltersBindToParams = columns.filter(
+  const columnFiltersBoundToParams = columns.filter(
     (c) => c.filter && c.filterFromParams
   );
 
   useEffect(() => {
     if (!searchParamsEnabled) return;
-    const currentParams = searchParams;
-    const filtersBindedToQs = filters.reduce((acc, curr) => {
-      const filterBoundToQs = columnFiltersBindToParams.find(
+    const filtersBoundToQs = filters.reduce((acc, curr) => {
+      const isFilterBoundToQs = columnFiltersBoundToParams.find(
         (col) => col.key === curr.key
       );
 
-      if (!filterBoundToQs) return [...acc];
+      if (!isFilterBoundToQs) return [...acc];
 
       return [...acc, { key: curr.key, value: curr.value }];
     }, []);
 
-    filtersBindedToQs.forEach((f) => {
-      currentParams.delete(f.key);
-
-      f.value.forEach((v) => {
-        currentParams.append(f.key, v);
-      });
-    });
-
-    setSearchParams(currentParams);
+    setSearchParams(updateSearchParams(searchParams, filtersBoundToQs));
   }, [filters, searchParams]);
 
   useEffect(() => {
     if (!searchParamsEnabled) return;
-    const filterFromQs = columnFiltersBindToParams.reduce((acc, curr) => {
+    const filterFromQs = columnFiltersBoundToParams.reduce((acc, curr) => {
       const paramsFilterValue = searchParams.getAll(curr.key);
 
       if (paramsFilterValue.length === 0) return [...acc];
