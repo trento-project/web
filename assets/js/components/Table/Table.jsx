@@ -56,7 +56,7 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const searchParamsEnabled = searchParams && setSearchParams;
+  const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
   const columnFiltersBoundToParams = columns.filter(
     (c) => c.filter && c.filterFromParams
