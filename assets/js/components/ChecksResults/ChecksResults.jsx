@@ -20,7 +20,15 @@ import { getClusterName } from '@components/ClusterLink';
 
 import ChecksResultFilters, { useFilteredChecks } from './ChecksResultFilters';
 import Content from './Content';
-import { description, getHostname, findCheck } from './checksUtils';
+import CheckResult from './CheckResult';
+import HostResultsWrapper from './HostResultsWrapper';
+import {
+  description,
+  getHostname,
+  findCheck,
+  sortHosts,
+  sortChecks,
+} from './checksUtils';
 
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
@@ -52,6 +60,8 @@ const ChecksResults = () => {
 
   const { filteredChecksyByHost, setFiltersPredicates } =
     useFilteredChecks(cluster);
+
+  const executionState = cluster.checks_execution;
 
   useEffect(() => {
     cluster?.provider && dispatchUpdateCatalog();
@@ -103,22 +113,42 @@ const ChecksResults = () => {
         </WarningBanner>
       )}
       <Content
-        catalog={catalogData}
         catalogError={catalogError}
-        checksResults={cluster.checks_results}
         clusterID={clusterID}
-        executionState={cluster.checks_execution}
-        filteredChecksyByHost={filteredChecksyByHost}
         hasAlreadyChecksResults={hasAlreadyChecksResults}
-        hostnames={hostnames}
-        hosts={hosts}
         selectedChecks={cluster?.selected_checks}
-        onCheckOpen={(checkId) => {
-          setModalOpen(true);
-          setSelectedCheck(checkId);
-        }}
         onCatalogRefresh={dispatchUpdateCatalog}
-      />
+      >
+        {sortHosts(hosts).map(({ host_id: hostId, reachable, msg }, idx) => (
+          <HostResultsWrapper
+            key={idx}
+            hostname={hostnames(hostId)}
+            reachable={reachable}
+            unreachableMessage={msg}
+          >
+            {sortChecks(filteredChecksyByHost(hostId)).map((checkId) => {
+              const health = cluster.checks_results.find(
+                (result) =>
+                  result.check_id === checkId && result.host_id === hostId
+              )?.result;
+
+              return (
+                <CheckResult
+                  key={checkId}
+                  checkId={checkId}
+                  description={description(catalogData, checkId)}
+                  executionState={executionState}
+                  health={health}
+                  onClick={() => {
+                    setModalOpen(true);
+                    setSelectedCheck(checkId);
+                  }}
+                />
+              );
+            })}
+          </HostResultsWrapper>
+        ))}
+      </Content>
     </div>
   );
 };
