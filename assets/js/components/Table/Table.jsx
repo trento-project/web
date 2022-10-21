@@ -1,11 +1,13 @@
 import React, { Fragment, useState } from 'react';
 import classNames from 'classnames';
-
+import { useSearchParams } from 'react-router-dom';
+import { getDefaultFilterFunction, setFilter as createFilter } from './filters';
 import { page, pages } from '@lib/lists';
 
 import CollapsibleTableRow from './CollapsibleTableRow';
 import { TableFilters } from './filters';
 import Pagination from './Pagination';
+import { useEffect } from 'react';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
@@ -40,8 +42,39 @@ const Table = ({ config, data = [] }) => {
     usePadding = true,
   } = config;
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const columnFiltersBindToParams = columns.filter(
+    (c) => c.filter && c.filterFromParams
+  );
+
+  useEffect(() => {
+    
+  }, [filters])
+
+  useEffect(() => {
+    const filterFromQs = columnFiltersBindToParams.reduce((acc, curr) => {
+      const paramsFilterValue = searchParams.getAll(curr.key);
+
+      if (paramsFilterValue.length === 0) return [...acc];
+
+      const filterFunction =
+        typeof curr.filter === 'function'
+          ? curr.filter(paramsFilterValue, curr.key)
+          : getDefaultFilterFunction(paramsFilterValue, curr.key);
+
+      return [
+        ...acc,
+        ...createFilter(filters, curr.key, paramsFilterValue, filterFunction),
+      ];
+    }, []);
+
+    if (filterFromQs.length) {
+      setFilters(filterFromQs);
+    }
+  }, [searchParams]);
 
   const filteredData = filters
     .map(({ value, filterFunction }) => {
@@ -55,6 +88,7 @@ const Table = ({ config, data = [] }) => {
     }, data);
 
   const totalPages = pages(filteredData);
+
   const renderedData = pagination
     ? page(currentPage, filteredData)
     : filteredData;

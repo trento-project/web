@@ -90,6 +90,7 @@ const HostsList = () => {
       {
         title: 'SID',
         key: 'sid',
+        filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
         render: (sids, { sap_systems }) => {
@@ -120,6 +121,7 @@ const HostsList = () => {
         title: 'Tags',
         key: 'tags',
         className: 'w-80',
+        filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (

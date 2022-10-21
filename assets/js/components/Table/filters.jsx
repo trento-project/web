@@ -4,11 +4,11 @@ import { uniq } from '@lib/lists';
 
 import Filter from './Filter';
 
-const getDefaultFilterFunction = (filter, key) => (element) => {
+export const getDefaultFilterFunction = (filter, key) => (element) => {
   return filter.includes(element[key]);
 };
 
-const setFilter = (filters, filterKey, filterValue, filterFunction) => {
+export const setFilter = (filters, filterKey, filterValue, filterFunction) => {
   const { found, filtersList } = filters.reduce(
     ({ found, filtersList }, current) => {
       const { key } = current;
