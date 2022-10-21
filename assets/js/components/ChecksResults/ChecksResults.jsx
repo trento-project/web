@@ -19,7 +19,7 @@ import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import { getClusterName } from '@components/ClusterLink';
 
 import ChecksResultFilters, { useFilteredChecks } from './ChecksResultFilters';
-import HintingProvider from './HintingProvider';
+import ResultsContainer from './ResultsContainer';
 import CheckResult from './CheckResult';
 import HostResultsWrapper from './HostResultsWrapper';
 import {
@@ -112,24 +112,24 @@ const ChecksResults = () => {
           use results with caution
         </WarningBanner>
       )}
-      <HintingProvider
+      <ResultsContainer
         catalogError={catalogError}
         clusterID={clusterID}
         hasAlreadyChecksResults={hasAlreadyChecksResults}
         selectedChecks={cluster?.selected_checks}
         onCatalogRefresh={dispatchUpdateCatalog}
       >
-        {sortHosts(hosts).map(({ host_id: hostId, reachable, msg }, idx) => (
+        {sortHosts(hosts).map(({ host_id: hostID, reachable, msg }, idx) => (
           <HostResultsWrapper
             key={idx}
-            hostname={hostnames(hostId)}
+            hostname={hostnames(hostID)}
             reachable={reachable}
             unreachableMessage={msg}
           >
-            {sortChecks(filteredChecksyByHost(hostId)).map((checkId) => {
+            {sortChecks(filteredChecksyByHost(hostID)).map((checkId) => {
               const health = cluster.checks_results.find(
                 (result) =>
-                  result.check_id === checkId && result.host_id === hostId
+                  result.check_id === checkId && result.host_id === hostID
               )?.result;
 
               return (
@@ -148,7 +148,7 @@ const ChecksResults = () => {
             })}
           </HostResultsWrapper>
         ))}
-      </HintingProvider>
+      </ResultsContainer>
     </div>
   );
 };

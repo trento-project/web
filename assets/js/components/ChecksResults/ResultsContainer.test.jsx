@@ -6,18 +6,18 @@ import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
 
-import HintingProvider from './HintingProvider';
+import ResultsContainer from './ResultsContainer';
 
-describe('ChecksResults HintingProvider component', () => {
+describe('ChecksResults ResultsContainer component', () => {
   it('should render the notification box', () => {
-    renderWithRouter(<HintingProvider catalogError />);
+    renderWithRouter(<ResultsContainer catalogError />);
 
     expect(screen.getByRole('button')).toHaveTextContent('Try again');
   });
 
   it('should render the suggestion box', () => {
     renderWithRouter(
-      <HintingProvider catalogError={false} hasAlreadyChecksResults={false} />
+      <ResultsContainer catalogError={false} hasAlreadyChecksResults={false} />
     );
 
     expect(screen.getByRole('button')).toHaveTextContent('Select Checks now!');
@@ -25,9 +25,9 @@ describe('ChecksResults HintingProvider component', () => {
 
   it('should render an hello', () => {
     renderWithRouter(
-      <HintingProvider catalogError={false} hasAlreadyChecksResults={true}>
+      <ResultsContainer catalogError={false} hasAlreadyChecksResults={true}>
         <span data-testid="hello">Hello World!</span>
-      </HintingProvider>
+      </ResultsContainer>
     );
 
     expect(screen.getByTestId('hello')).toHaveTextContent('Hello World!');
