@@ -10,7 +10,6 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - 5433:5432
-    restart: always
     volumes:
       - pg_data:/var/lib/postgresql/data
   grafana:
@@ -23,7 +22,6 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.10.5-management-alpine
-    restart: unless-stopped
     ports:
       - 5672:5672
       - 15672:15672
