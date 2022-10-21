@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import Table from './Table';
 import HealthIcon from '@components/Health/HealthIcon';
+import { useSearchParams } from 'react-router-dom';
 import Tags from './Tags';
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import HostLink from '@components/HostLink';
@@ -43,6 +44,8 @@ const HostsList = () => {
   const { applicationInstances, databaseInstances } = useSelector(
     (state) => state.sapSystemsList
   );
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const dispatch = useDispatch();
 
@@ -171,7 +174,12 @@ const HostsList = () => {
   return (
     <Fragment>
       <ComponentHealthSummary data={data} />
-      <Table config={config} data={data} />
+      <Table
+        config={config}
+        data={data}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
     </Fragment>
   );
 };

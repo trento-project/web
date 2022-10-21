@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react';
 import classNames from 'classnames';
-import { useSearchParams } from 'react-router-dom';
 import { getDefaultFilterFunction, setFilter as createFilter } from './filters';
 import { page, pages } from '@lib/lists';
 
@@ -34,7 +33,7 @@ const renderCells = (columns, item) => {
   );
 };
 
-const Table = ({ config, data = [] }) => {
+const Table = ({ config, data = [], searchParams, setSearchParams }) => {
   const {
     columns,
     collapsibleDetailRenderer = undefined,
@@ -42,19 +41,41 @@ const Table = ({ config, data = [] }) => {
     usePadding = true,
   } = config;
 
-  const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const searchParamsEnabled = searchParams && setSearchParams;
 
   const columnFiltersBindToParams = columns.filter(
     (c) => c.filter && c.filterFromParams
   );
 
   useEffect(() => {
-    
-  }, [filters])
+    if (!searchParamsEnabled) return;
+    const currentParams = searchParams;
+    const filtersBindedToQs = filters.reduce((acc, curr) => {
+      const filterBoundToQs = columnFiltersBindToParams.find(
+        (col) => col.key === curr.key
+      );
+
+      if (!filterBoundToQs) return [...acc];
+
+      return [...acc, { key: curr.key, value: curr.value }];
+    }, []);
+
+    filtersBindedToQs.forEach((f) => {
+      currentParams.delete(f.key);
+
+      f.value.forEach((v) => {
+        currentParams.append(f.key, v);
+      });
+    });
+
+    setSearchParams(currentParams);
+  }, [filters, searchParams]);
 
   useEffect(() => {
+    if (!searchParamsEnabled) return;
     const filterFromQs = columnFiltersBindToParams.reduce((acc, curr) => {
       const paramsFilterValue = searchParams.getAll(curr.key);
 
