@@ -61,7 +61,7 @@ const ChecksResults = () => {
   const { filteredChecksyByHost, setFiltersPredicates } =
     useFilteredChecks(cluster);
 
-  const executionState = cluster.checks_execution;
+  const executionState = cluster?.checks_execution;
 
   useEffect(() => {
     cluster?.provider && dispatchUpdateCatalog();
