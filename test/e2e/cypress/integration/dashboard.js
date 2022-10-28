@@ -30,5 +30,11 @@ describe('Dashboard page', () => {
         '1'
       );
     });
+
+    it('should have a working link to the passing checks in the overview component', () => {
+      cy.get(':nth-child(1) > :nth-child(5) > a').click();
+      cy.url().should('include', `/hosts?sid=NWD`);
+      cy.go('back');
+    });
   });
 });
