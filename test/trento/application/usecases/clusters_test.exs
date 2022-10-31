@@ -59,11 +59,15 @@ defmodule Trento.ClustersTest do
     end
 
     test "should not start checks execution if the cluster is not registered" do
+      expect(Trento.Integration.Checks.Mock, :request_execution, 0, fn _, _, _, _, _ -> :ok end)
+
       assert {:error, :cluster_not_found} = Clusters.Wanda.request_checks_execution(UUID.uuid4())
     end
 
     test "should not start checks execution if no checks are selected" do
       %{id: cluster_id} = insert(:cluster, selected_checks: [])
+
+      expect(Trento.Integration.Checks.Mock, :request_execution, 0, fn _, _, _, _, _ -> :ok end)
 
       assert :ok = Clusters.Wanda.request_checks_execution(cluster_id)
     end
