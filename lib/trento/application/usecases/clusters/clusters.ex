@@ -41,7 +41,7 @@ defmodule Trento.Clusters do
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    adapter().request_checks_execution(cluster_id)
+    checks_adapter().request_checks_execution(cluster_id)
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
@@ -124,7 +124,7 @@ defmodule Trento.Clusters do
     |> Repo.insert_or_update()
   end
 
-  defp adapter do
-    Application.fetch_env!(:trento, __MODULE__)[:adapter]
+  defp checks_adapter do
+    Application.fetch_env!(:trento, __MODULE__)[:checks_adapter]
   end
 end

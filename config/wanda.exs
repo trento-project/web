@@ -9,7 +9,7 @@ config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Wa
 
 config :trento, Trento.Messaging.Publisher, adapter: Trento.Messaging.Adapters.AMQP
 
-config :trento, Trento.Clusters, adapter: Trento.Clusters.Wanda
+config :trento, Trento.Clusters, checks_adapter: Trento.Clusters.Wanda
 
 config :trento, Trento.Messaging.Adapters.AMQP,
   publisher: [
