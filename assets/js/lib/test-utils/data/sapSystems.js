@@ -86,7 +86,7 @@ export default [
     health: 'passing',
     id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
     sid: 'NWD',
-    tags: [],
+    tags: [{ value: 'tag1' }],
     tenant: 'HDD',
   },
   {
@@ -176,7 +176,7 @@ export default [
     health: 'passing',
     id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     sid: 'NWP',
-    tags: [],
+    tags: [{ value: 'tag1' }],
     tenant: 'HDP',
   },
   {
@@ -266,7 +266,7 @@ export default [
     health: 'passing',
     id: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
     sid: 'NWQ',
-    tags: [],
+    tags: [{ value: 'tag1' }],
     tenant: 'HDQ',
   },
 ];
