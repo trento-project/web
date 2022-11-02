@@ -25,6 +25,9 @@ defmodule Trento.Router do
     UpdateSlesSubscriptions
   }
 
+  alias Commanded.Helpers.CommandAuditMiddleware
+
+  middleware CommandAuditMiddleware
   middleware Enrich
 
   identify Host, by: :host_id
