@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import DatabaseItemOverview from './DatabaseItemOverview';
@@ -27,6 +27,8 @@ const DatabasesOverview = () => {
     (state) => state.databasesList
   );
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const config = {
     pagination: true,
     usePadding: false,
@@ -35,6 +37,7 @@ const DatabasesOverview = () => {
         title: 'Health',
         key: 'health',
         filter: true,
+        filterFromParams: true,
         render: (content) => (
           <div className="ml-4">
             <HealthIcon health={content} />
@@ -44,6 +47,7 @@ const DatabasesOverview = () => {
       {
         title: 'SID',
         key: 'sid',
+        filterFromParams: true,
         filter: true,
         render: (content, item) => {
           return (
@@ -96,6 +100,7 @@ const DatabasesOverview = () => {
         title: 'Tags',
         key: 'tags',
         className: 'w-80',
+        filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
@@ -141,7 +146,12 @@ const DatabasesOverview = () => {
   ) : (
     <Fragment>
       <ComponentHealthSummary data={data} />
-      <Table config={config} data={data} />
+      <Table
+        config={config}
+        data={data}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
     </Fragment>
   );
 };
