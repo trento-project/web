@@ -57,6 +57,7 @@ const HostsList = () => {
         title: 'Health',
         key: 'heartbeat',
         filter: true,
+        filterFromParams: true,
         render: (_content, item) => {
           return <HealthIcon health={item.heartbeat} centered={true} />;
         },
@@ -66,6 +67,7 @@ const HostsList = () => {
         key: 'hostname',
         className: 'w-40',
         filter: true,
+        filterFromParams: true,
         render: (content, { id }) => <HostLink hostId={id}>{content}</HostLink>,
       },
       {
