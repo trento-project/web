@@ -41,6 +41,9 @@ defmodule Trento.Clusters do
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(cluster_id) do
+    # FIXME: The checks_adapter is a temporary adapter used while old runner and wanda coexist
+    # Once the legacy option is removed, the adapter can be removed and wanda adapter code
+    # be used directly here
     checks_adapter().request_checks_execution(cluster_id)
   end
 
