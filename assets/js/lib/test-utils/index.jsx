@@ -10,7 +10,7 @@ import { setSapSystems } from '@state/sapSystems';
 
 import hosts from './data/hosts';
 import clusters from './data/clusters';
-import sapSystems from './data/hosts';
+import sapSystems from './data/sapSystems';
 
 export const withState = (component) => {
   store.dispatch(setHosts(hosts));
