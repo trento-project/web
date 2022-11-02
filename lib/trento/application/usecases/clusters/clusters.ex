@@ -29,21 +29,21 @@ defmodule Trento.Clusters do
              host_id: host_id,
              checks_results: build_check_results(checks_results)
            }) do
-      Trento.Commanded.dispatch(command)
+      commanded().dispatch(command)
     end
   end
 
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(cluster_id, checks) do
     with {:ok, command} <- SelectChecks.new(%{cluster_id: cluster_id, checks: checks}) do
-      Trento.Commanded.dispatch(command)
+      commanded().dispatch(command)
     end
   end
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(cluster_id) do
     with {:ok, command} <- RequestChecksExecution.new(%{cluster_id: cluster_id}) do
-      Trento.Commanded.dispatch(command)
+      commanded().dispatch(command)
     end
   end
 
@@ -95,6 +95,9 @@ defmodule Trento.Clusters do
       end
     end)
   end
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
   @spec build_check_results([String.t()]) :: {:ok, [CheckResult.t()]} | {:error, any}
   defp build_check_results(checks_results) do

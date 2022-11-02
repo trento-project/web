@@ -4,8 +4,6 @@ defmodule Trento.Integration.ChecksTest do
 
   import Mox
 
-  alias Commanded.Helpers.CommandAuditMiddleware
-
   alias Trento.Integration.Checks
 
   alias Trento.Integration.Checks.{
@@ -29,11 +27,7 @@ defmodule Trento.Integration.ChecksTest do
 
   @runner_fixtures_path File.cwd!() <> "/test/fixtures/runner"
 
-  setup do
-    start_supervised!(CommandAuditMiddleware)
-
-    :ok
-  end
+  setup [:set_mox_from_context, :verify_on_exit!]
 
   def load_runner_fixture(name) do
     @runner_fixtures_path
@@ -364,6 +358,20 @@ defmodule Trento.Integration.ChecksTest do
     execution_id = Faker.UUID.v4()
     cluster_id = Faker.UUID.v4()
 
+    expect(
+      Trento.Commanded.Mock,
+      :dispatch,
+      fn command, opts ->
+        assert %StartChecksExecution{
+                 cluster_id: ^cluster_id
+               } = command
+
+        assert [correlation_id: ^execution_id] = opts
+
+        :ok
+      end
+    )
+
     Checks.handle_callback(%{
       "event" => "execution_started",
       "execution_id" => execution_id,
@@ -371,15 +379,6 @@ defmodule Trento.Integration.ChecksTest do
         "cluster_id" => cluster_id
       }
     })
-
-    assert [
-             %{
-               command: %StartChecksExecution{
-                 cluster_id: ^cluster_id
-               },
-               correlation_id: ^execution_id
-             }
-           ] = CommandAuditMiddleware.dispatched_commands(& &1)
   end
 
   test "should handle execution completed event properly" do
@@ -387,6 +386,52 @@ defmodule Trento.Integration.ChecksTest do
     cluster_id = Faker.UUID.v4()
     host_id_1 = Faker.UUID.v4()
     host_id_2 = Faker.UUID.v4()
+
+    expect(
+      Trento.Commanded.Mock,
+      :dispatch,
+      fn command, opts ->
+        assert %CompleteChecksExecution{
+                 cluster_id: ^cluster_id,
+                 hosts_executions: [
+                   %HostExecution{
+                     checks_results: [
+                       %CheckResult{
+                         check_id: "check1",
+                         result: :passing
+                       },
+                       %CheckResult{
+                         check_id: "check2",
+                         result: :warning
+                       }
+                     ],
+                     host_id: ^host_id_1,
+                     msg: nil,
+                     reachable: true
+                   },
+                   %HostExecution{
+                     checks_results: [
+                       %CheckResult{
+                         check_id: "check1",
+                         result: :critical
+                       },
+                       %CheckResult{
+                         check_id: "check2",
+                         result: :warning
+                       }
+                     ],
+                     host_id: ^host_id_2,
+                     msg: nil,
+                     reachable: true
+                   }
+                 ]
+               } = command
+
+        assert [correlation_id: ^execution_id] = opts
+
+        :ok
+      end
+    )
 
     Checks.handle_callback(%{
       "event" => "execution_completed",
@@ -427,46 +472,5 @@ defmodule Trento.Integration.ChecksTest do
         ]
       }
     })
-
-    assert [
-             %{
-               command: %CompleteChecksExecution{
-                 cluster_id: ^cluster_id,
-                 hosts_executions: [
-                   %HostExecution{
-                     checks_results: [
-                       %CheckResult{
-                         check_id: "check1",
-                         result: :passing
-                       },
-                       %CheckResult{
-                         check_id: "check2",
-                         result: :warning
-                       }
-                     ],
-                     host_id: ^host_id_1,
-                     msg: nil,
-                     reachable: true
-                   },
-                   %HostExecution{
-                     checks_results: [
-                       %CheckResult{
-                         check_id: "check1",
-                         result: :critical
-                       },
-                       %CheckResult{
-                         check_id: "check2",
-                         result: :warning
-                       }
-                     ],
-                     host_id: ^host_id_2,
-                     msg: nil,
-                     reachable: true
-                   }
-                 ]
-               },
-               correlation_id: ^execution_id
-             }
-           ] = CommandAuditMiddleware.dispatched_commands(& &1)
   end
 end

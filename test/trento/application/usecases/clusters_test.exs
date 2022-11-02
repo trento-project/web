@@ -3,9 +3,9 @@ defmodule Trento.ClustersTest do
   use ExUnit.Case, async: true
   use Trento.DataCase
 
-  import Trento.Factory
+  import Mox
 
-  alias Commanded.Helpers.CommandAuditMiddleware
+  import Trento.Factory
 
   alias Trento.Clusters
 
@@ -14,26 +14,27 @@ defmodule Trento.ClustersTest do
 
   alias Trento.Domain.Commands.RequestChecksExecution
 
-  setup do
-    start_supervised!(CommandAuditMiddleware)
-
-    :ok
-  end
+  setup [:set_mox_from_context, :verify_on_exit!]
 
   describe "checks execution" do
     test "should dispatch checks execution requests for each cluster" do
       clusters = Enum.map(0..4, fn _ -> insert(:cluster) end)
 
+      Enum.each(clusters, fn %{id: cluster_id} ->
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          fn command ->
+            assert %RequestChecksExecution{
+                     cluster_id: ^cluster_id
+                   } = command
+
+            :ok
+          end
+        )
+      end)
+
       :ok = Clusters.request_clusters_checks_execution()
-
-      expected_commands =
-        Enum.map(clusters, fn cluster ->
-          %RequestChecksExecution{
-            cluster_id: cluster.id
-          }
-        end)
-
-      assert ^expected_commands = CommandAuditMiddleware.dispatched_commands()
     end
   end
 

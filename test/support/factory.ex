@@ -41,6 +41,7 @@ defmodule Trento.Factory do
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
+    Heartbeat,
     HostChecksExecutionsReadModel,
     HostConnectionSettings,
     HostReadModel,
@@ -99,6 +100,13 @@ defmodule Trento.Factory do
       heartbeat: :unknown,
       provider: Enum.random(Provider.values()),
       provider_data: nil
+    }
+  end
+
+  def heartbeat_factory do
+    %Heartbeat{
+      agent_id: Faker.UUID.v4(),
+      timestamp: DateTime.utc_now()
     }
   end
 

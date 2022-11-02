@@ -127,7 +127,7 @@ defmodule Trento.Integration.Discovery do
   @spec dispatch(command | [command]) :: :ok | {:error, any}
   defp dispatch(commands) when is_list(commands) do
     Enum.reduce(commands, :ok, fn command, acc ->
-      case {Trento.Commanded.dispatch(command), acc} do
+      case {commanded().dispatch(command), acc} do
         {:ok, :ok} ->
           :ok
 
@@ -140,5 +140,8 @@ defmodule Trento.Integration.Discovery do
     end)
   end
 
-  defp dispatch(command), do: Trento.Commanded.dispatch(command)
+  defp dispatch(command), do: commanded().dispatch(command)
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

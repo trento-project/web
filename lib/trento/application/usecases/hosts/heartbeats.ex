@@ -56,7 +56,7 @@ defmodule Trento.Heartbeats do
   defp dispatch_command(agent_id, heartbeat) do
     case %{host_id: agent_id, heartbeat: heartbeat}
          |> UpdateHeartbeat.new!()
-         |> Trento.Commanded.dispatch() do
+         |> commanded().dispatch() do
       :ok ->
         {:ok, :done}
 
@@ -64,4 +64,7 @@ defmodule Trento.Heartbeats do
         error
     end
   end
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
