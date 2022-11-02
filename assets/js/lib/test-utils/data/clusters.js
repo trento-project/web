@@ -12,7 +12,7 @@ export default [
     resources_number: 9,
     selected_checks: [],
     sid: null,
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'unknown',
   },
   {
@@ -28,7 +28,7 @@ export default [
     resources_number: 9,
     selected_checks: [],
     sid: null,
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'unknown',
   },
   {
@@ -44,7 +44,7 @@ export default [
     resources_number: 9,
     selected_checks: [],
     sid: null,
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'unknown',
   },
   {
@@ -168,7 +168,7 @@ export default [
     resources_number: 7,
     selected_checks: [],
     sid: 'HDD',
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'hana_scale_up',
   },
   {
@@ -290,7 +290,7 @@ export default [
     resources_number: 7,
     selected_checks: [],
     sid: 'HDQ',
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'hana_scale_up',
   },
   {
@@ -423,7 +423,7 @@ export default [
     resources_number: 7,
     selected_checks: [],
     sid: 'HDP',
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'hana_scale_up',
   },
   {
@@ -439,7 +439,7 @@ export default [
     resources_number: 9,
     selected_checks: [],
     sid: null,
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'unknown',
   },
   {
@@ -455,7 +455,7 @@ export default [
     resources_number: 9,
     selected_checks: [],
     sid: null,
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'unknown',
   },
   {
@@ -471,7 +471,7 @@ export default [
     resources_number: 9,
     selected_checks: [],
     sid: null,
-    tags: [],
+    tags: [{ value: 'tag1' }],
     type: 'unknown',
   },
 ];

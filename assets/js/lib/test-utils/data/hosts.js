@@ -111,7 +111,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.31',
-    tags: [],
+    tags: ['tag1', 'tag2', 'tag3'],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -225,7 +225,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.32',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -339,7 +339,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.31',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -453,7 +453,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.32',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -567,7 +567,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.31',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -681,7 +681,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.32',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -795,7 +795,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.11',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -909,7 +909,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.12',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1023,7 +1023,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.11',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1137,7 +1137,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.12',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1251,7 +1251,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.11',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1365,7 +1365,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.12',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1479,7 +1479,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.4',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1593,7 +1593,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.4',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1707,7 +1707,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.4',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1821,7 +1821,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.21',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -1935,7 +1935,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.22',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2049,7 +2049,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.23',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2163,7 +2163,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.24',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2277,7 +2277,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.21',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2391,7 +2391,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.22',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2505,7 +2505,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.23',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2619,7 +2619,7 @@ export default [
       },
     ],
     ssh_address: '10.80.1.24',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2733,7 +2733,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.21',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2847,7 +2847,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.22',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -2952,7 +2952,7 @@ export default [
       },
     ],
     ssh_address: '10.90.1.23',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
@@ -3057,6 +3057,6 @@ export default [
       },
     ],
     ssh_address: '10.90.1.24',
-    tags: [],
+    tags: [{ value: 'tag1' }],
   },
 ];

@@ -7,6 +7,7 @@ import ClusterLink from '@components/ClusterLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
 import { ComponentHealthSummary } from '@components/HealthSummary';
 import { post, del } from '@lib/network';
+import { useSearchParams } from 'react-router-dom';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -32,6 +33,7 @@ const removeTag = (tag, clusterId) => {
 const ClustersList = () => {
   const clusters = useSelector((state) => state.clustersList.clusters);
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const config = {
     pagination: true,
@@ -41,6 +43,7 @@ const ClustersList = () => {
         title: 'Health',
         key: 'health',
         filter: true,
+        filterFromParams: true,
         render: (health, { checks_execution: checksExecution }) => {
           return (
             <div className="ml-4">
@@ -53,6 +56,7 @@ const ClustersList = () => {
         title: 'Name',
         key: 'name',
         filter: true,
+        filterFromParams: true,
         render: (content, item) => (
           <span className="tn-clustername">
             <ClusterLink cluster={item} />
@@ -62,6 +66,7 @@ const ClustersList = () => {
       {
         title: 'SID',
         key: 'sid',
+        filterFromParams: true,
         filter: true,
       },
       {
@@ -76,6 +81,7 @@ const ClustersList = () => {
         title: 'Type',
         key: 'type',
         filter: true,
+        filterFromParams: true,
         render: (content, item) => (
           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate">
             {getClusterTypeLabel(item.type)}
@@ -86,6 +92,7 @@ const ClustersList = () => {
         title: 'Tags',
         key: 'tags',
         className: 'w-80',
+        filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
@@ -128,7 +135,12 @@ const ClustersList = () => {
   return (
     <Fragment>
       <ComponentHealthSummary data={data} />
-      <Table config={config} data={data} />
+      <Table
+        config={config}
+        data={data}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
+      />
     </Fragment>
   );
 };

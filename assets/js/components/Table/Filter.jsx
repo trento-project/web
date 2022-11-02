@@ -36,6 +36,7 @@ const Filter = ({ options, title, value, onChange }) => {
         )}
         <button
           type="button"
+          data-testid={`filter-${title}`}
           onClick={() => setOpen(!open)}
           className="relative w-full bg-white rounded-md shadow pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm"
         >
@@ -86,6 +87,7 @@ const Filter = ({ options, title, value, onChange }) => {
               <ul
                 tabIndex="-1"
                 role="listbox"
+                data-testid={`filter-${title}-options`}
                 aria-labelledby="listbox-label"
                 className="max-h-56 py-2 text-base overflow-auto focus:outline-none sm:text-sm"
               >
