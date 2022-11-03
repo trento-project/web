@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Commands.CompleteChecksExecutionWanda do
   @moduledoc """
-  Complete the checks execution with the incomfing result
+  Complete the checks execution with the incoming result
   """
 
   @required_fields :all

@@ -582,7 +582,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should not change the the cluster aggregated health if discovery health is worst" do
+    test "should not change the the cluster aggregated health if discovery health is worse" do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
 
@@ -744,7 +744,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should not change the the cluster aggregated health if checks health is worst" do
+    test "should not change the the cluster aggregated health if checks health is worse" do
       cluster_registered_event =
         build(:cluster_registered_event, health: :passing, provider: :azure)
 
