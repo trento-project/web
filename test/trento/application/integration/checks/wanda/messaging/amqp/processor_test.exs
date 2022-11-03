@@ -4,7 +4,6 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
   use Trento.DataCase
 
   import Mox
-  import Mock
 
   alias Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor
 
@@ -28,14 +27,13 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
         {:ok, command, opts}
       end)
 
-      with_mock Trento.Commanded, dispatch: fn _, _ -> :ok end do
-        assert :ok = Processor.process(message)
+      expect(Trento.Commanded.Mock, :dispatch, fn expected_command, expected_opts ->
+        assert ^expected_command = command
+        assert ^expected_opts = opts
+        :ok
+      end)
 
-        assert_called Trento.Commanded.dispatch(
-                        command,
-                        opts
-                      )
-      end
+      assert :ok = Processor.process(message)
     end
 
     test "should return error if the event handling fails" do

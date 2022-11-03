@@ -14,7 +14,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
 
     with {:ok, event} <- Contracts.from_event(payload),
          {:ok, command, opts} <- adapter().handle(event) do
-      Trento.Commanded.dispatch(command, opts)
+      commanded().dispatch(command, opts)
     else
       {:error, reason} ->
         {:error, reason}
@@ -23,4 +23,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
 
   defp adapter,
     do: Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda)[:policy]
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
