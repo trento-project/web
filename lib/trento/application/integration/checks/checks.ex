@@ -59,7 +59,7 @@ defmodule Trento.Integration.Checks do
       }) do
     case StartChecksExecution.new(%{cluster_id: cluster_id}) do
       {:ok, command} ->
-        Trento.Commanded.dispatch(command, correlation_id: execution_id)
+        commanded().dispatch(command, correlation_id: execution_id)
 
       error ->
         error
@@ -74,11 +74,14 @@ defmodule Trento.Integration.Checks do
     with {:ok, execution_completed_event} <- ExecutionCompletedEventDto.new(payload),
          {:ok, command} <-
            build_complete_checks_execution_command(execution_completed_event) do
-      Trento.Commanded.dispatch(command, correlation_id: execution_id)
+      commanded().dispatch(command, correlation_id: execution_id)
     end
   end
 
   def handle_callback(_), do: {:error, :invalid_payload}
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
   defp adapter,
     do: Application.fetch_env!(:trento, __MODULE__)[:adapter]

@@ -26,6 +26,9 @@ defmodule Trento.RollupEventHandler do
   defp after_max_retries_reached(%ClusterRolledUp{cluster_id: cluster_id}, _, _) do
     %{cluster_id: cluster_id}
     |> AbortClusterRollup.new!()
-    |> Trento.Commanded.dispatch()
+    |> commanded().dispatch()
   end
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

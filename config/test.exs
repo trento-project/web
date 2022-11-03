@@ -70,6 +70,13 @@ config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
     ]
   ]
 
+config :trento, Trento.Scheduler,
+  jobs: [
+    heartbeat_check: [
+      state: :inactive
+    ]
+  ]
+
 config :trento,
   extra_children: [
     Trento.Messaging.Adapters.AMQP.Publisher,

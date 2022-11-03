@@ -53,6 +53,8 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :trento, Trento.Commanded, adapter: Trento.Commanded
+
 config :trento, Trento.Commanded,
   event_store: [
     adapter: Commanded.EventStore.Adapters.EventStore,

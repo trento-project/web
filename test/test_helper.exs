@@ -1,3 +1,7 @@
+Mox.defmock(Trento.Commanded.Mock, for: Commanded.Application)
+
+Application.put_env(:trento, Trento.Commanded, adapter: Trento.Commanded.Mock)
+
 Mox.defmock(Trento.Integration.Telemetry.Mock, for: Trento.Integration.Telemetry.Gen)
 
 Application.put_env(:trento, Trento.Integration.Telemetry,
