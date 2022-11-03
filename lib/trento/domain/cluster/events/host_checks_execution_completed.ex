@@ -8,8 +8,8 @@ defmodule Trento.Domain.Events.HostChecksExecutionCompleted do
   alias Trento.Domain.CheckResult
 
   defevent do
-    field :cluster_id, :string
-    field :host_id, :string
+    field :cluster_id, Ecto.UUID
+    field :host_id, Ecto.UUID
     field :reachable, :boolean
     field :msg, :string
 

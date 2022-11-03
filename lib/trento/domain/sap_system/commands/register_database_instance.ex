@@ -23,7 +23,7 @@ defmodule Trento.Domain.Commands.RegisterDatabaseInstance do
     field :sap_system_id, Ecto.UUID
     field :sid, :string
     field :tenant, :string
-    field :host_id, :string
+    field :host_id, Ecto.UUID
     field :instance_number, :string
     field :instance_hostname, :string
     field :features, :string

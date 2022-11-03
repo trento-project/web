@@ -37,7 +37,7 @@ defmodule Trento.Domain.SapSystem do
   use Trento.Type
 
   deftype do
-    field :sap_system_id, :string
+    field :sap_system_id, Ecto.UUID
     field :sid, :string
     field :health, Ecto.Enum, values: Health.values()
 
