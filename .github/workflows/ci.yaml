@@ -532,7 +532,7 @@ jobs:
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-e2e]
     container:
-      image: ghcr.io/trento-project/continuous-delivery:master
+      image: ghcr.io/trento-project/continuous-delivery:main
       env:
         GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DEST_FOLDER: "/tmp/osc_project"
@@ -542,6 +542,7 @@ jobs:
         OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
         FOLDER: packaging/suse
         REPOSITORY: ${{ github.repository }}
+      options: -u 0:0
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -572,9 +573,9 @@ jobs:
         # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
         # that is used to run osc commands
         run: |
-          /scripts/init_osc_creds.sh
           mkdir -p $HOME/.config/osc
-          cp /root/.config/osc/oscrc $HOME/.config/osc
+          cp /home/osc/.config/osc/oscrc $HOME/.config/osc
+          /scripts/init_osc_creds.sh
 
       - name: Prepare .changes file
         # The .changes file is updated only in release creation. This current task should be improved
