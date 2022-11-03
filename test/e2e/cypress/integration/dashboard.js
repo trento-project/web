@@ -17,15 +17,15 @@ describe('Dashboard page', () => {
 
   describe('The current state should be available in a summary', () => {
     it('should display 2 Passing clusters and 1 critical', () => {
-      cy.get('.bg-green-200 > .rounded > .flex > .font-semibold').should(
-        'contain',
-        '2'
-      );
-      cy.get('.bg-yellow-200 > .rounded > .flex > .font-semibold').should(
+      cy.get('.tn-health-passing > .rounded > .flex > .font-semibold', {
+        defaultCommandTimeout: 40000,
+      }).should('contain', '2');
+
+      cy.get('.tn-health-warning > .rounded > .flex > .font-semibold').should(
         'contain',
         '0'
       );
-      cy.get('.bg-red-200 > .rounded > .flex > .font-semibold').should(
+      cy.get('.tn-health-critical > .rounded > .flex > .font-semibold').should(
         'contain',
         '1'
       );
