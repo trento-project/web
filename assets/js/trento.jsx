@@ -24,6 +24,7 @@ import DatabasesOverview from '@components/DatabasesOverview';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import DatabaseDetails from './components/DatabaseDetails';
 import ChecksCatalog from '@components/ChecksCatalog';
+import { ChecksCatalogNew } from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
 import Settings from '@components/Settings';
@@ -49,6 +50,7 @@ const App = () => {
               <Route path="sap_systems" element={<SapSystemsOverview />} />
               <Route path="databases" element={<DatabasesOverview />} />
               <Route path="catalog" element={<ChecksCatalog />} />
+              <Route path="catalog_new" element={<ChecksCatalogNew />} />
               <Route path="settings" element={<Settings />} />
               <Route path="about" element={<AboutPage />} />
               <Route
