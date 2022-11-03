@@ -5,9 +5,10 @@ import Tags from './Tags';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
-import { ComponentHealthSummary } from '@components/HealthSummary';
 import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
+import HealthSummary from './HealthSummary/HealthSummary';
+import { getCounters } from './HealthSummary/summarySelection';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -132,9 +133,11 @@ const ClustersList = () => {
     };
   });
 
+  const counters = getCounters(data || []);
+
   return (
     <Fragment>
-      <ComponentHealthSummary data={data} />
+      <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
         data={data}

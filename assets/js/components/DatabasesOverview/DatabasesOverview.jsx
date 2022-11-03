@@ -8,7 +8,8 @@ import Tags from '@components/Tags';
 import { addTagToDatabase, removeTagFromDatabase } from '@state/databases';
 
 import { post, del } from '@lib/network';
-import { ComponentHealthSummary } from '@components/HealthSummary';
+import { getCounters } from '../HealthSummary/summarySelection';
+import HealthSummary from '../HealthSummary/HealthSummary';
 
 const byDatabase = (id) => (instance) => instance.sap_system_id === id;
 
@@ -141,11 +142,13 @@ const DatabasesOverview = () => {
     };
   });
 
+  const counters = getCounters(data || []);
+
   return loading ? (
     'Loading HANA Databases...'
   ) : (
     <Fragment>
-      <ComponentHealthSummary data={data} />
+      <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
         data={data}

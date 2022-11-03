@@ -10,7 +10,8 @@ import SapSystemLink from '@components/SapSystemLink';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { post, del } from '@lib/network';
-import { ComponentHealthSummary } from '@components/HealthSummary';
+import HealthSummary from './HealthSummary/HealthSummary';
+import { getCounters } from './HealthSummary/summarySelection';
 
 const getInstancesByHost = (
   applicationInstances,
@@ -173,9 +174,10 @@ const HostsList = () => {
     };
   });
 
+  const counters = getCounters(data || []);
   return (
     <Fragment>
-      <ComponentHealthSummary data={data} />
+      <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
         data={data}

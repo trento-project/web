@@ -9,7 +9,8 @@ import Tags from '@components/Tags';
 import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
 
 import { post, del } from '@lib/network';
-import { ComponentHealthSummary } from '@components/HealthSummary';
+import HealthSummary from '../HealthSummary/HealthSummary';
+import { getCounters } from '../HealthSummary/summarySelection';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 
@@ -131,11 +132,13 @@ const SapSystemsOverview = () => {
     };
   });
 
+  const counters = getCounters(data || []);
+
   return loading ? (
     'Loading SAP Systems...'
   ) : (
     <Fragment>
-      <ComponentHealthSummary data={data} />
+      <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
         data={data}
