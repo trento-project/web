@@ -15,7 +15,6 @@ defmodule Trento.Clusters do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
-    RequestChecksExecution,
     SelectChecks
   }
 
@@ -42,9 +41,10 @@ defmodule Trento.Clusters do
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    with {:ok, command} <- RequestChecksExecution.new(%{cluster_id: cluster_id}) do
-      commanded().dispatch(command)
-    end
+    # FIXME: The checks_adapter is a temporary adapter used while old runner and wanda coexist
+    # Once the legacy option is removed, the adapter can be removed and wanda adapter code
+    # be used directly here
+    checks_adapter().request_checks_execution(cluster_id)
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
@@ -125,5 +125,9 @@ defmodule Trento.Clusters do
     end
     |> ClusterEnrichmentData.changeset(%{cib_last_written: cib_last_written})
     |> Repo.insert_or_update()
+  end
+
+  defp checks_adapter do
+    Application.fetch_env!(:trento, __MODULE__)[:checks_adapter]
   end
 end

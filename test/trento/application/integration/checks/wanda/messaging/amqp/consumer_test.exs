@@ -27,6 +27,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ConsumerTest do
   end
 
   describe "handle_error/1" do
+    @tag capture_log: true
     test "should reject unknown events and move them to the dead letter queue" do
       pid = self()
 
