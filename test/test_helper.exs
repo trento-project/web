@@ -22,6 +22,8 @@ Application.put_env(:trento, :messaging, adapter: Trento.Messaging.Adapters.Mock
 
 Mox.defmock(GenRMQ.Processor.Mock, for: GenRMQ.Processor)
 
+Mox.defmock(Trento.Support.DateService.Mock, for: Trento.Support.DateService)
+
 Application.ensure_all_started(:ex_machina, :faker)
 
 ExUnit.start()

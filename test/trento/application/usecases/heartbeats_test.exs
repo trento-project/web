@@ -3,7 +3,6 @@ defmodule Trento.HeartbeatsTest do
   use Trento.DataCase
 
   import Mox
-  import Mock
 
   import Trento.Factory
 
@@ -24,32 +23,35 @@ defmodule Trento.HeartbeatsTest do
     now = DateTime.utc_now()
     agent_id = Faker.UUID.v4()
 
-    with_mock DateTime, [:passthrough], utc_now: fn -> now end do
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn command ->
-          assert %UpdateHeartbeat{
-                   host_id: ^agent_id,
-                   heartbeat: :passing
-                 } = command
+    expect(
+      Trento.Support.DateService.Mock,
+      :utc_now,
+      fn -> now end
+    )
 
-          :ok
-        end
-      )
+    expect(
+      Trento.Commanded.Mock,
+      :dispatch,
+      fn command ->
+        assert %UpdateHeartbeat{
+                 host_id: ^agent_id,
+                 heartbeat: :passing
+               } = command
 
-      Heartbeats.heartbeat(agent_id)
+        :ok
+      end
+    )
 
-      [heartbeat] = Repo.all(Heartbeat)
+    Heartbeats.heartbeat(agent_id, Trento.Support.DateService.Mock)
 
-      assert heartbeat.agent_id == agent_id
-      assert heartbeat.timestamp == now
-    end
+    [heartbeat] = Repo.all(Heartbeat)
+
+    assert heartbeat.agent_id == agent_id
+    assert heartbeat.timestamp == now
   end
 
   test "update existing heartbeat" do
-    agent_id = Faker.UUID.v4()
-    insert(:host, id: agent_id, heartbeat: :critical)
+    %{id: agent_id} = insert(:host, heartbeat: :critical)
     %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
 
     updated_time =
@@ -59,32 +61,34 @@ defmodule Trento.HeartbeatsTest do
         :millisecond
       )
 
-    with_mock DateTime, [:passthrough], utc_now: fn -> updated_time end do
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn command ->
-          assert %UpdateHeartbeat{
-                   host_id: ^agent_id,
-                   heartbeat: :passing
-                 } = command
+    expect(
+      Trento.Support.DateService.Mock,
+      :utc_now,
+      fn -> updated_time end
+    )
 
-          :ok
-        end
-      )
+    expect(
+      Trento.Commanded.Mock,
+      :dispatch,
+      fn command ->
+        assert %UpdateHeartbeat{
+                 host_id: ^agent_id,
+                 heartbeat: :passing
+               } = command
 
-      Heartbeats.heartbeat(agent_id)
+        :ok
+      end
+    )
 
-      [heartbeat] = Repo.all(Heartbeat)
+    Heartbeats.heartbeat(agent_id, Trento.Support.DateService.Mock)
 
-      assert heartbeat.timestamp == updated_time
-    end
+    [heartbeat] = Repo.all(Heartbeat)
+
+    assert heartbeat.timestamp == updated_time
   end
 
   test "dispatch commands on heartbeat expiration" do
-    agent_id = Faker.UUID.v4()
-
-    insert(:host, id: agent_id, heartbeat: :passing)
+    %{id: agent_id} = insert(:host, heartbeat: :passing)
     %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
 
     expired_time =
@@ -94,21 +98,25 @@ defmodule Trento.HeartbeatsTest do
         :millisecond
       )
 
-    with_mock DateTime, [:passthrough], utc_now: fn -> expired_time end do
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn command ->
-          assert %UpdateHeartbeat{
-                   host_id: ^agent_id,
-                   heartbeat: :critical
-                 } = command
+    expect(
+      Trento.Support.DateService.Mock,
+      :utc_now,
+      fn -> expired_time end
+    )
 
-          :ok
-        end
-      )
+    expect(
+      Trento.Commanded.Mock,
+      :dispatch,
+      fn command ->
+        assert %UpdateHeartbeat{
+                 host_id: ^agent_id,
+                 heartbeat: :critical
+               } = command
 
-      Heartbeats.dispatch_heartbeat_failed_commands()
-    end
+        :ok
+      end
+    )
+
+    Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
   end
 end
