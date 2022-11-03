@@ -8,7 +8,7 @@ defmodule Trento.Domain.Commands.SelectChecks do
   use Trento.Command
 
   defcommand do
-    field :cluster_id, :string
+    field :cluster_id, Ecto.UUID
     field :checks, {:array, :string}
   end
 end

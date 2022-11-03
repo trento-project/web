@@ -6,7 +6,7 @@ defmodule Trento.Domain.Events.HostAddedToCluster do
   use Trento.Event
 
   defevent do
-    field :cluster_id, :string
-    field :host_id, :string
+    field :cluster_id, Ecto.UUID
+    field :host_id, Ecto.UUID
   end
 end

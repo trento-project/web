@@ -29,7 +29,7 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
     field :sid, :string
     field :db_host, :string
     field :tenant, :string
-    field :host_id, :string
+    field :host_id, Ecto.UUID
     field :instance_number, :string
     field :instance_hostname, :string
     field :features, :string

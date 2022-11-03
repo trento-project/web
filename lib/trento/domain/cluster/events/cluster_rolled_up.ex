@@ -15,7 +15,7 @@ defmodule Trento.Domain.Events.ClusterRolledUp do
   }
 
   defevent do
-    field :cluster_id, :string
+    field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string

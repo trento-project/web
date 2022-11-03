@@ -6,7 +6,7 @@ defmodule Trento.Domain.Events.ChecksSelected do
   use Trento.Event
 
   defevent do
-    field :cluster_id, :string
+    field :cluster_id, Ecto.UUID
     field :checks, {:array, :string}
   end
 end

@@ -8,7 +8,7 @@ defmodule Trento.Domain.Commands.UpdateHeartbeat do
   use Trento.Command
 
   defcommand do
-    field :host_id, :string
+    field :host_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:passing, :critical]
   end
 end
