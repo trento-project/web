@@ -5,8 +5,18 @@ const alias = require('esbuild-plugin-path-alias');
 
 const resolvePath = (p) => path.resolve(__dirname, p);
 
+const WANDA_URL =
+  process.env.NODE_ENV === 'production'
+    ? ''
+    : JSON.stringify('http://localhost:4001');
+
+const define = {
+  'process.env.WANDA_URL': WANDA_URL,
+};
+
 require('esbuild')
   .build({
+    define,
     entryPoints: ['js/app.js', 'js/trento.jsx'],
     outdir: resolvePath('../priv/static/assets'),
     bundle: true,
