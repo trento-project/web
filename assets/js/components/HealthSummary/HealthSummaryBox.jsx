@@ -76,6 +76,9 @@ const HealthSummaryBox = ({
   return (
     <div
       style={style}
+      data-testid={`health-box-${health}-${
+        selected ? 'selected' : 'not-selected'
+      }`}
       className={styleByHealth[health](selected)}
       role={onClick === defaultOnClick ? null : 'button'}
       onClick={() => onClick(health)}

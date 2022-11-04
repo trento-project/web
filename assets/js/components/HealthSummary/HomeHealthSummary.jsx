@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '@components/Table';
 import HealthIcon from '../Health/HealthIcon';
 import { Link } from 'react-router-dom';
@@ -124,7 +124,7 @@ export const HomeHealthSummary = () => {
   return loading ? (
     <div>Loading...</div>
   ) : (
-    <Fragment>
+    <div data-testid="home-health-summary">
       <h1 className="text-2xl font-semibold">At a glance</h1>
       <hr className="my-3" />
       <h5 className="text-xl">Global Health</h5>
@@ -135,6 +135,6 @@ export const HomeHealthSummary = () => {
         activeFilters={activeFilters}
       />
       <Table config={healthSummaryTableConfig} data={summaryData} />
-    </Fragment>
+    </div>
   );
 };
