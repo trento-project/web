@@ -11,38 +11,28 @@ import {
   stopHealthSummaryLoading,
 } from '@state/healthSummary';
 import { act } from 'react-dom/test-utils';
+import { healthSummaryFactory } from '../../lib/test-utils/factories';
 
-const homeHealthSummaryPayload = [
-  {
-    clusterId: '7965f822-0254-5858-abca-f6e8b4c27714',
+const homeHealthSummaryActionPayload = [
+  healthSummaryFactory.build({
     clustersHealth: 'passing',
     databaseHealth: 'passing',
-    databaseId: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
     hostsHealth: 'critical',
-    id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
     sapsystemHealth: 'passing',
     sid: 'NWD',
-  },
-  {
-    clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
+  }),
+  healthSummaryFactory.build({
     clustersHealth: 'passing',
     databaseHealth: 'passing',
-    databaseId: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     hostsHealth: 'critical',
-    id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     sapsystemHealth: 'passing',
-    sid: 'NWP',
-  },
-  {
-    clusterId: 'fa0d74a3-9240-5d9e-99fa-61c4137acf81',
+  }),
+  healthSummaryFactory.build({
     clustersHealth: 'passing',
     databaseHealth: 'passing',
-    databaseId: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
     hostsHealth: 'critical',
-    id: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
     sapsystemHealth: 'passing',
-    sid: 'NWQ',
-  },
+  }),
 ];
 
 describe('HomeHealthSummary component', () => {
@@ -51,7 +41,9 @@ describe('HomeHealthSummary component', () => {
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
 
     act(() => {
-      store.dispatch(setHealthSummary(keysToCamel(homeHealthSummaryPayload)));
+      store.dispatch(
+        setHealthSummary(keysToCamel(homeHealthSummaryActionPayload))
+      );
       store.dispatch(stopHealthSummaryLoading());
     });
 
@@ -70,7 +62,9 @@ describe('HomeHealthSummary component', () => {
       const { container } = renderWithRouter(StatefulHomeHealthSummary);
 
       act(() => {
-        store.dispatch(setHealthSummary(keysToCamel(homeHealthSummaryPayload)));
+        store.dispatch(
+          setHealthSummary(keysToCamel(homeHealthSummaryActionPayload))
+        );
         store.dispatch(stopHealthSummaryLoading());
       });
 
