@@ -9,8 +9,8 @@ import Tags from '@components/Tags';
 import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
 
 import { post, del } from '@lib/network';
-import HealthSummary from '../HealthSummary/HealthSummary';
-import { getCounters } from '../HealthSummary/summarySelection';
+import HealthSummary from '@components/HealthSummary/HealthSummary';
+import { getCounters } from '@components/HealthSummary/summarySelection';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 

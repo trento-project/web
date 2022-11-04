@@ -5,11 +5,11 @@ import '@testing-library/jest-dom';
 import { keysToCamel } from '@lib/serialization';
 
 import { HomeHealthSummary } from './HomeHealthSummary';
-import { renderWithRouter, withState } from '../../lib/test-utils';
+import { renderWithRouter, withState } from '@lib/test-utils';
 import {
   setHealthSummary,
   stopHealthSummaryLoading,
-} from '../../state/healthSummary';
+} from '@state/healthSummary';
 import { act } from 'react-dom/test-utils';
 
 const homeHealthSummaryPayload = [

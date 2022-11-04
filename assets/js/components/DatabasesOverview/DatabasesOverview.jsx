@@ -8,8 +8,8 @@ import Tags from '@components/Tags';
 import { addTagToDatabase, removeTagFromDatabase } from '@state/databases';
 
 import { post, del } from '@lib/network';
-import { getCounters } from '../HealthSummary/summarySelection';
-import HealthSummary from '../HealthSummary/HealthSummary';
+import { getCounters } from '@components/HealthSummary/summarySelection';
+import HealthSummary from '@components/HealthSummary/HealthSummary';
 
 const byDatabase = (id) => (instance) => instance.sap_system_id === id;
 

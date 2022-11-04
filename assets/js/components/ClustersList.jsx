@@ -1,14 +1,14 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Table from './Table';
-import Tags from './Tags';
+import Table from '@components/Table';
+import Tags from '@components/Tags';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
 import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
-import HealthSummary from './HealthSummary/HealthSummary';
-import { getCounters } from './HealthSummary/summarySelection';
+import HealthSummary from '@components/HealthSummary/HealthSummary';
+import { getCounters } from '@components/HealthSummary/summarySelection';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
