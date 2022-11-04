@@ -1,9 +1,11 @@
-import React, { Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '@components/Table';
-import HealthIcon from '../Health/HealthIcon';
+import HealthIcon from '@components/Health/HealthIcon';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import HealthSummary from '@components/HealthSummary';
+import useQueryStringValues from '@hooks/useQueryStringValues';
+import { getCounters, isMostRelevantPrio } from './summarySelection';
 
 const healthSummaryTableConfig = {
   usePadding: false,
@@ -68,28 +70,71 @@ const healthSummaryTableConfig = {
   ],
 };
 
-const GlobalHealth = ({ data }) => {
-  return (
-    <Fragment>
-      <h1 className="text-2xl font-semibold">At a glance</h1>
-      <hr className="my-3" />
-      <h5 className="text-xl">Global Health</h5>
-      <HealthSummary data={data} />
-    </Fragment>
-  );
-};
-
 export const HomeHealthSummary = () => {
   const { loading, sapSystemsHealth } = useSelector(
     (state) => state.sapSystemsHealthSummary
   );
 
+  const {
+    extractedParams: { health: healthFilters = [] },
+    setQueryValues,
+  } = useQueryStringValues(['health']);
+
+  const [counters, setCounters] = useState({
+    warning: 0,
+    critical: 0,
+    passing: 0,
+  });
+
+  const [summaryData, setSummaryData] = useState([]);
+  const [activeFilters, setActiveFilters] = useState({});
+
+  useEffect(() => {
+    setCounters(getCounters(sapSystemsHealth));
+    setSummaryData(sapSystemsHealth);
+  }, [sapSystemsHealth]);
+
+  useEffect(() => {
+    setActiveFilters(
+      healthFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+    );
+    if (healthFilters.length === 0) {
+      setSummaryData(sapSystemsHealth);
+      return;
+    }
+    setSummaryData(
+      sapSystemsHealth.filter((e) => {
+        let result = false;
+
+        healthFilters.forEach((f) => {
+          result = result || isMostRelevantPrio(e, f);
+        });
+        return result;
+      })
+    );
+  }, [healthFilters]);
+
+  const onFiltersChange = (filterValue) => {
+    const newFilters = healthFilters.includes(filterValue)
+      ? healthFilters.filter((f) => f !== filterValue)
+      : [...healthFilters, filterValue];
+    setQueryValues({ health: newFilters });
+  };
+
   return loading ? (
     <div>Loading...</div>
   ) : (
-    <Fragment>
-      <GlobalHealth data={sapSystemsHealth} />
-      <Table config={healthSummaryTableConfig} data={sapSystemsHealth} />
-    </Fragment>
+    <div data-testid="home-health-summary">
+      <h1 className="text-2xl font-semibold">At a glance</h1>
+      <hr className="my-3" />
+      <h5 className="text-xl">Global Health</h5>
+
+      <HealthSummary
+        {...counters}
+        onFilterChange={onFiltersChange}
+        activeFilters={activeFilters}
+      />
+      <Table config={healthSummaryTableConfig} data={summaryData} />
+    </div>
   );
 };

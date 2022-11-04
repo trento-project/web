@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
-import Table from './Table';
+import Table from '@components/Table';
 import HealthIcon from '@components/Health/HealthIcon';
 import { useSearchParams } from 'react-router-dom';
-import Tags from './Tags';
+import Tags from '@components/Tags';
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
@@ -10,7 +10,8 @@ import SapSystemLink from '@components/SapSystemLink';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { post, del } from '@lib/network';
-import { ComponentHealthSummary } from '@components/HealthSummary';
+import HealthSummary from '@components/HealthSummary/HealthSummary';
+import { getCounters } from '@components/HealthSummary/summarySelection';
 
 const getInstancesByHost = (
   applicationInstances,
@@ -173,9 +174,10 @@ const HostsList = () => {
     };
   });
 
+  const counters = getCounters(data || []);
   return (
     <Fragment>
-      <ComponentHealthSummary data={data} />
+      <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
         data={data}

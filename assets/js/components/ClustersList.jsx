@@ -1,13 +1,14 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Table from './Table';
-import Tags from './Tags';
+import Table from '@components/Table';
+import Tags from '@components/Tags';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
-import { ComponentHealthSummary } from '@components/HealthSummary';
 import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
+import HealthSummary from '@components/HealthSummary/HealthSummary';
+import { getCounters } from '@components/HealthSummary/summarySelection';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -132,9 +133,11 @@ const ClustersList = () => {
     };
   });
 
+  const counters = getCounters(data || []);
+
   return (
     <Fragment>
-      <ComponentHealthSummary data={data} />
+      <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
         data={data}
