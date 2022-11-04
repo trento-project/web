@@ -16,31 +16,27 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
   def process(%GenRMQ.Message{payload: payload} = message) do
     Logger.debug("Received message: #{inspect(message)}")
 
-    with {:ok, event} <- Contracts.from_event(payload),
-         {:ok, {command, opts}} <- handle(event) do
-      commanded().dispatch(command, opts)
-    else
+    case Contracts.from_event(payload) do
+      {:ok, event} ->
+        handle(event)
+
       {:error, reason} ->
         {:error, reason}
     end
   end
 
   defp handle(%ExecutionCompleted{
-        execution_id: execution_id,
-        group_id: group_id,
-        result: result
-      }) do
-    case CompleteChecksExecutionWanda.new(%{
-           cluster_id: group_id,
-           health: map_health(result)
-         }) do
-      {:ok, command} ->
-        opts = [correlation_id: execution_id]
-        {:ok, {command, opts}}
-
-      error ->
-        error
-    end
+         execution_id: execution_id,
+         group_id: group_id,
+         result: result
+       }) do
+    commanded().dispatch(
+      CompleteChecksExecutionWanda.new!(%{
+        cluster_id: group_id,
+        health: map_health(result)
+      }),
+      correlation_id: execution_id
+    )
   end
 
   defp map_health(:CRITICAL), do: Health.critical()

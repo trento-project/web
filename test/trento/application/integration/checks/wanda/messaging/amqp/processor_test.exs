@@ -50,7 +50,9 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
 
       message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
 
-      assert {:error, %{cluster_id: ["is invalid"]}} = Processor.process(message)
+      assert_raise RuntimeError,
+                   "%{cluster_id: [\"is invalid\"]}",
+                   fn -> Processor.process(message) end
     end
 
     @tag capture_log: true
