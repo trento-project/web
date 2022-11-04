@@ -7,13 +7,17 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
 
   alias Trento.Contracts
 
+  alias Trento.Checks.V1.ExecutionCompleted
+  alias Trento.Domain.Commands.CompleteChecksExecutionWanda
+
   require Logger
+  require Trento.Domain.Enums.Health, as: Health
 
   def process(%GenRMQ.Message{payload: payload} = message) do
     Logger.debug("Received message: #{inspect(message)}")
 
     with {:ok, event} <- Contracts.from_event(payload),
-         {:ok, command, opts} <- adapter().handle(event) do
+         {:ok, {command, opts}} <- handle(event) do
       commanded().dispatch(command, opts)
     else
       {:error, reason} ->
@@ -21,8 +25,27 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
     end
   end
 
-  defp adapter,
-    do: Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda)[:policy]
+  defp handle(%ExecutionCompleted{
+        execution_id: execution_id,
+        group_id: group_id,
+        result: result
+      }) do
+    case CompleteChecksExecutionWanda.new(%{
+           cluster_id: group_id,
+           health: map_health(result)
+         }) do
+      {:ok, command} ->
+        opts = [correlation_id: execution_id]
+        {:ok, {command, opts}}
+
+      error ->
+        error
+    end
+  end
+
+  defp map_health(:CRITICAL), do: Health.critical()
+  defp map_health(:WARNING), do: Health.warning()
+  defp map_health(:PASSING), do: Health.passing()
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]

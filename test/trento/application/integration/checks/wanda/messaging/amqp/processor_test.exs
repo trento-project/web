@@ -9,27 +9,31 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
 
   alias Trento.Checks.V1.ExecutionCompleted
   alias Trento.Contracts
+  alias Trento.Domain.Commands.CompleteChecksExecutionWanda
+
+  require Trento.Domain.Enums.Health, as: Health
 
   describe "process" do
-    test "should process valid event and dispatch command" do
+    test "should process ExecutionCompleted and dispatch command" do
+      execution_id = UUID.uuid4()
+      group_id = UUID.uuid4()
+
       execution_completed =
         Contracts.to_event(%ExecutionCompleted{
-          execution_id: UUID.uuid4(),
-          group_id: UUID.uuid4(),
+          execution_id: execution_id,
+          group_id: group_id,
           result: :PASSING
         })
 
       message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
-      command = "some-command"
-      opts = [correlation_id: UUID.uuid4()]
 
-      expect(Trento.Integration.Checks.Wanda.Policy.Mock, :handle, fn _ ->
-        {:ok, command, opts}
-      end)
+      expect(Trento.Commanded.Mock, :dispatch, fn command, opts ->
+        assert %CompleteChecksExecutionWanda{
+                 cluster_id: ^group_id,
+                 health: Health.passing()
+               } = command
 
-      expect(Trento.Commanded.Mock, :dispatch, fn expected_command, expected_opts ->
-        assert ^expected_command = command
-        assert ^expected_opts = opts
+        assert [correlation_id: ^execution_id] = opts
         :ok
       end)
 
@@ -40,17 +44,13 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
       execution_completed =
         Contracts.to_event(%ExecutionCompleted{
           execution_id: UUID.uuid4(),
-          group_id: UUID.uuid4(),
+          group_id: "invalid-id",
           result: :PASSING
         })
 
       message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
 
-      expect(Trento.Integration.Checks.Wanda.Policy.Mock, :handle, fn _ ->
-        {:error, :handling_error}
-      end)
-
-      assert {:error, :handling_error} = Processor.process(message)
+      assert {:error, %{cluster_id: ["is invalid"]}} = Processor.process(message)
     end
 
     @tag capture_log: true
