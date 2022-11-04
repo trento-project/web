@@ -35,7 +35,8 @@ const styleByHealth = {
     classNames(
       'tn-health-passing w-1/3 px-5 shadow rounded-lg my-2 mr-10 bg-white',
       {
-        'bg-jungle-green-500 border-green-600 text-white hover:opacity-75': selected,
+        'bg-jungle-green-500 border-green-600 text-white hover:opacity-75':
+          selected,
         'text-jungle-green-500': !selected,
         'hover:opacity-75': asButton && !selected,
       }
