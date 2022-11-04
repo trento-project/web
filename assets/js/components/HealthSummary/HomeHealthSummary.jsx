@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Table from '@components/Table';
-import HealthIcon from '../Health/HealthIcon';
+import HealthIcon from '@components/Health/HealthIcon';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import HealthSummary from '@components/HealthSummary';
