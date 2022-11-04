@@ -4,7 +4,7 @@ import HealthIcon from '../Health/HealthIcon';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import HealthSummary from '@components/HealthSummary';
-import useQueryStringValues from '../../hooks/useQueryStringValues';
+import useQueryStringValues from '@hooks/useQueryStringValues';
 import { getCounters, isMostRelevantPrio } from './summarySelection';
 
 const healthSummaryTableConfig = {
