@@ -8,10 +8,26 @@ import React from 'react';
 
 const iconByHealth = {
   passing: () => (
-    <EOS_CHECK_CIRCLE_OUTLINED size={40} className="fill-green-600" />
+    <EOS_CHECK_CIRCLE_OUTLINED
+      size={40}
+      className="fill-green-600"
+      style={{ opacity: 1 }}
+    />
   ),
-  warning: () => <EOS_WARNING_OUTLINED size={40} className="fill-yellow-400" />,
-  critical: () => <EOS_ERROR_OUTLINED size={40} className="fill-red-600" />,
+  warning: () => (
+    <EOS_WARNING_OUTLINED
+      size={40}
+      className="fill-yellow-400"
+      style={{ opacity: 1 }}
+    />
+  ),
+  critical: () => (
+    <EOS_ERROR_OUTLINED
+      size={40}
+      className="fill-red-600"
+      style={{ opacity: 1 }}
+    />
+  ),
 };
 
 const styleByHealth = {
@@ -19,7 +35,8 @@ const styleByHealth = {
     classNames(
       'tn-health-passing w-1/3 px-5 shadow rounded-lg my-2 mr-10 bg-white',
       {
-        'bg-jungle-green-500 border-green-600 text-white': selected,
+        'bg-jungle-green-500 border-green-600 text-white hover:opacity-75':
+          selected,
         'text-jungle-green-500': !selected,
       }
     ),
@@ -27,7 +44,7 @@ const styleByHealth = {
     classNames(
       'tn-health-warning w-1/3 px-5 shadow rounded-lg my-2 mr-10 bg-white',
       {
-        'bg-yellow-400 border-yellow-400 text-white': selected,
+        'bg-yellow-400 border-yellow-400 text-white hover:opacity-75': selected,
         'text-yellow-400': !selected,
       }
     ),
@@ -35,7 +52,7 @@ const styleByHealth = {
     classNames(
       'tn-health-critical w-1/3 px-5 shadow rounded-lg my-2 mr-10 bg-white',
       {
-        'bg-red-600 border-red-600 text-white': selected,
+        'bg-red-600 border-red-600 text-white hover:opacity-75': selected,
         'text-red-600': !selected,
       }
     ),
