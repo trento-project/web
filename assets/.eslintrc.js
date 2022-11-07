@@ -6,6 +6,9 @@ module.exports = {
     jquery: true,
     'jest/globals': true,
   },
+  globals: {
+    process: true,
+  },
   extends: ['eslint:recommended', 'plugin:react/recommended'],
   parserOptions: {
     ecmaFeatures: {
