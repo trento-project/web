@@ -28,10 +28,7 @@ const healthSummaryTableConfig = {
       className: 'text-center',
       render: (content, item) => (
         <Link to={`/sap_systems/${item.id}`}>
-          {' '}
-          <HealthIcon health={content} centered={true}>
-            {' '}
-          </HealthIcon>
+          <HealthIcon health={content} centered={true}></HealthIcon>
         </Link>
       ),
     },
