@@ -2,13 +2,16 @@
 /* eslint-disable no-console */
 const path = require('path');
 const alias = require('esbuild-plugin-path-alias');
+const { config } = require('dotenv');
+
+config();
 
 const resolvePath = (p) => path.resolve(__dirname, p);
 
 const WANDA_URL =
   process.env.NODE_ENV === 'production'
     ? ''
-    : JSON.stringify('http://localhost:4001');
+    : JSON.stringify(process.env.WANDA_URL);
 
 const define = {
   'process.env.WANDA_URL': WANDA_URL,
