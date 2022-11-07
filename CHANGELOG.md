@@ -29,6 +29,7 @@
 **Fixed bugs:**
 
 - Table views not being updated when last tag is removed [\#416](https://github.com/trento-project/web/issues/416)
+- Include missing file for CI [\#956](https://github.com/trento-project/web/pull/956) ([arbulu89](https://github.com/arbulu89))
 - General browser fixes for collapsed sidebar [\#914](https://github.com/trento-project/web/pull/914) ([jagabomb](https://github.com/jagabomb))
 - Fix active style matching inside navlink usage [\#848](https://github.com/trento-project/web/pull/848) ([dottorblaster](https://github.com/dottorblaster))
 - Set the version properly in the suse container dockerfile [\#743](https://github.com/trento-project/web/pull/743) ([arbulu89](https://github.com/arbulu89))
@@ -41,8 +42,10 @@
 
 **Merged pull requests:**
 
+- Release 1.2.0 and update changelog [\#955](https://github.com/trento-project/web/pull/955) ([rtorrero](https://github.com/rtorrero))
 - Bump react-redux from 8.0.4 to 8.0.5 in /assets [\#953](https://github.com/trento-project/web/pull/953) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump babel-loader from 9.0.1 to 9.1.0 in /assets [\#952](https://github.com/trento-project/web/pull/952) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Enable box health filters on Dashboard [\#950](https://github.com/trento-project/web/pull/950) ([CDimonaco](https://github.com/CDimonaco))
 - Use uuid format for id fields [\#949](https://github.com/trento-project/web/pull/949) ([arbulu89](https://github.com/arbulu89))
 - fix obs-commit ci job [\#948](https://github.com/trento-project/web/pull/948) ([stefanotorresi](https://github.com/stefanotorresi))
 - Mock DateTime using a custom date service and mox [\#947](https://github.com/trento-project/web/pull/947) ([arbulu89](https://github.com/arbulu89))
