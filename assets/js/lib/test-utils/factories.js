@@ -22,7 +22,7 @@ export const healthSummaryFactory = Factory.define(() => ({
   hostsHealth: healthEnum,
   id: faker.datatype.uuid(),
   sapsystemHealth: healthEnum,
-  SID: faker.random.alphaNumeric({
+  sid: faker.random.alphaNumeric({
     length: 3,
     casing: 'upper',
   }),
