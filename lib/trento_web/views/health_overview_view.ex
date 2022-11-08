@@ -1,4 +1,4 @@
-defmodule TrentoWeb.HealthSummaryView do
+defmodule TrentoWeb.HealthOverviewView do
   use TrentoWeb, :view
 
   alias Trento.DatabaseInstanceReadModel

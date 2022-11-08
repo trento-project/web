@@ -1,4 +1,4 @@
-defmodule TrentoWeb.HealthSummaryViewTest do
+defmodule TrentoWeb.HealthOverviewViewTest do
   use TrentoWeb.ConnCase, async: true
 
   alias Trento.{
@@ -25,7 +25,7 @@ defmodule TrentoWeb.HealthSummaryViewTest do
                sid: ^sid
              }
            ] =
-             render(TrentoWeb.HealthSummaryView, "overview.json", %{
+             render(TrentoWeb.HealthOverviewView, "overview.json", %{
                health_infos: [
                  %{
                    id: sap_system_id,
