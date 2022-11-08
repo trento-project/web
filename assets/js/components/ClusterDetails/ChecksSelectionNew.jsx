@@ -18,8 +18,7 @@ import {
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
 
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { ChecksSelectionItem } from './ChecksSelectionItem';
 
 import axios from 'axios';
 
@@ -30,43 +29,23 @@ const wandaURL = process.env.WANDA_URL;
 export const ChecksSelectionNew = ({ clusterId, cluster }) => {
   const dispatch = useDispatch();
 
-  const [selectedChecks, setSelectedChecks] = useState(
-    cluster ? cluster.selected_checks : []
-  );
-
-  const isSelected = (checkId) =>
-    selectedChecks ? selectedChecks.includes(checkId) : false;
-
-  const [catalogError, setError] = useState(null);
-  const [loading, setLoaded] = useState(true);
-  const [catalogData, setCatalog] = useState({});
-
-  useEffect(() => {
-    getCatalog();
-  }, []);
-
-  const getCatalog = () => {
-    setLoaded(true);
-    axios
-      .get(`${wandaURL}/api/checks/catalog`)
-      .then((catalog) => {
-        setCatalog(groupBy(catalog.data.items, 'group'));
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .finally(() => {
-        setLoaded(false);
-      });
-  };
-
   const { saving, savingError, savingSuccess } = useSelector(
     (state) => state.clusterChecksSelection
   );
 
+  const [catalogError, setError] = useState(null);
+  const [loading, setLoaded] = useState(true);
+  const [catalogData, setCatalog] = useState({});
+  const [selectedChecks, setSelectedChecks] = useState(
+    cluster ? cluster.selected_checks : []
+  );
   const [localSavingError, setLocalSavingError] = useState(null);
   const [localSavingSuccess, setLocalSavingSuccess] = useState(null);
   const [groupSelection, setGroupSelection] = useState([]);
+
+  useEffect(() => {
+    getCatalog();
+  }, []);
 
   useEffect(() => {
     const groupedCheckSelection = Object.entries(catalogData).map(
@@ -94,6 +73,24 @@ export const ChecksSelectionNew = ({ clusterId, cluster }) => {
     setLocalSavingError(savingError);
     setLocalSavingSuccess(savingSuccess);
   }, [savingError, savingSuccess]);
+
+  const getCatalog = () => {
+    setLoaded(true);
+    axios
+      .get(`${wandaURL}/api/checks/catalog`)
+      .then((catalog) => {
+        setCatalog(groupBy(catalog.data.items, 'group'));
+      })
+      .catch((error) => {
+        setError(error.message);
+      })
+      .finally(() => {
+        setLoaded(false);
+      });
+  };
+
+  const isSelected = (checkId) =>
+    selectedChecks ? selectedChecks.includes(checkId) : false;
 
   if (loading) {
     return <LoadingBox text="Loading checks catalog..." />;
@@ -206,60 +203,19 @@ export const ChecksSelectionNew = ({ clusterId, cluster }) => {
                               className="divide-y divide-gray-200"
                             >
                               {checks.map((check) => (
-                                <li key={check.id}>
-                                  <a className="block hover:bg-gray-50">
-                                    <div className="px-4 py-4 sm:px-6">
-                                      <div className="flex items-center">
-                                        <p className="text-sm font-medium">
-                                          {check.name}
-                                        </p>
-                                        <p className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                          {check.id}
-                                        </p>
-                                      </div>
-                                      <div className="mt-2 sm:flex sm:justify-between">
-                                        <div className="sm:flex">
-                                          <ReactMarkdown
-                                            className="markdown"
-                                            remarkPlugins={[remarkGfm]}
-                                          >
-                                            {check.description}
-                                          </ReactMarkdown>
-                                        </div>
-                                        <Switch.Group
-                                          as="div"
-                                          className="flex items-center"
-                                        >
-                                          <Switch
-                                            checked={check.selected}
-                                            className={classNames(
-                                              isSelected(check.id)
-                                                ? 'bg-jungle-green-500'
-                                                : 'bg-gray-200',
-                                              'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
-                                            )}
-                                            onChange={() => {
-                                              setSelectedChecks(
-                                                toggle(check.id, selectedChecks)
-                                              );
-                                              setLocalSavingSuccess(null);
-                                            }}
-                                          >
-                                            <span
-                                              aria-hidden="true"
-                                              className={classNames(
-                                                isSelected(check.id)
-                                                  ? 'translate-x-5'
-                                                  : 'translate-x-0',
-                                                'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
-                                              )}
-                                            />
-                                          </Switch>
-                                        </Switch.Group>
-                                      </div>
-                                    </div>
-                                  </a>
-                                </li>
+                                <ChecksSelectionItem
+                                  key={check.id}
+                                  checkID={check.id}
+                                  name={check.name}
+                                  description={check.description}
+                                  isSelected={check.selected}
+                                  onChange={() => {
+                                    setSelectedChecks(
+                                      toggle(check.id, selectedChecks)
+                                    );
+                                    setLocalSavingSuccess(null);
+                                  }}
+                                />
                               ))}
                             </ul>
                           </Disclosure.Panel>
