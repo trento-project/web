@@ -20,18 +20,19 @@ export const ChecksCatalogNew = () => {
     axios
       .get(`${wandaURL}/api/checks/catalog`)
       .then((catalog) => {
-        setLoaded(false);
-        setCatalog(catalog.data);
+        setCatalog(catalog.data.items);
       })
-      .catch(function (error) {
-        setLoaded(false);
+      .catch((error) => {
         setError(error.message);
+      })
+      .finally(() => {
+        setLoaded(false);
       });
   };
 
   return (
     <CatalogContainer
-      getCatalog={getCatalog}
+      onRefresh={() => getCatalog()}
       catalogData={catalogData}
       catalogError={catalogError}
       loading={loading}

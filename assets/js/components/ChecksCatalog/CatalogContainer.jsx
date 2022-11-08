@@ -13,7 +13,7 @@ import { groupBy } from '@lib/lists';
 import { EOS_ERROR } from 'eos-icons-react';
 
 const CatalogContainer = ({
-  getCatalog = () => {},
+  onRefresh = () => {},
   catalogData = [],
   catalogError = null,
   loading = false,
@@ -28,14 +28,25 @@ const CatalogContainer = ({
         icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
         text={catalogError}
         buttonText="Try again"
-        buttonOnClick={getCatalog}
+        buttonOnClick={onRefresh}
+      />
+    );
+  }
+
+  if (catalogData.length === 0) {
+    return (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text="Checks catalog is empty."
+        buttonText="Try again"
+        buttonOnClick={onRefresh}
       />
     );
   }
 
   return (
     <div>
-      {Object.entries(groupBy(catalogData.items, 'group')).map(
+      {Object.entries(groupBy(catalogData, 'group')).map(
         ([group, checks], idx) => (
           <div
             key={idx}
