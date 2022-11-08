@@ -27,3 +27,11 @@ export const healthSummaryFactory = Factory.define(() => ({
     casing: 'upper',
   }),
 }));
+
+export const catalogCheckFactory = Factory.define(() => ({
+  id: faker.datatype.uuid(),
+  name: faker.animal.cat(),
+  group: faker.animal.cat(),
+  description: faker.lorem.paragraph(),
+  remediation: faker.lorem.paragraph(),
+}));
