@@ -36,6 +36,27 @@ const homeHealthSummaryActionPayload = [
 ];
 
 describe('HomeHealthSummary component', () => {
+  it('should have a clickable SAP INSTANCE icon with link to the belonging instance', () => {
+    const [StatefulHomeHealthSummary, store] = withState(<HomeHealthSummary />);
+    const { container } = renderWithRouter(StatefulHomeHealthSummary);
+    const [{ id }] = homeHealthSummaryActionPayload;
+
+    act(() => {
+      store.dispatch(
+        setHealthSummary(keysToCamel(homeHealthSummaryActionPayload))
+      );
+      store.dispatch(stopHealthSummaryLoading());
+    });
+
+    expect(
+      container
+        .querySelector(':nth-child(1) > :nth-child(1) > a')
+        .getAttribute('href')
+    ).toContain(`/sap_systems/${id}`);
+  });
+});
+
+describe('HomeHealthSummary component', () => {
   it('should have a working link to the passing checks in the overview component', () => {
     const [StatefulHomeHealthSummary, store] = withState(<HomeHealthSummary />);
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
