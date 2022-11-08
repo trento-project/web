@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-export const ChecksSelectionItem = ({
+const ChecksSelectionItem = ({
   checkID,
   name,
   description,
@@ -53,3 +53,5 @@ export const ChecksSelectionItem = ({
     </li>
   );
 };
+
+export default ChecksSelectionItem;

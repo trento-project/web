@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithRouter } from '@lib/test-utils';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 
-import { ChecksSelectionItem } from './ChecksSelectionItem';
+import ChecksSelectionItem from './ChecksSelectionItem';
 
 describe('ClusterDetails ChecksSelectionItem component', () => {
   it('should show check with selected state', () => {
