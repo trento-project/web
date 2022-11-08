@@ -31,6 +31,10 @@ export const ClusterSettings = () => {
     ),
   };
 
+  if (!cluster) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/clusters/${clusterID}`}>
