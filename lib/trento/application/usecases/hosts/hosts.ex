@@ -84,7 +84,6 @@ defmodule Trento.Hosts do
 
     query
     |> Repo.all()
-    |> Enum.map(&enrich_with_default_user/1)
   end
 
   @spec save_hosts_connection_settings([

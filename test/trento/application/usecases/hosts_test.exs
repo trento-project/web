@@ -73,13 +73,11 @@ defmodule Trento.HostsTest do
                %{
                  host_id: ^a_host_id,
                  hostname: ^a_hostname,
-                 default_user: "root",
                  user: nil
                },
                %{
                  host_id: ^another_host_id,
                  hostname: ^another_hostname,
-                 default_user: "root",
                  user: nil
                }
              ] = settings
@@ -113,13 +111,11 @@ defmodule Trento.HostsTest do
                %{
                  host_id: ^a_host_id,
                  hostname: ^a_hostname,
-                 default_user: "adminuser123",
                  user: nil
                },
                %{
                  host_id: ^another_host_id,
                  hostname: ^another_hostname,
-                 default_user: "adminuser345",
                  user: nil
                }
              ] = settings

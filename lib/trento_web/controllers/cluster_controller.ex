@@ -132,7 +132,7 @@ defmodule TrentoWeb.ClusterController do
 
     conn
     |> put_status(:ok)
-    |> json(settings)
+    |> render("settings.json", settings: settings)
   end
 
   operation :save_connection_settings, false
