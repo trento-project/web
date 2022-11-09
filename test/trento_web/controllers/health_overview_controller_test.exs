@@ -1,6 +1,10 @@
 defmodule TrentoWeb.HealthOverviewControllerTest do
   use TrentoWeb.ConnCase, async: true
 
+  import OpenApiSpex.TestAssertions
+
+  alias TrentoWeb.OpenApi.ApiSpec
+
   import Trento.Factory
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType
@@ -37,17 +41,8 @@ defmodule TrentoWeb.HealthOverviewControllerTest do
 
     assert 200 == conn.status
 
-    assert [
-             %{
-               "id" => "#{sap_system_id}",
-               "sid" => "#{sid}",
-               "sapsystem_health" => "critical",
-               "database_health" => "warning",
-               "clusters_health" => "passing",
-               "hosts_health" => "unknown",
-               "database_id" => "#{sap_system_id}",
-               "cluster_id" => "#{cluster_id}"
-             }
-           ] == json_response(conn, 200)
+    api_spec = ApiSpec.spec()
+
+    assert_schema(json_response(conn, 200), "HealthOverview", api_spec)
   end
 end
