@@ -108,6 +108,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
     OpenApiSpex.schema(%{
       title: "PacemakerClusterDetail",
       description: "Details of the detected PacemakerCluster",
+      nullable: true,
       oneOf: [
         HanaClusterDetails
       ]
@@ -138,14 +139,19 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
           items: %Schema{type: :string}
         },
         health: ResourceHealth,
-        resources_number: %Schema{type: :integer, description: "Resource number"},
-        hosts_number: %Schema{type: :integer, description: "Hosts number"},
-        cib_last_written: %Schema{type: :string, description: "CIB last written date"},
+        resources_number: %Schema{type: :integer, description: "Resource number", nullable: true},
+        hosts_number: %Schema{type: :integer, description: "Hosts number", nullable: true},
+        cib_last_written: %Schema{
+          type: :string,
+          description: "CIB last written date",
+          nullable: true
+        },
         details: Details,
         checks_execution: %Schema{
           type: :string,
           description: "Current status of the checks execution for this cluster",
-          enum: [:not_running, :requested, :running]
+          enum: [:not_running, :requested, :running],
+          nullable: true
         },
         hosts_executions: %Schema{
           title: "HostChecksExecutions",
