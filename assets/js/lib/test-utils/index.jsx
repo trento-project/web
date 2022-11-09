@@ -4,8 +4,26 @@ import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 
+import hosts from './data/hosts';
+import clusters from './data/clusters';
+import sapSystems from './data/sapSystems';
+
 const middlewares = [];
 const mockStore = configureStore(middlewares);
+
+const defaultInitialState = {
+  hostsList: { hosts: hosts },
+  clustersList: { clusters: clusters },
+  sapSystemsList: {
+    sapSystems: sapSystems,
+    applicationInstances: sapSystems.flatMap(
+      (sapSystem) => sapSystem.application_instances
+    ),
+    databaseInstances: sapSystems.flatMap(
+      (sapSystem) => sapSystem.database_instances
+    ),
+  },
+};
 
 export const withState = (component, initialState = {}) => {
   const store = mockStore(initialState);
@@ -16,6 +34,10 @@ export const withState = (component, initialState = {}) => {
     </Provider>,
     store,
   ];
+};
+
+export const withDefaultState = (component) => {
+  return withState(component, defaultInitialState);
 };
 
 export const renderWithRouter = (ui, { route = '/' } = {}) => {
