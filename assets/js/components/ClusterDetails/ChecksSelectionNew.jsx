@@ -7,17 +7,17 @@ import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
 
+import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 import {
   SavingFailedAlert,
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
 import ChecksSelectionGroup from './ChecksSelectionGroup';
 import ChecksSelectionItem from './ChecksSelectionItem';
-import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 
 const wandaURL = process.env.WANDA_URL;
 
-export const ChecksSelectionNew = ({ clusterId, cluster }) => {
+const ChecksSelectionNew = ({ clusterId, cluster }) => {
   const dispatch = useDispatch();
 
   const { saving, savingError, savingSuccess } = useSelector(
@@ -182,3 +182,5 @@ export const ChecksSelectionNew = ({ clusterId, cluster }) => {
     </CatalogContainer>
   );
 };
+
+export default ChecksSelectionNew;

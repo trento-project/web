@@ -78,4 +78,16 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const checkItems = getAllByRole('listitem');
     expect(checkItems.length).toBe(3);
   });
+
+  it('should run the onChange function when the switch button is clicked', () => {
+    const group = 'some-group';
+    const onChangeMock = jest.fn();
+
+    renderWithRouter(
+      <ChecksSelectionGroup group={group} onChange={onChangeMock} />
+    );
+
+    userEvent.click(screen.getByRole('switch'));
+    expect(onChangeMock).toBeCalled();
+  });
 });
