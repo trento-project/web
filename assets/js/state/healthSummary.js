@@ -9,6 +9,7 @@ import { createSlice } from '@reduxjs/toolkit';
 //  id:              string,
 //  sapsystemHealth: string,
 //  sid:             string,
+//  tenant:          string,
 // }
 
 const initialState = {

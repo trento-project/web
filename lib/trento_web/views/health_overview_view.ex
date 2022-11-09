@@ -15,7 +15,8 @@ defmodule TrentoWeb.HealthOverviewView do
           database_instances: database_instances,
           database_health: database_health,
           clusters_health: clusters_health,
-          hosts_health: hosts_health
+          hosts_health: hosts_health,
+          tenant: tenant
         }
       }) do
     %{
@@ -26,7 +27,8 @@ defmodule TrentoWeb.HealthOverviewView do
       clusters_health: clusters_health,
       hosts_health: hosts_health,
       cluster_id: extract_cluster_id(database_instances),
-      database_id: extract_database_id(database_instances)
+      database_id: extract_database_id(database_instances),
+      tenant: tenant
     }
   end
 

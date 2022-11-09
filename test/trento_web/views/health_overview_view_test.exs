@@ -11,6 +11,7 @@ defmodule TrentoWeb.HealthOverviewViewTest do
   test "renders overview.json" do
     sap_system_id = UUID.uuid4()
     sid = UUID.uuid4()
+    tenant = UUID.uuid4()
     cluster_id = UUID.uuid4()
 
     assert [
@@ -22,7 +23,8 @@ defmodule TrentoWeb.HealthOverviewViewTest do
                hosts_health: :warning,
                id: ^sap_system_id,
                sapsystem_health: :passing,
-               sid: ^sid
+               sid: ^sid,
+               tenant: ^tenant
              }
            ] =
              render(TrentoWeb.HealthOverviewView, "overview.json", %{
@@ -39,7 +41,8 @@ defmodule TrentoWeb.HealthOverviewViewTest do
                    ],
                    database_health: :passing,
                    clusters_health: :critical,
-                   hosts_health: :warning
+                   hosts_health: :warning,
+                   tenant: tenant
                  }
                ]
              })
