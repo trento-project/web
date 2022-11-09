@@ -8,7 +8,7 @@ import { EOS_ERROR } from 'eos-icons-react';
 const CatalogContainer = ({
   children,
   onRefresh = () => {},
-  catalogLength = 0,
+  isCatalogEmpty = false,
   catalogError = null,
   loading = false,
 }) => {
@@ -27,7 +27,7 @@ const CatalogContainer = ({
     );
   }
 
-  if (catalogLength === 0) {
+  if (isCatalogEmpty) {
     return (
       <NotificationBox
         icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}

@@ -36,7 +36,7 @@ export const ChecksCatalogNew = () => {
   return (
     <CatalogContainer
       onRefresh={() => getCatalog()}
-      catalogLength={catalogData.length}
+      isCatalogEmpty={catalogData.length === 0}
       catalogError={catalogError}
       loading={loading}
     >
