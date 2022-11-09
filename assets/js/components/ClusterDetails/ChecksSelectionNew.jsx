@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import NotificationBox from '../NotificationBox';
-import LoadingBox from '../LoadingBox';
+import axios from 'axios';
 
 import { EOS_ERROR, EOS_LOADING_ANIMATED } from 'eos-icons-react';
-import { remove, uniq } from '@lib/lists';
+
+import { remove, uniq, toggle, groupBy } from '@lib/lists';
+
+import NotificationBox from '../NotificationBox';
+import LoadingBox from '../LoadingBox';
 import {
   SavingFailedAlert,
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
-
 import ChecksSelectionGroup from './ChecksSelectionGroup';
 import ChecksSelectionItem from './ChecksSelectionItem';
-
-import axios from 'axios';
-
-import { toggle, groupBy } from '@lib/lists';
 
 const wandaURL = process.env.WANDA_URL;
 
@@ -68,6 +66,19 @@ export const ChecksSelectionNew = ({ clusterId, cluster }) => {
     setLocalSavingSuccess(savingSuccess);
   }, [savingError, savingSuccess]);
 
+  useEffect(() => {
+    if (cluster) {
+      setSelectedChecks(cluster.selected_checks ? cluster.selected_checks : []);
+    }
+  }, [cluster?.selected_checks]);
+
+  useEffect(() => {
+    if (loading === true) {
+      setLocalSavingError(null);
+      setLocalSavingSuccess(null);
+    }
+  }, [loading]);
+
   const getCatalog = () => {
     setLoaded(true);
     axios
@@ -85,6 +96,13 @@ export const ChecksSelectionNew = ({ clusterId, cluster }) => {
 
   const isSelected = (checkId) =>
     selectedChecks ? selectedChecks.includes(checkId) : false;
+
+  const dispatchChecksSelected = () => {
+    dispatch({
+      type: 'CHECKS_SELECTED',
+      payload: { checks: selectedChecks, clusterID: clusterId },
+    });
+  };
 
   if (loading) {
     return <LoadingBox text="Loading checks catalog..." />;
@@ -154,12 +172,7 @@ export const ChecksSelectionNew = ({ clusterId, cluster }) => {
       <div className="place-items-end flex">
         <button
           className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
-          onClick={() => {
-            dispatch({
-              type: 'CHECKS_SELECTED',
-              payload: { checks: selectedChecks, clusterID: clusterId },
-            });
-          }}
+          onClick={dispatchChecksSelected}
         >
           {saving ? (
             <span className="px-20">

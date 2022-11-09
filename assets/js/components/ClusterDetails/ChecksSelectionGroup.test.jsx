@@ -63,8 +63,11 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const group = 'some-group';
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group}>{[0,1,2].map(({value}, idx) =>
-        <li key={idx}>{value}</li>)}</ChecksSelectionGroup>
+      <ChecksSelectionGroup group={group}>
+        {[0, 1, 2].map(({ value }, idx) => (
+          <li key={idx}>{value}</li>
+        ))}
+      </ChecksSelectionGroup>
     );
 
     userEvent.click(screen.getByRole('heading').parentNode);
