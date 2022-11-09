@@ -2,20 +2,13 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import configureStore from 'redux-mock-store';
 
-import { store } from '@state';
-import { setHosts } from '@state/hosts';
-import { setClusters } from '@state/clusters';
-import { setSapSystems } from '@state/sapSystems';
+const middlewares = [];
+const mockStore = configureStore(middlewares);
 
-import hosts from './data/hosts';
-import clusters from './data/clusters';
-import sapSystems from './data/sapSystems';
-
-export const withState = (component) => {
-  store.dispatch(setHosts(hosts));
-  store.dispatch(setClusters(clusters));
-  store.dispatch(setSapSystems(sapSystems));
+export const withState = (component, initialState = {}) => {
+  const store = mockStore(initialState);
 
   return [
     <Provider key="root" store={store}>
