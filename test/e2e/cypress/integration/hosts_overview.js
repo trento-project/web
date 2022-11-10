@@ -227,8 +227,7 @@ context('Hosts Overview', () => {
           ':nth-child(3) > .mt-1 > .relative > :nth-child(1) > .ml-3'
         ).contains('HDD, NWD');
 
-        // clear
-        cy.get('.z-20 > [data-testid="eos-svg-component"]').click();
+        cy.resetFilterSelection('SID');
 
         cy.url('eq', '/hosts');
       });
@@ -237,6 +236,7 @@ context('Hosts Overview', () => {
     describe('Tags', () => {
       before(() => {
         cy.visit('/hosts');
+        cy.get('.tn-hostname').its('length').should('be.gt', 0);
         cy.removeTagsFromView();
       });
 
@@ -248,12 +248,11 @@ context('Hosts Overview', () => {
 
       describe('Filter by tags', () => {
         before(() => {
-          cy.visit('/hosts');
-          cy.get('span').contains('Filter Tags').parent().parent().click();
+          cy.get('[data-testid="filter-Tags"]').click();
         });
 
-        after(() => {
-          cy.get('span').contains('Filter Tags').parent().parent().click();
+        afterEach(() => {
+          cy.resetFilterSelection('Tags');
         });
 
         ['env1', 'env2', 'env3'].forEach((tag) => {
@@ -273,7 +272,7 @@ context('Hosts Overview', () => {
           const tag = 'env1';
 
           cy.get('.tn-page-item').eq(2).click();
-          cy.get('span').contains('Filter Tags').parent().parent().click();
+          cy.get('[data-testid="filter-Tags"]').click();
           cy.get('li > div > span.ml-3.block').contains(tag).click();
           cy.get('.tn-hostname').its('length').should('eq', 4);
           cy.get('li > div > span.ml-3.block').contains(tag).click();
@@ -281,12 +280,7 @@ context('Hosts Overview', () => {
 
         it('should extract tag1 and tag2 from query string and put in tag filter', () => {
           cy.visit('/hosts?tags=tag1&tags=tag2');
-          cy.get(
-            ':nth-child(4) > .mt-1 > .relative > :nth-child(1) > .ml-3'
-          ).contains('tag1, tag2');
-
-          // clear
-          cy.get('.z-20 > [data-testid="eos-svg-component"]').click();
+          cy.get('[data-testid="filter-Tags"]').contains('tag1, tag2');
         });
       });
     });
