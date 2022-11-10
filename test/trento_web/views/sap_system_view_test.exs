@@ -3,11 +3,13 @@ defmodule TrentoWeb.SapSystemViewTest do
 
   import Phoenix.View
 
+  alias Trento.SapSystemReadModel
+
   test "should add the system replication status to the secondary instance and should remove it from the primary one" do
     [%{database_instances: database_instances}] =
       render(TrentoWeb.SapSystemView, "sap_systems.json", %{
         sap_systems: [
-          %{
+          %SapSystemReadModel{
             database_instances: [
               %Trento.DatabaseInstanceReadModel{
                 system_replication: "Secondary",
@@ -19,7 +21,8 @@ defmodule TrentoWeb.SapSystemViewTest do
                 system_replication_status: "ACTIVE",
                 tenant: "5d4f71dd-b672-470c-b9de-79d2b943a9fd"
               }
-            ]
+            ],
+            application_instances: []
           }
         ]
       })

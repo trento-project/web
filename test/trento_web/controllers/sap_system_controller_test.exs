@@ -9,9 +9,11 @@ defmodule TrentoWeb.SapSystemControllerTest do
 
   describe "list" do
     test "should list all sap_systems", %{conn: conn} do
-      0..2
-      |> Enum.map(fn _ -> insert(:sap_system) end)
-      |> Enum.sort_by(& &1.sid)
+      sap_system_id = UUID.uuid4()
+
+      insert(:sap_system, id: sap_system_id)
+      insert_list(2, :database_instance, sap_system_id: sap_system_id)
+      insert_list(2, :application_instance, sap_system_id: sap_system_id)
 
       api_spec = ApiSpec.spec()
 
@@ -23,9 +25,10 @@ defmodule TrentoWeb.SapSystemControllerTest do
     end
 
     test "should list all databases", %{conn: conn} do
-      0..2
-      |> Enum.map(fn _ -> insert(:database) end)
-      |> Enum.sort_by(& &1.sid)
+      database_id = UUID.uuid4()
+
+      insert(:database, id: database_id)
+      insert_list(2, :database_instance, sap_system_id: database_id)
 
       api_spec = ApiSpec.spec()
 

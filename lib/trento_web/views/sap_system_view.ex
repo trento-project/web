@@ -5,16 +5,65 @@ defmodule TrentoWeb.SapSystemView do
     render_many(databases, __MODULE__, "database.json", as: :database)
   end
 
-  def render("database.json", %{database: database}) do
-    add_system_replication_status_to_secondary_instance(database)
+  def render("database.json", %{
+        database:
+          %{
+            database_instances: database_instances
+          } = database
+      }) do
+    rendered_database_instances =
+      render_many(database_instances, __MODULE__, "database_instance.json", as: :instance)
+
+    database
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.put(:database_instances, rendered_database_instances)
+    |> add_system_replication_status_to_secondary_instance
   end
 
   def render("sap_systems.json", %{sap_systems: sap_systems}) do
     render_many(sap_systems, __MODULE__, "sap_system.json")
   end
 
-  def render("sap_system.json", %{sap_system: sap_system}) do
-    add_system_replication_status_to_secondary_instance(sap_system)
+  def render("sap_system.json", %{
+        sap_system:
+          %{
+            application_instances: application_instances,
+            database_instances: database_instances
+          } = sap_system
+      }) do
+    rendered_application_instances =
+      render_many(application_instances, __MODULE__, "application_instance.json", as: :instance)
+
+    rendered_database_instances =
+      render_many(database_instances, __MODULE__, "database_instance.json", as: :instance)
+
+    sap_system
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.put(
+      :database_instances,
+      rendered_database_instances
+    )
+    |> Map.put(
+      :application_instances,
+      rendered_application_instances
+    )
+    |> add_system_replication_status_to_secondary_instance
+  end
+
+  def render("database_instance.json", %{instance: instance}) do
+    instance
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:host)
+  end
+
+  def render("application_instance.json", %{instance: instance}) do
+    instance
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:host)
   end
 
   defp add_system_replication_status_to_secondary_instance(
