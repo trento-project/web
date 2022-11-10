@@ -3,8 +3,6 @@ defmodule TrentoWeb.SapSystemController do
 
   alias Trento.SapSystems
 
-  alias Trento.Support.StructHelper
-
   use OpenApiSpex.ControllerSpecs
 
   tags ["Target Infrastructure"]
@@ -20,10 +18,9 @@ defmodule TrentoWeb.SapSystemController do
 
   ## TODO Fix sanitization
   def list(conn, _) do
-    # TODO: fix me with DTOs
-    sap_systems = StructHelper.to_map(SapSystems.get_all_sap_systems())
+    sap_systems = SapSystems.get_all_sap_systems()
 
-    json(conn, sap_systems)
+    render(conn, "sap_systems.json", sap_systems: sap_systems)
   end
 
   operation :list_databases,
@@ -36,9 +33,8 @@ defmodule TrentoWeb.SapSystemController do
     ]
 
   def list_databases(conn, _) do
-    # TODO: fix me with DTOs
-    databases = StructHelper.to_map(SapSystems.get_all_databases())
+    databases = SapSystems.get_all_databases()
 
-    json(conn, databases)
+    render(conn, "databases.json", databases: databases)
   end
 end
