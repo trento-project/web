@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import BackButton from '@components/BackButton';
 import { Tab } from '@headlessui/react';
 import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
+import ChecksSelectionNew from '@components/ClusterDetails/ChecksSelectionNew';
 import { getCluster } from '@state/selectors';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 import { truncatedClusterNameClasses } from './ClusterDetails';
@@ -17,13 +18,15 @@ import { ConnectionSettings, ClusterInfoBox } from '@components/ClusterDetails';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
-export const ClusterSettings = () => {
+export const ClusterSettings = ({ newChecksSelectionView = false }) => {
   const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
 
   const tabsSettings = {
-    'Checks Selection': (
+    'Checks Selection': newChecksSelectionView ? (
+      <ChecksSelectionNew clusterId={clusterID} cluster={cluster} />
+    ) : (
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
     ),
     'Connection Settings': (
