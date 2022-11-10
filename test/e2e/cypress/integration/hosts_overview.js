@@ -175,12 +175,12 @@ context('Hosts Overview', () => {
       before(() => {
         cy.visit('/hosts');
         cy.task('startAgentHeartbeat', [firstHost.id]);
-        cy.get('span').contains('Filter Health').parent().parent().click();
+        cy.get('[data-testid="filter-Health"]').click();
       });
 
       after(() => {
         cy.task('stopAgentsHeartbeat');
-        cy.get('span').contains('Filter Health').parent().parent().click();
+        cy.get('[data-testid="filter-Health"]').click();
       });
 
       it('should only show the passing host when hosts are filtered by only passing entries', () => {
@@ -200,11 +200,11 @@ context('Hosts Overview', () => {
 
     describe('SID', () => {
       before(() => {
-        cy.get('span').contains('Filter SID').parent().parent().click();
+        cy.get('[data-testid="filter-SID"]').click();
       });
 
       after(() => {
-        cy.get('span').contains('Filter SID').parent().parent().click();
+        cy.get('[data-testid="filter-SID"]').click();
       });
 
       ['HDD', 'NWD'].forEach((sid) => {

@@ -213,10 +213,10 @@ context('SAP Systems Overview', () => {
   describe('Filtering the SAP Systems overview', () => {
     describe('Filtering by SIDs', () => {
       before(() => {
-        cy.get('span').contains('Filter SID').parent().parent().click();
+        cy.get('[data-testid="filter-SID"]').click();
       });
       after(() => {
-        cy.get('span').contains('Filter SID').parent().parent().click();
+        cy.get('[data-testid="filter-SID"]').click();
       });
       availableSAPSystems.forEach(({ sid }) => {
         it(`should have SAP Systems ${sid}'`, () => {
@@ -236,10 +236,10 @@ context('SAP Systems Overview', () => {
 
     describe('Filtering by tags', () => {
       before(() => {
-        cy.get('span').contains('Filter Tags').parent().parent().click();
+        cy.get('[data-testid="filter-Tags"]').click();
       });
       after(() => {
-        cy.get('span').contains('Filter Tags').parent().parent().click();
+        cy.get('[data-testid="filter-Tags"]').click();
       });
       availableSAPSystems.forEach(({ sid, tag }) => {
         it(`should have SAP Systems ${sid} tagged with tag '${tag}'`, () => {

@@ -135,7 +135,7 @@ context('Clusters Overview', () => {
         ];
         tagsScenarios.forEach(([tag, expectedTaggedClusters]) => {
           it(`should have ${expectedTaggedClusters} clusters tagged with tag '${tag}'`, () => {
-            cy.get(':nth-child(5) > .mt-1 > .relative').click();
+            cy.get('[data-testid="filter-Tags"]').click();
             cy.get('.max-h-56').contains(tag).click();
             cy.clickOutside();
 
@@ -143,7 +143,7 @@ context('Clusters Overview', () => {
               .its('length')
               .should('eq', expectedTaggedClusters);
 
-            cy.get(':nth-child(5) > .mt-1 > .relative').click();
+            cy.get('[data-testid="filter-Tags"]').click();
             cy.get('.max-h-56').contains(tag).click();
             cy.clickOutside();
           });
@@ -157,7 +157,7 @@ context('Clusters Overview', () => {
         ];
         healthScenarios.forEach(([health, expectedClustersWithThisHealth]) => {
           it(`should show ${expectedClustersWithThisHealth} clusters when filtering by health '${health}'`, () => {
-            cy.get(':nth-child(1) > .mt-1 > .relative').click();
+            cy.get('[data-testid="filter-Health"]').click();
             cy.get('.max-h-56').contains(health).click();
             cy.clickOutside();
 
@@ -165,7 +165,7 @@ context('Clusters Overview', () => {
               .its('length')
               .should('eq', expectedClustersWithThisHealth);
 
-            cy.get(':nth-child(1) > .mt-1 > .relative').click();
+            cy.get('[data-testid="filter-Health"]').click();
             cy.get('.max-h-56').contains(health).click();
             cy.clickOutside();
           });
@@ -180,7 +180,7 @@ context('Clusters Overview', () => {
         ];
         SAPSystemsScenarios.forEach(([sapsystem, expectedRelatedClusters]) => {
           it(`should have ${expectedRelatedClusters} clusters related to SAP system '${sapsystem}'`, () => {
-            cy.get(':nth-child(3) > .mt-1 > .relative').click();
+            cy.get('[data-testid="filter-SID"]').click();
             cy.get('.max-h-56').contains(sapsystem).click();
             cy.clickOutside();
 
@@ -188,7 +188,7 @@ context('Clusters Overview', () => {
               .its('length')
               .should('eq', expectedRelatedClusters);
 
-            cy.get(':nth-child(3) > .mt-1 > .relative').click();
+            cy.get('[data-testid="filter-SID"]').click();
             cy.get('.max-h-56').contains(sapsystem).click();
             cy.clickOutside();
           });
@@ -206,7 +206,7 @@ context('Clusters Overview', () => {
         clusterNameScenarios.forEach(
           ([clusterName, expectedRelatedClusters]) => {
             it(`should have ${expectedRelatedClusters} clusters related to name '${clusterName}'`, () => {
-              cy.get(':nth-child(2) > .mt-1 > .relative').click();
+              cy.get('[data-testid="filter-Name"]').click();
               cy.get('.max-h-56').contains(clusterName).click();
               cy.clickOutside();
 
@@ -214,7 +214,7 @@ context('Clusters Overview', () => {
                 .its('length')
                 .should('eq', expectedRelatedClusters);
 
-              cy.get(':nth-child(2) > .mt-1 > .relative').click();
+              cy.get('[data-testid="filter-Name"]').click();
               cy.get('.max-h-56').contains(clusterName).click();
               cy.clickOutside();
             });
