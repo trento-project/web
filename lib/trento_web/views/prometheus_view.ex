@@ -19,4 +19,6 @@ defmodule TrentoWeb.PrometheusView do
       }
     }
   end
+
+  def render("exporter_status.json", %{status: status}), do: status
 end
