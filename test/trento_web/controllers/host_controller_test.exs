@@ -1,35 +1,23 @@
 defmodule TrentoWeb.HostControllerTest do
   use TrentoWeb.ConnCase, async: true
 
+  import OpenApiSpex.TestAssertions
+
+  alias TrentoWeb.OpenApi.ApiSpec
+
   import Trento.Factory
 
   describe "list" do
     test "should list all hosts", %{conn: conn} do
-      [
-        %{id: host_id_1, hostname: host_name_1},
-        %{id: host_id_2, hostname: host_name_2},
-        %{id: host_id_3, hostname: host_name_3}
-      ] =
-        0..2
-        |> Enum.map(fn _ -> insert(:host) end)
-        |> Enum.sort_by(& &1.hostname)
+      0..2
+      |> Enum.map(fn _ -> insert(:host) end)
+      |> Enum.sort_by(& &1.hostname)
 
-      conn = get(conn, Routes.host_path(conn, :list))
+      api_spec = ApiSpec.spec()
 
-      assert [
-               %{
-                 "id" => ^host_id_1,
-                 "hostname" => ^host_name_1
-               },
-               %{
-                 "id" => ^host_id_2,
-                 "hostname" => ^host_name_2
-               },
-               %{
-                 "id" => ^host_id_3,
-                 "hostname" => ^host_name_3
-               }
-             ] = json_response(conn, 200)
+      get(conn, Routes.host_path(conn, :list))
+      |> json_response(200)
+      |> assert_schema("HostsCollection", api_spec)
     end
   end
 end

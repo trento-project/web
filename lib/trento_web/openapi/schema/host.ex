@@ -41,7 +41,7 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
           description: "IP addresses",
           items: %Schema{
             title: "IPAddress",
-            oneOf: [
+            anyOf: [
               IPv4,
               IPv6
             ]

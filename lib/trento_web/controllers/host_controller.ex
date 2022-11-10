@@ -6,8 +6,6 @@ defmodule TrentoWeb.HostController do
     Hosts
   }
 
-  alias Trento.Support.StructHelper
-
   use OpenApiSpex.ControllerSpecs
 
   tags ["Target Infrastructure"]
@@ -23,10 +21,9 @@ defmodule TrentoWeb.HostController do
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
-    # TODO: replace to_map with DTO approach
-    hosts = StructHelper.to_map(Hosts.get_all_hosts())
+    hosts = Hosts.get_all_hosts()
 
-    json(conn, hosts)
+    render(conn, "hosts.json", hosts: hosts)
   end
 
   operation :heartbeat, false
