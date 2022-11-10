@@ -31,10 +31,14 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     });
 
     await act(async () => {
-      const [StatefulCheckSelection] = withState(
-        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />
+      const initialState = {
+        clusterChecksSelection: {},
+      };
+      const [StatefulChecksSelection] = withState(
+        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+        initialState
       );
-      renderWithRouter(StatefulCheckSelection);
+      renderWithRouter(StatefulChecksSelection);
     });
 
     const groupItem = await waitFor(() => screen.getByRole('heading'));
@@ -69,10 +73,14 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     });
 
     await act(async () => {
-      const [StatefulCheckSelection] = withState(
-        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />
+      const initialState = {
+        clusterChecksSelection: {},
+      };
+      const [StatefulChecksSelection] = withState(
+        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+        initialState
       );
-      renderWithRouter(StatefulCheckSelection);
+      renderWithRouter(StatefulChecksSelection);
     });
 
     const groupItem = await waitFor(() => screen.getByRole('heading'));
@@ -92,5 +100,45 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     userEvent.click(switches[2]);
 
     expect(switches[0]).not.toBeChecked();
+  });
+
+  it('should dispatch selected checks message when the save button is clicked', async () => {
+    const catalog = catalogCheckFactory.buildList(2);
+    const selectedChecks = [catalog[0].id, catalog[1].id];
+    const cluster = clusterFactory.build({
+      selected_checks: selectedChecks,
+    });
+
+    axiosMock.onGet(`${wandaURL}/api/checks/catalog`).reply(200, {
+      items: catalog,
+    });
+
+    const store = await act(async () => {
+      const initialState = {
+        clusterChecksSelection: {},
+      };
+      const [StatefulChecksSelection, store] = withState(
+        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+        initialState
+      );
+      renderWithRouter(StatefulChecksSelection);
+
+      return store;
+    });
+
+    await waitFor(() => screen.getAllByRole('heading'));
+
+    const saveButton = screen.getByRole('button');
+    userEvent.click(saveButton);
+
+    const actions = store.getActions();
+    const expectedPayload = {
+      type: 'CHECKS_SELECTED',
+      payload: {
+        checks: selectedChecks,
+        clusterID: cluster.id,
+      },
+    };
+    expect(actions).toEqual([expectedPayload]);
   });
 });
