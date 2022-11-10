@@ -8,7 +8,7 @@ defmodule TrentoWeb.PrometheusController do
   def targets(conn, _) do
     targets = Prometheus.get_targets()
 
-    json(conn, targets)
+    render(conn, "targets.json", hosts: targets)
   end
 
   def exporters_status(conn, %{"id" => host_id}) do
