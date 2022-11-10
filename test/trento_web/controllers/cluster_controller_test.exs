@@ -44,8 +44,6 @@ defmodule TrentoWeb.ClusterControllerTest do
         %{id: another_host_id, cluster_id: cluster_id}
       ]
     } do
-      api_spec = ApiSpec.spec()
-
       resp =
         conn
         |> get(Routes.cluster_path(conn, :get_connection_settings, cluster_id))
