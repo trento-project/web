@@ -9,9 +9,10 @@ defmodule TrentoWeb.HostControllerTest do
 
   describe "list" do
     test "should list all hosts", %{conn: conn} do
-      0..2
-      |> Enum.map(fn _ -> insert(:host) end)
-      |> Enum.sort_by(& &1.hostname)
+      %{id: host_id} = insert(:host)
+
+      insert_list(2, :sles_subscription, host_id: host_id)
+      insert_list(2, :tag, resource_id: host_id)
 
       api_spec = ApiSpec.spec()
 

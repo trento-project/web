@@ -160,7 +160,13 @@ defmodule Trento.Factory do
     %SlesSubscriptionReadModel{
       host_id: host.id,
       identifier: Faker.Airports.iata(),
-      version: Faker.App.semver()
+      version: Faker.App.semver(),
+      expires_at: "2022-11-10T16:13:08.141Z",
+      starts_at: "2022-11-10T16:13:08.141Z",
+      subscription_status: "ACTIVE",
+      status: "Registered",
+      type: "type",
+      arch: "x86_64"
     }
   end
 
