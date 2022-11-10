@@ -9,8 +9,7 @@ defmodule Trento.Integration.Prometheus do
 
   @spec get_targets :: [map]
   def get_targets do
-    HostReadModel
-    |> Repo.all()
+    Repo.all(HostReadModel)
   end
 
   @spec get_exporters_status(String.t()) :: {:ok, map} | {:error, any}

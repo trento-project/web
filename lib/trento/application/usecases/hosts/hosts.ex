@@ -82,8 +82,7 @@ defmodule Trento.Hosts do
         order_by: [asc: h.hostname]
       )
 
-    query
-    |> Repo.all()
+    Repo.all(query)
   end
 
   @spec save_hosts_connection_settings([

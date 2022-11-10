@@ -10,7 +10,7 @@ defmodule TrentoWeb.PrometheusView do
 
   def render("target.json", %{host: host}) do
     %{
-      target: ["#{host.ssh_address}:#{@node_exporter_port}"],
+      targets: ["#{host.ssh_address}:#{@node_exporter_port}"],
       labels: %{
         # TODO: in the future renaeme this label which also is used by node_exporter json
         agentID: "#{host.id}",
