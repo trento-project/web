@@ -13,7 +13,7 @@ defmodule Trento.DatabaseProjector do
     DatabaseReadModel
   }
 
-  alias Trento.Support.StructHelper
+  alias TrentoWeb.SapSystemView
 
   alias Trento.Domain.Events.{
     DatabaseHealthChanged,
@@ -147,7 +147,7 @@ defmodule Trento.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_registered",
-      StructHelper.to_map(database)
+      SapSystemView.render("database_registered.json", database: database)
     )
   end
 
@@ -160,10 +160,12 @@ defmodule Trento.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_health_changed",
-      %{
-        id: id,
-        health: health
-      }
+      SapSystemView.render("database_health_changed.json",
+        health: %{
+          id: id,
+          health: health
+        }
+      )
     )
   end
 
@@ -176,7 +178,9 @@ defmodule Trento.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_registered",
-      StructHelper.to_map(instance)
+      SapSystemView.render("database_instance.json",
+        instance: instance
+      )
     )
   end
 
@@ -196,12 +200,14 @@ defmodule Trento.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_health_changed",
-      %{
-        sap_system_id: sap_system_id,
-        host_id: host_id,
-        instance_number: instance_number,
-        health: health
-      }
+      SapSystemView.render("database_instance_health_changed.json",
+        instance: %{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          health: health
+        }
+      )
     )
   end
 
@@ -222,13 +228,15 @@ defmodule Trento.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_system_replication_changed",
-      %{
-        sap_system_id: sap_system_id,
-        host_id: host_id,
-        instance_number: instance_number,
-        system_replication: system_replication,
-        system_replication_status: system_replication_status
-      }
+      SapSystemView.render("database_instance_system_replication_changed.json",
+        instance: %{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status
+        }
+      )
     )
   end
 

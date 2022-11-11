@@ -66,6 +66,50 @@ defmodule TrentoWeb.SapSystemView do
     |> Map.delete(:host)
   end
 
+  def render("database_registered.json", %{database: database}) do
+    database
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:tags)
+    |> Map.delete(:database_instances)
+  end
+
+  def render("database_health_changed.json", %{health: health}), do: health
+
+  def render("database_instance_health_changed.json", %{
+        instance: %{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          health: health
+        }
+      }) do
+    %{
+      sap_system_id: sap_system_id,
+      host_id: host_id,
+      instance_number: instance_number,
+      health: health
+    }
+  end
+
+  def render("database_instance_system_replication_changed.json", %{
+        instance: %{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status
+        }
+      }) do
+    %{
+      sap_system_id: sap_system_id,
+      host_id: host_id,
+      instance_number: instance_number,
+      system_replication: system_replication,
+      system_replication_status: system_replication_status
+    }
+  end
+
   defp add_system_replication_status_to_secondary_instance(
          %{database_instances: database_instances} = sap_system
        ) do
