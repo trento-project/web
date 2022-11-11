@@ -1,41 +1,35 @@
-import React, { useState, useEffect } from 'react';
-
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { groupBy } from '@lib/lists';
 
+import { getCatalog } from '@state/selectors/catalog';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 
-const wandaURL = process.env.WANDA_URL;
-
 export const ChecksCatalogNew = () => {
-  const [catalogError, setError] = useState(null);
-  const [loading, setLoaded] = useState(true);
-  const [catalogData, setCatalog] = useState([]);
+  const dispatch = useDispatch();
+
+  const {
+    data: catalogData,
+    error: catalogError,
+    loading: loading,
+  } = useSelector(getCatalog());
 
   useEffect(() => {
-    getCatalog();
-  }, []);
+    dispatchUpdateCatalog();
+  }, [dispatch]);
 
-  const getCatalog = () => {
-    setLoaded(true);
-    axios
-      .get(`${wandaURL}/api/checks/catalog`)
-      .then((catalog) => {
-        setCatalog(catalog.data.items);
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .finally(() => {
-        setLoaded(false);
-      });
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG_NEW',
+      payload: {},
+    });
   };
 
   return (
     <CatalogContainer
-      onRefresh={() => getCatalog()}
+      onRefresh={() => dispatchUpdateCatalog()}
       isCatalogEmpty={catalogData.length === 0}
       catalogError={catalogError}
       loading={loading}

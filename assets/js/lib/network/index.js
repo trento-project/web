@@ -40,6 +40,7 @@ export const get = function (url) {
     .then(handleResponseStatus)
     .catch((error) => {
       logError(error);
+      throw error;
     });
 };
 
