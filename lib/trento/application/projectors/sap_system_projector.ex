@@ -15,7 +15,7 @@ defmodule Trento.SapSystemProjector do
     SapSystemRegistered
   }
 
-  alias Trento.Support.StructHelper
+  alias TrentoWeb.SapSystemView
 
   alias Trento.{
     ApplicationInstanceReadModel,
@@ -122,7 +122,7 @@ defmodule Trento.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_registered",
-      StructHelper.to_map(sap_system)
+      SapSystemView.render("sap_system_registered.json", sap_system: sap_system)
     )
   end
 
@@ -135,10 +135,12 @@ defmodule Trento.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_health_changed",
-      %{
-        id: id,
-        health: health
-      }
+      SapSystemView.render("sap_system_health_changed.json",
+        health: %{
+          id: id,
+          health: health
+        }
+      )
     )
   end
 
@@ -151,7 +153,7 @@ defmodule Trento.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_registered",
-      StructHelper.to_map(instance)
+      SapSystemView.render("application_instance.json", instance: instance)
     )
   end
 
@@ -171,12 +173,14 @@ defmodule Trento.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_health_changed",
-      %{
-        sap_system_id: sap_system_id,
-        host_id: host_id,
-        instance_number: instance_number,
-        health: health
-      }
+      SapSystemView.render("application_instance_health_changed.json",
+        health: %{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          health: health
+        }
+      )
     )
   end
 
