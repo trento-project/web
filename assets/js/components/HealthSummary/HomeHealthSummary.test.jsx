@@ -2,15 +2,10 @@ import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
-import { keysToCamel } from '@lib/serialization';
 
 import { HomeHealthSummary } from './HomeHealthSummary';
 import { renderWithRouter, withState } from '@lib/test-utils';
-import {
-  setHealthSummary,
-  stopHealthSummaryLoading,
-} from '@state/healthSummary';
-import { act } from 'react-dom/test-utils';
+
 import { healthSummaryFactory } from '../../lib/test-utils/factories';
 
 const homeHealthSummaryActionPayload = [
@@ -35,18 +30,21 @@ const homeHealthSummaryActionPayload = [
   }),
 ];
 
+const initialState = {
+  sapSystemsHealthSummary: {
+    sapSystemsHealth: homeHealthSummaryActionPayload,
+    loading: false,
+  },
+};
+
 describe('HomeHealthSummary component', () => {
   it('should have a clickable SAP INSTANCE icon with link to the belonging instance', () => {
-    const [StatefulHomeHealthSummary, store] = withState(<HomeHealthSummary />);
+    const [StatefulHomeHealthSummary] = withState(
+      <HomeHealthSummary />,
+      initialState
+    );
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
     const [{ id }] = homeHealthSummaryActionPayload;
-
-    act(() => {
-      store.dispatch(
-        setHealthSummary(keysToCamel(homeHealthSummaryActionPayload))
-      );
-      store.dispatch(stopHealthSummaryLoading());
-    });
 
     expect(
       container
@@ -58,15 +56,11 @@ describe('HomeHealthSummary component', () => {
 
 describe('HomeHealthSummary component', () => {
   it('should have a working link to the passing checks in the overview component', () => {
-    const [StatefulHomeHealthSummary, store] = withState(<HomeHealthSummary />);
+    const [StatefulHomeHealthSummary] = withState(
+      <HomeHealthSummary />,
+      initialState
+    );
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
-
-    act(() => {
-      store.dispatch(
-        setHealthSummary(keysToCamel(homeHealthSummaryActionPayload))
-      );
-      store.dispatch(stopHealthSummaryLoading());
-    });
 
     expect(
       container
@@ -77,17 +71,11 @@ describe('HomeHealthSummary component', () => {
 
   describe('health box filter behaviour', () => {
     it('should put the filters values in the query string when health filters are selected', async () => {
-      const [StatefulHomeHealthSummary, store] = withState(
-        <HomeHealthSummary />
+      const [StatefulHomeHealthSummary] = withState(
+        <HomeHealthSummary />,
+        initialState
       );
       const { container } = renderWithRouter(StatefulHomeHealthSummary);
-
-      act(() => {
-        store.dispatch(
-          setHealthSummary(keysToCamel(homeHealthSummaryActionPayload))
-        );
-        store.dispatch(stopHealthSummaryLoading());
-      });
 
       expect(container.querySelector('tbody').childNodes.length).toEqual(3);
 

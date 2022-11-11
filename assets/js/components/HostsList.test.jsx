@@ -4,12 +4,12 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import HostsList from './HostsList';
-import { renderWithRouter, withState } from '../lib/test-utils';
+import { renderWithRouter, withDefaultState } from '../lib/test-utils';
 
 describe('HostsLists component', () => {
   describe('query string filtering behavior', () => {
     it('should put the filters values in the query string when filters are selected', () => {
-      const [StatefulHostsList] = withState(<HostsList />);
+      const [StatefulHostsList] = withDefaultState(<HostsList />);
       renderWithRouter(StatefulHostsList);
 
       ['Health', 'Hostname', 'Tags', 'SID'].forEach((filter) => {

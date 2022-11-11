@@ -2,20 +2,31 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-
-import { store } from '@state';
-import { setHosts } from '@state/hosts';
-import { setClusters } from '@state/clusters';
-import { setSapSystems } from '@state/sapSystems';
+import configureStore from 'redux-mock-store';
 
 import hosts from './data/hosts';
 import clusters from './data/clusters';
 import sapSystems from './data/sapSystems';
 
-export const withState = (component) => {
-  store.dispatch(setHosts(hosts));
-  store.dispatch(setClusters(clusters));
-  store.dispatch(setSapSystems(sapSystems));
+const middlewares = [];
+const mockStore = configureStore(middlewares);
+
+const defaultInitialState = {
+  hostsList: { hosts: hosts },
+  clustersList: { clusters: clusters },
+  sapSystemsList: {
+    sapSystems: sapSystems,
+    applicationInstances: sapSystems.flatMap(
+      (sapSystem) => sapSystem.application_instances
+    ),
+    databaseInstances: sapSystems.flatMap(
+      (sapSystem) => sapSystem.database_instances
+    ),
+  },
+};
+
+export const withState = (component, initialState = {}) => {
+  const store = mockStore(initialState);
 
   return [
     <Provider key="root" store={store}>
@@ -23,6 +34,10 @@ export const withState = (component) => {
     </Provider>,
     store,
   ];
+};
+
+export const withDefaultState = (component) => {
+  return withState(component, defaultInitialState);
 };
 
 export const renderWithRouter = (ui, { route = '/' } = {}) => {

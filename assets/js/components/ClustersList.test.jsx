@@ -4,12 +4,12 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import ClustersList from './ClustersList';
-import { renderWithRouter, withState } from '../lib/test-utils';
+import { renderWithRouter, withDefaultState } from '../lib/test-utils';
 
 describe('ClustersList component', () => {
   describe('query string filtering behavior', () => {
     it('should put the filters values in the query string when filters are selected', () => {
-      const [StatefulClustersList] = withState(<ClustersList />);
+      const [StatefulClustersList] = withDefaultState(<ClustersList />);
       renderWithRouter(StatefulClustersList);
 
       ['Health', 'Name', 'SID', 'Type', 'Tags'].forEach((filter) => {

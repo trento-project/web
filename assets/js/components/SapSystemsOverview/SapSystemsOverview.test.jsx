@@ -4,12 +4,14 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import SapSystemsOverview from './SapSystemsOverview';
-import { renderWithRouter, withState } from '../../lib/test-utils';
+import { renderWithRouter, withDefaultState } from '../../lib/test-utils';
 
 describe('SapSystemsOverviews component', () => {
   describe('query string filtering behavior', () => {
     it('should put the filters values in the query string when filters are selected', () => {
-      const [StatefulSapSystemsOverview] = withState(<SapSystemsOverview />);
+      const [StatefulSapSystemsOverview] = withDefaultState(
+        <SapSystemsOverview />
+      );
       renderWithRouter(StatefulSapSystemsOverview);
 
       ['Health', 'SID', 'Tags'].forEach((filter) => {
