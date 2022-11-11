@@ -7,6 +7,13 @@ defmodule TrentoWeb.ClusterView do
 
   def render("cluster.json", %{cluster: cluster}), do: cluster
 
+  def render("cluster_registered.json", %{cluster: cluster}) do
+    cluster
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:tags)
+  end
+
   def render("settings.json", %{settings: settings}) do
     render_many(settings, __MODULE__, "setting.json", as: :setting)
   end
