@@ -164,17 +164,17 @@ defmodule Trento.MixProject do
       "README.md",
       "CHANGELOG.md",
       "CONTRIBUTING.md",
-      "docs/monitoring/monitoring.md",
-      "docs/alerting/alerting.md",
-      "docs/architecture/trento-architecture.md",
-      "docs/development/environment_variables.md",
-      "docs/development/hack_on_the_trento.md"
+      "guides/monitoring/monitoring.md",
+      "guides/alerting/alerting.md",
+      "guides/architecture/trento-architecture.md",
+      "guides/development/environment_variables.md",
+      "guides/development/hack_on_the_trento.md"
     ]
   end
 
   defp groups_for_extras do
     [
-      Development: [~r/docs\/development\/.?/, "CONTRIBUTING.md"]
+      Development: [~r/guides\/development\/.?/, "CONTRIBUTING.md"]
     ]
   end
 
