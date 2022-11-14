@@ -138,11 +138,6 @@ defmodule Trento.MixProject do
       logo: "priv/static/images/trento.svg",
       extra_section: "GUIDES",
       source_url: @source_url,
-      skip_undefined_reference_warnings_on: [
-        "CHANGELOG.md",
-        "docs/development/environment_variables.md",
-        "docs/development/hack_on_the_trento.md"
-      ],
       extras: extras(),
       groups_for_extras: groups_for_extras(),
       groups_for_modules: [

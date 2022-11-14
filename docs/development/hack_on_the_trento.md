@@ -54,7 +54,7 @@ iex -S mix phx.server
 
 Login page: [localhost:4000](http://localhost:4000)
 
-**Hint**: Altering the default port requires changes in [config/dev.exs](./../../config/dev.exs)
+**Hint**: Altering the default port requires changes in [config/dev.exs](https://github.com/trento-project/web/blob/main/config/dev.exs)
 
 ## Login 
 Username:
@@ -83,6 +83,6 @@ It's possible to use Photofinish' docker image too:
 docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run healthy-27-node-SAP-cluster -u http://localhost:4000/api/collect
 ```
 
-Several useful scenario fixtures are available in [./test/fixtures/scenarios](../../test/fixtures/scenarios/), the same ones used in e2e tests.
+Several useful scenario fixtures are available in [./test/fixtures/scenarios](https://github.com/trento-project/web/tree/main/test/fixtures/scenarios), the same ones used in e2e tests.
 
-See also [.photofinish.toml](../../.photofinish.toml).
+See also [.photofinish.toml](https://github.com/trento-project/web/blob/main/.photofinish.toml).

@@ -2,7 +2,7 @@
 
 A possibly non comprehensive list of the environment variables needed by the control plane to work.
 
-Dig into [./config](../../config/) directory for mode details.
+Dig into [./config](https://github.com/trento-project/web/blob/main/config/) directory for mode details.
 
 ---
 
