@@ -33,12 +33,12 @@ defmodule Trento.SapSystems.HealthSummaryService do
 
   @spec summary_from_sap_system(SapSystemReadModel.t()) :: map()
   defp summary_from_sap_system(%SapSystemReadModel{
-        id: id,
-        sid: sid,
-        health: health,
-        application_instances: application_instances,
-        database_instances: database_instances
-      }) do
+         id: id,
+         sid: sid,
+         health: health,
+         application_instances: application_instances,
+         database_instances: database_instances
+       }) do
     all_instances = application_instances ++ database_instances
 
     %{
