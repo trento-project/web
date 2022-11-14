@@ -1,5 +1,21 @@
 defmodule Trento.Domain.Host do
-  @moduledoc false
+  @moduledoc """
+  The host aggregate manages all the domain logic related to individual hosts
+  (agent, in other term) that compose the target infrastructure running SAP systems.
+
+  Each host running a Trento agent is registered as a new aggregate entry.
+  New host discovery messages update the aggregate values if there is some difference.
+  The host aggregate stores information such as:
+
+  - Host basic information as the hostname and ip addresses
+  - Hardware specifications
+  - Platform where the host is running (the cloud provider for instance)
+  - Registered SLES4SAP subscriptions
+
+  Besides these mostly static values, the aggregate takes care of detecting the host availability
+  using a heartbeat system. If each host does not send its heartbeat within a 10 seconds period
+  (configurable), a heartbeat failed event is raised setting the host as not available.
+  """
 
   require Trento.Domain.Enums.Provider, as: Provider
 
