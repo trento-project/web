@@ -32,7 +32,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
   end
 
   @spec summary_from_sap_system(SapSystemReadModel.t()) :: map()
-  def summary_from_sap_system(%SapSystemReadModel{
+  defp summary_from_sap_system(%SapSystemReadModel{
         id: id,
         sid: sid,
         health: health,
