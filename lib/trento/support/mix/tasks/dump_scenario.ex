@@ -1,5 +1,6 @@
 defmodule Mix.Tasks.DumpScenario do
-  @moduledoc "The hello mix task: `mix help hello`"
+  @moduledoc "Dump the current discovery scenario and
+  discarded discovery events."
 
   use Mix.Task
   import Trento.Tasks.Helper
