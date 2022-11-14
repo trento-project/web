@@ -154,6 +154,12 @@ defmodule Trento.MixProject do
         Projectors: [~r/Trento.*Projector$/],
         Support: [~r/Trento.Support.*/],
         Web: [~r/TrentoWeb.*/]
+      ],
+      nest_modules_by_prefix: [
+        Trento.Domain.Events,
+        Trento.Domain.Commands,
+        Trento.Integration.Checks,
+        Trento.Integration.Discovery
       ]
     ]
   end
