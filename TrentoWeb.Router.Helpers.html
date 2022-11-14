@@ -1,0 +1,2645 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="project" content="trento v1.2.0">
+
+    <title>TrentoWeb.Router.Helpers — trento v1.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
+    <script src="dist/sidebar_items-F6D7B69B.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-XN2TSG4M.js"></script>
+
+
+  </head>
+  <body data-type="modules" class="page-module">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName" translate="no">
+trento
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v1.2.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+  <span translate="no">TrentoWeb.Router.Helpers</span> 
+  <small class="app-vsn" translate="no">(trento v1.2.0)</small>
+
+</h1>
+
+
+  <section id="moduledoc">
+<p>Module with named helpers generated from TrentoWeb.Router.</p>
+  </section>
+
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+      Summary
+    </h1>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#about_path/2" translate="no">about_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#about_path/3" translate="no">about_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#about_url/2" translate="no">about_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#about_url/3" translate="no">about_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#catalog_path/2" translate="no">catalog_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#catalog_path/3" translate="no">catalog_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#catalog_url/2" translate="no">catalog_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#catalog_url/3" translate="no">catalog_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#cluster_path/2" translate="no">cluster_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#cluster_path/3" translate="no">cluster_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#cluster_path/4" translate="no">cluster_path(conn_or_endpoint, action, cluster_id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#cluster_url/2" translate="no">cluster_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#cluster_url/3" translate="no">cluster_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#cluster_url/4" translate="no">cluster_url(conn_or_endpoint, action, cluster_id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#clusters_tagging_path/3" translate="no">clusters_tagging_path(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#clusters_tagging_path/4" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#clusters_tagging_path/5" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#clusters_tagging_url/3" translate="no">clusters_tagging_url(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#clusters_tagging_url/4" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#clusters_tagging_url/5" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#databases_tagging_path/3" translate="no">databases_tagging_path(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#databases_tagging_path/4" translate="no">databases_tagging_path(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#databases_tagging_path/5" translate="no">databases_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#databases_tagging_url/3" translate="no">databases_tagging_url(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#databases_tagging_url/4" translate="no">databases_tagging_url(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#databases_tagging_url/5" translate="no">databases_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#discovery_path/2" translate="no">discovery_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#discovery_path/3" translate="no">discovery_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#discovery_url/2" translate="no">discovery_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#discovery_url/3" translate="no">discovery_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#health_overview_path/2" translate="no">health_overview_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#health_overview_path/3" translate="no">health_overview_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#health_overview_url/2" translate="no">health_overview_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#health_overview_url/3" translate="no">health_overview_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#host_path/2" translate="no">host_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#host_path/3" translate="no">host_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#host_path/4" translate="no">host_path(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#host_url/2" translate="no">host_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#host_url/3" translate="no">host_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#host_url/4" translate="no">host_url(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hosts_tagging_path/3" translate="no">hosts_tagging_path(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hosts_tagging_path/4" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hosts_tagging_path/5" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hosts_tagging_url/3" translate="no">hosts_tagging_url(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hosts_tagging_url/4" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hosts_tagging_url/5" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#installation_path/2" translate="no">installation_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#installation_path/3" translate="no">installation_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#installation_url/2" translate="no">installation_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#installation_url/3" translate="no">installation_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_path/2" translate="no">live_dashboard_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_path/3" translate="no">live_dashboard_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_path/4" translate="no">live_dashboard_path(conn_or_endpoint, action, page, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_path/5" translate="no">live_dashboard_path(conn_or_endpoint, action, node, page, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_url/2" translate="no">live_dashboard_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_url/3" translate="no">live_dashboard_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_url/4" translate="no">live_dashboard_url(conn_or_endpoint, action, page, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#live_dashboard_url/5" translate="no">live_dashboard_url(conn_or_endpoint, action, node, page, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#page_path/3" translate="no">page_path(conn_or_endpoint, action, path)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#page_path/4" translate="no">page_path(conn_or_endpoint, action, path, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#page_url/3" translate="no">page_url(conn_or_endpoint, action, path)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#page_url/4" translate="no">page_url(conn_or_endpoint, action, path, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#path/2" translate="no">path(data, path)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Generates the path information including any necessary prefix.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#pow_session_path/2" translate="no">pow_session_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#pow_session_path/3" translate="no">pow_session_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#pow_session_url/2" translate="no">pow_session_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#pow_session_url/3" translate="no">pow_session_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#prometheus_path/2" translate="no">prometheus_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#prometheus_path/3" translate="no">prometheus_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#prometheus_path/4" translate="no">prometheus_path(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#prometheus_url/2" translate="no">prometheus_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#prometheus_url/3" translate="no">prometheus_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#prometheus_url/4" translate="no">prometheus_url(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#render_spec_path/2" translate="no">render_spec_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#render_spec_path/3" translate="no">render_spec_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#render_spec_url/2" translate="no">render_spec_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#render_spec_url/3" translate="no">render_spec_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_system_path/2" translate="no">sap_system_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_system_path/3" translate="no">sap_system_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_system_url/2" translate="no">sap_system_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_system_url/3" translate="no">sap_system_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_systems_tagging_path/3" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_systems_tagging_path/4" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_systems_tagging_path/5" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_systems_tagging_url/3" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_systems_tagging_url/4" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sap_systems_tagging_url/5" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#settings_path/2" translate="no">settings_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#settings_path/3" translate="no">settings_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#settings_url/2" translate="no">settings_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#settings_url/3" translate="no">settings_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#static_integrity/2" translate="no">static_integrity(endpoint, path)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Generates an integrity hash to a static asset given its file path.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#static_path/2" translate="no">static_path(conn, path)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Generates path to a static asset given its file path.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#static_url/2" translate="no">static_url(conn, path)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Generates url to a static asset given its file path.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#swagger_ui_path/2" translate="no">swagger_ui_path(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#swagger_ui_path/3" translate="no">swagger_ui_path(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#swagger_ui_url/2" translate="no">swagger_ui_url(conn_or_endpoint, action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#swagger_ui_url/3" translate="no">swagger_ui_url(conn_or_endpoint, action, params)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#url/1" translate="no">url(data)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Generates the connection/endpoint base URL without any path information.</p></div>
+
+      </div>
+
+  </div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Functions
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="about_path/2">
+
+  <div class="detail-header">
+    <a href="#about_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">about_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="about_path/3">
+
+  <div class="detail-header">
+    <a href="#about_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">about_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="about_url/2">
+
+  <div class="detail-header">
+    <a href="#about_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">about_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="about_url/3">
+
+  <div class="detail-header">
+    <a href="#about_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">about_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="catalog_path/2">
+
+  <div class="detail-header">
+    <a href="#catalog_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">catalog_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="catalog_path/3">
+
+  <div class="detail-header">
+    <a href="#catalog_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">catalog_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="catalog_url/2">
+
+  <div class="detail-header">
+    <a href="#catalog_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">catalog_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="catalog_url/3">
+
+  <div class="detail-header">
+    <a href="#catalog_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">catalog_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_path/2">
+
+  <div class="detail-header">
+    <a href="#cluster_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_path/3">
+
+  <div class="detail-header">
+    <a href="#cluster_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_path/4">
+
+  <div class="detail-header">
+    <a href="#cluster_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_path(conn_or_endpoint, action, cluster_id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_url/2">
+
+  <div class="detail-header">
+    <a href="#cluster_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_url/3">
+
+  <div class="detail-header">
+    <a href="#cluster_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_url/4">
+
+  <div class="detail-header">
+    <a href="#cluster_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_url(conn_or_endpoint, action, cluster_id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="clusters_tagging_path/3">
+
+  <div class="detail-header">
+    <a href="#clusters_tagging_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">clusters_tagging_path(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="clusters_tagging_path/4">
+
+  <div class="detail-header">
+    <a href="#clusters_tagging_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="clusters_tagging_path/5">
+
+  <div class="detail-header">
+    <a href="#clusters_tagging_path/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="clusters_tagging_url/3">
+
+  <div class="detail-header">
+    <a href="#clusters_tagging_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">clusters_tagging_url(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="clusters_tagging_url/4">
+
+  <div class="detail-header">
+    <a href="#clusters_tagging_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="clusters_tagging_url/5">
+
+  <div class="detail-header">
+    <a href="#clusters_tagging_url/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="databases_tagging_path/3">
+
+  <div class="detail-header">
+    <a href="#databases_tagging_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">databases_tagging_path(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="databases_tagging_path/4">
+
+  <div class="detail-header">
+    <a href="#databases_tagging_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">databases_tagging_path(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="databases_tagging_path/5">
+
+  <div class="detail-header">
+    <a href="#databases_tagging_path/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">databases_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="databases_tagging_url/3">
+
+  <div class="detail-header">
+    <a href="#databases_tagging_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">databases_tagging_url(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="databases_tagging_url/4">
+
+  <div class="detail-header">
+    <a href="#databases_tagging_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">databases_tagging_url(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="databases_tagging_url/5">
+
+  <div class="detail-header">
+    <a href="#databases_tagging_url/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">databases_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="discovery_path/2">
+
+  <div class="detail-header">
+    <a href="#discovery_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">discovery_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="discovery_path/3">
+
+  <div class="detail-header">
+    <a href="#discovery_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">discovery_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="discovery_url/2">
+
+  <div class="detail-header">
+    <a href="#discovery_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">discovery_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="discovery_url/3">
+
+  <div class="detail-header">
+    <a href="#discovery_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">discovery_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="health_overview_path/2">
+
+  <div class="detail-header">
+    <a href="#health_overview_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">health_overview_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="health_overview_path/3">
+
+  <div class="detail-header">
+    <a href="#health_overview_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">health_overview_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="health_overview_url/2">
+
+  <div class="detail-header">
+    <a href="#health_overview_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">health_overview_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="health_overview_url/3">
+
+  <div class="detail-header">
+    <a href="#health_overview_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">health_overview_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_path/2">
+
+  <div class="detail-header">
+    <a href="#host_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_path/3">
+
+  <div class="detail-header">
+    <a href="#host_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_path/4">
+
+  <div class="detail-header">
+    <a href="#host_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_path(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_url/2">
+
+  <div class="detail-header">
+    <a href="#host_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_url/3">
+
+  <div class="detail-header">
+    <a href="#host_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="host_url/4">
+
+  <div class="detail-header">
+    <a href="#host_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_url(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hosts_tagging_path/3">
+
+  <div class="detail-header">
+    <a href="#hosts_tagging_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hosts_tagging_path(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hosts_tagging_path/4">
+
+  <div class="detail-header">
+    <a href="#hosts_tagging_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hosts_tagging_path/5">
+
+  <div class="detail-header">
+    <a href="#hosts_tagging_path/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hosts_tagging_url/3">
+
+  <div class="detail-header">
+    <a href="#hosts_tagging_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hosts_tagging_url(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hosts_tagging_url/4">
+
+  <div class="detail-header">
+    <a href="#hosts_tagging_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hosts_tagging_url/5">
+
+  <div class="detail-header">
+    <a href="#hosts_tagging_url/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="installation_path/2">
+
+  <div class="detail-header">
+    <a href="#installation_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">installation_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="installation_path/3">
+
+  <div class="detail-header">
+    <a href="#installation_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">installation_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="installation_url/2">
+
+  <div class="detail-header">
+    <a href="#installation_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">installation_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="installation_url/3">
+
+  <div class="detail-header">
+    <a href="#installation_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">installation_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_path/2">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_path/3">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_path/4">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action, page, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_path/5">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_path/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action, node, page, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_url/2">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_url/3">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_url/4">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action, page, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="live_dashboard_url/5">
+
+  <div class="detail-header">
+    <a href="#live_dashboard_url/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action, node, page, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="page_path/3">
+
+  <div class="detail-header">
+    <a href="#page_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">page_path(conn_or_endpoint, action, path)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="page_path/4">
+
+  <div class="detail-header">
+    <a href="#page_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">page_path(conn_or_endpoint, action, path, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="page_url/3">
+
+  <div class="detail-header">
+    <a href="#page_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">page_url(conn_or_endpoint, action, path)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="page_url/4">
+
+  <div class="detail-header">
+    <a href="#page_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">page_url(conn_or_endpoint, action, path, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="path/2">
+
+  <div class="detail-header">
+    <a href="#path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">path(data, path)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Generates the path information including any necessary prefix.</p>
+  </section>
+</section>
+<section class="detail" id="pow_session_path/2">
+
+  <div class="detail-header">
+    <a href="#pow_session_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">pow_session_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="pow_session_path/3">
+
+  <div class="detail-header">
+    <a href="#pow_session_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">pow_session_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="pow_session_url/2">
+
+  <div class="detail-header">
+    <a href="#pow_session_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">pow_session_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="pow_session_url/3">
+
+  <div class="detail-header">
+    <a href="#pow_session_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">pow_session_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="prometheus_path/2">
+
+  <div class="detail-header">
+    <a href="#prometheus_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">prometheus_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="prometheus_path/3">
+
+  <div class="detail-header">
+    <a href="#prometheus_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">prometheus_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="prometheus_path/4">
+
+  <div class="detail-header">
+    <a href="#prometheus_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">prometheus_path(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="prometheus_url/2">
+
+  <div class="detail-header">
+    <a href="#prometheus_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">prometheus_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="prometheus_url/3">
+
+  <div class="detail-header">
+    <a href="#prometheus_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">prometheus_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="prometheus_url/4">
+
+  <div class="detail-header">
+    <a href="#prometheus_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">prometheus_url(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="render_spec_path/2">
+
+  <div class="detail-header">
+    <a href="#render_spec_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_spec_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="render_spec_path/3">
+
+  <div class="detail-header">
+    <a href="#render_spec_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_spec_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="render_spec_url/2">
+
+  <div class="detail-header">
+    <a href="#render_spec_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_spec_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="render_spec_url/3">
+
+  <div class="detail-header">
+    <a href="#render_spec_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">render_spec_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_system_path/2">
+
+  <div class="detail-header">
+    <a href="#sap_system_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_system_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_system_path/3">
+
+  <div class="detail-header">
+    <a href="#sap_system_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_system_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_system_url/2">
+
+  <div class="detail-header">
+    <a href="#sap_system_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_system_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_system_url/3">
+
+  <div class="detail-header">
+    <a href="#sap_system_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_system_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_systems_tagging_path/3">
+
+  <div class="detail-header">
+    <a href="#sap_systems_tagging_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_systems_tagging_path/4">
+
+  <div class="detail-header">
+    <a href="#sap_systems_tagging_path/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_systems_tagging_path/5">
+
+  <div class="detail-header">
+    <a href="#sap_systems_tagging_path/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_systems_tagging_url/3">
+
+  <div class="detail-header">
+    <a href="#sap_systems_tagging_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_systems_tagging_url/4">
+
+  <div class="detail-header">
+    <a href="#sap_systems_tagging_url/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sap_systems_tagging_url/5">
+
+  <div class="detail-header">
+    <a href="#sap_systems_tagging_url/5" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="settings_path/2">
+
+  <div class="detail-header">
+    <a href="#settings_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">settings_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="settings_path/3">
+
+  <div class="detail-header">
+    <a href="#settings_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">settings_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="settings_url/2">
+
+  <div class="detail-header">
+    <a href="#settings_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">settings_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="settings_url/3">
+
+  <div class="detail-header">
+    <a href="#settings_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">settings_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="static_integrity/2">
+
+  <div class="detail-header">
+    <a href="#static_integrity/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">static_integrity(endpoint, path)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Generates an integrity hash to a static asset given its file path.</p>
+  </section>
+</section>
+<section class="detail" id="static_path/2">
+
+  <div class="detail-header">
+    <a href="#static_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">static_path(conn, path)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Generates path to a static asset given its file path.</p>
+  </section>
+</section>
+<section class="detail" id="static_url/2">
+
+  <div class="detail-header">
+    <a href="#static_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">static_url(conn, path)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Generates url to a static asset given its file path.</p>
+  </section>
+</section>
+<section class="detail" id="swagger_ui_path/2">
+
+  <div class="detail-header">
+    <a href="#swagger_ui_path/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">swagger_ui_path(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="swagger_ui_path/3">
+
+  <div class="detail-header">
+    <a href="#swagger_ui_path/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">swagger_ui_path(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="swagger_ui_url/2">
+
+  <div class="detail-header">
+    <a href="#swagger_ui_url/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">swagger_ui_url(conn_or_endpoint, action)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="swagger_ui_url/3">
+
+  <div class="detail-header">
+    <a href="#swagger_ui_url/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">swagger_ui_url(conn_or_endpoint, action, params)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="url/1">
+
+  <div class="detail-header">
+    <a href="#url/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">url(data)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Generates the connection/endpoint base URL without any path information.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>

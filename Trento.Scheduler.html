@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="project" content="trento v1.2.0">
+
+    <title>Trento.Scheduler — trento v1.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
+    <script src="dist/sidebar_items-F6D7B69B.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-XN2TSG4M.js"></script>
+
+
+  </head>
+  <body data-type="modules" class="page-module">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName" translate="no">
+trento
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v1.2.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+  <span translate="no">Trento.Scheduler</span> 
+  <small class="app-vsn" translate="no">(trento v1.2.0)</small>
+
+</h1>
+
+
+  <section id="moduledoc">
+<p>Defines a quantum Scheduler.</p><p>When used, the quantum scheduler expects the <code class="inline">:otp_app</code> as option.
+The <code class="inline">:otp_app</code> should point to an OTP application that has
+the quantum runner configuration. For example, the quantum scheduler:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Trento.Scheduler</span><span class="w"> </span><span class="k" data-group-id="2789794741-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:trento</span><span class="w">
+</span><span class="k" data-group-id="2789794741-1">end</span></code></pre><p>Could be configured with:</p><pre><code class="makeup elixir" translate="no"><span class="n">config</span><span class="w"> </span><span class="ss">:trento</span><span class="p">,</span><span class="w"> </span><span class="nc">Trento.Scheduler</span><span class="p">,</span><span class="w">
+  </span><span class="ss">jobs</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2297140923-1">[</span><span class="w">
+    </span><span class="p" data-group-id="2297140923-2">{</span><span class="s">&quot;@daily&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2297140923-3">{</span><span class="nc">Backup</span><span class="p">,</span><span class="w"> </span><span class="ss">:backup</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2297140923-4">[</span><span class="p" data-group-id="2297140923-4">]</span><span class="p" data-group-id="2297140923-3">}</span><span class="p" data-group-id="2297140923-2">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="2297140923-1">]</span></code></pre><h2 id="module-configuration" class="section-heading">
+  <a href="#module-configuration" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">configuration</p>
+  </a>
+  Configuration:
+</h2>
+<ul><li><p><code class="inline">:clock_broadcaster_name</code> - GenServer name of clock broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:execution_broadcaster_name</code> - GenServer name of execution broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:executor_supervisor_name</code> - GenServer name of execution supervisor <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:debug_logging</code> - Turn on debug logging</p></li><li><p><code class="inline">:jobs</code> - list of cron jobs to execute</p></li><li><p><code class="inline">:job_broadcaster_name</code> - GenServer name of job broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:name</code> - GenServer name of scheduler <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:node_selector_broadcaster_name</code> - GenServer name of node selector broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:overlap</code> - Default overlap of new Job</p></li><li><p><code class="inline">:otp_app</code> - Application where scheduler runs</p></li><li><p><code class="inline">:run_strategy</code> - Default Run Strategy of new Job</p></li><li><p><code class="inline">:schedule</code> - Default schedule of new Job</p></li><li><p><code class="inline">:storage</code> - Storage to use for persistence</p></li><li><p><code class="inline">:storage_name</code> - GenServer name of storage <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:supervisor_module</code> - Module to supervise scheduler <br/>Can be overwritten to supervise processes differently (for example for clustering) <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:task_registry_name</code> - GenServer name of task registry <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:task_supervisor_name</code> - GenServer name of task supervisor <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:timeout</code> - Sometimes, you may come across GenServer timeout errors
+esp. when you have too many jobs or high load. The default <a href="https://hexdocs.pm/elixir/GenServer.html#call/3"><code class="inline">GenServer.call/3</code></a>
+timeout is <code class="inline">5_000</code>.</p></li><li><p><code class="inline">:timezone</code> - Default timezone of new Job</p></li></ul><h2 id="module-telemetry" class="section-heading">
+  <a href="#module-telemetry" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">telemetry</p>
+  </a>
+  Telemetry
+</h2>
+<ul><li><p><code class="inline">[:quantum, :job, :add]</code></p><ul><li>Description: dispatched when a job is added</li><li>Measurements: <code class="inline">%{}</code></li><li>Metadata: <code class="inline">%{job: Quantum.Job.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :update]</code></p><ul><li>Description: dispatched when a job is updated</li><li>Measurements: <code class="inline">%{}</code></li><li>Metadata: <code class="inline">%{job: Quantum.Job.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :delete]</code></p><ul><li>Description: dispatched when a job is deleted</li><li>Measurements: <code class="inline">%{}</code></li><li>Metadata: <code class="inline">%{job: Quantum.Job.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :start]</code></p><ul><li>Description: dispatched on job execution start</li><li>Measurements: <code class="inline">%{system_time: integer()}</code></li><li>Metadata: <code class="inline">%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :stop]</code></p><ul><li>Description: dispatched on job execution end</li><li>Measurements: <code class="inline">%{duration: integer()}</code></li><li>Metadata: <code class="inline">%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), result: term()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :exception]</code></p><ul><li>Description: dispatched on job execution fail</li><li>Measurements: <code class="inline">%{duration: integer()}</code></li><li><p>Metadata: <code class="inline">%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), kind: :throw | :error | :exit, reason: term(), stacktrace: list()}</code></p></li></ul></li></ul><h3 id="module-examples" class="section-heading">
+  <a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">examples</p>
+  </a>
+  Examples
+</h3>
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex(1)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">discover_all</span><span class="p" data-group-id="4692798088-1">(</span><span class="ss">:quantum</span><span class="p" data-group-id="4692798088-1">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+</span><span class="gp unselectable">iex(2)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">spannable_events</span><span class="p" data-group-id="4692798088-2">(</span><span class="p" data-group-id="4692798088-2">)</span><span class="w">
+</span><span class="p" data-group-id="4692798088-3">[</span><span class="p" data-group-id="4692798088-4">{</span><span class="p" data-group-id="4692798088-5">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p" data-group-id="4692798088-5">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4692798088-6">[</span><span class="ss">:start</span><span class="p">,</span><span class="w"> </span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="ss">:exception</span><span class="p" data-group-id="4692798088-6">]</span><span class="p" data-group-id="4692798088-4">}</span><span class="p" data-group-id="4692798088-3">]</span><span class="w">
+</span><span class="gp unselectable">iex(3)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">list_events</span><span class="w">
+</span><span class="p" data-group-id="4692798088-7">[</span><span class="w">
+  </span><span class="p" data-group-id="4692798088-8">{</span><span class="p" data-group-id="4692798088-9">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:add</span><span class="p" data-group-id="4692798088-9">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-10">%{</span><span class="w">
+     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched when a job is added&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{}&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{job: Quantum.Job.t(), scheduler: atom()}&quot;</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-10">}</span><span class="p" data-group-id="4692798088-8">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4692798088-11">{</span><span class="p" data-group-id="4692798088-12">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:delete</span><span class="p" data-group-id="4692798088-12">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-13">%{</span><span class="w">
+     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched when a job is deleted&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{}&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{job: Quantum.Job.t(), scheduler: atom()}&quot;</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-13">}</span><span class="p" data-group-id="4692798088-11">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4692798088-14">{</span><span class="p" data-group-id="4692798088-15">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:exception</span><span class="p" data-group-id="4692798088-15">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-16">%{</span><span class="w">
+     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched on job execution fail&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{duration: integer()}&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), kind: :throw | :error | :exit, reason: term(), stacktrace: list()}&quot;</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-16">}</span><span class="p" data-group-id="4692798088-14">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4692798088-17">{</span><span class="p" data-group-id="4692798088-18">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:start</span><span class="p" data-group-id="4692798088-18">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-19">%{</span><span class="w">
+     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched on job execution start&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{system_time: integer()}&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom()}&quot;</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-19">}</span><span class="p" data-group-id="4692798088-17">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4692798088-20">{</span><span class="p" data-group-id="4692798088-21">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:stop</span><span class="p" data-group-id="4692798088-21">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-22">%{</span><span class="w">
+     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched on job execution end&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{duration: integer()}&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), result: term()}&quot;</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-22">}</span><span class="p" data-group-id="4692798088-20">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="4692798088-23">{</span><span class="p" data-group-id="4692798088-24">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:update</span><span class="p" data-group-id="4692798088-24">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-25">%{</span><span class="w">
+     </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched when a job is updated&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{}&quot;</span><span class="p">,</span><span class="w">
+     </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{job: Quantum.Job.t(), scheduler: atom()}&quot;</span><span class="w">
+   </span><span class="p" data-group-id="4692798088-25">}</span><span class="p" data-group-id="4692798088-23">}</span><span class="w">
+</span><span class="p" data-group-id="4692798088-7">]</span></code></pre>
+  </section>
+
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+      Summary
+    </h1>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#child_spec/1" translate="no">child_spec(opts)</a>
+
+        </div>
+
+      </div>
+
+  </div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Functions
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="child_spec/1">
+
+  <div class="detail-header">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">child_spec(opts)</h1>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> child_spec(<a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: <a href="https://hexdocs.pm/elixir/Supervisor.html#t:child_spec/0">Supervisor.child_spec</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>
