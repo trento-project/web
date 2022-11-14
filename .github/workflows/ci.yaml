@@ -116,6 +116,34 @@ jobs:
       - name: codespell
         run: codespell -S priv*,*package*json,deps*,*node_modules*,*svg,*.git,*.app -L enque,daa
 
+  generate-docs:
+    name: Generate project documentation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_name == 'main'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v3
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/test
+            priv/plts
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+      - name: Build docs
+        uses: lee-dohm/generate-elixir-docs@v1
+      - name: Publish to Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc
+
   static-code-analysis:
     name: Static Code Analysis
     needs: [elixir-deps, npm-deps]
