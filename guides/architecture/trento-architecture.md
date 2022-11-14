@@ -2,7 +2,7 @@
 
 Here's a high level view of what we do to achieve the result of providing a reactive event driven system.
 
-![Trento Architecture](./trento-architecture.png)
+![Trento Architecture](assets/trento-architecture.png)
 
 - Discovery
 - Scenario Detection
@@ -77,4 +77,4 @@ Whenever possible we use simpler implementations for non-critical aspects. (_Tag
 
 There's a lot of literature out there, here's just a perspective of the thing.
 
-![ES+CQRS](./event-sourcing-cqrs.png)
+![ES+CQRS](assets/event-sourcing-cqrs.png)

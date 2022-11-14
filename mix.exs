@@ -138,6 +138,7 @@ defmodule Trento.MixProject do
       logo: "priv/static/images/trento.svg",
       extra_section: "GUIDES",
       source_url: @source_url,
+      assets: "guides/assets/",
       extras: extras(),
       groups_for_extras: groups_for_extras(),
       groups_for_modules: [
