@@ -7,9 +7,10 @@ defmodule Trento.Domain.Cluster do
   SAP workloads. Any other type of resource is not handled properly.
 
   Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
-  to the same cluster are part of the same stream. Among all the hosts, only the cluster discovery messages
-  coming from the **designated controller** update the aggregate. In any case, all the hosts are listed in
-  the `hosts` field.
+  to the same cluster are part of the same stream. A cluster is registered first time/details updated afterwards
+  only by cluster discovery messages coming from the **designated controller** node. Once a cluster is
+  registered other hosts can be added receiving discovery messages coming from other nodes. All the hosts
+  are listed in the `hosts` field.
 
   The cluster aggregate stores and updates information coming in the cluster discovery messages such as:
 
