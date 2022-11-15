@@ -108,6 +108,19 @@ Cypress.Commands.add('addTagByColumnValue', (columnValue, tagValue) => {
     .parents('tr')
     .within(() => {
       cy.get('span').contains('Add Tag').type(`${tagValue}{enter}`);
+      cy.intercept('POST', '/api/*/*/tags');
+      cy.get('span').contains(tagValue);
+    });
+});
+
+Cypress.Commands.add('resetFilterSelection', (filterName) => {
+  cy.get(`[data-testid="filter-${filterName}"]`)
+    .parent()
+    .within(($filter) => {
+      const resetButton = '[data-testid="eos-svg-component"]';
+      if ($filter.find(resetButton).length > 0) {
+        cy.get(resetButton).click();
+      }
     });
 });
 
