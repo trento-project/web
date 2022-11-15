@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Version do
-  @moduledoc "The hello mix task: `mix help hello`"
+  @moduledoc "Print application version."
 
   use Mix.Task
 

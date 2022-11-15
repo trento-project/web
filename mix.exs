@@ -1,6 +1,7 @@
 defmodule Trento.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/trento-project/web"
   @version "1.2.0"
 
   def project do
@@ -14,6 +15,8 @@ defmodule Trento.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      name: "Trento Web",
+      docs: docs(),
       dialyzer: [
         plt_add_apps: [:ex_unit, :mix]
         # check_plt: true,
@@ -126,6 +129,53 @@ defmodule Trento.MixProject do
         "cmd --cd assets npm run build",
         "phx.digest"
       ]
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      logo: "priv/static/images/trento.svg",
+      extra_section: "GUIDES",
+      source_url: @source_url,
+      assets: "guides/assets/",
+      extras: extras(),
+      groups_for_extras: groups_for_extras(),
+      groups_for_modules: [
+        Domain: [~r/Trento.Domain.*/],
+        "Event handlers": [~r/Trento.*EventHandler$/],
+        Integration: [~r/Trento.Integration.*/],
+        Messaging: [~r/Trento.Messaging.*/],
+        "Read models": [~r/Trento.*ReadModel$/],
+        Projectors: [~r/Trento.*Projector$/],
+        Support: [~r/Trento.Support.*/],
+        Web: [~r/TrentoWeb.*/]
+      ],
+      nest_modules_by_prefix: [
+        Trento.Domain.Events,
+        Trento.Domain.Commands,
+        Trento.Integration.Checks,
+        Trento.Integration.Discovery
+      ]
+    ]
+  end
+
+  def extras() do
+    [
+      "README.md",
+      "CHANGELOG.md",
+      "CONTRIBUTING.md",
+      "guides/monitoring/monitoring.md",
+      "guides/alerting/alerting.md",
+      "guides/architecture/trento-architecture.md",
+      "guides/development/environment_variables.md",
+      "guides/development/hack_on_the_trento.md"
+    ]
+  end
+
+  defp groups_for_extras do
+    [
+      Development: [~r/guides\/development\/.?/, "CONTRIBUTING.md"]
     ]
   end
 

@@ -17,4 +17,4 @@ On a full Trento installation monitoring is enabled by default and the configura
 
 ---
 
-![Monitoring Architecture](./trento-monitoring.png)
+![Monitoring Architecture](assets/trento-monitoring.png)
