@@ -4,7 +4,7 @@ defmodule Trento.Domain.Cluster do
   deployed HA Clusters (Pacemaker, Corosync, etc).
   The HA cluster is used to handle the high availability scenarios on the installed
   SAP infrastructure. That's why this domain is tailored to work on clusters managing
-  SAP workloads. Any other type of resource is not handled properly.
+  SAP workloads.
 
   Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
   to the same cluster are part of the same stream. A cluster is registered first time/details updated afterwards
