@@ -17,7 +17,7 @@ import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
 import { ClusterSettings } from '@components/ClusterDetails';
 import ChecksResults from '@components/ChecksResults';
-import ExecutionResults from '@components/ExecutionResults';
+import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails from '@components/HostDetails';
 import ClusterDetails from '@components/ClusterDetails';
@@ -63,7 +63,7 @@ const App = () => {
               />
               <Route
                 path="clusters/:clusterID/execution/:executionID"
-                element={<ExecutionResults />}
+                element={<ExecutionResultsPage />}
               />
               <Route path="hosts/:hostID" element={<HostDetails />} />
               <Route path="sap_systems/:id" element={<SapSystemDetails />} />

@@ -84,7 +84,6 @@ const ExecutionResults = ({
       .then(
         ([{ data: fetchedExecutionData }, { data: fetchedCatalogData }]) => {
           setLoading(false);
-          console.log(fetchedExecutionData);
           setExecutionData(fetchedExecutionData);
           setCatalog(fetchedCatalogData.items);
         }
@@ -155,11 +154,7 @@ const ExecutionResults = ({
               unreachableMessage=""
             >
               {checks.map((checkID) => {
-                const { health, failedExpectations, expectations } = getHealth(
-                  checkResults,
-                  checkID,
-                  agentID
-                );
+                const { health } = getHealth(checkResults, checkID, agentID);
 
                 return (
                   <CheckResult
