@@ -18,7 +18,7 @@ defmodule Trento.ClustersTest do
 
   describe "checks execution" do
     test "should dispatch checks execution requests for each cluster" do
-      clusters = Enum.map(0..4, fn _ -> insert(:cluster) end)
+      clusters = insert_list(5, :cluster)
 
       Enum.each(clusters, fn %{id: cluster_id} ->
         expect(
