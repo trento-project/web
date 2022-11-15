@@ -18,10 +18,8 @@ defmodule Trento.HostsTest do
     end
 
     test "Detects the correct number of SLES4SAP Subscriptions" do
-      Enum.map(0..5, fn _ ->
-        insert(:sles_subscription, identifier: "SLES_SAP")
-        insert(:sles_subscription, identifier: "sle-module-server-applications")
-      end)
+      insert_list(6, :sles_subscription, identifier: "SLES_SAP")
+      insert_list(6, :sles_subscription, identifier: "sle-module-server-applications")
 
       assert 12 = SlesSubscriptionReadModel |> Repo.all() |> length()
       assert 6 = Hosts.get_all_sles_subscriptions()
