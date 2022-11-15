@@ -1,5 +1,51 @@
 defmodule Trento.Domain.Cluster do
-  @moduledoc false
+  @moduledoc """
+  The cluster aggregate manages all the domain logic related to
+  deployed HA Clusters (Pacemaker, Corosync, etc).
+  The HA cluster is used to handle the high availability scenarios on the installed
+  SAP infrastructure. That's why this domain is tailored to work on clusters managing
+  SAP workloads. Any other type of resource is not handled properly.
+
+  Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
+  to the same cluster are part of the same stream. Among all the hosts, only the cluster discovery messages
+  coming from the **designated controller** update the aggregate. In any case, all the hosts are listed in
+  the `hosts` field.
+
+  The cluster aggregate stores and updates information coming in the cluster discovery messages such as:
+
+  - Cluster name
+  - Number of hosts and cluster resources
+  - Platform where the host is running (the cloud provider for instance)
+  - Managed SAP workload SID
+
+  ## Cluster health
+
+  The cluster health is one of the most relevant concepts of this domain.
+  It shows if the cluster is working as expected or not, and in the second case,
+  what is the roout cause of the issue and if there is some possible remediation.
+  It is composed by sub-health elements:
+
+  - Discovered health
+  - Checks health
+
+  The main cluster health is computed using the values from these two. This means that the cluster health is the
+  worst of the two.
+
+  ### Discovered health
+
+  The discovered health comes from the cluster discovery messages and it depends on the cluster type.
+  Each cluster type has a different way of evaluating the health.
+
+  ### Checks health
+
+  The checks health is obtained from the [Checks Engine executions](https://github.com/trento-project/wanda/).
+  Every time a checks execution is started, the selected checks for this cluster are executed, and based on the result
+  the health value is updated. The checks are started from a user request or periodically following the
+  project scheduler configuration.
+
+  This domain only knows about the health, the details about the execution are stored in the
+  [Checks Engine](https://github.com/trento-project/wanda/).
+  """
 
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
