@@ -17,7 +17,7 @@ defmodule TrentoWeb.SapSystemControllerTest do
 
       api_spec = ApiSpec.spec()
 
-      conn = get(conn, Routes.sap_system_path(conn, :list))
+      conn = get(conn, "/api/sap_systems")
 
       conn
       |> json_response(200)
@@ -32,7 +32,7 @@ defmodule TrentoWeb.SapSystemControllerTest do
 
       api_spec = ApiSpec.spec()
 
-      conn = get(conn, Routes.sap_system_path(conn, :list_databases))
+      conn = get(conn, "/api/databases")
 
       conn
       |> json_response(200)
