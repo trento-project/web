@@ -8,7 +8,7 @@ defmodule TrentoWeb.TagsControllerTest do
   describe "Tag Validation" do
     test "should decline tag with whitespace", %{conn: conn} do
       conn =
-        post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
+        post(conn, "/api/hosts/#{Faker.UUID.v4()}/tags", %{
           "value" => "     "
         })
 
@@ -21,7 +21,7 @@ defmodule TrentoWeb.TagsControllerTest do
 
     test "should decline tag with forbidden characters", %{conn: conn} do
       conn =
-        post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
+        post(conn, "/api/hosts/#{Faker.UUID.v4()}/tags", %{
           "value" => "This / is a \ wrong #tag"
         })
 
@@ -36,7 +36,7 @@ defmodule TrentoWeb.TagsControllerTest do
   describe "tagging sap systems and databases" do
     test "should add a tag to a sap system", %{conn: conn} do
       conn =
-        post(conn, Routes.sap_systems_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
+        post(conn, "/api/sap_systems/#{Faker.UUID.v4()}/tags", %{
           "value" => Color.En.name()
         })
 
@@ -51,7 +51,7 @@ defmodule TrentoWeb.TagsControllerTest do
         resource_type: _resource_type
       } = insert(:tag, resource_type: :sap_system)
 
-      conn = delete(conn, Routes.sap_systems_tagging_path(conn, :remove_tag, resource_id, value))
+      conn = delete(conn, "/api/sap_systems/#{resource_id}/tags/#{value}")
 
       assert 204 == conn.status
     end
@@ -69,7 +69,7 @@ defmodule TrentoWeb.TagsControllerTest do
       conn =
         delete(
           conn,
-          Routes.sap_systems_tagging_path(conn, :remove_tag, resource_id, "non-existing-tag")
+          "/api/sap_systems/#{resource_id}/tags/non-existing-tag"
         )
 
       assert 404 == conn.status
@@ -77,7 +77,7 @@ defmodule TrentoWeb.TagsControllerTest do
 
     test "should add a tag to a database", %{conn: conn} do
       conn =
-        post(conn, Routes.databases_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
+        post(conn, "/api/databases/#{Faker.UUID.v4()}/tags", %{
           "value" => Color.En.name()
         })
 
@@ -92,7 +92,7 @@ defmodule TrentoWeb.TagsControllerTest do
         resource_type: _resource_type
       } = insert(:tag, resource_type: :database)
 
-      conn = delete(conn, Routes.databases_tagging_path(conn, :remove_tag, resource_id, value))
+      conn = delete(conn, "/api/databases/#{resource_id}/tags/#{value}")
 
       assert 204 == conn.status
     end
@@ -101,7 +101,7 @@ defmodule TrentoWeb.TagsControllerTest do
   describe "tagging clusters" do
     test "should add a tag to a cluster", %{conn: conn} do
       conn =
-        post(conn, Routes.clusters_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
+        post(conn, "/api/clusters/#{Faker.UUID.v4()}/tags", %{
           "value" => tag_value = Color.En.name()
         })
 
@@ -116,7 +116,7 @@ defmodule TrentoWeb.TagsControllerTest do
         resource_type: _resource_type
       } = insert(:tag, resource_type: :cluster)
 
-      conn = delete(conn, Routes.clusters_tagging_path(conn, :remove_tag, resource_id, value))
+      conn = delete(conn, "/api/clusters/#{resource_id}/tags/#{value}")
 
       assert 204 == conn.status
     end
@@ -132,7 +132,7 @@ defmodule TrentoWeb.TagsControllerTest do
       conn =
         delete(
           conn,
-          Routes.clusters_tagging_path(conn, :remove_tag, resource_id, "non-existing-tag")
+          "/api/clusters/#{resource_id}/tags/non-existing-tag"
         )
 
       assert 404 == conn.status
@@ -142,7 +142,7 @@ defmodule TrentoWeb.TagsControllerTest do
   describe "tagging hosts" do
     test "should add a tag to a host", %{conn: conn} do
       conn =
-        post(conn, Routes.hosts_tagging_path(conn, :add_tag, Faker.UUID.v4()), %{
+        post(conn, "/api/hosts/#{Faker.UUID.v4()}/tags", %{
           "value" => Color.En.name()
         })
 
@@ -157,7 +157,7 @@ defmodule TrentoWeb.TagsControllerTest do
         resource_type: _resource_type
       } = insert(:tag, resource_type: :host)
 
-      conn = delete(conn, Routes.hosts_tagging_path(conn, :remove_tag, resource_id, value))
+      conn = delete(conn, "/api/hosts/#{resource_id}/tags/#{value}")
 
       assert 204 == conn.status
     end
@@ -173,7 +173,7 @@ defmodule TrentoWeb.TagsControllerTest do
       conn =
         delete(
           conn,
-          Routes.hosts_tagging_path(conn, :remove_tag, resource_id, "non-existing-tag")
+          "/api/hosts/#{resource_id}/tags/non-existing-tag"
         )
 
       assert 404 == conn.status
