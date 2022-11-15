@@ -15,51 +15,15 @@ import {
   ResultsContainer,
   HostResultsWrapper,
   CheckResult,
+  getHosts,
+  getChecks,
+  getHealth,
+  getCheckResults,
 } from '@components/ChecksResults';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
-
-const getCheckResults = (executionData) => {
-  if (!executionData) {
-    return [];
-  }
-  if (!executionData.check_results) {
-    return [];
-  }
-  return executionData.check_results;
-};
-
-const getHosts = (checkResults) => {
-  return checkResults.flatMap(({ agents_check_results }) =>
-    agents_check_results.map(({ agent_id }) => agent_id)
-  );
-};
-
-const getChecks = (checkResults) => {
-  return checkResults.map(({ check_id }) => check_id);
-};
-
-const getHealth = (checkResults, checkID, agentID) => {
-  const checkResult = checkResults.find(({ check_id }) => check_id === checkID);
-  if (checkResult) {
-    const agentCheckResult = checkResult.agents_check_results.find(
-      ({ agent_id }) => agent_id === agentID
-    );
-
-    const failedExpectationEvaluations =
-      agentCheckResult?.expectation_evaluations.filter(
-        (expectationEvaluation) => 'message' in expectationEvaluation
-      );
-
-    return {
-      expectations: checkResult.expectation_results.length,
-      failedExpectations: failedExpectationEvaluations.length,
-      health: failedExpectationEvaluations.length > 0 ? 'critical' : 'passing',
-    };
-  }
-};
 
 const ExecutionResults = ({
   clusterID,
