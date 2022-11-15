@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="project" content="Trento Web v1.2.0">
+
+    <title>Hack on the trento — Trento Web v1.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
+    <script src="dist/sidebar_items-8FEF16ED.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-XN2TSG4M.js"></script>
+
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+      <a href="readme.html">
+        <img src="assets/logo.svg" alt="Trento Web" class="sidebar-projectImage">
+      </a>
+
+    <div class="sidebar-projectDetails">
+      <a href="readme.html" class="sidebar-projectName" translate="no">
+Trento Web
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v1.2.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">GUIDES</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/trento-project/web/blob/main/guides/development/hack_on_the_trento.md#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span>Hack on the trento</span>
+</h1>
+
+<ul><li><a href="#requirements">Requirements</a></li><li><a href="#install-dependencies">Install dependencies</a></li><li><a href="#development-environment">Development environment</a></li><li><a href="#setup-trento">Setup trento</a></li><li><a href="#start-trento-in-the-repl">Start trento in the repl</a></li><li><a href="#environment-variables">Environment Variables</a></li><li><a href="#scenario-loading-with-photofinish">Scenario loading with photofinish</a></li></ul><h2 id="requirements" class="section-heading">
+  <a href="#requirements" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">requirements</p>
+  </a>
+  Requirements
+</h2>
+<p>In order to run the trento web, you need</p><ol><li><a href="https://elixir-lang.org/">Elixir</a></li><li><a href="https://www.erlang.org/">Erlang OTP</a></li><li><a href="https://docs.docker.com/get-docker/">Docker</a></li><li><a href="https://docs.docker.com/compose/install/">Docker Compose</a></li></ol><h2 id="development-environment" class="section-heading">
+  <a href="#development-environment" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">development-environment</p>
+  </a>
+  Development environment
+</h2>
+<p>A <code class="inline">docker-compose</code> development environment is provided.</p><pre><code class="makeup elixir" translate="no"><span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="o">-</span><span class="n">d</span></code></pre><p>It will start a <strong>postgres</strong> database and a <strong>grafana</strong> instance, for storage and monitoring.</p><h2 id="install-dependencies" class="section-heading">
+  <a href="#install-dependencies" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">install-dependencies</p>
+  </a>
+  Install dependencies
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">mix</span><span class="w"> </span><span class="n">deps</span><span class="o">.</span><span class="n">get</span></code></pre><h2 id="setup-trento" class="section-heading">
+  <a href="#setup-trento" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">setup-trento</p>
+  </a>
+  Setup trento
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">mix</span><span class="w"> </span><span class="n">setup</span></code></pre><h2 id="install-the-javascript-frontend-packages" class="section-heading">
+  <a href="#install-the-javascript-frontend-packages" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">install-the-javascript-frontend-packages</p>
+  </a>
+  Install the JavaScript frontend packages
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">npm</span><span class="w"> </span><span class="o">--</span><span class="n">prefix</span><span class="w"> </span><span class="o">.</span><span class="o">/</span><span class="n">assets</span><span class="o">/</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">.</span><span class="o">/</span><span class="n">assets</span></code></pre><h2 id="start-trento-in-the-repl" class="section-heading">
+  <a href="#start-trento-in-the-repl" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">start-trento-in-the-repl</p>
+  </a>
+  Start trento in the repl
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">iex</span><span class="w"> </span><span class="o">-</span><span class="nc">S</span><span class="w"> </span><span class="n">mix</span><span class="w"> </span><span class="n">phx</span><span class="o">.</span><span class="n">server</span></code></pre><h2 id="access-the-trento-web" class="section-heading">
+  <a href="#access-the-trento-web" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">access-the-trento-web</p>
+  </a>
+  Access the trento web
+</h2>
+<p>Login page: <a href="http://localhost:4000">localhost:4000</a></p><p><strong>Hint</strong>: Altering the default port requires changes in <a href="https://github.com/trento-project/web/blob/main/config/dev.exs">config/dev.exs</a></p><h2 id="login" class="section-heading">
+  <a href="#login" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">login</p>
+  </a>
+  Login
+</h2>
+<p>Username:</p><pre><code class="makeup elixir" translate="no"><span class="n">admin</span></code></pre><p>Password:</p><pre><code class="makeup elixir" translate="no"><span class="n">adminpassword</span></code></pre><h2 id="environment-variables" class="section-heading">
+  <a href="#environment-variables" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">environment-variables</p>
+  </a>
+  Environment Variables
+</h2>
+<p>See <a href="environment_variables.html">environment_variables</a></p><h2 id="scenario-loading-with-photofinish" class="section-heading">
+  <a href="#scenario-loading-with-photofinish" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">scenario-loading-with-photofinish</p>
+  </a>
+  Scenario loading with photofinish
+</h2>
+<p>By leveraging <a href="https://github.com/trento-project/photofinish">photofinish</a> it is possible to load different scenarios for development and debugging purposes.</p><pre><code class="makeup elixir" translate="no"><span class="n">photofinish</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">--</span><span class="n">url</span><span class="w"> </span><span class="s">&quot;http://localhost:4000/api/collect&quot;</span><span class="w"> </span><span class="n">healthy</span><span class="o">-</span><span class="mi">27</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="nc">SAP</span><span class="o">-</span><span class="n">cluster</span></code></pre><p>It's possible to use Photofinish' docker image too:</p><pre><code class="makeup elixir" translate="no"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="s">&quot;$PWD&quot;</span><span class="ss">:/</span><span class="n">data</span><span class="w"> </span><span class="o">--</span><span class="n">network</span><span class="w"> </span><span class="n">host</span><span class="w"> </span><span class="n">ghcr</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">trento</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">photofinish</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="n">healthy</span><span class="o">-</span><span class="mi">27</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="nc">SAP</span><span class="o">-</span><span class="n">cluster</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w"> </span><span class="n">http</span><span class="ss">://</span><span class="n">localhost</span><span class="p">:</span><span class="mi">4000</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">collect</span></code></pre><p>Several useful scenario fixtures are available in <a href="https://github.com/trento-project/web/tree/main/test/fixtures/scenarios">./test/fixtures/scenarios</a>, the same ones used in e2e tests.</p><p>See also <a href="https://github.com/trento-project/web/blob/main/.photofinish.toml">.photofinish.toml</a>.</p>
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="environment_variables.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Environment Variables
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+  </div>
+</div>
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>

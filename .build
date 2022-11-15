@@ -80,6 +80,7 @@ Trento.Domain.Events.SlesSubscriptionsUpdated.html
 Trento.Domain.GcpProvider.html
 Trento.Domain.HanaClusterDetails.html
 Trento.Domain.HealthService.html
+Trento.Domain.Host.html
 Trento.Domain.HostExecution.html
 Trento.Domain.SapSystem.Application.html
 Trento.Domain.SapSystem.Database.html
@@ -243,7 +244,14 @@ TrentoWeb.SettingsView.html
 TrentoWeb.TagsController.html
 TrentoWeb.UserSocket.html
 TrentoWeb.html
+alerting.html
 api-reference.html
+assets/event-sourcing-cqrs.png
+assets/logo.svg
+assets/trento-architecture.png
+assets/trento-monitoring.png
+changelog.html
+contributing.html
 dist/handlebars.runtime-NWIB6V2M.js
 dist/handlebars.templates-X7YVL3G2.js
 dist/html-XN2TSG4M.js
@@ -269,7 +277,12 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-9B7265C7.js
-dist/sidebar_items-FAEBD5F1.js
+dist/search_items-40EE7B5C.js
+dist/sidebar_items-8FEF16ED.js
+environment_variables.html
+hack_on_the_trento.html
 index.html
+monitoring.html
+readme.html
 search.html
+trento-architecture.html

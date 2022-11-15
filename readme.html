@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="project" content="Trento Web v1.2.0">
+
+    <title>Trento — Trento Web v1.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
+    <script src="dist/sidebar_items-8FEF16ED.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-XN2TSG4M.js"></script>
+
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+      <a href="readme.html">
+        <img src="assets/logo.svg" alt="Trento Web" class="sidebar-projectImage">
+      </a>
+
+    <div class="sidebar-projectDetails">
+      <a href="readme.html" class="sidebar-projectName" translate="no">
+Trento Web
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v1.2.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">GUIDES</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/trento-project/web/blob/main/README.md#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span>Trento</span>
+</h1>
+
+<p>An open cloud-native web console improving on the work day of SAP Applications administrators.</p><h1>Table of contents</h1><ul><li><a href="#introduction">Introduction</a></li><li><a href="#features">Features</a><ul><li><a href="#sap-hana-ha-automated-discovery">Automated discovery</a></li><li><a href="#reactive-control-plane">Reactive Control Plane</a></li><li><a href="#configuration-validation">Configuration validation</a></li><li><a href="#monitoring">Monitoring</a></li><li><a href="#alerting">Alerting</a></li></ul></li><li><a href="#installation">Installation</a></li><li><a href="#support">Support</a></li><li><a href="#contributing">Contributing</a></li><li><a href="#license">License</a></li></ul><h1>Introduction</h1><p><em>Trento</em> is a comprehensive cloud-native, distributed monitoring solution.</p><p>It's made by three main components:</p><ul><li>Trento Agent</li><li>Trento Runner</li><li>Trento Web (current repository)</li></ul><p><a href="https://github.com/trento-project/agent">Trento Agent</a> is a single background <strong>process running in each host of the target</strong> infrastructure the user desires to monitor.</p><p><a href="https://github.com/trento-project/runner">Trento Runner</a> responsible of <strong>running the Trento configuration health checks</strong> among the installed Trento Agents.</p><p><em>Trento Web</em> is the <strong>control plane of the Trento Platform</strong>.
+In cooperation with the Agents and the Runner discovers, observes, monitors and checks the target SAP infrastructure.</p><p>See the <a href="trento-architecture.html">architecture document</a> for additional details.</p><blockquote><p>Being the project in development, all of the above might be subject to change!</p></blockquote><h1>Features</h1><h2 id="sap-hana-ha-automated-discovery" class="section-heading">
+  <a href="#sap-hana-ha-automated-discovery" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">sap-hana-ha-automated-discovery</p>
+  </a>
+  SAP HANA HA Automated discovery
+</h2>
+<p>The central server integrates with the Agents discoveries by <strong>collecting</strong> information about the target SAP infrastructure and then <strong>detects</strong> different kind of scenarios and <strong>reacts</strong> accordingly.</p><p>See also <a href="https://github.com/trento-project/agent">Trento Agent</a> for additional information.</p><h2 id="reactive-control-plane" class="section-heading">
+  <a href="#reactive-control-plane" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">reactive-control-plane</p>
+  </a>
+  Reactive Control Plane
+</h2>
+<p>By leveraging modern approaches to software architecture and engineering and top notch technologies we built a <strong>reactive system</strong> that provides <strong>realtime</strong> feedbacks about the <strong>changes in the target</strong> infrastructure.</p><p>Here's a non-comprehensive list of the capabilities provided by the bundled Web UI:</p><ul><li>Global Health Overview</li><li>Hosts Overview and Detail</li><li>Pacemaker Clusters Overview and Detail</li><li>SAP Systems Overview and Detail</li><li>HANA Databases Overview and Detail </li><li>Checks Catalog</li></ul><h2 id="configuration-validation" class="section-heading">
+  <a href="#configuration-validation" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">configuration-validation</p>
+  </a>
+  Configuration validation
+</h2>
+<p>Trento is able to execute a variety of <em>configuration health checks</em> (a.k.a. the <em>HA Config Checks</em>) among the installed Trento Agents.</p><ul><li>Pacemaker, Corosync, SBD, SAPHanaSR and other generic <em>SUSE Linux Enterprise for SAP Application</em> OS settings</li><li>Specific configuration audits for SAP HANA Scale-Up Performance-Optimized scenarios deployed on MS Azure cloud.</li></ul><p>See <a href="https://github.com/trento-project/runner">Trento Runner</a> for additional information.</p><h2 id="monitoring" class="section-heading">
+  <a href="#monitoring" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">monitoring</p>
+  </a>
+  Monitoring
+</h2>
+<p>It is important in critycal business systems to have access to relevant information about <em>how things are going</em>.</p><p>Currently Trento provides a basic integration with <strong>Grafana</strong> and <strong>Prometheus</strong>.</p><p>See <a href="monitoring.html">related documentation</a> for more information.</p><h2 id="alerting" class="section-heading">
+  <a href="#alerting" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">alerting</p>
+  </a>
+  Alerting
+</h2>
+<p>Alerting feature notifies the SAP Administrator about important updated in the Landscape being monitored/observed by Trento.</p><p>See <a href="alerting.html">related documentation</a> for more information.</p><h1>Installation</h1><p><em>Trento</em> is intended to run in many ways, depending on needs, and also the different components have their own requirements and constraints.</p><p>Please check the specific <a href="https://github.com/trento-project/agent">Agent</a> and <a href="https://github.com/trento-project/runner">Runner</a> documentations for respective details.</p><p>If you intend to install Trento on a k8s cluster, you may be interested in our <a href="https://github.com/trento-project/helm-charts">helm-charts</a> repo for detailed instructions.</p><p>If otherwise you want to play around with the current repository, go ahead,  <a href="hack_on_the_trento.html">hack on the trento</a> and <strong>have a lot of fun</strong>!</p><h1>Support</h1><p>Please only report bugs via <a href="https://github.com/trento-project/web/issues">GitHub issues</a>;
+for any other inquiry or topic use <a href="https://github.com/trento-project/trento/discussions">GitHub discussion</a>.</p><h1>Contributing</h1><p>See <a href="contributing.html">CONTRIBUTING.md</a></p><h1>License</h1><p>Copyright 2021-2022 SUSE LLC</p><p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at</p><p><a href="https://www.apache.org/licenses/LICENSE-2.0">https://www.apache.org/licenses/LICENSE-2.0</a></p><p>Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.</p>
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="changelog.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Changelog
+        </span>
+      </a>
+
+  </div>
+</div>
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>

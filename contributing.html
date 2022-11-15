@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="project" content="Trento Web v1.2.0">
+
+    <title>How to contribute — Trento Web v1.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
+    <script src="dist/sidebar_items-8FEF16ED.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-XN2TSG4M.js"></script>
+
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+      <a href="readme.html">
+        <img src="assets/logo.svg" alt="Trento Web" class="sidebar-projectImage">
+      </a>
+
+    <div class="sidebar-projectDetails">
+      <a href="readme.html" class="sidebar-projectName" translate="no">
+Trento Web
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v1.2.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">GUIDES</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/trento-project/web/blob/main/CONTRIBUTING.md#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span>How to contribute</span>
+</h1>
+
+<p>Thanks for showing interest and sharing your time to contribute to this project!</p><p>This guide is meant to be used as general guideline creating issues or
+pull requests. We encourage all first contributors to give this a read to avoid
+common mistakes and improve the quality of all contributions.</p><h2 id="opening-issues" class="section-heading">
+  <a href="#opening-issues" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">opening-issues</p>
+  </a>
+  Opening issues
+</h2>
+<p>Before creating a new issue make sure you use the search functionality to confirm
+that a similar issue doesn't already exist. Next, make sure you properly label
+the issue as per our <a href="https://github.com/trento-project/web/labels">labels</a></p><p>If you are reporting a <code class="inline">bug</code>, please share a file generated using the 
+<code class="inline">trento-support.sh</code> script with the following params:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># trento-support.sh --collect all --output file-tgz</span></code></pre><p>and include the output to your issue. The script should remove sensitive data
+automatically but please make sure you are not sharing anything sensible yourself.</p><h2 id="submitting-changes" class="section-heading">
+  <a href="#submitting-changes" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">submitting-changes</p>
+  </a>
+  Submitting changes
+</h2>
+<h3 id="pull-requests-guideline" class="section-heading">
+  <a href="#pull-requests-guideline" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">pull-requests-guideline</p>
+  </a>
+  Pull Requests guideline
+</h3>
+<p>Reviews are hard. This few points will help reduce the effort and allow us to
+merge your changes faster.</p><ol><li><p>Only touch relevant files.</p></li><li><p>We have a PR template to aid you in completing the required details. Be 
+sure to complete it and remove the non-relevant parts.</p></li><li><p>Keep PRs as small as possible. When the PR gets too big, consider splitting
+it in multiple parts. An PR should ideally be between 100 and 500 additions.</p></li><li><p>Check that the tests are passing.</p></li><li><p>Check that your code is not generating new warnings.</p></li><li><p>Check that any dependent changes have been merged and published in downstream modules</p></li><li><p>Commit history should be short and group changes that otherwise wouldn't
+make sense on their own.</p></li><li><p>Always write a clear log message for your commits. One-line messages are 
+fine for small changes, but bigger changes should look like this:</p><pre><code class="makeup elixir" translate="no"><span class="w"> </span><span class="n">git</span><span class="w"> </span><span class="n">commit</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="s">&quot;A brief summary of the commit
+ 
+ A paragraph describing what changed and its impact.&quot;</span></code></pre></li><li><p>Write a detailed description that gives context and explains why you are
+creating the PR.</p></li><li><p>If the PR adds functionality, please add some tests and documentation 
+to support it.</p></li><li><p>Each PR needs 1 approval to be merged. Select a reviewer in particular if
+you are looking for specific feedback from someone.</p></li></ol><h3 id="reviewers-guideline" class="section-heading">
+  <a href="#reviewers-guideline" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">reviewers-guideline</p>
+  </a>
+  Reviewers guideline
+</h3>
+<ol><li>Opinionated comments are welcome but don't expect them always to be 
+addressed. Be ready for discussion but also open to concede.</li><li>In order to avoid scope creeping, consider to propose subsequent PRs 
+rather than requesting changes for the current PR you are reviewing.</li><li>Short, concise comments with examples are the most valuable.</li></ol>
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="trento-architecture.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Trento Architecture
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="environment_variables.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Environment Variables
+        </span>
+      </a>
+
+  </div>
+</div>
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>
