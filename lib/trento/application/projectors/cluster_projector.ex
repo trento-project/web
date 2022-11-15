@@ -8,7 +8,7 @@ defmodule Trento.ClusterProjector do
     repo: Trento.Repo,
     name: "cluster_projector"
 
-  import Trento.Support.StructHelper
+  alias TrentoWeb.ClusterView
 
   alias Trento.Domain.Events.{
     ChecksExecutionCompleted,
@@ -158,13 +158,15 @@ defmodule Trento.ClusterProjector do
         _,
         %{cluster: cluster}
       ) do
-    TrentoWeb.Endpoint.broadcast(
-      "monitoring:clusters",
-      "cluster_registered",
+    registered_cluster =
       cluster
       |> Repo.preload([:checks_results, :hosts_executions])
       |> enrich_cluster_model
-      |> to_map()
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "cluster_registered",
+      ClusterView.render("cluster_registered.json", cluster: registered_cluster)
     )
   end
 

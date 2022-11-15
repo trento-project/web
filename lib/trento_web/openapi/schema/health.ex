@@ -7,6 +7,7 @@ defmodule TrentoWeb.OpenApi.Schema.ResourceHealth do
   OpenApiSpex.schema(%{
     title: "ResourceHealth",
     type: :string,
+    nullable: true,
     description: "Detected health of a Resource",
     enum: Health.values()
   })

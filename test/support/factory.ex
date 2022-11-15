@@ -160,7 +160,13 @@ defmodule Trento.Factory do
     %SlesSubscriptionReadModel{
       host_id: host.id,
       identifier: Faker.Airports.iata(),
-      version: Faker.App.semver()
+      version: Faker.App.semver(),
+      expires_at: DateTime.to_iso8601(Faker.DateTime.forward(2)),
+      starts_at: DateTime.to_iso8601(Faker.DateTime.backward(2)),
+      subscription_status: "ACTIVE",
+      status: "Registered",
+      type: "internal",
+      arch: "x86_64"
     }
   end
 
@@ -354,7 +360,7 @@ defmodule Trento.Factory do
 
   def application_instance_factory do
     host = build(:host)
-    build(:application_instance_without_host_factory, host_id: host.id, host: host)
+    build(:application_instance_without_host, host_id: host.id, host: host)
   end
 
   def discovery_event_factory do

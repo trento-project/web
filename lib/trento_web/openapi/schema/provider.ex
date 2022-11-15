@@ -91,6 +91,7 @@ defmodule TrentoWeb.OpenApi.Schema.Provider do
 
     OpenApiSpex.schema(%{
       title: "ProviderMetadata",
+      nullable: true,
       description: "Detected metadata for any provider",
       oneOf: [
         AwsProviderData,

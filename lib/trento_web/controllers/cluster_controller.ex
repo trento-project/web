@@ -29,7 +29,7 @@ defmodule TrentoWeb.ClusterController do
   def list(conn, _) do
     clusters = Clusters.get_all_clusters()
 
-    json(conn, clusters)
+    render(conn, "clusters.json", clusters: clusters)
   end
 
   operation :request_checks_execution,
@@ -132,7 +132,7 @@ defmodule TrentoWeb.ClusterController do
 
     conn
     |> put_status(:ok)
-    |> json(settings)
+    |> render("settings.json", settings: settings)
   end
 
   operation :save_connection_settings, false

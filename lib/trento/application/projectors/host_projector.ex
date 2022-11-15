@@ -8,7 +8,7 @@ defmodule Trento.HostProjector do
     repo: Trento.Repo,
     name: "host_projector"
 
-  import Trento.Support.StructHelper
+  alias TrentoWeb.HostView
 
   alias Trento.Repo
 
@@ -144,7 +144,7 @@ defmodule Trento.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_registered",
-      to_map(host)
+      HostView.render("host_registered.json", host: host)
     )
   end
 
@@ -178,11 +178,7 @@ defmodule Trento.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_details_updated",
-      host
-      |> to_map()
-      |> Map.delete("cluster_id")
-      |> Map.delete("heartbeat")
-      |> Map.delete("provider")
+      HostView.render("host_details_updated.json", host: host)
     )
   end
 

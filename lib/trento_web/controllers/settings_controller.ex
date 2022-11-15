@@ -17,10 +17,12 @@ defmodule TrentoWeb.SettingsController do
 
   @spec settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def settings(conn, _) do
-    json(conn, %{
-      eula_accepted: Installation.eula_accepted?(),
-      premium_subscription: Installation.premium?()
-    })
+    render(conn, "settings.json",
+      settings: %{
+        eula_accepted: Installation.eula_accepted?(),
+        premium_subscription: Installation.premium?()
+      }
+    )
   end
 
   operation :accept_eula,

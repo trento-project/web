@@ -82,9 +82,7 @@ defmodule Trento.Hosts do
         order_by: [asc: h.hostname]
       )
 
-    query
-    |> Repo.all()
-    |> Enum.map(&enrich_with_default_user/1)
+    Repo.all(query)
   end
 
   @spec save_hosts_connection_settings([

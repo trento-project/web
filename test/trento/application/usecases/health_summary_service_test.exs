@@ -6,7 +6,6 @@ defmodule Trento.HealthSummaryServiceTest do
 
   import Trento.Factory
 
-  alias Trento.Application.UseCases.SapSystems.HealthSummaryDto
   alias Trento.SapSystems.HealthSummaryService
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType
@@ -53,20 +52,21 @@ defmodule Trento.HealthSummaryServiceTest do
         insert(:cluster, type: ClusterType.hana_scale_up(), health: Health.passing())
 
       %Trento.HostReadModel{id: host_1_id} =
-        insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
+        host_one = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
       %Trento.SapSystemReadModel{
         id: sap_system_id,
         sid: sid
       } = insert(:sap_system, health: Health.critical())
 
-      insert(
-        :database_instance_without_host,
-        sap_system_id: sap_system_id,
-        sid: "HDD",
-        host_id: host_1_id,
-        health: Health.warning()
-      )
+      database_instance =
+        insert(
+          :database_instance_without_host,
+          sap_system_id: sap_system_id,
+          sid: "HDD",
+          host_id: host_1_id,
+          health: Health.warning()
+        )
 
       insert(
         :application_instance_without_host,
@@ -76,16 +76,17 @@ defmodule Trento.HealthSummaryServiceTest do
         health: Health.critical()
       )
 
+      expected_db_instance = %{database_instance | host: host_one}
+
       assert [
-               %HealthSummaryDto{
+               %{
                  id: ^sap_system_id,
                  sid: ^sid,
                  sapsystem_health: :critical,
                  database_health: :warning,
                  clusters_health: :passing,
                  hosts_health: :unknown,
-                 database_id: ^sap_system_id,
-                 cluster_id: ^cluster_id
+                 database_instances: [^expected_db_instance]
                }
              ] = HealthSummaryService.get_health_summary()
     end

@@ -17,23 +17,22 @@ defmodule Trento.SapSystems.HealthSummaryService do
   alias Trento.Domain.Enums.Health
   alias Trento.Domain.HealthService
 
-  alias Trento.Application.UseCases.SapSystems.HealthSummaryDto
   alias Trento.Repo
 
   @type instance_list :: [DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]
 
-  @spec get_health_summary :: [HealthSummaryDto.t()]
+  @spec get_health_summary :: [map()]
   def get_health_summary do
     SapSystemReadModel
     |> order_by(asc: :sid)
     |> Repo.all()
     |> Repo.preload(application_instances: :host)
     |> Repo.preload(database_instances: :host)
-    |> Enum.map(&sap_system_to_summary/1)
+    |> Enum.map(&summary_from_sap_system/1)
   end
 
-  @spec sap_system_to_summary(SapSystemReadModel.t()) :: HealthSummaryDto.t()
-  defp sap_system_to_summary(%SapSystemReadModel{
+  @spec summary_from_sap_system(SapSystemReadModel.t()) :: map()
+  defp summary_from_sap_system(%SapSystemReadModel{
          id: id,
          sid: sid,
          health: health,
@@ -42,16 +41,15 @@ defmodule Trento.SapSystems.HealthSummaryService do
        }) do
     all_instances = application_instances ++ database_instances
 
-    HealthSummaryDto.new!(%{
+    %{
       id: id,
       sid: sid,
       sapsystem_health: health,
       database_health: compute_database_health(database_instances),
       clusters_health: compute_clusters_health(all_instances),
       hosts_health: compute_hosts_health(all_instances),
-      cluster_id: extract_cluster_id(database_instances),
-      database_id: extract_database_id(database_instances)
-    })
+      database_instances: database_instances
+    }
   end
 
   @spec compute_database_health([DatabaseInstanceReadModel.t()]) :: Health.t()
@@ -71,18 +69,6 @@ defmodule Trento.SapSystems.HealthSummaryService do
     |> health_from_cluster()
     |> HealthService.compute_aggregated_health()
   end
-
-  @spec extract_database_id([DatabaseInstanceReadModel.t()]) :: String.t()
-  defp extract_database_id([]), do: nil
-
-  defp extract_database_id([%DatabaseInstanceReadModel{sap_system_id: sap_system_id} | _]),
-    do: sap_system_id
-
-  @spec extract_cluster_id([DatabaseInstanceReadModel.t()]) :: String.t()
-  defp extract_cluster_id([]), do: nil
-
-  defp extract_cluster_id([%DatabaseInstanceReadModel{host: %{cluster_id: cluster_id}} | _]),
-    do: cluster_id
 
   @spec clusters_from_instance(instance_list) :: [ClusterReadModel.t()]
   defp clusters_from_instance(instances) do

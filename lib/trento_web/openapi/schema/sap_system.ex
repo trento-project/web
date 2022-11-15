@@ -17,11 +17,19 @@ defmodule TrentoWeb.OpenApi.Schema.SAPSystem do
         sap_system_id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
         instance_number: %Schema{type: :string, description: "Instance Number"},
-        instance_hostname: %Schema{type: :string, description: "Instance Hostname"},
+        instance_hostname: %Schema{
+          type: :string,
+          description: "Instance Hostname",
+          nullable: true
+        },
         features: %Schema{type: :string, description: "Instance Features"},
-        http_port: %Schema{type: :integer, description: "Instance HTTP Port"},
-        https_port: %Schema{type: :integer, description: "Instance HTTPS Port"},
-        start_priority: %Schema{type: :string, description: "Instance Start Priority"},
+        http_port: %Schema{type: :integer, description: "Instance HTTP Port", nullable: true},
+        https_port: %Schema{type: :integer, description: "Instance HTTPS Port", nullable: true},
+        start_priority: %Schema{
+          type: :string,
+          description: "Instance Start Priority",
+          nullable: true
+        },
         host_id: %Schema{
           type: :string,
           description: "Identifier of the host where current instance is running",

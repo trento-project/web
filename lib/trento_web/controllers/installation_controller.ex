@@ -27,8 +27,6 @@ defmodule TrentoWeb.InstallationController do
   def get_api_key(conn, _) do
     key = Trento.Installation.get_api_key()
 
-    conn
-    |> put_status(:ok)
-    |> json(%{"api_key" => key})
+    render(conn, "api_key.json", api_key: key)
   end
 end
