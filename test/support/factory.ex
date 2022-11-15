@@ -161,11 +161,11 @@ defmodule Trento.Factory do
       host_id: host.id,
       identifier: Faker.Airports.iata(),
       version: Faker.App.semver(),
-      expires_at: "2022-11-10T16:13:08.141Z",
-      starts_at: "2022-11-10T16:13:08.141Z",
+      expires_at: DateTime.to_iso8601(Faker.DateTime.forward(2)),
+      starts_at: DateTime.to_iso8601(Faker.DateTime.backward(2)),
       subscription_status: "ACTIVE",
       status: "Registered",
-      type: "type",
+      type: "internal",
       arch: "x86_64"
     }
   end
