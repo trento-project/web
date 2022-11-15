@@ -10,7 +10,6 @@ Trento.AggregateCase.html
 Trento.AlertsEventHandler.html
 Trento.Application.Auth.ApiKey.html
 Trento.Application.UseCases.Alerting.html
-Trento.Application.UseCases.SapSystems.HealthSummaryDto.html
 Trento.ApplicationInstanceReadModel.html
 Trento.CheckResultProjector.html
 Trento.CheckResultReadModel.html
@@ -209,9 +208,11 @@ Trento.Tasks.Helper.html
 Trento.TelemetryProjector.html
 Trento.Type.html
 TrentoWeb.AboutController.html
+TrentoWeb.AboutView.html
 TrentoWeb.CatalogController.html
 TrentoWeb.ChannelCase.html
 TrentoWeb.ClusterController.html
+TrentoWeb.ClusterView.html
 TrentoWeb.ConnCase.html
 TrentoWeb.DiscoveryController.html
 TrentoWeb.Endpoint.html
@@ -219,8 +220,11 @@ TrentoWeb.ErrorHelpers.html
 TrentoWeb.ErrorView.html
 TrentoWeb.Gettext.html
 TrentoWeb.HealthOverviewController.html
+TrentoWeb.HealthOverviewView.html
 TrentoWeb.HostController.html
+TrentoWeb.HostView.html
 TrentoWeb.InstallationController.html
+TrentoWeb.InstallationView.html
 TrentoWeb.LayoutView.html
 TrentoWeb.MockRunnerController.html
 TrentoWeb.MonitoringChannel.html
@@ -229,10 +233,13 @@ TrentoWeb.PageController.html
 TrentoWeb.PageView.html
 TrentoWeb.Pow.SessionView.html
 TrentoWeb.PrometheusController.html
+TrentoWeb.PrometheusView.html
 TrentoWeb.Router.Helpers.html
 TrentoWeb.Router.html
 TrentoWeb.SapSystemController.html
+TrentoWeb.SapSystemView.html
 TrentoWeb.SettingsController.html
+TrentoWeb.SettingsView.html
 TrentoWeb.TagsController.html
 TrentoWeb.UserSocket.html
 TrentoWeb.html
@@ -262,7 +269,7 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-066B6313.js
-dist/sidebar_items-F6D7B69B.js
+dist/search_items-9B7265C7.js
+dist/sidebar_items-FAEBD5F1.js
 index.html
 search.html
