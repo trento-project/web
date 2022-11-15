@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { logError } from '@lib/log';
+import { getExecutionResult, getCatalog } from '@lib/api/wanda';
 
 import Modal from '@components/Modal';
 import BackButton from '@components/BackButton';
@@ -17,8 +18,6 @@ import {
 } from '@components/ChecksResults';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 
-const defaultExecutionFetch = () => Promise.resolve({});
-const defaultCatalogFetch = () => Promise.resolve({});
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
 
@@ -68,8 +67,8 @@ const ExecutionResults = ({
   clusterName,
   cloudProvider,
   hostnames = [],
-  onExecutionFetch = defaultExecutionFetch,
-  onCatalogFetch = defaultCatalogFetch,
+  onExecutionFetch = getExecutionResult,
+  onCatalogFetch = getCatalog,
   onCatalogRefresh = () => {},
 }) => {
   const [loading, setLoading] = useState(false);

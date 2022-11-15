@@ -8,10 +8,10 @@ const ExecutionResultsPage = () => {
   const { clusterID, executionID } = useParams();
   const dispatch = useDispatch();
   const hostnames = useSelector((state) =>
-    state.hostList.hosts.map(({ id, hostname }) => ({ id, hostname }))
+    state.hostsList.hosts.map(({ id, hostname }) => ({ id, hostname }))
   );
-  const { name: clusterName, provider: clusterCloudProvider } = useSelector(
-    (state) => state.clustersList.find((cluster) => cluster.id === clusterID)
+  const cluster = useSelector((state) =>
+    state.clustersList.clusters.find((cluster) => cluster.id === clusterID)
   );
 
   return (
@@ -19,11 +19,11 @@ const ExecutionResultsPage = () => {
       clusterID={clusterID}
       executionID={executionID}
       hostnames={hostnames}
-      clusterName={clusterName}
+      clusterName={cluster?.name}
       onCatalogRefresh={() => {
         dispatch({
           type: 'UPDATE_CATALOG',
-          payload: { provider: clusterCloudProvider },
+          payload: { provider: cluster?.provider },
         });
       }}
     />
