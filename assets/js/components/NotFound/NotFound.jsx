@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@components/Button';
-import TrentoLogo from '../../../static/trento-icon.png';
+import TrentoLogo from '@static/trento-icon.png';
 
 const NotFound = () => {
   const navigate = useNavigate();

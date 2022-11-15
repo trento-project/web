@@ -92,7 +92,7 @@ module.exports = {
     'react-markdown':
       '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
     'remark-gfm': '<rootDir>/mocks/remarkPlugin.js',
-    '\\.(jpg|ico|jpeg|png|gif)$': '<rootDir>/mocks/fileMock.js',
+    '\\.(jpg|ico|jpeg|png|gif|svg)$': '<rootDir>/mocks/fileMock.js',
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

@@ -9,11 +9,15 @@ context('HANA database details', () => {
   });
 
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
-    it(`should have name ${availableHanaCluster.name}`, () => {
+    it(`should have name ${availableHanaCluster.name} in header`, () => {
+      cy.get('h1').contains(availableHanaCluster.name);
+    });
+
+    it(`should have provider ${availableHanaCluster.provider}`, () => {
       cy.get('.tn-cluster-details')
-        .contains('Cluster name')
+        .contains('Provider')
         .next()
-        .contains(availableHanaCluster.name);
+        .contains(availableHanaCluster.provider);
     });
 
     it(`should have sid ${availableHanaCluster.sid}`, () => {

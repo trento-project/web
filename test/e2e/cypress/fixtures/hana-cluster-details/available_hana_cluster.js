@@ -3,6 +3,7 @@ export const availableHanaCluster = {
   name: 'hana_cluster_3',
   sid: 'HDP',
   clusterType: 'HANA scale-up',
+  provider: 'Azure',
   hanaSystemReplicationMode: 'sync',
   fencingType: 'external/sbd',
   hanaSecondarySyncState: 'SOK',

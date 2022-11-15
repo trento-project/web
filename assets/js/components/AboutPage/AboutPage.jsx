@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import TrentoLogo from '../../../static/trento-icon.png';
+import TrentoLogo from '@static/trento-icon.png';
 
 import { get } from '@lib/network';
 import { logError } from '@lib/log';

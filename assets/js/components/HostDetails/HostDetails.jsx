@@ -17,7 +17,7 @@ import {
   sapInstancesTableConfiguration,
 } from './tableConfigs';
 
-import SuseLogo from '../../../static/suse_logo.svg';
+import SuseLogo from '@static/suse_logo.svg';
 import {
   getInstancesOnHost,
   getClusterByHost,
