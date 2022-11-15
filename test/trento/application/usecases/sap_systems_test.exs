@@ -23,18 +23,16 @@ defmodule Trento.SapSystemsTest do
       } = insert(:sap_system)
 
       application_instances =
-        0..4
-        |> Enum.map(fn _ ->
-          insert(:application_instance_without_host, sap_system_id: sap_system_id)
-        end)
-        |> Enum.sort_by(&{&1.instance_number, &1.host_id})
+        Enum.sort_by(
+          insert_list(5, :application_instance_without_host, sap_system_id: sap_system_id),
+          &{&1.instance_number, &1.host_id}
+        )
 
       database_instances =
-        0..4
-        |> Enum.map(fn _ ->
-          insert(:database_instance_without_host, sap_system_id: sap_system_id)
-        end)
-        |> Enum.sort_by(&{&1.instance_number, &1.host_id})
+        Enum.sort_by(
+          insert_list(5, :database_instance_without_host, sap_system_id: sap_system_id),
+          &{&1.instance_number, &1.host_id}
+        )
 
       assert [
                %SapSystemReadModel{
@@ -55,11 +53,10 @@ defmodule Trento.SapSystemsTest do
       } = insert(:database)
 
       database_instances =
-        0..4
-        |> Enum.map(fn _ ->
-          insert(:database_instance_without_host, sap_system_id: sap_system_id)
-        end)
-        |> Enum.sort_by(& &1.host_id)
+        Enum.sort_by(
+          insert_list(5, :database_instance_without_host, sap_system_id: sap_system_id),
+          & &1.host_id
+        )
 
       assert [
                %DatabaseReadModel{
