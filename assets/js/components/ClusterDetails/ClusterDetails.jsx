@@ -161,7 +161,7 @@ const ClusterDetails = () => {
               {
                 title: 'Provider',
                 content: cluster.provider || 'Not defined',
-                render: (_) => <ProviderLabel provider={cluster.provider} />,
+                render: (content) => <ProviderLabel provider={content} />,
               },
               { title: 'SID', content: cluster.sid },
               {
