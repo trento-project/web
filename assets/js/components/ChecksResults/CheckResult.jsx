@@ -9,6 +9,7 @@ const CheckResult = ({
   description,
   executionState,
   health,
+  label,
   onClick,
 }) => (
   <tr
@@ -23,8 +24,9 @@ const CheckResult = ({
         {description}
       </ReactMarkdown>
     </td>
-    <td className="px-6 py-4 whitespace-nowrap content-center">
+    <td className="px-6 py-4 whitespace-nowrap content-center grid grid-flow-col items-center">
       <ExecutionIcon executionState={executionState} health={health} />
+      {label}
     </td>
   </tr>
 );

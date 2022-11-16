@@ -117,7 +117,15 @@ const ExecutionResults = ({
               unreachableMessage=""
             >
               {checks.map((checkID) => {
-                const { health } = getHealth(checkResults, checkID, agentID);
+                const { health, expectations, failedExpectations } = getHealth(
+                  checkResults,
+                  checkID,
+                  agentID
+                );
+                const label =
+                  health === 'passing'
+                    ? `${expectations}/${expectations} expectations passed`
+                    : `${failedExpectations}/${expectations} failed`;
 
                 return (
                   <CheckResult
@@ -128,6 +136,7 @@ const ExecutionResults = ({
                     }
                     executionState={executionData?.status}
                     health={health}
+                    label={label}
                     onClick={() => {
                       setModalOpen(true);
                       setSelectedCheck(checkID);
