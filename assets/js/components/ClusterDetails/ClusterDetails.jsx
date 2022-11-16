@@ -22,6 +22,7 @@ import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import { useChecksResult } from '@components/ClusterDetails/hooks';
+import ProviderLabel from './ProviderLabel';
 
 export const truncatedClusterNameClasses = classNames(
   'font-bold truncate w-60 inline-block align-top'
@@ -157,7 +158,11 @@ const ClusterDetails = () => {
             titleClassName="text-lg"
             orientation="vertical"
             data={[
-              { title: 'Cluster name', content: cluster.name || 'Not defined' },
+              {
+                title: 'Provider',
+                content: cluster.provider || 'Not defined',
+                render: (content) => <ProviderLabel provider={content} />,
+              },
               { title: 'SID', content: cluster.sid },
               {
                 title: 'Fencing type',

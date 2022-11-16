@@ -43,6 +43,7 @@ require('esbuild')
         '@state': resolvePath('./js/state'),
         '@lib': resolvePath('./js/lib'),
         '@hooks': resolvePath('./js/hooks'),
+        '@static': resolvePath('./static'),
       }),
     ],
   })

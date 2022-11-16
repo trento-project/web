@@ -6,7 +6,7 @@ import { EOS_SETTINGS, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import Button from '@components/Button';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 
-import TrentoLogo from '../../../static/trento-icon.png';
+import TrentoLogo from '@static/trento-icon.png';
 
 const ChecksSelectionHints = ({ clusterId, selectedChecks }) => {
   const navigate = useNavigate();

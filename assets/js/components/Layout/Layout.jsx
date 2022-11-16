@@ -14,7 +14,7 @@ import {
   EOS_KEYBOARD_DOUBLE_ARROW_RIGHT,
 } from 'eos-icons-react';
 
-import TrentoLogo from '../../../static/trento-logo-stacked.svg';
+import TrentoLogo from '@static/trento-logo-stacked.svg';
 
 import classNames from 'classnames';
 
