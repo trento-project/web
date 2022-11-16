@@ -16,7 +16,7 @@ defmodule TrentoWeb.HostControllerTest do
 
       api_spec = ApiSpec.spec()
 
-      get(conn, Routes.host_path(conn, :list))
+      get(conn, "/api/hosts")
       |> json_response(200)
       |> assert_schema("HostsCollection", api_spec)
     end

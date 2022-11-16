@@ -9,14 +9,12 @@ defmodule TrentoWeb.ClusterControllerTest do
 
   describe "list" do
     test "should list all clusters", %{conn: conn} do
-      0..2
-      |> Enum.map(fn _ -> insert(:cluster) end)
-      |> Enum.sort_by(& &1.name)
+      insert_list(2, :cluster)
 
       api_spec = ApiSpec.spec()
 
       conn
-      |> get(Routes.cluster_path(conn, :list))
+      |> get("/api/clusters")
       |> json_response(200)
       |> assert_schema("PacemakerClustersCollection", api_spec)
     end
@@ -46,7 +44,7 @@ defmodule TrentoWeb.ClusterControllerTest do
     } do
       resp =
         conn
-        |> get(Routes.cluster_path(conn, :get_connection_settings, cluster_id))
+        |> get("/api/clusters/#{cluster_id}/connection_settings")
         |> json_response(200)
 
       assert [
@@ -76,7 +74,7 @@ defmodule TrentoWeb.ClusterControllerTest do
       resp =
         conn
         |> put(
-          Routes.cluster_path(conn, :save_connection_settings, cluster_id),
+          "/api/clusters/#{cluster_id}/connection_settings",
           %{
             "settings" => [
               %{

@@ -37,7 +37,7 @@ defmodule TrentoWeb.HealthOverviewControllerTest do
       health: Health.critical()
     )
 
-    conn = get(conn, Routes.health_overview_path(conn, :overview))
+    conn = get(conn, "/api/sap_systems/health")
 
     assert 200 == conn.status
 

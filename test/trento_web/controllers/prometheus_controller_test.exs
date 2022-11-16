@@ -9,7 +9,7 @@ defmodule TrentoWeb.PrometheusControllerTest do
 
     response =
       conn
-      |> get(Routes.prometheus_path(conn, :targets))
+      |> get("/api/prometheus/targets")
       |> json_response(200)
 
     assert Enum.all?(hosts, fn host ->
@@ -31,7 +31,7 @@ defmodule TrentoWeb.PrometheusControllerTest do
 
     response =
       conn
-      |> get(Routes.prometheus_path(conn, :exporters_status, Faker.UUID.v4()))
+      |> get("/api/hosts/#{Faker.UUID.v4()}/exporters_status")
       |> json_response(200)
 
     assert %{"Node Exporter" => "passing"} == response
@@ -44,7 +44,7 @@ defmodule TrentoWeb.PrometheusControllerTest do
     end)
 
     conn
-    |> get(Routes.prometheus_path(conn, :exporters_status, Faker.UUID.v4()))
+    |> get("/api/hosts/#{Faker.UUID.v4()}/exporters_status")
     |> json_response(500)
   end
 end

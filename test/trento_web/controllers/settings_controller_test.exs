@@ -8,7 +8,7 @@ defmodule TrentoWeb.SettingsControllerTest do
   test "should return the settings according to the schema", %{conn: conn} do
     api_spec = ApiSpec.spec()
 
-    conn = get(conn, Routes.settings_path(conn, :settings))
+    conn = get(conn, "/api/settings")
 
     conn
     |> json_response(200)

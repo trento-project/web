@@ -8,7 +8,7 @@ defmodule TrentoWeb.InstallationControllerTest do
   test "should return the api key", %{conn: conn} do
     api_spec = ApiSpec.spec()
 
-    get(conn, Routes.installation_path(conn, :get_api_key))
+    get(conn, "/api/installation/api-key")
     |> json_response(200)
     |> assert_schema("ApiKey", api_spec)
   end
