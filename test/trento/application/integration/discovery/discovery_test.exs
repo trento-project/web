@@ -86,7 +86,6 @@ defmodule Trento.Integration.DiscoveryTest do
     insert_list(
       10,
       :discovery_event,
-      agent_id: Faker.UUID.v4(),
       discovery_type: "discovery_type",
       payload: %{},
       inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
@@ -100,7 +99,6 @@ defmodule Trento.Integration.DiscoveryTest do
     insert_list(
       10,
       :discarded_discovery_event,
-      payload: %{},
       inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
     )
 
