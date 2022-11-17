@@ -6,7 +6,7 @@ defmodule Trento.Domain.SapSystem do
 
   In order to have a fully registered SAP system, both the database and application
   composing this system must be registered. And each of the two layers might be composed
-  by multiple instances altogether. This means that a SAP system aggregate stream can have
+  by multiple instances altogether. This means that a SAP system aggregate state can have
   multiple application/database instances.
 
   ## SAP instance
@@ -29,7 +29,7 @@ defmodule Trento.Domain.SapSystem do
   That being said, this is the logical order of events in order to register a full system:
 
   1. A SAP system discovery message with a new database instance is received. At this point, the
-     registration process starts and the database stream is registered.
+     registration process starts and the database is registered.
      Any application instance discovery message without an associated database is ignored.
   2. New database instances/updates coming from already registered database instances are registered/applied.
   3. A SAP system discovery with a new application instance is received, and the database associated to
