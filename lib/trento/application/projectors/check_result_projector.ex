@@ -20,6 +20,8 @@ defmodule Trento.CheckResultProjector do
     HostChecksExecutionsReadModel
   }
 
+  alias TrentoWeb.ChecksResultView
+
   project(
     %ChecksExecutionRequested{
       cluster_id: cluster_id,
@@ -133,15 +135,25 @@ defmodule Trento.CheckResultProjector do
         _
       ) do
     Enum.each(hosts, fn host_id ->
-      TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_results_updated", %{
-        cluster_id: cluster_id,
+      view_data = %{
         host_id: host_id,
-        hosts_executions: [%{cluster_id: cluster_id, host_id: host_id, reachable: true, msg: ""}],
+        cluster_id: cluster_id,
+        reachable: true,
+        msg: "",
         checks_results:
           Enum.map(checks, fn check_id ->
             %{host_id: host_id, check_id: check_id, result: :unknown}
           end)
-      })
+      }
+
+      TrentoWeb.Endpoint.broadcast(
+        "monitoring:clusters",
+        "checks_results_updated",
+        ChecksResultView.render(
+          "checks_results_updated.json",
+          data: view_data
+        )
+      )
     end)
   end
 
@@ -157,21 +169,32 @@ defmodule Trento.CheckResultProjector do
         _,
         _
       ) do
-    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_results_updated", %{
-      cluster_id: cluster_id,
-      host_id: host_id,
-      hosts_executions: [
-        %{cluster_id: cluster_id, host_id: host_id, reachable: reachable, msg: msg}
-      ],
-      checks_results:
-        Enum.map(checks_results, fn %{check_id: check_id, result: result} ->
-          %{host_id: host_id, check_id: check_id, result: result}
-        end)
-    })
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "checks_results_updated",
+      ChecksResultView.render("checks_results_updated.json",
+        data: %{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          reachable: reachable,
+          msg: msg,
+          checks_results:
+            Enum.map(checks_results, fn %{check_id: check_id, result: result} ->
+              %{host_id: host_id, check_id: check_id, result: result}
+            end)
+        }
+      )
+    )
 
-    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "checks_execution_completed", %{
-      cluster_id: cluster_id
-    })
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "checks_execution_completed",
+      ChecksResultView.render("checks_execution_completed.json",
+        data: %{
+          cluster_id: cluster_id
+        }
+      )
+    )
   end
 
   def after_update(_, _, _), do: :ok
