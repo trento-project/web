@@ -15,8 +15,8 @@ defmodule Trento.DatabaseProjectorTest do
 
   alias Trento.Domain.Events.{
     DatabaseHealthChanged,
-    DatabaseInstanceSystemReplicationChanged,
-    DatabaseInstanceHealthChanged
+    DatabaseInstanceHealthChanged,
+    DatabaseInstanceSystemReplicationChanged
   }
 
   alias Trento.ProjectorTestHelper
