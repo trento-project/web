@@ -192,10 +192,12 @@ defmodule Trento.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_succeded",
-      %{
-        id: id,
-        hostname: hostname
-      }
+      HostView.render("heartbeat_result.json",
+        host: %{
+          id: id,
+          hostname: hostname
+        }
+      )
     )
   end
 
@@ -209,10 +211,12 @@ defmodule Trento.HostProjector do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_failed",
-      %{
-        id: id,
-        hostname: hostname
-      }
+      HostView.render("heartbeat_result.json",
+        host: %{
+          id: id,
+          hostname: hostname
+        }
+      )
     )
   end
 
