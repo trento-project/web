@@ -17,6 +17,11 @@ defmodule Trento.MixProject do
       deps: deps(),
       name: "Trento Web",
       docs: docs(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.github": :test
+      ],
       dialyzer: [
         plt_add_apps: [:ex_unit, :mix]
         # check_plt: true,
@@ -64,6 +69,7 @@ defmodule Trento.MixProject do
       {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.7.0", only: :test},
+      {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:floki, ">= 0.30.0", only: :test},
       {:fun_with_flags, "~> 1.8.1"},
@@ -123,6 +129,13 @@ defmodule Trento.MixProject do
         "event_store.create --quiet",
         "event_store.init --quiet",
         "test"
+      ],
+      "coveralls.github": [
+        "ecto.create --quiet",
+        "ecto.migrate --quiet",
+        "event_store.create --quiet",
+        "event_store.init --quiet",
+        "coveralls.github"
       ],
       "assets.deploy": [
         "cmd --cd assets npm run tailwind:build",
