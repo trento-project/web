@@ -2,7 +2,7 @@ defmodule Trento.Domain.SapSystem do
   @moduledoc """
   The SAP system aggregate manages all the domain logic related to
   deployed SAP systems, which are composed by a database and application layers.
-  **The HANA database is the unique supported database type.**
+  **The HANA database is the only supported database type.**
 
   In order to have a fully registered SAP system, both the database and application
   composing this system must be registered. And each of the two layers might be composed
@@ -11,16 +11,16 @@ defmodule Trento.Domain.SapSystem do
 
   ## SAP instance
 
-  A SAP instance can be understood as a single SAP workload installation running in a
-  particular host. So the instance runs entirely in one host, but in the other hand
+  A SAP instance can be seen as a single SAP workload installation running in a
+  particular host. So the instance runs entirely in one host, but on the other hand
   multiple different SAP instances might be running in the same host.
 
   For example, a HANA database might be composed by two database instances
-  that are working together in a System replication scenario.
+  that are working together in a System Replication scenario.
 
   ## SAP system registration process
 
-  The SAP system registration process have some caveats, so let's see them in more details.
+  The SAP system registration process has some caveats, so let's see them in more details.
 
   As a main concept, the SAP system is uniquely identified by the database ID. This means that
   there cannot exist any SAP system without a database, so Trento agents must be running
