@@ -25,12 +25,10 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
@@ -38,7 +36,6 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
         env:
           ImageOS: ubuntu20
-
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
@@ -48,7 +45,6 @@ jobs:
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
-
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -67,12 +63,10 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
@@ -80,12 +74,10 @@ jobs:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm install
@@ -93,22 +85,18 @@ jobs:
   codespell:
     name: Check common misspellings
     runs-on: ubuntu-20.04
-
     defaults:
       run:
         shell: bash
-
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Install codespell
         run: |
           sudo apt-get install -y git python3 python3-pip
@@ -148,18 +136,15 @@ jobs:
     name: Static Code Analysis
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-20.04
-
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
@@ -167,12 +152,10 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
         env:
           ImageOS: ubuntu20
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
@@ -182,7 +165,6 @@ jobs:
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
-
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
@@ -190,22 +172,16 @@ jobs:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-
       - name: Check for unused dependencies
         run: mix deps.unlock --check-unused
-
       - name: Check Code Format
         run: mix format --check-formatted
-
       - name: Run Credo
         run: mix credo
-
       - name: Run Dialyzer
         run: mix dialyzer
-
       - name: Run Eslint
         run: cd assets && npm run lint
-
       - name: Check JS Code Format
         run: cd assets && npm run format:check
 
@@ -213,7 +189,6 @@ jobs:
     name: Test
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-20.04
-
     services:
       postgres:
         image: postgres
@@ -240,23 +215,19 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
@@ -266,7 +237,6 @@ jobs:
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
-
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
@@ -274,10 +244,8 @@ jobs:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-
       - name: Run test
-        run: mix test --color --trace --slowest 10
-
+        run: mix coveralls.github --trace
       - name: Run JS tests
         run: cd assets && npm test
 
@@ -289,12 +257,10 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: npm-e2e-cache
@@ -302,12 +268,10 @@ jobs:
           path: |
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
@@ -341,12 +305,10 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
@@ -354,12 +316,10 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
         env:
           ImageOS: ubuntu20
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
@@ -369,7 +329,6 @@ jobs:
             _build/dev
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
-
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
@@ -377,7 +336,6 @@ jobs:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-e2e-cache
@@ -385,22 +343,17 @@ jobs:
           path: |
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
-
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
-
       - name: Mix setup
         run: mix setup
-
       - name: Run trento detached
         run: mix phx.server &
-
       - name: Get Photofinish for e2e testing
         run: |
           set -x
           wget -P /tmp https://github.com/trento-project/photofinish/releases/download/v1.1.0/photofinish
           chmod +x /tmp/photofinish
-
       - name: Cypress run
         uses: cypress-io/github-action@v2
         env:
@@ -413,7 +366,6 @@ jobs:
           headless: true
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
-
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@v3
         if: failure()
@@ -510,19 +462,16 @@ jobs:
         uses: jupyterhub/action-k3s-helm@v3
         with:
           k3s-channel: latest
-
       - name: Add bitnami helm deps
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
-
       - name: Download and unzip helm chart
         run: |
           rm rolling.zip | true
           rm -rf helm-charts-rolling | true
           wget https://github.com/trento-project/helm-charts/archive/refs/tags/rolling.zip
           unzip rolling.zip
-
       - name: Install trento-server helm chart
         run: |
           cd helm-charts-rolling/charts/trento-server
@@ -576,27 +525,21 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-
       - name: Checkout
         uses: actions/checkout@v3
-
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: latest-tag
         with:
           semver_only: true
           initial_version: 0.0.1
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Install assets
         run: cd assets && npm install
-
       - name: Get mix deps
         run: mix local.hex --force && mix deps.clean --all && mix deps.get
-
       - name: Configure OSC
         # OSC credentials must be configured beforehand as the HOME variables cannot be changed from /github/home
         # that is used to run osc commands
@@ -604,7 +547,6 @@ jobs:
           mkdir -p $HOME/.config/osc
           cp /home/osc/.config/osc/oscrc $HOME/.config/osc
           /scripts/init_osc_creds.sh
-
       - name: Prepare .changes file
         # The .changes file is updated only in release creation. This current task should be improved
         # in order to add the current rolling release notes
@@ -615,7 +557,6 @@ jobs:
           mv $CHANGES_FILE $FOLDER
           VERSION=${{ steps.latest-tag.outputs.tag }}
           hack/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $VERSION -f $FOLDER/$CHANGES_FILE
-
       - name: Set version
         run: |
           git config --global --add safe.directory /__w/web/web
@@ -623,7 +564,6 @@ jobs:
           # "+" character is not allowed in OBS dockerfile version strings
           VERSION=${VERSION//[+]/-}
           sed -i 's~%%VERSION%%~'"${VERSION}"'~' packaging/suse/Dockerfile
-
       - name: Commit on OBS
         run: |
           OBS_PACKAGE=$OBS_PROJECT/$NAME
