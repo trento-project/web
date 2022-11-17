@@ -2,7 +2,12 @@ defmodule Trento.ClusterProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Phoenix.ChannelTest
+  import TrentoWeb.ChannelCase
+
   import Trento.Factory
+
+  alias Trento.Domain.Events.ClusterHealthChanged
 
   alias Trento.{
     ClusterProjector,
@@ -23,6 +28,17 @@ defmodule Trento.ClusterProjectorTest do
 
   @moduletag :integration
 
+  @endpoint TrentoWeb.Endpoint
+
+  setup do
+    {:ok, _, socket} =
+      TrentoWeb.UserSocket
+      |> socket("user_id", %{some: :assign})
+      |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:clusters")
+
+    %{socket: socket}
+  end
+
   test "should project a new cluster when ClusterRegistered event is received" do
     event = build(:cluster_registered_event)
 
@@ -38,6 +54,63 @@ defmodule Trento.ClusterProjectorTest do
     assert event.hosts_number == cluster_projection.hosts_number
     assert StructHelper.to_map(event.details) == cluster_projection.details
     assert event.health == cluster_projection.health
+
+    cluster_id = event.cluster_id
+
+    assert_broadcast "cluster_registered",
+                     %{
+                       checks_execution: :not_running,
+                       checks_results: [],
+                       cib_last_written: nil,
+                       details: %Trento.Domain.HanaClusterDetails{
+                         fencing_type: "external/sbd",
+                         nodes: [
+                           %Trento.Domain.ClusterNode{
+                             attributes: _,
+                             hana_status: "Secondary",
+                             name: _,
+                             resources: [
+                               %Trento.Domain.ClusterResource{
+                                 fail_count: _,
+                                 id: _,
+                                 role: "Started",
+                                 status: "Active",
+                                 type: "ocf::heartbeat:Dummy"
+                               }
+                             ],
+                             site: _,
+                             virtual_ip: nil
+                           }
+                         ],
+                         sbd_devices: [
+                           %Trento.Domain.SbdDevice{device: "/dev/vdc", status: "healthy"}
+                         ],
+                         secondary_sync_state: "SOK",
+                         sr_health_state: "4",
+                         stopped_resources: [
+                           %Trento.Domain.ClusterResource{
+                             fail_count: nil,
+                             id: _,
+                             role: "Stopped",
+                             status: nil,
+                             type: "ocf::heartbeat:Dummy"
+                           }
+                         ],
+                         system_replication_mode: "sync",
+                         system_replication_operation_mode: "logreplay"
+                       },
+                       health: :passing,
+                       hosts_executions: [],
+                       hosts_number: 2,
+                       id: ^cluster_id,
+                       name: _,
+                       provider: _,
+                       resources_number: 8,
+                       selected_checks: [],
+                       sid: _,
+                       type: :hana_scale_up
+                     },
+                     1000
   end
 
   test "should update the cluster details when ClusterDetailsUpdated is received" do
@@ -70,6 +143,55 @@ defmodule Trento.ClusterProjectorTest do
     assert event.resources_number == cluster_projection.resources_number
     assert event.hosts_number == cluster_projection.hosts_number
     assert StructHelper.to_map(event.details) == cluster_projection.details
+
+    assert_broadcast "cluster_details_updated",
+                     %{
+                       details: %Trento.Domain.HanaClusterDetails{
+                         fencing_type: "external/sbd",
+                         nodes: [
+                           %Trento.Domain.ClusterNode{
+                             attributes: _,
+                             hana_status: "Secondary",
+                             name: _,
+                             resources: [
+                               %Trento.Domain.ClusterResource{
+                                 fail_count: _,
+                                 id: _,
+                                 role: "Started",
+                                 status: "Active",
+                                 type: "ocf::heartbeat:Dummy"
+                               }
+                             ],
+                             site: _,
+                             virtual_ip: nil
+                           }
+                         ],
+                         sbd_devices: [
+                           %Trento.Domain.SbdDevice{device: "/dev/vdc", status: "healthy"}
+                         ],
+                         secondary_sync_state: "SOK",
+                         sr_health_state: "4",
+                         stopped_resources: [
+                           %Trento.Domain.ClusterResource{
+                             fail_count: nil,
+                             id: _,
+                             role: "Stopped",
+                             status: nil,
+                             type: "ocf::heartbeat:Dummy"
+                           }
+                         ],
+                         system_replication_mode: "sync",
+                         system_replication_operation_mode: "logreplay"
+                       },
+                       hosts_number: 2,
+                       id: ^cluster_id,
+                       name: _,
+                       provider: _,
+                       resources_number: 8,
+                       sid: _,
+                       type: :hana_scale_up
+                     },
+                     1000
   end
 
   test "should update the cluster checks execution status when ChecksExecutionRequested is received" do
@@ -88,6 +210,10 @@ defmodule Trento.ClusterProjectorTest do
     cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
 
     assert :requested == cluster_projection.checks_execution
+
+    assert_broadcast "cluster_details_updated",
+                     %{id: ^cluster_id, checks_execution: :requested},
+                     1000
   end
 
   test "should update the cluster checks execution status when ChecksExecutionStarted is received" do
@@ -106,6 +232,10 @@ defmodule Trento.ClusterProjectorTest do
     cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
 
     assert :running == cluster_projection.checks_execution
+
+    assert_broadcast "cluster_details_updated",
+                     %{id: ^cluster_id, checks_execution: :running},
+                     1000
   end
 
   test "should update the cluster checks execution status when ChecksExecutionCompleted is received" do
@@ -124,5 +254,28 @@ defmodule Trento.ClusterProjectorTest do
     cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
 
     assert :not_running == cluster_projection.checks_execution
+
+    assert_broadcast "cluster_details_updated",
+                     %{id: ^cluster_id, checks_execution: :not_running},
+                     1000
+  end
+
+  test "should broadcast cluster_health_changed after the ClusterHealthChanged event" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
+
+    event = %ClusterHealthChanged{
+      cluster_id: cluster_id,
+      health: :passing
+    }
+
+    ProjectorTestHelper.project(
+      ClusterProjector,
+      event,
+      "cluster_projector"
+    )
+
+    assert_broadcast "cluster_health_changed",
+                     %{cluster_id: ^cluster_id, health: :passing},
+                     1000
   end
 end
