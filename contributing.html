@@ -109,8 +109,8 @@ Trento Web
   <span>How to contribute</span>
 </h1>
 
-<p>Thanks for showing interest and sharing your time to contribute to this project!</p><p>This guide is meant to be used as general guideline creating issues or
-pull requests. We encourage all first contributors to give this a read to avoid
+<p>Thanks for showing interest and sharing your time to contribute to this project!</p><p>This guide is meant to be used as a general guideline for creating issues or
+pull requests. We encourage all first-time contributors to give this a read to avoid
 common mistakes and improve the quality of all contributions.</p><h2 id="opening-issues" class="section-heading">
   <a href="#opening-issues" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">opening-issues</p>
@@ -119,29 +119,27 @@ common mistakes and improve the quality of all contributions.</p><h2 id="opening
 </h2>
 <p>Before creating a new issue make sure you use the search functionality to confirm
 that a similar issue doesn't already exist. Next, make sure you properly label
-the issue as per our <a href="https://github.com/trento-project/web/labels">labels</a></p><p>If you are reporting a <code class="inline">bug</code>, please share a file generated using the 
-<code class="inline">trento-support.sh</code> script with the following params:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># trento-support.sh --collect all --output file-tgz</span></code></pre><p>and include the output to your issue. The script should remove sensitive data
-automatically but please make sure you are not sharing anything sensible yourself.</p><h2 id="submitting-changes" class="section-heading">
+the issue as per our <a href="https://github.com/trento-project/web/labels">labels</a></p><p>If you are reporting a <code class="inline">bug</code>, please share a file generated using the
+<code class="inline">trento-support.sh</code> script with the following params:</p><pre><code class="makeup elixir" translate="no"><span class="c1"># trento-support.sh --collect all --output file-tgz</span></code></pre><p>and include the output in your issue. The script should remove sensitive data
+automatically but please make sure you are not sharing any sensitive data of your own.</p><h2 id="submitting-changes" class="section-heading">
   <a href="#submitting-changes" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">submitting-changes</p>
   </a>
   Submitting changes
 </h2>
-<h3 id="pull-requests-guideline" class="section-heading">
+<p>Always refer to the <a href="https://github.com/trento-project/docs">docs repository</a> for coding standards and general guidelines.</p><h3 id="pull-requests-guideline" class="section-heading">
   <a href="#pull-requests-guideline" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">pull-requests-guideline</p>
   </a>
   Pull Requests guideline
 </h3>
-<p>Reviews are hard. This few points will help reduce the effort and allow us to
-merge your changes faster.</p><ol><li><p>Only touch relevant files.</p></li><li><p>We have a PR template to aid you in completing the required details. Be 
-sure to complete it and remove the non-relevant parts.</p></li><li><p>Keep PRs as small as possible. When the PR gets too big, consider splitting
-it in multiple parts. An PR should ideally be between 100 and 500 additions.</p></li><li><p>Check that the tests are passing.</p></li><li><p>Check that your code is not generating new warnings.</p></li><li><p>Check that any dependent changes have been merged and published in downstream modules</p></li><li><p>Commit history should be short and group changes that otherwise wouldn't
-make sense on their own.</p></li><li><p>Always write a clear log message for your commits. One-line messages are 
-fine for small changes, but bigger changes should look like this:</p><pre><code class="makeup elixir" translate="no"><span class="w"> </span><span class="n">git</span><span class="w"> </span><span class="n">commit</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="s">&quot;A brief summary of the commit
- 
- A paragraph describing what changed and its impact.&quot;</span></code></pre></li><li><p>Write a detailed description that gives context and explains why you are
-creating the PR.</p></li><li><p>If the PR adds functionality, please add some tests and documentation 
+<p>Reviews are hard. These few points will help us to reduce the time and effort required and allow us to merge your changes faster.</p><ol><li><p>Only touch relevant files.</p></li><li><p>We have a PR template to aid you in completing the required details. Be
+sure to complete it and remove the non-relevant parts.</p></li><li><p>Keep PRs as small as possible. When the PR gets too big, consider splitting it into multiple parts. A PR should ideally be between 100 and 500 additions.</p></li><li><p>Check that the tests are passing.</p></li><li><p>Check that your code is not generating new warnings.</p></li><li><p>Check that any dependent changes have been merged and published in downstream modules</p></li><li><p>Commit history should be short and group changes that otherwise wouldn't
+make sense on their own.</p></li><li><p>Always write a clear log message for your commits. One-line messages are
+fine for small changes, but bigger changes should look like this:</p><pre><code class="makeup elixir" translate="no"><span class="n">git</span><span class="w"> </span><span class="n">commit</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="s">&quot;A brief summary of the commit
+
+A paragraph describing what changed and its impact.&quot;</span></code></pre></li><li><p>Write a detailed description that gives context and explains why you are
+creating the PR.</p></li><li><p>If the PR adds functionality, please add some tests and documentation
 to support it.</p></li><li><p>Each PR needs 1 approval to be merged. Select a reviewer in particular if
 you are looking for specific feedback from someone.</p></li></ol><h3 id="reviewers-guideline" class="section-heading">
   <a href="#reviewers-guideline" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
@@ -149,8 +147,9 @@ you are looking for specific feedback from someone.</p></li></ol><h3 id="reviewe
   </a>
   Reviewers guideline
 </h3>
-<ol><li>Opinionated comments are welcome but don't expect them always to be 
-addressed. Be ready for discussion but also open to concede.</li><li>In order to avoid scope creeping, consider to propose subsequent PRs 
+<ol><li>Opinionated comments are welcome but don't expect them always to be
+addressed. Be ready for discussion but also open to conceding.
+To avoid scope creep, consider proposing subsequent PRs
 rather than requesting changes for the current PR you are reviewing.</li><li>Short, concise comments with examples are the most valuable.</li></ol>
 <div class="bottom-actions">
   <div class="bottom-actions-item">
