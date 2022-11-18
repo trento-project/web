@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v1.2.0">
 
-    <title>Trento.Domain.Events.ClusterRolledUp — Trento Web v1.2.0</title>
+    <title>Trento.Domain.SapSystem — Trento Web v1.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
@@ -101,19 +101,45 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Domain.Events.ClusterRolledUp</span> 
+  <span translate="no">Trento.Domain.SapSystem</span> 
   <small class="app-vsn" translate="no">(Trento Web v1.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>This event is emitted when a cluster is rolled up and its stream is reset.</p>
+<p>The SAP system aggregate manages all the domain logic related to
+deployed SAP systems, which are composed by a database and application layers.
+<strong>The HANA database is the only supported database type.</strong></p><p>In order to have a fully registered SAP system, both the database and application
+composing this system must be registered. And each of the two layers might be composed
+by multiple instances altogether. This means that a SAP system aggregate state can have
+multiple application/database instances.</p><h2 id="module-sap-instance" class="section-heading">
+  <a href="#module-sap-instance" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">sap-instance</p>
+  </a>
+  SAP instance
+</h2>
+<p>A SAP instance can be seen as a single SAP workload installation running in a
+particular host. So the instance runs entirely in one host, but on the other hand
+multiple different SAP instances might be running in the same host.</p><p>For example, a HANA database might be composed by two database instances
+that are working together in a System Replication scenario.</p><h2 id="module-sap-system-registration-process" class="section-heading">
+  <a href="#module-sap-system-registration-process" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">sap-system-registration-process</p>
+  </a>
+  SAP system registration process
+</h2>
+<p>The SAP system registration process has some caveats, so let's see them in more details.</p><p>As a main concept, the SAP system is uniquely identified by the database ID. This means that
+there cannot exist any SAP system without a database, so Trento agents must be running
+in those hosts in order to start the registration.</p><p>That being said, this is the logical order of events in order to register a full system:</p><ol><li>A SAP system discovery message with a new database instance is received. At this point, the
+registration process starts and the database is registered.
+Any application instance discovery message without an associated database is ignored.</li><li>New database instances/updates coming from already registered database instances are registered/applied.</li><li>A SAP system discovery with a new application instance is received, and the database associated to
+this application exists, the application instance is registered together with the complete
+SAP system. The SAP system is fully registered now.</li><li>New application instances/updates coming from already registered application instances are registered/applied.</li></ol><p>Find additional information about the application/database association in <a href="Trento.Domain.Commands.RegisterApplicationInstance.html"><code class="inline">Trento.Domain.Commands.RegisterApplicationInstance</code></a>.</p>
   </section>
 
 
@@ -148,6 +174,14 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#apply/2" translate="no">apply(sap_system, arg2)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#cast_and_validate_required_embed/3" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</a>
 
         </div>
@@ -162,6 +196,14 @@ Trento Web
 
           <div class="summary-synopsis"><p>Casts the fields by using Ecto reflection,
 validates the required ones and returns a changeset.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#execute/2" translate="no">execute(sap_system, command)</a>
+
+        </div>
 
       </div>
 
@@ -183,22 +225,6 @@ Accepts a map or a list of maps.</p></div>
         </div>
 
           <div class="summary-synopsis"><p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#upcast/2" translate="no">upcast(params, metadata)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#upcast/3" translate="no">upcast(params, _, int)</a>
-
-        </div>
 
       </div>
 
@@ -233,7 +259,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L76" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -245,23 +271,12 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.Events.ClusterRolledUp{
-  applied: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  checks_health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  cluster_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  details: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  discovered_health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.SapSystem{
+  application: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  database: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  hosts: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  hosts_executions: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  hosts_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  name: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  provider: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  resources_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  selected_checks: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  type: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+  sap_system_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
       </div>
@@ -282,6 +297,28 @@ Types
 Functions
     </h1>
     <div class="functions-list">
+<section class="detail" id="apply/2">
+
+  <div class="detail-header">
+    <a href="#apply/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">apply(sap_system, arg2)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L257" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="cast_and_validate_required_embed/3">
 
   <div class="detail-header">
@@ -291,7 +328,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L76" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -313,7 +350,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L76" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -327,6 +364,28 @@ Functions
 validates the required ones and returns a changeset.</p>
   </section>
 </section>
+<section class="detail" id="execute/2">
+
+  <div class="detail-header">
+    <a href="#execute/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">execute(sap_system, command)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L89" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="new/1">
 
   <div class="detail-header">
@@ -336,7 +395,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L76" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -365,7 +424,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L76" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -384,50 +443,6 @@ Accepts a map or a list of maps.</p>
 <p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="upcast/2">
-
-  <div class="detail-header">
-    <a href="#upcast/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">upcast(params, metadata)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L17" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="upcast/3">
-
-  <div class="detail-header">
-    <a href="#upcast/3" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">upcast(params, _, int)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L6" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
 <section class="detail" id="validate_required_fields/2">
 
   <div class="detail-header">
@@ -437,7 +452,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/events/cluster_rolled_up.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/sap_system.ex#L76" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
