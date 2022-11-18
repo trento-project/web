@@ -2,17 +2,19 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
+import { getCluster } from '@state/selectors';
+
 import ExecutionResults from './ExecutionResults';
 
 const ExecutionResultsPage = () => {
   const { clusterID, executionID } = useParams();
   const dispatch = useDispatch();
   const hostnames = useSelector((state) =>
-    state.hostsList.hosts.map(({ id, hostname }) => ({ id, hostname }))
+    state.hostsList.hosts
+      .filter(({ cluster_id: hostClusterID }) => hostClusterID === clusterID)
+      .map(({ id, hostname }) => ({ id, hostname }))
   );
-  const cluster = useSelector((state) =>
-    state.clustersList.clusters.find((cluster) => cluster.id === clusterID)
-  );
+  const cluster = useSelector(getCluster(clusterID));
 
   return (
     <ExecutionResults
@@ -20,6 +22,7 @@ const ExecutionResultsPage = () => {
       executionID={executionID}
       hostnames={hostnames}
       clusterName={cluster?.name}
+      cloudProvider={cluster?.provider}
       onCatalogRefresh={() => {
         dispatch({
           type: 'UPDATE_CATALOG',

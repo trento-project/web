@@ -109,10 +109,10 @@ const ExecutionResults = ({
         onCatalogRefresh={onCatalogRefresh}
       >
         {hosts &&
-          hosts.map((agentID, idx) => (
+          hosts.map((hostID, idx) => (
             <HostResultsWrapper
               key={idx}
-              hostname={hostnames.find(({ id }) => agentID === id)?.hostname}
+              hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
               reachable
               unreachableMessage=""
             >
@@ -120,7 +120,7 @@ const ExecutionResults = ({
                 const { health, expectations, failedExpectations } = getHealth(
                   checkResults,
                   checkID,
-                  agentID
+                  hostID
                 );
                 const label =
                   health === 'passing'

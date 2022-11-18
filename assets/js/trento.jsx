@@ -62,7 +62,7 @@ const App = () => {
                 element={<ChecksResults />}
               />
               <Route
-                path="clusters/:clusterID/execution/:executionID"
+                path="clusters/:clusterID/executions/:executionID"
                 element={<ExecutionResultsPage />}
               />
               <Route path="hosts/:hostID" element={<HostDetails />} />

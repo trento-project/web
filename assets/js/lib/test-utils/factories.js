@@ -36,6 +36,9 @@ export const catalogCheckFactory = Factory.define(() => ({
   remediation: faker.lorem.paragraph(),
 }));
 
+export const checksExecutionStatusEnum = () =>
+  faker.helpers.arrayElement(['running', 'completed']);
+
 export const checksExecutionFactory = Factory.define(({ params }) => {
   const {
     agentID = faker.datatype.uuid(),
@@ -49,7 +52,7 @@ export const checksExecutionFactory = Factory.define(({ params }) => {
     group_id: groupID,
     result: resultEnum(),
     started_at: '2022-11-09T15:11:31.436586Z',
-    status: faker.helpers.arrayElement(['running', 'completed']),
+    status: checksExecutionStatusEnum(),
     timeout: [],
     check_results: [
       {
