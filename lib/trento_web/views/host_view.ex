@@ -25,4 +25,8 @@ defmodule TrentoWeb.HostView do
     |> Map.delete(:sles_subscriptions)
     |> Map.delete(:tags)
   end
+
+  def render("heartbeat_result.json", %{host: %{id: id, hostname: hostname}}) do
+    %{id: id, hostname: hostname}
+  end
 end

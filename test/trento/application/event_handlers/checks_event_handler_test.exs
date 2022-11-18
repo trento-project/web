@@ -2,12 +2,27 @@ defmodule Trento.ChecksEventHandlerTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  import Mox
+  import Phoenix.ChannelTest
+  import TrentoWeb.ChannelCase
 
+  import Mox
   import Trento.Factory
 
   alias Trento.ChecksEventHandler
   alias Trento.Domain.Events.ChecksExecutionRequested
+
+  @moduletag :integration
+
+  @endpoint TrentoWeb.Endpoint
+
+  setup do
+    {:ok, _, socket} =
+      TrentoWeb.UserSocket
+      |> socket("user_id", %{some: :assign})
+      |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:clusters")
+
+    %{socket: socket}
+  end
 
   test "should request a checks execution when the ChecksExecutionRequested event is received" do
     host_id_1 = Faker.UUID.v4()
@@ -33,9 +48,11 @@ defmodule Trento.ChecksEventHandlerTest do
       }
     ]
 
+    cluster_id = Faker.UUID.v4()
+
     event =
       ChecksExecutionRequested.new!(%{
-        cluster_id: Faker.UUID.v4(),
+        cluster_id: cluster_id,
         hosts: [host_id_1, host_id_2],
         checks: ["check1", "check2"]
       })
@@ -56,5 +73,7 @@ defmodule Trento.ChecksEventHandlerTest do
     end)
 
     assert :ok == ChecksEventHandler.handle(event, %{correlation_id: correlation_id})
+
+    assert_broadcast "checks_execution_requested", %{cluster_id: ^cluster_id}, 1000
   end
 end

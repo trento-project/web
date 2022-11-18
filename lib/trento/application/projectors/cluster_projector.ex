@@ -172,32 +172,16 @@ defmodule Trento.ClusterProjector do
 
   @impl true
   def after_update(
-        %ClusterDetailsUpdated{
-          cluster_id: id,
-          name: name,
-          type: type,
-          sid: sid,
-          provider: provider,
-          resources_number: resources_number,
-          hosts_number: hosts_number,
-          details: details
-        },
+        %ClusterDetailsUpdated{} = updated_details,
         _,
         _
       ) do
+    message = ClusterView.render("cluster_details_updated.json", data: updated_details)
+
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
       "cluster_details_updated",
-      %{
-        id: id,
-        name: name,
-        type: type,
-        sid: sid,
-        provider: provider,
-        resources_number: resources_number,
-        hosts_number: hosts_number,
-        details: details
-      }
+      message
     )
   end
 

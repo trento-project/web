@@ -2,6 +2,9 @@ defmodule Trento.HostProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Phoenix.ChannelTest
+  import TrentoWeb.ChannelCase
+
   import Trento.Factory
 
   require Trento.Domain.Enums.Provider, as: Provider
@@ -30,6 +33,17 @@ defmodule Trento.HostProjectorTest do
 
   @moduletag :integration
 
+  @endpoint TrentoWeb.Endpoint
+
+  setup do
+    {:ok, _, socket} =
+      TrentoWeb.UserSocket
+      |> socket("user_id", %{some: :assign})
+      |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:hosts")
+
+    %{socket: socket}
+  end
+
   setup do
     %HostReadModel{id: host_id} = insert(:host)
 
@@ -40,7 +54,18 @@ defmodule Trento.HostProjectorTest do
     event = build(:host_registered_event)
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    %{
+      agent_version: agent_version,
+      heartbeat: heartbeat,
+      hostname: hostname,
+      id: id,
+      ssh_address: ssh_address,
+      ip_addresses: ip_addresses,
+      cluster_id: cluster_id,
+      provider: provider,
+      provider_data: provider_data
+    } = host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
@@ -48,6 +73,20 @@ defmodule Trento.HostProjectorTest do
     assert event.ssh_address == host_projection.ssh_address
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat
+
+    assert_broadcast "host_registered",
+                     %{
+                       agent_version: ^agent_version,
+                       cluster_id: ^cluster_id,
+                       heartbeat: ^heartbeat,
+                       hostname: ^hostname,
+                       id: ^id,
+                       ip_addresses: ^ip_addresses,
+                       provider: ^provider,
+                       provider_data: ^provider_data,
+                       ssh_address: ^ssh_address
+                     },
+                     1000
   end
 
   test "should update the cluster_id field when HostAddedToCluster event is received and the host was already registered" do
@@ -70,37 +109,48 @@ defmodule Trento.HostProjectorTest do
 
     assert event.cluster_id == host_projection.cluster_id
     assert hostname == host_projection.hostname
+
+    assert_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
   end
 
   test "should project a new host with no additional properties when HostAddedToCluster event is received" do
     insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
-    event = %HostAddedToCluster{
-      host_id: Faker.UUID.v4(),
-      cluster_id: cluster_id
-    }
+    %{host_id: host_id} =
+      event = %HostAddedToCluster{
+        host_id: Faker.UUID.v4(),
+        cluster_id: cluster_id
+      }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert event.cluster_id == host_projection.cluster_id
     assert nil == host_projection.hostname
+
+    refute_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{
     host_id: host_id
   } do
-    event = %HostDetailsUpdated{
-      host_id: host_id,
-      hostname: Faker.StarWars.character(),
-      ip_addresses: [Faker.Internet.ip_v4_address()],
-      ssh_address: Faker.Internet.ip_v4_address(),
-      agent_version: Faker.StarWars.planet(),
-      cpu_count: Enum.random(1..16),
-      total_memory_mb: Enum.random(1..128),
-      socket_count: Enum.random(1..16),
-      os_version: Faker.App.version()
-    }
+    %{
+      agent_version: agent_version,
+      hostname: hostname,
+      ip_addresses: ip_addresses,
+      ssh_address: ssh_address
+    } =
+      event = %HostDetailsUpdated{
+        host_id: host_id,
+        hostname: Faker.StarWars.character(),
+        ip_addresses: [Faker.Internet.ip_v4_address()],
+        ssh_address: Faker.Internet.ip_v4_address(),
+        agent_version: Faker.StarWars.planet(),
+        cpu_count: Enum.random(1..16),
+        total_memory_mb: Enum.random(1..128),
+        socket_count: Enum.random(1..16),
+        os_version: Faker.App.version()
+      }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
     host_projection = Repo.get!(HostReadModel, event.host_id)
@@ -110,6 +160,17 @@ defmodule Trento.HostProjectorTest do
     assert event.ip_addresses == host_projection.ip_addresses
     assert event.ssh_address == host_projection.ssh_address
     assert event.agent_version == host_projection.agent_version
+
+    assert_broadcast "host_details_updated",
+                     %{
+                       agent_version: ^agent_version,
+                       hostname: ^hostname,
+                       id: ^host_id,
+                       ip_addresses: ^ip_addresses,
+                       provider_data: nil,
+                       ssh_address: ^ssh_address
+                     },
+                     1000
   end
 
   test "should update the heartbeat field to passing status when HeartbeatSucceded is received",
@@ -119,9 +180,16 @@ defmodule Trento.HostProjectorTest do
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    host_projection = Repo.get!(HostReadModel, event.host_id)
+    %{hostname: hostname} = host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert :passing == host_projection.heartbeat
+
+    assert_broadcast "heartbeat_succeded",
+                     %{
+                       id: ^host_id,
+                       hostname: ^hostname
+                     },
+                     1000
   end
 
   test "should update the heartbeat field to critical status when HeartbeatFailed is received", %{
@@ -132,9 +200,16 @@ defmodule Trento.HostProjectorTest do
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    host_projection = Repo.get!(HostReadModel, event.host_id)
+    %{hostname: hostname} = host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert :critical == host_projection.heartbeat
+
+    assert_broadcast "heartbeat_failed",
+                     %{
+                       id: ^host_id,
+                       hostname: ^hostname
+                     },
+                     1000
   end
 
   test "should update the provider field when ProviderUpdated is received with Azure provider type",
@@ -172,6 +247,17 @@ defmodule Trento.HostProjectorTest do
 
     assert :azure == host_projection.provider
     assert expected_azure_model == host_projection.provider_data
+
+    broadcast_provider_data =
+      Map.new(expected_azure_model, fn {k, v} -> {String.to_atom(k), v} end)
+
+    assert_broadcast "host_details_updated",
+                     %{
+                       id: ^host_id,
+                       provider: :azure,
+                       provider_data: ^broadcast_provider_data
+                     },
+                     1000
   end
 
   test "should update the provider field when ProviderUpdated is received with AWS provider type",
@@ -209,6 +295,16 @@ defmodule Trento.HostProjectorTest do
 
     assert Provider.aws() == host_projection.provider
     assert expected_aws_model == host_projection.provider_data
+
+    broadcast_provider_data = Map.new(expected_aws_model, fn {k, v} -> {String.to_atom(k), v} end)
+
+    assert_broadcast "host_details_updated",
+                     %{
+                       id: ^host_id,
+                       provider: :aws,
+                       provider_data: ^broadcast_provider_data
+                     },
+                     1000
   end
 
   test "should update the provider field when ProviderUpdated is received with GCP provider type",
@@ -244,5 +340,15 @@ defmodule Trento.HostProjectorTest do
 
     assert :gcp == host_projection.provider
     assert expected_gcp_model == host_projection.provider_data
+
+    broadcast_provider_data = Map.new(expected_gcp_model, fn {k, v} -> {String.to_atom(k), v} end)
+
+    assert_broadcast "host_details_updated",
+                     %{
+                       id: ^host_id,
+                       provider: :gcp,
+                       provider_data: ^broadcast_provider_data
+                     },
+                     1000
   end
 end
