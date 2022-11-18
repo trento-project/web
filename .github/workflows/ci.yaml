@@ -357,7 +357,7 @@ jobs:
           wget -P /tmp https://github.com/trento-project/photofinish/releases/download/v1.1.0/photofinish
           chmod +x /tmp/photofinish
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         env:
           cypress_video: false
           cypress_db_host: postgres
