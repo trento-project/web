@@ -214,6 +214,7 @@ TrentoWeb.AboutController.html
 TrentoWeb.AboutView.html
 TrentoWeb.CatalogController.html
 TrentoWeb.ChannelCase.html
+TrentoWeb.ChecksResultView.html
 TrentoWeb.ClusterController.html
 TrentoWeb.ClusterView.html
 TrentoWeb.ConnCase.html
@@ -279,8 +280,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-2E929FD0.js
-dist/sidebar_items-FE7CADA1.js
+dist/search_items-8DDB30B5.js
+dist/sidebar_items-73F18DF7.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
