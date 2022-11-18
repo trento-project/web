@@ -29,6 +29,7 @@ import {
   sortHosts,
   sortChecks,
 } from './checksUtils';
+import { ClusterInfoBox } from '@components/ClusterDetails';
 
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
@@ -112,6 +113,7 @@ const ChecksResults = () => {
           use results with caution
         </WarningBanner>
       )}
+      <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
       <ResultsContainer
         catalogError={catalogError}
         clusterID={clusterID}

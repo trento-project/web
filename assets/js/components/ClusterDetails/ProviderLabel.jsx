@@ -36,11 +36,11 @@ const ProviderLabel = ({ provider }) => (
     {providerData[provider] ? (
       <img
         src={providerData[provider].logo}
-        className="inline h-4 pr-2"
+        className="inline mr-2 h-4"
         alt={provider}
       />
     ) : (
-      <EOS_HELP />
+      <EOS_HELP className="inline mr-2" />
     )}
     {providerData[provider]
       ? providerData[provider].label

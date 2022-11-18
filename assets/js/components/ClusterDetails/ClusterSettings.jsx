@@ -8,12 +8,12 @@ import classNames from 'classnames';
 import BackButton from '@components/BackButton';
 import { Tab } from '@headlessui/react';
 import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
-import { ConnectionSettings } from '@components/ClusterDetails/ConnectionSettings';
 import { getCluster } from '@state/selectors';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 import { truncatedClusterNameClasses } from './ClusterDetails';
 import { getClusterName } from '@components/ClusterLink';
 import WarningBanner from '@components/Banners/WarningBanner';
+import { ConnectionSettings, ClusterInfoBox } from '@components/ClusterDetails';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
@@ -63,6 +63,7 @@ export const ClusterSettings = () => {
             </Tab>
           ))}
         </Tab.List>
+        <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
         {cluster.provider == UNKNOWN_PROVIDER && (
           <WarningBanner>
             The following catalog is valid for on-premise bare metal platforms.
