@@ -15,6 +15,7 @@ const homeHealthSummaryActionPayload = [
     hostsHealth: 'critical',
     sapsystemHealth: 'passing',
     sid: 'NWD',
+    tenant: 'HDD',
   }),
   healthSummaryFactory.build({
     clustersHealth: 'passing',
@@ -66,7 +67,7 @@ describe('HomeHealthSummary component', () => {
       container
         .querySelector(':nth-child(1) > :nth-child(5) > a')
         .getAttribute('href')
-    ).toContain('/hosts?sid=NWD');
+    ).toContain('/hosts?sid=NWD&sid=HDD');
   });
 
   describe('health box filter behaviour', () => {

@@ -63,7 +63,7 @@ const healthSummaryTableConfig = {
       key: 'hostsHealth',
       className: 'text-center',
       render: (content, item) => {
-        const linkToHosts = `/hosts?sid=${item.sid}`;
+        const linkToHosts = `/hosts?sid=${item.sid}&sid=${item.tenant}`;
         return (
           <Link to={linkToHosts}>
             <HealthIcon health={content} centered={true} />
