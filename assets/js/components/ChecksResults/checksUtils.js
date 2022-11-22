@@ -52,22 +52,24 @@ export const getChecks = (checkResults) => {
 
 export const getHealth = (checkResults, checkID, agentID) => {
   const checkResult = checkResults.find(({ check_id }) => check_id === checkID);
-  if (checkResult) {
-    const agentCheckResult = checkResult.agents_check_results.find(
-      ({ agent_id }) => agent_id === agentID
+  if (!checkResult) {
+    return;
+  }
+
+  const agentCheckResult = checkResult.agents_check_results.find(
+    ({ agent_id }) => agent_id === agentID
+  );
+
+  const failedExpectationEvaluations =
+    agentCheckResult?.expectation_evaluations.filter(
+      (expectationEvaluation) => 'message' in expectationEvaluation
     );
 
-    const failedExpectationEvaluations =
-      agentCheckResult?.expectation_evaluations.filter(
-        (expectationEvaluation) => 'message' in expectationEvaluation
-      );
-
-    return {
-      expectations: checkResult.expectation_results.length,
-      failedExpectations: failedExpectationEvaluations.length,
-      health: failedExpectationEvaluations.length > 0 ? 'critical' : 'passing',
-    };
-  }
+  return {
+    expectations: checkResult.expectation_results.length,
+    failedExpectations: failedExpectationEvaluations.length,
+    health: failedExpectationEvaluations.length > 0 ? 'critical' : 'passing',
+  };
 };
 
 export const getCheckDescription = (catalog, checkID) =>

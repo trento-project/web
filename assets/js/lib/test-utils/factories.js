@@ -44,6 +44,7 @@ export const checksExecutionFactory = Factory.define(({ params }) => {
     agentID = faker.datatype.uuid(),
     groupID = faker.datatype.uuid(),
     executionID = faker.datatype.uuid(),
+    checkID = faker.datatype.uuid(),
   } = params;
 
   return {
@@ -67,12 +68,12 @@ export const checksExecutionFactory = Factory.define(({ params }) => {
               },
             ],
             facts: [
-              { check_id: '156F64', name: 'lol_this_is_a_fact', value: 123 },
+              { check_id: checkID, name: 'lol_this_is_a_fact', value: 123 },
             ],
             values: [],
           },
         ],
-        check_id: faker.datatype.uuid(),
+        check_id: checkID,
         expectation_results: [
           { name: 'expectation_example', result: true, type: 'expect' },
         ],
