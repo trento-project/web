@@ -56,8 +56,7 @@ defmodule Trento.HealthSummaryServiceTest do
 
       %Trento.SapSystemReadModel{
         id: sap_system_id,
-        sid: sid,
-        tenant: tenant
+        sid: sid
       } = insert(:sap_system, health: Health.critical())
 
       database_instance =
@@ -87,8 +86,7 @@ defmodule Trento.HealthSummaryServiceTest do
                  database_health: :warning,
                  clusters_health: :passing,
                  hosts_health: :unknown,
-                 database_instances: [^expected_db_instance],
-                 tenant: ^tenant
+                 database_instances: [^expected_db_instance]
                }
              ] = HealthSummaryService.get_health_summary()
     end

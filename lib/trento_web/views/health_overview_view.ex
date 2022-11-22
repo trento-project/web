@@ -15,8 +15,7 @@ defmodule TrentoWeb.HealthOverviewView do
           database_instances: database_instances,
           database_health: database_health,
           clusters_health: clusters_health,
-          hosts_health: hosts_health,
-          tenant: tenant
+          hosts_health: hosts_health
         }
       }) do
     %{
@@ -28,7 +27,7 @@ defmodule TrentoWeb.HealthOverviewView do
       hosts_health: hosts_health,
       cluster_id: extract_cluster_id(database_instances),
       database_id: extract_database_id(database_instances),
-      tenant: tenant
+      tenant: extract_tenant(database_instances)
     }
   end
 
@@ -43,4 +42,10 @@ defmodule TrentoWeb.HealthOverviewView do
 
   defp extract_cluster_id([%DatabaseInstanceReadModel{host: %{cluster_id: cluster_id}} | _]),
     do: cluster_id
+
+  @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t()
+  defp extract_tenant([]), do: nil
+
+  defp extract_tenant([%DatabaseInstanceReadModel{tenant: tenant} | _]),
+    do: tenant
 end

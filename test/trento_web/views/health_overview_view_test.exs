@@ -36,13 +36,13 @@ defmodule TrentoWeb.HealthOverviewViewTest do
                    database_instances: [
                      %DatabaseInstanceReadModel{
                        host: %HostReadModel{cluster_id: cluster_id},
-                       sap_system_id: sap_system_id
+                       sap_system_id: sap_system_id,
+                       tenant: tenant
                      }
                    ],
                    database_health: :passing,
                    clusters_health: :critical,
-                   hosts_health: :warning,
-                   tenant: tenant
+                   hosts_health: :warning
                  }
                ]
              })
