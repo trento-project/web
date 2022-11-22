@@ -1,3 +1,12 @@
 {
-  "skip_files": ["test/support", "lib/trento_web/openapi/api_spec.ex"]
+  "skip_files": [
+    "test/support",
+    "lib/trento_web.ex",
+    "lib/trento_web/endpoint.ex",
+    "lib/trento_web/router.ex",
+    "lib/trento_web/openapi/api_spec.ex",
+    "lib/trento_web/telemetry.ex",
+    "lib/trento_web/error_helpers.ex"
+  ],
+  "treat_no_relevant_lines_as_covered": true
 }
