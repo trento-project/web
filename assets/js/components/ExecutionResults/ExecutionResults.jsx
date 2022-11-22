@@ -25,6 +25,11 @@ import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
 
+const getLabel = (health, expectations, failedExpectations) =>
+  health === 'passing'
+    ? `${expectations}/${expectations} expectations passed`
+    : `${failedExpectations}/${expectations} failed`;
+
 const ExecutionResults = ({
   clusterID,
   executionID,
@@ -122,10 +127,11 @@ const ExecutionResults = ({
                   checkID,
                   hostID
                 );
-                const label =
-                  health === 'passing'
-                    ? `${expectations}/${expectations} expectations passed`
-                    : `${failedExpectations}/${expectations} failed`;
+                const label = getLabel(
+                  health,
+                  expectations,
+                  failedExpectations
+                );
 
                 return (
                   <CheckResult
