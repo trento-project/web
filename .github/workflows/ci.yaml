@@ -126,6 +126,13 @@ jobs:
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@v1
+      - name: Generate openapi.json
+        run: mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.ApiSpec
+      - name: Generate Swagger UI
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: ./doc/swaggerui
+          spec-file: openapi.json
       - name: Publish to Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
