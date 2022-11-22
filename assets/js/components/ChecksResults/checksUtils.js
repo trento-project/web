@@ -60,10 +60,9 @@ export const getHealth = (checkResults, checkID, agentID) => {
     ({ agent_id }) => agent_id === agentID
   );
 
-  const failedExpectationEvaluations =
-    agentCheckResult?.expectation_evaluations.filter(
-      (expectationEvaluation) => 'message' in expectationEvaluation
-    );
+  const failedExpectationEvaluations = agentCheckResult?.expectation_evaluations
+    .filter((expectationEvaluation) => 'message' in expectationEvaluation)
+    .filter(({ type }) => type !== 'expect');
 
   return {
     expectations: checkResult.expectation_results.length,
