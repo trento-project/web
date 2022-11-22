@@ -11,8 +11,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
   def spec do
     OpenApiSpex.resolve_schema_modules(%OpenApi{
       servers: [
-        # Populate the Server info from a phoenix endpoint
-        Server.from_endpoint(Endpoint)
+        endpoint()
       ],
       info: %Info{
         title: "Trento",
@@ -36,5 +35,17 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         }
       ]
     })
+  end
+
+  defp endpoint do
+    if Process.whereis(Endpoint) do
+      # Populate the Server info from a phoenix endpoint
+      Server.from_endpoint(Endpoint)
+    else
+      # If the endpoint is not running, use a placeholder
+      # this happens when generarting openapi.json with --start-app=false
+      # e.g. mix openapi.spec.json --start-app=false --spec WandaWeb.ApiSpec
+      %OpenApiSpex.Server{url: "https://demo.trento-project.io"}
+    end
   end
 end
