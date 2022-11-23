@@ -196,6 +196,8 @@ jobs:
     name: Test
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-20.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     services:
       postgres:
         image: postgres
@@ -252,11 +254,21 @@ jobs:
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mix coveralls.github --trace
+        run: mix coveralls.github --verbose --trace --parallel true --flagname backend
       - name: Run JS tests
-        run: cd assets && npm test
+        run: cd assets && npm run test:coverage
+      - name: Coveralls JS
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          parallel: true
+          path-to-lcov: ./assets/coverage/lcov.info
+          flag-name: frontend
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          parallel-finished: true
 
   npm-e2e-deps:
     name: Npm E2E dependencies
