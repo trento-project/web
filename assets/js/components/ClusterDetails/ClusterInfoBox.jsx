@@ -9,7 +9,7 @@ const haScenarioToString = {
 };
 
 export const ClusterInfoBox = ({ haScenario, provider }) => (
-  <div className="tn-cluster-details w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-8">
+  <div className="tn-cluster-details w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
     <ListView
       className="grid-flow-row"
       titleClassName="text-lg"
