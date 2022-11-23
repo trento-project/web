@@ -254,31 +254,24 @@ jobs:
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run test
-        run: mix coveralls.github --trace --parallel true --flagname backend
-      - uses: haya14busa/action-cond@v1
-        id: service_job_id
-        with:
-          # This service_job_id expression comes from elixir-coveralls
-          # https://github.com/parroty/excoveralls/blob/master/lib/excoveralls/github.ex#L43
-          cond: ${{ github.event_name == 'pull_request' }}
-          if_true: "${{ github.event.pull_request.head.sha }}-PR-${{ github.event.number }}"
-          if_false: ${{ env.GITHUB_SHA }}
+        run: |
+          mix coveralls.post --trace --token ${{ env.GITHUB_TOKEN }} --build ${{ github.run_id }} --name github \
+          --branch ${{ github.ref }} --sha ${{ github.sha }} --parallel true --flagname backend
       - name: Run JS tests
-        env:
-          COVERALLS_REPO_TOKEN: ${{ env.GITHUB_TOKEN }}
-          COVERALLS_SERVICE_NAME: github
-          COVERALLS_FLAG_NAME: frontend
-          COVERALLS_PARALLEL: true
-          COVERALLS_SERVICE_JOB_ID: ${{ steps.service_job_id.outputs.value }}
-        run: cd assets && npm run test:coveralls
+        run: cd assets && npm run test:coverage
+      - name: Coveralls JS
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          parallel: true
+          flag-name: frontend
+          path-to-lcov: ./assets/coverage/lcov.info
+          base-path: ./assets
       - name: Coveralls Finished
-        run: curl -k https://coveralls.io/webhook?repo_token="${{ env.GITHUB_TOKEN }}" -d "payload[build_num]=${{ steps.service_job_id.outputs.value }}&payload[status]=done"
-
-      # - name: Coveralls Finished
-      #   uses: coverallsapp/github-action@master
-      #   with:
-      #     github-token: ${{ env.GITHUB_TOKEN }}
-      #     parallel-finished: true
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          parallel-finished: true
 
   npm-e2e-deps:
     name: Npm E2E dependencies

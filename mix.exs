@@ -130,12 +130,12 @@ defmodule Trento.MixProject do
         "event_store.init --quiet",
         "test"
       ],
-      "coveralls.github": [
+      "coveralls.post": [
         "ecto.create --quiet",
         "ecto.migrate --quiet",
         "event_store.create --quiet",
         "event_store.init --quiet",
-        "coveralls.github"
+        "coveralls.post"
       ],
       "assets.deploy": [
         "cmd --cd assets npm run tailwind:build",
