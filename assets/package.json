@@ -16,6 +16,7 @@
     "autoprefixer": "^10.4.13",
     "babel-jest": "^29.2.1",
     "babel-loader": "^9.1.0",
+    "coveralls": "^3.1.1",
     "esbuild": "^0.15.15",
     "esbuild-plugin-path-alias": "^1.0.7",
     "eslint": "^8.28.0",
@@ -61,6 +62,7 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:coveralls": "jest --coverage && coveralls < coverage/lcov.info"
   }
 }
