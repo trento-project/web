@@ -34,5 +34,6 @@ trento-*.tar
 npm-debug.log
 /assets/node_modules/
 /assets/.env
+/assets/coverage/
 
 .pgdata/

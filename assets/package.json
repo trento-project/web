@@ -60,6 +60,7 @@
     "lint": "eslint . --ext js,jsx",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   }
 }
