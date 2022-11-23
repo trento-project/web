@@ -14,6 +14,8 @@ module.exports = {
       ...config.resolve.alias,
       '@components': path.resolve(__dirname, '../js/components'),
       '@lib': path.resolve(__dirname, '../js/lib'),
+      '@hooks': path.resolve(__dirname, '../js/hooks'),
+      '@state': path.resolve(__dirname, '../js/state'),
     };
     return config;
   },

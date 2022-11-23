@@ -27,5 +27,53 @@ export const getHostname =
   };
 
 export const findCheck = (catalog, checkID) => {
-  return catalog.find((check) => check.id === checkID);
+  return catalog?.find((check) => check.id === checkID);
+};
+
+export const getCheckResults = (executionData) => {
+  if (!executionData) {
+    return [];
+  }
+  if (!executionData.check_results) {
+    return [];
+  }
+  return executionData.check_results;
+};
+
+export const getHosts = (checkResults) => {
+  return checkResults.flatMap(({ agents_check_results }) =>
+    agents_check_results.map(({ agent_id }) => agent_id)
+  );
+};
+
+export const getChecks = (checkResults) => {
+  return checkResults.map(({ check_id }) => check_id);
+};
+
+export const getHealth = (checkResults, checkID, agentID) => {
+  const checkResult = checkResults.find(({ check_id }) => check_id === checkID);
+  if (!checkResult) {
+    return;
+  }
+
+  const agentCheckResult = checkResult.agents_check_results.find(
+    ({ agent_id }) => agent_id === agentID
+  );
+
+  const failedExpectationEvaluations = agentCheckResult?.expectation_evaluations
+    .filter((expectationEvaluation) => 'message' in expectationEvaluation)
+    .filter(({ type }) => type !== 'expect');
+
+  return {
+    expectations: checkResult.expectation_results.length,
+    failedExpectations: failedExpectationEvaluations.length,
+    health: failedExpectationEvaluations.length > 0 ? 'critical' : 'passing',
+  };
+};
+
+export const getCheckDescription = (catalog, checkID) => {
+  const check = findCheck(catalog, checkID);
+  if (check) {
+    return check.description;
+  }
 };
