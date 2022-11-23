@@ -8,7 +8,9 @@ describe('HealthIcon', () => {
   it('should display a green svg when the health is passing', () => {
     const { container } = render(<HealthIcon health={'passing'} />);
     const svgEl = container.querySelector("[data-testid='eos-svg-component']");
-    expect(svgEl.classList.toString()).toContain('fill-jungle-green-500');
+    expect(svgEl.classList.toString()).toContain(
+      'hover:opacity-75 fill-jungle-green-500'
+    );
   });
   it('should display a yellow svg when the health is warning', () => {
     const { container } = render(<HealthIcon health={'warning'} />);
@@ -24,5 +26,12 @@ describe('HealthIcon', () => {
     const { container } = render(<HealthIcon health={''} />);
     const svgEl = container.querySelector("[data-testid='eos-svg-component']");
     expect(svgEl.classList.toString()).toContain('fill-gray-500');
+  });
+  it('should display an svg without hovering effect', () => {
+    const { container } = render(
+      <HealthIcon health={''} hoverOpacity={false} />
+    );
+    const svgEl = container.querySelector("[data-testid='eos-svg-component']");
+    expect(svgEl.classList.toString()).toContain('hover:opacity-100');
   });
 });
