@@ -192,9 +192,9 @@ jobs:
       - name: Check JS Code Format
         run: cd assets && npm run format:check
 
-  test:
-    name: Test
-    needs: [elixir-deps, npm-deps]
+  test-backend:
+    name: Test backend
+    needs: elixir-deps
     runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -233,10 +233,6 @@ jobs:
         with:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
@@ -246,6 +242,31 @@ jobs:
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+      - name: Run test
+        run: |
+          mix coveralls.post --trace --token ${{ env.GITHUB_TOKEN }} --build ${{ github.run_id }} --name github \
+          --branch ${{ github.ref_name }} --sha ${{ github.sha }} --message ${{ github.event.head_commit.message }} \
+          --committer ${{ github.event.sender.login }} --parallel true --flagname backend
+
+  test-frontend:
+    name: Test frontend
+    needs: npm-deps
+    runs-on: ubuntu-20.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
@@ -253,24 +274,29 @@ jobs:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-      - name: Run test
-        run: |
-          mix coveralls.post --trace --token ${{ env.GITHUB_TOKEN }} --build ${{ github.run_id }} --name github \
-          --branch ${{ github.ref }} --sha ${{ github.sha }} --parallel true --flagname backend
       - name: Run JS tests
-        run: cd assets && npm run test:coverage
-      - name: Coveralls JS
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ env.GITHUB_TOKEN }}
-          parallel: true
-          flag-name: frontend
-          path-to-lcov: ./assets/coverage/lcov.info
-          base-path: ./assets
+        env:
+          COVERALLS_REPO_TOKEN: ${{ env.GITHUB_TOKEN }}
+          COVERALLS_SERVICE_NAME: github
+          COVERALLS_GIT_BRANCH: ${{ github.ref_name }}
+          COVERALLS_FLAG_NAME: frontend
+          COVERALLS_SERVICE_JOB_ID: ${{ github.run_id }}
+          COVERALLS_PARALLEL: true
+        run: cd assets && npm run test:coveralls
+
+  complete-coveralls:
+    name: Complete coveralls
+    runs-on: ubuntu-20.04
+    if: always()
+    needs: [test-backend, test-frontend]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ env.GITHUB_TOKEN }}
+          git-branch: ${{ github.ref_name }}
           parallel-finished: true
 
   npm-e2e-deps:
@@ -401,7 +427,7 @@ jobs:
     name: Build and push container images
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test-frontend, test-backend, test-e2e]
     permissions:
       contents: read
       packages: write
@@ -439,7 +465,7 @@ jobs:
     name: Build the docker image for the demo environment
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test-frontend, test-backend, test-e2e]
     permissions:
       contents: read
       packages: write
@@ -531,7 +557,7 @@ jobs:
     name: Commit the project on OBS
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test-frontend, test-backend, test-e2e]
     container:
       image: ghcr.io/trento-project/continuous-delivery:main
       env:
