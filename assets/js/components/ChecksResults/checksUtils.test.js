@@ -1,7 +1,16 @@
 import { faker } from '@faker-js/faker';
-import { checksExecutionFactory } from '@lib/test-utils/factories';
+import {
+  checksExecutionFactory,
+  catalogCheckFactory,
+} from '@lib/test-utils/factories';
 
-import { getCheckResults, getChecks, getHealth, getHosts } from './checksUtils';
+import {
+  getCheckDescription,
+  getCheckResults,
+  getChecks,
+  getHealth,
+  getHosts,
+} from './checksUtils';
 
 describe('checksUtils', () => {
   it('getChecksResults returns a list of checks results', () => {
@@ -63,5 +72,12 @@ describe('checksUtils', () => {
     });
 
     expect(getChecks(checkResults)).toStrictEqual([checkID]);
+  });
+
+  it('getDescription should return a check description', () => {
+    const catalog = catalogCheckFactory.buildList(2);
+    const [{ id, description }] = catalog;
+
+    expect(getCheckDescription(catalog, id)).toBe(description);
   });
 });

@@ -72,4 +72,4 @@ export const getHealth = (checkResults, checkID, agentID) => {
 };
 
 export const getCheckDescription = (catalog, checkID) =>
-  catalog.find(({ id }) => id === checkID)?.description;
+  catalog?.find(({ id }) => id === checkID)?.description;

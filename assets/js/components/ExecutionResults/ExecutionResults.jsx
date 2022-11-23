@@ -19,6 +19,7 @@ import {
   getChecks,
   getHealth,
   getCheckResults,
+  getCheckDescription,
 } from '@components/ChecksResults';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 
@@ -77,12 +78,12 @@ const ExecutionResults = ({
   return (
     <div>
       <Modal
-        title={catalog?.find(({ id }) => id === selectedCheck)?.description}
+        title={getCheckDescription(catalog, selectedCheck)}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       >
         <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-          {catalog?.find(({ id }) => id === selectedCheck)?.description}
+          {getCheckDescription(catalog, selectedCheck)}
         </ReactMarkdown>
       </Modal>
       <BackButton url={`/clusters/${clusterID}`}>
@@ -137,9 +138,7 @@ const ExecutionResults = ({
                   <CheckResult
                     key={checkID}
                     checkId={checkID}
-                    description={
-                      catalog.find(({ id }) => id === checkID)?.description
-                    }
+                    description={getCheckDescription(catalog, checkID)}
                     executionState={executionData?.status}
                     health={health}
                     label={label}
