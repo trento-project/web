@@ -8,20 +8,32 @@ import React from 'react';
 
 const uiForResult = {
   passing: {
-    color: 'green',
+    iconColorClassName: 'fill-green-600',
+    backgroundColorClassName: 'bg-green-200',
     component: EOS_CHECK_CIRCLE_OUTLINED,
     text: 'Passing',
   },
   warning: {
-    color: 'yellow',
+    iconColorClassName: 'fill-yellow-600',
+    backgroundColorClassName: 'bg-yellow-200',
     component: EOS_WARNING_OUTLINED,
     text: 'Warning',
   },
-  critical: { color: 'red', component: EOS_ERROR_OUTLINED, text: 'Critical' },
+  critical: {
+    iconColorClassName: 'fill-red-600',
+    backgroundColorClassName: 'bg-red-200',
+    component: EOS_ERROR_OUTLINED,
+    text: 'Critical',
+  },
 };
 
 const CheckResult = ({ value, result, onClick }) => {
-  const { color, component: Component, text } = uiForResult[result];
+  const {
+    iconColorClassName,
+    backgroundColorClassName,
+    component: Component,
+    text,
+  } = uiForResult[result];
 
   return (
     <div
@@ -29,8 +41,8 @@ const CheckResult = ({ value, result, onClick }) => {
       onClick={onClick}
       className="hover:text-jungle-green-500 flex items-center rounded p-3 text-lg font-bold"
     >
-      <span className={`rounded-lg p-2 bg-${color}-200 mr-2`}>
-        <Component size={25} className={`fill-${color}-600`} />
+      <span className={`rounded-lg p-2 ${backgroundColorClassName} mr-2`}>
+        <Component size={25} className={`${iconColorClassName}`} />
       </span>
       <div className="flex w-full ml-2 items-center w-[65%]">
         <p>{text}</p>
