@@ -258,8 +258,10 @@ jobs:
       - uses: haya14busa/action-cond@v1
         id: service_job_id
         with:
+          # This service_job_id expression comes from elixir-coveralls
+          # https://github.com/parroty/excoveralls/blob/master/lib/excoveralls/github.ex#L43
           cond: ${{ github.event_name == 'pull_request' }}
-          if_true: "${{ github.event.pull_request.head.sha}}-PR-${{ github.event.number }}"
+          if_true: "${{ github.event.pull_request.head.sha }}-PR-${{ github.event.number }}"
           if_false: ${{ env.GITHUB_SHA }}
       - name: Run JS tests
         env:
@@ -267,13 +269,16 @@ jobs:
           COVERALLS_SERVICE_NAME: github
           COVERALLS_FLAG_NAME: frontend
           COVERALLS_PARALLEL: true
-          COVERALLS_SERVICE_JOB_ID: steps.service_job_id.outputs.value
+          COVERALLS_SERVICE_JOB_ID: ${{ steps.service_job_id.outputs.value }}
         run: cd assets && npm run test:coveralls
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ env.GITHUB_TOKEN }}
-          parallel-finished: true
+        run: curl -k https://coveralls.io/webhook?repo_token="${{ env.GITHUB_TOKEN }}" -d "payload[build_num]=${{ steps.service_job_id.outputs.value }}&payload[status]=done"
+
+      # - name: Coveralls Finished
+      #   uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ env.GITHUB_TOKEN }}
+      #     parallel-finished: true
 
   npm-e2e-deps:
     name: Npm E2E dependencies
