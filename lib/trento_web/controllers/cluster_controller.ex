@@ -15,6 +15,8 @@ defmodule TrentoWeb.ClusterController do
     type: %OpenApiSpex.Schema{type: :string, format: :uuid}
   ]
 
+  action_fallback TrentoWeb.FallbackController
+
   operation :list,
     summary: "List Pacemaker Clusters",
     tags: ["Target Infrastructure"],
@@ -57,9 +59,7 @@ defmodule TrentoWeb.ClusterController do
         |> json(%{})
 
       {:error, reason} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: reason})
+        {:error, {:bad_request, reason}}
     end
   end
 
@@ -119,9 +119,7 @@ defmodule TrentoWeb.ClusterController do
         |> json(%{})
 
       {:error, reason} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: reason})
+        {:error, {:bad_request, reason}}
     end
   end
 
