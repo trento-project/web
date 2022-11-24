@@ -243,7 +243,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Run test
-        run: mix test
+        run: mix coveralls.github --trace --parallel true --flagname backend
 
   test-frontend:
     name: Test frontend
@@ -271,16 +271,24 @@ jobs:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
-      - name: Run JS tests
-        run: cd assets && npm run test:coverage
-      - name: Coveralls frontend
-        uses: coverallsapp/github-action@master
+      - uses: haya14busa/action-cond@v1
+        id: service_job_id
         with:
-          github-token: ${{ env.GITHUB_TOKEN }}
-          flag-name: frontend
-          path-to-lcov: ./assets/coverage/lcov.info
-          base-path: ./assets
-          parallel: true
+          # This service_job_id expression comes from elixir-coveralls
+          # https://github.com/parroty/excoveralls/blob/master/lib/excoveralls/github.ex#L43
+          cond: ${{ github.event_name == 'pull_request' }}
+          if_true: "${{ github.event.pull_request.head.sha }}-PR-${{ github.event.number }}"
+          if_false: ${{ env.GITHUB_SHA }}
+      - name: Run JS tests
+        env:
+          COVERALLS_REPO_TOKEN: ${{ env.GITHUB_TOKEN }}
+          COVERALLS_GIT_BRANCH: ${{ github.ref }}
+          COVERALLS_GIT_COMMIT: ${{ github.sha }}
+          COVERALLS_SERVICE_NAME: github
+          COVERALLS_FLAG_NAME: frontend
+          COVERALLS_PARALLEL: true
+          COVERALLS_SERVICE_JOB_ID: ${{ steps.service_job_id.outputs.value }}
+        run: cd assets && npm run test:coveralls
 
   complete-coveralls:
     name: Complete coveralls
@@ -291,10 +299,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ env.GITHUB_TOKEN }}
-          parallel-finished: true
+        run: curl -k https://coveralls.io/webhook?repo_token=${{ env.GITHUB_TOKEN }} -d "payload[build_num]=${{ steps.service_job_id.outputs.value }}&payload[status]=done"
 
   npm-e2e-deps:
     name: Npm E2E dependencies
