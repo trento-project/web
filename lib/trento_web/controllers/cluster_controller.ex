@@ -87,9 +87,7 @@ defmodule TrentoWeb.ClusterController do
         |> json(%{})
 
       {:error, _} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: "runner callback failed"})
+        {:error, {:bad_request, "runner callback failed"}}
     end
   end
 

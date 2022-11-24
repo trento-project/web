@@ -24,6 +24,19 @@ defmodule TrentoWeb.ClusterControllerTest do
     end
   end
 
+  describe "runner_callback" do
+    test "should return 400 when the request is invalid", %{conn: conn} do
+      resp =
+        conn
+        |> post("/api/runner/callback", %{
+          "invalid" => "not valid?"
+        })
+        |> json_response(400)
+
+      assert %{"error" => "runner callback failed"} = resp
+    end
+  end
+
   describe "select_checks" do
     test "should return bad request when the request is malformed", %{conn: conn} do
       cluster_id = UUID.uuid4()
@@ -45,6 +58,29 @@ defmodule TrentoWeb.ClusterControllerTest do
         |> json_response(400)
 
       assert %{"error" => "the reason is you"} = resp
+    end
+  end
+
+  describe "request check executions" do
+    test "should return 400 when the request is invalid", %{conn: conn} do
+      cluster_id = UUID.uuid4()
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn _ ->
+          {:error, "the reason is us"}
+        end
+      )
+
+      resp =
+        conn
+        |> post("/api/clusters/#{cluster_id}/checks/request_execution", %{
+          "cluster_id" => cluster_id
+        })
+        |> json_response(400)
+
+      assert %{"error" => "the reason is us"} = resp
     end
   end
 
