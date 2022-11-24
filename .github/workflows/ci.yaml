@@ -243,10 +243,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Run test
-        run: |
-          mix coveralls.post --trace --token ${{ env.GITHUB_TOKEN }} --build ${{ github.run_id }} --name github \
-          --branch ${{ github.ref_name }} --sha ${{ github.sha }} --message ${{ github.event.head_commit.message }} \
-          --committer ${{ github.event.sender.login }} --parallel true --flagname backend
+        run: mix test
 
   test-frontend:
     name: Test frontend
@@ -275,14 +272,15 @@ jobs:
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run JS tests
-        env:
-          COVERALLS_REPO_TOKEN: ${{ env.GITHUB_TOKEN }}
-          COVERALLS_SERVICE_NAME: github
-          COVERALLS_GIT_BRANCH: ${{ github.ref_name }}
-          COVERALLS_FLAG_NAME: frontend
-          COVERALLS_SERVICE_JOB_ID: ${{ github.run_id }}
-          COVERALLS_PARALLEL: true
-        run: cd assets && npm run test:coveralls
+        run: cd assets && npm run test:coverage
+      - name: Coveralls frontend
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ env.GITHUB_TOKEN }}
+          flag-name: frontend
+          path-to-lcov: ./assets/coverage/lcov.info
+          base-path: ./assets
+          parallel: true
 
   complete-coveralls:
     name: Complete coveralls
@@ -296,7 +294,6 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ env.GITHUB_TOKEN }}
-          git-branch: ${{ github.ref_name }}
           parallel-finished: true
 
   npm-e2e-deps:
