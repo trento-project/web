@@ -12,7 +12,7 @@ export const post = function (url, data) {
     .post(url, data, conf)
     .then(handleResponseStatus)
     .catch((error) => {
-      logError(error);
+      handleError(error);
     });
 };
 
@@ -21,7 +21,7 @@ export const del = function (url) {
     .delete(url, conf)
     .then(handleResponseStatus)
     .catch((error) => {
-      logError(error);
+      handleError(error);
     });
 };
 
@@ -30,7 +30,7 @@ export const put = function (url, data) {
     .put(url, data, conf)
     .then(handleResponseStatus)
     .catch((error) => {
-      logError(error);
+      handleError(error);
     });
 };
 
@@ -39,7 +39,7 @@ export const get = function (url) {
     .get(url, conf)
     .then(handleResponseStatus)
     .catch((error) => {
-      logError(error);
+      handleError(error);
     });
 };
 
@@ -59,4 +59,9 @@ function handleResponseStatus(response) {
   }
 
   return response;
+}
+
+function handleError(error) {
+  logError(error);
+  throw error;
 }

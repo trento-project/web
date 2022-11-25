@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
+import { runSaga } from 'redux-saga';
 
 import hosts from './data/hosts';
 import clusters from './data/clusters';
@@ -47,3 +48,17 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
     ...render(ui, { wrapper: BrowserRouter }),
   };
 };
+
+export async function recordSaga(saga, initialAction) {
+  const dispatched = [];
+
+  await runSaga(
+    {
+      dispatch: (action) => dispatched.push(action),
+    },
+    saga,
+    initialAction
+  ).toPromise();
+
+  return dispatched;
+}

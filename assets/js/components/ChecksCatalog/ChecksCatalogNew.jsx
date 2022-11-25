@@ -1,41 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-import axios from 'axios';
+import { groupBy } from '@lib/lists';
 
+import { getCatalog } from '@state/selectors/catalog';
 import CatalogContainer from './CatalogContainer';
-
-const wandaURL = process.env.WANDA_URL;
+import CheckItem from './CheckItem';
 
 export const ChecksCatalogNew = () => {
-  const [catalogError, setError] = useState(null);
-  const [loading, setLoaded] = useState(true);
-  const [catalogData, setCatalog] = useState([]);
+  const dispatch = useDispatch();
+
+  const {
+    data: catalogData,
+    error: catalogError,
+    loading: loading,
+  } = useSelector(getCatalog());
 
   useEffect(() => {
-    getCatalog();
-  }, []);
+    dispatchUpdateCatalog();
+  }, [dispatch]);
 
-  const getCatalog = () => {
-    setLoaded(true);
-    axios
-      .get(`${wandaURL}/api/checks/catalog`)
-      .then((catalog) => {
-        setCatalog(catalog.data.items);
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .finally(() => {
-        setLoaded(false);
-      });
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG_NEW',
+      payload: {},
+    });
   };
 
   return (
     <CatalogContainer
-      onRefresh={() => getCatalog()}
-      catalogData={catalogData}
+      onRefresh={() => dispatchUpdateCatalog()}
+      isCatalogEmpty={catalogData.length === 0}
       catalogError={catalogError}
       loading={loading}
-    />
+    >
+      <div>
+        {Object.entries(groupBy(catalogData, 'group')).map(
+          ([group, checks], idx) => (
+            <div
+              key={idx}
+              className="check-group bg-white shadow overflow-hidden sm:rounded-md mb-8"
+            >
+              <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                  {group}
+                </h3>
+              </div>
+              <ul role="list" className="divide-y divide-gray-200">
+                {checks.map((check) => (
+                  <CheckItem
+                    key={check.id}
+                    checkID={check.id}
+                    premium={check.premium}
+                    description={check.description}
+                    remediation={check.remediation}
+                  />
+                ))}
+              </ul>
+            </div>
+          )
+        )}
+      </div>
+    </CatalogContainer>
   );
 };

@@ -68,6 +68,7 @@ import { setEulaVisible, setIsPremium } from '@state/settings';
 
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
+import { watchCatalogUpdateNew } from '@state/sagas/catalog';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
 import {
@@ -643,6 +644,7 @@ export default function* rootSaga() {
     watchSapSystem(),
     watchDatabase(),
     watchCatalogUpdate(),
+    watchCatalogUpdateNew(),
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchClustrConnectionSettings(),
