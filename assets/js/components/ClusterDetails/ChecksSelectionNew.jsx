@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import axios from 'axios';
-
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
+import { getCatalog } from '@state/selectors/catalog';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 import {
@@ -15,8 +14,6 @@ import {
 import ChecksSelectionGroup from './ChecksSelectionGroup';
 import ChecksSelectionItem from './ChecksSelectionItem';
 
-const wandaURL = process.env.WANDA_URL;
-
 const ChecksSelectionNew = ({ clusterId, cluster }) => {
   const dispatch = useDispatch();
 
@@ -24,9 +21,12 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
     (state) => state.clusterChecksSelection
   );
 
-  const [catalogError, setError] = useState(null);
-  const [loading, setLoaded] = useState(true);
-  const [catalogData, setCatalog] = useState({});
+  const {
+    data: catalogData,
+    error: catalogError,
+    loading: loading,
+  } = useSelector(getCatalog());
+
   const [selectedChecks, setSelectedChecks] = useState(
     cluster ? cluster.selected_checks : []
   );
@@ -35,28 +35,28 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
   const [groupSelection, setGroupSelection] = useState([]);
 
   useEffect(() => {
-    getCatalog();
-  }, []);
+    dispatchUpdateCatalog();
+  }, [dispatch]);
 
   useEffect(() => {
-    const groupedCheckSelection = Object.entries(catalogData).map(
-      ([group, checks]) => {
-        const groupChecks = checks.map((check) => ({
-          ...check,
-          selected: isSelected(check.id),
-        }));
-        const allSelected = checks.every((check) => isSelected(check.id));
-        const someSelected =
-          !allSelected && checks.some((check) => isSelected(check.id));
-        return {
-          group,
-          checks: groupChecks,
-          allSelected,
-          someSelected,
-          noneSelected: !allSelected && !someSelected,
-        };
-      }
-    );
+    const groupedCheckSelection = Object.entries(
+      groupBy(catalogData, 'group')
+    ).map(([group, checks]) => {
+      const groupChecks = checks.map((check) => ({
+        ...check,
+        selected: isSelected(check.id),
+      }));
+      const allSelected = checks.every((check) => isSelected(check.id));
+      const someSelected =
+        !allSelected && checks.some((check) => isSelected(check.id));
+      return {
+        group,
+        checks: groupChecks,
+        allSelected,
+        someSelected,
+        noneSelected: !allSelected && !someSelected,
+      };
+    });
     setGroupSelection(groupedCheckSelection);
   }, [catalogData, selectedChecks]);
 
@@ -78,21 +78,6 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
     }
   }, [loading]);
 
-  const getCatalog = () => {
-    setLoaded(true);
-    axios
-      .get(`${wandaURL}/api/checks/catalog`)
-      .then((catalog) => {
-        setCatalog(groupBy(catalog.data.items, 'group'));
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .finally(() => {
-        setLoaded(false);
-      });
-  };
-
   const isSelected = (checkId) =>
     selectedChecks ? selectedChecks.includes(checkId) : false;
 
@@ -103,9 +88,16 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
     });
   };
 
+  const dispatchUpdateCatalog = () => {
+    dispatch({
+      type: 'UPDATE_CATALOG_NEW',
+      payload: {},
+    });
+  };
+
   return (
     <CatalogContainer
-      onRefresh={() => getCatalog()}
+      onRefresh={() => dispatchUpdateCatalog()}
       isCatalogEmpty={catalogData.size === 0}
       catalogError={catalogError}
       loading={loading}

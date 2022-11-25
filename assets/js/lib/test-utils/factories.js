@@ -97,4 +97,4 @@ export const aboutFactory = Factory.define(() => ({
 export const clusterFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   selected_checks: [],
-})); 
+}));

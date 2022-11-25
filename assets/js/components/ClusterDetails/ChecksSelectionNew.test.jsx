@@ -4,42 +4,28 @@ import { screen, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 import { faker } from '@faker-js/faker';
 import { withState, renderWithRouter } from '@lib/test-utils';
 import { catalogCheckFactory, clusterFactory } from '@lib/test-utils/factories';
 
 import ChecksSelectionNew from './ChecksSelectionNew';
 
-const wandaURL = process.env.WANDA_URL;
-
 describe('ClusterDetails ChecksSelectionNew component', () => {
-  const axiosMock = new MockAdapter(axios);
-
-  beforeEach(() => {
-    axiosMock.reset();
-  });
-
   it('should change individual check switches accordingly if the group switch is clicked', async () => {
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group: group });
     const cluster = clusterFactory.build();
 
-    axiosMock.onGet(`${wandaURL}/api/checks/catalog`).reply(200, {
-      items: catalog,
-    });
+    const initialState = {
+      catalogNew: { loading: false, data: catalog, error: null },
+      clusterChecksSelection: {},
+    };
+    const [statefulChecksSelection] = withState(
+      <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+      initialState
+    );
 
-    await act(async () => {
-      const initialState = {
-        clusterChecksSelection: {},
-      };
-      const [StatefulChecksSelection] = withState(
-        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-        initialState
-      );
-      renderWithRouter(StatefulChecksSelection);
-    });
+    await act(async () => renderWithRouter(statefulChecksSelection));
 
     const groupItem = await waitFor(() => screen.getByRole('heading'));
 
@@ -68,20 +54,16 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
       selected_checks: [catalog[0].id, catalog[1].id],
     });
 
-    axiosMock.onGet(`${wandaURL}/api/checks/catalog`).reply(200, {
-      items: catalog,
-    });
+    const initialState = {
+      catalogNew: { loading: false, data: catalog, error: null },
+      clusterChecksSelection: {},
+    };
+    const [statefulChecksSelection] = withState(
+      <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+      initialState
+    );
 
-    await act(async () => {
-      const initialState = {
-        clusterChecksSelection: {},
-      };
-      const [StatefulChecksSelection] = withState(
-        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-        initialState
-      );
-      renderWithRouter(StatefulChecksSelection);
-    });
+    await act(async () => renderWithRouter(statefulChecksSelection));
 
     const groupItem = await waitFor(() => screen.getByRole('heading'));
 
@@ -109,22 +91,16 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
       selected_checks: selectedChecks,
     });
 
-    axiosMock.onGet(`${wandaURL}/api/checks/catalog`).reply(200, {
-      items: catalog,
-    });
+    const initialState = {
+      catalogNew: { loading: false, data: catalog, error: null },
+      clusterChecksSelection: {},
+    };
+    const [statefulChecksSelection, store] = withState(
+      <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+      initialState
+    );
 
-    const store = await act(async () => {
-      const initialState = {
-        clusterChecksSelection: {},
-      };
-      const [StatefulChecksSelection, store] = withState(
-        <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-        initialState
-      );
-      renderWithRouter(StatefulChecksSelection);
-
-      return store;
-    });
+    await act(async () => renderWithRouter(statefulChecksSelection));
 
     await waitFor(() => screen.getAllByRole('heading'));
 
@@ -132,13 +108,19 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     userEvent.click(saveButton);
 
     const actions = store.getActions();
-    const expectedPayload = {
-      type: 'CHECKS_SELECTED',
-      payload: {
-        checks: selectedChecks,
-        clusterID: cluster.id,
+    const expectedActions = [
+      {
+        type: 'UPDATE_CATALOG_NEW',
+        payload: {},
       },
-    };
-    expect(actions).toEqual([expectedPayload]);
+      {
+        type: 'CHECKS_SELECTED',
+        payload: {
+          checks: selectedChecks,
+          clusterID: cluster.id,
+        },
+      },
+    ];
+    expect(actions).toEqual(expectedActions);
   });
 });
