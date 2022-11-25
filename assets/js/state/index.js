@@ -10,7 +10,7 @@ import clusterChecksSelectionReducer from './clusterChecksSelection';
 import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
 import catalogReducer from './catalog';
-import catalogNewReducer from './catalog_new';
+import catalogNewReducer from './catalogNew';
 import liveFeedReducer from './liveFeed';
 import settingsReducer from './settings';
 import registerEvents from './registerSocketEvents';
@@ -29,7 +29,7 @@ export const store = configureStore({
     sapSystemsList: sapSystemListReducer,
     databasesList: databasesListReducer,
     catalog: catalogReducer,
-    catalog_new: catalogNewReducer,
+    catalogNew: catalogNewReducer,
     liveFeed: liveFeedReducer,
     settings: settingsReducer,
   },

@@ -18,7 +18,7 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const catalog = group1.concat(group2);
 
     const initialState = {
-      catalog_new: { loading: false, data: catalog, error: null },
+      catalogNew: { loading: false, data: catalog, error: null },
     };
     const [statefulCatalog] = withState(<ChecksCatalogNew />, initialState);
 

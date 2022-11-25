@@ -2,7 +2,7 @@ import catalogNewReducer, {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
-} from './catalog_new';
+} from './catalogNew';
 
 describe('Catalog reducer', () => {
   it('should set catalog on loading state', () => {

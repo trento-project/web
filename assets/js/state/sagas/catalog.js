@@ -6,7 +6,7 @@ import {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
-} from '@state/catalog_new';
+} from '@state/catalogNew';
 
 const wandaURL = process.env.WANDA_URL;
 

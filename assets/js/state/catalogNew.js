@@ -7,7 +7,7 @@ const initialState = {
 };
 
 export const catalogNewSlice = createSlice({
-  name: 'catalog_new',
+  name: 'catalogNew',
   initialState,
   reducers: {
     setCatalogLoading: (state) => {

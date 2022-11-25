@@ -9,7 +9,7 @@ import {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
-} from '../catalog_new';
+} from '../catalogNew';
 
 const wandaURL = process.env.WANDA_URL;
 const url = `${wandaURL}/api/checks/catalog`;
