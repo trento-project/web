@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const baseURL = process.env.WANDA_URL;
 
-const wandaClient = axios.create({
+export const wandaClient = axios.create({
   baseURL,
 });
 

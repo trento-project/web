@@ -1,8 +1,8 @@
-import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { recordSaga } from '@lib/test-utils';
 
+import { wandaClient } from '@lib/api/wanda';
 import { updateCatalog } from './catalog';
 
 import {
@@ -11,9 +11,8 @@ import {
   setCatalogError,
 } from '../catalogNew';
 
-const wandaURL = process.env.WANDA_URL;
-const url = `${wandaURL}/api/checks/catalog`;
-const axiosMock = new MockAdapter(axios);
+const getCatalogUrl = '/api/checks/catalog';
+const axiosMock = new MockAdapter(wandaClient);
 
 describe('Catalog saga', () => {
   beforeEach(() => {
@@ -29,7 +28,7 @@ describe('Catalog saga', () => {
   it('should update catalog', async () => {
     const catalog = catalogCheckFactory.buildList(5);
 
-    axiosMock.onGet(url).reply(200, {
+    axiosMock.onGet(getCatalogUrl).reply(200, {
       items: catalog,
     });
 
@@ -40,7 +39,7 @@ describe('Catalog saga', () => {
   });
 
   it('should update catalog with error', async () => {
-    axiosMock.onGet(url).networkError();
+    axiosMock.onGet(getCatalogUrl).networkError();
 
     const dispatched = await recordSaga(updateCatalog, {});
 

@@ -1,6 +1,5 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
-
-import { get } from '@lib/network';
+import { getCatalog } from '@lib/api/wanda';
 
 import {
   setCatalogLoading,
@@ -8,12 +7,10 @@ import {
   setCatalogError,
 } from '@state/catalogNew';
 
-const wandaURL = process.env.WANDA_URL;
-
 export function* updateCatalog() {
   yield put(setCatalogLoading());
   try {
-    const { data: data } = yield call(get, `${wandaURL}/api/checks/catalog`);
+    const { data: data } = yield call(getCatalog);
     yield put(setCatalogData({ data: data.items }));
   } catch (error) {
     yield put(setCatalogError({ error: error.message }));
