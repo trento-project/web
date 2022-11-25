@@ -22,7 +22,7 @@ describe('Catalog saga', () => {
   });
 
   afterEach(() => {
-    /* eslint-disable no-console */
+    /* eslint-disable-next-line */
     console.error.mockRestore();
   });
 
