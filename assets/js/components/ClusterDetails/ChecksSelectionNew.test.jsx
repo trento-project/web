@@ -121,6 +121,6 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
         },
       },
     ];
-    expect(actions).toEqual(expectedActions);
+    expect(actions).toEqual(expect.arrayContaining(expectedActions));
   });
 });

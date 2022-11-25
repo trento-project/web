@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { groupBy } from '@lib/lists';
 
 import { getCatalog } from '@state/selectors/catalog';
+import { dispatchUpdateCatalog } from '@state/actions/catalog';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 
@@ -17,19 +18,12 @@ export const ChecksCatalogNew = () => {
   } = useSelector(getCatalog());
 
   useEffect(() => {
-    dispatchUpdateCatalog();
+    dispatchUpdateCatalog()(dispatch);
   }, [dispatch]);
-
-  const dispatchUpdateCatalog = () => {
-    dispatch({
-      type: 'UPDATE_CATALOG_NEW',
-      payload: {},
-    });
-  };
 
   return (
     <CatalogContainer
-      onRefresh={() => dispatchUpdateCatalog()}
+      onRefresh={() => dispatchUpdateCatalog()(dispatch)}
       isCatalogEmpty={catalogData.length === 0}
       catalogError={catalogError}
       loading={loading}

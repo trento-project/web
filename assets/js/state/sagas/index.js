@@ -88,6 +88,8 @@ import {
 } from '@state/clusterChecksSelection';
 import { setClusterConnectionSettingsSavingSuccess } from '@state/clusterConnectionSettings';
 
+import { checksSelectedAction } from '@state/actions/cluster';
+
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
   payload: { text, icon },
@@ -273,7 +275,7 @@ function* checksSelected({ payload }) {
 }
 
 function* watchChecksSelected() {
-  yield takeEvery('CHECKS_SELECTED', checksSelected);
+  yield takeEvery(checksSelectedAction, checksSelected);
 }
 
 function* requestChecksExecution({ payload }) {
