@@ -1,12 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { aboutPageFactory } from '@lib/test-utils/factories';
-import AboutPage from './index';
+import { aboutFactory } from '@lib/test-utils/factories';
+import AboutPage from './AboutPage';
 import { act, screen } from '@testing-library/react';
 import { renderWithRouter } from '@lib/test-utils';
 
 describe('AboutPage component', () => {
-  const apiRequestData = aboutPageFactory.build();
+  const apiRequestData = aboutFactory.build();
   it('should render the about page with content from the api', async () => {
     await act(async () => {
       renderWithRouter(
@@ -21,7 +21,7 @@ describe('AboutPage component', () => {
     ).toBeTruthy();
   });
 
-  it('should render the about page with state values if api get request fails', async () => {
+  it('should render the about page with default values if api get request fails', async () => {
     const stateValues = { flavor: 'N/A', subscriptions: 0, version: 'v0.0.0' };
     const errorMessage = { messages: "Get request '/api/about' failed" };
     await act(async () => {

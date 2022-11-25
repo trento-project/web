@@ -88,8 +88,8 @@ export const hostnameFactory = Factory.define(() => ({
   hostname: faker.hacker.noun(),
 }));
 
-export const aboutPageFactory = Factory.define(() => ({
+export const aboutFactory = Factory.define(() => ({
   flavor: faker.animal.cat(),
   sles_subscriptions: faker.datatype.number(),
-  version: faker.git.branch(),
+  version: faker.system.networkInterface(),
 }));

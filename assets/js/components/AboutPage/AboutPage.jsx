@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { logError } from '@lib/log';
-import { getAboutPageData } from '@lib/api/about';
+import { getAboutData } from '@lib/api/about';
 
 import ListView from '@components/ListView';
 import Pill from '@components/Pill';
@@ -9,7 +9,7 @@ import Pill from '@components/Pill';
 import AboutPageLogo from './AboutPageLogo';
 import AboutPageText from './AboutPageText';
 
-const AboutPage = ({ onFetch = getAboutPageData }) => {
+const AboutPage = ({ onFetch = getAboutData }) => {
   const [flavor, setFlavor] = useState('N/A');
   const [subscriptions, setSubscriptions] = useState(0);
   const [version, setVersion] = useState('v0.0.0');

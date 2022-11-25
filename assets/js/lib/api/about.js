@@ -1,3 +1,3 @@
 import { get } from '@lib/network';
 
-export const getAboutPageData = () => get('/api/about');
+export const getAboutData = () => get('/api/about');
