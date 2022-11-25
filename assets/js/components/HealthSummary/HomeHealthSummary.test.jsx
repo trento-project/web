@@ -29,6 +29,13 @@ const homeHealthSummaryActionPayload = [
     hostsHealth: 'critical',
     sapsystemHealth: 'passing',
   }),
+  healthSummaryFactory.build({
+    clusterId: null,
+    clustersHealth: 'unknown',
+    databaseHealth: 'passing',
+    hostsHealth: 'critical',
+    sapsystemHealth: 'passing',
+  }),
 ];
 
 const initialState = {
@@ -52,6 +59,31 @@ describe('HomeHealthSummary component', () => {
         .querySelector(':nth-child(1) > :nth-child(1) > a')
         .getAttribute('href')
     ).toContain(`/sap_systems/${id}`);
+  });
+
+  it('should have a clickable PACEMAKER CLUSTER icon with link to the belonging cluster when available', () => {
+    const [StatefulHomeHealthSummary] = withState(
+      <HomeHealthSummary />,
+      initialState
+    );
+    const { container } = renderWithRouter(StatefulHomeHealthSummary);
+    const [{ clusterId }] = homeHealthSummaryActionPayload;
+
+    expect(
+      container
+        .querySelector(':nth-child(1) > :nth-child(4) > a')
+        .getAttribute('href')
+    ).toContain(`/clusters/${clusterId}`);
+
+    expect(
+      container.querySelector(':nth-child(4) > :nth-child(4) > a')
+    ).toBeNull();
+
+    expect(
+      container
+        .querySelector(':nth-child(4) > :nth-child(4) > svg')
+        .classList.toString()
+    ).toContain('hover:opacity-100');
   });
 });
 
@@ -78,12 +110,12 @@ describe('HomeHealthSummary component', () => {
       );
       const { container } = renderWithRouter(StatefulHomeHealthSummary);
 
-      expect(container.querySelector('tbody').childNodes.length).toEqual(3);
+      expect(container.querySelector('tbody').childNodes.length).toEqual(4);
 
       const cases = [
         ['passing', 0],
         ['warning', 0],
-        ['critical', 3],
+        ['critical', 4],
       ];
 
       cases.forEach(([health, results]) => {

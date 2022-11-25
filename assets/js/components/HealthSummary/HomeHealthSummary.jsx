@@ -51,10 +51,13 @@ const healthSummaryTableConfig = {
       className: 'text-center',
       render: (content, item) => {
         const linkToCluster = `/clusters/${item.clusterId}`;
-        return (
+
+        return item?.clusterId ? (
           <Link to={linkToCluster}>
             <HealthIcon health={content} centered={true} />
           </Link>
+        ) : (
+          <HealthIcon health={content} centered={true} hoverOpacity={false} />
         );
       },
     },
