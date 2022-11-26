@@ -48,7 +48,7 @@ config :trento, :messaging, adapter: Trento.Messaging.Adapters.AMQP
 config :trento, Trento.Messaging.Adapters.AMQP,
   publisher: [
     exchange: "trento.test.checks",
-    connection: "amqp://trento:trento@localhost:5672"
+    connection: "amqp://trento:trento@localhost:5673"
   ]
 
 config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
@@ -58,7 +58,7 @@ config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
     exchange: "trento.test.checks",
     routing_key: "results",
     prefetch_count: "10",
-    connection: "amqp://trento:trento@localhost:5672",
+    connection: "amqp://trento:trento@localhost:5673",
     retry_delay_function: fn attempt -> :timer.sleep(2000 * attempt) end,
     queue_options: [
       durable: false,

@@ -22,8 +22,8 @@ services:
   rabbitmq:
     image: rabbitmq:3.10.5-management-alpine
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 5673:5672
+      - 15673:15672
     environment:
       RABBITMQ_DEFAULT_USER: trento
       RABBITMQ_DEFAULT_PASS: trento
