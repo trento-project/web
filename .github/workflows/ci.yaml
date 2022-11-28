@@ -352,12 +352,6 @@ jobs:
           path: |
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
-      - name: Retrieve cached photofinish binary
-        uses: actions/cache@v3
-        id: photofinish-cache
-        with:
-          path: /tmp/photofinish
-          key: ${{ runner.os }}-photofinish
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: Mix setup
@@ -368,6 +362,8 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.5.0
         with:
           repo: trento-project/photofinish
+          tag: v1.1.2
+          cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
@@ -517,6 +513,8 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.5.0
         with:
           repo: trento-project/photofinish
+          tag: v1.1.2
+          cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Give executable permissions to photofinish
