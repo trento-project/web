@@ -26,8 +26,8 @@ defmodule TrentoWeb.HostControllerTest do
     end
   end
 
-  describe "hearbeat" do
-    test "hearbeat action should return 400 when the request is malformed", %{conn: conn} do
+  describe "heartbeat" do
+    test "heartbeat action should return 400 when the request is malformed", %{conn: conn} do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
