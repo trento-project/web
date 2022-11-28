@@ -142,7 +142,7 @@ function HostsList() {
   };
 
   const data = hosts.map((host) => {
-    const cluster = clusters.find((cluster) => cluster.id === host.cluster_id);
+    const cluster = clusters.find((c) => c.id === host.cluster_id);
     const sapSystemList = getInstancesByHost(
       applicationInstances,
       databaseInstances,

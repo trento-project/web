@@ -13,6 +13,8 @@ export const createFilter = (
   filterFunction,
 ) => {
   const { found, filtersList } = filters.reduce(
+    // shadowing in acc destructuring
+    // eslint-disable-next-line
     ({ found, filtersList }, current) => {
       const { key } = current;
       return filterKey === key

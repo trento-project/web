@@ -16,9 +16,9 @@ function ListView({
     }
     >
       {data.map(({
-        title, content, render = (content) => (
+        title, content, render = (component) => (
           <span>
-            {content}
+            {component}
           </span>
         ),
       }, index) => (

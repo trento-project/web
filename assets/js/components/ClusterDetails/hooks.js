@@ -10,18 +10,18 @@ export const useChecksResult = (cluster) => {
   const [lastCheckExecution, setLastCheckExecution] = useState(new Date());
 
   useEffect(() => {
-    if (cluster?.checks_results?.length == 0) return;
+    if (cluster?.checks_results?.length === 0) return;
 
     const selectedCheckResults = cluster?.checks_results.filter((result) => cluster?.selected_checks.includes(result?.check_id));
 
     if (!selectedCheckResults) return;
 
-    const lastCheckExecution = max(
+    const lastCheck = max(
       cluster?.checks_results.map((result) => parseISO(result.updated_at)),
     );
 
-    if (isValid(lastCheckExecution)) {
-      setLastCheckExecution(lastCheckExecution);
+    if (isValid(lastCheck)) {
+      setLastCheckExecution(lastCheck);
     }
 
     const result = selectedCheckResults.reduce(

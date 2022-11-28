@@ -82,7 +82,7 @@ function Filter({
                 <input
                   className="rounded-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-jungle-green-500 focus:border-transparent"
                   value={query}
-                  onChange={({ target: { value } }) => setQuery(value)}
+                  onChange={({ target: { value: newValue } }) => setQuery(newValue)}
                 />
               </div>
               <ul

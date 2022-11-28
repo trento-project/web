@@ -65,7 +65,7 @@ export const getDatabaseDetail = (id) => (state) => {
 };
 
 export const getClusterByHost = (hostId) => (state) => {
-  const host = state.hostsList.hosts.find((host) => host.id === hostId);
+  const host = state.hostsList.hosts.find((h) => h.id === hostId);
   return state.clustersList.clusters.find(isIdByKey('id', host?.cluster_id));
 };
 

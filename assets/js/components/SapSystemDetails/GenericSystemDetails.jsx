@@ -17,7 +17,7 @@ export function GenericSystemDetails({ title, type, system }) {
     return <div>Not Found</div>;
   }
 
-  const renderType = (type) => (type === APPLICATION_TYPE ? 'Application server' : 'HANA Database');
+  const renderType = (t) => (t === APPLICATION_TYPE ? 'Application server' : 'HANA Database');
 
   const getUniqueHosts = (hosts) => Array.from(
     hosts

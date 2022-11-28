@@ -14,8 +14,8 @@ function Settings() {
   useEffect(() => {
     setLoading(true);
     get('/api/installation/api-key')
-      .then(({ data: { api_key: apiKey } }) => {
-        apiKey !== undefined && setApiKey(apiKey);
+      .then(({ data: { api_key: newApiKey } }) => {
+        apiKey !== undefined && setApiKey(newApiKey);
         setLoading(false);
       })
       .catch((error) => {

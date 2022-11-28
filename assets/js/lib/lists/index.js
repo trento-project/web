@@ -16,8 +16,8 @@ export const pages = (list) => {
   return hasRest ? ~~(list.length / 10) + 1 : ~~(list.length / 10);
 };
 
-export const page = (page, list) => {
-  const start = 10 * (page - 1);
+export const page = (p, list) => {
+  const start = 10 * (p - 1);
   const end = start + 10;
   return list.slice(start, end);
 };

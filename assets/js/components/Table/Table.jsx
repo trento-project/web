@@ -104,7 +104,7 @@ function Table({
       }
       return filterFunction;
     })
-    .reduce((data, filterFunction) => data.filter(filterFunction), data);
+    .reduce((d, filterFunction) => d.filter(filterFunction), data);
 
   const totalPages = pages(filteredData);
 
@@ -166,7 +166,7 @@ function Table({
               <Pagination
                 pages={totalPages}
                 currentPage={currentPage}
-                onSelect={(page) => setCurrentPage(page)}
+                onSelect={(selectedPage) => setCurrentPage(selectedPage)}
               />
             )}
           </div>
