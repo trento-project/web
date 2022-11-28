@@ -1,27 +1,50 @@
-/* eslint-disable no-undef */
+const path = require('path');
+
+const resolvePath = (p) => path.resolve(__dirname, p);
+
 module.exports = {
   env: {
     browser: true,
     es2021: true,
     jquery: true,
+    node: true,
     'jest/globals': true,
   },
   globals: {
     process: true,
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended'],
+  extends: [
+    'plugin:import/recommended',
+    'plugin:react/recommended',
+    'airbnb',
+  ],
+  overrides: [
+  ],
   parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 12,
+    ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', 'jest'],
+  settings: {
+    'import/resolver': {
+      alias: {
+        extensions: ['.js', '.jsx'],
+        map: [
+          ['@components', resolvePath('./js/components')],
+          ['@state', resolvePath('./js/state')],
+          ['@lib', resolvePath('./js/lib')],
+          ['@hooks', resolvePath('./js/hooks')],
+          ['@static', resolvePath('./static')],
+        ],
+      },
+    },
+  },
+  plugins: [
+    'react',
+    'jest',
+  ],
   rules: {
     'no-console': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'react/prop-types': 'off',
   },
-  ignorePatterns: ['assets/js/**'],
 };
