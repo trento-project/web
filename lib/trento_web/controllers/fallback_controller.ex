@@ -9,6 +9,12 @@ defmodule TrentoWeb.FallbackController do
     |> render_error(reason)
   end
 
+  def call(conn, {:error, {:internal_error, reason}}) do
+    conn
+    |> put_status(:internal_server_error)
+    |> render_error(reason)
+  end
+
   defp render_error(conn, reason) do
     conn
     |> put_view(ErrorView)

@@ -43,8 +43,11 @@ defmodule TrentoWeb.PrometheusControllerTest do
       {:error, :reason}
     end)
 
-    conn
-    |> get("/api/hosts/#{Faker.UUID.v4()}/exporters_status")
-    |> json_response(500)
+    resp =
+      conn
+      |> get("/api/hosts/#{Faker.UUID.v4()}/exporters_status")
+      |> json_response(500)
+
+    assert %{"error" => "An error occurred in getting exporters status."} = resp
   end
 end
