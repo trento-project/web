@@ -20,7 +20,9 @@ export const useFilteredChecks = (cluster) => {
 
   useEffect(() => {
     if (cluster?.checks_results.length > 0) {
-      const selectedCheckResults = cluster?.checks_results.filter((result) => cluster?.selected_checks.includes(result?.check_id));
+      const selectedCheckResults = cluster?.checks_results.filter(
+        (result) => cluster?.selected_checks.includes(result?.check_id),
+      );
 
       setFilteredChecks(filterChecks(selectedCheckResults, filtersPredicates));
     }

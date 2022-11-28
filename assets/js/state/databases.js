@@ -39,7 +39,9 @@ export const databasesListSlice = createSlice({
       });
     },
     updateDatabaseInstanceHealth: (state, action) => {
-      state.databaseInstances = state.databaseInstances.map((instance) => maybeUpdateInstanceHealth(action.payload, instance));
+      state.databaseInstances = state.databaseInstances.map(
+        (instance) => maybeUpdateInstanceHealth(action.payload, instance),
+      );
     },
     updateDatabaseInstanceSystemReplication: (state, action) => {
       state.databaseInstances = state.databaseInstances.map((instance) => {

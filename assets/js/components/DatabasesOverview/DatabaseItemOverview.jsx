@@ -49,7 +49,9 @@ function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
           </div>
           <div className="table-row-group">
             {instances
-              && instances.map((instance, index) => <DatabaseInstance key={index} instance={instance} />)}
+              && instances.map(
+                (instance, index) => <DatabaseInstance key={index} instance={instance} />,
+              )}
           </div>
         </div>
       </div>

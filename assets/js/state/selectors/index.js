@@ -5,7 +5,9 @@ export const isIdByKey = (key, id) => ({ [key]: keyToLookup }) => keyToLookup ==
 
 export const getHost = (id) => (state) => state.hostsList.hosts.find((host) => host.id === id);
 
-export const getCluster = (id) => (state) => state.clustersList.clusters.find((cluster) => cluster.id === id);
+export const getCluster = (id) => (state) => state.clustersList.clusters.find(
+  (cluster) => cluster.id === id,
+);
 
 const enrichInstances = (instances, sapSystemId, state) => instances
   .filter(isIdByKey('sap_system_id', sapSystemId))
@@ -26,7 +28,9 @@ export const getSapSystem = (id) => (state) => state.sapSystemsList.sapSystems.f
   (sapSystem) => id === sapSystem.id,
 );
 
-export const getDatabase = (id) => (state) => state.databasesList.databases.find((database) => id === database.id);
+export const getDatabase = (id) => (state) => state.databasesList.databases.find(
+  (database) => id === database.id,
+);
 
 export const getSapSystemDetail = (id) => (state) => {
   const system = keysToCamel(getSapSystem(id)(state));

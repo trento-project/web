@@ -53,12 +53,16 @@ export const clustersListSlice = createSlice({
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.cluster_id) {
           cluster.checks_results = [
-            ...cluster.checks_results.filter((check_result) => check_result.host_id !== action.payload.host_id),
+            ...cluster.checks_results.filter(
+              (check_result) => check_result.host_id !== action.payload.host_id,
+            ),
             ...action.payload.checks_results,
           ];
 
           cluster.hosts_executions = [
-            ...cluster.hosts_executions.filter((host_execution) => host_execution.host_id !== action.payload.host_id),
+            ...cluster.hosts_executions.filter(
+              (host_execution) => host_execution.host_id !== action.payload.host_id,
+            ),
             ...action.payload.hosts_executions,
           ];
         }

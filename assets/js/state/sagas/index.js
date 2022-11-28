@@ -96,7 +96,9 @@ const notify = ({ text, icon }) => ({
   payload: { text, icon },
 });
 
-const getClusterName = (clusterID) => (state) => state.clustersList.clusters.reduce((acc, cluster) => {
+const getClusterName = (clusterID) => (
+  state,
+) => state.clustersList.clusters.reduce((acc, cluster) => {
   if (cluster.id === clusterID) {
     acc = cluster.name;
   }

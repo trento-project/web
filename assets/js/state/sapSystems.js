@@ -4,6 +4,7 @@ import { maybeUpdateInstanceHealth } from './instances';
 const initialState = {
   loading: false,
   sapSystems: [],
+  // eslint-disable-next-line
   applicationInstances: [], // TODO: is this separation needed? Can it be just encapsulated into previous sapSystems?
   databaseInstances: [],
 };
@@ -13,7 +14,8 @@ export const sapSystemsListSlice = createSlice({
   initialState,
   reducers: {
     // Here the payload comes from /api/sap_systems API when the application loads
-    // Note that each sap system item has an application_instances and a database_instances properties
+    // Note that each sap system item has an application_instances and
+    // a database_instances properties
     setSapSystems: (state, { payload }) => {
       state.sapSystems = payload;
 
@@ -62,7 +64,9 @@ export const sapSystemsListSlice = createSlice({
       );
     },
     updateSAPSystemDatabaseInstanceHealth: (state, action) => {
-      state.databaseInstances = state.databaseInstances.map((instance) => maybeUpdateInstanceHealth(action.payload, instance));
+      state.databaseInstances = state.databaseInstances.map(
+        (instance) => maybeUpdateInstanceHealth(action.payload, instance),
+      );
     },
     updateSAPSystemDatabaseInstanceSystemReplication: (state, action) => {
       state.databaseInstances = state.databaseInstances.map((instance) => {

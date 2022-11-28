@@ -12,7 +12,9 @@ export const useChecksResult = (cluster) => {
   useEffect(() => {
     if (cluster?.checks_results?.length === 0) return;
 
-    const selectedCheckResults = cluster?.checks_results.filter((result) => cluster?.selected_checks.includes(result?.check_id));
+    const selectedCheckResults = cluster?.checks_results.filter(
+      (result) => cluster?.selected_checks.includes(result?.check_id),
+    );
 
     if (!selectedCheckResults) return;
 
