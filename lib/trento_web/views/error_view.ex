@@ -17,4 +17,8 @@ defmodule TrentoWeb.ErrorView do
   def render("error.json", %{reason: reason}) do
     %{error: reason}
   end
+
+  def render("errors.json", %{errors: errors}) do
+    %{errors: errors}
+  end
 end

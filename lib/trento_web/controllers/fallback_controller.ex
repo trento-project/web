@@ -3,6 +3,12 @@ defmodule TrentoWeb.FallbackController do
 
   alias TrentoWeb.ErrorView
 
+  def call(conn, {:error, {:bad_request, errors = %{}}}) do
+    conn
+    |> put_status(:bad_request)
+    |> render_errors(errors)
+  end
+
   def call(conn, {:error, {:bad_request, reason}}) do
     conn
     |> put_status(:bad_request)
@@ -19,5 +25,11 @@ defmodule TrentoWeb.FallbackController do
     conn
     |> put_view(ErrorView)
     |> render("error.json", reason: reason)
+  end
+
+  defp render_errors(conn, errors) do
+    conn
+    |> put_view(ErrorView)
+    |> render("errors.json", errors: errors)
   end
 end
