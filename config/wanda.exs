@@ -14,7 +14,7 @@ config :trento, Trento.Clusters, checks_adapter: Trento.Clusters.Wanda
 config :trento, Trento.Messaging.Adapters.AMQP,
   publisher: [
     exchange: "trento.checks",
-    connection: "amqp://trento:trento@localhost:5672"
+    connection: "amqp://wanda:wanda@localhost:5674"
   ]
 
 config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
@@ -24,7 +24,7 @@ config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
     exchange: "trento.checks",
     routing_key: "results",
     prefetch_count: "10",
-    connection: "amqp://trento:trento@localhost:5672",
+    connection: "amqp://wanda:wanda@localhost:5674",
     retry_delay_function: fn attempt -> :timer.sleep(2000 * attempt) end
   ]
 
