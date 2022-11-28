@@ -5,6 +5,29 @@ const conf = {
   validateStatus: (status) => status < 500,
 };
 
+function handleError(error) {
+  logError(error);
+  throw error;
+}
+
+function handleResponseStatus(response) {
+  if (response.status < 400) {
+    return response;
+  }
+  switch (response.status) {
+    case 401:
+    case 403:
+      logWarn('Redirecting to login after status', response.status);
+      window.location.href = '/session/new';
+      break;
+
+    default:
+      logError(response.statusText);
+  }
+
+  return response;
+}
+
 export const post = function (url, data) {
   return axios
     .post(url, data, conf)
@@ -40,26 +63,3 @@ export const get = function (url) {
       handleError(error);
     });
 };
-
-function handleResponseStatus(response) {
-  if (response.status < 400) {
-    return response;
-  }
-  switch (response.status) {
-    case 401:
-    case 403:
-      logWarn('Redirecting to login after status', response.status);
-      window.location.href = '/session/new';
-      break;
-
-    default:
-      logError(response.statusText);
-  }
-
-  return response;
-}
-
-function handleError(error) {
-  logError(error);
-  throw error;
-}

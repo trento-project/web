@@ -1,9 +1,26 @@
 import { keysToCamel } from '@lib/serialization';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 
+export const isIdByKey = (key, id) => ({ [key]: keyToLookup }) => keyToLookup === id;
+
 export const getHost = (id) => (state) => state.hostsList.hosts.find((host) => host.id === id);
 
 export const getCluster = (id) => (state) => state.clustersList.clusters.find((cluster) => cluster.id === id);
+
+const enrichInstances = (instances, sapSystemId, state) => instances
+  .filter(isIdByKey('sap_system_id', sapSystemId))
+  .map(keysToCamel)
+  .map((instance) => {
+    const host = getHost(instance.hostId)(state);
+    const cluster = getCluster(host?.cluster_id)(state);
+    return {
+      ...instance,
+      host: {
+        ...host,
+        cluster,
+      },
+    };
+  });
 
 export const getSapSystem = (id) => (state) => state.sapSystemsList.sapSystems.find(
   (sapSystem) => id === sapSystem.id,
@@ -47,21 +64,6 @@ export const getDatabaseDetail = (id) => (state) => {
   };
 };
 
-const enrichInstances = (instances, sapSystemId, state) => instances
-  .filter(isIdByKey('sap_system_id', sapSystemId))
-  .map(keysToCamel)
-  .map((instance) => {
-    const host = getHost(instance.hostId)(state);
-    const cluster = getCluster(host?.cluster_id)(state);
-    return {
-      ...instance,
-      host: {
-        ...host,
-        cluster,
-      },
-    };
-  });
-
 export const getClusterByHost = (hostId) => (state) => {
   const host = state.hostsList.hosts.find((host) => host.id === hostId);
   return state.clustersList.clusters.find(isIdByKey('id', host?.cluster_id));
@@ -84,5 +86,3 @@ export const getInstancesOnHost = (hostId) => (state) => {
 
   return [...foundApplicationInstances, ...foundDatabaseInstances];
 };
-
-export const isIdByKey = (key, id) => ({ [key]: keyToLookup }) => keyToLookup === id;

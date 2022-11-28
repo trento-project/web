@@ -47,5 +47,7 @@ module.exports = {
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'react/prop-types': 'off',
     camelcase: 'off',
+    'import/prefer-default-export': 'off',
+    'react/jsx-props-no-spreading': 'off',
   },
 };

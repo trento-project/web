@@ -23,6 +23,10 @@ export function ChecksCatalogNew() {
     dispatch(updateCatalog());
   }, [dispatch]);
 
+  useEffect(() => {
+    getCatalog();
+  }, []);
+
   return (
     <CatalogContainer
       onRefresh={() => dispatch(updateCatalog())}
