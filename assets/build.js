@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const alias = require('esbuild-plugin-path-alias');
 const { config } = require('dotenv');

@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+/* eslint-disable max-len */
 
 /*
  * For a detailed explanation regarding each configuration property, visit:
