@@ -358,18 +358,23 @@ jobs:
         run: mix setup
       - name: Run trento detached
         run: mix phx.server &
-      - name: Get Photofinish for e2e testing
-        run: |
-          set -x
-          wget -P /tmp https://github.com/trento-project/photofinish/releases/download/v1.1.0/photofinish
-          chmod +x /tmp/photofinish
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v1.5.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.1.2
+          cache: enable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Give executable permissions to photofinish
+        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v4
         env:
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
-          cypress_photofinish_binary: /tmp/photofinish
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           headless: true
@@ -504,13 +509,18 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Get Photofinish for e2e testing
-        run: |
-          set -x
-          wget -P /tmp https://github.com/trento-project/photofinish/releases/download/v1.1.2/photofinish
-          chmod +x /tmp/photofinish
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v1.5.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.1.2
+          cache: enable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Give executable permissions to photofinish
+        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Push data
-        run: /tmp/photofinish run healthy-27-node-SAP-cluster -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
+        run: photofinish run healthy-27-node-SAP-cluster -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
 
   obs-commit:
     name: Commit the project on OBS
