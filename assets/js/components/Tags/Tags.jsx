@@ -38,9 +38,9 @@ function Tags({
         className,
       )}
     >
-      {renderedTags.map((tag, index) => (
+      {renderedTags.map((tag) => (
         <Pill
-          key={index}
+          key={tag}
           className={classNames({
             'text-green-800': true,
             'bg-green-100': true,

@@ -37,9 +37,9 @@ function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
         <div className="table w-full">
           <div className="table-header-group bg-grey bg-gray-100">
             <div className="table-row">
-              {databaseInstanceColumns.map(({ name, cssClass }, index) => (
+              {databaseInstanceColumns.map(({ name, cssClass }) => (
                 <div
-                  key={index}
+                  key={name}
                   className={`table-cell p-2 text-left text-xs font-medium text-gray-500 uppercase ${cssClass}`}
                 >
                   {name}
@@ -50,7 +50,12 @@ function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
           <div className="table-row-group">
             {instances
               && instances.map(
-                (instance, index) => <DatabaseInstance key={index} instance={instance} />,
+                (instance) => (
+                  <DatabaseInstance
+                    key={instance.host_id + instance.sap_system_id}
+                    instance={instance}
+                  />
+                ),
               )}
           </div>
         </div>

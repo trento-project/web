@@ -122,8 +122,8 @@ export function InstanceStatus({ health = undefined }) {
 export function Features({ features }) {
   return (
     <div>
-      {features.split('|').map((feature, index) => (
-        <Pill key={index}>{feature}</Pill>
+      {features.split('|').map((feature) => (
+        <Pill key={feature}>{feature}</Pill>
       ))}
     </div>
   );

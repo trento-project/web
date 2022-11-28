@@ -117,9 +117,9 @@ export function ChecksSelection({ clusterId, cluster }) {
         {groupSelection?.map(
           ({
             group, checks, allSelected, someSelected, noneSelected,
-          }, idx) => (
+          }) => (
             <div
-              key={idx}
+              key={group}
               className="bg-white shadow overflow-hidden sm:rounded-md mb-1"
             >
               <Disclosure>

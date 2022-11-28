@@ -21,9 +21,9 @@ function ListView({
             {component}
           </span>
         ),
-      }, index) => (
+      }) => (
         <div
-          key={index}
+          key={title}
           className={
           orientation === 'vertical'
             ? 'grid grid-flow-row'

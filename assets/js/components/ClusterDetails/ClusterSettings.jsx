@@ -54,9 +54,9 @@ export function ClusterSettings({ newChecksSelectionView = false }) {
       </div>
       <Tab.Group manual>
         <Tab.List className="flex p-1 space-x-1 bg-zinc-300/20 rounded">
-          {Object.keys(tabsSettings).map((tabTitle, idx) => (
+          {Object.keys(tabsSettings).map((tabTitle) => (
             <Tab
-              key={idx}
+              key={tabTitle}
               className={({ selected }) => classNames(
                 'w-full py-2.5 text-sm leading-5 font-medium rounded',
                 'focus:outline-none',
@@ -79,9 +79,9 @@ export function ClusterSettings({ newChecksSelectionView = false }) {
           </WarningBanner>
         )}
         <Tab.Panels className="mt-2">
-          {Object.values(tabsSettings).map((tabContent, idx) => (
+          {Object.entries(tabsSettings).map(([tabTitle, tabContent]) => (
             <Tab.Panel
-              key={idx}
+              key={tabTitle}
               className={classNames(
                 'bg-white rounded p-3',
                 'focus:outline-none focus:ring-2 ring-offset-2 ring-white ring-opacity-60',

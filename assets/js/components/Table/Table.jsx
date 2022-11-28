@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+
 import React, { Fragment, useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { page, pages } from '@lib/lists';

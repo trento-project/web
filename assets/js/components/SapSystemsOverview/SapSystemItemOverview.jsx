@@ -32,9 +32,9 @@ function SapSystemItemOverview({ sapSystem }) {
           <div className="table w-full">
             <div className="table-header-group bg-grey bg-gray-100">
               <div className="table-row">
-                {applicationInstanceColumns.map(({ name, cssClass }, index) => (
+                {applicationInstanceColumns.map(({ name, cssClass }) => (
                   <div
-                    key={index}
+                    key={name}
                     className={`table-cell p-2 text-left text-xs font-medium text-gray-500 uppercase ${cssClass}`}
                   >
                     {name}
@@ -44,8 +44,8 @@ function SapSystemItemOverview({ sapSystem }) {
             </div>
             <div className="table-row-group">
               {applicationInstances
-                && applicationInstances.map((instance, index) => (
-                  <ApplicationInstance key={index} instance={instance} />
+                && applicationInstances.map((instance) => (
+                  <ApplicationInstance key={instance.host_id} instance={instance} />
                 ))}
             </div>
           </div>

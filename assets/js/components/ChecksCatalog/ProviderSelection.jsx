@@ -26,7 +26,7 @@ function ProviderSelection({ providers, selected, onChange }) {
             <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {providers.map((provider, providerIdx) => (
                 <Listbox.Option
-                  key={providerIdx}
+                  key={/* eslint-disable */ providerIdx}
                   className={({ active }) => `cursor-default select-none relative py-2 pl-10 pr-4 ${
                     active ? 'text-green-900 bg-green-100' : 'text-gray-900'
                   }`}

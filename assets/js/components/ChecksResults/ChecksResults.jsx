@@ -118,9 +118,9 @@ function ChecksResults() {
         selectedChecks={cluster?.selected_checks}
         onCatalogRefresh={dispatchUpdateCatalog}
       >
-        {sortHosts(hosts).map(({ host_id: hostID, reachable, msg }, idx) => (
+        {sortHosts(hosts).map(({ host_id: hostID, reachable, msg }) => (
           <HostResultsWrapper
-            key={idx}
+            key={hostID}
             hostname={hostnames(hostID)}
             reachable={reachable}
             unreachableMessage={msg}

@@ -95,7 +95,7 @@ function HostsList() {
           const sidsArray = sap_systems.map((instance, index) => [
             index > 0 && ', ',
             <SapSystemLink
-              key={index}
+              key={`${instance?.sap_system_id}-${instance?.id}`}
               systemType={instance?.type}
               sapSystemId={instance?.sap_system_id}
             >

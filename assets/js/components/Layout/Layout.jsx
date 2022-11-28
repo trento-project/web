@@ -121,9 +121,9 @@ function Layout() {
             </div>
             <nav className="mt-6">
               <div>
-                {navigation.map((item, index) => (
+                {navigation.map((item) => (
                   <NavLink
-                    key={index}
+                    key={item.name}
                     className={({ isActive }) => `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
                       isActive
                         ? 'pl-5 border-l-4 border-jungle-green-500'
