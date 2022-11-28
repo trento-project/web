@@ -5,13 +5,13 @@ import LoadingBox from '@components/LoadingBox';
 
 import { EOS_ERROR } from 'eos-icons-react';
 
-const CatalogContainer = ({
-  children,
+function CatalogContainer({
   onRefresh = () => {},
   isCatalogEmpty = false,
   catalogError = null,
   loading = false,
-}) => {
+  children,
+}) {
   if (loading) {
     return <LoadingBox text="Loading checks catalog..." />;
   }

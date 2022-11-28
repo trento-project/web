@@ -5,7 +5,7 @@ import { getDatabaseDetail } from '@state/selectors';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
 import { DATABASE_TYPE } from '@lib/model';
 
-const DatabaseDetails = () => {
+function DatabaseDetails() {
   const { id } = useParams();
   const database = useSelector(getDatabaseDetail(id));
 
@@ -15,11 +15,11 @@ const DatabaseDetails = () => {
 
   return (
     <GenericSystemDetails
-      title={'HANA Database Details'}
+      title="HANA Database Details"
       type={DATABASE_TYPE}
       system={database}
     />
   );
-};
+}
 
 export default DatabaseDetails;

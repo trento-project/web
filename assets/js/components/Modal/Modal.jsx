@@ -1,7 +1,9 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-const Modal = ({ children, open, onClose, title }) => {
+function Modal({
+  children, open, onClose, title,
+}) {
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog
@@ -52,6 +54,6 @@ const Modal = ({ children, open, onClose, title }) => {
       </Dialog>
     </Transition>
   );
-};
+}
 
 export default Modal;

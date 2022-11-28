@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-const SapSystemLink = ({ systemType, sapSystemId, children }) => {
+function SapSystemLink({ systemType, sapSystemId, children }) {
   return (
     <Link
       key={sapSystemId}
@@ -12,6 +12,6 @@ const SapSystemLink = ({ systemType, sapSystemId, children }) => {
       {children}
     </Link>
   );
-};
+}
 
 export default SapSystemLink;

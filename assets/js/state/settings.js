@@ -21,7 +21,6 @@ export const settingsSlice = createSlice({
   },
 });
 
-export const { setEulaVisible, setIsPremium, acceptEula } =
-  settingsSlice.actions;
+export const { setEulaVisible, setIsPremium, acceptEula } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

@@ -1,22 +1,23 @@
 import { EOS_ERROR, EOS_LOADING_ANIMATED } from 'eos-icons-react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import LoadingBox from '../LoadingBox';
-import NotificationBox from '../NotificationBox';
 import Table from '@components/Table';
 import { Switch } from '@headlessui/react';
 
 import classNames from 'classnames';
+import NotificationBox from '../NotificationBox';
+import LoadingBox from '../LoadingBox';
 import {
   SavingFailedAlert,
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
 
-export const ConnectionSettings = ({ clusterId, cluster }) => {
+export function ConnectionSettings({ clusterId, cluster }) {
   const dispatch = useDispatch();
 
-  const { loading, saving, error, settings, savingError, savingSuccess } =
-    useSelector((state) => state.clusterConnectionSettings);
+  const {
+    loading, saving, error, settings, savingError, savingSuccess,
+  } = useSelector((state) => state.clusterConnectionSettings);
   const [localSettings, setLocalSettings] = useState([]);
   const [localSavingError, setLocalSavingError] = useState(null);
   const [localSavingSuccess, setLocalSavingSuccess] = useState(null);
@@ -38,7 +39,7 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
         ...hostSettings,
         isDefaultUser:
           hostSettings.user === hostSettings.default_user || !hostSettings.user,
-      }))
+      })),
     );
   }, [settings]);
   useEffect(() => {
@@ -73,7 +74,7 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
           };
         }
         return hostSettings;
-      })
+      }),
     );
   };
 
@@ -87,7 +88,7 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
           };
         }
         return hostSettings;
-      })
+      }),
     );
   };
 
@@ -98,50 +99,44 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
       {
         title: 'Connection User',
         key: 'user',
-        render: (content, item) => {
-          return (
-            <input
-              type="text"
-              id={item.host_id}
-              className="rounded-lg border-transparent flex-1 appearance-none border border-gray-100 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:focus:border-transparent"
-              placeholder="Provide a user if different from the default one"
-              value={content || ''}
-              onChange={({ target: { value } }) =>
-                setHostConnectionUser(item.host_id, value)
-              }
-            />
-          );
-        },
+        render: (content, item) => (
+          <input
+            type="text"
+            id={item.host_id}
+            className="rounded-lg border-transparent flex-1 appearance-none border border-gray-100 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:focus:border-transparent"
+            placeholder="Provide a user if different from the default one"
+            value={content || ''}
+            onChange={({ target: { value } }) => setHostConnectionUser(item.host_id, value)}
+          />
+        ),
       },
       {
         title: 'Default User',
         key: 'default_user',
-        render: (content, item) => {
-          return (
-            <Switch.Group as="div" className="flex items-center">
-              <Switch.Label className="mr-4">{content}</Switch.Label>
-              <Switch
-                checked={item.isDefaultUser}
+        render: (content, item) => (
+          <Switch.Group as="div" className="flex items-center">
+            <Switch.Label className="mr-4">{content}</Switch.Label>
+            <Switch
+              checked={item.isDefaultUser}
+              className={classNames(
+                item.isDefaultUser ? 'bg-jungle-green-500' : 'bg-gray-200',
+                'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
+              )}
+              onChange={() => toggleUseDefaultConnectionUser(item.host_id)}
+            >
+              <span
+                aria-hidden="true"
                 className={classNames(
-                  item.isDefaultUser ? 'bg-jungle-green-500' : 'bg-gray-200',
-                  'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
+                  {
+                    'translate-x-5': item.isDefaultUser,
+                    'translate-x-0': !item.isDefaultUser,
+                  },
+                  'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
                 )}
-                onChange={() => toggleUseDefaultConnectionUser(item.host_id)}
-              >
-                <span
-                  aria-hidden="true"
-                  className={classNames(
-                    {
-                      'translate-x-5': item.isDefaultUser,
-                      'translate-x-0': !item.isDefaultUser,
-                    },
-                    'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
-                  )}
-                />
-              </Switch>
-            </Switch.Group>
-          );
-        },
+              />
+            </Switch>
+          </Switch.Group>
+        ),
       },
     ],
   };
@@ -192,4 +187,4 @@ export const ConnectionSettings = ({ clusterId, cluster }) => {
       </div>
     </div>
   );
-};
+}

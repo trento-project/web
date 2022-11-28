@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
-const ProviderSelection = ({ providers, selected, onChange }) => {
+function ProviderSelection({ providers, selected, onChange }) {
   return (
     <div className="w-72 pb-4">
       <Listbox value={selected} onChange={onChange}>
@@ -27,11 +27,9 @@ const ProviderSelection = ({ providers, selected, onChange }) => {
               {providers.map((provider, providerIdx) => (
                 <Listbox.Option
                   key={providerIdx}
-                  className={({ active }) =>
-                    `cursor-default select-none relative py-2 pl-10 pr-4 ${
-                      active ? 'text-green-900 bg-green-100' : 'text-gray-900'
-                    }`
-                  }
+                  className={({ active }) => `cursor-default select-none relative py-2 pl-10 pr-4 ${
+                    active ? 'text-green-900 bg-green-100' : 'text-gray-900'
+                  }`}
                   value={provider}
                 >
                   {({ selected }) => (
@@ -58,6 +56,6 @@ const ProviderSelection = ({ providers, selected, onChange }) => {
       </Listbox>
     </div>
   );
-};
+}
 
 export default ProviderSelection;

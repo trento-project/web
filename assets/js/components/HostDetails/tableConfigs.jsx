@@ -49,9 +49,7 @@ export const sapInstancesTableConfiguration = {
     {
       title: 'Features',
       key: 'features',
-      render: (content) => {
-        return <Features features={content} />;
-      },
+      render: (content) => <Features features={content} />,
     },
     { title: 'Instance Number', key: 'instance_number' },
   ],

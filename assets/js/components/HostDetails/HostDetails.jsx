@@ -7,24 +7,22 @@ import axios from 'axios';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 
-import StatusPill from './StatusPill';
-import ProviderDetails from './ProviderDetails';
-
 import ClusterLink from '@components/ClusterLink';
-
-import {
-  subscriptionsTableConfiguration,
-  sapInstancesTableConfiguration,
-} from './tableConfigs';
-
 import SuseLogo from '@static/suse_logo.svg';
 import {
   getInstancesOnHost,
   getClusterByHost,
   getHost,
 } from '@state/selectors';
+import StatusPill from './StatusPill';
+import ProviderDetails from './ProviderDetails';
 
-const HostDetails = () => {
+import {
+  subscriptionsTableConfiguration,
+  sapInstancesTableConfiguration,
+} from './tableConfigs';
+
+function HostDetails() {
   const { hostID } = useParams();
   const host = useSelector(getHost(hostID));
   const cluster = useSelector(getClusterByHost(hostID));
@@ -51,7 +49,10 @@ const HostDetails = () => {
   return (
     <div>
       <div className="flex">
-        <h1 className="text-3xl font-bold">Host details: {host.hostname}</h1>
+        <h1 className="text-3xl font-bold">
+          Host details:
+          {host.hostname}
+        </h1>
         <StatusPill
           className="self-center ml-4 shadow"
           heartbeat={host.heartbeat}
@@ -68,7 +69,7 @@ const HostDetails = () => {
             >
               {exporterName}
             </StatusPill>
-          )
+          ),
         )}
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
@@ -91,7 +92,7 @@ const HostDetails = () => {
           width="100%"
           height="200"
           frameBorder="0"
-        ></iframe>
+        />
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <iframe
@@ -99,7 +100,7 @@ const HostDetails = () => {
           width="100%"
           height="200"
           frameBorder="0"
-        ></iframe>
+        />
       </div>
 
       <div className="mt-16">
@@ -133,6 +134,6 @@ const HostDetails = () => {
       </div>
     </div>
   );
-};
+}
 
 export default HostDetails;

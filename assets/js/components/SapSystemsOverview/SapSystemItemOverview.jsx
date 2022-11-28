@@ -4,9 +4,9 @@ import DatabaseItemOverview from '@components/DatabasesOverview/DatabaseItemOver
 import InstanceOverview from '@components/InstanceOverview';
 import { APPLICATION_TYPE } from '@lib/model';
 
-const ApplicationInstance = ({ instance }) => (
-  <InstanceOverview instanceType={APPLICATION_TYPE} instance={instance} />
-);
+function ApplicationInstance({ instance }) {
+  return <InstanceOverview instanceType={APPLICATION_TYPE} instance={instance} />;
+}
 
 const applicationInstanceColumns = [
   { name: 'Health', cssClass: 'w-20' },
@@ -16,7 +16,7 @@ const applicationInstanceColumns = [
   { name: 'Host' },
 ];
 
-const SapSystemItemOverview = ({ sapSystem }) => {
+function SapSystemItemOverview({ sapSystem }) {
   const { applicationInstances, databaseInstances } = sapSystem;
 
   return (
@@ -43,22 +43,20 @@ const SapSystemItemOverview = ({ sapSystem }) => {
               </div>
             </div>
             <div className="table-row-group">
-              {applicationInstances &&
-                applicationInstances.map((instance, index) => {
-                  return (
-                    <ApplicationInstance key={index} instance={instance} />
-                  );
-                })}
+              {applicationInstances
+                && applicationInstances.map((instance, index) => (
+                  <ApplicationInstance key={index} instance={instance} />
+                ))}
             </div>
           </div>
         </div>
       </div>
       <DatabaseItemOverview
         database={{ databaseInstances }}
-        asDatabaseLayer={true}
+        asDatabaseLayer
       />
     </div>
   );
-};
+}
 
 export default SapSystemItemOverview;

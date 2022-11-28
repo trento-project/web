@@ -5,14 +5,14 @@ import NotificationBox from '@components/NotificationBox';
 
 import ChecksSelectionHints from './ChecksSelectionHints';
 
-const ResultsContainer = ({
+function ResultsContainer({
   catalogError,
   children,
   clusterID,
   hasAlreadyChecksResults,
   selectedChecks = [],
   onCatalogRefresh = () => {},
-}) => {
+}) {
   if (catalogError) {
     return (
       <NotificationBox
@@ -22,16 +22,15 @@ const ResultsContainer = ({
         buttonOnClick={onCatalogRefresh}
       />
     );
-  } else if (!hasAlreadyChecksResults) {
+  } if (!hasAlreadyChecksResults) {
     return (
       <ChecksSelectionHints
         clusterId={clusterID}
         selectedChecks={selectedChecks}
       />
     );
-  } else {
-    return children;
   }
-};
+  return children;
+}
 
 export default ResultsContainer;

@@ -10,9 +10,7 @@ export const systemInstancesTableConfiguration = {
     {
       title: 'Features',
       key: 'features',
-      render: (content) => {
-        return <Features features={content} />;
-      },
+      render: (content) => <Features features={content} />,
     },
     { title: 'Http Port', key: 'httpPort' },
     { title: 'Https Port', key: 'httpsPort' },
@@ -20,9 +18,7 @@ export const systemInstancesTableConfiguration = {
     {
       title: 'Status',
       key: 'health',
-      render: (content) => {
-        return <InstanceStatus health={content} />;
-      },
+      render: (content) => <InstanceStatus health={content} />,
     },
   ],
 };
@@ -38,12 +34,11 @@ export const systemHostsTableConfiguration = {
     {
       title: 'IP',
       key: 'ip_addresses',
-      render: (content) =>
-        content?.map((ip) => (
-          <div key={ip} className="text-sm text-gray-900">
-            {ip}
-          </div>
-        )),
+      render: (content) => content?.map((ip) => (
+        <div key={ip} className="text-sm text-gray-900">
+          {ip}
+        </div>
+      )),
     },
     {
       title: 'Provider',
@@ -52,9 +47,7 @@ export const systemHostsTableConfiguration = {
     {
       title: 'Cluster',
       key: 'cluster',
-      render: (cluster) => {
-        return cluster?.name;
-      },
+      render: (cluster) => cluster?.name,
     },
     {
       title: 'Agent version',

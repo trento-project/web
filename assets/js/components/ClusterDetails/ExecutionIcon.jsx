@@ -6,7 +6,7 @@ import { EOS_SCHEDULE } from 'eos-icons-react';
 import HealthIcon from '@components/Health';
 import Spinner from '@components/Spinner';
 
-export const ExecutionIcon = ({ health, executionState, centered = false }) => {
+export function ExecutionIcon({ health, executionState, centered = false }) {
   switch (executionState) {
     case 'requested':
       return (
@@ -19,4 +19,4 @@ export const ExecutionIcon = ({ health, executionState, centered = false }) => {
   }
 
   return <HealthIcon health={health} centered={centered} />;
-};
+}

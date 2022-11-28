@@ -5,7 +5,7 @@ import { getSapSystemDetail } from '@state/selectors';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
 import { APPLICATION_TYPE } from '@lib/model';
 
-const SapSystemDetails = () => {
+function SapSystemDetails() {
   const { id } = useParams();
   const sapSystem = useSelector(getSapSystemDetail(id));
 
@@ -15,11 +15,11 @@ const SapSystemDetails = () => {
 
   return (
     <GenericSystemDetails
-      title={'SAP System Details'}
+      title="SAP System Details"
       type={APPLICATION_TYPE}
       system={sapSystem}
     />
   );
-};
+}
 
 export default SapSystemDetails;

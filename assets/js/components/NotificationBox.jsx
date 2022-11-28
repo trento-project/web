@@ -2,7 +2,9 @@ import React from 'react';
 
 import Button from '@components/Button';
 
-const NotificationBox = ({ icon, text, buttonText, buttonOnClick }) => {
+function NotificationBox({
+  icon, text, buttonText, buttonOnClick,
+}) {
   return (
     <div className="shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-1/2 m-auto">
       <div className="w-full h-full text-center">
@@ -22,6 +24,6 @@ const NotificationBox = ({ icon, text, buttonText, buttonOnClick }) => {
       </div>
     </div>
   );
-};
+}
 
 export default NotificationBox;

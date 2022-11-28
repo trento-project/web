@@ -1,4 +1,4 @@
-import { page, pages } from './';
+import { page, pages } from '.';
 
 const pagedList = [...Array(30).keys()];
 

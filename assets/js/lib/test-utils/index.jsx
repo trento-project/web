@@ -13,15 +13,15 @@ const middlewares = [];
 const mockStore = configureStore(middlewares);
 
 const defaultInitialState = {
-  hostsList: { hosts: hosts },
-  clustersList: { clusters: clusters },
+  hostsList: { hosts },
+  clustersList: { clusters },
   sapSystemsList: {
-    sapSystems: sapSystems,
+    sapSystems,
     applicationInstances: sapSystems.flatMap(
-      (sapSystem) => sapSystem.application_instances
+      (sapSystem) => sapSystem.application_instances,
     ),
     databaseInstances: sapSystems.flatMap(
-      (sapSystem) => sapSystem.database_instances
+      (sapSystem) => sapSystem.database_instances,
     ),
   },
 };
@@ -37,9 +37,7 @@ export const withState = (component, initialState = {}) => {
   ];
 };
 
-export const withDefaultState = (component) => {
-  return withState(component, defaultInitialState);
-};
+export const withDefaultState = (component) => withState(component, defaultInitialState);
 
 export const renderWithRouter = (ui, { route = '/' } = {}) => {
   window.history.pushState({}, 'Test page', route);

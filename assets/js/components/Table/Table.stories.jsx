@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Table from './';
+import Table from '.';
 
 export default {
   /* 👇 The title prop is optional.
@@ -28,17 +28,15 @@ const config = {
     {
       title: 'Status',
       key: 'status',
-      render: (content) => {
-        return (
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-            ></span>
-            <span className="relative">{content}</span>
-          </span>
-        );
-      },
+      render: (content) => (
+        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+          />
+          <span className="relative">{content}</span>
+        </span>
+      ),
     },
   ],
 };
@@ -63,17 +61,15 @@ const filteredConfig = {
     {
       title: 'Status',
       key: 'status',
-      render: (content) => {
-        return (
-          <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-            ></span>
-            <span className="relative">{content}</span>
-          </span>
-        );
-      },
+      render: (content) => (
+        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
+          />
+          <span className="relative">{content}</span>
+        </span>
+      ),
     },
   ],
 };
@@ -99,14 +95,18 @@ const data = [
   },
 ];
 
-export const Populated = () => <Table config={config} data={data} />;
+export function Populated() {
+  return <Table config={config} data={data} />;
+}
 
-export const Paginated = () => (
-  <Table config={{ ...config, pagination: true }} data={data} />
-);
+export function Paginated() {
+  return <Table config={{ ...config, pagination: true }} data={data} />;
+}
 
-export const WithFilters = (args) => (
-  <Table config={filteredConfig} data={data} {...args} />
-);
+export function WithFilters(args) {
+  return <Table config={filteredConfig} data={data} {...args} />;
+}
 
-export const Empty = () => <Table config={config} data={[]} />;
+export function Empty() {
+  return <Table config={config} data={[]} />;
+}

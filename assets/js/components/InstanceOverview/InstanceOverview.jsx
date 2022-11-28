@@ -7,7 +7,8 @@ import { DATABASE_TYPE } from '@lib/model';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import Pill from '@components/Pill';
-const InstanceOverview = ({
+
+function InstanceOverview({
   instanceType,
   instance: {
     health,
@@ -17,7 +18,7 @@ const InstanceOverview = ({
     features,
     host_id: hostId,
   },
-}) => {
+}) {
   const isDatabase = DATABASE_TYPE === instanceType;
 
   const host = useSelector(getHost(hostId));
@@ -30,13 +31,14 @@ const InstanceOverview = ({
       </div>
       <div className="table-cell p-2 text-center">{instanceNumber}</div>
       <div
-        className={`table-cell p-2 text-gray-500 dark:text-gray-300 text-sm`}
+        className="table-cell p-2 text-gray-500 dark:text-gray-300 text-sm"
       >
         <Features features={features} />
       </div>
       {isDatabase && (
         <div className="table-cell p-2">
-          {systemReplication && `HANA ${systemReplication}`}{' '}
+          {systemReplication && `HANA ${systemReplication}`}
+          {' '}
           {systemReplicationStatus && <Pill>{systemReplicationStatus}</Pill>}
         </div>
       )}
@@ -54,6 +56,6 @@ const InstanceOverview = ({
       </div>
     </div>
   );
-};
+}
 
 export default InstanceOverview;

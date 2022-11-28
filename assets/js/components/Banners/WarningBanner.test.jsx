@@ -11,11 +11,11 @@ describe('WarningBanner', () => {
         Warning!
         <br />
         You should have a look on this!
-      </WarningBanner>
+      </WarningBanner>,
     );
 
     expect(screen.getByTestId('warning-banner')).toHaveTextContent(
-      'Warning!You should have a look on this!'
+      'Warning!You should have a look on this!',
     );
   });
 });

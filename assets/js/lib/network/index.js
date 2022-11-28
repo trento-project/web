@@ -2,9 +2,7 @@ import axios from 'axios';
 import { logError, logWarn } from '@lib/log';
 
 const conf = {
-  validateStatus: (status) => {
-    return status < 500;
-  },
+  validateStatus: (status) => status < 500,
 };
 
 export const post = function (url, data) {

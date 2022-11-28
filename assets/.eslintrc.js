@@ -46,5 +46,6 @@ module.exports = {
     'no-console': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'react/prop-types': 'off',
+    camelcase: 'off',
   },
 };

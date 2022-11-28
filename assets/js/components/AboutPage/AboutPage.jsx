@@ -9,7 +9,7 @@ import Pill from '@components/Pill';
 import AboutPageLogo from './AboutPageLogo';
 import AboutPageText from './AboutPageText';
 
-const AboutPage = ({ onFetch = getAboutData }) => {
+function AboutPage({ onFetch = getAboutData }) {
   const [flavor, setFlavor] = useState('N/A');
   const [subscriptions, setSubscriptions] = useState(0);
   const [version, setVersion] = useState('v0.0.0');
@@ -18,10 +18,10 @@ const AboutPage = ({ onFetch = getAboutData }) => {
   useEffect(() => {
     setLoading(true);
     onFetch()
-      .then(({ data: { flavor, version, sles_subscriptions } }) => {
+      .then(({ data: { flavor: newFlavor, version: newVersion, sles_subscriptions } }) => {
         setLoading(false);
-        undefined !== flavor && setFlavor(flavor);
-        setVersion(version);
+        undefined !== newFlavor && setFlavor(newFlavor);
+        setVersion(newVersion);
         setSubscriptions(sles_subscriptions);
       })
       .catch((error) => {
@@ -47,8 +47,7 @@ const AboutPage = ({ onFetch = getAboutData }) => {
     {
       title: 'SLES for SAP subscriptions',
       content: `${subscriptions} found`,
-      render: (content) =>
-        loading ? <span>Loading...</span> : <Pill>{content}</Pill>,
+      render: (content) => (loading ? <span>Loading...</span> : <Pill>{content}</Pill>),
     },
   ];
 
@@ -69,6 +68,6 @@ const AboutPage = ({ onFetch = getAboutData }) => {
       </div>
     </div>
   );
-};
+}
 
 export default AboutPage;

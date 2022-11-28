@@ -31,21 +31,23 @@ const providerData = {
   },
 };
 
-const ProviderLabel = ({ provider }) => (
-  <span>
-    {providerData[provider] ? (
-      <img
-        src={providerData[provider].logo}
-        className="inline mr-2 h-4"
-        alt={provider}
-      />
-    ) : (
-      <EOS_HELP className="inline mr-2" />
-    )}
-    {providerData[provider]
-      ? providerData[provider].label
-      : 'Provider not recognized'}
-  </span>
-);
+function ProviderLabel({ provider }) {
+  return (
+    <span>
+      {providerData[provider] ? (
+        <img
+          src={providerData[provider].logo}
+          className="inline mr-2 h-4"
+          alt={provider}
+        />
+      ) : (
+        <EOS_HELP className="inline mr-2" />
+      )}
+      {providerData[provider]
+        ? providerData[provider].label
+        : 'Provider not recognized'}
+    </span>
+  );
+}
 
 export default ProviderLabel;

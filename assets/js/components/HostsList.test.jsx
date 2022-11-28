@@ -18,12 +18,12 @@ describe('HostsLists component', () => {
         fireEvent.click(
           screen
             .getByTestId(`filter-${filter}-options`)
-            .querySelector('li > div > span').firstChild
+            .querySelector('li > div > span').firstChild,
         );
       });
 
       expect(window.location.search).toEqual(
-        '?heartbeat=unknown&hostname=vmdrbddev01&tags=tag1&sid=HDD'
+        '?heartbeat=unknown&hostname=vmdrbddev01&tags=tag1&sid=HDD',
       );
     });
   });

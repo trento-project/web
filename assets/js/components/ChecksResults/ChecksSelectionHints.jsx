@@ -8,7 +8,7 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 
 import TrentoLogo from '@static/trento-icon.png';
 
-const ChecksSelectionHints = ({ clusterId, selectedChecks }) => {
+function ChecksSelectionHints({ clusterId, selectedChecks }) {
   const navigate = useNavigate();
 
   const hasSelectedChecks = selectedChecks.length > 0;
@@ -25,10 +25,10 @@ const ChecksSelectionHints = ({ clusterId, selectedChecks }) => {
         </div>
         <div className="w-full mb-10">
           <p className="ttext-gray-600 dark:text-gray-100 text-center px-5">
-            {!hasSelectedChecks &&
-              'It looks like you have not configured any checks for the current cluster. Select your desired checks to be executed.'}
-            {hasSelectedChecks &&
-              'It looks like there is no recent execution for current cluster. Run your Check selection now!'}
+            {!hasSelectedChecks
+              && 'It looks like you have not configured any checks for the current cluster. Select your desired checks to be executed.'}
+            {hasSelectedChecks
+              && 'It looks like there is no recent execution for current cluster. Run your Check selection now!'}
           </p>
         </div>
         <div className="w-full text-center">
@@ -48,7 +48,9 @@ const ChecksSelectionHints = ({ clusterId, selectedChecks }) => {
               cssClasses="rounded relative w-1/4 ml-0.5 bg-waterhole-blue mx-auto px-2 py-2 w-1/4 xs:w-full text-base"
               clusterId={clusterId}
             >
-              <EOS_PLAY_CIRCLE className="inline-block fill-white" /> Start
+              <EOS_PLAY_CIRCLE className="inline-block fill-white" />
+              {' '}
+              Start
               Execution now
             </TriggerChecksExecutionRequest>
           )}
@@ -56,6 +58,6 @@ const ChecksSelectionHints = ({ clusterId, selectedChecks }) => {
       </div>
     </div>
   );
-};
+}
 
 export default ChecksSelectionHints;

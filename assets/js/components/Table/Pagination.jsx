@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 const getPagesArray = (pages) => Array.from({ length: pages }, (_, i) => 1 + i);
 
-const Pagination = ({ pages, currentPage, onSelect }) => {
+function Pagination({ pages, currentPage, onSelect }) {
   const pagesList = getPagesArray(pages);
   return (
     <div className="grid py-2">
@@ -30,7 +30,7 @@ const Pagination = ({ pages, currentPage, onSelect }) => {
                 border: pageNumber % 2 === 0,
                 'border-t': pageNumber % 2 === 1,
                 'border-b': pageNumber % 2 === 1,
-              }
+              },
             );
 
             return (
@@ -48,6 +48,6 @@ const Pagination = ({ pages, currentPage, onSelect }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Pagination;

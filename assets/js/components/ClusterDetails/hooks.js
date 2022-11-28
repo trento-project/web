@@ -12,14 +12,12 @@ export const useChecksResult = (cluster) => {
   useEffect(() => {
     if (cluster?.checks_results?.length == 0) return;
 
-    const selectedCheckResults = cluster?.checks_results.filter((result) =>
-      cluster?.selected_checks.includes(result?.check_id)
-    );
+    const selectedCheckResults = cluster?.checks_results.filter((result) => cluster?.selected_checks.includes(result?.check_id));
 
     if (!selectedCheckResults) return;
 
     const lastCheckExecution = max(
-      cluster?.checks_results.map((result) => parseISO(result.updated_at))
+      cluster?.checks_results.map((result) => parseISO(result.updated_at)),
     );
 
     if (isValid(lastCheckExecution)) {
@@ -27,13 +25,11 @@ export const useChecksResult = (cluster) => {
     }
 
     const result = selectedCheckResults.reduce(
-      (acc, curr) => {
-        return {
-          ...acc,
-          [curr.result]: acc[curr.result] + 1,
-        };
-      },
-      { passing: 0, warning: 0, critical: 0 }
+      (acc, curr) => ({
+        ...acc,
+        [curr.result]: acc[curr.result] + 1,
+      }),
+      { passing: 0, warning: 0, critical: 0 },
     );
 
     setChecksResult(result);

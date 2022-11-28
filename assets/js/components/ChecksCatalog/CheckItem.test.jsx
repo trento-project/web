@@ -19,7 +19,7 @@ describe('ChecksCatalog CheckItem component', () => {
         checkID={check.id}
         description={check.description}
         remediation={check.remediation}
-      />
+      />,
     );
 
     expect(screen.getByText(check.id)).toBeVisible();
@@ -33,10 +33,10 @@ describe('ChecksCatalog CheckItem component', () => {
       <CheckItem
         key={check.id}
         checkID={check.id}
-        premium={true}
+        premium
         description={check.description}
         remediation={check.remediation}
-      />
+      />,
     );
 
     expect(screen.getByText('Premium')).toBeVisible();
@@ -51,7 +51,7 @@ describe('ChecksCatalog CheckItem component', () => {
         checkID={check.id}
         description={check.description}
         remediation={check.remediation}
-      />
+      />,
     );
 
     const checks = screen.getAllByRole('listitem');

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Pill from '@components/Pill';
 import ListView from '@components/ListView';
 
-const ProviderDetails = ({ provider, provider_data }) => {
+function ProviderDetails({ provider, provider_data }) {
   const data = {
     azure: [
       {
@@ -92,6 +92,6 @@ const ProviderDetails = ({ provider, provider_data }) => {
       Provider not recognized
     </Pill>
   );
-};
+}
 
 export default ProviderDetails;

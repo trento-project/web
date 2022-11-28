@@ -6,10 +6,11 @@ import { toggle, hasOne } from '@lib/lists';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE } from 'eos-icons-react';
 
-const getLabel = (value, placeholder) =>
-  value.length === 0 ? placeholder : value.join(', ');
+const getLabel = (value, placeholder) => (value.length === 0 ? placeholder : value.join(', '));
 
-const Filter = ({ options, title, value, onChange }) => {
+function Filter({
+  options, title, value, onChange,
+}) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -62,7 +63,7 @@ const Filter = ({ options, title, value, onChange }) => {
                   fillRule="evenodd"
                   d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
                   clipRule="evenodd"
-                ></path>
+                />
               </svg>
             )}
           </span>
@@ -116,7 +117,7 @@ const Filter = ({ options, title, value, onChange }) => {
                             fillRule="evenodd"
                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                             clipRule="evenodd"
-                          ></path>
+                          />
                         </svg>
                       </span>
                     )}
@@ -129,6 +130,6 @@ const Filter = ({ options, title, value, onChange }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Filter;

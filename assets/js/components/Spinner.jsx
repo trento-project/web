@@ -3,7 +3,7 @@ import { computedIconCssClass } from '@lib/icon';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
-const Spinner = ({ centered = false }) => {
+function Spinner({ centered = false }) {
   return (
     <div role="alert" aria-label="Loading">
       <EOS_LOADING_ANIMATED
@@ -11,6 +11,6 @@ const Spinner = ({ centered = false }) => {
       />
     </div>
   );
-};
+}
 
 export default Spinner;

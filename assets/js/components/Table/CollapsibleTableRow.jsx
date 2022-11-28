@@ -1,15 +1,15 @@
 import React, { Fragment, useState } from 'react';
 
-const CollapsibleTableRow = ({
+function CollapsibleTableRow({
   columns,
   item,
   collapsibleDetailRenderer,
   renderCells = () => {},
   colSpan = 1,
-}) => {
+}) {
   const [rowExpanded, toggleRow] = useState(false);
   return (
-    <Fragment>
+    <>
       <tr
         className={collapsibleDetailRenderer ? 'cursor-pointer' : ''}
         onClick={() => {
@@ -29,8 +29,8 @@ const CollapsibleTableRow = ({
           <td colSpan={colSpan}>{collapsibleDetailRenderer(item)}</td>
         </tr>
       )}
-    </Fragment>
+    </>
   );
-};
+}
 
 export default CollapsibleTableRow;

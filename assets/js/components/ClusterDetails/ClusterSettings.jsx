@@ -11,14 +11,14 @@ import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
 import ChecksSelectionNew from '@components/ClusterDetails/ChecksSelectionNew';
 import { getCluster } from '@state/selectors';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
-import { truncatedClusterNameClasses } from './ClusterDetails';
 import { getClusterName } from '@components/ClusterLink';
 import WarningBanner from '@components/Banners/WarningBanner';
 import { ConnectionSettings, ClusterInfoBox } from '@components/ClusterDetails';
+import { truncatedClusterNameClasses } from './ClusterDetails';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
-export const ClusterSettings = ({ newChecksSelectionView = false }) => {
+export function ClusterSettings({ newChecksSelectionView = false }) {
   const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
@@ -45,7 +45,8 @@ export const ClusterSettings = ({ newChecksSelectionView = false }) => {
       </BackButton>
       <div className="flex mb-2">
         <h1 className="text-3xl w-1/2">
-          <span className="font-medium">Cluster Settings for</span>{' '}
+          <span className="font-medium">Cluster Settings for</span>
+          {' '}
           <span className={`font-bold ${truncatedClusterNameClasses}`}>
             {getClusterName(cluster)}
           </span>
@@ -56,15 +57,13 @@ export const ClusterSettings = ({ newChecksSelectionView = false }) => {
           {Object.keys(tabsSettings).map((tabTitle, idx) => (
             <Tab
               key={idx}
-              className={({ selected }) =>
-                classNames(
-                  'w-full py-2.5 text-sm leading-5 font-medium rounded',
-                  'focus:outline-none',
-                  selected
-                    ? 'bg-white shadow'
-                    : 'text-gray-800 hover:bg-white/[0.12]'
-                )
-              }
+              className={({ selected }) => classNames(
+                'w-full py-2.5 text-sm leading-5 font-medium rounded',
+                'focus:outline-none',
+                selected
+                  ? 'bg-white shadow'
+                  : 'text-gray-800 hover:bg-white/[0.12]',
+              )}
             >
               {tabTitle}
             </Tab>
@@ -85,7 +84,7 @@ export const ClusterSettings = ({ newChecksSelectionView = false }) => {
               key={idx}
               className={classNames(
                 'bg-white rounded p-3',
-                'focus:outline-none focus:ring-2 ring-offset-2 ring-white ring-opacity-60'
+                'focus:outline-none focus:ring-2 ring-offset-2 ring-white ring-opacity-60',
               )}
             >
               {tabContent}
@@ -95,9 +94,9 @@ export const ClusterSettings = ({ newChecksSelectionView = false }) => {
       </Tab.Group>
     </div>
   );
-};
+}
 
-export const SavingFailedAlert = ({ onClose = () => {}, children }) => {
+export function SavingFailedAlert({ onClose = () => {}, children }) {
   return (
     <div
       className="rounded relative bg-red-200 border-red-600 text-red-600 border-l-4 p-2 ml-2 pr-10"
@@ -112,12 +111,12 @@ export const SavingFailedAlert = ({ onClose = () => {}, children }) => {
       </button>
     </div>
   );
-};
+}
 
-export const SuggestTriggeringChecksExecutionAfterSettingsUpdated = ({
+export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
   clusterId,
   onClose = () => {},
-}) => {
+}) {
   return (
     <div>
       <div
@@ -125,7 +124,8 @@ export const SuggestTriggeringChecksExecutionAfterSettingsUpdated = ({
         role="alert"
       >
         <p className="mr-1">
-          Well done! To start execution now, click here 👉{' '}
+          Well done! To start execution now, click here 👉
+          {' '}
         </p>
         <TriggerChecksExecutionRequest
           cssClasses="tn-checks-start-execute rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
@@ -139,4 +139,4 @@ export const SuggestTriggeringChecksExecutionAfterSettingsUpdated = ({
       </div>
     </div>
   );
-};
+}

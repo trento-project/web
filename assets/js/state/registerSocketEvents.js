@@ -12,9 +12,7 @@ const registerEvents = (store, socket, channelName, events) => {
   const channel = socket.channel(channelName, {});
 
   for (const event of events) {
-    channel.on(event, (payload) =>
-      store.dispatch({ type: event.toUpperCase(), payload })
-    );
+    channel.on(event, (payload) => store.dispatch({ type: event.toUpperCase(), payload }));
   }
 
   joinChannel(channel);

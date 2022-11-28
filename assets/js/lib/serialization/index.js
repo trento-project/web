@@ -6,11 +6,7 @@ const isObject = function (o) {
   return o === Object(o) && !isArray(o) && typeof o !== 'function';
 };
 
-const toCamel = (s) => {
-  return s.replace(/([-_][a-z])/gi, ($1) => {
-    return $1.toUpperCase().replace('-', '').replace('_', '');
-  });
-};
+const toCamel = (s) => s.replace(/([-_][a-z])/gi, ($1) => $1.toUpperCase().replace('-', '').replace('_', ''));
 
 export const keysToCamel = function (o) {
   if (isObject(o)) {
@@ -21,18 +17,15 @@ export const keysToCamel = function (o) {
     });
 
     return n;
-  } else if (isArray(o)) {
-    return o.map((i) => {
-      return keysToCamel(i);
-    });
+  } if (isArray(o)) {
+    return o.map((i) => keysToCamel(i));
   }
 
   return o;
 };
 
 export const urlEncode = function (params) {
-  var str = [];
-  for (var p in params)
-    str.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]));
+  const str = [];
+  for (const p in params) str.push(`${encodeURIComponent(p)}=${encodeURIComponent(params[p])}`);
   return str.join('&');
 };

@@ -80,6 +80,7 @@ import {
   startSavingClusterConnectionSettings,
   stopSavingClusterConnectionSettings,
   setClusterConnectionSettingsSavingError,
+  setClusterConnectionSettingsSavingSuccess,
 } from '@state/clusterConnectionSettings';
 import {
   setClusterChecksSelectionSavingError,
@@ -87,7 +88,6 @@ import {
   startSavingClusterChecksSelection,
   stopSavingClusterChecksSelection,
 } from '@state/clusterChecksSelection';
-import { setClusterConnectionSettingsSavingSuccess } from '@state/clusterConnectionSettings';
 
 import { checksSelectedAction } from '@state/actions/cluster';
 
@@ -96,14 +96,12 @@ const notify = ({ text, icon }) => ({
   payload: { text, icon },
 });
 
-const getClusterName = (clusterID) => (state) => {
-  return state.clustersList.clusters.reduce((acc, cluster) => {
-    if (cluster.id === clusterID) {
-      acc = cluster.name;
-    }
-    return acc;
-  }, '');
-};
+const getClusterName = (clusterID) => (state) => state.clustersList.clusters.reduce((acc, cluster) => {
+  if (cluster.id === clusterID) {
+    acc = cluster.name;
+  }
+  return acc;
+}, '');
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
@@ -159,13 +157,13 @@ function* hostRegistered({ payload }) {
     appendEntryToLiveFeed({
       source: payload.hostname,
       message: 'New host registered.',
-    })
+    }),
   );
   yield put(
     notify({
       text: `A new host, ${payload.hostname}, has been discovered.`,
       icon: 'ℹ️',
-    })
+    }),
   );
 }
 
@@ -187,7 +185,7 @@ function* heartbeatSucceded({ payload }) {
     notify({
       text: `The host ${payload.hostname} heartbeat is alive.`,
       icon: '❤️',
-    })
+    }),
   );
 }
 
@@ -201,7 +199,7 @@ function* heartbeatFailed({ payload }) {
     notify({
       text: `The host ${payload.hostname} heartbeat is failing.`,
       icon: '💔',
-    })
+    }),
   );
 }
 
@@ -215,13 +213,13 @@ function* clusterRegistered({ payload }) {
     appendEntryToLiveFeed({
       source: payload.name,
       message: 'New cluster registered.',
-    })
+    }),
   );
   yield put(
     notify({
       text: `A new cluster, ${payload.name}, has been discovered.`,
       icon: 'ℹ️',
-    })
+    }),
   );
 }
 
@@ -259,14 +257,14 @@ function* checksSelected({ payload }) {
       appendEntryToLiveFeed({
         source: clusterName,
         message: 'Checks selection changed.',
-      })
+      }),
     );
 
     yield put(
       notify({
-        text: `Checks selection saved`,
+        text: 'Checks selection saved',
         icon: '💾',
-      })
+      }),
     );
     yield put(setClusterChecksSelectionSavingSuccess());
   } catch (error) {
@@ -284,21 +282,21 @@ function* requestChecksExecution({ payload }) {
   yield call(
     post,
     `/api/clusters/${payload.clusterID}/checks/request_execution`,
-    {}
+    {},
   );
 
   yield put(
     appendEntryToLiveFeed({
       source: clusterName,
       message: 'Checks execution requested.',
-    })
+    }),
   );
 
   yield put(
     notify({
       text: `Checks execution requested, cluster: ${clusterName}`,
       icon: '🐰',
-    })
+    }),
   );
 }
 
@@ -313,14 +311,14 @@ function* checksExecutionStarted({ payload }) {
     appendEntryToLiveFeed({
       source: clusterName,
       message: 'Checks execution started.',
-    })
+    }),
   );
 
   yield put(
     notify({
       text: `Checks execution started, cluster: ${clusterName}`,
       icon: '🐰',
-    })
+    }),
   );
 }
 
@@ -335,14 +333,14 @@ function* checksExecutionCompleted({ payload }) {
     appendEntryToLiveFeed({
       source: clusterName,
       message: 'Checks execution completed.',
-    })
+    }),
   );
 
   yield put(
     notify({
       text: `Checks execution completed, cluster: ${clusterName}`,
       icon: '🐇',
-    })
+    }),
   );
 }
 
@@ -372,32 +370,31 @@ function* sapSystemRegistered({ payload }) {
     appendEntryToLiveFeed({
       source: payload.sid,
       message: 'New SAP System registered.',
-    })
+    }),
   );
   yield put(
     notify({
       text: `A new SAP System, ${payload.sid}, has been discovered.`,
       icon: 'ℹ️',
-    })
+    }),
   );
 }
 
 function* sapSystemHealthChanged({ payload }) {
-  const sid =
-    (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
+  const sid = (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
 
   yield put(updateSapSystemHealth(payload));
   yield put(
     appendEntryToLiveFeed({
       source: sid,
       message: `SAP System Health changed to ${payload.health}`,
-    })
+    }),
   );
   yield put(
     notify({
       text: `The SAP System ${sid} health is ${payload.health}!`,
       icon: 'ℹ️',
-    })
+    }),
   );
 }
 
@@ -407,7 +404,7 @@ function* applicationInstanceRegistered({ payload }) {
     appendEntryToLiveFeed({
       source: payload.sid,
       message: 'New Application instance registered.',
-    })
+    }),
   );
 }
 
@@ -420,11 +417,11 @@ function* watchSapSystem() {
   yield takeEvery('SAP_SYSTEM_HEALTH_CHANGED', sapSystemHealthChanged);
   yield takeEvery(
     'APPLICATION_INSTANCE_REGISTERED',
-    applicationInstanceRegistered
+    applicationInstanceRegistered,
   );
   yield takeEvery(
     'APPLICATION_INSTANCE_HEALTH_CHANGED',
-    applicationInstanceHealthChanged
+    applicationInstanceHealthChanged,
   );
 }
 
@@ -434,32 +431,31 @@ function* databaseRegistered({ payload }) {
     appendEntryToLiveFeed({
       source: payload.sid,
       message: 'New Database registered.',
-    })
+    }),
   );
   yield put(
     notify({
       text: `A new Database, ${payload.sid}, has been discovered.`,
       icon: 'ℹ️',
-    })
+    }),
   );
 }
 
 function* databaseHealthChanged({ payload }) {
-  const sid =
-    (yield select(getDatabase(payload.id)))?.sid || 'unable to determine SID';
+  const sid = (yield select(getDatabase(payload.id)))?.sid || 'unable to determine SID';
 
   yield put(updateDatabaseHealth(payload));
   yield put(
     appendEntryToLiveFeed({
       source: sid,
       message: `Database Health changed to ${payload.health}`,
-    })
+    }),
   );
   yield put(
     notify({
       text: `The Database ${sid} health is ${payload.health}!`,
       icon: 'ℹ️',
-    })
+    }),
   );
 }
 
@@ -470,13 +466,13 @@ function* databaseInstanceRegistered({ payload }) {
     appendEntryToLiveFeed({
       source: payload.sid,
       message: 'New Database instance registered.',
-    })
+    }),
   );
   yield put(
     notify({
       text: `A new Database instance, ${payload.sid}, has been discovered.`,
       icon: 'ℹ️',
-    })
+    }),
   );
 }
 
@@ -496,11 +492,11 @@ function* watchDatabase() {
   yield takeEvery('DATABASE_INSTANCE_REGISTERED', databaseInstanceRegistered);
   yield takeEvery(
     'DATABASE_INSTANCE_HEALTH_CHANGED',
-    databaseInstanceHealthChanged
+    databaseInstanceHealthChanged,
   );
   yield takeEvery(
     'DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED',
-    databaseInstanceSystemReplicationChanged
+    databaseInstanceSystemReplicationChanged,
   );
 }
 
@@ -509,14 +505,14 @@ function* updateCatalog({ payload }) {
   try {
     const { data: catalog } = yield call(
       get,
-      `/api/checks/catalog?${urlEncode(payload)}`
+      `/api/checks/catalog?${urlEncode(payload)}`,
     );
     yield put(setCatalog(catalog));
   } catch (error) {
     yield put(
       setCatalog({
         error: error.response.data.error,
-      })
+      }),
     );
   }
 }
@@ -531,47 +527,47 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   yield debounce(
     debounceDuration,
     'HOST_REGISTERED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'CLUSTER_REGISTERED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'DATABASE_REGISTERED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'SAP_SYSTEM_REGISTERED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'HEARTBEAT_FAILED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'HEARTBEAT_SUCCEDED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'DATABASE_HEALTH_CHANGED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'SAP_SYSTEM_HEALTH_CHANGED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
   yield debounce(
     debounceDuration,
     'CLUSTER_HEALTH_CHANGED',
-    loadSapSystemsHealthSummary
+    loadSapSystemsHealthSummary,
   );
 }
 
@@ -580,7 +576,7 @@ function* loadClusterConnectionSettings({ payload: { cluster } }) {
   try {
     const { data: settings } = yield call(
       get,
-      `/api/clusters/${cluster}/connection_settings`
+      `/api/clusters/${cluster}/connection_settings`,
     );
     yield put(setClusterConnectionSettings({ settings }));
   } catch (error) {
@@ -600,13 +596,13 @@ function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
           host_id: hostSettings.host_id,
           user: hostSettings.user,
         })),
-      }
+      },
     );
 
     yield put(
       setClusterConnectionSettings({
         settings: newSettings,
-      })
+      }),
     );
     yield put(setClusterConnectionSettingsSavingSuccess());
   } catch (error) {
@@ -618,11 +614,11 @@ function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
 function* watchClustrConnectionSettings() {
   yield takeEvery(
     'LOAD_CLUSTER_CONNECTION_SETTINGS',
-    loadClusterConnectionSettings
+    loadClusterConnectionSettings,
   );
   yield takeEvery(
     'SAVE_CLUSTER_CONNECTION_SETTINGS',
-    saveClusterConnectionSettings
+    saveClusterConnectionSettings,
   );
 }
 
