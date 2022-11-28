@@ -87,3 +87,9 @@ export const hostnameFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   hostname: faker.hacker.noun(),
 }));
+
+export const aboutFactory = Factory.define(() => ({
+  flavor: faker.animal.cat(),
+  sles_subscriptions: faker.datatype.number(),
+  version: faker.system.networkInterface(),
+}));
