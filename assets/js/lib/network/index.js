@@ -28,7 +28,7 @@ function handleResponseStatus(response) {
   return response;
 }
 
-export const post = function (url, data) {
+export const post = function post(url, data) {
   return axios
     .post(url, data, conf)
     .then(handleResponseStatus)
@@ -37,7 +37,7 @@ export const post = function (url, data) {
     });
 };
 
-export const del = function (url) {
+export const del = function del(url) {
   return axios
     .delete(url, conf)
     .then(handleResponseStatus)
@@ -46,7 +46,7 @@ export const del = function (url) {
     });
 };
 
-export const put = function (url, data) {
+export const put = function put(url, data) {
   return axios
     .put(url, data, conf)
     .then(handleResponseStatus)
@@ -55,7 +55,7 @@ export const put = function (url, data) {
     });
 };
 
-export const get = function (url) {
+export const get = function get(url) {
   return axios
     .get(url, conf)
     .then(handleResponseStatus)
