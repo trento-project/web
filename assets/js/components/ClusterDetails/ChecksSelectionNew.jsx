@@ -122,7 +122,7 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
                     checkID={check.id}
                     name={check.name}
                     description={check.description}
-                    isSelected={check.selected}
+                    selected={check.selected}
                     onChange={() => {
                       setSelectedChecks(toggle(check.id, selectedChecks));
                       setLocalSavingSuccess(null);
@@ -136,9 +136,7 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
         <div className="place-items-end flex">
           <button
             className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
-            onClick={() =>
-              dispatch(checksSelected(selectedChecks, clusterId))
-            }
+            onClick={() => dispatch(checksSelected(selectedChecks, clusterId))}
           >
             {saving ? (
               <span className="px-20">

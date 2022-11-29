@@ -10,7 +10,7 @@ const ChecksSelectionItem = ({
   checkID,
   name,
   description,
-  isSelected,
+  selected,
   onChange = () => {},
 }) => {
   return (
@@ -31,9 +31,9 @@ const ChecksSelectionItem = ({
             </div>
             <Switch.Group as="div" className="flex items-center">
               <Switch
-                checked={isSelected}
+                checked={selected}
                 className={classNames(
-                  isSelected ? 'bg-jungle-green-500' : 'bg-gray-200',
+                  selected ? 'bg-jungle-green-500' : 'bg-gray-200',
                   'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
                 )}
                 onChange={onChange}
@@ -41,7 +41,7 @@ const ChecksSelectionItem = ({
                 <span
                   aria-hidden="true"
                   className={classNames(
-                    isSelected ? 'translate-x-5' : 'translate-x-0',
+                    selected ? 'translate-x-5' : 'translate-x-0',
                     'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
                   )}
                 />

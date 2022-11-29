@@ -19,7 +19,7 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
         checkID={check.id}
         name={check.name}
         description={check.description}
-        isSelected={true}
+        selected
       />
     );
 
@@ -38,7 +38,7 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
         checkID={check.id}
         name={check.name}
         description={check.description}
-        isSelected={false}
+        selected={false}
       />
     );
 
@@ -55,7 +55,7 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
         checkID={check.id}
         name={check.name}
         description={check.description}
-        isSelected={true}
+        selected
         onChange={onChangeMock}
       />
     );
