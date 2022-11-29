@@ -14,7 +14,9 @@ import {
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
 import ChecksSelectionGroup, {
-  groupState,
+  NONE_CHECKED,
+  SOME_CHECKED,
+  ALL_CHECKED,
   allSelected,
 } from './ChecksSelectionGroup';
 import ChecksSelectionItem from './ChecksSelectionItem';
@@ -24,11 +26,11 @@ const isSelected = (selectedChecks, checkID) =>
 
 const getGroupSelectedState = function (checks, selectedChecks) {
   if (checks.every(({ id }) => isSelected(selectedChecks, id))) {
-    return groupState.All;
+    return ALL_CHECKED;
   } else if (checks.some((check) => isSelected(selectedChecks, check.id))) {
-    return groupState.Some;
+    return SOME_CHECKED;
   } else {
-    return groupState.None;
+    return NONE_CHECKED;
   }
 };
 

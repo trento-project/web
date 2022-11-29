@@ -6,30 +6,28 @@ import { Disclosure, Switch, Transition } from '@headlessui/react';
 
 import { EOS_KEYBOARD_ARROW_RIGHT } from 'eos-icons-react';
 
-export const groupState = {
-  None: 0,
-  Some: 1,
-  All: 2,
-};
+export const NONE_CHECKED = 'none';
+export const SOME_CHECKED = 'some';
+export const ALL_CHECKED = 'all';
 
 const switchClasses = {
-  [groupState.None]: 'bg-gray-200',
-  [groupState.Some]: 'bg-green-300',
-  [groupState.All]: 'bg-jungle-green-500',
+  [NONE_CHECKED]: 'bg-gray-200',
+  [SOME_CHECKED]: 'bg-green-300',
+  [ALL_CHECKED]: 'bg-jungle-green-500',
 };
 
 const translateClasses = {
-  [groupState.None]: 'translate-x-0',
-  [groupState.Some]: 'translate-x-2.5',
-  [groupState.All]: 'translate-x-5',
+  [NONE_CHECKED]: 'translate-x-0',
+  [SOME_CHECKED]: 'translate-x-2.5',
+  [ALL_CHECKED]: 'translate-x-5',
 };
 
-export const allSelected = (selectedState) => selectedState == groupState.All;
+export const allSelected = (selectedState) => selectedState == ALL_CHECKED;
 
 const ChecksSelectionGroup = ({
   children,
   group,
-  selected = groupState.None,
+  selected = NONE_CHECKED,
   onChange = () => {},
 }) => {
   return (

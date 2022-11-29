@@ -6,14 +6,18 @@ import userEvent from '@testing-library/user-event';
 
 import { renderWithRouter } from '@lib/test-utils';
 
-import ChecksSelectionGroup, { groupState } from './ChecksSelectionGroup';
+import ChecksSelectionGroup, {
+  NONE_CHECKED,
+  SOME_CHECKED,
+  ALL_CHECKED,
+} from './ChecksSelectionGroup';
 
 describe('ClusterDetails ChecksSelectionGroup component', () => {
   it('should show group with selected state', () => {
     const group = 'some-group';
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group} selected={groupState.All} />
+      <ChecksSelectionGroup group={group} selected={ALL_CHECKED} />
     );
 
     expect(screen.getByText(group)).toBeVisible();
@@ -27,7 +31,7 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const group = 'some-group';
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group} selected={groupState.Some} />
+      <ChecksSelectionGroup group={group} selected={SOME_CHECKED} />
     );
 
     expect(screen.getByText(group)).toBeVisible();
@@ -41,7 +45,7 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const group = 'some-group';
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group} selected={groupState.None} />
+      <ChecksSelectionGroup group={group} selected={NONE_CHECKED} />
     );
 
     expect(screen.getByText(group)).toBeVisible();
