@@ -6,12 +6,30 @@ import { Disclosure, Switch, Transition } from '@headlessui/react';
 
 import { EOS_KEYBOARD_ARROW_RIGHT } from 'eos-icons-react';
 
+export const groupState = {
+  None: 0,
+  Some: 1,
+  All: 2,
+};
+
+const switchClasses = {
+  [groupState.None]: 'bg-gray-200',
+  [groupState.Some]: 'bg-green-300',
+  [groupState.All]: 'bg-jungle-green-500',
+};
+
+const translateClasses = {
+  [groupState.None]: 'translate-x-0',
+  [groupState.Some]: 'translate-x-2.5',
+  [groupState.All]: 'translate-x-5',
+};
+
+export const allSelected = (selectedState) => selectedState == groupState.All;
+
 const ChecksSelectionGroup = ({
   children,
   group,
-  allSelected,
-  someSelected,
-  noneSelected,
+  selected = groupState.None,
   onChange = () => {},
 }) => {
   return (
@@ -25,13 +43,9 @@ const ChecksSelectionGroup = ({
                 className="flex items-center hover:bg-white pl-2"
               >
                 <Switch
-                  checked={allSelected}
+                  checked={allSelected(selected)}
                   className={classNames(
-                    {
-                      'bg-jungle-green-500': allSelected,
-                      'bg-green-300': someSelected,
-                      'bg-gray-200': noneSelected,
-                    },
+                    switchClasses[selected],
                     'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
                   )}
                   onChange={onChange}
@@ -39,11 +53,7 @@ const ChecksSelectionGroup = ({
                   <span
                     aria-hidden="true"
                     className={classNames(
-                      {
-                        'translate-x-5': allSelected,
-                        'translate-x-2.5': someSelected,
-                        'translate-x-0': noneSelected,
-                      },
+                      translateClasses[selected],
                       'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
                     )}
                   />

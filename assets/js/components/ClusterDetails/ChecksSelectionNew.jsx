@@ -13,8 +13,24 @@ import {
   SavingFailedAlert,
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
-import ChecksSelectionGroup from './ChecksSelectionGroup';
+import ChecksSelectionGroup, {
+  groupState,
+  allSelected,
+} from './ChecksSelectionGroup';
 import ChecksSelectionItem from './ChecksSelectionItem';
+
+const isSelected = (selectedChecks, checkID) =>
+  selectedChecks ? selectedChecks.includes(checkID) : false;
+
+const getGroupSelectedState = function (checks, selectedChecks) {
+  if (checks.every(({ id }) => isSelected(selectedChecks, id))) {
+    return groupState.All;
+  } else if (checks.some((check) => isSelected(selectedChecks, check.id))) {
+    return groupState.Some;
+  } else {
+    return groupState.None;
+  }
+};
 
 const ChecksSelectionNew = ({ clusterId, cluster }) => {
   const dispatch = useDispatch();
@@ -46,17 +62,13 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
     ).map(([group, checks]) => {
       const groupChecks = checks.map((check) => ({
         ...check,
-        selected: isSelected(check.id),
+        selected: isSelected(selectedChecks, check.id),
       }));
-      const allSelected = checks.every((check) => isSelected(check.id));
-      const someSelected =
-        !allSelected && checks.some((check) => isSelected(check.id));
+
       return {
         group,
         checks: groupChecks,
-        allSelected,
-        someSelected,
-        noneSelected: !allSelected && !someSelected,
+        groupSelected: getGroupSelectedState(checks, selectedChecks),
       };
     });
     setGroupSelection(groupedCheckSelection);
@@ -80,9 +92,6 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
     }
   }, [loading]);
 
-  const isSelected = (checkId) =>
-    selectedChecks ? selectedChecks.includes(checkId) : false;
-
   return (
     <CatalogContainer
       onRefresh={() => dispatch(updateCatalog())}
@@ -92,46 +101,36 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
     >
       <div>
         <div className="pb-4">
-          {groupSelection?.map(
-            (
-              { group, checks, allSelected, someSelected, noneSelected },
-              idx
-            ) => (
-              <ChecksSelectionGroup
-                key={idx}
-                group={group}
-                allSelected={allSelected}
-                someSelected={someSelected}
-                noneSelected={noneSelected}
-                onChange={() => {
-                  const groupChecks = checks.map((check) => check.id);
-                  if (noneSelected || someSelected) {
-                    setSelectedChecks(
-                      uniq([...selectedChecks, ...groupChecks])
-                    );
-                  }
-                  if (allSelected) {
-                    setSelectedChecks(remove(groupChecks, selectedChecks));
-                  }
-                  setLocalSavingSuccess(null);
-                }}
-              >
-                {checks.map((check) => (
-                  <ChecksSelectionItem
-                    key={check.id}
-                    checkID={check.id}
-                    name={check.name}
-                    description={check.description}
-                    selected={check.selected}
-                    onChange={() => {
-                      setSelectedChecks(toggle(check.id, selectedChecks));
-                      setLocalSavingSuccess(null);
-                    }}
-                  />
-                ))}
-              </ChecksSelectionGroup>
-            )
-          )}
+          {groupSelection?.map(({ group, checks, groupSelected }, idx) => (
+            <ChecksSelectionGroup
+              key={idx}
+              group={group}
+              selected={groupSelected}
+              onChange={() => {
+                const groupChecks = checks.map((check) => check.id);
+                if (allSelected(groupSelected)) {
+                  setSelectedChecks(remove(groupChecks, selectedChecks));
+                } else {
+                  setSelectedChecks(uniq([...selectedChecks, ...groupChecks]));
+                }
+                setLocalSavingSuccess(null);
+              }}
+            >
+              {checks.map((check) => (
+                <ChecksSelectionItem
+                  key={check.id}
+                  checkID={check.id}
+                  name={check.name}
+                  description={check.description}
+                  selected={check.selected}
+                  onChange={() => {
+                    setSelectedChecks(toggle(check.id, selectedChecks));
+                    setLocalSavingSuccess(null);
+                  }}
+                />
+              ))}
+            </ChecksSelectionGroup>
+          ))}
         </div>
         <div className="place-items-end flex">
           <button
