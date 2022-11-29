@@ -1,8 +1,8 @@
 export const updateCatalogAction = 'UPDATE_CATALOG_NEW';
 
-export const dispatchUpdateCatalog = () => (dispatch) => {
-  dispatch({
+export const updateCatalog = () => {
+  return {
     type: updateCatalogAction,
     payload: {},
-  });
+  };
 };

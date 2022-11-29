@@ -5,8 +5,8 @@ import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
-import { dispatchUpdateCatalog } from '@state/actions/catalog';
-import { dispatchChecksSelected } from '@state/actions/cluster';
+import { updateCatalog } from '@state/actions/catalog';
+import { checksSelected } from '@state/actions/cluster';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 import {
@@ -37,7 +37,7 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
   const [groupSelection, setGroupSelection] = useState([]);
 
   useEffect(() => {
-    dispatchUpdateCatalog()(dispatch);
+    dispatch(updateCatalog());
   }, [dispatch]);
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
 
   return (
     <CatalogContainer
-      onRefresh={() => dispatchUpdateCatalog()(dispatch)}
+      onRefresh={() => dispatch(updateCatalog())}
       isCatalogEmpty={catalogData.size === 0}
       catalogError={catalogError}
       loading={loading}
@@ -136,10 +136,9 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
         <div className="place-items-end flex">
           <button
             className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
-            onClick={() => dispatchChecksSelected(
-              selectedChecks,
-              clusterId
-            )(dispatch)}
+            onClick={() =>
+              dispatch(checksSelected(selectedChecks, clusterId))
+            }
           >
             {saving ? (
               <span className="px-20">
