@@ -3,6 +3,8 @@ defmodule TrentoWeb.TagsController do
 
   alias Trento.Tags
 
+  action_fallback TrentoWeb.FallbackController
+
   @spec add_tag(Plug.Conn.t(), map) :: Plug.Conn.t()
   def add_tag(
         %{assigns: %{resource_type: resource_type}} = conn,
@@ -18,9 +20,7 @@ defmodule TrentoWeb.TagsController do
         |> json(%{value: value})
 
       {:error, errors} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{errors: errors})
+        {:error, {:bad_request, errors}}
     end
   end
 

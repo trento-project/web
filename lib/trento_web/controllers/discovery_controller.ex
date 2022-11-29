@@ -3,6 +3,8 @@ defmodule TrentoWeb.DiscoveryController do
 
   alias Trento.Integration.Discovery
 
+  action_fallback TrentoWeb.FallbackController
+
   @spec collect(Plug.Conn.t(), map) :: Plug.Conn.t()
   def collect(conn, event) do
     case Discovery.handle(event) do
@@ -13,9 +15,7 @@ defmodule TrentoWeb.DiscoveryController do
 
       # TODO: distinguish between validiation and command dispatch errors
       {:error, _} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: "An error occurred in handling the discovery event."})
+        {:error, {:bad_request, "An error occurred in handling the discovery event."}}
     end
   end
 end

@@ -5,6 +5,8 @@ defmodule TrentoWeb.PrometheusController do
 
   require Logger
 
+  action_fallback TrentoWeb.FallbackController
+
   def targets(conn, _) do
     targets = Prometheus.get_targets()
 
@@ -19,9 +21,7 @@ defmodule TrentoWeb.PrometheusController do
       {:error, reason} ->
         Logger.error("Failed to get exporters status:", error: inspect(reason))
 
-        conn
-        |> put_status(500)
-        |> json(%{error: "An error occurred in getting exporters status."})
+        {:error, {:internal_error, "An error occurred in getting exporters status."}}
     end
   end
 end

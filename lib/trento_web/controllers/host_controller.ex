@@ -8,6 +8,8 @@ defmodule TrentoWeb.HostController do
 
   use OpenApiSpex.ControllerSpecs
 
+  action_fallback TrentoWeb.FallbackController
+
   tags ["Target Infrastructure"]
 
   operation :list,
@@ -34,9 +36,7 @@ defmodule TrentoWeb.HostController do
         send_resp(conn, 204, "")
 
       {:error, _, reason, _} ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: reason})
+        {:error, {:bad_request, reason}}
     end
   end
 end
