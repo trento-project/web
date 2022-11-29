@@ -1018,6 +1018,7 @@
         }
       ],
       "Config": {
+        "SBD_OPTS": "",
         "SBD_DELAY_START": "no",
         "SBD_DEVICE": "/dev/vdc;/dev/vdb",
         "SBD_MOVE_TO_ROOT_CGROUP": "auto",

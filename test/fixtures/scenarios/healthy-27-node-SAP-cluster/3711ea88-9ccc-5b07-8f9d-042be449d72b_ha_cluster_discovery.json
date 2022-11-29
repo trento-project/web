@@ -390,6 +390,7 @@
     },
     "SBD": {
       "Config": {
+        "SBD_OPTS": "",
         "SBD_DEVICE": "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_813ace38-2d4f-48f6-8aa2-5360252ca492",
         "SBD_PACEMAKER": "yes",
         "SBD_STARTMODE": "always",
