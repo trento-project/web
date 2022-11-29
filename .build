@@ -222,6 +222,7 @@ TrentoWeb.DiscoveryController.html
 TrentoWeb.Endpoint.html
 TrentoWeb.ErrorHelpers.html
 TrentoWeb.ErrorView.html
+TrentoWeb.FallbackController.html
 TrentoWeb.Gettext.html
 TrentoWeb.HealthOverviewController.html
 TrentoWeb.HealthOverviewView.html
@@ -280,8 +281,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-3D48055E.js
-dist/sidebar_items-73F18DF7.js
+dist/search_items-CB28D96F.js
+dist/sidebar_items-80EF5C8B.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
