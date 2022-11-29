@@ -58,6 +58,10 @@ const App = () => {
                 element={<ClusterSettings />}
               />
               <Route
+                path="clusters/:clusterID/settings_new"
+                element={<ClusterSettings newChecksSelectionView={true} />}
+              />
+              <Route
                 path="clusters/:clusterID/checks/results"
                 element={<ChecksResults />}
               />

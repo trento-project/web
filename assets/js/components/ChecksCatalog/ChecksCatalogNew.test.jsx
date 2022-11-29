@@ -20,7 +20,10 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const initialState = {
       catalogNew: { loading: false, data: catalog, error: null },
     };
-    const [statefulCatalog] = withState(<ChecksCatalogNew />, initialState);
+    const [statefulCatalog, store] = withState(
+      <ChecksCatalogNew />,
+      initialState
+    );
 
     await act(async () => renderWithRouter(statefulCatalog));
 
@@ -32,5 +35,14 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
       let checks = getAllByRole('listitem');
       expect(checks.length).toBe(5);
     }
+
+    const actions = store.getActions();
+    const expectedActions = [
+      {
+        type: 'UPDATE_CATALOG_NEW',
+        payload: {},
+      },
+    ];
+    expect(actions).toEqual(expectedActions);
   });
 });

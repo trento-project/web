@@ -93,3 +93,8 @@ export const aboutFactory = Factory.define(() => ({
   sles_subscriptions: faker.datatype.number(),
   version: faker.system.networkInterface(),
 }));
+
+export const clusterFactory = Factory.define(() => ({
+  id: faker.datatype.uuid(),
+  selected_checks: [],
+}));
