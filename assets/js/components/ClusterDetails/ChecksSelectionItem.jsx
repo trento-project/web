@@ -33,7 +33,7 @@ const ChecksSelectionItem = ({
               <Switch
                 checked={selected}
                 className={classNames(
-                  selected ? 'bg-jungle-green-500' : 'bg-gray-200',
+                  { 'bg-jungle-green-500': selected, 'bg-gray-200': !selected },
                   'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
                 )}
                 onChange={onChange}
@@ -41,7 +41,7 @@ const ChecksSelectionItem = ({
                 <span
                   aria-hidden="true"
                   className={classNames(
-                    selected ? 'translate-x-5' : 'translate-x-0',
+                    { 'translate-x-5': selected, 'translate-x-0': !selected },
                     'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
                   )}
                 />
