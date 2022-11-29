@@ -390,6 +390,7 @@
     },
     "SBD": {
       "Config": {
+        "SBD_OPTS": "",
         "SBD_DEVICE": "/dev/disk/by-id/scsi-36001405f01eb5f4c5c941e499beb055d",
         "SBD_PACEMAKER": "yes",
         "SBD_STARTMODE": "always",
