@@ -5,9 +5,11 @@ import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 const Spinner = ({ centered = false }) => {
   return (
-    <EOS_LOADING_ANIMATED
-      className={computedIconCssClass('fill-jungle-green-500', centered)}
-    />
+    <div role="alert" aria-label="Loading">
+      <EOS_LOADING_ANIMATED
+        className={computedIconCssClass('fill-jungle-green-500', centered)}
+      />
+    </div>
   );
 };
 
