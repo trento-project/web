@@ -6,3 +6,4 @@ export { ExecutionIcon } from './ExecutionIcon';
 export { ClusterInfoBox } from './ClusterInfoBox';
 
 export default ClusterDetails;
+export { ClusterDetailsNew } from './ClusterDetailsNew';
