@@ -1,6 +1,6 @@
 import { logMessage, logError } from '@lib/log';
 
-const joinChannel = (channel) => {
+export const joinChannel = (channel) => {
   channel
     .join()
     .receive('ok', ({ messages }) => logMessage('catching up', messages))
