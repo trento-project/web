@@ -49,5 +49,6 @@ module.exports = {
     camelcase: 'off',
     'import/prefer-default-export': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
   },
 };
