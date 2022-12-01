@@ -13,7 +13,7 @@ import {
   ResultsContainer,
   HostResultsWrapper,
   CheckResult,
-  getHealth,
+  getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
 } from '@components/ChecksResults';
@@ -129,7 +129,7 @@ function ExecutionResults({
           >
             {checks.map((checkID) => {
               const { health, error, expectations, failedExpectations } =
-                getHealth(checkResults, checkID, hostID);
+                getCheckHealthByAgent(checkResults, checkID, hostID);
 
               const label = getLabel(
                 executionData?.status,

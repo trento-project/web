@@ -5,7 +5,7 @@ import CheckResult from './CheckResult';
 import {
   getHosts,
   getChecks,
-  getHealth,
+  getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
 } from './checksUtils';
@@ -16,7 +16,7 @@ export {
   CheckResult,
   getHosts,
   getChecks,
-  getHealth,
+  getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
 };
