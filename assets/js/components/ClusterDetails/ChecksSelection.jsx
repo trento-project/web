@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -194,7 +195,6 @@ export function ChecksSelection({ clusterId, cluster }) {
                       >
                         <Disclosure.Panel className="border-none">
                           <ul
-                            role="list"
                             className="divide-y divide-gray-200"
                           >
                             {checks.map((check) => (

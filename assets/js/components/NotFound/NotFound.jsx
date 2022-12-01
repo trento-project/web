@@ -27,7 +27,7 @@ function NotFound() {
             </Button>
           </div>
           <div className="block w-full mx-auto md:mt-0 relative max-w-md lg:max-w-2xl">
-            <img src={TrentoLogo} />
+            <img src={TrentoLogo} alt="trento project logo" />
           </div>
         </div>
       </div>

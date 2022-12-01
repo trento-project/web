@@ -17,6 +17,7 @@ function Pill({
         },
         className,
       )}
+      aria-hidden="true"
       onClick={onClick}
     >
       {children}

@@ -58,6 +58,7 @@ function Tags({
         >
           {tag}
           <span
+            aria-hidden="true"
             className="ml-2 cursor-pointer group-hover:opacity-60"
             onClick={() => {
               const newTagsList = renderedTags.reduce(

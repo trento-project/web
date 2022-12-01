@@ -99,6 +99,8 @@ function Filter({
                   <li
                     key={index}
                     role="option"
+                    aria-selected={hasOne(value, [option])}
+                    aria-hidden="true"
                     className="text-gray-900 cursor-default select-none hover:bg-jungle-green-500 hover:text-white relative py-2 pl-3 pr-9"
                     onClick={() => onChange(toggle(option, value))}
                   >

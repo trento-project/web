@@ -88,6 +88,7 @@ function HostDetails() {
 
       <div className="mt-8 bg-white shadow rounded-lg py-4 px-8">
         <iframe
+          title="node-exporter chart"
           src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=77&var-agentID=${host.id}`}
           width="100%"
           height="200"
@@ -96,6 +97,7 @@ function HostDetails() {
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <iframe
+          title="node-exporter chart trento"
           src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=78&var-agentID=${host.id}`}
           width="100%"
           height="200"
@@ -122,7 +124,7 @@ function HostDetails() {
 
       <div className="mt-16">
         <div className="flex flex-direction-row">
-          <img src={SuseLogo} className="h-12" />
+          <img src={SuseLogo} className="h-12" alt="suse company logo" />
           <h2 className="ml-2 text-2xl font-bold self-center">
             SLES subscription details
           </h2>

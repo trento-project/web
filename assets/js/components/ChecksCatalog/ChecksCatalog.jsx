@@ -62,8 +62,8 @@ function ChecksCatalog() {
         onChange={setSelected}
       />
       {catalogData
-        .filter((provider) => provider.provider == selected)
-        .map(({ _, groups }) => groups?.map(({ group, checks }, idx) => (
+        .filter((provider) => provider.provider === selected)
+        .map(({ _, groups }) => groups?.map(({ group, checks }) => (
           <div
             key={group}
             className="check-group bg-white shadow overflow-hidden sm:rounded-md mb-8"
@@ -73,7 +73,7 @@ function ChecksCatalog() {
                 {group}
               </h3>
             </div>
-            <ul role="list" className="divide-y divide-gray-200">
+            <ul className="divide-y divide-gray-200">
               {checks.map((check) => (
                 <li key={check.id}>
                   <Disclosure>

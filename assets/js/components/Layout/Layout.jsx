@@ -116,6 +116,7 @@ function Layout() {
                   'h-auto transition-scale duration-100',
                   { 'w-12': isCollapsed, 'w-24': !isCollapsed },
                 )}
+                alt="trento project logo"
                 src={TrentoLogo}
               />
               {' '}

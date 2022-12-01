@@ -77,6 +77,7 @@ function HealthSummaryBox({
 
   return (
     <div
+      aria-hidden="true"
       style={style}
       data-testid={`health-box-${health}-${
         selected ? 'selected' : 'not-selected'
