@@ -11,9 +11,9 @@ export const joinChannel = (channel) => {
 const registerEvents = (store, socket, channelName, events) => {
   const channel = socket.channel(channelName, {});
 
-  for (const event of events) {
+  events.forEach((event) => {
     channel.on(event, (payload) => store.dispatch({ type: event.toUpperCase(), payload }));
-  }
+  });
 
   joinChannel(channel);
 };

@@ -26,6 +26,8 @@ export const keysToCamel = function keysToCamel(o) {
 
 export const urlEncode = function urlEncode(params) {
   const str = [];
-  for (const p in params) str.push(`${encodeURIComponent(p)}=${encodeURIComponent(params[p])}`);
+  Object.entries(params).forEach(([key, value]) => {
+    str.push(`${encodeURIComponent(key)}=${encodeURIComponent(params[value])}`);
+  });
   return str.join('&');
 };
