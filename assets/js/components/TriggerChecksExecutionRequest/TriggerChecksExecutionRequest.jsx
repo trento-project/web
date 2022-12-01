@@ -18,6 +18,7 @@ export function TriggerChecksExecutionRequest({
         'items-center text-sm border-green-500 px-2 text-jungle-green-500 bg-white border border-green hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow',
         cssClasses,
       )}
+      type="button"
       onClick={() => {
         dispatch({
           type: 'REQUEST_CHECKS_EXECUTION',

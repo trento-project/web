@@ -89,6 +89,7 @@ function Layout() {
             })}
           >
             <button
+              type="button"
               className="flex p-2 items-center rounded-r bg-white text-gray-500 text-md"
               onClick={handleSidebar}
               title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}

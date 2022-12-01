@@ -199,7 +199,7 @@ export function ChecksSelection({ clusterId, cluster }) {
                           >
                             {checks.map((check) => (
                               <li key={check.id}>
-                                <a className="block hover:bg-gray-50">
+                                <a role="button" className="block hover:bg-gray-50">
                                   <div className="px-4 py-4 sm:px-6">
                                     <div className="flex items-center">
                                       <p className="text-sm font-medium">
@@ -267,6 +267,7 @@ export function ChecksSelection({ clusterId, cluster }) {
       </div>
       <div className="place-items-end flex">
         <button
+          type="button"
           className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
           onClick={() => {
             dispatch({

@@ -70,7 +70,7 @@ export function ClusterSettings({ newChecksSelectionView = false }) {
           ))}
         </Tab.List>
         <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
-        {cluster.provider == UNKNOWN_PROVIDER && (
+        {cluster.provider === UNKNOWN_PROVIDER && (
           <WarningBanner>
             The following catalog is valid for on-premise bare metal platforms.
             <br />
@@ -104,6 +104,7 @@ export function SavingFailedAlert({ onClose = () => {}, children }) {
     >
       {children}
       <button
+        type="button"
         className="absolute top-0 bottom-0 right-0 pr-2"
         onClick={() => onClose()}
       >
@@ -133,7 +134,7 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
         >
           <EOS_PLAY_CIRCLE color="green" />
         </TriggerChecksExecutionRequest>
-        <button className="ml-1" onClick={() => onClose()}>
+        <button className="ml-1" onClick={() => onClose()} type="button">
           <EOS_CANCEL size={14} className="fill-green-600" />
         </button>
       </div>

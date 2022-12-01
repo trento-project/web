@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';

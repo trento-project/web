@@ -146,6 +146,7 @@ export function ConnectionSettings({ clusterId, cluster }) {
       <Table config={connectionSettingsTableConfig} data={localSettings} />
       <div className="place-items-end flex">
         <button
+          type="button"
           disabled={saving}
           className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
           onClick={() => {
