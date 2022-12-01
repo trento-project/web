@@ -11,7 +11,7 @@ function ClusterLink({ cluster }) {
     'truncate w-32 inline-block align-middle',
   );
 
-  if (cluster?.type == 'hana_scale_up' || cluster?.type == 'hana_scale_out') {
+  if (cluster?.type === 'hana_scale_up' || cluster?.type === 'hana_scale_out') {
     return (
       <Link
         className="text-jungle-green-500 hover:opacity-75"

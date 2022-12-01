@@ -16,7 +16,7 @@ export function ExecutionIcon({ health, executionState, centered = false }) {
       );
     case 'running':
       return <Spinner />;
+    default:
+      return <HealthIcon health={health} centered={centered} />;
   }
-
-  return <HealthIcon health={health} centered={centered} />;
 }

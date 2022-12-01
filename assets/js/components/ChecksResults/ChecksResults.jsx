@@ -102,7 +102,7 @@ function ChecksResults() {
           onChange={(filtersPredicates) => setFiltersPredicates(filtersPredicates)}
         />
       </div>
-      {cluster.provider == UNKNOWN_PROVIDER && (
+      {cluster.provider === UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following results are valid for on-premise bare metal platforms.
           <br />

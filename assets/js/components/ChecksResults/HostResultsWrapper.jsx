@@ -15,7 +15,7 @@ function HostResultsWrapper({
               <h3 className="text-lg leading-6 font-medium text-gray-900">
                 {hostname}
               </h3>
-              {reachable == false && (
+              {reachable === false && (
               <div
                 className="bg-yellow-200 border-yellow-600 text-yellow-600 border-l-4 p-4"
                 role="alert"

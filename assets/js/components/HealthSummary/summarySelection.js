@@ -19,6 +19,8 @@ export const isMostRelevantPrio = (predicate, label) => {
         && !any(predicate, 'warning')
         && any(predicate, label)
       );
+    default:
+      return null;
   }
 };
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-bitwise */
+
 export const toggle = (element, list) => (list.includes(element)
   ? list.filter((string) => string !== element)
   : [...list, element]);
@@ -23,6 +25,7 @@ export const page = (p, list) => {
 };
 
 export const groupBy = (list, key) => list.reduce((rv, x) => {
+  // eslint-disable-next-line
   (rv[x[key]] = rv[x[key]] || []).push(x);
   return rv;
 }, {});

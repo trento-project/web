@@ -132,7 +132,7 @@ function Layout() {
                         : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
                     }`}
                     to={item.href}
-                    end={item.href == '/'}
+                    end={item.href === '/'}
                     title={item.name}
                   >
                     <span className="text-left">
