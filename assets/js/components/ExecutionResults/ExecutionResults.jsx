@@ -24,7 +24,7 @@ const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
 
 const getLabel = (status, health, error, expectations, failedExpectations) => {
-  if (status === 'running') {
+  if (status === 'running' || !health) {
     return '';
   }
 

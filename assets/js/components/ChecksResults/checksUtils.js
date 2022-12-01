@@ -40,23 +40,57 @@ export const getChecks = (checkResults) =>
   checkResults.map(({ check_id }) => check_id);
 
 export const getCheckHealthByAgent = (checkResults, checkID, agentID) => {
+  if (!checkResults) {
+    return {};
+  }
+
   const checkResult = checkResults.find(({ check_id }) => check_id === checkID);
   if (!checkResult) {
-    return undefined;
+    return {};
   }
 
   const agentCheckResult = checkResult.agents_check_results.find(
     ({ agent_id }) => agent_id === agentID
   );
 
-  const failedExpectationEvaluations = agentCheckResult?.expectation_evaluations
-    .filter((expectationEvaluation) => 'message' in expectationEvaluation)
-    .filter(({ type }) => type !== 'expect');
+  // agentCheckError
+  if (agentCheckResult?.type) {
+    return {
+      health: 'critical',
+      error: agentCheckResult.message,
+    };
+  }
+
+  // expectation evaluation error , malformed expression most probably
+  const evaluationErrors = agentCheckResult?.expectation_evaluations.filter(
+    ({ message }) => message
+  ).length;
+
+  // expect evaluating to false
+  const failedExpectEvaluations =
+    agentCheckResult?.expectation_evaluations.filter(
+      ({ type, return_value }) => type == 'expect' && !return_value
+    ).length;
+
+  // expect_same
+  const failedExpectSameEvaluations =
+    agentCheckResult?.expectation_evaluations.filter(
+      ({ name, type }) =>
+        type == 'expect_same' &&
+        !checkResult.expectation_results.find(
+          ({ name: result_name }) => result_name == name
+        ).result
+    ).length;
+
+  const failedExpectation =
+    evaluationErrors + failedExpectEvaluations + failedExpectSameEvaluations;
+
+  const health = failedExpectation > 0 ? checkResult.result : 'passing';
 
   return {
+    health: health,
     expectations: checkResult.expectation_results.length,
-    failedExpectations: failedExpectationEvaluations.length,
-    health: failedExpectationEvaluations.length > 0 ? 'critical' : 'passing',
+    failedExpectations: failedExpectation,
   };
 };
 
