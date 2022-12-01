@@ -111,7 +111,7 @@ export default [
       },
     ],
     ssh_address: '10.100.1.31',
-    tags: ['tag1', 'tag2', 'tag3'],
+    tags: [{ value: 'tag1' }, { value: 'tag2' }, { value: 'tag3' }],
   },
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',

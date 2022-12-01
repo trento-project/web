@@ -90,6 +90,7 @@ function SapSystemsOverview() {
         render: (content, item) => (
           <Tags
             tags={content}
+            resourceId={item.id}
             onChange={() => {}}
             onAdd={(tag) => {
               addTag(tag, item.id);

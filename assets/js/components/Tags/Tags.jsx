@@ -8,7 +8,7 @@ const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
 const tagValidation = (char) => tagRegexValidation.test(char);
 
 function Tags({
-  className, tags, onChange, onAdd, onRemove,
+  className, tags, onChange, onAdd, onRemove, resourceId,
 }) {
   const [renderedTags, setTags] = useState(tags);
   const [addingTag, setAddingTag] = useState(false);
@@ -40,7 +40,7 @@ function Tags({
     >
       {renderedTags.map((tag) => (
         <Pill
-          key={tag}
+          key={`${tag}-${resourceId}`}
           className={classNames({
             'text-green-800': true,
             'bg-green-100': true,
