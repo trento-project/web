@@ -1,5 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
+// safe to disable phoenix stuff
+// eslint-disable-next-line
 import { Socket } from 'phoenix';
 
 import sapSystemsHealthSummaryReducer from './healthSummary';

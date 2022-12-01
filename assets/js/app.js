@@ -20,6 +20,8 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
+// Phoenix stuff, safe to ignore the import/no-unresolved
+/* eslint-disable import/no-unresolved */
 import 'phoenix_html';
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from 'phoenix';
