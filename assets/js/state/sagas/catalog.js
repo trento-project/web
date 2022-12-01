@@ -1,6 +1,6 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
 import { getCatalog } from '@lib/api/wanda';
-import { updateCatalogAction } from '@state/actions/catalog';
+import { UPDATE_CATALOG } from '@state/actions/catalog';
 
 import {
   setCatalogLoading,
@@ -19,5 +19,5 @@ export function* updateCatalog() {
 }
 
 export function* watchCatalogUpdateNew() {
-  yield takeEvery(updateCatalogAction, updateCatalog);
+  yield takeEvery(UPDATE_CATALOG, updateCatalog);
 }

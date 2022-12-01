@@ -11,6 +11,7 @@ import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
 import catalogReducer from './catalog';
 import catalogNewReducer from './catalogNew';
+import lastExecutionsReducer from './lastExecutions';
 import liveFeedReducer from './liveFeed';
 import settingsReducer from './settings';
 import registerEvents from './registerSocketEvents';
@@ -30,6 +31,7 @@ export const store = configureStore({
     databasesList: databasesListReducer,
     catalog: catalogReducer,
     catalogNew: catalogNewReducer,
+    lastExecutions: lastExecutionsReducer,
     liveFeed: liveFeedReducer,
     settings: settingsReducer,
   },
