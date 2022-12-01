@@ -30,13 +30,18 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
          group_id: group_id,
          result: result
        }) do
-    commanded().dispatch(
-      CompleteChecksExecutionWanda.new!(%{
-        cluster_id: group_id,
-        health: map_health(result)
-      }),
-      correlation_id: execution_id
-    )
+    with :ok <-
+           commanded().dispatch(
+             CompleteChecksExecutionWanda.new!(%{
+               cluster_id: group_id,
+               health: map_health(result)
+             }),
+             correlation_id: execution_id
+           ) do
+      TrentoWeb.Endpoint.broadcast("monitoring:executions", "execution_completed", %{
+        group_id: group_id
+      })
+    end
   end
 
   defp map_health(:CRITICAL), do: Health.critical()
