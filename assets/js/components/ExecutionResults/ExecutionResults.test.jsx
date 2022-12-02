@@ -5,7 +5,8 @@ import { renderWithRouter } from '@lib/test-utils';
 import {
   hostnameFactory,
   agentCheckResultFactory,
-  checksExecutionFactory,
+  checksExecutionCompletedFactory,
+  checksExecutionRunningFactory,
   checkResultFactory,
   catalogCheckFactory,
 } from '@lib/test-utils/factories';
@@ -26,9 +27,8 @@ describe('ExecutionResults', () => {
       agents_check_results: [agent1, agent2],
     });
 
-    const executionResult = checksExecutionFactory.build({
+    const executionResult = checksExecutionCompletedFactory.build({
       check_results: checkResults,
-      status: 'completed',
       result: 'passing',
     });
     const {
@@ -57,17 +57,8 @@ describe('ExecutionResults', () => {
 
   it('should render ExecutionResults with running state', async () => {
     const hostnames = hostnameFactory.buildList(2);
-    const [{ id: agentID }] = hostnames;
-    const executionResult = checksExecutionFactory.build({
-      agentID,
-      status: 'running',
-    });
-    const {
-      groupID: clusterID,
-      execution_id: executionID,
-      check_results: [{ check_id: checkID }],
-    } = executionResult;
-    const catalog = [catalogCheckFactory.build({ id: checkID })];
+    const executionResult = checksExecutionRunningFactory.build();
+    const { group_id: clusterID, execution_id: executionID } = executionResult;
 
     await act(async () => {
       renderWithRouter(
@@ -75,7 +66,7 @@ describe('ExecutionResults', () => {
           clusterID={clusterID}
           executionID={executionID}
           onExecutionFetch={() => Promise.resolve({ data: executionResult })}
-          onCatalogFetch={() => Promise.resolve({ data: { items: catalog } })}
+          onCatalogFetch={() => Promise.resolve({ data: { items: [] } })}
           hostnames={hostnames}
         />
       );

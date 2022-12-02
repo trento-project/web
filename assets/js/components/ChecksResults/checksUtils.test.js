@@ -2,7 +2,8 @@ import { faker } from '@faker-js/faker';
 import {
   agentCheckResultFactory,
   catalogCheckFactory,
-  checksExecutionFactory,
+  checksExecutionCompletedFactory,
+  checksExecutionRunningFactory,
   checkResultFactory,
 } from '@lib/test-utils/factories';
 
@@ -17,10 +18,9 @@ import {
 describe('checksUtils', () => {
   describe('getChecksResults', () => {
     it('getChecksResults returns a list of checks results', () => {
-      const checksExecution = checksExecutionFactory.build();
-      const checkResults = getCheckResults(checksExecution);
-
-      expect(checkResults).toBe(checksExecution.check_results);
+      const execution = checksExecutionCompletedFactory.build();
+      const checkResults = getCheckResults(execution);
+      expect(checkResults).toBe(execution.check_results);
     });
 
     it('getChecksResults returns an empty list when the execution is empty', () => {
@@ -28,10 +28,8 @@ describe('checksUtils', () => {
     });
 
     it('getChecksResults returns an empty list when there are no checks results', () => {
-      const checksExecution = checksExecutionFactory.build({
-        check_results: [],
-      });
-      expect(getCheckResults(checksExecution)).toStrictEqual([]);
+      const execution = checksExecutionRunningFactory.build();
+      expect(getCheckResults(execution)).toStrictEqual([]);
     });
   });
 
@@ -70,12 +68,12 @@ describe('checksUtils', () => {
 
   describe('getHealth', () => {
     it('getHealth should return health', () => {
-      const checkResults = checkResultFactory.build();
+      const checkResult = checkResultFactory.build();
       const { check_id: checkID, agents_check_results: agentChecks } =
-        checkResults;
+        checkResult;
 
       const { health, expectations, failedExpectations } = getHealth(
-        [checkResults],
+        [checkResult],
         checkID,
         agentChecks[0].agent_id
       );
@@ -86,11 +84,13 @@ describe('checksUtils', () => {
     });
 
     it('getHealth should return undefined when check is not found', () => {
-      const agentID = faker.datatype.uuid();
-      const { check_results: checkResults } = checksExecutionFactory.build({
-        agentID,
-      });
-      const healthInfo = getHealth(checkResults, 'carbonara', agentID);
+      const checkResult = checkResultFactory.build();
+      const { agents_check_results: agentChecks } = checkResult;
+      const healthInfo = getHealth(
+        [checkResult],
+        'carbonara',
+        agentChecks[0].agent_id
+      );
 
       expect(healthInfo).toBe(undefined);
     });
