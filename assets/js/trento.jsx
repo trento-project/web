@@ -67,7 +67,7 @@ function App() {
                 element={<ChecksResults />}
               />
               <Route
-                path="clusters/:clusterID/executions/:executionID"
+                path="clusters/:clusterID/executions/last"
                 element={<ExecutionResultsPage />}
               />
               <Route path="hosts/:hostID" element={<HostDetails />} />

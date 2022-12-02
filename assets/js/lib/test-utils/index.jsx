@@ -30,7 +30,6 @@ const defaultInitialState = {
 
 export const withState = (component, initialState = {}) => {
   const store = mockStore(initialState);
-
   return [
     <Provider key="root" store={store}>
       {component}
