@@ -38,7 +38,7 @@ const ChecksResultOverviewNew = ({
     <div className="flex flex-col items-center">
       <h1 className="text-center text-2xl font-bold">Check Results</h1>
       <h6 className="opacity-60 text-xs">
-        {format(new Date(data.completed_at), 'iii MMM dd, HH:MM:SS y')}
+        {format(new Date(data.completed_at), 'iii MMM dd, HH:mm:ss y')}
       </h6>
 
       <div className="flex flex-col self-start w-full px-4 mt-2">
