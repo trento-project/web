@@ -53,6 +53,10 @@ export const getCheckHealthByAgent = (checkResults, checkID, agentID) => {
     ({ agent_id }) => agent_id === agentID
   );
 
+  if (!agentCheckResult) {
+    return {};
+  }
+
   // agentCheckError
   if (agentCheckResult?.type) {
     return {

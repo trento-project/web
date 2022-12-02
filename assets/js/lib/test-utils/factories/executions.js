@@ -22,12 +22,6 @@ export const executionExpectationEvaluationFactory = Factory.define(
   })
 );
 
-export const executionFactFactory = Factory.define(() => ({
-  check_id: faker.datatype.uuid(),
-  name: faker.animal.cat(),
-  value: faker.datatype.number(),
-}));
-
 export const agentCheckResultFactory = Factory.define(() => {
   executionExpectationEvaluationFactory.rewindSequence();
 
@@ -38,6 +32,13 @@ export const agentCheckResultFactory = Factory.define(() => {
     values: executionValueFactory.buildList(2),
   };
 });
+
+export const agentCheckErrorFactory = Factory.define(() => ({
+  agent_id: faker.datatype.uuid(),
+  facts: executionFactFactory.buildList(2),
+  type: faker.color.human(),
+  message: faker.hacker.phrase(),
+}));
 
 export const expectationResultFactory = Factory.define(({ sequence }) => ({
   name: `execution_${sequence}`,
@@ -50,7 +51,15 @@ export const targetFactory = Factory.define(() => ({
   checks: Array.from({ length: 5 }).map((_) => faker.datatype.uuid()),
 }));
 
-export const checkResultFactory = Factory.define(() => ({
+export const executionExpectationEvaluationErrorFactory = Factory.define(
+  ({ sequence }) => ({
+    name: `execution_${sequence}`,
+    message: faker.hacker.phrase(),
+    type: faker.animal.dog(),
+  })
+);
+
+export const executionFactFactory = Factory.define(() => ({
   check_id: faker.datatype.uuid(),
   result: resultEnum(),
   agents_check_results: agentCheckResultFactory.buildList(2),
