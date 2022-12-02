@@ -1,14 +1,15 @@
 import { faker } from '@faker-js/faker';
 import {
+  addCriticalExpectation,
+  addExpectationWithError,
+  addPassingExpectation,
   agentCheckErrorFactory,
   agentCheckResultFactory,
   catalogCheckFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   checkResultFactory,
-  executionExpectationEvaluationFactory,
-  executionExpectationEvaluationErrorFactory,
-  expectationResultFactory,
+  withEmptyExpectations,
 } from '@lib/test-utils/factories';
 
 import {
@@ -128,39 +129,16 @@ describe('checksUtils', () => {
     });
 
     it('should count expect and expect_same type errors', () => {
-      const expecs = [
-        executionExpectationEvaluationFactory.build({
-          type: 'expect',
-          return_value: true,
-        }),
-        executionExpectationEvaluationFactory.build({ type: 'expect_same' }),
-        executionExpectationEvaluationFactory.build({
-          type: 'expect',
-          return_value: false,
-        }),
-        executionExpectationEvaluationFactory.build({ type: 'expect_same' }),
-        executionExpectationEvaluationErrorFactory.build(),
-      ];
+      let checkResult = checkResultFactory.build({ result: 'critical' });
+      checkResult = withEmptyExpectations(checkResult);
+      checkResult = addPassingExpectation(checkResult, 'expect');
+      checkResult = addPassingExpectation(checkResult, 'expect_same');
+      checkResult = addCriticalExpectation(checkResult, 'expect');
+      checkResult = addCriticalExpectation(checkResult, 'expect_same');
+      checkResult = addExpectationWithError(checkResult);
 
-      const evalutionResults = [
-        expectationResultFactory.build({ name: expecs[0].name, result: true }),
-        expectationResultFactory.build({ name: expecs[1].name, result: true }),
-        expectationResultFactory.build({ name: expecs[2].name, result: false }),
-        expectationResultFactory.build({ name: expecs[3].name, result: false }),
-        expectationResultFactory.build({ name: expecs[4].name, result: false }),
-      ];
-
-      const agentResult = agentCheckResultFactory.build({
-        expectation_evaluations: expecs,
-      });
-      const checkResult = checkResultFactory.build({
-        agents_check_results: [agentResult],
-        expectation_results: evalutionResults,
-        result: 'critical',
-      });
-
-      const { check_id: checkID } = checkResult;
-      const { agent_id: agentID } = agentResult;
+      const { check_id: checkID, agents_check_results: agents } = checkResult;
+      const { agent_id: agentID } = agents[0];
 
       const { health, error, expectations, failedExpectations } =
         getCheckHealthByAgent([checkResult], checkID, agentID);
@@ -172,24 +150,12 @@ describe('checksUtils', () => {
     });
 
     it('should set result as warnning', () => {
-      const expecs = [executionExpectationEvaluationErrorFactory.build()];
+      let checkResult = checkResultFactory.build({ result: 'warning' });
+      checkResult = withEmptyExpectations(checkResult);
+      checkResult = addExpectationWithError(checkResult, 'expect');
 
-      const evalutionResults = [
-        expectationResultFactory.build({ name: expecs[0].name, result: false }),
-      ];
-
-      const agentResult = agentCheckResultFactory.build({
-        expectation_evaluations: expecs,
-      });
-
-      const checkResult = checkResultFactory.build({
-        agents_check_results: [agentResult],
-        expectation_results: evalutionResults,
-        result: 'warning',
-      });
-
-      const { check_id: checkID } = checkResult;
-      const { agent_id: agentID } = agentResult;
+      const { check_id: checkID, agents_check_results: agents } = checkResult;
+      const { agent_id: agentID } = agents[0];
 
       const { health } = getCheckHealthByAgent([checkResult], checkID, agentID);
 
