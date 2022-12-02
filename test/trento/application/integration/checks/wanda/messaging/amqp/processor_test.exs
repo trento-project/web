@@ -1,7 +1,7 @@
 defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
   @moduledoc false
   use ExUnit.Case, async: true
-  use Trento.DataCase
+  use TrentoWeb.ChannelCase
 
   import Mox
 
@@ -14,6 +14,15 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
   require Trento.Domain.Enums.Health, as: Health
 
   describe "process" do
+    setup do
+      {:ok, _, _} =
+        TrentoWeb.UserSocket
+        |> socket("user_id", %{some: :assign})
+        |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:executions")
+
+      :ok
+    end
+
     test "should process ExecutionCompleted and dispatch command" do
       execution_id = UUID.uuid4()
       group_id = UUID.uuid4()
@@ -38,13 +47,16 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
       end)
 
       assert :ok = Processor.process(message)
+      assert_broadcast "execution_completed", %{group_id: ^group_id}, 1000
     end
 
     test "should return error if the event handling fails" do
+      group_id = "invalid-id"
+
       execution_completed =
         Contracts.to_event(%ExecutionCompleted{
           execution_id: UUID.uuid4(),
-          group_id: "invalid-id",
+          group_id: group_id,
           result: :PASSING
         })
 
@@ -53,6 +65,8 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
       assert_raise RuntimeError,
                    "%{cluster_id: [\"is invalid\"]}",
                    fn -> Processor.process(message) end
+
+      refute_broadcast "checks_execution_completed", %{cluster_id: ^group_id}, 1000
     end
 
     @tag capture_log: true

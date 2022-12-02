@@ -14,7 +14,9 @@ import catalogNewReducer from './catalogNew';
 import lastExecutionsReducer from './lastExecutions';
 import liveFeedReducer from './liveFeed';
 import settingsReducer from './settings';
-import registerEvents from './registerSocketEvents';
+import registerEvents, { joinChannel } from './registerSocketEvents';
+
+import { updateLastExecution } from '@state/actions/lastExecutions';
 
 import rootSaga from './sagas';
 
@@ -72,6 +74,16 @@ const processChannelEvents = (store) => {
     'database_instance_health_changed',
     'database_instance_system_replication_changed',
   ]);
+
+  // FIXME: This is to overcome the fact that we are generating names with registerEvents
+  // in the future we want to remove this and use the constants directly,
+  // since events and actions may have different names and parameters.
+  const channel = socket.channel('monitoring:executions', {});
+  channel.on('execution_completed', ({ group_id: groupID }) => {
+    store.dispatch(updateLastExecution(groupID));
+  });
+
+  joinChannel(channel);
 };
 
 processChannelEvents(store);
