@@ -1,10 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
+export * from './executions';
+
 const healthEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
 
-const resultEnum = () =>
+export const resultEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning']);
 
 export const checkFactory = Factory.define(() => ({
@@ -35,53 +37,6 @@ export const catalogCheckFactory = Factory.define(() => ({
   description: faker.lorem.paragraph(),
   remediation: faker.lorem.paragraph(),
 }));
-
-export const checksExecutionStatusEnum = () =>
-  faker.helpers.arrayElement(['running', 'completed']);
-
-export const checksExecutionFactory = Factory.define(({ params }) => {
-  const {
-    agentID = faker.datatype.uuid(),
-    groupID = faker.datatype.uuid(),
-    executionID = faker.datatype.uuid(),
-    checkID = faker.datatype.uuid(),
-  } = params;
-
-  return {
-    completed_at: '2022-11-09T17:02:20.629366Z',
-    execution_id: executionID,
-    group_id: groupID,
-    result: resultEnum(),
-    started_at: '2022-11-09T15:11:31.436586Z',
-    status: checksExecutionStatusEnum(),
-    timeout: [],
-    check_results: [
-      {
-        agents_check_results: [
-          {
-            agent_id: agentID,
-            expectation_evaluations: [
-              {
-                name: 'expectation_example',
-                return_value: 123,
-                type: 'expect',
-              },
-            ],
-            facts: [
-              { check_id: checkID, name: 'lol_this_is_a_fact', value: 123 },
-            ],
-            values: [],
-          },
-        ],
-        check_id: checkID,
-        expectation_results: [
-          { name: 'expectation_example', result: true, type: 'expect' },
-        ],
-        result: resultEnum(),
-      },
-    ],
-  };
-});
 
 export const hostnameFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
