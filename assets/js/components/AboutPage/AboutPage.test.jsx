@@ -24,6 +24,8 @@ describe('AboutPage component', () => {
   it('should render the about page with default values if api get request fails', async () => {
     const stateValues = { flavor: 'N/A', subscriptions: 0, version: 'v0.0.0' };
     const errorMessage = { messages: "Get request '/api/about' failed" };
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+
     await act(async () => {
       renderWithRouter(
         <AboutPage onFetch={() => Promise.reject(errorMessage)} />
