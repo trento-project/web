@@ -37,7 +37,7 @@ export const getChecks = (checkResults) => checkResults.map(({ check_id }) => ch
 export const getHealth = (checkResults, checkID, agentID) => {
   const checkResult = checkResults.find(({ check_id }) => check_id === checkID);
   if (!checkResult) {
-    return {};
+    return undefined;
   }
 
   const agentCheckResult = checkResult.agents_check_results.find(

@@ -45,7 +45,8 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
     expect(screen.getByRole('switch')).not.toBeChecked();
   });
 
-  it('should run the onChange function when the switch button is clicked', () => {
+  it('should run the onChange function when the switch button is clicked', async () => {
+    const user = userEvent.setup();
     const check = catalogCheckFactory.build();
     const onChangeMock = jest.fn();
 
@@ -60,7 +61,7 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
       />,
     );
 
-    userEvent.click(screen.getByRole('switch'));
+    await user.click(screen.getByRole('switch'));
     expect(onChangeMock).toBeCalled();
   });
 });

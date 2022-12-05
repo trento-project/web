@@ -82,7 +82,7 @@ function ChecksSelectionGroup({
                   leaveTo="transform opacity-0"
                 >
                   <Disclosure.Panel className="border-none">
-                    <ul className="divide-y divide-gray-200">
+                    <ul data-testid="check-selection-panel" className="divide-y divide-gray-200">
                       {children}
                     </ul>
                   </Disclosure.Panel>

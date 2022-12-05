@@ -56,7 +56,8 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     );
   });
 
-  it('should show children checks when the group row is clicked', () => {
+  it('should show children checks when the group row is clicked', async () => {
+    const user = userEvent.setup();
     const group = 'some-group';
 
     renderWithRouter(
@@ -67,7 +68,7 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
       </ChecksSelectionGroup>,
     );
 
-    userEvent.click(screen.getByRole('heading').parentNode);
+    await user.click(screen.getByRole('heading').parentNode);
     const groupItem = screen.getAllByRole('list');
     expect(groupItem.length).toBe(1);
 
@@ -76,15 +77,16 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     expect(checkItems.length).toBe(3);
   });
 
-  it('should run the onChange function when the switch button is clicked', () => {
+  it('should run the onChange function when the switch button is clicked', async () => {
     const group = 'some-group';
     const onChangeMock = jest.fn();
+    const user = userEvent.setup();
 
     renderWithRouter(
       <ChecksSelectionGroup group={group} onChange={onChangeMock} />,
     );
 
-    userEvent.click(screen.getByRole('switch'));
+    await user.click(screen.getByRole('switch'));
     expect(onChangeMock).toBeCalled();
   });
 });

@@ -11,7 +11,7 @@ import {
 import Spinner from '@components/Spinner';
 import classNames from 'classnames';
 
-function HealthIcon({ health = undefined, centered = false, hoverOpacity = false }) {
+function HealthIcon({ health = undefined, centered = false, hoverOpacity = true }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
