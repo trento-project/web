@@ -45,7 +45,7 @@ describe('Catalog saga', () => {
 
     expect(dispatched).toContainEqual(setCatalogLoading());
     expect(dispatched).toContainEqual(
-      setCatalogError({ error: 'Network Error' })
+      setCatalogError({ error: 'Network Error' }),
     );
   });
 });

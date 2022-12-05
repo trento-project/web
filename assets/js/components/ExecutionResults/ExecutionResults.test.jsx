@@ -48,7 +48,7 @@ describe('ExecutionResults', () => {
           onExecutionFetch={() => Promise.resolve({ data: executionResult })}
           onCatalogFetch={() => Promise.resolve({ data: { items: catalog } })}
           hostnames={hostnames}
-        />
+        />,
       );
     });
 
@@ -70,12 +70,12 @@ describe('ExecutionResults', () => {
           onExecutionFetch={() => Promise.resolve({ data: executionResult })}
           onCatalogFetch={() => Promise.resolve({ data: { items: [] } })}
           hostnames={hostnames}
-        />
+        />,
       );
     });
 
     expect(
-      screen.getByText('Check execution currently running...')
+      screen.getByText('Check execution currently running...'),
     ).toBeTruthy();
   });
 });

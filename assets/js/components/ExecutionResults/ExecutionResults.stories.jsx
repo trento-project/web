@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import ExecutionResults from './';
+import ExecutionResults from '.';
 
 const executionID = '9fbcaec6-e65e-4adc-9cac-fc542c66717b';
 
@@ -106,20 +106,17 @@ const catalogData = {
   },
 };
 
-const fetchRunning = () =>
-  new Promise((resolve, _reject) => {
-    setTimeout(() => resolve(runningExecution), 3000);
-  });
+const fetchRunning = () => new Promise((resolve, _reject) => {
+  setTimeout(() => resolve(runningExecution), 3000);
+});
 
-const fetchCompleted = () =>
-  new Promise((resolve, _reject) => {
-    setTimeout(() => resolve(completedExecution), 3000);
-  });
+const fetchCompleted = () => new Promise((resolve, _reject) => {
+  setTimeout(() => resolve(completedExecution), 3000);
+});
 
-const fetchCatalog = () =>
-  new Promise((resolve, _reject) => {
-    setTimeout(() => resolve(catalogData), 3000);
-  });
+const fetchCatalog = () => new Promise((resolve, _reject) => {
+  setTimeout(() => resolve(catalogData), 3000);
+});
 
 export default {
   title: 'ExecutionResults',
@@ -133,22 +130,26 @@ export default {
   ],
 };
 
-export const Running = () => (
-  <ExecutionResults
-    clusterID="lellellel"
-    executionID={executionID}
-    onExecutionFetch={fetchRunning}
-    onCatalogFetch={fetchCatalog}
-    hosts={hostnames}
-  />
-);
+export function Running() {
+  return (
+    <ExecutionResults
+      clusterID="lellellel"
+      executionID={executionID}
+      onExecutionFetch={fetchRunning}
+      onCatalogFetch={fetchCatalog}
+      hosts={hostnames}
+    />
+  );
+}
 
-export const Completed = () => (
-  <ExecutionResults
-    clusterID="EugenIsTheBest"
-    executionID={executionID}
-    onExecutionFetch={fetchCompleted}
-    onCatalogFetch={fetchCatalog}
-    hostnames={hostnames}
-  />
-);
+export function Completed() {
+  return (
+    <ExecutionResults
+      clusterID="EugenIsTheBest"
+      executionID={executionID}
+      onExecutionFetch={fetchCompleted}
+      onCatalogFetch={fetchCatalog}
+      hostnames={hostnames}
+    />
+  );
+}

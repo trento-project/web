@@ -9,7 +9,7 @@ import ChecksResultOverviewNew from './ChecksResultOverviewNew';
 
 describe('ChecksResultOverviewNew component', () => {
   it('should render a spinner when in loading state', () => {
-    render(<ChecksResultOverviewNew loading={true} />);
+    render(<ChecksResultOverviewNew loading />);
 
     expect(screen.getByRole('alert')).toBeVisible();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
@@ -43,9 +43,9 @@ describe('ChecksResultOverviewNew component', () => {
 
     const data = {
       completed_at: faker.date.past().toISOString(),
-      passing_count: passing_count,
-      warning_count: warning_count,
-      critical_count: critical_count,
+      passing_count,
+      warning_count,
+      critical_count,
       status: 'completed',
     };
 

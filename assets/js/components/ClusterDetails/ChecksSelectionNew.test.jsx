@@ -13,7 +13,7 @@ import ChecksSelectionNew from './ChecksSelectionNew';
 describe('ClusterDetails ChecksSelectionNew component', () => {
   it('should change individual check switches accordingly if the group switch is clicked', async () => {
     const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group: group });
+    const catalog = catalogCheckFactory.buildList(2, { group });
     const cluster = clusterFactory.build();
 
     const initialState = {
@@ -22,7 +22,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState
+      initialState,
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));
@@ -49,7 +49,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
 
   it('should change group check switch accordingly if the children check switches are clicked', async () => {
     const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group: group });
+    const catalog = catalogCheckFactory.buildList(2, { group });
     const cluster = clusterFactory.build({
       selected_checks: [catalog[0].id, catalog[1].id],
     });
@@ -60,7 +60,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState
+      initialState,
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));
@@ -97,7 +97,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection, store] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState
+      initialState,
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));

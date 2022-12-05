@@ -4,6 +4,7 @@ import createSagaMiddleware from 'redux-saga';
 // eslint-disable-next-line
 import { Socket } from 'phoenix';
 
+import { updateLastExecution } from '@state/actions/lastExecutions';
 import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
@@ -17,8 +18,6 @@ import lastExecutionsReducer from './lastExecutions';
 import liveFeedReducer from './liveFeed';
 import settingsReducer from './settings';
 import registerEvents, { joinChannel } from './registerSocketEvents';
-
-import { updateLastExecution } from '@state/actions/lastExecutions';
 
 import rootSaga from './sagas';
 

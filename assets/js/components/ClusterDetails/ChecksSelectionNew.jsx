@@ -3,7 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
-import { remove, uniq, toggle, groupBy } from '@lib/lists';
+import {
+  remove, uniq, toggle, groupBy,
+} from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
 import { checksSelected } from '@state/actions/cluster';
@@ -21,34 +23,32 @@ import ChecksSelectionGroup, {
 } from './ChecksSelectionGroup';
 import ChecksSelectionItem from './ChecksSelectionItem';
 
-const isSelected = (selectedChecks, checkID) =>
-  selectedChecks ? selectedChecks.includes(checkID) : false;
+const isSelected = (selectedChecks, checkID) => (selectedChecks ? selectedChecks.includes(checkID) : false);
 
 const getGroupSelectedState = function (checks, selectedChecks) {
   if (checks.every(({ id }) => isSelected(selectedChecks, id))) {
     return ALL_CHECKED;
-  } else if (checks.some((check) => isSelected(selectedChecks, check.id))) {
+  } if (checks.some((check) => isSelected(selectedChecks, check.id))) {
     return SOME_CHECKED;
-  } else {
-    return NONE_CHECKED;
   }
+  return NONE_CHECKED;
 };
 
-const ChecksSelectionNew = ({ clusterId, cluster }) => {
+function ChecksSelectionNew({ clusterId, cluster }) {
   const dispatch = useDispatch();
 
   const { saving, savingError, savingSuccess } = useSelector(
-    (state) => state.clusterChecksSelection
+    (state) => state.clusterChecksSelection,
   );
 
   const {
     data: catalogData,
     error: catalogError,
-    loading: loading,
+    loading,
   } = useSelector(getCatalog());
 
   const [selectedChecks, setSelectedChecks] = useState(
-    cluster ? cluster.selected_checks : []
+    cluster ? cluster.selected_checks : [],
   );
   const [localSavingError, setLocalSavingError] = useState(null);
   const [localSavingSuccess, setLocalSavingSuccess] = useState(null);
@@ -60,7 +60,7 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
 
   useEffect(() => {
     const groupedCheckSelection = Object.entries(
-      groupBy(catalogData, 'group')
+      groupBy(catalogData, 'group'),
     ).map(([group, checks]) => {
       const groupChecks = checks.map((check) => ({
         ...check,
@@ -162,6 +162,6 @@ const ChecksSelectionNew = ({ clusterId, cluster }) => {
       </div>
     </CatalogContainer>
   );
-};
+}
 
 export default ChecksSelectionNew;

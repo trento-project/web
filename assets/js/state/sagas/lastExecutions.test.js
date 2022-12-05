@@ -4,18 +4,16 @@ import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 
 import { wandaClient } from '@lib/api/wanda';
-import { updateLastExecution } from './lastExecutions';
-
 import {
   setLastExecutionLoading,
   setLastExecution,
   setLastExecutionEmpty,
   setLastExecutionError,
 } from '@state/lastExecutions';
+import { updateLastExecution } from './lastExecutions';
 
 const axiosMock = new MockAdapter(wandaClient);
-const lastExecutionURL = (groupID) =>
-  `/api/checks/groups/${groupID}/executions/last`;
+const lastExecutionURL = (groupID) => `/api/checks/groups/${groupID}/executions/last`;
 
 describe('lastExecutions saga', () => {
   beforeEach(() => {
@@ -42,7 +40,7 @@ describe('lastExecutions saga', () => {
     axiosMock.onGet(lastExecutionURL(groupID)).reply(200, lastExecution);
 
     const dispatched = await recordSaga(updateLastExecution, {
-      payload: { groupID: groupID },
+      payload: { groupID },
     });
 
     expect(dispatched).toContainEqual(setLastExecutionLoading(groupID));
@@ -55,7 +53,7 @@ describe('lastExecutions saga', () => {
     axiosMock.onGet(lastExecutionURL(groupID)).reply(404, {});
 
     const dispatched = await recordSaga(updateLastExecution, {
-      payload: { groupID: groupID },
+      payload: { groupID },
     });
 
     expect(dispatched).toContainEqual(setLastExecutionLoading(groupID));
@@ -68,12 +66,12 @@ describe('lastExecutions saga', () => {
     axiosMock.onGet(lastExecutionURL(groupID)).networkError();
 
     const dispatched = await recordSaga(updateLastExecution, {
-      payload: { groupID: groupID },
+      payload: { groupID },
     });
 
     expect(dispatched).toContainEqual(setLastExecutionLoading(groupID));
     expect(dispatched).toContainEqual(
-      setLastExecutionError({ groupID: groupID, error: 'Network Error' })
+      setLastExecutionError({ groupID, error: 'Network Error' }),
     );
   });
 });

@@ -3,11 +3,9 @@ import { Factory } from 'fishery';
 
 export * from './executions';
 
-const healthEnum = () =>
-  faker.helpers.arrayElement(['requested', 'running', 'not_running']);
+const healthEnum = () => faker.helpers.arrayElement(['requested', 'running', 'not_running']);
 
-export const resultEnum = () =>
-  faker.helpers.arrayElement(['passing', 'critical', 'warning']);
+export const resultEnum = () => faker.helpers.arrayElement(['passing', 'critical', 'warning']);
 
 export const checkFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),

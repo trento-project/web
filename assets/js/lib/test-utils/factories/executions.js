@@ -2,11 +2,9 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { resultEnum } from '.';
 
-export const checksExecutionStatusEnum = () =>
-  faker.helpers.arrayElement(['running', 'completed']);
+export const checksExecutionStatusEnum = () => faker.helpers.arrayElement(['running', 'completed']);
 
-const expectationReturnTypeEnum = () =>
-  faker.helpers.arrayElement(['expect', 'expect_same']);
+const expectationReturnTypeEnum = () => faker.helpers.arrayElement(['expect', 'expect_same']);
 
 export const checksExecutionRunningFactory = Factory.define(() => ({
   completed_at: null,
@@ -23,21 +21,15 @@ export const checksExecutionRunningFactory = Factory.define(() => ({
   critical_count: null,
 }));
 
-export const checksExecutionCompletedFactory = Factory.define(({ params }) => {
-  return withCompletedResults(checksExecutionRunningFactory.build(params));
-});
+export const checksExecutionCompletedFactory = Factory.define(({ params }) => withCompletedResults(checksExecutionRunningFactory.build(params)));
 
-export const withCompletedResults = (execution, result, checkResults) => {
-  return {
-    ...execution,
-    status: 'completed',
-    result: result ? result : checksExecutionStatusEnum(),
-    check_results: checkResults
-      ? checkResults
-      : checkResultFactory.buildList(2),
-    completed_at: faker.date.soon(),
-  };
-};
+export const withCompletedResults = (execution, result, checkResults) => ({
+  ...execution,
+  status: 'completed',
+  result: result || checksExecutionStatusEnum(),
+  check_results: checkResults || checkResultFactory.buildList(2),
+  completed_at: faker.date.soon(),
+});
 
 export const targetFactory = Factory.define(() => ({
   agent_id: faker.datatype.uuid(),
@@ -73,7 +65,7 @@ export const executionExpectationEvaluationFactory = Factory.define(
     name: `execution_${sequence}`,
     return_value: faker.datatype.number(),
     type: expectationReturnTypeEnum(),
-  })
+  }),
 );
 
 export const executionFactFactory = Factory.define(() => ({

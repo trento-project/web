@@ -1,5 +1,1 @@
-export const getLastExecution =
-  (groupID) =>
-  ({ lastExecutions }) => {
-    return lastExecutions[groupID];
-  };
+export const getLastExecution = (groupID) => ({ lastExecutions }) => lastExecutions[groupID];

@@ -39,6 +39,6 @@ function CatalogContainer({
   }
 
   return children;
-};
+}
 
 export default CatalogContainer;

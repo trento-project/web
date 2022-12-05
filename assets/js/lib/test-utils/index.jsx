@@ -57,7 +57,7 @@ export async function recordSaga(saga, initialAction) {
       dispatch: (action) => dispatched.push(action),
     },
     saga,
-    initialAction
+    initialAction,
   ).toPromise();
 
   return dispatched;

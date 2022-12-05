@@ -57,7 +57,7 @@ const healthSummaryTableConfig = {
             <HealthIcon health={content} centered />
           </Link>
         ) : (
-          <HealthIcon health={content} centered={true} hoverOpacity={false} />
+          <HealthIcon health={content} centered hoverOpacity={false} />
         );
       },
     },

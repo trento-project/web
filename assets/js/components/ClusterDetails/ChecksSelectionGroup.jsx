@@ -24,12 +24,12 @@ const translateClasses = {
 
 export const allSelected = (selectedState) => selectedState == ALL_CHECKED;
 
-const ChecksSelectionGroup = ({
+function ChecksSelectionGroup({
   children,
   group,
   selected = NONE_CHECKED,
   onChange = () => {},
-}) => {
+}) {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md mb-1">
       <Disclosure>
@@ -44,7 +44,7 @@ const ChecksSelectionGroup = ({
                   checked={allSelected(selected)}
                   className={classNames(
                     switchClasses[selected],
-                    'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
+                    'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
                   )}
                   onChange={onChange}
                 >
@@ -52,7 +52,7 @@ const ChecksSelectionGroup = ({
                     aria-hidden="true"
                     className={classNames(
                       translateClasses[selected],
-                      'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                      'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
                     )}
                   />
                 </Switch>
@@ -94,6 +94,6 @@ const ChecksSelectionGroup = ({
       </Disclosure>
     </div>
   );
-};
+}
 
 export default ChecksSelectionGroup;

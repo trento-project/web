@@ -64,7 +64,7 @@ describe('HomeHealthSummary component', () => {
   it('should have a clickable PACEMAKER CLUSTER icon with link to the belonging cluster when available', () => {
     const [StatefulHomeHealthSummary] = withState(
       <HomeHealthSummary />,
-      initialState
+      initialState,
     );
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
     const [{ clusterId }] = homeHealthSummaryActionPayload;
@@ -72,17 +72,17 @@ describe('HomeHealthSummary component', () => {
     expect(
       container
         .querySelector(':nth-child(1) > :nth-child(4) > a')
-        .getAttribute('href')
+        .getAttribute('href'),
     ).toContain(`/clusters/${clusterId}`);
 
     expect(
-      container.querySelector(':nth-child(4) > :nth-child(4) > a')
+      container.querySelector(':nth-child(4) > :nth-child(4) > a'),
     ).toBeNull();
 
     expect(
       container
         .querySelector(':nth-child(4) > :nth-child(4) > svg')
-        .classList.toString()
+        .classList.toString(),
     ).toContain('hover:opacity-100');
   });
 });

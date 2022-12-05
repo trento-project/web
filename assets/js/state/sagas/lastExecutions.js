@@ -26,7 +26,7 @@ export function* updateLastExecution({ payload }) {
     }
 
     yield put(
-      setLastExecutionError({ groupID: groupID, error: error.message })
+      setLastExecutionError({ groupID, error: error.message }),
     );
   }
 }

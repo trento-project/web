@@ -47,12 +47,12 @@ describe('Catalog reducer', () => {
 
     const error = 'some-error';
 
-    const action = setCatalogError({ data: [], error: error });
+    const action = setCatalogError({ data: [], error });
 
     const expectedState = {
       loading: false,
       data: [],
-      error: error,
+      error,
     };
 
     const actual = catalogNewReducer(initialState, action);
