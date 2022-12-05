@@ -16,6 +16,8 @@ export const getHostname = (hosts = []) => (hostId) => hosts.reduce((acc, host) 
   return acc;
 }, '');
 
+export const findCheck = (catalog, checkID) => catalog?.find((check) => check.id === checkID);
+
 export const getCheckResults = (executionData) => {
   if (!executionData) {
     return [];
@@ -53,12 +55,9 @@ export const getHealth = (checkResults, checkID, agentID) => {
   };
 };
 
-export const findCheck = (catalog, checkID) => catalog.find((check) => check.id === checkID);
-
 export const getCheckDescription = (catalog, checkID) => {
   const check = findCheck(catalog, checkID);
   if (check) {
     return check.description;
   }
-  return null;
 };
