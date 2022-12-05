@@ -60,4 +60,5 @@ export const getCheckDescription = (catalog, checkID) => {
   if (check) {
     return check.description;
   }
+  return null;
 };

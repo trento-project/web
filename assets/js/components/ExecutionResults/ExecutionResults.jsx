@@ -98,7 +98,7 @@ function ExecutionResults({
           </span>
         </h1>
       </div>
-      {cloudProvider == UNKNOWN_PROVIDER && (
+      {cloudProvider === UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following results are valid for on-premise bare metal platforms.
           <br />
@@ -114,9 +114,9 @@ function ExecutionResults({
         onCatalogRefresh={onCatalogRefresh}
       >
         {hosts
-          && hosts.map((hostID, idx) => (
+          && hosts.map((hostID) => (
             <HostResultsWrapper
-              key={idx}
+              key={hostID}
               hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
               reachable
               unreachableMessage=""

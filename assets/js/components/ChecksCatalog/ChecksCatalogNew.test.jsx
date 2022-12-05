@@ -32,11 +32,11 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const groups = await waitFor(() => screen.getAllByRole('list'));
     expect(groups.length).toBe(2);
 
-    for (const group of groups) {
+    groups.forEach((group) => {
       const { getAllByRole } = within(group);
       const checks = getAllByRole('listitem');
       expect(checks.length).toBe(5);
-    }
+    });
 
     const actions = store.getActions();
     const expectedActions = [

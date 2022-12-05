@@ -19,7 +19,7 @@ export function* updateLastExecution({ payload }) {
 
     yield put(setLastExecution(data));
   } catch (error) {
-    if (error.response && error.response.status == 404) {
+    if (error.response && error.response.status === 404) {
       yield put(setLastExecutionEmpty(groupID));
 
       return;

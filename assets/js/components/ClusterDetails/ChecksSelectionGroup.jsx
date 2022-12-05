@@ -22,7 +22,7 @@ const translateClasses = {
   [ALL_CHECKED]: 'translate-x-5',
 };
 
-export const allSelected = (selectedState) => selectedState == ALL_CHECKED;
+export const allSelected = (selectedState) => selectedState === ALL_CHECKED;
 
 function ChecksSelectionGroup({
   children,
@@ -82,7 +82,7 @@ function ChecksSelectionGroup({
                   leaveTo="transform opacity-0"
                 >
                   <Disclosure.Panel className="border-none">
-                    <ul role="list" className="divide-y divide-gray-200">
+                    <ul className="divide-y divide-gray-200">
                       {children}
                     </ul>
                   </Disclosure.Panel>

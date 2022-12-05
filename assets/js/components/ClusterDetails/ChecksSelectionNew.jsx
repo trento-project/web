@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -23,7 +25,8 @@ import ChecksSelectionGroup, {
 } from './ChecksSelectionGroup';
 import ChecksSelectionItem from './ChecksSelectionItem';
 
-const isSelected = (selectedChecks, checkID) => (selectedChecks ? selectedChecks.includes(checkID) : false);
+const isSelected = (selectedChecks, checkID) => (selectedChecks
+  ? selectedChecks.includes(checkID) : false);
 
 const getGroupSelectedState = function (checks, selectedChecks) {
   if (checks.every(({ id }) => isSelected(selectedChecks, id))) {
@@ -138,6 +141,7 @@ function ChecksSelectionNew({ clusterId, cluster }) {
           <button
             className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
             onClick={() => dispatch(checksSelected(selectedChecks, clusterId))}
+            type="button"
           >
             {saving ? (
               <span className="px-20">
