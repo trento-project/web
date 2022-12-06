@@ -98,7 +98,8 @@ defmodule Trento.MixProject do
       {:timex, "~> 3.7.7"},
       {:trento_contracts, github: "trento-project/contracts", ref: "39abbf1", sparse: "elixir"},
       {:proper_case, "~> 1.3.1"},
-      {:polymorphic_embed, "~> 2.0.0"}
+      {:polymorphic_embed, "~> 2.0.0"},
+      {:joken, "~> 2.5.0"}
     ]
   end
 
