@@ -369,7 +369,7 @@ jobs:
       - name: Give executable permissions to photofinish
         run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         env:
           cypress_video: false
           cypress_db_host: postgres
