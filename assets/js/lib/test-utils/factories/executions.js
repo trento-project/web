@@ -14,73 +14,48 @@ export const executionValueFactory = Factory.define(() => ({
   value: faker.datatype.number(),
 }));
 
-export const withEmptyExpectations = (checkResult) => {
-  const agents = checkResult.agents_check_results.map((agent) => {
-    return {
-      ...agent,
-      expectation_evaluations: [],
-    };
-  });
-
-  return {
-    ...checkResult,
-    agents_check_results: agents,
-    expectation_results: [],
-  };
-};
-
-const addExpectation = (checkResult, name, expec, result) => {
-  const agents = checkResult.agents_check_results.map((agent) => {
-    const evals = [...agent.expectation_evaluations, expec];
+export const executionExpectationEvaluationFactory = Factory.define(
+  ({ sequence, params }) => {
+    const name = params.name || `expectation_${sequence}`;
 
     return {
-      ...agent,
-      expectation_evaluations: evals,
+      name,
+      return_value: faker.datatype.number(),
+      type: expectationReturnTypeEnum(),
     };
-  });
+  }
+);
 
-  const results = [
-    ...checkResult.expectation_results,
-    expectationResultFactory.build({ name: name, result: result }),
-  ];
+export const executionExpectationEvaluationErrorFactory = Factory.define(
+  ({ sequence, params }) => {
+    const name = params.name || `expectation_${sequence}`;
 
-  return {
-    ...checkResult,
-    agents_check_results: agents,
-    expectation_results: results,
-  };
-};
+    return {
+      name,
+      message: faker.hacker.phrase(),
+      type: faker.animal.dog(),
+    };
+  }
+);
 
-export const addPassingExpectation = (checkResult, type) => {
-  const name = faker.company.name();
-  const expec = executionExpectationEvaluationFactory.build({
-    name: name,
-    type: type,
-    return_value: true,
-  });
+export const expectationResultFactory = Factory.define(
+  ({ sequence, params }) => {
+    const name = params.name || `expectation_${sequence}`;
 
-  return addExpectation(checkResult, name, expec, true);
-};
+    return {
+      name,
+      result: faker.datatype.boolean(),
+      type: expectationReturnTypeEnum(),
+    };
+  }
+);
 
-export const addCriticalExpectation = (checkResult, type) => {
-  const name = faker.company.name();
-  const expec = executionExpectationEvaluationFactory.build({
-    name: name,
-    type: type,
-    return_value: false,
-  });
-
-  return addExpectation(checkResult, name, expec, false);
-};
-
-export const addExpectationWithError = (checkResult) => {
-  const name = faker.company.name();
-  const expec = executionExpectationEvaluationErrorFactory.build({
-    name: name,
-  });
-
-  return addExpectation(checkResult, name, expec, false);
-};
+export const executionFactFactory = Factory.define(() => ({
+  check_id: faker.datatype.uuid(),
+  result: resultEnum(),
+  agents_check_results: [],
+  expectation_results: expectationResultFactory.buildList(2),
+}));
 
 export const agentCheckResultFactory = Factory.define(() => {
   executionExpectationEvaluationFactory.rewindSequence();
@@ -100,43 +75,12 @@ export const agentCheckErrorFactory = Factory.define(() => ({
   message: faker.hacker.phrase(),
 }));
 
-export const expectationResultFactory = Factory.define(
-  ({ sequence, params }) => {
-    const name = params.name || `expectation_${sequence}`;
+export const targetFactory = Factory.define(() => ({
+  agent_id: faker.datatype.uuid(),
+  checks: Array.from({ length: 5 }).map((_) => faker.datatype.uuid()),
+}));
 
-    return {
-      name: name,
-      result: faker.datatype.boolean(),
-      type: expectationReturnTypeEnum(),
-    };
-  }
-);
-
-export const executionExpectationEvaluationFactory = Factory.define(
-  ({ sequence, params }) => {
-    const name = params.name || `expectation_${sequence}`;
-
-    return {
-      name: name,
-      return_value: faker.datatype.number(),
-      type: expectationReturnTypeEnum(),
-    };
-  }
-);
-
-export const executionExpectationEvaluationErrorFactory = Factory.define(
-  ({ sequence, params }) => {
-    const name = params.name || `expectation_${sequence}`;
-
-    return {
-      name: name,
-      message: faker.hacker.phrase(),
-      type: faker.animal.dog(),
-    };
-  }
-);
-
-export const executionFactFactory = Factory.define(() => ({
+export const checkResultFactory = Factory.define(() => ({
   check_id: faker.datatype.uuid(),
   result: resultEnum(),
   agents_check_results: agentCheckResultFactory.buildList(2),
@@ -169,3 +113,69 @@ export const withCompletedResults = (execution, result, checkResults) => ({
 export const checksExecutionCompletedFactory = Factory.define(({ params }) =>
   withCompletedResults(checksExecutionRunningFactory.build(params))
 );
+
+export const withEmptyExpectations = (checkResult) => {
+  const agents = checkResult.agents_check_results.map((agent) => ({
+    ...agent,
+    expectation_evaluations: [],
+  }));
+
+  return {
+    ...checkResult,
+    agents_check_results: agents,
+    expectation_results: [],
+  };
+};
+
+const addExpectation = (checkResult, name, expec, result) => {
+  const agents = checkResult.agents_check_results.map((agent) => {
+    const evals = [...agent.expectation_evaluations, expec];
+
+    return {
+      ...agent,
+      expectation_evaluations: evals,
+    };
+  });
+
+  const results = [
+    ...checkResult.expectation_results,
+    expectationResultFactory.build({ name, result }),
+  ];
+
+  return {
+    ...checkResult,
+    agents_check_results: agents,
+    expectation_results: results,
+  };
+};
+
+export const addPassingExpectation = (checkResult, type) => {
+  const name = faker.company.name();
+  const expec = executionExpectationEvaluationFactory.build({
+    name,
+    type,
+    return_value: true,
+  });
+
+  return addExpectation(checkResult, name, expec, true);
+};
+
+export const addCriticalExpectation = (checkResult, type) => {
+  const name = faker.company.name();
+  const expec = executionExpectationEvaluationFactory.build({
+    name,
+    type,
+    return_value: false,
+  });
+
+  return addExpectation(checkResult, name, expec, false);
+};
+
+export const addExpectationWithError = (checkResult) => {
+  const name = faker.company.name();
+  const expec = executionExpectationEvaluationErrorFactory.build({
+    name,
+  });
+
+  return addExpectation(checkResult, name, expec, false);
+};

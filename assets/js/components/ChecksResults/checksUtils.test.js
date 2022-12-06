@@ -117,7 +117,7 @@ describe('checksUtils', () => {
       });
 
       const { check_id: checkID } = checkResult;
-      const { agent_id: agentID, message: message } = agentError;
+      const { agent_id: agentID, message } = agentError;
 
       const { health, error, expectations, failedExpectations } =
         getCheckHealthByAgent([checkResult], checkID, agentID);

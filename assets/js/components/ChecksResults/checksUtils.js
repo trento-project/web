@@ -1,8 +1,7 @@
 import { uniq } from '@lib/lists';
 
-export const description = (catalog, checkId) => {
-  return catalog.find(({ id }) => id === checkId)?.description;
-};
+export const description = (catalog, checkId) =>
+  catalog.find(({ id }) => id === checkId)?.description;
 
 export const sortChecks = (checksResults = []) =>
   checksResults.sort((a, b) => (a.check_id > b.check_id ? 1 : -1));
@@ -34,13 +33,12 @@ export const getCheckResults = (executionData) => {
   return executionData.check_results;
 };
 
-export const getHosts = (checkResults) => {
-  return uniq(
+export const getHosts = (checkResults) =>
+  uniq(
     checkResults.flatMap(({ agents_check_results }) =>
       agents_check_results.map(({ agent_id }) => agent_id)
     )
   );
-};
 
 export const getChecks = (checkResults) =>
   checkResults.map(({ check_id }) => check_id);
@@ -79,28 +77,28 @@ export const getCheckHealthByAgent = (checkResults, checkID, agentID) => {
   // expect evaluating to false
   const failedExpectEvaluations =
     agentCheckResult?.expectation_evaluations.filter(
-      ({ type, return_value }) => type == 'expect' && !return_value
+      ({ type, return_value: returnValue }) => type === 'expect' && !returnValue
     ).length;
 
   // expect_same
   const failedExpectSameEvaluations =
     agentCheckResult?.expectation_evaluations.filter(
       ({ name, type }) =>
-        type == 'expect_same' &&
+        type === 'expect_same' &&
         !checkResult.expectation_results.find(
-          ({ name: result_name }) => result_name == name
-        ).result
+          ({ name: resultName }) => resultName === name
+        )?.result
     ).length;
 
-  const failedExpectation =
+  const failedExpectations =
     evaluationErrors + failedExpectEvaluations + failedExpectSameEvaluations;
 
-  const health = failedExpectation > 0 ? checkResult.result : 'passing';
+  const health = failedExpectations > 0 ? checkResult.result : 'passing';
 
   return {
-    health: health,
+    health,
     expectations: checkResult.expectation_results.length,
-    failedExpectations: failedExpectation,
+    failedExpectations,
   };
 };
 
