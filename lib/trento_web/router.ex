@@ -14,11 +14,12 @@ defmodule TrentoWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.ApiSpec
+    plug Trento.Application.Auth.JwtFlow, otp_app: :trento
   end
 
   pipeline :protected do
     plug Pow.Plug.RequireAuthenticated,
-      error_handler: Pow.Phoenix.PlugErrorHandler
+      error_handler: TrentoWeb.AuthErrorHandler
   end
 
   pipeline :protected_api do
@@ -40,7 +41,13 @@ defmodule TrentoWeb.Router do
 
     get "/api/doc", OpenApiSpex.Plug.SwaggerUI, path: "/api/openapi"
 
-    pow_session_routes()
+    get "/login", TrentoWeb.SessionController, :new, as: :login
+  end
+
+  scope "/", TrentoWeb do
+    pipe_through [:api]
+
+    post "/session", SessionController, :create, as: :login
   end
 
   scope "/feature-flags" do
