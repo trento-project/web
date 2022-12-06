@@ -31,7 +31,7 @@ const removeTag = (tag, clusterId) => {
   del(`/api/clusters/${clusterId}/tags/${tag}`);
 };
 
-const ClustersList = () => {
+function ClustersList() {
   const clusters = useSelector((state) => state.clustersList.clusters);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,13 +45,11 @@ const ClustersList = () => {
         key: 'health',
         filter: true,
         filterFromParams: true,
-        render: (health, { checks_execution: checksExecution }) => {
-          return (
-            <div className="ml-4">
-              <ExecutionIcon health={health} executionState={checksExecution} />
-            </div>
-          );
-        },
+        render: (health, { checks_execution: checksExecution }) => (
+          <div className="ml-4">
+            <ExecutionIcon health={health} executionState={checksExecution} />
+          </div>
+        ),
       },
       {
         title: 'Name',
@@ -94,22 +92,22 @@ const ClustersList = () => {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) =>
-          element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
+            resourceId={item.id}
             onChange={() => {}}
             onAdd={(tag) => {
               addTag(tag, item.id);
               dispatch(
-                addTagToCluster({ tags: [{ value: tag }], id: item.id })
+                addTagToCluster({ tags: [{ value: tag }], id: item.id }),
               );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromCluster({ tags: [{ value: tag }], id: item.id })
+                removeTagFromCluster({ tags: [{ value: tag }], id: item.id }),
               );
             }}
           />
@@ -118,25 +116,23 @@ const ClustersList = () => {
     ],
   };
 
-  const data = clusters.map((cluster) => {
-    return {
-      health: cluster.health,
-      name: cluster.name,
-      id: cluster.id,
-      sid: cluster.sid,
-      type: cluster.type,
-      hosts_number: cluster.hosts_number,
-      resources_number: cluster.resources_number,
-      checks_execution: cluster.checks_execution,
-      selected_checks: cluster.selected_checks,
-      tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
-    };
-  });
+  const data = clusters.map((cluster) => ({
+    health: cluster.health,
+    name: cluster.name,
+    id: cluster.id,
+    sid: cluster.sid,
+    type: cluster.type,
+    hosts_number: cluster.hosts_number,
+    resources_number: cluster.resources_number,
+    checks_execution: cluster.checks_execution,
+    selected_checks: cluster.selected_checks,
+    tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
+  }));
 
   const counters = getCounters(data || []);
 
   return (
-    <Fragment>
+    <>
       <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
@@ -144,8 +140,8 @@ const ClustersList = () => {
         searchParams={searchParams}
         setSearchParams={setSearchParams}
       />
-    </Fragment>
+    </>
   );
-};
+}
 
 export default ClustersList;

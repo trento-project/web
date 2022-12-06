@@ -3,7 +3,7 @@ import Button from '@components/Button';
 import { useNavigate } from 'react-router-dom';
 import { EOS_ARROW_BACK } from 'eos-icons-react';
 
-export const BackButton = ({ children, url }) => {
+export function BackButton({ children, url }) {
   const navigate = useNavigate();
 
   return (
@@ -21,6 +21,6 @@ export const BackButton = ({ children, url }) => {
       </div>
     </div>
   );
-};
+}
 
 export default BackButton;

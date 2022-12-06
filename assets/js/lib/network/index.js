@@ -2,46 +2,13 @@ import axios from 'axios';
 import { logError, logWarn } from '@lib/log';
 
 const conf = {
-  validateStatus: (status) => {
-    return status < 500;
-  },
+  validateStatus: (status) => status < 500,
 };
 
-export const post = function (url, data) {
-  return axios
-    .post(url, data, conf)
-    .then(handleResponseStatus)
-    .catch((error) => {
-      handleError(error);
-    });
-};
-
-export const del = function (url) {
-  return axios
-    .delete(url, conf)
-    .then(handleResponseStatus)
-    .catch((error) => {
-      handleError(error);
-    });
-};
-
-export const put = function (url, data) {
-  return axios
-    .put(url, data, conf)
-    .then(handleResponseStatus)
-    .catch((error) => {
-      handleError(error);
-    });
-};
-
-export const get = function (url) {
-  return axios
-    .get(url, conf)
-    .then(handleResponseStatus)
-    .catch((error) => {
-      handleError(error);
-    });
-};
+function handleError(error) {
+  logError(error);
+  throw error;
+}
 
 function handleResponseStatus(response) {
   if (response.status < 400) {
@@ -61,7 +28,38 @@ function handleResponseStatus(response) {
   return response;
 }
 
-function handleError(error) {
-  logError(error);
-  throw error;
-}
+export const post = function post(url, data) {
+  return axios
+    .post(url, data, conf)
+    .then(handleResponseStatus)
+    .catch((error) => {
+      handleError(error);
+    });
+};
+
+export const del = function del(url) {
+  return axios
+    .delete(url, conf)
+    .then(handleResponseStatus)
+    .catch((error) => {
+      handleError(error);
+    });
+};
+
+export const put = function put(url, data) {
+  return axios
+    .put(url, data, conf)
+    .then(handleResponseStatus)
+    .catch((error) => {
+      handleError(error);
+    });
+};
+
+export const get = function get(url) {
+  return axios
+    .get(url, conf)
+    .then(handleResponseStatus)
+    .catch((error) => {
+      handleError(error);
+    });
+};

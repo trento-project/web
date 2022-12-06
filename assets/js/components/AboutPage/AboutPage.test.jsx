@@ -1,23 +1,23 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { aboutFactory } from '@lib/test-utils/factories';
-import AboutPage from './AboutPage';
 import { act, screen } from '@testing-library/react';
 import { renderWithRouter } from '@lib/test-utils';
+import AboutPage from './AboutPage';
 
 describe('AboutPage component', () => {
   const apiRequestData = aboutFactory.build();
   it('should render the about page with content from the api', async () => {
     await act(async () => {
       renderWithRouter(
-        <AboutPage onFetch={() => Promise.resolve({ data: apiRequestData })} />
+        <AboutPage onFetch={() => Promise.resolve({ data: apiRequestData })} />,
       );
     });
 
     expect(screen.getByText(apiRequestData.flavor)).toBeTruthy();
     expect(screen.getByText(apiRequestData.version)).toBeTruthy();
     expect(
-      screen.getByText(`${apiRequestData.sles_subscriptions} found`)
+      screen.getByText(`${apiRequestData.sles_subscriptions} found`),
     ).toBeTruthy();
   });
 
@@ -28,7 +28,7 @@ describe('AboutPage component', () => {
 
     await act(async () => {
       renderWithRouter(
-        <AboutPage onFetch={() => Promise.reject(errorMessage)} />
+        <AboutPage onFetch={() => Promise.reject(errorMessage)} />,
       );
     });
 

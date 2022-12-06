@@ -62,13 +62,13 @@ describe('lastExecutions reducer', () => {
     };
 
     const error = faker.hacker.phrase();
-    const action = setLastExecutionError({ groupID: 'someID', error: error });
+    const action = setLastExecutionError({ groupID: 'someID', error });
 
     const expectedState = {
       someID: {
         data: null,
         loading: false,
-        error: error,
+        error,
       },
     };
 
@@ -90,7 +90,7 @@ describe('lastExecutions reducer', () => {
 
     const expectedState = {
       someID: {
-        data: data,
+        data,
         loading: false,
         error: null,
       },

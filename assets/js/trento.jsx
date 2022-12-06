@@ -8,29 +8,27 @@ import { Provider } from 'react-redux';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { store } from './state';
-
 import Layout from '@components/Layout';
 import Home from '@components/Home';
 import AboutPage from '@components/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
-import { ClusterSettings } from '@components/ClusterDetails';
+import ClusterDetails, { ClusterSettings, ClusterDetailsNew } from '@components/ClusterDetails';
 import ChecksResults from '@components/ChecksResults';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails from '@components/HostDetails';
-import ClusterDetails, { ClusterDetailsNew } from '@components/ClusterDetails';
 import DatabasesOverview from '@components/DatabasesOverview';
-import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
-import DatabaseDetails from './components/DatabaseDetails';
 import ChecksCatalog, { ChecksCatalogNew } from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
 import Settings from '@components/Settings';
 import Eula from '@components/Eula';
+import DatabaseDetails from './components/DatabaseDetails';
+import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
+import { store } from './state';
 
-const App = () => {
+function App() {
   return (
     <Provider store={store}>
       <Toaster position="top-right" />
@@ -59,7 +57,7 @@ const App = () => {
               />
               <Route
                 path="clusters/:clusterID/settings_new"
-                element={<ClusterSettings newChecksSelectionView={true} />}
+                element={<ClusterSettings newChecksSelectionView />}
               />
               <Route
                 path="clusters/:clusterID/checks/results"
@@ -84,7 +82,7 @@ const App = () => {
       </BrowserRouter>
     </Provider>
   );
-};
+}
 
 const container = document.getElementById('trento');
 if (container) {

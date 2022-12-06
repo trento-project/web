@@ -4,9 +4,9 @@ import React from 'react';
 import InstanceOverview from '@components/InstanceOverview';
 import { DATABASE_TYPE } from '@lib/model';
 
-export const DatabaseInstance = ({ instance }) => (
-  <InstanceOverview instanceType={DATABASE_TYPE} instance={instance} />
-);
+export function DatabaseInstance({ instance }) {
+  return <InstanceOverview instanceType={DATABASE_TYPE} instance={instance} />;
+}
 
 const databaseInstanceColumns = [
   { name: 'Health', cssClass: 'w-20' },
@@ -17,7 +17,7 @@ const databaseInstanceColumns = [
   { name: 'Host' },
 ];
 
-const PlainDatabaseItemOverview = ({ instances, asDatabaseLayer = false }) => {
+function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
   return (
     <div
       className={classNames('flex bg-white dark:bg-gray-800 shadow mb-2', {
@@ -37,9 +37,9 @@ const PlainDatabaseItemOverview = ({ instances, asDatabaseLayer = false }) => {
         <div className="table w-full">
           <div className="table-header-group bg-grey bg-gray-100">
             <div className="table-row">
-              {databaseInstanceColumns.map(({ name, cssClass }, index) => (
+              {databaseInstanceColumns.map(({ name, cssClass }) => (
                 <div
-                  key={index}
+                  key={name}
                   className={`table-cell p-2 text-left text-xs font-medium text-gray-500 uppercase ${cssClass}`}
                 >
                   {name}
@@ -48,32 +48,37 @@ const PlainDatabaseItemOverview = ({ instances, asDatabaseLayer = false }) => {
             </div>
           </div>
           <div className="table-row-group">
-            {instances &&
-              instances.map((instance, index) => {
-                return <DatabaseInstance key={index} instance={instance} />;
-              })}
+            {instances
+              && instances.map(
+                (instance) => (
+                  <DatabaseInstance
+                    key={instance.host_id + instance.sap_system_id}
+                    instance={instance}
+                  />
+                ),
+              )}
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-const DatabaseLayer = ({ instances }) => {
+function DatabaseLayer({ instances }) {
   return (
-    <PlainDatabaseItemOverview instances={instances} asDatabaseLayer={true} />
+    <PlainDatabaseItemOverview instances={instances} asDatabaseLayer />
   );
-};
+}
 
-const DatabaseInstances = ({ instances }) => {
+function DatabaseInstances({ instances }) {
   return (
     <div className="p-2">
       <PlainDatabaseItemOverview instances={instances} />
     </div>
   );
-};
+}
 
-const DatabaseItemOverview = ({ database, asDatabaseLayer = false }) => {
+function DatabaseItemOverview({ database, asDatabaseLayer = false }) {
   const { databaseInstances } = database;
 
   return asDatabaseLayer ? (
@@ -81,6 +86,6 @@ const DatabaseItemOverview = ({ database, asDatabaseLayer = false }) => {
   ) : (
     <DatabaseInstances instances={databaseInstances} />
   );
-};
+}
 
 export default DatabaseItemOverview;

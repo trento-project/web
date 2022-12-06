@@ -1,3 +1,10 @@
+export const any = (predicate, label) => Object.keys(predicate).reduce((accumulator, key) => {
+  if (accumulator) {
+    return true;
+  }
+  return predicate[key] === label;
+}, false);
+
 export const isMostRelevantPrio = (predicate, label) => {
   switch (label) {
     case 'critical':
@@ -8,25 +15,21 @@ export const isMostRelevantPrio = (predicate, label) => {
 
     case 'passing':
       return (
-        !any(predicate, 'critical') &&
-        !any(predicate, 'warning') &&
-        any(predicate, label)
+        !any(predicate, 'critical')
+        && !any(predicate, 'warning')
+        && any(predicate, label)
       );
+    default:
+      return null;
   }
 };
 
-export const any = (predicate, label) =>
-  Object.keys(predicate).reduce((accumulator, key) => {
-    if (accumulator) {
-      return true;
-    }
-    return predicate[key] === label;
-  }, false);
-
 export const getCounters = (data) => {
-  const defaultCounter = { critical: 0, warning: 0, passing: 0, unknown: 0 };
+  const defaultCounter = {
+    critical: 0, warning: 0, passing: 0, unknown: 0,
+  };
 
-  if (!data || 0 === data.length) {
+  if (!data || data.length === 0) {
     return defaultCounter;
   }
 

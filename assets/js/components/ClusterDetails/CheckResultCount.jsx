@@ -27,7 +27,7 @@ const uiForResult = {
   },
 };
 
-const CheckResultCount = ({ value, result, onClick }) => {
+function CheckResultCount({ value, result, onClick }) {
   const {
     iconColorClassName,
     backgroundColorClassName,
@@ -39,6 +39,7 @@ const CheckResultCount = ({ value, result, onClick }) => {
     <div
       role="button"
       onClick={onClick}
+      aria-hidden="true"
       className="hover:text-jungle-green-500 flex items-center rounded p-3 text-lg font-bold"
     >
       <span className={`rounded-lg p-2 ${backgroundColorClassName} mr-2`}>
@@ -50,6 +51,6 @@ const CheckResultCount = ({ value, result, onClick }) => {
       <div className="flex text-2xl">{value}</div>
     </div>
   );
-};
+}
 
 export default CheckResultCount;

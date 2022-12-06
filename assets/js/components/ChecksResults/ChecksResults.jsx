@@ -18,6 +18,7 @@ import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 
 import { getClusterName } from '@components/ClusterLink';
 
+import { ClusterInfoBox } from '@components/ClusterDetails';
 import ChecksResultFilters, { useFilteredChecks } from './ChecksResultFilters';
 import ResultsContainer from './ResultsContainer';
 import CheckResult from './CheckResult';
@@ -29,12 +30,10 @@ import {
   sortHosts,
   sortChecks,
 } from './checksUtils';
-import { ClusterInfoBox } from '@components/ClusterDetails';
 
-const truncatedClusterNameClasses =
-  'font-bold truncate w-60 inline-block align-top';
+const truncatedClusterNameClasses = 'font-bold truncate w-60 inline-block align-top';
 
-const ChecksResults = () => {
+function ChecksResults() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCheck, setSelectedCheck] = useState('');
   const dispatch = useDispatch();
@@ -59,8 +58,7 @@ const ChecksResults = () => {
 
   const hostnames = getHostname(useSelector((state) => state.hostsList.hosts));
 
-  const { filteredChecksyByHost, setFiltersPredicates } =
-    useFilteredChecks(cluster);
+  const { filteredChecksyByHost, setFiltersPredicates } = useFilteredChecks(cluster);
 
   const executionState = cluster?.checks_execution;
 
@@ -92,7 +90,8 @@ const ChecksResults = () => {
       </BackButton>
       <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
-          <span className="font-medium">Checks Results for cluster</span>{' '}
+          <span className="font-medium">Checks Results for cluster</span>
+          {' '}
           <span
             className={classNames('font-bold', truncatedClusterNameClasses)}
           >
@@ -100,12 +99,10 @@ const ChecksResults = () => {
           </span>
         </h1>
         <ChecksResultFilters
-          onChange={(filtersPredicates) =>
-            setFiltersPredicates(filtersPredicates)
-          }
+          onChange={(filtersPredicates) => setFiltersPredicates(filtersPredicates)}
         />
       </div>
-      {cluster.provider == UNKNOWN_PROVIDER && (
+      {cluster.provider === UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following results are valid for on-premise bare metal platforms.
           <br />
@@ -121,17 +118,16 @@ const ChecksResults = () => {
         selectedChecks={cluster?.selected_checks}
         onCatalogRefresh={dispatchUpdateCatalog}
       >
-        {sortHosts(hosts).map(({ host_id: hostID, reachable, msg }, idx) => (
+        {sortHosts(hosts).map(({ host_id: hostID, reachable, msg }) => (
           <HostResultsWrapper
-            key={idx}
+            key={hostID}
             hostname={hostnames(hostID)}
             reachable={reachable}
             unreachableMessage={msg}
           >
             {sortChecks(filteredChecksyByHost(hostID)).map((checkId) => {
               const health = cluster.checks_results.find(
-                (result) =>
-                  result.check_id === checkId && result.host_id === hostID
+                (result) => result.check_id === checkId && result.host_id === hostID,
               )?.result;
 
               return (
@@ -153,6 +149,6 @@ const ChecksResults = () => {
       </ResultsContainer>
     </div>
   );
-};
+}
 
 export default ChecksResults;

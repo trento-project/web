@@ -20,16 +20,18 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
+// Phoenix stuff, safe to ignore the import/no-unresolved
+/* eslint-disable import/no-unresolved */
 import 'phoenix_html';
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from 'phoenix';
 import { LiveSocket } from 'phoenix_live_view';
 import topbar from '../vendor/topbar';
 
-let csrfToken = document
+const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
-let liveSocket = new LiveSocket('/live', Socket, {
+const liveSocket = new LiveSocket('/live', Socket, {
   params: { _csrf_token: csrfToken },
 });
 

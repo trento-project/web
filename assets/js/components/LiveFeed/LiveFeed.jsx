@@ -21,7 +21,7 @@ const liveFeedConfig = {
   ],
 };
 
-const LiveFeed = () => {
+function LiveFeed() {
   const liveFeed = useSelector((state) => state.liveFeed.entries);
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
@@ -53,6 +53,6 @@ const LiveFeed = () => {
       </div>
     </div>
   );
-};
+}
 
 export default LiveFeed;

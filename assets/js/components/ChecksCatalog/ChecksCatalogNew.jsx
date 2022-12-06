@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -8,18 +9,23 @@ import { updateCatalog } from '@state/actions/catalog';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 
-export const ChecksCatalogNew = () => {
+// eslint-disable-next-line import/prefer-default-export
+export function ChecksCatalogNew() {
   const dispatch = useDispatch();
 
   const {
     data: catalogData,
     error: catalogError,
-    loading: loading,
+    loading,
   } = useSelector(getCatalog());
 
   useEffect(() => {
     dispatch(updateCatalog());
   }, [dispatch]);
+
+  useEffect(() => {
+    getCatalog();
+  }, []);
 
   return (
     <CatalogContainer
@@ -40,7 +46,7 @@ export const ChecksCatalogNew = () => {
                   {group}
                 </h3>
               </div>
-              <ul role="list" className="divide-y divide-gray-200">
+              <ul className="divide-y divide-gray-200">
                 {checks.map((check) => (
                   <CheckItem
                     key={check.id}
@@ -52,9 +58,9 @@ export const ChecksCatalogNew = () => {
                 ))}
               </ul>
             </div>
-          )
+          ),
         )}
       </div>
     </CatalogContainer>
   );
-};
+}

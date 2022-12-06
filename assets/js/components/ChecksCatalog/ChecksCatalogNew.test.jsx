@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { screen, within, act, waitFor } from '@testing-library/react';
+import {
+  screen, within, act, waitFor,
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
@@ -22,7 +24,7 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     };
     const [statefulCatalog, store] = withState(
       <ChecksCatalogNew />,
-      initialState
+      initialState,
     );
 
     await act(async () => renderWithRouter(statefulCatalog));
@@ -30,11 +32,11 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const groups = await waitFor(() => screen.getAllByRole('list'));
     expect(groups.length).toBe(2);
 
-    for (let group of groups) {
-      let { getAllByRole } = within(group);
-      let checks = getAllByRole('listitem');
+    groups.forEach((group) => {
+      const { getAllByRole } = within(group);
+      const checks = getAllByRole('listitem');
       expect(checks.length).toBe(5);
-    }
+    });
 
     const actions = store.getActions();
     const expectedActions = [

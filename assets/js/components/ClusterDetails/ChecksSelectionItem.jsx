@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 
 import { Switch } from '@headlessui/react';
@@ -6,13 +7,13 @@ import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const ChecksSelectionItem = ({
+function ChecksSelectionItem({
   checkID,
   name,
   description,
   selected,
   onChange = () => {},
-}) => {
+}) {
   return (
     <li>
       <a className="block hover:bg-gray-50">
@@ -34,7 +35,7 @@ const ChecksSelectionItem = ({
                 checked={selected}
                 className={classNames(
                   { 'bg-jungle-green-500': selected, 'bg-gray-200': !selected },
-                  'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
+                  'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
                 )}
                 onChange={onChange}
               >
@@ -42,7 +43,7 @@ const ChecksSelectionItem = ({
                   aria-hidden="true"
                   className={classNames(
                     { 'translate-x-5': selected, 'translate-x-0': !selected },
-                    'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                    'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
                   )}
                 />
               </Switch>
@@ -52,6 +53,6 @@ const ChecksSelectionItem = ({
       </a>
     </li>
   );
-};
+}
 
 export default ChecksSelectionItem;

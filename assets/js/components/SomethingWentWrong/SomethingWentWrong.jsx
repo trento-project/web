@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@components/Button';
 import TrentoLogo from '@static/trento-icon.png';
 
-const SomethingWentWrong = () => {
+function SomethingWentWrong() {
   const navigate = useNavigate();
 
   return (
@@ -18,19 +18,19 @@ const SomethingWentWrong = () => {
             <Button
               className="px-2 py-2 w-36 mt-16"
               onClick={() => {
-                navigate(`/`);
+                navigate('/');
               }}
             >
               Go back home
             </Button>
           </div>
           <div className="block w-full mx-auto md:mt-0 relative max-w-md lg:max-w-2xl grayscale">
-            <img src={TrentoLogo} />
+            <img src={TrentoLogo} alt="trento project logo" />
           </div>
         </div>
       </div>
     </main>
   );
-};
+}
 
 export default SomethingWentWrong;

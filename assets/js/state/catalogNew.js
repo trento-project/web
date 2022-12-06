@@ -26,7 +26,6 @@ export const catalogNewSlice = createSlice({
   },
 });
 
-export const { setCatalogLoading, setCatalogData, setCatalogError } =
-  catalogNewSlice.actions;
+export const { setCatalogLoading, setCatalogData, setCatalogError } = catalogNewSlice.actions;
 
 export default catalogNewSlice.reducer;

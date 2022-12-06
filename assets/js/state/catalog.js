@@ -26,8 +26,7 @@ export const catalogSlice = createSlice({
 
       if (Object.prototype.hasOwnProperty.call(action.payload, 'error')) {
         state.errorCode = action.payload.error;
-        state.error =
-          errorMessages[action.payload.error] || errorMessages['default'];
+        state.error = errorMessages[action.payload.error] || errorMessages.default;
         state.data = [];
         return;
       }

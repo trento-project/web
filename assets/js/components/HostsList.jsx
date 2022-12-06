@@ -16,18 +16,16 @@ import { getCounters } from '@components/HealthSummary/summarySelection';
 const getInstancesByHost = (
   applicationInstances,
   databaseInstances,
-  hostId
-) => {
-  return applicationInstances
-    .map((instance) => ({ ...instance, type: 'sap_systems' }))
-    .concat(
-      databaseInstances.map((instance) => ({
-        ...instance,
-        type: 'databases',
-      }))
-    )
-    .filter((instance) => instance.host_id === hostId);
-};
+  hostId,
+) => applicationInstances
+  .map((instance) => ({ ...instance, type: 'sap_systems' }))
+  .concat(
+    databaseInstances.map((instance) => ({
+      ...instance,
+      type: 'databases',
+    })),
+  )
+  .filter((instance) => instance.host_id === hostId);
 
 const addTag = (tag, hostId) => {
   post(`/api/hosts/${hostId}/tags`, {
@@ -39,11 +37,11 @@ const removeTag = (tag, hostId) => {
   del(`/api/hosts/${hostId}/tags/${tag}`);
 };
 
-const HostsList = () => {
+function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
   const { applicationInstances, databaseInstances } = useSelector(
-    (state) => state.sapSystemsList
+    (state) => state.sapSystemsList,
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -59,9 +57,7 @@ const HostsList = () => {
         key: 'heartbeat',
         filter: true,
         filterFromParams: true,
-        render: (_content, item) => {
-          return <HealthIcon health={item.heartbeat} centered={true} />;
-        },
+        render: (_content, item) => <HealthIcon health={item.heartbeat} centered />,
       },
       {
         title: 'Hostname',
@@ -74,12 +70,11 @@ const HostsList = () => {
       {
         title: 'IP',
         key: 'ip',
-        render: (content) =>
-          content.map((ip) => (
-            <div key={ip} className="text-sm text-gray-900">
-              {ip}
-            </div>
-          )),
+        render: (content) => content.map((ip) => (
+          <div key={ip} className="text-sm text-gray-900">
+            {ip}
+          </div>
+        )),
       },
       {
         title: 'Provider',
@@ -89,21 +84,18 @@ const HostsList = () => {
         title: 'Cluster',
         key: 'cluster',
         className: 'w-40',
-        render: (cluster) => {
-          return <ClusterLink cluster={cluster} />;
-        },
+        render: (cluster) => <ClusterLink cluster={cluster} />,
       },
       {
         title: 'SID',
         key: 'sid',
         filterFromParams: true,
-        filter: (filter, key) => (element) =>
-          element[key].some((sid) => filter.includes(sid)),
+        filter: (filter, key) => (element) => element[key].some((sid) => filter.includes(sid)),
         render: (sids, { sap_systems }) => {
-          let sidsArray = sap_systems.map((instance, index) => [
+          const sidsArray = sap_systems.map((instance, index) => [
             index > 0 && ', ',
             <SapSystemLink
-              key={index}
+              key={`${instance?.sap_system_id}-${instance?.id}`}
               systemType={instance?.type}
               sapSystemId={instance?.sap_system_id}
             >
@@ -128,11 +120,11 @@ const HostsList = () => {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) =>
-          element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
+            resourceId={item.id}
             onChange={() => {}}
             onAdd={(tag) => {
               addTag(tag, item.id);
@@ -141,7 +133,7 @@ const HostsList = () => {
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromHost({ tags: [{ value: tag }], id: item.id })
+                removeTagFromHost({ tags: [{ value: tag }], id: item.id }),
               );
             }}
           />
@@ -151,11 +143,11 @@ const HostsList = () => {
   };
 
   const data = hosts.map((host) => {
-    const cluster = clusters.find((cluster) => cluster.id === host.cluster_id);
+    const cluster = clusters.find((c) => c.id === host.cluster_id);
     const sapSystemList = getInstancesByHost(
       applicationInstances,
       databaseInstances,
-      host.id
+      host.id,
     );
 
     return {
@@ -163,10 +155,8 @@ const HostsList = () => {
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
-      sid: sapSystemList.map((sapSystem) => {
-        return sapSystem.sid;
-      }),
-      cluster: cluster,
+      sid: sapSystemList.map((sapSystem) => sapSystem.sid),
+      cluster,
       agent_version: host.agent_version,
       id: host.id,
       tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
@@ -176,7 +166,7 @@ const HostsList = () => {
 
   const counters = getCounters(data || []);
   return (
-    <Fragment>
+    <>
       <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
@@ -184,8 +174,8 @@ const HostsList = () => {
         searchParams={searchParams}
         setSearchParams={setSearchParams}
       />
-    </Fragment>
+    </>
   );
-};
+}
 
 export default HostsList;

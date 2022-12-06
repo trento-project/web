@@ -10,7 +10,9 @@ import { withState } from '@lib/test-utils';
 import Eula from '.';
 
 describe('Eula component', () => {
-  it('should render community eula correctly', () => {
+  it('should render community eula correctly', async () => {
+    const user = userEvent.setup();
+
     const initialState = {
       settings: { eulaVisible: true, setIsPremium: false },
     };
@@ -21,14 +23,15 @@ describe('Eula component', () => {
     expect(acceptButton).toHaveTextContent('Accept');
     expect(screen.getByText(/Trento Community/)).toBeTruthy();
 
-    userEvent.click(acceptButton);
+    await user.click(acceptButton);
 
     const actions = store.getActions();
     const expectedPayload = { type: 'ACCEPT_EULA' };
     expect(actions).toEqual([expectedPayload]);
   });
 
-  it('should render premium eula correctly', () => {
+  it('should render premium eula correctly', async () => {
+    const user = userEvent.setup();
     const initialState = { settings: { eulaVisible: true, isPremium: true } };
     const [statefulEula, store] = withState(<Eula />, initialState);
 
@@ -37,7 +40,7 @@ describe('Eula component', () => {
     expect(acceptButton).toHaveTextContent('Accept');
     expect(screen.getByText(/Trento Premium/)).toBeTruthy();
 
-    userEvent.click(acceptButton);
+    await user.click(acceptButton);
 
     const actions = store.getActions();
     const expectedPayload = { type: 'ACCEPT_EULA' };

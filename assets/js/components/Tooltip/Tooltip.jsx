@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Tooltip = ({ children, tooltipText }) => {
+function Tooltip({ children, tooltipText }) {
   const tipRef = React.createRef(null);
 
   const handleMouseEnter = () => {
@@ -33,6 +33,6 @@ const Tooltip = ({ children, tooltipText }) => {
       {children}
     </div>
   );
-};
+}
 
 export default Tooltip;

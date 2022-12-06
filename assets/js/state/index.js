@@ -1,7 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
+// safe to disable phoenix stuff
+// eslint-disable-next-line
 import { Socket } from 'phoenix';
 
+import { updateLastExecution } from '@state/actions/lastExecutions';
 import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
@@ -15,8 +18,6 @@ import lastExecutionsReducer from './lastExecutions';
 import liveFeedReducer from './liveFeed';
 import settingsReducer from './settings';
 import registerEvents, { joinChannel } from './registerSocketEvents';
-
-import { updateLastExecution } from '@state/actions/lastExecutions';
 
 import rootSaga from './sagas';
 
@@ -42,17 +43,17 @@ export const store = configureStore({
 
 sagaMiddleware.run(rootSaga);
 
-const processChannelEvents = (store) => {
+const processChannelEvents = (reduxStore) => {
   const socket = new Socket('/socket', {});
   socket.connect();
 
-  registerEvents(store, socket, 'monitoring:hosts', [
+  registerEvents(reduxStore, socket, 'monitoring:hosts', [
     'host_registered',
     'host_details_updated',
     'heartbeat_succeded',
     'heartbeat_failed',
   ]);
-  registerEvents(store, socket, 'monitoring:clusters', [
+  registerEvents(reduxStore, socket, 'monitoring:clusters', [
     'cluster_registered',
     'cluster_details_updated',
     'checks_execution_started',
@@ -61,13 +62,13 @@ const processChannelEvents = (store) => {
     'cluster_health_changed',
     'cluster_cib_last_written_updated',
   ]);
-  registerEvents(store, socket, 'monitoring:sap_systems', [
+  registerEvents(reduxStore, socket, 'monitoring:sap_systems', [
     'sap_system_registered',
     'sap_system_health_changed',
     'application_instance_registered',
     'application_instance_health_changed',
   ]);
-  registerEvents(store, socket, 'monitoring:databases', [
+  registerEvents(reduxStore, socket, 'monitoring:databases', [
     'database_registered',
     'database_health_changed',
     'database_instance_registered',

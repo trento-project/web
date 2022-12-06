@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AboutPageText = () => {
+function AboutPageText() {
   return (
     <div className="pb-5">
       <h2 className="text-5xl font-bold">About Trento Console</h2>
@@ -10,6 +10,6 @@ const AboutPageText = () => {
       </h3>
     </div>
   );
-};
+}
 
 export default AboutPageText;

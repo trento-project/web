@@ -1,15 +1,15 @@
 import React from 'react';
 import { format } from 'date-fns';
 
-import CheckResultCount from './CheckResultCount';
 import Spinner from '@components/Spinner';
+import CheckResultCount from './CheckResultCount';
 
-const ChecksResultOverviewNew = ({
+function ChecksResultOverviewNew({
   data,
   error = null,
   loading = false,
   onCheckClick,
-}) => {
+}) {
   if (loading || data?.status === 'running') {
     return (
       <div className="flex flex-col items-center mt-2 px-4">
@@ -60,6 +60,6 @@ const ChecksResultOverviewNew = ({
       </div>
     </div>
   );
-};
+}
 
 export default ChecksResultOverviewNew;

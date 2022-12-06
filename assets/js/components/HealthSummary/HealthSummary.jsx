@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import HealthSummaryBox from './HealthSummaryBox';
 
-const HealthSummary = ({
+function HealthSummary({
   passing,
   critical,
   warning,
@@ -13,12 +13,12 @@ const HealthSummary = ({
     critical: false,
     warning: false,
   },
-}) => {
+}) {
   return (
     <div
       className={classNames(
         className,
-        'tn-health-container flex flex-row justify-between'
+        'tn-health-container flex flex-row justify-between',
       )}
     >
       <HealthSummaryBox
@@ -42,6 +42,6 @@ const HealthSummary = ({
       />
     </div>
   );
-};
+}
 
 export default HealthSummary;

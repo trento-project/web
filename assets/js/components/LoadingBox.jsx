@@ -2,7 +2,7 @@ import React from 'react';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
-const LoadingBox = ({ text }) => {
+function LoadingBox({ text }) {
   return (
     <div className="shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-1/2 m-auto">
       <div className="w-full h-full text-center">
@@ -15,6 +15,6 @@ const LoadingBox = ({ text }) => {
       </div>
     </div>
   );
-};
+}
 
 export default LoadingBox;

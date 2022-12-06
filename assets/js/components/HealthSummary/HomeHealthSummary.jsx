@@ -28,7 +28,7 @@ const healthSummaryTableConfig = {
       className: 'text-center',
       render: (content, item) => (
         <Link to={`/sap_systems/${item.id}`}>
-          <HealthIcon health={content} centered={true}></HealthIcon>
+          <HealthIcon health={content} centered />
         </Link>
       ),
     },
@@ -40,7 +40,7 @@ const healthSummaryTableConfig = {
         const linkToDatabase = `/databases/${item.databaseId}`;
         return (
           <Link to={linkToDatabase}>
-            <HealthIcon health={content} centered={true} />
+            <HealthIcon health={content} centered />
           </Link>
         );
       },
@@ -54,10 +54,10 @@ const healthSummaryTableConfig = {
 
         return item?.clusterId ? (
           <Link to={linkToCluster}>
-            <HealthIcon health={content} centered={true} />
+            <HealthIcon health={content} centered />
           </Link>
         ) : (
-          <HealthIcon health={content} centered={true} hoverOpacity={false} />
+          <HealthIcon health={content} centered hoverOpacity={false} />
         );
       },
     },
@@ -69,7 +69,7 @@ const healthSummaryTableConfig = {
         const linkToHosts = `/hosts?sid=${item.sid}&sid=${item.tenant}`;
         return (
           <Link to={linkToHosts}>
-            <HealthIcon health={content} centered={true} />
+            <HealthIcon health={content} centered />
           </Link>
         );
       },
@@ -77,9 +77,9 @@ const healthSummaryTableConfig = {
   ],
 };
 
-export const HomeHealthSummary = () => {
+export function HomeHealthSummary() {
   const { loading, sapSystemsHealth } = useSelector(
-    (state) => state.sapSystemsHealthSummary
+    (state) => state.sapSystemsHealthSummary,
   );
 
   const {
@@ -103,7 +103,7 @@ export const HomeHealthSummary = () => {
 
   useEffect(() => {
     setActiveFilters(
-      healthFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+      healthFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}),
     );
     if (healthFilters.length === 0) {
       setSummaryData(sapSystemsHealth);
@@ -117,7 +117,7 @@ export const HomeHealthSummary = () => {
           result = result || isMostRelevantPrio(e, f);
         });
         return result;
-      })
+      }),
     );
   }, [healthFilters]);
 
@@ -144,4 +144,4 @@ export const HomeHealthSummary = () => {
       <Table config={healthSummaryTableConfig} data={summaryData} />
     </div>
   );
-};
+}

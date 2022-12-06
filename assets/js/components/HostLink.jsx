@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-const HostLink = ({ hostId, children }) => {
+function HostLink({ hostId, children }) {
   return (
     <span
       id={`host-${hostId}`}
@@ -11,6 +11,6 @@ const HostLink = ({ hostId, children }) => {
       <Link to={`/hosts/${hostId}`}>{children}</Link>
     </span>
   );
-};
+}
 
 export default HostLink;

@@ -6,14 +6,12 @@ import { getCluster } from '@state/selectors';
 
 import ExecutionResults from './ExecutionResults';
 
-const ExecutionResultsPage = () => {
+function ExecutionResultsPage() {
   const { clusterID, executionID } = useParams();
   const dispatch = useDispatch();
-  const hostnames = useSelector((state) =>
-    state.hostsList.hosts
-      .filter(({ cluster_id: hostClusterID }) => hostClusterID === clusterID)
-      .map(({ id, hostname }) => ({ id, hostname }))
-  );
+  const hostnames = useSelector((state) => state.hostsList.hosts
+    .filter(({ cluster_id: hostClusterID }) => hostClusterID === clusterID)
+    .map(({ id, hostname }) => ({ id, hostname })));
   const cluster = useSelector(getCluster(clusterID));
 
   return (
@@ -31,6 +29,6 @@ const ExecutionResultsPage = () => {
       }}
     />
   );
-};
+}
 
 export default ExecutionResultsPage;

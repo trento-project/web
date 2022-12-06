@@ -3,11 +3,13 @@ import classNames from 'classnames';
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';
 import Pill from '@components/Pill';
 import useOnClickOutside from '@hooks/useOnClickOutside';
-//eslint-disable-next-line
+// eslint-disable-next-line
 const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
 const tagValidation = (char) => tagRegexValidation.test(char);
 
-const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
+function Tags({
+  className, tags, onChange, onAdd, onRemove, resourceId,
+}) {
   const [renderedTags, setTags] = useState(tags);
   const [addingTag, setAddingTag] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
@@ -33,12 +35,12 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
         'flex-wrap',
         'gap-y-2',
         'gap-x-1.5',
-        className
+        className,
       )}
     >
-      {renderedTags.map((tag, index) => (
+      {renderedTags.map((tag) => (
         <Pill
-          key={index}
+          key={`${tag}-${resourceId}`}
           className={classNames({
             'text-green-800': true,
             'bg-green-100': true,
@@ -56,11 +58,12 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
         >
           {tag}
           <span
+            aria-hidden="true"
             className="ml-2 cursor-pointer group-hover:opacity-60"
             onClick={() => {
               const newTagsList = renderedTags.reduce(
                 (acc, current) => (current === tag ? acc : [...acc, current]),
-                []
+                [],
               );
               setTags(newTagsList);
               onChange(newTagsList);
@@ -84,8 +87,8 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
             onKeyDown={({ key }) => {
               if (key === 'Enter') {
                 if (
-                  newTagValue.length === 0 ||
-                  renderedTags.includes(newTagValue)
+                  newTagValue.length === 0
+                  || renderedTags.includes(newTagValue)
                 ) {
                   return;
                 }
@@ -117,11 +120,13 @@ const Tags = ({ className, tags, onChange, onAdd, onRemove }) => {
             setAddingTag(true);
           }}
         >
-          <EOS_NEW_LABEL color="#276749" size="base" /> Add Tag
+          <EOS_NEW_LABEL color="#276749" size="base" />
+          {' '}
+          Add Tag
         </Pill>
       )}
     </span>
   );
-};
+}
 
 export default Tags;

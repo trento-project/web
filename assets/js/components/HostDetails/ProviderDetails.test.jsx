@@ -32,7 +32,7 @@ describe('Provider Details', () => {
   it('should display an element containing "Provider not recognized"', () => {
     render(<ProviderDetails provider="unrecognized-provider" />);
     expect(document.querySelector('span')).toHaveTextContent(
-      'Provider not recognized'
+      'Provider not recognized',
     );
   });
 });

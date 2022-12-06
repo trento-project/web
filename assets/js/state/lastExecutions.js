@@ -42,7 +42,7 @@ export const lastExecutionsSlice = createSlice({
 
       const lastExecutionState = {
         ...initialExecutionState,
-        error: error,
+        error,
       };
 
       state[groupID] = lastExecutionState;

@@ -1,36 +1,32 @@
 import React from 'react';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
-import {
-  systemHostsTableConfiguration,
-  systemInstancesTableConfiguration,
-} from './tableConfigs';
 import Pill from '@components/Pill/Pill';
 import {
   EOS_APPLICATION_OUTLINED,
   EOS_DATABASE_OUTLINED,
 } from 'eos-icons-react';
 import { APPLICATION_TYPE } from '@lib/model';
+import {
+  systemHostsTableConfiguration,
+  systemInstancesTableConfiguration,
+} from './tableConfigs';
 
-export const GenericSystemDetails = ({ title, type, system }) => {
+export function GenericSystemDetails({ title, type, system }) {
   if (!system) {
     return <div>Not Found</div>;
   }
 
-  const renderType = (type) => {
-    return type === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
-  };
+  const renderType = (t) => (t === APPLICATION_TYPE ? 'Application server' : 'HANA Database');
 
-  const getUniqueHosts = (hosts) => {
-    return Array.from(
-      hosts
-        .reduce(function (hostsMap, host) {
-          if (!hostsMap.has(host.id)) hostsMap.set(host.id, host);
-          return hostsMap;
-        }, new Map())
-        .values()
-    );
-  };
+  const getUniqueHosts = (hosts) => Array.from(
+    hosts
+      .reduce((hostsMap, host) => {
+        if (!hostsMap.has(host.id)) hostsMap.set(host.id, host);
+        return hostsMap;
+      }, new Map())
+      .values(),
+  );
 
   return (
     <div>
@@ -50,23 +46,21 @@ export const GenericSystemDetails = ({ title, type, system }) => {
             {
               title: '',
               content: type,
-              render: (content) => {
-                return (
-                  <div className="float-right">
-                    {content === APPLICATION_TYPE ? (
-                      <EOS_APPLICATION_OUTLINED
-                        size={25}
-                        className="fill-blue-500"
-                      />
-                    ) : (
-                      <EOS_DATABASE_OUTLINED
-                        size={25}
-                        className="fill-blue-500"
-                      />
-                    )}
-                  </div>
-                );
-              },
+              render: (content) => (
+                <div className="float-right">
+                  {content === APPLICATION_TYPE ? (
+                    <EOS_APPLICATION_OUTLINED
+                      size={25}
+                      className="fill-blue-500"
+                    />
+                  ) : (
+                    <EOS_DATABASE_OUTLINED
+                      size={25}
+                      className="fill-blue-500"
+                    />
+                  )}
+                </div>
+              ),
             },
           ]}
         />
@@ -93,10 +87,11 @@ export const GenericSystemDetails = ({ title, type, system }) => {
       </div>
     </div>
   );
-};
+}
 
-export const InstanceStatus = ({ health = undefined }) => {
-  let cssClass, instanceStatus;
+export function InstanceStatus({ health = undefined }) {
+  let cssClass; let
+    instanceStatus;
 
   switch (health) {
     case 'passing':
@@ -118,18 +113,18 @@ export const InstanceStatus = ({ health = undefined }) => {
   }
 
   return (
-    <Pill roundedMode={'rounded'} className={`${cssClass} text-gray-50`}>
+    <Pill roundedMode="rounded" className={`${cssClass} text-gray-50`}>
       {instanceStatus}
     </Pill>
   );
-};
+}
 
-export const Features = ({ features }) => {
+export function Features({ features }) {
   return (
     <div>
-      {features.split('|').map((feature, index) => (
-        <Pill key={index}>{feature}</Pill>
+      {features.split('|').map((feature) => (
+        <Pill key={feature}>{feature}</Pill>
       ))}
     </div>
   );
-};
+}

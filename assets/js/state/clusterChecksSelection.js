@@ -19,8 +19,7 @@ export const clusterChecksSelectionSlice = createSlice({
       state.saving = false;
     },
     setClusterChecksSelectionSavingError: (state) => {
-      state.savingError =
-        'An unexpected error happened while selecting your desired checks';
+      state.savingError = 'An unexpected error happened while selecting your desired checks';
     },
     setClusterChecksSelectionSavingSuccess: (state) => {
       state.savingSuccess = true;

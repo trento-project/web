@@ -19,7 +19,7 @@ describe('ChecksCatalog CheckItem component', () => {
         checkID={check.id}
         description={check.description}
         remediation={check.remediation}
-      />
+      />,
     );
 
     expect(screen.getByText(check.id)).toBeVisible();
@@ -33,17 +33,18 @@ describe('ChecksCatalog CheckItem component', () => {
       <CheckItem
         key={check.id}
         checkID={check.id}
-        premium={true}
+        premium
         description={check.description}
         remediation={check.remediation}
-      />
+      />,
     );
 
     expect(screen.getByText('Premium')).toBeVisible();
   });
 
-  it('should show check remediation when the row is clicked', () => {
+  it('should show check remediation when the row is clicked', async () => {
     const check = catalogCheckFactory.build();
+    const user = userEvent.setup();
 
     renderWithRouter(
       <CheckItem
@@ -51,16 +52,16 @@ describe('ChecksCatalog CheckItem component', () => {
         checkID={check.id}
         description={check.description}
         remediation={check.remediation}
-      />
+      />,
     );
 
     const checks = screen.getAllByRole('listitem');
     const checkDiv = checks[0].querySelector('div');
 
     expect(screen.queryByText(check.remediation)).not.toBeInTheDocument();
-    userEvent.click(checkDiv);
+    await user.click(checkDiv);
     expect(screen.getByText(check.remediation)).toBeVisible();
-    userEvent.click(checkDiv);
+    await user.click(checkDiv);
     expect(screen.queryByText(check.remediation)).not.toBeInTheDocument();
   });
 });

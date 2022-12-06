@@ -12,8 +12,10 @@ import ChecksSelectionNew from './ChecksSelectionNew';
 
 describe('ClusterDetails ChecksSelectionNew component', () => {
   it('should change individual check switches accordingly if the group switch is clicked', async () => {
+    const user = userEvent.setup();
+
     const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group: group });
+    const catalog = catalogCheckFactory.buildList(2, { group });
     const cluster = clusterFactory.build();
 
     const initialState = {
@@ -22,34 +24,40 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState
+      initialState,
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));
 
     const groupItem = await waitFor(() => screen.getByRole('heading'));
 
-    userEvent.click(groupItem.parentNode);
-    const switches = screen.getAllByRole('switch');
+    await user.click(groupItem.parentNode);
+    let switches = screen.getAllByRole('switch');
 
     expect(switches[0]).not.toBeChecked();
     expect(switches[1]).not.toBeChecked();
     expect(switches[2]).not.toBeChecked();
 
-    userEvent.click(switches[0]);
+    await user.click(switches[0]);
+
+    switches = screen.getAllByRole('switch');
 
     expect(switches[1]).toBeChecked();
     expect(switches[2]).toBeChecked();
 
-    userEvent.click(switches[0]);
+    await user.click(switches[0]);
+
+    switches = screen.getAllByRole('switch');
 
     expect(switches[1]).not.toBeChecked();
     expect(switches[2]).not.toBeChecked();
   });
 
   it('should change group check switch accordingly if the children check switches are clicked', async () => {
+    const user = userEvent.setup();
+
     const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group: group });
+    const catalog = catalogCheckFactory.buildList(2, { group });
     const cluster = clusterFactory.build({
       selected_checks: [catalog[0].id, catalog[1].id],
     });
@@ -60,31 +68,36 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState
+      initialState,
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));
 
     const groupItem = await waitFor(() => screen.getByRole('heading'));
 
-    userEvent.click(groupItem.parentNode);
-    const switches = screen.getAllByRole('switch');
+    await user.click(groupItem.parentNode);
+    let switches = screen.getAllByRole('switch');
 
     expect(switches[0]).toBeChecked();
     expect(switches[1]).toBeChecked();
     expect(switches[2]).toBeChecked();
 
-    userEvent.click(switches[1]);
+    await user.click(switches[1]);
+    switches = screen.getAllByRole('switch');
 
     expect(switches[0]).not.toBeChecked();
     expect(switches[0].classList.contains('bg-green-300')).toBe(true);
 
-    userEvent.click(switches[2]);
+    await user.click(switches[2]);
+
+    switches = screen.getAllByRole('switch');
 
     expect(switches[0]).not.toBeChecked();
   });
 
   it('should dispatch selected checks message when the save button is clicked', async () => {
+    const user = userEvent.setup();
+
     const catalog = catalogCheckFactory.buildList(2);
     const selectedChecks = [catalog[0].id, catalog[1].id];
     const cluster = clusterFactory.build({
@@ -97,7 +110,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection, store] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState
+      initialState,
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));
@@ -105,7 +118,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     await waitFor(() => screen.getAllByRole('heading'));
 
     const saveButton = screen.getByRole('button');
-    userEvent.click(saveButton);
+    await user.click(saveButton);
 
     const actions = store.getActions();
     const expectedActions = [

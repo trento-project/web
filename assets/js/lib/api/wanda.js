@@ -6,10 +6,8 @@ export const wandaClient = axios.create({
   baseURL,
 });
 
-export const getExecutionResult = (executionID) =>
-  wandaClient.get(`/api/checks/executions/${executionID}`);
+export const getExecutionResult = (executionID) => wandaClient.get(`/api/checks/executions/${executionID}`);
 
-export const getLastExecutionByGroupID = (groupID) =>
-  wandaClient.get(`/api/checks/groups/${groupID}/executions/last`);
+export const getLastExecutionByGroupID = (groupID) => wandaClient.get(`/api/checks/groups/${groupID}/executions/last`);
 
 export const getCatalog = () => wandaClient.get('/api/checks/catalog');

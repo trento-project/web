@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+
 import React, { Fragment, useState, useRef } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';
@@ -6,10 +8,11 @@ import { toggle, hasOne } from '@lib/lists';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE } from 'eos-icons-react';
 
-const getLabel = (value, placeholder) =>
-  value.length === 0 ? placeholder : value.join(', ');
+const getLabel = (value, placeholder) => (value.length === 0 ? placeholder : value.join(', '));
 
-const Filter = ({ options, title, value, onChange }) => {
+function Filter({
+  options, title, value, onChange,
+}) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -22,8 +25,9 @@ const Filter = ({ options, title, value, onChange }) => {
   return (
     <div className="w-64 w-72 top-16 mr-4" ref={ref}>
       <div className="mt-1 relative">
-        {value != '' && (
+        {value !== '' && (
           <button
+            type="button"
             className="block absolute z-20 right-0 h-full pr-2 flex items-center"
             onClick={() => onChange([])}
           >
@@ -50,7 +54,7 @@ const Filter = ({ options, title, value, onChange }) => {
             </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            {value == '' && (
+            {value === '' && (
               <svg
                 className="h-5 w-5 text-gray-400"
                 xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +66,7 @@ const Filter = ({ options, title, value, onChange }) => {
                   fillRule="evenodd"
                   d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
                   clipRule="evenodd"
-                ></path>
+                />
               </svg>
             )}
           </span>
@@ -81,7 +85,7 @@ const Filter = ({ options, title, value, onChange }) => {
                 <input
                   className="rounded-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-jungle-green-500 focus:border-transparent"
                   value={query}
-                  onChange={({ target: { value } }) => setQuery(value)}
+                  onChange={({ target: { value: newValue } }) => setQuery(newValue)}
                 />
               </div>
               <ul
@@ -95,6 +99,8 @@ const Filter = ({ options, title, value, onChange }) => {
                   <li
                     key={index}
                     role="option"
+                    aria-selected={hasOne(value, [option])}
+                    aria-hidden="true"
                     className="text-gray-900 cursor-default select-none hover:bg-jungle-green-500 hover:text-white relative py-2 pl-3 pr-9"
                     onClick={() => onChange(toggle(option, value))}
                   >
@@ -116,7 +122,7 @@ const Filter = ({ options, title, value, onChange }) => {
                             fillRule="evenodd"
                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                             clipRule="evenodd"
-                          ></path>
+                          />
                         </svg>
                       </span>
                     )}
@@ -129,6 +135,6 @@ const Filter = ({ options, title, value, onChange }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Filter;

@@ -23,15 +23,13 @@ import {
 } from '@components/ChecksResults';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 
-const truncatedClusterNameClasses =
-  'font-bold truncate w-60 inline-block align-top';
+const truncatedClusterNameClasses = 'font-bold truncate w-60 inline-block align-top';
 
-const getLabel = (health, expectations, failedExpectations) =>
-  health === 'passing'
-    ? `${expectations}/${expectations} expectations passed`
-    : `${failedExpectations}/${expectations} failed`;
+const getLabel = (health, expectations, failedExpectations) => (health === 'passing'
+  ? `${expectations}/${expectations} expectations passed`
+  : `${failedExpectations}/${expectations} failed`);
 
-const ExecutionResults = ({
+function ExecutionResults({
   clusterID,
   executionID,
   clusterName,
@@ -40,7 +38,7 @@ const ExecutionResults = ({
   onExecutionFetch = getExecutionResult,
   onCatalogFetch = getCatalog,
   onCatalogRefresh = () => {},
-}) => {
+}) {
   const [loading, setLoading] = useState(false);
   const [executionData, setExecutionData] = useState(null);
   const [catalog, setCatalog] = useState(null);
@@ -55,7 +53,7 @@ const ExecutionResults = ({
           setLoading(false);
           setExecutionData(fetchedExecutionData);
           setCatalog(fetchedCatalogData.items);
-        }
+        },
       )
       .catch((error) => {
         setLoading(false);
@@ -91,7 +89,8 @@ const ExecutionResults = ({
       </BackButton>
       <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
-          <span className="font-medium">Checks Results for cluster</span>{' '}
+          <span className="font-medium">Checks Results for cluster</span>
+          {' '}
           <span
             className={classNames('font-bold', truncatedClusterNameClasses)}
           >
@@ -99,7 +98,7 @@ const ExecutionResults = ({
           </span>
         </h1>
       </div>
-      {cloudProvider == UNKNOWN_PROVIDER && (
+      {cloudProvider === UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following results are valid for on-premise bare metal platforms.
           <br />
@@ -114,10 +113,10 @@ const ExecutionResults = ({
         selectedChecks={checks}
         onCatalogRefresh={onCatalogRefresh}
       >
-        {hosts &&
-          hosts.map((hostID, idx) => (
+        {hosts
+          && hosts.map((hostID) => (
             <HostResultsWrapper
-              key={idx}
+              key={hostID}
               hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
               reachable
               unreachableMessage=""
@@ -126,12 +125,12 @@ const ExecutionResults = ({
                 const { health, expectations, failedExpectations } = getHealth(
                   checkResults,
                   checkID,
-                  hostID
+                  hostID,
                 );
                 const label = getLabel(
                   health,
                   expectations,
-                  failedExpectations
+                  failedExpectations,
                 );
 
                 return (
@@ -154,6 +153,6 @@ const ExecutionResults = ({
       </ResultsContainer>
     </div>
   );
-};
+}
 
 export default ExecutionResults;

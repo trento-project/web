@@ -12,8 +12,6 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 
 import { groupBy } from '@lib/lists';
 
-import SiteDetails from './SiteDetails';
-
 import { getClusterName } from '@components/ClusterLink';
 import HostLink from '@components/HostLink';
 
@@ -22,10 +20,11 @@ import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import { useChecksResult } from '@components/ClusterDetails/hooks';
+import SiteDetails from './SiteDetails';
 import ProviderLabel from './ProviderLabel';
 
 export const truncatedClusterNameClasses = classNames(
-  'font-bold truncate w-60 inline-block align-top'
+  'font-bold truncate w-60 inline-block align-top',
 );
 
 const siteDetailsConfig = {
@@ -62,14 +61,13 @@ const siteDetailsConfig = {
   ],
 };
 
-const getStatusPill = (status) =>
-  status === 'healthy' ? (
-    <Pill className="bg-green-200 text-green-800 mr-2">Healthy</Pill>
-  ) : (
-    <Pill className="bg-red-200 text-red-800 mr-2">Unhealthy</Pill>
-  );
+const getStatusPill = (status) => (status === 'healthy' ? (
+  <Pill className="bg-green-200 text-green-800 mr-2">Healthy</Pill>
+) : (
+  <Pill className="bg-red-200 text-red-800 mr-2">Unhealthy</Pill>
+));
 
-const ClusterDetails = () => {
+function ClusterDetails() {
   const { clusterID } = useParams();
   const navigate = useNavigate();
 
@@ -77,31 +75,27 @@ const ClusterDetails = () => {
 
   const checkResults = useChecksResult(cluster);
 
-  const hostsData = useSelector((state) =>
-    state.hostsList.hosts.reduce((accumulator, current) => {
-      if (current.cluster_id === clusterID) {
-        return {
-          ...accumulator,
-          [current.hostname]: { hostId: current.id, ips: current.ip_addresses },
-        };
-      }
-      return accumulator;
-    }, {})
-  );
+  const hostsData = useSelector((state) => state.hostsList.hosts.reduce((accumulator, current) => {
+    if (current.cluster_id === clusterID) {
+      return {
+        ...accumulator,
+        [current.hostname]: { hostId: current.id, ips: current.ip_addresses },
+      };
+    }
+    return accumulator;
+  }, {}));
 
   if (!cluster) {
     return <div>Loading...</div>;
   }
 
-  const renderedNodes = cluster.details?.nodes?.map((node) =>
-    hostsData[node.name]
-      ? {
-          ...node,
-          ips: hostsData[node.name].ips,
-          hostId: hostsData[node.name].hostId,
-        }
-      : node
-  );
+  const renderedNodes = cluster.details?.nodes?.map((node) => (hostsData[node.name]
+    ? {
+      ...node,
+      ips: hostsData[node.name].ips,
+      hostId: hostsData[node.name].hostId,
+    }
+    : node));
 
   const hasSelectedChecks = cluster.selected_checks.length > 0;
 
@@ -109,7 +103,8 @@ const ClusterDetails = () => {
     <div>
       <div className="flex mb-4">
         <h1 className="text-3xl font-bold w-1/2">
-          Pacemaker cluster details:{' '}
+          Pacemaker cluster details:
+          {' '}
           <span className={truncatedClusterNameClasses}>
             {getClusterName(cluster)}
           </span>
@@ -121,7 +116,8 @@ const ClusterDetails = () => {
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/settings`)}
           >
-            <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+            <EOS_SETTINGS className="inline-block fill-jungle-green-500" />
+            {' '}
             Settings
           </Button>
           <Button
@@ -130,7 +126,8 @@ const ClusterDetails = () => {
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
           >
-            <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
+            <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />
+            {' '}
             Show Results
           </Button>
           <TriggerChecksExecutionRequest
@@ -142,7 +139,8 @@ const ClusterDetails = () => {
               className={classNames('inline-block fill-jungle-green-500', {
                 'fill-slate-500': !hasSelectedChecks,
               })}
-            />{' '}
+            />
+            {' '}
             Start Execution
             {!hasSelectedChecks && (
               <Tooltip tooltipText="Select some Checks first!" />
@@ -196,8 +194,8 @@ const ClusterDetails = () => {
               {
                 title: 'HANA log operation mode',
                 content:
-                  cluster.details &&
-                  cluster.details.system_replication_operation_mode,
+                  cluster.details
+                  && cluster.details.system_replication_operation_mode,
               },
             ]}
           />
@@ -205,9 +203,7 @@ const ClusterDetails = () => {
         <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
           <ChecksResultOverview
             {...checkResults}
-            onCheckClick={(health) =>
-              navigate(`/clusters/${clusterID}/checks/results?health=${health}`)
-            }
+            onCheckClick={(health) => navigate(`/clusters/${clusterID}/checks/results?health=${health}`)}
           />
         </div>
       </div>
@@ -246,7 +242,7 @@ const ClusterDetails = () => {
                 data={renderedNodes.filter(({ site }) => site === siteName)}
               />
             </div>
-          )
+          ),
         )}
       </div>
 
@@ -258,12 +254,14 @@ const ClusterDetails = () => {
       <div className="mt-2 bg-white shadow rounded-lg py-4 px-8 tn-sbd-details">
         {cluster.details.sbd_devices.map(({ device, status }) => (
           <div key={device}>
-            {getStatusPill(status)} {device}
+            {getStatusPill(status)}
+            {' '}
+            {device}
           </div>
         ))}
       </div>
     </div>
   );
-};
+}
 
 export default ClusterDetails;

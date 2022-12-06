@@ -4,6 +4,7 @@ import { maybeUpdateInstanceHealth } from './instances';
 const initialState = {
   loading: false,
   sapSystems: [],
+  // eslint-disable-next-line
   applicationInstances: [], // TODO: is this separation needed? Can it be just encapsulated into previous sapSystems?
   databaseInstances: [],
 };
@@ -13,15 +14,16 @@ export const sapSystemsListSlice = createSlice({
   initialState,
   reducers: {
     // Here the payload comes from /api/sap_systems API when the application loads
-    // Note that each sap system item has an application_instances and a database_instances properties
+    // Note that each sap system item has an application_instances and
+    // a database_instances properties
     setSapSystems: (state, { payload }) => {
       state.sapSystems = payload;
 
       state.applicationInstances = payload.flatMap(
-        (sapSystem) => sapSystem.application_instances
+        (sapSystem) => sapSystem.application_instances,
       );
       state.databaseInstances = payload.flatMap(
-        (sapSystem) => sapSystem.database_instances
+        (sapSystem) => sapSystem.database_instances,
       );
     },
     startSapSystemsLoading: (state) => {
@@ -58,26 +60,23 @@ export const sapSystemsListSlice = createSlice({
     },
     updateApplicationInstanceHealth: (state, action) => {
       state.applicationInstances = state.applicationInstances.map(
-        (instance) => {
-          return maybeUpdateInstanceHealth(action.payload, instance);
-        }
+        (instance) => maybeUpdateInstanceHealth(action.payload, instance),
       );
     },
     updateSAPSystemDatabaseInstanceHealth: (state, action) => {
-      state.databaseInstances = state.databaseInstances.map((instance) => {
-        return maybeUpdateInstanceHealth(action.payload, instance);
-      });
+      state.databaseInstances = state.databaseInstances.map(
+        (instance) => maybeUpdateInstanceHealth(action.payload, instance),
+      );
     },
     updateSAPSystemDatabaseInstanceSystemReplication: (state, action) => {
       state.databaseInstances = state.databaseInstances.map((instance) => {
         if (
-          action.payload.sap_system_id === instance.sap_system_id &&
-          action.payload.host_id === instance.host_id &&
-          action.payload.instance_number === instance.instance_number
+          action.payload.sap_system_id === instance.sap_system_id
+          && action.payload.host_id === instance.host_id
+          && action.payload.instance_number === instance.instance_number
         ) {
           instance.system_replication = action.payload.system_replication;
-          instance.system_replication_status =
-            action.payload.system_replication_status;
+          instance.system_replication_status = action.payload.system_replication_status;
         }
         return instance;
       });
@@ -94,7 +93,7 @@ export const sapSystemsListSlice = createSlice({
       state.sapSystems = state.sapSystems.map((sapSystem) => {
         if (sapSystem.id === action.payload.id) {
           sapSystem.tags = sapSystem.tags.filter(
-            (tag) => tag.value !== action.payload.tags[0].value
+            (tag) => tag.value !== action.payload.tags[0].value,
           );
         }
         return sapSystem;

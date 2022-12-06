@@ -1,10 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { Disclosure, Switch, Transition } from '@headlessui/react';
-
-import NotificationBox from '../NotificationBox';
-import LoadingBox from '../LoadingBox';
 
 import {
   EOS_ERROR,
@@ -13,28 +11,28 @@ import {
 } from 'eos-icons-react';
 import classNames from 'classnames';
 import { remove, uniq } from '@lib/lists';
+
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   SavingFailedAlert,
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
+import LoadingBox from '../LoadingBox';
+import NotificationBox from '../NotificationBox';
 
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+const toggle = (list, element) => (list.includes(element)
+  ? list.filter((string) => string !== element)
+  : [...list, element]);
 
-const toggle = (list, element) =>
-  list.includes(element)
-    ? list.filter((string) => string !== element)
-    : [...list, element];
-
-export const ChecksSelection = ({ clusterId, cluster }) => {
+export function ChecksSelection({ clusterId, cluster }) {
   const dispatch = useDispatch();
 
   const [selectedChecks, setSelectedChecks] = useState(
-    cluster ? cluster.selected_checks : []
+    cluster ? cluster.selected_checks : [],
   );
 
-  const isSelected = (check_id) =>
-    selectedChecks ? selectedChecks.includes(check_id) : false;
+  const isSelected = (check_id) => (selectedChecks ? selectedChecks.includes(check_id) : false);
 
   const [[catalogData], catalogError, loading] = useSelector((state) => [
     state.catalog.data,
@@ -43,7 +41,7 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
   ]);
 
   const { saving, savingError, savingSuccess } = useSelector(
-    (state) => state.clusterChecksSelection
+    (state) => state.clusterChecksSelection,
   );
 
   const [localSavingError, setLocalSavingError] = useState(null);
@@ -75,8 +73,7 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
         selected: isSelected(check.id),
       }));
       const allSelected = checks.every((check) => isSelected(check.id));
-      const someSelected =
-        !allSelected && checks.some((check) => isSelected(check.id));
+      const someSelected = !allSelected && checks.some((check) => isSelected(check.id));
       return {
         group,
         checks: groupChecks,
@@ -119,9 +116,11 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
     <div>
       <div className="pb-4">
         {groupSelection?.map(
-          ({ group, checks, allSelected, someSelected, noneSelected }, idx) => (
+          ({
+            group, checks, allSelected, someSelected, noneSelected,
+          }) => (
             <div
-              key={idx}
+              key={group}
               className="bg-white shadow overflow-hidden sm:rounded-md mb-1"
             >
               <Disclosure>
@@ -140,18 +139,18 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                               'bg-green-300': someSelected,
                               'bg-gray-200': noneSelected,
                             },
-                            'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
+                            'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
                           )}
                           onChange={() => {
                             const groupChecks = checks.map((check) => check.id);
                             if (noneSelected || someSelected) {
                               setSelectedChecks(
-                                uniq([...selectedChecks, ...groupChecks])
+                                uniq([...selectedChecks, ...groupChecks]),
                               );
                             }
                             if (allSelected) {
                               setSelectedChecks(
-                                remove(groupChecks, selectedChecks)
+                                remove(groupChecks, selectedChecks),
                               );
                             }
                             setLocalSavingSuccess(null);
@@ -165,7 +164,7 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                                 'translate-x-2.5': someSelected,
                                 'translate-x-0': noneSelected,
                               },
-                              'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                              'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
                             )}
                           />
                         </Switch>
@@ -185,90 +184,90 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
                     </div>
 
                     {open && (
-                      <div>
-                        <Transition
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform opacity-0"
-                          enterTo="transform opacity-100"
-                          leave="transition duration-100 ease-out"
-                          leaveFrom="transform opacity-100"
-                          leaveTo="transform opacity-0"
-                        >
-                          <Disclosure.Panel className="border-none">
-                            <ul
-                              role="list"
-                              className="divide-y divide-gray-200"
-                            >
-                              {checks.map((check) => (
-                                <li key={check.id}>
-                                  <a className="block hover:bg-gray-50">
-                                    <div className="px-4 py-4 sm:px-6">
-                                      <div className="flex items-center">
-                                        <p className="text-sm font-medium">
-                                          {check.name}
-                                        </p>
-                                        <p className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                          {check.id}
-                                        </p>
-                                      </div>
-                                      <div className="mt-2 sm:flex sm:justify-between">
-                                        <div className="sm:flex">
-                                          <ReactMarkdown
-                                            className="markdown"
-                                            remarkPlugins={[remarkGfm]}
-                                          >
-                                            {check.description}
-                                          </ReactMarkdown>
-                                        </div>
-                                        <Switch.Group
-                                          as="div"
-                                          className="flex items-center"
+                    <div>
+                      <Transition
+                        enter="transition duration-100 ease-out"
+                        enterFrom="transform opacity-0"
+                        enterTo="transform opacity-100"
+                        leave="transition duration-100 ease-out"
+                        leaveFrom="transform opacity-100"
+                        leaveTo="transform opacity-0"
+                      >
+                        <Disclosure.Panel className="border-none">
+                          <ul
+                            className="divide-y divide-gray-200"
+                          >
+                            {checks.map((check) => (
+                              <li key={check.id}>
+                                <a role="button" className="block hover:bg-gray-50">
+                                  <div className="px-4 py-4 sm:px-6">
+                                    <div className="flex items-center">
+                                      <p className="text-sm font-medium">
+                                        {check.name}
+                                      </p>
+                                      <p className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        {check.id}
+                                      </p>
+                                    </div>
+                                    <div className="mt-2 sm:flex sm:justify-between">
+                                      <div className="sm:flex">
+                                        <ReactMarkdown
+                                          className="markdown"
+                                          remarkPlugins={[remarkGfm]}
                                         >
-                                          <Switch
-                                            checked={check.selected}
+                                          {check.description}
+                                        </ReactMarkdown>
+                                      </div>
+                                      <Switch.Group
+                                        as="div"
+                                        className="flex items-center"
+                                      >
+                                        <Switch
+                                          checked={check.selected}
+                                          className={classNames(
+                                            isSelected(check.id)
+                                              ? 'bg-jungle-green-500'
+                                              : 'bg-gray-200',
+                                            'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
+                                          )}
+                                          onChange={() => {
+                                            setSelectedChecks(
+                                              toggle(selectedChecks, check.id),
+                                            );
+                                            setLocalSavingSuccess(null);
+                                          }}
+                                        >
+                                          <span
+                                            aria-hidden="true"
                                             className={classNames(
                                               isSelected(check.id)
-                                                ? 'bg-jungle-green-500'
-                                                : 'bg-gray-200',
-                                              'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
+                                                ? 'translate-x-5'
+                                                : 'translate-x-0',
+                                              'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
                                             )}
-                                            onChange={() => {
-                                              setSelectedChecks(
-                                                toggle(selectedChecks, check.id)
-                                              );
-                                              setLocalSavingSuccess(null);
-                                            }}
-                                          >
-                                            <span
-                                              aria-hidden="true"
-                                              className={classNames(
-                                                isSelected(check.id)
-                                                  ? 'translate-x-5'
-                                                  : 'translate-x-0',
-                                                'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
-                                              )}
-                                            />
-                                          </Switch>
-                                        </Switch.Group>
-                                      </div>
+                                          />
+                                        </Switch>
+                                      </Switch.Group>
                                     </div>
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </Disclosure.Panel>
-                        </Transition>
-                      </div>
+                                  </div>
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </Disclosure.Panel>
+                      </Transition>
+                    </div>
                     )}
                   </>
                 )}
               </Disclosure>
             </div>
-          )
+          ),
         )}
       </div>
       <div className="place-items-end flex">
         <button
+          type="button"
           className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
           onClick={() => {
             dispatch({
@@ -299,4 +298,4 @@ export const ChecksSelection = ({ clusterId, cluster }) => {
       </div>
     </div>
   );
-};
+}

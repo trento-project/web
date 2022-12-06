@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -24,9 +25,10 @@ const removeTag = (tag, sapSystemId) => {
   del(`/api/sap_systems/${sapSystemId}/tags/${tag}`);
 };
 
-const SapSystemsOverview = () => {
-  const { sapSystems, applicationInstances, databaseInstances, loading } =
-    useSelector((state) => state.sapSystemsList);
+function SapSystemsOverview() {
+  const {
+    sapSystems, applicationInstances, databaseInstances, loading,
+  } = useSelector((state) => state.sapSystemsList);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -50,31 +52,27 @@ const SapSystemsOverview = () => {
         key: 'sid',
         filterFromParams: true,
         filter: true,
-        render: (content, item) => {
-          return (
-            <Link
-              className="text-jungle-green-500 hover:opacity-75"
-              to={`/sap_systems/${item.id}`}
-            >
-              {content}
-            </Link>
-          );
-        },
+        render: (content, item) => (
+          <Link
+            className="text-jungle-green-500 hover:opacity-75"
+            to={`/sap_systems/${item.id}`}
+          >
+            {content}
+          </Link>
+        ),
       },
       {
         title: 'Attached RDBMS',
         key: 'attachedRdbms',
 
-        render: (content, item) => {
-          return (
-            <Link
-              className="text-jungle-green-500 hover:opacity-75"
-              to={`/databases/${item.id}`}
-            >
-              {content}
-            </Link>
-          );
-        },
+        render: (content, item) => (
+          <Link
+            className="text-jungle-green-500 hover:opacity-75"
+            to={`/databases/${item.id}`}
+          >
+            {content}
+          </Link>
+        ),
       },
       {
         title: 'Tenant',
@@ -89,22 +87,22 @@ const SapSystemsOverview = () => {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) =>
-          element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
+            resourceId={item.id}
             onChange={() => {}}
             onAdd={(tag) => {
               addTag(tag, item.id);
               dispatch(
-                addTagToSAPSystem({ tags: [{ value: tag }], id: item.id })
+                addTagToSAPSystem({ tags: [{ value: tag }], id: item.id }),
               );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromSAPSystem({ tags: [{ value: tag }], id: item.id })
+                removeTagFromSAPSystem({ tags: [{ value: tag }], id: item.id }),
               );
             }}
           />
@@ -116,28 +114,26 @@ const SapSystemsOverview = () => {
     ),
   };
 
-  const data = sapSystems.map((sapSystem) => {
-    return {
-      id: sapSystem.id,
-      health: sapSystem.health,
-      sid: sapSystem.sid,
-      attachedRdbms: sapSystem.tenant,
-      tenant: sapSystem.tenant,
-      dbAddress: sapSystem.db_host,
-      applicationInstances: applicationInstances.filter(
-        bySapSystem(sapSystem.id)
-      ),
-      databaseInstances: databaseInstances.filter(bySapSystem(sapSystem.id)),
-      tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],
-    };
-  });
+  const data = sapSystems.map((sapSystem) => ({
+    id: sapSystem.id,
+    health: sapSystem.health,
+    sid: sapSystem.sid,
+    attachedRdbms: sapSystem.tenant,
+    tenant: sapSystem.tenant,
+    dbAddress: sapSystem.db_host,
+    applicationInstances: applicationInstances.filter(
+      bySapSystem(sapSystem.id),
+    ),
+    databaseInstances: databaseInstances.filter(bySapSystem(sapSystem.id)),
+    tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],
+  }));
 
   const counters = getCounters(data || []);
 
   return loading ? (
     'Loading SAP Systems...'
   ) : (
-    <Fragment>
+    <>
       <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
@@ -145,8 +141,8 @@ const SapSystemsOverview = () => {
         searchParams={searchParams}
         setSearchParams={setSearchParams}
       />
-    </Fragment>
+    </>
   );
-};
+}
 
 export default SapSystemsOverview;

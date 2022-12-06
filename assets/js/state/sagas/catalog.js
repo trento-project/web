@@ -11,7 +11,7 @@ import {
 export function* updateCatalog() {
   yield put(setCatalogLoading());
   try {
-    const { data: data } = yield call(getCatalog);
+    const { data } = yield call(getCatalog);
     yield put(setCatalogData({ data: data.items }));
   } catch (error) {
     yield put(setCatalogError({ error: error.message }));

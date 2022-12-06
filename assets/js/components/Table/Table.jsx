@@ -1,37 +1,35 @@
-import React, { Fragment, useState } from 'react';
+/* eslint-disable react/no-array-index-key */
+
+import React, { Fragment, useState, useEffect } from 'react';
 import classNames from 'classnames';
-import { getDefaultFilterFunction, createFilter } from './filters';
 import { page, pages } from '@lib/lists';
+import { getDefaultFilterFunction, createFilter, TableFilters } from './filters';
 
 import CollapsibleTableRow from './CollapsibleTableRow';
-import { TableFilters } from './filters';
 import Pagination from './Pagination';
-import { useEffect } from 'react';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
 );
 
-const renderCells = (columns, item) => {
-  return (
-    <Fragment>
-      {columns.map(({ key, className, render = defaultCellRender }, idx) => {
-        const content = item[key];
-        return (
-          <td
-            key={idx}
-            className={classNames(
-              'px-5 py-5 border-b border-gray-200 bg-white text-sm',
-              className
-            )}
-          >
-            {render(content, item)}
-          </td>
-        );
-      })}
-    </Fragment>
-  );
-};
+const renderCells = (columns, item) => (
+  <>
+    {columns.map(({ key, className, render = defaultCellRender }, idx) => {
+      const content = item[key];
+      return (
+        <td
+          key={idx}
+          className={classNames(
+            'px-5 py-5 border-b border-gray-200 bg-white text-sm',
+            className,
+          )}
+        >
+          {render(content, item)}
+        </td>
+      );
+    })}
+  </>
+);
 
 const updateSearchParams = (searchParams, values) => {
   values.forEach((f) => {
@@ -45,7 +43,9 @@ const updateSearchParams = (searchParams, values) => {
   return searchParams;
 };
 
-const Table = ({ config, data = [], searchParams, setSearchParams }) => {
+function Table({
+  config, data = [], searchParams, setSearchParams,
+}) {
   const {
     columns,
     collapsibleDetailRenderer = undefined,
@@ -59,14 +59,14 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
   const columnFiltersBoundToParams = columns.filter(
-    (c) => c.filter && c.filterFromParams
+    (c) => c.filter && c.filterFromParams,
   );
 
   useEffect(() => {
     if (!searchParamsEnabled) return;
     const filtersBoundToQs = filters.reduce((acc, curr) => {
       const isFilterBoundToQs = columnFiltersBoundToParams.find(
-        (col) => col.key === curr.key
+        (col) => col.key === curr.key,
       );
 
       if (!isFilterBoundToQs) return [...acc];
@@ -84,10 +84,9 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
 
       if (paramsFilterValue.length === 0) return [...acc];
 
-      const filterFunction =
-        typeof curr.filter === 'function'
-          ? curr.filter(paramsFilterValue, curr.key)
-          : getDefaultFilterFunction(paramsFilterValue, curr.key);
+      const filterFunction = typeof curr.filter === 'function'
+        ? curr.filter(paramsFilterValue, curr.key)
+        : getDefaultFilterFunction(paramsFilterValue, curr.key);
 
       return [
         ...acc,
@@ -107,9 +106,7 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
       }
       return filterFunction;
     })
-    .reduce((data, filterFunction) => {
-      return data.filter(filterFunction);
-    }, data);
+    .reduce((d, filterFunction) => d.filter(filterFunction), data);
 
   const totalPages = pages(filteredData);
 
@@ -146,7 +143,7 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
                       scope="col"
                       className={classNames(
                         'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                        className
+                        className,
                       )}
                     >
                       {title}
@@ -171,7 +168,7 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
               <Pagination
                 pages={totalPages}
                 currentPage={currentPage}
-                onSelect={(page) => setCurrentPage(page)}
+                onSelect={(selectedPage) => setCurrentPage(selectedPage)}
               />
             )}
           </div>
@@ -179,6 +176,6 @@ const Table = ({ config, data = [], searchParams, setSearchParams }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Table;

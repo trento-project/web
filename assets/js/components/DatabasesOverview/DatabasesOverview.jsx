@@ -1,15 +1,16 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
-import DatabaseItemOverview from './DatabaseItemOverview';
 import Tags from '@components/Tags';
 import { addTagToDatabase, removeTagFromDatabase } from '@state/databases';
 
 import { post, del } from '@lib/network';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
+import DatabaseItemOverview from './DatabaseItemOverview';
 
 const byDatabase = (id) => (instance) => instance.sap_system_id === id;
 
@@ -23,9 +24,9 @@ const removeTag = (tag, sapSystemId) => {
   del(`/api/databases/${sapSystemId}/tags/${tag}`);
 };
 
-const DatabasesOverview = () => {
+function DatabasesOverview() {
   const { databases, databaseInstances, loading } = useSelector(
-    (state) => state.databasesList
+    (state) => state.databasesList,
   );
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,16 +51,14 @@ const DatabasesOverview = () => {
         key: 'sid',
         filterFromParams: true,
         filter: true,
-        render: (content, item) => {
-          return (
-            <Link
-              className="text-jungle-green-500 hover:opacity-75"
-              to={`/databases/${item.id}`}
-            >
-              {content}
-            </Link>
-          );
-        },
+        render: (content, item) => (
+          <Link
+            className="text-jungle-green-500 hover:opacity-75"
+            to={`/databases/${item.id}`}
+          >
+            {content}
+          </Link>
+        ),
       },
       {
         title: 'Summary',
@@ -85,13 +84,24 @@ const DatabasesOverview = () => {
               passing: 0,
               warning: 0,
               critical: 0,
-            }
+            },
           );
           return (
             <div>
-              {item.databaseInstances?.length} instances:{' '}
-              {statusAggregation.critical} critical, {statusAggregation.warning}{' '}
-              warning, {statusAggregation.passing} passing
+              {item.databaseInstances?.length}
+              {' '}
+              instances:
+              {' '}
+              {statusAggregation.critical}
+              {' '}
+              critical,
+              {statusAggregation.warning}
+              {' '}
+              warning,
+              {' '}
+              {statusAggregation.passing}
+              {' '}
+              passing
               {content}
             </div>
           );
@@ -102,22 +112,22 @@ const DatabasesOverview = () => {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) =>
-          element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
+            resourceId={item.id}
             onChange={() => {}}
             onAdd={(tag) => {
               addTag(tag, item.id);
               dispatch(
-                addTagToDatabase({ tags: [{ value: tag }], id: item.id })
+                addTagToDatabase({ tags: [{ value: tag }], id: item.id }),
               );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromDatabase({ tags: [{ value: tag }], id: item.id })
+                removeTagFromDatabase({ tags: [{ value: tag }], id: item.id }),
               );
             }}
           />
@@ -129,25 +139,23 @@ const DatabasesOverview = () => {
     ),
   };
 
-  const data = databases.map((database) => {
-    return {
-      id: database.id,
-      health: database.health,
-      sid: database.sid,
-      attachedRdbms: database.tenant,
-      tenant: database.tenant,
-      dbAddress: database.db_host,
-      databaseInstances: databaseInstances.filter(byDatabase(database.id)),
-      tags: (database.tags && database.tags.map((tag) => tag.value)) || [],
-    };
-  });
+  const data = databases.map((database) => ({
+    id: database.id,
+    health: database.health,
+    sid: database.sid,
+    attachedRdbms: database.tenant,
+    tenant: database.tenant,
+    dbAddress: database.db_host,
+    databaseInstances: databaseInstances.filter(byDatabase(database.id)),
+    tags: (database.tags && database.tags.map((tag) => tag.value)) || [],
+  }));
 
   const counters = getCounters(data || []);
 
   return loading ? (
     'Loading HANA Databases...'
   ) : (
-    <Fragment>
+    <>
       <HealthSummary {...counters} className="mb-8" />
       <Table
         config={config}
@@ -155,8 +163,8 @@ const DatabasesOverview = () => {
         searchParams={searchParams}
         setSearchParams={setSearchParams}
       />
-    </Fragment>
+    </>
   );
-};
+}
 
 export default DatabasesOverview;

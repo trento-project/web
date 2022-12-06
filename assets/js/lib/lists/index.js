@@ -1,16 +1,15 @@
-export const toggle = (element, list) =>
-  list.includes(element)
-    ? list.filter((string) => string !== element)
-    : [...list, element];
+/* eslint-disable no-bitwise */
 
-export const hasOne = (elements, list) =>
-  elements.reduce(
-    (accumulator, current) => accumulator || list.includes(current),
-    false
-  );
+export const toggle = (element, list) => (list.includes(element)
+  ? list.filter((string) => string !== element)
+  : [...list, element]);
 
-export const remove = (elements, list) =>
-  list.filter((value) => !elements.includes(value));
+export const hasOne = (elements, list) => elements.reduce(
+  (accumulator, current) => accumulator || list.includes(current),
+  false,
+);
+
+export const remove = (elements, list) => list.filter((value) => !elements.includes(value));
 
 export const uniq = (list) => [...new Set(list)];
 
@@ -19,15 +18,14 @@ export const pages = (list) => {
   return hasRest ? ~~(list.length / 10) + 1 : ~~(list.length / 10);
 };
 
-export const page = (page, list) => {
-  const start = 10 * (page - 1);
+export const page = (p, list) => {
+  const start = 10 * (p - 1);
   const end = start + 10;
   return list.slice(start, end);
 };
 
-export const groupBy = (list, key) => {
-  return list.reduce(function (rv, x) {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-};
+export const groupBy = (list, key) => list.reduce((rv, x) => {
+  // eslint-disable-next-line
+  (rv[x[key]] = rv[x[key]] || []).push(x);
+  return rv;
+}, {});

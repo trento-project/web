@@ -3,13 +3,13 @@ import { format } from 'date-fns';
 
 import CheckResultCount from './CheckResultCount';
 
-const ChecksResultOverview = ({
+function ChecksResultOverview({
   passing = 0,
   warning = 0,
   critical = 0,
   lastCheckExecution = new Date(),
   onCheckClick,
-}) => {
+}) {
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-center text-2xl font-bold">Check Results</h1>
@@ -36,6 +36,6 @@ const ChecksResultOverview = ({
       </div>
     </div>
   );
-};
+}
 
 export default ChecksResultOverview;

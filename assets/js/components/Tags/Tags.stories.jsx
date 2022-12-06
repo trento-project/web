@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Tags from './';
+import Tags from '.';
 
 export default {
   title: 'Tags',
@@ -8,8 +8,10 @@ export default {
   argTypes: { onChange: { action: 'tag changed' } },
 };
 
-export const Populated = (args) => (
-  <Tags tags={['carbonara', 'Amatriciana']} {...args} />
-);
+export function Populated(args) {
+  return <Tags tags={['carbonara', 'Amatriciana']} {...args} />;
+}
 
-export const Empty = (args) => <Tags tags={[]} {...args} />;
+export function Empty(args) {
+  return <Tags tags={[]} {...args} />;
+}

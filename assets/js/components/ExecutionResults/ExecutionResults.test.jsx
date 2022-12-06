@@ -3,12 +3,14 @@ import { act, screen } from '@testing-library/react';
 
 import { renderWithRouter } from '@lib/test-utils';
 import {
-  hostnameFactory,
   agentCheckResultFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   checkResultFactory,
+} from '@lib/test-utils/factories/executions';
+import {
   catalogCheckFactory,
+  hostnameFactory,
 } from '@lib/test-utils/factories';
 
 import ExecutionResults from './ExecutionResults';
@@ -46,7 +48,7 @@ describe('ExecutionResults', () => {
           onExecutionFetch={() => Promise.resolve({ data: executionResult })}
           onCatalogFetch={() => Promise.resolve({ data: { items: catalog } })}
           hostnames={hostnames}
-        />
+        />,
       );
     });
 
@@ -68,12 +70,12 @@ describe('ExecutionResults', () => {
           onExecutionFetch={() => Promise.resolve({ data: executionResult })}
           onCatalogFetch={() => Promise.resolve({ data: { items: [] } })}
           hostnames={hostnames}
-        />
+        />,
       );
     });
 
     expect(
-      screen.getByText('Check execution currently running...')
+      screen.getByText('Check execution currently running...'),
     ).toBeTruthy();
   });
 });
