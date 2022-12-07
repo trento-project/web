@@ -10,7 +10,7 @@ describe('SapSystemsOverviews component', () => {
   describe('query string filtering behavior', () => {
     it('should put the filters values in the query string when filters are selected', () => {
       const [StatefulSapSystemsOverview] = withDefaultState(
-        <SapSystemsOverview />,
+        <SapSystemsOverview />
       );
       renderWithRouter(StatefulSapSystemsOverview);
 
@@ -20,12 +20,12 @@ describe('SapSystemsOverviews component', () => {
         fireEvent.click(
           screen
             .getByTestId(`filter-${filter}-options`)
-            .querySelector('li > div > span').firstChild,
+            .querySelector('li > div > span').firstChild
         );
       });
 
       expect(window.location.search).toEqual(
-        '?health=passing&sid=NWD&tags=tag1',
+        '?health=passing&sid=NWD&tags=tag1'
       );
     });
   });

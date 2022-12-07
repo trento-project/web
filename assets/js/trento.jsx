@@ -13,7 +13,10 @@ import Home from '@components/Home';
 import AboutPage from '@components/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
-import ClusterDetails, { ClusterSettings, ClusterDetailsNew } from '@components/ClusterDetails';
+import ClusterDetails, {
+  ClusterSettings,
+  ClusterDetailsNew,
+} from '@components/ClusterDetails';
 import ChecksResults from '@components/ChecksResults';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';

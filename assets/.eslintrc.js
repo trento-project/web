@@ -17,9 +17,9 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:react/recommended',
     'airbnb',
+    'prettier',
   ],
-  overrides: [
-  ],
+  overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -38,10 +38,7 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    'react',
-    'jest',
-  ],
+  plugins: ['react', 'jest'],
   rules: {
     'no-console': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
@@ -50,6 +47,9 @@ module.exports = {
     'import/no-cycle': 'off',
     'import/prefer-default-export': 'off',
     'react/jsx-props-no-spreading': 'off',
-    'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
+    'no-unused-expressions': [
+      'error',
+      { allowShortCircuit: true, allowTernary: true },
+    ],
   },
 };

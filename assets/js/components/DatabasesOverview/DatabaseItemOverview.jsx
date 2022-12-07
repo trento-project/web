@@ -48,15 +48,13 @@ function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
             </div>
           </div>
           <div className="table-row-group">
-            {instances
-              && instances.map(
-                (instance) => (
-                  <DatabaseInstance
-                    key={instance.host_id + instance.sap_system_id}
-                    instance={instance}
-                  />
-                ),
-              )}
+            {instances &&
+              instances.map((instance) => (
+                <DatabaseInstance
+                  key={instance.host_id + instance.sap_system_id}
+                  instance={instance}
+                />
+              ))}
           </div>
         </div>
       </div>
@@ -65,9 +63,7 @@ function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
 }
 
 function DatabaseLayer({ instances }) {
-  return (
-    <PlainDatabaseItemOverview instances={instances} asDatabaseLayer />
-  );
+  return <PlainDatabaseItemOverview instances={instances} asDatabaseLayer />;
 }
 
 function DatabaseInstances({ instances }) {

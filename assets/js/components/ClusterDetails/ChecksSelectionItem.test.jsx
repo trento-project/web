@@ -20,7 +20,7 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
         name={check.name}
         description={check.description}
         selected
-      />,
+      />
     );
 
     expect(screen.getByText(check.id)).toBeVisible();
@@ -39,7 +39,7 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
         name={check.name}
         description={check.description}
         selected={false}
-      />,
+      />
     );
 
     expect(screen.getByRole('switch')).not.toBeChecked();
@@ -58,7 +58,7 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
         description={check.description}
         selected
         onChange={onChangeMock}
-      />,
+      />
     );
 
     await user.click(screen.getByRole('switch'));

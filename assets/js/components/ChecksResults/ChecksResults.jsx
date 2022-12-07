@@ -31,7 +31,8 @@ import {
   sortChecks,
 } from './checksUtils';
 
-const truncatedClusterNameClasses = 'font-bold truncate w-60 inline-block align-top';
+const truncatedClusterNameClasses =
+  'font-bold truncate w-60 inline-block align-top';
 
 function ChecksResults() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,7 +59,8 @@ function ChecksResults() {
 
   const hostnames = getHostname(useSelector((state) => state.hostsList.hosts));
 
-  const { filteredChecksyByHost, setFiltersPredicates } = useFilteredChecks(cluster);
+  const { filteredChecksyByHost, setFiltersPredicates } =
+    useFilteredChecks(cluster);
 
   const executionState = cluster?.checks_execution;
 
@@ -90,8 +92,7 @@ function ChecksResults() {
       </BackButton>
       <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
-          <span className="font-medium">Checks Results for cluster</span>
-          {' '}
+          <span className="font-medium">Checks Results for cluster</span>{' '}
           <span
             className={classNames('font-bold', truncatedClusterNameClasses)}
           >
@@ -99,7 +100,9 @@ function ChecksResults() {
           </span>
         </h1>
         <ChecksResultFilters
-          onChange={(filtersPredicates) => setFiltersPredicates(filtersPredicates)}
+          onChange={(filtersPredicates) =>
+            setFiltersPredicates(filtersPredicates)
+          }
         />
       </div>
       {cluster.provider === UNKNOWN_PROVIDER && (
@@ -127,7 +130,8 @@ function ChecksResults() {
           >
             {sortChecks(filteredChecksyByHost(hostID)).map((checkId) => {
               const health = cluster.checks_results.find(
-                (result) => result.check_id === checkId && result.host_id === hostID,
+                (result) =>
+                  result.check_id === checkId && result.host_id === hostID
               )?.result;
 
               return (

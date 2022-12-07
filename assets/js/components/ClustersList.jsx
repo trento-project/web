@@ -92,7 +92,8 @@ function ClustersList() {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) =>
+          element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
@@ -101,13 +102,13 @@ function ClustersList() {
             onAdd={(tag) => {
               addTag(tag, item.id);
               dispatch(
-                addTagToCluster({ tags: [{ value: tag }], id: item.id }),
+                addTagToCluster({ tags: [{ value: tag }], id: item.id })
               );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromCluster({ tags: [{ value: tag }], id: item.id }),
+                removeTagFromCluster({ tags: [{ value: tag }], id: item.id })
               );
             }}
           />

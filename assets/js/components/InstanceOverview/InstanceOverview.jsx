@@ -30,15 +30,12 @@ function InstanceOverview({
         <HealthIcon health={health} />
       </div>
       <div className="table-cell p-2 text-center">{instanceNumber}</div>
-      <div
-        className="table-cell p-2 text-gray-500 dark:text-gray-300 text-sm"
-      >
+      <div className="table-cell p-2 text-gray-500 dark:text-gray-300 text-sm">
         <Features features={features} />
       </div>
       {isDatabase && (
         <div className="table-cell p-2">
-          {systemReplication && `HANA ${systemReplication}`}
-          {' '}
+          {systemReplication && `HANA ${systemReplication}`}{' '}
           {systemReplicationStatus && <Pill>{systemReplicationStatus}</Pill>}
         </div>
       )}

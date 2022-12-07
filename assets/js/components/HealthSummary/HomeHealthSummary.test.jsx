@@ -49,7 +49,7 @@ describe('HomeHealthSummary component', () => {
   it('should have a clickable SAP INSTANCE icon with link to the belonging instance', () => {
     const [StatefulHomeHealthSummary] = withState(
       <HomeHealthSummary />,
-      initialState,
+      initialState
     );
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
     const [{ id }] = homeHealthSummaryActionPayload;
@@ -57,14 +57,14 @@ describe('HomeHealthSummary component', () => {
     expect(
       container
         .querySelector(':nth-child(1) > :nth-child(1) > a')
-        .getAttribute('href'),
+        .getAttribute('href')
     ).toContain(`/sap_systems/${id}`);
   });
 
   it('should have a clickable PACEMAKER CLUSTER icon with link to the belonging cluster when available', () => {
     const [StatefulHomeHealthSummary] = withState(
       <HomeHealthSummary />,
-      initialState,
+      initialState
     );
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
     const [{ clusterId }] = homeHealthSummaryActionPayload;
@@ -72,17 +72,17 @@ describe('HomeHealthSummary component', () => {
     expect(
       container
         .querySelector(':nth-child(1) > :nth-child(4) > a')
-        .getAttribute('href'),
+        .getAttribute('href')
     ).toContain(`/clusters/${clusterId}`);
 
     expect(
-      container.querySelector(':nth-child(4) > :nth-child(4) > a'),
+      container.querySelector(':nth-child(4) > :nth-child(4) > a')
     ).toBeNull();
 
     expect(
       container
         .querySelector(':nth-child(4) > :nth-child(4) > svg')
-        .classList.toString(),
+        .classList.toString()
     ).toContain('hover:opacity-100');
   });
 });
@@ -91,14 +91,14 @@ describe('HomeHealthSummary component', () => {
   it('should have a working link to the passing checks in the overview component', () => {
     const [StatefulHomeHealthSummary] = withState(
       <HomeHealthSummary />,
-      initialState,
+      initialState
     );
     const { container } = renderWithRouter(StatefulHomeHealthSummary);
 
     expect(
       container
         .querySelector(':nth-child(1) > :nth-child(5) > a')
-        .getAttribute('href'),
+        .getAttribute('href')
     ).toContain('/hosts?sid=NWD&sid=HDD');
   });
 
@@ -106,7 +106,7 @@ describe('HomeHealthSummary component', () => {
     it('should put the filters values in the query string when health filters are selected', async () => {
       const [StatefulHomeHealthSummary] = withState(
         <HomeHealthSummary />,
-        initialState,
+        initialState
       );
       const { container } = renderWithRouter(StatefulHomeHealthSummary);
 
@@ -120,11 +120,11 @@ describe('HomeHealthSummary component', () => {
 
       cases.forEach(([health, results]) => {
         fireEvent.click(
-          screen.getByTestId(`health-box-${health}-not-selected`),
+          screen.getByTestId(`health-box-${health}-not-selected`)
         );
 
         expect(container.querySelector('tbody').childNodes.length).toEqual(
-          results,
+          results
         );
 
         expect(window.location.search).toEqual(`?health=${health}`);
@@ -136,12 +136,12 @@ describe('HomeHealthSummary component', () => {
 
       cases.forEach(([health]) => {
         fireEvent.click(
-          screen.getByTestId(`health-box-${health}-not-selected`),
+          screen.getByTestId(`health-box-${health}-not-selected`)
         );
       });
 
       expect(window.location.search).toEqual(
-        '?health=passing&health=warning&health=critical',
+        '?health=passing&health=warning&health=critical'
       );
     });
   });

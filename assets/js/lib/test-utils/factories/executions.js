@@ -3,9 +3,11 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { resultEnum } from '.';
 
-export const checksExecutionStatusEnum = () => faker.helpers.arrayElement(['running', 'completed']);
+export const checksExecutionStatusEnum = () =>
+  faker.helpers.arrayElement(['running', 'completed']);
 
-const expectationReturnTypeEnum = () => faker.helpers.arrayElement(['expect', 'expect_same']);
+const expectationReturnTypeEnum = () =>
+  faker.helpers.arrayElement(['expect', 'expect_same']);
 
 export const executionValueFactory = Factory.define(() => ({
   name: faker.animal.cat(),
@@ -17,7 +19,7 @@ export const executionExpectationEvaluationFactory = Factory.define(
     name: `execution_${sequence}`,
     return_value: faker.datatype.number(),
     type: expectationReturnTypeEnum(),
-  }),
+  })
 );
 
 export const executionFactFactory = Factory.define(() => ({
@@ -78,6 +80,6 @@ export const withCompletedResults = (execution, result, checkResults) => ({
   completed_at: faker.date.soon(),
 });
 
-export const checksExecutionCompletedFactory = Factory.define(
-  ({ params }) => withCompletedResults(checksExecutionRunningFactory.build(params)),
+export const checksExecutionCompletedFactory = Factory.define(({ params }) =>
+  withCompletedResults(checksExecutionRunningFactory.build(params))
 );

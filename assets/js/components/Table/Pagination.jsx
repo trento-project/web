@@ -30,7 +30,7 @@ function Pagination({ pages, currentPage, onSelect }) {
                 border: pageNumber % 2 === 0,
                 'border-t': pageNumber % 2 === 1,
                 'border-b': pageNumber % 2 === 1,
-              },
+              }
             );
 
             return (

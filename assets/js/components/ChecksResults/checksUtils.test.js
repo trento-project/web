@@ -69,12 +69,13 @@ describe('checksUtils', () => {
   describe('getHealth', () => {
     it('getHealth should return health', () => {
       const checkResult = checkResultFactory.build();
-      const { check_id: checkID, agents_check_results: agentChecks } = checkResult;
+      const { check_id: checkID, agents_check_results: agentChecks } =
+        checkResult;
 
       const { health, expectations, failedExpectations } = getHealth(
         [checkResult],
         checkID,
-        agentChecks[0].agent_id,
+        agentChecks[0].agent_id
       );
 
       expect(health).toBe('passing');
@@ -88,7 +89,7 @@ describe('checksUtils', () => {
       const healthInfo = getHealth(
         [checkResult],
         'carbonara',
-        agentChecks[0].agent_id,
+        agentChecks[0].agent_id
       );
 
       expect(healthInfo).toBe(undefined);

@@ -13,7 +13,8 @@ import {
 import { updateLastExecution } from './lastExecutions';
 
 const axiosMock = new MockAdapter(wandaClient);
-const lastExecutionURL = (groupID) => `/api/checks/groups/${groupID}/executions/last`;
+const lastExecutionURL = (groupID) =>
+  `/api/checks/groups/${groupID}/executions/last`;
 
 describe('lastExecutions saga', () => {
   beforeEach(() => {
@@ -71,7 +72,7 @@ describe('lastExecutions saga', () => {
 
     expect(dispatched).toContainEqual(setLastExecutionLoading(groupID));
     expect(dispatched).toContainEqual(
-      setLastExecutionError({ groupID, error: 'Network Error' }),
+      setLastExecutionError({ groupID, error: 'Network Error' })
     );
   });
 });

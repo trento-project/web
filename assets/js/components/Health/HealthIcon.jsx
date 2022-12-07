@@ -11,7 +11,11 @@ import {
 import Spinner from '@components/Spinner';
 import classNames from 'classnames';
 
-function HealthIcon({ health = undefined, centered = false, hoverOpacity = true }) {
+function HealthIcon({
+  health = undefined,
+  centered = false,
+  hoverOpacity = true,
+}) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
@@ -22,7 +26,7 @@ function HealthIcon({ health = undefined, centered = false, hoverOpacity = true 
         <EOS_CHECK_CIRCLE_OUTLINED
           className={classNames(
             hoverOpacityClass,
-            computedIconCssClass('fill-jungle-green-500', centered),
+            computedIconCssClass('fill-jungle-green-500', centered)
           )}
         />
       );
@@ -31,7 +35,7 @@ function HealthIcon({ health = undefined, centered = false, hoverOpacity = true 
         <EOS_WARNING_OUTLINED
           className={classNames(
             hoverOpacityClass,
-            computedIconCssClass('fill-yellow-500', centered),
+            computedIconCssClass('fill-yellow-500', centered)
           )}
         />
       );
@@ -40,7 +44,7 @@ function HealthIcon({ health = undefined, centered = false, hoverOpacity = true 
         <EOS_ERROR_OUTLINED
           className={classNames(
             hoverOpacityClass,
-            computedIconCssClass('fill-red-500', centered),
+            computedIconCssClass('fill-red-500', centered)
           )}
         />
       );
@@ -51,7 +55,7 @@ function HealthIcon({ health = undefined, centered = false, hoverOpacity = true 
         <EOS_LENS_FILLED
           className={classNames(
             hoverOpacityClass,
-            computedIconCssClass('fill-gray-500', centered),
+            computedIconCssClass('fill-gray-500', centered)
           )}
         />
       );

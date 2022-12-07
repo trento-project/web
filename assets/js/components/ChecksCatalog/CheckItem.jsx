@@ -5,9 +5,7 @@ import { Disclosure, Transition } from '@headlessui/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-function CheckItem({
-  checkID, premium = false, description, remediation,
-}) {
+function CheckItem({ checkID, premium = false, description, remediation }) {
   return (
     <li>
       <Disclosure>

@@ -11,17 +11,20 @@ export const useFilteredChecks = (cluster) => {
   const filterChecks = (checks, predicates) => {
     if (predicates.length === 0) return checks;
 
-    return checks.filter((check) => predicates.some((predicate) => predicate(check)));
+    return checks.filter((check) =>
+      predicates.some((predicate) => predicate(check))
+    );
   };
 
-  const checksForHost = (hostID) => filteredChecks
-    .filter((result) => result.host_id === hostID)
-    .map((result) => result.check_id);
+  const checksForHost = (hostID) =>
+    filteredChecks
+      .filter((result) => result.host_id === hostID)
+      .map((result) => result.check_id);
 
   useEffect(() => {
     if (cluster?.checks_results.length > 0) {
-      const selectedCheckResults = cluster?.checks_results.filter(
-        (result) => cluster?.selected_checks.includes(result?.check_id),
+      const selectedCheckResults = cluster?.checks_results.filter((result) =>
+        cluster?.selected_checks.includes(result?.check_id)
       );
 
       setFilteredChecks(filterChecks(selectedCheckResults, filtersPredicates));
@@ -46,7 +49,7 @@ function ChecksResultFilters({ onChange }) {
     setFiltersForField({
       RESULT_FILTER_FIELD: {
         predicates: selectedFilters.map(
-          (value) => (checks) => checks[RESULT_FILTER_FIELD] === value,
+          (value) => (checks) => checks[RESULT_FILTER_FIELD] === value
         ),
         values: selectedFilters,
       },
@@ -57,7 +60,7 @@ function ChecksResultFilters({ onChange }) {
     if (Object.keys(filtersForField).length >= 0) {
       const filtersToApply = Object.keys(filtersForField).reduce(
         (acc, curr) => [...acc, ...filtersForField[curr].predicates],
-        [],
+        []
       );
 
       onChange(filtersToApply);

@@ -17,7 +17,7 @@ describe('ChecksResults ResultsContainer component', () => {
 
   it('should render the suggestion box', () => {
     renderWithRouter(
-      <ResultsContainer catalogError={false} hasAlreadyChecksResults={false} />,
+      <ResultsContainer catalogError={false} hasAlreadyChecksResults={false} />
     );
 
     expect(screen.getByRole('button')).toHaveTextContent('Select Checks now!');
@@ -27,7 +27,7 @@ describe('ChecksResults ResultsContainer component', () => {
     renderWithRouter(
       <ResultsContainer catalogError={false} hasAlreadyChecksResults>
         <span data-testid="hello">Hello World!</span>
-      </ResultsContainer>,
+      </ResultsContainer>
     );
 
     expect(screen.getByTestId('hello')).toHaveTextContent('Hello World!');

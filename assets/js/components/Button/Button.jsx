@@ -23,13 +23,11 @@ const getButtonClasses = (type) => {
   }
 };
 
-function Button({
-  children, className, type, size, ...props
-}) {
+function Button({ children, className, type, size, ...props }) {
   const buttonClasses = classNames(
     getButtonClasses(type),
     getSizeClasses(size),
-    className,
+    className
   );
   return (
     <button type="button" className={buttonClasses} {...props}>

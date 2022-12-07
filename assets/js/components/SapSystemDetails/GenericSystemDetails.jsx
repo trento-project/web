@@ -17,16 +17,18 @@ export function GenericSystemDetails({ title, type, system }) {
     return <div>Not Found</div>;
   }
 
-  const renderType = (t) => (t === APPLICATION_TYPE ? 'Application server' : 'HANA Database');
+  const renderType = (t) =>
+    t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
 
-  const getUniqueHosts = (hosts) => Array.from(
-    hosts
-      .reduce((hostsMap, host) => {
-        if (!hostsMap.has(host.id)) hostsMap.set(host.id, host);
-        return hostsMap;
-      }, new Map())
-      .values(),
-  );
+  const getUniqueHosts = (hosts) =>
+    Array.from(
+      hosts
+        .reduce((hostsMap, host) => {
+          if (!hostsMap.has(host.id)) hostsMap.set(host.id, host);
+          return hostsMap;
+        }, new Map())
+        .values()
+    );
 
   return (
     <div>
@@ -90,8 +92,8 @@ export function GenericSystemDetails({ title, type, system }) {
 }
 
 export function InstanceStatus({ health = undefined }) {
-  let cssClass; let
-    instanceStatus;
+  let cssClass;
+  let instanceStatus;
 
   switch (health) {
     case 'passing':

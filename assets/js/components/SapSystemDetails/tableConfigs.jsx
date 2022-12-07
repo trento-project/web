@@ -34,11 +34,12 @@ export const systemHostsTableConfiguration = {
     {
       title: 'IP',
       key: 'ip_addresses',
-      render: (content) => content?.map((ip) => (
-        <div key={ip} className="text-sm text-gray-900">
-          {ip}
-        </div>
-      )),
+      render: (content) =>
+        content?.map((ip) => (
+          <div key={ip} className="text-sm text-gray-900">
+            {ip}
+          </div>
+        )),
     },
     {
       title: 'Provider',

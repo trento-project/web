@@ -13,7 +13,7 @@ describe('Provider Label', () => {
     const { container } = render(<ProviderLabel provider="azure" />);
     expect(screen.getAllByText(/Azure/)).toBeTruthy();
     expect(container.querySelector('img').getAttribute('alt')).toContain(
-      'azure',
+      'azure'
     );
   });
   it('should display an icon and label with GCP as the provider', () => {
@@ -30,15 +30,15 @@ describe('Provider Label', () => {
     const { container } = render(<ProviderLabel provider="nutanix" />);
     expect(screen.getAllByText(/Nutanix/)).toBeTruthy();
     expect(container.querySelector('img').getAttribute('alt')).toContain(
-      'nutanix',
+      'nutanix'
     );
   });
   it('should display an element containing "Provider not recognized"', () => {
     const { container } = render(
-      <ProviderLabel provider="unrecognized-provider" />,
+      <ProviderLabel provider="unrecognized-provider" />
     );
     expect(container.querySelector('span')).toHaveTextContent(
-      'Provider not recognized',
+      'Provider not recognized'
     );
   });
 });

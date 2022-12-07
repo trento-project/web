@@ -18,12 +18,16 @@ function AboutPage({ onFetch = getAboutData }) {
   useEffect(() => {
     setLoading(true);
     onFetch()
-      .then(({ data: { flavor: newFlavor, version: newVersion, sles_subscriptions } }) => {
-        setLoading(false);
-        undefined !== newFlavor && setFlavor(newFlavor);
-        setVersion(newVersion);
-        setSubscriptions(sles_subscriptions);
-      })
+      .then(
+        ({
+          data: { flavor: newFlavor, version: newVersion, sles_subscriptions },
+        }) => {
+          setLoading(false);
+          undefined !== newFlavor && setFlavor(newFlavor);
+          setVersion(newVersion);
+          setSubscriptions(sles_subscriptions);
+        }
+      )
       .catch((error) => {
         logError(error);
         setLoading(false);
@@ -47,7 +51,8 @@ function AboutPage({ onFetch = getAboutData }) {
     {
       title: 'SLES for SAP subscriptions',
       content: `${subscriptions} found`,
-      render: (content) => (loading ? <span>Loading...</span> : <Pill>{content}</Pill>),
+      render: (content) =>
+        loading ? <span>Loading...</span> : <Pill>{content}</Pill>,
     },
   ];
 

@@ -5,7 +5,9 @@ import InstanceOverview from '@components/InstanceOverview';
 import { APPLICATION_TYPE } from '@lib/model';
 
 function ApplicationInstance({ instance }) {
-  return <InstanceOverview instanceType={APPLICATION_TYPE} instance={instance} />;
+  return (
+    <InstanceOverview instanceType={APPLICATION_TYPE} instance={instance} />
+  );
 }
 
 const applicationInstanceColumns = [
@@ -43,18 +45,18 @@ function SapSystemItemOverview({ sapSystem }) {
               </div>
             </div>
             <div className="table-row-group">
-              {applicationInstances
-                && applicationInstances.map((instance) => (
-                  <ApplicationInstance key={instance.host_id} instance={instance} />
+              {applicationInstances &&
+                applicationInstances.map((instance) => (
+                  <ApplicationInstance
+                    key={instance.host_id}
+                    instance={instance}
+                  />
                 ))}
             </div>
           </div>
         </div>
       </div>
-      <DatabaseItemOverview
-        database={{ databaseInstances }}
-        asDatabaseLayer
-      />
+      <DatabaseItemOverview database={{ databaseInstances }} asDatabaseLayer />
     </div>
   );
 }

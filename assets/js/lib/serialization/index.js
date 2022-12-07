@@ -6,7 +6,10 @@ const isObject = function isObject(o) {
   return o === Object(o) && !isArray(o) && typeof o !== 'function';
 };
 
-const toCamel = (s) => s.replace(/([-_][a-z])/gi, ($1) => $1.toUpperCase().replace('-', '').replace('_', ''));
+const toCamel = (s) =>
+  s.replace(/([-_][a-z])/gi, ($1) =>
+    $1.toUpperCase().replace('-', '').replace('_', '')
+  );
 
 export const keysToCamel = function keysToCamel(o) {
   if (isObject(o)) {
@@ -17,7 +20,8 @@ export const keysToCamel = function keysToCamel(o) {
     });
 
     return n;
-  } if (isArray(o)) {
+  }
+  if (isArray(o)) {
     return o.map((i) => keysToCamel(i));
   }
 

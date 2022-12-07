@@ -9,9 +9,7 @@ import CheckResult from './CheckResult';
 
 describe('CheckResult component', () => {
   it('should render a single check result', () => {
-    const {
-      id, description, executionState, health,
-    } = checkFactory.build();
+    const { id, description, executionState, health } = checkFactory.build();
 
     render(
       <table>
@@ -24,7 +22,7 @@ describe('CheckResult component', () => {
             onClick={() => {}}
           />
         </tbody>
-      </table>,
+      </table>
     );
 
     expect(screen.getByText(id)).toBeVisible();

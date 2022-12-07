@@ -44,7 +44,7 @@ function ChecksSelectionGroup({
                   checked={allSelected(selected)}
                   className={classNames(
                     switchClasses[selected],
-                    'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
+                    'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
                   )}
                   onChange={onChange}
                 >
@@ -52,7 +52,7 @@ function ChecksSelectionGroup({
                     aria-hidden="true"
                     className={classNames(
                       translateClasses[selected],
-                      'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
+                      'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
                     )}
                   />
                 </Switch>
@@ -82,7 +82,10 @@ function ChecksSelectionGroup({
                   leaveTo="transform opacity-0"
                 >
                   <Disclosure.Panel className="border-none">
-                    <ul data-testid="check-selection-panel" className="divide-y divide-gray-200">
+                    <ul
+                      data-testid="check-selection-panel"
+                      className="divide-y divide-gray-200"
+                    >
                       {children}
                     </ul>
                   </Disclosure.Panel>

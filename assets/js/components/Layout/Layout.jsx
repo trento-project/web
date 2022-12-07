@@ -55,7 +55,7 @@ const navigation = [
 
 function Layout() {
   const [isCollapsed, setCollapsed] = useState(
-    localStorage.getItem('sidebar-collapsed'),
+    localStorage.getItem('sidebar-collapsed')
   );
 
   const handleSidebar = useCallback(() => {
@@ -66,7 +66,7 @@ function Layout() {
   }, [isCollapsed]);
 
   const csrfToken = document.head.querySelector(
-    '[name~=csrf-token][content]',
+    '[name~=csrf-token][content]'
   ).content;
 
   const sidebarIconColor = 'currentColor';
@@ -79,7 +79,7 @@ function Layout() {
         <div
           className={classNames(
             'h-screen block shadow-lg fixed flex-shrink-0 z-20',
-            { 'w-16': isCollapsed, 'w-64': !isCollapsed },
+            { 'w-16': isCollapsed, 'w-64': !isCollapsed }
           )}
         >
           <div
@@ -112,25 +112,26 @@ function Layout() {
           <div className="bg-white h-full dark:bg-gray-700">
             <div className="flex items-center justify-center pt-6">
               <img
-                className={classNames(
-                  'h-auto transition-scale duration-100',
-                  { 'w-12': isCollapsed, 'w-24': !isCollapsed },
-                )}
+                className={classNames('h-auto transition-scale duration-100', {
+                  'w-12': isCollapsed,
+                  'w-24': !isCollapsed,
+                })}
                 alt="trento project logo"
                 src={TrentoLogo}
-              />
-              {' '}
+              />{' '}
             </div>
             <nav className="mt-6">
               <div>
                 {navigation.map((item) => (
                   <NavLink
                     key={item.name}
-                    className={({ isActive }) => `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
-                      isActive
-                        ? 'pl-5 border-l-4 border-jungle-green-500'
-                        : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
-                    }`}
+                    className={({ isActive }) =>
+                      `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
+                        isActive
+                          ? 'pl-5 border-l-4 border-jungle-green-500'
+                          : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
+                      }`
+                    }
                     to={item.href}
                     end={item.href === '/'}
                     title={item.name}

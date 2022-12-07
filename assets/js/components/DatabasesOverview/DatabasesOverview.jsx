@@ -26,7 +26,7 @@ const removeTag = (tag, sapSystemId) => {
 
 function DatabasesOverview() {
   const { databases, databaseInstances, loading } = useSelector(
-    (state) => state.databasesList,
+    (state) => state.databasesList
   );
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -84,23 +84,13 @@ function DatabasesOverview() {
               passing: 0,
               warning: 0,
               critical: 0,
-            },
+            }
           );
           return (
             <div>
-              {item.databaseInstances?.length}
-              {' '}
-              instances:
-              {' '}
-              {statusAggregation.critical}
-              {' '}
-              critical,
-              {statusAggregation.warning}
-              {' '}
-              warning,
-              {' '}
-              {statusAggregation.passing}
-              {' '}
+              {item.databaseInstances?.length} instances:{' '}
+              {statusAggregation.critical} critical,
+              {statusAggregation.warning} warning, {statusAggregation.passing}{' '}
               passing
               {content}
             </div>
@@ -112,7 +102,8 @@ function DatabasesOverview() {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) =>
+          element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
@@ -121,13 +112,13 @@ function DatabasesOverview() {
             onAdd={(tag) => {
               addTag(tag, item.id);
               dispatch(
-                addTagToDatabase({ tags: [{ value: tag }], id: item.id }),
+                addTagToDatabase({ tags: [{ value: tag }], id: item.id })
               );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromDatabase({ tags: [{ value: tag }], id: item.id }),
+                removeTagFromDatabase({ tags: [{ value: tag }], id: item.id })
               );
             }}
           />
