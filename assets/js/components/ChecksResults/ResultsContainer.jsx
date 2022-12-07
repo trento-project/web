@@ -22,7 +22,8 @@ function ResultsContainer({
         buttonOnClick={onCatalogRefresh}
       />
     );
-  } if (!hasAlreadyChecksResults) {
+  }
+  if (!hasAlreadyChecksResults) {
     return (
       <ChecksSelectionHints
         clusterId={clusterID}

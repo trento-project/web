@@ -27,9 +27,11 @@ function ProviderSelection({ providers, selected, onChange }) {
               {providers.map((provider, providerIdx) => (
                 <Listbox.Option
                   key={/* eslint-disable */ providerIdx}
-                  className={({ active }) => `cursor-default select-none relative py-2 pl-10 pr-4 ${
-                    active ? 'text-green-900 bg-green-100' : 'text-gray-900'
-                  }`}
+                  className={({ active }) =>
+                    `cursor-default select-none relative py-2 pl-10 pr-4 ${
+                      active ? 'text-green-900 bg-green-100' : 'text-gray-900'
+                    }`
+                  }
                   value={provider}
                 >
                   {({ selected: isSelected }) => (

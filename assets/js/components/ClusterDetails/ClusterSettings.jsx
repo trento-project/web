@@ -45,8 +45,7 @@ export function ClusterSettings({ newChecksSelectionView = false }) {
       </BackButton>
       <div className="flex mb-2">
         <h1 className="text-3xl w-1/2">
-          <span className="font-medium">Cluster Settings for</span>
-          {' '}
+          <span className="font-medium">Cluster Settings for</span>{' '}
           <span className={`font-bold ${truncatedClusterNameClasses}`}>
             {getClusterName(cluster)}
           </span>
@@ -57,13 +56,15 @@ export function ClusterSettings({ newChecksSelectionView = false }) {
           {Object.keys(tabsSettings).map((tabTitle) => (
             <Tab
               key={tabTitle}
-              className={({ selected }) => classNames(
-                'w-full py-2.5 text-sm leading-5 font-medium rounded',
-                'focus:outline-none',
-                selected
-                  ? 'bg-white shadow'
-                  : 'text-gray-800 hover:bg-white/[0.12]',
-              )}
+              className={({ selected }) =>
+                classNames(
+                  'w-full py-2.5 text-sm leading-5 font-medium rounded',
+                  'focus:outline-none',
+                  selected
+                    ? 'bg-white shadow'
+                    : 'text-gray-800 hover:bg-white/[0.12]'
+                )
+              }
             >
               {tabTitle}
             </Tab>
@@ -84,7 +85,7 @@ export function ClusterSettings({ newChecksSelectionView = false }) {
               key={tabTitle}
               className={classNames(
                 'bg-white rounded p-3',
-                'focus:outline-none focus:ring-2 ring-offset-2 ring-white ring-opacity-60',
+                'focus:outline-none focus:ring-2 ring-offset-2 ring-white ring-opacity-60'
               )}
             >
               {tabContent}
@@ -125,8 +126,7 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
         role="alert"
       >
         <p className="mr-1">
-          Well done! To start execution now, click here 👉
-          {' '}
+          Well done! To start execution now, click here 👉{' '}
         </p>
         <TriggerChecksExecutionRequest
           cssClasses="tn-checks-start-execute rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"

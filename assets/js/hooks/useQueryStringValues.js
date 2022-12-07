@@ -7,10 +7,13 @@ const useQueryStringValues = (paramsNames) => {
   const [extractedParams, setExtractedParams] = useState({});
 
   useEffect(() => {
-    const paramsFromQs = paramsNames.reduce((acc, curr) => ({
-      ...acc,
-      [curr]: searchParams.getAll(curr),
-    }), {});
+    const paramsFromQs = paramsNames.reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr]: searchParams.getAll(curr),
+      }),
+      {}
+    );
 
     setExtractedParams(paramsFromQs);
   }, [searchParams]);

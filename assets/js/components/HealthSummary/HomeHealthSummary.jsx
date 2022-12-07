@@ -79,7 +79,7 @@ const healthSummaryTableConfig = {
 
 export function HomeHealthSummary() {
   const { loading, sapSystemsHealth } = useSelector(
-    (state) => state.sapSystemsHealthSummary,
+    (state) => state.sapSystemsHealthSummary
   );
 
   const {
@@ -103,7 +103,7 @@ export function HomeHealthSummary() {
 
   useEffect(() => {
     setActiveFilters(
-      healthFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {}),
+      healthFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
     );
     if (healthFilters.length === 0) {
       setSummaryData(sapSystemsHealth);
@@ -117,7 +117,7 @@ export function HomeHealthSummary() {
           result = result || isMostRelevantPrio(e, f);
         });
         return result;
-      }),
+      })
     );
   }, [healthFilters]);
 

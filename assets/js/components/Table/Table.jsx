@@ -3,7 +3,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { page, pages } from '@lib/lists';
-import { getDefaultFilterFunction, createFilter, TableFilters } from './filters';
+import {
+  getDefaultFilterFunction,
+  createFilter,
+  TableFilters,
+} from './filters';
 
 import CollapsibleTableRow from './CollapsibleTableRow';
 import Pagination from './Pagination';
@@ -21,7 +25,7 @@ const renderCells = (columns, item) => (
           key={idx}
           className={classNames(
             'px-5 py-5 border-b border-gray-200 bg-white text-sm',
-            className,
+            className
           )}
         >
           {render(content, item)}
@@ -43,9 +47,7 @@ const updateSearchParams = (searchParams, values) => {
   return searchParams;
 };
 
-function Table({
-  config, data = [], searchParams, setSearchParams,
-}) {
+function Table({ config, data = [], searchParams, setSearchParams }) {
   const {
     columns,
     collapsibleDetailRenderer = undefined,
@@ -59,14 +61,14 @@ function Table({
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
   const columnFiltersBoundToParams = columns.filter(
-    (c) => c.filter && c.filterFromParams,
+    (c) => c.filter && c.filterFromParams
   );
 
   useEffect(() => {
     if (!searchParamsEnabled) return;
     const filtersBoundToQs = filters.reduce((acc, curr) => {
       const isFilterBoundToQs = columnFiltersBoundToParams.find(
-        (col) => col.key === curr.key,
+        (col) => col.key === curr.key
       );
 
       if (!isFilterBoundToQs) return [...acc];
@@ -84,9 +86,10 @@ function Table({
 
       if (paramsFilterValue.length === 0) return [...acc];
 
-      const filterFunction = typeof curr.filter === 'function'
-        ? curr.filter(paramsFilterValue, curr.key)
-        : getDefaultFilterFunction(paramsFilterValue, curr.key);
+      const filterFunction =
+        typeof curr.filter === 'function'
+          ? curr.filter(paramsFilterValue, curr.key)
+          : getDefaultFilterFunction(paramsFilterValue, curr.key);
 
       return [
         ...acc,
@@ -143,7 +146,7 @@ function Table({
                       scope="col"
                       className={classNames(
                         'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                        className,
+                        className
                       )}
                     >
                       {title}

@@ -9,9 +9,10 @@ config();
 
 const resolvePath = (p) => path.resolve(__dirname, p);
 
-const WANDA_URL = process.env.NODE_ENV === 'production'
-  ? ''
-  : JSON.stringify(process.env.WANDA_URL);
+const WANDA_URL =
+  process.env.NODE_ENV === 'production'
+    ? ''
+    : JSON.stringify(process.env.WANDA_URL);
 
 const define = {
   'process.env.WANDA_URL': WANDA_URL,
@@ -34,10 +35,10 @@ require('esbuild')
       alias({
         phoenix: resolvePath('../deps/phoenix/priv/static/phoenix.mjs'),
         phoenix_html: resolvePath(
-          '../deps/phoenix_html/priv/static/phoenix_html.js',
+          '../deps/phoenix_html/priv/static/phoenix_html.js'
         ),
         phoenix_live_view: resolvePath(
-          '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js',
+          '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js'
         ),
         '@components': resolvePath('./js/components'),
         '@state': resolvePath('./js/state'),

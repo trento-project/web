@@ -10,14 +10,14 @@ describe('AboutPage component', () => {
   it('should render the about page with content from the api', async () => {
     await act(async () => {
       renderWithRouter(
-        <AboutPage onFetch={() => Promise.resolve({ data: apiRequestData })} />,
+        <AboutPage onFetch={() => Promise.resolve({ data: apiRequestData })} />
       );
     });
 
     expect(screen.getByText(apiRequestData.flavor)).toBeTruthy();
     expect(screen.getByText(apiRequestData.version)).toBeTruthy();
     expect(
-      screen.getByText(`${apiRequestData.sles_subscriptions} found`),
+      screen.getByText(`${apiRequestData.sles_subscriptions} found`)
     ).toBeTruthy();
   });
 
@@ -28,7 +28,7 @@ describe('AboutPage component', () => {
 
     await act(async () => {
       renderWithRouter(
-        <AboutPage onFetch={() => Promise.reject(errorMessage)} />,
+        <AboutPage onFetch={() => Promise.reject(errorMessage)} />
       );
     });
 

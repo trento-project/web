@@ -26,7 +26,8 @@ export const clusterConnectionsSettingsSlice = createSlice({
       state.settings = payload.settings;
     },
     setClusterConnectionSettingsLoadingError: (state) => {
-      state.error = 'An unexpected error happened loading the Connection Settings for the Cluster';
+      state.error =
+        'An unexpected error happened loading the Connection Settings for the Cluster';
     },
     startSavingClusterConnectionSettings: (state) => {
       state.saving = true;
@@ -37,7 +38,8 @@ export const clusterConnectionsSettingsSlice = createSlice({
       state.saving = false;
     },
     setClusterConnectionSettingsSavingError: (state) => {
-      state.savingError = 'An unexpected error happened while saving your connection settings';
+      state.savingError =
+        'An unexpected error happened while saving your connection settings';
     },
     setClusterConnectionSettingsSavingSuccess: (state) => {
       state.savingSuccess = true;

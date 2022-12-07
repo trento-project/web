@@ -13,19 +13,16 @@ import { post, del } from '@lib/network';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 
-const getInstancesByHost = (
-  applicationInstances,
-  databaseInstances,
-  hostId,
-) => applicationInstances
-  .map((instance) => ({ ...instance, type: 'sap_systems' }))
-  .concat(
-    databaseInstances.map((instance) => ({
-      ...instance,
-      type: 'databases',
-    })),
-  )
-  .filter((instance) => instance.host_id === hostId);
+const getInstancesByHost = (applicationInstances, databaseInstances, hostId) =>
+  applicationInstances
+    .map((instance) => ({ ...instance, type: 'sap_systems' }))
+    .concat(
+      databaseInstances.map((instance) => ({
+        ...instance,
+        type: 'databases',
+      }))
+    )
+    .filter((instance) => instance.host_id === hostId);
 
 const addTag = (tag, hostId) => {
   post(`/api/hosts/${hostId}/tags`, {
@@ -41,7 +38,7 @@ function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
   const { applicationInstances, databaseInstances } = useSelector(
-    (state) => state.sapSystemsList,
+    (state) => state.sapSystemsList
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -57,7 +54,9 @@ function HostsList() {
         key: 'heartbeat',
         filter: true,
         filterFromParams: true,
-        render: (_content, item) => <HealthIcon health={item.heartbeat} centered />,
+        render: (_content, item) => (
+          <HealthIcon health={item.heartbeat} centered />
+        ),
       },
       {
         title: 'Hostname',
@@ -70,11 +69,12 @@ function HostsList() {
       {
         title: 'IP',
         key: 'ip',
-        render: (content) => content.map((ip) => (
-          <div key={ip} className="text-sm text-gray-900">
-            {ip}
-          </div>
-        )),
+        render: (content) =>
+          content.map((ip) => (
+            <div key={ip} className="text-sm text-gray-900">
+              {ip}
+            </div>
+          )),
       },
       {
         title: 'Provider',
@@ -90,7 +90,8 @@ function HostsList() {
         title: 'SID',
         key: 'sid',
         filterFromParams: true,
-        filter: (filter, key) => (element) => element[key].some((sid) => filter.includes(sid)),
+        filter: (filter, key) => (element) =>
+          element[key].some((sid) => filter.includes(sid)),
         render: (sids, { sap_systems }) => {
           const sidsArray = sap_systems.map((instance, index) => [
             index > 0 && ', ',
@@ -120,7 +121,8 @@ function HostsList() {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) =>
+          element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
@@ -133,7 +135,7 @@ function HostsList() {
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromHost({ tags: [{ value: tag }], id: item.id }),
+                removeTagFromHost({ tags: [{ value: tag }], id: item.id })
               );
             }}
           />
@@ -147,7 +149,7 @@ function HostsList() {
     const sapSystemList = getInstancesByHost(
       applicationInstances,
       databaseInstances,
-      host.id,
+      host.id
     );
 
     return {

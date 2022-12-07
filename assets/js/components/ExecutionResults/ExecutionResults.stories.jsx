@@ -106,17 +106,20 @@ const catalogData = {
   },
 };
 
-const fetchRunning = () => new Promise((resolve, _reject) => {
-  setTimeout(() => resolve(runningExecution), 3000);
-});
+const fetchRunning = () =>
+  new Promise((resolve, _reject) => {
+    setTimeout(() => resolve(runningExecution), 3000);
+  });
 
-const fetchCompleted = () => new Promise((resolve, _reject) => {
-  setTimeout(() => resolve(completedExecution), 3000);
-});
+const fetchCompleted = () =>
+  new Promise((resolve, _reject) => {
+    setTimeout(() => resolve(completedExecution), 3000);
+  });
 
-const fetchCatalog = () => new Promise((resolve, _reject) => {
-  setTimeout(() => resolve(catalogData), 3000);
-});
+const fetchCatalog = () =>
+  new Promise((resolve, _reject) => {
+    setTimeout(() => resolve(catalogData), 3000);
+  });
 
 export default {
   title: 'ExecutionResults',

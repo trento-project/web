@@ -1,1 +1,4 @@
-export const getLastExecution = (groupID) => ({ lastExecutions }) => lastExecutions[groupID];
+export const getLastExecution =
+  (groupID) =>
+  ({ lastExecutions }) =>
+    lastExecutions[groupID];

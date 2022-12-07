@@ -8,7 +8,7 @@ export const getClusterName = (cluster) => cluster?.name || cluster?.id;
 function ClusterLink({ cluster }) {
   const clusterName = getClusterName(cluster);
   const truncatedClasses = classNames(
-    'truncate w-32 inline-block align-middle',
+    'truncate w-32 inline-block align-middle'
   );
 
   if (cluster?.type === 'hana_scale_up' || cluster?.type === 'hana_scale_out') {

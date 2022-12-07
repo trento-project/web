@@ -15,7 +15,7 @@ function Pill({
           'bg-green-100': !className,
           'text-green-800': !className,
         },
-        className,
+        className
       )}
       aria-hidden="true"
       onClick={onClick}

@@ -7,9 +7,7 @@ import useOnClickOutside from '@hooks/useOnClickOutside';
 const tagRegexValidation = /^[\+\-=.,_:@\p{L}\w]*$/u;
 const tagValidation = (char) => tagRegexValidation.test(char);
 
-function Tags({
-  className, tags, onChange, onAdd, onRemove, resourceId,
-}) {
+function Tags({ className, tags, onChange, onAdd, onRemove, resourceId }) {
   const [renderedTags, setTags] = useState(tags);
   const [addingTag, setAddingTag] = useState(false);
   const [newTagValue, setNewTagValue] = useState('');
@@ -35,7 +33,7 @@ function Tags({
         'flex-wrap',
         'gap-y-2',
         'gap-x-1.5',
-        className,
+        className
       )}
     >
       {renderedTags.map((tag) => (
@@ -63,7 +61,7 @@ function Tags({
             onClick={() => {
               const newTagsList = renderedTags.reduce(
                 (acc, current) => (current === tag ? acc : [...acc, current]),
-                [],
+                []
               );
               setTags(newTagsList);
               onChange(newTagsList);
@@ -87,8 +85,8 @@ function Tags({
             onKeyDown={({ key }) => {
               if (key === 'Enter') {
                 if (
-                  newTagValue.length === 0
-                  || renderedTags.includes(newTagValue)
+                  newTagValue.length === 0 ||
+                  renderedTags.includes(newTagValue)
                 ) {
                   return;
                 }
@@ -120,9 +118,7 @@ function Tags({
             setAddingTag(true);
           }}
         >
-          <EOS_NEW_LABEL color="#276749" size="base" />
-          {' '}
-          Add Tag
+          <EOS_NEW_LABEL color="#276749" size="base" /> Add Tag
         </Pill>
       )}
     </span>

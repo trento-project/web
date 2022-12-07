@@ -18,12 +18,12 @@ describe('ClustersList component', () => {
         fireEvent.click(
           screen
             .getByTestId(`filter-${filter}-options`)
-            .querySelector('li > div > span').firstChild,
+            .querySelector('li > div > span').firstChild
         );
       });
 
       expect(window.location.search).toEqual(
-        '?health=unknown&name=drbd_cluster&sid=HDD&type=unknown&tags=tag1',
+        '?health=unknown&name=drbd_cluster&sid=HDD&type=unknown&tags=tag1'
       );
     });
   });

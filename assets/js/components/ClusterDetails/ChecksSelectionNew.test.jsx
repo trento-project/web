@@ -24,7 +24,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState,
+      initialState
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));
@@ -68,7 +68,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState,
+      initialState
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));
@@ -110,7 +110,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     };
     const [statefulChecksSelection, store] = withState(
       <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
-      initialState,
+      initialState
     );
 
     await act(async () => renderWithRouter(statefulChecksSelection));

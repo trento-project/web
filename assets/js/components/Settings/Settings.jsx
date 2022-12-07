@@ -71,7 +71,7 @@ function Settings() {
                     {
                       'bg-gray-100': hasApiKey,
                       'bg-red-100': !hasApiKey,
-                    },
+                    }
                   )}
                 >
                   <code>
@@ -117,8 +117,7 @@ function Settings() {
                     Register Trento Agents
                   </h3>
                   <p className="text-gray-500 dark:text-gray-300 leading-loose">
-                    Register your first
-                    {' '}
+                    Register your first{' '}
                     <a
                       className="text-jungle-green-500 hover:opacity-75"
                       href="https://github.com/trento-project/agent"
@@ -126,8 +125,7 @@ function Settings() {
                       rel="noreferrer"
                     >
                       Trento Agents
-                    </a>
-                    {' '}
+                    </a>{' '}
                     or add new ones to the target SAP Landscape.
                   </p>
                 </div>

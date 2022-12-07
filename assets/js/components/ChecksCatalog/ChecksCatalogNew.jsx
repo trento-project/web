@@ -58,7 +58,7 @@ export function ChecksCatalogNew() {
                 ))}
               </ul>
             </div>
-          ),
+          )
         )}
       </div>
     </CatalogContainer>

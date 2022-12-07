@@ -18,13 +18,13 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const group = 'some-group';
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group} selected={ALL_CHECKED} />,
+      <ChecksSelectionGroup group={group} selected={ALL_CHECKED} />
     );
 
     expect(screen.getByText(group)).toBeVisible();
     expect(screen.getByRole('switch')).toBeChecked();
     expect(
-      screen.getByRole('switch').classList.contains('bg-jungle-green-500'),
+      screen.getByRole('switch').classList.contains('bg-jungle-green-500')
     ).toBe(true);
   });
 
@@ -32,13 +32,13 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const group = 'some-group';
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group} selected={SOME_CHECKED} />,
+      <ChecksSelectionGroup group={group} selected={SOME_CHECKED} />
     );
 
     expect(screen.getByText(group)).toBeVisible();
     expect(screen.getByRole('switch')).not.toBeChecked();
     expect(screen.getByRole('switch').classList.contains('bg-green-300')).toBe(
-      true,
+      true
     );
   });
 
@@ -46,13 +46,13 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const group = 'some-group';
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group} selected={NONE_CHECKED} />,
+      <ChecksSelectionGroup group={group} selected={NONE_CHECKED} />
     );
 
     expect(screen.getByText(group)).toBeVisible();
     expect(screen.getByRole('switch')).not.toBeChecked();
     expect(screen.getByRole('switch').classList.contains('bg-gray-200')).toBe(
-      true,
+      true
     );
   });
 
@@ -65,7 +65,7 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
         {[0, 1, 2].map(({ value }, idx) => (
           <li key={idx}>{value}</li>
         ))}
-      </ChecksSelectionGroup>,
+      </ChecksSelectionGroup>
     );
 
     await user.click(screen.getByRole('heading').parentNode);
@@ -83,7 +83,7 @@ describe('ClusterDetails ChecksSelectionGroup component', () => {
     const user = userEvent.setup();
 
     renderWithRouter(
-      <ChecksSelectionGroup group={group} onChange={onChangeMock} />,
+      <ChecksSelectionGroup group={group} onChange={onChangeMock} />
     );
 
     await user.click(screen.getByRole('switch'));

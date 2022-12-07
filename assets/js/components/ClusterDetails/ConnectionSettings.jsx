@@ -15,9 +15,8 @@ import {
 export function ConnectionSettings({ clusterId, cluster }) {
   const dispatch = useDispatch();
 
-  const {
-    loading, saving, error, settings, savingError, savingSuccess,
-  } = useSelector((state) => state.clusterConnectionSettings);
+  const { loading, saving, error, settings, savingError, savingSuccess } =
+    useSelector((state) => state.clusterConnectionSettings);
   const [localSettings, setLocalSettings] = useState([]);
   const [localSavingError, setLocalSavingError] = useState(null);
   const [localSavingSuccess, setLocalSavingSuccess] = useState(null);
@@ -39,7 +38,7 @@ export function ConnectionSettings({ clusterId, cluster }) {
         ...hostSettings,
         isDefaultUser:
           hostSettings.user === hostSettings.default_user || !hostSettings.user,
-      })),
+      }))
     );
   }, [settings]);
   useEffect(() => {
@@ -74,7 +73,7 @@ export function ConnectionSettings({ clusterId, cluster }) {
           };
         }
         return hostSettings;
-      }),
+      })
     );
   };
 
@@ -88,7 +87,7 @@ export function ConnectionSettings({ clusterId, cluster }) {
           };
         }
         return hostSettings;
-      }),
+      })
     );
   };
 
@@ -106,7 +105,9 @@ export function ConnectionSettings({ clusterId, cluster }) {
             className="rounded-lg border-transparent flex-1 appearance-none border border-gray-100 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-1 focus:focus:border-transparent"
             placeholder="Provide a user if different from the default one"
             value={content || ''}
-            onChange={({ target: { value } }) => setHostConnectionUser(item.host_id, value)}
+            onChange={({ target: { value } }) =>
+              setHostConnectionUser(item.host_id, value)
+            }
           />
         ),
       },
@@ -120,7 +121,7 @@ export function ConnectionSettings({ clusterId, cluster }) {
               checked={item.isDefaultUser}
               className={classNames(
                 item.isDefaultUser ? 'bg-jungle-green-500' : 'bg-gray-200',
-                'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
+                'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200'
               )}
               onChange={() => toggleUseDefaultConnectionUser(item.host_id)}
             >
@@ -131,7 +132,7 @@ export function ConnectionSettings({ clusterId, cluster }) {
                     'translate-x-5': item.isDefaultUser,
                     'translate-x-0': !item.isDefaultUser,
                   },
-                  'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
+                  'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
                 )}
               />
             </Switch>

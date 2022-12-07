@@ -10,8 +10,8 @@ function Community({ visible, dispatch }) {
         <div className="row">
           <div>
             <p className="my-2">
-              Trento, an open cloud-native web console improving the life of
-              SAP Applications administrators
+              Trento, an open cloud-native web console improving the life of SAP
+              Applications administrators
             </p>
             <hr />
             <p className="mt-2">
@@ -31,8 +31,8 @@ function Community({ visible, dispatch }) {
                   <li>Number of sockets and total count of cores</li>
                   <li>Available memory per host</li>
                   <li>
-                    Hosting platform (Cloud service provider, Hypervisor or
-                    bare metal)
+                    Hosting platform (Cloud service provider, Hypervisor or bare
+                    metal)
                   </li>
                   <li>List of running SAP instances</li>
                   <li>Statistics about Trento checks configuration</li>
@@ -52,8 +52,8 @@ function Community({ visible, dispatch }) {
             </p>
 
             <p className="mt-2">
-              By using Trento Community and its updates available through
-              GitHub channels you agree to these terms.
+              By using Trento Community and its updates available through GitHub
+              channels you agree to these terms.
             </p>
             <div className="grid justify-items-end mt-8 pr-4">
               <Button

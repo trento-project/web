@@ -41,12 +41,10 @@ describe('Cluster Info Box', () => {
       provider: 'nutanix',
       providerText: 'Nutanix',
     },
-  ].forEach(({
-    haScenario, haScenarioText, provider, providerText,
-  }) => {
+  ].forEach(({ haScenario, haScenarioText, provider, providerText }) => {
     it(`should display ${providerText} as the provider and HA Scenario: ${haScenarioText}`, () => {
       const { getByText } = render(
-        <ClusterInfoBox haScenario={haScenario} provider={provider} />,
+        <ClusterInfoBox haScenario={haScenario} provider={provider} />
       );
       expect(getByText(providerText)).toBeTruthy();
       expect(getByText(haScenarioText)).toBeTruthy();

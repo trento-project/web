@@ -26,9 +26,8 @@ const removeTag = (tag, sapSystemId) => {
 };
 
 function SapSystemsOverview() {
-  const {
-    sapSystems, applicationInstances, databaseInstances, loading,
-  } = useSelector((state) => state.sapSystemsList);
+  const { sapSystems, applicationInstances, databaseInstances, loading } =
+    useSelector((state) => state.sapSystemsList);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -87,7 +86,8 @@ function SapSystemsOverview() {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) => element[key].some((tag) => filter.includes(tag)),
+        filter: (filter, key) => (element) =>
+          element[key].some((tag) => filter.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
@@ -96,13 +96,13 @@ function SapSystemsOverview() {
             onAdd={(tag) => {
               addTag(tag, item.id);
               dispatch(
-                addTagToSAPSystem({ tags: [{ value: tag }], id: item.id }),
+                addTagToSAPSystem({ tags: [{ value: tag }], id: item.id })
               );
             }}
             onRemove={(tag) => {
               removeTag(tag, item.id);
               dispatch(
-                removeTagFromSAPSystem({ tags: [{ value: tag }], id: item.id }),
+                removeTagFromSAPSystem({ tags: [{ value: tag }], id: item.id })
               );
             }}
           />
@@ -122,7 +122,7 @@ function SapSystemsOverview() {
     tenant: sapSystem.tenant,
     dbAddress: sapSystem.db_host,
     applicationInstances: applicationInstances.filter(
-      bySapSystem(sapSystem.id),
+      bySapSystem(sapSystem.id)
     ),
     databaseInstances: databaseInstances.filter(bySapSystem(sapSystem.id)),
     tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],

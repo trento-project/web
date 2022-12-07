@@ -9,9 +9,11 @@ import ExecutionResults from './ExecutionResults';
 function ExecutionResultsPage() {
   const { clusterID, executionID } = useParams();
   const dispatch = useDispatch();
-  const hostnames = useSelector((state) => state.hostsList.hosts
-    .filter(({ cluster_id: hostClusterID }) => hostClusterID === clusterID)
-    .map(({ id, hostname }) => ({ id, hostname })));
+  const hostnames = useSelector((state) =>
+    state.hostsList.hosts
+      .filter(({ cluster_id: hostClusterID }) => hostClusterID === clusterID)
+      .map(({ id, hostname }) => ({ id, hostname }))
+  );
   const cluster = useSelector(getCluster(clusterID));
 
   return (

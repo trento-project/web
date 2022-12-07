@@ -16,12 +16,12 @@ function HostResultsWrapper({
                 {hostname}
               </h3>
               {reachable === false && (
-              <div
-                className="bg-yellow-200 border-yellow-600 text-yellow-600 border-l-4 p-4"
-                role="alert"
-              >
-                <p>{unreachableMessage}</p>
-              </div>
+                <div
+                  className="bg-yellow-200 border-yellow-600 text-yellow-600 border-l-4 p-4"
+                  role="alert"
+                >
+                  <p>{unreachableMessage}</p>
+                </div>
               )}
             </div>
             <table className="min-w-full divide-y divide-gray-200">

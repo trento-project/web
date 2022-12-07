@@ -22,6 +22,7 @@
     "esbuild-plugin-path-alias": "^1.0.7",
     "eslint": "^8.29.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.1.6",
@@ -65,8 +66,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "lint": "eslint . --ext js,jsx",
-    "format:check": "prettier-eslint \"src/**/*.{js,jsx}\"",
-    "format": "prettier-eslint --write \"src/**/*.{js,jsx}\"",
+    "format:check": "prettier .",
+    "format": "prettier --write .",
     "test": "jest"
   }
 }

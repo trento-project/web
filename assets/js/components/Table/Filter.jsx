@@ -8,11 +8,10 @@ import { toggle, hasOne } from '@lib/lists';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE } from 'eos-icons-react';
 
-const getLabel = (value, placeholder) => (value.length === 0 ? placeholder : value.join(', '));
+const getLabel = (value, placeholder) =>
+  value.length === 0 ? placeholder : value.join(', ');
 
-function Filter({
-  options, title, value, onChange,
-}) {
+function Filter({ options, title, value, onChange }) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -85,7 +84,9 @@ function Filter({
                 <input
                   className="rounded-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-jungle-green-500 focus:border-transparent"
                   value={query}
-                  onChange={({ target: { value: newValue } }) => setQuery(newValue)}
+                  onChange={({ target: { value: newValue } }) =>
+                    setQuery(newValue)
+                  }
                 />
               </div>
               <ul

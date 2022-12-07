@@ -10,21 +10,19 @@ function Premium({ visible, dispatch }) {
         <div className="row">
           <div>
             <p className="my-2">
-              Trento, an open cloud-native web console improving the life of
-              SAP Applications administrators
+              Trento, an open cloud-native web console improving the life of SAP
+              Applications administrators
             </p>
             <hr />
             <p className="mt-2">
               Trento is an open source (Apache License 2.0) component that is
               supported as part of SUSE Linux Enterprise Server for SAP
-              applications and therefore falls under the standard SUSE Terms
-              and Conditions that can be reviewed at
-              {' '}
+              applications and therefore falls under the standard SUSE Terms and
+              Conditions that can be reviewed at{' '}
               <a href="https://www.suse.com/products/terms_and_conditions.pdf">
                 https://www.suse.com/products/terms_and_conditions.pdf
               </a>
-              , SUSE EULA is available at
-              {' '}
+              , SUSE EULA is available at{' '}
               <a href="https://www.suse.com/licensing/eula/#server">
                 https://www.suse.com/licensing/eula/#server
               </a>
@@ -32,8 +30,8 @@ function Premium({ visible, dispatch }) {
             </p>
 
             <p className="mt-2">
-              By using Trento via a registered SUSE Linux Enterprise Server
-              for SAP you agree to the Terms and Conditions also for Trento.
+              By using Trento via a registered SUSE Linux Enterprise Server for
+              SAP you agree to the Terms and Conditions also for Trento.
             </p>
 
             <p className="mt-2">
@@ -50,8 +48,8 @@ function Premium({ visible, dispatch }) {
                   <li>Number of sockets and total count of cores per host</li>
                   <li>Available memory per host</li>
                   <li>
-                    Hosting platform (Cloud service provider, Hypervisor or
-                    bare metal)
+                    Hosting platform (Cloud service provider, Hypervisor or bare
+                    metal)
                   </li>
                   <li>List of running SAP instances</li>
                   <li>Statistics about Trento checks configuration</li>

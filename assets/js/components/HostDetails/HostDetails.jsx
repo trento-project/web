@@ -69,7 +69,7 @@ function HostDetails() {
             >
               {exporterName}
             </StatusPill>
-          ),
+          )
         )}
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
