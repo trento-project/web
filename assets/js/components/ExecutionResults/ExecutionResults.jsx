@@ -13,7 +13,6 @@ import {
   ResultsContainer,
   HostResultsWrapper,
   CheckResult,
-  getChecks,
   getHealth,
   getCheckResults,
   getCheckDescription,
@@ -123,15 +122,13 @@ function ExecutionResults({
         catalogError={false}
         clusterID={clusterID}
         hasAlreadyChecksResults
-        selectedChecks={getChecks(checkResults)}
+        selectedChecks={checkResults}
         onCatalogRefresh={onCatalogRefresh}
       >
         {executionData?.targets.map(({ agent_id: hostID, checks }) => (
           <HostResultsWrapper
             key={hostID}
             hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
-            reachable
-            unreachableMessage=""
           >
             {checks.map((checkID) => {
               const { health, error, expectations, failedExpectations } =

@@ -1,6 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
-import { renderWithRouter, withState } from '@lib/test-utils';
+import { renderWithRouter } from '@lib/test-utils';
 import {
   agentCheckResultFactory,
   checksExecutionCompletedFactory,
@@ -22,7 +21,7 @@ const prepareStateData = (checkExecutionStatus) => {
   });
   const executionResult = checksExecutionCompletedFactory.build({
     check_results: checkResults,
-    result: 'completed',
+    result: 'passing',
   });
 
   const {
@@ -66,19 +65,7 @@ const prepareStateData = (checkExecutionStatus) => {
     error: executionError,
   } = lastExecution;
 
-  const initialState = {
-    catalogNew: { loading, data: catalog, error },
-    lastExecutions: {
-      [clusterID]: {
-        loading: executionLoading,
-        error: executionError,
-        data: executionData,
-      },
-    },
-  };
-
   return {
-    initialState,
     clusterID,
     executionResult,
     loading,
@@ -98,7 +85,6 @@ const prepareStateData = (checkExecutionStatus) => {
 describe('ExecutionResults', () => {
   it('should render ExecutionResults with successfully fetched results', async () => {
     const {
-      initialState,
       clusterID,
       hostnames,
       checkID,
@@ -110,7 +96,7 @@ describe('ExecutionResults', () => {
       executionError,
     } = prepareStateData('passing');
 
-    const [StatefulExecutionResults] = withState(
+    const { getByText, getAllByText } = renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
         clusterName="test-cluster"
@@ -122,21 +108,17 @@ describe('ExecutionResults', () => {
         executionLoading={executionLoading}
         executionData={executionData}
         executionError={executionError}
-      />,
-      initialState
+      />
     );
 
-    renderWithRouter(StatefulExecutionResults);
-
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID)).toHaveLength(2);
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
+    expect(getByText(hostnames[0].hostname)).toBeTruthy();
+    expect(getByText(hostnames[1].hostname)).toBeTruthy();
+    expect(getAllByText(checkID)).toHaveLength(2);
+    expect(getAllByText('2/2 expectations passed')).toBeTruthy();
   });
 
   it('should render ExecutionResults with running state', async () => {
     const {
-      initialState,
       clusterID,
       hostnames,
       loading,
@@ -147,7 +129,7 @@ describe('ExecutionResults', () => {
       executionError,
     } = prepareStateData('running');
 
-    const [StatefulExecutionResults] = withState(
+    const { getByText } = renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
         hostnames={hostnames}
@@ -157,14 +139,9 @@ describe('ExecutionResults', () => {
         executionLoading={executionLoading}
         executionData={executionData}
         executionError={executionError}
-      />,
-      initialState
+      />
     );
 
-    renderWithRouter(StatefulExecutionResults);
-
-    expect(
-      screen.getByText('Check execution currently running...')
-    ).toBeTruthy();
+    expect(getByText('Check execution currently running...')).toBeTruthy();
   });
 });
