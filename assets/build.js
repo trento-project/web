@@ -9,10 +9,15 @@ config();
 
 const resolvePath = (p) => path.resolve(__dirname, p);
 
+const stringify = (variable) => {
+  if (!variable) {
+    return JSON.stringify('');
+  }
+  return JSON.stringify(variable);
+};
+
 const WANDA_URL =
-  process.env.NODE_ENV === 'production'
-    ? ''
-    : JSON.stringify(process.env.WANDA_URL);
+  process.env.NODE_ENV === 'production' ? '' : stringify(process.env.WANDA_URL);
 
 const define = {
   'process.env.WANDA_URL': WANDA_URL,
