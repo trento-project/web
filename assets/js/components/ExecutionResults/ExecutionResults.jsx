@@ -87,10 +87,6 @@ function ExecutionResults({
     );
   }
 
-  if (executionData?.status === 'running') {
-    return <LoadingBox text="Check execution currently running..." />;
-  }
-
   const checkResults = getCheckResults(executionData);
 
   return (

@@ -129,7 +129,7 @@ describe('ExecutionResults', () => {
       executionError,
     } = prepareStateData('running');
 
-    const { getByText } = renderWithRouter(
+    const { container } = renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
         hostnames={hostnames}
@@ -141,7 +141,11 @@ describe('ExecutionResults', () => {
         executionError={executionError}
       />
     );
-
-    expect(getByText('Check execution currently running...')).toBeTruthy();
+    const svgEl = container.querySelector("[data-testid='eos-svg-component']");
+    const transform = svgEl.getAttribute('transform');
+    expect(svgEl.classList.toString()).toContain(
+      'inline-block fill-jungle-green-500'
+    );
+    expect(transform).toEqual('rotate(0) translate(0, 0) scale(1, 1)');
   });
 });
