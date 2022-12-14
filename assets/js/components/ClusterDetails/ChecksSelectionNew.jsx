@@ -26,7 +26,7 @@ import ChecksSelectionItem from './ChecksSelectionItem';
 const isSelected = (selectedChecks, checkID) =>
   selectedChecks ? selectedChecks.includes(checkID) : false;
 
-const getGroupSelectedState = function (checks, selectedChecks) {
+const getGroupSelectedState = (checks, selectedChecks) => {
   if (checks.every(({ id }) => isSelected(selectedChecks, id))) {
     return ALL_CHECKED;
   }
