@@ -75,7 +75,14 @@ function ExecutionResults({
             : catalogError || executionError
         }
         buttonText="Try again"
-        buttonOnClick={onCatalogRefresh}
+        buttonOnClick={() => {
+          if (catalogError) {
+            onCatalogRefresh();
+          }
+          if (executionError) {
+            onLastExecutionUpdate();
+          }
+        }}
       />
     );
   }
