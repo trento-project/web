@@ -158,7 +158,7 @@ function ChecksSelectionNew({ clusterId, cluster }) {
           {localSavingSuccess && selectedChecks.length > 0 && (
             <SuggestTriggeringChecksExecutionAfterSettingsUpdated
               clusterId={clusterId}
-              usingWanda={true}
+              usingWanda
               onClose={() => setLocalSavingSuccess(null)}
             />
           )}

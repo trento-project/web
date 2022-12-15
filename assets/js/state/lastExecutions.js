@@ -50,13 +50,13 @@ export const lastExecutionsSlice = createSlice({
     setExecutionRequested: (state, { payload }) => {
       const { clusterID: groupID, hosts, checks } = payload;
 
-      const targets = hosts.map((host) => ({ agent_id: host, checks: checks }));
+      const targets = hosts.map((host) => ({ agent_id: host, checks }));
 
       const lastExecutionState = {
         ...initialExecutionState,
         data: {
           status: 'running',
-          targets: targets,
+          targets,
         },
       };
 

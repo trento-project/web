@@ -9,7 +9,7 @@ import {
 } from '@state/selectors/cluster';
 import { executionRequested } from '@state/actions/lastExecutions';
 
-export function TriggerChecksExecutionRequest({
+function TriggerChecksExecutionRequest({
   clusterId,
   cssClasses,
   usingWanda = false,

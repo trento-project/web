@@ -144,7 +144,7 @@ export function ClusterDetailsNew() {
             cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
             clusterId={clusterID}
             disabled={!hasSelectedChecks}
-            usingWanda={true}
+            usingWanda
           >
             <EOS_PLAY_CIRCLE
               className={classNames('inline-block fill-jungle-green-500', {

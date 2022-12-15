@@ -108,7 +108,7 @@ describe('lastExecutions reducer', () => {
     const data = {
       clusterID: 'someID',
       hosts: ['agent1', 'agent2'],
-      checks: checks,
+      checks,
     };
 
     const action = setExecutionRequested(data);
@@ -118,8 +118,8 @@ describe('lastExecutions reducer', () => {
         data: {
           status: 'running',
           targets: [
-            { agent_id: 'agent1', checks: checks },
-            { agent_id: 'agent2', checks: checks },
+            { agent_id: 'agent1', checks },
+            { agent_id: 'agent2', checks },
           ],
         },
         loading: false,
