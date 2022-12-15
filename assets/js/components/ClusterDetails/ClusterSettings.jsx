@@ -18,13 +18,13 @@ import { truncatedClusterNameClasses } from './ClusterDetails';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
-export function ClusterSettings({ newChecksSelectionView = false }) {
+export function ClusterSettings({ usingWanda = false }) {
   const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
 
   const tabsSettings = {
-    'Checks Selection': newChecksSelectionView ? (
+    'Checks Selection': usingWanda ? (
       <ChecksSelectionNew clusterId={clusterID} cluster={cluster} />
     ) : (
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
@@ -40,7 +40,11 @@ export function ClusterSettings({ newChecksSelectionView = false }) {
 
   return (
     <div className="w-full px-2 sm:px-0">
-      <BackButton url={`/clusters/${clusterID}`}>
+      <BackButton
+        url={
+          usingWanda ? `/clusters_new/${clusterID}` : `/clusters/${clusterID}`
+        }
+      >
         Back to Cluster Details
       </BackButton>
       <div className="flex mb-2">
@@ -117,6 +121,7 @@ export function SavingFailedAlert({ onClose = () => {}, children }) {
 
 export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
   clusterId,
+  usingWanda = false,
   onClose = () => {},
 }) {
   return (
@@ -131,6 +136,7 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
         <TriggerChecksExecutionRequest
           cssClasses="tn-checks-start-execute rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
           clusterId={clusterId}
+          usingWanda={usingWanda}
         >
           <EOS_PLAY_CIRCLE color="green" />
         </TriggerChecksExecutionRequest>

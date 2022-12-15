@@ -20,6 +20,7 @@ export function TriggerChecksExecutionRequest({
   const navigate = useNavigate();
   const hosts = useSelector(getClusterHostIDs(clusterId));
   const checks = useSelector(getClusterSelectedChecks(clusterId));
+
   return (
     <button
       className={classNames(
@@ -29,7 +30,11 @@ export function TriggerChecksExecutionRequest({
       type="button"
       onClick={() => {
         dispatch(executionRequested(clusterId, hosts, checks));
-        navigate(`/clusters_new/${clusterId}/executions/last`);
+        navigate(
+          usingWanda
+            ? `/clusters_new/${clusterId}/executions/last`
+            : `/clusters/${clusterId}/checks/results`
+        );
       }}
       {...props}
     >

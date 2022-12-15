@@ -59,15 +59,15 @@ function App() {
                 element={<ClusterSettings />}
               />
               <Route
-                path="clusters/:clusterID/settings_new"
-                element={<ClusterSettings newChecksSelectionView />}
+                path="clusters_new/:clusterID/settings"
+                element={<ClusterSettings usingWanda />}
               />
               <Route
                 path="clusters/:clusterID/checks/results"
                 element={<ChecksResults />}
               />
               <Route
-                path="clusters/:clusterID/executions/last"
+                path="clusters_new/:clusterID/executions/last"
                 element={<ExecutionResultsPage />}
               />
               <Route path="hosts/:hostID" element={<HostDetails />} />
