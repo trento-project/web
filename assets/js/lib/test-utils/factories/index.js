@@ -39,6 +39,12 @@ export const catalogCheckFactory = Factory.define(() => ({
   remediation: faker.lorem.paragraph(),
 }));
 
+export const catalogFactory = Factory.define(() => ({
+  loading: faker.datatype.boolean(),
+  catalog: catalogCheckFactory.build(),
+  error: null,
+}));
+
 export const hostnameFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   hostname: faker.hacker.noun(),

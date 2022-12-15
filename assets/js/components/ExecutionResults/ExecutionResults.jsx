@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
+
 import classNames from 'classnames';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
-import { logError } from '@lib/log';
-import { getExecutionResult, getCatalog } from '@lib/api/wanda';
-
+import { EOS_ERROR } from 'eos-icons-react';
 import Modal from '@components/Modal';
 import BackButton from '@components/BackButton';
 import WarningBanner from '@components/Banners/WarningBanner';
@@ -15,65 +13,81 @@ import {
   ResultsContainer,
   HostResultsWrapper,
   CheckResult,
-  getHosts,
-  getChecks,
   getHealth,
   getCheckResults,
   getCheckDescription,
 } from '@components/ChecksResults';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
+import NotificationBox from '@components/NotificationBox';
 
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
 
-const getLabel = (health, expectations, failedExpectations) =>
-  health === 'passing'
-    ? `${expectations}/${expectations} expectations passed`
-    : `${failedExpectations}/${expectations} failed`;
+const getLabel = (status, health, error, expectations, failedExpectations) => {
+  if (status === 'running') {
+    return '';
+  }
+
+  if (error) {
+    return error;
+  }
+
+  if (health === 'passing') {
+    return `${expectations}/${expectations} expectations passed`;
+  }
+
+  return `${failedExpectations}/${expectations} expectations failed`;
+};
 
 function ExecutionResults({
   clusterID,
-  executionID,
   clusterName,
   cloudProvider,
   hostnames = [],
-  onExecutionFetch = getExecutionResult,
-  onCatalogFetch = getCatalog,
+  catalogLoading,
+  catalog,
+  catalogError,
+  executionLoading,
+  executionData,
+  executionError,
   onCatalogRefresh = () => {},
+  onLastExecutionUpdate = () => {},
 }) {
-  const [loading, setLoading] = useState(false);
-  const [executionData, setExecutionData] = useState(null);
-  const [catalog, setCatalog] = useState(null);
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    Promise.all([onExecutionFetch(executionID), onCatalogFetch()])
-      .then(
-        ([{ data: fetchedExecutionData }, { data: fetchedCatalogData }]) => {
-          setLoading(false);
-          setExecutionData(fetchedExecutionData);
-          setCatalog(fetchedCatalogData.items);
-        }
-      )
-      .catch((error) => {
-        setLoading(false);
-        logError(error);
-      });
-  }, [onExecutionFetch, onCatalogFetch, setExecutionData, setCatalog]);
+    onCatalogRefresh();
+    onLastExecutionUpdate();
+  }, []);
 
-  if (loading) {
+  if (catalogLoading || executionLoading) {
     return <LoadingBox text="Loading checks execution..." />;
   }
 
-  if (executionData?.status === 'running') {
-    return <LoadingBox text="Check execution currently running..." />;
+  if (catalogError || executionError) {
+    return (
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={
+          catalogError && executionError
+            ? `${catalogError}\n${executionError}`
+            : catalogError || executionError
+        }
+        buttonText="Try again"
+        buttonOnClick={() => {
+          if (catalogError) {
+            onCatalogRefresh();
+          }
+          if (executionError) {
+            onLastExecutionUpdate();
+          }
+        }}
+      />
+    );
   }
 
   const checkResults = getCheckResults(executionData);
-  const hosts = getHosts(checkResults);
-  const checks = getChecks(checkResults);
 
   return (
     <div>
@@ -111,46 +125,42 @@ function ExecutionResults({
         catalogError={false}
         clusterID={clusterID}
         hasAlreadyChecksResults
-        selectedChecks={checks}
+        selectedChecks={checkResults}
         onCatalogRefresh={onCatalogRefresh}
       >
-        {hosts &&
-          hosts.map((hostID) => (
-            <HostResultsWrapper
-              key={hostID}
-              hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
-              reachable
-              unreachableMessage=""
-            >
-              {checks.map((checkID) => {
-                const { health, expectations, failedExpectations } = getHealth(
-                  checkResults,
-                  checkID,
-                  hostID
-                );
-                const label = getLabel(
-                  health,
-                  expectations,
-                  failedExpectations
-                );
+        {executionData?.targets.map(({ agent_id: hostID, checks }) => (
+          <HostResultsWrapper
+            key={hostID}
+            hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
+          >
+            {checks.map((checkID) => {
+              const { health, error, expectations, failedExpectations } =
+                getHealth(checkResults, checkID, hostID);
 
-                return (
-                  <CheckResult
-                    key={checkID}
-                    checkId={checkID}
-                    description={getCheckDescription(catalog, checkID)}
-                    executionState={executionData?.status}
-                    health={health}
-                    label={label}
-                    onClick={() => {
-                      setModalOpen(true);
-                      setSelectedCheck(checkID);
-                    }}
-                  />
-                );
-              })}
-            </HostResultsWrapper>
-          ))}
+              const label = getLabel(
+                executionData?.status,
+                health,
+                error,
+                expectations,
+                failedExpectations
+              );
+              return (
+                <CheckResult
+                  key={checkID}
+                  checkId={checkID}
+                  description={getCheckDescription(catalog, checkID)}
+                  executionState={executionData?.status}
+                  health={health}
+                  label={label}
+                  onClick={() => {
+                    setModalOpen(true);
+                    setSelectedCheck(checkID);
+                  }}
+                />
+              );
+            })}
+          </HostResultsWrapper>
+        ))}
       </ResultsContainer>
     </div>
   );

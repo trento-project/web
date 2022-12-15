@@ -1,81 +1,151 @@
 import React from 'react';
-import { act, screen } from '@testing-library/react';
-
 import { renderWithRouter } from '@lib/test-utils';
 import {
   agentCheckResultFactory,
   checksExecutionCompletedFactory,
-  checksExecutionRunningFactory,
   checkResultFactory,
+  expectationResultFactory,
 } from '@lib/test-utils/factories/executions';
-import {
-  catalogCheckFactory,
-  hostnameFactory,
-} from '@lib/test-utils/factories';
+import { catalogFactory, hostnameFactory } from '@lib/test-utils/factories';
 
 import ExecutionResults from './ExecutionResults';
 
+const prepareStateData = (checkExecutionStatus) => {
+  const hostnames = hostnameFactory.buildList(2);
+  const [{ id: agentID1 }, { id: agentID2 }] = hostnames;
+  const agent1 = agentCheckResultFactory.build({ agent_id: agentID1 });
+  const agent2 = agentCheckResultFactory.build({ agent_id: agentID2 });
+  const agents = [agent1, agent2];
+  const checkResults = checkResultFactory.buildList(1, {
+    agents_check_results: [agent1, agent2],
+  });
+  const executionResult = checksExecutionCompletedFactory.build({
+    check_results: checkResults,
+    result: 'passing',
+  });
+
+  const {
+    group_id: clusterID,
+    check_results: [{ check_id: checkID }],
+  } = executionResult;
+
+  const { loading, catalog, error } = catalogFactory.build({
+    loading: false,
+    catalog: [catalogFactory.build({ id: checkID })],
+    error: null,
+  });
+
+  const targets = [
+    { agent_id: agentID1, checks: [catalog[0].id] },
+    { agent_id: agentID2, checks: [catalog[0].id] },
+  ];
+
+  const checkResult = checkResultFactory.build({
+    check_id: checkID,
+    result: 'passing',
+    agents_check_results: [agent1, agent2],
+    expectation_results: expectationResultFactory.buildList(2, {
+      result: true,
+    }),
+  });
+
+  const lastExecution = {
+    executionLoading: false,
+    executionData: {
+      status: checkExecutionStatus,
+      targets,
+      check_results: [checkResult],
+    },
+    error: '',
+  };
+
+  const {
+    executionLoading,
+    executionData,
+    error: executionError,
+  } = lastExecution;
+
+  return {
+    clusterID,
+    executionResult,
+    loading,
+    catalog,
+    error,
+    targets,
+    hostnames,
+    checkID,
+    agents,
+    checkResult,
+    executionLoading,
+    executionData,
+    executionError,
+  };
+};
+
 describe('ExecutionResults', () => {
   it('should render ExecutionResults with successfully fetched results', async () => {
-    const hostnames = hostnameFactory.buildList(2);
-    const [
-      { id: agentID1, hostname: hostname1 },
-      { id: agentID2, hostname: hostname2 },
-    ] = hostnames;
-
-    const agent1 = agentCheckResultFactory.build({ agent_id: agentID1 });
-    const agent2 = agentCheckResultFactory.build({ agent_id: agentID2 });
-    const checkResults = checkResultFactory.buildList(1, {
-      agents_check_results: [agent1, agent2],
-    });
-
-    const executionResult = checksExecutionCompletedFactory.build({
-      check_results: checkResults,
-      result: 'passing',
-    });
     const {
-      groupID: clusterID,
-      execution_id: executionID,
-      check_results: [{ check_id: checkID }],
-    } = executionResult;
-    const catalog = [catalogCheckFactory.build({ id: checkID })];
+      clusterID,
+      hostnames,
+      checkID,
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+    } = prepareStateData('passing');
 
-    await act(async () => {
-      renderWithRouter(
-        <ExecutionResults
-          clusterID={clusterID}
-          executionID={executionID}
-          onExecutionFetch={() => Promise.resolve({ data: executionResult })}
-          onCatalogFetch={() => Promise.resolve({ data: { items: catalog } })}
-          hostnames={hostnames}
-        />
-      );
-    });
+    const { getByText, getAllByText } = renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterName="test-cluster"
+        cloudProvider="test-provider"
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />
+    );
 
-    expect(screen.getByText(hostname1)).toBeTruthy();
-    expect(screen.getByText(hostname2)).toBeTruthy();
-    expect(screen.getAllByText(checkID)).toHaveLength(2);
+    expect(getByText(hostnames[0].hostname)).toBeTruthy();
+    expect(getByText(hostnames[1].hostname)).toBeTruthy();
+    expect(getAllByText(checkID)).toHaveLength(2);
+    expect(getAllByText('2/2 expectations passed')).toBeTruthy();
   });
 
   it('should render ExecutionResults with running state', async () => {
-    const hostnames = hostnameFactory.buildList(2);
-    const executionResult = checksExecutionRunningFactory.build();
-    const { group_id: clusterID, execution_id: executionID } = executionResult;
+    const {
+      clusterID,
+      hostnames,
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+    } = prepareStateData('running');
 
-    await act(async () => {
-      renderWithRouter(
-        <ExecutionResults
-          clusterID={clusterID}
-          executionID={executionID}
-          onExecutionFetch={() => Promise.resolve({ data: executionResult })}
-          onCatalogFetch={() => Promise.resolve({ data: { items: [] } })}
-          hostnames={hostnames}
-        />
-      );
-    });
-
-    expect(
-      screen.getByText('Check execution currently running...')
-    ).toBeTruthy();
+    const { container } = renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />
+    );
+    const svgEl = container.querySelector("[data-testid='eos-svg-component']");
+    const transform = svgEl.getAttribute('transform');
+    expect(svgEl.classList.toString()).toContain(
+      'inline-block fill-jungle-green-500'
+    );
+    expect(transform).toEqual('rotate(0) translate(0, 0) scale(1, 1)');
   });
 });
