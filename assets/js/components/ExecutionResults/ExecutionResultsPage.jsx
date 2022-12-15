@@ -44,12 +44,12 @@ function ExecutionResultsPage() {
       hostnames={hostnames}
       clusterName={cluster?.name}
       cloudProvider={cluster?.provider}
-      onCatalogRefresh={() => {
+      onCatalogRefresh={() =>
         dispatch({
           type: 'UPDATE_CATALOG',
           payload: { provider: cluster?.provider },
-        });
-      }}
+        })
+      }
       onLastExecutionUpdate={() => dispatch(updateLastExecution(clusterID))}
       catalogLoading={catalogLoading}
       catalog={catalog}
