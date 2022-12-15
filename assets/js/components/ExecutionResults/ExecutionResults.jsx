@@ -47,7 +47,6 @@ function ExecutionResults({
   catalogLoading,
   catalog,
   catalogError,
-  executionLoading,
   executionData,
   executionError,
   onCatalogRefresh = () => {},
@@ -56,12 +55,7 @@ function ExecutionResults({
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    onCatalogRefresh();
-    onLastExecutionUpdate();
-  }, []);
-
-  if (catalogLoading || executionLoading) {
+  if (catalogLoading) {
     return <LoadingBox text="Loading checks execution..." />;
   }
 
@@ -100,7 +94,7 @@ function ExecutionResults({
           {getCheckDescription(catalog, selectedCheck)}
         </ReactMarkdown>
       </Modal>
-      <BackButton url={`/clusters/${clusterID}`}>
+      <BackButton url={`/clusters_new/${clusterID}`}>
         Back to Cluster Details
       </BackButton>
       <div className="flex mb-4 justify-between">
