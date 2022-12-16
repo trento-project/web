@@ -6,12 +6,11 @@ defmodule Trento.ClusterTest do
   alias Trento.Support.StructHelper
 
   alias Trento.Domain.Commands.{
-    AbortClusterRollup,
     CompleteChecksExecution,
     CompleteChecksExecutionWanda,
     RegisterClusterHost,
     RequestChecksExecution,
-    RollupCluster,
+    RollUpCluster,
     SelectChecks,
     StartChecksExecution
   }
@@ -27,7 +26,7 @@ defmodule Trento.ClusterTest do
     ClusterHealthChanged,
     ClusterRegistered,
     ClusterRolledUp,
-    ClusterRollupFailed,
+    ClusterRollUpRequested,
     HostAddedToCluster,
     HostChecksExecutionCompleted
   }
@@ -801,7 +800,7 @@ defmodule Trento.ClusterTest do
   describe "rollup" do
     test "should not accept a rollup command if a cluster was not registered yet" do
       assert_error(
-        RollupCluster.new!(%{cluster_id: Faker.UUID.v4()}),
+        RollUpCluster.new!(%{cluster_id: Faker.UUID.v4()}),
         {:error, :cluster_not_found}
       )
     end
@@ -812,23 +811,25 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         cluster_registered_event,
-        RollupCluster.new!(%{cluster_id: cluster_id}),
-        %ClusterRolledUp{
+        RollUpCluster.new!(%{cluster_id: cluster_id}),
+        %ClusterRollUpRequested{
           cluster_id: cluster_id,
-          name: cluster_registered_event.name,
-          type: cluster_registered_event.type,
-          sid: cluster_registered_event.sid,
-          provider: cluster_registered_event.provider,
-          resources_number: cluster_registered_event.resources_number,
-          hosts_number: cluster_registered_event.hosts_number,
-          details: cluster_registered_event.details,
-          health: cluster_registered_event.health,
-          hosts: [],
-          selected_checks: [],
-          discovered_health: :passing,
-          checks_health: nil,
-          hosts_executions: [],
-          applied: false
+          snapshot: %Cluster{
+            cluster_id: cluster_id,
+            name: cluster_registered_event.name,
+            type: cluster_registered_event.type,
+            sid: cluster_registered_event.sid,
+            provider: cluster_registered_event.provider,
+            resources_number: cluster_registered_event.resources_number,
+            hosts_number: cluster_registered_event.hosts_number,
+            details: cluster_registered_event.details,
+            health: cluster_registered_event.health,
+            hosts: [],
+            selected_checks: [],
+            discovered_health: :passing,
+            checks_health: nil,
+            hosts_executions: []
+          }
         },
         fn %Cluster{rolling_up: rolling_up} ->
           assert rolling_up
@@ -844,26 +845,27 @@ defmodule Trento.ClusterTest do
         [
           cluster_registered_event,
           %ClusterRolledUp{
-            cluster_id: cluster_id,
-            name: cluster_registered_event.name,
-            type: cluster_registered_event.type,
-            sid: cluster_registered_event.sid,
-            provider: cluster_registered_event.provider,
-            resources_number: cluster_registered_event.resources_number,
-            hosts_number: cluster_registered_event.hosts_number,
-            details: cluster_registered_event.details,
-            health: cluster_registered_event.health,
-            hosts: [],
-            selected_checks: [],
-            discovered_health: :passing,
-            checks_health: nil,
-            hosts_executions: [],
-            applied: true
+            snapshot: %Cluster{
+              cluster_id: cluster_id,
+              name: cluster_registered_event.name,
+              type: cluster_registered_event.type,
+              sid: cluster_registered_event.sid,
+              provider: cluster_registered_event.provider,
+              resources_number: cluster_registered_event.resources_number,
+              hosts_number: cluster_registered_event.hosts_number,
+              details: cluster_registered_event.details,
+              health: cluster_registered_event.health,
+              hosts: [],
+              selected_checks: [],
+              discovered_health: :passing,
+              checks_health: nil,
+              hosts_executions: []
+            }
           }
         ],
         [],
         fn cluster ->
-          assert not cluster.rolling_up
+          refute cluster.rolling_up
           assert cluster.name == cluster_registered_event.name
           assert cluster.type == cluster_registered_event.type
           assert cluster.sid == cluster_registered_event.sid
@@ -886,9 +888,8 @@ defmodule Trento.ClusterTest do
 
       events = [
         build(:cluster_registered_event, cluster_id: cluster_id),
-        %ClusterRolledUp{
-          cluster_id: cluster_id,
-          applied: false
+        %ClusterRollUpRequested{
+          cluster_id: cluster_id
         }
       ]
 
@@ -915,27 +916,8 @@ defmodule Trento.ClusterTest do
 
       assert_error(
         events,
-        RollupCluster.new!(%{cluster_id: cluster_id}),
+        RollUpCluster.new!(%{cluster_id: cluster_id}),
         {:error, :cluster_rolling_up}
-      )
-    end
-
-    test "should abort the rollup process" do
-      cluster_id = Faker.UUID.v4()
-
-      assert_events_and_state(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id),
-          %ClusterRolledUp{
-            cluster_id: cluster_id,
-            applied: false
-          }
-        ],
-        AbortClusterRollup.new!(%{cluster_id: cluster_id}),
-        %ClusterRollupFailed{cluster_id: cluster_id},
-        fn state ->
-          assert state.rolling_up == false
-        end
       )
     end
   end

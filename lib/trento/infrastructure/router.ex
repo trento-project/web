@@ -10,7 +10,6 @@ defmodule Trento.Router do
   }
 
   alias Trento.Domain.Commands.{
-    AbortClusterRollup,
     CompleteChecksExecution,
     CompleteChecksExecutionWanda,
     RegisterApplicationInstance,
@@ -18,7 +17,7 @@ defmodule Trento.Router do
     RegisterDatabaseInstance,
     RegisterHost,
     RequestChecksExecution,
-    RollupCluster,
+    RollUpCluster,
     SelectChecks,
     StartChecksExecution,
     UpdateHeartbeat,
@@ -31,11 +30,11 @@ defmodule Trento.Router do
   identify Host, by: :host_id
   dispatch [RegisterHost, UpdateHeartbeat, UpdateProvider, UpdateSlesSubscriptions], to: Host
 
-  identify Cluster, by: :cluster_id
+  identify Cluster,
+    by: :cluster_id
 
   dispatch [
-             AbortClusterRollup,
-             RollupCluster,
+             RollUpCluster,
              RegisterClusterHost,
              SelectChecks,
              RequestChecksExecution,

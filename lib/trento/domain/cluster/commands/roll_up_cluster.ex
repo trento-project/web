@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Commands.RollupCluster do
+defmodule Trento.Domain.Commands.RollUpCluster do
   @moduledoc """
   Start a cluster aggregate rollup.
   """
