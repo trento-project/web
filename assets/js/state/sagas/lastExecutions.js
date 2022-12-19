@@ -1,12 +1,16 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
 
-import { UPDATE_LAST_EXECUTION } from '@state/actions/lastExecutions';
+import {
+  UPDATE_LAST_EXECUTION,
+  EXECUTION_REQUESTED,
+} from '@state/actions/lastExecutions';
 import { getLastExecutionByGroupID } from '@lib/api/wanda';
 import {
   setLastExecutionLoading,
   setLastExecution,
   setLastExecutionEmpty,
   setLastExecutionError,
+  setExecutionRequested,
 } from '@state/lastExecutions';
 
 export function* updateLastExecution({ payload }) {
@@ -29,6 +33,14 @@ export function* updateLastExecution({ payload }) {
   }
 }
 
+export function* requestExecution({ payload }) {
+  yield put(setExecutionRequested(payload));
+}
+
 export function* watchUpdateLastExecution() {
   yield takeEvery(UPDATE_LAST_EXECUTION, updateLastExecution);
+}
+
+export function* watchRequestExecution() {
+  yield takeEvery(EXECUTION_REQUESTED, requestExecution);
 }

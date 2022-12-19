@@ -45,6 +45,11 @@ export const catalogFactory = Factory.define(() => ({
   error: null,
 }));
 
+export const hostFactory = Factory.define(() => ({
+  id: faker.datatype.uuid(),
+  cluster_id: faker.datatype.uuid(),
+}));
+
 export const hostnameFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   hostname: faker.hacker.noun(),

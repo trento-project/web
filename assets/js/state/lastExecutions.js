@@ -47,6 +47,21 @@ export const lastExecutionsSlice = createSlice({
 
       state[groupID] = lastExecutionState;
     },
+    setExecutionRequested: (state, { payload }) => {
+      const { clusterID: groupID, hosts, checks } = payload;
+
+      const targets = hosts.map((host) => ({ agent_id: host, checks }));
+
+      const lastExecutionState = {
+        ...initialExecutionState,
+        data: {
+          status: 'running',
+          targets,
+        },
+      };
+
+      state[groupID] = lastExecutionState;
+    },
   },
 });
 
@@ -55,6 +70,7 @@ export const {
   setLastExecution,
   setLastExecutionEmpty,
   setLastExecutionError,
+  setExecutionRequested,
 } = lastExecutionsSlice.actions;
 
 export default lastExecutionsSlice.reducer;

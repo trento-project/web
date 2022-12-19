@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 
 import lastExecutionsReducer, {
+  setExecutionRequested,
   setLastExecutionLoading,
   setLastExecutionEmpty,
   setLastExecutionError,
@@ -91,6 +92,36 @@ describe('lastExecutions reducer', () => {
     const expectedState = {
       someID: {
         data,
+        loading: false,
+        error: null,
+      },
+    };
+
+    expect(lastExecutionsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should set on a execution requested state a given groupID', () => {
+    const initialState = {};
+
+    const checks = ['check1', 'check2'];
+
+    const data = {
+      clusterID: 'someID',
+      hosts: ['agent1', 'agent2'],
+      checks,
+    };
+
+    const action = setExecutionRequested(data);
+
+    const expectedState = {
+      someID: {
+        data: {
+          status: 'running',
+          targets: [
+            { agent_id: 'agent1', checks },
+            { agent_id: 'agent2', checks },
+          ],
+        },
         loading: false,
         error: null,
       },

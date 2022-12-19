@@ -69,7 +69,10 @@ import { setEulaVisible, setIsPremium } from '@state/settings';
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdateNew } from '@state/sagas/catalog';
-import { watchUpdateLastExecution } from '@state/sagas/lastExecutions';
+import {
+  watchUpdateLastExecution,
+  watchRequestExecution,
+} from '@state/sagas/lastExecutions';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
 import {
@@ -89,7 +92,8 @@ import {
   stopSavingClusterChecksSelection,
 } from '@state/clusterChecksSelection';
 
-import { checksSelectedAction } from '@state/actions/cluster';
+import { CHECKS_SELECTED } from '@state/actions/cluster';
+import { EXECUTION_REQUESTED } from '@state/actions/lastExecutions';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
@@ -275,7 +279,7 @@ function* checksSelected({ payload }) {
 }
 
 function* watchChecksSelected() {
-  yield takeEvery(checksSelectedAction, checksSelected);
+  yield takeEvery(CHECKS_SELECTED, checksSelected);
 }
 
 function* requestChecksExecution({ payload }) {
@@ -302,7 +306,7 @@ function* requestChecksExecution({ payload }) {
 }
 
 function* watchRequestChecksExecution() {
-  yield takeEvery('REQUEST_CHECKS_EXECUTION', requestChecksExecution);
+  yield takeEvery(EXECUTION_REQUESTED, requestChecksExecution);
 }
 
 function* checksExecutionStarted({ payload }) {
@@ -648,6 +652,7 @@ export default function* rootSaga() {
     watchCatalogUpdate(),
     watchCatalogUpdateNew(),
     watchUpdateLastExecution(),
+    watchRequestExecution(),
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchClustrConnectionSettings(),

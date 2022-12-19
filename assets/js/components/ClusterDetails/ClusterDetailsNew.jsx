@@ -124,7 +124,7 @@ export function ClusterDetailsNew() {
             type="primary-white"
             className="w-1/4 mx-0.5 border-green-500 border"
             size="small"
-            onClick={() => navigate(`/clusters/${clusterID}/settings_new`)}
+            onClick={() => navigate(`/clusters_new/${clusterID}/settings`)}
           >
             <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
             Settings
@@ -133,7 +133,9 @@ export function ClusterDetailsNew() {
             type="primary-white"
             className="w-1/4 mx-0.5 border-green-500 border"
             size="small"
-            onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
+            onClick={() =>
+              navigate(`/clusters_new/${clusterID}/executions/last`)
+            }
           >
             <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
             Show Results
@@ -142,6 +144,7 @@ export function ClusterDetailsNew() {
             cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
             clusterId={clusterID}
             disabled={!hasSelectedChecks}
+            usingNewChecksEngine
           >
             <EOS_PLAY_CIRCLE
               className={classNames('inline-block fill-jungle-green-500', {

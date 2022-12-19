@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import { getCluster } from '@state/selectors';
+import { updateCatalog } from '@state/actions/catalog';
 import { updateLastExecution } from '@state/actions/lastExecutions';
 import ExecutionResults from './ExecutionResults';
 
@@ -24,6 +25,20 @@ function ExecutionResultsPage() {
   } = useSelector(getCatalog());
   const lastExecution = useSelector(getLastExecution(clusterID));
 
+  useEffect(() => {
+    dispatch(updateCatalog());
+  }, []);
+
+  useEffect(() => {
+    if (lastExecution?.data?.status !== 'running') {
+      dispatch(updateLastExecution(clusterID));
+    }
+  }, []);
+
+  if (!cluster) {
+    return <div>Loading...</div>;
+  }
+
   if (!lastExecution) {
     return (
       <h1 className="font-light font-sans text-center text-4xl text-gray-700">
@@ -32,11 +47,7 @@ function ExecutionResultsPage() {
     );
   }
 
-  const {
-    loading: executionLoading,
-    data: executionData,
-    error: executionError,
-  } = lastExecution;
+  const { data: executionData, error: executionError } = lastExecution;
 
   return (
     <ExecutionResults
@@ -44,18 +55,12 @@ function ExecutionResultsPage() {
       hostnames={hostnames}
       clusterName={cluster?.name}
       cloudProvider={cluster?.provider}
-      onCatalogRefresh={() =>
-        dispatch({
-          type: 'UPDATE_CATALOG',
-          payload: { provider: cluster?.provider },
-        })
-      }
+      onCatalogRefresh={() => dispatch(updateCatalog())}
       onLastExecutionUpdate={() => dispatch(updateLastExecution(clusterID))}
       catalogLoading={catalogLoading}
       catalog={catalog}
       catalogError={catalogError}
-      executionData={executionLoading}
-      ecutionData={executionData}
+      executionData={executionData}
       executionError={executionError}
     />
   );
