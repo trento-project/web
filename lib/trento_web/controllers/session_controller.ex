@@ -1,4 +1,7 @@
 defmodule TrentoWeb.SessionController do
+  alias Trento.Repo
+  alias Trento.User
+
   use TrentoWeb, :controller
 
   action_fallback TrentoWeb.FallbackController
@@ -10,5 +13,14 @@ defmodule TrentoWeb.SessionController do
       {:error, _conn} ->
         {:error, {:unauthorized}}
     end
+  end
+
+  def show(conn, _) do
+    user_id = conn.private[:user_id]
+    user = Repo.get_by!(User, id: user_id)
+
+    IO.inspect(user)
+    conn
+    |> json(%{})
   end
 end

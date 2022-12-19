@@ -51,6 +51,8 @@ defmodule TrentoWeb.Router do
   scope "/api", TrentoWeb do
     pipe_through [:api, :protected_api]
 
+    get "/me", SessionController, :show, as: :me
+
     get "/about", AboutController, :info
 
     get "/installation/api-key", InstallationController, :get_api_key
