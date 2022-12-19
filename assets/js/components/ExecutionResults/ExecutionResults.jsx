@@ -18,6 +18,7 @@ import {
   getCheckDescription,
 } from '@components/ChecksResults';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
+import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
 
 const truncatedClusterNameClasses =
@@ -42,6 +43,7 @@ const getLabel = (status, health, error, expectations, failedExpectations) => {
 function ExecutionResults({
   clusterID,
   clusterName,
+  clusterScenario,
   cloudProvider,
   hostnames = [],
   catalogLoading,
@@ -115,6 +117,7 @@ function ExecutionResults({
           use results with caution
         </WarningBanner>
       )}
+      <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
       <ResultsContainer
         catalogError={false}
         clusterID={clusterID}

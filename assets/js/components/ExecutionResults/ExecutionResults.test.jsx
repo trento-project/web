@@ -123,7 +123,8 @@ describe('ExecutionResults', () => {
       <ExecutionResults
         clusterID={clusterID}
         clusterName="test-cluster"
-        cloudProvider="test-provider"
+        clusterScenario="hana_scale_up"
+        cloudProvider="azure"
         hostnames={hostnames}
         catalogLoading={loading}
         catalog={catalog}
@@ -134,6 +135,9 @@ describe('ExecutionResults', () => {
       />
     );
 
+    expect(screen.getByText("test-cluster")).toBeTruthy();
+    expect(screen.getByText("HANA scale-up")).toBeTruthy();
+    expect(screen.getByText("Azure")).toBeTruthy();
     expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
     expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
     expect(screen.getAllByText(checkID1)).toHaveLength(2);
