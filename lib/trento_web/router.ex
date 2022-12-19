@@ -17,22 +17,17 @@ defmodule TrentoWeb.Router do
     plug Trento.Application.Auth.JwtFlow, otp_app: :trento
   end
 
-  pipeline :protected do
-    plug Pow.Plug.RequireAuthenticated,
-      error_handler: TrentoWeb.AuthErrorHandler
-  end
-
   pipeline :protected_api do
     if Application.fetch_env!(:trento, :api_key_authentication)[:enabled] do
       plug Pow.Plug.RequireAuthenticated,
-        error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
+        error_handler: TrentoWeb.AuthenticatedAPIErrorHandler
     end
   end
 
   pipeline :apikey_authenticated do
     if Application.fetch_env!(:trento, :api_key_authentication)[:enabled] do
       plug Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug,
-        error_handler: Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
+        error_handler: TrentoWeb.AuthenticatedAPIErrorHandler
     end
   end
 
@@ -40,11 +35,9 @@ defmodule TrentoWeb.Router do
     pipe_through :browser
 
     get "/api/doc", OpenApiSpex.Plug.SwaggerUI, path: "/api/openapi"
-
-    get "/login", TrentoWeb.SessionController, :new, as: :login
   end
 
-  scope "/", TrentoWeb do
+  scope "/api", TrentoWeb do
     pipe_through [:api]
 
     post "/session", SessionController, :create, as: :login
@@ -175,7 +168,7 @@ defmodule TrentoWeb.Router do
   end
 
   scope "/*path", TrentoWeb do
-    pipe_through [:browser, :protected]
+    pipe_through [:browser]
 
     get "/", PageController, :index
   end
