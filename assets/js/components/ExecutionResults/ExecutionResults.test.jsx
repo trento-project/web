@@ -1,60 +1,82 @@
 import React from 'react';
+import { screen } from '@testing-library/react';
+
 import { renderWithRouter } from '@lib/test-utils';
 import {
+  addCriticalExpectation,
+  addPassingExpectation,
   agentCheckResultFactory,
   checksExecutionCompletedFactory,
   checkResultFactory,
-  expectationResultFactory,
+  withEmptyExpectations,
 } from '@lib/test-utils/factories/executions';
 import { catalogFactory, hostnameFactory } from '@lib/test-utils/factories';
 
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
-  const hostnames = hostnameFactory.buildList(2);
+  const hostnames = hostnameFactory.buildList(4);
   const [{ id: agentID1 }, { id: agentID2 }] = hostnames;
-  const agent1 = agentCheckResultFactory.build({ agent_id: agentID1 });
-  const agent2 = agentCheckResultFactory.build({ agent_id: agentID2 });
-  const agents = [agent1, agent2];
-  const checkResults = checkResultFactory.buildList(1, {
-    agents_check_results: [agent1, agent2],
+  const agentCheckResult1 = agentCheckResultFactory.build({
+    agent_id: agentID1,
   });
-  const executionResult = checksExecutionCompletedFactory.build({
-    check_results: checkResults,
+  const agentCheckResult2 = agentCheckResultFactory.build({
+    agent_id: agentID2,
+  });
+  const agentCheckResult3 = agentCheckResultFactory.build({
+    agent_id: agentID1,
+  });
+  const agentCheckResult4 = agentCheckResultFactory.build({
+    agent_id: agentID2,
+  });
+  let checkResult1 = checkResultFactory.build({
+    agents_check_results: [agentCheckResult1, agentCheckResult2],
     result: 'passing',
+  });
+
+  checkResult1 = withEmptyExpectations(checkResult1);
+  checkResult1 = addPassingExpectation(checkResult1, 'expect');
+  checkResult1 = addPassingExpectation(checkResult1, 'expect_same');
+
+  let checkResult2 = checkResultFactory.build({
+    agents_check_results: [agentCheckResult3, agentCheckResult4],
+    result: 'critical',
+  });
+
+  checkResult2 = withEmptyExpectations(checkResult2);
+  checkResult2 = addPassingExpectation(checkResult2, 'expect');
+  checkResult2 = addCriticalExpectation(checkResult2, 'expect');
+
+  const executionResult = checksExecutionCompletedFactory.build({
+    check_results: [checkResult1, checkResult2],
+    result: 'critical',
   });
 
   const {
     group_id: clusterID,
-    check_results: [{ check_id: checkID }],
+    check_results: [{ check_id: checkID1 }, { check_id: checkID2 }],
   } = executionResult;
 
   const { loading, catalog, error } = catalogFactory.build({
     loading: false,
-    catalog: [catalogFactory.build({ id: checkID })],
+    catalog: [
+      catalogFactory.build({ id: checkID1 }),
+      catalogFactory.build({ id: checkID2 }),
+    ],
     error: null,
   });
 
   const targets = [
-    { agent_id: agentID1, checks: [catalog[0].id] },
-    { agent_id: agentID2, checks: [catalog[0].id] },
+    { agent_id: agentID1, checks: [checkID1, checkID2] },
+    { agent_id: agentID2, checks: [checkID1, checkID2] },
   ];
-
-  const checkResult = checkResultFactory.build({
-    check_id: checkID,
-    result: 'passing',
-    agents_check_results: [agent1, agent2],
-    expectation_results: expectationResultFactory.buildList(2, {
-      result: true,
-    }),
-  });
 
   const lastExecution = {
     executionLoading: false,
     executionData: {
       status: checkExecutionStatus,
       targets,
-      check_results: [checkResult],
+      check_results: [checkResult1, checkResult2],
     },
     error: '',
   };
@@ -73,9 +95,8 @@ const prepareStateData = (checkExecutionStatus) => {
     error,
     targets,
     hostnames,
-    checkID,
-    agents,
-    checkResult,
+    checkID1,
+    checkID2,
     executionLoading,
     executionData,
     executionError,
@@ -87,7 +108,8 @@ describe('ExecutionResults', () => {
     const {
       clusterID,
       hostnames,
-      checkID,
+      checkID1,
+      checkID2,
       loading,
       catalog,
       error,
@@ -96,7 +118,7 @@ describe('ExecutionResults', () => {
       executionError,
     } = prepareStateData('passing');
 
-    const { getByText, getAllByText } = renderWithRouter(
+    renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
         clusterName="test-cluster"
@@ -111,10 +133,12 @@ describe('ExecutionResults', () => {
       />
     );
 
-    expect(getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(getAllByText(checkID)).toHaveLength(2);
-    expect(getAllByText('2/2 expectations passed')).toBeTruthy();
+    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
+    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
+    expect(screen.getAllByText(checkID1)).toHaveLength(2);
+    expect(screen.getAllByText(checkID2)).toHaveLength(2);
+    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
+    expect(screen.getAllByText('1/2 expectations failed')).toBeTruthy();
   });
 
   it('should render ExecutionResults with running state', async () => {

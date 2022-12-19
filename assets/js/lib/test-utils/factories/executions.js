@@ -128,6 +128,7 @@ export const withEmptyExpectations = (checkResult) => {
 };
 
 const addExpectation = (checkResult, name, expec, result) => {
+  const { type } = expec;
   const agents = checkResult.agents_check_results.map((agent) => {
     const evals = [...agent.expectation_evaluations, expec];
 
@@ -139,7 +140,7 @@ const addExpectation = (checkResult, name, expec, result) => {
 
   const results = [
     ...checkResult.expectation_results,
-    expectationResultFactory.build({ name, result }),
+    expectationResultFactory.build({ name, result, type }),
   ];
 
   return {
