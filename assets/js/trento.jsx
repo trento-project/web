@@ -60,7 +60,7 @@ function App() {
               />
               <Route
                 path="clusters_new/:clusterID/settings"
-                element={<ClusterSettings usingWanda />}
+                element={<ClusterSettings usingNewChecksEngine />}
               />
               <Route
                 path="clusters/:clusterID/checks/results"

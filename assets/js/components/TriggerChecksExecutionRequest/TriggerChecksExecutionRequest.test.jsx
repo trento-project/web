@@ -38,7 +38,10 @@ describe('TriggerChecksExecutionRequest', () => {
     };
 
     const [statefulView, store] = withState(
-      <TriggerChecksExecutionRequest clusterId={clusterID1} usingWanda />,
+      <TriggerChecksExecutionRequest
+        clusterId={clusterID1}
+        usingNewChecksEngine
+      />,
       initialState
     );
 

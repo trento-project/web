@@ -12,7 +12,7 @@ import { executionRequested } from '@state/actions/lastExecutions';
 function TriggerChecksExecutionRequest({
   clusterId,
   cssClasses,
-  usingWanda = false,
+  usingNewChecksEngine = false,
   children,
   ...props
 }) {
@@ -31,7 +31,7 @@ function TriggerChecksExecutionRequest({
       onClick={() => {
         dispatch(executionRequested(clusterId, hosts, checks));
         navigate(
-          usingWanda
+          usingNewChecksEngine
             ? `/clusters_new/${clusterId}/executions/last`
             : `/clusters/${clusterId}/checks/results`
         );
