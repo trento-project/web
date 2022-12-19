@@ -17,9 +17,13 @@ import {
   getCheckResults,
   getCheckDescription,
 } from '@components/ChecksResults';
+import ChecksResultFilters, {
+  useFilteredChecks,
+} from '@components/ChecksResults/ChecksResultFilters';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
+import { sortChecks } from '@components/ChecksResults/checksUtils';
 
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
@@ -41,6 +45,7 @@ const getLabel = (status, health, error, expectations, failedExpectations) => {
 };
 
 function ExecutionResults({
+  cluster,
   clusterID,
   clusterName,
   clusterScenario,
@@ -56,6 +61,9 @@ function ExecutionResults({
 }) {
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const { filteredChecksyByHost, setFiltersPredicates } =
+    useFilteredChecks(cluster);
 
   if (catalogLoading) {
     return <LoadingBox text="Loading checks execution..." />;
@@ -108,6 +116,11 @@ function ExecutionResults({
             {clusterName}
           </span>
         </h1>
+        <ChecksResultFilters
+          onChange={(filtersPredicates) =>
+            setFiltersPredicates(filtersPredicates)
+          }
+        />
       </div>
       {cloudProvider === UNKNOWN_PROVIDER && (
         <WarningBanner>
@@ -125,12 +138,12 @@ function ExecutionResults({
         selectedChecks={checkResults}
         onCatalogRefresh={onCatalogRefresh}
       >
-        {executionData?.targets.map(({ agent_id: hostID, checks }) => (
+        {executionData?.targets.map(({ agent_id: hostID }) => (
           <HostResultsWrapper
             key={hostID}
             hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
           >
-            {checks.map((checkID) => {
+            {sortChecks(filteredChecksyByHost(hostID)).map((checkID) => {
               const { health, error, expectations, failedExpectations } =
                 getCheckHealthByAgent(checkResults, checkID, hostID);
 
