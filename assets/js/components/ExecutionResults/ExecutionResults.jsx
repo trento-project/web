@@ -18,12 +18,11 @@ import {
   getCheckDescription,
 } from '@components/ChecksResults';
 import ChecksResultFilters, {
-  useFilteredChecks,
+  filterChecks,
 } from '@components/ChecksResults/ChecksResultFilters';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
-import { sortChecks } from '@components/ChecksResults/checksUtils';
 
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
@@ -45,7 +44,6 @@ const getLabel = (status, health, error, expectations, failedExpectations) => {
 };
 
 function ExecutionResults({
-  cluster,
   clusterID,
   clusterName,
   clusterScenario,
@@ -61,9 +59,7 @@ function ExecutionResults({
 }) {
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const { filteredChecksyByHost, setFiltersPredicates } =
-    useFilteredChecks(cluster);
+  const [predicates, setPredicates] = useState([]);
 
   if (catalogLoading) {
     return <LoadingBox text="Loading checks execution..." />;
@@ -117,9 +113,7 @@ function ExecutionResults({
           </span>
         </h1>
         <ChecksResultFilters
-          onChange={(filtersPredicates) =>
-            setFiltersPredicates(filtersPredicates)
-          }
+          onChange={(newPredicates) => setPredicates(newPredicates)}
         />
       </div>
       {cloudProvider === UNKNOWN_PROVIDER && (
@@ -138,39 +132,43 @@ function ExecutionResults({
         selectedChecks={checkResults}
         onCatalogRefresh={onCatalogRefresh}
       >
-        {executionData?.targets.map(({ agent_id: hostID }) => (
-          <HostResultsWrapper
-            key={hostID}
-            hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
-          >
-            {sortChecks(filteredChecksyByHost(hostID)).map((checkID) => {
-              const { health, error, expectations, failedExpectations } =
-                getCheckHealthByAgent(checkResults, checkID, hostID);
+        {executionData?.targets.map(({ agent_id: hostID, checks }) => {
+          const filteredChecks = filterChecks(checks, predicates);
 
-              const label = getLabel(
-                executionData?.status,
-                health,
-                error,
-                expectations,
-                failedExpectations
-              );
-              return (
-                <CheckResult
-                  key={checkID}
-                  checkId={checkID}
-                  description={getCheckDescription(catalog, checkID)}
-                  executionState={executionData?.status}
-                  health={health}
-                  label={label}
-                  onClick={() => {
-                    setModalOpen(true);
-                    setSelectedCheck(checkID);
-                  }}
-                />
-              );
-            })}
-          </HostResultsWrapper>
-        ))}
+          return (
+            <HostResultsWrapper
+              key={hostID}
+              hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
+            >
+              {filteredChecks.map((checkID) => {
+                const { health, error, expectations, failedExpectations } =
+                  getHealth(checkResults, checkID, hostID);
+
+                const label = getLabel(
+                  executionData?.status,
+                  health,
+                  error,
+                  expectations,
+                  failedExpectations
+                );
+                return (
+                  <CheckResult
+                    key={checkID}
+                    checkId={checkID}
+                    description={getCheckDescription(catalog, checkID)}
+                    executionState={executionData?.status}
+                    health={health}
+                    label={label}
+                    onClick={() => {
+                      setModalOpen(true);
+                      setSelectedCheck(checkID);
+                    }}
+                  />
+                );
+              })}
+            </HostResultsWrapper>
+          );
+        })}
       </ResultsContainer>
     </div>
   );
