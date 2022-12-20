@@ -13,6 +13,25 @@ defmodule TrentoWeb.SessionController do
     tags: ["Platform"],
     description:
       "Retrieve the access and refresh token for api interactions, returns two jwt tokens",
+    security: [],
+    request_body:
+      {"User login credentials", "application/json",
+       %Schema{
+         title: "LoginCredentials",
+         type: :object,
+         example: %{
+           username: "admin",
+           password: "thepassword"
+         },
+         properties: %{
+           username: %Schema{
+             type: :string
+           },
+           password: %Schema{
+             type: :string
+           }
+         }
+       }},
     responses: [
       ok:
         {"User credentials", "application/json",
