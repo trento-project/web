@@ -69,7 +69,7 @@ export const getCheckHealthByAgent = (checkResults, checkID, agentID) => {
     };
   }
 
-  // expectation evaluation error , malformed expression most probably
+  // expectation evaluation error, malformed expression most probably
   const evaluationErrors = agentCheckResult?.expectation_evaluations.filter(
     ({ message }) => message
   ).length;
