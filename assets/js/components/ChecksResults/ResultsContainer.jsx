@@ -11,9 +11,12 @@ function ResultsContainer({
   clusterID,
   hasAlreadyChecksResults,
   selectedChecks = [],
-  onCatalogRefresh = () => {},
   usingNewChecksEngine = false,
+  onCatalogRefresh = () => {},
+  
 }) {
+  console.log("Has already ...", hasAlreadyChecksResults)
+  console.log("new checks container 2", usingNewChecksEngine)
   if (catalogError) {
     return (
       <NotificationBox

@@ -16,7 +16,7 @@ function ChecksSelectionHints({
   const navigate = useNavigate();
 
   const hasSelectedChecks = selectedChecks.length > 0;
-
+  console.log("new engine 3", usingNewChecksEngine)
   return (
     <div className="flex items-center justify-center py-5">
       <div className="w-full rounded-lg bg-white dark:bg-gray-800 shadow-lg px-5 pt-5 pb-10 text-gray-800 dark:text-gray-50">

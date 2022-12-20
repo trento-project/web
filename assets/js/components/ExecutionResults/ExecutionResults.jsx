@@ -51,7 +51,7 @@ function ExecutionResults({
   catalogError,
   executionData,
   executionError,
-  usingNewChecksEngine,
+  usingNewChecksEngine = true ,
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
 }) {
@@ -122,7 +122,7 @@ function ExecutionResults({
       <ResultsContainer
         catalogError={false}
         clusterID={clusterID}
-        hasAlreadyChecksResults
+        hasAlreadyChecksResults={false}
         selectedChecks={checkResults}
         onCatalogRefresh={onCatalogRefresh}
         usingNewChecksEngine={usingNewChecksEngine}
