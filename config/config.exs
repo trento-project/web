@@ -153,8 +153,8 @@ config :fun_with_flags, :cache_bust_notifications,
   client: Trento.PubSub
 
 config :trento, :jwt_authentication,
-    issuer: "https://github.com/trento-project/web",
-    audience: "trento-project"
+  issuer: "https://github.com/trento-project/web",
+  audience: "trento-project"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
