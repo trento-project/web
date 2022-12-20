@@ -8,7 +8,11 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 
 import TrentoLogo from '@static/trento-icon.png';
 
-function ChecksSelectionHints({ clusterId, selectedChecks }) {
+function ChecksSelectionHints({
+  clusterId,
+  selectedChecks = [],
+  usingNewChecksEngine = false,
+}) {
   const navigate = useNavigate();
 
   const hasSelectedChecks = selectedChecks.length > 0;
@@ -36,7 +40,11 @@ function ChecksSelectionHints({ clusterId, selectedChecks }) {
             <Button
               className="bg-waterhole-blue mx-auto px-2 py-2 w-1/4 xs:w-full"
               onClick={() => {
-                navigate(`/clusters/${clusterId}/settings`);
+                navigate(
+                  usingNewChecksEngine
+                    ? `/clusters_new/${clusterId}/settings`
+                    : `/clusters/${clusterId}/settings`
+                );
               }}
             >
               <EOS_SETTINGS className="inline-block fill-white mr-1" />

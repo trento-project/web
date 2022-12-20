@@ -51,6 +51,7 @@ function ExecutionResults({
   catalogError,
   executionData,
   executionError,
+  usingNewChecksEngine,
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
 }) {
@@ -124,6 +125,7 @@ function ExecutionResults({
         hasAlreadyChecksResults
         selectedChecks={checkResults}
         onCatalogRefresh={onCatalogRefresh}
+        usingNewChecksEngine={usingNewChecksEngine}
       >
         {executionData?.targets.map(({ agent_id: hostID, checks }) => (
           <HostResultsWrapper

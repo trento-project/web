@@ -8,7 +8,7 @@ import { updateCatalog } from '@state/actions/catalog';
 import { updateLastExecution } from '@state/actions/lastExecutions';
 import ExecutionResults from './ExecutionResults';
 
-function ExecutionResultsPage() {
+function ExecutionResultsPage(usingNewChecksEngine) {
   const { clusterID } = useParams();
   const dispatch = useDispatch();
   const hostnames = useSelector((state) =>
@@ -63,6 +63,7 @@ function ExecutionResultsPage() {
       catalogError={catalogError}
       executionData={executionData}
       executionError={executionError}
+      usingNewChecksEngine={usingNewChecksEngine}
     />
   );
 }

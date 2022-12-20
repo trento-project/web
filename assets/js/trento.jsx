@@ -68,7 +68,7 @@ function App() {
               />
               <Route
                 path="clusters_new/:clusterID/executions/last"
-                element={<ExecutionResultsPage />}
+                element={<ExecutionResultsPage usingNewChecksEngine />}
               />
               <Route path="hosts/:hostID" element={<HostDetails />} />
               <Route path="sap_systems/:id" element={<SapSystemDetails />} />

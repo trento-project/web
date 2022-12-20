@@ -135,9 +135,9 @@ describe('ExecutionResults', () => {
       />
     );
 
-    expect(screen.getByText("test-cluster")).toBeTruthy();
-    expect(screen.getByText("HANA scale-up")).toBeTruthy();
-    expect(screen.getByText("Azure")).toBeTruthy();
+    expect(screen.getByText('test-cluster')).toBeTruthy();
+    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('Azure')).toBeTruthy();
     expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
     expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
     expect(screen.getAllByText(checkID1)).toHaveLength(2);

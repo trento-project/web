@@ -12,6 +12,7 @@ function ResultsContainer({
   hasAlreadyChecksResults,
   selectedChecks = [],
   onCatalogRefresh = () => {},
+  usingNewChecksEngine = false,
 }) {
   if (catalogError) {
     return (
@@ -28,6 +29,7 @@ function ResultsContainer({
       <ChecksSelectionHints
         clusterId={clusterID}
         selectedChecks={selectedChecks}
+        usingNewChecksEngine={usingNewChecksEngine}
       />
     );
   }
