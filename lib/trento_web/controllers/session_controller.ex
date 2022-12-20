@@ -19,8 +19,6 @@ defmodule TrentoWeb.SessionController do
     user_id = conn.private[:user_id]
     user = Repo.get_by!(User, id: user_id)
 
-    IO.inspect(user)
-    conn
-    |> json(%{})
+    render(conn, "me.json", user: user)
   end
 end
