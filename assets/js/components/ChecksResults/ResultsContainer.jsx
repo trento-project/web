@@ -27,6 +27,8 @@ function ResultsContainer({
       />
     );
   }
+
+  // FIX ME , hasAlreadyChecksResults is always true and needs to be false --> need to validate checks before
   if (!hasAlreadyChecksResults) {
     return (
       <ChecksSelectionHints
