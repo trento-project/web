@@ -1,4 +1,9 @@
-defmodule Trento.Application.Auth.JwtToken do
+defmodule TrentoWeb.Auth.JwtToken do
+  @moduledoc """
+    Jwt Token is the module responsible for creating a proper jwt token.
+
+    Uses Joken as jwt base libary
+  """
   use Joken.Config
 
   @impl true

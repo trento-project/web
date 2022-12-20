@@ -1,12 +1,21 @@
-defmodule Trento.Application.Auth.JwtFlow do
+defmodule TrentoWeb.Auth.JWTAuthPlug do
+  @moduledoc """
+    The JWTAuthPlug is a Pow compatibile authorization flow.
+    Handles the login and the credentials recovery at each request
+
+    Uses Joken for jwt management
+
+    See the pow documentation for further details.
+  """
   use Pow.Plug.Base
 
   require Logger
 
   alias Plug.Conn
-  alias Trento.Application.Auth.JwtToken, as: Token
+  alias TrentoWeb.Auth.JwtToken, as: Token
 
   @impl true
+  @spec fetch(Plug.Conn.t(), any) :: {Plug.Conn.t(), nil | %{optional(<<_::40>>) => binary}}
   def fetch(conn, _config) do
     with {:ok, jwt_token} <- read_token(conn),
          {:ok, claims} <- validate_token(jwt_token) do
@@ -25,7 +34,7 @@ defmodule Trento.Application.Auth.JwtFlow do
   def create(conn, user, _config) do
     claims = %{"user_id" => user.id}
     generated_token = Token.generate_and_sign!(claims)
-    conn = conn |> Conn.put_private(:api_access_token, generated_token)
+    conn = Conn.put_private(conn, :api_access_token, generated_token)
     {conn, user}
   end
 

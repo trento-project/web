@@ -56,10 +56,10 @@ defmodule TrentoWeb.SessionController do
     ]
 
   def create(conn, credentials) do
-    with {:ok, conn} <- conn |> Pow.Plug.authenticate_user(credentials) do
-      render(conn, "logged.json", token: conn.private[:api_access_token])
-    else
-      {:error, _conn} ->
+    case Pow.Plug.authenticate_user(conn, credentials) do
+      {:ok, conn} ->
+        render(conn, "logged.json", token: conn.private[:api_access_token])
+      {:error, _} ->
         {:error, {:unauthorized}}
     end
   end

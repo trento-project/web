@@ -14,7 +14,7 @@ defmodule TrentoWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.ApiSpec
-    plug Trento.Application.Auth.JwtFlow, otp_app: :trento
+    plug TrentoWeb.Auth.JWTAuthPlug, otp_app: :trento
   end
 
   pipeline :protected_api do
