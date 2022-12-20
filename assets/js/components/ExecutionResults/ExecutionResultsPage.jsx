@@ -54,6 +54,7 @@ function ExecutionResultsPage() {
       clusterID={clusterID}
       hostnames={hostnames}
       clusterName={cluster?.name}
+      clusterScenario={cluster?.type}
       cloudProvider={cluster?.provider}
       onCatalogRefresh={() => dispatch(updateCatalog())}
       onLastExecutionUpdate={() => dispatch(updateLastExecution(clusterID))}
