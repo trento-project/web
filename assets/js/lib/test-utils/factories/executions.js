@@ -52,9 +52,8 @@ export const expectationResultFactory = Factory.define(
 
 export const executionFactFactory = Factory.define(() => ({
   check_id: faker.datatype.uuid(),
-  result: resultEnum(),
-  agents_check_results: [],
-  expectation_results: expectationResultFactory.buildList(2),
+  name: faker.animal.cat(),
+  value: faker.datatype.number(),
 }));
 
 export const agentCheckResultFactory = Factory.define(() => {
@@ -127,10 +126,10 @@ export const withEmptyExpectations = (checkResult) => {
   };
 };
 
-const addExpectation = (checkResult, name, expec, result) => {
-  const { type } = expec;
+const addExpectation = (checkResult, name, expectation, result) => {
+  const { type } = expectation;
   const agents = checkResult.agents_check_results.map((agent) => {
-    const evals = [...agent.expectation_evaluations, expec];
+    const evals = [...agent.expectation_evaluations, expectation];
 
     return {
       ...agent,
@@ -152,31 +151,31 @@ const addExpectation = (checkResult, name, expec, result) => {
 
 export const addPassingExpectation = (checkResult, type) => {
   const name = faker.company.name();
-  const expec = executionExpectationEvaluationFactory.build({
+  const expectation = executionExpectationEvaluationFactory.build({
     name,
     type,
     return_value: true,
   });
 
-  return addExpectation(checkResult, name, expec, true);
+  return addExpectation(checkResult, name, expectation, true);
 };
 
 export const addCriticalExpectation = (checkResult, type) => {
   const name = faker.company.name();
-  const expec = executionExpectationEvaluationFactory.build({
+  const expectation = executionExpectationEvaluationFactory.build({
     name,
     type,
     return_value: false,
   });
 
-  return addExpectation(checkResult, name, expec, false);
+  return addExpectation(checkResult, name, expectation, false);
 };
 
 export const addExpectationWithError = (checkResult) => {
   const name = faker.company.name();
-  const expec = executionExpectationEvaluationErrorFactory.build({
+  const expectation = executionExpectationEvaluationErrorFactory.build({
     name,
   });
 
-  return addExpectation(checkResult, name, expec, false);
+  return addExpectation(checkResult, name, expectation, false);
 };

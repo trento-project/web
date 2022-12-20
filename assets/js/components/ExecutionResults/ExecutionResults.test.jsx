@@ -2,20 +2,22 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import { renderWithRouter } from '@lib/test-utils';
+
 import {
+  catalogFactory,
+  hostnameFactory,
   addCriticalExpectation,
   addPassingExpectation,
   agentCheckResultFactory,
   checksExecutionCompletedFactory,
   checkResultFactory,
   withEmptyExpectations,
-} from '@lib/test-utils/factories/executions';
-import { catalogFactory, hostnameFactory } from '@lib/test-utils/factories';
+} from '@lib/test-utils/factories';
 
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
-  const hostnames = hostnameFactory.buildList(4);
+  const hostnames = hostnameFactory.buildList(2);
   const [{ id: agentID1 }, { id: agentID2 }] = hostnames;
   const agentCheckResult1 = agentCheckResultFactory.build({
     agent_id: agentID1,
@@ -47,15 +49,21 @@ const prepareStateData = (checkExecutionStatus) => {
   checkResult2 = addPassingExpectation(checkResult2, 'expect');
   checkResult2 = addCriticalExpectation(checkResult2, 'expect');
 
+  const { check_id: checkID1 } = checkResult1;
+  const { check_id: checkID2 } = checkResult2;
+
+  const targets = [
+    { agent_id: agentID1, checks: [checkID1, checkID2] },
+    { agent_id: agentID2, checks: [checkID1, checkID2] },
+  ];
+
   const executionResult = checksExecutionCompletedFactory.build({
     check_results: [checkResult1, checkResult2],
+    targets,
     result: 'critical',
   });
 
-  const {
-    group_id: clusterID,
-    check_results: [{ check_id: checkID1 }, { check_id: checkID2 }],
-  } = executionResult;
+  const { group_id: clusterID } = executionResult;
 
   const { loading, catalog, error } = catalogFactory.build({
     loading: false,
@@ -65,11 +73,6 @@ const prepareStateData = (checkExecutionStatus) => {
     ],
     error: null,
   });
-
-  const targets = [
-    { agent_id: agentID1, checks: [checkID1, checkID2] },
-    { agent_id: agentID2, checks: [checkID1, checkID2] },
-  ];
 
   const lastExecution = {
     executionLoading: false,
@@ -95,8 +98,7 @@ const prepareStateData = (checkExecutionStatus) => {
     error,
     targets,
     hostnames,
-    checkID1,
-    checkID2,
+    checks: [checkID1, checkID2],
     executionLoading,
     executionData,
     executionError,
@@ -108,8 +110,7 @@ describe('ExecutionResults', () => {
     const {
       clusterID,
       hostnames,
-      checkID1,
-      checkID2,
+      checks: [checkID1, checkID2],
       loading,
       catalog,
       error,
