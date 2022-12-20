@@ -133,43 +133,39 @@ function ExecutionResults({
         onCatalogRefresh={onCatalogRefresh}
         usingNewChecksEngine
       >
-        {executionData?.targets.map(({ agent_id: hostID, checks }) => {
-          const filteredChecks = filterChecks(checks, predicates);
+        {executionData?.targets.map(({ agent_id: hostID, checks }) => (
+          <HostResultsWrapper
+            key={hostID}
+            hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
+          >
+            {filterChecks(checks, predicates).map((checkID) => {
+              const { health, error, expectations, failedExpectations } =
+                getCheckHealthByAgent(checkResults, checkID, hostID);
 
-          return (
-            <HostResultsWrapper
-              key={hostID}
-              hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
-            >
-              {filteredChecks.map((checkID) => {
-                const { health, error, expectations, failedExpectations } =
-                  getCheckHealthByAgent(checkResults, checkID, hostID);
-
-                const label = getLabel(
-                  executionData?.status,
-                  health,
-                  error,
-                  expectations,
-                  failedExpectations
-                );
-                return (
-                  <CheckResult
-                    key={checkID}
-                    checkId={checkID}
-                    description={getCheckDescription(catalog, checkID)}
-                    executionState={executionData?.status}
-                    health={health}
-                    label={label}
-                    onClick={() => {
-                      setModalOpen(true);
-                      setSelectedCheck(checkID);
-                    }}
-                  />
-                );
-              })}
-            </HostResultsWrapper>
-          );
-        })}
+              const label = getLabel(
+                executionData?.status,
+                health,
+                error,
+                expectations,
+                failedExpectations
+              );
+              return (
+                <CheckResult
+                  key={checkID}
+                  checkId={checkID}
+                  description={getCheckDescription(catalog, checkID)}
+                  executionState={executionData?.status}
+                  health={health}
+                  label={label}
+                  onClick={() => {
+                    setModalOpen(true);
+                    setSelectedCheck(checkID);
+                  }}
+                />
+              );
+            })}
+          </HostResultsWrapper>
+        ))}
       </ResultsContainer>
     </div>
   );
