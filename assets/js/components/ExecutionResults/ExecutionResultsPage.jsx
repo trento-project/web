@@ -51,7 +51,6 @@ function ExecutionResultsPage() {
 
   return (
     <ExecutionResults
-      cluster={cluster}
       clusterID={clusterID}
       hostnames={hostnames}
       clusterName={cluster?.name}
