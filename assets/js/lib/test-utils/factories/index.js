@@ -50,9 +50,9 @@ export const hostFactory = Factory.define(() => ({
   cluster_id: faker.datatype.uuid(),
 }));
 
-export const hostnameFactory = Factory.define(() => ({
+export const hostnameFactory = Factory.define(({ sequence }) => ({
   id: faker.datatype.uuid(),
-  hostname: faker.hacker.noun(),
+  hostname: `${faker.hacker.noun()}_${sequence}`,
 }));
 
 export const aboutFactory = Factory.define(() => ({

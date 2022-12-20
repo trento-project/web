@@ -1,17 +1,22 @@
 import { faker } from '@faker-js/faker';
 import {
+  addCriticalExpectation,
+  addExpectationWithError,
+  addPassingExpectation,
+  agentCheckErrorFactory,
   agentCheckResultFactory,
   catalogCheckFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   checkResultFactory,
+  withEmptyExpectations,
 } from '@lib/test-utils/factories';
 
 import {
   getCheckDescription,
   getCheckResults,
   getChecks,
-  getHealth,
+  getCheckHealthByAgent,
   getHosts,
 } from './checksUtils';
 
@@ -66,33 +71,95 @@ describe('checksUtils', () => {
     expect(getCheckDescription(catalog, id)).toBe(description);
   });
 
-  describe('getHealth', () => {
-    it('getHealth should return health', () => {
-      const checkResult = checkResultFactory.build();
-      const { check_id: checkID, agents_check_results: agentChecks } =
-        checkResult;
-
-      const { health, expectations, failedExpectations } = getHealth(
-        [checkResult],
-        checkID,
-        agentChecks[0].agent_id
-      );
-
-      expect(health).toBe('passing');
-      expect(expectations).toBe(2);
-      expect(failedExpectations).toBe(0);
+  describe('getCheckHealthByAgent', () => {
+    it('should return an empty map when check results are empty', () => {
+      expect(
+        getCheckHealthByAgent(
+          null,
+          faker.datatype.uuid(),
+          faker.datatype.uuid()
+        )
+      ).toStrictEqual({});
     });
 
-    it('getHealth should return undefined when check is not found', () => {
+    it('should return empty map when check is not found', () => {
       const checkResult = checkResultFactory.build();
-      const { agents_check_results: agentChecks } = checkResult;
-      const healthInfo = getHealth(
+      const healthInfo = getCheckHealthByAgent(
         [checkResult],
-        'carbonara',
-        agentChecks[0].agent_id
+        faker.datatype.uuid(),
+        faker.datatype.uuid()
       );
 
-      expect(healthInfo).toBe(undefined);
+      expect(healthInfo).toStrictEqual({});
+    });
+
+    it('should return empty map when agent is not found', () => {
+      const agentResult = agentCheckResultFactory.build();
+      const checkResult = checkResultFactory.build({
+        agents_check_results: [agentResult],
+      });
+
+      const { check_id: checkID } = checkResult;
+
+      const healthInfo = getCheckHealthByAgent(
+        [checkResult],
+        checkID,
+        faker.datatype.uuid()
+      );
+
+      expect(healthInfo).toStrictEqual({});
+    });
+
+    it('should return an agent error result', () => {
+      const agentError = agentCheckErrorFactory.build();
+      const checkResult = checkResultFactory.build({
+        agents_check_results: [agentError],
+      });
+
+      const { check_id: checkID } = checkResult;
+      const { agent_id: agentID, message } = agentError;
+
+      const { health, error, expectations, failedExpectations } =
+        getCheckHealthByAgent([checkResult], checkID, agentID);
+
+      expect(health).toBe('critical');
+      expect(error).toBe(message);
+      expect(expectations).toBe(undefined);
+      expect(failedExpectations).toBe(undefined);
+    });
+
+    it('should count expect and expect_same type errors', () => {
+      let checkResult = checkResultFactory.build({ result: 'critical' });
+      checkResult = withEmptyExpectations(checkResult);
+      checkResult = addPassingExpectation(checkResult, 'expect');
+      checkResult = addPassingExpectation(checkResult, 'expect_same');
+      checkResult = addCriticalExpectation(checkResult, 'expect');
+      checkResult = addCriticalExpectation(checkResult, 'expect_same');
+      checkResult = addExpectationWithError(checkResult);
+
+      const { check_id: checkID, agents_check_results: agents } = checkResult;
+      const { agent_id: agentID } = agents[0];
+
+      const { health, error, expectations, failedExpectations } =
+        getCheckHealthByAgent([checkResult], checkID, agentID);
+
+      expect(health).toBe('critical');
+      expect(error).toBe(undefined);
+      expect(expectations).toBe(5);
+      expect(failedExpectations).toBe(3);
+    });
+
+    it('should set result as warnning', () => {
+      let checkResult = checkResultFactory.build({ result: 'warning' });
+      checkResult = withEmptyExpectations(checkResult);
+      checkResult = addExpectationWithError(checkResult, 'expect');
+
+      const { check_id: checkID, agents_check_results: agents } = checkResult;
+      const { agent_id: agentID } = agents[0];
+
+      const { health } = getCheckHealthByAgent([checkResult], checkID, agentID);
+
+      expect(health).toBe('warning');
     });
   });
 });

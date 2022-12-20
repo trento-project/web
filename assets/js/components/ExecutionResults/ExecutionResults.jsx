@@ -13,7 +13,7 @@ import {
   ResultsContainer,
   HostResultsWrapper,
   CheckResult,
-  getHealth,
+  getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
 } from '@components/ChecksResults';
@@ -24,7 +24,7 @@ const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
 
 const getLabel = (status, health, error, expectations, failedExpectations) => {
-  if (status === 'running') {
+  if (status === 'running' || !health) {
     return '';
   }
 
@@ -129,7 +129,7 @@ function ExecutionResults({
           >
             {checks.map((checkID) => {
               const { health, error, expectations, failedExpectations } =
-                getHealth(checkResults, checkID, hostID);
+                getCheckHealthByAgent(checkResults, checkID, hostID);
 
               const label = getLabel(
                 executionData?.status,
