@@ -41,6 +41,7 @@ defmodule TrentoWeb.Router do
     pipe_through [:api]
 
     post "/session", SessionController, :create, as: :login
+    post "/session/refresh", SessionController, :refresh, as: :refresh
   end
 
   scope "/feature-flags" do
