@@ -12,13 +12,13 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   require Logger
 
   alias Plug.Conn
-  alias TrentoWeb.Auth.JwtToken, as: Token
+  alias TrentoWeb.Auth.AccessToken, as: AccessToken
 
   @impl true
   @spec fetch(Plug.Conn.t(), any) :: {Plug.Conn.t(), nil | %{optional(<<_::40>>) => binary}}
   def fetch(conn, _config) do
     with {:ok, jwt_token} <- read_token(conn),
-         {:ok, claims} <- validate_token(jwt_token) do
+         {:ok, claims} <- validate_access_token(jwt_token) do
       conn =
         conn
         |> Conn.put_private(:api_access_token, jwt_token)
@@ -33,7 +33,7 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   @impl true
   def create(conn, user, _config) do
     claims = %{"user_id" => user.id}
-    generated_token = Token.generate_and_sign!(claims)
+    generated_token = AccessToken.generate_and_sign!(claims)
     conn = Conn.put_private(conn, :api_access_token, generated_token)
     {conn, user}
   end
@@ -51,7 +51,7 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
     end
   end
 
-  @spec validate_token(binary()) :: {atom(), any()}
-  defp validate_token(jwt_token),
-    do: Token.verify_and_validate(jwt_token)
+  @spec validate_access_token(binary()) :: {atom(), any()}
+  defp validate_access_token(jwt_token),
+    do: AccessToken.verify_and_validate(jwt_token)
 end

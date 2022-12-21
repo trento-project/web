@@ -154,7 +154,9 @@ config :fun_with_flags, :cache_bust_notifications,
 
 config :trento, :jwt_authentication,
   issuer: "https://github.com/trento-project/web",
-  audience: "trento-project"
+  audience: "trento-project",
+  access_token_expiration: 600, # Seconds, 10 minutes
+  refresh_token_expiration: 21600 # Seconds, 6 hours
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
