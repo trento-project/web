@@ -17,7 +17,6 @@ function ExecutionResultsPage() {
       .map(({ id, hostname }) => ({ id, hostname }))
   );
   const cluster = useSelector(getCluster(clusterID));
-
   const {
     loading: catalogLoading,
     data: catalog,
@@ -38,17 +37,13 @@ function ExecutionResultsPage() {
   if (!cluster) {
     return <div>Loading...</div>;
   }
+  const clusterSelectedChecks = cluster?.selected_checks;
 
-  if (!lastExecution) {
-    return (
-      <h1 className="font-light font-sans text-center text-4xl text-gray-700">
-        No completed executions yet
-      </h1>
-    );
-  }
-
-  const { data: executionData, error: executionError } = lastExecution;
-  //console.log("New checks", usingNewChecksEngine)
+  const {
+    data: executionData,
+    error: executionError,
+    loading: executionLoading,
+  } = lastExecution || {};
   return (
     <ExecutionResults
       clusterID={clusterID}
@@ -61,9 +56,10 @@ function ExecutionResultsPage() {
       catalogLoading={catalogLoading}
       catalog={catalog}
       catalogError={catalogError}
+      executionLoading={executionLoading}
       executionData={executionData}
       executionError={executionError}
-      usingNewChecksEngine={true}
+      clusterSelectedChecks={clusterSelectedChecks}
     />
   );
 }

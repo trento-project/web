@@ -13,10 +13,7 @@ function ResultsContainer({
   selectedChecks = [],
   usingNewChecksEngine = false,
   onCatalogRefresh = () => {},
-  
 }) {
-  console.log("Has already ...", hasAlreadyChecksResults)
-  console.log("new checks container 2", usingNewChecksEngine)
   if (catalogError) {
     return (
       <NotificationBox
@@ -28,7 +25,6 @@ function ResultsContainer({
     );
   }
 
-  // FIX ME , hasAlreadyChecksResults is always true and needs to be false --> need to validate checks before
   if (!hasAlreadyChecksResults) {
     return (
       <ChecksSelectionHints
