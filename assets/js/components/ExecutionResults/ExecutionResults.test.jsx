@@ -1,6 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 
+import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
 
 import {
@@ -13,7 +14,7 @@ import {
   checkResultFactory,
   withEmptyExpectations,
 } from '@lib/test-utils/factories';
-
+import '@testing-library/jest-dom/extend-expect';
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
@@ -176,5 +177,33 @@ describe('ExecutionResults', () => {
       'inline-block fill-jungle-green-500'
     );
     expect(transform).toEqual('rotate(0) translate(0, 0) scale(1, 1)');
+  });
+
+  it('should render ChecksSelectionHints when executionData is null or executionLoading is false', async () => {
+    const executionData = null;
+    const executionLoading = false;
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={faker.datatype.uuid()}
+        clusterName={faker.animal.cat()}
+        clusterScenario={faker.animal.cat()}
+        cloudProvider={faker.animal.cat()}
+        hostnames
+        catalogLoading={false}
+        catalog={[]}
+        catalogError={null}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={false}
+        clusterSelectedChecks={[]}
+      />
+    );
+    const hintText = screen.getByText(
+      'It looks like you have not configured any checks for the current cluster. Select your desired checks to be executed.'
+    );
+    expect(hintText).toBeInTheDocument();
+    const svgText = screen.getByText('Select Checks now!');
+    expect(svgText).toBeInTheDocument();
   });
 });

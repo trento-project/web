@@ -37,7 +37,6 @@ function ExecutionResultsPage() {
   if (!cluster) {
     return <div>Loading...</div>;
   }
-  const clusterSelectedChecks = cluster?.selected_checks;
 
   const {
     data: executionData,
@@ -59,7 +58,7 @@ function ExecutionResultsPage() {
       executionLoading={executionLoading}
       executionData={executionData}
       executionError={executionError}
-      clusterSelectedChecks={clusterSelectedChecks}
+      clusterSelectedChecks={cluster?.selected_checks}
     />
   );
 }
