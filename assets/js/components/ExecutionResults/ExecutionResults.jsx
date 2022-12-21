@@ -17,6 +17,9 @@ import {
   getCheckResults,
   getCheckDescription,
 } from '@components/ChecksResults';
+import ChecksResultFilters, {
+  filterChecks,
+} from '@components/ChecksResults/ChecksResultFilters';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
@@ -56,6 +59,7 @@ function ExecutionResults({
 }) {
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [predicates, setPredicates] = useState([]);
 
   if (catalogLoading) {
     return <LoadingBox text="Loading checks execution..." />;
@@ -108,6 +112,9 @@ function ExecutionResults({
             {clusterName}
           </span>
         </h1>
+        <ChecksResultFilters
+          onChange={(newPredicates) => setPredicates(newPredicates)}
+        />
       </div>
       {cloudProvider === UNKNOWN_PROVIDER && (
         <WarningBanner>
@@ -130,7 +137,7 @@ function ExecutionResults({
             key={hostID}
             hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
           >
-            {checks.map((checkID) => {
+            {filterChecks(checks, predicates).map((checkID) => {
               const { health, error, expectations, failedExpectations } =
                 getCheckHealthByAgent(checkResults, checkID, hostID);
 
