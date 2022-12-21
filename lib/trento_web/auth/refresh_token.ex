@@ -12,7 +12,7 @@ defmodule TrentoWeb.Auth.RefreshToken do
   end
 
   @doc """
-    Generates and sign a valid refresh with the default claims
+    Generates and sign a valid refresh token with the default claims
     for the token type
 
     Raise an error

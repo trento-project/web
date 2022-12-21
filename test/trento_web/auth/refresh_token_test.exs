@@ -1,7 +1,7 @@
-defmodule TrentoWeb.AccessTokenTest do
+defmodule TrentoWeb.RefreshTokenTest do
   @moduledoc false
 
-  alias TrentoWeb.Auth.AccessToken
+  alias TrentoWeb.Auth.RefreshToken
 
   use ExUnit.Case
 
@@ -22,11 +22,11 @@ defmodule TrentoWeb.AccessTokenTest do
     :ok
   end
 
-  describe "generate_access_token!/1" do
-    test "should generate and sign a jwt token with the default claims correctly set" do
-      expected_expiry = 1_671_641_814 + 600
+  describe "generate_refresh_token!/1" do
+    test "it should return a refresh token with the correct default claims" do
+      expected_expiry = 1_671_641_814 + 21_600
 
-      token = AccessToken.generate_access_token!(%{})
+      token = RefreshToken.generate_refresh_token!(%{})
       {:ok, claims} = Joken.peek_claims(token)
 
       assert %{
@@ -36,20 +36,22 @@ defmodule TrentoWeb.AccessTokenTest do
                "iat" => 1_671_641_814,
                "jti" => _,
                "nbf" => 1_671_641_814,
-               "typ" => "Bearer"
+               "typ" => "Refresh"
              } = claims
     end
 
-    test "should merge the custom claims with the default after signing" do
+    test "it should add custom claims to the refresh token" do
       token =
-        AccessToken.generate_access_token!(%{
-          "sub" => 1
+        RefreshToken.generate_refresh_token!(%{
+          "sub" => 1,
+          "asd" => "test"
         })
 
       {:ok, claims} = Joken.peek_claims(token)
 
       assert %{
-               "sub" => 1
+               "sub" => 1,
+               "asd" => "test"
              } = claims
     end
   end
