@@ -3,7 +3,7 @@ defmodule Trento.AuthenticateAPIKeyPlugTest do
   use Plug.Test
 
   alias Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug
-  alias Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler
+  alias TrentoWeb.AuthenticatedAPIErrorHandler
 
   test "Reject an Unauthorized request" do
     conn = conn(:get, "/foo", "bar=10")
