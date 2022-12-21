@@ -39,6 +39,7 @@ defmodule TrentoWeb.SessionController do
            title: "Credentials",
            type: :object,
            example: %{
+             expires_in: 600,
              access_token:
                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJ1c2VyX2lkIjoxfQ.frHteBttgtW8706m7nqYC6ruYtTrbVcCEO_UgIkHn6A",
              refresh_token:
@@ -50,6 +51,9 @@ defmodule TrentoWeb.SessionController do
              },
              refresh_token: %Schema{
                type: :string
+             },
+             expires_in: %Schema{
+               type: :integer
              }
            }
          }}
@@ -58,7 +62,11 @@ defmodule TrentoWeb.SessionController do
   def create(conn, credentials) do
     case Pow.Plug.authenticate_user(conn, credentials) do
       {:ok, conn} ->
-        render(conn, "logged.json", token: conn.private[:api_access_token])
+        render(conn, "logged.json",
+          token: conn.private[:api_access_token],
+          expiration: conn.private[:access_token_expiration]
+        )
+
       {:error, _} ->
         {:error, {:unauthorized}}
     end
@@ -86,8 +94,8 @@ defmodule TrentoWeb.SessionController do
     ]
 
   def show(conn, _) do
-    user_id = conn.private[:user_id]
-    user = Repo.get_by!(User, id: user_id)
+    request_user = Pow.Plug.current_user(conn)
+    user = Repo.get_by!(User, id: request_user["user_id"])
 
     render(conn, "me.json", user: user)
   end

@@ -24,7 +24,7 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
         |> Conn.put_private(:api_access_token, jwt_token)
         |> Conn.put_private(:user_id, claims["user_id"])
 
-      {conn, %{"token" => jwt_token}}
+      {conn, %{"access_token" => jwt_token, "user_id" => claims["user_id"]}}
     else
       _any -> {conn, nil}
     end
@@ -34,7 +34,12 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   def create(conn, user, _config) do
     claims = %{"user_id" => user.id}
     generated_token = AccessToken.generate_and_sign!(claims)
-    conn = Conn.put_private(conn, :api_access_token, generated_token)
+
+    conn =
+      conn
+      |> Conn.put_private(:api_access_token, generated_token)
+      |> Conn.put_private(:access_token_expiration, AccessToken.expires_in())
+
     {conn, user}
   end
 
