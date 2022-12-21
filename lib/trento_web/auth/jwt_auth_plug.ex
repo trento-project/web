@@ -33,7 +33,7 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   @impl true
   def create(conn, user, _config) do
     claims = %{"sub" => user.id}
-    generated_token = AccessToken.generate_and_sign!(claims)
+    generated_token = AccessToken.generate_access_token!(claims)
 
     conn =
       conn

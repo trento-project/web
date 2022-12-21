@@ -43,7 +43,8 @@ if config_env() in [:prod, :demo] do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  config :joken, default_signer: secret_key_base
+  config :joken,
+    access_token_signer: secret_key_base
 
   config :trento, TrentoWeb.Endpoint,
     http: [
