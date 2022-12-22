@@ -4,17 +4,17 @@ import Filter from '@components/Table/Filter';
 
 export const RESULT_FILTER_FIELD = 'result';
 
+export const filterChecks = (checks, predicates) => {
+  if (predicates.length === 0) return checks;
+
+  return checks.filter((check) =>
+    predicates.some((predicate) => predicate(check))
+  );
+};
+
 export const useFilteredChecks = (cluster) => {
   const [filtersPredicates, setFiltersPredicates] = useState([]);
   const [filteredChecks, setFilteredChecks] = useState([]);
-
-  const filterChecks = (checks, predicates) => {
-    if (predicates.length === 0) return checks;
-
-    return checks.filter((check) =>
-      predicates.some((predicate) => predicate(check))
-    );
-  };
 
   const checksForHost = (hostID) =>
     filteredChecks
