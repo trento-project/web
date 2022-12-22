@@ -52,8 +52,10 @@ function ExecutionResults({
   catalogLoading,
   catalog,
   catalogError,
+  executionLoading,
   executionData,
   executionError,
+  clusterSelectedChecks = [],
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
 }) {
@@ -86,9 +88,7 @@ function ExecutionResults({
       />
     );
   }
-
   const checkResults = getCheckResults(executionData);
-
   return (
     <div>
       <Modal
@@ -128,9 +128,10 @@ function ExecutionResults({
       <ResultsContainer
         catalogError={false}
         clusterID={clusterID}
-        hasAlreadyChecksResults
-        selectedChecks={checkResults}
+        hasAlreadyChecksResults={!!(executionData || executionLoading)}
+        selectedChecks={clusterSelectedChecks}
         onCatalogRefresh={onCatalogRefresh}
+        usingNewChecksEngine
       >
         {executionData?.targets.map(({ agent_id: hostID, checks }) => (
           <HostResultsWrapper

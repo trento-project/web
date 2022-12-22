@@ -17,7 +17,6 @@ function ExecutionResultsPage() {
       .map(({ id, hostname }) => ({ id, hostname }))
   );
   const cluster = useSelector(getCluster(clusterID));
-
   const {
     loading: catalogLoading,
     data: catalog,
@@ -39,16 +38,11 @@ function ExecutionResultsPage() {
     return <div>Loading...</div>;
   }
 
-  if (!lastExecution) {
-    return (
-      <h1 className="font-light font-sans text-center text-4xl text-gray-700">
-        No completed executions yet
-      </h1>
-    );
-  }
-
-  const { data: executionData, error: executionError } = lastExecution;
-
+  const {
+    data: executionData,
+    error: executionError,
+    loading: executionLoading,
+  } = lastExecution || {};
   return (
     <ExecutionResults
       clusterID={clusterID}
@@ -61,8 +55,10 @@ function ExecutionResultsPage() {
       catalogLoading={catalogLoading}
       catalog={catalog}
       catalogError={catalogError}
+      executionLoading={executionLoading}
       executionData={executionData}
       executionError={executionError}
+      clusterSelectedChecks={cluster?.selected_checks}
     />
   );
 }
