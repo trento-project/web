@@ -631,7 +631,7 @@ function* watchClustrConnectionSettings() {
 
 export default function* rootSaga() {
   yield all([
-    initialDataFetch(),
+    // initialDataFetch(), TODO: INITIAL DATA FETCH ONLY AFTER LOGIN
     watchResetState(),
     watchHostRegistered(),
     watchHostDetailsUpdated(),

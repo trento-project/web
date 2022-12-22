@@ -28,6 +28,7 @@ import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
 import Settings from '@components/Settings';
 import Eula from '@components/Eula';
+import Login from '@components/Login';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import { store } from './state';
@@ -45,6 +46,7 @@ function App() {
           }}
         >
           <Routes>
+            <Route path="/session/new" element={<Login />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route index path="hosts" element={<HostsList />} />
