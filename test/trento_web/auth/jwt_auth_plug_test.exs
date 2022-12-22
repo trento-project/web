@@ -6,8 +6,8 @@ defmodule TrentoWeb.JWTAuthPlugTest do
 
   alias TrentoWeb.Auth.{
     AccessToken,
-    JWTAuthPlug
-    RefreshToken,
+    JWTAuthPlug,
+    RefreshToken
   }
 
   import Mox
