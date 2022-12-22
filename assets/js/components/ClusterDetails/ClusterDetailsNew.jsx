@@ -214,7 +214,9 @@ export function ClusterDetailsNew() {
           <ChecksResultOverviewNew
             {...lastExecution}
             onCheckClick={(health) =>
-              navigate(`/clusters/${clusterID}/checks/results?health=${health}`)
+              navigate(
+                `/clusters_new/${clusterID}/executions/last?health=${health}`
+              )
             }
           />
         </div>

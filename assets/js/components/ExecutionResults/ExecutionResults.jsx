@@ -17,9 +17,7 @@ import {
   getCheckResults,
   getCheckDescription,
 } from '@components/ChecksResults';
-import ChecksResultFilters, {
-  filterChecks,
-} from '@components/ChecksResults/ChecksResultFilters';
+import ChecksResultFilters from '@components/ChecksResults/ChecksResultFilters';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
@@ -138,32 +136,57 @@ function ExecutionResults({
             key={hostID}
             hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
           >
-            {filterChecks(checks, predicates).map((checkID) => {
-              const { health, error, expectations, failedExpectations } =
-                getCheckHealthByAgent(checkResults, checkID, hostID);
+            {checks
+              .map((checkID) => {
+                const { health, error, expectations, failedExpectations } =
+                  getCheckHealthByAgent(checkResults, checkID, hostID);
 
-              const label = getLabel(
-                executionData?.status,
-                health,
-                error,
-                expectations,
-                failedExpectations
-              );
-              return (
-                <CheckResult
-                  key={checkID}
-                  checkId={checkID}
-                  description={getCheckDescription(catalog, checkID)}
-                  executionState={executionData?.status}
-                  health={health}
-                  label={label}
-                  onClick={() => {
-                    setModalOpen(true);
-                    setSelectedCheck(checkID);
-                  }}
-                />
-              );
-            })}
+                return {
+                  checkID,
+                  error,
+                  expectations,
+                  failedExpectations,
+                  result: health,
+                };
+              })
+              .filter((check) => {
+                if (predicates.length === 0) {
+                  return true;
+                }
+
+                return predicates.some((predicate) => predicate(check));
+              })
+              .map(
+                ({
+                  checkID,
+                  result,
+                  error,
+                  expectations,
+                  failedExpectations,
+                }) => {
+                  const label = getLabel(
+                    executionData?.status,
+                    result,
+                    error,
+                    expectations,
+                    failedExpectations
+                  );
+                  return (
+                    <CheckResult
+                      key={checkID}
+                      checkId={checkID}
+                      description={getCheckDescription(catalog, checkID)}
+                      executionState={executionData?.status}
+                      health={result}
+                      label={label}
+                      onClick={() => {
+                        setModalOpen(true);
+                        setSelectedCheck(checkID);
+                      }}
+                    />
+                  );
+                }
+              )}
           </HostResultsWrapper>
         ))}
       </ResultsContainer>
