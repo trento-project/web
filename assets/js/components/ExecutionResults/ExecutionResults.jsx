@@ -17,9 +17,7 @@ import {
   getCheckResults,
   getCheckDescription,
 } from '@components/ChecksResults';
-import ChecksResultFilters, {
-  filterChecks,
-} from '@components/ChecksResults/ChecksResultFilters';
+import ChecksResultFilters from '@components/ChecksResults/ChecksResultFilters';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
