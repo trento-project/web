@@ -3,6 +3,8 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
 export * from './executions';
+export * from './hosts';
+export * from './sapSystems';
 
 const healthEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
@@ -43,11 +45,6 @@ export const catalogFactory = Factory.define(() => ({
   loading: faker.datatype.boolean(),
   catalog: catalogCheckFactory.build(),
   error: null,
-}));
-
-export const hostFactory = Factory.define(() => ({
-  id: faker.datatype.uuid(),
-  cluster_id: faker.datatype.uuid(),
 }));
 
 export const hostnameFactory = Factory.define(({ sequence }) => ({
