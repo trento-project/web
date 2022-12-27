@@ -4,9 +4,9 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter, withState } from '@lib/test-utils';
-import { HomeHealthSummary } from './HomeHealthSummary';
+import { healthSummaryFactory } from '@lib/test-utils/factories';
 
-import { healthSummaryFactory } from '../../lib/test-utils/factories';
+import { HomeHealthSummary } from './HomeHealthSummary';
 
 const homeHealthSummaryActionPayload = [
   healthSummaryFactory.build({
