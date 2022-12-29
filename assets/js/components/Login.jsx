@@ -55,6 +55,7 @@ export default function Login() {
                 <input
                   id="username"
                   type="text"
+                  data-testid="login-username"
                   disabled={authInProgress}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -77,6 +78,7 @@ export default function Login() {
                 <input
                   id="password"
                   type="password"
+                  data-testid="login-password"
                   disabled={authInProgress}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -90,6 +92,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={authInProgress}
+                data-testid="login-submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-jungle-green-500 hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-jungle-green-500"
               >
                 Login
