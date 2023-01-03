@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-80EF5C8B.js"></script>
+    <script src="dist/sidebar_items-A3808D4A.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -374,6 +374,15 @@ SAP workloads.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="Trento.Domain.Cluster.Lifespan.html" translate="no">Trento.Domain.Cluster.Lifespan</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Cluster aggregate lifespan.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="Trento.Domain.ClusterNode.html" translate="no">Trento.Domain.ClusterNode</a>
 
   </div>
@@ -388,15 +397,6 @@ SAP workloads.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Represents the resource of a HANA cluster.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Commands.AbortClusterRollup.html" translate="no">Trento.Domain.Commands.AbortClusterRollup</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Compensation command that aborts the cluster rollup.</p></div>
 
 </div>
 <div class="summary-row">
@@ -464,7 +464,7 @@ SAP workloads.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Domain.Commands.RollupCluster.html" translate="no">Trento.Domain.Commands.RollupCluster</a>
+    <a href="Trento.Domain.Commands.RollUpCluster.html" translate="no">Trento.Domain.Commands.RollUpCluster</a>
 
   </div>
 
@@ -644,20 +644,22 @@ SAP workloads.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Domain.Events.ClusterRolledUp.html" translate="no">Trento.Domain.Events.ClusterRolledUp</a>
+    <a href="Trento.Domain.Events.ClusterRollUpRequested.html" translate="no">Trento.Domain.Events.ClusterRollUpRequested</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>This event is emitted when a cluster is rolled up and its stream is reset.</p></div>
+    <div class="summary-synopsis"><p>This event is emitted when a cluster roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the cluster aggregate.</p></div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Domain.Events.ClusterRollupFailed.html" translate="no">Trento.Domain.Events.ClusterRollupFailed</a>
+    <a href="Trento.Domain.Events.ClusterRolledUp.html" translate="no">Trento.Domain.Events.ClusterRolledUp</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Event emitted when a cluster rollup has failed</p></div>
+    <div class="summary-synopsis"><p>This event is emitted when a cluster is rolled up and its stream is archived.
+It contains the snapshot of the cluster aggregate that will be used to restore the aggregate state.</p></div>
 
 </div>
 <div class="summary-row">
@@ -1742,20 +1744,29 @@ installed.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Rollup.html" translate="no">Trento.Rollup</a>
+    <a href="Trento.RollUp.html" translate="no">Trento.RollUp</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Provides the rollup functionality</p></div>
+    <div class="summary-synopsis"><p>This module is responsible for archiving a stream and appending a roll-up event to it.</p></div>
 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.RollupEventHandler.html" translate="no">Trento.RollupEventHandler</a>
+    <a href="Trento.RollUp.Queries.html" translate="no">Trento.RollUp.Queries</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>This event handler is responsible for rolling up aggregates.</p></div>
+    <div class="summary-synopsis"><p>This module contains the SQL queries used to archive a stream.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.RollUpEventHandler.html" translate="no">Trento.RollUpEventHandler</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event handler is responsible for rolling-up aggregates when a requested event is received.</p></div>
 
 </div>
 <div class="summary-row">
@@ -1826,6 +1837,15 @@ installed.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Check result projector</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.StreamRollUpEventHandler.html" translate="no">Trento.StreamRollUpEventHandler</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module is responsible for triggering the roll-up of an aggregate.</p></div>
 
 </div>
 <div class="summary-row">

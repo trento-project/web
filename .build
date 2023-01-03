@@ -30,10 +30,10 @@ Trento.DatabaseReadModel.html
 Trento.Domain.AwsProvider.html
 Trento.Domain.AzureProvider.html
 Trento.Domain.CheckResult.html
+Trento.Domain.Cluster.Lifespan.html
 Trento.Domain.Cluster.html
 Trento.Domain.ClusterNode.html
 Trento.Domain.ClusterResource.html
-Trento.Domain.Commands.AbortClusterRollup.html
 Trento.Domain.Commands.CompleteChecksExecution.html
 Trento.Domain.Commands.CompleteChecksExecutionWanda.html
 Trento.Domain.Commands.RegisterApplicationInstance.html
@@ -41,7 +41,7 @@ Trento.Domain.Commands.RegisterClusterHost.html
 Trento.Domain.Commands.RegisterDatabaseInstance.html
 Trento.Domain.Commands.RegisterHost.html
 Trento.Domain.Commands.RequestChecksExecution.html
-Trento.Domain.Commands.RollupCluster.html
+Trento.Domain.Commands.RollUpCluster.html
 Trento.Domain.Commands.SelectChecks.html
 Trento.Domain.Commands.StartChecksExecution.html
 Trento.Domain.Commands.UpdateHeartbeat.html
@@ -61,8 +61,8 @@ Trento.Domain.Events.ClusterDetailsUpdated.html
 Trento.Domain.Events.ClusterDiscoveredHealthChanged.html
 Trento.Domain.Events.ClusterHealthChanged.html
 Trento.Domain.Events.ClusterRegistered.html
+Trento.Domain.Events.ClusterRollUpRequested.html
 Trento.Domain.Events.ClusterRolledUp.html
-Trento.Domain.Events.ClusterRollupFailed.html
 Trento.Domain.Events.DatabaseHealthChanged.html
 Trento.Domain.Events.DatabaseInstanceHealthChanged.html
 Trento.Domain.Events.DatabaseInstanceRegistered.html
@@ -188,8 +188,9 @@ Trento.Messaging.html
 Trento.ProjectorTestHelper.html
 Trento.Release.html
 Trento.Repo.html
-Trento.Rollup.html
-Trento.RollupEventHandler.html
+Trento.RollUp.Queries.html
+Trento.RollUp.html
+Trento.RollUpEventHandler.html
 Trento.Router.html
 Trento.SapSystemProjector.html
 Trento.SapSystemReadModel.html
@@ -198,6 +199,7 @@ Trento.SapSystems.html
 Trento.Scheduler.html
 Trento.SlesSubscriptionReadModel.html
 Trento.SlesSubscriptionsProjector.html
+Trento.StreamRollUpEventHandler.html
 Trento.Support.DateService.html
 Trento.Support.Enum.html
 Trento.Support.EventHandlerFailureContext.html
@@ -281,8 +283,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-CB28D96F.js
-dist/sidebar_items-80EF5C8B.js
+dist/search_items-F2DA7DC1.js
+dist/sidebar_items-A3808D4A.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
