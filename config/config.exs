@@ -77,6 +77,8 @@ config :trento, Trento.Commanded,
     ]
   }
 
+config :trento, Trento.StreamRollUpEventHandler, max_stream_version: 10_000
+
 config :trento, Trento.EventStore,
   serializer: Trento.JsonbSerializer,
   column_data_type: "jsonb",

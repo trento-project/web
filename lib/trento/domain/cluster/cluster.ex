@@ -63,12 +63,11 @@ defmodule Trento.Domain.Cluster do
   }
 
   alias Trento.Domain.Commands.{
-    AbortClusterRollup,
     CompleteChecksExecution,
     CompleteChecksExecutionWanda,
     RegisterClusterHost,
     RequestChecksExecution,
-    RollupCluster,
+    RollUpCluster,
     SelectChecks,
     StartChecksExecution
   }
@@ -84,7 +83,7 @@ defmodule Trento.Domain.Cluster do
     ClusterHealthChanged,
     ClusterRegistered,
     ClusterRolledUp,
-    ClusterRollupFailed,
+    ClusterRollUpRequested,
     HostAddedToCluster,
     HostChecksExecutionCompleted
   }
@@ -115,15 +114,6 @@ defmodule Trento.Domain.Cluster do
 
     embeds_one :details, HanaClusterDetails
     embeds_many :hosts_executions, HostExecution
-  end
-
-  def execute(%Cluster{rolling_up: false}, %AbortClusterRollup{}),
-    do: []
-
-  def execute(%Cluster{rolling_up: true}, %AbortClusterRollup{cluster_id: cluster_id}) do
-    %ClusterRollupFailed{
-      cluster_id: cluster_id
-    }
   end
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
@@ -305,40 +295,12 @@ defmodule Trento.Domain.Cluster do
   end
 
   def execute(
-        %Cluster{
-          cluster_id: cluster_id,
-          name: name,
-          type: type,
-          sid: sid,
-          provider: provider,
-          resources_number: resources_number,
-          hosts_number: hosts_number,
-          details: details,
-          health: health,
-          hosts: hosts,
-          selected_checks: selected_checks,
-          discovered_health: discovered_health,
-          checks_health: checks_health,
-          hosts_executions: hosts_executions
-        },
-        %RollupCluster{}
+        %Cluster{cluster_id: cluster_id} = snapshot,
+        %RollUpCluster{}
       ) do
-    %ClusterRolledUp{
+    %ClusterRollUpRequested{
       cluster_id: cluster_id,
-      name: name,
-      type: type,
-      sid: sid,
-      provider: provider,
-      resources_number: resources_number,
-      hosts_number: hosts_number,
-      details: details,
-      health: health,
-      hosts: hosts,
-      selected_checks: selected_checks,
-      discovered_health: discovered_health,
-      checks_health: checks_health,
-      hosts_executions: hosts_executions,
-      applied: false
+      snapshot: snapshot
     }
   end
 
@@ -538,47 +500,14 @@ defmodule Trento.Domain.Cluster do
     %Cluster{cluster | health: health}
   end
 
-  def apply(%Cluster{} = cluster, %ClusterRolledUp{applied: false}) do
+  def apply(%Cluster{} = cluster, %ClusterRollUpRequested{}) do
     %Cluster{cluster | rolling_up: true}
   end
 
   def apply(%Cluster{}, %ClusterRolledUp{
-        cluster_id: cluster_id,
-        name: name,
-        type: type,
-        sid: sid,
-        provider: provider,
-        resources_number: resources_number,
-        hosts_number: hosts_number,
-        details: details,
-        health: health,
-        hosts: hosts,
-        selected_checks: selected_checks,
-        discovered_health: discovered_health,
-        checks_health: checks_health,
-        hosts_executions: hosts_executions,
-        applied: true
+        snapshot: snapshot
       }) do
-    %Cluster{
-      cluster_id: cluster_id,
-      name: name,
-      type: type,
-      sid: sid,
-      provider: provider,
-      resources_number: resources_number,
-      hosts_number: hosts_number,
-      details: details,
-      health: health,
-      hosts: hosts,
-      selected_checks: selected_checks,
-      discovered_health: discovered_health,
-      checks_health: checks_health,
-      hosts_executions: hosts_executions
-    }
-  end
-
-  def apply(%Cluster{} = cluster, %ClusterRollupFailed{}) do
-    %Cluster{cluster | rolling_up: false}
+    snapshot
   end
 
   defp maybe_emit_host_added_to_cluster_event(

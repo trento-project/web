@@ -1,14 +1,28 @@
 defmodule Trento.Domain.Cluster.Lifespan do
-  @moduledoc false
+  @moduledoc """
+  Cluster aggregate lifespan.
+
+  It controls the lifespan of the aggregate GenServer representing a cluster.
+  """
 
   @behaviour Commanded.Aggregates.AggregateLifespan
 
-  alias Trento.Domain.Events.ClusterRolledUp
+  alias Commanded.Aggregates.DefaultLifespan
 
-  def after_event(%ClusterRolledUp{applied: false}), do: :stop
-  def after_event(_), do: :infinity
+  alias Trento.Domain.Events.ClusterRollUpRequested
 
-  def after_command(_), do: :infinity
+  @doc """
+  The cluster aggregate will be stopped after a ClusterRollUpRequested event is received.
+  This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.
+  """
+  def after_event(%ClusterRollUpRequested{}), do: :stop
+  def after_event(event), do: DefaultLifespan.after_event(event)
 
-  def after_error(_), do: :stop
+  def after_command(command), do: DefaultLifespan.after_command(command)
+
+  @doc """
+   If the aggregate is rolling up, it will be stopped to avoid processing any other event.
+  """
+  def after_error({:error, :cluster_rolling_up}), do: :stop
+  def after_error(error), do: DefaultLifespan.after_error(error)
 end

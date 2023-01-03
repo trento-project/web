@@ -82,3 +82,5 @@ config :trento,
     Trento.Messaging.Adapters.AMQP.Publisher,
     Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer
   ]
+
+config :trento, Trento.StreamRollUpEventHandler, max_stream_version: 10
