@@ -3,8 +3,9 @@ import { screen, fireEvent } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
+import { renderWithRouter, withDefaultState } from '@lib/test-utils';
+
 import SapSystemsOverview from './SapSystemsOverview';
-import { renderWithRouter, withDefaultState } from '../../lib/test-utils';
 
 describe('SapSystemsOverviews component', () => {
   describe('query string filtering behavior', () => {

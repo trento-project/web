@@ -1,6 +1,9 @@
 import React from 'react';
+
 import HostLink from '@components/HostLink';
-import { Features, InstanceStatus } from './GenericSystemDetails';
+
+import Features from './Features';
+import InstanceStatus from './InstanceStatus';
 
 export const systemInstancesTableConfiguration = {
   usePadding: false,
