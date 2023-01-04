@@ -18,7 +18,7 @@ defmodule TrentoWeb.Router do
   end
 
   pipeline :protected_api do
-    if Application.fetch_env!(:trento, :api_key_authentication)[:enabled] do
+    if Application.fetch_env!(:trento, :jwt_authentication)[:enabled] do
       plug Pow.Plug.RequireAuthenticated,
         error_handler: TrentoWeb.AuthenticatedAPIErrorHandler
     end

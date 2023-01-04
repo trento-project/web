@@ -3,8 +3,7 @@ import { selectedHost } from '../fixtures/host-details/selected_host';
 context('Host Details', () => {
   before(() => {
     cy.task('startAgentHeartbeat', [selectedHost.agentId]);
-
-    cy.navigateToItem('Hosts');
+    cy.visit('/hosts');
     cy.get(`#host-${selectedHost.agentId} > a`).click();
     cy.url().should('include', `/hosts/${selectedHost.agentId}`);
   });

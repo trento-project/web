@@ -31,19 +31,62 @@ Cypress.Commands.add('login', () => {
     Cypress.env('login_user'),
     Cypress.env('login_password'),
   ];
-  cy.visit('/login');
-  cy.get('#user_username').type(username);
-  cy.get('#user_password').type(password);
-  cy.get(':nth-child(5) > .w-full').click();
+  cy.visit('/session/new');
+  cy.get('#username').type(username);
+  cy.get('#password').type(password);
+  cy.get('[data-testid="login-submit"]').click();
   cy.url().should('include', '/');
 });
 
+const apiLogin = () => {
+  const [username, password] = [
+    Cypress.env('login_user'),
+    Cypress.env('login_password'),
+  ];
+  return cy
+    .request({
+      method: 'POST',
+      url: '/api/session',
+      body: {
+        username,
+        password,
+      },
+    })
+    .then((response) => {
+      const { access_token: accessToken, refresh_token: refreshToken } =
+        response.body;
+      return { accessToken, refreshToken };
+    });
+};
+
+Cypress.Commands.add('initiateSession', () => {
+  cy.session('trento-jwt', () => {
+    apiLogin().then(({ accessToken, refreshToken }) => {
+      window.localStorage.setItem('access_token', accessToken);
+      window.localStorage.setItem('refresh_token', refreshToken);
+    });
+  });
+});
+
+Cypress.Commands.add('apiLogin', () => {
+  return apiLogin().then(({ accessToken }) => {
+    localStorage.setItem('access_token', accessToken);
+  });
+});
+
 Cypress.Commands.add('acceptEula', () => {
-  cy.request('/api/settings').then((response) => {
-    if (!response.body.eula_accepted) {
-      cy.get('div').should('contain', 'License agreement');
-      cy.get('button').contains('Accept').click();
-    }
+  apiLogin().then(({ accessToken }) => {
+    cy.request({
+      url: '/api/settings',
+      auth: {
+        bearer: accessToken,
+      },
+    }).then((response) => {
+      if (!response.body.eula_accepted) {
+        cy.get('div').should('contain', 'License agreement');
+        cy.get('button').contains('Accept').click();
+      }
+    });
   });
 });
 
@@ -87,8 +130,18 @@ Cypress.Commands.add('selectChecks', (clusterId, checks) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks`;
-  cy.request({ method: 'POST', url: url, body: checksBody, headers: headers });
+  apiLogin().then(({ accessToken }) => {
+    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks`;
+    cy.request({
+      method: 'POST',
+      url: url,
+      body: checksBody,
+      headers: headers,
+      auth: {
+        bearer: accessToken,
+      },
+    });
+  });
 });
 
 Cypress.Commands.add('removeTagsFromView', () => {
@@ -138,12 +191,17 @@ Cypress.Commands.add('setMockRunnerExpectedResult', (result) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  const url = `http://${webAPIHost}:${webAPIPort}/api/mockrunner/expected_result`;
-  cy.request({
-    method: 'POST',
-    url: url,
-    body: requestResultBody,
-    headers: headers,
+  apiLogin().then(({ accessToken }) => {
+    const url = `http://${webAPIHost}:${webAPIPort}/api/mockrunner/expected_result`;
+    cy.request({
+      method: 'POST',
+      url: url,
+      body: requestResultBody,
+      headers: headers,
+      auth: {
+        bearer: accessToken,
+      },
+    });
   });
 });
 
@@ -157,6 +215,15 @@ Cypress.Commands.add('requestChecksExecution', (clusterId) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks/request_execution`;
-  cy.request({ method: 'POST', url: url, headers: headers });
+  apiLogin().then(({ accessToken }) => {
+    const url = `http://${webAPIHost}:${webAPIPort}/api/clusters/${clusterId}/checks/request_execution`;
+    cy.request({
+      method: 'POST',
+      url: url,
+      headers: headers,
+      auth: {
+        bearer: accessToken,
+      },
+    });
+  });
 });

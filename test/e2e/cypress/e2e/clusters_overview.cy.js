@@ -7,8 +7,8 @@ import {
 
 context('Clusters Overview', () => {
   const availableClusters = allClusterNames();
-  before(() => {
-    cy.navigateToItem('Clusters');
+  beforeEach(() => {
+    cy.visit('/clusters');
     cy.url().should('include', '/clusters');
   });
 

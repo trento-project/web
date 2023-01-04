@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import TrentoLogo from '@static/trento.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { performLogin } from '@state/actions/auth';
 
 export default function Login() {
@@ -14,6 +14,7 @@ export default function Login() {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     if (authError) {
@@ -23,7 +24,8 @@ export default function Login() {
 
   useEffect(() => {
     if (loggedIn) {
-      navigate('/');
+      const destinationURL = searchParams.get('request_path')
+      navigate(destinationURL || '/');
     }
   }, [loggedIn]);
 

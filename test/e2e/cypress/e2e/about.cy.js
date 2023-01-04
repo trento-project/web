@@ -2,7 +2,7 @@ import { getValue } from '../support/common';
 
 describe('User account page', () => {
   before(() => {
-    cy.navigateToItem('About');
+    cy.visit('/about');
     cy.url().should('include', '/about');
   });
 
