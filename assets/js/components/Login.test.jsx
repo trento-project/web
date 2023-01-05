@@ -51,7 +51,7 @@ describe('Login component', () => {
     renderWithRouter(StatefulLogin);
 
     await waitFor(() =>
-      screen.getByText('An error occured during login, try again')
+      screen.getByText('An error occurred during login, try again')
     );
   });
 

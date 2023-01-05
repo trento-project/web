@@ -2,7 +2,7 @@ defmodule TrentoWeb.Auth.RefreshToken do
   @moduledoc """
     Refresh token is the module responsible for creating a proper jwt refresh token
 
-    Uses Joken as jwt base libary
+    Uses Joken as jwt base library
   """
   use Joken.Config, default_signer: :refresh_token_signer
 

@@ -83,7 +83,7 @@ defmodule TrentoWeb.SessionController do
   operation :show,
     summary: "Current logged user",
     tags: ["Platform"],
-    description: "Retrieve informations about the logged user",
+    description: "Retrieve information about the logged user",
     responses: [
       ok:
         {"Trento User", "application/json",

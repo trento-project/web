@@ -18,7 +18,7 @@ export default function Login() {
 
   useEffect(() => {
     if (authError) {
-      toast.error('An error occured during login, try again');
+      toast.error('An error occurred during login, try again');
     }
   }, [authError]);
 

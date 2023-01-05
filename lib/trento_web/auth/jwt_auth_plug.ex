@@ -1,6 +1,6 @@
 defmodule TrentoWeb.Auth.JWTAuthPlug do
   @moduledoc """
-    The JWTAuthPlug is a Pow compatibile authorization flow.
+    The JWTAuthPlug is a Pow compatible authorization flow.
     Handles the login and the credentials recovery at each request
 
     Uses Joken for jwt management
