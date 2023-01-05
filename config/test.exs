@@ -43,6 +43,8 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :trento, :api_key_authentication, enabled: false
 
+config :trento, :jwt_authentication, enabled: false
+
 config :trento, :messaging, adapter: Trento.Messaging.Adapters.AMQP
 
 config :trento, Trento.Messaging.Adapters.AMQP,
