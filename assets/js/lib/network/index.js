@@ -44,7 +44,10 @@ createAuthRefreshInterceptor(networkClient, refreshAuthLogic);
 networkClient.interceptors.response.use(null, (error) => {
   if (error === unrecoverableAuthError) {
     logWarn('unrecoverable auth flow, session expired');
-    window.location.assign('/session/new');
+    const currentLocationPath = new URLSearchParams();
+    currentLocationPath.append('request_path', window.location.pathname);
+
+    window.location.assign(`/session/new?${currentLocationPath.toString()}`);
   }
   throw error;
 });

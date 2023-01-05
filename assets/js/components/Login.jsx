@@ -14,7 +14,7 @@ export default function Login() {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (authError) {
@@ -24,7 +24,7 @@ export default function Login() {
 
   useEffect(() => {
     if (loggedIn) {
-      const destinationURL = searchParams.get('request_path')
+      const destinationURL = searchParams.get('request_path');
       navigate(destinationURL || '/');
     }
   }, [loggedIn]);

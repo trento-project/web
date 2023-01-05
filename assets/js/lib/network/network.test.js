@@ -81,7 +81,7 @@ describe('networkClient', () => {
       }
     });
 
-    it('should redirect to /session/new when a unrecoverableAuthError is dispatched in the request flow', async () => {
+    it('should redirect to /session/new with the current pathname as query string parameter when a unrecoverableAuthError is dispatched in the request flow', async () => {
       expect.assertions(2);
 
       axiosMock.onGet('/test').reply(401, {
@@ -92,7 +92,9 @@ describe('networkClient', () => {
         await networkClient.get('/test');
       } catch (e) {
         expect(e).toEqual(unrecoverableAuthError);
-        expect(global.location.assign).toHaveBeenCalledWith('/session/new');
+        expect(global.location.assign).toHaveBeenCalledWith(
+          '/session/new?request_path=%2F'
+        );
       }
     });
 

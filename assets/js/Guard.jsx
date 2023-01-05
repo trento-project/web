@@ -31,7 +31,11 @@ export default function Guard({ redirectPath, getUser }) {
 
   useEffect(() => {
     if (!userLoading && !user) {
-      navigate(redirectPath, { replace: true });
+      const currentLocationPath = new URLSearchParams();
+      currentLocationPath.append('request_path', window.location.pathname);
+      navigate(`${redirectPath}?${currentLocationPath.toString()}`, {
+        replace: true,
+      });
     }
   }, [userLoading, user]);
 
