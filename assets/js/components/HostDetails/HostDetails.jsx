@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { networkClient } from '@lib/network'
+import { networkClient } from '@lib/network';
 
 import ListView from '@components/ListView';
 import Table from '@components/Table';
@@ -34,7 +34,9 @@ function HostDetails() {
   const [exportersStatus, setExportersStatus] = useState([]);
 
   const getExportersStatus = async () => {
-    const { data } = await networkClient.get(`/api/hosts/${hostID}/exporters_status`);
+    const { data } = await networkClient.get(
+      `/api/hosts/${hostID}/exporters_status`
+    );
     setExportersStatus(data);
   };
 
