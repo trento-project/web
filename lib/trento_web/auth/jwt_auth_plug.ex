@@ -27,7 +27,7 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
 
       {conn, %{"access_token" => jwt_token, "user_id" => claims["sub"]}}
     else
-      _any -> {conn, nil}
+      _ -> {conn, nil}
     end
   end
 

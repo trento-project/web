@@ -158,7 +158,6 @@ function* watchInitialDataFetching() {
   yield takeLatest('user/setUserAsLogged', initialDataFetch);
 }
 
-// TODO: this should also be related to login status
 function* watchResetState() {
   yield takeEvery('RESET_STATE', initialDataFetch);
 }
