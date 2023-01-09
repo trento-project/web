@@ -94,6 +94,7 @@ import {
 
 import { CHECKS_SELECTED } from '@state/actions/cluster';
 import { EXECUTION_REQUESTED } from '@state/actions/lastExecutions';
+import { watchPerformLogin } from '@state/sagas/user';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
@@ -656,5 +657,6 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchClustrConnectionSettings(),
+    watchPerformLogin(),
   ]);
 }
