@@ -293,6 +293,7 @@ export function ChecksSelection({ clusterId, cluster }) {
         )}
         {localSavingSuccess && selectedChecks.length > 0 && (
           <SuggestTriggeringChecksExecutionAfterSettingsUpdated
+            cluster={cluster}
             clusterId={clusterId}
             onClose={() => setLocalSavingSuccess(null)}
           />

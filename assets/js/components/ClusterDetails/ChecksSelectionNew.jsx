@@ -165,6 +165,7 @@ function ChecksSelectionNew({ clusterId, cluster }) {
             {localSavingSuccess && selectedChecks.length > 0 && (
               <SuggestTriggeringChecksExecutionAfterSettingsUpdated
                 clusterId={clusterId}
+                cluster={cluster}
                 usingNewChecksEngine
                 onClose={() => setLocalSavingSuccess(null)}
               />

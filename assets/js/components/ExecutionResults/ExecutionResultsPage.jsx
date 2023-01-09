@@ -5,7 +5,10 @@ import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import { getCluster } from '@state/selectors';
 import { updateCatalog } from '@state/actions/catalog';
-import { updateLastExecution } from '@state/actions/lastExecutions';
+import {
+  updateLastExecution,
+  executionRequested,
+} from '@state/actions/lastExecutions';
 import ExecutionResults from './ExecutionResults';
 
 function ExecutionResultsPage() {
@@ -59,6 +62,9 @@ function ExecutionResultsPage() {
       executionData={executionData}
       executionError={executionError}
       clusterSelectedChecks={cluster?.selected_checks}
+      onStartExecution={(clusterId, hosts, selectedChecks) =>
+        dispatch(executionRequested(clusterId, hosts, selectedChecks))
+      }
     />
   );
 }

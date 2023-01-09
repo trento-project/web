@@ -119,6 +119,7 @@ function ChecksResults() {
         clusterID={clusterID}
         hasAlreadyChecksResults={hasAlreadyChecksResults}
         selectedChecks={cluster?.selected_checks}
+        hosts={hosts}
         onCatalogRefresh={dispatchUpdateCatalog}
       >
         {sortHosts(hosts).map(({ host_id: hostID, reachable, msg }) => (

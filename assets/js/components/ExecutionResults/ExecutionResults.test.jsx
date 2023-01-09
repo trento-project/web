@@ -189,7 +189,7 @@ describe('ExecutionResults', () => {
         clusterName={faker.animal.cat()}
         clusterScenario={faker.animal.cat()}
         cloudProvider={faker.animal.cat()}
-        hostnames
+        hostnames={[]}
         catalogLoading={false}
         catalog={[]}
         catalogError={null}

@@ -182,6 +182,7 @@ export function ConnectionSettings({ clusterId, cluster }) {
         )}
         {localSavingSuccess && cluster.selected_checks.length > 0 && (
           <SuggestTriggeringChecksExecutionAfterSettingsUpdated
+            cluster={cluster}
             clusterId={clusterId}
             onClose={() => setLocalSavingSuccess(null)}
           />

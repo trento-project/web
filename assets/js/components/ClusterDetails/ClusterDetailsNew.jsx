@@ -18,7 +18,11 @@ import { getClusterName } from '@components/ClusterLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { getCluster } from '@state/selectors';
-import { updateLastExecution } from '@state/actions/lastExecutions';
+import { getClusterHostIDs } from '@state/selectors/cluster';
+import {
+  updateLastExecution,
+  executionRequested,
+} from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import SiteDetails from './SiteDetails';
 
@@ -74,9 +78,8 @@ export function ClusterDetailsNew() {
   const cluster = useSelector(getCluster(clusterID));
 
   const dispatch = useDispatch();
-
   const lastExecution = useSelector(getLastExecution(clusterID));
-
+  const hosts = useSelector(getClusterHostIDs(clusterID));
   useEffect(() => {
     dispatch(updateLastExecution(clusterID));
   }, [dispatch]);
@@ -145,6 +148,11 @@ export function ClusterDetailsNew() {
             clusterId={clusterID}
             disabled={!hasSelectedChecks}
             usingNewChecksEngine
+            hosts={hosts}
+            checks={cluster.selected_checks}
+            onStartExecution={(clusterId, hostList, selectedChecks) =>
+              dispatch(executionRequested(clusterId, hostList, selectedChecks))
+            }
           >
             <EOS_PLAY_CIRCLE
               className={classNames('inline-block fill-jungle-green-500', {

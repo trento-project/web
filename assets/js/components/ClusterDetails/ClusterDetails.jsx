@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Button from '@components/Button';
 
@@ -14,6 +14,7 @@ import ProviderLabel from '@components/ProviderLabel';
 import { groupBy } from '@lib/lists';
 
 import { getClusterName } from '@components/ClusterLink';
+import { getClusterHostIDs } from '@state/selectors/cluster';
 import HostLink from '@components/HostLink';
 
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
@@ -21,6 +22,7 @@ import { getCluster } from '@state/selectors';
 import classNames from 'classnames';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import { useChecksResult } from '@components/ClusterDetails/hooks';
+import { executionRequested } from '@state/actions/lastExecutions';
 import SiteDetails from './SiteDetails';
 
 export const truncatedClusterNameClasses = classNames(
@@ -75,7 +77,11 @@ function ClusterDetails() {
   const cluster = useSelector(getCluster(clusterID));
 
   const checkResults = useChecksResult(cluster);
-
+  const dispatch = useDispatch();
+  const onStartExecution = (clusterId, hosts, selectedChecks) => {
+    dispatch(executionRequested(clusterId, hosts, selectedChecks));
+  };
+  const hosts = useSelector(getClusterHostIDs(clusterID));
   const hostsData = useSelector((state) =>
     state.hostsList.hosts.reduce((accumulator, current) => {
       if (current.cluster_id === clusterID) {
@@ -136,6 +142,9 @@ function ClusterDetails() {
             cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
             clusterId={clusterID}
             disabled={!hasSelectedChecks}
+            hosts={hosts}
+            checks={cluster.selected_checks}
+            onStartExecution={onStartExecution}
           >
             <EOS_PLAY_CIRCLE
               className={classNames('inline-block fill-jungle-green-500', {
