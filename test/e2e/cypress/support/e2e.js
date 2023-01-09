@@ -22,7 +22,6 @@ import './commands';
 // require('./commands')
 //
 
-
 before(() => {
   cy.loadScenario('healthy-27-node-SAP-cluster');
   cy.acceptEula();
