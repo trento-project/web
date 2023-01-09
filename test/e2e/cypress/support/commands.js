@@ -77,15 +77,12 @@ Cypress.Commands.add('apiLogin', () => {
 Cypress.Commands.add('acceptEula', () => {
   apiLogin().then(({ accessToken }) => {
     cy.request({
-      url: '/api/settings',
+      url: '/api/accept_eula',
+      method: 'POST',
       auth: {
         bearer: accessToken,
       },
-    }).then((response) => {
-      if (!response.body.eula_accepted) {
-        cy.get('div').should('contain', 'License agreement');
-        cy.get('button').contains('Accept').click();
-      }
+      body: {},
     });
   });
 });
