@@ -13,7 +13,7 @@ export const login = (credentials) =>
     return response;
   });
 
-export const refreshAccessToken = (refreshToken) => {
+export const refreshAccessToken = (refreshToken) =>
   authClient
     .post('/api/session/refresh', { refresh_token: refreshToken })
     .then((response) => {
@@ -22,7 +22,6 @@ export const refreshAccessToken = (refreshToken) => {
       }
       return response;
     });
-};
 
 export const storeAccessToken = (accessToken) => {
   window.localStorage.setItem(STORAGE_ACCESS_TOKEN_IDENTIFIER, accessToken);

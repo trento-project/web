@@ -3,20 +3,29 @@ import React, { useState, useEffect } from 'react';
 import TrentoLogo from '@static/trento.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { performLogin } from '@state/actions/auth';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { authError, authInProgress } = useSelector((state) => state.user);
-
+  const { authError, authInProgress, loggedIn } = useSelector(
+    (state) => state.user
+  );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (authError) {
       toast.error('An error occured during login, try again');
     }
   }, [authError]);
+
+  useEffect(() => {
+    if (loggedIn) {
+      navigate('/');
+    }
+  }, [loggedIn]);
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();

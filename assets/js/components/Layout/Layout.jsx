@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useCallback } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ import {
 import TrentoLogo from '@static/trento-logo-stacked.svg';
 
 import classNames from 'classnames';
+import { clearCredentialsFromStore } from '@lib/auth';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -65,13 +67,16 @@ function Layout() {
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
 
-  const csrfToken = document.head.querySelector(
-    '[name~=csrf-token][content]'
-  ).content;
-
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
   const sidebarIconSize = '24';
+
+  const logout = (e) => {
+    e.preventDefault();
+
+    clearCredentialsFromStore();
+    window.location.href = '/session/new';
+  };
 
   return (
     <main className="bg-gray-100 dark:bg-gray-800 relative">
@@ -157,10 +162,9 @@ function Layout() {
             <div className="relative flex flex-col justify-end h-full px-8 md:w-full">
               <div className="relative p-5 flex items-center w-full space-x-8 justify-end mr-20">
                 <a
-                  href="/session"
-                  data-to="/session"
-                  data-method="delete"
-                  data-csrf={csrfToken}
+                  role="button"
+                  aria-hidden="true"
+                  onClick={logout}
                   className="flex text-md text-gray-500 hover:text-gray-700"
                 >
                   Sign out

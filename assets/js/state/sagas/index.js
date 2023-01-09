@@ -6,6 +6,7 @@ import {
   takeEvery,
   select,
   debounce,
+  takeLatest,
 } from 'redux-saga/effects';
 import { urlEncode, keysToCamel } from '@lib/serialization';
 
@@ -153,6 +154,11 @@ function* initialDataFetch() {
   yield put(stopDatabasesLoading());
 }
 
+function* watchInitialDataFetching() {
+  yield takeLatest('user/setUserAsLogged', initialDataFetch);
+}
+
+// TODO: this should also be related to login status
 function* watchResetState() {
   yield takeEvery('RESET_STATE', initialDataFetch);
 }
@@ -632,7 +638,7 @@ function* watchClustrConnectionSettings() {
 
 export default function* rootSaga() {
   yield all([
-    // initialDataFetch(), TODO: INITIAL DATA FETCH ONLY AFTER LOGIN
+    watchInitialDataFetching(),
     watchResetState(),
     watchHostRegistered(),
     watchHostDetailsUpdated(),
