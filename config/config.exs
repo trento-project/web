@@ -158,7 +158,7 @@ config :trento, :jwt_authentication,
   # Seconds, 10 minutes
   access_token_expiration: 600,
   # Seconds, 6 hours
-  refresh_token_expiration: 60
+  refresh_token_expiration: 21600
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -12,8 +12,8 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   require Logger
 
   alias Plug.Conn
-  alias TrentoWeb.Auth.AccessToken, as: AccessToken
-  alias TrentoWeb.Auth.RefreshToken, as: RefreshToken
+  alias TrentoWeb.Auth.AccessToken
+  alias TrentoWeb.Auth.RefreshToken
 
   @impl true
   @spec fetch(Plug.Conn.t(), any) :: {Plug.Conn.t(), nil | %{optional(<<_::40>>) => binary}}

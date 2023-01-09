@@ -24,6 +24,9 @@ Mox.defmock(GenRMQ.Processor.Mock, for: GenRMQ.Processor)
 
 Mox.defmock(Trento.Support.DateService.Mock, for: Trento.Support.DateService)
 
+Mox.defmock(Joken.CurrentTime.Mock, for: Joken.CurrentTime)
+Application.put_env(:joken, :current_time_adapter, Joken.CurrentTime.Mock)
+
 Application.ensure_all_started(:ex_machina, :faker)
 
 ExUnit.start()
