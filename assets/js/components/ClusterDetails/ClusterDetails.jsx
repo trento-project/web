@@ -9,6 +9,7 @@ import Pill from '@components/Pill';
 import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
+import ProviderLabel from '@components/ProviderLabel';
 
 import { groupBy } from '@lib/lists';
 
@@ -21,7 +22,6 @@ import classNames from 'classnames';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import { useChecksResult } from '@components/ClusterDetails/hooks';
 import SiteDetails from './SiteDetails';
-import ProviderLabel from './ProviderLabel';
 
 export const truncatedClusterNameClasses = classNames(
   'font-bold truncate w-60 inline-block align-top'

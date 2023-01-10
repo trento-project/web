@@ -12,14 +12,14 @@ import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 import HostLink from '@components/HostLink';
-import ChecksResultOverviewNew from '@components/ClusterDetails/ChecksResultOverviewNew';
+import ChecksResultOverviewNew from '@components/ClusterDetails/ChecksResultOverviewNew'
+import ProviderLabel from '@components/ProviderLabel';
 import { getClusterName } from '@components/ClusterLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { getCluster } from '@state/selectors';
 import { updateLastExecution } from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import ProviderLabel from './ProviderLabel';
 import SiteDetails from './SiteDetails';
 
 export const truncatedClusterNameClasses = classNames(
