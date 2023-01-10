@@ -80,7 +80,12 @@ function HostsList() {
       {
         title: 'Provider',
         key: 'provider',
-        render: (content) => <ProviderLabel provider={content} />,
+        render: (content) => {
+          if (content) {
+            return <ProviderLabel provider={content} />;
+          }
+          return '';
+        },
       },
       {
         title: 'Cluster',

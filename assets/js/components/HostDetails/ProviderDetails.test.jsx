@@ -31,7 +31,7 @@ describe('Provider Details', () => {
       expect(screen.getAllByText(/Provider/)).toBeTruthy();
       expect(screen.getAllByText(providerText)).toBeTruthy();
     });
-});
+  });
 
   it('should display an element containing "Provider not recognized"', () => {
     render(<ProviderDetails provider="unrecognized-provider" />);
