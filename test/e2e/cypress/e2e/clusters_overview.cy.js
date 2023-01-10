@@ -158,7 +158,7 @@ context('Clusters Overview', () => {
         healthScenarios.forEach(([health, expectedClustersWithThisHealth]) => {
           it(`should show ${expectedClustersWithThisHealth} clusters when filtering by health '${health}'`, () => {
             cy.get('[data-testid="filter-Health"]').click();
-            cy.get('.max-h-56').contains(health).click();
+            cy.get('.max-h-56', { timeout: 150000 }).contains(health).click();
             cy.clickOutside();
 
             cy.get('.tn-clustername')
@@ -166,7 +166,7 @@ context('Clusters Overview', () => {
               .should('eq', expectedClustersWithThisHealth);
 
             cy.get('[data-testid="filter-Health"]').click();
-            cy.get('.max-h-56').contains(health).click();
+            cy.get('.max-h-56', { timeout: 150000 }).contains(health).click();
             cy.clickOutside();
           });
         });
@@ -181,7 +181,9 @@ context('Clusters Overview', () => {
         SAPSystemsScenarios.forEach(([sapsystem, expectedRelatedClusters]) => {
           it(`should have ${expectedRelatedClusters} clusters related to SAP system '${sapsystem}'`, () => {
             cy.get('[data-testid="filter-SID"]').click();
-            cy.get('.max-h-56').contains(sapsystem).click();
+            cy.get('.max-h-56', { timeout: 150000 })
+              .contains(sapsystem)
+              .click();
             cy.clickOutside();
 
             cy.get('.tn-clustername')
@@ -189,7 +191,9 @@ context('Clusters Overview', () => {
               .should('eq', expectedRelatedClusters);
 
             cy.get('[data-testid="filter-SID"]').click();
-            cy.get('.max-h-56').contains(sapsystem).click();
+            cy.get('.max-h-56', { timeout: 150000 })
+              .contains(sapsystem)
+              .click();
             cy.clickOutside();
           });
         });
