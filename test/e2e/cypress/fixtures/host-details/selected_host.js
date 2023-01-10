@@ -5,7 +5,7 @@ export const selectedHost = {
   clusterName: 'hana_cluster_3',
   clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
   azureCloudDetails: {
-    provider: 'azure',
+    provider: 'Azure',
     vmName: 'vmhdbprd01',
     resourceGroup: 'resourceGroupName',
     location: 'westeurope',
@@ -15,7 +15,7 @@ export const selectedHost = {
     sku: 'gen2',
   },
   awsCloudDetails: {
-    provider: 'aws',
+    provider: 'AWS',
     instanceId: 'i-12345',
     accountId: '123456',
     region: 'eu-west-1 (eu-west-1a)',
@@ -25,7 +25,7 @@ export const selectedHost = {
     vpcId: 'vpc-12345',
   },
   gcpCloudDetails: {
-    provider: 'gcp',
+    provider: 'GCP',
     diskNumber: 4,
     machineType: 'n1-highmem-8',
     instanceName: 'vmhana01',
@@ -35,10 +35,10 @@ export const selectedHost = {
     network: 'network',
   },
   kvmCloudDetails: {
-    provider: 'kvm',
+    provider: 'KVM',
   },
   nutanixCloudDetails: {
-    provider: 'nutanix',
+    provider: 'Nutanix',
   },
   sapInstance: {
     id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
