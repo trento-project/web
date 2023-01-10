@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { post, del } from '@lib/network';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
+import ProviderLabel from '@components/ProviderLabel';
 
 const getInstancesByHost = (applicationInstances, databaseInstances, hostId) =>
   applicationInstances
@@ -79,6 +80,7 @@ function HostsList() {
       {
         title: 'Provider',
         key: 'provider',
+        render: (content) => <ProviderLabel provider={content} />,
       },
       {
         title: 'Cluster',

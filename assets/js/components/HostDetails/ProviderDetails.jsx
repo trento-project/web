@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import Pill from '@components/Pill';
 import ListView from '@components/ListView';
+import ProviderLabel from '@components/ProviderLabel';
 
 function ProviderDetails({ provider, provider_data }) {
   const data = {
@@ -9,7 +10,7 @@ function ProviderDetails({ provider, provider_data }) {
       {
         title: 'Provider',
         content: provider,
-        render: (content) => <p className="capitalize">{content}</p>,
+        render: (content) => <ProviderLabel provider={content} />,
       },
       { title: 'VM Size', content: provider_data?.vm_size },
       { title: 'VM Name', content: provider_data?.vm_name },
@@ -29,7 +30,7 @@ function ProviderDetails({ provider, provider_data }) {
       {
         title: 'Provider',
         content: provider,
-        render: (content) => <p className="uppercase">{content}</p>,
+        render: (content) => <ProviderLabel provider={content} />,
       },
       { title: 'Instance type', content: provider_data?.instance_type },
       { title: 'Instance ID', content: provider_data?.instance_id },
@@ -52,7 +53,7 @@ function ProviderDetails({ provider, provider_data }) {
       {
         title: 'Provider',
         content: provider,
-        render: (content) => <p className="uppercase">{content}</p>,
+        render: (content) => <ProviderLabel provider={content} />,
       },
       { title: 'Machine type', content: provider_data?.machine_type },
       { title: 'Instance name', content: provider_data?.instance_name },
@@ -66,14 +67,14 @@ function ProviderDetails({ provider, provider_data }) {
       {
         title: 'Provider',
         content: provider,
-        render: (content) => <p className="uppercase">{content}</p>,
+        render: (content) => <ProviderLabel provider={content} />,
       },
     ],
     nutanix: [
       {
         title: 'Provider',
         content: provider,
-        render: (content) => <p className="capitalize">{content}</p>,
+        render: (content) => <ProviderLabel provider={content} />,
       },
     ],
   };
