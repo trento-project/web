@@ -8,10 +8,10 @@ import {
   setCatalogError,
 } from '@state/catalogNew';
 
-export function* updateCatalog() {
+export function* updateCatalog({ payload }) {
   yield put(setCatalogLoading());
   try {
-    const { data } = yield call(getCatalog);
+    const { data } = yield call(getCatalog, payload);
     yield put(setCatalogData({ data: data.items }));
   } catch (error) {
     yield put(setCatalogError({ error: error.message }));
