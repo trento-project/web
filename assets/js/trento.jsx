@@ -84,16 +84,8 @@ function App() {
                   element={<ClusterSettings />}
                 />
                 <Route
-                  path="clusters/:clusterID/settings_new"
-                  element={<ClusterSettings newChecksSelectionView />}
-                />
-                <Route
                   path="clusters/:clusterID/checks/results"
                   element={<ChecksResults />}
-                />
-                <Route
-                  path="clusters/:clusterID/executions/:executionID"
-                  element={<ExecutionResultsPage />}
                 />
                 <Route path="hosts/:hostID" element={<HostDetails />} />
                 <Route path="sap_systems/:id" element={<SapSystemDetails />} />
