@@ -48,16 +48,18 @@ describe('user login saga', () => {
     expect(getRefreshTokenFromStore()).toEqual(null);
   });
 
-  it('should set the username in the store and set the user as logged when login is successful', async () => {
+  it('should set the username in the store and set the user as logged when login is successful, persisting the information in the local storage', async () => {
+    const credentialResponse = {
+      access_token:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MTE5NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtOTJmdG1kdm1nMDAwbmExIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IkJlYXJlciJ9.ZuHORuLkK9e15NGGMRRpxFOUR1BO1_BLuT9EeOJfuLM',
+      expires_in: 600,
+      refresh_token:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MDY1NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtZWhmbG1kdm1nMDAwbmMxIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.AW6-iV1XHWdzQKBVadhf7o7gUdidYg6mEyyuDke_zlA',
+    };
+
     axiosMock
       .onPost('/api/session', { username: 'good', password: 'good' })
-      .reply(200, {
-        access_token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MTE5NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtOTJmdG1kdm1nMDAwbmExIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IkJlYXJlciJ9.ZuHORuLkK9e15NGGMRRpxFOUR1BO1_BLuT9EeOJfuLM',
-        expires_in: 600,
-        refresh_token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MDY1NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtZWhmbG1kdm1nMDAwbmMxIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.AW6-iV1XHWdzQKBVadhf7o7gUdidYg6mEyyuDke_zlA',
-      });
+      .reply(200, credentialResponse);
 
     const dispatched = await recordSaga(performLogin, {
       payload: {
@@ -69,26 +71,6 @@ describe('user login saga', () => {
     expect(dispatched).toContainEqual(setAuthInProgress());
     expect(dispatched).toContainEqual(setUser({ username: 'good' }));
     expect(dispatched).toContainEqual(setUserAsLogged());
-  });
-
-  it('should set the access token and refresh token in the storage when the login is successful', async () => {
-    const credentialResponse = {
-      access_token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MTE5NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtOTJmdG1kdm1nMDAwbmExIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IkJlYXJlciJ9.ZuHORuLkK9e15NGGMRRpxFOUR1BO1_BLuT9EeOJfuLM',
-      expires_in: 600,
-      refresh_token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MDY1NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtZWhmbG1kdm1nMDAwbmMxIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.AW6-iV1XHWdzQKBVadhf7o7gUdidYg6mEyyuDke_zlA',
-    };
-    axiosMock
-      .onPost('/api/session', { username: 'good', password: 'good' })
-      .reply(200, credentialResponse);
-
-    await recordSaga(performLogin, {
-      payload: {
-        username: 'good',
-        password: 'good',
-      },
-    });
 
     expect(getAccessTokenFromStore()).toEqual(credentialResponse.access_token);
     expect(getRefreshTokenFromStore()).toEqual(

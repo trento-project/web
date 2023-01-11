@@ -31,11 +31,10 @@ import Eula from '@components/Eula';
 import Login from '@components/Login';
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
-
+import Guard from '@components/Guard';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import { store } from './state';
-import Guard from './Guard';
 
 function App() {
   const getUser = () => me(networkClient);

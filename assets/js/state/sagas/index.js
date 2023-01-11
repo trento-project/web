@@ -74,6 +74,7 @@ import {
   watchUpdateLastExecution,
   watchRequestExecution,
 } from '@state/sagas/lastExecutions';
+import { watchPerformLogin } from '@state/sagas/user';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
 import {
@@ -95,7 +96,6 @@ import {
 
 import { CHECKS_SELECTED } from '@state/actions/cluster';
 import { EXECUTION_REQUESTED } from '@state/actions/lastExecutions';
-import { watchPerformLogin } from '@state/sagas/user';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
