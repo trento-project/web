@@ -9,13 +9,14 @@ defmodule TrentoWeb.RefreshTokenTest do
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
+  @test_timestamp 1_671_641_814
   setup do
     expect(
       Joken.CurrentTime.Mock,
       :current_time,
       3,
       fn ->
-        1_671_641_814
+        @test_timestamp
       end
     )
 
@@ -24,7 +25,7 @@ defmodule TrentoWeb.RefreshTokenTest do
 
   describe "generate_refresh_token!/1" do
     test "it should return a refresh token with the correct default claims" do
-      expected_expiry = 1_671_641_814 + 21_600
+      expected_expiry = @test_timestamp + 21_600
 
       token = RefreshToken.generate_refresh_token!(%{})
       {:ok, claims} = Joken.peek_claims(token)
@@ -33,9 +34,9 @@ defmodule TrentoWeb.RefreshTokenTest do
                "iss" => "https://github.com/trento-project/web",
                "aud" => "trento-project",
                "exp" => ^expected_expiry,
-               "iat" => 1_671_641_814,
+               "iat" => @test_timestamp,
                "jti" => _,
-               "nbf" => 1_671_641_814,
+               "nbf" => @test_timestamp,
                "typ" => "Refresh"
              } = claims
     end

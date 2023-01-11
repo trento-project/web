@@ -9,13 +9,15 @@ defmodule TrentoWeb.AccessTokenTest do
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
+  @test_timestamp 1_671_641_814
+
   setup do
     expect(
       Joken.CurrentTime.Mock,
       :current_time,
       3,
       fn ->
-        1_671_641_814
+        @test_timestamp
       end
     )
 
@@ -24,7 +26,7 @@ defmodule TrentoWeb.AccessTokenTest do
 
   describe "generate_access_token!/1" do
     test "should generate and sign a jwt token with the default claims correctly set" do
-      expected_expiry = 1_671_641_814 + 600
+      expected_expiry = @test_timestamp + 600
 
       token = AccessToken.generate_access_token!(%{})
       {:ok, claims} = Joken.peek_claims(token)
@@ -33,9 +35,9 @@ defmodule TrentoWeb.AccessTokenTest do
                "iss" => "https://github.com/trento-project/web",
                "aud" => "trento-project",
                "exp" => ^expected_expiry,
-               "iat" => 1_671_641_814,
+               "iat" => @test_timestamp,
                "jti" => _,
-               "nbf" => 1_671_641_814,
+               "nbf" => @test_timestamp,
                "typ" => "Bearer"
              } = claims
     end
