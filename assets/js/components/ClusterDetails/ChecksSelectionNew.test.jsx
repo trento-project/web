@@ -29,9 +29,9 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
 
     await act(async () => renderWithRouter(statefulChecksSelection));
 
-    const groupItem = await waitFor(() => screen.getByRole('heading'));
+    const groupItem = await waitFor(() => screen.getByText(group));
 
-    await user.click(groupItem.parentNode);
+    await user.click(groupItem);
     let switches = screen.getAllByRole('switch');
 
     expect(switches[0]).not.toBeChecked();
@@ -73,9 +73,9 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
 
     await act(async () => renderWithRouter(statefulChecksSelection));
 
-    const groupItem = await waitFor(() => screen.getByRole('heading'));
+    const groupItem = await waitFor(() => screen.getByText(group));
 
-    await user.click(groupItem.parentNode);
+    await user.click(groupItem);
     let switches = screen.getAllByRole('switch');
 
     expect(switches[0]).toBeChecked();
@@ -117,7 +117,9 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
 
     await waitFor(() => screen.getAllByRole('heading'));
 
-    const saveButton = screen.getByRole('button');
+    const saveButton = screen.getByRole('button', {
+      name: 'Select Checks for Execution',
+    });
     await user.click(saveButton);
 
     const actions = store.getActions();

@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import BackButton from '@components/BackButton';
 import { Tab } from '@headlessui/react';
 import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
-import ChecksSelectionNew from '@components/ClusterDetails/ChecksSelectionNew';
 import { getCluster } from '@state/selectors';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 import { getClusterName } from '@components/ClusterLink';
@@ -18,15 +17,13 @@ import { truncatedClusterNameClasses } from './ClusterDetails';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
-export function ClusterSettings({ usingNewChecksEngine = false }) {
+export function ClusterSettings() {
   const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
 
   const tabsSettings = {
-    'Checks Selection': usingNewChecksEngine ? (
-      <ChecksSelectionNew clusterId={clusterID} cluster={cluster} />
-    ) : (
+    'Checks Selection': (
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
     ),
     'Connection Settings': (
@@ -40,13 +37,7 @@ export function ClusterSettings({ usingNewChecksEngine = false }) {
 
   return (
     <div className="w-full px-2 sm:px-0">
-      <BackButton
-        url={
-          usingNewChecksEngine
-            ? `/clusters_new/${clusterID}`
-            : `/clusters/${clusterID}`
-        }
-      >
+      <BackButton url={`/clusters/${clusterID}`}>
         Back to Cluster Details
       </BackButton>
       <div className="flex mb-2">

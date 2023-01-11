@@ -16,6 +16,7 @@ import ClustersList from '@components/ClustersList';
 import ClusterDetails, {
   ClusterSettings,
   ClusterDetailsNew,
+  ClusterSettingsNew,
 } from '@components/ClusterDetails';
 import ChecksResults from '@components/ChecksResults';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
@@ -60,7 +61,7 @@ function App() {
               />
               <Route
                 path="clusters_new/:clusterID/settings"
-                element={<ClusterSettings usingNewChecksEngine />}
+                element={<ClusterSettingsNew />}
               />
               <Route
                 path="clusters/:clusterID/checks/results"

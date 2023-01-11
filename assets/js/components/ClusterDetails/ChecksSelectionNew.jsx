@@ -97,74 +97,81 @@ function ChecksSelectionNew({ clusterId, cluster }) {
   }, [loading]);
 
   return (
-    <CatalogContainer
-      onRefresh={() => dispatch(updateCatalog())}
-      isCatalogEmpty={catalogData.size === 0}
-      catalogError={catalogError}
-      loading={loading}
-    >
-      <div>
-        <div className="pb-4">
-          {groupSelection?.map(({ group, checks, groupSelected }, idx) => (
-            <ChecksSelectionGroup
-              key={idx}
-              group={group}
-              selected={groupSelected}
-              onChange={() => {
-                const groupChecks = checks.map((check) => check.id);
-                if (allSelected(groupSelected)) {
-                  setSelectedChecks(remove(groupChecks, selectedChecks));
-                } else {
-                  setSelectedChecks(uniq([...selectedChecks, ...groupChecks]));
-                }
-                setLocalSavingSuccess(null);
-              }}
+    <div className="bg-white rounded p-3">
+      <CatalogContainer
+        onRefresh={() => dispatch(updateCatalog())}
+        isCatalogEmpty={catalogData.size === 0}
+        catalogError={catalogError}
+        loading={loading}
+      >
+        <div>
+          <div className="pb-4">
+            {groupSelection?.map(({ group, checks, groupSelected }, idx) => (
+              <ChecksSelectionGroup
+                key={idx}
+                group={group}
+                selected={groupSelected}
+                onChange={() => {
+                  const groupChecks = checks.map((check) => check.id);
+                  if (allSelected(groupSelected)) {
+                    setSelectedChecks(remove(groupChecks, selectedChecks));
+                  } else {
+                    setSelectedChecks(
+                      uniq([...selectedChecks, ...groupChecks])
+                    );
+                  }
+                  setLocalSavingSuccess(null);
+                }}
+              >
+                {checks.map((check) => (
+                  <ChecksSelectionItem
+                    key={check.id}
+                    checkID={check.id}
+                    name={check.name}
+                    description={check.description}
+                    selected={check.selected}
+                    onChange={() => {
+                      setSelectedChecks(toggle(check.id, selectedChecks));
+                      setLocalSavingSuccess(null);
+                    }}
+                  />
+                ))}
+              </ChecksSelectionGroup>
+            ))}
+          </div>
+          <div className="place-items-end flex">
+            <button
+              className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
+              onClick={() =>
+                dispatch(checksSelected(selectedChecks, clusterId))
+              }
+              type="button"
+              data-testid="save-selection-button"
             >
-              {checks.map((check) => (
-                <ChecksSelectionItem
-                  key={check.id}
-                  checkID={check.id}
-                  name={check.name}
-                  description={check.description}
-                  selected={check.selected}
-                  onChange={() => {
-                    setSelectedChecks(toggle(check.id, selectedChecks));
-                    setLocalSavingSuccess(null);
-                  }}
-                />
-              ))}
-            </ChecksSelectionGroup>
-          ))}
-        </div>
-        <div className="place-items-end flex">
-          <button
-            className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
-            onClick={() => dispatch(checksSelected(selectedChecks, clusterId))}
-            type="button"
-          >
-            {saving ? (
-              <span className="px-20">
-                <EOS_LOADING_ANIMATED color="green" size={25} />
-              </span>
-            ) : (
-              'Select Checks for Execution'
+              {saving ? (
+                <span className="px-20">
+                  <EOS_LOADING_ANIMATED color="green" size={25} />
+                </span>
+              ) : (
+                'Select Checks for Execution'
+              )}
+            </button>
+            {localSavingError && (
+              <SavingFailedAlert onClose={() => setLocalSavingError(null)}>
+                <p>{savingError}</p>
+              </SavingFailedAlert>
             )}
-          </button>
-          {localSavingError && (
-            <SavingFailedAlert onClose={() => setLocalSavingError(null)}>
-              <p>{savingError}</p>
-            </SavingFailedAlert>
-          )}
-          {localSavingSuccess && selectedChecks.length > 0 && (
-            <SuggestTriggeringChecksExecutionAfterSettingsUpdated
-              clusterId={clusterId}
-              usingNewChecksEngine
-              onClose={() => setLocalSavingSuccess(null)}
-            />
-          )}
+            {localSavingSuccess && selectedChecks.length > 0 && (
+              <SuggestTriggeringChecksExecutionAfterSettingsUpdated
+                clusterId={clusterId}
+                usingNewChecksEngine
+                onClose={() => setLocalSavingSuccess(null)}
+              />
+            )}
+          </div>
         </div>
-      </div>
-    </CatalogContainer>
+      </CatalogContainer>
+    </div>
   );
 }
 
