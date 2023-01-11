@@ -14,7 +14,7 @@ import sapSystems from './data/sapSystems';
 const middlewares = [];
 const mockStore = configureStore(middlewares);
 
-const defaultInitialState = {
+export const defaultInitialState = {
   hostsList: { hosts },
   clustersList: { clusters },
   sapSystemsList: {
@@ -26,6 +26,7 @@ const defaultInitialState = {
       (sapSystem) => sapSystem.database_instances
     ),
   },
+  clusterChecksSelection: {},
 };
 
 export const withState = (component, initialState = {}) => {

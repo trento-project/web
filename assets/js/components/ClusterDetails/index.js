@@ -7,3 +7,4 @@ export { ClusterInfoBox } from './ClusterInfoBox';
 
 export default ClusterDetails;
 export { ClusterDetailsNew } from './ClusterDetailsNew';
+export { ClusterSettingsNew } from './ClusterSettingsNew';
