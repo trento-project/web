@@ -55,6 +55,13 @@ const navigation = [
   { name: 'About', href: '/about', icon: EOS_INFO },
 ];
 
+const logout = (e) => {
+  e.preventDefault();
+
+  clearCredentialsFromStore();
+  window.location.href = '/session/new';
+};
+
 function Layout() {
   const [isCollapsed, setCollapsed] = useState(
     localStorage.getItem('sidebar-collapsed')
@@ -70,13 +77,6 @@ function Layout() {
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
   const sidebarIconSize = '24';
-
-  const logout = (e) => {
-    e.preventDefault();
-
-    clearCredentialsFromStore();
-    window.location.href = '/session/new';
-  };
 
   return (
     <main className="bg-gray-100 dark:bg-gray-800 relative">
