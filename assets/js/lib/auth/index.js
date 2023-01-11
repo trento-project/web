@@ -23,6 +23,14 @@ export const refreshAccessToken = (refreshToken) =>
       return response;
     });
 
+export const me = (apiClient = authClient) =>
+  apiClient.get('/api/me').then((response) => {
+    if (response.status !== 200) {
+      throw Error('unauthorized', { cause: response.status });
+    }
+    return response.data;
+  });
+
 export const storeAccessToken = (accessToken) => {
   window.localStorage.setItem(STORAGE_ACCESS_TOKEN_IDENTIFIER, accessToken);
 };
