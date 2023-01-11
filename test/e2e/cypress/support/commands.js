@@ -26,18 +26,6 @@
 
 const initializeOpenSidebar = () => cy.setCookie('sidebar-collapsed', 'false');
 
-Cypress.Commands.add('login', () => {
-  const [username, password] = [
-    Cypress.env('login_user'),
-    Cypress.env('login_password'),
-  ];
-  cy.visit('/session/new');
-  cy.get('#username').type(username);
-  cy.get('#password').type(password);
-  cy.get('[data-testid="login-submit"]').click();
-  cy.url().should('include', '/');
-});
-
 const apiLogin = () => {
   const [username, password] = [
     Cypress.env('login_user'),

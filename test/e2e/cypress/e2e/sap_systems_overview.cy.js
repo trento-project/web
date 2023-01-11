@@ -212,9 +212,7 @@ context('SAP Systems Overview', () => {
 
   describe('SAP Systems Tagging', () => {
     before(() => {
-      cy.apiLogin().then(() => {
-        cy.removeTagsFromView();
-      });
+      cy.removeTagsFromView();
     });
 
     availableSAPSystems.forEach(({ sid, tag }) => {
