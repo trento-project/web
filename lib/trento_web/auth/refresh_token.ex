@@ -6,9 +6,13 @@ defmodule TrentoWeb.Auth.RefreshToken do
   """
   use Joken.Config, default_signer: :refresh_token_signer
 
+  @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
+  @aud Application.compile_env!(:trento, :jwt_authentication)[:audience]
+  @exp Application.compile_env!(:trento, :jwt_authentication)[:refresh_token_expiration]
+
   @impl true
   def token_config do
-    default_claims(iss: iss(), aud: aud(), default_exp: exp())
+    default_claims(iss: @iss, aud: @aud, default_exp: @exp)
   end
 
   @doc """
@@ -22,8 +26,4 @@ defmodule TrentoWeb.Auth.RefreshToken do
     claims = Map.merge(claims, %{"typ" => "Refresh"})
     generate_and_sign!(claims)
   end
-
-  defp iss, do: Application.fetch_env!(:trento, :jwt_authentication)[:issuer]
-  defp aud, do: Application.fetch_env!(:trento, :jwt_authentication)[:audience]
-  defp exp, do: Application.fetch_env!(:trento, :jwt_authentication)[:refresh_token_expiration]
 end

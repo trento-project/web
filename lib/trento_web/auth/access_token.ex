@@ -6,9 +6,13 @@ defmodule TrentoWeb.Auth.AccessToken do
   """
   use Joken.Config, default_signer: :access_token_signer
 
+  @expires_in Application.compile_env!(:trento, :jwt_authentication)[:access_token_expiration]
+  @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
+  @aud Application.compile_env!(:trento, :jwt_authentication)[:audience]
+
   @impl true
   def token_config do
-    default_claims(iss: iss(), aud: aud(), default_exp: expires_in())
+    default_claims(iss: @iss, aud: @aud, default_exp: @expires_in)
   end
 
   @doc """
@@ -27,9 +31,5 @@ defmodule TrentoWeb.Auth.AccessToken do
     Returns the access_token expiration time, in seconds
   """
   @spec expires_in :: integer()
-  def expires_in,
-    do: Application.fetch_env!(:trento, :jwt_authentication)[:access_token_expiration]
-
-  defp iss, do: Application.fetch_env!(:trento, :jwt_authentication)[:issuer]
-  defp aud, do: Application.fetch_env!(:trento, :jwt_authentication)[:audience]
+  def expires_in, do: @expires_in
 end

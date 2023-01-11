@@ -76,7 +76,7 @@ defmodule TrentoWeb.SessionController do
         )
 
       {:error, _} ->
-        {:error, {:invalid_credentials}}
+        {:error, :invalid_credentials}
     end
   end
 
@@ -163,7 +163,7 @@ defmodule TrentoWeb.SessionController do
           error: reason
         )
 
-        {:error, {:unauthorized}}
+        {:error, :unauthorized}
     end
   end
 end

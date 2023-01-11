@@ -6,6 +6,7 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
     Uses Joken for jwt management
 
     See the pow documentation for further details.
+    https://hexdocs.pm/pow/Pow.Plug.Base.html
   """
   use Pow.Plug.Base
 
@@ -16,7 +17,9 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   alias TrentoWeb.Auth.RefreshToken
 
   @impl true
-  @spec fetch(Plug.Conn.t(), any) :: {Plug.Conn.t(), nil | %{optional(<<_::40>>) => binary}}
+  @doc """
+    Read, validate and decode the JWT from authorization header at each call
+  """
   def fetch(conn, _config) do
     with {:ok, jwt_token} <- read_token(conn),
          {:ok, claims} <- validate_access_token(jwt_token) do
@@ -32,6 +35,10 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   end
 
   @impl true
+  @doc """
+    Generates the refresh and access token pairs from a User
+    The generated credentials will be stored in private section of the Plug.Conn struct
+  """
   def create(conn, user, _config) do
     claims = %{"sub" => user.id}
     access_token = AccessToken.generate_access_token!(claims)
@@ -71,15 +78,17 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
   end
 
   @impl true
+  @doc """
+    The authentication method is stateles, this is a no-op. Need that to satisfy Pow library
+  """
   def delete(conn, _config) do
     conn
   end
 
-  @spec read_token(Conn.t()) :: {atom(), any()}
   defp read_token(conn) do
     case Conn.get_req_header(conn, "authorization") do
       [token | _rest] -> {:ok, token |> String.replace("Bearer", "") |> String.trim()}
-      _any -> {:error, "No Auth token found"}
+      _ -> {:error, "No Auth token found"}
     end
   end
 
