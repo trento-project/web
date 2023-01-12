@@ -100,7 +100,6 @@ Trento.HostReadModel.html
 Trento.HostTelemetryReadModel.html
 Trento.Hosts.html
 Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug.html
-Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler.html
 Trento.Installation.html
 Trento.Integration.Checks.CatalogDto.html
 Trento.Integration.Checks.CheckDto.html
@@ -214,6 +213,10 @@ Trento.TelemetryProjector.html
 Trento.Type.html
 TrentoWeb.AboutController.html
 TrentoWeb.AboutView.html
+TrentoWeb.Auth.AccessToken.html
+TrentoWeb.Auth.ApiAuthErrorHandler.html
+TrentoWeb.Auth.JWTAuthPlug.html
+TrentoWeb.Auth.RefreshToken.html
 TrentoWeb.CatalogController.html
 TrentoWeb.ChannelCase.html
 TrentoWeb.ChecksResultView.html
@@ -238,13 +241,14 @@ TrentoWeb.MonitoringChannel.html
 TrentoWeb.OpenApi.ApiSpec.html
 TrentoWeb.PageController.html
 TrentoWeb.PageView.html
-TrentoWeb.Pow.SessionView.html
 TrentoWeb.PrometheusController.html
 TrentoWeb.PrometheusView.html
 TrentoWeb.Router.Helpers.html
 TrentoWeb.Router.html
 TrentoWeb.SapSystemController.html
 TrentoWeb.SapSystemView.html
+TrentoWeb.SessionController.html
+TrentoWeb.SessionView.html
 TrentoWeb.SettingsController.html
 TrentoWeb.SettingsView.html
 TrentoWeb.TagsController.html
@@ -283,8 +287,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-F2DA7DC1.js
-dist/sidebar_items-A3808D4A.js
+dist/search_items-A3A6297F.js
+dist/sidebar_items-7EDD9963.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
