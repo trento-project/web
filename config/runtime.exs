@@ -43,6 +43,20 @@ if config_env() in [:prod, :demo] do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  config :joken,
+    access_token_signer:
+      System.get_env("ACCESS_TOKEN_ENC_SECRET") ||
+        raise("""
+        environment variable ACCESS_TOKEN_ENC_SECRET is missing.
+        You can generate one by calling: mix phx.gen.secret
+        """),
+    refresh_token_signer:
+      System.get_env("REFRESH_TOKEN_ENC_SECRET") ||
+        raise("""
+        environment variable REFRESH_TOKEN_ENC_SECRET is missing.
+        You can generate one by calling: mix phx.gen.secret
+        """)
+
   config :trento, TrentoWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.

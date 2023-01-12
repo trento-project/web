@@ -1,11 +1,59 @@
 import axios from 'axios';
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { logError, logWarn } from '@lib/log';
+import {
+  getAccessTokenFromStore,
+  getRefreshTokenFromStore,
+  refreshAccessToken,
+  storeAccessToken,
+} from '@lib/auth';
 
-const conf = {
-  validateStatus: (status) => status < 500,
+export const unrecoverableAuthError = Error(
+  'could not authenticate the user, session destroyed'
+);
+
+export const networkClient = axios.create({});
+
+networkClient.interceptors.request.use((request) => {
+  request.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
+  return request;
+});
+
+const refreshAuthLogic = async (failedRequest) => {
+  const refreshToken = getRefreshTokenFromStore();
+  if (!refreshToken) {
+    logWarn('could not refresh the access token, refresh token not found');
+    throw unrecoverableAuthError;
+  }
+
+  try {
+    const { data } = await refreshAccessToken(refreshToken);
+    const accessToken = data.access_token;
+    storeAccessToken(accessToken);
+    // need the params reassing, the library works that way
+    // eslint-disable-next-line
+    failedRequest.response.config.headers.Authorization = `Bearer ${accessToken}`;
+  } catch (e) {
+    logWarn('could not refresh the token, error during the request flow', e);
+    throw unrecoverableAuthError;
+  }
 };
 
+createAuthRefreshInterceptor(networkClient, refreshAuthLogic);
+
+networkClient.interceptors.response.use(null, (error) => {
+  if (error === unrecoverableAuthError) {
+    logWarn('unrecoverable auth flow, session expired');
+    const currentLocationPath = new URLSearchParams();
+    currentLocationPath.append('request_path', window.location.pathname);
+
+    window.location.assign(`/session/new?${currentLocationPath.toString()}`);
+  }
+  throw error;
+});
+
 function handleError(error) {
+  if (error === unrecoverableAuthError) return;
   logError(error);
   throw error;
 }
@@ -14,23 +62,13 @@ function handleResponseStatus(response) {
   if (response.status < 400) {
     return response;
   }
-  switch (response.status) {
-    case 401:
-    case 403:
-      logWarn('Redirecting to login after status', response.status);
-      window.location.href = '/session/new';
-      break;
-
-    default:
-      logError(response.statusText);
-  }
-
+  logError(response.statusText);
   return response;
 }
 
 export const post = function post(url, data) {
-  return axios
-    .post(url, data, conf)
+  return networkClient
+    .post(url, data)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);
@@ -38,8 +76,8 @@ export const post = function post(url, data) {
 };
 
 export const del = function del(url) {
-  return axios
-    .delete(url, conf)
+  return networkClient
+    .delete(url)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);
@@ -47,8 +85,8 @@ export const del = function del(url) {
 };
 
 export const put = function put(url, data) {
-  return axios
-    .put(url, data, conf)
+  return networkClient
+    .put(url, data)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);
@@ -56,8 +94,8 @@ export const put = function put(url, data) {
 };
 
 export const get = function get(url) {
-  return axios
-    .get(url, conf)
+  return networkClient
+    .get(url)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);

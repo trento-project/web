@@ -13,6 +13,8 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// import 'cypress-localstorage-commands';
+
 // Import commands.js using ES2015 syntax:
 import './commands';
 
@@ -20,18 +22,8 @@ import './commands';
 // require('./commands')
 //
 
-const sessionCookie = '_trento_key';
-
 before(() => {
   cy.loadScenario('healthy-27-node-SAP-cluster');
-  cy.login();
   cy.acceptEula();
-});
-
-after(() => {
-  cy.clearCookie(sessionCookie);
-});
-
-beforeEach(() => {
-  cy.Cookies.preserveOnce(sessionCookie);
+  cy.initiateSession();
 });

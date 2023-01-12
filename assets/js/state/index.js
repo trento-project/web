@@ -17,6 +17,7 @@ import catalogNewReducer from './catalogNew';
 import lastExecutionsReducer from './lastExecutions';
 import liveFeedReducer from './liveFeed';
 import settingsReducer from './settings';
+import userReducer from './user';
 import registerEvents, { joinChannel } from './registerSocketEvents';
 
 import rootSaga from './sagas';
@@ -37,6 +38,7 @@ export const store = configureStore({
     lastExecutions: lastExecutionsReducer,
     liveFeed: liveFeedReducer,
     settings: settingsReducer,
+    user: userReducer,
   },
   middleware: [sagaMiddleware],
 });

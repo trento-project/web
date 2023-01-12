@@ -6,6 +6,7 @@ import {
   takeEvery,
   select,
   debounce,
+  takeLatest,
 } from 'redux-saga/effects';
 import { urlEncode, keysToCamel } from '@lib/serialization';
 
@@ -73,6 +74,7 @@ import {
   watchUpdateLastExecution,
   watchRequestExecution,
 } from '@state/sagas/lastExecutions';
+import { watchPerformLogin } from '@state/sagas/user';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
 import {
@@ -150,6 +152,10 @@ function* initialDataFetch() {
   const { data: databases } = yield call(get, '/api/databases');
   yield put(setDatabases(databases));
   yield put(stopDatabasesLoading());
+}
+
+function* watchInitialDataFetching() {
+  yield takeLatest('user/setUserAsLogged', initialDataFetch);
 }
 
 function* watchResetState() {
@@ -631,7 +637,7 @@ function* watchClustrConnectionSettings() {
 
 export default function* rootSaga() {
   yield all([
-    initialDataFetch(),
+    watchInitialDataFetching(),
     watchResetState(),
     watchHostRegistered(),
     watchHostDetailsUpdated(),
@@ -656,5 +662,6 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchClustrConnectionSettings(),
+    watchPerformLogin(),
   ]);
 }

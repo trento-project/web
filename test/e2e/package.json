@@ -9,7 +9,8 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "cypress": "^9.6.1",
+    "cypress": "^12.3.0",
+    "cypress-localstorage-commands": "^2.2.2",
     "eslint": "^8.15.0",
     "eslint-plugin-cypress": "^2.12.1",
     "prettier": "2.6.2"

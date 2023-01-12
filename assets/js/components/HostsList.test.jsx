@@ -24,20 +24,26 @@ describe('HostsLists component', () => {
         cluster: '',
         sid: 'NWQ',
         version: '1.1.0+git.dev17.1660137228.fe5ba8a',
-      }
+      },
     ].forEach(({ host, ip, provider, cluster, sid, version }) => {
       it(`should show the correct values in the hosts list for host ${host}`, () => {
         const [StatefulHostsList] = withDefaultState(<HostsList />);
-        const params = { route: `/hosts?hostname=${host}` }
+        const params = { route: `/hosts?hostname=${host}` };
         renderWithRouter(StatefulHostsList, params);
 
         const table = screen.getByRole('table');
         expect(table.querySelector('td:nth-child(2)')).toHaveTextContent(host);
         expect(table.querySelector('td:nth-child(3)')).toHaveTextContent(ip);
-        expect(table.querySelector('td:nth-child(4)')).toHaveTextContent(provider);
-        expect(table.querySelector('td:nth-child(5)')).toHaveTextContent(cluster);
+        expect(table.querySelector('td:nth-child(4)')).toHaveTextContent(
+          provider
+        );
+        expect(table.querySelector('td:nth-child(5)')).toHaveTextContent(
+          cluster
+        );
         expect(table.querySelector('td:nth-child(6)')).toHaveTextContent(sid);
-        expect(table.querySelector('td:nth-child(7)')).toHaveTextContent(version);
+        expect(table.querySelector('td:nth-child(7)')).toHaveTextContent(
+          version
+        );
       });
     });
   });

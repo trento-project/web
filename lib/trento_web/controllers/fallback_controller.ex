@@ -21,6 +21,20 @@ defmodule TrentoWeb.FallbackController do
     |> render_error(reason)
   end
 
+  def call(conn, {:error, :invalid_credentials}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(TrentoWeb.SessionView)
+    |> render("invalid_credentials.json")
+  end
+
+  def call(conn, {:error, :unauthorized}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(TrentoWeb.SessionView)
+    |> render("unauthorized.json")
+  end
+
   defp render_error(conn, reason) do
     conn
     |> put_view(ErrorView)

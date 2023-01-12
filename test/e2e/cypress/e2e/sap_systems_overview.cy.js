@@ -8,7 +8,7 @@ import {
 
 context('SAP Systems Overview', () => {
   before(() => {
-    cy.navigateToItem('SAP Systems');
+    cy.visit('/sap_systems');
     cy.url().should('include', '/sap_systems');
   });
 
@@ -41,6 +41,11 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Links to the details page are the expected ones', () => {
+      before(() => {
+        cy.navigateToItem('SAP Systems');
+        cy.url().should('include', '/sap_systems');
+      });
+
       availableSAPSystems.forEach(({ sid: sid, id: id }) => {
         it(`should have a link to the SAP System with id: ${id}`, () => {
           cy.get('td').contains(sid).click();
@@ -51,6 +56,10 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Attached databases are the expected ones', () => {
+      before(() => {
+        cy.navigateToItem('SAP Systems');
+        cy.url().should('include', '/sap_systems');
+      });
       availableSAPSystems.forEach(
         ({ sid: sid, attachedDatabase: attachedDatabase }) => {
           it(`should show the expected attached database details`, () => {
@@ -77,6 +86,11 @@ context('SAP Systems Overview', () => {
     });
 
     describe('Instances are the expected ones', () => {
+      before(() => {
+        cy.navigateToItem('SAP Systems');
+        cy.url().should('include', '/sap_systems');
+      });
+
       availableSAPSystems.forEach(({ instances: instances }, index) => {
         it(`should show the expected instances details`, () => {
           cy.get('table.table-fixed > tbody > tr')
@@ -202,6 +216,10 @@ context('SAP Systems Overview', () => {
     });
 
     availableSAPSystems.forEach(({ sid, tag }) => {
+      before(() => {
+        cy.navigateToItem('SAP Systems');
+        cy.url().should('include', '/sap_systems');
+      });
       describe(`Add tag '${tag}' to SAP System with sid: '${sid}'`, () => {
         it(`should tag SAP System '${sid}'`, () => {
           cy.addTagByColumnValue(sid, tag);
