@@ -7,7 +7,7 @@ const availableHosts1stPage = availableHosts.slice(0, 10);
 
 context('Hosts Overview', () => {
   before(() => {
-    cy.navigateToItem('Hosts');
+    cy.visit('/hosts');
     cy.url().should('include', '/hosts');
   });
 
@@ -136,6 +136,7 @@ context('Hosts Overview', () => {
     describe('Health Container shows the health overview of the deployed landscape', () => {
       before(() => {
         cy.visit('/hosts');
+        cy.url().should('include', '/hosts');
         cy.task('startAgentHeartbeat', agents());
       });
 
@@ -200,6 +201,7 @@ context('Hosts Overview', () => {
 
     describe('SID', () => {
       before(() => {
+        cy.visit('/hosts');
         cy.get('[data-testid="filter-SID"]').click();
       });
 

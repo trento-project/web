@@ -1,9 +1,9 @@
-defmodule Trento.Infrastructure.Auth.AuthenticatedAPIErrorHandler do
+defmodule TrentoWeb.Auth.ApiAuthErrorHandler do
   @moduledoc """
   Used to handle authentication error in APIs
 
   Can be attached to
-  `Pow.Plug.RequireAuthenticated`, `Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug`
+  `Pow.Plug.RequireAuthenticated`, `TrentoWeb.AuthenticateAPIKeyPlug`
   and any other auth plug supporting an :error_handler
   """
   use TrentoWeb, :controller

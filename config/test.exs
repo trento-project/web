@@ -43,6 +43,8 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :trento, :api_key_authentication, enabled: false
 
+config :trento, :jwt_authentication, enabled: false
+
 config :trento, :messaging, adapter: Trento.Messaging.Adapters.AMQP
 
 config :trento, Trento.Messaging.Adapters.AMQP,
@@ -84,3 +86,7 @@ config :trento,
   ]
 
 config :trento, Trento.StreamRollUpEventHandler, max_stream_version: 10
+
+config :joken,
+  access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",
+  refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"

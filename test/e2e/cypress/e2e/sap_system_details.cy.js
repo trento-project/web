@@ -97,6 +97,11 @@ context('SAP system details', () => {
   });
 
   describe('The hosts table shows the attached hosts to this SAP system', () => {
+    before(() => {
+      cy.visit(`/sap_systems/${selectedSystem.Id}`);
+      cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
+    });
+
     attachedHosts.forEach((host, index) => {
       it(`should show ${host.Name} with the data`, () => {
         cy.get('table.table-fixed')
