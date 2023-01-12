@@ -21,12 +21,14 @@ function Filter({ options, title, value, onChange }) {
     .filter((option) => option.toLowerCase().includes(query.toLowerCase()));
 
   useOnClickOutside(ref, () => setOpen(false));
+
   return (
     <div className="w-64 w-72 top-16 mr-4" ref={ref}>
       <div className="mt-1 relative">
         {value !== '' && (
           <button
             type="button"
+            data-testid={`filter-${title}-clear`}
             className="block absolute z-20 right-0 h-full pr-2 flex items-center"
             onClick={() => onChange([])}
           >
