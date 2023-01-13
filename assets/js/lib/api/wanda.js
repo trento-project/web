@@ -12,4 +12,5 @@ export const getExecutionResult = (executionID) =>
 export const getLastExecutionByGroupID = (groupID) =>
   wandaClient.get(`/api/checks/groups/${groupID}/executions/last`);
 
-export const getCatalog = () => wandaClient.get('/api/checks/catalog');
+export const getCatalog = (env) =>
+  wandaClient.get(`/api/checks/catalog`, { params: env })

@@ -55,9 +55,10 @@ function ChecksSelectionNew({ clusterId, cluster }) {
   const [localSavingError, setLocalSavingError] = useState(null);
   const [localSavingSuccess, setLocalSavingSuccess] = useState(null);
   const [groupSelection, setGroupSelection] = useState([]);
+  const { provider } = cluster;
 
   useEffect(() => {
-    dispatch(updateCatalog());
+    dispatch(updateCatalog({ provider }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -99,7 +100,7 @@ function ChecksSelectionNew({ clusterId, cluster }) {
   return (
     <div className="bg-white rounded p-3">
       <CatalogContainer
-        onRefresh={() => dispatch(updateCatalog())}
+        onRefresh={() => dispatch(updateCatalog({ provider }))}
         isCatalogEmpty={catalogData.size === 0}
         catalogError={catalogError}
         loading={loading}
