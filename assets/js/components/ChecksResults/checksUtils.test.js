@@ -14,6 +14,7 @@ import {
 
 import {
   getCheckDescription,
+  getCheckRemediation,
   getCheckResults,
   getChecks,
   getCheckHealthByAgent,
@@ -69,6 +70,13 @@ describe('checksUtils', () => {
     const [{ id, description }] = catalog;
 
     expect(getCheckDescription(catalog, id)).toBe(description);
+  });
+
+  it('getCheckRemediation should return a check remediation', () => {
+    const catalog = catalogCheckFactory.buildList(2);
+    const [{ id, remediation }] = catalog;
+
+    expect(getCheckRemediation(catalog, id)).toBe(remediation);
   });
 
   describe('getCheckHealthByAgent', () => {
