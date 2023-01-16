@@ -112,5 +112,8 @@ export const getCheckDescription = (catalog, checkID) => {
 
 export const getCheckRemediation = (catalog, checkID) => {
   const check = findCheck(catalog, checkID);
-  return check?.remediation;
+  if (check) {
+    return check.remediation;
+  }
+  return null;
 };

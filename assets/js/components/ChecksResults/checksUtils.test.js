@@ -77,6 +77,7 @@ describe('checksUtils', () => {
     const [{ id, remediation }] = catalog;
 
     expect(getCheckRemediation(catalog, id)).toBe(remediation);
+    expect(getCheckRemediation(catalog, 'wont-be-found')).toBe(null);
   });
 
   describe('getCheckHealthByAgent', () => {
