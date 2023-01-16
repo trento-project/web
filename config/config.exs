@@ -67,10 +67,6 @@ config :trento, Trento.Commanded,
       snapshot_every: 200,
       snapshot_version: 1
     ],
-    Trento.Domain.Cluster => [
-      snapshot_every: 200,
-      snapshot_version: 1
-    ],
     Trento.Domain.SapSystem => [
       snapshot_every: 200,
       snapshot_version: 1
