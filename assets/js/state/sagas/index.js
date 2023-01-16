@@ -96,6 +96,9 @@ import {
 
 import { CHECKS_SELECTED } from '@state/actions/cluster';
 import { EXECUTION_REQUESTED } from '@state/actions/lastExecutions';
+import { initSocketConnection } from '@lib/network/socket';
+import processChannelEvents from '@state/channels';
+import { store } from '@state';
 
 const notify = ({ text, icon }) => ({
   type: 'NOTIFICATION',
@@ -154,8 +157,16 @@ function* initialDataFetch() {
   yield put(stopDatabasesLoading());
 }
 
-function* watchInitialDataFetching() {
-  yield takeLatest('user/setUserAsLogged', initialDataFetch);
+function* setupSocketEvents() {
+  const socket = initSocketConnection();
+  yield call(processChannelEvents, store, socket);
+}
+
+function* watchUserLoggedIn() {
+  yield all([
+    takeLatest('user/setUserAsLogged', initialDataFetch),
+    takeLatest('user/setUserAsLogged', setupSocketEvents),
+  ]);
 }
 
 function* watchResetState() {
@@ -637,7 +648,7 @@ function* watchClustrConnectionSettings() {
 
 export default function* rootSaga() {
   yield all([
-    watchInitialDataFetching(),
+    watchUserLoggedIn(),
     watchResetState(),
     watchHostRegistered(),
     watchHostDetailsUpdated(),

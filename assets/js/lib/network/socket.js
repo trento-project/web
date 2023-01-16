@@ -1,3 +1,6 @@
+// safe to disable phoenix stuff
+// eslint-disable-next-line
+import { Socket } from 'phoenix';
 import { logMessage, logError } from '@lib/log';
 
 export const joinChannel = (channel) => {
@@ -8,16 +11,9 @@ export const joinChannel = (channel) => {
     .receive('timeout', () => logMessage('Networking issue. Still waiting...'));
 };
 
-const registerEvents = (store, socket, channelName, events) => {
-  const channel = socket.channel(channelName, {});
+export const initSocketConnection = () => {
+  const socket = new Socket('/socket', {});
+  socket.connect();
 
-  events.forEach((event) => {
-    channel.on(event, (payload) =>
-      store.dispatch({ type: event.toUpperCase(), payload })
-    );
-  });
-
-  joinChannel(channel);
+  return socket;
 };
-
-export default registerEvents;
