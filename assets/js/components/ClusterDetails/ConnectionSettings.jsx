@@ -1,12 +1,14 @@
 import { EOS_ERROR, EOS_LOADING_ANIMATED } from 'eos-icons-react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Table from '@components/Table';
+import classNames from 'classnames';
 import { Switch } from '@headlessui/react';
 
-import classNames from 'classnames';
-import NotificationBox from '../NotificationBox';
-import LoadingBox from '../LoadingBox';
+import Table from '@components/Table';
+import NotificationBox from '@components/NotificationBox';
+import LoadingBox from '@components/LoadingBox';
+import { executionRequested } from '@state/actions/lastExecutions';
+
 import {
   SavingFailedAlert,
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
@@ -182,9 +184,12 @@ export function ConnectionSettings({ clusterId, cluster }) {
         )}
         {localSavingSuccess && cluster.selected_checks.length > 0 && (
           <SuggestTriggeringChecksExecutionAfterSettingsUpdated
-            cluster={cluster}
             clusterId={clusterId}
+            selectedChecks={cluster.selected_checks}
             onClose={() => setLocalSavingSuccess(null)}
+            onStartExecution={(clusterID, hosts, checks) =>
+              dispatch(executionRequested(clusterID, hosts, checks))
+            }
           />
         )}
       </div>

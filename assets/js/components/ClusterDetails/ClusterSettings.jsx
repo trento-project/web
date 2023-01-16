@@ -115,10 +115,11 @@ export function SavingFailedAlert({ onClose = () => {}, children }) {
 }
 
 export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
-  cluster,
   clusterId,
   usingNewChecksEngine = false,
+  selectedChecks,
   onClose = () => {},
+  onStartExecution = () => {},
 }) {
   return (
     <div>
@@ -134,7 +135,8 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
           clusterId={clusterId}
           usingNewChecksEngine={usingNewChecksEngine}
           hosts={useSelector(getClusterHostIDs(clusterId))}
-          checks={cluster.selected_checks}
+          checks={selectedChecks}
+          onStartExecution={onStartExecution}
         >
           <EOS_PLAY_CIRCLE color="green" />
         </TriggerChecksExecutionRequest>

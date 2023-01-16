@@ -9,6 +9,7 @@ import { remove, uniq, toggle, groupBy } from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
 import { checksSelected } from '@state/actions/cluster';
+import { executionRequested } from '@state/actions/lastExecutions';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 import {
@@ -165,9 +166,12 @@ function ChecksSelectionNew({ clusterId, cluster }) {
             {localSavingSuccess && selectedChecks.length > 0 && (
               <SuggestTriggeringChecksExecutionAfterSettingsUpdated
                 clusterId={clusterId}
-                cluster={cluster}
                 usingNewChecksEngine
+                selectedChecks={cluster.selected_checks}
                 onClose={() => setLocalSavingSuccess(null)}
+                onStartExecution={(clusterID, hosts, checks) =>
+                  dispatch(executionRequested(clusterID, hosts, checks))
+                }
               />
             )}
           </div>

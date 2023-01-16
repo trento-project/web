@@ -78,8 +78,8 @@ function ClusterDetails() {
 
   const checkResults = useChecksResult(cluster);
   const dispatch = useDispatch();
-  const onStartExecution = (clusterId, hosts, selectedChecks) => {
-    dispatch(executionRequested(clusterId, hosts, selectedChecks));
+  const onStartExecution = (_, hosts, selectedChecks) => {
+    dispatch(executionRequested(clusterID, hosts, selectedChecks));
   };
   const hosts = useSelector(getClusterHostIDs(clusterID));
   const hostsData = useSelector((state) =>

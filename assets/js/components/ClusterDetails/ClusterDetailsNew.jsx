@@ -150,8 +150,8 @@ export function ClusterDetailsNew() {
             usingNewChecksEngine
             hosts={hosts}
             checks={cluster.selected_checks}
-            onStartExecution={(clusterId, hostList, selectedChecks) =>
-              dispatch(executionRequested(clusterId, hostList, selectedChecks))
+            onStartExecution={(_, hostList, selectedChecks) =>
+              dispatch(executionRequested(clusterID, hostList, selectedChecks))
             }
           >
             <EOS_PLAY_CIRCLE
