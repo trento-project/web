@@ -16,6 +16,7 @@ import {
   getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
+  getCheckRemediation,
 } from '@components/ChecksResults';
 import ChecksResultFilters from '@components/ChecksResults/ChecksResultFilters';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
@@ -95,7 +96,7 @@ function ExecutionResults({
         onClose={() => setModalOpen(false)}
       >
         <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-          {getCheckDescription(catalog, selectedCheck)}
+          {getCheckRemediation(catalog, selectedCheck)}
         </ReactMarkdown>
       </Modal>
       <BackButton url={`/clusters_new/${clusterID}`}>

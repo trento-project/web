@@ -1,11 +1,14 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 
+import userEvent from '@testing-library/user-event';
+
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
 
 import {
   catalogFactory,
+  catalogCheckFactory,
   hostnameFactory,
   addCriticalExpectation,
   addPassingExpectation,
@@ -69,8 +72,8 @@ const prepareStateData = (checkExecutionStatus) => {
   const { loading, catalog, error } = catalogFactory.build({
     loading: false,
     catalog: [
-      catalogFactory.build({ id: checkID1 }),
-      catalogFactory.build({ id: checkID2 }),
+      catalogCheckFactory.build({ id: checkID1 }),
+      catalogCheckFactory.build({ id: checkID2 }),
     ],
     error: null,
   });
@@ -108,6 +111,13 @@ const prepareStateData = (checkExecutionStatus) => {
 
 describe('ExecutionResults', () => {
   it('should render ExecutionResults with successfully fetched results', async () => {
+    window.IntersectionObserver = jest.fn().mockImplementation(() => ({
+      observe: () => null,
+      disconnect: () => null,
+    }));
+
+    const user = userEvent.setup();
+
     const {
       clusterID,
       hostnames,
@@ -145,6 +155,11 @@ describe('ExecutionResults', () => {
     expect(screen.getAllByText(checkID2)).toHaveLength(2);
     expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
     expect(screen.getAllByText('1/2 expectations failed')).toBeTruthy();
+
+    const [{ remediation }] = catalog;
+    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
+    await user.click(screen.getAllByText(checkID1)[0]);
+    expect(screen.getByText(remediation)).toBeVisible();
   });
 
   it('should render ExecutionResults with running state', async () => {

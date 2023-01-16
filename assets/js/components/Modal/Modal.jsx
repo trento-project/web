@@ -1,15 +1,18 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
 function Modal({ children, open, onClose, title }) {
+  const refContent = useRef(null);
+
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog
+        initialFocus={refContent}
         as="div"
         className="fixed inset-0 z-50 overflow-y-auto"
         onClose={onClose}
       >
-        <div className="min-h-screen px-4 text-center">
+        <div ref={refContent} className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
