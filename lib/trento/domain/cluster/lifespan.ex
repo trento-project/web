@@ -23,6 +23,6 @@ defmodule Trento.Domain.Cluster.Lifespan do
   @doc """
    If the aggregate is rolling up, it will be stopped to avoid processing any other event.
   """
-  def after_error({:error, :cluster_rolling_up}), do: :stop
+  def after_error(:cluster_rolling_up), do: :stop
   def after_error(error), do: DefaultLifespan.after_error(error)
 end
