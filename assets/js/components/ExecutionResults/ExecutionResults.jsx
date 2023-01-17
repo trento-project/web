@@ -42,10 +42,10 @@ const getLabel = (status, health, error, expectations, failedExpectations) => {
   return `${failedExpectations}/${expectations} expectations failed`;
 };
 
-function asMarkdownContent(content) {
+function MarkdownContent({children}) {
   return (
     <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-      {content}
+      {children}
     </ReactMarkdown>
   );
 }
@@ -101,11 +101,17 @@ function ExecutionResults({
   return (
     <div>
       <Modal
-        title={asMarkdownContent(getCheckDescription(catalog, selectedCheck))}
+        title={
+          <MarkdownContent>
+            {getCheckDescription(catalog, selectedCheck)}
+          </MarkdownContent>
+        }
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       >
-        {asMarkdownContent(getCheckRemediation(catalog, selectedCheck))}
+        <MarkdownContent>
+          {getCheckRemediation(catalog, selectedCheck)}
+        </MarkdownContent>
       </Modal>
       <BackButton url={`/clusters_new/${clusterID}`}>
         Back to Cluster Details
