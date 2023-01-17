@@ -13,6 +13,8 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 import { getClusterName } from '@components/ClusterLink';
 import WarningBanner from '@components/Banners/WarningBanner';
 import { ConnectionSettings, ClusterInfoBox } from '@components/ClusterDetails';
+import { getClusterHostIDs } from '@state/selectors/cluster';
+
 import { truncatedClusterNameClasses } from './ClusterDetails';
 
 export const UNKNOWN_PROVIDER = 'unknown';
@@ -115,7 +117,9 @@ export function SavingFailedAlert({ onClose = () => {}, children }) {
 export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
   clusterId,
   usingNewChecksEngine = false,
+  selectedChecks,
   onClose = () => {},
+  onStartExecution = () => {},
 }) {
   return (
     <div>
@@ -130,6 +134,9 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
           cssClasses="tn-checks-start-execute rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
           clusterId={clusterId}
           usingNewChecksEngine={usingNewChecksEngine}
+          hosts={useSelector(getClusterHostIDs(clusterId))}
+          checks={selectedChecks}
+          onStartExecution={onStartExecution}
         >
           <EOS_PLAY_CIRCLE color="green" />
         </TriggerChecksExecutionRequest>

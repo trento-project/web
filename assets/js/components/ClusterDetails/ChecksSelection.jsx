@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 import { Disclosure, Switch, Transition } from '@headlessui/react';
 
 import {
@@ -12,14 +15,14 @@ import {
 import classNames from 'classnames';
 import { remove, uniq } from '@lib/lists';
 
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import LoadingBox from '@components/LoadingBox';
+import NotificationBox from '@components/NotificationBox';
+import { executionRequested } from '@state/actions/lastExecutions';
+
 import {
   SavingFailedAlert,
   SuggestTriggeringChecksExecutionAfterSettingsUpdated,
 } from './ClusterSettings';
-import LoadingBox from '../LoadingBox';
-import NotificationBox from '../NotificationBox';
 
 const toggle = (list, element) =>
   list.includes(element)
@@ -294,7 +297,11 @@ export function ChecksSelection({ clusterId, cluster }) {
         {localSavingSuccess && selectedChecks.length > 0 && (
           <SuggestTriggeringChecksExecutionAfterSettingsUpdated
             clusterId={clusterId}
+            selectedChecks={selectedChecks}
             onClose={() => setLocalSavingSuccess(null)}
+            onStartExecution={(clusterID, hosts, checks) =>
+              dispatch(executionRequested(clusterID, hosts, checks))
+            }
           />
         )}
       </div>

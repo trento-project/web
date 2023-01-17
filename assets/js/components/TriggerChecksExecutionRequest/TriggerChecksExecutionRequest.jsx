@@ -1,25 +1,18 @@
 import React from 'react';
 import classNames from 'classnames';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
-import {
-  getClusterHostIDs,
-  getClusterSelectedChecks,
-} from '@state/selectors/cluster';
-import { executionRequested } from '@state/actions/lastExecutions';
 
 function TriggerChecksExecutionRequest({
   clusterId,
   cssClasses,
   usingNewChecksEngine = false,
   children,
+  hosts = [],
+  checks = [],
+  onStartExecution = () => {},
   ...props
 }) {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const hosts = useSelector(getClusterHostIDs(clusterId));
-  const checks = useSelector(getClusterSelectedChecks(clusterId));
 
   return (
     <button
@@ -29,7 +22,8 @@ function TriggerChecksExecutionRequest({
       )}
       type="button"
       onClick={() => {
-        dispatch(executionRequested(clusterId, hosts, checks));
+        onStartExecution(clusterId, hosts, checks);
+
         navigate(
           usingNewChecksEngine
             ? `/clusters_new/${clusterId}/executions/last`
