@@ -1,10 +1,16 @@
 import React from 'react';
+import classNames from 'classnames';
 
-function PremiumPill() {
+import Pill from '@components/Pill';
+
+function PremiumPill({ className }) {
   return (
-    <p className="ml-1 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+    <Pill
+      className={classNames(className, 'bg-green-100 text-green-800')}
+      size="xs"
+    >
       Premium
-    </p>
+    </Pill>
   );
 }
 

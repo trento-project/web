@@ -26,7 +26,7 @@ function ChecksSelectionItem({
             <p className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
               {checkID}
             </p>
-            {premium && <PremiumPill />}
+            {premium && <PremiumPill className="ml-1" />}
           </div>
           <div className="mt-2 sm:flex sm:justify-between">
             <div className="sm:flex">
