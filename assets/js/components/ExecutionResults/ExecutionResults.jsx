@@ -16,6 +16,7 @@ import {
   getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
+  getCheckRemediation,
 } from '@components/ChecksResults';
 import ChecksResultFilters from '@components/ChecksResults/ChecksResultFilters';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
@@ -40,6 +41,14 @@ const getLabel = (status, health, error, expectations, failedExpectations) => {
 
   return `${failedExpectations}/${expectations} expectations failed`;
 };
+
+function asMarkdownContent(content) {
+  return (
+    <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+      {content}
+    </ReactMarkdown>
+  );
+}
 
 function ExecutionResults({
   clusterID,
@@ -90,13 +99,11 @@ function ExecutionResults({
   return (
     <div>
       <Modal
-        title={getCheckDescription(catalog, selectedCheck)}
+        title={asMarkdownContent(getCheckDescription(catalog, selectedCheck))}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       >
-        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-          {getCheckDescription(catalog, selectedCheck)}
-        </ReactMarkdown>
+        {asMarkdownContent(getCheckRemediation(catalog, selectedCheck))}
       </Modal>
       <BackButton url={`/clusters_new/${clusterID}`}>
         Back to Cluster Details

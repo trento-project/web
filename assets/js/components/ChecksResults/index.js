@@ -8,6 +8,7 @@ import {
   getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
+  getCheckRemediation,
 } from './checksUtils';
 
 export {
@@ -19,6 +20,7 @@ export {
   getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
+  getCheckRemediation,
 };
 
 export default ChecksResults;
