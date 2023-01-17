@@ -3,6 +3,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const alias = require('esbuild-plugin-path-alias');
+const esbuild = require('esbuild');
 const { config } = require('dotenv');
 
 config();
@@ -23,37 +24,48 @@ const define = {
   'process.env.WANDA_URL': WANDA_URL,
 };
 
-require('esbuild')
-  .build({
-    define,
-    entryPoints: ['js/app.js', 'js/trento.jsx'],
-    outdir: resolvePath('../priv/static/assets'),
-    bundle: true,
-    minify: !process.env.ESBUILD_WATCH,
-    sourcemap: process.env.ESBUILD_WATCH ? 'inline' : false,
-    loader: {
-      '.png': 'dataurl',
-      '.svg': 'dataurl',
-    },
-    watch: Boolean(process.env.ESBUILD_WATCH),
-    plugins: [
-      alias({
-        phoenix: resolvePath('../deps/phoenix/priv/static/phoenix.mjs'),
-        phoenix_html: resolvePath(
-          '../deps/phoenix_html/priv/static/phoenix_html.js'
-        ),
-        phoenix_live_view: resolvePath(
-          '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js'
-        ),
-        '@components': resolvePath('./js/components'),
-        '@state': resolvePath('./js/state'),
-        '@lib': resolvePath('./js/lib'),
-        '@hooks': resolvePath('./js/hooks'),
-        '@static': resolvePath('./static'),
-      }),
-    ],
-  })
-  .then((_result) => {
-    console.log('Built!');
-  })
-  .catch((err) => console.log(err));
+const watching = Boolean(process.env.ESBUILD_WATCH);
+
+const buildConfig = {
+  define,
+  entryPoints: ['js/app.js', 'js/trento.jsx'],
+  outdir: resolvePath('../priv/static/assets'),
+  bundle: true,
+  minify: !process.env.ESBUILD_WATCH,
+  sourcemap: process.env.ESBUILD_WATCH ? 'inline' : false,
+  loader: {
+    '.png': 'dataurl',
+    '.svg': 'dataurl',
+  },
+  plugins: [
+    alias({
+      phoenix: resolvePath('../deps/phoenix/priv/static/phoenix.mjs'),
+      phoenix_html: resolvePath(
+        '../deps/phoenix_html/priv/static/phoenix_html.js'
+      ),
+      phoenix_live_view: resolvePath(
+        '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js'
+      ),
+      '@components': resolvePath('./js/components'),
+      '@state': resolvePath('./js/state'),
+      '@lib': resolvePath('./js/lib'),
+      '@hooks': resolvePath('./js/hooks'),
+      '@static': resolvePath('./static'),
+    }),
+  ],
+};
+
+const build = async () => {
+  if (watching) {
+    const context = await esbuild.context(buildConfig);
+    console.log('=> JS bundle was built!');
+    console.log('=> Watching...');
+
+    context.watch();
+  } else {
+    await esbuild.build(buildConfig);
+    console.log('=> JS bundle was built!');
+  }
+};
+
+build();
