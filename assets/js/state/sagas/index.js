@@ -289,25 +289,28 @@ function* watchChecksSelected() {
 
 function* requestChecksExecution({ payload }) {
   const clusterName = yield select(getClusterName(payload.clusterID));
-  yield call(
-    post,
-    `/clusters/${payload.clusterID}/checks/request_execution`,
-    {}
-  );
 
-  yield put(
-    appendEntryToLiveFeed({
-      source: clusterName,
-      message: 'Checks execution requested.',
-    })
-  );
+  try {
+    yield call(
+      post,
+      `/clusters/${payload.clusterID}/checks/request_execution`,
+      {}
+    );
 
-  yield put(
-    notify({
-      text: `Checks execution requested, cluster: ${clusterName}`,
-      icon: '🐰',
-    })
-  );
+    yield put(
+      notify({
+        text: `Checks execution requested, cluster: ${clusterName}`,
+        icon: '🐰',
+      })
+    );
+  } catch (error) {
+    yield put(
+      notify({
+        text: `Unable to start execution for cluster: ${clusterName}`,
+        icon: '❌',
+      })
+    );
+  }
 }
 
 function* watchRequestChecksExecution() {
