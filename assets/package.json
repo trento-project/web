@@ -67,7 +67,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "lint": "eslint . --ext js,jsx",
-    "format:check": "prettier .",
+    "format:check": "prettier -c .",
     "format": "prettier --write .",
     "test": "jest"
   }

@@ -42,7 +42,7 @@ const getLabel = (status, health, error, expectations, failedExpectations) => {
   return `${failedExpectations}/${expectations} expectations failed`;
 };
 
-function MarkdownContent({children}) {
+function MarkdownContent({ children }) {
   return (
     <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
       {children}
