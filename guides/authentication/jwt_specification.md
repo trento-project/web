@@ -1,4 +1,4 @@
-# Authentication
+# JWT
 
 The `web` dashboard is the identity provider and authentication manager of the Trento stack.
 The API endpoints of the Trento project are protected with a JWT token authentication.
@@ -100,5 +100,4 @@ curl 'http://<YOUR_TRENTO_INSTANCE>/api/session/refresh' \
 
 The endpoint will return a new `access_token` with the same lifespan as all the other `access_token`.
 
-Please refer to the [OpenApi](https://www.trento-project.io/web/swaggerui/#/Platform/TrentoWeb.SessionController.create) spec for further details and client generation.
-
+Please refer to the [OpenAPI](https://www.trento-project.io/web/swaggerui/#/Platform/TrentoWeb.SessionController.create) spec for further details and client generation.

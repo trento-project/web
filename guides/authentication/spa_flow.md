@@ -1,4 +1,4 @@
-# Authentication flow in Trento single page application
+# Trento Single Page Application
 
 The trento single page application, leverages the JWT authentication mechanism of `trento` API, using the refresh token flow when the `access_token` expires.
 
