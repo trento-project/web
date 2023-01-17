@@ -130,6 +130,7 @@ function ChecksSelectionNew({ clusterId, cluster }) {
                     checkID={check.id}
                     name={check.name}
                     description={check.description}
+                    premium={check.premium}
                     selected={check.selected}
                     onChange={() => {
                       setSelectedChecks(toggle(check.id, selectedChecks));

@@ -39,6 +39,7 @@ export const catalogCheckFactory = Factory.define(() => ({
   group: faker.animal.cat(),
   description: faker.lorem.paragraph(),
   remediation: faker.lorem.paragraph(),
+  premium: faker.datatype.boolean(),
 }));
 
 export const catalogFactory = Factory.define(() => ({

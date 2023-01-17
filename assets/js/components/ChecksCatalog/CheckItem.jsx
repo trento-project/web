@@ -5,6 +5,8 @@ import { Disclosure, Transition } from '@headlessui/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+import PremiumPill from '@components/PremiumPill';
+
 function CheckItem({ checkID, premium = false, description, remediation }) {
   return (
     <li>
@@ -18,11 +20,7 @@ function CheckItem({ checkID, premium = false, description, remediation }) {
               <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                 {checkID}
               </p>
-              {premium > 0 && (
-                <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Premium
-                </p>
-              )}
+              {premium && <PremiumPill className="ml-1" />}
             </div>
             <div className="mt-2 sm:flex sm:justify-between">
               <div className="sm:flex">

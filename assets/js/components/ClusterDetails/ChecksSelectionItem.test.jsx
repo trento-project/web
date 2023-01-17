@@ -64,4 +64,21 @@ describe('ClusterDetails ChecksSelectionItem component', () => {
     await user.click(screen.getByRole('switch'));
     expect(onChangeMock).toBeCalled();
   });
+
+  it('should show premium badge if the check is premium', () => {
+    const check = catalogCheckFactory.build();
+
+    renderWithRouter(
+      <ChecksSelectionItem
+        key={check.id}
+        checkID={check.id}
+        name={check.name}
+        description={check.description}
+        premium
+        selected
+      />
+    );
+
+    expect(screen.getByText('Premium')).toBeVisible();
+  });
 });
