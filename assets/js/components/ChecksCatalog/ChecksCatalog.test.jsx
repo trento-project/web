@@ -8,9 +8,9 @@ import { faker } from '@faker-js/faker';
 import { withState, renderWithRouter } from '@lib/test-utils';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 
-import { ChecksCatalogNew } from './ChecksCatalogNew';
+import ChecksCatalog from './ChecksCatalog';
 
-describe('ChecksCatalog ChecksCatalogNew component', () => {
+describe('ChecksCatalog ChecksCatalog component', () => {
   it('should render the checks catalog with fetched data', async () => {
     const groupName1 = faker.animal.cat();
     const groupName2 = faker.animal.cat();
@@ -19,12 +19,9 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const catalog = group1.concat(group2);
 
     const initialState = {
-      catalogNew: { loading: false, data: catalog, error: null },
+      catalog: { loading: false, data: catalog, error: null },
     };
-    const [statefulCatalog, store] = withState(
-      <ChecksCatalogNew />,
-      initialState
-    );
+    const [statefulCatalog, store] = withState(<ChecksCatalog />, initialState);
 
     await act(async () => renderWithRouter(statefulCatalog));
 
@@ -40,7 +37,7 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const actions = store.getActions();
     const expectedActions = [
       {
-        type: 'UPDATE_CATALOG_NEW',
+        type: 'UPDATE_CATALOG',
         payload: {},
       },
     ];
@@ -53,13 +50,10 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const catalog = catalogCheckFactory.buildList(5);
 
     const initialState = {
-      catalogNew: { loading: false, data: catalog, error: null },
+      catalog: { loading: false, data: catalog, error: null },
     };
 
-    const [statefulCatalog, store] = withState(
-      <ChecksCatalogNew />,
-      initialState
-    );
+    const [statefulCatalog, store] = withState(<ChecksCatalog />, initialState);
 
     await act(async () => renderWithRouter(statefulCatalog, store));
 
@@ -72,11 +66,11 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const actions = store.getActions();
     const expectedActions = [
       {
-        type: 'UPDATE_CATALOG_NEW',
+        type: 'UPDATE_CATALOG',
         payload: {},
       },
       {
-        type: 'UPDATE_CATALOG_NEW',
+        type: 'UPDATE_CATALOG',
         payload: { provider: 'aws' },
       },
     ];

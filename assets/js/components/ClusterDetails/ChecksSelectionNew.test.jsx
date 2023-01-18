@@ -19,7 +19,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     const cluster = clusterFactory.build();
 
     const initialState = {
-      catalogNew: { loading: false, data: catalog, error: null },
+      catalog: { loading: false, data: catalog, error: null },
       clusterChecksSelection: {},
     };
     const [statefulChecksSelection] = withState(
@@ -63,7 +63,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     });
 
     const initialState = {
-      catalogNew: { loading: false, data: catalog, error: null },
+      catalog: { loading: false, data: catalog, error: null },
       clusterChecksSelection: {},
     };
     const [statefulChecksSelection] = withState(
@@ -105,7 +105,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     });
 
     const initialState = {
-      catalogNew: { loading: false, data: catalog, error: null },
+      catalog: { loading: false, data: catalog, error: null },
       clusterChecksSelection: {},
     };
     const [statefulChecksSelection, store] = withState(
@@ -125,7 +125,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
     const actions = store.getActions();
     const expectedActions = [
       {
-        type: 'UPDATE_CATALOG_NEW',
+        type: 'UPDATE_CATALOG',
         payload: {},
       },
       {

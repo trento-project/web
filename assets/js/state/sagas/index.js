@@ -8,7 +8,7 @@ import {
   debounce,
   takeLatest,
 } from 'redux-saga/effects';
-import { urlEncode, keysToCamel } from '@lib/serialization';
+import { keysToCamel } from '@lib/serialization';
 
 import {
   setHosts,
@@ -62,14 +62,12 @@ import {
   updateDatabaseInstanceSystemReplication,
 } from '@state/databases';
 
-import { setCatalog } from '@state/catalog';
-
 import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { setEulaVisible, setIsPremium } from '@state/settings';
 
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
-import { watchCatalogUpdateNew } from '@state/sagas/catalog';
+import { watchCatalogUpdate } from '@state/sagas/catalog';
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
@@ -524,27 +522,6 @@ function* watchDatabase() {
   );
 }
 
-function* updateCatalog({ payload }) {
-  yield put(setCatalog({ loading: true }));
-  try {
-    const { data: catalog } = yield call(
-      get,
-      `/api/checks/catalog?${urlEncode(payload)}`
-    );
-    yield put(setCatalog(catalog));
-  } catch (error) {
-    yield put(
-      setCatalog({
-        error: error.response.data.error,
-      })
-    );
-  }
-}
-
-function* watchCatalogUpdate() {
-  yield takeEvery('UPDATE_CATALOG', updateCatalog);
-}
-
 function* refreshHealthSummaryOnComnponentsHealthChange() {
   const debounceDuration = 5000;
 
@@ -667,7 +644,6 @@ export default function* rootSaga() {
     watchSapSystem(),
     watchDatabase(),
     watchCatalogUpdate(),
-    watchCatalogUpdateNew(),
     watchUpdateLastExecution(),
     watchRequestExecution(),
     watchAcceptEula(),

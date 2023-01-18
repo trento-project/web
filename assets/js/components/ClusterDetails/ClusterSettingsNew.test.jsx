@@ -19,7 +19,7 @@ describe('ClusterDetails ClusterSettingsNew component', () => {
       <ClusterSettingsNew />,
       {
         ...defaultInitialState,
-        catalogNew: { loading: false, data: catalog, error: null },
+        catalog: { loading: false, data: catalog, error: null },
       }
     );
 

@@ -6,7 +6,7 @@ import {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
-} from '@state/catalogNew';
+} from '@state/catalog';
 
 export function* updateCatalog({ payload }) {
   yield put(setCatalogLoading());
@@ -18,6 +18,6 @@ export function* updateCatalog({ payload }) {
   }
 }
 
-export function* watchCatalogUpdateNew() {
+export function* watchCatalogUpdate() {
   yield takeEvery(UPDATE_CATALOG, updateCatalog);
 }

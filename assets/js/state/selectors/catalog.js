@@ -1,5 +1,5 @@
 export const getCatalog = () => (state) => ({
-  data: state.catalogNew.data,
-  error: state.catalogNew.error,
-  loading: state.catalogNew.loading,
+  data: state.catalog.data,
+  error: state.catalog.error,
+  loading: state.catalog.loading,
 });
