@@ -12,16 +12,36 @@ defmodule TrentoWeb.PrometheusControllerTest do
       |> get("/api/prometheus/targets")
       |> json_response(200)
 
-    assert Enum.all?(hosts, fn host ->
+    assert Enum.all?(hosts, fn %{id: id, hostname: hostname, ip_addresses: [ip_address | _]} ->
              %{
-               "targets" => ["#{host.ssh_address}:9100"],
+               "targets" => ["#{ip_address}:9100"],
                "labels" => %{
-                 "agentID" => "#{host.id}",
-                 "hostname" => "#{host.hostname}",
+                 "agentID" => "#{id}",
+                 "hostname" => "#{hostname}",
                  "exporter_name" => "Node Exporter"
                }
              } in response
            end)
+  end
+
+  test "should return the expected targets when some host does not have any IP address", %{
+    conn: conn
+  } do
+    %{id: id, hostname: hostname} = insert(:host, ip_addresses: [])
+
+    response =
+      conn
+      |> get("/api/prometheus/targets")
+      |> json_response(200)
+
+    %{
+      "targets" => ["#{hostname}:9100"],
+      "labels" => %{
+        "agentID" => "#{id}",
+        "hostname" => "#{hostname}",
+        "exporter_name" => "Node Exporter"
+      }
+    } in response
   end
 
   test "should return the exporters status", %{conn: conn} do

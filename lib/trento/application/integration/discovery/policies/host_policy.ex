@@ -75,7 +75,6 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp build_register_host_command(agent_id, %HostDiscoveryPayload{
          hostname: hostname,
          ip_addresses: ip_addresses,
-         ssh_address: ssh_address,
          agent_version: agent_version,
          cpu_count: cpu_count,
          total_memory_mb: total_memory_mb,
@@ -88,7 +87,6 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            host_id: agent_id,
            hostname: hostname,
            ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
-           ssh_address: ssh_address,
            agent_version: agent_version,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,

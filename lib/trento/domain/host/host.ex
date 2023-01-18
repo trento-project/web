@@ -54,7 +54,6 @@ defmodule Trento.Domain.Host do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}
-    field :ssh_address, :string
     field :agent_version, :string
     field :cpu_count, :integer
     field :total_memory_mb, :integer
@@ -88,7 +87,6 @@ defmodule Trento.Domain.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -101,7 +99,6 @@ defmodule Trento.Domain.Host do
       host_id: host_id,
       hostname: hostname,
       ip_addresses: ip_addresses,
-      ssh_address: ssh_address,
       agent_version: agent_version,
       cpu_count: cpu_count,
       total_memory_mb: total_memory_mb,
@@ -117,7 +114,6 @@ defmodule Trento.Domain.Host do
         %Host{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -128,7 +124,6 @@ defmodule Trento.Domain.Host do
         %RegisterHost{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -146,7 +141,6 @@ defmodule Trento.Domain.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -159,7 +153,6 @@ defmodule Trento.Domain.Host do
       host_id: host_id,
       hostname: hostname,
       ip_addresses: ip_addresses,
-      ssh_address: ssh_address,
       agent_version: agent_version,
       cpu_count: cpu_count,
       total_memory_mb: total_memory_mb,
@@ -255,7 +248,6 @@ defmodule Trento.Domain.Host do
           host_id: host_id,
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -270,7 +262,6 @@ defmodule Trento.Domain.Host do
       | host_id: host_id,
         hostname: hostname,
         ip_addresses: ip_addresses,
-        ssh_address: ssh_address,
         agent_version: agent_version,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,
@@ -286,7 +277,6 @@ defmodule Trento.Domain.Host do
         %HostDetailsUpdated{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version,
           cpu_count: cpu_count,
           total_memory_mb: total_memory_mb,
@@ -299,7 +289,6 @@ defmodule Trento.Domain.Host do
       host
       | hostname: hostname,
         ip_addresses: ip_addresses,
-        ssh_address: ssh_address,
         agent_version: agent_version,
         cpu_count: cpu_count,
         total_memory_mb: total_memory_mb,

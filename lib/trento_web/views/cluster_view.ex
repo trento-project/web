@@ -31,7 +31,6 @@ defmodule TrentoWeb.ClusterView do
           host_id: host_id,
           hostname: hostname,
           user: user,
-          ssh_address: ssh_address,
           provider_data: provider_data
         }
       }) do
@@ -39,7 +38,6 @@ defmodule TrentoWeb.ClusterView do
       host_id: host_id,
       hostname: hostname,
       user: user,
-      ssh_address: ssh_address,
       default_user: determine_default_connection_user(provider_data)
     }
   end

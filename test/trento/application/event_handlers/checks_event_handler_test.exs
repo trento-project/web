@@ -26,22 +26,20 @@ defmodule Trento.ChecksEventHandlerTest do
 
   test "should request a checks execution when the ChecksExecutionRequested event is received" do
     host_id_1 = Faker.UUID.v4()
-    host_1 = insert(:host, id: host_id_1, ssh_address: "192.168.1.1")
+    host_1 = insert(:host, id: host_id_1)
 
     host_id_2 = Faker.UUID.v4()
-    host_2 = insert(:host, id: host_id_2, ssh_address: "192.168.1.2")
+    host_2 = insert(:host, id: host_id_2)
 
     expected_hosts = [
       %{
         host_id: host_id_1,
-        ssh_address: "192.168.1.1",
         user: nil,
         default_user: "root",
         hostname: host_1.hostname
       },
       %{
         host_id: host_id_2,
-        ssh_address: "192.168.1.2",
         user: nil,
         default_user: "root",
         hostname: host_2.hostname

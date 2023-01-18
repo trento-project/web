@@ -8,7 +8,6 @@ defmodule Trento.Domain.Events.HostDetailsUpdatedTest do
       host_id = Faker.UUID.v4()
       hostname = Faker.StarWars.character()
       ip_addresses = [Faker.Internet.ip_v4_address()]
-      ssh_address = Faker.Internet.ip_v4_address()
       agent_version = Faker.Internet.slug()
       cpu_count = Enum.random(1..16)
       total_memory_mb = Enum.random(1..128)
@@ -20,7 +19,6 @@ defmodule Trento.Domain.Events.HostDetailsUpdatedTest do
                host_id: host_id,
                hostname: hostname,
                ip_addresses: ip_addresses,
-               ssh_address: ssh_address,
                agent_version: agent_version,
                cpu_count: cpu_count,
                total_memory_mb: total_memory_mb,
@@ -32,7 +30,6 @@ defmodule Trento.Domain.Events.HostDetailsUpdatedTest do
                  "host_id" => host_id,
                  "hostname" => hostname,
                  "ip_addresses" => ip_addresses,
-                 "ssh_address" => ssh_address,
                  "agent_version" => agent_version,
                  "cpu_count" => cpu_count,
                  "total_memory_mb" => total_memory_mb,

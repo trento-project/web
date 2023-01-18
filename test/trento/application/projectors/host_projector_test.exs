@@ -60,7 +60,6 @@ defmodule Trento.HostProjectorTest do
       heartbeat: heartbeat,
       hostname: hostname,
       id: id,
-      ssh_address: ssh_address,
       ip_addresses: ip_addresses,
       cluster_id: cluster_id,
       provider: provider,
@@ -70,7 +69,6 @@ defmodule Trento.HostProjectorTest do
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
     assert event.ip_addresses == host_projection.ip_addresses
-    assert event.ssh_address == host_projection.ssh_address
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat
 
@@ -83,8 +81,7 @@ defmodule Trento.HostProjectorTest do
                        id: ^id,
                        ip_addresses: ^ip_addresses,
                        provider: ^provider,
-                       provider_data: ^provider_data,
-                       ssh_address: ^ssh_address
+                       provider_data: ^provider_data
                      },
                      1000
   end
@@ -137,14 +134,12 @@ defmodule Trento.HostProjectorTest do
     %{
       agent_version: agent_version,
       hostname: hostname,
-      ip_addresses: ip_addresses,
-      ssh_address: ssh_address
+      ip_addresses: ip_addresses
     } =
       event = %HostDetailsUpdated{
         host_id: host_id,
         hostname: Faker.StarWars.character(),
         ip_addresses: [Faker.Internet.ip_v4_address()],
-        ssh_address: Faker.Internet.ip_v4_address(),
         agent_version: Faker.StarWars.planet(),
         cpu_count: Enum.random(1..16),
         total_memory_mb: Enum.random(1..128),
@@ -158,7 +153,6 @@ defmodule Trento.HostProjectorTest do
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
     assert event.ip_addresses == host_projection.ip_addresses
-    assert event.ssh_address == host_projection.ssh_address
     assert event.agent_version == host_projection.agent_version
 
     assert_broadcast "host_details_updated",
@@ -167,8 +161,7 @@ defmodule Trento.HostProjectorTest do
                        hostname: ^hostname,
                        id: ^host_id,
                        ip_addresses: ^ip_addresses,
-                       provider_data: nil,
-                       ssh_address: ^ssh_address
+                       provider_data: nil
                      },
                      1000
   end

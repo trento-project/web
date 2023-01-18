@@ -28,7 +28,6 @@ defmodule Trento.HostProjector do
       host_id: id,
       hostname: hostname,
       ip_addresses: ip_addresses,
-      ssh_address: ssh_address,
       agent_version: agent_version,
       heartbeat: heartbeat
     },
@@ -37,7 +36,6 @@ defmodule Trento.HostProjector do
         HostReadModel.changeset(%HostReadModel{id: id}, %{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version,
           heartbeat: heartbeat
         })
@@ -72,7 +70,6 @@ defmodule Trento.HostProjector do
       host_id: id,
       hostname: hostname,
       ip_addresses: ip_addresses,
-      ssh_address: ssh_address,
       agent_version: agent_version
     },
     fn multi ->
@@ -80,7 +77,6 @@ defmodule Trento.HostProjector do
         HostReadModel.changeset(%HostReadModel{id: id}, %{
           hostname: hostname,
           ip_addresses: ip_addresses,
-          ssh_address: ssh_address,
           agent_version: agent_version
         })
 
