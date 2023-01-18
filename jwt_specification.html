@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="project" content="Trento Web v1.2.0">
+
+    <title>JWT — Trento Web v1.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
+    <script src="dist/sidebar_items-7B49D5E2.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-XN2TSG4M.js"></script>
+
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+      <a href="readme.html">
+        <img src="assets/logo.svg" alt="Trento Web" class="sidebar-projectImage">
+      </a>
+
+    <div class="sidebar-projectDetails">
+      <a href="readme.html" class="sidebar-projectName" translate="no">
+Trento Web
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v1.2.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">GUIDES</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/trento-project/web/blob/main/guides/authentication/jwt_specification.md#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span>JWT</span>
+</h1>
+
+<p>The <code class="inline">web</code> dashboard is the identity provider and authentication manager of the Trento stack.
+The API endpoints of the Trento project are protected with a JWT token authentication.</p><p>To retrieve and refresh an access token, you should always refer to the web dashboard, with dedicated endpoints.</p><h2 id="login" class="section-heading">
+  <a href="#login" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">login</p>
+  </a>
+  Login
+</h2>
+<p>Endpoint: <code class="inline">/api/session</code>
+Method: POST
+Content-Type: <code class="inline">application/json</code></p><p>Body</p><pre><code class="json">{
+    &quot;username&quot;: &quot;yourusername&quot;,
+    &quot;password&quot;: &quot;yourpassword&quot;
+}</code></pre><p>Returns 401 if the credentials are invalid.</p><p><strong>Curl Example</strong></p><pre><code class="makeup bash" translate="no"><span class="">curl &#39;http://&lt;YOUR_TRENTO_INSTANCE&gt;/api/session&#39; \
+</span><span class="">  -H &#39;Accept: application/json&#39; \
+</span><span class="">  -H &#39;Content-Type: application/json&#39; \
+</span><span class="">  --data-raw &#39;{&quot;username&quot;:&quot;your_username&quot;,&quot;password&quot;:&quot;your_password&quot;}&#39; \
+</span></code></pre><p>The login endpoint returns a pair of JWT tokens, an <code class="inline">access_token</code>, used as <code class="inline">Bearer</code> token for all the API requests, and a <code class="inline">refresh_token</code> used to regenerate an <code class="inline">access_token</code> when the token expires.</p><h3 id="jwt-anatomy" class="section-heading">
+  <a href="#jwt-anatomy" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">jwt-anatomy</p>
+  </a>
+  JWT anatomy
+</h3>
+<p><strong>Access token</strong></p><pre><code class="json">{
+    &quot;aud&quot;: &quot;trento-project&quot;,
+    &quot;exp&quot;: 1673882986,
+    &quot;iat&quot;: 1673882386,
+    &quot;iss&quot;: &quot;https://github.com/trento-project/web&quot;,
+    &quot;jti&quot;: &quot;2std6abj9nni0s3kp8000lv2&quot;,
+    &quot;nbf&quot;: 1673882386,
+    &quot;sub&quot;: 1,
+    &quot;typ&quot;: &quot;Bearer&quot;
+}</code></pre><p><strong>Refresh Token</strong></p><pre><code class="json">{
+  &quot;aud&quot;: &quot;trento-project&quot;,
+  &quot;exp&quot;: 1673886911,
+  &quot;iat&quot;: 1673865311,
+  &quot;iss&quot;: &quot;https://github.com/trento-project/web&quot;,
+  &quot;jti&quot;: &quot;2stc78e75h9sgvrc9s0003f2&quot;,
+  &quot;nbf&quot;: 1673865311,
+  &quot;sub&quot;: 1,
+  &quot;typ&quot;: &quot;Refresh&quot;
+}</code></pre><p>You can distinguish the <code class="inline">access_token</code> from the <code class="inline">refresh_token</code> using the claim <code class="inline">typ</code> of the JWT.</p><p>The <code class="inline">access_token</code> has a lifespan of <strong>10 minutes</strong>, the <code class="inline">refresh_token</code> has a lifespan of <strong>6 hours</strong>.</p><p>The <code class="inline">sub</code> claim, contains the identifier of the user, in the example JWT <code class="inline">1</code>.</p><h2 id="refresh-an-access-token" class="section-heading">
+  <a href="#refresh-an-access-token" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">refresh-an-access-token</p>
+  </a>
+  Refresh an access token
+</h2>
+<p>To refresh an <code class="inline">access_token</code> when expires, you should use the <code class="inline">refresh</code> endpoint.</p><p>Endpoint: <code class="inline">/api/session/refresh</code>
+Method: POST
+Content-Type: <code class="inline">application/json</code></p><p>Body</p><pre><code class="json">{
+    &quot;refresh_token&quot;: &quot;YOUREFRESHTOKENJWT&quot;,
+}</code></pre><p>Returns 401 if the refresh token is invalid or expired.</p><p><strong>Curl Example</strong></p><pre><code class="makeup bash" translate="no"><span class="">curl &#39;http://&lt;YOUR_TRENTO_INSTANCE&gt;/api/session/refresh&#39; \
+</span><span class="">  -H &#39;Accept: application/json&#39; \
+</span><span class="">  -H &#39;Content-Type: application/json&#39; \
+</span><span class="">  --data-raw &#39;{&quot;refresh_token&quot;:&quot;YOUR_REFRESH_TOKEN&quot;}&#39; \
+</span></code></pre><p>The endpoint will return a new <code class="inline">access_token</code> with the same lifespan as all the other <code class="inline">access_token</code>.</p><p>Please refer to the <a href="https://www.trento-project.io/web/swaggerui/#/Platform/TrentoWeb.SessionController.create">OpenAPI</a> spec for further details and client generation.</p>
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="hack_on_the_trento.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Hack on the trento
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="spa_flow.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Trento Single Page Application
+        </span>
+      </a>
+
+  </div>
+</div>
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>

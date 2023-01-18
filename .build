@@ -260,6 +260,9 @@ assets/event-sourcing-cqrs.png
 assets/logo.svg
 assets/trento-architecture.png
 assets/trento-monitoring.png
+assets/trento-spa-login.png
+assets/trento-spa-refresh-failed.png
+assets/trento-spa-refresh.png
 changelog.html
 contributing.html
 dist/handlebars.runtime-NWIB6V2M.js
@@ -287,12 +290,14 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-A3A6297F.js
-dist/sidebar_items-7EDD9963.js
+dist/search_items-EC9BD9EE.js
+dist/sidebar_items-7B49D5E2.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
+jwt_specification.html
 monitoring.html
 readme.html
 search.html
+spa_flow.html
 trento-architecture.html
