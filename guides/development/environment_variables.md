@@ -39,3 +39,7 @@ Dig into [./config](https://github.com/trento-project/web/blob/main/config/) dir
 - `SMTP_PORT`
 - `SMTP_USER`
 - `SMTP_PASSWORD`
+
+**AUTHENTICATION**
+- `ACCESS_TOKEN_ENC_SECRET`
+- `REFRESH_TOKEN_ENC_SECRET`
