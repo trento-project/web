@@ -96,7 +96,7 @@ defmodule Trento.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:timex, "~> 3.7.7"},
-      {:trento_contracts, github: "trento-project/contracts", ref: "39abbf1", sparse: "elixir"},
+      {:trento_contracts, github: "trento-project/contracts", ref: "1bff79a", sparse: "elixir"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 2.0.0"},
       {:joken, "~> 2.5.0"}
