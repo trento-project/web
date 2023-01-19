@@ -3,19 +3,16 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { EOS_CANCEL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
-import classNames from 'classnames';
 
 import BackButton from '@components/BackButton';
-import { Tab } from '@headlessui/react';
-import { ChecksSelection } from '@components/ClusterDetails/ChecksSelection';
-import { getCluster } from '@state/selectors';
+import ChecksSelection from '@components/ClusterDetails/ChecksSelection';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
-import { getClusterName } from '@components/ClusterLink';
 import WarningBanner from '@components/Banners/WarningBanner';
-import { ConnectionSettings, ClusterInfoBox } from '@components/ClusterDetails';
-import { getClusterHostIDs } from '@state/selectors/cluster';
+import { getClusterName } from '@components/ClusterLink';
+import { ClusterInfoBox } from '@components/ClusterDetails';
 
-import { truncatedClusterNameClasses } from './ClusterDetails';
+import { getCluster } from '@state/selectors';
+import { getClusterHostIDs } from '@state/selectors/cluster';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
@@ -23,15 +20,6 @@ export function ClusterSettings() {
   const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
-
-  const tabsSettings = {
-    'Checks Selection': (
-      <ChecksSelection clusterId={clusterID} cluster={cluster} />
-    ),
-    'Connection Settings': (
-      <ConnectionSettings clusterId={clusterID} cluster={cluster} />
-    ),
-  };
 
   if (!cluster) {
     return <div>Loading...</div>;
@@ -44,54 +32,22 @@ export function ClusterSettings() {
       </BackButton>
       <div className="flex mb-2">
         <h1 className="text-3xl w-1/2">
-          <span className="font-medium">Cluster Settings for</span>{' '}
-          <span className={`font-bold ${truncatedClusterNameClasses}`}>
+          <span className="font-medium">Checks Selection for </span>{' '}
+          <span className="font-bold truncate w-60 inline-block align-top">
             {getClusterName(cluster)}
           </span>
         </h1>
       </div>
-      <Tab.Group manual>
-        <Tab.List className="flex p-1 space-x-1 bg-zinc-300/20 rounded">
-          {Object.keys(tabsSettings).map((tabTitle) => (
-            <Tab
-              key={tabTitle}
-              className={({ selected }) =>
-                classNames(
-                  'w-full py-2.5 text-sm leading-5 font-medium rounded',
-                  'focus:outline-none',
-                  selected
-                    ? 'bg-white shadow'
-                    : 'text-gray-800 hover:bg-white/[0.12]'
-                )
-              }
-            >
-              {tabTitle}
-            </Tab>
-          ))}
-        </Tab.List>
-        <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
-        {cluster.provider === UNKNOWN_PROVIDER && (
-          <WarningBanner>
-            The following catalog is valid for on-premise bare metal platforms.
-            <br />
-            If you are running your HANA cluster on a different platform, please
-            use results with caution
-          </WarningBanner>
-        )}
-        <Tab.Panels className="mt-2">
-          {Object.entries(tabsSettings).map(([tabTitle, tabContent]) => (
-            <Tab.Panel
-              key={tabTitle}
-              className={classNames(
-                'bg-white rounded p-3',
-                'focus:outline-none focus:ring-2 ring-offset-2 ring-white ring-opacity-60'
-              )}
-            >
-              {tabContent}
-            </Tab.Panel>
-          ))}
-        </Tab.Panels>
-      </Tab.Group>
+      <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
+      {cluster.provider === UNKNOWN_PROVIDER && (
+        <WarningBanner>
+          The following catalog is valid for on-premise bare metal platforms.
+          <br />
+          If you are running your HANA cluster on a different platform, please
+          use results with caution
+        </WarningBanner>
+      )}
+      <ChecksSelection clusterId={clusterID} cluster={cluster} />
     </div>
   );
 }
@@ -116,7 +72,6 @@ export function SavingFailedAlert({ onClose = () => {}, children }) {
 
 export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
   clusterId,
-  usingNewChecksEngine = false,
   selectedChecks,
   onClose = () => {},
   onStartExecution = () => {},
@@ -133,7 +88,6 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
         <TriggerChecksExecutionRequest
           cssClasses="tn-checks-start-execute rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
           clusterId={clusterId}
-          usingNewChecksEngine={usingNewChecksEngine}
           hosts={useSelector(getClusterHostIDs(clusterId))}
           checks={selectedChecks}
           onStartExecution={onStartExecution}

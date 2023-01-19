@@ -1,28 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import Button from '@components/Button';
+import { groupBy } from '@lib/lists';
+import classNames from 'classnames';
 
+import Button from '@components/Button';
 import ListView from '@components/ListView';
 import Pill from '@components/Pill';
 import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
-import ProviderLabel from '@components/ProviderLabel';
-
-import { groupBy } from '@lib/lists';
-
-import { getClusterName } from '@components/ClusterLink';
-import { getClusterHostIDs } from '@state/selectors/cluster';
 import HostLink from '@components/HostLink';
-
-import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
-import { getCluster } from '@state/selectors';
-import classNames from 'classnames';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
-import { useChecksResult } from '@components/ClusterDetails/hooks';
-import { executionRequested } from '@state/actions/lastExecutions';
+import ProviderLabel from '@components/ProviderLabel';
+import { getClusterName } from '@components/ClusterLink';
+import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
+
+import { getCluster } from '@state/selectors';
+import { getClusterHostIDs } from '@state/selectors/cluster';
+import {
+  updateLastExecution,
+  executionRequested,
+} from '@state/actions/lastExecutions';
+import { getLastExecution } from '@state/selectors/lastExecutions';
 import SiteDetails from './SiteDetails';
 
 export const truncatedClusterNameClasses = classNames(
@@ -70,18 +71,20 @@ const getStatusPill = (status) =>
     <Pill className="bg-red-200 text-red-800 mr-2">Unhealthy</Pill>
   );
 
-function ClusterDetails() {
+export function ClusterDetails() {
   const { clusterID } = useParams();
   const navigate = useNavigate();
 
   const cluster = useSelector(getCluster(clusterID));
 
-  const checkResults = useChecksResult(cluster);
   const dispatch = useDispatch();
-  const onStartExecution = (_, hosts, selectedChecks) => {
-    dispatch(executionRequested(clusterID, hosts, selectedChecks));
-  };
+  const lastExecution = useSelector(getLastExecution(clusterID));
   const hosts = useSelector(getClusterHostIDs(clusterID));
+  useEffect(() => {
+    dispatch(updateLastExecution(clusterID));
+  }, [dispatch]);
+
+  // FIXME: move this to a specific selector in the selectors folder
   const hostsData = useSelector((state) =>
     state.hostsList.hosts.reduce((accumulator, current) => {
       if (current.cluster_id === clusterID) {
@@ -133,7 +136,7 @@ function ClusterDetails() {
             type="primary-white"
             className="w-1/4 mx-0.5 border-green-500 border"
             size="small"
-            onClick={() => navigate(`/clusters/${clusterID}/checks/results`)}
+            onClick={() => navigate(`/clusters/${clusterID}/executions/last`)}
           >
             <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
             Show Results
@@ -144,7 +147,9 @@ function ClusterDetails() {
             disabled={!hasSelectedChecks}
             hosts={hosts}
             checks={cluster.selected_checks}
-            onStartExecution={onStartExecution}
+            onStartExecution={(_, hostList, selectedChecks) =>
+              dispatch(executionRequested(clusterID, hostList, selectedChecks))
+            }
           >
             <EOS_PLAY_CIRCLE
               className={classNames('inline-block fill-jungle-green-500', {
@@ -212,9 +217,11 @@ function ClusterDetails() {
         </div>
         <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
           <ChecksResultOverview
-            {...checkResults}
+            {...lastExecution}
             onCheckClick={(health) =>
-              navigate(`/clusters/${clusterID}/checks/results?health=${health}`)
+              navigate(
+                `/clusters/${clusterID}/executions/last?health=${health}`
+              )
             }
           />
         </div>
@@ -273,5 +280,3 @@ function ClusterDetails() {
     </div>
   );
 }
-
-export default ClusterDetails;

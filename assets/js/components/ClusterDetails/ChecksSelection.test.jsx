@@ -8,9 +8,9 @@ import { faker } from '@faker-js/faker';
 import { withState, renderWithRouter } from '@lib/test-utils';
 import { catalogCheckFactory, clusterFactory } from '@lib/test-utils/factories';
 
-import ChecksSelectionNew from './ChecksSelectionNew';
+import ChecksSelection from './ChecksSelection';
 
-describe('ClusterDetails ChecksSelectionNew component', () => {
+describe('ClusterDetails ChecksSelection component', () => {
   it('should change individual check switches accordingly if the group switch is clicked', async () => {
     const user = userEvent.setup();
 
@@ -23,7 +23,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
       clusterChecksSelection: {},
     };
     const [statefulChecksSelection] = withState(
-      <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+      <ChecksSelection clusterId={cluster.id} cluster={cluster} />,
       initialState
     );
 
@@ -67,7 +67,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
       clusterChecksSelection: {},
     };
     const [statefulChecksSelection] = withState(
-      <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+      <ChecksSelection clusterId={cluster.id} cluster={cluster} />,
       initialState
     );
 
@@ -109,7 +109,7 @@ describe('ClusterDetails ChecksSelectionNew component', () => {
       clusterChecksSelection: {},
     };
     const [statefulChecksSelection, store] = withState(
-      <ChecksSelectionNew clusterId={cluster.id} cluster={cluster} />,
+      <ChecksSelection clusterId={cluster.id} cluster={cluster} />,
       initialState
     );
 

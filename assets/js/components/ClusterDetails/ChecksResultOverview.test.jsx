@@ -5,11 +5,11 @@ import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 
-import ChecksResultOverviewNew from './ChecksResultOverviewNew';
+import ChecksResultOverview from './ChecksResultOverview';
 
-describe('ChecksResultOverviewNew component', () => {
+describe('ChecksResultOverview component', () => {
   it('should render a spinner when in loading state', () => {
-    render(<ChecksResultOverviewNew loading />);
+    render(<ChecksResultOverview loading />);
 
     expect(screen.getByRole('alert')).toBeVisible();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
@@ -19,7 +19,7 @@ describe('ChecksResultOverviewNew component', () => {
 
   it('should render an error message', () => {
     const error = faker.hacker.noun();
-    render(<ChecksResultOverviewNew error={error} />);
+    render(<ChecksResultOverview error={error} />);
 
     expect(screen.getByText(error)).toBeVisible();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
@@ -28,7 +28,7 @@ describe('ChecksResultOverviewNew component', () => {
   });
 
   it('should display a message if no last execution was found', () => {
-    render(<ChecksResultOverviewNew />);
+    render(<ChecksResultOverview />);
 
     expect(screen.getByText('No check results available.')).toBeVisible();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
@@ -49,7 +49,7 @@ describe('ChecksResultOverviewNew component', () => {
       status: 'completed',
     };
 
-    render(<ChecksResultOverviewNew data={data} />);
+    render(<ChecksResultOverview data={data} />);
 
     expect(screen.getByText('Passing')).toBeVisible();
     expect(screen.getByText(passing_count)).toBeVisible();

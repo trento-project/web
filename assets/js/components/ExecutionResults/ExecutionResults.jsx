@@ -9,19 +9,21 @@ import Modal from '@components/Modal';
 import BackButton from '@components/BackButton';
 import WarningBanner from '@components/Banners/WarningBanner';
 import LoadingBox from '@components/LoadingBox';
+import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
+import { ClusterInfoBox } from '@components/ClusterDetails';
+import NotificationBox from '@components/NotificationBox';
+
 import {
-  ResultsContainer,
-  HostResultsWrapper,
-  CheckResult,
   getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
   getCheckRemediation,
-} from '@components/ChecksResults';
-import ChecksResultFilters from '@components/ChecksResults/ChecksResultFilters';
-import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
-import { ClusterInfoBox } from '@components/ClusterDetails';
-import NotificationBox from '@components/NotificationBox';
+} from './checksUtils';
+
+import CheckResult from './CheckResult';
+import ChecksResultFilters from './ChecksResultFilters';
+import ResultsContainer from './ResultsContainer';
+import HostResultsWrapper from './HostResultsWrapper';
 
 const truncatedClusterNameClasses =
   'font-bold truncate w-60 inline-block align-top';
@@ -113,7 +115,7 @@ function ExecutionResults({
           {getCheckRemediation(catalog, selectedCheck)}
         </MarkdownContent>
       </Modal>
-      <BackButton url={`/clusters_new/${clusterID}`}>
+      <BackButton url={`/clusters/${clusterID}`}>
         Back to Cluster Details
       </BackButton>
       <div className="flex mb-4 justify-between">
@@ -145,7 +147,6 @@ function ExecutionResults({
         selectedChecks={clusterSelectedChecks}
         hosts={hosts}
         onCatalogRefresh={onCatalogRefresh}
-        usingNewChecksEngine
         onStartExecution={onStartExecution}
       >
         {executionData?.targets.map(({ agent_id: hostID, checks }) => (

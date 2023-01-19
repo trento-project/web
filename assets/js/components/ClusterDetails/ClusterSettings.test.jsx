@@ -8,31 +8,28 @@ import { withState, defaultInitialState } from '@lib/test-utils';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 
 import { Route, Routes, MemoryRouter } from 'react-router-dom';
-import { ClusterSettingsNew } from './ClusterSettingsNew';
+import { ClusterSettings } from './ClusterSettings';
 
-describe('ClusterDetails ClusterSettingsNew component', () => {
+describe('ClusterDetails ClusterSettings component', () => {
   it('should render the cluster info box and the catalog container', async () => {
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
 
-    const [StatefulChecksSettingsNew, state] = withState(
-      <ClusterSettingsNew />,
-      {
-        ...defaultInitialState,
-        catalog: { loading: false, data: catalog, error: null },
-      }
-    );
+    const [StatefulChecksSettings, state] = withState(<ClusterSettings />, {
+      ...defaultInitialState,
+      catalog: { loading: false, data: catalog, error: null },
+    });
 
     const {
       clusters: [, , , { id: clusterID }],
     } = state.getState().clustersList;
 
     render(
-      <MemoryRouter initialEntries={[`/clusters_new/${clusterID}/settings`]}>
+      <MemoryRouter initialEntries={[`/clusters/${clusterID}/settings`]}>
         <Routes>
           <Route
-            path="clusters_new/:clusterID/settings"
-            element={StatefulChecksSettingsNew}
+            path="clusters/:clusterID/settings"
+            element={StatefulChecksSettings}
           />
         </Routes>
       </MemoryRouter>

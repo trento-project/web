@@ -12,7 +12,6 @@ function ChecksSelectionHints({
   clusterId,
   selectedChecks = [],
   hosts = [],
-  usingNewChecksEngine = false,
   onStartExecution = () => {},
 }) {
   const navigate = useNavigate();
@@ -42,11 +41,7 @@ function ChecksSelectionHints({
             <Button
               className="bg-waterhole-blue mx-auto px-2 py-2 w-1/4 xs:w-full"
               onClick={() => {
-                navigate(
-                  usingNewChecksEngine
-                    ? `/clusters_new/${clusterId}/settings`
-                    : `/clusters/${clusterId}/settings`
-                );
+                navigate(`/clusters/${clusterId}/settings`);
               }}
             >
               <EOS_SETTINGS className="inline-block fill-white mr-1" />
@@ -57,7 +52,6 @@ function ChecksSelectionHints({
             <TriggerChecksExecutionRequest
               cssClasses="rounded relative w-1/4 ml-0.5 bg-waterhole-blue mx-auto px-2 py-2 w-1/4 xs:w-full text-base"
               clusterId={clusterId}
-              usingNewChecksEngine={usingNewChecksEngine}
               hosts={hosts}
               checks={selectedChecks}
               onStartExecution={onStartExecution}
