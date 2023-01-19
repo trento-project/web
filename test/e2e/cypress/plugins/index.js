@@ -18,6 +18,7 @@
 // eslint-disable-next-line no-unused-vars
 
 const http = require('http');
+const webpack = require('@cypress/webpack-preprocessor');
 let heartbeatsIntervals = [];
 
 module.exports = (on, config) => {
@@ -56,6 +57,12 @@ module.exports = (on, config) => {
       return null;
     },
   });
+
+  const webpackOptions = {
+    webpackOptions: require('../../webpack.config'),
+    watchOptions: {},
+  };
+  on('file:preprocessor', webpack(webpackOptions));
 
   return config;
 };

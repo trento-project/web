@@ -7,6 +7,7 @@ module.exports = defineConfig({
   env: {
     web_api_host: '127.0.0.1',
     web_api_port: 4000,
+    wanda_url: 'http://localhost:4001',
     heartbeat_interval: 5000,
     db_host: '127.0.0.1',
     db_port: 5432,

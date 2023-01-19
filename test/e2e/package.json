@@ -16,6 +16,7 @@
     "prettier": "2.6.2"
   },
   "dependencies": {
+    "@cypress/webpack-preprocessor": "^5.16.1",
     "npm": "^8.11.0"
   }
 }
