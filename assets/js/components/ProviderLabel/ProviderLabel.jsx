@@ -50,4 +50,14 @@ function ProviderLabel({ provider }) {
   );
 }
 
+const getLabels = (labelValue) => {
+  const labels = [];
+  Object.keys(labelValue).forEach((key) => {
+    labels.push(labelValue[key].label);
+  });
+  return labels;
+};
+
+export const providersList = getLabels(providerData);
+
 export default ProviderLabel;
