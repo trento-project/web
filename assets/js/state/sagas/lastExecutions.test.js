@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 
 import { recordSaga } from '@lib/test-utils';
 
-import { wandaClient } from '@lib/api/wanda';
+import { networkClient } from '@lib/network';
 import {
   setLastExecutionLoading,
   setLastExecution,
@@ -12,7 +12,7 @@ import {
 } from '@state/lastExecutions';
 import { updateLastExecution } from './lastExecutions';
 
-const axiosMock = new MockAdapter(wandaClient);
+const axiosMock = new MockAdapter(networkClient);
 const lastExecutionURL = (groupID) =>
   `/api/checks/groups/${groupID}/executions/last`;
 
