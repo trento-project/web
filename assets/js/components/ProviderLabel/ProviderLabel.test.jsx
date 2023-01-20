@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ProviderLabel from './ProviderLabel';
+import ProviderLabel, { providersList } from './ProviderLabel';
 
 describe('Provider Label', () => {
   it('should display an icon and label with AWS as the provider', () => {
@@ -40,5 +40,12 @@ describe('Provider Label', () => {
     expect(container.querySelector('span')).toHaveTextContent(
       'Provider not recognized'
     );
+  });
+
+  describe('providersList', () => {
+    test('returns an array of all Provider labels', () => {
+      const expectedProviderLabels = ['AWS', 'Azure', 'GCP', 'Nutanix', 'KVM'];
+      expect(providersList).toEqual(expectedProviderLabels);
+    });
   });
 });
