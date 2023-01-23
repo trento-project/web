@@ -6,48 +6,60 @@ import { groupBy } from '@lib/lists';
 
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import { providersList } from '../ProviderLabel/ProviderLabel';
+import {
+  providerData,
+  getLabels,
+  getProviderByLabel,
+} from '../ProviderLabel/ProviderLabel';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 import ProviderSelection from './ProviderSelection';
 
-const providers = ['default'].concat(providersList.slice());
+const ALL_FILTER = 'All';
+
 // eslint-disable-next-line import/prefer-default-export
 export function ChecksCatalogNew() {
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState(providers[0]);
-  const provider = selected;
+  const updatedProvider = providerData;
+  updatedProvider[''] = { label: ALL_FILTER };
+  const providerLabels = getLabels(providerData);
+
+  const [selectedProvider, setProviderSelected] = useState(ALL_FILTER);
+
   const {
     data: catalogData,
     error: catalogError,
     loading,
-  } = useSelector(getCatalog(provider));
+  } = useSelector(getCatalog());
 
   useEffect(() => {
-    setSelected(providers[0]);
-  }, [providers[0]]);
-
-  useEffect(() => {
-    if (provider === 'default') {
-      dispatch(updateCatalog());
-    } else {
-      dispatch(updateCatalog({ provider }));
-    }
-  }, [dispatch, provider]);
+    dispatch(
+      updateCatalog({
+        provider: getProviderByLabel(providerData, selectedProvider) || null,
+      })
+    );
+  }, [dispatch, selectedProvider]);
 
   return (
     <div>
-      <ProviderSelection
-        providers={providers}
-        selected={selected}
-        onChange={setSelected}
-      />
       <CatalogContainer
-        onRefresh={() => dispatch(updateCatalog({ provider }))}
+        onRefresh={() =>
+          dispatch(
+            updateCatalog({
+              provider:
+                getProviderByLabel(providerData, selectedProvider) || null,
+            })
+          )
+        }
         isCatalogEmpty={catalogData.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
+        <ProviderSelection
+          providers={providerLabels}
+          selected={selectedProvider}
+          onChange={setProviderSelected}
+        />
         <div>
           {Object.entries(groupBy(catalogData, 'group')).map(
             ([group, checks], idx) => (

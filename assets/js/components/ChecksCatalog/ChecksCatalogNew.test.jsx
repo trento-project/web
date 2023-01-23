@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen, within, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 
 import { faker } from '@faker-js/faker';
 import { withState, renderWithRouter } from '@lib/test-utils';
@@ -9,25 +10,14 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 
 import { ChecksCatalogNew } from './ChecksCatalogNew';
 
-
-
-
 describe('ChecksCatalog ChecksCatalogNew component', () => {
-
-  const stateCatalog =() => {
+  it('should render the checks catalog with fetched data', async () => {
     const groupName1 = faker.animal.cat();
     const groupName2 = faker.animal.cat();
-    const groupName3 = faker.animal.cat();
-    const groupName4 = faker.animal.cat();
-    const groupName5 = faker.animal.cat();
-    const group1 = catalogCheckFactory.buildList(5, { group: groupName1, provider: "aws" });
-    const group2 = catalogCheckFactory.buildList(5, { group: groupName2, provider: "azure" });
-    const group3 = catalogCheckFactory.buildList(5, { group: groupName3, provider: "gcp" });
-    const group4 = catalogCheckFactory.buildList(5, { group: groupName4, provider: "nutanix" });
-    const group5 = catalogCheckFactory.buildList(5, { group: groupName5, provider: "kvm" });
-    const catalog = group1.concat(group2, group3, group4, group5)
+    const group1 = catalogCheckFactory.buildList(5, { group: groupName1 });
+    const group2 = catalogCheckFactory.buildList(5, { group: groupName2 });
+    const catalog = group1.concat(group2);
 
-  
     const initialState = {
       catalogNew: { loading: false, data: catalog, error: null },
     };
@@ -35,17 +25,11 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
       <ChecksCatalogNew />,
       initialState
     );
-  return {statefulCatalog,store}
-  }
 
-
-  it('should render the checks catalog with fetched data', async () => {
-
-    const { statefulCatalog, store } = stateCatalog();
     await act(async () => renderWithRouter(statefulCatalog));
 
     const groups = await waitFor(() => screen.getAllByRole('list'));
-    expect(groups.length).toBe(5);
+    expect(groups.length).toBe(2);
 
     groups.forEach((group) => {
       const { getAllByRole } = within(group);
@@ -57,47 +41,45 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const expectedActions = [
       {
         type: 'UPDATE_CATALOG_NEW',
-        payload: {},
+        payload: { provider: null },
       },
     ];
     expect(actions).toEqual(expectedActions);
   });
 
+  it('should query the catalog with the correct provider', async () => {
+    const user = userEvent.setup();
 
+    const catalog = catalogCheckFactory.buildList(5);
 
-  it("should render the catalog only for aws", async () => {
-  
-  
-  
-  }
-  )
+    const initialState = {
+      catalogNew: { loading: false, data: catalog, error: null },
+    };
 
+    const [statefulCatalog, store] = withState(
+      <ChecksCatalogNew />,
+      initialState
+    );
 
-  it("should render the catalog only for azure", async () => {
-  
-  
-  
-  }
-  )
+    await act(async () => renderWithRouter(statefulCatalog, store));
 
-  it("should render the catalog only for gcp", async () => {
-  
-  
-  
-  }
-  )
+    await user.click(screen.getByText('All'));
 
-  it("should render the catalog only for nutanix", async () => {
-  
-  
-  
-  }
-  )
+    const providerFilter = screen.getByText('AWS');
 
-  it("should render the catalog only for kvm", async () => {
-  
-  
-  
-  }
-  )
+    await user.click(providerFilter);
+
+    const actions = store.getActions();
+    const expectedActions = [
+      {
+        type: 'UPDATE_CATALOG_NEW',
+        payload: { provider: null },
+      },
+      {
+        type: 'UPDATE_CATALOG_NEW',
+        payload: { provider: 'aws' },
+      },
+    ];
+    expect(actions).toEqual(expectedActions);
+  });
 });
