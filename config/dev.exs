@@ -97,6 +97,16 @@ config :trento, Trento.Scheduler,
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.MockRunner
 
+config :trento, Trento.Messaging.Adapters.AMQP,
+  publisher: [
+    connection: "amqp://wanda:wanda@localhost:5674"
+  ]
+
+config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
+  consumer: [
+    connection: "amqp://wanda:wanda@localhost:5674"
+  ]
+
 config :trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.MockPrometheusApi
 
