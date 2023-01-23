@@ -28,7 +28,7 @@ ENV MIX_ENV=$MIX_ENV
 RUN mix phx.digest
 RUN mix release
 
-FROM registry.suse.com/bci/bci-base:15.3 AS trento
+FROM registry.suse.com/bci/bci-base:15.4 AS trento
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
 ARG MIX_ENV=prod
 ENV LANG en_US.UTF-8

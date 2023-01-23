@@ -10,7 +10,7 @@ WORKDIR /build/web/assets
 RUN npm run tailwind:build
 RUN npm run build
 
-FROM bci/bci-base:15.3 AS release
+FROM bci/bci-base:15.4 AS release
 # Workaround for https://github.com/openSUSE/obs-build/issues/487
 RUN zypper --non-interactive in sles-release
 RUN zypper -n in elixir elixir-hex erlang-rebar3
@@ -26,7 +26,7 @@ ENV VERSION=%%VERSION%%
 RUN mix phx.digest
 RUN mix release
 
-FROM bci/bci-base:15.3 AS trento
+FROM bci/bci-base:15.4 AS trento
 # Define labels according to https://en.opensuse.org/Building_derived_containers
 # labelprefix=com.suse.trento
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
