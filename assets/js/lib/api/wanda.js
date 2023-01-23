@@ -1,16 +1,13 @@
 import axios from 'axios';
+import { networkClient } from '@lib/network'
 
 const baseURL = process.env.WANDA_URL;
 
-export const wandaClient = axios.create({
-  baseURL,
-});
-
 export const getExecutionResult = (executionID) =>
-  wandaClient.get(`/api/checks/executions/${executionID}`);
+  networkClient.get(`/api/checks/executions/${executionID}`, { baseURL: baseURL });
 
 export const getLastExecutionByGroupID = (groupID) =>
-  wandaClient.get(`/api/checks/groups/${groupID}/executions/last`);
+  networkClient.get(`/api/checks/groups/${groupID}/executions/last`, { baseURL: baseURL });
 
 export const getCatalog = (env) =>
-  wandaClient.get(`/api/checks/catalog`, { params: env });
+  networkClient.get(`/api/checks/catalog`, { baseURL: baseURL, params: env });
