@@ -8,8 +8,11 @@ defmodule Trento.Clusters do
   require Logger
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-  alias Trento.ClusterEnrichmentData
-  alias Trento.ClusterReadModel
+  alias Trento.{
+    ClusterEnrichmentData,
+    ClusterReadModel,
+    HostReadModel
+  }
 
   alias Trento.Domain.CheckResult
 
@@ -17,6 +20,8 @@ defmodule Trento.Clusters do
     CompleteChecksExecution,
     SelectChecks
   }
+
+  alias Trento.Integration.Checks
 
   alias Trento.Repo
 
@@ -41,10 +46,9 @@ defmodule Trento.Clusters do
 
   @spec request_checks_execution(String.t()) :: :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    # FIXME: The checks_adapter is a temporary adapter used while old runner and wanda coexist
-    # Once the legacy option is removed, the adapter can be removed and wanda adapter code
-    # be used directly here
-    checks_adapter().request_checks_execution(cluster_id)
+    ClusterReadModel
+    |> Repo.get(cluster_id)
+    |> maybe_request_checks_execution()
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
@@ -55,13 +59,6 @@ defmodule Trento.Clusters do
     )
     |> enrich_cluster_model_query()
     |> Repo.all()
-  end
-
-  @spec enrich_cluster_model_query(Ecto.Query.t()) :: Ecto.Query.t()
-  defp enrich_cluster_model_query(query) do
-    query
-    |> join(:left, [c], e in ClusterEnrichmentData, on: c.id == e.cluster_id)
-    |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
   end
 
   @spec enrich_cluster_model(ClusterReadModel.t()) :: ClusterReadModel.t()
@@ -96,8 +93,25 @@ defmodule Trento.Clusters do
     end)
   end
 
+  @spec update_cib_last_written(String.t(), String.t()) :: {:ok, Ecto.Schema.t()} | {:error, any}
+  def update_cib_last_written(cluster_id, cib_last_written) do
+    case Repo.get(ClusterEnrichmentData, cluster_id) do
+      nil -> %ClusterEnrichmentData{cluster_id: cluster_id}
+      enriched_cluster -> enriched_cluster
+    end
+    |> ClusterEnrichmentData.changeset(%{cib_last_written: cib_last_written})
+    |> Repo.insert_or_update()
+  end
+
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  @spec enrich_cluster_model_query(Ecto.Query.t()) :: Ecto.Query.t()
+  defp enrich_cluster_model_query(query) do
+    query
+    |> join(:left, [c], e in ClusterEnrichmentData, on: c.id == e.cluster_id)
+    |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
+  end
 
   @spec build_check_results([String.t()]) :: {:ok, [CheckResult.t()]} | {:error, any}
   defp build_check_results(checks_results) do
@@ -117,17 +131,29 @@ defmodule Trento.Clusters do
       {:ok, results}
   end
 
-  @spec update_cib_last_written(String.t(), String.t()) :: {:ok, Ecto.Schema.t()} | {:error, any}
-  def update_cib_last_written(cluster_id, cib_last_written) do
-    case Repo.get(ClusterEnrichmentData, cluster_id) do
-      nil -> %ClusterEnrichmentData{cluster_id: cluster_id}
-      enriched_cluster -> enriched_cluster
-    end
-    |> ClusterEnrichmentData.changeset(%{cib_last_written: cib_last_written})
-    |> Repo.insert_or_update()
+  defp maybe_request_checks_execution(nil), do: {:error, :cluster_not_found}
+  defp maybe_request_checks_execution(%{selected_checks: []}), do: :ok
+
+  defp maybe_request_checks_execution(%{
+         id: cluster_id,
+         provider: provider,
+         selected_checks: selected_checks
+       }) do
+    hosts_data =
+      Repo.all(
+        from h in HostReadModel,
+          select: %{host_id: h.id},
+          where: h.cluster_id == ^cluster_id
+      )
+
+    Checks.request_execution(
+      UUID.uuid4(),
+      cluster_id,
+      provider,
+      hosts_data,
+      selected_checks
+    )
   end
 
-  defp checks_adapter do
-    Application.fetch_env!(:trento, __MODULE__)[:checks_adapter]
-  end
+  defp maybe_request_checks_execution(error), do: error
 end
