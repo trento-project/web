@@ -83,8 +83,6 @@ if config_env() in [:prod, :demo] do
       connection: amqp_url
     ]
 
-  config :trento, Trento.Integration.Checks.Runner, runner_url: runner_url
-
   config :trento, :grafana,
     user: System.get_env("GRAFANA_USER") || "admin",
     password: System.get_env("GRAFANA_PASSWORD") || "admin",
@@ -141,7 +139,7 @@ if config_env() in [:prod, :demo] do
     jobs: [
       clusters_checks_execution: [
         # Runs every five minutes by default
-        schedule: "*/#{System.get_env("RUNNER_INTERVAL", "5")} * * * *"
+        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
       ]
     ]
 end

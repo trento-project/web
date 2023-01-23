@@ -8,11 +8,6 @@ defmodule Trento.Integration.Checks.Wanda do
   alias Trento.Messaging
   alias Trento.Messaging.Mapper
 
-  alias Trento.Integration.Checks.{
-    FlatCatalogDto,
-    FlatCheckDto
-  }
-
   @impl true
   def request_execution(execution_id, group_id, provider, targets, selected_checks) do
     execution_requested =
@@ -25,25 +20,5 @@ defmodule Trento.Integration.Checks.Wanda do
       )
 
     :ok = Messaging.publish("executions", execution_requested)
-  end
-
-  @impl true
-  def get_catalog do
-    {:ok,
-     %FlatCatalogDto{
-       checks: [
-         %FlatCheckDto{
-           description: "description 1",
-           group: "Group 1",
-           id: "156F64",
-           implementation: "implementation 1",
-           labels: "labels",
-           name: "test 1",
-           provider: :azure,
-           remediation: "remediation 1",
-           premium: true
-         }
-       ]
-     }}
   end
 end
