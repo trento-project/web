@@ -47,6 +47,29 @@ export const lastExecutionsSlice = createSlice({
 
       state[groupID] = lastExecutionState;
     },
+    setExecutionStarted: (state, { payload }) => {
+      const { groupID: clusterID, checks: startedChecks } = payload;
+
+      // The execution started event contains the information
+      // about the checks "really" started in the execution
+      // this checks could differ from the ones requested
+      // because for some reason the checks could be skipped by
+      // some conditions
+      // we want to make sure that only the real checks executed
+      // are present into the state when an execution occur
+
+      const targets = state[clusterID].data.targets;
+      const targetsWithCheckUsedInExecution = targets.map((target) => ({
+        ...target,
+        checks: target.checks.filter((checkID) =>
+          startedChecks.includes(checkID)
+        ),
+      }));
+
+      state[clusterID].data.targets = targetsWithCheckUsedInExecution;
+      state[clusterID].loading = false;
+      state[clusterID].error = null;
+    },
     setExecutionRequested: (state, { payload }) => {
       const { clusterID: groupID, hosts, checks } = payload;
 
@@ -71,6 +94,7 @@ export const {
   setLastExecutionEmpty,
   setLastExecutionError,
   setExecutionRequested,
+  setExecutionStarted,
 } = lastExecutionsSlice.actions;
 
 export default lastExecutionsSlice.reducer;
