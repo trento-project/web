@@ -75,6 +75,21 @@ if config_env() in [:prod, :demo] do
       For example: http://localhost:8080
       """
 
+  amqp_url =
+    System.get_env("AMQP_URL") ||
+      raise """
+      environment variable AMQP_URL is missing.
+      For example: amqp://USER:PASSWORD@HOST
+      """
+
+  config :wanda, Wanda.Messaging.Adapters.AMQP,
+    consumer: [
+      connection: amqp_url
+    ],
+    publisher: [
+      connection: amqp_url
+    ]
+
   config :trento, Trento.Integration.Checks.Runner, runner_url: runner_url
 
   config :trento, :grafana,
