@@ -70,8 +70,6 @@ defmodule TrentoWeb.Router do
          ClusterController,
          :request_checks_execution
 
-    get "/checks/catalog", CatalogController, :checks_catalog
-
     post "/hosts/:id/tags", TagsController, :add_tag,
       assigns: %{resource_type: :host},
       as: :hosts_tagging
@@ -112,7 +110,6 @@ defmodule TrentoWeb.Router do
   scope "/api", TrentoWeb do
     pipe_through :api
 
-    post "/runner/callback", ClusterController, :runner_callback
     get "/prometheus/targets", PrometheusController, :targets
   end
 
