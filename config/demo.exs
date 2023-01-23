@@ -27,5 +27,3 @@ config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Mo
 
 config :trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.MockPrometheusApi
-
-config :trento, :extra_children, [Trento.Integration.Checks.MockRunner]

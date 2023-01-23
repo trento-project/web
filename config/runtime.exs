@@ -68,13 +68,6 @@ if config_env() in [:prod, :demo] do
     ],
     secret_key_base: secret_key_base
 
-  runner_url =
-    System.get_env("RUNNER_URL") ||
-      raise """
-      environment variable RUNNER_URL is missing.
-      For example: http://localhost:8080
-      """
-
   amqp_url =
     System.get_env("AMQP_URL") ||
       raise """
