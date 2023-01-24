@@ -1,17 +1,31 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { groupBy } from '@lib/lists';
 
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
+import {
+  providerData,
+  getLabels,
+  getProviderByLabel,
+} from '@components/ProviderLabel/ProviderLabel';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
+import ProviderSelection from './ProviderSelection';
+
+const ALL_FILTER = 'All';
+const updatedProvider = {
+  default: { label: ALL_FILTER },
+  ...providerData,
+};
+const providerLabels = getLabels(updatedProvider);
 
 // eslint-disable-next-line import/prefer-default-export
 export function ChecksCatalogNew() {
   const dispatch = useDispatch();
+  const [selectedProvider, setProviderSelected] = useState(ALL_FILTER);
 
   const {
     data: catalogData,
@@ -20,20 +34,32 @@ export function ChecksCatalogNew() {
   } = useSelector(getCatalog());
 
   useEffect(() => {
-    dispatch(updateCatalog());
-  }, [dispatch]);
+    const apiParams =
+      selectedProvider === ALL_FILTER
+        ? {}
+        : { provider: getProviderByLabel(updatedProvider, selectedProvider) };
 
-  useEffect(() => {
-    getCatalog();
-  }, []);
-
+    dispatch(updateCatalog(apiParams));
+  }, [dispatch, selectedProvider]);
   return (
     <CatalogContainer
-      onRefresh={() => dispatch(updateCatalog())}
+      onRefresh={() =>
+        dispatch(
+          updateCatalog({
+            provider:
+              getProviderByLabel(providerData, selectedProvider) || null,
+          })
+        )
+      }
       isCatalogEmpty={catalogData.length === 0}
       catalogError={catalogError}
       loading={loading}
     >
+      <ProviderSelection
+        providers={providerLabels}
+        selected={selectedProvider}
+        onChange={setProviderSelected}
+      />
       <div>
         {Object.entries(groupBy(catalogData, 'group')).map(
           ([group, checks], idx) => (

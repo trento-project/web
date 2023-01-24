@@ -2,6 +2,7 @@ import React from 'react';
 
 import { screen, within, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 
 import { faker } from '@faker-js/faker';
 import { withState, renderWithRouter } from '@lib/test-utils';
@@ -41,6 +42,42 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
       {
         type: 'UPDATE_CATALOG_NEW',
         payload: {},
+      },
+    ];
+    expect(actions).toEqual(expectedActions);
+  });
+
+  it('should query the catalog with the correct provider', async () => {
+    const user = userEvent.setup();
+
+    const catalog = catalogCheckFactory.buildList(5);
+
+    const initialState = {
+      catalogNew: { loading: false, data: catalog, error: null },
+    };
+
+    const [statefulCatalog, store] = withState(
+      <ChecksCatalogNew />,
+      initialState
+    );
+
+    await act(async () => renderWithRouter(statefulCatalog, store));
+
+    await user.click(screen.getByText('All'));
+
+    const providerFilter = screen.getByText('AWS');
+
+    await user.click(providerFilter);
+
+    const actions = store.getActions();
+    const expectedActions = [
+      {
+        type: 'UPDATE_CATALOG_NEW',
+        payload: {},
+      },
+      {
+        type: 'UPDATE_CATALOG_NEW',
+        payload: { provider: 'aws' },
       },
     ];
     expect(actions).toEqual(expectedActions);
