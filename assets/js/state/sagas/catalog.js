@@ -1,5 +1,5 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
-import { getCatalog } from '@lib/api/wanda';
+import { getCatalog } from '@lib/api/checks';
 import { UPDATE_CATALOG } from '@state/actions/catalog';
 
 import {

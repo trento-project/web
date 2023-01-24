@@ -11,8 +11,10 @@ function ResultsContainer({
   clusterID,
   hasAlreadyChecksResults,
   selectedChecks = [],
+  hosts = [],
   usingNewChecksEngine = false,
   onCatalogRefresh = () => {},
+  onStartExecution = () => {},
 }) {
   if (catalogError) {
     return (
@@ -30,7 +32,9 @@ function ResultsContainer({
       <ChecksSelectionHints
         clusterId={clusterID}
         selectedChecks={selectedChecks}
+        hosts={hosts}
         usingNewChecksEngine={usingNewChecksEngine}
+        onStartExecution={onStartExecution}
       />
     );
   }

@@ -2,7 +2,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { recordSaga } from '@lib/test-utils';
 
-import { wandaClient } from '@lib/api/wanda';
+import { networkClient } from '@lib/network';
 import { updateCatalog } from './catalog';
 
 import {
@@ -12,7 +12,7 @@ import {
 } from '../catalogNew';
 
 const getCatalogUrl = '/api/checks/catalog';
-const axiosMock = new MockAdapter(wandaClient);
+const axiosMock = new MockAdapter(networkClient);
 
 describe('Catalog saga', () => {
   beforeEach(() => {

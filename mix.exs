@@ -184,12 +184,13 @@ defmodule Trento.MixProject do
       "guides/architecture/trento-architecture.md",
       "guides/development/environment_variables.md",
       "guides/development/hack_on_the_trento.md"
-    ]
+    ] ++ Path.wildcard("guides/authentication/*.md")
   end
 
   defp groups_for_extras do
     [
-      Development: [~r/guides\/development\/.?/, "CONTRIBUTING.md"]
+      Development: [~r/guides\/development\/.?/, "CONTRIBUTING.md"],
+      Authentication: [~r/guides\/authentication\/.?/]
     ]
   end
 

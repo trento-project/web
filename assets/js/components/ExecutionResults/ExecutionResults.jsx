@@ -42,10 +42,10 @@ const getLabel = (status, health, error, expectations, failedExpectations) => {
   return `${failedExpectations}/${expectations} expectations failed`;
 };
 
-function asMarkdownContent(content) {
+function MarkdownContent({ children }) {
   return (
     <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-      {content}
+      {children}
     </ReactMarkdown>
   );
 }
@@ -65,10 +65,12 @@ function ExecutionResults({
   clusterSelectedChecks = [],
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
+  onStartExecution = () => {},
 }) {
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [predicates, setPredicates] = useState([]);
+  const hosts = hostnames.map((item) => item.id);
 
   if (catalogLoading) {
     return <LoadingBox text="Loading checks execution..." />;
@@ -99,11 +101,17 @@ function ExecutionResults({
   return (
     <div>
       <Modal
-        title={asMarkdownContent(getCheckDescription(catalog, selectedCheck))}
+        title={
+          <MarkdownContent>
+            {getCheckDescription(catalog, selectedCheck)}
+          </MarkdownContent>
+        }
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       >
-        {asMarkdownContent(getCheckRemediation(catalog, selectedCheck))}
+        <MarkdownContent>
+          {getCheckRemediation(catalog, selectedCheck)}
+        </MarkdownContent>
       </Modal>
       <BackButton url={`/clusters_new/${clusterID}`}>
         Back to Cluster Details
@@ -135,8 +143,10 @@ function ExecutionResults({
         clusterID={clusterID}
         hasAlreadyChecksResults={!!(executionData || executionLoading)}
         selectedChecks={clusterSelectedChecks}
+        hosts={hosts}
         onCatalogRefresh={onCatalogRefresh}
         usingNewChecksEngine
+        onStartExecution={onStartExecution}
       >
         {executionData?.targets.map(({ agent_id: hostID, checks }) => (
           <HostResultsWrapper

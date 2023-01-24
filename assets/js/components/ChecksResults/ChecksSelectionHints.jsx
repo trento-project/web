@@ -11,7 +11,9 @@ import TrentoLogo from '@static/trento-icon.png';
 function ChecksSelectionHints({
   clusterId,
   selectedChecks = [],
+  hosts = [],
   usingNewChecksEngine = false,
+  onStartExecution = () => {},
 }) {
   const navigate = useNavigate();
 
@@ -56,6 +58,9 @@ function ChecksSelectionHints({
               cssClasses="rounded relative w-1/4 ml-0.5 bg-waterhole-blue mx-auto px-2 py-2 w-1/4 xs:w-full text-base"
               clusterId={clusterId}
               usingNewChecksEngine={usingNewChecksEngine}
+              hosts={hosts}
+              checks={selectedChecks}
+              onStartExecution={onStartExecution}
             >
               <EOS_PLAY_CIRCLE className="inline-block fill-white" /> Start
               Execution now

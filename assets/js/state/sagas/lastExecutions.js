@@ -4,7 +4,7 @@ import {
   UPDATE_LAST_EXECUTION,
   EXECUTION_REQUESTED,
 } from '@state/actions/lastExecutions';
-import { getLastExecutionByGroupID } from '@lib/api/wanda';
+import { getLastExecutionByGroupID } from '@lib/api/checks';
 import {
   setLastExecutionLoading,
   setLastExecution,
