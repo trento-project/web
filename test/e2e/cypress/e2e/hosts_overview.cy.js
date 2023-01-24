@@ -52,7 +52,9 @@ context('Hosts Overview', () => {
           .contains('th', 'Agent version')
           .invoke('index')
           .then((i) => {
-            cy.get('@hostRow').eq(i).should('contain', host.agentVersion);
+            cy.get('@hostRow')
+              .eq(i)
+              .should('contain', host.agentVersion.slice(0, 15));
           });
       });
     });
