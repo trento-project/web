@@ -17,7 +17,7 @@ function DatabaseDetails() {
 
   return (
     <>
-      <BackButton url={`/databases`}>Back to HANA Databases</BackButton>
+      <BackButton url="/databases">Back to HANA Databases</BackButton>
       <GenericSystemDetails
         title="HANA Database Details"
         type={DATABASE_TYPE}

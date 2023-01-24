@@ -17,7 +17,7 @@ function SapSystemDetails() {
 
   return (
     <>
-      <BackButton url={`/sap_systems`}>Back to SAP Systems</BackButton>
+      <BackButton url="/sap_systems">Back to SAP Systems</BackButton>
       <GenericSystemDetails
         title="SAP System Details"
         type={APPLICATION_TYPE}
