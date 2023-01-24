@@ -10,7 +10,7 @@ import {
   providerData,
   getLabels,
   getProviderByLabel,
-} from '../ProviderLabel/ProviderLabel';
+} from '@components/ProviderLabel/ProviderLabel';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 import ProviderSelection from './ProviderSelection';
