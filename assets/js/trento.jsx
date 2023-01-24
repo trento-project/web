@@ -52,48 +52,53 @@ function App() {
         >
           <Routes>
             <Route path="/session/new" element={<Login />} />
-            <Route path="/" element={<Layout />}>
+            <Route path="/">
               <Route
                 element={
                   <Guard redirectPath="/session/new" getUser={getUser} />
                 }
               >
-                <Route
-                  path="clusters_new/:clusterID/settings"
-                  element={<ClusterSettingsNew />}
-                />
-                <Route
-                  path="clusters_new/:clusterID/executions/last"
-                  element={<ExecutionResultsPage />}
-                />
-                <Route
-                  path="clusters_new/:clusterID"
-                  element={<ClusterDetailsNew />}
-                />
-                <Route index element={<Home />} />
-                <Route index path="hosts" element={<HostsList />} />
-                <Route path="clusters" element={<ClustersList />} />
-                <Route path="sap_systems" element={<SapSystemsOverview />} />
-                <Route path="databases" element={<DatabasesOverview />} />
-                <Route path="catalog" element={<ChecksCatalog />} />
-                <Route path="catalog_new" element={<ChecksCatalogNew />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="about" element={<AboutPage />} />
-                <Route
-                  path="clusters/:clusterID/settings"
-                  element={<ClusterSettings />}
-                />
-                <Route
-                  path="clusters/:clusterID/checks/results"
-                  element={<ChecksResults />}
-                />
-                <Route path="hosts/:hostID" element={<HostDetails />} />
-                <Route path="sap_systems/:id" element={<SapSystemDetails />} />
-                <Route path="databases/:id" element={<DatabaseDetails />} />
-                <Route
-                  path="clusters/:clusterID"
-                  element={<ClusterDetails />}
-                />
+                <Route element={<Layout />}>
+                  <Route
+                    path="clusters_new/:clusterID/settings"
+                    element={<ClusterSettingsNew />}
+                  />
+                  <Route
+                    path="clusters_new/:clusterID/executions/last"
+                    element={<ExecutionResultsPage />}
+                  />
+                  <Route
+                    path="clusters_new/:clusterID"
+                    element={<ClusterDetailsNew />}
+                  />
+                  <Route index element={<Home />} />
+                  <Route index path="hosts" element={<HostsList />} />
+                  <Route path="clusters" element={<ClustersList />} />
+                  <Route path="sap_systems" element={<SapSystemsOverview />} />
+                  <Route path="databases" element={<DatabasesOverview />} />
+                  <Route path="catalog" element={<ChecksCatalog />} />
+                  <Route path="catalog_new" element={<ChecksCatalogNew />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="about" element={<AboutPage />} />
+                  <Route
+                    path="clusters/:clusterID/settings"
+                    element={<ClusterSettings />}
+                  />
+                  <Route
+                    path="clusters/:clusterID/checks/results"
+                    element={<ChecksResults />}
+                  />
+                  <Route path="hosts/:hostID" element={<HostDetails />} />
+                  <Route
+                    path="sap_systems/:id"
+                    element={<SapSystemDetails />}
+                  />
+                  <Route path="databases/:id" element={<DatabaseDetails />} />
+                  <Route
+                    path="clusters/:clusterID"
+                    element={<ClusterDetails />}
+                  />
+                </Route>
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
