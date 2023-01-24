@@ -2,7 +2,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { groupBy } from '@lib/lists';
 
 context('Checks catalog', () => {
-  const wandaCatalogURL = `${Cypress.env('wanda_url')}/api/checks/catalog`;
+  const wandaCatalogURL = `**/api/checks/catalog`;
 
   const group1 = catalogCheckFactory.buildList(2, { group: 'Group 1' });
   const group2 = catalogCheckFactory.buildList(2, { group: 'Group 2' });
@@ -12,13 +12,9 @@ context('Checks catalog', () => {
   before(() => {
     cy.visit('/catalog');
     cy.url().should('include', '/catalog');
-    cy.intercept(
-      wandaCatalogURL,
-      { times: 1 },
-      {
-        body: { items: catalog },
-      }
-    );
+    cy.intercept(wandaCatalogURL, {
+      body: { items: catalog },
+    });
   });
 
   describe('Checks catalog should be available', () => {
@@ -50,13 +46,9 @@ context('Checks catalog', () => {
       ['gcp', 'GCP', 4],
     ].forEach(([provider, label, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
-        cy.intercept(
-          `${wandaCatalogURL}?provider=${provider}`,
-          { times: 1 },
-          {
-            body: { items: catalog.slice(0, checkCount) },
-          }
-        ).as('request');
+        cy.intercept(`${wandaCatalogURL}?provider=${provider}`, {
+          body: { items: catalog.slice(0, checkCount) },
+        }).as('request');
 
         cy.get('.cloud-provider-selection-dropdown').click();
         cy.get('.cloud-provider-selection-dropdown')
@@ -87,7 +79,7 @@ context('Checks catalog', () => {
 
   describe('Catalog error', () => {
     it('should show an error notification if the catalog cannot be obtained', () => {
-      cy.intercept(wandaCatalogURL, { times: 1 }, { forceNetworkError: true });
+      cy.intercept(wandaCatalogURL, { forceNetworkError: true });
       cy.visit('/catalog');
       cy.contains('Network Error');
       cy.contains('Try again');
