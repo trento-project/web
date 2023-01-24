@@ -16,14 +16,15 @@ import CheckItem from './CheckItem';
 import ProviderSelection from './ProviderSelection';
 
 const ALL_FILTER = 'All';
+const updatedProvider = {
+  default: { label: ALL_FILTER },
+  ...providerData,
+};
+const providerLabels = getLabels(updatedProvider);
 
 // eslint-disable-next-line import/prefer-default-export
 export function ChecksCatalogNew() {
   const dispatch = useDispatch();
-  const updatedProvider = providerData;
-  updatedProvider[''] = { label: ALL_FILTER };
-  const providerLabels = getLabels(providerData);
-
   const [selectedProvider, setProviderSelected] = useState(ALL_FILTER);
 
   const {
@@ -33,13 +34,13 @@ export function ChecksCatalogNew() {
   } = useSelector(getCatalog());
 
   useEffect(() => {
-    dispatch(
-      updateCatalog({
-        provider: getProviderByLabel(providerData, selectedProvider) || null,
-      })
-    );
-  }, [dispatch, selectedProvider]);
+    const apiParams =
+      selectedProvider === ALL_FILTER
+        ? {}
+        : { provider: getProviderByLabel(updatedProvider, selectedProvider) };
 
+    dispatch(updateCatalog(apiParams));
+  }, [dispatch, selectedProvider]);
   return (
     <div>
       <CatalogContainer

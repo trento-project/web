@@ -41,7 +41,7 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const expectedActions = [
       {
         type: 'UPDATE_CATALOG_NEW',
-        payload: { provider: null },
+        payload: {},
       },
     ];
     expect(actions).toEqual(expectedActions);
@@ -73,7 +73,7 @@ describe('ChecksCatalog ChecksCatalogNew component', () => {
     const expectedActions = [
       {
         type: 'UPDATE_CATALOG_NEW',
-        payload: { provider: null },
+        payload: {},
       },
       {
         type: 'UPDATE_CATALOG_NEW',
