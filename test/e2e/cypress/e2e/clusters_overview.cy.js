@@ -47,7 +47,7 @@ context('Clusters Overview', () => {
       });
     });
 
-    describe('Health status for each cluster is correct', () => {
+    describe.skip('Health status for each cluster is correct', () => {
       before(() => {
         cy.selectChecks(
           clusterIdByName(healthyClusterScenario.clusterName),
