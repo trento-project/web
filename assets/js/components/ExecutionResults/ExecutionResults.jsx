@@ -78,6 +78,10 @@ function ExecutionResults({
     return <LoadingBox text="Loading checks execution..." />;
   }
 
+  if(executionLoading) {
+    return <LoadingBox text="Checks execution starting..." />;
+  }
+
   if (catalogError || executionError) {
     return (
       <NotificationBox
