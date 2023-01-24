@@ -166,7 +166,10 @@ function HostsList() {
       provider: host.provider,
       sid: sapSystemList.map((sapSystem) => sapSystem.sid),
       cluster,
-      agent_version: host.agent_version,
+      agent_version:
+        host.agent_version.length > 15
+          ? `${host.agent_version.slice(0, 15)}...`
+          : host.agent_version,
       id: host.id,
       tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
       sap_systems: sapSystemList,
@@ -176,13 +179,16 @@ function HostsList() {
   const counters = getCounters(data || []);
   return (
     <>
-      <HealthSummary {...counters} className="mb-8" />
-      <Table
-        config={config}
-        data={data}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-      />
+      <h1 className="text-3xl font-semibold pb-4">Hosts</h1>
+      <div className="bg-white rounded-lg shadow">
+        <HealthSummary {...counters} className="px-4 py-2" />
+        <Table
+          config={config}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+        />
+      </div>
     </>
   );
 }

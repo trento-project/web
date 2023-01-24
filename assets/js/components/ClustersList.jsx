@@ -134,13 +134,16 @@ function ClustersList() {
 
   return (
     <>
-      <HealthSummary {...counters} className="mb-8" />
-      <Table
-        config={config}
-        data={data}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-      />
+      <h1 className="text-3xl font-semibold pb-4">Clusters</h1>
+      <div className="bg-white rounded-lg shadow">
+        <HealthSummary {...counters} className="px-4 py-2" />
+        <Table
+          config={config}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+        />
+      </div>
     </>
   );
 }
