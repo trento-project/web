@@ -1,7 +1,5 @@
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
-import { checkDataByProvider } from '../fixtures/checks-catalog/available_checks';
-
 context('HANA database details', () => {
   before(() => {
     cy.visit(`/clusters/${availableHanaCluster.id}`);
@@ -211,7 +209,7 @@ context('HANA database details', () => {
     it(`should show the default catalog`, () => {
       cy.contains('button', 'Settings').click();
       cy.contains('Corosync').click();
-      cy.get('li').first().contains(checkDataByProvider.get('default'));
+      cy.get('li').first().contains(5000);
     });
   });
 
@@ -224,7 +222,7 @@ context('HANA database details', () => {
     it(`should show the default catalog`, () => {
       cy.contains('button', 'Settings').click();
       cy.contains('Corosync').click();
-      cy.get('li').first().contains(checkDataByProvider.get('default'));
+      cy.get('li').first().contains(5000);
     });
   });
 });

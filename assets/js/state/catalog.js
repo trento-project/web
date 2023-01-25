@@ -1,43 +1,32 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const errorMessages = {
-  not_ready: 'The catalog is being built. Try again in some few moments',
-  default: 'Unexpected error happened trying to get the checks catalog',
-};
-
 const initialState = {
-  loading: false,
+  loading: true,
   data: [],
-  errorCode: '',
-  error: '',
+  error: null,
 };
 
 export const catalogSlice = createSlice({
   name: 'catalog',
   initialState,
   reducers: {
-    setCatalog: (state, action) => {
-      if (action.payload.loading) {
-        state.loading = true;
-        return;
-      }
-
+    setCatalogLoading: (state) => {
+      state.loading = true;
+    },
+    setCatalogData: (state, action) => {
+      state.data = action.payload.data;
+      state.error = null;
       state.loading = false;
-
-      if (Object.prototype.hasOwnProperty.call(action.payload, 'error')) {
-        state.errorCode = action.payload.error;
-        state.error =
-          errorMessages[action.payload.error] || errorMessages.default;
-        state.data = [];
-        return;
-      }
-      state.errorCode = '';
-      state.error = '';
-      state.data = action.payload;
+    },
+    setCatalogError: (state, action) => {
+      state.data = [];
+      state.error = action.payload.error;
+      state.loading = false;
     },
   },
 });
 
-export const { setCatalog } = catalogSlice.actions;
+export const { setCatalogLoading, setCatalogData, setCatalogError } =
+  catalogSlice.actions;
 
 export default catalogSlice.reducer;

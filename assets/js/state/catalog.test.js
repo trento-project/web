@@ -1,8 +1,8 @@
-import catalogNewReducer, {
+import catalogReducer, {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
-} from './catalogNew';
+} from './catalog';
 
 describe('Catalog reducer', () => {
   it('should set catalog on loading state', () => {
@@ -16,7 +16,7 @@ describe('Catalog reducer', () => {
       loading: true,
     };
 
-    expect(catalogNewReducer(initialState, action)).toEqual(expectedState);
+    expect(catalogReducer(initialState, action)).toEqual(expectedState);
   });
 
   it('should set catalog data', () => {
@@ -33,7 +33,7 @@ describe('Catalog reducer', () => {
       error: null,
     };
 
-    const actual = catalogNewReducer(initialState, action);
+    const actual = catalogReducer(initialState, action);
 
     expect(actual).toEqual(expectedState);
   });
@@ -55,7 +55,7 @@ describe('Catalog reducer', () => {
       error,
     };
 
-    const actual = catalogNewReducer(initialState, action);
+    const actual = catalogReducer(initialState, action);
 
     expect(actual).toEqual(expectedState);
   });

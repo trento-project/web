@@ -5,11 +5,7 @@ import { recordSaga } from '@lib/test-utils';
 import { networkClient } from '@lib/network';
 import { updateCatalog } from './catalog';
 
-import {
-  setCatalogLoading,
-  setCatalogData,
-  setCatalogError,
-} from '../catalogNew';
+import { setCatalogLoading, setCatalogData, setCatalogError } from '../catalog';
 
 const getCatalogUrl = '/api/checks/catalog';
 const axiosMock = new MockAdapter(networkClient);
