@@ -10,7 +10,7 @@ defmodule TrentoWeb.SessionView do
   end
 
   def render("invalid_credentials.json", _args) do
-    %{error: "Invalid email or password"}
+    %{error: "Invalid username or password"}
   end
 
   def render("unauthorized.json", _args) do

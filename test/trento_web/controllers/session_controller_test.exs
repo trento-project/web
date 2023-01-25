@@ -192,7 +192,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"error" => "Invalid email or password"} = resp
+      assert %{"error" => "Invalid username or password"} = resp
     end
   end
 end
