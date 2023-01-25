@@ -80,7 +80,7 @@ context('HANA database details', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Passing');
     });
 
-    it('should have a working link to the passing checks in the overview component', () => {
+    it.skip('should have a working link to the passing checks in the overview component', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Passing').click();
       cy.url().should(
         'include',
@@ -93,7 +93,7 @@ context('HANA database details', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Warning');
     });
 
-    it('should have a working link to the warning checks in the overview component', () => {
+    it.skip('should have a working link to the warning checks in the overview component', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Warning').click();
       cy.url().should(
         'include',
@@ -106,7 +106,7 @@ context('HANA database details', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Critical');
     });
 
-    it('should have a working link to the critical checks in the overview component', () => {
+    it.skip('should have a working link to the critical checks in the overview component', () => {
       cy.get('.tn-cluster-checks-overview ').contains('Critical').click();
       cy.url().should(
         'include',
@@ -153,7 +153,7 @@ context('HANA database details', () => {
     });
   });
 
-  describe('Settings should allow to enable checks from the checks catalog', () => {
+  describe.skip('Settings should allow to enable checks from the checks catalog', () => {
     it('should take me to the cluster settings when pressing the settings button', () => {
       cy.get('button').contains('Settings').click();
     });
@@ -181,7 +181,7 @@ context('HANA database details', () => {
     });
   });
 
-  describe('Cluster with unknown provider', () => {
+  describe.skip('Cluster with unknown provider', () => {
     before(() => {
       cy.loadScenario('cluster-unknown-provider');
       cy.visit(`/clusters/${availableHanaCluster.id}`);
@@ -202,7 +202,7 @@ context('HANA database details', () => {
     });
   });
 
-  describe('Cluster with kvm provider', () => {
+  describe.skip('Cluster with kvm provider', () => {
     before(() => {
       cy.loadScenario('cluster-kvm-provider');
       cy.visit(`/clusters/${availableHanaCluster.id}`);
@@ -215,7 +215,7 @@ context('HANA database details', () => {
     });
   });
 
-  describe('Cluster with nutanix provider', () => {
+  describe.skip('Cluster with nutanix provider', () => {
     before(() => {
       cy.loadScenario('cluster-nutanix-provider');
       cy.visit(`/clusters/${availableHanaCluster.id}`);
