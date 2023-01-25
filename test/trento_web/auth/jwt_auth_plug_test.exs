@@ -37,7 +37,7 @@ defmodule TrentoWeb.JWTAuthPlugTest do
   end
 
   describe "renew/2" do
-    test "should put in conn private a renewd access token if the refresh token is valid", %{
+    test "should renew a token and put it in the conn private if the refresh token is valid", %{
       conn: conn
     } do
       valid_refresh = RefreshToken.generate_refresh_token!(%{"sub" => 1})
