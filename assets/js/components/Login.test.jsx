@@ -35,7 +35,26 @@ describe('Login component', () => {
     expect(window.location.pathname).toEqual('/');
   });
 
-  it('should show a toast with an error if there are authorization errors', async () => {
+  it('should show a message if the authentication request returns a 401', async () => {
+    const [StatefulLogin] = withState(<Login />, {
+      user: {
+        authError: { message: 'Unauthorized', code: 401 },
+      },
+    });
+
+    renderWithRouter(StatefulLogin);
+
+    await waitFor(() => screen.getByText('Invalid credentials'));
+
+    ['username', 'password'].forEach((id) => {
+      const element = screen.getByTestId(`login-${id}`);
+      expect(element).toHaveClass('border-red-300');
+    });
+  });
+
+  it('should show a toast if an error occurs during the authentication and the error code is not 401', async () => {
+    const error = { message: 'Error', code: 500 };
+
     const [StatefulLogin] = withState(
       <>
         <Toaster position="top-right" />
@@ -43,7 +62,7 @@ describe('Login component', () => {
       </>,
       {
         user: {
-          authError: true,
+          authError: error,
         },
       }
     );
@@ -51,7 +70,9 @@ describe('Login component', () => {
     renderWithRouter(StatefulLogin);
 
     await waitFor(() =>
-      screen.getByText('An error occurred during login, try again')
+      screen.getByText(
+        `An error occurred during login, try again: ${error.message}`
+      )
     );
   });
 
