@@ -42,7 +42,10 @@ describe('user login saga', () => {
 
     expect(dispatched).toContainEqual(setAuthInProgress());
     expect(dispatched).toContainEqual(
-      setAuthError({ error: 'Request failed with status code 401' })
+      setAuthError({
+        message: 'Request failed with status code 401',
+        code: 401,
+      })
     );
     expect(getAccessTokenFromStore()).toEqual(null);
     expect(getRefreshTokenFromStore()).toEqual(null);
