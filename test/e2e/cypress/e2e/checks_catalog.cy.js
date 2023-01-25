@@ -2,7 +2,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { groupBy } from '@lib/lists';
 
 context('Checks catalog', () => {
-  const wandaCatalogURL = `**/api/checks/catalog`;
+  const checksCatalogURL = `**/api/checks/catalog`;
 
   const group1 = catalogCheckFactory.buildList(2, { group: 'Group 1' });
   const group2 = catalogCheckFactory.buildList(2, { group: 'Group 2' });
@@ -12,7 +12,7 @@ context('Checks catalog', () => {
   before(() => {
     cy.visit('/catalog');
     cy.url().should('include', '/catalog');
-    cy.intercept(wandaCatalogURL, {
+    cy.intercept(checksCatalogURL, {
       body: { items: catalog },
     });
   });
@@ -46,7 +46,7 @@ context('Checks catalog', () => {
       ['gcp', 'GCP', 4],
     ].forEach(([provider, label, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
-        cy.intercept(`${wandaCatalogURL}?provider=${provider}`, {
+        cy.intercept(`${checksCatalogURL}?provider=${provider}`, {
           body: { items: catalog.slice(0, checkCount) },
         }).as('request');
 
@@ -79,7 +79,7 @@ context('Checks catalog', () => {
 
   describe('Catalog error', () => {
     it('should show an error notification if the catalog cannot be obtained', () => {
-      cy.intercept(wandaCatalogURL, { forceNetworkError: true });
+      cy.intercept(checksCatalogURL, { forceNetworkError: true });
       cy.visit('/catalog');
       cy.contains('Network Error');
       cy.contains('Try again');
