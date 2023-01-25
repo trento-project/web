@@ -3,6 +3,7 @@ import Table from '@components/Table';
 import HealthIcon from '@components/Health/HealthIcon';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import PageHeader from '@components/PageHeader';
 import HealthSummary from '@components/HealthSummary';
 import useQueryStringValues from '@hooks/useQueryStringValues';
 import { getCounters, isMostRelevantPrio } from './summarySelection';
@@ -132,7 +133,7 @@ export function HomeHealthSummary() {
     <div>Loading...</div>
   ) : (
     <div data-testid="home-health-summary">
-      <h1 className="text-2xl font-semibold">At a glance</h1>
+      <PageHeader>At a glance</PageHeader>
       <hr className="my-3" />
       <h5 className="text-xl">Global Health</h5>
 

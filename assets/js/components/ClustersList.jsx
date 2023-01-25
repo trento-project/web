@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Table from '@components/Table';
 import Tags from '@components/Tags';
+import PageHeader from '@components/PageHeader';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
@@ -134,7 +135,9 @@ function ClustersList() {
 
   return (
     <>
-      <h1 className="text-3xl font-semibold pb-4">Clusters</h1>
+      <PageHeader>
+        <span className="font-bold">Clusters</span>
+      </PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table

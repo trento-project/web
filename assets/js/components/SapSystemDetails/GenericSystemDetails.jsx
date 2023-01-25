@@ -1,6 +1,7 @@
 import React from 'react';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
+import PageHeader from '@components/PageHeader';
 import {
   EOS_APPLICATION_OUTLINED,
   EOS_DATABASE_OUTLINED,
@@ -31,9 +32,9 @@ export function GenericSystemDetails({ title, type, system }) {
 
   return (
     <div>
-      <div className="flex">
-        <h1 className="text-3xl font-bold">{title}</h1>
-      </div>
+      <PageHeader>
+        <span className="font-bold">{title}</span>
+      </PageHeader>
 
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView

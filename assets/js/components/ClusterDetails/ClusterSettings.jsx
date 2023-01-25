@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { EOS_CANCEL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
+import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import ChecksSelection from '@components/ClusterDetails/ChecksSelection';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
@@ -30,14 +31,10 @@ export function ClusterSettings() {
       <BackButton url={`/clusters/${clusterID}`}>
         Back to Cluster Details
       </BackButton>
-      <div className="flex mb-2">
-        <h1 className="text-3xl w-1/2">
-          <span className="font-medium">Checks Selection for </span>{' '}
-          <span className="font-bold truncate w-60 inline-block align-top">
-            {getClusterName(cluster)}
-          </span>
-        </h1>
-      </div>
+      <PageHeader>
+        Cluster Settings for{' '}
+        <span className="font-bold">{getClusterName(cluster)}</span>
+      </PageHeader>
       <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
       {cluster.provider === UNKNOWN_PROVIDER && (
         <WarningBanner>

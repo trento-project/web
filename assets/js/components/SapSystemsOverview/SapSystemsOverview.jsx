@@ -2,6 +2,7 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
+import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import SAPSystemItemOverview from '@components/SapSystemsOverview/SapSystemItemOverview';
@@ -134,7 +135,9 @@ function SapSystemsOverview() {
     'Loading SAP Systems...'
   ) : (
     <>
-      <h1 className="text-3xl font-semibold pb-4">SAP Systems</h1>
+      <PageHeader>
+        <span className="font-bold">SAP Systems</span>
+      </PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table

@@ -7,6 +7,7 @@ import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
+import PageHeader from '@components/PageHeader';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { post, del } from '@lib/network';
@@ -122,9 +123,9 @@ function HostsList() {
             className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
             style={{
               overflow: 'hidden',
-              'text-overflow': 'ellipsis',
-              'white-space': 'nowrap',
-              'max-width': '115px',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '115px',
               width: '115px',
               display: 'inline-block',
             }}
@@ -186,7 +187,9 @@ function HostsList() {
   const counters = getCounters(data || []);
   return (
     <>
-      <h1 className="text-3xl font-semibold pb-4">Hosts</h1>
+      <PageHeader>
+        <span className="font-bold">Hosts</span>
+      </PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table

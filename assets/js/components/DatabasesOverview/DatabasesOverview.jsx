@@ -2,6 +2,7 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
+import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import Tags from '@components/Tags';
@@ -147,7 +148,9 @@ function DatabasesOverview() {
     'Loading HANA Databases...'
   ) : (
     <>
-      <h1 className="text-3xl font-semibold pb-4">HANA Databases</h1>
+      <PageHeader>
+        <span className="font-bold">HANA Databases</span>
+      </PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
