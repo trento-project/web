@@ -1,9 +1,23 @@
+import { checksExecutionCompletedFactory } from '@lib/test-utils/factories';
+
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
-context('HANA database details', () => {
+context('HANA cluster details', () => {
+  const lastExecutionURL = `**/api/checks/groups/**/executions/last`;
+  const lastExecution = checksExecutionCompletedFactory.build({
+    group_id: availableHanaCluster.id,
+    passing_count: 5,
+    warning_count: 3,
+    critical_count: 1,
+  });
+
   before(() => {
+    cy.intercept(lastExecutionURL, {
+      body: lastExecution,
+    }).as('lastExecution');
     cy.visit(`/clusters/${availableHanaCluster.id}`);
     cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
+    cy.wait('@lastExecution');
   });
 
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
@@ -75,7 +89,11 @@ context('HANA database details', () => {
     });
 
     it('should have the check overview component with passing checks', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Passing');
+      cy.get('.tn-cluster-checks-overview ')
+        .contains('Passing')
+        .parent()
+        .next()
+        .contains(lastExecution.passing_count);
     });
 
     it.skip('should have a working link to the passing checks in the overview component', () => {
@@ -88,7 +106,11 @@ context('HANA database details', () => {
     });
 
     it('should have the check overview component with warning checks', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Warning');
+      cy.get('.tn-cluster-checks-overview ')
+        .contains('Warning')
+        .parent()
+        .next()
+        .contains(lastExecution.warning_count);
     });
 
     it.skip('should have a working link to the warning checks in the overview component', () => {
@@ -101,7 +123,11 @@ context('HANA database details', () => {
     });
 
     it('should have the check overview component with critical checks', () => {
-      cy.get('.tn-cluster-checks-overview ').contains('Critical');
+      cy.get('.tn-cluster-checks-overview ')
+        .contains('Critical')
+        .parent()
+        .next()
+        .contains(lastExecution.critical_count);
     });
 
     it.skip('should have a working link to the critical checks in the overview component', () => {
