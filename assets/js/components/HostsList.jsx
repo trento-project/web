@@ -118,7 +118,17 @@ function HostsList() {
         title: 'Agent version',
         key: 'agent_version',
         render: (content) => (
-          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          <span
+            className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+            style={{
+              overflow: 'hidden',
+              'text-overflow': 'ellipsis',
+              'white-space': 'nowrap',
+              'max-width': '115px',
+              width: '115px',
+              display: 'inline-block',
+            }}
+          >
             {content}
           </span>
         ),
@@ -166,10 +176,7 @@ function HostsList() {
       provider: host.provider,
       sid: sapSystemList.map((sapSystem) => sapSystem.sid),
       cluster,
-      agent_version:
-        host.agent_version.length > 15
-          ? `${host.agent_version.slice(0, 15)}...`
-          : host.agent_version,
+      agent_version: host.agent_version,
       id: host.id,
       tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
       sap_systems: sapSystemList,

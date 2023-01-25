@@ -15,7 +15,7 @@ describe('HostsLists component', () => {
         provider: 'Azure',
         cluster: 'hana_cluster_1',
         sid: 'HDD',
-        version: '1.1.0+git.dev17...',
+        version: '1.1.0+git.dev17.1660137228.fe5ba8a',
       },
       {
         host: 'vmnwqas03',
@@ -23,7 +23,7 @@ describe('HostsLists component', () => {
         provider: '',
         cluster: '',
         sid: 'NWQ',
-        version: '1.1.0+git.dev17...',
+        version: '1.1.0+git.dev17.1660137228.fe5ba8a',
       },
     ].forEach(({ host, ip, provider, cluster, sid, version }) => {
       it(`should show the correct values in the hosts list for host ${host}`, () => {
