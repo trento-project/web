@@ -5,7 +5,6 @@
     "hostname": "vmnwprd03",
     "cpu_count": 2,
     "os_version": "15-SP3",
-    "ssh_address": "10.80.1.23",
     "ip_addresses": [
       "127.0.0.1",
       "::1",

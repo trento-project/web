@@ -110,7 +110,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.31',
     tags: [{ value: 'tag1' }, { value: 'tag2' }, { value: 'tag3' }],
   },
   {
@@ -224,7 +223,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.32',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -338,7 +336,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.31',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -452,7 +449,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.32',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -566,7 +562,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.31',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -680,7 +675,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.32',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -794,7 +788,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.11',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -908,7 +901,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.12',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1022,7 +1014,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.11',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1136,7 +1127,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.12',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1250,7 +1240,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.11',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1364,7 +1353,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.12',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1478,7 +1466,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.4',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1592,7 +1579,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.4',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1706,7 +1692,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.4',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1820,7 +1805,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.21',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -1934,7 +1918,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.22',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2048,7 +2031,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.23',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2162,7 +2144,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.100.1.24',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2276,7 +2257,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.21',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2390,7 +2370,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.22',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2504,7 +2483,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.23',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2618,7 +2596,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.80.1.24',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2732,7 +2709,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.21',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2846,7 +2822,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.22',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -2951,7 +2926,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.23',
     tags: [{ value: 'tag1' }],
   },
   {
@@ -3056,7 +3030,6 @@ export default [
         version: '15.3',
       },
     ],
-    ssh_address: '10.90.1.24',
     tags: [{ value: 'tag1' }],
   },
 ];

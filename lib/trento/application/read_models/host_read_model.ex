@@ -18,7 +18,6 @@ defmodule Trento.HostReadModel do
   schema "hosts" do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
-    field :ssh_address, :string
     field :agent_version, :string
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]

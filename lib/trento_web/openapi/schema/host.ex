@@ -47,7 +47,6 @@ defmodule TrentoWeb.OpenApi.Schema.Host do
             ]
           }
         },
-        ssh_address: IPv4,
         agent_version: %Schema{
           type: :string,
           description: "Version of the agent installed on the host"

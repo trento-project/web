@@ -29,13 +29,12 @@ defmodule Trento.HostsTest do
   describe "Connection settings" do
     test "Returns connection settings map" do
       host_id = Faker.UUID.v4()
-      host = insert(:host, id: host_id, ssh_address: "192.168.1.1")
+      host = insert(:host, id: host_id)
 
       insert(:host_connection_settings, id: host_id, user: "root")
 
       assert %{
                host_id: host_id,
-               ssh_address: "192.168.1.1",
                user: "root",
                default_user: "root",
                hostname: host.hostname

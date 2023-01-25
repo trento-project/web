@@ -57,7 +57,7 @@ defmodule Trento.Integration.Checks.Runner do
         Enum.map(host_settings, fn host ->
           %{
             host_id: host.host_id,
-            address: host.ssh_address,
+            address: "",
             user: host.user || host.default_user
           }
         end)

@@ -49,7 +49,6 @@ defmodule Trento.Hosts do
           host_id: h.id,
           hostname: h.hostname,
           user: s.user,
-          ssh_address: h.ssh_address,
           provider_data: h.provider_data
         },
         where: h.id == ^host_id
@@ -75,7 +74,6 @@ defmodule Trento.Hosts do
           host_id: h.id,
           hostname: h.hostname,
           user: s.user,
-          ssh_address: h.ssh_address,
           provider_data: h.provider_data
         },
         where: h.cluster_id == ^cluster_id,
@@ -113,14 +111,12 @@ defmodule Trento.Hosts do
          host_id: host_id,
          hostname: hostname,
          user: user,
-         ssh_address: ssh_address,
          provider_data: provider_data
        }) do
     %{
       host_id: host_id,
       hostname: hostname,
       user: user,
-      ssh_address: ssh_address,
       default_user: determine_default_connection_user(provider_data)
     }
   end

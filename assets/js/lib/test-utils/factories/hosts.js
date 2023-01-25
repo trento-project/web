@@ -55,6 +55,5 @@ export const hostFactory = Factory.define(({ params }) => {
       vm_size: faker.hacker.noun(),
     },
     sles_subscriptions: slesSubscriptionFactory.buildList(4, { host_id: id }),
-    ssh_address: faker.internet.ip(),
   };
 });
