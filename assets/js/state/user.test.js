@@ -18,8 +18,12 @@ describe('user reducer', () => {
   });
 
   it('should set the authorization error when setAuthError is dispatched', () => {
-    const error = faker.commerce.productAdjective();
-    const action = setAuthError({ error });
+    const error = {
+      message: faker.commerce.productAdjective(),
+      code: faker.internet.httpStatusCode(),
+    };
+    const action = setAuthError({ ...error });
+
     expect(userReducer(initialState, action)).toEqual({
       ...initialState,
       authError: error,
