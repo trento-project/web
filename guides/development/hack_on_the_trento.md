@@ -1,4 +1,4 @@
-# Hack on the trento
+# Hack on the Trento web
 
 ## Requirements
 
@@ -85,7 +85,7 @@ The Trento application uses several environment variables to configure its behav
 
 See [environment_variables](./environment_variables.md)
 
-## Scenario loading with photofinish
+## Scenario loading with Photofinish
 
 The Trento project includes a tool called [photofinish](https://github.com/trento-project/photofinish), which you can use to load different scenarios for development and debugging purposes.
 
