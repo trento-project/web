@@ -86,12 +86,14 @@ const prepareStateData = (checkExecutionStatus) => {
       check_results: [checkResult1, checkResult2],
     },
     error: '',
+    executionStarted: true,
   };
 
   const {
     executionLoading,
     executionData,
     error: executionError,
+    executionStarted,
   } = lastExecution;
 
   return {
@@ -99,6 +101,7 @@ const prepareStateData = (checkExecutionStatus) => {
     executionResult,
     loading,
     catalog,
+    executionStarted,
     error,
     targets,
     hostnames,
@@ -127,6 +130,7 @@ describe('ExecutionResults', () => {
       error,
       executionLoading,
       executionData,
+      executionStarted,
       executionError,
     } = prepareStateData('passing');
 
@@ -139,6 +143,7 @@ describe('ExecutionResults', () => {
         hostnames={hostnames}
         catalogLoading={loading}
         catalog={catalog}
+        executionStarted={executionStarted}
         catalogError={error}
         executionLoading={executionLoading}
         executionData={executionData}
@@ -162,7 +167,7 @@ describe('ExecutionResults', () => {
     expect(screen.getByText(remediation)).toBeVisible();
   });
 
-  it('should render ExecutionResults with running state', async () => {
+  it('should render the execution starting dialog, when an execution is not started yet', () => {
     const {
       clusterID,
       hostnames,
@@ -173,6 +178,35 @@ describe('ExecutionResults', () => {
       executionData,
       executionError,
     } = prepareStateData('running');
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        catalogError={error}
+        executionStarted={false}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />
+    );
+
+    screen.getByText('Checks execution starting...');
+  });
+
+  it('should render ExecutionResults with running state', async () => {
+    const {
+      clusterID,
+      hostnames,
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('running');
 
     const { container } = renderWithRouter(
       <ExecutionResults
@@ -181,6 +215,7 @@ describe('ExecutionResults', () => {
         catalogLoading={loading}
         catalog={catalog}
         catalogError={error}
+        executionStarted={executionStarted}
         executionLoading={executionLoading}
         executionData={executionData}
         executionError={executionError}
@@ -207,6 +242,7 @@ describe('ExecutionResults', () => {
         hostnames={[]}
         catalogLoading={false}
         catalog={[]}
+        executionStarted
         catalogError={null}
         executionLoading={executionLoading}
         executionData={executionData}
@@ -233,6 +269,7 @@ describe('ExecutionResults', () => {
       executionLoading,
       executionData,
       executionError,
+      executionStarted,
     } = prepareStateData('passing');
 
     renderWithRouter(
@@ -244,6 +281,7 @@ describe('ExecutionResults', () => {
         hostnames={hostnames}
         catalogLoading={loading}
         catalog={catalog}
+        executionStarted={executionStarted}
         catalogError={error}
         executionLoading={executionLoading}
         executionData={executionData}
@@ -269,6 +307,7 @@ describe('ExecutionResults', () => {
       checks: [checkID1, checkID2],
       loading,
       catalog,
+      executionStarted,
       error,
       executionLoading,
       executionData,
@@ -284,6 +323,7 @@ describe('ExecutionResults', () => {
         hostnames={hostnames}
         catalogLoading={loading}
         catalog={catalog}
+        executionStarted={executionStarted}
         catalogError={error}
         executionLoading={executionLoading}
         executionData={executionData}

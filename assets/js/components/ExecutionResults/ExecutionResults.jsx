@@ -62,6 +62,7 @@ function ExecutionResults({
   catalog,
   catalogError,
   executionLoading,
+  executionStarted,
   executionData,
   executionError,
   clusterSelectedChecks = [],
@@ -78,7 +79,7 @@ function ExecutionResults({
     return <LoadingBox text="Loading checks execution..." />;
   }
 
-  if(executionLoading) {
+  if (!executionStarted) {
     return <LoadingBox text="Checks execution starting..." />;
   }
 

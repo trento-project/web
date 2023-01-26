@@ -26,6 +26,7 @@ describe('lastExecutions reducer', () => {
         data: null,
         loading: true,
         error: null,
+        executionStarted: false,
       },
     };
 
@@ -48,6 +49,7 @@ describe('lastExecutions reducer', () => {
         data: null,
         loading: false,
         error: null,
+        executionStarted: false,
       },
     };
 
@@ -70,6 +72,7 @@ describe('lastExecutions reducer', () => {
       someID: {
         data: null,
         loading: false,
+        executionStarted: true,
         error,
       },
     };
@@ -95,16 +98,17 @@ describe('lastExecutions reducer', () => {
         data,
         loading: false,
         error: null,
+        executionStarted: true,
       },
     };
 
     expect(lastExecutionsReducer(initialState, action)).toEqual(expectedState);
   });
 
-  it('should set the executed checks and set off loading', () => {
+  it('should set the executed checks and set the execution as started', () => {
     const initialState = {
       someID: {
-        loading: true,
+        executionStarted: false,
       },
     };
 
@@ -143,6 +147,7 @@ describe('lastExecutions reducer', () => {
         },
         loading: false,
         error: null,
+        executionStarted: true,
       },
     };
 
@@ -173,6 +178,7 @@ describe('lastExecutions reducer', () => {
         },
         loading: false,
         error: null,
+        executionStarted: false,
       },
     };
 

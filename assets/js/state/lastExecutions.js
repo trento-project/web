@@ -5,6 +5,7 @@ const initialState = {};
 const initialExecutionState = {
   data: null,
   loading: false,
+  executionStarted: false,
   error: null,
 };
 
@@ -32,6 +33,7 @@ export const lastExecutionsSlice = createSlice({
 
       const lastExecutionState = {
         ...initialExecutionState,
+        executionStarted: true,
         data: payload,
       };
 
@@ -42,6 +44,7 @@ export const lastExecutionsSlice = createSlice({
 
       const lastExecutionState = {
         ...initialExecutionState,
+        executionStarted: true,
         error,
       };
 
@@ -58,6 +61,7 @@ export const lastExecutionsSlice = createSlice({
       // we want to make sure that only the real checks executed
       // are present into the state when an execution occur
 
+      // eslint-disable-next-line prefer-destructuring
       const targets = state[clusterID].data.targets;
       const targetsWithCheckUsedInExecution = targets.map((target) => ({
         ...target,
@@ -67,7 +71,7 @@ export const lastExecutionsSlice = createSlice({
       }));
 
       state[clusterID].data.targets = targetsWithCheckUsedInExecution;
-      state[clusterID].loading = false;
+      state[clusterID].executionStarted = true;
       state[clusterID].error = null;
     },
     setExecutionRequested: (state, { payload }) => {

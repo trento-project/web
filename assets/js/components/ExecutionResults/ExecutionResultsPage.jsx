@@ -45,11 +45,13 @@ function ExecutionResultsPage() {
     data: executionData,
     error: executionError,
     loading: executionLoading,
+    executionStarted,
   } = lastExecution || {};
   return (
     <ExecutionResults
       clusterID={clusterID}
       hostnames={hostnames}
+      executionStarted={executionStarted}
       clusterName={cluster?.name}
       clusterScenario={cluster?.type}
       cloudProvider={cluster?.provider}
