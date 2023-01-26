@@ -119,17 +119,7 @@ function HostsList() {
         title: 'Agent version',
         key: 'agent_version',
         render: (content) => (
-          <span
-            className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '115px',
-              width: '115px',
-              display: 'inline-block',
-            }}
-          >
+          <span className="px-2 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate w-32 inline-block">
             {content}
           </span>
         ),
