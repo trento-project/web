@@ -36,7 +36,9 @@ context('Host Details', () => {
 
   describe('Cluster details for this host should be displayed', () => {
     it(`should show a link to the cluster details view for ${selectedHost.clusterName}`, () => {
-      cy.get('.truncate').should('contain', selectedHost.clusterName).click();
+      cy.get('.text-jungle-green-500 > .truncate')
+        .should('contain', selectedHost.clusterName)
+        .click();
 
       cy.location('pathname').should(
         'eq',
