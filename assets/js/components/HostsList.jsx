@@ -177,9 +177,7 @@ function HostsList() {
   const counters = getCounters(data || []);
   return (
     <>
-      <PageHeader className="font-bold">
-        Hosts
-      </PageHeader>
+      <PageHeader className="font-bold">Hosts</PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table

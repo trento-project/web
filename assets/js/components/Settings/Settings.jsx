@@ -29,9 +29,7 @@ function Settings() {
 
   return (
     <section>
-      <PageHeader className="font-bold">
-        Settings
-      </PageHeader>
+      <PageHeader className="font-bold">Settings</PageHeader>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
         <div className="flex flex-wrap -mx-8">
           <div className="w-full lg:w-1/2 px-8">
