@@ -44,9 +44,7 @@ function ChecksCatalog() {
   }, [dispatch, selectedProvider]);
   return (
     <>
-      <PageHeader>
-        <span className="font-bold">Checks catalog</span>
-      </PageHeader>
+      <PageHeader className="font-bold">Checks catalog</PageHeader>
       <CatalogContainer
         onRefresh={() =>
           dispatch(

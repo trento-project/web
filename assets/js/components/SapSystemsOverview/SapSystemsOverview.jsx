@@ -135,9 +135,7 @@ function SapSystemsOverview() {
     'Loading SAP Systems...'
   ) : (
     <>
-      <PageHeader>
-        <span className="font-bold">SAP Systems</span>
-      </PageHeader>
+      <PageHeader className="font-bold">SAP Systems</PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table

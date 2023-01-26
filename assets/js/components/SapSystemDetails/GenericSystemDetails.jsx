@@ -32,9 +32,7 @@ export function GenericSystemDetails({ title, type, system }) {
 
   return (
     <div>
-      <PageHeader>
-        <span className="font-bold">{title}</span>
-      </PageHeader>
+      <PageHeader className="font-bold">{title}</PageHeader>
 
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView

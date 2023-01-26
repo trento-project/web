@@ -133,7 +133,7 @@ export function HomeHealthSummary() {
     <div>Loading...</div>
   ) : (
     <div data-testid="home-health-summary">
-      <PageHeader>At a glance</PageHeader>
+      <PageHeader className="font-bold">At a glance</PageHeader>
       <hr className="my-3" />
       <h5 className="text-xl">Global Health</h5>
 
