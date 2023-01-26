@@ -13,12 +13,7 @@ import Home from '@components/Home';
 import AboutPage from '@components/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
-import ClusterDetails, {
-  ClusterSettings,
-  ClusterDetailsNew,
-  ClusterSettingsNew,
-} from '@components/ClusterDetails';
-import ChecksResults from '@components/ChecksResults';
+import ClusterDetails, { ClusterSettings } from '@components/ClusterDetails';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails from '@components/HostDetails';
@@ -59,18 +54,6 @@ function App() {
                 }
               >
                 <Route element={<Layout />}>
-                  <Route
-                    path="clusters_new/:clusterID/settings"
-                    element={<ClusterSettingsNew />}
-                  />
-                  <Route
-                    path="clusters_new/:clusterID/executions/last"
-                    element={<ExecutionResultsPage />}
-                  />
-                  <Route
-                    path="clusters_new/:clusterID"
-                    element={<ClusterDetailsNew />}
-                  />
                   <Route index element={<Home />} />
                   <Route index path="hosts" element={<HostsList />} />
                   <Route path="clusters" element={<ClustersList />} />
@@ -79,14 +62,6 @@ function App() {
                   <Route path="catalog" element={<ChecksCatalog />} />
                   <Route path="settings" element={<Settings />} />
                   <Route path="about" element={<AboutPage />} />
-                  <Route
-                    path="clusters/:clusterID/settings"
-                    element={<ClusterSettings />}
-                  />
-                  <Route
-                    path="clusters/:clusterID/checks/results"
-                    element={<ChecksResults />}
-                  />
                   <Route path="hosts/:hostID" element={<HostDetails />} />
                   <Route
                     path="sap_systems/:id"
@@ -96,6 +71,14 @@ function App() {
                   <Route
                     path="clusters/:clusterID"
                     element={<ClusterDetails />}
+                  />
+                  <Route
+                    path="clusters/:clusterID/settings"
+                    element={<ClusterSettings />}
+                  />
+                  <Route
+                    path="clusters/:clusterID/executions/last"
+                    element={<ExecutionResultsPage />}
                   />
                 </Route>
               </Route>

@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 function TriggerChecksExecutionRequest({
   clusterId,
   cssClasses,
-  usingNewChecksEngine = false,
   children,
   hosts = [],
   checks = [],
@@ -24,11 +23,7 @@ function TriggerChecksExecutionRequest({
       onClick={() => {
         onStartExecution(clusterId, hosts, checks);
 
-        navigate(
-          usingNewChecksEngine
-            ? `/clusters_new/${clusterId}/executions/last`
-            : `/clusters/${clusterId}/checks/results`
-        );
+        navigate(`/clusters/${clusterId}/executions/last`);
       }}
       {...props}
     >

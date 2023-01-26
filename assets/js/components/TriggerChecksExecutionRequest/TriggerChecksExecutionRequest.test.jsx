@@ -20,7 +20,6 @@ describe('TriggerChecksExecutionRequest component', () => {
       renderWithRouter(
         <TriggerChecksExecutionRequest
           clusterId={clusterId}
-          usingNewChecksEngine
           onStartExecution={onStartExecution}
           hosts={hosts}
           checks={selectedChecks}
@@ -37,7 +36,7 @@ describe('TriggerChecksExecutionRequest component', () => {
       selectedChecks
     );
     expect(window.location.pathname).toBe(
-      `/clusters_new/${clusterId}/executions/last`
+      `/clusters/${clusterId}/executions/last`
     );
   });
 });

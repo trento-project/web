@@ -1,4 +1,4 @@
-import { get, post, put as PUT } from '@lib/network';
+import { get, post } from '@lib/network';
 import {
   put,
   all,
@@ -75,16 +75,6 @@ import {
 import { watchPerformLogin } from '@state/sagas/user';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
-import {
-  setClusterConnectionSettings,
-  setClusterConnectionSettingsLoadingError,
-  startLoadingClusterConnectionSettings,
-  stopLoadingClusterConnectionSettings,
-  startSavingClusterConnectionSettings,
-  stopSavingClusterConnectionSettings,
-  setClusterConnectionSettingsSavingError,
-  setClusterConnectionSettingsSavingSuccess,
-} from '@state/clusterConnectionSettings';
 import {
   setClusterChecksSelectionSavingError,
   setClusterChecksSelectionSavingSuccess,
@@ -572,57 +562,6 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
 }
 
-function* loadClusterConnectionSettings({ payload: { cluster } }) {
-  yield put(startLoadingClusterConnectionSettings());
-  try {
-    const { data: settings } = yield call(
-      get,
-      `/api/clusters/${cluster}/connection_settings`
-    );
-    yield put(setClusterConnectionSettings({ settings }));
-  } catch (error) {
-    yield put(setClusterConnectionSettingsLoadingError());
-  }
-  yield put(stopLoadingClusterConnectionSettings());
-}
-
-function* saveClusterConnectionSettings({ payload: { cluster, settings } }) {
-  yield put(startSavingClusterConnectionSettings());
-  try {
-    const { data: newSettings } = yield call(
-      PUT,
-      `/api/clusters/${cluster}/connection_settings`,
-      {
-        settings: settings.map((hostSettings) => ({
-          host_id: hostSettings.host_id,
-          user: hostSettings.user,
-        })),
-      }
-    );
-
-    yield put(
-      setClusterConnectionSettings({
-        settings: newSettings,
-      })
-    );
-    yield put(setClusterConnectionSettingsSavingSuccess());
-  } catch (error) {
-    yield put(setClusterConnectionSettingsSavingError());
-  }
-  yield put(stopSavingClusterConnectionSettings());
-}
-
-function* watchClustrConnectionSettings() {
-  yield takeEvery(
-    'LOAD_CLUSTER_CONNECTION_SETTINGS',
-    loadClusterConnectionSettings
-  );
-  yield takeEvery(
-    'SAVE_CLUSTER_CONNECTION_SETTINGS',
-    saveClusterConnectionSettings
-  );
-}
-
 export default function* rootSaga() {
   yield all([
     watchUserLoggedIn(),
@@ -648,7 +587,6 @@ export default function* rootSaga() {
     watchRequestExecution(),
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
-    watchClustrConnectionSettings(),
     watchPerformLogin(),
   ]);
 }

@@ -12,7 +12,6 @@ function ResultsContainer({
   hasAlreadyChecksResults,
   selectedChecks = [],
   hosts = [],
-  usingNewChecksEngine = false,
   onCatalogRefresh = () => {},
   onStartExecution = () => {},
 }) {
@@ -33,7 +32,6 @@ function ResultsContainer({
         clusterId={clusterID}
         selectedChecks={selectedChecks}
         hosts={hosts}
-        usingNewChecksEngine={usingNewChecksEngine}
         onStartExecution={onStartExecution}
       />
     );

@@ -249,7 +249,7 @@ describe('ExecutionResults', () => {
         executionData={executionData}
         executionError={executionError}
       />,
-      { route: `/clusters_new/${clusterID}/executions/last?health=passing` }
+      { route: `/clusters/${clusterID}/executions/last?health=passing` }
     );
 
     expect(screen.getByText('test-cluster')).toBeTruthy();
@@ -290,7 +290,7 @@ describe('ExecutionResults', () => {
         executionError={executionError}
       />,
       {
-        route: `/clusters_new/${clusterID}/executions/last?health=passing&health=critical
+        route: `/clusters/${clusterID}/executions/last?health=passing&health=critical
     `,
       }
     );
