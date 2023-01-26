@@ -135,8 +135,8 @@ function ClustersList() {
 
   return (
     <>
-      <PageHeader>
-        <span className="font-bold">Clusters</span>
+      <PageHeader className="font-bold">
+        Clusters
       </PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
