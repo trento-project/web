@@ -77,13 +77,19 @@ See [related documentation](./guides/alerting/alerting.md) for more information.
 
 # Installation
 
-_Trento_ is intended to run in many ways, depending on needs, and also the different components have their own requirements and constraints.
+_Trento_ can be installed in various ways, depending on your needs and the requirements of its different components. Please refer to the specific [Agent](https://github.com/trento-project/agent) and [Runner](https://github.com/trento-project/runner) documentation for more information.
 
-Please check the specific [Agent](https://github.com/trento-project/agent) and [Runner](https://github.com/trento-project/runner) documentation for respective details.
+## Installing Trento on a k8s Cluster
 
-If you intend to install Trento on a k8s cluster, you may be interested in our [helm-charts](https://github.com/trento-project/helm-charts) repo for detailed instructions.
+For detailed instructions on installing Trento on a k8s cluster, please refer to our [helm-charts](https://github.com/trento-project/helm-charts) repository.
 
-If otherwise you want to play around with the current repository, go ahead, [hack on the trento](./guides/development/hack_on_the_trento.md) and **have a lot of fun**!
+## Installing Trento Web Locally for Development
+
+To install Trento web locally for development, please refer to our [hack on the trento](./guides/development/hack_on_the_trento.md) guide for detailed instructions.
+
+## Installing Trento Web Locally and Connecting it with [wanda](https://github.com/trento-project/wanda/tree/main) for Development
+
+For instructions on installing Trento web locally and connecting it with [wanda](https://github.com/trento-project/wanda/tree/main) for development, please refer to our [hack on web and wanda](./guides/development/hack_on_web_and_wanda.md) guide for detailed instructions.
 
 # Support
 
