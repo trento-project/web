@@ -148,8 +148,8 @@ function DatabasesOverview() {
     'Loading HANA Databases...'
   ) : (
     <>
-      <PageHeader>
-        <span className="font-bold">HANA Databases</span>
+      <PageHeader className="font-bold">
+        HANA Databases
       </PageHeader>
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
