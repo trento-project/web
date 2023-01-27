@@ -52,7 +52,10 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
                        %{
                          group_id: ^group_id,
                          execution_id: ^execution_id,
-                         checks: ["check_1", "check_2", "check_3"]
+                         targets: [
+                           %{agent_id: "agent_1", checks: ["check_1", "check_2"]},
+                           %{agent_id: "agent_2", checks: ["check_3", "check_2"]}
+                         ]
                        },
                        1000
     end

@@ -34,17 +34,12 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
          group_id: group_id,
          targets: targets
        }) do
-    checks_for_execution =
-      targets
-      |> Enum.flat_map(& &1.checks)
-      |> Enum.uniq()
-
-    Logger.debug("Checks for execution #{inspect(checks_for_execution)}")
+    Logger.debug("Targets for execution #{inspect(targets)}")
 
     TrentoWeb.Endpoint.broadcast("monitoring:executions", "execution_started", %{
       group_id: group_id,
       execution_id: execution_id,
-      checks: checks_for_execution
+      targets: targets
     })
   end
 
