@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
 
+import PageHeader from '@components/PageHeader';
 import Button from '@components/Button';
 import { logError } from '@lib/log';
 import { get } from '@lib/network';
@@ -28,9 +29,7 @@ function Settings() {
 
   return (
     <section>
-      <div className="mb-4">
-        <h1 className="text-4xl font-bold">Settings</h1>
-      </div>
+      <PageHeader className="font-bold">Settings</PageHeader>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
         <div className="flex flex-wrap -mx-8">
           <div className="w-full lg:w-1/2 px-8">

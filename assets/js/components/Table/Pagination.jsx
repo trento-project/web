@@ -6,7 +6,7 @@ const getPagesArray = (pages) => Array.from({ length: pages }, (_, i) => 1 + i);
 function Pagination({ pages, currentPage, onSelect }) {
   const pagesList = getPagesArray(pages);
   return (
-    <div className="grid py-2">
+    <div className="grid py-2 bg-gray-50 rounded-lg">
       <div className="justify-self-end pr-2">
         <div className="flex items-center">
           {pagesList.map((pageNumber) => {

@@ -36,7 +36,7 @@ context('Host Details', () => {
 
   describe('Cluster details for this host should be displayed', () => {
     it(`should show a link to the cluster details view for ${selectedHost.clusterName}`, () => {
-      cy.get('.text-jungle-green-500')
+      cy.get('.text-jungle-green-500 > .truncate')
         .should('contain', selectedHost.clusterName)
         .click();
 
@@ -335,13 +335,15 @@ context('Host Details', () => {
 
   describe("Trento agent status should be 'running'", () => {
     it("should show the status as 'running'", () => {
-      cy.get('span').should('contain', 'Agent: running');
+      cy.get('span').should('contain.text', 'Agent:running');
+      cy.get('span').find('svg').should('exist');
     });
   });
 
   describe("Node exporter status should be 'running'", () => {
     it("should show the status as 'running'", () => {
-      cy.get('span').should('contain', 'Node Exporter: running');
+      cy.get('span').should('contain.text', 'Node Exporter:running');
+      cy.get('span').find('svg').should('exist');
     });
   });
 });

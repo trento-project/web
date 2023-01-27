@@ -5,7 +5,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { groupBy } from '@lib/lists';
 import classNames from 'classnames';
 
+import PageHeader from '@components/PageHeader';
+import BackButton from '@components/BackButton';
 import Button from '@components/Button';
+
 import ListView from '@components/ListView';
 import Pill from '@components/Pill';
 import Table from '@components/Table';
@@ -25,10 +28,6 @@ import {
 } from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import SiteDetails from './SiteDetails';
-
-export const truncatedClusterNameClasses = classNames(
-  'font-bold truncate w-60 inline-block align-top'
-);
 
 const siteDetailsConfig = {
   usePadding: false,
@@ -115,13 +114,12 @@ export function ClusterDetails() {
 
   return (
     <div>
-      <div className="flex mb-4">
-        <h1 className="text-3xl font-bold w-1/2">
-          Pacemaker cluster details:{' '}
-          <span className={truncatedClusterNameClasses}>
-            {getClusterName(cluster)}
-          </span>
-        </h1>
+      <BackButton url="/clusters">Back to Clusters</BackButton>
+      <div className="flex">
+        <PageHeader>
+          Pacemaker Cluster Details:{' '}
+          <span className="font-bold">{getClusterName(cluster)}</span>
+        </PageHeader>
         <div className="flex w-1/2 justify-end">
           <Button
             type="primary-white"
@@ -253,7 +251,7 @@ export function ClusterDetails() {
       <div className="mt-2 tn-site-details">
         {Object.entries(groupBy(cluster.details.nodes, 'site')).map(
           ([siteName]) => (
-            <div key={siteName} className={`tn-site-details-${siteName}`}>
+            <div key={siteName} className={`tn-site-details-${siteName} mt-4`}>
               <h3 className="text-l font-bold tn-site-name">{siteName}</h3>
               <Table
                 className="tn-site-table"

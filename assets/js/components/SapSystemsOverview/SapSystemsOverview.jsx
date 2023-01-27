@@ -2,6 +2,7 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
+import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import SAPSystemItemOverview from '@components/SapSystemsOverview/SapSystemItemOverview';
@@ -134,13 +135,16 @@ function SapSystemsOverview() {
     'Loading SAP Systems...'
   ) : (
     <>
-      <HealthSummary {...counters} className="mb-8" />
-      <Table
-        config={config}
-        data={data}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-      />
+      <PageHeader className="font-bold">SAP Systems</PageHeader>
+      <div className="bg-white rounded-lg shadow">
+        <HealthSummary {...counters} className="px-4 py-2" />
+        <Table
+          config={config}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+        />
+      </div>
     </>
   );
 }

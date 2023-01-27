@@ -23,7 +23,7 @@ function Filter({ options, title, value, onChange }) {
   useOnClickOutside(ref, () => setOpen(false));
 
   return (
-    <div className="w-64 w-72 top-16 mr-4" ref={ref}>
+    <div className="flex-1 top-16 mx-2" ref={ref}>
       <div className="mt-1 relative">
         {value !== '' && (
           <button
@@ -43,7 +43,7 @@ function Filter({ options, title, value, onChange }) {
           type="button"
           data-testid={`filter-${title}`}
           onClick={() => setOpen(!open)}
-          className="relative w-full bg-white rounded-md shadow pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm"
+          className="relative w-full bg-white rounded-md border pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm"
         >
           <span className="flex items-center">
             <span

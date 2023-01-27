@@ -123,7 +123,7 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
         'px-4 sm:px-8': usePadding,
       })}
     >
-      <div className="flex items-center">
+      <div className="flex items-center px-2">
         <TableFilters
           config={config}
           data={data}
@@ -135,7 +135,7 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
         />
       </div>
       <div className="">
-        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
+        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 pt-4">
           <div className="min-w-fit shadow rounded-lg">
             <table className="min-w-full leading-normal table-fixed">
               <thead>
@@ -145,7 +145,7 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
                       key={title}
                       scope="col"
                       className={classNames(
-                        'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+                        'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100',
                         className
                       )}
                     >

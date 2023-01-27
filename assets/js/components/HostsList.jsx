@@ -7,6 +7,7 @@ import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
+import PageHeader from '@components/PageHeader';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { post, del } from '@lib/network';
@@ -118,7 +119,7 @@ function HostsList() {
         title: 'Agent version',
         key: 'agent_version',
         render: (content) => (
-          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          <span className="px-2 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate w-32 inline-block">
             {content}
           </span>
         ),
@@ -176,13 +177,16 @@ function HostsList() {
   const counters = getCounters(data || []);
   return (
     <>
-      <HealthSummary {...counters} className="mb-8" />
-      <Table
-        config={config}
-        data={data}
-        searchParams={searchParams}
-        setSearchParams={setSearchParams}
-      />
+      <PageHeader className="font-bold">Hosts</PageHeader>
+      <div className="bg-white rounded-lg shadow">
+        <HealthSummary {...counters} className="px-4 py-2" />
+        <Table
+          config={config}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+        />
+      </div>
     </>
   );
 }

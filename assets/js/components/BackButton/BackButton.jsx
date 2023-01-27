@@ -7,7 +7,7 @@ export function BackButton({ children, url }) {
   const navigate = useNavigate();
 
   return (
-    <div className="flex mb-8">
+    <div className="flex mb-4">
       <div className="flex w-2/5">
         <Button
           className="w-2/3 text-jungle-green-500 text-left py-0 px-0"

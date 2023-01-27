@@ -7,6 +7,8 @@ import { networkClient } from '@lib/network';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 
+import PageHeader from '@components/PageHeader';
+import BackButton from '@components/BackButton';
 import ClusterLink from '@components/ClusterLink';
 import SuseLogo from '@static/suse_logo.svg';
 import {
@@ -50,11 +52,11 @@ function HostDetails() {
 
   return (
     <div>
+      <BackButton url="/hosts">Back to Hosts</BackButton>
       <div className="flex">
-        <h1 className="text-3xl font-bold">
-          Host details:
-          {host.hostname}
-        </h1>
+        <PageHeader>
+          Host Details: <span className="font-bold">{host.hostname}</span>
+        </PageHeader>
         <StatusPill
           className="self-center ml-4 shadow"
           heartbeat={host.heartbeat}
