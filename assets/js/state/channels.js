@@ -52,8 +52,8 @@ const processChannelEvents = (reduxStore, socket) => {
   channel.on('execution_completed', ({ group_id: groupID }) => {
     reduxStore.dispatch(updateLastExecution(groupID));
   });
-  channel.on('execution_started', ({ group_id: groupID, checks }) => {
-    reduxStore.dispatch(setExecutionStarted({ groupID, checks }));
+  channel.on('execution_started', ({ group_id: groupID, targets }) => {
+    reduxStore.dispatch(setExecutionStarted({ groupID, targets }));
   });
 
   joinChannel(channel);

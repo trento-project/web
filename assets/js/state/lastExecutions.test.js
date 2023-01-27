@@ -26,7 +26,6 @@ describe('lastExecutions reducer', () => {
         data: null,
         loading: true,
         error: null,
-        executionStarted: false,
       },
     };
 
@@ -49,7 +48,6 @@ describe('lastExecutions reducer', () => {
         data: null,
         loading: false,
         error: null,
-        executionStarted: false,
       },
     };
 
@@ -72,7 +70,6 @@ describe('lastExecutions reducer', () => {
       someID: {
         data: null,
         loading: false,
-        executionStarted: true,
         error,
       },
     };
@@ -98,7 +95,6 @@ describe('lastExecutions reducer', () => {
         data,
         loading: false,
         error: null,
-        executionStarted: true,
       },
     };
 
@@ -108,7 +104,9 @@ describe('lastExecutions reducer', () => {
   it('should set the executed checks and set the execution as started', () => {
     const initialState = {
       someID: {
-        executionStarted: false,
+        data: {
+          status: 'requested',
+        },
       },
     };
 
@@ -128,7 +126,10 @@ describe('lastExecutions reducer', () => {
     const executionStartedData = {
       groupID: 'someID',
       executionID: 'execid',
-      checks: ['check1', 'check2'],
+      targets: [
+        { agent_id: 'agent1', checks: ['check1', 'check2'] },
+        { agent_id: 'agent2', checks: ['check1', 'check2'] },
+      ],
     };
 
     const executionStartedState = lastExecutionsReducer(
@@ -147,7 +148,6 @@ describe('lastExecutions reducer', () => {
         },
         loading: false,
         error: null,
-        executionStarted: true,
       },
     };
 
@@ -170,7 +170,7 @@ describe('lastExecutions reducer', () => {
     const expectedState = {
       someID: {
         data: {
-          status: 'running',
+          status: 'requested',
           targets: [
             { agent_id: 'agent1', checks },
             { agent_id: 'agent2', checks },
@@ -178,7 +178,6 @@ describe('lastExecutions reducer', () => {
         },
         loading: false,
         error: null,
-        executionStarted: false,
       },
     };
 

@@ -86,14 +86,12 @@ const prepareStateData = (checkExecutionStatus) => {
       check_results: [checkResult1, checkResult2],
     },
     error: '',
-    executionStarted: true,
   };
 
   const {
     executionLoading,
     executionData,
     error: executionError,
-    executionStarted,
   } = lastExecution;
 
   return {
@@ -101,7 +99,7 @@ const prepareStateData = (checkExecutionStatus) => {
     executionResult,
     loading,
     catalog,
-    executionStarted,
+    executionStarted: executionData?.status !== 'requested',
     error,
     targets,
     hostnames,

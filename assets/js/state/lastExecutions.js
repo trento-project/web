@@ -1,11 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const RUNNING_EXECUTION_STATE = 'running';
+export const REQUESTED_EXECUTION_STATE = 'requested';
+export const COMPLETED_EXECUTION_STATE = 'completed';
+
 const initialState = {};
 
 const initialExecutionState = {
   data: null,
   loading: false,
-  executionStarted: false,
   error: null,
 };
 
@@ -33,7 +36,6 @@ export const lastExecutionsSlice = createSlice({
 
       const lastExecutionState = {
         ...initialExecutionState,
-        executionStarted: true,
         data: payload,
       };
 
@@ -44,34 +46,16 @@ export const lastExecutionsSlice = createSlice({
 
       const lastExecutionState = {
         ...initialExecutionState,
-        executionStarted: true,
         error,
       };
 
       state[groupID] = lastExecutionState;
     },
     setExecutionStarted: (state, { payload }) => {
-      const { groupID: clusterID, checks: startedChecks } = payload;
+      const { groupID: clusterID, targets } = payload;
 
-      // The execution started event contains the information
-      // about the checks "really" started in the execution
-      // this checks could differ from the ones requested
-      // because for some reason the checks could be skipped by
-      // some conditions
-      // we want to make sure that only the real checks executed
-      // are present into the state when an execution occur
-
-      // eslint-disable-next-line prefer-destructuring
-      const targets = state[clusterID].data.targets;
-      const targetsWithCheckUsedInExecution = targets.map((target) => ({
-        ...target,
-        checks: target.checks.filter((checkID) =>
-          startedChecks.includes(checkID)
-        ),
-      }));
-
-      state[clusterID].data.targets = targetsWithCheckUsedInExecution;
-      state[clusterID].executionStarted = true;
+      state[clusterID].data.targets = targets;
+      state[clusterID].data.status = RUNNING_EXECUTION_STATE;
       state[clusterID].error = null;
     },
     setExecutionRequested: (state, { payload }) => {
@@ -82,7 +66,7 @@ export const lastExecutionsSlice = createSlice({
       const lastExecutionState = {
         ...initialExecutionState,
         data: {
-          status: 'running',
+          status: REQUESTED_EXECUTION_STATE,
           targets,
         },
       };
