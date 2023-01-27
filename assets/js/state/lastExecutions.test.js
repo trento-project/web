@@ -6,6 +6,7 @@ import lastExecutionsReducer, {
   setLastExecutionEmpty,
   setLastExecutionError,
   setLastExecution,
+  setExecutionStarted,
 } from './lastExecutions';
 
 describe('lastExecutions reducer', () => {
@@ -100,6 +101,59 @@ describe('lastExecutions reducer', () => {
     expect(lastExecutionsReducer(initialState, action)).toEqual(expectedState);
   });
 
+  it('should set the executed checks and set the execution as started', () => {
+    const initialState = {
+      someID: {
+        data: {
+          status: 'requested',
+        },
+      },
+    };
+
+    const checks = ['check1', 'check2', 'check3'];
+
+    const executionRequestedData = {
+      clusterID: 'someID',
+      hosts: ['agent1', 'agent2'],
+      checks,
+    };
+
+    const executionRequestedState = lastExecutionsReducer(
+      initialState,
+      setExecutionRequested(executionRequestedData)
+    );
+
+    const executionStartedData = {
+      groupID: 'someID',
+      executionID: 'execid',
+      targets: [
+        { agent_id: 'agent1', checks: ['check1', 'check2'] },
+        { agent_id: 'agent2', checks: ['check1', 'check2'] },
+      ],
+    };
+
+    const executionStartedState = lastExecutionsReducer(
+      executionRequestedState,
+      setExecutionStarted(executionStartedData)
+    );
+
+    const expectedState = {
+      someID: {
+        data: {
+          status: 'running',
+          targets: [
+            { agent_id: 'agent1', checks: ['check1', 'check2'] },
+            { agent_id: 'agent2', checks: ['check1', 'check2'] },
+          ],
+        },
+        loading: false,
+        error: null,
+      },
+    };
+
+    expect(expectedState).toEqual(executionStartedState);
+  });
+
   it('should set on a execution requested state a given groupID', () => {
     const initialState = {};
 
@@ -116,7 +170,7 @@ describe('lastExecutions reducer', () => {
     const expectedState = {
       someID: {
         data: {
-          status: 'running',
+          status: 'requested',
           targets: [
             { agent_id: 'agent1', checks },
             { agent_id: 'agent2', checks },

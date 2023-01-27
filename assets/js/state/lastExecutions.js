@@ -1,5 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const RUNNING_EXECUTION_STATE = 'running';
+export const REQUESTED_EXECUTION_STATE = 'requested';
+export const COMPLETED_EXECUTION_STATE = 'completed';
+
 const initialState = {};
 
 const initialExecutionState = {
@@ -47,6 +51,13 @@ export const lastExecutionsSlice = createSlice({
 
       state[groupID] = lastExecutionState;
     },
+    setExecutionStarted: (state, { payload }) => {
+      const { groupID: clusterID, targets } = payload;
+
+      state[clusterID].data.targets = targets;
+      state[clusterID].data.status = RUNNING_EXECUTION_STATE;
+      state[clusterID].error = null;
+    },
     setExecutionRequested: (state, { payload }) => {
       const { clusterID: groupID, hosts, checks } = payload;
 
@@ -55,7 +66,7 @@ export const lastExecutionsSlice = createSlice({
       const lastExecutionState = {
         ...initialExecutionState,
         data: {
-          status: 'running',
+          status: REQUESTED_EXECUTION_STATE,
           targets,
         },
       };
@@ -71,6 +82,7 @@ export const {
   setLastExecutionEmpty,
   setLastExecutionError,
   setExecutionRequested,
+  setExecutionStarted,
 } = lastExecutionsSlice.actions;
 
 export default lastExecutionsSlice.reducer;

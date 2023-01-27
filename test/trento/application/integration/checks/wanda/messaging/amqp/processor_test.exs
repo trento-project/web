@@ -7,7 +7,12 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
 
   alias Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor
 
-  alias Trento.Checks.V1.ExecutionCompleted
+  alias Trento.Checks.V1.{
+    ExecutionCompleted,
+    ExecutionStarted,
+    Target
+  }
+
   alias Trento.Contracts
   alias Trento.Domain.Commands.CompleteChecksExecutionWanda
 
@@ -21,6 +26,38 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
         |> subscribe_and_join(TrentoWeb.MonitoringChannel, "monitoring:executions")
 
       :ok
+    end
+
+    test "should process ExecutionStarted and broadcast to the socket" do
+      execution_id = UUID.uuid4()
+      group_id = UUID.uuid4()
+
+      targets = [
+        %Target{agent_id: "agent_1", checks: ["check_1", "check_2"]},
+        %Target{agent_id: "agent_2", checks: ["check_3", "check_2"]}
+      ]
+
+      execution_started =
+        Contracts.to_event(%ExecutionStarted{
+          execution_id: execution_id,
+          group_id: group_id,
+          targets: targets
+        })
+
+      message = %GenRMQ.Message{payload: execution_started, attributes: %{}, channel: nil}
+
+      assert :ok = Processor.process(message)
+
+      assert_broadcast "execution_started",
+                       %{
+                         group_id: ^group_id,
+                         execution_id: ^execution_id,
+                         targets: [
+                           %{agent_id: "agent_1", checks: ["check_1", "check_2"]},
+                           %{agent_id: "agent_2", checks: ["check_3", "check_2"]}
+                         ]
+                       },
+                       1000
     end
 
     test "should process ExecutionCompleted and dispatch command" do

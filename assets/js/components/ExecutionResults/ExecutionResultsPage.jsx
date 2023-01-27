@@ -9,6 +9,10 @@ import {
   updateLastExecution,
   executionRequested,
 } from '@state/actions/lastExecutions';
+import {
+  RUNNING_EXECUTION_STATE,
+  REQUESTED_EXECUTION_STATE,
+} from '@state/lastExecutions';
 import ExecutionResults from './ExecutionResults';
 
 function ExecutionResultsPage() {
@@ -32,7 +36,7 @@ function ExecutionResultsPage() {
   }, []);
 
   useEffect(() => {
-    if (lastExecution?.data?.status !== 'running') {
+    if (lastExecution?.data?.status !== RUNNING_EXECUTION_STATE) {
       dispatch(updateLastExecution(clusterID));
     }
   }, []);
@@ -50,6 +54,7 @@ function ExecutionResultsPage() {
     <ExecutionResults
       clusterID={clusterID}
       hostnames={hostnames}
+      executionStarted={executionData?.status !== REQUESTED_EXECUTION_STATE}
       clusterName={cluster?.name}
       clusterScenario={cluster?.type}
       cloudProvider={cluster?.provider}

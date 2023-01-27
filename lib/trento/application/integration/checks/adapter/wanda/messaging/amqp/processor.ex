@@ -7,7 +7,11 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
 
   alias Trento.Contracts
 
-  alias Trento.Checks.V1.ExecutionCompleted
+  alias Trento.Checks.V1.{
+    ExecutionCompleted,
+    ExecutionStarted
+  }
+
   alias Trento.Domain.Commands.CompleteChecksExecutionWanda
 
   require Logger
@@ -23,6 +27,20 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
       {:error, reason} ->
         {:error, reason}
     end
+  end
+
+  defp handle(%ExecutionStarted{
+         execution_id: execution_id,
+         group_id: group_id,
+         targets: targets
+       }) do
+    Logger.debug("Targets for execution #{inspect(targets)}")
+
+    TrentoWeb.Endpoint.broadcast("monitoring:executions", "execution_started", %{
+      group_id: group_id,
+      execution_id: execution_id,
+      targets: map_targets(targets)
+    })
   end
 
   defp handle(%ExecutionCompleted{
@@ -43,6 +61,8 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
       })
     end
   end
+
+  defp map_targets(targets), do: Enum.map(targets, &%{checks: &1.checks, agent_id: &1.agent_id})
 
   defp map_health(:CRITICAL), do: Health.critical()
   defp map_health(:WARNING), do: Health.warning()

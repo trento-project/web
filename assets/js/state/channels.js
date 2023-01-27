@@ -1,6 +1,7 @@
 // TODO remove dependency from the store when the fixme is fixed
 import { updateLastExecution } from '@state/actions/lastExecutions';
 import { joinChannel } from '@lib/network/socket';
+import { setExecutionStarted } from '@state/lastExecutions';
 
 const registerEvents = (store, socket, channelName, events) => {
   const channel = socket.channel(channelName, {});
@@ -50,6 +51,9 @@ const processChannelEvents = (reduxStore, socket) => {
   const channel = socket.channel('monitoring:executions', {});
   channel.on('execution_completed', ({ group_id: groupID }) => {
     reduxStore.dispatch(updateLastExecution(groupID));
+  });
+  channel.on('execution_started', ({ group_id: groupID, targets }) => {
+    reduxStore.dispatch(setExecutionStarted({ groupID, targets }));
   });
 
   joinChannel(channel);
