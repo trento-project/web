@@ -42,7 +42,7 @@ See also [Trento Agent](https://github.com/trento-project/agent) for additional 
 
 ## Reactive Control Plane
 
-By leveraging modern approaches to software architecture and engineering and top-notch technologies we built a **reactive system** that provides **real-time** feedback about the **changes in the target** infrastructure.
+By leveraging modern approaches to software architecture and engineering and top-notch technologies, we built a **reactive system** that provides **real-time** feedback about the **changes in the target** infrastructure.
 
 Here's a non-comprehensive list of the capabilities provided by the bundled Web UI:
 
@@ -90,7 +90,7 @@ To install Trento web locally for development, please refer to our [hack on the 
 # Support
 
 Please only report bugs via [GitHub issues](https://github.com/trento-project/web/issues);
-for any other inquiry or topic use [GitHub discussion](https://github.com/trento-project/trento/discussions).
+for any other inquiry or topic, use [GitHub discussion](https://github.com/trento-project/trento/discussions).
 
 # Contributing
 
