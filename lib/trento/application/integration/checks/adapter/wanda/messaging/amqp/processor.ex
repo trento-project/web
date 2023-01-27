@@ -39,7 +39,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
     TrentoWeb.Endpoint.broadcast("monitoring:executions", "execution_started", %{
       group_id: group_id,
       execution_id: execution_id,
-      targets: targets
+      targets: map_targets(targets)
     })
   end
 
@@ -61,6 +61,8 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
       })
     end
   end
+
+  defp map_targets(targets), do: Enum.map(targets, &%{checks: &1.checks, agent_id: &1.agent_id})
 
   defp map_health(:CRITICAL), do: Health.critical()
   defp map_health(:WARNING), do: Health.warning()
