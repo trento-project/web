@@ -127,7 +127,7 @@ config :trento, Trento.Messaging.Publisher, adapter: Trento.Messaging.Adapters.A
 config :trento, Trento.Messaging.Adapters.AMQP,
   publisher: [
     exchange: "trento.checks",
-    connection: "amqp://wanda:wanda@localhost:5672"
+    connection: "amqp://guest:guest@localhost:5672"
   ]
 
 config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
@@ -137,7 +137,7 @@ config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
     exchange: "trento.checks",
     routing_key: "results",
     prefetch_count: "10",
-    connection: "amqp://wanda:wanda@localhost:5672"
+    connection: "amqp://guest:guest@localhost:5672"
   ]
 
 config :trento, Trento.Integration.Prometheus,

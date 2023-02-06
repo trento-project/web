@@ -99,12 +99,12 @@ config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Wa
 
 config :trento, Trento.Messaging.Adapters.AMQP,
   publisher: [
-    connection: "amqp://wanda:wanda@localhost:5674"
+    connection: "amqp://trento:trento@localhost:5673"
   ]
 
 config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
   consumer: [
-    connection: "amqp://wanda:wanda@localhost:5674"
+    connection: "amqp://trento:trento@localhost:5673"
   ]
 
 config :trento, Trento.Integration.Prometheus,
