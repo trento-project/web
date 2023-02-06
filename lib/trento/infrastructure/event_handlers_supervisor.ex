@@ -11,7 +11,6 @@ defmodule Trento.EventHandlersSupervisor do
   def init(_init_arg) do
     children = [
       Trento.AlertsEventHandler,
-      Trento.ChecksEventHandler,
       Trento.RollUpEventHandler,
       Trento.StreamRollUpEventHandler
     ]

@@ -11,9 +11,6 @@ defmodule Trento.ClusterProjector do
   alias TrentoWeb.ClusterView
 
   alias Trento.Domain.Events.{
-    ChecksExecutionCompleted,
-    ChecksExecutionRequested,
-    ChecksExecutionStarted,
     ChecksSelected,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
@@ -49,53 +46,10 @@ defmodule Trento.ClusterProjector do
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
-          health: health,
-          checks_execution: :not_running
+          health: health
         })
 
       Ecto.Multi.insert(multi, :cluster, changeset)
-    end
-  )
-
-  project(
-    %ChecksExecutionRequested{
-      cluster_id: id
-    },
-    fn multi ->
-      changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
-          checks_execution: :requested
-        })
-
-      Ecto.Multi.update(multi, :cluster, changeset)
-    end
-  )
-
-  project(
-    %ChecksExecutionStarted{
-      cluster_id: id
-    },
-    fn multi ->
-      changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
-          checks_execution: :running
-        })
-
-      Ecto.Multi.update(multi, :cluster, changeset)
-    end
-  )
-
-  project(
-    %ChecksExecutionCompleted{
-      cluster_id: id
-    },
-    fn multi ->
-      changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
-          checks_execution: :not_running
-        })
-
-      Ecto.Multi.update(multi, :cluster, changeset)
     end
   )
 
@@ -158,10 +112,7 @@ defmodule Trento.ClusterProjector do
         _,
         %{cluster: cluster}
       ) do
-    registered_cluster =
-      cluster
-      |> Repo.preload([:checks_results, :hosts_executions])
-      |> enrich_cluster_model
+    registered_cluster = enrich_cluster_model(cluster)
 
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
@@ -182,27 +133,6 @@ defmodule Trento.ClusterProjector do
       "monitoring:clusters",
       "cluster_details_updated",
       message
-    )
-  end
-
-  # TODO: broadcast a more specific event
-  def after_update(
-        %event{},
-        _,
-        %{cluster: %{id: id, checks_execution: checks_execution}}
-      )
-      when event in [
-             ChecksExecutionRequested,
-             ChecksExecutionStarted,
-             ChecksExecutionCompleted
-           ] do
-    TrentoWeb.Endpoint.broadcast(
-      "monitoring:clusters",
-      "cluster_details_updated",
-      %{
-        id: id,
-        checks_execution: checks_execution
-      }
     )
   end
 
