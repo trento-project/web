@@ -13,6 +13,9 @@ defmodule Trento.ClusterTest do
   }
 
   alias Trento.Domain.Events.{
+    ChecksExecutionCompleted,
+    ChecksExecutionRequested,
+    ChecksExecutionStarted,
     ChecksSelected,
     ClusterChecksHealthChanged,
     ClusterDetailsUpdated,
@@ -21,7 +24,8 @@ defmodule Trento.ClusterTest do
     ClusterRegistered,
     ClusterRolledUp,
     ClusterRollUpRequested,
-    HostAddedToCluster
+    HostAddedToCluster,
+    HostChecksExecutionCompleted
   }
 
   alias Trento.Domain.Cluster
@@ -671,6 +675,42 @@ defmodule Trento.ClusterTest do
         events,
         RollUpCluster.new!(%{cluster_id: cluster_id}),
         {:error, :cluster_rolling_up}
+      )
+    end
+  end
+
+  describe "legacy events" do
+    test "should ignore legacy events and not update the aggregate" do
+      cluster_id = Faker.UUID.v4()
+
+      cluster_registered_event =
+        build(
+          :cluster_registered_event,
+          cluster_id: cluster_id
+        )
+
+      assert_state(
+        [
+          cluster_registered_event,
+          %ChecksExecutionCompleted{cluster_id: cluster_id},
+          %ChecksExecutionRequested{cluster_id: cluster_id},
+          %ChecksExecutionStarted{cluster_id: cluster_id},
+          %HostChecksExecutionCompleted{cluster_id: cluster_id}
+        ],
+        [],
+        fn cluster ->
+          assert cluster.name == cluster_registered_event.name
+          assert cluster.type == cluster_registered_event.type
+          assert cluster.sid == cluster_registered_event.sid
+          assert cluster.provider == cluster_registered_event.provider
+          assert cluster.resources_number == cluster_registered_event.resources_number
+          assert cluster.hosts_number == cluster_registered_event.hosts_number
+          assert cluster.details == cluster_registered_event.details
+          assert cluster.health == cluster_registered_event.health
+          assert cluster.hosts == []
+          assert cluster.selected_checks == []
+          assert cluster.discovered_health == :passing
+        end
       )
     end
   end
