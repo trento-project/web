@@ -14,7 +14,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
   }
 
   alias Trento.Contracts
-  alias Trento.Domain.Commands.CompleteChecksExecutionWanda
+  alias Trento.Domain.Commands.CompleteChecksExecution
 
   require Trento.Domain.Enums.Health, as: Health
 
@@ -74,7 +74,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ProcessorTest do
       message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
 
       expect(Trento.Commanded.Mock, :dispatch, fn command, opts ->
-        assert %CompleteChecksExecutionWanda{
+        assert %CompleteChecksExecution{
                  cluster_id: ^group_id,
                  health: Health.passing()
                } = command

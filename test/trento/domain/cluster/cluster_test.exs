@@ -7,18 +7,12 @@ defmodule Trento.ClusterTest do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
-    CompleteChecksExecutionWanda,
     RegisterClusterHost,
-    RequestChecksExecution,
     RollUpCluster,
-    SelectChecks,
-    StartChecksExecution
+    SelectChecks
   }
 
   alias Trento.Domain.Events.{
-    ChecksExecutionCompleted,
-    ChecksExecutionRequested,
-    ChecksExecutionStarted,
     ChecksSelected,
     ClusterChecksHealthChanged,
     ClusterDetailsUpdated,
@@ -27,15 +21,10 @@ defmodule Trento.ClusterTest do
     ClusterRegistered,
     ClusterRolledUp,
     ClusterRollUpRequested,
-    HostAddedToCluster,
-    HostChecksExecutionCompleted
+    HostAddedToCluster
   }
 
-  alias Trento.Domain.{
-    CheckResult,
-    Cluster,
-    HostExecution
-  }
+  alias Trento.Domain.Cluster
 
   require Trento.Domain.Enums.Health, as: Health
 
@@ -243,13 +232,6 @@ defmodule Trento.ClusterTest do
   end
 
   describe "checks execution" do
-    test "should not accept start check execution command if a cluster was not registered yet" do
-      assert_error(
-        StartChecksExecution.new!(%{cluster_id: Faker.UUID.v4()}),
-        {:error, :cluster_not_found}
-      )
-    end
-
     test "should select desired checks" do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
@@ -320,231 +302,6 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should request a checks execution with the selected checks" do
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
-      checks_results = Enum.map(selected_checks, &%CheckResult{check_id: &1, result: :unknown})
-
-      assert_events_and_state(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id, provider: :azure),
-          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
-          %ChecksSelected{
-            cluster_id: cluster_id,
-            checks: selected_checks
-          }
-        ],
-        RequestChecksExecution.new!(%{
-          cluster_id: cluster_id
-        }),
-        [
-          %ChecksExecutionRequested{
-            cluster_id: cluster_id,
-            hosts: [host_id],
-            checks: selected_checks,
-            provider: :azure
-          },
-          %ClusterHealthChanged{
-            cluster_id: cluster_id,
-            health: :unknown
-          }
-        ],
-        fn cluster ->
-          assert %Cluster{
-                   health: :unknown,
-                   checks_execution: :requested,
-                   hosts_executions: [
-                     %HostExecution{
-                       host_id: ^host_id,
-                       reachable: true,
-                       checks_results: ^checks_results
-                     }
-                   ]
-                 } = cluster
-        end
-      )
-    end
-
-    test "should not start a checks execution if no checks are selected" do
-      cluster_id = Faker.UUID.v4()
-
-      assert_events(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id),
-          %ChecksSelected{
-            cluster_id: cluster_id,
-            checks: []
-          }
-        ],
-        RequestChecksExecution.new!(%{
-          cluster_id: cluster_id
-        }),
-        []
-      )
-    end
-
-    test "should start a checks execution" do
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
-
-      assert_events_and_state(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id),
-          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
-          %ChecksSelected{
-            cluster_id: cluster_id,
-            checks: selected_checks
-          }
-        ],
-        StartChecksExecution.new!(%{
-          cluster_id: cluster_id
-        }),
-        [
-          %ChecksExecutionStarted{
-            cluster_id: cluster_id
-          }
-        ],
-        fn cluster ->
-          assert %Cluster{
-                   checks_execution: :running
-                 } = cluster
-        end
-      )
-    end
-
-    test "should complete a checks execution" do
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
-      checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :critical})
-      expected_results = Enum.map(checks_results, &CheckResult.new!/1)
-      msg = Faker.StarWars.planet()
-
-      assert_events_and_state(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id),
-          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
-          %ChecksSelected{
-            cluster_id: cluster_id,
-            checks: selected_checks
-          },
-          %ChecksExecutionRequested{
-            cluster_id: cluster_id,
-            hosts: [host_id],
-            checks: selected_checks,
-            provider: :azure
-          },
-          %ChecksExecutionStarted{
-            cluster_id: cluster_id
-          }
-        ],
-        CompleteChecksExecution.new!(%{
-          cluster_id: cluster_id,
-          hosts_executions: [
-            %{
-              host_id: host_id,
-              reachable: true,
-              msg: msg,
-              checks_results: checks_results
-            }
-          ]
-        }),
-        [
-          HostChecksExecutionCompleted.new!(%{
-            cluster_id: cluster_id,
-            host_id: host_id,
-            reachable: true,
-            msg: msg,
-            checks_results: checks_results
-          }),
-          %ChecksExecutionCompleted{
-            cluster_id: cluster_id,
-            health: :critical
-          },
-          %ClusterHealthChanged{
-            cluster_id: cluster_id,
-            health: :critical
-          }
-        ],
-        fn cluster ->
-          assert %Cluster{
-                   checks_execution: :not_running,
-                   hosts_executions: [
-                     %HostExecution{
-                       host_id: ^host_id,
-                       reachable: true,
-                       checks_results: ^expected_results
-                     }
-                   ]
-                 } = cluster
-        end
-      )
-    end
-
-    test "should complete a checks execution when reachable is false" do
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
-      checks_results = Enum.map(selected_checks, &%{check_id: &1, result: :unknown})
-      expected_results = Enum.map(checks_results, &CheckResult.new!(&1))
-      msg = Faker.StarWars.planet()
-
-      assert_events_and_state(
-        [
-          build(:cluster_registered_event, cluster_id: cluster_id),
-          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
-          %ChecksSelected{
-            cluster_id: cluster_id,
-            checks: selected_checks
-          },
-          build(
-            :checks_execution_requested_event,
-            cluster_id: cluster_id,
-            hosts: [host_id],
-            checks: selected_checks
-          )
-        ],
-        CompleteChecksExecution.new!(%{
-          cluster_id: cluster_id,
-          hosts_executions: [
-            %{
-              host_id: host_id,
-              reachable: false,
-              msg: msg
-            }
-          ]
-        }),
-        [
-          HostChecksExecutionCompleted.new!(%{
-            cluster_id: cluster_id,
-            host_id: host_id,
-            reachable: false,
-            msg: msg,
-            checks_results: checks_results
-          }),
-          %ChecksExecutionCompleted{
-            cluster_id: cluster_id,
-            health: :unknown
-          },
-          %ClusterHealthChanged{cluster_id: cluster_id, health: :unknown}
-        ],
-        fn cluster ->
-          assert %Cluster{
-                   checks_execution: :not_running,
-                   hosts_executions: [
-                     %HostExecution{
-                       checks_results: ^expected_results
-                     }
-                   ]
-                 } = cluster
-        end
-      )
-    end
-  end
-
-  describe "checks execution using wanda" do
     test "should change health state when checks health changes" do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
@@ -557,7 +314,7 @@ defmodule Trento.ClusterTest do
             checks: selected_checks
           }
         ],
-        CompleteChecksExecutionWanda.new!(%{
+        CompleteChecksExecution.new!(%{
           cluster_id: cluster_id,
           health: Health.critical()
         }),
@@ -597,7 +354,7 @@ defmodule Trento.ClusterTest do
             discovered_health: Health.critical()
           }
         ],
-        CompleteChecksExecutionWanda.new!(%{
+        CompleteChecksExecution.new!(%{
           cluster_id: cluster_id,
           health: Health.warning()
         }),
@@ -637,7 +394,7 @@ defmodule Trento.ClusterTest do
             discovered_health: Health.critical()
           }
         ],
-        CompleteChecksExecutionWanda.new!(%{
+        CompleteChecksExecution.new!(%{
           cluster_id: cluster_id,
           health: Health.critical()
         }),
@@ -664,9 +421,9 @@ defmodule Trento.ClusterTest do
         [
           cluster_registered_event,
           host_added_to_cluster_event,
-          %ChecksExecutionCompleted{
+          %ClusterChecksHealthChanged{
             cluster_id: cluster_registered_event.cluster_id,
-            health: :unknown
+            checks_health: :unknown
           },
           %ChecksSelected{
             cluster_id: cluster_registered_event.cluster_id,
@@ -758,9 +515,9 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_registered_event.cluster_id,
             checks: [Faker.Cat.name()]
           },
-          %ChecksExecutionCompleted{
+          %ClusterChecksHealthChanged{
             cluster_id: cluster_registered_event.cluster_id,
-            health: :critical
+            checks_health: :critical
           },
           %ClusterHealthChanged{
             cluster_id: cluster_registered_event.cluster_id,
@@ -827,8 +584,7 @@ defmodule Trento.ClusterTest do
             hosts: [],
             selected_checks: [],
             discovered_health: :passing,
-            checks_health: nil,
-            hosts_executions: []
+            checks_health: nil
           }
         },
         fn %Cluster{rolling_up: rolling_up} ->
@@ -858,8 +614,7 @@ defmodule Trento.ClusterTest do
               hosts: [],
               selected_checks: [],
               discovered_health: :passing,
-              checks_health: nil,
-              hosts_executions: []
+              checks_health: nil
             }
           }
         ],
@@ -877,8 +632,6 @@ defmodule Trento.ClusterTest do
           assert cluster.hosts == []
           assert cluster.selected_checks == []
           assert cluster.discovered_health == :passing
-          assert cluster.checks_health == nil
-          assert cluster.hosts_executions == []
         end
       )
     end
@@ -910,7 +663,7 @@ defmodule Trento.ClusterTest do
 
       assert_error(
         events,
-        StartChecksExecution.new!(%{cluster_id: cluster_id}),
+        CompleteChecksExecution.new!(%{cluster_id: cluster_id, health: :unknown}),
         {:error, :cluster_rolling_up}
       )
 

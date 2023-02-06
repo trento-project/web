@@ -7,18 +7,14 @@ defmodule Trento.ClusterProjectorTest do
 
   import Trento.Factory
 
-  alias Trento.Domain.Events.ClusterHealthChanged
+  alias Trento.Domain.Events.{
+    ClusterDetailsUpdated,
+    ClusterHealthChanged
+  }
 
   alias Trento.{
     ClusterProjector,
     ClusterReadModel
-  }
-
-  alias Trento.Domain.Events.{
-    ChecksExecutionCompleted,
-    ChecksExecutionRequested,
-    ChecksExecutionStarted,
-    ClusterDetailsUpdated
   }
 
   alias Trento.ProjectorTestHelper
@@ -59,8 +55,6 @@ defmodule Trento.ClusterProjectorTest do
 
     assert_broadcast "cluster_registered",
                      %{
-                       checks_execution: :not_running,
-                       checks_results: [],
                        cib_last_written: nil,
                        details: %Trento.Domain.HanaClusterDetails{
                          fencing_type: "external/sbd",
@@ -100,7 +94,6 @@ defmodule Trento.ClusterProjectorTest do
                          system_replication_operation_mode: "logreplay"
                        },
                        health: :passing,
-                       hosts_executions: [],
                        hosts_number: 2,
                        id: ^cluster_id,
                        name: _,
@@ -191,72 +184,6 @@ defmodule Trento.ClusterProjectorTest do
                        sid: _,
                        type: :hana_scale_up
                      },
-                     1000
-  end
-
-  test "should update the cluster checks execution status when ChecksExecutionRequested is received" do
-    insert(:cluster, id: cluster_id = Faker.UUID.v4())
-
-    event = %ChecksExecutionRequested{
-      cluster_id: cluster_id
-    }
-
-    ProjectorTestHelper.project(
-      ClusterProjector,
-      event,
-      "cluster_projector"
-    )
-
-    cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
-
-    assert :requested == cluster_projection.checks_execution
-
-    assert_broadcast "cluster_details_updated",
-                     %{id: ^cluster_id, checks_execution: :requested},
-                     1000
-  end
-
-  test "should update the cluster checks execution status when ChecksExecutionStarted is received" do
-    insert(:cluster, id: cluster_id = Faker.UUID.v4())
-
-    event = %ChecksExecutionStarted{
-      cluster_id: cluster_id
-    }
-
-    ProjectorTestHelper.project(
-      ClusterProjector,
-      event,
-      "cluster_projector"
-    )
-
-    cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
-
-    assert :running == cluster_projection.checks_execution
-
-    assert_broadcast "cluster_details_updated",
-                     %{id: ^cluster_id, checks_execution: :running},
-                     1000
-  end
-
-  test "should update the cluster checks execution status when ChecksExecutionCompleted is received" do
-    insert(:cluster, id: cluster_id = Faker.UUID.v4())
-
-    event = %ChecksExecutionCompleted{
-      cluster_id: cluster_id
-    }
-
-    ProjectorTestHelper.project(
-      ClusterProjector,
-      event,
-      "cluster_projector"
-    )
-
-    cluster_projection = Repo.get!(ClusterReadModel, cluster_id)
-
-    assert :not_running == cluster_projection.checks_execution
-
-    assert_broadcast "cluster_details_updated",
-                     %{id: ^cluster_id, checks_execution: :not_running},
                      1000
   end
 
