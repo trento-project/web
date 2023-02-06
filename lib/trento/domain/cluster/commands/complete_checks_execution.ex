@@ -1,16 +1,16 @@
 defmodule Trento.Domain.Commands.CompleteChecksExecution do
   @moduledoc """
-  Store the checks results coming from an execution on a specific cluster.
+  Complete the checks execution with the incoming result
   """
 
   @required_fields :all
 
   use Trento.Command
 
-  alias Trento.Domain.HostExecution
+  require Trento.Domain.Enums.Health, as: Health
 
   defcommand do
     field :cluster_id, Ecto.UUID
-    embeds_many :hosts_executions, HostExecution
+    field :health, Ecto.Enum, values: Health.values()
   end
 end
