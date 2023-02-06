@@ -75,10 +75,12 @@ if config_env() in [:prod, :demo] do
       For example: amqp://USER:PASSWORD@HOST
       """
 
-  config :wanda, Wanda.Messaging.Adapters.AMQP,
+  config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
     consumer: [
       connection: amqp_url
-    ],
+    ]
+
+  config :trento, Trento.Messaging.Adapters.AMQP,
     publisher: [
       connection: amqp_url
     ]
