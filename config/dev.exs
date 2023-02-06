@@ -84,15 +84,17 @@ config :trento, TrentoWeb.Endpoint,
     ]
   ]
 
-config :trento, Trento.Scheduler,
-  jobs: [
-    publish_telemetry: [
-      schedule: {:extended, "@hourly"}
-    ],
-    clusters_checks_execution: [
-      schedule: {:extended, "@hourly"}
+unless IEx.started?() do
+  config :trento, Trento.Scheduler,
+    jobs: [
+      publish_telemetry: [
+        schedule: {:extended, "@hourly"}
+      ],
+      clusters_checks_execution: [
+        schedule: {:extended, "@hourly"}
+      ]
     ]
-  ]
+end
 
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
 config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.MockRunner
