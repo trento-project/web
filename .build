@@ -17,9 +17,6 @@ Trento.ChecksEventHandler.html
 Trento.ClusterEnrichmentData.html
 Trento.ClusterProjector.html
 Trento.ClusterReadModel.html
-Trento.Clusters.Gen.html
-Trento.Clusters.Runner.html
-Trento.Clusters.Wanda.html
 Trento.Clusters.html
 Trento.Command.html
 Trento.Commanded.html
@@ -101,18 +98,7 @@ Trento.HostTelemetryReadModel.html
 Trento.Hosts.html
 Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug.html
 Trento.Installation.html
-Trento.Integration.Checks.CatalogDto.html
-Trento.Integration.Checks.CheckDto.html
-Trento.Integration.Checks.ExecutionCompletedEventDto.Host.Result.html
-Trento.Integration.Checks.ExecutionCompletedEventDto.Host.html
-Trento.Integration.Checks.ExecutionCompletedEventDto.html
-Trento.Integration.Checks.FlatCatalogDto.html
-Trento.Integration.Checks.FlatCheckDto.html
 Trento.Integration.Checks.Gen.html
-Trento.Integration.Checks.GroupDto.html
-Trento.Integration.Checks.MockRunner.html
-Trento.Integration.Checks.ProviderDto.html
-Trento.Integration.Checks.Runner.html
 Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer.html
 Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor.html
 Trento.Integration.Checks.Wanda.html
@@ -217,7 +203,6 @@ TrentoWeb.Auth.AccessToken.html
 TrentoWeb.Auth.ApiAuthErrorHandler.html
 TrentoWeb.Auth.JWTAuthPlug.html
 TrentoWeb.Auth.RefreshToken.html
-TrentoWeb.CatalogController.html
 TrentoWeb.ChannelCase.html
 TrentoWeb.ChecksResultView.html
 TrentoWeb.ClusterController.html
@@ -236,7 +221,6 @@ TrentoWeb.HostView.html
 TrentoWeb.InstallationController.html
 TrentoWeb.InstallationView.html
 TrentoWeb.LayoutView.html
-TrentoWeb.MockRunnerController.html
 TrentoWeb.MonitoringChannel.html
 TrentoWeb.OpenApi.ApiSpec.html
 TrentoWeb.PageController.html
@@ -290,8 +274,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-EC9BD9EE.js
-dist/sidebar_items-7B49D5E2.js
+dist/search_items-A647C03E.js
+dist/sidebar_items-30672BD2.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
