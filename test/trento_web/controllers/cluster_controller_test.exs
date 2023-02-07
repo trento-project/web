@@ -24,19 +24,6 @@ defmodule TrentoWeb.ClusterControllerTest do
     end
   end
 
-  describe "runner_callback" do
-    test "should return 400 when the request is invalid", %{conn: conn} do
-      resp =
-        conn
-        |> post("/api/runner/callback", %{
-          "invalid" => "not valid?"
-        })
-        |> json_response(400)
-
-      assert %{"error" => "runner callback failed"} = resp
-    end
-  end
-
   describe "select_checks" do
     test "should return bad request when the request is malformed", %{conn: conn} do
       cluster_id = UUID.uuid4()
@@ -62,13 +49,26 @@ defmodule TrentoWeb.ClusterControllerTest do
   end
 
   describe "request check executions" do
-    test "should return 400 when the request is invalid", %{conn: conn} do
+    test "should return 400 with not found when the cluster is not known", %{conn: conn} do
       cluster_id = UUID.uuid4()
 
+      resp =
+        conn
+        |> post("/api/clusters/#{cluster_id}/checks/request_execution", %{
+          "cluster_id" => cluster_id
+        })
+        |> json_response(400)
+
+      assert %{"error" => "cluster_not_found"} = resp
+    end
+
+    test "should return 400 when the request is invalid", %{conn: conn} do
+      %{id: cluster_id} = insert(:cluster)
+
       expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn _ ->
+        Trento.Integration.Checks.Mock,
+        :request_execution,
+        fn _, _, _, _, _ ->
           {:error, "the reason is us"}
         end
       )
@@ -81,89 +81,6 @@ defmodule TrentoWeb.ClusterControllerTest do
         |> json_response(400)
 
       assert %{"error" => "the reason is us"} = resp
-    end
-  end
-
-  describe "Connection Settings Management for the Hosts of a Cluster" do
-    setup do
-      cluster_id = Faker.UUID.v4()
-      insert(:cluster, id: cluster_id)
-
-      %{
-        cluster_id: cluster_id,
-        hosts: [
-          insert(:host, hostname: "A-01", cluster_id: cluster_id),
-          insert(:host, hostname: "B-01", cluster_id: cluster_id)
-        ]
-      }
-    end
-
-    test "should retrieve connection settings for a given cluster", %{
-      conn: conn,
-      cluster_id: cluster_id,
-      hosts: [
-        %{id: a_host_id, cluster_id: cluster_id},
-        %{id: another_host_id, cluster_id: cluster_id}
-      ]
-    } do
-      resp =
-        conn
-        |> get("/api/clusters/#{cluster_id}/connection_settings")
-        |> json_response(200)
-
-      assert [
-               %{
-                 "default_user" => "root",
-                 "host_id" => ^a_host_id,
-                 "user" => nil
-               },
-               %{
-                 "default_user" => "root",
-                 "host_id" => ^another_host_id,
-                 "user" => nil
-               }
-             ] = resp
-    end
-
-    test "should apply desired connection settings for the hosts of a given cluster", %{
-      conn: conn,
-      cluster_id: cluster_id,
-      hosts: [
-        %{id: a_host_id, cluster_id: cluster_id},
-        %{id: another_host_id, cluster_id: cluster_id}
-      ]
-    } do
-      connection_user = "cloudadmin"
-
-      resp =
-        conn
-        |> put(
-          "/api/clusters/#{cluster_id}/connection_settings",
-          %{
-            "settings" => [
-              %{
-                "host_id" => a_host_id,
-                "user" => connection_user
-              },
-              %{
-                "host_id" => another_host_id,
-                "user" => connection_user
-              }
-            ]
-          }
-        )
-        |> json_response(200)
-
-      assert [
-               %{
-                 "host_id" => ^a_host_id,
-                 "user" => ^connection_user
-               },
-               %{
-                 "host_id" => ^another_host_id,
-                 "user" => ^connection_user
-               }
-             ] = resp
     end
   end
 end

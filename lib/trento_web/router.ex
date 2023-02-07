@@ -70,14 +70,6 @@ defmodule TrentoWeb.Router do
          ClusterController,
          :request_checks_execution
 
-    get "/clusters/:cluster_id/connection_settings", ClusterController, :get_connection_settings
-
-    put "/clusters/:cluster_id/connection_settings",
-        ClusterController,
-        :save_connection_settings
-
-    get "/checks/catalog", CatalogController, :checks_catalog
-
     post "/hosts/:id/tags", TagsController, :add_tag,
       assigns: %{resource_type: :host},
       as: :hosts_tagging
@@ -118,7 +110,6 @@ defmodule TrentoWeb.Router do
   scope "/api", TrentoWeb do
     pipe_through :api
 
-    post "/runner/callback", ClusterController, :runner_callback
     get "/prometheus/targets", PrometheusController, :targets
   end
 
@@ -162,11 +153,6 @@ defmodule TrentoWeb.Router do
       pipe_through :browser
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-
-    scope "/api", TrentoWeb do
-      pipe_through :api
-      post "/mockrunner/expected_result", MockRunnerController, :set_expected_results
     end
   end
 

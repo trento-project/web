@@ -79,12 +79,6 @@ config :trento, Trento.Scheduler,
     ]
   ]
 
-config :trento,
-  extra_children: [
-    Trento.Messaging.Adapters.AMQP.Publisher,
-    Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer
-  ]
-
 config :trento, Trento.StreamRollUpEventHandler, max_stream_version: 10
 
 config :joken,

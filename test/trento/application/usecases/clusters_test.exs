@@ -12,31 +12,7 @@ defmodule Trento.ClustersTest do
   alias Trento.ClusterEnrichmentData
   alias Trento.ClusterReadModel
 
-  alias Trento.Domain.Commands.RequestChecksExecution
-
   setup [:set_mox_from_context, :verify_on_exit!]
-
-  describe "checks execution" do
-    test "should dispatch checks execution requests for each cluster" do
-      clusters = insert_list(5, :cluster)
-
-      Enum.each(clusters, fn %{id: cluster_id} ->
-        expect(
-          Trento.Commanded.Mock,
-          :dispatch,
-          fn command ->
-            assert %RequestChecksExecution{
-                     cluster_id: ^cluster_id
-                   } = command
-
-            :ok
-          end
-        )
-      end)
-
-      :ok = Clusters.request_clusters_checks_execution()
-    end
-  end
 
   describe "checks execution with wanda adapter" do
     test "should start a checks execution on demand" do
@@ -55,13 +31,13 @@ defmodule Trento.ClustersTest do
         :ok
       end)
 
-      assert :ok = Clusters.Wanda.request_checks_execution(cluster_id)
+      assert :ok = Clusters.request_checks_execution(cluster_id)
     end
 
     test "should not start checks execution if the cluster is not registered" do
       expect(Trento.Integration.Checks.Mock, :request_execution, 0, fn _, _, _, _, _ -> :ok end)
 
-      assert {:error, :cluster_not_found} = Clusters.Wanda.request_checks_execution(UUID.uuid4())
+      assert {:error, :cluster_not_found} = Clusters.request_checks_execution(UUID.uuid4())
     end
 
     test "should not start checks execution if no checks are selected" do
@@ -69,7 +45,7 @@ defmodule Trento.ClustersTest do
 
       expect(Trento.Integration.Checks.Mock, :request_execution, 0, fn _, _, _, _, _ -> :ok end)
 
-      assert :ok = Clusters.Wanda.request_checks_execution(cluster_id)
+      assert :ok = Clusters.request_checks_execution(cluster_id)
     end
 
     test "should return an error if the checks execution start fails" do
@@ -79,7 +55,7 @@ defmodule Trento.ClustersTest do
         {:error, :some_error}
       end)
 
-      assert {:error, :some_error} = Clusters.Wanda.request_checks_execution(cluster_id)
+      assert {:error, :some_error} = Clusters.request_checks_execution(cluster_id)
     end
   end
 

@@ -68,14 +68,22 @@ if config_env() in [:prod, :demo] do
     ],
     secret_key_base: secret_key_base
 
-  runner_url =
-    System.get_env("RUNNER_URL") ||
+  amqp_url =
+    System.get_env("AMQP_URL") ||
       raise """
-      environment variable RUNNER_URL is missing.
-      For example: http://localhost:8080
+      environment variable AMQP_URL is missing.
+      For example: amqp://USER:PASSWORD@HOST
       """
 
-  config :trento, Trento.Integration.Checks.Runner, runner_url: runner_url
+  config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
+    consumer: [
+      connection: amqp_url
+    ]
+
+  config :trento, Trento.Messaging.Adapters.AMQP,
+    publisher: [
+      connection: amqp_url
+    ]
 
   config :trento, :grafana,
     user: System.get_env("GRAFANA_USER") || "admin",
@@ -133,7 +141,7 @@ if config_env() in [:prod, :demo] do
     jobs: [
       clusters_checks_execution: [
         # Runs every five minutes by default
-        schedule: "*/#{System.get_env("RUNNER_INTERVAL", "5")} * * * *"
+        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
       ]
     ]
 end

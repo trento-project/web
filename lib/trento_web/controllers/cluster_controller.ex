@@ -1,9 +1,7 @@
 defmodule TrentoWeb.ClusterController do
   use TrentoWeb, :controller
 
-  alias Trento.{Clusters, Hosts}
-
-  alias Trento.Integration.Checks
+  alias Trento.Clusters
 
   alias TrentoWeb.OpenApi.Schema
 
@@ -63,34 +61,6 @@ defmodule TrentoWeb.ClusterController do
     end
   end
 
-  operation :runner_callback,
-    summary: "Hook for Checks Execution progress updates",
-    tags: ["Checks"],
-    description:
-      "The Runner executing the Checks Selection on the target infrastructure, publishes updates about the progress of the Execution.",
-    request_body: {"Callback Event", "application/json", Schema.Runner.CallbackEvent},
-    responses: [
-      accepted:
-        {"The Operation has been accepted, and the proper followup processes will trigger",
-         "application/json", Schema.Common.EmptyResponse},
-      bad_request:
-        {"Something went wrong during the operation", "application/json",
-         Schema.Common.BadRequestResponse}
-    ]
-
-  @spec runner_callback(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def runner_callback(conn, params) do
-    case Checks.handle_callback(params) do
-      :ok ->
-        conn
-        |> put_status(:accepted)
-        |> json(%{})
-
-      {:error, _} ->
-        {:error, {:bad_request, "runner callback failed"}}
-    end
-  end
-
   operation :select_checks,
     summary: "Select Checks",
     tags: ["Checks"],
@@ -119,35 +89,5 @@ defmodule TrentoWeb.ClusterController do
       {:error, reason} ->
         {:error, {:bad_request, reason}}
     end
-  end
-
-  operation :get_connection_settings, false
-  @spec get_connection_settings(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def get_connection_settings(conn, %{"cluster_id" => cluster_id}) do
-    settings = Hosts.get_all_connection_settings_by_cluster_id(cluster_id)
-
-    conn
-    |> put_status(:ok)
-    |> render("settings.json", settings: settings)
-  end
-
-  operation :save_connection_settings, false
-  @spec save_connection_settings(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def save_connection_settings(
-        conn,
-        %{
-          "settings" => [_ | _] = settings,
-          "cluster_id" => cluster_id
-        }
-      ) do
-    settings
-    |> Enum.map(&map_to_struct/1)
-    |> Hosts.save_hosts_connection_settings()
-
-    get_connection_settings(conn, %{"cluster_id" => cluster_id})
-  end
-
-  defp map_to_struct(%{"host_id" => host_id, "user" => user}) do
-    %{host_id: host_id, user: user}
   end
 end
