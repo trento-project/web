@@ -121,11 +121,12 @@ defmodule TrentoWeb.Router do
     end
   end
 
-
   scope "/api" do
     pipe_through :api
 
-    match :*, "/*path/", TrentoWeb.Plugs.ApiRedirector, latest_version: @latest_api_version
+    match :*, "/*path/", TrentoWeb.Plugs.ApiRedirector,
+      latest_version: @latest_api_version,
+      router: __MODULE__
   end
 
   scope "/api" do
