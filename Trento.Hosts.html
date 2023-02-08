@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-30672BD2.js"></script>
+    <script src="dist/sidebar_items-CE46C668.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -133,14 +133,6 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#get_all_connection_settings_by_cluster_id/1" translate="no">get_all_connection_settings_by_cluster_id(cluster_id)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
           <a href="#get_all_hosts/0" translate="no">get_all_hosts()</a>
 
         </div>
@@ -150,22 +142,6 @@ Trento Web
       <div class="summary-row">
         <div class="summary-signature">
           <a href="#get_all_sles_subscriptions/0" translate="no">get_all_sles_subscriptions()</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#get_connection_settings/1" translate="no">get_connection_settings(host_id)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#save_hosts_connection_settings/1" translate="no">save_hosts_connection_settings(settings)</a>
 
         </div>
 
@@ -185,36 +161,6 @@ Trento Web
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="get_all_connection_settings_by_cluster_id/1">
-
-  <div class="detail-header">
-    <a href="#get_all_connection_settings_by_cluster_id/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_all_connection_settings_by_cluster_id(cluster_id)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L68" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> get_all_connection_settings_by_cluster_id(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: [
-  %{host_id: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), hostname: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), user: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()}
-]</pre>
-
-      </div>
-
-
-  </section>
-</section>
 <section class="detail" id="get_all_hosts/0">
 
   <div class="detail-header">
@@ -224,7 +170,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_all_hosts()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L17" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L16" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -252,7 +198,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_all_sles_subscriptions()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L26" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L25" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -265,63 +211,6 @@ Functions
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> get_all_sles_subscriptions() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="get_connection_settings/1">
-
-  <div class="detail-header">
-    <a href="#get_connection_settings/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_connection_settings(host_id)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L42" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> get_connection_settings(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="save_hosts_connection_settings/1">
-
-  <div class="detail-header">
-    <a href="#save_hosts_connection_settings/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">save_hosts_connection_settings(settings)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L92" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> save_hosts_connection_settings([%{host_id: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), user: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()}]) ::
-  :ok</pre>
 
       </div>
 

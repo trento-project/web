@@ -11,9 +11,6 @@ Trento.AlertsEventHandler.html
 Trento.Application.Auth.ApiKey.html
 Trento.Application.UseCases.Alerting.html
 Trento.ApplicationInstanceReadModel.html
-Trento.CheckResultProjector.html
-Trento.CheckResultReadModel.html
-Trento.ChecksEventHandler.html
 Trento.ClusterEnrichmentData.html
 Trento.ClusterProjector.html
 Trento.ClusterReadModel.html
@@ -32,15 +29,12 @@ Trento.Domain.Cluster.html
 Trento.Domain.ClusterNode.html
 Trento.Domain.ClusterResource.html
 Trento.Domain.Commands.CompleteChecksExecution.html
-Trento.Domain.Commands.CompleteChecksExecutionWanda.html
 Trento.Domain.Commands.RegisterApplicationInstance.html
 Trento.Domain.Commands.RegisterClusterHost.html
 Trento.Domain.Commands.RegisterDatabaseInstance.html
 Trento.Domain.Commands.RegisterHost.html
-Trento.Domain.Commands.RequestChecksExecution.html
 Trento.Domain.Commands.RollUpCluster.html
 Trento.Domain.Commands.SelectChecks.html
-Trento.Domain.Commands.StartChecksExecution.html
 Trento.Domain.Commands.UpdateHeartbeat.html
 Trento.Domain.Commands.UpdateProvider.html
 Trento.Domain.Commands.UpdateSlesSubscriptions.html
@@ -91,7 +85,6 @@ Trento.EventStoreCase.html
 Trento.Factory.html
 Trento.Heartbeats.Faker.html
 Trento.Heartbeats.html
-Trento.HostChecksExecutionsReadModel.html
 Trento.HostProjector.html
 Trento.HostReadModel.html
 Trento.HostTelemetryReadModel.html
@@ -274,8 +267,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-A647C03E.js
-dist/sidebar_items-30672BD2.js
+dist/search_items-13D7AC57.js
+dist/sidebar_items-CE46C668.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
