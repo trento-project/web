@@ -2,6 +2,8 @@ defmodule TrentoWeb.Router do
   use TrentoWeb, :router
   use Pow.Phoenix.Router
 
+  @latest_api_version "v1"
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -117,6 +119,13 @@ defmodule TrentoWeb.Router do
     scope "/v1", TrentoWeb.V1 do
       get "/prometheus/targets", PrometheusController, :targets
     end
+  end
+
+
+  scope "/api" do
+    pipe_through :api
+
+    match :*, "/*path/", TrentoWeb.Plugs.ApiRedirector, latest_version: @latest_api_version
   end
 
   scope "/api" do
