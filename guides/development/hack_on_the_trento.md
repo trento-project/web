@@ -1,14 +1,14 @@
-# Hack on the Trento web
+# Hack on the Trento Web
 
 ## Requirements
 
-In order to run the Trento web application, you need to have the following software installed on your system:
+In order to run the Trento Web application, you need to have the following software installed on your system:
 
 1. [Elixir](https://elixir-lang.org/) - a dynamic, functional language designed for building scalable and maintainable applications.
 2. [Docker](https://docs.docker.com/get-docker/) - a platform for developing, shipping, and running applications in containers
 3. [Docker Compose](https://docs.docker.com/compose/install/) - a tool for defining and running multi-container Docker applications.
 
-Please note that you also need to have Git installed on your computer to clone the Trento repository.
+**Note** that you also need to have Git installed on your computer to clone the Trento repository.
 
 ## Development environment
 
@@ -22,23 +22,35 @@ This starts the Postgres and Grafana containers in detached mode, so you can con
 
 It starts a **postgres** database and a **grafana** instance, for storage and monitoring.
 
-## Install dependencies
-
-Before you can start the Trento application, you need to install the Elixir dependencies. To do this, navigate to the root directory of the Trento project and run the following command:
-
-```
-mix deps.get
-```
-
 ## Setup Trento
 
-Once the dependencies are installed, you can set up the Trento application by running the following command:
+Before starting Trento Web, some initial setup tasks are required. This can be achieved by running the following command:
 
 ```
 mix setup
 ```
 
-This command set's up the necessary database tables and seed data.
+This command performs necessary tasks such as installing dependencies, creating the database schema and running migrations.
+
+### Hint about Project setup
+
+Gain a deeper understanding of how Trento Web is configured, reading the [mix.exs](https://github.com/trento-project/web/blob/main/mix.exs) file located in the root directory of the project. This file contains information on dependencies, configuration settings, and tasks that can be run using the Mix build tool, providing a complete picture of the project's setup.
+
+## Connecting Trento Web to [Wanda](https://github.com/trento-project/wanda)
+
+Wanda is a service that is responsible to orchestrate Checks for the Trento Web application. By default, Wanda can be accessed on port 4001. To connect Trento Web to Wanda, you need to create a .env file in the root path of Trento Web.
+
+Create the file by running the following command in your terminal:
+
+```
+echo "WANDA_URL=http://localhost:4001" > assets/.env
+```
+
+**Guide** how to hack on [Wanda](https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.md).
+
+### Hint about the default port of Wanda
+
+If the Wanda service is running on a different port, you need to change 4001 in the .env file to the correct port number.
 
 ## Install the JavaScript frontend packages
 
@@ -58,9 +70,9 @@ iex -S mix phx.server
 
 This command start's the Phoenix web server and open an Elixir REPL, where you can interact with the application and make changes to the code.
 
-## Access the Trento web
+## Access the Trento Web
 
-Once the application is running, you can access the Trento web by navigating to http://localhost:4000 in your web browser.
+Once the application is running, you can access the Trento Web by navigating to http://localhost:4000 in your web browser.
 The default port is 4000, but you can change it by modifying the config/dev.exs file.
 
 ## Login
@@ -103,19 +115,3 @@ docker run -v "$PWD":/data --network host ghcr.io/trento-project/photofinish run
 Several useful scenario fixtures are available in [./test/fixtures/scenarios](https://github.com/trento-project/web/tree/main/test/fixtures/scenarios), the same ones used in e2e tests.
 
 See also [.photofinish.toml](https://github.com/trento-project/web/blob/main/.photofinish.toml).
-
-## Connect Trento web with [Wanda](https://github.com/trento-project/wanda)
-
-In order to connect the Trento web with Wanda, you must first have a running Wanda server.
-To install Wanda, please follow the instructions provided in the [hack_on_wanda documentation](https://github.com/trento-project/wanda/blob/update_documentation/guides/development/hack_on_wanda.md).
-Once you have a running Wanda server, you can proceed to connect it with Trento web.
-
-The next step is to restart the Trento web server with the following command:
-
-```
-WANDA_URL=http://localhost:4001 MIX_ENV=wanda iex -S mix phx.server
-```
-
-This command sets the WANDA_URL environment variable to the URL of the Wanda server, and starts the Trento server in the Wanda environment.
-
-It is important to note that the WANDA_URL variable must be set to the correct URL of the running Wanda server, otherwise the Trento web server is not able to connect to it.
