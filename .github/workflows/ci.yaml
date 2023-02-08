@@ -11,15 +11,22 @@ on:
     types: [start-ci]
 
 env:
-  ELIXIR_VERSION: 1.13.1
-  OTP_VERSION: 24
+  ELIXIR_VERSION: 1.14.3
+  OTP_VERSION: 25
   MIX_ENV: test
   NODE_VERSION: "16"
 
 jobs:
   elixir-deps:
-    name: Elixir dependencies
+    name: Elixir dependencies (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.14.3
+            otp: 25
+          - elixir: 1.13.4
+            otp: 22
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -32,8 +39,8 @@ jobs:
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
         env:
           ImageOS: ubuntu20
       - name: Retrieve Cached Dependencies
@@ -44,7 +51,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -106,7 +113,7 @@ jobs:
 
   generate-docs:
     name: Generate project documentation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
       - uses: actions/checkout@v2
@@ -193,9 +200,16 @@ jobs:
         run: cd assets && npm run format:check
 
   test:
-    name: Test
+    name: Test (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
     needs: [elixir-deps, npm-deps]
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.14.3
+            otp: 25
+          - elixir: 1.13.4
+            otp: 22
     services:
       postgres:
         image: postgres
@@ -229,8 +243,8 @@ jobs:
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -243,7 +257,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
@@ -286,9 +300,16 @@ jobs:
         run: cd test/e2e && npm install
 
   test-e2e:
-    name: End to end tests
+    name: End to end tests (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.14.3
+            otp: 25
+          - elixir: 1.13.4
+            otp: 22
     env:
       MIX_ENV: dev
     services:
@@ -321,8 +342,8 @@ jobs:
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.ELIXIR_VERSION }}
-          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
         env:
           ImageOS: ubuntu20
       - name: Setup Node
@@ -337,7 +358,7 @@ jobs:
             deps
             _build/dev
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
@@ -489,7 +510,7 @@ jobs:
       - name: Install trento-server helm chart
         run: |
           cd helm-charts-rolling/charts/trento-server
-          helm dependency update          
+          helm dependency update
           helm upgrade -i trento --wait . \
             --set-file trento-runner.privateKey=/home/azureuser/.ssh/id_rsa \
             --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
