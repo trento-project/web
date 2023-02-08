@@ -6,7 +6,6 @@ defmodule Trento.Hosts do
   import Ecto.Query
 
   alias Trento.{
-    HostConnectionSettings,
     HostReadModel,
     SlesSubscriptionReadModel
   }
@@ -37,94 +36,4 @@ defmodule Trento.Hosts do
         subscription_count
     end
   end
-
-  @spec get_connection_settings(String.t()) :: map | {:error, any}
-  def get_connection_settings(host_id) do
-    # TODO: refactor to a common query
-    query =
-      from h in HostReadModel,
-        left_join: s in HostConnectionSettings,
-        on: h.id == s.id,
-        select: %{
-          host_id: h.id,
-          hostname: h.hostname,
-          user: s.user,
-          provider_data: h.provider_data
-        },
-        where: h.id == ^host_id
-
-    query
-    |> Repo.one()
-    |> enrich_with_default_user()
-  end
-
-  @spec get_all_connection_settings_by_cluster_id(String.t()) :: [
-          %{
-            host_id: String.t(),
-            hostname: String.t(),
-            user: String.t()
-          }
-        ]
-  def get_all_connection_settings_by_cluster_id(cluster_id) do
-    query =
-      from(h in HostReadModel,
-        left_join: s in HostConnectionSettings,
-        on: h.id == s.id,
-        select: %{
-          host_id: h.id,
-          hostname: h.hostname,
-          user: s.user,
-          provider_data: h.provider_data
-        },
-        where: h.cluster_id == ^cluster_id,
-        order_by: [asc: h.hostname]
-      )
-
-    Repo.all(query)
-  end
-
-  @spec save_hosts_connection_settings([
-          %{
-            host_id: String.t(),
-            user: String.t()
-          }
-        ]) :: :ok
-  def save_hosts_connection_settings(settings) do
-    settings =
-      Enum.map(settings, fn %{host_id: host_id, user: user} ->
-        # TODO: use changeset to properly validate input
-        %{
-          id: host_id,
-          user: user
-        }
-      end)
-
-    Repo.insert_all(HostConnectionSettings, settings,
-      on_conflict: :replace_all,
-      conflict_target: [:id]
-    )
-
-    :ok
-  end
-
-  defp enrich_with_default_user(%{
-         host_id: host_id,
-         hostname: hostname,
-         user: user,
-         provider_data: provider_data
-       }) do
-    %{
-      host_id: host_id,
-      hostname: hostname,
-      user: user,
-      default_user: determine_default_connection_user(provider_data)
-    }
-  end
-
-  defp determine_default_connection_user(%{
-         "admin_username" => admin_username
-       }),
-       do: admin_username
-
-  defp determine_default_connection_user(_), do: "root"
 end

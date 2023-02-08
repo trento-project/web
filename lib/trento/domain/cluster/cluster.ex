@@ -55,21 +55,16 @@ defmodule Trento.Domain.Cluster do
   alias Commanded.Aggregate.Multi
 
   alias Trento.Domain.{
-    CheckResult,
     Cluster,
     HanaClusterDetails,
-    HealthService,
-    HostExecution
+    HealthService
   }
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
-    CompleteChecksExecutionWanda,
     RegisterClusterHost,
-    RequestChecksExecution,
     RollUpCluster,
-    SelectChecks,
-    StartChecksExecution
+    SelectChecks
   }
 
   alias Trento.Domain.Events.{
@@ -89,6 +84,12 @@ defmodule Trento.Domain.Cluster do
   }
 
   @required_fields []
+  @legacy_events [
+    ChecksExecutionCompleted,
+    ChecksExecutionRequested,
+    ChecksExecutionStarted,
+    HostChecksExecutionCompleted
+  ]
 
   use Trento.Type
 
@@ -105,15 +106,8 @@ defmodule Trento.Domain.Cluster do
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
-
-    field :checks_execution, Ecto.Enum,
-      values: [:not_running, :requested, :running],
-      default: :not_running
-
     field :rolling_up, :boolean, default: false
-
     embeds_one :details, HanaClusterDetails
-    embeds_many :hosts_executions, HostExecution
   end
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
@@ -209,82 +203,11 @@ defmodule Trento.Domain.Cluster do
     |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
   end
 
-  # Request checks execution
-  def execute(
-        %Cluster{
-          cluster_id: cluster_id,
-          selected_checks: []
-        },
-        %RequestChecksExecution{cluster_id: cluster_id}
-      ),
-      do: nil
-
-  def execute(
-        %Cluster{
-          cluster_id: cluster_id,
-          provider: provider,
-          hosts: hosts,
-          selected_checks: selected_checks
-        },
-        %RequestChecksExecution{cluster_id: cluster_id}
-      ) do
-    [
-      %ChecksExecutionRequested{
-        cluster_id: cluster_id,
-        provider: provider,
-        hosts: hosts,
-        checks: selected_checks
-      },
-      %ClusterHealthChanged{cluster_id: cluster_id, health: :unknown}
-    ]
-  end
-
-  # Start the checks execution
   def execute(
         %Cluster{
           cluster_id: cluster_id
-        },
-        %StartChecksExecution{cluster_id: cluster_id}
-      ) do
-    %ChecksExecutionStarted{
-      cluster_id: cluster_id
-    }
-  end
-
-  # Store checks results
-  def execute(
-        %Cluster{
-          cluster_id: cluster_id,
-          hosts_executions: old_hosts_executions
         } = cluster,
         %CompleteChecksExecution{
-          hosts_executions: hosts_executions
-        }
-      ) do
-    hosts_executions
-    |> Enum.reduce(
-      Multi.new(cluster),
-      &emit_host_execution_completed_event(&1, &2, cluster_id, old_hosts_executions)
-    )
-    |> Multi.execute(fn _ ->
-      %ChecksExecutionCompleted{
-        cluster_id: cluster_id,
-        health:
-          hosts_executions
-          |> Enum.flat_map(fn %{checks_results: checks_results} -> checks_results end)
-          |> Enum.map(fn %{result: result} -> result end)
-          |> Enum.reject(fn result -> result == :skipped end)
-          |> HealthService.compute_aggregated_health()
-      }
-    end)
-    |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
-  end
-
-  def execute(
-        %Cluster{
-          cluster_id: cluster_id
-        } = cluster,
-        %CompleteChecksExecutionWanda{
           cluster_id: cluster_id
         } = command
       ) do
@@ -399,103 +322,6 @@ defmodule Trento.Domain.Cluster do
     }
   end
 
-  def apply(
-        %Cluster{selected_checks: selected_checks, hosts: hosts} = cluster,
-        %ChecksExecutionRequested{}
-      ) do
-    hosts_executions =
-      Enum.map(hosts, fn host_id ->
-        %HostExecution{
-          host_id: host_id,
-          reachable: true,
-          checks_results:
-            Enum.map(selected_checks, fn check_id ->
-              %CheckResult{check_id: check_id, result: :unknown}
-            end)
-        }
-      end)
-
-    %Cluster{
-      cluster
-      | hosts_executions: hosts_executions,
-        checks_execution: :requested
-    }
-  end
-
-  def apply(
-        %Cluster{} = cluster,
-        %ChecksExecutionStarted{}
-      ) do
-    %Cluster{
-      cluster
-      | checks_execution: :running
-    }
-  end
-
-  def apply(
-        %Cluster{} = cluster,
-        %ChecksExecutionCompleted{
-          health: health
-        }
-      ) do
-    %Cluster{
-      cluster
-      | checks_execution: :not_running,
-        checks_health: health
-    }
-  end
-
-  def apply(
-        %Cluster{hosts_executions: hosts_executions} = cluster,
-        %HostChecksExecutionCompleted{
-          host_id: host_id,
-          reachable: true,
-          msg: msg,
-          checks_results: checks_results
-        }
-      ) do
-    hosts_executions =
-      Enum.map(hosts_executions, fn
-        %HostExecution{host_id: ^host_id} ->
-          %HostExecution{
-            host_id: host_id,
-            reachable: true,
-            msg: msg,
-            checks_results: checks_results
-          }
-
-        host ->
-          host
-      end)
-
-    %Cluster{
-      cluster
-      | hosts_executions: hosts_executions
-    }
-  end
-
-  def apply(
-        %Cluster{hosts_executions: hosts_executions} = cluster,
-        %HostChecksExecutionCompleted{host_id: host_id, reachable: false, msg: msg}
-      ) do
-    %Cluster{
-      cluster
-      | hosts_executions:
-          Enum.map(hosts_executions, fn
-            %HostExecution{host_id: ^host_id, checks_results: checks_results} ->
-              %HostExecution{
-                host_id: host_id,
-                reachable: false,
-                msg: msg,
-                checks_results: checks_results
-              }
-
-            host ->
-              host
-          end)
-    }
-  end
-
   def apply(%Cluster{} = cluster, %ClusterHealthChanged{health: health}) do
     %Cluster{cluster | health: health}
   end
@@ -509,6 +335,8 @@ defmodule Trento.Domain.Cluster do
       }) do
     snapshot
   end
+
+  def apply(cluster, %legacy_event{}) when legacy_event in @legacy_events, do: cluster
 
   defp maybe_emit_host_added_to_cluster_event(
          %Cluster{cluster_id: cluster_id, hosts: hosts},
@@ -592,13 +420,13 @@ defmodule Trento.Domain.Cluster do
 
   defp maybe_emit_cluster_checks_health_changed_event(
          %Cluster{checks_health: checks_health},
-         %CompleteChecksExecutionWanda{health: checks_health}
+         %CompleteChecksExecution{health: checks_health}
        ),
        do: nil
 
   defp maybe_emit_cluster_checks_health_changed_event(
          %Cluster{cluster_id: cluster_id},
-         %CompleteChecksExecutionWanda{health: checks_health}
+         %CompleteChecksExecution{health: checks_health}
        ) do
     %ClusterChecksHealthChanged{
       cluster_id: cluster_id,
@@ -625,52 +453,5 @@ defmodule Trento.Domain.Cluster do
     if new_health != health do
       %ClusterHealthChanged{cluster_id: cluster_id, health: new_health}
     end
-  end
-
-  defp emit_host_execution_completed_event(
-         %{host_id: host_id, reachable: false, msg: msg},
-         multi,
-         cluster_id,
-         hosts_executions
-       ) do
-    Multi.execute(multi, fn _ ->
-      %HostChecksExecutionCompleted{
-        cluster_id: cluster_id,
-        host_id: host_id,
-        reachable: false,
-        msg: msg,
-        checks_results:
-          Enum.find_value(
-            hosts_executions,
-            fn
-              %HostExecution{
-                host_id: ^host_id,
-                checks_results: checks_results
-              } ->
-                checks_results
-
-              _ ->
-                false
-            end
-          )
-      }
-    end)
-  end
-
-  defp emit_host_execution_completed_event(
-         %{host_id: host_id, reachable: true, msg: msg, checks_results: results},
-         multi,
-         cluster_id,
-         _hosts_executions
-       ) do
-    Multi.execute(multi, fn _ ->
-      %HostChecksExecutionCompleted{
-        cluster_id: cluster_id,
-        host_id: host_id,
-        reachable: true,
-        msg: msg,
-        checks_results: results
-      }
-    end)
   end
 end

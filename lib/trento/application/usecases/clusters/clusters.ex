@@ -14,28 +14,11 @@ defmodule Trento.Clusters do
     HostReadModel
   }
 
-  alias Trento.Domain.CheckResult
-
-  alias Trento.Domain.Commands.{
-    CompleteChecksExecution,
-    SelectChecks
-  }
+  alias Trento.Domain.Commands.SelectChecks
 
   alias Trento.Integration.Checks
 
   alias Trento.Repo
-
-  def store_checks_results(cluster_id, host_id, checks_results) do
-    with {:ok, checks_results} <- build_check_results(checks_results),
-         {:ok, command} <-
-           CompleteChecksExecution.new(%{
-             cluster_id: cluster_id,
-             host_id: host_id,
-             checks_results: build_check_results(checks_results)
-           }) do
-      commanded().dispatch(command)
-    end
-  end
 
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(cluster_id, checks) do
@@ -55,7 +38,7 @@ defmodule Trento.Clusters do
   def get_all_clusters do
     from(c in ClusterReadModel,
       order_by: [asc: c.name],
-      preload: [:tags, :hosts_executions, :checks_results]
+      preload: [:tags]
     )
     |> enrich_cluster_model_query()
     |> Repo.all()
@@ -111,24 +94,6 @@ defmodule Trento.Clusters do
     query
     |> join(:left, [c], e in ClusterEnrichmentData, on: c.id == e.cluster_id)
     |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
-  end
-
-  @spec build_check_results([String.t()]) :: {:ok, [CheckResult.t()]} | {:error, any}
-  defp build_check_results(checks_results) do
-    Enum.map(checks_results, fn c ->
-      case CheckResult.new(c) do
-        {:ok, check_result} ->
-          check_result
-
-        {:error, _} = error ->
-          throw(error)
-      end
-    end)
-  catch
-    {:error, _} = error -> error
-  else
-    results ->
-      {:ok, results}
   end
 
   defp maybe_request_checks_execution(nil), do: {:error, :cluster_not_found}

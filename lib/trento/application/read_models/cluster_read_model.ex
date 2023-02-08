@@ -11,11 +11,6 @@ defmodule Trento.ClusterReadModel do
   require Trento.Domain.Enums.ClusterType, as: ClusterType
   require Trento.Domain.Enums.Health, as: Health
 
-  alias Trento.{
-    CheckResultReadModel,
-    HostChecksExecutionsReadModel
-  }
-
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -30,10 +25,7 @@ defmodule Trento.ClusterReadModel do
     field :resources_number, :integer
     field :hosts_number, :integer
     field :details, :map
-    field :checks_execution, Ecto.Enum, values: [:not_running, :requested, :running]
 
-    has_many :hosts_executions, HostChecksExecutionsReadModel, foreign_key: :cluster_id
-    has_many :checks_results, CheckResultReadModel, foreign_key: :cluster_id
     has_many :tags, Trento.Tag, foreign_key: :resource_id
 
     # Virtually enriched fields

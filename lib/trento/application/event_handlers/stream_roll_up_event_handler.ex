@@ -20,17 +20,13 @@ defmodule Trento.StreamRollUpEventHandler do
   @max_stream_version Application.compile_env!(:trento, [__MODULE__, :max_stream_version])
 
   @cluster_events [
-    Trento.Domain.Events.ChecksExecutionCompleted,
-    Trento.Domain.Events.ChecksExecutionRequested,
-    Trento.Domain.Events.ChecksExecutionStarted,
     Trento.Domain.Events.ChecksSelected,
     Trento.Domain.Events.ClusterChecksHealthChanged,
     Trento.Domain.Events.ClusterDetailsUpdated,
     Trento.Domain.Events.ClusterDiscoveredHealthChanged,
     Trento.Domain.Events.ClusterHealthChanged,
     Trento.Domain.Events.ClusterRegistered,
-    Trento.Domain.Events.HostAddedToCluster,
-    Trento.Domain.Events.HostChecksExecutionCompleted
+    Trento.Domain.Events.HostAddedToCluster
   ]
 
   def handle(%event_type{cluster_id: cluster_id}, %{

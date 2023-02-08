@@ -6,7 +6,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
 
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.Schema.{Checks, Provider, ResourceHealth, Tags}
+  alias TrentoWeb.OpenApi.Schema.{Provider, ResourceHealth, Tags}
 
   defmodule ClusterResource do
     @moduledoc false
@@ -147,24 +147,6 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
           nullable: true
         },
         details: Details,
-        checks_execution: %Schema{
-          type: :string,
-          description: "Current status of the checks execution for this cluster",
-          enum: [:not_running, :requested, :running],
-          nullable: true
-        },
-        hosts_executions: %Schema{
-          title: "HostChecksExecutions",
-          description: "A list of tags attached to a resource",
-          type: :array,
-          items: Checks.HostChecksExecution
-        },
-        checks_results: %Schema{
-          title: "CheckResults",
-          description: "A list of tags attached to a resource",
-          type: :array,
-          items: Checks.CheckResult
-        },
         tags: Tags
       }
     })

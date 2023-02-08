@@ -12,7 +12,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
     ExecutionStarted
   }
 
-  alias Trento.Domain.Commands.CompleteChecksExecutionWanda
+  alias Trento.Domain.Commands.CompleteChecksExecution
 
   require Logger
   require Trento.Domain.Enums.Health, as: Health
@@ -50,7 +50,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
        }) do
     with :ok <-
            commanded().dispatch(
-             CompleteChecksExecutionWanda.new!(%{
+             CompleteChecksExecution.new!(%{
                cluster_id: group_id,
                health: map_health(result)
              }),

@@ -11,7 +11,6 @@ defmodule Trento.ProjectorsSupervisor do
   def init(_init_arg) do
     children = [
       Trento.ClusterProjector,
-      Trento.CheckResultProjector,
       Trento.HostProjector,
       Trento.SlesSubscriptionsProjector,
       Trento.DatabaseProjector,

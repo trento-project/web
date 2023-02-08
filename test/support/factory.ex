@@ -17,7 +17,6 @@ defmodule Trento.Factory do
 
   alias Trento.Domain.Events.{
     ApplicationInstanceRegistered,
-    ChecksExecutionRequested,
     ClusterRegistered,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
@@ -36,14 +35,11 @@ defmodule Trento.Factory do
 
   alias Trento.{
     ApplicationInstanceReadModel,
-    CheckResultReadModel,
     ClusterEnrichmentData,
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
     Heartbeat,
-    HostChecksExecutionsReadModel,
-    HostConnectionSettings,
     HostReadModel,
     HostTelemetryReadModel,
     SapSystemReadModel,
@@ -104,13 +100,6 @@ defmodule Trento.Factory do
     %Heartbeat{
       agent_id: Faker.UUID.v4(),
       timestamp: DateTime.utc_now()
-    }
-  end
-
-  def host_connection_settings_factory do
-    %HostConnectionSettings{
-      id: Faker.UUID.v4(),
-      user: Faker.StarWars.character()
     }
   end
 
@@ -418,31 +407,5 @@ defmodule Trento.Factory do
       system_replication_status: "ACTIVE",
       health: Health.passing()
     })
-  end
-
-  def checks_execution_requested_event_factory do
-    %ChecksExecutionRequested{
-      cluster_id: Faker.UUID.v4(),
-      hosts: [Faker.UUID.v4()],
-      checks: Enum.map(0..4, fn _ -> Faker.UUID.v4() end)
-    }
-  end
-
-  def check_result_factory do
-    %CheckResultReadModel{
-      cluster_id: Faker.UUID.v4(),
-      host_id: Faker.UUID.v4(),
-      check_id: Faker.UUID.v4(),
-      result: :passing
-    }
-  end
-
-  def host_checks_result_factory do
-    %HostChecksExecutionsReadModel{
-      cluster_id: Faker.UUID.v4(),
-      host_id: Faker.UUID.v4(),
-      reachable: true,
-      msg: Faker.StarWars.planet()
-    }
   end
 end

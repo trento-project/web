@@ -11,15 +11,12 @@ defmodule Trento.Router do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
-    CompleteChecksExecutionWanda,
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
     RegisterHost,
-    RequestChecksExecution,
     RollUpCluster,
     SelectChecks,
-    StartChecksExecution,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -37,10 +34,7 @@ defmodule Trento.Router do
              RollUpCluster,
              RegisterClusterHost,
              SelectChecks,
-             RequestChecksExecution,
-             StartChecksExecution,
-             CompleteChecksExecution,
-             CompleteChecksExecutionWanda
+             CompleteChecksExecution
            ],
            to: Cluster,
            lifespan: Cluster.Lifespan
