@@ -4,11 +4,17 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    reviewers:
+      - "trento-project/mantainers"
   - package-ecosystem: "mix"
     directory: "/"
     schedule:
       interval: "daily"
+    reviewers:
+      - "trento-project/mantainers"
   - package-ecosystem: "npm"
     directory: "/assets"
     schedule:
       interval: "daily"
+    reviewers:
+      - "trento-project/mantainers"
