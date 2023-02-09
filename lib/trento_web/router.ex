@@ -36,7 +36,9 @@ defmodule TrentoWeb.Router do
   scope "/" do
     pipe_through :browser
 
-    get "/api/doc", OpenApiSpex.Plug.SwaggerUI, path: "/api/openapi"
+    get "/api/doc", OpenApiSpex.Plug.SwaggerUI,
+      path: "/api/openapi",
+      urls: [%{url: "/api/openapi", name: "Version 1"}]
   end
 
   scope "/api", TrentoWeb do
