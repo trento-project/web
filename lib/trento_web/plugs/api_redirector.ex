@@ -46,7 +46,7 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
     verb =
       verb
       |> String.downcase()
-      |> String.to_atom()
+      |> String.to_existing_atom()
 
     router
     |> Phoenix.Router.routes()
