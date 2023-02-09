@@ -17,13 +17,13 @@ import { getCounters } from '@components/HealthSummary/summarySelection';
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 
 const addTag = (tag, sapSystemId) => {
-  post(`/api/sap_systems/${sapSystemId}/tags`, {
+  post(`sap_systems/${sapSystemId}/tags`, {
     value: tag,
   });
 };
 
 const removeTag = (tag, sapSystemId) => {
-  del(`/api/sap_systems/${sapSystemId}/tags/${tag}`);
+  del(`sap_systems/${sapSystemId}/tags/${tag}`);
 };
 
 function SapSystemsOverview() {

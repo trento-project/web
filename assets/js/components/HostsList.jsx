@@ -27,13 +27,13 @@ const getInstancesByHost = (applicationInstances, databaseInstances, hostId) =>
     .filter((instance) => instance.host_id === hostId);
 
 const addTag = (tag, hostId) => {
-  post(`/api/hosts/${hostId}/tags`, {
+  post(`hosts/${hostId}/tags`, {
     value: tag,
   });
 };
 
 const removeTag = (tag, hostId) => {
-  del(`/api/hosts/${hostId}/tags/${tag}`);
+  del(`hosts/${hostId}/tags/${tag}`);
 };
 
 function HostsList() {

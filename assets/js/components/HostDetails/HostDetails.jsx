@@ -37,7 +37,7 @@ function HostDetails() {
 
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
-      `/api/hosts/${hostID}/exporters_status`
+      `hosts/${hostID}/exporters_status`
     );
     setExportersStatus(data);
   };

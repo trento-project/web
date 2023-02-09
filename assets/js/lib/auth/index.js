@@ -24,7 +24,7 @@ export const refreshAccessToken = (refreshToken) =>
     });
 
 export const me = (apiClient = authClient) =>
-  apiClient.get('/api/me').then((response) => {
+  apiClient.get('/api/me', { baseURL: '' }).then((response) => {
     if (response.status !== 200) {
       throw Error('unauthorized', { cause: response.status });
     }

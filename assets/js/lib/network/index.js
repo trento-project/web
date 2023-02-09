@@ -12,7 +12,9 @@ export const unrecoverableAuthError = Error(
   'could not authenticate the user, session destroyed'
 );
 
-export const networkClient = axios.create({});
+export const networkClient = axios.create({
+  baseURL: '/api/v1/',
+});
 
 networkClient.interceptors.request.use((request) => {
   request.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;

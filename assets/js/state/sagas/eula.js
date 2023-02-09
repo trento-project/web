@@ -6,7 +6,7 @@ import { logError } from '@lib/log';
 
 export function* acceptEulaSaga() {
   try {
-    yield call(post, '/api/accept_eula', {});
+    yield call(post, 'accept_eula', {});
 
     yield put(acceptEula());
   } catch (error) {
