@@ -1,7 +1,21 @@
 defmodule TrentoWeb.Plugs.ApiRedirector do
+  @moduledoc """
+    This Plug is responsible for redirect api requests without a specific version
+    to the latest version, when the requested path exists
+
+    For example:
+      Requesting /api/test, will redirect to /api/<latest version/test, only if the /api/<latest version/test exists.
+
+    router and latest_version options should be provided.
+
+    latest_version option should be a string, will be interpolated with the path.
+  """
   @behaviour Plug
 
   alias Phoenix.Controller
+
+  alias TrentoWeb.ErrorView
+
   import Plug.Conn
 
   @impl true
@@ -29,7 +43,8 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
       |> halt()
     else
       conn
-      |> resp(:not_found, Jason.encode!(%{status: "not found"}))
+      |> put_resp_content_type("application/json")
+      |> resp(:not_found, Jason.encode!(ErrorView.render("error.json", reason: "not found")))
       |> halt()
     end
   end
