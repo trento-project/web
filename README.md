@@ -81,7 +81,7 @@ To install Trento Web locally for development, please refer to our [hack on the 
 
 # Support
 
-Please only report bugs via [GitHub issues](https://github.com/trento-project/web/issues) and for any other inquiry or topic, use [GitHub discussion](https://github.com/trento-project/trento/discussions).
+Please only report bugs via [GitHub issues](https://github.com/trento-project/web/issues).
 
 # Contributing
 

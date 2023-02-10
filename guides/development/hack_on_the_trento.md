@@ -5,8 +5,27 @@
 In order to run the Trento Web application, the following software must be installed:
 
 1. [Elixir](https://elixir-lang.org/)
-2. [Docker](https://docs.docker.com/get-docker/)
-3. [Docker Compose](https://docs.docker.com/compose/install/)
+2. [Node.js](https://nodejs.org/en/)
+3. [Docker](https://docs.docker.com/get-docker/)
+4. [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Ensure Compatibility with ASDF
+
+[ASDF](https://asdf-vm.com/guide/introduction.html) allows you to use specific versions of programming language tools that are known to be compatible with your project, rather than relying on the version that's installed globally on your system.
+
+Follow the official [ASDF](https://asdf-vm.com/guide/getting-started.html).
+
+Install all required ASDF plugins from [.tool-versions](/.tool-versions) inside the wep repository.
+
+```
+cut -d' ' -f1 .tool-versions|xargs -i asdf plugin add  {}
+```
+
+Set up the asdf environment
+
+```
+asdf install
+```
 
 ## Development environment
 
@@ -27,7 +46,7 @@ mix setup
 
 ## Connect Trento Web with [Wanda](https://github.com/trento-project/wanda)
 
-By default, Wanda can be accessed on port 4001. To connect Trento Web to Wanda, create a .env file in the root path of Trento Web.
+By default, Wanda can be accessed on port 4001. To connect Trento Web to Wanda, create a .env file in the assets directory.
 
 ```
 echo "WANDA_URL=http://localhost:4001" > assets/.env
