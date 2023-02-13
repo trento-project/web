@@ -3,7 +3,7 @@ import { checksExecutionCompletedFactory } from '@lib/test-utils/factories';
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 context('HANA cluster details', () => {
-  const lastExecutionURL = `**/api/checks/groups/**/executions/last`;
+  const lastExecutionURL = `**/api/v1/checks/groups/**/executions/last`;
   const lastExecution = checksExecutionCompletedFactory.build({
     group_id: availableHanaCluster.id,
     passing_count: 5,

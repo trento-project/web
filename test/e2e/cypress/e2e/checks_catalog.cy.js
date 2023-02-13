@@ -2,7 +2,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { groupBy } from '@lib/lists';
 
 context('Checks catalog', () => {
-  const checksCatalogURL = `**/api/checks/catalog`;
+  const checksCatalogURL = `**/api/v1/checks/catalog`;
 
   const group1 = catalogCheckFactory.buildList(2, { group: 'Group 1' });
   const group2 = catalogCheckFactory.buildList(2, { group: 'Group 2' });
