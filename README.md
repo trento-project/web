@@ -69,7 +69,7 @@ See [related documentation](./guides/alerting/alerting.md) for more information.
 
 # Installation
 
-_Trento_ can be installed in various ways, depending on your needs and the requirements of its different components. Please refer to the specific [Agent](https://github.com/trento-project/agent) documentation for more information.
+**Trento** can be installed in various ways, depending on your needs and the requirements of its different components. Please refer to the specific [Agent](https://github.com/trento-project/agent) documentation for more information.
 
 ## Installing Trento on a k8s Cluster
 

@@ -5,17 +5,18 @@
 In order to run the Trento Web application, the following software must be installed:
 
 1. [Elixir](https://elixir-lang.org/)
-2. [Node.js](https://nodejs.org/en/)
-3. [Docker](https://docs.docker.com/get-docker/)
-4. [Docker Compose](https://docs.docker.com/compose/install/)
+2. [Erlang OTP](https://www.erlang.org/)
+3. [Node.js](https://nodejs.org/en/)
+4. [Docker](https://docs.docker.com/get-docker/)
+5. [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Ensure Compatibility with ASDF
+### Ensure Compatibility with asdf
 
-[ASDF](https://asdf-vm.com/guide/introduction.html) allows you to use specific versions of programming language tools that are known to be compatible with your project, rather than relying on the version that's installed globally on your system.
+[asdf](https://asdf-vm.com/guide/introduction.html) allows to use specific versions of programming language tools that are known to be compatible with the project, rather than relying on the version that's installed globally on the host system.
 
-Follow the official [ASDF](https://asdf-vm.com/guide/getting-started.html).
+In order to use asdf, follow the official [asdf getting started guide](https://asdf-vm.com/guide/getting-started.html).
 
-Install all required ASDF plugins from [.tool-versions](/.tool-versions) inside the wep repository.
+Install all required asdf plugins from [.tool-versions](/.tool-versions) inside the web repository.
 
 ```
 cut -d' ' -f1 .tool-versions|xargs -i asdf plugin add  {}
@@ -54,9 +55,7 @@ echo "WANDA_URL=http://localhost:4001" > assets/.env
 
 **Guide** how to set up [Wanda](https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.md).
 
-### Hint about the default port of Wanda
-
-If the Wanda service is running on a different port, change the default 4001 port in the .env file.
+Note: If the Wanda service is running on a different port, change the default 4001 port in the .env file.
 
 ## Install the JavaScript frontend packages
 
