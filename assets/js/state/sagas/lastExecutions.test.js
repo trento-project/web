@@ -14,7 +14,7 @@ import { updateLastExecution } from './lastExecutions';
 
 const axiosMock = new MockAdapter(networkClient);
 const lastExecutionURL = (groupID) =>
-  `/api/checks/groups/${groupID}/executions/last`;
+  `/api/v1/checks/groups/${groupID}/executions/last`;
 
 describe('lastExecutions saga', () => {
   beforeEach(() => {
