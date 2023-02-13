@@ -1,82 +1,111 @@
-# Hack on the trento
-
-- [Requirements](#requirements)
-- [Install dependencies](#install-dependencies)
-- [Development environment](#development-environment)
-- [Setup trento](#setup-trento)
-- [Start trento in the repl](#start-trento-in-the-repl)
-- [Environment Variables](#environment-variables)
-- [Scenario loading with photofinish](#scenario-loading-with-photofinish)
+# Hack on the Trento Web
 
 ## Requirements
 
-In order to run the trento web, you need
+In order to run the Trento Web application, the following software must be installed:
 
 1. [Elixir](https://elixir-lang.org/)
 2. [Erlang OTP](https://www.erlang.org/)
-3. [Docker](https://docs.docker.com/get-docker/)
-4. [Docker Compose](https://docs.docker.com/compose/install/)
+3. [Node.js](https://nodejs.org/en/)
+4. [Docker](https://docs.docker.com/get-docker/)
+5. [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Ensure Compatibility with asdf
+
+[asdf](https://asdf-vm.com/guide/introduction.html) allows to use specific versions of programming language tools that are known to be compatible with the project, rather than relying on the version that's installed globally on the host system.
+
+In order to use asdf, follow the official [asdf getting started guide](https://asdf-vm.com/guide/getting-started.html).
+
+Install all required asdf plugins from [.tool-versions](/.tool-versions) inside the web repository.
+
+```
+cut -d' ' -f1 .tool-versions|xargs -i asdf plugin add  {}
+```
+
+Set up the asdf environment
+
+```
+asdf install
+```
 
 ## Development environment
 
-A `docker-compose` development environment is provided.
+The Trento project provides a docker-compose development environment that is used to start a Postgres database and a Grafana instance for storage and monitoring. To start the development environment, navigate to the root directory of the Trento project and run the following command:
 
 ```
 docker-compose up -d
 ```
 
-It will start a **postgres** database and a **grafana** instance, for storage and monitoring.
-## Install dependencies
+## Setup Trento
 
-```
-mix deps.get
-```
-
-## Setup trento
+Before starting Trento Web, some initial setup tasks, like installing dependencies and creating the database, are required.
+Execute following command:
 
 ```
 mix setup
 ```
 
+## Connect Trento Web with [Wanda](https://github.com/trento-project/wanda)
+
+By default, Wanda can be accessed on port 4001. To connect Trento Web to Wanda, create a .env file in the assets directory.
+
+```
+echo "WANDA_URL=http://localhost:4001" > assets/.env
+```
+
+**Guide** how to set up [Wanda](https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.md).
+
+Note: If the Wanda service is running on a different port, change the default 4001 port in the .env file.
+
 ## Install the JavaScript frontend packages
+
+Install frontend packages:
 
 ```
 npm --prefix ./assets/ install ./assets
 ```
 
-## Start trento in the repl
+## Start Trento Web server in the REPL
+
+Start Trento web:
 
 ```
 iex -S mix phx.server
 ```
 
-## Access the trento web 
+## Access the Trento Web
 
-Login page: [localhost:4000](http://localhost:4000)
+Access the Trento Web by navigating to http://localhost:4000 in the web browser.
 
-**Hint**: Altering the default port requires changes in [config/dev.exs](https://github.com/trento-project/web/blob/main/config/dev.exs)
+## Login
 
-## Login 
+The default login credentials are:
+
 Username:
+
 ```
 admin
 ```
+
 Password:
+
 ```
 adminpassword
 ```
 
 ## Environment Variables
 
-See [environment_variables](./environment_variables.md)
+The Trento application uses several environment variables to configure its behavior.
+Information about these variables' [environment_variables](./environment_variables.md).
 
-## Scenario loading with photofinish
+## Scenario loading with Photofinish
 
-By leveraging [photofinish](https://github.com/trento-project/photofinish) it is possible to load different scenarios for development and debugging purposes.
+The Trento project includes a tool called [photofinish](https://github.com/trento-project/photofinish), which is used to load different scenarios for development and debugging purposes.
 
 ```
 photofinish run --url "http://localhost:4000/api/collect" healthy-27-node-SAP-cluster
 ```
+
 It's possible to use Photofinish' docker image too:
 
 ```

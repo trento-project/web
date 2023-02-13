@@ -12,46 +12,25 @@ The documentation is available at [trento-project.io/web](https://trento-project
 
 Swagger UI is available at [trento-project.io/web/swaggerui](https://trento-project.io/web/swaggerui).
 
-# Overview
+# Overview of Trento
 
-_Trento_ is a comprehensive cloud-native, distributed monitoring solution.
+**Trento** is a comprehensive cloud-native, distributed monitoring solution, and it consists of three main components:
 
-It's made of three main components:
+- [Agent](https://github.com/trento-project/agent): Single background **process that runs on each host in the target infrastructure**
+- [Wanda](https://github.com/trento-project/wanda): Responsible to **orchestrate _checks_ executions** on a target infrastructure among the installed Trento Agents.
+- [Web](https://github.com/trento-project/web) (current repository): The control plane of the Trento Platform, which works in conjunction with the Agents and Wanda to **discover, observe, monitor, and check** the target SAP infrastructure.
 
-- Trento Agent
-- Trento Runner
-- Trento Web (current repository)
-
-[Trento Agent](https://github.com/trento-project/agent) is a single background **process running in each host of the target** infrastructure the user desires to monitor.
-[Trento Runner](https://github.com/trento-project/runner) is responsible for **running** the Trento configuration health checks\*\* among the installed Trento Agents.
-
-_Trento Web_ is the **control plane of the Trento Platform**.
-In cooperation with the Agents and the Runner it discovers, observes, monitors and checks the target SAP infrastructure.
+## Trento architecture
 
 See the [architecture document](https://github.com/trento-project/docs/blob/main/guides/architecture/trento-architecture.md) for additional details.
 
-> Being the project in development, all of the above might be subject to change!
-
-# Features
+# Features of Trento
 
 ## SAP HANA HA Automated discovery
 
 The central server integrates with the agents discoveries by **collecting** information about the target SAP infrastructure and then **detects** different kinds of scenarios and **reacts** accordingly.
 
 See also [Trento Agent](https://github.com/trento-project/agent) for additional information.
-
-## Reactive Control Plane
-
-By leveraging modern approaches to software architecture and engineering and top-notch technologies we built a **reactive system** that provides **real-time** feedback about the **changes in the target** infrastructure.
-
-Here's a non-comprehensive list of the capabilities provided by the bundled Web UI:
-
-- Global Health Overview
-- Hosts Overview and Detail
-- Pacemaker Clusters Overview and Detail
-- SAP Systems Overview and Detail
-- HANA Databases Overview and Detail
-- Checks Catalog
 
 ## Configuration validation
 
@@ -60,7 +39,20 @@ Trento is able to execute a variety of _configuration health checks_ (a.k.a. the
 - Pacemaker, Corosync, SBD, SAPHanaSR and other generic _SUSE Linux Enterprise for SAP Application_ OS settings
 - Specific configuration audits for SAP HANA Scale-Up Performance-Optimized scenarios deployed on MS Azure cloud.
 
-See [Trento Runner](https://github.com/trento-project/runner) for additional information.
+See [Trento Wanda](https://github.com/trento-project/wanda) for additional information.
+
+## Reactive Control Plane
+
+By leveraging modern approaches to software architecture and engineering and top-notch technologies, we built a **reactive system** that provides **real-time** feedback about the **changes in the target** infrastructure.
+
+Here's a non-comprehensive list of the capabilities provided by the [Trento Web](https://github.com/trento-project/web) UI:
+
+- Global Health Overview
+- Hosts Overview and Detail
+- Pacemaker Clusters Overview and Detail
+- SAP Systems Overview and Detail
+- HANA Databases Overview and Detail
+- Checks Catalog
 
 ## Monitoring
 
@@ -77,18 +69,19 @@ See [related documentation](./guides/alerting/alerting.md) for more information.
 
 # Installation
 
-_Trento_ is intended to run in many ways, depending on needs, and also the different components have their own requirements and constraints.
+**Trento** can be installed in various ways, depending on your needs and the requirements of its different components. Please refer to the specific [Agent](https://github.com/trento-project/agent) documentation for more information.
 
-Please check the specific [Agent](https://github.com/trento-project/agent) and [Runner](https://github.com/trento-project/runner) documentation for respective details.
+## Installing Trento on a k8s Cluster
 
-If you intend to install Trento on a k8s cluster, you may be interested in our [helm-charts](https://github.com/trento-project/helm-charts) repo for detailed instructions.
+For detailed instructions on installing Trento on a k8s cluster, please refer to our [helm-charts](https://github.com/trento-project/helm-charts) repository.
 
-If otherwise you want to play around with the current repository, go ahead, [hack on the trento](./guides/development/hack_on_the_trento.md) and **have a lot of fun**!
+## Installing Trento Web locally for Development
+
+To install Trento Web locally for development, please refer to our [hack on the Trento Web](./guides/development/hack_on_the_trento.md) guide for detailed instructions.
 
 # Support
 
-Please only report bugs via [GitHub issues](https://github.com/trento-project/web/issues);
-for any other inquiry or topic use [GitHub discussion](https://github.com/trento-project/trento/discussions).
+Please only report bugs via [GitHub issues](https://github.com/trento-project/web/issues).
 
 # Contributing
 
