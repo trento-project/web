@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v1.2.0">
 
-    <title>TrentoWeb.PrometheusController — Trento Web v1.2.0</title>
+    <title>TrentoWeb.V1.SettingsController — Trento Web v1.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-F25B2281.js"></script>
+    <script src="dist/sidebar_items-B6FCE26C.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,12 +101,12 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/prometheus_controller.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/settings_controller.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">TrentoWeb.PrometheusController</span> 
+  <span translate="no">TrentoWeb.V1.SettingsController</span> 
   <small class="app-vsn" translate="no">(Trento Web v1.2.0)</small>
 
 </h1>
@@ -129,7 +129,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#exporters_status/2" translate="no">exporters_status(conn, map)</a>
+          <a href="#accept_eula/2" translate="no">accept_eula(conn, _)</a>
 
         </div>
 
@@ -137,7 +137,31 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#targets/2" translate="no">targets(conn, _)</a>
+          <a href="#open_api_operation/1" translate="no">open_api_operation(action)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#settings/2" translate="no">settings(conn, _)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#shared_security/0" translate="no">shared_security()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#shared_tags/0" translate="no">shared_tags()</a>
 
         </div>
 
@@ -157,16 +181,100 @@ Trento Web
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="exporters_status/2">
+<section class="detail" id="accept_eula/2">
 
   <div class="detail-header">
-    <a href="#exporters_status/2" class="detail-link" title="Link to this function">
+    <a href="#accept_eula/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">exporters_status(conn, map)</h1>
+    <h1 class="signature" translate="no">accept_eula(conn, _)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/prometheus_controller.ex#L16" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/settings_controller.ex#L39" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> accept_eula(<a href="https://hexdocs.pm/plug/1.13.6/Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: <a href="https://hexdocs.pm/plug/1.13.6/Plug.Conn.html#t:t/0">Plug.Conn.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="open_api_operation/1">
+
+  <div class="detail-header">
+    <a href="#open_api_operation/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">open_api_operation(action)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/settings_controller.ex#L10" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> open_api_operation(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()) :: <a href="https://hexdocs.pm/open_api_spex/3.12.0/OpenApiSpex.Operation.html#t:t/0">OpenApiSpex.Operation.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="settings/2">
+
+  <div class="detail-header">
+    <a href="#settings/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">settings(conn, _)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/settings_controller.ex#L19" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> settings(<a href="https://hexdocs.pm/plug/1.13.6/Plug.Conn.html#t:t/0">Plug.Conn.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: <a href="https://hexdocs.pm/plug/1.13.6/Plug.Conn.html#t:t/0">Plug.Conn.t</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="shared_security/0">
+
+  <div class="detail-header">
+    <a href="#shared_security/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">shared_security()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/settings_controller.ex#L1" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -179,16 +287,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="targets/2">
+<section class="detail" id="shared_tags/0">
 
   <div class="detail-header">
-    <a href="#targets/2" class="detail-link" title="Link to this function">
+    <a href="#shared_tags/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">targets(conn, _)</h1>
+    <h1 class="signature" translate="no">shared_tags()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/prometheus_controller.ex#L10" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/settings_controller.ex#L1" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
