@@ -67,6 +67,8 @@
     "rc-input": "^1.7.1",
     "rc-input-number": "^9.3.0",
     "rc-tooltip": "^6.3.1",
+    "postcss-import": "^15.1.0",
+    "posthog-js": "^1.42.3",
     "react": "^18.2.0",
     "react-accessible-treeview": "^2.10.0",
     "react-chartjs-2": "^5.2.0",
