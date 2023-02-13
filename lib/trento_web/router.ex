@@ -49,68 +49,74 @@ defmodule TrentoWeb.Router do
     forward "/", FunWithFlags.UI.Router, namespace: "feature-flags"
   end
 
-  scope "/api", TrentoWeb do
+  scope "/api" do
     pipe_through [:api, :protected_api]
 
-    get "/me", SessionController, :show, as: :me
+    get "/me", TrentoWeb.SessionController, :show, as: :me
 
-    get "/about", AboutController, :info
+    scope "/v1", TrentoWeb.V1 do
+      get "/about", AboutController, :info
 
-    get "/installation/api-key", InstallationController, :get_api_key
+      get "/installation/api-key", InstallationController, :get_api_key
 
-    get "/hosts", HostController, :list
-    get "/clusters", ClusterController, :list
-    get "/sap_systems", SapSystemController, :list
-    get "/sap_systems/health", HealthOverviewController, :overview
-    get "/databases", SapSystemController, :list_databases
+      get "/hosts", HostController, :list
+      get "/clusters", ClusterController, :list
+      get "/sap_systems", SapSystemController, :list
+      get "/sap_systems/health", HealthOverviewController, :overview
+      get "/databases", SapSystemController, :list_databases
 
-    post "/clusters/:cluster_id/checks", ClusterController, :select_checks
+      post "/clusters/:cluster_id/checks", ClusterController, :select_checks
 
-    post "/clusters/:cluster_id/checks/request_execution",
-         ClusterController,
-         :request_checks_execution
+      post "/clusters/:cluster_id/checks/request_execution",
+           ClusterController,
+           :request_checks_execution
 
-    post "/hosts/:id/tags", TagsController, :add_tag,
-      assigns: %{resource_type: :host},
-      as: :hosts_tagging
+      post "/hosts/:id/tags", TagsController, :add_tag,
+        assigns: %{resource_type: :host},
+        as: :hosts_tagging
 
-    delete "/hosts/:id/tags/:value", TagsController, :remove_tag, as: :hosts_tagging
+      delete "/hosts/:id/tags/:value", TagsController, :remove_tag, as: :hosts_tagging
 
-    post "/clusters/:id/tags", TagsController, :add_tag,
-      assigns: %{resource_type: :cluster},
-      as: :clusters_tagging
+      post "/clusters/:id/tags", TagsController, :add_tag,
+        assigns: %{resource_type: :cluster},
+        as: :clusters_tagging
 
-    delete "/clusters/:id/tags/:value", TagsController, :remove_tag, as: :clusters_tagging
+      delete "/clusters/:id/tags/:value", TagsController, :remove_tag, as: :clusters_tagging
 
-    post "/sap_systems/:id/tags", TagsController, :add_tag,
-      assigns: %{resource_type: :sap_system},
-      as: :sap_systems_tagging
+      post "/sap_systems/:id/tags", TagsController, :add_tag,
+        assigns: %{resource_type: :sap_system},
+        as: :sap_systems_tagging
 
-    delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag, as: :sap_systems_tagging
+      delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag, as: :sap_systems_tagging
 
-    post "/databases/:id/tags", TagsController, :add_tag,
-      assigns: %{resource_type: :database},
-      as: :databases_tagging
+      post "/databases/:id/tags", TagsController, :add_tag,
+        assigns: %{resource_type: :database},
+        as: :databases_tagging
 
-    delete "/databases/:id/tags/:value", TagsController, :remove_tag, as: :databases_tagging
+      delete "/databases/:id/tags/:value", TagsController, :remove_tag, as: :databases_tagging
 
-    get "/settings", SettingsController, :settings
-    post "/accept_eula", SettingsController, :accept_eula
+      get "/settings", SettingsController, :settings
+      post "/accept_eula", SettingsController, :accept_eula
 
-    get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
+      get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
+    end
   end
 
-  scope "/api", TrentoWeb do
+  scope "/api" do
     pipe_through [:api, :apikey_authenticated]
 
-    post "/collect", DiscoveryController, :collect
-    post "/hosts/:id/heartbeat", HostController, :heartbeat
+    scope "/v1", TrentoWeb.V1 do
+      post "/collect", DiscoveryController, :collect
+      post "/hosts/:id/heartbeat", HostController, :heartbeat
+    end
   end
 
-  scope "/api", TrentoWeb do
+  scope "/api" do
     pipe_through :api
 
-    get "/prometheus/targets", PrometheusController, :targets
+    scope "/v1", TrentoWeb.V1 do
+      get "/prometheus/targets", PrometheusController, :targets
+    end
   end
 
   scope "/api" do
