@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-9CFA08C4.js"></script>
+    <script src="dist/sidebar_items-F25B2281.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -111,27 +111,31 @@ Trento Web
 
 <p><a href="https://github.com/trento-project/web/actions/workflows/ci.yaml"><img src="https://github.com/trento-project/web/actions/workflows/ci.yaml/badge.svg" alt="CI"/></a>
 <a href="https://coveralls.io/github/trento-project/web?branch=main"><img src="https://coveralls.io/repos/github/trento-project/web/badge.svg?branch=main" alt="Coverage Status"/></a>
-<a href="https://trento-project.io/web/"><img src="https://img.shields.io/badge/documentation-grey.svg" alt="Documentation"/></a></p><p>An open cloud-native web console aiming to improve the workday of SAP Applications administrators.</p><h1>Documentation</h1><p>The documentation is available at <a href="https://trento-project.io/web/">trento-project.io/web</a>.</p><p>Swagger UI is available at <a href="https://trento-project.io/web/swaggerui">trento-project.io/web/swaggerui</a>.</p><h1>Overview</h1><p><em>Trento</em> is a comprehensive cloud-native, distributed monitoring solution.</p><p>It's made of three main components:</p><ul><li>Trento Agent</li><li>Trento Runner</li><li>Trento Web (current repository)</li></ul><p><a href="https://github.com/trento-project/agent">Trento Agent</a> is a single background <strong>process running in each host of the target</strong> infrastructure the user desires to monitor.
-<a href="https://github.com/trento-project/runner">Trento Runner</a> is responsible for <strong>running</strong> the Trento configuration health checks** among the installed Trento Agents.</p><p><em>Trento Web</em> is the <strong>control plane of the Trento Platform</strong>.
-In cooperation with the Agents and the Runner it discovers, observes, monitors and checks the target SAP infrastructure.</p><p>See the <a href="https://github.com/trento-project/docs/blob/main/guides/architecture/trento-architecture.md">architecture document</a> for additional details.</p><blockquote><p>Being the project in development, all of the above might be subject to change!</p></blockquote><h1>Features</h1><h2 id="sap-hana-ha-automated-discovery" class="section-heading">
+<a href="https://trento-project.io/web/"><img src="https://img.shields.io/badge/documentation-grey.svg" alt="Documentation"/></a></p><p>An open cloud-native web console aiming to improve the workday of SAP Applications administrators.</p><h1>Documentation</h1><p>The documentation is available at <a href="https://trento-project.io/web/">trento-project.io/web</a>.</p><p>Swagger UI is available at <a href="https://trento-project.io/web/swaggerui">trento-project.io/web/swaggerui</a>.</p><h1>Overview of Trento</h1><p><strong>Trento</strong> is a comprehensive cloud-native, distributed monitoring solution, and it consists of three main components:</p><ul><li><a href="https://github.com/trento-project/agent">Agent</a>: Single background <strong>process that runs on each host in the target infrastructure</strong></li><li><a href="https://github.com/trento-project/wanda">Wanda</a>: Responsible to <strong>orchestrate <em>checks</em> executions</strong> on a target infrastructure among the installed Trento Agents.</li><li><a href="https://github.com/trento-project/web">Web</a> (current repository): The control plane of the Trento Platform, which works in conjunction with the Agents and Wanda to <strong>discover, observe, monitor, and check</strong> the target SAP infrastructure.</li></ul><h2 id="trento-architecture" class="section-heading">
+  <a href="#trento-architecture" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">trento-architecture</p>
+  </a>
+  Trento architecture
+</h2>
+<p>See the <a href="https://github.com/trento-project/docs/blob/main/guides/architecture/trento-architecture.md">architecture document</a> for additional details.</p><h1>Features of Trento</h1><h2 id="sap-hana-ha-automated-discovery" class="section-heading">
   <a href="#sap-hana-ha-automated-discovery" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">sap-hana-ha-automated-discovery</p>
   </a>
   SAP HANA HA Automated discovery
 </h2>
-<p>The central server integrates with the agents discoveries by <strong>collecting</strong> information about the target SAP infrastructure and then <strong>detects</strong> different kinds of scenarios and <strong>reacts</strong> accordingly.</p><p>See also <a href="https://github.com/trento-project/agent">Trento Agent</a> for additional information.</p><h2 id="reactive-control-plane" class="section-heading">
-  <a href="#reactive-control-plane" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">reactive-control-plane</p>
-  </a>
-  Reactive Control Plane
-</h2>
-<p>By leveraging modern approaches to software architecture and engineering and top-notch technologies we built a <strong>reactive system</strong> that provides <strong>real-time</strong> feedback about the <strong>changes in the target</strong> infrastructure.</p><p>Here's a non-comprehensive list of the capabilities provided by the bundled Web UI:</p><ul><li>Global Health Overview</li><li>Hosts Overview and Detail</li><li>Pacemaker Clusters Overview and Detail</li><li>SAP Systems Overview and Detail</li><li>HANA Databases Overview and Detail</li><li>Checks Catalog</li></ul><h2 id="configuration-validation" class="section-heading">
+<p>The central server integrates with the agents discoveries by <strong>collecting</strong> information about the target SAP infrastructure and then <strong>detects</strong> different kinds of scenarios and <strong>reacts</strong> accordingly.</p><p>See also <a href="https://github.com/trento-project/agent">Trento Agent</a> for additional information.</p><h2 id="configuration-validation" class="section-heading">
   <a href="#configuration-validation" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">configuration-validation</p>
   </a>
   Configuration validation
 </h2>
-<p>Trento is able to execute a variety of <em>configuration health checks</em> (a.k.a. the <em>HA Config Checks</em>) among the installed Trento Agents.</p><ul><li>Pacemaker, Corosync, SBD, SAPHanaSR and other generic <em>SUSE Linux Enterprise for SAP Application</em> OS settings</li><li>Specific configuration audits for SAP HANA Scale-Up Performance-Optimized scenarios deployed on MS Azure cloud.</li></ul><p>See <a href="https://github.com/trento-project/runner">Trento Runner</a> for additional information.</p><h2 id="monitoring" class="section-heading">
+<p>Trento is able to execute a variety of <em>configuration health checks</em> (a.k.a. the <em>HA Config Checks</em>) among the installed Trento Agents.</p><ul><li>Pacemaker, Corosync, SBD, SAPHanaSR and other generic <em>SUSE Linux Enterprise for SAP Application</em> OS settings</li><li>Specific configuration audits for SAP HANA Scale-Up Performance-Optimized scenarios deployed on MS Azure cloud.</li></ul><p>See <a href="https://github.com/trento-project/wanda">Trento Wanda</a> for additional information.</p><h2 id="reactive-control-plane" class="section-heading">
+  <a href="#reactive-control-plane" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">reactive-control-plane</p>
+  </a>
+  Reactive Control Plane
+</h2>
+<p>By leveraging modern approaches to software architecture and engineering and top-notch technologies, we built a <strong>reactive system</strong> that provides <strong>real-time</strong> feedback about the <strong>changes in the target</strong> infrastructure.</p><p>Here's a non-comprehensive list of the capabilities provided by the <a href="https://github.com/trento-project/web">Trento Web</a> UI:</p><ul><li>Global Health Overview</li><li>Hosts Overview and Detail</li><li>Pacemaker Clusters Overview and Detail</li><li>SAP Systems Overview and Detail</li><li>HANA Databases Overview and Detail</li><li>Checks Catalog</li></ul><h2 id="monitoring" class="section-heading">
   <a href="#monitoring" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">monitoring</p>
   </a>
@@ -144,8 +148,19 @@ Currently, Trento provides basic integration with <strong>Grafana</strong> and <
   </a>
   Alerting
 </h2>
-<p>Alerting feature notifies the SAP Administrator about important updates in the Landscape being monitored/observed by Trento.</p><p>See <a href="alerting.html">related documentation</a> for more information.</p><h1>Installation</h1><p><em>Trento</em> is intended to run in many ways, depending on needs, and also the different components have their own requirements and constraints.</p><p>Please check the specific <a href="https://github.com/trento-project/agent">Agent</a> and <a href="https://github.com/trento-project/runner">Runner</a> documentation for respective details.</p><p>If you intend to install Trento on a k8s cluster, you may be interested in our <a href="https://github.com/trento-project/helm-charts">helm-charts</a> repo for detailed instructions.</p><p>If otherwise you want to play around with the current repository, go ahead, <a href="hack_on_the_trento.html">hack on the trento</a> and <strong>have a lot of fun</strong>!</p><h1>Support</h1><p>Please only report bugs via <a href="https://github.com/trento-project/web/issues">GitHub issues</a>;
-for any other inquiry or topic use <a href="https://github.com/trento-project/trento/discussions">GitHub discussion</a>.</p><h1>Contributing</h1><p>See <a href="contributing.html">CONTRIBUTING.md</a></p><h1>License</h1><p>Copyright 2021-2022 SUSE LLC</p><p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use
+<p>Alerting feature notifies the SAP Administrator about important updates in the Landscape being monitored/observed by Trento.</p><p>See <a href="alerting.html">related documentation</a> for more information.</p><h1>Installation</h1><p><strong>Trento</strong> can be installed in various ways, depending on your needs and the requirements of its different components. Please refer to the specific <a href="https://github.com/trento-project/agent">Agent</a> documentation for more information.</p><h2 id="installing-trento-on-a-k8s-cluster" class="section-heading">
+  <a href="#installing-trento-on-a-k8s-cluster" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">installing-trento-on-a-k8s-cluster</p>
+  </a>
+  Installing Trento on a k8s Cluster
+</h2>
+<p>For detailed instructions on installing Trento on a k8s cluster, please refer to our <a href="https://github.com/trento-project/helm-charts">helm-charts</a> repository.</p><h2 id="installing-trento-web-locally-for-development" class="section-heading">
+  <a href="#installing-trento-web-locally-for-development" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">installing-trento-web-locally-for-development</p>
+  </a>
+  Installing Trento Web locally for Development
+</h2>
+<p>To install Trento Web locally for development, please refer to our <a href="hack_on_the_trento.html">hack on the Trento Web</a> guide for detailed instructions.</p><h1>Support</h1><p>Please only report bugs via <a href="https://github.com/trento-project/web/issues">GitHub issues</a>.</p><h1>Contributing</h1><p>See <a href="contributing.html">CONTRIBUTING.md</a></p><h1>License</h1><p>Copyright 2021-2022 SUSE LLC</p><p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use
 this file except in compliance with the License. You may obtain a copy of the
 License at</p><p><a href="https://www.apache.org/licenses/LICENSE-2.0">https://www.apache.org/licenses/LICENSE-2.0</a></p><p>Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR

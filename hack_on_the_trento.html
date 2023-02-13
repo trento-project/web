@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v1.2.0">
 
-    <title>Hack on the trento — Trento Web v1.2.0</title>
+    <title>Hack on the Trento Web — Trento Web v1.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-9CFA08C4.js"></script>
+    <script src="dist/sidebar_items-F25B2281.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -106,70 +106,78 @@ Trento Web
       <span class="sr-only">View Source</span>
     </a>
 
-  <span>Hack on the trento</span>
+  <span>Hack on the Trento Web</span>
 </h1>
 
-<ul><li><a href="#requirements">Requirements</a></li><li><a href="#install-dependencies">Install dependencies</a></li><li><a href="#development-environment">Development environment</a></li><li><a href="#setup-trento">Setup trento</a></li><li><a href="#start-trento-in-the-repl">Start trento in the repl</a></li><li><a href="#environment-variables">Environment Variables</a></li><li><a href="#scenario-loading-with-photofinish">Scenario loading with photofinish</a></li></ul><h2 id="requirements" class="section-heading">
+<h2 id="requirements" class="section-heading">
   <a href="#requirements" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">requirements</p>
   </a>
   Requirements
 </h2>
-<p>In order to run the trento web, you need</p><ol><li><a href="https://elixir-lang.org/">Elixir</a></li><li><a href="https://www.erlang.org/">Erlang OTP</a></li><li><a href="https://docs.docker.com/get-docker/">Docker</a></li><li><a href="https://docs.docker.com/compose/install/">Docker Compose</a></li></ol><h2 id="development-environment" class="section-heading">
+<p>In order to run the Trento Web application, the following software must be installed:</p><ol><li><a href="https://elixir-lang.org/">Elixir</a></li><li><a href="https://www.erlang.org/">Erlang OTP</a></li><li><a href="https://nodejs.org/en/">Node.js</a></li><li><a href="https://docs.docker.com/get-docker/">Docker</a></li><li><a href="https://docs.docker.com/compose/install/">Docker Compose</a></li></ol><h3 id="ensure-compatibility-with-asdf" class="section-heading">
+  <a href="#ensure-compatibility-with-asdf" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">ensure-compatibility-with-asdf</p>
+  </a>
+  Ensure Compatibility with asdf
+</h3>
+<p><a href="https://asdf-vm.com/guide/introduction.html">asdf</a> allows to use specific versions of programming language tools that are known to be compatible with the project, rather than relying on the version that's installed globally on the host system.</p><p>In order to use asdf, follow the official <a href="https://asdf-vm.com/guide/getting-started.html">asdf getting started guide</a>.</p><p>Install all required asdf plugins from <a href="/.tool-versions">.tool-versions</a> inside the web repository.</p><pre><code class="makeup elixir" translate="no"><span class="n">cut</span><span class="w"> </span><span class="o">-</span><span class="n">d</span><span class="sc">&#39; &#39;</span><span class="w"> </span><span class="o">-</span><span class="n">f1</span><span class="w"> </span><span class="o">.</span><span class="n">tool</span><span class="o">-</span><span class="n">versions</span><span class="o">|</span><span class="n">xargs</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"> </span><span class="n">asdf</span><span class="w"> </span><span class="n">plugin</span><span class="w"> </span><span class="n">add</span><span class="w">  </span><span class="p" data-group-id="2445877605-1">{</span><span class="p" data-group-id="2445877605-1">}</span></code></pre><p>Set up the asdf environment</p><pre><code class="makeup elixir" translate="no"><span class="n">asdf</span><span class="w"> </span><span class="n">install</span></code></pre><h2 id="development-environment" class="section-heading">
   <a href="#development-environment" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">development-environment</p>
   </a>
   Development environment
 </h2>
-<p>A <code class="inline">docker-compose</code> development environment is provided.</p><pre><code class="makeup elixir" translate="no"><span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="o">-</span><span class="n">d</span></code></pre><p>It will start a <strong>postgres</strong> database and a <strong>grafana</strong> instance, for storage and monitoring.</p><h2 id="install-dependencies" class="section-heading">
-  <a href="#install-dependencies" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">install-dependencies</p>
-  </a>
-  Install dependencies
-</h2>
-<pre><code class="makeup elixir" translate="no"><span class="n">mix</span><span class="w"> </span><span class="n">deps</span><span class="o">.</span><span class="n">get</span></code></pre><h2 id="setup-trento" class="section-heading">
+<p>The Trento project provides a docker-compose development environment that is used to start a Postgres database and a Grafana instance for storage and monitoring. To start the development environment, navigate to the root directory of the Trento project and run the following command:</p><pre><code class="makeup elixir" translate="no"><span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="o">-</span><span class="n">d</span></code></pre><h2 id="setup-trento" class="section-heading">
   <a href="#setup-trento" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">setup-trento</p>
   </a>
-  Setup trento
+  Setup Trento
 </h2>
-<pre><code class="makeup elixir" translate="no"><span class="n">mix</span><span class="w"> </span><span class="n">setup</span></code></pre><h2 id="install-the-javascript-frontend-packages" class="section-heading">
+<p>Before starting Trento Web, some initial setup tasks, like installing dependencies and creating the database, are required.
+Execute following command:</p><pre><code class="makeup elixir" translate="no"><span class="n">mix</span><span class="w"> </span><span class="n">setup</span></code></pre><h2 id="connect-trento-web-with-wanda" class="section-heading">
+  <a href="#connect-trento-web-with-wanda" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">connect-trento-web-with-wanda</p>
+  </a>
+  Connect Trento Web with <a href="https://github.com/trento-project/wanda">Wanda</a>
+</h2>
+<p>By default, Wanda can be accessed on port 4001. To connect Trento Web to Wanda, create a .env file in the assets directory.</p><pre><code class="makeup elixir" translate="no"><span class="n">echo</span><span class="w"> </span><span class="s">&quot;WANDA_URL=http://localhost:4001&quot;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">assets</span><span class="o">/</span><span class="o">.</span><span class="n">env</span></code></pre><p><strong>Guide</strong> how to set up <a href="https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.md">Wanda</a>.</p><p>Note: If the Wanda service is running on a different port, change the default 4001 port in the .env file.</p><h2 id="install-the-javascript-frontend-packages" class="section-heading">
   <a href="#install-the-javascript-frontend-packages" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">install-the-javascript-frontend-packages</p>
   </a>
   Install the JavaScript frontend packages
 </h2>
-<pre><code class="makeup elixir" translate="no"><span class="n">npm</span><span class="w"> </span><span class="o">--</span><span class="n">prefix</span><span class="w"> </span><span class="o">.</span><span class="o">/</span><span class="n">assets</span><span class="o">/</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">.</span><span class="o">/</span><span class="n">assets</span></code></pre><h2 id="start-trento-in-the-repl" class="section-heading">
-  <a href="#start-trento-in-the-repl" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">start-trento-in-the-repl</p>
+<p>Install frontend packages:</p><pre><code class="makeup elixir" translate="no"><span class="n">npm</span><span class="w"> </span><span class="o">--</span><span class="n">prefix</span><span class="w"> </span><span class="o">.</span><span class="o">/</span><span class="n">assets</span><span class="o">/</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">.</span><span class="o">/</span><span class="n">assets</span></code></pre><h2 id="start-trento-web-server-in-the-repl" class="section-heading">
+  <a href="#start-trento-web-server-in-the-repl" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">start-trento-web-server-in-the-repl</p>
   </a>
-  Start trento in the repl
+  Start Trento Web server in the REPL
 </h2>
-<pre><code class="makeup elixir" translate="no"><span class="n">iex</span><span class="w"> </span><span class="o">-</span><span class="nc">S</span><span class="w"> </span><span class="n">mix</span><span class="w"> </span><span class="n">phx</span><span class="o">.</span><span class="n">server</span></code></pre><h2 id="access-the-trento-web" class="section-heading">
+<p>Start Trento web:</p><pre><code class="makeup elixir" translate="no"><span class="n">iex</span><span class="w"> </span><span class="o">-</span><span class="nc">S</span><span class="w"> </span><span class="n">mix</span><span class="w"> </span><span class="n">phx</span><span class="o">.</span><span class="n">server</span></code></pre><h2 id="access-the-trento-web" class="section-heading">
   <a href="#access-the-trento-web" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">access-the-trento-web</p>
   </a>
-  Access the trento web
+  Access the Trento Web
 </h2>
-<p>Login page: <a href="http://localhost:4000">localhost:4000</a></p><p><strong>Hint</strong>: Altering the default port requires changes in <a href="https://github.com/trento-project/web/blob/main/config/dev.exs">config/dev.exs</a></p><h2 id="login" class="section-heading">
+<p>Access the Trento Web by navigating to <a href="http://localhost:4000">http://localhost:4000</a> in the web browser.</p><h2 id="login" class="section-heading">
   <a href="#login" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">login</p>
   </a>
   Login
 </h2>
-<p>Username:</p><pre><code class="makeup elixir" translate="no"><span class="n">admin</span></code></pre><p>Password:</p><pre><code class="makeup elixir" translate="no"><span class="n">adminpassword</span></code></pre><h2 id="environment-variables" class="section-heading">
+<p>The default login credentials are:</p><p>Username:</p><pre><code class="makeup elixir" translate="no"><span class="n">admin</span></code></pre><p>Password:</p><pre><code class="makeup elixir" translate="no"><span class="n">adminpassword</span></code></pre><h2 id="environment-variables" class="section-heading">
   <a href="#environment-variables" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">environment-variables</p>
   </a>
   Environment Variables
 </h2>
-<p>See <a href="environment_variables.html">environment_variables</a></p><h2 id="scenario-loading-with-photofinish" class="section-heading">
+<p>The Trento application uses several environment variables to configure its behavior.
+Information about these variables' <a href="environment_variables.html">environment_variables</a>.</p><h2 id="scenario-loading-with-photofinish" class="section-heading">
   <a href="#scenario-loading-with-photofinish" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">scenario-loading-with-photofinish</p>
   </a>
-  Scenario loading with photofinish
+  Scenario loading with Photofinish
 </h2>
-<p>By leveraging <a href="https://github.com/trento-project/photofinish">photofinish</a> it is possible to load different scenarios for development and debugging purposes.</p><pre><code class="makeup elixir" translate="no"><span class="n">photofinish</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">--</span><span class="n">url</span><span class="w"> </span><span class="s">&quot;http://localhost:4000/api/collect&quot;</span><span class="w"> </span><span class="n">healthy</span><span class="o">-</span><span class="mi">27</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="nc">SAP</span><span class="o">-</span><span class="n">cluster</span></code></pre><p>It's possible to use Photofinish' docker image too:</p><pre><code class="makeup elixir" translate="no"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="s">&quot;$PWD&quot;</span><span class="ss">:/</span><span class="n">data</span><span class="w"> </span><span class="o">--</span><span class="n">network</span><span class="w"> </span><span class="n">host</span><span class="w"> </span><span class="n">ghcr</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">trento</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">photofinish</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="n">healthy</span><span class="o">-</span><span class="mi">27</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="nc">SAP</span><span class="o">-</span><span class="n">cluster</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w"> </span><span class="n">http</span><span class="ss">://</span><span class="n">localhost</span><span class="p">:</span><span class="mi">4000</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">collect</span></code></pre><p>Several useful scenario fixtures are available in <a href="https://github.com/trento-project/web/tree/main/test/fixtures/scenarios">./test/fixtures/scenarios</a>, the same ones used in e2e tests.</p><p>See also <a href="https://github.com/trento-project/web/blob/main/.photofinish.toml">.photofinish.toml</a>.</p>
+<p>The Trento project includes a tool called <a href="https://github.com/trento-project/photofinish">photofinish</a>, which is used to load different scenarios for development and debugging purposes.</p><pre><code class="makeup elixir" translate="no"><span class="n">photofinish</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">--</span><span class="n">url</span><span class="w"> </span><span class="s">&quot;http://localhost:4000/api/collect&quot;</span><span class="w"> </span><span class="n">healthy</span><span class="o">-</span><span class="mi">27</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="nc">SAP</span><span class="o">-</span><span class="n">cluster</span></code></pre><p>It's possible to use Photofinish' docker image too:</p><pre><code class="makeup elixir" translate="no"><span class="n">docker</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="o">-</span><span class="n">v</span><span class="w"> </span><span class="s">&quot;$PWD&quot;</span><span class="ss">:/</span><span class="n">data</span><span class="w"> </span><span class="o">--</span><span class="n">network</span><span class="w"> </span><span class="n">host</span><span class="w"> </span><span class="n">ghcr</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">trento</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">photofinish</span><span class="w"> </span><span class="n">run</span><span class="w"> </span><span class="n">healthy</span><span class="o">-</span><span class="mi">27</span><span class="o">-</span><span class="n">node</span><span class="o">-</span><span class="nc">SAP</span><span class="o">-</span><span class="n">cluster</span><span class="w"> </span><span class="o">-</span><span class="n">u</span><span class="w"> </span><span class="n">http</span><span class="ss">://</span><span class="n">localhost</span><span class="p">:</span><span class="mi">4000</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">collect</span></code></pre><p>Several useful scenario fixtures are available in <a href="https://github.com/trento-project/web/tree/main/test/fixtures/scenarios">./test/fixtures/scenarios</a>, the same ones used in e2e tests.</p><p>See also <a href="https://github.com/trento-project/web/blob/main/.photofinish.toml">.photofinish.toml</a>.</p>
 <div class="bottom-actions">
   <div class="bottom-actions-item">
 
