@@ -28,7 +28,7 @@ It's made of three main components:
 _Trento Web_ is the **control plane of the Trento Platform**.
 In cooperation with the Agents and the Runner it discovers, observes, monitors and checks the target SAP infrastructure.
 
-See the [architecture document](./guides/architecture/trento-architecture.md) for additional details.
+See the [architecture document](https://github.com/trento-project/docs/blob/main/guides/architecture/trento-architecture.md) for additional details.
 
 > Being the project in development, all of the above might be subject to change!
 
