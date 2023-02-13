@@ -31,7 +31,7 @@ module.exports = (on, config) => {
         http
           .request({
             host: web_api_host,
-            path: `/api/hosts/${agentId}/heartbeat`,
+            path: `/api/v1/hosts/${agentId}/heartbeat`,
             port: web_api_port,
             method: 'POST',
           })

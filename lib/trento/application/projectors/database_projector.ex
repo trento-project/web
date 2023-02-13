@@ -13,7 +13,7 @@ defmodule Trento.DatabaseProjector do
     DatabaseReadModel
   }
 
-  alias TrentoWeb.SapSystemView
+  alias TrentoWeb.V1.SapSystemView
 
   alias Trento.Domain.Events.{
     DatabaseHealthChanged,

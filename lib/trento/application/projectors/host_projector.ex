@@ -8,7 +8,7 @@ defmodule Trento.HostProjector do
     repo: Trento.Repo,
     name: "host_projector"
 
-  alias TrentoWeb.HostView
+  alias TrentoWeb.V1.HostView
 
   alias Trento.Repo
 

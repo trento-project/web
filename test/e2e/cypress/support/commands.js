@@ -65,7 +65,7 @@ Cypress.Commands.add('apiLogin', () => {
 Cypress.Commands.add('acceptEula', () => {
   apiLogin().then(({ accessToken }) => {
     cy.request({
-      url: '/api/accept_eula',
+      url: '/api/v1/accept_eula',
       method: 'POST',
       auth: {
         bearer: accessToken,

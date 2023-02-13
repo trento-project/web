@@ -15,7 +15,7 @@ defmodule Trento.SapSystemProjector do
     SapSystemRegistered
   }
 
-  alias TrentoWeb.SapSystemView
+  alias TrentoWeb.V1.SapSystemView
 
   alias Trento.{
     ApplicationInstanceReadModel,

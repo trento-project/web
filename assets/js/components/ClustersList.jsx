@@ -23,13 +23,13 @@ const getClusterTypeLabel = (type) => {
 };
 
 const addTag = (tag, clusterId) => {
-  post(`/api/clusters/${clusterId}/tags`, {
+  post(`/clusters/${clusterId}/tags`, {
     value: tag,
   });
 };
 
 const removeTag = (tag, clusterId) => {
-  del(`/api/clusters/${clusterId}/tags/${tag}`);
+  del(`/clusters/${clusterId}/tags/${tag}`);
 };
 
 function ClustersList() {
