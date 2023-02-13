@@ -103,7 +103,7 @@ const getClusterName = (clusterID) => (state) =>
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
-  const { data: healthSummary } = yield call(get, 'sap_systems/health');
+  const { data: healthSummary } = yield call(get, '/sap_systems/health');
 
   yield put(setHealthSummary(keysToCamel(healthSummary)));
   yield put(stopHealthSummaryLoading());
@@ -114,7 +114,7 @@ function* initialDataFetch() {
 
   const {
     data: { eula_accepted, premium_subscription },
-  } = yield call(get, 'settings');
+  } = yield call(get, '/settings');
 
   if (!eula_accepted) {
     yield put(setEulaVisible());
@@ -125,22 +125,22 @@ function* initialDataFetch() {
   }
 
   yield put(startHostsLoading());
-  const { data: hosts } = yield call(get, 'hosts');
+  const { data: hosts } = yield call(get, '/hosts');
   yield put(setHosts(hosts));
   yield put(stopHostsLoading());
 
   yield put(startClustersLoading());
-  const { data: clusters } = yield call(get, 'clusters');
+  const { data: clusters } = yield call(get, '/clusters');
   yield put(setClusters(clusters));
   yield put(stopClustersLoading());
 
   yield put(startSapSystemsLoading());
-  const { data: sapSystems } = yield call(get, 'sap_systems');
+  const { data: sapSystems } = yield call(get, '/sap_systems');
   yield put(setSapSystems(sapSystems));
   yield put(stopSapSystemsLoading());
 
   yield put(startDatabasesLoading());
-  const { data: databases } = yield call(get, 'databases');
+  const { data: databases } = yield call(get, '/databases');
   yield put(setDatabases(databases));
   yield put(stopDatabasesLoading());
 }
@@ -257,7 +257,7 @@ function* checksSelected({ payload }) {
   yield put(startSavingClusterChecksSelection());
 
   try {
-    yield call(post, `clusters/${payload.clusterID}/checks`, {
+    yield call(post, `/clusters/${payload.clusterID}/checks`, {
       checks: payload.checks,
     });
     yield put(updateSelectedChecks(payload));
@@ -291,7 +291,7 @@ function* requestChecksExecution({ payload }) {
   const clusterName = yield select(getClusterName(payload.clusterID));
   yield call(
     post,
-    `clusters/${payload.clusterID}/checks/request_execution`,
+    `/clusters/${payload.clusterID}/checks/request_execution`,
     {}
   );
 

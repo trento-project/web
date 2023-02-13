@@ -13,7 +13,7 @@ export const unrecoverableAuthError = Error(
 );
 
 export const networkClient = axios.create({
-  baseURL: '/api/v1/',
+  baseURL: '/api/v1',
 });
 
 networkClient.interceptors.request.use((request) => {

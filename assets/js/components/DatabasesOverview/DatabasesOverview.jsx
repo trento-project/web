@@ -16,13 +16,13 @@ import DatabaseItemOverview from './DatabaseItemOverview';
 const byDatabase = (id) => (instance) => instance.sap_system_id === id;
 
 const addTag = (tag, sapSystemId) => {
-  post(`databases/${sapSystemId}/tags`, {
+  post(`/databases/${sapSystemId}/tags`, {
     value: tag,
   });
 };
 
 const removeTag = (tag, sapSystemId) => {
-  del(`databases/${sapSystemId}/tags/${tag}`);
+  del(`/databases/${sapSystemId}/tags/${tag}`);
 };
 
 function DatabasesOverview() {
