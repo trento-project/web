@@ -6,7 +6,10 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
 
   defmodule StubRouter do
     def __routes__ do
-      [%{verb: :get, path: "/api/v1/test"}]
+      [
+        %{verb: :get, path: "/api/v1/test"},
+        %{verb: :get, path: "/api/v1/some-resource/12345"}
+      ]
     end
   end
 
@@ -49,6 +52,18 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       location_header = get_resp_header(result_conn, "location")
 
       assert location_header == ["/api/v1/test"]
+    end
+
+    test "should redirect to the correct path with a subroute path when the route is recognized with the latest version",
+         %{conn: conn} do
+      conn = %{conn | path_info: ["api", "some-resource", "12345"]}
+
+      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: StubRouter)
+
+      assert result_conn.status == 302
+      location_header = get_resp_header(result_conn, "location")
+
+      assert location_header == ["/api/v1/some-resource/12345"]
     end
   end
 end
