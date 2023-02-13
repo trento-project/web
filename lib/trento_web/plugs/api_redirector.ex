@@ -36,9 +36,9 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
 
     redirect_path = build_path(latest_version, path_parts)
 
-    if find_route(router, redirect_path, method) do
+    if route_exists?(router, redirect_path, method) do
       conn
-      |> put_status(:found)
+      |> put_status(307)
       |> redirect(redirect_path)
       |> halt()
     else
@@ -57,16 +57,11 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
     Controller.redirect(conn, to: to <> conn.query_string)
   end
 
-  defp find_route(router, path, verb) do
-    verb =
-      verb
-      |> String.downcase()
-      |> String.to_existing_atom()
-
-    router
-    |> Phoenix.Router.routes()
-    |> Enum.find(fn %{path: router_path, verb: router_verb} ->
-      verb == router_verb and path == router_path
-    end)
+  defp route_exists?(router, path, verb) do
+    case Phoenix.Router.route_info(router, verb, path, "") do
+      :error -> false
+      %{plug: __MODULE__} -> false
+      _ -> true
+    end
   end
 end

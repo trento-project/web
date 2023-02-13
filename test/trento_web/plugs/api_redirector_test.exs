@@ -4,12 +4,9 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
 
   alias TrentoWeb.Plugs.ApiRedirector
 
-  defmodule StubRouter do
-    def __routes__ do
-      [
-        %{verb: :get, path: "/api/v1/test"},
-        %{verb: :get, path: "/api/v1/some-resource/12345"}
-      ]
+  defmodule FoundRouter do
+    def __match_route__(_, _, _) do
+      {%{}, %{}, %{}, {%{}, %{}}}
     end
   end
 
@@ -33,9 +30,34 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
     test "should return 404 with the error view when the path is not recognized by the router", %{
       conn: conn
     } do
+      defmodule NotFoundRouter do
+        def __match_route__(_, _, _) do
+          :error
+        end
+      end
+
       conn = %{conn | path_info: ["api", "hosts"]}
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: StubRouter)
+      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: NotFoundRouter)
+
+      resp_body = json_response(result_conn, 404)
+
+      assert resp_body == %{"error" => "not found"}
+    end
+
+    test "should return 404 with the error view when the path is not recognized by the router because match the ApiRedirectorPlug",
+         %{
+           conn: conn
+         } do
+      defmodule NotFoundRouter do
+        def __match_route__(_, _, _) do
+          {%{plug: ApiRedirector}, %{}, %{}, {%{}, %{}}}
+        end
+      end
+
+      conn = %{conn | path_info: ["api", "hosts"]}
+
+      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: NotFoundRouter)
 
       resp_body = json_response(result_conn, 404)
 
@@ -46,9 +68,9 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
          %{conn: conn} do
       conn = %{conn | path_info: ["api", "test"]}
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: StubRouter)
+      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: FoundRouter)
 
-      assert result_conn.status == 302
+      assert result_conn.status == 307
       location_header = get_resp_header(result_conn, "location")
 
       assert location_header == ["/api/v1/test"]
@@ -58,9 +80,9 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
          %{conn: conn} do
       conn = %{conn | path_info: ["api", "some-resource", "12345"]}
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: StubRouter)
+      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: FoundRouter)
 
-      assert result_conn.status == 302
+      assert result_conn.status == 307
       location_header = get_resp_header(result_conn, "location")
 
       assert location_header == ["/api/v1/some-resource/12345"]
