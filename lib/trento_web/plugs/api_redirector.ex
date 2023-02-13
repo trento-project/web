@@ -1,6 +1,6 @@
 defmodule TrentoWeb.Plugs.ApiRedirector do
   @moduledoc """
-    This Plug is responsible for redirect api requests without a specific version
+    This Plug is responsible for redirecting api requests without a specific version
     to the latest version, when the requested path exists
 
     For example:
@@ -8,7 +8,7 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
 
     router and latest_version options should be provided.
 
-    latest_version option should be a string, will be interpolated with the path.
+    latest_version option should be a string,which will be interpolated with the path.
   """
   @behaviour Plug
 
