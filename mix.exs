@@ -184,7 +184,6 @@ defmodule Trento.MixProject do
       "CONTRIBUTING.md",
       "guides/monitoring/monitoring.md",
       "guides/alerting/alerting.md",
-      "guides/architecture/trento-architecture.md",
       "guides/development/environment_variables.md",
       "guides/development/hack_on_the_trento.md"
     ] ++ Path.wildcard("guides/authentication/*.md")
