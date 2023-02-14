@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import { getCluster } from '@state/selectors';
+import { getCluster } from '@state/selectors/cluster';
 import { updateCatalog } from '@state/actions/catalog';
 import {
   updateLastExecution,
