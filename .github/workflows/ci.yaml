@@ -300,16 +300,9 @@ jobs:
         run: cd test/e2e && npm install
 
   test-e2e:
-    name: End to end tests (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
+    name: End to end tests 
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.14.3
-            otp: 25
-          - elixir: 1.13.4
-            otp: 22
     env:
       MIX_ENV: dev
     services:
@@ -342,8 +335,8 @@ jobs:
       - name: Setup
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
         env:
           ImageOS: ubuntu20
       - name: Setup Node
@@ -358,7 +351,7 @@ jobs:
             deps
             _build/dev
             priv/plts
-          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v3
         id: npm-cache
