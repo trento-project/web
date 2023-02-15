@@ -14,10 +14,11 @@ export const userSlice = createSlice({
   reducers: {
     setAuthInProgress(state, _payload) {
       state.authInProgress = true;
+      state.authError = null;
     },
-    setAuthError(state, { payload: { error } }) {
+    setAuthError(state, { payload: { message, code } }) {
       state.authInProgress = false;
-      state.authError = error;
+      state.authError = { message, code };
     },
     setUserAsLogged(state, _payload) {
       state.loggedIn = true;
