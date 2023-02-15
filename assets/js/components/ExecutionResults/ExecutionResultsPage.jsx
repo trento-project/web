@@ -5,10 +5,7 @@ import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import { getCluster } from '@state/selectors/cluster';
 import { updateCatalog } from '@state/actions/catalog';
-import {
-  updateLastExecution,
-  executionRequested,
-} from '@state/actions/lastExecutions';
+import { updateLastExecution } from '@state/actions/lastExecutions';
 import {
   RUNNING_EXECUTION_STATE,
   REQUESTED_EXECUTION_STATE,
@@ -67,9 +64,6 @@ function ExecutionResultsPage() {
       executionData={executionData}
       executionError={executionError}
       clusterSelectedChecks={cluster?.selected_checks}
-      onStartExecution={(clusterId, hosts, selectedChecks) =>
-        dispatch(executionRequested(clusterId, hosts, selectedChecks))
-      }
     />
   );
 }

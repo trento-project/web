@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+
+import { ChecksExecutionContext } from '@components/ChecksExecutionContext';
 
 function TriggerChecksExecutionRequest({
   clusterId,
@@ -8,10 +10,11 @@ function TriggerChecksExecutionRequest({
   children,
   hosts = [],
   checks = [],
-  onStartExecution = () => {},
   ...props
 }) {
   const navigate = useNavigate();
+
+  const startExecution = useContext(ChecksExecutionContext);
 
   return (
     <button
@@ -21,8 +24,7 @@ function TriggerChecksExecutionRequest({
       )}
       type="button"
       onClick={() => {
-        onStartExecution(clusterId, hosts, checks);
-
+        startExecution(clusterId, hosts, checks);
         navigate(`/clusters/${clusterId}/executions/last`);
       }}
       {...props}

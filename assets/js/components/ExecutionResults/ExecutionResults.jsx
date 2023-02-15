@@ -68,7 +68,6 @@ function ExecutionResults({
   clusterSelectedChecks = [],
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
-  onStartExecution = () => {},
 }) {
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -152,7 +151,6 @@ function ExecutionResults({
         selectedChecks={clusterSelectedChecks}
         hosts={hosts}
         onCatalogRefresh={onCatalogRefresh}
-        onStartExecution={onStartExecution}
       >
         {executionData?.targets.map(({ agent_id: hostID, checks }) => (
           <HostResultsWrapper

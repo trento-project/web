@@ -70,7 +70,6 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
   clusterId,
   selectedChecks,
   onClose = () => {},
-  onStartExecution = () => {},
 }) {
   return (
     <div>
@@ -86,7 +85,6 @@ export function SuggestTriggeringChecksExecutionAfterSettingsUpdated({
           clusterId={clusterId}
           hosts={useSelector(getClusterHostIDs(clusterId))}
           checks={selectedChecks}
-          onStartExecution={onStartExecution}
         >
           <EOS_PLAY_CIRCLE color="green" />
         </TriggerChecksExecutionRequest>

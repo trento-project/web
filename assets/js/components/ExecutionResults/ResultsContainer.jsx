@@ -13,7 +13,6 @@ function ResultsContainer({
   selectedChecks = [],
   hosts = [],
   onCatalogRefresh = () => {},
-  onStartExecution = () => {},
 }) {
   if (catalogError) {
     return (
@@ -32,7 +31,6 @@ function ResultsContainer({
         clusterId={clusterID}
         selectedChecks={selectedChecks}
         hosts={hosts}
-        onStartExecution={onStartExecution}
       />
     );
   }

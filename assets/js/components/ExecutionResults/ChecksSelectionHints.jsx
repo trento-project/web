@@ -8,12 +8,7 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 
 import TrentoLogo from '@static/trento-icon.png';
 
-function ChecksSelectionHints({
-  clusterId,
-  selectedChecks = [],
-  hosts = [],
-  onStartExecution = () => {},
-}) {
+function ChecksSelectionHints({ clusterId, selectedChecks = [], hosts = [] }) {
   const navigate = useNavigate();
 
   const hasSelectedChecks = selectedChecks.length > 0;
@@ -54,7 +49,6 @@ function ChecksSelectionHints({
               clusterId={clusterId}
               hosts={hosts}
               checks={selectedChecks}
-              onStartExecution={onStartExecution}
             >
               <EOS_PLAY_CIRCLE className="inline-block fill-white" /> Start
               Execution now

@@ -27,6 +27,7 @@ import Login from '@components/Login';
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';
+import ChecksExecutionContextProvider from '@components/ChecksExecutionContext';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import { store } from './state';
@@ -68,18 +69,20 @@ function App() {
                     element={<SapSystemDetails />}
                   />
                   <Route path="databases/:id" element={<DatabaseDetails />} />
-                  <Route
-                    path="clusters/:clusterID"
-                    element={<ClusterDetails />}
-                  />
-                  <Route
-                    path="clusters/:clusterID/settings"
-                    element={<ClusterSettings />}
-                  />
-                  <Route
-                    path="clusters/:clusterID/executions/last"
-                    element={<ExecutionResultsPage />}
-                  />
+                  <Route element={<ChecksExecutionContextProvider />}>
+                    <Route
+                      path="clusters/:clusterID"
+                      element={<ClusterDetails />}
+                    />
+                    <Route
+                      path="clusters/:clusterID/settings"
+                      element={<ClusterSettings />}
+                    />
+                    <Route
+                      path="clusters/:clusterID/executions/last"
+                      element={<ExecutionResultsPage />}
+                    />
+                  </Route>
                 </Route>
               </Route>
             </Route>
