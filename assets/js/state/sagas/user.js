@@ -25,7 +25,7 @@ export function* performLogin({ payload: { username, password } }) {
     yield put(setUserAsLogged());
   } catch (error) {
     yield put(
-      setAuthError({ message: error.message, code: error.response.status })
+      setAuthError({ message: error.message, code: error.response?.status })
     );
     yield call(clearCredentialsFromStore);
   }
