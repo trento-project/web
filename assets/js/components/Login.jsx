@@ -37,6 +37,8 @@ export default function Login() {
     dispatch(performLogin({ username, password }));
   };
 
+  const isUnauthorized = authError && authError.code === 401;
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -69,7 +71,7 @@ export default function Login() {
                   required
                   className={classNames(
                     'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm',
-                    { 'border-red-300': authError && authError.code === 401 }
+                    { 'border-red-300': isUnauthorized }
                   )}
                 />
               </div>
@@ -95,7 +97,7 @@ export default function Login() {
                   className={classNames(
                     'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm',
                     {
-                      'border-red-300': authError && authError.code === 401,
+                      'border-red-300': isUnauthorized,
                       'disabled:opacity-50': authInProgress,
                     }
                   )}
