@@ -23,7 +23,5 @@ config :trento, Trento.Scheduler,
     ]
   ]
 
-config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.MockRunner
-
 config :trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.MockPrometheusApi

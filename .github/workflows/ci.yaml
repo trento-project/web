@@ -505,7 +505,6 @@ jobs:
           cd helm-charts-rolling/charts/trento-server
           helm dependency update
           helm upgrade -i trento --wait . \
-            --set-file trento-runner.privateKey=/home/azureuser/.ssh/id_rsa \
             --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
             --set trento-web.image.pullPolicy=Always \
             --set trento-web.image.repository="${IMAGE_REPOSITORY}" \
