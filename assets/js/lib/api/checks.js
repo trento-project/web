@@ -1,6 +1,8 @@
 import { networkClient } from '@lib/network';
 
-const baseURL = process.env.WANDA_URL;
+// eslint-disable-next-line no-undef
+const baseURL = config.checksServiceBaseUrl;
+
 const defaultConfig = { baseURL };
 
 export const getExecutionResult = (executionID) =>

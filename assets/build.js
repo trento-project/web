@@ -10,24 +10,9 @@ config();
 
 const resolvePath = (p) => path.resolve(__dirname, p);
 
-const stringify = (variable) => {
-  if (!variable) {
-    return JSON.stringify('');
-  }
-  return JSON.stringify(variable);
-};
-
-const WANDA_URL =
-  process.env.NODE_ENV === 'production' ? '' : stringify(process.env.WANDA_URL);
-
-const define = {
-  'process.env.WANDA_URL': WANDA_URL,
-};
-
 const watching = Boolean(process.env.ESBUILD_WATCH);
 
 const buildConfig = {
-  define,
   entryPoints: ['js/app.js', 'js/trento.jsx'],
   outdir: resolvePath('../priv/static/assets'),
   bundle: true,
