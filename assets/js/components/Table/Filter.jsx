@@ -23,7 +23,7 @@ function Filter({ options, title, value, onChange }) {
   useOnClickOutside(ref, () => setOpen(false));
 
   return (
-    <div className="w-64 top-16 mr-4" ref={ref}>
+    <div className="w-64 top-16" ref={ref}>
       <div className="mt-1 relative">
         {value !== '' && (
           <button

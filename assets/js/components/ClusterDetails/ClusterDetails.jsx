@@ -117,15 +117,15 @@ export function ClusterDetails() {
       <BackButton url="/clusters">Back to Clusters</BackButton>
       <div className="flex flex-wrap  ">
         <div className="flex w-1/2  h-auto overflow-hidden overflow-ellipsis  break-words ">
-          <PageHeader className="whitespace-normal font-bold">
-            Pacemaker Cluster Details:
-            <span>{getClusterName(cluster)}</span>
+          <PageHeader className="whitespace-normal">
+            Pacemaker Cluster Details:{' '}
+            <span className="font-bold">{getClusterName(cluster)}</span>
           </PageHeader>
         </div>
         <div className="flex w-1/2 justify-end">
           <Button
             type="primary-white"
-            className="w-fit  inline-block mx-0.5 border-green-500 border "
+            className="w-fit inline-block mx-0.5 border-green-500 border "
             size="small"
             onClick={() => navigate(`/clusters/${clusterID}/settings`)}
           >
@@ -158,10 +158,10 @@ export function ClusterDetails() {
                 'fill-slate-500': !hasSelectedChecks,
               })}
             />{' '}
+            Start Execution
             {!hasSelectedChecks && (
               <Tooltip tooltipText="Select some Checks first!" />
             )}
-            Start Execution
           </TriggerChecksExecutionRequest>
         </div>
       </div>
