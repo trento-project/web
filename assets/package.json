@@ -32,7 +32,7 @@
     "fishery": "^2.2.2",
     "intersection-observer": "^0.12.2",
     "jest": "^29.4.3",
-    "jest-environment-jsdom": "^29.4.2",
+    "jest-environment-jsdom": "^29.4.3",
     "postcss": "^8.4.21",
     "prettier-eslint-cli": "^7.1.0",
     "redux-mock-store": "^1.5.4",
