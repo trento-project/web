@@ -14,6 +14,12 @@ export const getLastExecutionByGroupID = (groupID) =>
     defaultConfig
   );
 
+export const triggerChecksExecution = (clusterId) =>
+  networkClient.post(
+    `/clusters/${clusterId}/checks/request_execution`,
+    defaultConfig
+  );
+
 export const getCatalog = (env) =>
   networkClient.get(`/api/v1/checks/catalog`, {
     ...defaultConfig,
