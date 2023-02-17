@@ -115,53 +115,60 @@ export function ClusterDetails() {
   return (
     <div>
       <BackButton url="/clusters">Back to Clusters</BackButton>
-      <div className="flex">
-        <PageHeader>
-          Pacemaker Cluster Details:{' '}
-          <span className="font-bold">{getClusterName(cluster)}</span>
-        </PageHeader>
+      <div className="flex flex-wrap">
+        <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
+          <PageHeader className="whitespace-normal">
+            Pacemaker Cluster Details:{' '}
+            <span className="font-bold">{getClusterName(cluster)}</span>
+          </PageHeader>
+        </div>
         <div className="flex w-1/2 justify-end">
-          <Button
-            type="primary-white"
-            className="w-1/4 mx-0.5 border-green-500 border"
-            size="small"
-            onClick={() => navigate(`/clusters/${clusterID}/settings`)}
-          >
-            <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
-            Settings
-          </Button>
-          <Button
-            type="primary-white"
-            className="w-1/4 mx-0.5 border-green-500 border"
-            size="small"
-            onClick={() => navigate(`/clusters/${clusterID}/executions/last`)}
-          >
-            <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
-            Show Results
-          </Button>
-          <TriggerChecksExecutionRequest
-            cssClasses="rounded relative w-1/4 ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
-            clusterId={clusterID}
-            disabled={!hasSelectedChecks}
-            hosts={hosts}
-            checks={cluster.selected_checks}
-            onStartExecution={(_, hostList, selectedChecks) =>
-              dispatch(executionRequested(clusterID, hostList, selectedChecks))
-            }
-          >
-            <EOS_PLAY_CIRCLE
-              className={classNames('inline-block fill-jungle-green-500', {
-                'fill-slate-500': !hasSelectedChecks,
-              })}
-            />{' '}
-            Start Execution
-            {!hasSelectedChecks && (
-              <Tooltip tooltipText="Select some Checks first!" />
-            )}
-          </TriggerChecksExecutionRequest>
+          <div className="flex w-fit whitespace-nowrap">
+            <Button
+              type="primary-white"
+              className="inline-block mx-0.5 border-green-500 border"
+              size="small"
+              onClick={() => navigate(`/clusters/${clusterID}/settings`)}
+            >
+              <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+              Settings
+            </Button>
+
+            <Button
+              type="primary-white"
+              className="mx-0.5 border-green-500 border"
+              size="small"
+              onClick={() => navigate(`/clusters/${clusterID}/executions/last`)}
+            >
+              <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
+              Show Results
+            </Button>
+
+            <TriggerChecksExecutionRequest
+              cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
+              clusterId={clusterID}
+              disabled={!hasSelectedChecks}
+              hosts={hosts}
+              checks={cluster.selected_checks}
+              onStartExecution={(_, hostList, selectedChecks) =>
+                dispatch(
+                  executionRequested(clusterID, hostList, selectedChecks)
+                )
+              }
+            >
+              <EOS_PLAY_CIRCLE
+                className={classNames('inline-block fill-jungle-green-500', {
+                  'fill-slate-500': !hasSelectedChecks,
+                })}
+              />{' '}
+              <span>Start Execution</span>
+              {!hasSelectedChecks && (
+                <Tooltip tooltipText="Select some Checks first!" />
+              )}
+            </TriggerChecksExecutionRequest>
+          </div>
         </div>
       </div>
-
       <div className="flex xl:flex-row flex-col">
         <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-3/4 w-full mr-4">
           <ListView
