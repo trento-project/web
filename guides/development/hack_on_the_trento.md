@@ -47,11 +47,10 @@ mix setup
 
 ## Connect Trento Web with [Wanda](https://github.com/trento-project/wanda)
 
-By default, Wanda can be accessed on port 4001. To connect Trento Web to Wanda, create a .env file in the assets directory.
+By default, Wanda can be accessed on port 4001.
 
-```
-echo "WANDA_URL=http://localhost:4001" > assets/.env
-```
+The wanda url is provided with the configuration parameter `:trento, :checks_service, :base_url`.
+
 
 **Guide** how to set up [Wanda](https://github.com/trento-project/wanda/blob/main/guides/development/hack_on_wanda.md).
 
