@@ -9,12 +9,20 @@ import {
   setLastExecution,
   setLastExecutionEmpty,
   setLastExecutionError,
+  setExecutionRequested,
 } from '@state/lastExecutions';
-import { updateLastExecution } from './lastExecutions';
+import {
+  notifyChecksExecutionRequested,
+  notifyChecksExecutionRequestFailed,
+} from '@state/actions/notifications';
+import { updateLastExecution, requestExecution } from './lastExecutions';
 
 const axiosMock = new MockAdapter(networkClient);
 const lastExecutionURL = (groupID) =>
   `/api/v1/checks/groups/${groupID}/executions/last`;
+
+const triggerChecksExecutionURL = (clusterId) =>
+  `/clusters/${clusterId}/checks/request_execution`;
 
 describe('lastExecutions saga', () => {
   beforeEach(() => {
@@ -61,7 +69,7 @@ describe('lastExecutions saga', () => {
     expect(dispatched).toContainEqual(setLastExecutionEmpty(groupID));
   });
 
-  it('should the last execution for a given groupID with an error', async () => {
+  it('should update the last execution for a given groupID with an error', async () => {
     const groupID = faker.datatype.uuid();
 
     axiosMock.onGet(lastExecutionURL(groupID)).networkError();
@@ -73,6 +81,60 @@ describe('lastExecutions saga', () => {
     expect(dispatched).toContainEqual(setLastExecutionLoading(groupID));
     expect(dispatched).toContainEqual(
       setLastExecutionError({ groupID, error: 'Network Error' })
+    );
+  });
+
+  it('should set the last execution to requested state', async () => {
+    const clusterID = faker.datatype.uuid();
+    const clusterName = faker.animal.cat();
+    const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const checks = [faker.color.human(), faker.color.human()];
+
+    axiosMock.onPost(triggerChecksExecutionURL(clusterID)).reply(202, {});
+
+    const payload = { clusterID, hosts, checks };
+    const dispatched = await recordSaga(
+      requestExecution,
+      {
+        payload,
+      },
+      {
+        clustersList: {
+          clusters: [{ id: clusterID, name: clusterName }],
+        },
+      }
+    );
+
+    expect(dispatched).toContainEqual(setExecutionRequested(payload));
+    expect(dispatched).toContainEqual(
+      notifyChecksExecutionRequested(clusterName)
+    );
+  });
+
+  it('should not set the last execution to requested state on failure', async () => {
+    const clusterID = faker.datatype.uuid();
+    const clusterName = faker.animal.cat();
+    const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const checks = [faker.color.human(), faker.color.human()];
+
+    axiosMock.onPost(triggerChecksExecutionURL(clusterID)).reply(400, {});
+
+    const payload = { clusterID, hosts, checks };
+    const dispatched = await recordSaga(
+      requestExecution,
+      {
+        payload,
+      },
+      {
+        clustersList: {
+          clusters: [{ id: clusterID, name: clusterName }],
+        },
+      }
+    );
+
+    expect(dispatched).not.toContainEqual(setExecutionRequested(payload));
+    expect(dispatched).toContainEqual(
+      notifyChecksExecutionRequestFailed(clusterName)
     );
   });
 });

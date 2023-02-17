@@ -50,12 +50,13 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
   };
 };
 
-export async function recordSaga(saga, initialAction) {
+export async function recordSaga(saga, initialAction, state = {}) {
   const dispatched = [];
 
   await runSaga(
     {
       dispatch: (action) => dispatched.push(action),
+      getState: () => state,
     },
     saga,
     initialAction

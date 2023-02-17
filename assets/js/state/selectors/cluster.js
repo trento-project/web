@@ -9,3 +9,8 @@ export const getClusterHostIDs =
     hostsList.hosts
       .filter((host) => host.cluster_id === clusterID)
       .map(({ id: hostID }) => hostID);
+
+export const getClusterName =
+  (clusterID) =>
+  ({ clustersList }) =>
+    getCluster(clusterID)({ clustersList })?.name || '';
