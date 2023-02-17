@@ -85,13 +85,7 @@ if config_env() in [:prod, :demo] do
       connection: amqp_url
     ]
 
-  config :trento, :checks_service,
-    base_url:
-      System.get_env("CHECKS_SERVICE_BASE_URL") ||
-        raise("""
-        environment variable CHECKS_SERVICE_BASE_URL is missing.
-        For example: /check_service
-        """)
+  config :trento, :checks_service, base_url: System.get_env("CHECKS_SERVICE_BASE_URL") || ""
 
   config :trento, :grafana,
     user: System.get_env("GRAFANA_USER") || "admin",
