@@ -25,11 +25,7 @@ export const lastExecutionsSlice = createSlice({
       state[groupID] = lastExecutionState;
     },
     setLastExecutionEmpty: (state, { payload: groupID }) => {
-      const lastExecutionState = {
-        ...initialExecutionState,
-      };
-
-      state[groupID] = lastExecutionState;
+      state[groupID] = initialExecutionState;
     },
     setLastExecution: (state, { payload }) => {
       const { group_id: groupID } = payload;
@@ -53,6 +49,14 @@ export const lastExecutionsSlice = createSlice({
     },
     setExecutionStarted: (state, { payload }) => {
       const { groupID: clusterID, targets } = payload;
+
+      if (typeof state[clusterID] === 'undefined') {
+        state[clusterID] = initialExecutionState;
+      }
+
+      if (state[clusterID].data === null) {
+        state[clusterID].data = {};
+      }
 
       state[clusterID].data.targets = targets;
       state[clusterID].data.status = RUNNING_EXECUTION_STATE;

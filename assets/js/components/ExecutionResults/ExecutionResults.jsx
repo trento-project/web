@@ -152,7 +152,7 @@ function ExecutionResults({
         hosts={hosts}
         onCatalogRefresh={onCatalogRefresh}
       >
-        {executionData?.targets.map(({ agent_id: hostID, checks }) => (
+        {executionData?.targets?.map(({ agent_id: hostID, checks }) => (
           <HostResultsWrapper
             key={hostID}
             hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
