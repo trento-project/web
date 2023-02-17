@@ -1,8 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 
 import { ChecksExecutionContext } from '@components/ChecksExecutionContext';
+import { useSelector } from 'react-redux';
+import { getLastExecution } from '@state/selectors/lastExecutions';
+import { REQUESTED_EXECUTION_STATE } from '@state/lastExecutions';
 
 function TriggerChecksExecutionRequest({
   clusterId,
@@ -16,6 +19,14 @@ function TriggerChecksExecutionRequest({
 
   const startExecution = useContext(ChecksExecutionContext);
 
+  const lastExecution = useSelector(getLastExecution(clusterId));
+
+  useEffect(() => {
+    if (lastExecution?.data?.status === REQUESTED_EXECUTION_STATE) {
+      navigate(`/clusters/${clusterId}/executions/last`);
+    }
+  }, [lastExecution]);
+
   return (
     <button
       className={classNames(
@@ -25,7 +36,6 @@ function TriggerChecksExecutionRequest({
       type="button"
       onClick={() => {
         startExecution(clusterId, hosts, checks);
-        navigate(`/clusters/${clusterId}/executions/last`);
       }}
       {...props}
     >

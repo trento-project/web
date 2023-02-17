@@ -2,7 +2,7 @@ import React from 'react';
 
 import { screen, act } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
-import { renderWithRouter } from '@lib/test-utils';
+import { renderWithRouter, withState } from '@lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import { hostFactory } from '@lib/test-utils/factories';
 
@@ -17,17 +17,26 @@ describe('TriggerChecksExecutionRequest component', () => {
     const hosts = hostFactory.buildList(2);
     const selectedChecks = [faker.datatype.uuid(), faker.datatype.uuid()];
 
-    await act(async () =>
-      renderWithRouter(
-        <ChecksExecutionContext.Provider value={handleExecutionStart}>
-          <TriggerChecksExecutionRequest
-            clusterId={clusterId}
-            hosts={hosts}
-            checks={selectedChecks}
-          />
-        </ChecksExecutionContext.Provider>
-      )
+    const [StatefulTrigger] = withState(
+      <ChecksExecutionContext.Provider value={handleExecutionStart}>
+        <TriggerChecksExecutionRequest
+          clusterId={clusterId}
+          hosts={hosts}
+          checks={selectedChecks}
+        />
+      </ChecksExecutionContext.Provider>,
+      {
+        lastExecutions: {
+          [clusterId]: {
+            data: {
+              status: 'requested',
+            },
+          },
+        },
+      }
     );
+
+    await act(async () => renderWithRouter(StatefulTrigger));
 
     const button = screen.getByRole('button');
     await user.click(button);
