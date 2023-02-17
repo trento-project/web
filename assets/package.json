@@ -36,7 +36,7 @@
     "postcss": "^8.4.21",
     "prettier-eslint-cli": "^7.1.0",
     "redux-mock-store": "^1.5.4",
-    "tailwindcss": "^3.2.6"
+    "tailwindcss": "^3.2.7"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.11",
