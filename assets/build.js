@@ -4,9 +4,6 @@
 const path = require('path');
 const alias = require('esbuild-plugin-path-alias');
 const esbuild = require('esbuild');
-const { config } = require('dotenv');
-
-config();
 
 const resolvePath = (p) => path.resolve(__dirname, p);
 
