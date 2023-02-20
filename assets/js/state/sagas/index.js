@@ -84,14 +84,10 @@ import {
 
 import { CHECKS_SELECTED } from '@state/actions/cluster';
 import { EXECUTION_REQUESTED } from '@state/actions/lastExecutions';
+import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
-
-const notify = ({ text, icon }) => ({
-  type: 'NOTIFICATION',
-  payload: { text, icon },
-});
 
 const getClusterName = (clusterID) => (state) =>
   state.clustersList.clusters.reduce((acc, cluster) => {
