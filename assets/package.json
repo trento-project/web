@@ -18,7 +18,7 @@
     "axios-mock-adapter": "^1.21.2",
     "babel-jest": "^29.4.3",
     "babel-loader": "^9.1.2",
-    "esbuild": "^0.17.8",
+    "esbuild": "^0.17.9",
     "esbuild-plugin-path-alias": "^1.0.7",
     "eslint": "^8.34.0",
     "eslint-config-airbnb": "^19.0.4",
