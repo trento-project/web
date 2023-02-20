@@ -150,9 +150,19 @@ export function ClusterDetails() {
               disabled={!hasSelectedChecks}
               hosts={hosts}
               checks={cluster.selected_checks}
-              onStartExecution={(_, hostList, selectedChecks) =>
+              onStartExecution={(
+                _,
+                hostList,
+                selectedChecks,
+                navigateFunction
+              ) =>
                 dispatch(
-                  executionRequested(clusterID, hostList, selectedChecks)
+                  executionRequested(
+                    clusterID,
+                    hostList,
+                    selectedChecks,
+                    navigateFunction
+                  )
                 )
               }
             >

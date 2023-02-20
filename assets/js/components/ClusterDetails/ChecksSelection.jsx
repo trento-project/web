@@ -169,8 +169,10 @@ function ChecksSelection({ clusterId, cluster }) {
                 clusterId={clusterId}
                 selectedChecks={cluster.selected_checks}
                 onClose={() => setLocalSavingSuccess(null)}
-                onStartExecution={(clusterID, hosts, checks) =>
-                  dispatch(executionRequested(clusterID, hosts, checks))
+                onStartExecution={(clusterID, hosts, checks, navigate) =>
+                  dispatch(
+                    executionRequested(clusterID, hosts, checks, navigate)
+                  )
                 }
               />
             )}

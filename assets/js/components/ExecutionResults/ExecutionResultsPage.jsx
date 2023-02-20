@@ -67,8 +67,8 @@ function ExecutionResultsPage() {
       executionData={executionData}
       executionError={executionError}
       clusterSelectedChecks={cluster?.selected_checks}
-      onStartExecution={(clusterId, hosts, selectedChecks) =>
-        dispatch(executionRequested(clusterId, hosts, selectedChecks))
+      onStartExecution={(clusterId, hosts, selectedChecks, navigate) =>
+        dispatch(executionRequested(clusterId, hosts, selectedChecks, navigate))
       }
     />
   );
