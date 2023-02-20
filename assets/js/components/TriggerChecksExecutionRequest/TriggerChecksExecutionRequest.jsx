@@ -21,9 +21,7 @@ function TriggerChecksExecutionRequest({
       className={cssOverride || classNames(baseStyle, cssClasses)}
       type="button"
       onClick={() => {
-        onStartExecution(clusterId, hosts, checks);
-
-        navigate(`/clusters/${clusterId}/executions/last`);
+        onStartExecution(clusterId, hosts, checks, navigate);
       }}
       {...props}
     >

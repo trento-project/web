@@ -11,7 +11,13 @@ import TriggerChecksExecutionRequest from './TriggerChecksExecutionRequest';
 describe('TriggerChecksExecutionRequest component', () => {
   it('should dispatch execution requested on click and navigate to the correct url', async () => {
     const user = userEvent.setup();
-    const onStartExecution = jest.fn();
+
+    const onStartExecution = jest.fn(
+      (clusterId, _hosts, _selectedChecks, navigate) => {
+        navigate(`/clusters/${clusterId}/executions/last`);
+      }
+    );
+
     const clusterId = faker.datatype.uuid();
     const hosts = hostFactory.buildList(2);
     const selectedChecks = [faker.datatype.uuid(), faker.datatype.uuid()];
@@ -33,7 +39,8 @@ describe('TriggerChecksExecutionRequest component', () => {
     expect(onStartExecution).toHaveBeenCalledWith(
       clusterId,
       hosts,
-      selectedChecks
+      selectedChecks,
+      expect.any(Function)
     );
     expect(window.location.pathname).toBe(
       `/clusters/${clusterId}/executions/last`
