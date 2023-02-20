@@ -7,5 +7,10 @@ export const getClusterHostIDs =
       .filter((host) => host.cluster_id === clusterID)
       .map(({ id: hostID }) => hostID);
 
+export const getClusterName =
+  (clusterID) =>
+  ({ clustersList }) =>
+    getCluster(clusterID)({ clustersList })?.name || '';
+
 export const getClusterSelectedChecks = (clusterID) => (state) =>
   getCluster(clusterID)(state).selected_checks;

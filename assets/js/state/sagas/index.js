@@ -75,6 +75,7 @@ import {
 import { watchPerformLogin } from '@state/sagas/user';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
+import { getClusterName } from '@state/selectors/cluster';
 import {
   setClusterChecksSelectionSavingError,
   setClusterChecksSelectionSavingSuccess,
@@ -88,14 +89,6 @@ import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
-
-const getClusterName = (clusterID) => (state) =>
-  state.clustersList.clusters.reduce((acc, cluster) => {
-    if (cluster.id === clusterID) {
-      acc = cluster.name;
-    }
-    return acc;
-  }, '');
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
