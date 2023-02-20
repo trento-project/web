@@ -84,7 +84,6 @@ import {
 } from '@state/clusterChecksSelection';
 
 import { CHECKS_SELECTED } from '@state/actions/cluster';
-import { EXECUTION_REQUESTED } from '@state/actions/lastExecutions';
 import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
@@ -274,33 +273,6 @@ function* checksSelected({ payload }) {
 
 function* watchChecksSelected() {
   yield takeEvery(CHECKS_SELECTED, checksSelected);
-}
-
-function* requestChecksExecution({ payload }) {
-  const clusterName = yield select(getClusterName(payload.clusterID));
-  yield call(
-    post,
-    `/clusters/${payload.clusterID}/checks/request_execution`,
-    {}
-  );
-
-  yield put(
-    appendEntryToLiveFeed({
-      source: clusterName,
-      message: 'Checks execution requested.',
-    })
-  );
-
-  yield put(
-    notify({
-      text: `Checks execution requested, cluster: ${clusterName}`,
-      icon: '🐰',
-    })
-  );
-}
-
-function* watchRequestChecksExecution() {
-  yield takeEvery(EXECUTION_REQUESTED, requestChecksExecution);
 }
 
 function* checksExecutionStarted({ payload }) {
@@ -564,7 +536,6 @@ export default function* rootSaga() {
     watchClusterCibLastWrittenUpdated(),
     watchNotifications(),
     watchChecksSelected(),
-    watchRequestChecksExecution(),
     watchChecksExecutionStarted(),
     watchChecksExecutionCompleted(),
     watchChecksResultsUpdated(),
