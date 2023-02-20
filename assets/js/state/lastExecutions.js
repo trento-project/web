@@ -54,6 +54,14 @@ export const lastExecutionsSlice = createSlice({
     setExecutionStarted: (state, { payload }) => {
       const { groupID: clusterID, targets } = payload;
 
+      if (typeof state[clusterID] === 'undefined') {
+        state[clusterID] = initialExecutionState;
+      }
+
+      if (state[clusterID].data === null) {
+        state[clusterID].data = {};
+      }
+
       state[clusterID].data.targets = targets;
       state[clusterID].data.status = RUNNING_EXECUTION_STATE;
       state[clusterID].error = null;
