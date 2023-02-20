@@ -32,33 +32,24 @@ const iconByHealth = {
 
 const styleByHealth = {
   passing: (selected, asButton) =>
-    classNames(
-      'tn-health-passing w-1/3 px-5 border rounded-lg my-2 mr-4 bg-white',
-      {
-        'bg-jungle-green-500 border-green-600 text-white hover:opacity-75':
-          selected,
-        'text-jungle-green-500': !selected,
-        'hover:opacity-75': asButton && !selected,
-      }
-    ),
+    classNames('tn-health-passing w-1/3 px-5 border rounded-lg my-2 mr-4', {
+      'bg-jungle-green-500 border-green-600 text-white hover:opacity-75':
+        selected,
+      'text-jungle-green-500 bg-white': !selected,
+      'hover:opacity-75': asButton && !selected,
+    }),
   warning: (selected, asButton) =>
-    classNames(
-      'tn-health-warning w-1/3 px-5 border rounded-lg my-2 mr-4 bg-white',
-      {
-        'bg-yellow-400 border-yellow-400 text-white hover:opacity-75': selected,
-        'text-yellow-400': !selected,
-        'hover:opacity-75': asButton && !selected,
-      }
-    ),
+    classNames('tn-health-warning w-1/3 px-5 border rounded-lg my-2 mr-4', {
+      'bg-yellow-400 border-yellow-400 text-white hover:opacity-75': selected,
+      'text-yellow-400 bg-white': !selected,
+      'hover:opacity-75': asButton && !selected,
+    }),
   critical: (selected, asButton) =>
-    classNames(
-      'tn-health-critical w-1/3 px-5 border rounded-lg my-2 mr-4 bg-white',
-      {
-        'bg-red-600 border-red-600 text-white hover:opacity-75': selected,
-        'text-red-600': !selected,
-        'hover:opacity-75': asButton && !selected,
-      }
-    ),
+    classNames('tn-health-critical w-1/3 px-5 border rounded-lg my-2 mr-4', {
+      'bg-red-600 border-red-600 text-white hover:opacity-75': selected,
+      'text-red-600 bg-white': !selected,
+      'hover:opacity-75': asButton && !selected,
+    }),
 };
 
 const labelByHealth = {
