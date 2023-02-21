@@ -20,7 +20,7 @@ describe('ChecksResults ResultsContainer component', () => {
       <ResultsContainer catalogError={false} hasAlreadyChecksResults={false} />
     );
 
-    expect(screen.getByRole('button')).toHaveTextContent('Select Checks now!');
+    expect(screen.getByRole('button')).toHaveTextContent('Select Checks now');
   });
 
   it('should render a hello', () => {

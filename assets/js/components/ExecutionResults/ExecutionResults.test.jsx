@@ -252,7 +252,7 @@ describe('ExecutionResults', () => {
       'It looks like you have not configured any checks for the current cluster. Select your desired checks to be executed.'
     );
     expect(hintText).toBeInTheDocument();
-    const svgText = screen.getByText('Select Checks now!');
+    const svgText = screen.getByText('Select Checks now');
     expect(svgText).toBeInTheDocument();
   });
 
