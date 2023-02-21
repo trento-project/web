@@ -16,9 +16,7 @@ function TriggerChecksExecutionRequest({
   ...props
 }) {
   const navigate = useNavigate();
-
   const startExecution = useContext(ChecksExecutionContext);
-
   const lastExecution = useSelector(getLastExecution(clusterId));
 
   useEffect(() => {

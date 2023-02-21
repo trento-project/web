@@ -25,7 +25,11 @@ export const lastExecutionsSlice = createSlice({
       state[groupID] = lastExecutionState;
     },
     setLastExecutionEmpty: (state, { payload: groupID }) => {
-      state[groupID] = initialExecutionState;
+      const lastExecutionState = {
+        ...initialExecutionState,
+      };
+
+      state[groupID] = lastExecutionState;
     },
     setLastExecution: (state, { payload }) => {
       const { group_id: groupID } = payload;

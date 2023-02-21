@@ -11,10 +11,7 @@ import {
   setLastExecutionError,
   setExecutionRequested,
 } from '@state/lastExecutions';
-import {
-  notifyChecksExecutionRequested,
-  notifyChecksExecutionRequestFailed,
-} from '@state/actions/notifications';
+import { notify } from '@state/actions/notifications';
 import { updateLastExecution, requestExecution } from './lastExecutions';
 
 const axiosMock = new MockAdapter(networkClient);
@@ -107,7 +104,10 @@ describe('lastExecutions saga', () => {
 
     expect(dispatched).toContainEqual(setExecutionRequested(payload));
     expect(dispatched).toContainEqual(
-      notifyChecksExecutionRequested(clusterName)
+      notify({
+        text: `Checks execution requested, cluster: ${clusterName}`,
+        icon: '🐰',
+      })
     );
   });
 
@@ -134,7 +134,10 @@ describe('lastExecutions saga', () => {
 
     expect(dispatched).not.toContainEqual(setExecutionRequested(payload));
     expect(dispatched).toContainEqual(
-      notifyChecksExecutionRequestFailed(clusterName)
+      notify({
+        text: `Unable to start execution for cluster: ${clusterName}`,
+        icon: '❌',
+      })
     );
   });
 });

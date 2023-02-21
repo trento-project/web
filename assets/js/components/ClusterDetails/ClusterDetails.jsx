@@ -20,7 +20,8 @@ import ProviderLabel from '@components/ProviderLabel';
 import { getClusterName } from '@components/ClusterLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
-import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
+import { getCluster } from '@state/selectors';
+import { getClusterHostIDs } from '@state/selectors/cluster';
 import { updateLastExecution } from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import SiteDetails from './SiteDetails';

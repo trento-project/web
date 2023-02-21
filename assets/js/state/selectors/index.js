@@ -1,6 +1,5 @@
 import { keysToCamel } from '@lib/serialization';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
-import { getCluster } from '@state/selectors/cluster';
 
 export const isIdByKey =
   (key, id) =>
@@ -9,6 +8,9 @@ export const isIdByKey =
 
 export const getHost = (id) => (state) =>
   state.hostsList.hosts.find((host) => host.id === id);
+
+export const getCluster = (id) => (state) =>
+  state.clustersList.clusters.find((cluster) => cluster.id === id);
 
 const enrichInstances = (instances, sapSystemId, state) =>
   instances

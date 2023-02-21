@@ -12,7 +12,8 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import { getClusterName } from '@components/ClusterLink';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 
-import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
+import { getCluster } from '@state/selectors';
+import { getClusterHostIDs } from '@state/selectors/cluster';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 

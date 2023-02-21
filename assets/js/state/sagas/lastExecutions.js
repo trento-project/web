@@ -4,10 +4,7 @@ import {
   UPDATE_LAST_EXECUTION,
   EXECUTION_REQUESTED,
 } from '@state/actions/lastExecutions';
-import {
-  notifyChecksExecutionRequested,
-  notifyChecksExecutionRequestFailed,
-} from '@state/actions/notifications';
+import { notify } from '@state/actions/notifications';
 import {
   getLastExecutionByGroupID,
   triggerChecksExecution,
@@ -48,9 +45,19 @@ export function* requestExecution({ payload }) {
   try {
     yield call(triggerChecksExecution, payload.clusterID);
     yield put(setExecutionRequested(payload));
-    yield put(notifyChecksExecutionRequested(clusterName));
+    yield put(
+      notify({
+        text: `Checks execution requested, cluster: ${clusterName}`,
+        icon: '🐰',
+      })
+    );
   } catch (error) {
-    yield put(notifyChecksExecutionRequestFailed(clusterName));
+    yield put(
+      notify({
+        text: `Unable to start execution for cluster: ${clusterName}`,
+        icon: '❌',
+      })
+    );
   }
 }
 
