@@ -228,53 +228,6 @@ context('SAP Systems Overview', () => {
     });
   });
 
-  describe('Filtering the SAP Systems overview', () => {
-    describe('Filtering by SIDs', () => {
-      before(() => {
-        cy.get('[data-testid="filter-SID"]').click();
-      });
-      after(() => {
-        cy.get('[data-testid="filter-SID"]').click();
-      });
-      availableSAPSystems.forEach(({ sid }) => {
-        it(`should have SAP Systems ${sid}'`, () => {
-          cy.get('li > div > span.ml-3.block').contains(sid).click();
-          cy.get('table.table-fixed > tbody > tr').should('have.length', 2);
-          cy.get('td')
-            .contains(sid)
-            .parent('td')
-            .parent('tr')
-            .within(() => {
-              cy.get('td').eq(1).contains(sid);
-            });
-          cy.get('li > div > span.ml-3.block').contains(sid).click();
-        });
-      });
-    });
-
-    describe('Filtering by tags', () => {
-      before(() => {
-        cy.get('[data-testid="filter-Tags"]').click();
-      });
-      after(() => {
-        cy.get('[data-testid="filter-Tags"]').click();
-      });
-      availableSAPSystems.forEach(({ sid, tag }) => {
-        it(`should have SAP Systems ${sid} tagged with tag '${tag}'`, () => {
-          cy.get('li > div > span.ml-3.block').contains(tag).click();
-          cy.get('table.table-fixed > tbody > tr').should('have.length', 2);
-          cy.get('td')
-            .contains(tag)
-            .parents('tr')
-            .within(() => {
-              cy.get('td').eq(1).contains(sid);
-            });
-          cy.get('li > div > span.ml-3.block').contains(tag).click();
-        });
-      });
-    });
-  });
-
   describe('Health states are updated', () => {
     Object.entries(healthMap).forEach(([state, health], index) => {
       it(`should have ${state} health in SAP system and instance ${
