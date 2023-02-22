@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { getCluster, getHost } from '@state/selectors';
+import { getHost } from '@state/selectors';
+import { getCluster } from '@state/selectors/cluster';
 import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails';
 import { DATABASE_TYPE } from '@lib/model';

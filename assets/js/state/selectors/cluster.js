@@ -1,4 +1,7 @@
-import { getCluster } from '@state/selectors';
+export const getCluster =
+  (id) =>
+  ({ clustersList }) =>
+    clustersList.clusters.find((cluster) => cluster.id === id);
 
 export const getClusterHostIDs =
   (clusterID) =>
@@ -11,6 +14,3 @@ export const getClusterName =
   (clusterID) =>
   ({ clustersList }) =>
     getCluster(clusterID)({ clustersList })?.name || '';
-
-export const getClusterSelectedChecks = (clusterID) => (state) =>
-  getCluster(clusterID)(state).selected_checks;
