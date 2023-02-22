@@ -8,7 +8,7 @@ on:
     types: [published]
   workflow_dispatch:
   repository_dispatch:
-    types: [start-ci]
+    types: [start-ci, deploy-demo]
 
 env:
   ELIXIR_VERSION: 1.14.3
@@ -300,7 +300,7 @@ jobs:
         run: cd test/e2e && npm install
 
   test-e2e:
-    name: End to end tests 
+    name: End to end tests
     needs: [elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-20.04
     env:
@@ -442,7 +442,7 @@ jobs:
   build-demo-img:
     name: Build the docker image for the demo environment
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    if: github.event.action == 'deploy-demo' || github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-e2e]
     permissions:
       contents: read
@@ -481,7 +481,7 @@ jobs:
   deploy-demo-env:
     name: Deploy updated images to the demo environment
     runs-on: self-hosted
-    if: vars.DEPLOY_DEMO == 'true' && (github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch')
+    if: (vars.DEPLOY_DEMO == 'true' || github.event.action == 'deploy-demo') && (github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch')
     env:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
     needs: build-demo-img
