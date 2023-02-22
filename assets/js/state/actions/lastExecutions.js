@@ -6,7 +6,7 @@ export const updateLastExecution = (groupID) => ({
   payload: { groupID },
 });
 
-export const executionRequested = (clusterID, hosts, checks) => ({
+export const executionRequested = (clusterID, hosts, checks, navigate) => ({
   type: EXECUTION_REQUESTED,
-  payload: { clusterID, hosts, checks },
+  payload: { clusterID, hosts, checks, navigate },
 });

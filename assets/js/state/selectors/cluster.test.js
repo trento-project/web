@@ -1,4 +1,8 @@
-import { getClusterHostIDs, getClusterSelectedChecks } from './cluster';
+import {
+  getClusterHostIDs,
+  getClusterSelectedChecks,
+  getClusterName,
+} from './cluster';
 
 describe('Cluster selector', () => {
   it('should return the cluster hosts IDs', () => {
@@ -48,5 +52,24 @@ describe('Cluster selector', () => {
       'check1',
       'check2',
     ]);
+  });
+
+  it('should return a cluster name', () => {
+    const state = {
+      clustersList: {
+        clusters: [
+          {
+            id: 'cluster1',
+            name: 'cluster-name',
+          },
+          {
+            id: 'cluster2',
+          },
+        ],
+      },
+    };
+
+    expect(getClusterName('cluster1')(state)).toEqual('cluster-name');
+    expect(getClusterName('cluster2')(state)).toEqual('');
   });
 });

@@ -1,10 +1,14 @@
-import { put, call, takeEvery } from 'redux-saga/effects';
+import { put, call, takeEvery, select } from 'redux-saga/effects';
 
 import {
   UPDATE_LAST_EXECUTION,
   EXECUTION_REQUESTED,
 } from '@state/actions/lastExecutions';
-import { getLastExecutionByGroupID } from '@lib/api/checks';
+import { notify } from '@state/actions/notifications';
+import {
+  getLastExecutionByGroupID,
+  triggerChecksExecution,
+} from '@lib/api/checks';
 import {
   setLastExecutionLoading,
   setLastExecution,
@@ -12,6 +16,8 @@ import {
   setLastExecutionError,
   setExecutionRequested,
 } from '@state/lastExecutions';
+
+import { getClusterName } from '@state/selectors/cluster';
 
 export function* updateLastExecution({ payload }) {
   const { groupID } = payload;
@@ -34,7 +40,27 @@ export function* updateLastExecution({ payload }) {
 }
 
 export function* requestExecution({ payload }) {
-  yield put(setExecutionRequested(payload));
+  const { clusterID, navigate } = payload;
+  const clusterName = yield select(getClusterName(clusterID));
+
+  try {
+    yield call(triggerChecksExecution, clusterID);
+    yield put(setExecutionRequested(payload));
+    yield put(
+      notify({
+        text: `Checks execution requested, cluster: ${clusterName}`,
+        icon: '🐰',
+      })
+    );
+    navigate(`/clusters/${clusterID}/executions/last`);
+  } catch (error) {
+    yield put(
+      notify({
+        text: `Unable to start execution for cluster: ${clusterName}`,
+        icon: '❌',
+      })
+    );
+  }
 }
 
 export function* watchUpdateLastExecution() {

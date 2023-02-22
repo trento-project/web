@@ -2,7 +2,13 @@ import React from 'react';
 import { format } from 'date-fns';
 
 import Spinner from '@components/Spinner';
+import {
+  REQUESTED_EXECUTION_STATE,
+  RUNNING_EXECUTION_STATE,
+} from '@state/lastExecutions';
 import CheckResultCount from './CheckResultCount';
+
+const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
 function ChecksResultOverview({
   data,
@@ -10,7 +16,7 @@ function ChecksResultOverview({
   loading = false,
   onCheckClick,
 }) {
-  if (loading || data?.status === 'running') {
+  if (loading || pendingStates.includes(data?.status)) {
     return (
       <div className="flex flex-col items-center mt-2 px-4">
         <Spinner />

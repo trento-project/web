@@ -75,6 +75,7 @@ import {
 import { watchPerformLogin } from '@state/sagas/user';
 
 import { getDatabase, getSapSystem } from '@state/selectors';
+import { getClusterName } from '@state/selectors/cluster';
 import {
   setClusterChecksSelectionSavingError,
   setClusterChecksSelectionSavingSuccess,
@@ -83,23 +84,10 @@ import {
 } from '@state/clusterChecksSelection';
 
 import { CHECKS_SELECTED } from '@state/actions/cluster';
-import { EXECUTION_REQUESTED } from '@state/actions/lastExecutions';
+import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
-
-const notify = ({ text, icon }) => ({
-  type: 'NOTIFICATION',
-  payload: { text, icon },
-});
-
-const getClusterName = (clusterID) => (state) =>
-  state.clustersList.clusters.reduce((acc, cluster) => {
-    if (cluster.id === clusterID) {
-      acc = cluster.name;
-    }
-    return acc;
-  }, '');
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
@@ -285,33 +273,6 @@ function* checksSelected({ payload }) {
 
 function* watchChecksSelected() {
   yield takeEvery(CHECKS_SELECTED, checksSelected);
-}
-
-function* requestChecksExecution({ payload }) {
-  const clusterName = yield select(getClusterName(payload.clusterID));
-  yield call(
-    post,
-    `/clusters/${payload.clusterID}/checks/request_execution`,
-    {}
-  );
-
-  yield put(
-    appendEntryToLiveFeed({
-      source: clusterName,
-      message: 'Checks execution requested.',
-    })
-  );
-
-  yield put(
-    notify({
-      text: `Checks execution requested, cluster: ${clusterName}`,
-      icon: '🐰',
-    })
-  );
-}
-
-function* watchRequestChecksExecution() {
-  yield takeEvery(EXECUTION_REQUESTED, requestChecksExecution);
 }
 
 function* checksExecutionStarted({ payload }) {
@@ -575,7 +536,6 @@ export default function* rootSaga() {
     watchClusterCibLastWrittenUpdated(),
     watchNotifications(),
     watchChecksSelected(),
-    watchRequestChecksExecution(),
     watchChecksExecutionStarted(),
     watchChecksExecutionCompleted(),
     watchChecksResultsUpdated(),
