@@ -40,6 +40,7 @@ export const hostFactory = Factory.define(({ params }) => {
   return {
     id,
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
+    hostname: faker.name.firstName(),
     cluster_id: faker.datatype.uuid(),
     ip_addresses: [faker.internet.ip()],
     provider: cloudProviderEnum(),
