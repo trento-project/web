@@ -23,14 +23,14 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   httpsPort: faker.internet.port(),
   instanceHostname: faker.hacker.noun(),
   instanceNumber: faker.datatype.number({ min: 10, max: 99 }).toString(),
-  sid: faker.random.alpha({ casing: 'upper', count: 3 }),
+  sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
   startPriority: faker.datatype.number({ min: 1, max: 9 }).toString(),
   sapSystemId: faker.datatype.uuid(),
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {
   const sapSystemId = params.sapSystemId || faker.datatype.uuid();
-  const sid = faker.random.alpha({ casing: 'upper', count: 3 });
+  const sid = faker.random.alphaNumeric(3, { casing: 'upper' });
 
   return {
     dbHost: faker.internet.ip(),
@@ -42,7 +42,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     }),
     sid,
     tags: [],
-    tenant: faker.random.alpha({ casing: 'upper', count: 3 }),
+    tenant: faker.random.alphaNumeric(3, { casing: 'upper' }),
     hosts: hostFactory.buildList(5),
   };
 });

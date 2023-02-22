@@ -6,6 +6,7 @@ export * from './executions';
 export * from './hosts';
 export * from './sapSystems';
 export * from './clusters';
+export * from './databases';
 
 const healthEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
