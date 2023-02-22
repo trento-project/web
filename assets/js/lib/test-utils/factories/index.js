@@ -5,6 +5,7 @@ import { Factory } from 'fishery';
 export * from './executions';
 export * from './hosts';
 export * from './sapSystems';
+export * from './clusters';
 
 const healthEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
@@ -57,9 +58,4 @@ export const aboutFactory = Factory.define(() => ({
   flavor: faker.animal.cat(),
   sles_subscriptions: faker.datatype.number(),
   version: faker.system.networkInterface(),
-}));
-
-export const clusterFactory = Factory.define(() => ({
-  id: faker.datatype.uuid(),
-  selected_checks: [],
 }));
