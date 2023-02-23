@@ -54,7 +54,7 @@ cmdline() {
         p)
             readonly EXPORT_PATH=$OPTARG
             ;;
-        p)
+        d)
             readonly DISCARDED_EVENT_NUMBER=$OPTARG
             ;;
         *)
