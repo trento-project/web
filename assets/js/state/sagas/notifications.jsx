@@ -2,6 +2,7 @@
 import React from 'react';
 import { takeEvery } from 'redux-saga/effects';
 import { toast } from 'react-hot-toast';
+import { NOTIFICATION } from '@state/actions/notifications';
 
 export function* notification({ payload }) {
   const { text, icon } = payload;
@@ -12,5 +13,5 @@ export function* notification({ payload }) {
 }
 
 export function* watchNotifications() {
-  yield takeEvery('NOTIFICATION', notification);
+  yield takeEvery(NOTIFICATION, notification);
 }
