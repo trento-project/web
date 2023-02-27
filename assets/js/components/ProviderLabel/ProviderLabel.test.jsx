@@ -37,6 +37,14 @@ describe('Provider Label', () => {
       'nutanix'
     );
   });
+
+  it('should display an icon and label with VMWare as the provider', () => {
+    const { container } = render(<ProviderLabel provider="vmware" />);
+    expect(screen.getAllByText(/Vmware/)).toBeTruthy();
+    expect(container.querySelector('img').getAttribute('alt')).toContain(
+      'vmware'
+    );
+  });
   it('should display an element containing "Provider not recognized"', () => {
     const { container } = render(
       <ProviderLabel provider="unrecognized-provider" />
@@ -48,7 +56,14 @@ describe('Provider Label', () => {
 
   describe('Provider Labels functions: ', () => {
     it('should return a list of all Provider labels', () => {
-      const expectedProviderLabels = ['AWS', 'Azure', 'GCP', 'Nutanix', 'KVM'];
+      const expectedProviderLabels = [
+        'AWS',
+        'Azure',
+        'GCP',
+        'Nutanix',
+        'KVM',
+        'Vmware',
+      ];
       expect(getLabels(providerData)).toEqual(expectedProviderLabels);
     });
 
