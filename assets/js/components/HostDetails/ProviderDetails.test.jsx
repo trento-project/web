@@ -22,6 +22,10 @@ describe('Provider Details', () => {
       providerText: 'KVM',
     },
     {
+      provider: 'vmware',
+      providerText: 'Vmware',
+    },
+    {
       provider: 'nutanix',
       providerText: 'Nutanix',
     },
