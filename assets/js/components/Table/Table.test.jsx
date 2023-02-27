@@ -1,48 +1,79 @@
 import React from 'react';
 
-import { screen, fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  render,
+  waitFor,
+  act,
+} from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
-import { filterTable } from '@lib/test-utils/table';
-
 import Table from './Table';
 
-const tableConfig = {
-  pagination: true,
-  columns: [
-    {
-      title: 'Column1',
-      key: 'column1',
-      filter: true,
-      filterFromParams: true,
-    },
-    {
-      title: 'Column2',
-      key: 'column2',
-      filter: (filter, key) => (element) =>
-        element[key].some((item) => filter.includes(item)),
-      filterFromParams: true,
-    },
-    {
-      title: 'Column3',
-      key: 'column3',
-      filter: true,
-      filterFromParams: true,
-    },
-  ],
+export const filterTable = (name, option) => {
+  const filterContainer = screen.getByTestId(`filter-${name}`);
+
+  act(() => {
+    fireEvent.click(filterContainer);
+  });
+
+  const optionContainer = Array.from(
+    screen
+      .getByTestId(`filter-${name}-options`)
+      .querySelectorAll('li > div > span')
+  ).find((f) => f.textContent === option);
+
+  act(() => {
+    fireEvent.click(optionContainer);
+    fireEvent.click(screen.getByTestId(`filter-${name}`));
+  });
 };
 
-const tableDataFactory = Factory.define(() => ({
-  column1: faker.name.firstName(),
-  column2: [faker.address.city()],
-  column3: faker.animal.dog(),
-}));
+export const clearFilter = (name) => {
+  const filterContainer = screen.getByTestId(`filter-${name}-clear`);
+
+  act(() => {
+    fireEvent.click(filterContainer);
+  });
+};
 
 describe('Table component', () => {
+  const tableConfig = {
+    pagination: true,
+    columns: [
+      {
+        title: 'Column1',
+        key: 'column1',
+        filter: true,
+        filterFromParams: true,
+      },
+      {
+        title: 'Column2',
+        key: 'column2',
+        filter: (filter, key) => (element) =>
+          element[key].some((item) => filter.includes(item)),
+        filterFromParams: true,
+      },
+      {
+        title: 'Column3',
+        key: 'column3',
+        filter: true,
+        filterFromParams: true,
+      },
+    ],
+  };
+
+  const tableDataFactory = Factory.define(() => ({
+    column1: faker.name.firstName(),
+    column2: [faker.address.city()],
+    column3: faker.animal.dog(),
+  }));
+
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
       const data = tableDataFactory.buildList(10);
