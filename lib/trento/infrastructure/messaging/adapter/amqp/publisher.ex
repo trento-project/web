@@ -1,4 +1,4 @@
-defmodule Trento.Messaging.Adapters.AMQP.Publisher do
+defmodule Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher do
   @moduledoc """
   AMQP publisher.
   """
@@ -10,7 +10,7 @@ defmodule Trento.Messaging.Adapters.AMQP.Publisher do
   require Logger
 
   def init do
-    Application.fetch_env!(:trento, Trento.Messaging.Adapters.AMQP)[:publisher]
+    Application.fetch_env!(:trento, __MODULE__)
   end
 
   def start_link(_opts), do: GenRMQ.Publisher.start_link(__MODULE__, name: __MODULE__)

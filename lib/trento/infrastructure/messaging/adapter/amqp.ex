@@ -1,11 +1,11 @@
-defmodule Trento.Messaging.Adapters.AMQP do
+defmodule Trento.Infrastructure.Messaging.Adapter.AMQP do
   @moduledoc """
   AMQP adapter
   """
 
-  @behaviour Trento.Messaging.Adapters.Behaviour
+  @behaviour Trento.Infrastructure.Messaging.Adapter.Gen
 
-  alias Trento.Messaging.Adapters.AMQP.Publisher
+  alias Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher
 
   require Logger
 
