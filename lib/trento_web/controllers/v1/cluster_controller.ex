@@ -1,19 +1,20 @@
 defmodule TrentoWeb.V1.ClusterController do
   use TrentoWeb, :controller
+  use OpenApiSpex.ControllerSpecs
 
   alias Trento.Clusters
 
   alias TrentoWeb.OpenApi.Schema
 
-  use OpenApiSpex.ControllerSpecs
+  plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
+
+  action_fallback TrentoWeb.FallbackController
 
   @cluster_id_schema [
     in: :path,
     required: true,
     type: %OpenApiSpex.Schema{type: :string, format: :uuid}
   ]
-
-  action_fallback TrentoWeb.FallbackController
 
   operation :list,
     summary: "List Pacemaker Clusters",
@@ -25,7 +26,6 @@ defmodule TrentoWeb.V1.ClusterController do
          Schema.Cluster.PacemakerClustersCollection}
     ]
 
-  @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
     clusters = Clusters.get_all_clusters()
 
@@ -40,24 +40,21 @@ defmodule TrentoWeb.V1.ClusterController do
       cluster_id: @cluster_id_schema
     ],
     responses: [
-      accepted:
-        {"The Command has been accepted and the Requested execution is scheduled",
-         "application/json", Schema.Common.EmptyResponse},
-      bad_request:
-        {"Something went wrong while triggering an Execution Request", "application/json",
-         Schema.Common.BadRequestResponse}
+      accepted: "The Command has been accepted and the Requested execution is scheduled"
     ]
 
-  @spec request_checks_execution(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def request_checks_execution(conn, %{"cluster_id" => cluster_id}) do
+  def request_checks_execution(conn, %{cluster_id: cluster_id}) do
     case Clusters.request_checks_execution(cluster_id) do
       :ok ->
         conn
         |> put_status(:accepted)
         |> json(%{})
 
-      {:error, reason} ->
-        {:error, {:bad_request, reason}}
+      {:error, :cluster_not_found} ->
+        {:error, {:not_found, "Cluster not found"}}
+
+      {:error, :request_execution_failed} ->
+        {:error, {:internal_error, "Something went wrong while triggering an Execution Request"}}
     end
   end
 
@@ -70,24 +67,20 @@ defmodule TrentoWeb.V1.ClusterController do
     ],
     request_body: {"Checks Selection", "application/json", Schema.Checks.ChecksSelectionRequest},
     responses: [
-      accepted:
-        {"The Selection has been successfully collected", "application/json",
-         Schema.Common.EmptyResponse},
-      bad_request:
-        {"Something went wrong with the collection of the Checks Selection", "application/json",
-         Schema.Common.BadRequestResponse}
+      accepted: "The Selection has been successfully collected"
     ]
 
-  @spec select_checks(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def select_checks(conn, %{"cluster_id" => cluster_id, "checks" => checks}) do
+  def select_checks(%{body_params: body_params} = conn, %{cluster_id: cluster_id}) do
+    %{checks: checks} = body_params
+
     case Clusters.select_checks(cluster_id, checks) do
       :ok ->
         conn
         |> put_status(:accepted)
         |> json(%{})
 
-      {:error, reason} ->
-        {:error, {:bad_request, reason}}
+      {:error, _} ->
+        {:error, {:internal_error, "Something went wrong when selecting checks"}}
     end
   end
 end

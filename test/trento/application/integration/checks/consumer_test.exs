@@ -1,9 +1,9 @@
-defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ConsumerTest do
+defmodule Trento.Integration.Checks.AMQP.ConsumerTest do
   use ExUnit.Case
 
   import Mox
 
-  alias Trento.Messaging.Adapters.AMQP.Publisher
+  alias Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -36,8 +36,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.ConsumerTest do
         {:error, "invalid payload"}
       end)
 
-      config =
-        Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda.Messaging.AMQP)[:consumer]
+      config = Application.fetch_env!(:trento, Trento.Integration.Checks.AMQP.Consumer)
 
       connection = Keyword.get(config, :connection)
       routing_key = Keyword.get(config, :routing_key)

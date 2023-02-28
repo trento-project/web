@@ -2,12 +2,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   use TrentoWeb.ConnCase, async: true
 
   import OpenApiSpex.TestAssertions
-
-  alias TrentoWeb.OpenApi.ApiSpec
-
+  import Mox
   import Trento.Factory
 
-  import Mox
+  alias TrentoWeb.OpenApi.ApiSpec
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -25,62 +23,55 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   end
 
   describe "select_checks" do
-    test "should return bad request when the request is malformed", %{conn: conn} do
-      cluster_id = UUID.uuid4()
+    test "should return 202 when the checks were selected", %{conn: conn} do
+      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
+        :ok
+      end)
 
-      expect(
-        Trento.Commanded.Mock,
-        :dispatch,
-        fn _ ->
-          {:error, "the reason is you"}
-        end
-      )
+      cluster_id = UUID.uuid4()
 
       resp =
         conn
+        |> put_req_header("content-type", "application/json")
         |> post("/api/v1/clusters/#{cluster_id}/checks", %{
-          "cluster_id" => cluster_id,
-          "checks" => []
+          "checks" => ["string"]
         })
-        |> json_response(400)
+        |> json_response(:accepted)
 
-      assert %{"error" => "the reason is you"} = resp
+      assert %{} = resp
     end
   end
 
   describe "request check executions" do
-    test "should return 400 with not found when the cluster is not known", %{conn: conn} do
+    test "should return 404 when the cluster is not found", %{conn: conn} do
       cluster_id = UUID.uuid4()
 
       resp =
         conn
-        |> post("/api/v1/clusters/#{cluster_id}/checks/request_execution", %{
-          "cluster_id" => cluster_id
-        })
-        |> json_response(400)
+        |> post("/api/v1/clusters/#{cluster_id}/checks/request_execution", %{})
+        |> json_response(:not_found)
 
-      assert %{"error" => "cluster_not_found"} = resp
+      assert %{"error" => "Cluster not found"} = resp
     end
 
-    test "should return 400 when the request is invalid", %{conn: conn} do
-      %{id: cluster_id} = insert(:cluster)
-
+    test "should return 500 if messaging returns an error", %{conn: conn} do
       expect(
-        Trento.Integration.Checks.Mock,
-        :request_execution,
-        fn _, _, _, _, _ ->
-          {:error, "the reason is us"}
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn _, _ ->
+          {:error, :amqp_error}
         end
       )
 
+      %{id: cluster_id} = insert(:cluster)
+
       resp =
         conn
-        |> post("/api/v1/clusters/#{cluster_id}/checks/request_execution", %{
-          "cluster_id" => cluster_id
-        })
-        |> json_response(400)
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/clusters/#{cluster_id}/checks/request_execution", %{})
+        |> json_response(:internal_server_error)
 
-      assert %{"error" => "the reason is us"} = resp
+      assert %{"error" => "Something went wrong while triggering an Execution Request"} = resp
     end
   end
 end

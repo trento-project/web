@@ -15,9 +15,21 @@ defmodule TrentoWeb.FallbackController do
     |> render_error(reason)
   end
 
+  def call(conn, {:error, {:unprocessable_entity, reason}}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> render_error(reason)
+  end
+
   def call(conn, {:error, {:internal_error, reason}}) do
     conn
     |> put_status(:internal_server_error)
+    |> render_error(reason)
+  end
+
+  def call(conn, {:error, {:not_found, reason}}) do
+    conn
+    |> put_status(:not_found)
     |> render_error(reason)
   end
 

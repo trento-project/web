@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer do
+defmodule Trento.Integration.Checks.AMQP.Consumer do
   @moduledoc """
   AMQP consumer.
   """
@@ -9,9 +9,7 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer do
 
   @impl GenRMQ.Consumer
   def init do
-    config =
-      Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda.Messaging.AMQP)[:consumer]
-
+    config = Application.fetch_env!(:trento, __MODULE__)
     Keyword.merge(config, retry_delay_function: fn attempt -> :timer.sleep(2000 * attempt) end)
   end
 
@@ -52,6 +50,5 @@ defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Consumer do
   end
 
   defp processor,
-    do:
-      Application.fetch_env!(:trento, Trento.Integration.Checks.Wanda.Messaging.AMQP)[:processor]
+    do: Application.fetch_env!(:trento, __MODULE__)[:processor]
 end
