@@ -3,5 +3,5 @@ defmodule Trento.Domain.Enums.Provider do
   Type that represents the supported provider values by our agent.
   """
 
-  use Trento.Support.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :unknown]
+  use Trento.Support.Enum, values: [:azure, :aws, :gcp, :kvm, :nutanix, :vmware, :unknown]
 end
