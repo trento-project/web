@@ -45,32 +45,25 @@ config :trento, :api_key_authentication, enabled: false
 
 config :trento, :jwt_authentication, enabled: false
 
-config :trento, :messaging, adapter: Trento.Messaging.Adapters.AMQP
-
-config :trento, Trento.Messaging.Adapters.AMQP,
-  publisher: [
-    exchange: "trento.test.checks",
-    connection: "amqp://trento:trento@localhost:5673"
-  ]
-
-config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
+config :trento, Trento.Integration.Checks.AMQP.Consumer,
   processor: GenRMQ.Processor.Mock,
-  consumer: [
-    queue: "trento.test.checks.results",
-    exchange: "trento.test.checks",
-    routing_key: "results",
-    prefetch_count: "10",
-    connection: "amqp://trento:trento@localhost:5673",
-    retry_delay_function: fn attempt -> :timer.sleep(2000 * attempt) end,
-    queue_options: [
-      durable: false,
-      auto_delete: true
-    ],
-    deadletter_queue_options: [
-      durable: false,
-      auto_delete: true
-    ]
+  queue: "trento.test.checks.results",
+  exchange: "trento.test.checks",
+  routing_key: "results",
+  prefetch_count: "10",
+  connection: "amqp://trento:trento@localhost:5673",
+  queue_options: [
+    durable: false,
+    auto_delete: true
+  ],
+  deadletter_queue_options: [
+    durable: false,
+    auto_delete: true
   ]
+
+config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
+  exchange: "trento.test.checks",
+  connection: "amqp://trento:trento@localhost:5673"
 
 config :trento, Trento.Scheduler,
   jobs: [

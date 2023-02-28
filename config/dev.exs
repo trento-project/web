@@ -97,17 +97,12 @@ unless IEx.started?() do
 end
 
 config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
-config :trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Wanda
 
-config :trento, Trento.Messaging.Adapters.AMQP,
-  publisher: [
-    connection: "amqp://trento:trento@localhost:5673"
-  ]
+config :trento, Trento.Integration.Checks.AMQP.Consumer,
+  connection: "amqp://trento:trento@localhost:5673"
 
-config :trento, Trento.Integration.Checks.Wanda.Messaging.AMQP,
-  consumer: [
-    connection: "amqp://trento:trento@localhost:5673"
-  ]
+config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
+  connection: "amqp://trento:trento@localhost:5673"
 
 config :trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.MockPrometheusApi
