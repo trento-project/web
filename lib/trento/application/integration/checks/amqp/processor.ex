@@ -1,6 +1,6 @@
-defmodule Trento.Integration.Checks.Wanda.Messaging.AMQP.Processor do
+defmodule Trento.Integration.Checks.AMQP.Processor do
   @moduledoc """
-  AMQP processor.
+  AMQP processor for the checks execution events
   """
 
   @behaviour GenRMQ.Processor
