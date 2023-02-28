@@ -31,8 +31,7 @@ defmodule TrentoWeb.V1.SettingsController do
     description: "Accepting EULA allows the end user to use the platform",
     responses: [
       ok:
-        {"EULA acceptance has been correctly registered and the user may continue using the platform",
-         "application/json", Schema.Common.EmptyResponse}
+        "EULA acceptance has been correctly registered and the user may continue using the platform"
     ]
 
   @spec accept_eula(Plug.Conn.t(), any) :: Plug.Conn.t()
