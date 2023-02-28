@@ -15,19 +15,13 @@ defmodule Trento.ClustersTest do
   setup [:set_mox_from_context, :verify_on_exit!]
 
   describe "checks execution with wanda adapter" do
-    test "should start a checks execution on demand" do
-      %{id: cluster_id, provider: provider, selected_checks: selected_checks} = insert(:cluster)
-      [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+    test "should start a checks execution on demand if checks are selected" do
+      %{id: cluster_id} = insert(:cluster)
+      insert_list(2, :host, cluster_id: cluster_id)
 
-      expect(Trento.Integration.Checks.Mock, :request_execution, fn _,
-                                                                    expected_cluster_id,
-                                                                    expected_provider,
-                                                                    expected_hosts,
-                                                                    expected_checks ->
-        assert ^cluster_id = expected_cluster_id
-        assert ^provider = expected_provider
-        assert [%{host_id: host_id_1}, %{host_id: host_id_2}] == expected_hosts
-        assert ^selected_checks = expected_checks
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+        assert message.group_id == cluster_id
+
         :ok
       end)
 
@@ -35,7 +29,9 @@ defmodule Trento.ClustersTest do
     end
 
     test "should not start checks execution if the cluster is not registered" do
-      expect(Trento.Integration.Checks.Mock, :request_execution, 0, fn _, _, _, _, _ -> :ok end)
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+        :ok
+      end)
 
       assert {:error, :cluster_not_found} = Clusters.request_checks_execution(UUID.uuid4())
     end
@@ -43,7 +39,9 @@ defmodule Trento.ClustersTest do
     test "should not start checks execution if no checks are selected" do
       %{id: cluster_id} = insert(:cluster, selected_checks: [])
 
-      expect(Trento.Integration.Checks.Mock, :request_execution, 0, fn _, _, _, _, _ -> :ok end)
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+        :ok
+      end)
 
       assert :ok = Clusters.request_checks_execution(cluster_id)
     end
@@ -51,11 +49,11 @@ defmodule Trento.ClustersTest do
     test "should return an error if the checks execution start fails" do
       %{id: cluster_id} = insert(:cluster)
 
-      expect(Trento.Integration.Checks.Mock, :request_execution, fn _, _, _, _, _ ->
-        {:error, :some_error}
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn _, _ ->
+        {:error, :ampq_error}
       end)
 
-      assert {:error, :some_error} = Clusters.request_checks_execution(cluster_id)
+      assert {:error, :request_execution_failed} = Clusters.request_checks_execution(cluster_id)
     end
   end
 

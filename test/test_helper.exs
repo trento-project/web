@@ -8,17 +8,21 @@ Application.put_env(:trento, Trento.Integration.Telemetry,
   adapter: Trento.Integration.Telemetry.Mock
 )
 
-Mox.defmock(Trento.Integration.Checks.Mock, for: Trento.Integration.Checks.Gen)
-Application.put_env(:trento, Trento.Integration.Checks, adapter: Trento.Integration.Checks.Mock)
-
 Mox.defmock(Trento.Integration.Prometheus.Mock, for: Trento.Integration.Prometheus.Gen)
 
 Application.put_env(:trento, Trento.Integration.Prometheus,
   adapter: Trento.Integration.Prometheus.Mock
 )
 
-Mox.defmock(Trento.Messaging.Adapters.Mock, for: Trento.Messaging.Adapters.Behaviour)
-Application.put_env(:trento, :messaging, adapter: Trento.Messaging.Adapters.Mock)
+Mox.defmock(Trento.Infrastructure.Messaging.Adapter.Mock,
+  for: Trento.Infrastructure.Messaging.Adapter.Gen
+)
+
+Application.put_env(
+  :trento,
+  Trento.Infrastructure.Messaging,
+  adapter: Trento.Infrastructure.Messaging.Adapter.Mock
+)
 
 Mox.defmock(GenRMQ.Processor.Mock, for: GenRMQ.Processor)
 
