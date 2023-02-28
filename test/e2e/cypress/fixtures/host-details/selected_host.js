@@ -40,6 +40,9 @@ export const selectedHost = {
   nutanixCloudDetails: {
     provider: 'Nutanix',
   },
+  vmwareCloudDetails: {
+    provider: 'Vmware',
+  },
   sapInstance: {
     id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
     sid: 'HDP',

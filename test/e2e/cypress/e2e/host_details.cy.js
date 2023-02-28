@@ -176,6 +176,15 @@ context('Host Details', () => {
         .should('contain', selectedHost.kvmCloudDetails.provider);
     });
 
+    it(`should show vmware cloud details correctly`, () => {
+      cy.loadScenario('host-details-vmware');
+
+      cy.get('div')
+        .contains(/^Provider$/)
+        .next()
+        .should('contain', selectedHost.vmwareCloudDetails.provider);
+    });
+
     it(`should show Nutanix cloud details correctly`, () => {
       cy.loadScenario('host-details-nutanix');
 
