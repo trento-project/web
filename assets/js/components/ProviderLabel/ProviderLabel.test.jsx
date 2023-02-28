@@ -40,7 +40,7 @@ describe('Provider Label', () => {
 
   it('should display an icon and label with VMWare as the provider', () => {
     const { container } = render(<ProviderLabel provider="vmware" />);
-    expect(screen.getAllByText(/Vmware/)).toBeTruthy();
+    expect(screen.getAllByText(/VMware/)).toBeTruthy();
     expect(container.querySelector('img').getAttribute('alt')).toContain(
       'vmware'
     );
@@ -62,7 +62,7 @@ describe('Provider Label', () => {
         'GCP',
         'Nutanix',
         'KVM',
-        'Vmware',
+        'VMware',
       ];
       expect(getLabels(providerData)).toEqual(expectedProviderLabels);
     });

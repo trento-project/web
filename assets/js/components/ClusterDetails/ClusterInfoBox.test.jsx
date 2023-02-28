@@ -39,7 +39,7 @@ describe('Cluster Info Box', () => {
       haScenario: 'unknown',
       haScenarioText: 'Unknown',
       provider: 'vmware',
-      providerText: 'Vmware',
+      providerText: 'VMware',
     },
     {
       haScenario: 'hana_scale_up',

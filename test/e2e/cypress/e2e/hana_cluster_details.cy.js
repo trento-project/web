@@ -247,7 +247,7 @@ context('HANA cluster details', () => {
 
     it(`should recognize the provider as vmware`, () => {
       cy.contains('button', 'Settings').click();
-      cy.contains('Vmware');
+      cy.contains('VMware');
     });
   });
 

@@ -32,7 +32,7 @@ export const providerData = {
   },
   vmware: {
     logo: VmwareLogo,
-    label: 'Vmware',
+    label: 'VMware',
   },
 };
 
