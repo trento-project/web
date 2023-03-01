@@ -239,6 +239,18 @@ context('HANA cluster details', () => {
     });
   });
 
+  describe('Cluster with vmware provider', () => {
+    before(() => {
+      cy.loadScenario('cluster-vmware-provider');
+      cy.visit(`/clusters/${availableHanaCluster.id}`);
+    });
+
+    it(`should recognize the provider as vmware`, () => {
+      cy.contains('button', 'Settings').click();
+      cy.contains('VMware');
+    });
+  });
+
   describe.skip('Cluster with nutanix provider', () => {
     before(() => {
       cy.loadScenario('cluster-nutanix-provider');

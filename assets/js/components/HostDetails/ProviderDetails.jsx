@@ -70,6 +70,13 @@ function ProviderDetails({ provider, provider_data }) {
         render: (content) => <ProviderLabel provider={content} />,
       },
     ],
+    vmware: [
+      {
+        title: 'Provider',
+        content: provider,
+        render: (content) => <ProviderLabel provider={content} />,
+      },
+    ],
     nutanix: [
       {
         title: 'Provider',

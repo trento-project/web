@@ -144,6 +144,12 @@ files = [
 ]
 
 
+[cluster-vmware-provider]
+
+files = [
+    "./test/fixtures/scenarios/hana-cluster-details/b767b3e9-e802-587e-a442-541d093b86b9_ha_cluster_discovery_vmware_provider.json",
+]
+
 [cluster-nutanix-provider]
 
 files = [
@@ -173,6 +179,13 @@ files = [
 files = [
     "./test/fixtures/scenarios/host-details/9cd46919-5f19-59aa-993e-cf3736c71053_cloud_discovery_kvm.json",
 ]
+
+[host-details-vmware]
+
+files = [
+    "./test/fixtures/scenarios/host-details/9cd46919-5f19-59aa-993e-cf3736c71053_cloud_discovery_vmware.json",
+]
+
 
 [host-details-nutanix]
 

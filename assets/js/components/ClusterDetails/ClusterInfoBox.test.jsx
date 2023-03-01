@@ -36,6 +36,12 @@ describe('Cluster Info Box', () => {
       providerText: 'KVM',
     },
     {
+      haScenario: 'unknown',
+      haScenarioText: 'Unknown',
+      provider: 'vmware',
+      providerText: 'VMware',
+    },
+    {
       haScenario: 'hana_scale_up',
       haScenarioText: 'HANA scale-up',
       provider: 'nutanix',
