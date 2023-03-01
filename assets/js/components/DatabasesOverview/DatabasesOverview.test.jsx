@@ -2,13 +2,13 @@ import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
-import { sapSystemFactory } from '@lib/test-utils/factories';
+import { databaseFactory } from '@lib/test-utils/factories';
 import { renderWithRouter, withState } from '@lib/test-utils';
 import { filterTable, clearFilter } from '@components/Table/Table.test';
 
-import SapSystemsOverview from './SapSystemsOverview';
+import DatabasesOverview from './DatabasesOverview';
 
-describe('SapSystemsOverviews component', () => {
+describe('DatabasesOverview component', () => {
   describe('filtering', () => {
     const cleanInitialState = {
       hostsList: {
@@ -17,9 +17,8 @@ describe('SapSystemsOverviews component', () => {
       clustersList: {
         clusters: [],
       },
-      sapSystemsList: {
-        sapSystems: [],
-        applicationInstances: [],
+      databasesList: {
+        databases: [],
         databaseInstances: [],
       },
     };
@@ -30,14 +29,13 @@ describe('SapSystemsOverviews component', () => {
         options: ['unknown', 'passing', 'warning', 'critical'],
         state: {
           ...cleanInitialState,
-          sapSystemsList: {
-            sapSystems: [].concat(
-              sapSystemFactory.buildList(2, { health: 'unknown' }),
-              sapSystemFactory.buildList(2, { health: 'passing' }),
-              sapSystemFactory.buildList(2, { health: 'warning' }),
-              sapSystemFactory.buildList(2, { health: 'critical' })
+          databasesList: {
+            databases: [].concat(
+              databaseFactory.buildList(2, { health: 'unknown' }),
+              databaseFactory.buildList(2, { health: 'passing' }),
+              databaseFactory.buildList(2, { health: 'warning' }),
+              databaseFactory.buildList(2, { health: 'critical' })
             ),
-            applicationInstances: [],
             databaseInstances: [],
           },
         },
@@ -48,13 +46,12 @@ describe('SapSystemsOverviews component', () => {
         options: ['PRD', 'QAS'],
         state: {
           ...cleanInitialState,
-          sapSystemsList: {
-            sapSystems: [].concat(
-              sapSystemFactory.buildList(4),
-              sapSystemFactory.buildList(2, { sid: 'PRD' }),
-              sapSystemFactory.buildList(2, { sid: 'QAS' })
+          databasesList: {
+            databases: [].concat(
+              databaseFactory.buildList(4),
+              databaseFactory.buildList(2, { sid: 'PRD' }),
+              databaseFactory.buildList(2, { sid: 'QAS' })
             ),
-            applicationInstances: [],
             databaseInstances: [],
           },
         },
@@ -65,13 +62,12 @@ describe('SapSystemsOverviews component', () => {
         options: ['Tag1', 'Tag2'],
         state: {
           ...cleanInitialState,
-          sapSystemsList: {
-            sapSystems: [].concat(
-              sapSystemFactory.buildList(2),
-              sapSystemFactory.buildList(2, { tags: [{ value: 'Tag1' }] }),
-              sapSystemFactory.buildList(2, { tags: [{ value: 'Tag2' }] })
+          databasesList: {
+            databases: [].concat(
+              databaseFactory.buildList(2),
+              databaseFactory.buildList(2, { tags: [{ value: 'Tag1' }] }),
+              databaseFactory.buildList(2, { tags: [{ value: 'Tag2' }] })
             ),
-            applicationInstances: [],
             databaseInstances: [],
           },
         },
@@ -82,12 +78,9 @@ describe('SapSystemsOverviews component', () => {
     it.each(scenarios)(
       'should filter the table content by $filter filter',
       ({ filter, options, state, expectedRows }) => {
-        const [StatefulSapSystemList] = withState(
-          <SapSystemsOverview />,
-          state
-        );
+        const [StatefulDatbaseList] = withState(<DatabasesOverview />, state);
 
-        renderWithRouter(StatefulSapSystemList);
+        renderWithRouter(StatefulDatbaseList);
 
         options.forEach((option) => {
           filterTable(filter, option);
@@ -103,26 +96,25 @@ describe('SapSystemsOverviews component', () => {
     );
 
     it('should put the filters values in the query string when filters are selected', () => {
-      const sapSystems = sapSystemFactory.buildList(1, {
+      const databases = databaseFactory.buildList(1, {
         tags: [{ value: 'Tag1' }],
       });
 
       const state = {
         ...cleanInitialState,
-        sapSystemsList: {
-          sapSystems,
-          applicationInstances: [],
+        databasesList: {
+          databases,
           databaseInstances: [],
         },
       };
 
-      const { health, sid, tags } = sapSystems[0];
+      const { health, sid, tags } = databases[0];
 
-      const [StatefulSapSystemsOverview] = withState(
-        <SapSystemsOverview />,
+      const [StatefulDatabasesOverview] = withState(
+        <DatabasesOverview />,
         state
       );
-      renderWithRouter(StatefulSapSystemsOverview);
+      renderWithRouter(StatefulDatabasesOverview);
 
       ['Health', 'SID', 'Tags'].forEach((filter) => {
         fireEvent.click(screen.getByTestId(`filter-${filter}`));

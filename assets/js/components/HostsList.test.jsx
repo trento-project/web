@@ -2,9 +2,13 @@ import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
+import { hostFactory } from '@lib/test-utils/factories';
+
+import { renderWithRouter, withDefaultState, withState } from '@lib/test-utils';
+
+import { filterTable, clearFilter } from '@components/Table/Table.test';
 
 import HostsList from './HostsList';
-import { renderWithRouter, withDefaultState } from '../lib/test-utils';
 
 describe('HostsLists component', () => {
   describe('list content', () => {
@@ -48,12 +52,138 @@ describe('HostsLists component', () => {
     });
   });
 
-  describe('query string filtering behavior', () => {
+  describe('filtering', () => {
+    const cleanInitialState = {
+      hostsList: {
+        hosts: [],
+      },
+      clustersList: {
+        clusters: [],
+      },
+      sapSystemsList: {
+        sapSystems: [],
+        applicationInstances: [],
+        databaseInstances: [],
+      },
+    };
+
+    const scenarios = [
+      {
+        filter: 'Health',
+        options: ['unknown', 'passing', 'critical'],
+        state: {
+          ...cleanInitialState,
+          hostsList: {
+            hosts: [].concat(
+              hostFactory.buildList(2, { heartbeat: 'unknown' }),
+              hostFactory.buildList(2, { heartbeat: 'passing' }),
+              hostFactory.buildList(2, { heartbeat: 'critical' })
+            ),
+          },
+        },
+        expectedRows: 2,
+      },
+      {
+        filter: 'Hostname',
+        options: ['host1', 'host2'],
+        state: {
+          ...cleanInitialState,
+          hostsList: {
+            hosts: [].concat(
+              hostFactory.buildList(4),
+              hostFactory.buildList(1, { hostname: 'host1' }),
+              hostFactory.buildList(1, { hostname: 'host2' })
+            ),
+          },
+        },
+        expectedRows: 1,
+      },
+      {
+        filter: 'SID',
+        options: ['PRD', 'QAS'],
+        state: {
+          ...cleanInitialState,
+          hostsList: {
+            hosts: [].concat(
+              hostFactory.buildList(4),
+              hostFactory.buildList(1, { id: 'host1' }),
+              hostFactory.buildList(1, { id: 'host2' }),
+              hostFactory.buildList(1, { id: 'host3' }),
+              hostFactory.buildList(1, { id: 'host4' })
+            ),
+          },
+          sapSystemsList: {
+            applicationInstances: [
+              { sid: 'PRD', host_id: 'host1' },
+              { sid: 'QAS', host_id: 'host3' },
+            ],
+            databaseInstances: [
+              { sid: 'PRD', host_id: 'host2' },
+              { sid: 'QAS', host_id: 'host4' },
+            ],
+          },
+        },
+        expectedRows: 2,
+      },
+      {
+        filter: 'Tags',
+        options: ['Tag1', 'Tag2'],
+        state: {
+          ...cleanInitialState,
+          hostsList: {
+            hosts: [].concat(
+              hostFactory.buildList(2),
+              hostFactory.buildList(2, { tags: [{ value: 'Tag1' }] }),
+              hostFactory.buildList(2, { tags: [{ value: 'Tag2' }] })
+            ),
+          },
+        },
+        expectedRows: 2,
+      },
+    ];
+
+    it.each(scenarios)(
+      'should filter the table content by $filter filter',
+      ({ filter, options, state, expectedRows }) => {
+        const [StatefulHostsList] = withState(<HostsList />, state);
+
+        renderWithRouter(StatefulHostsList);
+
+        options.forEach((option) => {
+          filterTable(filter, option);
+
+          const table = screen.getByRole('table');
+          expect(table.querySelectorAll('tbody > tr')).toHaveLength(
+            expectedRows
+          );
+
+          clearFilter(filter);
+        });
+      }
+    );
+
     it('should put the filters values in the query string when filters are selected', () => {
-      const [StatefulHostsList] = withDefaultState(<HostsList />);
+      const hosts = hostFactory.buildList(1, {
+        id: 'host1',
+        tags: [{ value: 'Tag1' }],
+      });
+      const state = {
+        ...cleanInitialState,
+        hostsList: {
+          hosts,
+        },
+        sapSystemsList: {
+          applicationInstances: [{ sid: 'PRD', host_id: 'host1' }],
+          databaseInstances: [],
+        },
+      };
+
+      const { heartbeat, hostname, tags } = hosts[0];
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
 
-      ['Health', 'Hostname', 'Tags', 'SID'].forEach((filter) => {
+      ['Health', 'Hostname', 'SID', 'Tags'].forEach((filter) => {
         fireEvent.click(screen.getByTestId(`filter-${filter}`));
 
         fireEvent.click(
@@ -64,7 +194,7 @@ describe('HostsLists component', () => {
       });
 
       expect(window.location.search).toEqual(
-        '?heartbeat=unknown&hostname=vmdrbddev01&tags=tag1&sid=HDD'
+        `?heartbeat=${heartbeat}&hostname=${hostname}&sid=PRD&tags=${tags[0].value}`
       );
     });
   });
