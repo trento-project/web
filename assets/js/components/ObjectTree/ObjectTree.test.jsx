@@ -13,6 +13,7 @@ describe('ObjectTree component', () => {
     const {
       number,
       string,
+      array: { 0: firstArrayElement },
       complexObject: { nestedString },
     } = data;
 
@@ -21,10 +22,13 @@ describe('ObjectTree component', () => {
     expect(screen.getByText(number)).toBeVisible();
     expect(screen.getByText(string)).toBeVisible();
     expect(screen.queryByText(nestedString)).toBeNull();
+    expect(screen.queryByText(firstArrayElement)).toBeNull();
 
     fireEvent.click(screen.getByText('complexObject'));
+    fireEvent.click(screen.getByText('array'));
 
     expect(screen.queryByText(nestedString)).toBeVisible();
+    expect(screen.queryByText(firstArrayElement)).toBeVisible();
   });
 });
 
@@ -32,30 +36,30 @@ describe('flattenTree and treeify', () => {
   it('should flatten an object tree', () => {
     const data = objectTreeFactory.build();
 
-    const { count, children } = flattenTree(treeify(data), null);
+    const { count, children } = flattenTree(treeify('object', data), null);
 
     expect(count).toBe(children.length - 1);
 
     const [
       {
-        children: [firstChildId, _second, _third, fourthChildId],
+        children: [firstChildID, _second, _third, fourthChildID],
       },
     ] = children;
 
     expect(children[0].id).toBe(0);
     expect(children[0].parent).toBeNull();
 
-    expect(children[firstChildId].parent).toBe(0);
-    expect(children[fourthChildId].parent).toBe(0);
-    expect(children[fourthChildId].id).toBe(fourthChildId);
+    expect(children[firstChildID].parent).toBe(0);
+    expect(children[fourthChildID].parent).toBe(0);
+    expect(children[fourthChildID].id).toBe(fourthChildID);
 
     const {
-      [fourthChildId]: {
+      [fourthChildID]: {
         children: [firstComplexObjectChild, secondComplexObjectChild],
       },
     } = children;
 
-    expect(children[firstComplexObjectChild].parent).toBe(fourthChildId);
-    expect(children[secondComplexObjectChild].parent).toBe(fourthChildId);
+    expect(children[firstComplexObjectChild].parent).toBe(fourthChildID);
+    expect(children[secondComplexObjectChild].parent).toBe(fourthChildID);
   });
 });

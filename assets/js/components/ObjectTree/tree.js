@@ -40,15 +40,14 @@ export const flattenTree = (tree, parent, id = 0) => {
   return { count, children: [node, ...children] };
 };
 
-export const treeify = (data) => ({
-  name: '',
+export const treeify = (name, data) => ({
+  name,
   children: Object.keys(data).map((key) => {
     const { [key]: element } = data;
     const dataType = typeof element;
 
     if (dataType === 'object') {
-      const { children } = treeify(element);
-      return { name: key, children };
+      return treeify(key, element);
     }
 
     return { name: key, value: element };
@@ -56,7 +55,7 @@ export const treeify = (data) => ({
 });
 
 export const getTreeRepresentation = (data) => {
-  const tree = treeify(data);
+  const tree = treeify('object', data);
   const { children: flattenedTree } = flattenTree(tree, null, 0);
   return flattenedTree;
 };
