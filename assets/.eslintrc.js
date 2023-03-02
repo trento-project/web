@@ -41,7 +41,10 @@ module.exports = {
   plugins: ['react', 'jest'],
   rules: {
     'no-console': 'error',
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' },
+    ],
     'react/prop-types': 'off',
     camelcase: 'off',
     'import/no-cycle': 'off',
