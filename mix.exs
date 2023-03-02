@@ -54,7 +54,7 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:commanded, "~> 1.3"},
+      {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.3"},
       {:commanded_eventstore_adapter, "~> 1.2"},
       # this is pinned since the 3.1.0 version requires OTP 23.2
