@@ -60,3 +60,13 @@ export const aboutFactory = Factory.define(() => ({
   sles_subscriptions: faker.datatype.number(),
   version: faker.system.networkInterface(),
 }));
+
+export const objectTreeFactory = Factory.define(() => ({
+  number: faker.datatype.number(),
+  string: faker.word.adjective(),
+  array: faker.datatype.array(),
+  complexObject: {
+    nestedNumber: faker.datatype.number(),
+    nestedString: faker.word.noun(),
+  },
+}));
