@@ -1,8 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 
-import userEvent from '@testing-library/user-event';
-
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
 
@@ -12,55 +10,37 @@ import {
   hostnameFactory,
   addCriticalExpectation,
   addPassingExpectation,
-  agentCheckResultFactory,
   checksExecutionCompletedFactory,
-  checkResultFactory,
-  withEmptyExpectations,
+  emptyCheckResultFactory,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom/extend-expect';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
+  const checkID1 = faker.datatype.uuid();
+  const checkID2 = faker.datatype.uuid();
+
   const hostnames = hostnameFactory.buildList(2);
-  const [{ id: agentID1 }, { id: agentID2 }] = hostnames;
-  const agentCheckResult1 = agentCheckResultFactory.build({
-    agent_id: agentID1,
-  });
-  const agentCheckResult2 = agentCheckResultFactory.build({
-    agent_id: agentID2,
-  });
-  const agentCheckResult3 = agentCheckResultFactory.build({
-    agent_id: agentID1,
-  });
-  const agentCheckResult4 = agentCheckResultFactory.build({
-    agent_id: agentID2,
-  });
-  let checkResult1 = checkResultFactory.build({
-    agents_check_results: [agentCheckResult1, agentCheckResult2],
+  const [{ id: agent1 }, { id: agent2 }] = hostnames;
+  const targets = [agent1, agent2];
+
+  let checkResult1 = emptyCheckResultFactory.build({
+    checkID: checkID1,
+    targets,
     result: 'passing',
   });
-
-  checkResult1 = withEmptyExpectations(checkResult1);
+  checkResult1 = addPassingExpectation(checkResult1, 'expect');
   checkResult1 = addPassingExpectation(checkResult1, 'expect');
   checkResult1 = addPassingExpectation(checkResult1, 'expect_same');
 
-  let checkResult2 = checkResultFactory.build({
-    agents_check_results: [agentCheckResult3, agentCheckResult4],
+  let checkResult2 = emptyCheckResultFactory.build({
+    checkID: checkID2,
+    targets,
     result: 'critical',
   });
-
-  checkResult2 = withEmptyExpectations(checkResult2);
   checkResult2 = addPassingExpectation(checkResult2, 'expect');
   checkResult2 = addCriticalExpectation(checkResult2, 'expect');
-
-  const { check_id: checkID1 } = checkResult1;
-  const { check_id: checkID2 } = checkResult2;
-
-  const targets = [
-    { agent_id: agentID1, checks: [checkID1, checkID2] },
-    { agent_id: agentID2, checks: [checkID1, checkID2] },
-  ];
 
   const executionResult = checksExecutionCompletedFactory.build({
     check_results: [checkResult1, checkResult2],
@@ -70,11 +50,19 @@ const prepareStateData = (checkExecutionStatus) => {
 
   const { group_id: clusterID } = executionResult;
 
+  const aCheckDescription = faker.lorem.sentence();
+  const anotherCheckDescription = faker.lorem.sentence();
   const { loading, catalog, error } = catalogFactory.build({
     loading: false,
     catalog: [
-      catalogCheckFactory.build({ id: checkID1 }),
-      catalogCheckFactory.build({ id: checkID2 }),
+      catalogCheckFactory.build({
+        id: checkID1,
+        description: aCheckDescription,
+      }),
+      catalogCheckFactory.build({
+        id: checkID2,
+        description: anotherCheckDescription,
+      }),
     ],
     error: null,
   });
@@ -118,8 +106,7 @@ describe('ExecutionResults', () => {
       disconnect: () => null,
     }));
 
-    const user = userEvent.setup();
-
+    const clusterName = 'test-cluster';
     const {
       clusterID,
       hostnames,
@@ -136,7 +123,7 @@ describe('ExecutionResults', () => {
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        clusterName="test-cluster"
+        clusterName={clusterName}
         clusterScenario="hana_scale_up"
         cloudProvider="azure"
         hostnames={hostnames}
@@ -150,20 +137,29 @@ describe('ExecutionResults', () => {
       />
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
-    expect(screen.getByText('HANA scale-up')).toBeTruthy();
-    expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
-    expect(screen.getAllByText(checkID2)).toHaveLength(2);
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
-    expect(screen.getAllByText('1/2 expectations failed')).toBeTruthy();
+    expect(screen.getAllByText(clusterName)).toHaveLength(2);
+    expect(screen.getAllByText(hostnames[0].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(hostnames[1].hostname)).toHaveLength(2);
+    expect(
+      screen.getAllByText('Value is the same on all targets')
+    ).toHaveLength(1);
+    expect(screen.getAllByText('2/2 Expectations met.')).toHaveLength(2);
+    expect(screen.getAllByText('1/2 Expectations met.')).toHaveLength(2);
 
-    const [{ remediation }] = catalog;
-    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
-    await user.click(screen.getAllByText(checkID1)[0]);
-    expect(screen.getByText(remediation)).toBeVisible();
+    const mainTable = screen.getByRole('table');
+    const tableRows = mainTable.querySelectorAll('tbody > tr');
+
+    expect(tableRows).toHaveLength(2 * executionData.check_results.length);
+
+    expect(tableRows[0]).toHaveTextContent(checkID1);
+    expect(tableRows[1]).toHaveTextContent(clusterName);
+    expect(tableRows[1]).toHaveTextContent('Value is the same on all targets');
+    expect(tableRows[1]).toHaveTextContent(hostnames[0].hostname);
+    expect(tableRows[1]).toHaveTextContent('2/2 Expectations met.');
+
+    expect(tableRows[2]).toHaveTextContent(checkID2);
+    expect(tableRows[3]).toHaveTextContent(hostnames[1].hostname);
+    expect(tableRows[3]).toHaveTextContent('1/2 Expectations met');
   });
 
   it('should render the execution starting dialog, when an execution is not started yet', () => {

@@ -179,3 +179,24 @@ export const addExpectationWithError = (checkResult) => {
 
   return addExpectation(checkResult, name, expectation, false);
 };
+
+export const emptyCheckResultFactory = Factory.define(({ params }) => {
+  const checkID = params.checkID || faker.datatype.uuid();
+  const targets = params.targets || [
+    faker.datatype.uuid(),
+    faker.datatype.uuid(),
+  ];
+  const result = params.result || resultEnum();
+
+  const checkResult = checkResultFactory.build({
+    check_id: checkID,
+    agents_check_results: targets.map((agentId) =>
+      agentCheckResultFactory.build({
+        agent_id: agentId,
+      })
+    ),
+    result,
+  });
+
+  return withEmptyExpectations(checkResult);
+});
