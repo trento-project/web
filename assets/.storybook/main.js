@@ -16,6 +16,7 @@ module.exports = {
       '@lib': path.resolve(__dirname, '../js/lib'),
       '@hooks': path.resolve(__dirname, '../js/hooks'),
       '@state': path.resolve(__dirname, '../js/state'),
+      '@static': path.resolve(__dirname, '../static'),
     };
     return config;
   },
