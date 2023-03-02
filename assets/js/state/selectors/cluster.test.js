@@ -1,4 +1,9 @@
-import { getClusterHostIDs, getClusterName } from './cluster';
+import { hostFactory } from '@lib/test-utils/factories';
+import {
+  getClusterHostIDs,
+  getClusterHostNames,
+  getClusterName,
+} from './cluster';
 
 describe('Cluster selector', () => {
   it('should return the cluster hosts IDs', () => {
@@ -22,6 +27,41 @@ describe('Cluster selector', () => {
     };
 
     expect(getClusterHostIDs('cluster1')(state)).toEqual(['id1', 'id2']);
+  });
+
+  it('should return the cluster hosts names', () => {
+    const state = {
+      hostsList: {
+        hosts: [
+          hostFactory.build({
+            id: 'id1',
+            cluster_id: 'cluster1',
+            hostname: 'hostname-1',
+          }),
+          hostFactory.build({
+            id: 'id2',
+            cluster_id: 'cluster1',
+            hostname: 'hostname-2',
+          }),
+          hostFactory.build({
+            id: 'id3',
+            cluster_id: 'cluster2',
+            hostname: 'hostname-3',
+          }),
+        ],
+      },
+    };
+
+    expect(getClusterHostNames('cluster1')(state)).toEqual([
+      {
+        id: 'id1',
+        hostname: 'hostname-1',
+      },
+      {
+        id: 'id2',
+        hostname: 'hostname-2',
+      },
+    ]);
   });
 
   it('should return a cluster name', () => {
