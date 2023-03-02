@@ -1,47 +1,68 @@
-import React, { useState } from 'react';
-
-import classNames from 'classnames';
+import React from 'react';
+import Table from '@components/Table';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { EOS_ERROR } from 'eos-icons-react';
-import Modal from '@components/Modal';
-import BackButton from '@components/BackButton';
+
 import LoadingBox from '@components/LoadingBox';
-import { providerWarningBanners } from '@components/ClusterDetails/ClusterSettings';
-import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
 
-import {
-  getCheckHealthByAgent,
-  getCheckResults,
-  getCheckDescription,
-  getCheckRemediation,
-} from './checksUtils';
+import { getCheckResults, getCheckDescription } from './checksUtils';
 
-import CheckResult from './CheckResult';
-import ChecksResultFilters from './ChecksResultFilters';
 import ResultsContainer from './ResultsContainer';
-import HostResultsWrapper from './HostResultsWrapper';
+import { ExecutionIcon } from './ExecutionIcon';
+import CheckResultOutline from './CheckResultOutline';
+import ExecutionHeader from './ExecutionHeader';
 
-const truncatedClusterNameClasses =
-  'font-bold truncate w-60 inline-block align-top';
-
-const getLabel = (status, health, error, expectations, failedExpectations) => {
-  if (status === 'running' || !health) {
-    return '';
-  }
-
-  if (error) {
-    return error;
-  }
-
-  if (health === 'passing') {
-    return `${expectations}/${expectations} expectations passed`;
-  }
-
-  return `${failedExpectations}/${expectations} expectations failed`;
+const resultsTableConfig = {
+  usePadding: false,
+  columns: [
+    {
+      title: 'Id',
+      key: 'checkID',
+      render: (checkID) => (
+        <div className="whitespace-nowrap text-jungle-green-500">{checkID}</div>
+      ),
+    },
+    {
+      title: 'Description',
+      key: 'description',
+      render: (description) => <MarkdownContent>{description}</MarkdownContent>,
+    },
+    {
+      title: 'Result',
+      key: 'result',
+      render: (_, { result, executionState }) => (
+        <ExecutionIcon executionState={executionState} health={result} />
+      ),
+    },
+  ],
+  collapsibleDetailRenderer: ({
+    checkID,
+    agentsCheckResults,
+    expectationResults,
+    clusterName,
+  }) => (
+    <CheckResultOutline
+      checkID={checkID}
+      agentsCheckResults={agentsCheckResults}
+      expectationResults={expectationResults}
+      clusterName={clusterName}
+    />
+  ),
 };
+
+const addHostnameToTargets = (targets, hostnames) =>
+  targets?.map((target) => {
+    const { agent_id } = target;
+
+    const { hostname } = hostnames.find(({ id }) => agent_id === id);
+    return {
+      ...target,
+      hostname,
+    };
+  });
 
 function MarkdownContent({ children }) {
   return (
@@ -69,9 +90,6 @@ function ExecutionResults({
   onLastExecutionUpdate = () => {},
   onStartExecution = () => {},
 }) {
-  const [selectedCheck, setSelectedCheck] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [predicates, setPredicates] = useState([]);
   const hosts = hostnames.map((item) => item.id);
 
   if (catalogLoading) {
@@ -104,42 +122,31 @@ function ExecutionResults({
     );
   }
 
-  const checkResults = getCheckResults(executionData);
-  const warning = providerWarningBanners[cloudProvider];
+  const tableData = getCheckResults(executionData).map(
+    ({
+      check_id: checkID,
+      result,
+      expectation_results: expectationResults,
+      agents_check_results: agentsCheckResults,
+    }) => ({
+      checkID,
+      result,
+      clusterName,
+      executionState: executionData?.status,
+      description: getCheckDescription(catalog, checkID),
+      expectationResults,
+      agentsCheckResults: addHostnameToTargets(agentsCheckResults, hostnames),
+    })
+  );
 
   return (
-    <div>
-      <Modal
-        title={
-          <MarkdownContent>
-            {getCheckDescription(catalog, selectedCheck)}
-          </MarkdownContent>
-        }
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-      >
-        <MarkdownContent>
-          {getCheckRemediation(catalog, selectedCheck)}
-        </MarkdownContent>
-      </Modal>
-      <BackButton url={`/clusters/${clusterID}`}>
-        Back to Cluster Details
-      </BackButton>
-      <div className="flex mb-4 justify-between">
-        <h1 className="text-3xl w-3/5">
-          <span className="font-medium">Checks Results for cluster</span>{' '}
-          <span
-            className={classNames('font-bold', truncatedClusterNameClasses)}
-          >
-            {clusterName}
-          </span>
-        </h1>
-        <ChecksResultFilters
-          onChange={(newPredicates) => setPredicates(newPredicates)}
-        />
-      </div>
-      {warning}
-      <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
+    <>
+      <ExecutionHeader
+        clusterID={clusterID}
+        clusterName={clusterName}
+        cloudProvider={cloudProvider}
+        clusterScenario={clusterScenario}
+      />
       <ResultsContainer
         catalogError={false}
         clusterID={clusterID}
@@ -149,66 +156,9 @@ function ExecutionResults({
         onCatalogRefresh={onCatalogRefresh}
         onStartExecution={onStartExecution}
       >
-        {executionData?.targets?.map(({ agent_id: hostID, checks }) => (
-          <HostResultsWrapper
-            key={hostID}
-            hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
-          >
-            {checks
-              .map((checkID) => {
-                const { health, error, expectations, failedExpectations } =
-                  getCheckHealthByAgent(checkResults, checkID, hostID);
-
-                return {
-                  checkID,
-                  error,
-                  expectations,
-                  failedExpectations,
-                  result: health,
-                };
-              })
-              .filter((check) => {
-                if (predicates.length === 0) {
-                  return true;
-                }
-
-                return predicates.some((predicate) => predicate(check));
-              })
-              .map(
-                ({
-                  checkID,
-                  result,
-                  error,
-                  expectations,
-                  failedExpectations,
-                }) => {
-                  const label = getLabel(
-                    executionData?.status,
-                    result,
-                    error,
-                    expectations,
-                    failedExpectations
-                  );
-                  return (
-                    <CheckResult
-                      key={checkID}
-                      checkId={checkID}
-                      description={getCheckDescription(catalog, checkID)}
-                      executionState={executionData?.status}
-                      health={result}
-                      label={label}
-                      onClick={() => {
-                        setModalOpen(true);
-                        setSelectedCheck(checkID);
-                      }}
-                    />
-                  );
-                }
-              )}
-          </HostResultsWrapper>
-        ))}
+        <Table config={resultsTableConfig} data={tableData} />
       </ResultsContainer>
-    </div>
+    </>
   );
 }
 
