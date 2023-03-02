@@ -196,9 +196,9 @@ process to go into hibernation after a period of inactivity.</p><h3 id="child_sp
   </a>
   Example
 </h3>
-<pre><code class="makeup elixir" translate="no"><span class="nc">Supervisor</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="5698960428-1">(</span><span class="p" data-group-id="5698960428-2">[</span><span class="w">
-  </span><span class="p" data-group-id="5698960428-3">{</span><span class="nc">ExampleHandler</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5698960428-4">[</span><span class="p" data-group-id="5698960428-4">]</span><span class="p" data-group-id="5698960428-3">}</span><span class="w">
-</span><span class="p" data-group-id="5698960428-2">]</span><span class="p">,</span><span class="w"> </span><span class="ss">strategy</span><span class="p">:</span><span class="w"> </span><span class="ss">:one_for_one</span><span class="p" data-group-id="5698960428-1">)</span></code></pre>
+<pre><code class="makeup elixir" translate="no"><span class="nc">Supervisor</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="0336368243-1">(</span><span class="p" data-group-id="0336368243-2">[</span><span class="w">
+  </span><span class="p" data-group-id="0336368243-3">{</span><span class="nc">ExampleHandler</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0336368243-4">[</span><span class="p" data-group-id="0336368243-4">]</span><span class="p" data-group-id="0336368243-3">}</span><span class="w">
+</span><span class="p" data-group-id="0336368243-2">]</span><span class="p">,</span><span class="w"> </span><span class="ss">strategy</span><span class="p">:</span><span class="w"> </span><span class="ss">:one_for_one</span><span class="p" data-group-id="0336368243-1">)</span></code></pre>
   </section>
 </section>
 <section class="detail" id="start_link/1">
@@ -229,7 +229,8 @@ process to go into hibernation after a period of inactivity.</p><h3 id="child_sp
   Options
 </h2>
 <ul><li><p><code class="inline">:application</code> - the Commanded application.</p></li><li><p><code class="inline">:name</code> - name of the event handler used to determine its unique event
-store subscription.</p></li><li><p><code class="inline">:consistency</code> - one of either <code class="inline">:eventual</code> (default) or <code class="inline">:strong</code>.</p></li><li><p><code class="inline">:start_from</code> - where to start the event store subscription from when
+store subscription.</p></li><li><p><code class="inline">:concurrency</code> - determines how many processes are started to
+concurrently process events. The default is one process.</p></li><li><p><code class="inline">:consistency</code> - one of either <code class="inline">:eventual</code> (default) or <code class="inline">:strong</code>.</p></li><li><p><code class="inline">:start_from</code> - where to start the event store subscription from when
 first created (default: <code class="inline">:origin</code>).</p></li><li><p>:subscribe_to - which stream to subscribe to can be either <code class="inline">:all</code> to
 subscribe to all events or a named stream (default: <code class="inline">:all</code>).</p></li></ul><p>The default options supported by <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/3"><code class="inline">GenServer.start_link/3</code></a> are supported,
 including the <code class="inline">:hibernate_after</code> option which allows the process to go
