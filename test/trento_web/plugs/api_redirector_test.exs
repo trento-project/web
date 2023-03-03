@@ -30,7 +30,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
     test "should return 404 with the error view when the path is not recognized by the router", %{
       conn: conn
     } do
-      defmodule NotFoundRouter do
+      defmodule ErrorNotFoundRouter do
         def __match_route__(_, _, _) do
           :error
         end
@@ -38,7 +38,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
 
       conn = %{conn | path_info: ["api", "hosts"]}
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: NotFoundRouter)
+      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: ErrorNotFoundRouter)
 
       resp_body = json_response(result_conn, 404)
 
