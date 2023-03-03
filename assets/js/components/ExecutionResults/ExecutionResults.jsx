@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Table from '@components/Table';
 
 import ReactMarkdown from 'react-markdown';
@@ -89,6 +89,8 @@ function ExecutionResults({
   onLastExecutionUpdate = () => {},
   onStartExecution = () => {},
 }) {
+  const [predicates, setPredicates] = useState([]);
+
   const hosts = hostnames.map((item) => item.id);
 
   if (catalogLoading) {
@@ -121,22 +123,30 @@ function ExecutionResults({
     );
   }
 
-  const tableData = getCheckResults(executionData).map(
-    ({
-      check_id: checkID,
-      result,
-      expectation_results: expectationResults,
-      agents_check_results: agentsCheckResults,
-    }) => ({
-      checkID,
-      result,
-      clusterName,
-      executionState: executionData?.status,
-      description: getCheckDescription(catalog, checkID),
-      expectationResults,
-      agentsCheckResults: addHostnameToTargets(agentsCheckResults, hostnames),
+  const tableData = getCheckResults(executionData)
+    .filter((check) => {
+      if (predicates.length === 0) {
+        return true;
+      }
+
+      return predicates.some((predicate) => predicate(check));
     })
-  );
+    .map(
+      ({
+        check_id: checkID,
+        result,
+        expectation_results: expectationResults,
+        agents_check_results: agentsCheckResults,
+      }) => ({
+        checkID,
+        result,
+        clusterName,
+        executionState: executionData?.status,
+        description: getCheckDescription(catalog, checkID),
+        expectationResults,
+        agentsCheckResults: addHostnameToTargets(agentsCheckResults, hostnames),
+      })
+    );
 
   return (
     <>
@@ -145,6 +155,7 @@ function ExecutionResults({
         clusterName={clusterName}
         cloudProvider={cloudProvider}
         clusterScenario={clusterScenario}
+        onFilterChange={(newPredicates) => setPredicates(newPredicates)}
       />
       <ResultsContainer
         catalogError={false}

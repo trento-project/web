@@ -251,4 +251,89 @@ describe('ExecutionResults', () => {
     const svgText = screen.getByText('Select Checks now');
     expect(svgText).toBeInTheDocument();
   });
+
+  it("should render ExecutionResults with successfully filtered 'passing' results", async () => {
+    const {
+      clusterID,
+      hostnames,
+      checks: [checkID1, checkID2],
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('passing');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterName="test-cluster"
+        clusterScenario="hana_scale_up"
+        cloudProvider="azure"
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />,
+      { route: `/clusters/${clusterID}/executions/last?health=passing` }
+    );
+
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
+    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('Azure')).toBeTruthy();
+    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
+    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
+    expect(screen.queryByText(checkID2)).toBeNull();
+  });
+
+  it("should render ExecutionResults with successfully filtered 'passing' and 'critical' results", async () => {
+    const {
+      clusterID,
+      hostnames,
+      checks: [checkID1, checkID2],
+      loading,
+      catalog,
+      executionStarted,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+    } = prepareStateData('passing');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterName="test-cluster"
+        clusterScenario="hana_scale_up"
+        cloudProvider="azure"
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />,
+      {
+        route: `/clusters/${clusterID}/executions/last?health=passing&health=critical
+    `,
+      }
+    );
+
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
+    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('Azure')).toBeTruthy();
+    expect(screen.getAllByText(hostnames[0].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(hostnames[1].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
+    expect(screen.getAllByText(checkID2)).toHaveLength(1);
+  });
 });
