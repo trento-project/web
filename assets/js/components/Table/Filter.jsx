@@ -43,7 +43,7 @@ function Filter({ options, title, value, onChange }) {
           type="button"
           data-testid={`filter-${title}`}
           onClick={() => setOpen(!open)}
-          className="relative w-full bg-white rounded-md border pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm"
+          className="relative w-full bg-white hover:bg-gray-50 rounded-md border pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm"
         >
           <span className="flex items-center">
             <span
