@@ -25,7 +25,7 @@ function Filter({ options, title, value, onChange }) {
   return (
     <div className="flex-1 w-64 top-16" ref={ref}>
       <div className="mt-1 relative">
-        {value.length != 0 && (
+        {value.length !== 0 && (
           <button
             type="button"
             data-testid={`filter-${title}-clear`}
