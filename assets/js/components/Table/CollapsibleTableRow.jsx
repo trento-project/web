@@ -8,6 +8,13 @@ function CollapsibleTableRow({
   colSpan = 1,
 }) {
   const [rowExpanded, toggleRow] = useState(false);
+  console.log('STAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAART');
+  console.log('columns: ', columns);
+  console.log('item: ', item);
+
+  console.log('colla...', collapsibleDetailRenderer);
+  console.log('renderCells' + renderCells);
+
   return (
     <>
       <tr
