@@ -5,7 +5,7 @@ defmodule Trento.HostTest do
 
   alias Trento.Domain.Commands.{
     RegisterHost,
-    RollupHost,
+    RollUpHost,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -529,7 +529,7 @@ defmodule Trento.HostTest do
   describe "rollup" do
     test "should not accept a rollup command if a host was not registered yet" do
       assert_error(
-        RollupHost.new!(%{host_id: Faker.UUID.v4()}),
+        RollUpHost.new!(%{host_id: Faker.UUID.v4()}),
         {:error, :host_not_registered}
       )
     end
@@ -540,7 +540,7 @@ defmodule Trento.HostTest do
 
       assert_events_and_state(
         host_registered_event,
-        RollupHost.new!(%{host_id: host_id}),
+        RollUpHost.new!(%{host_id: host_id}),
         %HostRollUpRequested{
           host_id: host_id,
           snapshot: %Host{
@@ -596,7 +596,7 @@ defmodule Trento.HostTest do
 
       assert_error(
         events,
-        RollupHost.new!(%{
+        RollUpHost.new!(%{
           host_id: host_id
         }),
         {:error, :host_rolling_up}

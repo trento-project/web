@@ -30,7 +30,7 @@ defmodule Trento.Domain.Host do
 
   alias Trento.Domain.Commands.{
     RegisterHost,
-    RollupHost,
+    RollUpHost,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -252,14 +252,14 @@ defmodule Trento.Domain.Host do
   # Start the rollup flow
   def execute(
         %Host{host_id: nil},
-        %RollupHost{}
+        %RollUpHost{}
       ) do
     {:error, :host_not_registered}
   end
 
   def execute(
         %Host{host_id: host_id} = snapshot,
-        %RollupHost{}
+        %RollUpHost{}
       ) do
     %HostRollUpRequested{
       snapshot: snapshot,

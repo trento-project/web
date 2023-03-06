@@ -7,7 +7,7 @@ defmodule Trento.StreamRollUpEventHandlerTest do
 
   alias Trento.Domain.Commands.{
     RollUpCluster,
-    RollupHost
+    RollUpHost
   }
 
   alias Trento.StreamRollUpEventHandler
@@ -43,7 +43,7 @@ defmodule Trento.StreamRollUpEventHandlerTest do
 
     event = build(:host_registered_event, host_id: host_id)
 
-    expect(Trento.Commanded.Mock, :dispatch, fn %RollupHost{host_id: ^host_id}, _ ->
+    expect(Trento.Commanded.Mock, :dispatch, fn %RollUpHost{host_id: ^host_id}, _ ->
       :ok
     end)
 

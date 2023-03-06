@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Commands.RollupHost do
+defmodule Trento.Domain.Commands.RollUpHost do
   @moduledoc """
   Start an host aggregate rollup
   """

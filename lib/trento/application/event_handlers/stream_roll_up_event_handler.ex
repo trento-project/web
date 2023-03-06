@@ -15,7 +15,7 @@ defmodule Trento.StreamRollUpEventHandler do
 
   alias Trento.Domain.Commands.{
     RollUpCluster,
-    RollupHost
+    RollUpHost
   }
 
   require Logger
@@ -53,7 +53,7 @@ defmodule Trento.StreamRollUpEventHandler do
         "Rolling up host: #{host_id} because  #{stream_version} > #{@max_stream_version}"
       )
 
-      commanded().dispatch(%RollupHost{host_id: host_id},
+      commanded().dispatch(%RollUpHost{host_id: host_id},
         consistency: :strong
       )
     else
