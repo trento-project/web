@@ -13,7 +13,10 @@ defmodule Trento.StreamRollUpEventHandler do
     application: Trento.Commanded,
     name: "stream_roll_up_event_handler"
 
-  alias Trento.Domain.Commands.RollUpCluster
+  alias Trento.Domain.Commands.{
+    RollUpCluster,
+    RollupHost
+  }
 
   require Logger
 
@@ -28,6 +31,35 @@ defmodule Trento.StreamRollUpEventHandler do
     Trento.Domain.Events.ClusterRegistered,
     Trento.Domain.Events.HostAddedToCluster
   ]
+
+  @host_events [
+    Trento.Domain.Events.HeartbeatFailed,
+    Trento.Domain.Events.HeartbeatSucceded,
+    Trento.Domain.Events.HostDetailsUpdated,
+    Trento.Domain.Events.HostRegistered,
+    Trento.Domain.Events.ProviderUpdated,
+    Trento.Domain.Events.SlesSubscriptionsUpdated
+  ]
+
+  def handle(%event_type{host_id: host_id}, %{
+        stream_version: event_stream_version
+      })
+      when event_type in @host_events and event_stream_version > @max_stream_version do
+    {:ok, %EventStore.Streams.StreamInfo{stream_version: stream_version}} =
+      Trento.EventStore.stream_info(host_id)
+
+    if stream_version > @max_stream_version do
+      Logger.info(
+        "Rolling up host: #{host_id} because  #{stream_version} > #{@max_stream_version}"
+      )
+
+      commanded().dispatch(%RollupHost{host_id: host_id},
+        consistency: :strong
+      )
+    else
+      :ok
+    end
+  end
 
   def handle(%event_type{cluster_id: cluster_id}, %{
         stream_version: event_stream_version
