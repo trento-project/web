@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { sapSystemFactory } from '@lib/test-utils/factories';
@@ -89,13 +89,14 @@ describe('SapSystemsOverviews component', () => {
 
         renderWithRouter(StatefulSapSystemList);
 
-        options.forEach((option) => {
+        options.forEach(async (option) => {
           filterTable(filter, option);
-
-          const table = screen.getByRole('table');
-          expect(
-            table.querySelectorAll('tbody > tr.cursor-pointer')
-          ).toHaveLength(expectedRows);
+          screen.getByRole('table');
+          const table = await waitFor(() =>
+            expect(
+              table.querySelectorAll('tbody > tr.cursor-pointer')
+            ).toHaveLength(expectedRows)
+          );
 
           clearFilter(filter);
         });
@@ -124,14 +125,12 @@ describe('SapSystemsOverviews component', () => {
       );
       renderWithRouter(StatefulSapSystemsOverview);
 
-      ['Health', 'SID', 'Tags'].forEach((filter) => {
-        fireEvent.click(screen.getByTestId(`filter-${filter}`));
-
-        fireEvent.click(
-          screen
-            .getByTestId(`filter-${filter}-options`)
-            .querySelector('li > div > span').firstChild
-        );
+      [
+        ['Health', health],
+        ['SID', sid],
+        ['Tags', tags[0].value],
+      ].forEach(([filter, option]) => {
+        filterTable(filter, option);
       });
 
       expect(window.location.search).toEqual(

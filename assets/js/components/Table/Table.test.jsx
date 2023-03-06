@@ -1,12 +1,6 @@
 import React from 'react';
 
-import {
-  screen,
-  fireEvent,
-  render,
-  waitFor,
-  act,
-} from '@testing-library/react';
+import { screen, fireEvent, render, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
@@ -18,9 +12,7 @@ import Table from './Table';
 export const filterTable = (name, option) => {
   const filterContainer = screen.getByTestId(`filter-${name}`);
 
-  act(() => {
-    fireEvent.click(filterContainer);
-  });
+  fireEvent.click(filterContainer);
 
   const optionContainer = Array.from(
     screen
@@ -28,18 +20,14 @@ export const filterTable = (name, option) => {
       .querySelectorAll('li > div > span')
   ).find((f) => f.textContent === option);
 
-  act(() => {
-    fireEvent.click(optionContainer);
-    fireEvent.click(screen.getByTestId(`filter-${name}`));
-  });
+  fireEvent.click(optionContainer);
+  fireEvent.click(screen.getByTestId(`filter-${name}`));
 };
 
 export const clearFilter = (name) => {
   const filterContainer = screen.getByTestId(`filter-${name}-clear`);
 
-  act(() => {
-    fireEvent.click(filterContainer);
-  });
+  fireEvent.click(filterContainer);
 };
 
 describe('Table component', () => {
