@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { hostFactory } from '@lib/test-utils/factories';
@@ -149,12 +149,13 @@ describe('HostsLists component', () => {
 
         renderWithRouter(StatefulHostsList);
 
-        options.forEach((option) => {
+        options.forEach(async (option) => {
           filterTable(filter, option);
-
-          const table = screen.getByRole('table');
-          expect(table.querySelectorAll('tbody > tr')).toHaveLength(
-            expectedRows
+          screen.getByRole('table');
+          const table = await waitFor(() =>
+            expect(table.querySelectorAll('tbody > tr')).toHaveLength(
+              expectedRows
+            )
           );
 
           clearFilter(filter);
@@ -167,13 +168,14 @@ describe('HostsLists component', () => {
         id: 'host1',
         tags: [{ value: 'Tag1' }],
       });
+      const sid = 'PRD';
       const state = {
         ...cleanInitialState,
         hostsList: {
           hosts,
         },
         sapSystemsList: {
-          applicationInstances: [{ sid: 'PRD', host_id: 'host1' }],
+          applicationInstances: [{ sid, host_id: 'host1' }],
           databaseInstances: [],
         },
       };
@@ -183,18 +185,17 @@ describe('HostsLists component', () => {
       const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
 
-      ['Health', 'Hostname', 'SID', 'Tags'].forEach((filter) => {
-        fireEvent.click(screen.getByTestId(`filter-${filter}`));
-
-        fireEvent.click(
-          screen
-            .getByTestId(`filter-${filter}-options`)
-            .querySelector('li > div > span').firstChild
-        );
+      [
+        ['Health', heartbeat],
+        ['Hostname', hostname],
+        ['SID', sid],
+        ['Tags', tags[0].value],
+      ].forEach(([filter, option]) => {
+        filterTable(filter, option);
       });
 
       expect(window.location.search).toEqual(
-        `?heartbeat=${heartbeat}&hostname=${hostname}&sid=PRD&tags=${tags[0].value}`
+        `?heartbeat=${heartbeat}&hostname=${hostname}&sid=${sid}&tags=${tags[0].value}`
       );
     });
   });

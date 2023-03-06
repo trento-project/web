@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { clusterFactory } from '@lib/test-utils/factories';
@@ -109,12 +109,13 @@ describe('ClustersList component', () => {
 
         renderWithRouter(StatefulClustersList);
 
-        options.forEach((option) => {
+        options.forEach(async (option) => {
           filterTable(filter, option);
-
-          const table = screen.getByRole('table');
-          expect(table.querySelectorAll('tbody > tr')).toHaveLength(
-            expectedRows
+          screen.getByRole('table');
+          const table = await waitFor(() =>
+            expect(table.querySelectorAll('tbody > tr')).toHaveLength(
+              expectedRows
+            )
           );
 
           clearFilter(filter);
@@ -123,8 +124,9 @@ describe('ClustersList component', () => {
     );
 
     it('should put the filters values in the query string when filters are selected', () => {
+      const tag = 'Tag1';
       const clusters = clusterFactory.buildList(1, {
-        tags: [{ value: 'Tag1' }],
+        tags: [{ value: tag }],
       });
       const state = {
         ...cleanInitialState,
@@ -138,18 +140,18 @@ describe('ClustersList component', () => {
       const [StatefulClustersList] = withState(<ClustersList />, state);
       renderWithRouter(StatefulClustersList);
 
-      ['Health', 'Name', 'SID', 'Type', 'Tags'].forEach((filter) => {
-        fireEvent.click(screen.getByTestId(`filter-${filter}`));
-
-        fireEvent.click(
-          screen
-            .getByTestId(`filter-${filter}-options`)
-            .querySelector('li > div > span').firstChild
-        );
+      [
+        ['Health', health],
+        ['Name', name],
+        ['SID', sid],
+        ['Type', type],
+        ['Tags', tag],
+      ].forEach(([filter, option]) => {
+        filterTable(filter, option);
       });
 
       expect(window.location.search).toEqual(
-        `?health=${health}&name=${name}&sid=${sid}&type=${type}&tags=Tag1`
+        `?health=${health}&name=${name}&sid=${sid}&type=${type}&tags=${tag}`
       );
     });
   });
