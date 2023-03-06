@@ -5,6 +5,7 @@ defmodule Trento.HostTest do
 
   alias Trento.Domain.Commands.{
     RegisterHost,
+    RollupHost,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -15,6 +16,8 @@ defmodule Trento.HostTest do
     HeartbeatSucceded,
     HostDetailsUpdated,
     HostRegistered,
+    HostRolledUp,
+    HostRollUpRequested,
     ProviderUpdated,
     SlesSubscriptionsUpdated
   }
@@ -518,6 +521,125 @@ defmodule Trento.HostTest do
                      }
                    ]
                  } = state
+        end
+      )
+    end
+  end
+
+  describe "rollup" do
+    test "should not accept a rollup command if a host was not registered yet" do
+      assert_error(
+        RollupHost.new!(%{host_id: Faker.UUID.v4()}),
+        {:error, :host_not_registered}
+      )
+    end
+
+    test "should change the cluster state to rolling up" do
+      host_id = UUID.uuid4()
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_events_and_state(
+        host_registered_event,
+        RollupHost.new!(%{host_id: host_id}),
+        %HostRollUpRequested{
+          host_id: host_id,
+          snapshot: %Host{
+            host_id: host_registered_event.host_id,
+            hostname: host_registered_event.hostname,
+            ip_addresses: host_registered_event.ip_addresses,
+            agent_version: host_registered_event.agent_version,
+            cpu_count: host_registered_event.cpu_count,
+            total_memory_mb: host_registered_event.total_memory_mb,
+            socket_count: host_registered_event.socket_count,
+            os_version: host_registered_event.os_version,
+            installation_source: host_registered_event.installation_source,
+            heartbeat: :unknown,
+            rolling_up: false
+          }
+        },
+        fn %Host{rolling_up: rolling_up} ->
+          assert rolling_up
+        end
+      )
+    end
+
+    test "should not accept commands if a cluster is in rolling up state" do
+      host_id = UUID.uuid4()
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      events = [
+        host_registered_event,
+        %HostRollUpRequested{
+          host_id: host_id,
+          snapshot: %Host{}
+        }
+      ]
+
+      assert_error(
+        events,
+        UpdateProvider.new!(%{
+          host_id: host_id,
+          provider: :azure,
+          provider_data: %{
+            account_id: "12345",
+            ami_id: "ami-12345",
+            availability_zone: "eu-west-1a",
+            data_disk_number: 1,
+            instance_id: "i-12345",
+            instance_type: "t3.micro",
+            region: "eu-west-1",
+            vpc_id: "vpc-12345"
+          }
+        }),
+        {:error, :host_rolling_up}
+      )
+
+      assert_error(
+        events,
+        RollupHost.new!(%{
+          host_id: host_id
+        }),
+        {:error, :host_rolling_up}
+      )
+    end
+
+    test "should apply the rollup event and rehydrate the aggregate" do
+      host_id = UUID.uuid4()
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_state(
+        [
+          host_registered_event,
+          %HostRolledUp{
+            host_id: host_id,
+            snapshot: %Host{
+              host_id: host_registered_event.host_id,
+              hostname: host_registered_event.hostname,
+              ip_addresses: host_registered_event.ip_addresses,
+              agent_version: host_registered_event.agent_version,
+              cpu_count: host_registered_event.cpu_count,
+              total_memory_mb: host_registered_event.total_memory_mb,
+              socket_count: host_registered_event.socket_count,
+              os_version: host_registered_event.os_version,
+              installation_source: host_registered_event.installation_source,
+              heartbeat: :unknown,
+              rolling_up: false
+            }
+          }
+        ],
+        [],
+        fn host ->
+          refute host.rolling_up
+          assert host.host_id == host_registered_event.host_id
+          assert host.hostname == host_registered_event.hostname
+          assert host.ip_addresses == host_registered_event.ip_addresses
+          assert host.agent_version == host_registered_event.agent_version
+          assert host.cpu_count == host_registered_event.cpu_count
+          assert host.total_memory_mb == host_registered_event.total_memory_mb
+          assert host.socket_count == host_registered_event.socket_count
+          assert host.os_version == host_registered_event.os_version
+          assert host.installation_source == host_registered_event.installation_source
+          assert host.heartbeat == :unknown
         end
       )
     end
