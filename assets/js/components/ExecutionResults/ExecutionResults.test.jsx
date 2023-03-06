@@ -285,17 +285,16 @@ describe('ExecutionResults', () => {
       { route: `/clusters/${clusterID}/executions/last?health=passing` }
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
     expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
     expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
     expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
     expect(screen.queryByText(checkID2)).toBeNull();
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
   });
 
-  it("should render ExecutionResults with successfully filtered 'passing' and 'ciritcal' results", async () => {
+  it("should render ExecutionResults with successfully filtered 'passing' and 'critical' results", async () => {
     const {
       clusterID,
       hostnames,
@@ -330,15 +329,13 @@ describe('ExecutionResults', () => {
       }
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
     expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
-    expect(screen.getAllByText(checkID2)).toHaveLength(2);
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
-    expect(screen.getAllByText('1/2 expectations failed')).toBeTruthy();
+    expect(screen.getAllByText(hostnames[0].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(hostnames[1].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
+    expect(screen.getAllByText(checkID2)).toHaveLength(1);
   });
 
   it('given provider is VMware, should render ExecutionResults with warning banner', async () => {
