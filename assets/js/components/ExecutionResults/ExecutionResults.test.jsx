@@ -1,6 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
-
+import { screen, fireEvent } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
 
@@ -410,5 +409,75 @@ describe('ExecutionResults', () => {
         /The following catalog is valid for on-premise bare metal platforms.*If you are running your HANA cluster on a different platform, please use results with caution/
       )
     ).toBeTruthy();
+  });
+
+  it('should open remediation modal when clicking on checkID', async () => {
+    const {
+      clusterID,
+      hostnames,
+      loading,
+      catalog,
+      executionError,
+      executionStarted,
+      executionResult,
+      checks,
+    } = prepareStateData('completed');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionLoading={loading}
+        executionStarted={executionStarted}
+        executionData={executionResult}
+        executionError={executionError}
+        clusterSelectedChecks={checks}
+      />
+    );
+
+    const { id: checkID, remediation } = catalog[0];
+    const clickableID = screen.getByText(checkID);
+    expect(clickableID.textContent).toBe(checks[0]);
+    let remediationModalElement = screen.queryByText(remediation);
+    expect(remediationModalElement).not.toBeInTheDocument();
+    fireEvent.click(clickableID);
+    remediationModalElement = screen.getByText(remediation);
+    expect(remediationModalElement).toBeInTheDocument();
+  });
+
+  it('should not open remediation modal when clicking on description', async () => {
+    const {
+      clusterID,
+      hostnames,
+      loading,
+      catalog,
+      executionError,
+      executionStarted,
+      executionResult,
+      checks,
+    } = prepareStateData('completed');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionLoading={loading}
+        executionStarted={executionStarted}
+        executionData={executionResult}
+        executionError={executionError}
+        clusterSelectedChecks={checks}
+      />
+    );
+
+    const { remediation, description } = catalog[0];
+    const checkDescriptionText = screen.getByText(description);
+    expect(description).toBe(checkDescriptionText.textContent);
+    fireEvent.click(checkDescriptionText);
+    const remediationModalElement = screen.queryByText(remediation);
+    expect(remediationModalElement).not.toBeInTheDocument();
   });
 });
