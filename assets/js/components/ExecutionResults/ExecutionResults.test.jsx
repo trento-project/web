@@ -202,7 +202,7 @@ describe('ExecutionResults', () => {
       executionStarted,
     } = prepareStateData('running');
 
-    const { container } = renderWithRouter(
+    renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
         hostnames={hostnames}
@@ -211,16 +211,12 @@ describe('ExecutionResults', () => {
         catalogError={error}
         executionStarted={executionStarted}
         executionLoading={executionLoading}
+        executionRunning
         executionData={executionData}
         executionError={executionError}
       />
     );
-    const svgEl = container.querySelector("[data-testid='eos-svg-component']");
-    const transform = svgEl.getAttribute('transform');
-    expect(svgEl.classList.toString()).toContain(
-      'inline-block fill-jungle-green-500'
-    );
-    expect(transform).toEqual('rotate(0) translate(0, 0) scale(1, 1)');
+    screen.getByText('Checks execution running...');
   });
 
   it('should render ChecksSelectionHints when executionData is null or executionLoading is false', async () => {

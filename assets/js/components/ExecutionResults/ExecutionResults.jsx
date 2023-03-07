@@ -80,6 +80,7 @@ function ExecutionResults({
   catalogError,
   executionLoading,
   executionStarted,
+  executionRunning,
   executionData,
   executionError,
   clusterSelectedChecks = [],
@@ -97,6 +98,10 @@ function ExecutionResults({
 
   if (!executionStarted) {
     return <LoadingBox text="Checks execution starting..." />;
+  }
+
+  if (executionRunning) {
+    return <LoadingBox text="Checks execution running..." />;
   }
 
   const onContentRefresh = () => {
