@@ -91,7 +91,8 @@ config :trento, :pow,
 
 config :trento, :api_key_authentication, enabled: true
 
-config :trento, Trento.Heartbeats, interval: :timer.seconds(5)
+# Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
+config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
 
 config :trento, Trento.Scheduler,
   jobs: [
