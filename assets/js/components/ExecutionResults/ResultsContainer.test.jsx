@@ -10,14 +10,24 @@ import ResultsContainer from './ResultsContainer';
 
 describe('ChecksResults ResultsContainer component', () => {
   it('should render the notification box', () => {
-    renderWithRouter(<ResultsContainer catalogError />);
+    renderWithRouter(<ResultsContainer error />);
 
+    expect(screen.getByRole('button')).toHaveTextContent('Try again');
+  });
+
+  it('should render the notification box with several errors', () => {
+    renderWithRouter(
+      <ResultsContainer error errorContent={['error 1', 'error 2']} />
+    );
+
+    expect(screen.getByText('error 1')).toBeTruthy();
+    expect(screen.getByText('error 2')).toBeTruthy();
     expect(screen.getByRole('button')).toHaveTextContent('Try again');
   });
 
   it('should render the suggestion box', () => {
     renderWithRouter(
-      <ResultsContainer catalogError={false} hasAlreadyChecksResults={false} />
+      <ResultsContainer error={false} hasAlreadyChecksResults={false} />
     );
 
     expect(screen.getByRole('button')).toHaveTextContent('Select Checks now');
@@ -25,7 +35,7 @@ describe('ChecksResults ResultsContainer component', () => {
 
   it('should render a hello', () => {
     renderWithRouter(
-      <ResultsContainer catalogError={false} hasAlreadyChecksResults>
+      <ResultsContainer error={false} hasAlreadyChecksResults>
         <span data-testid="hello">Hello World!</span>
       </ResultsContainer>
     );
