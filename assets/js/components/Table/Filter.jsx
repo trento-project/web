@@ -23,9 +23,9 @@ function Filter({ options, title, value, onChange }) {
   useOnClickOutside(ref, () => setOpen(false));
 
   return (
-    <div className="flex-1 w-64 top-16 ml-2" ref={ref}>
+    <div className="flex-1 w-64 top-16" ref={ref}>
       <div className="mt-1 relative">
-        {value !== '' && (
+        {value.length !== 0 && (
           <button
             type="button"
             data-testid={`filter-${title}-clear`}
@@ -34,7 +34,7 @@ function Filter({ options, title, value, onChange }) {
           >
             <EOS_CLOSE
               size="20"
-              className="text-gray-400"
+              className="text-gray-400 hover:text-gray-500"
               color="currentColor"
             />
           </button>
@@ -43,7 +43,7 @@ function Filter({ options, title, value, onChange }) {
           type="button"
           data-testid={`filter-${title}`}
           onClick={() => setOpen(!open)}
-          className="relative w-full bg-white rounded-md border pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm"
+          className="relative w-full bg-white hover:bg-gray-50 rounded-md border pl-3 pr-10 py-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-jungle-green-500 focus:border-jungle-green-500 sm:text-sm"
         >
           <span className="flex items-center">
             <span
@@ -55,7 +55,7 @@ function Filter({ options, title, value, onChange }) {
             </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            {value === '' && (
+            {value.length === 0 && (
               <svg
                 className="h-5 w-5 text-gray-400"
                 xmlns="http://www.w3.org/2000/svg"
