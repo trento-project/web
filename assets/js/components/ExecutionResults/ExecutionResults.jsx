@@ -3,10 +3,7 @@ import Table from '@components/Table';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { EOS_ERROR } from 'eos-icons-react';
-
 import LoadingBox from '@components/LoadingBox';
-import NotificationBox from '@components/NotificationBox';
 
 import { getCheckResults, getCheckDescription } from './checksUtils';
 
@@ -83,6 +80,7 @@ function ExecutionResults({
   catalogError,
   executionLoading,
   executionStarted,
+  executionRunning,
   executionData,
   executionError,
   clusterSelectedChecks = [],
@@ -94,7 +92,7 @@ function ExecutionResults({
 
   const hosts = hostnames.map((item) => item.id);
 
-  if (catalogLoading) {
+  if (catalogLoading || executionLoading) {
     return <LoadingBox text="Loading checks execution..." />;
   }
 
@@ -102,27 +100,18 @@ function ExecutionResults({
     return <LoadingBox text="Checks execution starting..." />;
   }
 
-  if (catalogError || executionError) {
-    return (
-      <NotificationBox
-        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-        text={
-          catalogError && executionError
-            ? `${catalogError}\n${executionError}`
-            : catalogError || executionError
-        }
-        buttonText="Try again"
-        buttonOnClick={() => {
-          if (catalogError) {
-            onCatalogRefresh();
-          }
-          if (executionError) {
-            onLastExecutionUpdate();
-          }
-        }}
-      />
-    );
+  if (executionRunning) {
+    return <LoadingBox text="Checks execution running..." />;
   }
+
+  const onContentRefresh = () => {
+    if (catalogError) {
+      onCatalogRefresh();
+    }
+    if (executionError) {
+      onLastExecutionUpdate();
+    }
+  };
 
   const tableData = getCheckResults(executionData)
     .filter((check) => {
@@ -159,12 +148,16 @@ function ExecutionResults({
         onFilterChange={(newPredicates) => setPredicates(newPredicates)}
       />
       <ResultsContainer
-        catalogError={false}
+        error={catalogError || executionError}
+        errorContent={[
+          catalogError ? `Failed loading catalog: ${catalogError}` : null,
+          executionError ? `Failed loading execution: ${executionError}` : null,
+        ]}
         clusterID={clusterID}
         hasAlreadyChecksResults={!!(executionData || executionLoading)}
         selectedChecks={clusterSelectedChecks}
         hosts={hosts}
-        onCatalogRefresh={onCatalogRefresh}
+        onContentRefresh={onContentRefresh}
         onStartExecution={onStartExecution}
       >
         <Table config={resultsTableConfig} data={tableData} />

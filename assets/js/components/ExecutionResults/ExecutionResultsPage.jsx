@@ -15,6 +15,8 @@ import {
 } from '@state/lastExecutions';
 import ExecutionResults from './ExecutionResults';
 
+const runningStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
+
 function ExecutionResultsPage() {
   const { clusterID } = useParams();
   const dispatch = useDispatch();
@@ -54,7 +56,6 @@ function ExecutionResultsPage() {
     <ExecutionResults
       clusterID={clusterID}
       hostnames={hostnames}
-      executionStarted={executionData?.status !== REQUESTED_EXECUTION_STATE}
       clusterName={cluster?.name}
       clusterScenario={cluster?.type}
       cloudProvider={cluster?.provider}
@@ -64,6 +65,8 @@ function ExecutionResultsPage() {
       catalog={catalog}
       catalogError={catalogError}
       executionLoading={executionLoading}
+      executionStarted={executionData?.status !== REQUESTED_EXECUTION_STATE}
+      executionRunning={runningStates.includes(executionData?.status)}
       executionData={executionData}
       executionError={executionError}
       clusterSelectedChecks={cluster?.selected_checks}

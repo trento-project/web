@@ -6,23 +6,26 @@ import NotificationBox from '@components/NotificationBox';
 import ChecksSelectionHints from './ChecksSelectionHints';
 
 function ResultsContainer({
-  catalogError,
+  error,
+  errorContent,
   children,
   clusterID,
   hasAlreadyChecksResults,
   selectedChecks = [],
   hosts = [],
-  onCatalogRefresh = () => {},
+  onContentRefresh = () => {},
   onStartExecution = () => {},
 }) {
-  if (catalogError) {
+  if (error) {
     return (
-      <NotificationBox
-        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-        text={catalogError}
-        buttonText="Try again"
-        buttonOnClick={onCatalogRefresh}
-      />
+      <div className="bg-white rounded p-3 shadow">
+        <NotificationBox
+          icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+          text={errorContent}
+          buttonText="Try again"
+          buttonOnClick={onContentRefresh}
+        />
+      </div>
     );
   }
 
