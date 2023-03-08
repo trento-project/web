@@ -30,6 +30,7 @@ defmodule Trento.Domain.Host do
 
   alias Trento.Domain.Commands.{
     RegisterHost,
+    RollUpHost,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -40,6 +41,8 @@ defmodule Trento.Domain.Host do
     HeartbeatSucceded,
     HostDetailsUpdated,
     HostRegistered,
+    HostRolledUp,
+    HostRollUpRequested,
     ProviderUpdated,
     SlesSubscriptionsUpdated
   }
@@ -62,6 +65,7 @@ defmodule Trento.Domain.Host do
     field :provider, Ecto.Enum, values: Provider.values()
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
+    field :rolling_up, :boolean, default: false
 
     embeds_many :subscriptions, SlesSubscription
 
@@ -79,6 +83,9 @@ defmodule Trento.Domain.Host do
     |> cast(attrs, [:host_id, :provider])
     |> cast_polymorphic_embed(:provider_data, required: false)
   end
+
+  # Stop everything during the rollup process
+  def execute(%Host{rolling_up: true}, _), do: {:error, :host_rolling_up}
 
   # New host registered
   def execute(
@@ -242,6 +249,24 @@ defmodule Trento.Domain.Host do
     }
   end
 
+  # Start the rollup flow
+  def execute(
+        %Host{host_id: nil},
+        %RollUpHost{}
+      ) do
+    {:error, :host_not_registered}
+  end
+
+  def execute(
+        %Host{host_id: host_id} = snapshot,
+        %RollUpHost{}
+      ) do
+    %HostRollUpRequested{
+      host_id: host_id,
+      snapshot: snapshot
+    }
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -335,5 +360,17 @@ defmodule Trento.Domain.Host do
         subscriptions: subscriptions
       }) do
     %Host{host | subscriptions: subscriptions}
+  end
+
+  # Aggregate to rolling up state
+  def apply(%Host{} = host, %HostRollUpRequested{}) do
+    %Host{host | rolling_up: true}
+  end
+
+  # Hydrate the aggregate with a rollup snapshot after rollup ends
+  def apply(%Host{}, %HostRolledUp{
+        snapshot: snapshot
+      }) do
+    snapshot
   end
 end

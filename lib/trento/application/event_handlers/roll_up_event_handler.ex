@@ -13,7 +13,9 @@ defmodule Trento.RollUpEventHandler do
 
   alias Trento.Domain.Events.{
     ClusterRolledUp,
-    ClusterRollUpRequested
+    ClusterRollUpRequested,
+    HostRolledUp,
+    HostRollUpRequested
   }
 
   def handle(
@@ -22,6 +24,18 @@ defmodule Trento.RollUpEventHandler do
       ) do
     roll_up_event = %ClusterRolledUp{
       cluster_id: stream_id,
+      snapshot: snapshot
+    }
+
+    now = DateTime.to_iso8601(DateTime.utc_now())
+    archive_stream_id = "#{stream_id}-archived-#{now}"
+
+    RollUp.roll_up_aggregate(stream_id, roll_up_event, archive_stream_id)
+  end
+
+  def handle(%HostRollUpRequested{host_id: stream_id, snapshot: snapshot}, _) do
+    roll_up_event = %HostRolledUp{
+      host_id: stream_id,
       snapshot: snapshot
     }
 

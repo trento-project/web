@@ -16,6 +16,7 @@ defmodule Trento.Router do
     RegisterDatabaseInstance,
     RegisterHost,
     RollUpCluster,
+    RollUpHost,
     SelectChecks,
     UpdateHeartbeat,
     UpdateProvider,
@@ -25,7 +26,16 @@ defmodule Trento.Router do
   middleware Enrich
 
   identify Host, by: :host_id
-  dispatch [RegisterHost, UpdateHeartbeat, UpdateProvider, UpdateSlesSubscriptions], to: Host
+
+  dispatch [
+             RegisterHost,
+             UpdateHeartbeat,
+             UpdateProvider,
+             UpdateSlesSubscriptions,
+             RollUpHost
+           ],
+           to: Host,
+           lifespan: Host.Lifespan
 
   identify Cluster,
     by: :cluster_id
