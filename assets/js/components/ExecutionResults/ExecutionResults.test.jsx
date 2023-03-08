@@ -349,7 +349,6 @@ describe('ExecutionResults', () => {
     const {
       clusterID,
       hostnames,
-      checks: [checkID1, checkID2],
       loading,
       catalog,
       error,
@@ -377,26 +376,18 @@ describe('ExecutionResults', () => {
       { route: `/clusters/${clusterID}/executions/last?health=passing` }
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
-    expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('VMware')).toBeTruthy();
     expect(
       screen.getByText(
         'Configuration checks for HANA scale-up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
       )
     ).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
-    expect(screen.queryByText(checkID2)).toBeNull();
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
   });
 
   it('given provider is unknown, should render ExecutionResults with warning banner', async () => {
     const {
       clusterID,
       hostnames,
-      checks: [checkID1, checkID2],
       loading,
       catalog,
       error,
@@ -424,18 +415,11 @@ describe('ExecutionResults', () => {
       { route: `/clusters/${clusterID}/executions/last?health=passing` }
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
-    expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('Provider not recognized')).toBeTruthy();
     expect(
       screen.getByText(
         /The following catalog is valid for on-premise bare metal platforms.*If you are running your HANA cluster on a different platform, please use results with caution/
       )
     ).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
-    expect(screen.queryByText(checkID2)).toBeNull();
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
   });
 });

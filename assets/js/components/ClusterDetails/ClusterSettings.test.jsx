@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 import { withState, defaultInitialState } from '@lib/test-utils';
-import { catalogCheckFactory } from '@lib/test-utils/factories';
+import { catalogCheckFactory, clusterFactory } from '@lib/test-utils/factories';
 
 import { Route, Routes, MemoryRouter } from 'react-router-dom';
 import { ClusterSettings, UNKNOWN_PROVIDER } from './ClusterSettings';
@@ -46,21 +46,16 @@ describe('ClusterDetails ClusterSettings component', () => {
   it('given VMware provider, should render the warning banner', async () => {
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
+    const clusters = clusterFactory.buildList(1, { provider: 'vmware' });
 
-    const [StatefulChecksSettings, state] = withState(<ClusterSettings />, {
+    const state = {
       ...defaultInitialState,
       catalog: { loading: false, data: catalog, error: null },
-      clustersList: {
-        clusters: defaultInitialState.clustersList.clusters.map((cluster) => ({
-          ...cluster,
-          provider: 'vmware',
-        })),
-      },
-    });
+      clustersList: { clusters },
+    };
+    const { id: clusterID } = clusters[0];
 
-    const {
-      clusters: [, , , { id: clusterID }],
-    } = state.getState().clustersList;
+    const [StatefulChecksSettings] = withState(<ClusterSettings />, state);
 
     render(
       <MemoryRouter initialEntries={[`/clusters/${clusterID}/settings`]}>
@@ -86,21 +81,18 @@ describe('ClusterDetails ClusterSettings component', () => {
   it('given unknown provider, should render the warning banner', async () => {
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
-
-    const [StatefulChecksSettings, state] = withState(<ClusterSettings />, {
-      ...defaultInitialState,
-      catalog: { loading: false, data: catalog, error: null },
-      clustersList: {
-        clusters: defaultInitialState.clustersList.clusters.map((cluster) => ({
-          ...cluster,
-          provider: UNKNOWN_PROVIDER,
-        })),
-      },
+    const clusters = clusterFactory.buildList(1, {
+      provider: UNKNOWN_PROVIDER,
     });
 
-    const {
-      clusters: [, , , { id: clusterID }],
-    } = state.getState().clustersList;
+    const state = {
+      ...defaultInitialState,
+      catalog: { loading: false, data: catalog, error: null },
+      clustersList: { clusters },
+    };
+    const { id: clusterID } = clusters[0];
+
+    const [StatefulChecksSettings] = withState(<ClusterSettings />, state);
 
     render(
       <MemoryRouter initialEntries={[`/clusters/${clusterID}/settings`]}>
