@@ -262,8 +262,8 @@ defmodule Trento.Domain.Host do
         %RollUpHost{}
       ) do
     %HostRollUpRequested{
-      snapshot: snapshot,
-      host_id: host_id
+      host_id: host_id,
+      snapshot: snapshot
     }
   end
 

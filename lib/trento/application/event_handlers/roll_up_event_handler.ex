@@ -18,9 +18,12 @@ defmodule Trento.RollUpEventHandler do
     HostRollUpRequested
   }
 
-  def handle(%HostRollUpRequested{host_id: stream_id, snapshot: snapshot}, _) do
-    roll_up_event = %HostRolledUp{
-      host_id: stream_id,
+  def handle(
+        %ClusterRollUpRequested{cluster_id: stream_id, snapshot: snapshot},
+        _
+      ) do
+    roll_up_event = %ClusterRolledUp{
+      cluster_id: stream_id,
       snapshot: snapshot
     }
 
@@ -30,12 +33,9 @@ defmodule Trento.RollUpEventHandler do
     RollUp.roll_up_aggregate(stream_id, roll_up_event, archive_stream_id)
   end
 
-  def handle(
-        %ClusterRollUpRequested{cluster_id: stream_id, snapshot: snapshot},
-        _
-      ) do
-    roll_up_event = %ClusterRolledUp{
-      cluster_id: stream_id,
+  def handle(%HostRollUpRequested{host_id: stream_id, snapshot: snapshot}, _) do
+    roll_up_event = %HostRolledUp{
+      host_id: stream_id,
       snapshot: snapshot
     }
 

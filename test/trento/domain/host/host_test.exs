@@ -534,7 +534,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should change the cluster state to rolling up" do
+    test "should change the host state to rolling up" do
       host_id = UUID.uuid4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
@@ -563,7 +563,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should not accept commands if a cluster is in rolling up state" do
+    test "should not accept commands if a host is in rolling up state" do
       host_id = UUID.uuid4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
