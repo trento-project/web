@@ -8,7 +8,7 @@ defmodule Trento.Domain.Events.HostRollUpRequested do
 
   alias Trento.Domain.Host
 
-  defevent resource: "host" do
+  defevent do
     field :host_id, Ecto.UUID
     embeds_one :snapshot, Host
   end
