@@ -8,7 +8,7 @@ import { EOS_ERROR } from 'eos-icons-react';
 import Modal from '@components/Modal';
 import BackButton from '@components/BackButton';
 import LoadingBox from '@components/LoadingBox';
-import { warningBanners } from '@components/ClusterDetails/ClusterSettings';
+import { providerWarningBanners } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
 
@@ -135,7 +135,7 @@ function ExecutionResults({
           onChange={(newPredicates) => setPredicates(newPredicates)}
         />
       </div>
-      {warningBanners[cloudProvider] ?? null}
+      {providerWarningBanners[cloudProvider] ?? null}
       <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
       <ResultsContainer
         catalogError={false}

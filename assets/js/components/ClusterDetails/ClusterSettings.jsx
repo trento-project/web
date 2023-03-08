@@ -16,7 +16,7 @@ import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
-export const warningBanners = {
+export const providerWarningBanners = {
   [UNKNOWN_PROVIDER]: (
     <WarningBanner>
       The following catalog is valid for on-premise bare metal platforms.
@@ -51,8 +51,8 @@ export function ClusterSettings() {
         Cluster Settings for{' '}
         <span className="font-bold">{getClusterName(cluster)}</span>
       </PageHeader>
+      {providerWarningBanners[cluster.provider] ?? null}
       <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
-      {warningBanners[cluster.provider] ?? null}
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
     </div>
   );
