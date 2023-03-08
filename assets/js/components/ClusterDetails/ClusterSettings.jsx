@@ -16,7 +16,7 @@ import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
-const warningBanners = {
+export const warningBanners = {
   [UNKNOWN_PROVIDER]: (
     <WarningBanner>
       The following catalog is valid for on-premise bare metal platforms.

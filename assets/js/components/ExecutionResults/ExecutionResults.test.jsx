@@ -18,6 +18,7 @@ import {
   withEmptyExpectations,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom/extend-expect';
+import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
@@ -342,5 +343,99 @@ describe('ExecutionResults', () => {
     expect(screen.getAllByText(checkID2)).toHaveLength(2);
     expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
     expect(screen.getAllByText('1/2 expectations failed')).toBeTruthy();
+  });
+
+  it('given provider is VMware, should render ExecutionResults with warning banner', async () => {
+    const {
+      clusterID,
+      hostnames,
+      checks: [checkID1, checkID2],
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('passing');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterName="test-cluster"
+        clusterScenario="hana_scale_up"
+        cloudProvider="vmware"
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />,
+      { route: `/clusters/${clusterID}/executions/last?health=passing` }
+    );
+
+    expect(screen.getByText('test-cluster')).toBeTruthy();
+    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('VMware')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Configuration checks for HANA scale-up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
+      )
+    ).toBeTruthy();
+    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
+    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
+    expect(screen.getAllByText(checkID1)).toHaveLength(2);
+    expect(screen.queryByText(checkID2)).toBeNull();
+    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
+  });
+
+  it('given provider is unknown, should render ExecutionResults with warning banner', async () => {
+    const {
+      clusterID,
+      hostnames,
+      checks: [checkID1, checkID2],
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('passing');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterName="test-cluster"
+        clusterScenario="hana_scale_up"
+        cloudProvider={UNKNOWN_PROVIDER}
+        hostnames={hostnames}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />,
+      { route: `/clusters/${clusterID}/executions/last?health=passing` }
+    );
+
+    expect(screen.getByText('test-cluster')).toBeTruthy();
+    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('Provider not recognized')).toBeTruthy();
+    expect(
+      screen.getByText(
+        /The following catalog is valid for on-premise bare metal platforms.*If you are running your HANA cluster on a different platform, please use results with caution/
+      )
+    ).toBeTruthy();
+    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
+    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
+    expect(screen.getAllByText(checkID1)).toHaveLength(2);
+    expect(screen.queryByText(checkID2)).toBeNull();
+    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
   });
 });
