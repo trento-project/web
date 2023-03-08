@@ -34,6 +34,7 @@ Trento.Domain.Commands.RegisterClusterHost.html
 Trento.Domain.Commands.RegisterDatabaseInstance.html
 Trento.Domain.Commands.RegisterHost.html
 Trento.Domain.Commands.RollUpCluster.html
+Trento.Domain.Commands.RollUpHost.html
 Trento.Domain.Commands.SelectChecks.html
 Trento.Domain.Commands.UpdateHeartbeat.html
 Trento.Domain.Commands.UpdateProvider.html
@@ -65,6 +66,8 @@ Trento.Domain.Events.HostAddedToCluster.html
 Trento.Domain.Events.HostChecksExecutionCompleted.html
 Trento.Domain.Events.HostDetailsUpdated.html
 Trento.Domain.Events.HostRegistered.html
+Trento.Domain.Events.HostRollUpRequested.html
+Trento.Domain.Events.HostRolledUp.html
 Trento.Domain.Events.ProviderUpdated.html
 Trento.Domain.Events.SapSystemHealthChanged.html
 Trento.Domain.Events.SapSystemRegistered.html
@@ -72,6 +75,7 @@ Trento.Domain.Events.SlesSubscriptionsUpdated.html
 Trento.Domain.GcpProvider.html
 Trento.Domain.HanaClusterDetails.html
 Trento.Domain.HealthService.html
+Trento.Domain.Host.Lifespan.html
 Trento.Domain.Host.html
 Trento.Domain.HostExecution.html
 Trento.Domain.SapSystem.Application.html
@@ -263,8 +267,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-D58B3E76.js
-dist/sidebar_items-B022E6A9.js
+dist/search_items-009A4449.js
+dist/sidebar_items-7058292E.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

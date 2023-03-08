@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-B022E6A9.js"></script>
+    <script src="dist/sidebar_items-7058292E.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -180,7 +180,7 @@ validates the required ones and returns a changeset.</p></div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#execute/2" translate="no">execute(host, arg2)</a>
+          <a href="#execute/2" translate="no">execute(snapshot, arg2)</a>
 
         </div>
 
@@ -238,7 +238,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L49" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L52" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -261,6 +261,7 @@ Types
   os_version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   provider: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   provider_data: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  rolling_up: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   socket_count: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   subscriptions: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   total_memory_mb: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
@@ -293,7 +294,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">apply(host, arg2)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L245" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L270" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -315,7 +316,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L49" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L52" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -337,7 +338,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L77" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L81" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -358,9 +359,9 @@ validates the required ones and returns a changeset.</p>
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">execute(host, arg2)</h1>
+    <h1 class="signature" translate="no">execute(snapshot, arg2)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L84" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L88" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -382,7 +383,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L49" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L52" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -411,7 +412,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L49" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L52" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -439,7 +440,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L49" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/host.ex#L52" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
