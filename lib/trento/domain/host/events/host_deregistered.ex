@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Host.Events.HostDeregistered do
+defmodule Trento.Domain.Events.HostDeregistered do
   @moduledoc """
     This event is emitted when a deregistration (decomission) of a host is completed.
   """

@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Host.Events.HostDeregistrationRequested do
+defmodule Trento.Domain.Events.HostDeregistrationRequested do
   @moduledoc """
     This event is emitted when a deregistration (decomission) of a host is requested.
   """
