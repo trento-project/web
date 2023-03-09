@@ -1,4 +1,4 @@
-defmodule Trento.Application.ProcessManagers.DeregistrationProcessManager do
+defmodule Trento.DeregistrationProcessManager do
   @moduledoc """
     DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible
     for the deregistration procedure for both hosts and clusters.
@@ -12,7 +12,7 @@ defmodule Trento.Application.ProcessManagers.DeregistrationProcessManager do
     application: Trento.Commanded,
     name: "deregistration_process_manager"
 
-  alias Trento.Application.ProcessManagers.DeregistrationState
+  alias Trento.ProcessManagers.DeregistrationState
 
   alias Trento.Domain.Events.{
     HostDeregistered,

@@ -1,4 +1,4 @@
-defmodule Trento.Application.ProcessManagers.DeregistrationState do
+defmodule Trento.ProcessManagers.DeregistrationState do
   @moduledoc """
     DeregistrationState represent the state of Deregistration process manager
   """
