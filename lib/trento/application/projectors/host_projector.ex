@@ -16,6 +16,7 @@ defmodule Trento.HostProjector do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostAddedToCluster,
+    HostDeregistered,
     HostDetailsUpdated,
     HostRegistered,
     ProviderUpdated
@@ -44,6 +45,21 @@ defmodule Trento.HostProjector do
         on_conflict: {:replace_all_except, [:cluster_id]},
         conflict_target: [:id]
       )
+    end
+  )
+
+  project(
+    %HostDeregistered{
+      host_id: id,
+      deregistered_at: deregistered_at
+    },
+    fn multi ->
+      changeset =
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
+          deregistered_at: deregistered_at
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
@@ -141,6 +157,23 @@ defmodule Trento.HostProjector do
       "monitoring:hosts",
       "host_registered",
       HostView.render("host_registered.json", host: host)
+    )
+  end
+
+  def after_update(
+        %HostDeregistered{host_id: id},
+        _,
+        _
+      ) do
+    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_deregistered",
+      %{
+        id: id,
+        hostname: hostname
+      }
     )
   end
 

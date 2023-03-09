@@ -344,4 +344,28 @@ defmodule Trento.HostProjectorTest do
                      },
                      1000
   end
+
+  test "should update the deregistered_at field when HostDeregistered is received",
+       %{
+         host_id: host_id
+       } do
+    timestamp = DateTime.utc_now()
+
+    event = %HostDeregistered{
+      host_id: host_id,
+      deregistered_at: timestamp
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, event.host_id)
+
+    assert timestamp == host_projection.deregistered_at
+
+    assert_broadcast "host_deregistered",
+                     %{
+                       id: ^host_id,
+                       hostname: ^hostname
+                     },
+                     1000
+  end
 end
