@@ -36,7 +36,7 @@ defmodule Trento.Router do
              UpdateSlesSubscriptions,
              RollUpHost,
              RequestHostDeregistration,
-             DeregisterHost,
+             DeregisterHost
            ],
            to: Host,
            lifespan: Host.Lifespan
