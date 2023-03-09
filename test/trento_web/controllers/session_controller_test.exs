@@ -72,7 +72,8 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"error" => "You don't have access to the resource."} = resp
+      assert %{"errors" => [%{"detail" => "Invalid refresh token", "title" => "Unauthorized"}]} =
+               resp
     end
 
     test "should return unauthorized if the refresh token signature is malformed", %{conn: conn} do
@@ -92,7 +93,8 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"error" => "You don't have access to the resource."} = resp
+      assert %{"errors" => [%{"detail" => "Invalid refresh token", "title" => "Unauthorized"}]} =
+               resp
     end
 
     test "should return unauthorized if the refresh token is valid but expired", %{conn: conn} do
@@ -115,7 +117,8 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"error" => "You don't have access to the resource."} = resp
+      assert %{"errors" => [%{"detail" => "Invalid refresh token", "title" => "Unauthorized"}]} =
+               resp
     end
   end
 
@@ -192,7 +195,8 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"error" => "Invalid username or password"} = resp
+      assert %{"errors" => [%{"detail" => "Invalid credentials", "title" => "Unauthorized"}]} =
+               resp
     end
   end
 end

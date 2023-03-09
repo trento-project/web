@@ -27,21 +27,21 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "heartbeat" do
-    test "heartbeat action should return 400 when the request is malformed", %{conn: conn} do
+    test "should return 404 if the host was not found", %{conn: conn} do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
         fn _ ->
-          {:error, "the reason is you"}
+          {:error, :host_not_registered}
         end
       )
 
       resp =
         conn
-        |> post("/api/v1/hosts/#{Faker.UUID.v4()}/heartbeat")
-        |> json_response(:bad_request)
+        |> post("/api/v1/hosts/#{UUID.uuid4()}/heartbeat")
+        |> json_response(:not_found)
 
-      assert %{"error" => "the reason is you"} = resp
+      assert %{"errors" => [%{"detail" => "Host not found", "title" => "Not Found"}]} = resp
     end
   end
 end
