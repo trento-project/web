@@ -8,5 +8,6 @@ defmodule Trento.Domain.Commands.DeregisterHost do
 
   defcommand do
     field :host_id, Ecto.UUID
+    field :deregistered_at, :utc_datetime_usec, default: DateTime.utc_now()
   end
 end
