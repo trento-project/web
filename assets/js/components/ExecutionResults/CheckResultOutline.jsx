@@ -8,21 +8,29 @@ const TARGET_CLUSTER = 'TARGET_CLUSTER';
 const isExpect = ({ type }) => type === EXPECT;
 const isExpectSame = ({ type }) => type === EXPECT_SAME;
 
-function CheckResultOutline({
-  checkID,
-  agentsCheckResults,
-  expectationResults,
-  clusterName,
-}) {
-  const expectExpectationsCount = expectationResults.filter(isExpect).length;
-  const expectResults = agentsCheckResults.map((agentCheckResult) => {
+const expectExpectations = (expectationList) =>
+  expectationList.filter(isExpect);
+
+const getExpectExpectationsMet = (expectationEvaluations) =>
+  expectExpectations(expectationEvaluations).filter(
+    ({ return_value }) => return_value
+  );
+
+const extractExpectResults = (expectations, agentsCheckResults) => {
+  const expectExpectationsCount = expectExpectations(expectations).length;
+
+  if (expectExpectationsCount === 0) {
+    return [];
+  }
+
+  return agentsCheckResults.map((agentCheckResult) => {
     const { hostname, expectation_evaluations } = agentCheckResult;
 
     const isAgentCheckError = !!agentCheckResult?.type;
 
-    const metExpectations = expectation_evaluations
-      ?.filter(isExpect)
-      .filter(({ return_value }) => return_value).length;
+    const metExpectations = getExpectExpectationsMet(
+      expectation_evaluations || []
+    ).length;
 
     const expectationsSummary = isAgentCheckError
       ? agentCheckResult.message
@@ -36,17 +44,49 @@ function CheckResultOutline({
         isAgentCheckError || metExpectations < expectExpectationsCount,
     };
   });
+};
 
-  const expectSameResults = expectationResults
-    .filter(isExpectSame)
-    .map(({ result }) => ({
+const expectSameExpectations = (expectationList) =>
+  expectationList.filter(isExpectSame);
+
+const getExpectSameExpectationResult = (expectationResults, name) =>
+  expectSameExpectations(expectationResults).find(
+    ({ name: resultExpectationName }) => name === resultExpectationName
+  ) || {};
+
+const extractExpectSameResults = (
+  targetName,
+  expectations,
+  expectationResults
+) =>
+  expectSameExpectations(expectations).map(({ name }) => {
+    const { result } = getExpectSameExpectationResult(expectationResults, name);
+
+    return {
       target: TARGET_CLUSTER,
-      targetName: clusterName,
+      targetName,
+      expectationName: name,
       expectationsSummary: result
-        ? 'Value is the same on all targets'
-        : 'Value is not the same on all targets',
+        ? `Value \`${name}\` is the same on all targets`
+        : `Value \`${name}\` is not the same on all targets`,
       isAgentCheckError: !result,
-    }));
+    };
+  });
+
+function CheckResultOutline({
+  checkID,
+  expectations,
+  agentsCheckResults,
+  expectationResults,
+  clusterName,
+}) {
+  const expectResults = extractExpectResults(expectations, agentsCheckResults);
+
+  const expectSameResults = extractExpectSameResults(
+    clusterName,
+    expectations,
+    expectationResults
+  );
 
   return (
     <div className="p-5">
@@ -66,11 +106,12 @@ function CheckResultOutline({
             ({
               target,
               targetName,
+              expectationName,
               expectationsSummary,
               isAgentCheckError,
             }) => (
               <TargetResult
-                key={`${checkID}-${targetName}`}
+                key={`${checkID}-${targetName}-${expectationName}`}
                 isCluster={target === TARGET_CLUSTER}
                 targetName={targetName}
                 expectationsSummary={expectationsSummary}

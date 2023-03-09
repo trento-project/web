@@ -35,6 +35,30 @@ export const healthSummaryFactory = Factory.define(() => ({
   }),
 }));
 
+export const catalogExpectExpectationFactory = Factory.define(({ name }) => ({
+  name: name || faker.animal.cat(),
+  type: 'expect',
+  expression: faker.lorem.sentence(),
+}));
+
+export const catalogExpectExpectation = (name) =>
+  catalogExpectExpectationFactory.build({
+    name,
+  });
+
+export const catalogExpectSameExpectationFactory = Factory.define(
+  ({ name }) => ({
+    name: name || faker.animal.cat(),
+    type: 'expect_same',
+    expression: faker.lorem.sentence(),
+  })
+);
+
+export const catalogExpectSameExpectation = (name) =>
+  catalogExpectSameExpectationFactory.build({
+    name,
+  });
+
 export const catalogCheckFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   name: faker.animal.cat(),
@@ -42,6 +66,7 @@ export const catalogCheckFactory = Factory.define(() => ({
   description: faker.lorem.paragraph(),
   remediation: faker.lorem.paragraph(),
   premium: faker.datatype.boolean(),
+  expectations: catalogExpectExpectationFactory.buildList(3),
 }));
 
 export const catalogFactory = Factory.define(() => ({
