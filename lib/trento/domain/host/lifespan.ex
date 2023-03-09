@@ -19,7 +19,7 @@ defmodule Trento.Domain.Host.Lifespan do
   This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.
 
   The host aggregate will be stopped after a HostDeregisteredEvent is received.
-  The host is decomissioned and can be safely stopped.
+  The host is decommissioned and can be safely stopped.
   """
   def after_event(%HostRollUpRequested{}), do: :stop
   def after_event(%HostDeregistered{}), do: :stop

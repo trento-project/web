@@ -16,8 +16,8 @@ defmodule Trento.HostTest do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
-    HostDeregistrationRequested,
     HostDeregistered,
+    HostDeregistrationRequested,
     HostDetailsUpdated,
     HostRegistered,
     HostRolledUp,
