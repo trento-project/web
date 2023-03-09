@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Host.Commands.RequestHostDeregistration do
+defmodule Trento.Domain.Commands.RequestHostDeregistration do
   @moduledoc """
     Request a deregistration of a host
   """
