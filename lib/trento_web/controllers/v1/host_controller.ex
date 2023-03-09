@@ -1,13 +1,13 @@
 defmodule TrentoWeb.V1.HostController do
   use TrentoWeb, :controller
+  use OpenApiSpex.ControllerSpecs
 
   alias Trento.{
     Heartbeats,
     Hosts
   }
 
-  use OpenApiSpex.ControllerSpecs
-
+  plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
   tags ["Target Infrastructure"]
@@ -28,15 +28,35 @@ defmodule TrentoWeb.V1.HostController do
     render(conn, "hosts.json", hosts: hosts)
   end
 
-  operation :heartbeat, false
+  operation :heartbeat,
+    summary: "Update the heartbeat for a host",
+    tags: ["Agent"],
+    description:
+      "Update the heartbeat for a host. This is used by the agents to signal that they are still alive.",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ]
+    ],
+    responses: [
+      accepted: "The heartbeat has been updated",
+      not_found: TrentoWeb.OpenApi.Schema.NotFound.response(),
+      bad_request: TrentoWeb.OpenApi.Schema.BadRequest.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+    ]
 
-  def heartbeat(conn, %{"id" => id}) do
+  def heartbeat(conn, %{id: id}) do
     case Heartbeats.heartbeat(id) do
       {:ok, _} ->
         send_resp(conn, 204, "")
 
-      {:error, _, reason, _} ->
-        {:error, {:bad_request, reason}}
+      {:error, :command, :host_not_registered, _} ->
+        {:error, {:not_found, "Host not found"}}
+
+      {:error, _, _, _} ->
+        {:error, {:internal_error, "An error occurred while updating the heartbeat."}}
     end
   end
 end

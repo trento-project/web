@@ -1,11 +1,10 @@
 defmodule TrentoWeb.V1.AboutController do
   use TrentoWeb, :controller
+  use OpenApiSpex.ControllerSpecs
 
   alias Trento.Hosts
 
   alias TrentoWeb.OpenApi.Schema
-
-  use OpenApiSpex.ControllerSpecs
 
   @version Mix.Project.config()[:version]
 

@@ -76,7 +76,7 @@ defmodule TrentoWeb.SessionController do
         )
 
       {:error, _} ->
-        {:error, :invalid_credentials}
+        {:error, {:unauthorized, "Invalid credentials"}}
     end
   end
 
@@ -158,12 +158,8 @@ defmodule TrentoWeb.SessionController do
           expiration: conn.private[:access_token_expiration]
         )
 
-      {:error, reason} ->
-        Logger.error("Failed to get a new access token for refresh token",
-          error: reason
-        )
-
-        {:error, :unauthorized}
+      {:error, _} ->
+        {:error, {:unauthorized, "Invalid refresh token"}}
     end
   end
 end

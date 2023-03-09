@@ -7,14 +7,7 @@ defmodule TrentoWeb.V1.ClusterController do
   alias TrentoWeb.OpenApi.Schema
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
-
   action_fallback TrentoWeb.FallbackController
-
-  @cluster_id_schema [
-    in: :path,
-    required: true,
-    type: %OpenApiSpex.Schema{type: :string, format: :uuid}
-  ]
 
   operation :list,
     summary: "List Pacemaker Clusters",
@@ -37,10 +30,17 @@ defmodule TrentoWeb.V1.ClusterController do
     tags: ["Checks"],
     description: "Trigger execution of the latest Checks Selection on the target infrastructure",
     parameters: [
-      cluster_id: @cluster_id_schema
+      cluster_id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ]
     ],
     responses: [
-      accepted: "The Command has been accepted and the Requested execution is scheduled"
+      accepted: "The Command has been accepted and the Requested execution is scheduled",
+      not_found: Schema.NotFound.response(),
+      bad_request: Schema.BadRequest.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def request_checks_execution(conn, %{cluster_id: cluster_id}) do
@@ -63,11 +63,18 @@ defmodule TrentoWeb.V1.ClusterController do
     tags: ["Checks"],
     description: "Select the Checks eligible for execution on the target infrastructure",
     parameters: [
-      cluster_id: @cluster_id_schema
+      cluster_id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ]
     ],
     request_body: {"Checks Selection", "application/json", Schema.Checks.ChecksSelectionRequest},
     responses: [
-      accepted: "The Selection has been successfully collected"
+      accepted: "The Selection has been successfully collected",
+      not_found: Schema.NotFound.response(),
+      bad_request: Schema.BadRequest.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def select_checks(%{body_params: body_params} = conn, %{cluster_id: cluster_id}) do
