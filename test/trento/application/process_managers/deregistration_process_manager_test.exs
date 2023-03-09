@@ -10,7 +10,6 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
   alias Trento.DeregistrationProcessManager
   alias Trento.Domain.Commands.DeregisterHost
-  alias Trento.ProcessManagers.DeregistrationState
 
   describe "events interested" do
     test "should start the process manager when HostRegisteredEvent arrives" do
@@ -46,7 +45,7 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
   describe "host deregistration procedure" do
     test "should update the state with the proper host id when HostRegistered events is emitted" do
-      initial_state = %DeregistrationState{}
+      initial_state = %DeregistrationProcessManager{}
       host_id = UUID.uuid4()
 
       events = [%HostRegistered{host_id: host_id}]
@@ -54,11 +53,11 @@ defmodule Trento.DeregistrationProcessManagerTest do
       {commands, state} = reduce_events(events, initial_state)
 
       assert [] == commands
-      assert %DeregistrationState{host_id: ^host_id} = state
+      assert %DeregistrationProcessManager{host_id: ^host_id} = state
     end
 
     test "should update the state with the proper host when HostRolledUp event is emitted" do
-      initial_state = %DeregistrationState{}
+      initial_state = %DeregistrationProcessManager{}
       host_id = UUID.uuid4()
 
       events = [%HostRolledUp{host_id: host_id}]
@@ -66,12 +65,12 @@ defmodule Trento.DeregistrationProcessManagerTest do
       {commands, state} = reduce_events(events, initial_state)
 
       assert [] == commands
-      assert %DeregistrationState{host_id: ^host_id} = state
+      assert %DeregistrationProcessManager{host_id: ^host_id} = state
     end
 
     test "should dispatch DeregisterHost command when HostDeregistrationRequested is emitted" do
       host_id = UUID.uuid4()
-      initial_state = %DeregistrationState{host_id: host_id}
+      initial_state = %DeregistrationProcessManager{host_id: host_id}
 
       events = [%HostDeregistrationRequested{host_id: host_id}]
 

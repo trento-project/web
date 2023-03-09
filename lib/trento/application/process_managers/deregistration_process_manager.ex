@@ -12,7 +12,12 @@ defmodule Trento.DeregistrationProcessManager do
     application: Trento.Commanded,
     name: "deregistration_process_manager"
 
-  alias Trento.ProcessManagers.DeregistrationState
+  @derive Jason.Encoder
+  defstruct [
+    :host_id
+  ]
+
+  alias Trento.DeregistrationProcessManager
 
   alias Trento.Domain.Events.{
     HostDeregistered,
@@ -39,15 +44,15 @@ defmodule Trento.DeregistrationProcessManager do
   def interested?(%HostDeregistered{host_id: host_id}), do: {:stop, host_id}
   def interested?(_event), do: false
 
-  def handle(%DeregistrationState{}, %HostDeregistrationRequested{host_id: host_id}) do
+  def handle(%DeregistrationProcessManager{}, %HostDeregistrationRequested{host_id: host_id}) do
     %DeregisterHost{host_id: host_id}
   end
 
-  def apply(%DeregistrationState{} = state, %HostRegistered{host_id: host_id}) do
-    %DeregistrationState{state | host_id: host_id}
+  def apply(%DeregistrationProcessManager{} = state, %HostRegistered{host_id: host_id}) do
+    %DeregistrationProcessManager{state | host_id: host_id}
   end
 
-  def apply(%DeregistrationState{} = state, %HostRolledUp{host_id: host_id}) do
-    %DeregistrationState{state | host_id: host_id}
+  def apply(%DeregistrationProcessManager{} = state, %HostRolledUp{host_id: host_id}) do
+    %DeregistrationProcessManager{state | host_id: host_id}
   end
 end
