@@ -9,14 +9,6 @@ defmodule TrentoWeb.SessionView do
     %{access_token: token, expires_in: expiration}
   end
 
-  def render("invalid_credentials.json", _args) do
-    %{error: "Invalid username or password"}
-  end
-
-  def render("unauthorized.json", _args) do
-    %{error: "You don't have access to the resource."}
-  end
-
   def render("me.json", %{user: user}) do
     %{
       username: user.username
