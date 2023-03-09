@@ -8,10 +8,13 @@ import {
   catalogFactory,
   catalogCheckFactory,
   hostnameFactory,
-  addCriticalExpectation,
-  addPassingExpectation,
   checksExecutionCompletedFactory,
   emptyCheckResultFactory,
+  catalogExpectExpectation,
+  catalogExpectSameExpectation,
+  addPassingExpectExpectation,
+  addPassingExpectSameExpectation,
+  addCriticalExpectExpectation,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom/extend-expect';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
@@ -25,22 +28,31 @@ const prepareStateData = (checkExecutionStatus) => {
   const [{ id: agent1 }, { id: agent2 }] = hostnames;
   const targets = [agent1, agent2];
 
+  const expectationName1 = faker.company.name();
+  const expectationName2 = faker.company.name();
+  const expectationName3 = faker.company.name();
+  const expectationName4 = faker.company.name();
+  const expectationName5 = faker.company.name();
+
   let checkResult1 = emptyCheckResultFactory.build({
     checkID: checkID1,
     targets,
     result: 'passing',
   });
-  checkResult1 = addPassingExpectation(checkResult1, 'expect');
-  checkResult1 = addPassingExpectation(checkResult1, 'expect');
-  checkResult1 = addPassingExpectation(checkResult1, 'expect_same');
+  checkResult1 = addPassingExpectExpectation(checkResult1, expectationName1);
+  checkResult1 = addPassingExpectExpectation(checkResult1, expectationName2);
+  checkResult1 = addPassingExpectSameExpectation(
+    checkResult1,
+    expectationName3
+  );
 
   let checkResult2 = emptyCheckResultFactory.build({
     checkID: checkID2,
     targets,
     result: 'critical',
   });
-  checkResult2 = addPassingExpectation(checkResult2, 'expect');
-  checkResult2 = addCriticalExpectation(checkResult2, 'expect');
+  checkResult2 = addPassingExpectExpectation(checkResult2, expectationName4);
+  checkResult2 = addCriticalExpectExpectation(checkResult2, expectationName5);
 
   const executionResult = checksExecutionCompletedFactory.build({
     check_results: [checkResult1, checkResult2],
@@ -58,10 +70,19 @@ const prepareStateData = (checkExecutionStatus) => {
       catalogCheckFactory.build({
         id: checkID1,
         description: aCheckDescription,
+        expectations: [
+          catalogExpectExpectation(expectationName1),
+          catalogExpectExpectation(expectationName2),
+          catalogExpectSameExpectation(expectationName3),
+        ],
       }),
       catalogCheckFactory.build({
         id: checkID2,
         description: anotherCheckDescription,
+        expectations: [
+          catalogExpectExpectation(expectationName4),
+          catalogExpectExpectation(expectationName5),
+        ],
       }),
     ],
     error: null,
@@ -141,7 +162,7 @@ describe('ExecutionResults', () => {
     expect(screen.getAllByText(hostnames[0].hostname)).toHaveLength(2);
     expect(screen.getAllByText(hostnames[1].hostname)).toHaveLength(2);
     expect(
-      screen.getAllByText('Value is the same on all targets')
+      screen.getAllByText(/Value `.*` is the same on all targets/)
     ).toHaveLength(1);
     expect(screen.getAllByText('2/2 Expectations met.')).toHaveLength(2);
     expect(screen.getAllByText('1/2 Expectations met.')).toHaveLength(2);
@@ -153,7 +174,9 @@ describe('ExecutionResults', () => {
 
     expect(tableRows[0]).toHaveTextContent(checkID1);
     expect(tableRows[1]).toHaveTextContent(clusterName);
-    expect(tableRows[1]).toHaveTextContent('Value is the same on all targets');
+    expect(tableRows[1]).toHaveTextContent(
+      /Value `.*` is the same on all targets/
+    );
     expect(tableRows[1]).toHaveTextContent(hostnames[0].hostname);
     expect(tableRows[1]).toHaveTextContent('2/2 Expectations met.');
 
