@@ -8,14 +8,18 @@ defmodule Trento.DeregistrationProcessManager do
 
     For more information see https://hexdocs.pm/commanded/process-managers.html
   """
+
+  @required_fields :all
+
+  use Trento.Type
+
   use Commanded.ProcessManagers.ProcessManager,
     application: Trento.Commanded,
     name: "deregistration_process_manager"
 
-  @derive Jason.Encoder
-  defstruct [
-    :host_id
-  ]
+  deftype do
+    field :host_id, Ecto.UUID
+  end
 
   alias Trento.DeregistrationProcessManager
 
