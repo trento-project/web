@@ -42,6 +42,8 @@ export function ClusterSettings() {
     return <div>Loading...</div>;
   }
 
+  const warning = providerWarningBanners[cluster.provider];
+
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/clusters/${clusterID}`}>
@@ -51,7 +53,7 @@ export function ClusterSettings() {
         Cluster Settings for{' '}
         <span className="font-bold">{getClusterName(cluster)}</span>
       </PageHeader>
-      {providerWarningBanners[cluster.provider] ?? null}
+      {warning}
       <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
     </div>

@@ -103,7 +103,10 @@ function ExecutionResults({
       />
     );
   }
+
   const checkResults = getCheckResults(executionData);
+  const warning = providerWarningBanners[cloudProvider];
+
   return (
     <div>
       <Modal
@@ -135,7 +138,7 @@ function ExecutionResults({
           onChange={(newPredicates) => setPredicates(newPredicates)}
         />
       </div>
-      {providerWarningBanners[cloudProvider] ?? null}
+      {warning}
       <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
       <ResultsContainer
         catalogError={false}

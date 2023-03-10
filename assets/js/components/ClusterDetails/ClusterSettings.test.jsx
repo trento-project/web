@@ -4,7 +4,11 @@ import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
-import { withState, defaultInitialState } from '@lib/test-utils';
+import {
+  withState,
+  defaultInitialState,
+  renderWithRouterMatch,
+} from '@lib/test-utils';
 import { catalogCheckFactory, clusterFactory } from '@lib/test-utils/factories';
 
 import { Route, Routes, MemoryRouter } from 'react-router-dom';
@@ -57,16 +61,10 @@ describe('ClusterDetails ClusterSettings component', () => {
 
     const [StatefulChecksSettings] = withState(<ClusterSettings />, state);
 
-    render(
-      <MemoryRouter initialEntries={[`/clusters/${clusterID}/settings`]}>
-        <Routes>
-          <Route
-            path="clusters/:clusterID/settings"
-            element={StatefulChecksSettings}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderWithRouterMatch(StatefulChecksSettings, {
+      path: 'clusters/:clusterID/settings',
+      route: `/clusters/${clusterID}/settings`,
+    });
 
     expect(screen.getByText('Provider')).toBeVisible();
     expect(screen.getByText('VMware')).toBeVisible();
@@ -94,16 +92,10 @@ describe('ClusterDetails ClusterSettings component', () => {
 
     const [StatefulChecksSettings] = withState(<ClusterSettings />, state);
 
-    render(
-      <MemoryRouter initialEntries={[`/clusters/${clusterID}/settings`]}>
-        <Routes>
-          <Route
-            path="clusters/:clusterID/settings"
-            element={StatefulChecksSettings}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderWithRouterMatch(StatefulChecksSettings, {
+      path: 'clusters/:clusterID/settings',
+      route: `/clusters/${clusterID}/settings`,
+    });
 
     expect(screen.getByText('Provider')).toBeVisible();
     expect(screen.getByText('Provider not recognized')).toBeVisible();

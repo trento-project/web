@@ -3,7 +3,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import { runSaga } from 'redux-saga';
 
@@ -49,6 +49,20 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
     ...render(ui, { wrapper: BrowserRouter }),
   };
 };
+
+export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
+  window.history.pushState({}, 'Test page', route);
+
+  return {
+    ...render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={path} element={ui} />
+        </Routes>
+      </BrowserRouter>
+    ),
+  };
+}
 
 export async function recordSaga(saga, initialAction, state = {}) {
   const dispatched = [];
