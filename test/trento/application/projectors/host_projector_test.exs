@@ -24,8 +24,8 @@ defmodule Trento.HostProjectorTest do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostAddedToCluster,
-    HostDetailsUpdated,
     HostDeregistered,
+    HostDetailsUpdated,
     ProviderUpdated
   }
 
