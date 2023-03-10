@@ -25,4 +25,16 @@ defmodule Trento.HostsTest do
       assert 6 = Hosts.get_all_sles_subscriptions()
     end
   end
+
+  describe "Hosts listing" do
+    test "should filter unregistered hosts" do
+      %{id: host_id} = insert(:host)
+      insert(:host, deregistered_at: DateTime.utc_now())
+
+      hosts = Hosts.get_all_hosts()
+
+      assert length(hosts) == 1
+      assert [%{id: ^host_id}] = hosts
+    end
+  end
 end

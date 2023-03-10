@@ -24,23 +24,6 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> json_response(200)
       |> assert_schema("HostsCollection", api_spec)
     end
-
-    test "should filter unregistered hosts", %{conn: conn} do
-      %{id: host_id} = insert(:host)
-      insert(:host, deregistered_at: DateTime.utc_now())
-
-      insert_list(2, :sles_subscription, host_id: host_id)
-      insert_list(2, :tag, resource_id: host_id)
-
-      api_spec = ApiSpec.spec()
-
-      conn = get(conn, "/api/v1/hosts")
-
-      resp = json_response(conn, 200)
-
-      assert length(resp) == 1
-      assert [%{"id" => ^host_id}] = resp
-    end
   end
 
   describe "heartbeat" do
