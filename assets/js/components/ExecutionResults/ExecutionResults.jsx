@@ -7,9 +7,8 @@ import remarkGfm from 'remark-gfm';
 import { EOS_ERROR } from 'eos-icons-react';
 import Modal from '@components/Modal';
 import BackButton from '@components/BackButton';
-import WarningBanner from '@components/Banners/WarningBanner';
 import LoadingBox from '@components/LoadingBox';
-import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
+import { providerWarningBanners } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import NotificationBox from '@components/NotificationBox';
 
@@ -104,7 +103,10 @@ function ExecutionResults({
       />
     );
   }
+
   const checkResults = getCheckResults(executionData);
+  const warning = providerWarningBanners[cloudProvider];
+
   return (
     <div>
       <Modal
@@ -136,14 +138,7 @@ function ExecutionResults({
           onChange={(newPredicates) => setPredicates(newPredicates)}
         />
       </div>
-      {cloudProvider === UNKNOWN_PROVIDER && (
-        <WarningBanner>
-          The following results are valid for on-premise bare metal platforms.
-          <br />
-          If you are running your HANA cluster on a different platform, please
-          use results with caution
-        </WarningBanner>
-      )}
+      {warning}
       <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
       <ResultsContainer
         catalogError={false}

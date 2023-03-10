@@ -16,6 +16,23 @@ import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
 
 export const UNKNOWN_PROVIDER = 'unknown';
 
+export const providerWarningBanners = {
+  [UNKNOWN_PROVIDER]: (
+    <WarningBanner>
+      The following catalog is valid for on-premise bare metal platforms.
+      <br />
+      If you are running your HANA cluster on a different platform, please use
+      results with caution
+    </WarningBanner>
+  ),
+  vmware: (
+    <WarningBanner>
+      Configuration checks for HANA scale-up performance optimized clusters on
+      VMware are still in experimental phase. Please use results with caution.
+    </WarningBanner>
+  ),
+};
+
 export function ClusterSettings() {
   const { clusterID } = useParams();
 
@@ -24,6 +41,8 @@ export function ClusterSettings() {
   if (!cluster) {
     return <div>Loading...</div>;
   }
+
+  const warning = providerWarningBanners[cluster.provider];
 
   return (
     <div className="w-full px-2 sm:px-0">
@@ -34,15 +53,8 @@ export function ClusterSettings() {
         Cluster Settings for{' '}
         <span className="font-bold">{getClusterName(cluster)}</span>
       </PageHeader>
+      {warning}
       <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
-      {cluster.provider === UNKNOWN_PROVIDER && (
-        <WarningBanner>
-          The following catalog is valid for on-premise bare metal platforms.
-          <br />
-          If you are running your HANA cluster on a different platform, please
-          use results with caution
-        </WarningBanner>
-      )}
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
     </div>
   );
