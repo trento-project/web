@@ -31,7 +31,7 @@ defmodule Trento.EnrichRegisterApplicationInstanceTest do
              Enrichable.enrich(command, %{})
   end
 
-  test "should not return an enriched command if the database instance host has been deregistered" do
+  test "should return a database not found error if the database instance host has been deregistered" do
     deregistered_host = insert(:host, deregistered_at: DateTime.utc_now())
 
     %{
