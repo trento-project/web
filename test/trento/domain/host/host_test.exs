@@ -673,6 +673,7 @@ defmodule Trento.HostTest do
 
     test "should emit the HostDeregistrationRequest Event" do
       host_id = Faker.UUID.v4()
+      requested_at = DateTime.utc_now()
 
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
@@ -680,11 +681,13 @@ defmodule Trento.HostTest do
         [host_registered_event],
         [
           %RequestHostDeregistration{
-            host_id: host_id
+            host_id: host_id,
+            requested_at: requested_at
           }
         ],
         %HostDeregistrationRequested{
-          host_id: host_id
+          host_id: host_id,
+          requested_at: requested_at
         }
       )
     end
@@ -705,7 +708,7 @@ defmodule Trento.HostTest do
         ],
         [],
         fn host ->
-          assert host.deregistered_at == dat
+          assert dat == host.deregistered_at
         end
       )
     end

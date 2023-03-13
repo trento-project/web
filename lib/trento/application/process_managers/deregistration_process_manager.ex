@@ -48,8 +48,11 @@ defmodule Trento.DeregistrationProcessManager do
   def interested?(%HostDeregistered{host_id: host_id}), do: {:stop, host_id}
   def interested?(_event), do: false
 
-  def handle(%DeregistrationProcessManager{}, %HostDeregistrationRequested{host_id: host_id}) do
-    %DeregisterHost{host_id: host_id}
+  def handle(%DeregistrationProcessManager{}, %HostDeregistrationRequested{
+        host_id: host_id,
+        requested_at: requested_at
+      }) do
+    %DeregisterHost{host_id: host_id, deregistered_at: requested_at}
   end
 
   def apply(%DeregistrationProcessManager{} = state, %HostRegistered{host_id: host_id}) do

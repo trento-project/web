@@ -70,14 +70,15 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
     test "should dispatch DeregisterHost command when HostDeregistrationRequested is emitted" do
       host_id = UUID.uuid4()
+      requested_at = DateTime.utc_now()
       initial_state = %DeregistrationProcessManager{host_id: host_id}
 
-      events = [%HostDeregistrationRequested{host_id: host_id}]
+      events = [%HostDeregistrationRequested{host_id: host_id, requested_at: requested_at}]
 
       {commands, state} = reduce_events(events, initial_state)
 
       assert ^initial_state = state
-      assert %DeregisterHost{host_id: ^host_id, deregistered_at: _deregistered_at} = commands
+      assert %DeregisterHost{host_id: ^host_id, deregistered_at: ^requested_at} = commands
     end
   end
 

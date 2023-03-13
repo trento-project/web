@@ -274,10 +274,11 @@ defmodule Trento.Domain.Host do
 
   def execute(
         %Host{host_id: host_id},
-        %RequestHostDeregistration{}
+        %RequestHostDeregistration{requested_at: requested_at}
       ) do
     %HostDeregistrationRequested{
-      host_id: host_id
+      host_id: host_id,
+      requested_at: requested_at
     }
   end
 
