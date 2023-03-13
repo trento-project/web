@@ -24,13 +24,6 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"404", detail: detail)
   end
 
-  def call(conn, {:error, :invalid_credentials}) do
-    conn
-    |> put_status(:unauthorized)
-    |> put_view(ErrorView)
-    |> render(:"401")
-  end
-
   def call(conn, {:error, {:unauthorized, detail}}) do
     conn
     |> put_status(:unauthorized)

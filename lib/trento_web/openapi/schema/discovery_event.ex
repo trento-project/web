@@ -16,6 +16,6 @@ defmodule TrentoWeb.OpenApi.Schema.DiscoveryEvent do
         oneOf: [%Schema{type: :object}, %Schema{type: :array}]
       }
     },
-    required: [:agent_id, :discovery_type]
+    required: [:agent_id, :discovery_type, :payload]
   })
 end

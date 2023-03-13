@@ -29,7 +29,7 @@ defmodule TrentoWeb.V1.TagsController do
          }
        }},
     responses: [
-      accepted: "The tag has been added to the resource",
+      created: "The tag has been added to the resource",
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
@@ -72,9 +72,10 @@ defmodule TrentoWeb.V1.TagsController do
       ]
     ],
     responses: [
-      accepted: "The tag has been removed from the resource",
+      no_content: "The tag has been removed from the resource",
       bad_request: TrentoWeb.OpenApi.Schema.BadRequest.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
+      not_found: OpenApiSpex.JsonErrorResponse.response()
     ]
 
   def remove_tag(conn, %{

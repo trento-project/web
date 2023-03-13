@@ -34,6 +34,17 @@ defmodule TrentoWeb.ErrorView do
     }
   end
 
+  def render("404.json", %{detail: detail}) do
+    %{
+      errors: [
+        %{
+          title: "Not Found",
+          detail: detail
+        }
+      ]
+    }
+  end
+
   def render("422.json", %{error: error}) when is_map(error) do
     %{
       errors: render_validation_error(error, "")
@@ -44,19 +55,8 @@ defmodule TrentoWeb.ErrorView do
     %{
       errors: [
         %{
-          title: "Invalid value",
+          title: "Unprocessable Entity",
           detail: error
-        }
-      ]
-    }
-  end
-
-  def render("404.json", %{detail: detail}) do
-    %{
-      errors: [
-        %{
-          title: "Not Found",
-          detail: detail
         }
       ]
     }

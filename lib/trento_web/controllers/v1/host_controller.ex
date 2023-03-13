@@ -29,10 +29,9 @@ defmodule TrentoWeb.V1.HostController do
   end
 
   operation :heartbeat,
-    summary: "Update the heartbeat for a host",
+    summary: "Signal that an agent is alive",
     tags: ["Agent"],
-    description:
-      "Update the heartbeat for a host. This is used by the agents to signal that they are still alive.",
+    description: "This is used by the agents to signal that they are still alive.",
     parameters: [
       id: [
         in: :path,
@@ -41,7 +40,7 @@ defmodule TrentoWeb.V1.HostController do
       ]
     ],
     responses: [
-      accepted: "The heartbeat has been updated",
+      no_content: "The heartbeat has been updated",
       not_found: TrentoWeb.OpenApi.Schema.NotFound.response(),
       bad_request: TrentoWeb.OpenApi.Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()

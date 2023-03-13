@@ -14,9 +14,9 @@ defmodule TrentoWeb.V1.DiscoveryController do
     tags: ["Agent"],
     description:
       "This endpoint is used by the agents to collect data from the target infrastructure",
-    request_body: {"Checks Selection", "application/json", Schema.DiscoveryEvent},
+    request_body: {"Discovery Event", "application/json", Schema.DiscoveryEvent},
     responses: [
-      accepted: "The Event has been accepted and the data is being processed",
+      accepted: "The discovery has been accepted and the event is being processed",
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 
