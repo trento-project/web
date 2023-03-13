@@ -8,59 +8,61 @@ const TARGET_CLUSTER = 'TARGET_CLUSTER';
 const isExpect = ({ type }) => type === EXPECT;
 const isExpectSame = ({ type }) => type === EXPECT_SAME;
 
-const expectExpectations = (expectationList) =>
+const getExpectStatements = (expectationList) =>
   expectationList.filter(isExpect);
 
-const getExpectExpectationsMet = (expectationEvaluations) =>
-  expectExpectations(expectationEvaluations).filter(
-    ({ return_value }) => return_value
-  );
-
 const extractExpectResults = (expectations, agentsCheckResults) => {
-  const expectExpectationsCount = expectExpectations(expectations).length;
+  const expectStatementsCount = getExpectStatements(expectations).length;
 
-  if (expectExpectationsCount === 0) {
+  if (expectStatementsCount === 0) {
     return [];
   }
 
   return agentsCheckResults.map((agentCheckResult) => {
-    const { hostname, expectation_evaluations } = agentCheckResult;
+    const { hostname, expectation_evaluations = [] } = agentCheckResult;
 
     const isAgentCheckError = !!agentCheckResult?.type;
 
-    const metExpectations = getExpectExpectationsMet(
-      expectation_evaluations || []
+    const metExpectations = getExpectStatements(expectation_evaluations).filter(
+      ({ return_value }) => return_value
     ).length;
 
     const expectationsSummary = isAgentCheckError
       ? agentCheckResult.message
-      : `${metExpectations}/${expectExpectationsCount} Expectations met.`;
+      : `${metExpectations}/${expectStatementsCount} Expectations met.`;
 
     return {
       target: TARGET_NODE,
       targetName: hostname,
       expectationsSummary,
       isAgentCheckError:
-        isAgentCheckError || metExpectations < expectExpectationsCount,
+        isAgentCheckError || metExpectations < expectStatementsCount,
     };
   });
 };
 
-const expectSameExpectations = (expectationList) =>
+const getExpectSameStatements = (expectationList) =>
   expectationList.filter(isExpectSame);
 
-const getExpectSameExpectationResult = (expectationResults, name) =>
-  expectSameExpectations(expectationResults).find(
+const getExpectSameStatementResult = (expectationResults, name) => {
+  const expectSameStatement = getExpectSameStatements(expectationResults).find(
     ({ name: resultExpectationName }) => name === resultExpectationName
-  ) || {};
+  );
+
+  if (!expectSameStatement) {
+    return {};
+  }
+
+  return expectSameStatement;
+};
 
 const extractExpectSameResults = (
   targetName,
   expectations,
   expectationResults
 ) =>
-  expectSameExpectations(expectations).map(({ name }) => {
-    const { result } = getExpectSameExpectationResult(expectationResults, name);
+  getExpectSameStatements(expectations).map(({ name }) => {
+    const { result } = getExpectSameStatementResult(expectationResults, name);
 
     return {
       target: TARGET_CLUSTER,

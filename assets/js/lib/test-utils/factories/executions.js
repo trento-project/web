@@ -86,20 +86,6 @@ export const checkResultFactory = Factory.define(() => ({
   expectation_results: expectationResultFactory.buildList(2),
 }));
 
-export const expectExpectationResult = (expectationName, result) =>
-  expectationResultFactory.build({
-    name: expectationName,
-    type: 'expect',
-    result,
-  });
-
-export const expectSameExpectationResult = (expectationName, result) =>
-  expectationResultFactory.build({
-    name: expectationName,
-    type: 'expect_same',
-    result,
-  });
-
 export const checksExecutionRunningFactory = Factory.define(() => ({
   completed_at: null,
   execution_id: faker.datatype.uuid(),

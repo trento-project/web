@@ -4,19 +4,32 @@ import { render, screen } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 
 import {
-  catalogExpectExpectation,
-  catalogExpectSameExpectation,
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
   emptyCheckResultFactory,
-  expectExpectationResult,
-  expectSameExpectationResult,
   agentsCheckResultsWithHostname,
   agentCheckErrorFactory,
+  expectationResultFactory,
+  catalogExpectExpectationFactory,
+  catalogExpectSameExpectationFactory,
 } from '@lib/test-utils/factories';
 
 import '@testing-library/jest-dom';
 import CheckResultOutline from './CheckResultOutline';
+
+const expectStatementResult = (expectationName, result) =>
+  expectationResultFactory.build({
+    name: expectationName,
+    type: 'expect',
+    result,
+  });
+
+const expectSameStatementResult = (expectationName, result) =>
+  expectationResultFactory.build({
+    name: expectationName,
+    type: 'expect_same',
+    result,
+  });
 
 describe('CheckResultOutline Component', () => {
   it('should render a proper outline for a successful result', () => {
@@ -30,11 +43,21 @@ describe('CheckResultOutline Component', () => {
     const expectSameExpectationName2 = faker.lorem.word();
 
     const expectations = [
-      catalogExpectExpectation(expectationName1),
-      catalogExpectExpectation(expectationName2),
-      catalogExpectExpectation(expectationName3),
-      catalogExpectSameExpectation(expectSameExpectationName1),
-      catalogExpectSameExpectation(expectSameExpectationName2),
+      catalogExpectExpectationFactory.build({
+        name: expectationName1,
+      }),
+      catalogExpectExpectationFactory.build({
+        name: expectationName2,
+      }),
+      catalogExpectExpectationFactory.build({
+        name: expectationName3,
+      }),
+      catalogExpectSameExpectationFactory.build({
+        name: expectSameExpectationName1,
+      }),
+      catalogExpectSameExpectationFactory.build({
+        name: expectSameExpectationName2,
+      }),
     ];
 
     let checkResult = emptyCheckResultFactory.build({
@@ -59,10 +82,10 @@ describe('CheckResultOutline Component', () => {
     );
 
     const expectationResults = [
-      expectExpectationResult(expectationName1, true),
-      expectExpectationResult(expectationName2, true),
-      expectSameExpectationResult(expectSameExpectationName1, true),
-      expectSameExpectationResult(expectSameExpectationName2, true),
+      expectStatementResult(expectationName1, true),
+      expectStatementResult(expectationName2, true),
+      expectSameStatementResult(expectSameExpectationName1, true),
+      expectSameStatementResult(expectSameExpectationName2, true),
     ];
 
     render(
@@ -97,8 +120,12 @@ describe('CheckResultOutline Component', () => {
     const expectationName2 = faker.color.human();
 
     const expectations = [
-      catalogExpectExpectation(expectationName1),
-      catalogExpectExpectation(expectationName2),
+      catalogExpectExpectationFactory.build({
+        name: expectationName1,
+      }),
+      catalogExpectExpectationFactory.build({
+        name: expectationName2,
+      }),
     ];
 
     const agentsCheckResults = agentsCheckResultsWithHostname(

@@ -10,11 +10,11 @@ import {
   hostnameFactory,
   checksExecutionCompletedFactory,
   emptyCheckResultFactory,
-  catalogExpectExpectation,
-  catalogExpectSameExpectation,
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
   addCriticalExpectExpectation,
+  catalogExpectExpectationFactory,
+  catalogExpectSameExpectationFactory,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom/extend-expect';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
@@ -71,17 +71,27 @@ const prepareStateData = (checkExecutionStatus) => {
         id: checkID1,
         description: aCheckDescription,
         expectations: [
-          catalogExpectExpectation(expectationName1),
-          catalogExpectExpectation(expectationName2),
-          catalogExpectSameExpectation(expectationName3),
+          catalogExpectExpectationFactory.build({
+            name: expectationName1,
+          }),
+          catalogExpectExpectationFactory.build({
+            name: expectationName2,
+          }),
+          catalogExpectSameExpectationFactory.build({
+            name: expectationName3,
+          }),
         ],
       }),
       catalogCheckFactory.build({
         id: checkID2,
         description: anotherCheckDescription,
         expectations: [
-          catalogExpectExpectation(expectationName4),
-          catalogExpectExpectation(expectationName5),
+          catalogExpectExpectationFactory.build({
+            name: expectationName4,
+          }),
+          catalogExpectExpectationFactory.build({
+            name: expectationName5,
+          }),
         ],
       }),
     ],
