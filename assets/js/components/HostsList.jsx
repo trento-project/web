@@ -1,19 +1,23 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+
+import classNames from 'classnames';
+import { useSearchParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+
 import Table from '@components/Table';
 import HealthIcon from '@components/Health/HealthIcon';
-import { useSearchParams } from 'react-router-dom';
 import Tags from '@components/Tags';
-import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import PageHeader from '@components/PageHeader';
-import { useSelector, useDispatch } from 'react-redux';
-
-import { post, del } from '@lib/network';
+import Pill from '@components/Pill';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
+
+import { addTagToHost, removeTagFromHost } from '@state/hosts';
+import { post, del } from '@lib/network';
 
 const getInstancesByHost = (applicationInstances, databaseInstances, hostId) =>
   applicationInstances
@@ -119,9 +123,13 @@ function HostsList() {
         title: 'Agent version',
         key: 'agent_version',
         render: (content) => (
-          <span className="px-2 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate w-32 inline-block">
+          <Pill
+            size="xs"
+            display="inline-block"
+            className="bg-green-100 text-green-800 truncate w-32"
+          >
             {content}
-          </span>
+          </Pill>
         ),
       },
       {

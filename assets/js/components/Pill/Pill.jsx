@@ -12,17 +12,19 @@ function Pill({
   onClick = () => {},
   size = 'sm',
   roundedMode = 'rounded-full',
+  display = 'inline-flex',
 }) {
   return (
     <span
       className={classNames(
-        `inline-flex leading-5 font-semibold`,
+        `leading-5 font-semibold`,
         {
           'bg-green-100': !className,
           'text-green-800': !className,
         },
         roundedMode,
         sizeClasses[size],
+        display,
         className
       )}
       aria-hidden="true"

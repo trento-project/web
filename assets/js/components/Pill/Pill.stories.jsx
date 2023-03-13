@@ -32,3 +32,14 @@ export function Warning() {
 export function Critical() {
   return <Pill className="bg-red-200 text-red-600">Critical!</Pill>;
 }
+
+export function Truncated() {
+  return (
+    <Pill
+      display="inline-block"
+      className="bg-green-100 text-green-800 truncate w-24"
+    >
+      Truncated pill text
+    </Pill>
+  );
+}
