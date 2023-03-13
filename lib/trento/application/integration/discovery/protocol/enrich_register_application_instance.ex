@@ -14,7 +14,7 @@ defimpl Trento.Support.Middleware.Enrichable,
       from d in DatabaseInstanceReadModel,
         join: h in HostReadModel,
         on: d.host_id == h.id,
-        where: ^db_host in h.ip_addresses and ^tenant == d.tenant
+        where: ^db_host in h.ip_addresses and ^tenant == d.tenant and is_nil(h.deregistered_at)
 
     case Repo.one(query) do
       %DatabaseInstanceReadModel{sap_system_id: sap_system_id} ->
