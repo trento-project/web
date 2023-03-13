@@ -12,7 +12,7 @@ defmodule Trento.DeregistrationProcessManagerTest do
   alias Trento.Domain.Commands.DeregisterHost
 
   describe "events interested" do
-    test "should start the process manager when HostRegisteredEvent arrives" do
+    test "should start the process manager when HostRegistered event arrives" do
       host_id = UUID.uuid4()
 
       assert {:start, ^host_id} =
@@ -44,7 +44,7 @@ defmodule Trento.DeregistrationProcessManagerTest do
   end
 
   describe "host deregistration procedure" do
-    test "should update the state with the proper host id when HostRegistered events is emitted" do
+    test "should update the state with the proper host id when HostRegistered event is emitted" do
       initial_state = %DeregistrationProcessManager{}
       host_id = UUID.uuid4()
 

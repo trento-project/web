@@ -18,7 +18,7 @@ defmodule Trento.Domain.Host.Lifespan do
   The host aggregate will be stopped after a HostRollUpRequested event is received.
   This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.
 
-  The host aggregate will be stopped after a HostDeregisteredEvent is received.
+  The host aggregate will be stopped after a HostDeregistered event is received.
   The host is decommissioned and can be safely stopped.
   """
   def after_event(%HostRollUpRequested{}), do: :stop

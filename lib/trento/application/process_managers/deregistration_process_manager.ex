@@ -1,9 +1,9 @@
 defmodule Trento.DeregistrationProcessManager do
   @moduledoc """
     DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible
-    for the deregistration procedure for both hosts and clusters.
+    for the deregistration procedure for the aggregates
 
-    This represent a transaction to ensure that the procedure of deregistering hosts and cluster
+    This represents a transaction to ensure that the procedure of deregistering domain aggregates
     follows a certain path and satisfies some requisities.
 
     For more information see https://hexdocs.pm/commanded/process-managers.html
@@ -33,9 +33,9 @@ defmodule Trento.DeregistrationProcessManager do
   alias Trento.Domain.Commands.DeregisterHost
 
   @doc """
-    The process manager is interested in HostRegistered which starts or join an existing process
-    manager for the host identified with host_id field.
-    The process manager is interested in HostDeregistered which stops a process manager for the host identified by host id.
+    The process manager is interested in HostRegistered which starts or joins an existing process
+    manager for the host identified by a host_id field.
+    The process manager is interested in HostDeregistered which stops a process manager for the host identified by host_id.
 
     We consider also the host rollup case, starting a process manager when the host rolled up arrived, so we identify a registered host
     without the HostRegistered event, because that event could be rolled up and then we have to consider also the rolled up host as registered.
