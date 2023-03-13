@@ -359,7 +359,7 @@ defmodule Trento.HostProjectorTest do
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    host_projection = Repo.get!(HostReadModel, event.host_id)
+    host_projection = Repo.get!(HostReadModel, host_id)
 
     assert timestamp == host_projection.deregistered_at
 
