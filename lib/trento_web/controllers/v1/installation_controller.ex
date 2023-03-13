@@ -1,9 +1,8 @@
 defmodule TrentoWeb.V1.InstallationController do
   use TrentoWeb, :controller
+  use OpenApiSpex.ControllerSpecs
 
   alias OpenApiSpex.Schema
-
-  use OpenApiSpex.ControllerSpecs
 
   operation :get_api_key,
     summary: "Retrieve API Key",

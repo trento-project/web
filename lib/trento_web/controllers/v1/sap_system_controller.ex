@@ -16,7 +16,6 @@ defmodule TrentoWeb.V1.SapSystemController do
          TrentoWeb.OpenApi.Schema.SAPSystem.SAPSystemsCollection}
     ]
 
-  ## TODO Fix sanitization
   def list(conn, _) do
     sap_systems = SapSystems.get_all_sap_systems()
 

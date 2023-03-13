@@ -68,6 +68,13 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
       |> get("/api/v1/hosts/#{Faker.UUID.v4()}/exporters_status")
       |> json_response(500)
 
-    assert %{"error" => "An error occurred in getting exporters status."} = resp
+    assert %{
+             "errors" => [
+               %{
+                 "detail" => "An error occurred in getting exporters status.",
+                 "title" => "Internal Server Error"
+               }
+             ]
+           } = resp
   end
 end

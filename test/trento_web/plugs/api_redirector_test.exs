@@ -36,13 +36,13 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
         end
       end
 
-      conn = %{conn | path_info: ["api", "hosts"]}
+      resp =
+        conn
+        |> Map.put(:path_info, ["api", "hosts"])
+        |> ApiRedirector.call(latest_version: "v1", router: ErrorNotFoundRouter)
+        |> json_response(404)
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: ErrorNotFoundRouter)
-
-      resp_body = json_response(result_conn, 404)
-
-      assert resp_body == %{"error" => "not found"}
+      assert %{"errors" => [%{"detail" => "Not found", "title" => "Not Found"}]} == resp
     end
 
     test "should return 404 with the error view when the path is not recognized by the router because match the ApiRedirectorPlug",
@@ -55,37 +55,41 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
         end
       end
 
-      conn = %{conn | path_info: ["api", "hosts"]}
+      resp =
+        conn
+        |> Map.put(:path_info, ["api", "hosts"])
+        |> ApiRedirector.call(latest_version: "v1", router: NotFoundRouter)
+        |> json_response(404)
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: NotFoundRouter)
-
-      resp_body = json_response(result_conn, 404)
-
-      assert resp_body == %{"error" => "not found"}
+      assert %{"errors" => [%{"detail" => "Not found", "title" => "Not Found"}]} == resp
     end
 
     test "should redirect to the correct path when the route is recognized with the latest version",
          %{conn: conn} do
-      conn = %{conn | path_info: ["api", "test"]}
+      conn =
+        conn
+        |> Map.put(:path_info, ["api", "test"])
+        |> ApiRedirector.call(latest_version: "v1", router: FoundRouter)
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: FoundRouter)
+      assert 307 == conn.status
 
-      assert result_conn.status == 307
-      location_header = get_resp_header(result_conn, "location")
+      location_header = get_resp_header(conn, "location")
 
-      assert location_header == ["/api/v1/test"]
+      assert ["/api/v1/test"] == location_header
     end
 
     test "should redirect to the correct path with a subroute path when the route is recognized with the latest version",
          %{conn: conn} do
-      conn = %{conn | path_info: ["api", "some-resource", "12345"]}
+      conn =
+        conn
+        |> Map.put(:path_info, ["api", "some-resource", "12345"])
+        |> ApiRedirector.call(latest_version: "v1", router: FoundRouter)
 
-      result_conn = ApiRedirector.call(conn, latest_version: "v1", router: FoundRouter)
+      assert 307 == conn.status
 
-      assert result_conn.status == 307
-      location_header = get_resp_header(result_conn, "location")
+      location_header = get_resp_header(conn, "location")
 
-      assert location_header == ["/api/v1/some-resource/12345"]
+      assert ["/api/v1/some-resource/12345"] == location_header
     end
   end
 end

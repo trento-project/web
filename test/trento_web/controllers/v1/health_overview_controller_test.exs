@@ -2,10 +2,10 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
   use TrentoWeb.ConnCase, async: true
 
   import OpenApiSpex.TestAssertions
+  import Trento.Factory
 
   alias TrentoWeb.OpenApi.ApiSpec
 
-  import Trento.Factory
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 

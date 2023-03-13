@@ -122,7 +122,7 @@ defmodule Trento.Integration.Discovery do
     do: SapSystemPolicy.handle(event)
 
   defp do_handle(_),
-    do: {:error, :undefined_discovery_type}
+    do: {:error, :unknown_discovery_type}
 
   @spec dispatch(command | [command]) :: :ok | {:error, any}
   defp dispatch(commands) when is_list(commands) do
