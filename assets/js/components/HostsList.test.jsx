@@ -4,7 +4,7 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { hostFactory } from '@lib/test-utils/factories';
 
-import { renderWithRouter, withDefaultState, withState } from '@lib/test-utils';
+import { renderWithRouter, withDefaultState, withState, defaultInitialState } from '@lib/test-utils';
 
 import { filterTable, clearFilter } from '@components/Table/Table.test';
 
@@ -50,6 +50,30 @@ describe('HostsLists component', () => {
         );
       });
     });
+
+    it('should show a warning state if the agent version is not compatible', () => {
+      const host1 = hostFactory.build({ agent_version: '1.0.0'})
+      const host2 = hostFactory.build({ agent_version: '2.0.0'})
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [].concat(host1, host2)
+        }
+      }
+
+      const [StatefulHostsList] = withState(<HostsList />, state)
+
+      renderWithRouter(StatefulHostsList);
+      const table = screen.getByRole('table');
+      const host1VersionCell = table.querySelector('tr:nth-child(1) > td:nth-child(7)')
+      expect(host1VersionCell).toHaveTextContent('1.0.0');
+      const icon1 = host1VersionCell.querySelector("[data-testid='eos-svg-component']");
+      expect(icon1.classList.toString()).toContain('fill-yellow-800');
+
+      const host2VersionCell = table.querySelector('tr:nth-child(2) > td:nth-child(7)')
+      expect(host2VersionCell).toHaveTextContent('2.0.0');
+      expect(host2VersionCell.querySelector("[data-testid='eos-svg-component']")).toBeNull();
+    })
   });
 
   describe('filtering', () => {

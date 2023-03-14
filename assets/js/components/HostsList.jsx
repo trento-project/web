@@ -1,8 +1,8 @@
 import React from 'react';
 
-import classNames from 'classnames';
 import { useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Table from '@components/Table';
 import HealthIcon from '@components/Health/HealthIcon';
@@ -15,6 +15,7 @@ import Pill from '@components/Pill';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
+import { agentVersionWarnings } from '@components/HostDetails';
 
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import { post, del } from '@lib/network';
@@ -122,15 +123,32 @@ function HostsList() {
       {
         title: 'Agent version',
         key: 'agent_version',
-        render: (content) => (
-          <Pill
-            size="xs"
-            display="inline-block"
-            className="bg-green-100 text-green-800 truncate w-32"
-          >
-            {content}
-          </Pill>
-        ),
+        render: (content) => {
+          const warning = agentVersionWarnings(content);
+          if (warning) {
+            return (
+              <Pill
+                size="xs"
+                className="bg-yellow-100 text-yellow-800 group flex items-center"
+              >
+                <EOS_WARNING_OUTLINED
+                  size="base"
+                  className="centered fill-yellow-800"
+                />
+                <span className="ml-1 truncate max-w-[100px]">{content}</span>
+              </Pill>
+            );
+          }
+          return (
+            <Pill
+              size="xs"
+              display="inline-block"
+              className="bg-green-100 text-green-800 truncate max-w-[112px]"
+            >
+              {content}
+            </Pill>
+          );
+        },
       },
       {
         title: 'Tags',
