@@ -29,7 +29,9 @@ defmodule Trento.Domain.Host do
   }
 
   alias Trento.Domain.Commands.{
+    DeregisterHost,
     RegisterHost,
+    RequestHostDeregistration,
     RollUpHost,
     UpdateHeartbeat,
     UpdateProvider,
@@ -39,6 +41,8 @@ defmodule Trento.Domain.Host do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostDeregistered,
+    HostDeregistrationRequested,
     HostDetailsUpdated,
     HostRegistered,
     HostRolledUp,
@@ -66,6 +70,7 @@ defmodule Trento.Domain.Host do
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :rolling_up, :boolean, default: false
+    field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_many :subscriptions, SlesSubscription
 
@@ -267,6 +272,26 @@ defmodule Trento.Domain.Host do
     }
   end
 
+  def execute(
+        %Host{host_id: host_id},
+        %RequestHostDeregistration{requested_at: requested_at}
+      ) do
+    %HostDeregistrationRequested{
+      host_id: host_id,
+      requested_at: requested_at
+    }
+  end
+
+  def execute(
+        %Host{host_id: host_id},
+        %DeregisterHost{deregistered_at: deregistered_at}
+      ) do
+    %HostDeregistered{
+      host_id: host_id,
+      deregistered_at: deregistered_at
+    }
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -373,4 +398,14 @@ defmodule Trento.Domain.Host do
       }) do
     snapshot
   end
+
+  # Deregistration
+
+  def apply(%Host{} = host, %HostDeregistered{
+        deregistered_at: deregistered_at
+      }) do
+    %Host{host | deregistered_at: deregistered_at}
+  end
+
+  def apply(%Host{} = host, %HostDeregistrationRequested{}), do: host
 end

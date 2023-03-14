@@ -7,5 +7,6 @@ defmodule Trento.Domain.Events.HostDeregistrationRequested do
 
   defevent do
     field :host_id, Ecto.UUID
+    field :requested_at, :utc_datetime_usec
   end
 end
