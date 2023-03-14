@@ -59,6 +59,9 @@
     "redux-saga": "^1.2.2",
     "remark-gfm": "^3.0.1"
   },
+  "overrides": {
+    "@testing-library/dom": "^9.0.1"
+  },
   "scripts": {
     "tailwind:build": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css",
     "build": "node build.js",
