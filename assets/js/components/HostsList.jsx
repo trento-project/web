@@ -16,6 +16,7 @@ import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
 import { agentVersionWarnings } from '@components/HostDetails';
+import Tooltip from '@components/Tooltip';
 
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import { post, del } from '@lib/network';
@@ -129,13 +130,14 @@ function HostsList() {
             return (
               <Pill
                 size="xs"
-                className="bg-yellow-100 text-yellow-800 group flex items-center"
+                className="bg-yellow-100 text-yellow-800 group flex items-center relative"
               >
                 <EOS_WARNING_OUTLINED
                   size="base"
                   className="centered fill-yellow-800"
                 />
                 <span className="ml-1 truncate max-w-[100px]">{content}</span>
+                <Tooltip tooltipText={warning} width="w-52 -translate-x-1/3" />
               </Pill>
             );
           }

@@ -1,5 +1,6 @@
 import React from 'react';
 import HealthIcon from '@components/Health/HealthIcon';
+import Tooltip from '@components/Tooltip';
 
 import Pill from '.';
 
@@ -40,6 +41,15 @@ export function Truncated() {
       className="bg-green-100 text-green-800 truncate w-24"
     >
       Truncated pill text
+    </Pill>
+  );
+}
+
+export function WithTooltip() {
+  return (
+    <Pill className="bg-green-100 text-green-800 relative">
+      With tooltip!
+      <Tooltip tooltipText="Oh yeah!" />
     </Pill>
   );
 }
