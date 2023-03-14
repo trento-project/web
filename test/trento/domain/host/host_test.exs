@@ -4,7 +4,9 @@ defmodule Trento.HostTest do
   import Trento.Factory
 
   alias Trento.Domain.Commands.{
+    DeregisterHost,
     RegisterHost,
+    RequestHostDeregistration,
     RollUpHost,
     UpdateHeartbeat,
     UpdateProvider,
@@ -14,6 +16,8 @@ defmodule Trento.HostTest do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostDeregistered,
+    HostDeregistrationRequested,
     HostDetailsUpdated,
     HostRegistered,
     HostRolledUp,
@@ -640,6 +644,71 @@ defmodule Trento.HostTest do
           assert host.os_version == host_registered_event.os_version
           assert host.installation_source == host_registered_event.installation_source
           assert host.heartbeat == :unknown
+        end
+      )
+    end
+  end
+
+  describe "deregistration" do
+    test "should emit the HostDeregistered event" do
+      host_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_events(
+        [host_registered_event],
+        [
+          %DeregisterHost{
+            host_id: host_id,
+            deregistered_at: dat
+          }
+        ],
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: dat
+        }
+      )
+    end
+
+    test "should emit the HostDeregistrationRequest Event" do
+      host_id = Faker.UUID.v4()
+      requested_at = DateTime.utc_now()
+
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_events(
+        [host_registered_event],
+        [
+          %RequestHostDeregistration{
+            host_id: host_id,
+            requested_at: requested_at
+          }
+        ],
+        %HostDeregistrationRequested{
+          host_id: host_id,
+          requested_at: requested_at
+        }
+      )
+    end
+
+    test "should apply the HostDeregistered event and set the deregistration date into the state" do
+      host_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_state(
+        [
+          host_registered_event,
+          %HostDeregistered{
+            host_id: host_id,
+            deregistered_at: dat
+          }
+        ],
+        [],
+        fn host ->
+          assert dat == host.deregistered_at
         end
       )
     end
