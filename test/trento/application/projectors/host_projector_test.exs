@@ -24,6 +24,7 @@ defmodule Trento.HostProjectorTest do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostAddedToCluster,
+    HostDeregistered,
     HostDetailsUpdated,
     ProviderUpdated
   }
@@ -45,9 +46,9 @@ defmodule Trento.HostProjectorTest do
   end
 
   setup do
-    %HostReadModel{id: host_id} = insert(:host)
+    %HostReadModel{id: host_id, hostname: hostname} = insert(:host)
 
-    %{host_id: host_id}
+    %{host_id: host_id, hostname: hostname}
   end
 
   test "should project a new host when HostRegistered event is received" do
@@ -341,6 +342,31 @@ defmodule Trento.HostProjectorTest do
                        id: ^host_id,
                        provider: :gcp,
                        provider_data: ^broadcast_provider_data
+                     },
+                     1000
+  end
+
+  test "should update the deregistered_at field when HostDeregistered is received",
+       %{
+         host_id: host_id,
+         hostname: hostname
+       } do
+    timestamp = DateTime.utc_now()
+
+    event = %HostDeregistered{
+      host_id: host_id,
+      deregistered_at: timestamp
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, host_id)
+
+    assert timestamp == host_projection.deregistered_at
+
+    assert_broadcast "host_deregistered",
+                     %{
+                       id: ^host_id,
+                       hostname: ^hostname
                      },
                      1000
   end

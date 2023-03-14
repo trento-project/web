@@ -31,6 +31,34 @@ defmodule Trento.EnrichRegisterApplicationInstanceTest do
              Enrichable.enrich(command, %{})
   end
 
+  test "should return a database not found error if the database instance host has been deregistered" do
+    deregistered_host = insert(:host, deregistered_at: DateTime.utc_now())
+
+    %{
+      tenant: tenant,
+      host: %{ip_addresses: [ip]}
+    } =
+      insert(:database_instance_without_host,
+        host_id: deregistered_host.id,
+        host: deregistered_host
+      )
+
+    command =
+      build(
+        :register_application_instance_command,
+        sap_system_id: nil,
+        sid: Faker.StarWars.planet(),
+        db_host: ip,
+        tenant: tenant,
+        instance_number: "00",
+        features: Faker.Pokemon.name(),
+        host_id: Faker.UUID.v4(),
+        health: :passing
+      )
+
+    assert {:error, :database_not_found} = Enrichable.enrich(command, %{})
+  end
+
   test "should return an error if the database was not found" do
     %{
       tenant: tenant
