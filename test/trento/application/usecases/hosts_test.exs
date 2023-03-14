@@ -25,4 +25,17 @@ defmodule Trento.HostsTest do
       assert 6 = Hosts.get_all_sles_subscriptions()
     end
   end
+
+  describe "get_all_hosts/0" do
+    test "should list all hosts except the deregistered ones" do
+      registered_hosts = Enum.map(0..9, fn i -> insert(:host, hostname: "hostname_#{i}") end)
+      deregistered_host = insert(:host, deregistered_at: DateTime.utc_now())
+
+      hosts = Hosts.get_all_hosts()
+      hosts_ids = Enum.map(hosts, & &1.id)
+
+      assert Enum.map(registered_hosts, & &1.id) == hosts_ids
+      refute deregistered_host.id in hosts_ids
+    end
+  end
 end
