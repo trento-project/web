@@ -28,28 +28,20 @@ const addHostnameToTargets = (targets, hostnames) =>
     };
   });
 
-function MarkdownContent({ children }) {
-  return (
-    <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-      {children}
-    </ReactMarkdown>
-  );
-}
-
 const resultsTableConfig = {
   usePadding: false,
   columns: [
     {
       title: 'Id',
       key: 'checkID',
-      render: (checkID, item) => (
+      render: (checkID, { onClick }) => (
         <div className="whitespace-nowrap text-jungle-green-500">
           <span
             className="inline-block"
             aria-hidden="true"
             onClick={(e) => {
               e.stopPropagation();
-              item.onClickRemediation();
+              onClick();
             }}
           >
             {checkID}
@@ -60,7 +52,11 @@ const resultsTableConfig = {
     {
       title: 'Description',
       key: 'description',
-      render: (description) => <MarkdownContent>{description}</MarkdownContent>,
+      render: (description) => (
+        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+          {description}
+        </ReactMarkdown>
+      ),
     },
     {
       title: 'Result',
@@ -153,7 +149,7 @@ function ExecutionResults({
         description: getCheckDescription(catalog, checkID),
         expectationResults,
         agentsCheckResults: addHostnameToTargets(agentsCheckResults, hostnames),
-        onClickRemediation: () => {
+        onClick: () => {
           setModalOpen(true);
           setSelectedCheck(checkID);
         },
@@ -181,22 +177,21 @@ function ExecutionResults({
         hosts={hosts}
         onContentRefresh={onContentRefresh}
         onStartExecution={onStartExecution}
-        selectedCheck={selectedCheck}
       >
         <Table config={resultsTableConfig} data={tableData} />
       </ResultsContainer>
       <Modal
         open={modalOpen}
         title={
-          <MarkdownContent>
+          <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
             {getCheckDescription(catalog, selectedCheck)}
-          </MarkdownContent>
+          </ReactMarkdown>
         }
         onClose={() => setModalOpen(false)}
       >
-        <MarkdownContent>
+        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
           {getCheckRemediation(catalog, selectedCheck)}
-        </MarkdownContent>
+        </ReactMarkdown>
       </Modal>
     </>
   );

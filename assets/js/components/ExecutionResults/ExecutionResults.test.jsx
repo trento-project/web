@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
 
@@ -411,7 +412,7 @@ describe('ExecutionResults', () => {
     ).toBeTruthy();
   });
 
-  it('should open remediation modal when clicking on checkID', async () => {
+  it('should open remediation modal when clicking on checkID and close it when clicking outside', async () => {
     const {
       clusterID,
       hostnames,
@@ -438,13 +439,12 @@ describe('ExecutionResults', () => {
     );
 
     const { id: checkID, remediation } = catalog[0];
-    const clickableID = screen.getByText(checkID);
-    expect(clickableID.textContent).toBe(checks[0]);
-    let remediationModalElement = screen.queryByText(remediation);
-    expect(remediationModalElement).not.toBeInTheDocument();
-    fireEvent.click(clickableID);
-    remediationModalElement = screen.getByText(remediation);
-    expect(remediationModalElement).toBeInTheDocument();
+    expect(screen.getByText(checkID).textContent).toBe(checks[0]);
+    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByText(checkID));
+    expect(screen.queryByText(remediation)).toBeInTheDocument();
+    await userEvent.click(document.body);
+    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
   });
 
   it('should not open remediation modal when clicking on description', async () => {
@@ -474,10 +474,8 @@ describe('ExecutionResults', () => {
     );
 
     const { remediation, description } = catalog[0];
-    const checkDescriptionText = screen.getByText(description);
-    expect(description).toBe(checkDescriptionText.textContent);
-    fireEvent.click(checkDescriptionText);
-    const remediationModalElement = screen.queryByText(remediation);
-    expect(remediationModalElement).not.toBeInTheDocument();
+    expect(screen.getByText(description).textContent).toBe(description);
+    userEvent.click(screen.getByText(description));
+    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
   });
 });
