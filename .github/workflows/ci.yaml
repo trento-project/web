@@ -375,7 +375,7 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Install photofinish
-        uses: jaxxstorm/action-install-gh-release@v1.9.0
+        uses: jaxxstorm/action-install-gh-release@v1.10.0
         with:
           repo: trento-project/photofinish
           tag: v1.2.2
@@ -528,7 +528,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install photofinish
-        uses: jaxxstorm/action-install-gh-release@v1.9.0
+        uses: jaxxstorm/action-install-gh-release@v1.10.0
         with:
           repo: trento-project/photofinish
           tag: v1.2.2
