@@ -15,7 +15,7 @@ defmodule Trento.Hosts do
   @spec get_all_hosts :: [HostReadModel.t()]
   def get_all_hosts do
     HostReadModel
-    |> where([h], not is_nil(h.hostname))
+    |> where([h], not is_nil(h.hostname) and is_nil(h.deregistered_at))
     |> order_by(asc: :hostname)
     |> Repo.all()
     |> Repo.preload([:sles_subscriptions, :tags])
