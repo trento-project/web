@@ -12,10 +12,9 @@ import {
 import {
   RUNNING_EXECUTION_STATE,
   REQUESTED_EXECUTION_STATE,
+  RUNNING_STATES,
 } from '@state/lastExecutions';
 import ExecutionResults from './ExecutionResults';
-
-const runningStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
 function ExecutionResultsPage() {
   const { clusterID } = useParams();
@@ -62,7 +61,7 @@ function ExecutionResultsPage() {
       catalogError={catalogError}
       executionLoading={executionLoading}
       executionStarted={executionData?.status !== REQUESTED_EXECUTION_STATE}
-      executionRunning={runningStates.includes(executionData?.status)}
+      executionRunning={RUNNING_STATES.includes(executionData?.status)}
       executionData={executionData}
       executionError={executionError}
       clusterSelectedChecks={cluster?.selected_checks}
