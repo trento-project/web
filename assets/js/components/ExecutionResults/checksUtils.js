@@ -117,3 +117,11 @@ export const getCheckRemediation = (catalog, checkID) => {
   }
   return null;
 };
+
+export const getCheckExpectations = (catalog, checkID) => {
+  const check = findCheck(catalog, checkID);
+  if (check) {
+    return check.expectations;
+  }
+  return [];
+};

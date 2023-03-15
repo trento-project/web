@@ -19,6 +19,7 @@ import {
   getChecks,
   getCheckHealthByAgent,
   getHosts,
+  getCheckExpectations,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -78,6 +79,14 @@ describe('checksUtils', () => {
 
     expect(getCheckRemediation(catalog, id)).toBe(remediation);
     expect(getCheckRemediation(catalog, 'wont-be-found')).toBe(null);
+  });
+
+  it('getCheckExpectations should return check expectations', () => {
+    const catalog = catalogCheckFactory.buildList(2);
+    const [_, { id, expectations }] = catalog;
+
+    expect(getCheckExpectations(catalog, id)).toBe(expectations);
+    expect(getCheckExpectations(catalog, 'wont-be-found')).toHaveLength(0);
   });
 
   describe('getCheckHealthByAgent', () => {

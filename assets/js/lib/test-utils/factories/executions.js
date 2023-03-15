@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { resultEnum } from '.';
+import { hostnameFactory, resultEnum } from '.';
 
 export const checksExecutionStatusEnum = () =>
   faker.helpers.arrayElement(['running', 'completed']);
@@ -149,8 +149,8 @@ const addExpectation = (checkResult, name, expectation, result) => {
   };
 };
 
-export const addPassingExpectation = (checkResult, type) => {
-  const name = faker.company.name();
+export const addPassingExpectation = (checkResult, type, expectationName) => {
+  const name = expectationName || faker.company.name();
   const expectation = executionExpectationEvaluationFactory.build({
     name,
     type,
@@ -160,8 +160,8 @@ export const addPassingExpectation = (checkResult, type) => {
   return addExpectation(checkResult, name, expectation, true);
 };
 
-export const addCriticalExpectation = (checkResult, type) => {
-  const name = faker.company.name();
+export const addCriticalExpectation = (checkResult, type, expectationName) => {
+  const name = expectationName || faker.company.name();
   const expectation = executionExpectationEvaluationFactory.build({
     name,
     type,
@@ -171,14 +171,29 @@ export const addCriticalExpectation = (checkResult, type) => {
   return addExpectation(checkResult, name, expectation, false);
 };
 
-export const addExpectationWithError = (checkResult) => {
-  const name = faker.company.name();
+export const addExpectationWithError = (checkResult, expectationName) => {
+  const name = expectationName || faker.company.name();
   const expectation = executionExpectationEvaluationErrorFactory.build({
     name,
   });
 
   return addExpectation(checkResult, name, expectation, false);
 };
+
+export const addPassingExpectExpectation = (checkResult, expectationName) =>
+  addPassingExpectation(checkResult, 'expect', expectationName);
+
+export const addCriticalExpectExpectation = (checkResult, expectationName) =>
+  addCriticalExpectation(checkResult, 'expect', expectationName);
+
+export const addPassingExpectSameExpectation = (checkResult, expectationName) =>
+  addPassingExpectation(checkResult, 'expect_same', expectationName);
+
+export const agentsCheckResultsWithHostname = (agentsCheckResults) =>
+  agentsCheckResults.map((agentCheckResult) => ({
+    ...agentCheckResult,
+    hostname: hostnameFactory.build().hostname,
+  }));
 
 export const emptyCheckResultFactory = Factory.define(({ params }) => {
   const checkID = params.checkID || faker.datatype.uuid();
