@@ -18,20 +18,26 @@ const defaultCellRender = (content) => (
 
 const renderCells = (columns, item) => (
   <>
-    {columns.map(({ key, className, render = defaultCellRender }, idx) => {
-      const content = item[key];
-      return (
-        <td
-          key={idx}
-          className={classNames(
-            'px-5 py-5 border-b border-gray-200 bg-white text-sm',
-            className
-          )}
-        >
-          {render(content, item)}
-        </td>
-      );
-    })}
+    {columns.map(
+      (
+        { key, className, fontSize = 'text-sm', render = defaultCellRender },
+        idx
+      ) => {
+        const content = item[key];
+        return (
+          <td
+            key={idx}
+            className={classNames(
+              'px-5 py-5 border-b border-gray-200 bg-white',
+              className,
+              fontSize
+            )}
+          >
+            {render(content, item)}
+          </td>
+        );
+      }
+    )}
   </>
 );
 
