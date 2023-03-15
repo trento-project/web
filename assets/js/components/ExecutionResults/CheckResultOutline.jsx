@@ -93,7 +93,7 @@ function CheckResultOutline({
   return (
     <div className="p-5">
       <div className="table w-full bg-white rounded shadow">
-        <div className="table-header-group bg-gray-100">
+        <div className="table-header-group bg-gray-50 border-b border-gray">
           <div className="table-row">
             <div className="table-cell w-1/5 p-2 text-left text-xs font-medium text-gray-500 uppercase">
               Target
@@ -103,7 +103,7 @@ function CheckResultOutline({
             </div>
           </div>
         </div>
-        <div className="table-row-group">
+        <div className="table-row-group text-sm">
           {[...expectSameResults, ...expectResults].map(
             ({
               target,

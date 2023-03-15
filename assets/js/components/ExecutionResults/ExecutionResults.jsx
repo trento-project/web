@@ -35,6 +35,8 @@ const resultsTableConfig = {
     {
       title: 'Id',
       key: 'checkID',
+      fontSize: 'text-base',
+      className: 'bg-gray-50 border-b',
       render: (checkID, { onClick }) => (
         <div className="whitespace-nowrap text-jungle-green-500">
           <span
@@ -53,6 +55,8 @@ const resultsTableConfig = {
     {
       title: 'Description',
       key: 'description',
+      fontSize: 'text-base',
+      className: 'bg-gray-50 border-b',
       render: (description) => (
         <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
           {description}
@@ -62,6 +66,8 @@ const resultsTableConfig = {
     {
       title: 'Result',
       key: 'result',
+      fontSize: 'text-base',
+      className: 'bg-gray-50 border-b',
       render: (_, { result, executionState }) => (
         <ExecutionIcon executionState={executionState} health={result} />
       ),
