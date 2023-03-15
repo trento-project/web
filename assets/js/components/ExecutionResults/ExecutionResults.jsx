@@ -4,13 +4,29 @@ import Table from '@components/Table';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import LoadingBox from '@components/LoadingBox';
+import Modal from '@components/Modal';
 
-import { getCheckResults, getCheckDescription } from './checksUtils';
+import {
+  getCheckResults,
+  getCheckDescription,
+  getCheckRemediation,
+} from './checksUtils';
 
 import ResultsContainer from './ResultsContainer';
 import { ExecutionIcon } from './ExecutionIcon';
 import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
+
+const addHostnameToTargets = (targets, hostnames) =>
+  targets?.map((target) => {
+    const { agent_id } = target;
+
+    const { hostname } = hostnames.find(({ id }) => agent_id === id);
+    return {
+      ...target,
+      hostname,
+    };
+  });
 
 const resultsTableConfig = {
   usePadding: false,
@@ -18,14 +34,29 @@ const resultsTableConfig = {
     {
       title: 'Id',
       key: 'checkID',
-      render: (checkID) => (
-        <div className="whitespace-nowrap text-jungle-green-500">{checkID}</div>
+      render: (checkID, { onClick }) => (
+        <div className="whitespace-nowrap text-jungle-green-500">
+          <span
+            className="inline-block"
+            aria-hidden="true"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick();
+            }}
+          >
+            {checkID}
+          </span>
+        </div>
       ),
     },
     {
       title: 'Description',
       key: 'description',
-      render: (description) => <MarkdownContent>{description}</MarkdownContent>,
+      render: (description) => (
+        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+          {description}
+        </ReactMarkdown>
+      ),
     },
     {
       title: 'Result',
@@ -50,25 +81,6 @@ const resultsTableConfig = {
   ),
 };
 
-const addHostnameToTargets = (targets, hostnames) =>
-  targets?.map((target) => {
-    const { agent_id } = target;
-
-    const { hostname } = hostnames.find(({ id }) => agent_id === id);
-    return {
-      ...target,
-      hostname,
-    };
-  });
-
-function MarkdownContent({ children }) {
-  return (
-    <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-      {children}
-    </ReactMarkdown>
-  );
-}
-
 function ExecutionResults({
   clusterID,
   clusterName,
@@ -89,6 +101,8 @@ function ExecutionResults({
   onStartExecution = () => {},
 }) {
   const [predicates, setPredicates] = useState([]);
+  const [selectedCheck, setSelectedCheck] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const hosts = hostnames.map((item) => item.id);
 
@@ -135,6 +149,10 @@ function ExecutionResults({
         description: getCheckDescription(catalog, checkID),
         expectationResults,
         agentsCheckResults: addHostnameToTargets(agentsCheckResults, hostnames),
+        onClick: () => {
+          setModalOpen(true);
+          setSelectedCheck(checkID);
+        },
       })
     );
 
@@ -162,6 +180,19 @@ function ExecutionResults({
       >
         <Table config={resultsTableConfig} data={tableData} />
       </ResultsContainer>
+      <Modal
+        open={modalOpen}
+        title={
+          <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+            {getCheckDescription(catalog, selectedCheck)}
+          </ReactMarkdown>
+        }
+        onClose={() => setModalOpen(false)}
+      >
+        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+          {getCheckRemediation(catalog, selectedCheck)}
+        </ReactMarkdown>
+      </Modal>
     </>
   );
 }
