@@ -27,6 +27,7 @@ import Login from '@components/Login';
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';
+import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import { store } from './state';
@@ -79,6 +80,10 @@ function App() {
                   <Route
                     path="clusters/:clusterID/executions/last"
                     element={<ExecutionResultsPage />}
+                  />
+                  <Route
+                    path="clusters/:clusterID/executions/last/:checkID/:targetType/:targetName"
+                    element={<CheckResultDetailPage />}
                   />
                 </Route>
               </Route>
