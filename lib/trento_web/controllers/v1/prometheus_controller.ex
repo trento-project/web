@@ -11,7 +11,7 @@ defmodule TrentoWeb.V1.PrometheusController do
   action_fallback TrentoWeb.FallbackController
 
   operation :targets,
-    summary: "Get Prometheus exporters status",
+    summary: "Get Prometheus exporters targets",
     tags: ["Target Infrastructure"],
     description: "Get Prometheus targets with the Http Discovery format",
     responses: [
