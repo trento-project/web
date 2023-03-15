@@ -12,12 +12,12 @@ function TargetResult({
   return (
     <div className="table-row border-b cursor-pointer">
       <div className="table-cell p-2">
-        <div className="flex p-1" data-fix="vertical align content">
+        <div className="flex p-1">
           <TargetIcon isCluster={isCluster} />
-          <span className="ml-3 inline-flex">{targetName}</span>
+          <span className="ml-3 inline-flex self-center">{targetName}</span>
         </div>
       </div>
-      <div className="table-cell p-2">
+      <div className="table-cell p-2 align-middle">
         <div className="flex p-1 justify-between">
           <span className={classNames({ 'text-red-500': isAgentCheckError })}>
             {expectationsSummary}
