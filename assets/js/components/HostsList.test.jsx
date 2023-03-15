@@ -93,7 +93,7 @@ describe('HostsLists component', () => {
       user.hover(host2VersionCell);
       expect(
         screen.queryByText(
-          'Agent version 2.0.0 or greater is required for new checks engine.'
+          'Agent version 2.0.0 or greater is required for the new checks engine.'
         )
       ).toBeInTheDocument();
     });
