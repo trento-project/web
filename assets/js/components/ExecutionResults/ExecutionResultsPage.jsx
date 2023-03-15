@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import { getCluster } from '@state/selectors/cluster';
+import { getCluster, getClusterHostNames } from '@state/selectors/cluster';
 import { updateCatalog } from '@state/actions/catalog';
 import {
   updateLastExecution,
@@ -20,11 +20,7 @@ const runningStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 function ExecutionResultsPage() {
   const { clusterID } = useParams();
   const dispatch = useDispatch();
-  const hostnames = useSelector((state) =>
-    state.hostsList.hosts
-      .filter(({ cluster_id: hostClusterID }) => hostClusterID === clusterID)
-      .map(({ id, hostname }) => ({ id, hostname }))
-  );
+  const hostnames = useSelector(getClusterHostNames(clusterID));
   const cluster = useSelector(getCluster(clusterID));
   const {
     loading: catalogLoading,
