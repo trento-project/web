@@ -11,7 +11,7 @@ defmodule TrentoWeb.OpenApi.Schema.Prometheus do
       title: "PrometheusExporterStatus",
       type: :object,
       example: %{
-        "Node exporter" => "running"
+        "Node exporter" => "critical"
       },
       additionalProperties: %Schema{
         description:
