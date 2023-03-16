@@ -1,19 +1,25 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+
+import { useSearchParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
+
 import Table from '@components/Table';
 import HealthIcon from '@components/Health/HealthIcon';
-import { useSearchParams } from 'react-router-dom';
 import Tags from '@components/Tags';
-import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import PageHeader from '@components/PageHeader';
-import { useSelector, useDispatch } from 'react-redux';
-
-import { post, del } from '@lib/network';
+import Pill from '@components/Pill';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
+import Tooltip from '@components/Tooltip';
+
+import { addTagToHost, removeTagFromHost } from '@state/hosts';
+import { post, del } from '@lib/network';
+import { agentVersionWarning } from '@lib/agent';
 
 const getInstancesByHost = (applicationInstances, databaseInstances, hostId) =>
   applicationInstances
@@ -118,11 +124,33 @@ function HostsList() {
       {
         title: 'Agent version',
         key: 'agent_version',
-        render: (content) => (
-          <span className="px-2 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 truncate w-32 inline-block">
-            {content}
-          </span>
-        ),
+        render: (content) => {
+          const warning = agentVersionWarning(content);
+          if (warning) {
+            return (
+              <Pill
+                size="xs"
+                className="bg-yellow-100 text-yellow-800 group flex items-center relative"
+              >
+                <EOS_WARNING_OUTLINED
+                  size="base"
+                  className="centered fill-yellow-800"
+                />
+                <span className="ml-1 truncate max-w-[100px]">{content}</span>
+                <Tooltip tooltipText={warning} width="w-52 -translate-x-1/3" />
+              </Pill>
+            );
+          }
+          return (
+            <Pill
+              size="xs"
+              display="inline-block"
+              className="bg-green-100 text-green-800 truncate max-w-[112px]"
+            >
+              {content}
+            </Pill>
+          );
+        },
       },
       {
         title: 'Tags',

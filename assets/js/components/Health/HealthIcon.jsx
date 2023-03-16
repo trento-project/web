@@ -15,6 +15,7 @@ function HealthIcon({
   health = undefined,
   centered = false,
   hoverOpacity = true,
+  size = 'l',
 }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
@@ -24,7 +25,7 @@ function HealthIcon({
     case 'passing':
       return (
         <EOS_CHECK_CIRCLE_OUTLINED
-          size="l"
+          size={size}
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-jungle-green-500', centered)
@@ -34,7 +35,7 @@ function HealthIcon({
     case 'warning':
       return (
         <EOS_WARNING_OUTLINED
-          size="l"
+          size={size}
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-yellow-500', centered)
@@ -44,7 +45,7 @@ function HealthIcon({
     case 'critical':
       return (
         <EOS_ERROR_OUTLINED
-          size="l"
+          size={size}
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-red-500', centered)
@@ -56,7 +57,7 @@ function HealthIcon({
     default:
       return (
         <EOS_LENS_FILLED
-          size="l"
+          size={size}
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-gray-500', centered)

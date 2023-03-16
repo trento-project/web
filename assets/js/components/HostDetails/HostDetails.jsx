@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import { networkClient } from '@lib/network';
+import { agentVersionWarning } from '@lib/agent';
 
 import ListView from '@components/ListView';
 import Table from '@components/Table';
@@ -10,6 +11,7 @@ import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import ClusterLink from '@components/ClusterLink';
+import WarningBanner from '@components/Banners/WarningBanner';
 import SuseLogo from '@static/suse_logo.svg';
 import {
   getInstancesOnHost,
@@ -50,6 +52,8 @@ function HostDetails() {
     return <div>Not Found</div>;
   }
 
+  const versionWarningMessage = agentVersionWarning(host.agent_version);
+
   return (
     <div>
       <BackButton url="/hosts">Back to Hosts</BackButton>
@@ -76,6 +80,9 @@ function HostDetails() {
           )
         )}
       </div>
+      {versionWarningMessage && (
+        <WarningBanner>{versionWarningMessage}</WarningBanner>
+      )}
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
           orientation="vertical"

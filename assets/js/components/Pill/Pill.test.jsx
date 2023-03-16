@@ -14,12 +14,17 @@ describe('Pill', () => {
 
   it('should display a pill with provided props', () => {
     render(
-      <Pill className="some-class" roundedMode="not-rounded" size="xs">
+      <Pill
+        className="some-class"
+        roundedMode="not-rounded"
+        size="xs"
+        display="inline-block"
+      >
         Content
       </Pill>
     );
     expect(screen.getByText('Content')).toHaveClass(
-      'inline-flex leading-5 font-semibold some-class not-rounded px-2 text-xs'
+      'leading-5 font-semibold some-class not-rounded px-2 text-xs inline-block'
     );
   });
 });
