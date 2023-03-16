@@ -3,10 +3,10 @@ import React from 'react';
 import LoadingBox from '@components/LoadingBox';
 
 function ExecutionContainer({
-  catalogLoading,
-  executionLoading,
-  executionStarted,
-  executionRunning,
+  catalogLoading = false,
+  executionLoading = false,
+  executionStarted = true,
+  executionRunning = false,
   children,
 }) {
   if (catalogLoading || executionLoading) {
