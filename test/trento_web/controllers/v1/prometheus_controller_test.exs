@@ -1,27 +1,20 @@
 defmodule TrentoWeb.V1.PrometheusControllerTest do
   use TrentoWeb.ConnCase, async: true
 
+  alias TrentoWeb.OpenApi.ApiSpec
+
+  import OpenApiSpex.TestAssertions
   import Mox
   import Trento.Factory
 
   test "should return the expected targets", %{conn: conn} do
-    hosts = insert_list(2, :host)
+    insert_list(2, :host)
+    api_spec = ApiSpec.spec()
 
-    response =
-      conn
-      |> get("/api/v1/prometheus/targets")
-      |> json_response(200)
-
-    assert Enum.all?(hosts, fn %{id: id, hostname: hostname, ip_addresses: [ip_address | _]} ->
-             %{
-               "targets" => ["#{ip_address}:9100"],
-               "labels" => %{
-                 "agentID" => "#{id}",
-                 "hostname" => "#{hostname}",
-                 "exporter_name" => "Node Exporter"
-               }
-             } in response
-           end)
+    conn
+    |> get("/api/v1/prometheus/targets")
+    |> json_response(200)
+    |> assert_schema("HttpSTDTargetList", api_spec)
   end
 
   test "should return the expected targets when some host does not have any IP address", %{
