@@ -15,11 +15,11 @@ import Pill from '@components/Pill';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
-import { agentVersionWarnings } from '@components/HostDetails';
 import Tooltip from '@components/Tooltip';
 
 import { addTagToHost, removeTagFromHost } from '@state/hosts';
 import { post, del } from '@lib/network';
+import { agentVersionWarning } from '@lib/agent';
 
 const getInstancesByHost = (applicationInstances, databaseInstances, hostId) =>
   applicationInstances
@@ -125,7 +125,7 @@ function HostsList() {
         title: 'Agent version',
         key: 'agent_version',
         render: (content) => {
-          const warning = agentVersionWarnings(content);
+          const warning = agentVersionWarning(content);
           if (warning) {
             return (
               <Pill
