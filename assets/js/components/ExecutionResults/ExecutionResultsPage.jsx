@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { getCatalog } from '@state/selectors/catalog';
-import { getLastExecution } from '@state/selectors/lastExecutions';
-import { getCluster, getClusterHostNames } from '@state/selectors/cluster';
+import { getLastExecutionContext } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/actions/catalog';
 import {
   updateLastExecution,
@@ -19,21 +17,24 @@ import ExecutionResults from './ExecutionResults';
 function ExecutionResultsPage() {
   const { clusterID } = useParams();
   const dispatch = useDispatch();
-  const hostnames = useSelector(getClusterHostNames(clusterID));
-  const cluster = useSelector(getCluster(clusterID));
+
   const {
-    loading: catalogLoading,
-    data: catalog,
-    error: catalogError,
-  } = useSelector(getCatalog());
-  const lastExecution = useSelector(getLastExecution(clusterID));
+    hostnames,
+    cluster,
+    catalog: { loading: catalogLoading, data: catalog, error: catalogError },
+    lastExecution: {
+      data: executionData,
+      error: executionError,
+      loading: executionLoading,
+    },
+  } = useSelector(getLastExecutionContext(clusterID));
 
   useEffect(() => {
     dispatch(updateCatalog());
   }, []);
 
   useEffect(() => {
-    if (lastExecution?.data?.status !== RUNNING_EXECUTION_STATE) {
+    if (executionData?.status !== RUNNING_EXECUTION_STATE) {
       dispatch(updateLastExecution(clusterID));
     }
   }, []);
@@ -42,11 +43,6 @@ function ExecutionResultsPage() {
     return <div>Loading...</div>;
   }
 
-  const {
-    data: executionData,
-    error: executionError,
-    loading: executionLoading,
-  } = lastExecution || {};
   return (
     <ExecutionResults
       clusterID={clusterID}
