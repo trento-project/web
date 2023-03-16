@@ -5,6 +5,8 @@ defmodule TrentoWeb.V1.PrometheusController do
 
   alias Trento.Integration.Prometheus
 
+  alias TrentoWeb.OpenApi.Schema
+
   require Logger
 
   action_fallback TrentoWeb.FallbackController
@@ -14,9 +16,7 @@ defmodule TrentoWeb.V1.PrometheusController do
     tags: ["Target Infrastructure"],
     description: "Get Prometheus targets with the Http Discovery format",
     responses: [
-      ok:
-        {"A collection of HttpSTD targets", "application/json",
-         TrentoWeb.OpenApi.Schema.HttpStd.TargetList}
+      ok: {"A collection of HttpSTD targets", "application/json", Schema.HttpStd.TargetList}
     ]
 
   def targets(conn, _) do
@@ -32,7 +32,7 @@ defmodule TrentoWeb.V1.PrometheusController do
     responses: [
       ok:
         {"The status for the prometheus exporter", "application/json",
-         TrentoWeb.OpenApi.Schema.Prometheus.ExporterStatus}
+         Schema.Prometheus.ExporterStatus}
     ]
 
   def exporters_status(conn, %{"id" => host_id}) do
