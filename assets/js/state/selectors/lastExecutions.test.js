@@ -4,7 +4,7 @@ import {
   catalogCheckFactory,
   checksExecutionCompletedFactory,
 } from '@lib/test-utils/factories';
-import { getLastExecution, getLastExecutionContext } from './lastExecutions';
+import { getLastExecution, getLastExecutionData } from './lastExecutions';
 
 describe('lastExecutions selector', () => {
   it('should return the expected last execution by group ID', () => {
@@ -77,7 +77,7 @@ describe('lastExecutions selector', () => {
     };
 
     const { hostnames, cluster, catalog, lastExecution } =
-      getLastExecutionContext(clusterID)(state);
+      getLastExecutionData(clusterID)(state);
 
     expect(hostnames).toEqual([
       { id: agent1, hostname: hostname1 },

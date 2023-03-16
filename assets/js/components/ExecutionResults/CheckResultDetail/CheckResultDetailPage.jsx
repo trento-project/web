@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { getLastExecutionContext } from '@state/selectors/lastExecutions';
+import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/actions/catalog';
 import {
   updateLastExecution,
@@ -32,7 +32,7 @@ function CheckResultDetailPage() {
       error: executionError,
       loading: executionLoading,
     },
-  } = useSelector(getLastExecutionContext(clusterID));
+  } = useSelector(getLastExecutionData(clusterID));
 
   useEffect(() => {
     dispatch(updateCatalog());

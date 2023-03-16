@@ -6,7 +6,7 @@ export const getLastExecution =
   ({ lastExecutions }) =>
     lastExecutions[groupID];
 
-export const getLastExecutionContext = (groupID) => (state) => {
+export const getLastExecutionData = (groupID) => (state) => {
   const hostnames = getClusterHostNames(groupID)(state);
   const cluster = getCluster(groupID)(state);
   const catalog = getCatalog()(state);

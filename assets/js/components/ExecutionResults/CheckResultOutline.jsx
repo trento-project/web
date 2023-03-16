@@ -1,6 +1,6 @@
 import React from 'react';
-import { EXPECT, EXPECT_SAME, TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import { useNavigate } from 'react-router-dom';
+import { EXPECT, EXPECT_SAME, TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import TargetResult from './TargetResult';
 
 const isExpect = ({ type }) => type === EXPECT;
