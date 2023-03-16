@@ -4,7 +4,6 @@ defmodule TrentoWeb.V1.PrometheusController do
   use OpenApiSpex.ControllerSpecs
 
   alias Trento.Integration.Prometheus
-  alias TrentoWeb.OpenApi.Schema
 
   require Logger
 
@@ -33,8 +32,7 @@ defmodule TrentoWeb.V1.PrometheusController do
     responses: [
       ok:
         {"The status for the prometheus exporter", "application/json",
-         TrentoWeb.OpenApi.Schema.Prometheus.ExporterStatus},
-      not_found: Schema.NotFound.response()
+         TrentoWeb.OpenApi.Schema.Prometheus.ExporterStatus}
     ]
 
   def exporters_status(conn, %{"id" => host_id}) do
