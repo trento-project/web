@@ -8,7 +8,6 @@ import {
   executionRequested,
 } from '@state/actions/lastExecutions';
 import {
-  RUNNING_EXECUTION_STATE,
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
 } from '@state/lastExecutions';
@@ -30,11 +29,10 @@ function ExecutionResultsPage() {
   } = useSelector(getLastExecutionData(clusterID));
 
   useEffect(() => {
-    dispatch(updateCatalog());
-  }, []);
-
-  useEffect(() => {
-    if (executionData?.status !== RUNNING_EXECUTION_STATE) {
+    if (catalog.length === 0) {
+      dispatch(updateCatalog());
+    }
+    if (!executionData) {
       dispatch(updateLastExecution(clusterID));
     }
   }, []);
