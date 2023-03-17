@@ -3,7 +3,6 @@ import Table from '@components/Table';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import LoadingBox from '@components/LoadingBox';
 import Modal from '@components/Modal';
 
 import {
@@ -17,6 +16,7 @@ import ResultsContainer from './ResultsContainer';
 import { ExecutionIcon } from './ExecutionIcon';
 import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
+import ExecutionContainer from './ExecutionContainer';
 
 const addHostnameToTargets = (targets, hostnames) =>
   targets?.map((target) => {
@@ -74,6 +74,7 @@ const resultsTableConfig = {
     },
   ],
   collapsibleDetailRenderer: ({
+    clusterID,
     checkID,
     expectations,
     agentsCheckResults,
@@ -81,6 +82,7 @@ const resultsTableConfig = {
     clusterName,
   }) => (
     <CheckResultOutline
+      clusterID={clusterID}
       checkID={checkID}
       expectations={expectations}
       agentsCheckResults={agentsCheckResults}
@@ -115,18 +117,6 @@ function ExecutionResults({
 
   const hosts = hostnames.map((item) => item.id);
 
-  if (catalogLoading || executionLoading) {
-    return <LoadingBox text="Loading checks execution..." />;
-  }
-
-  if (!executionStarted) {
-    return <LoadingBox text="Checks execution starting..." />;
-  }
-
-  if (executionRunning) {
-    return <LoadingBox text="Checks execution running..." />;
-  }
-
   const onContentRefresh = () => {
     if (catalogError) {
       onCatalogRefresh();
@@ -151,6 +141,7 @@ function ExecutionResults({
         expectation_results: expectationResults,
         agents_check_results: agentsCheckResults,
       }) => ({
+        clusterID,
         checkID,
         result,
         clusterName,
@@ -167,7 +158,12 @@ function ExecutionResults({
     );
 
   return (
-    <>
+    <ExecutionContainer
+      catalogLoading={catalogLoading}
+      executionLoading={executionLoading}
+      executionStarted={executionStarted}
+      executionRunning={executionRunning}
+    >
       <ExecutionHeader
         clusterID={clusterID}
         clusterName={clusterName}
@@ -203,7 +199,7 @@ function ExecutionResults({
           {getCheckRemediation(catalog, selectedCheck)}
         </ReactMarkdown>
       </Modal>
-    </>
+    </ExecutionContainer>
   );
 }
 

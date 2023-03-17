@@ -1,9 +1,7 @@
 import React from 'react';
-import { EXPECT, EXPECT_SAME } from '@lib/model';
+import { useNavigate } from 'react-router-dom';
+import { EXPECT, EXPECT_SAME, TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import TargetResult from './TargetResult';
-
-const TARGET_NODE = 'TARGET_NODE';
-const TARGET_CLUSTER = 'TARGET_CLUSTER';
 
 const isExpect = ({ type }) => type === EXPECT;
 const isExpectSame = ({ type }) => type === EXPECT_SAME;
@@ -32,7 +30,7 @@ const extractExpectResults = (expectations, agentsCheckResults) => {
       : `${metExpectations}/${expectStatementsCount} Expectations met.`;
 
     return {
-      target: TARGET_NODE,
+      targetType: TARGET_HOST,
       targetName: hostname,
       expectationsSummary,
       isAgentCheckError:
@@ -65,7 +63,7 @@ const extractExpectSameResults = (
     const { result } = getExpectSameStatementResult(expectationResults, name);
 
     return {
-      target: TARGET_CLUSTER,
+      targetType: TARGET_CLUSTER,
       targetName,
       expectationName: name,
       expectationsSummary: result
@@ -76,12 +74,15 @@ const extractExpectSameResults = (
   });
 
 function CheckResultOutline({
+  clusterID,
   checkID,
   expectations,
   agentsCheckResults,
   expectationResults,
   clusterName,
 }) {
+  const navigate = useNavigate();
+
   const expectResults = extractExpectResults(expectations, agentsCheckResults);
 
   const expectSameResults = extractExpectSameResults(
@@ -106,7 +107,7 @@ function CheckResultOutline({
         <div className="table-row-group text-sm">
           {[...expectSameResults, ...expectResults].map(
             ({
-              target,
+              targetType,
               targetName,
               expectationName,
               expectationsSummary,
@@ -114,10 +115,15 @@ function CheckResultOutline({
             }) => (
               <TargetResult
                 key={`${checkID}-${targetName}-${expectationName}`}
-                isCluster={target === TARGET_CLUSTER}
+                isCluster={targetType === TARGET_CLUSTER}
                 targetName={targetName}
                 expectationsSummary={expectationsSummary}
                 isAgentCheckError={isAgentCheckError}
+                onClick={() =>
+                  navigate(
+                    `/clusters/${clusterID}/executions/last/${checkID}/${targetType}/${targetName}`
+                  )
+                }
               />
             )
           )}
