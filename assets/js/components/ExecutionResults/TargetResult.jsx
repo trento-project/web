@@ -7,10 +7,17 @@ function TargetResult({
   isCluster = false,
   targetName,
   expectationsSummary,
-  isAgentCheckError,
+  isAgentCheckError = false,
+  onClick = () => {},
 }) {
   return (
-    <div className="table-row border-b cursor-pointer">
+    <div
+      role="button"
+      aria-hidden="true"
+      className="table-row border-b cursor-pointer"
+      onClick={onClick}
+      data-testid="target-result"
+    >
       <div className="table-cell p-2">
         <div className="flex p-1">
           <TargetIcon isCluster={isCluster} />
