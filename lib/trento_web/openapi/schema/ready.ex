@@ -1,6 +1,6 @@
-defmodule TrentoWeb.OpenApi.Schema.Health do
+defmodule TrentoWeb.OpenApi.Schema.Ready do
   @moduledoc """
-  Healthcheck
+  Ready
   """
   alias OpenApiSpex.Operation
   alias OpenApiSpex.Schema
@@ -8,23 +8,22 @@ defmodule TrentoWeb.OpenApi.Schema.Health do
   require OpenApiSpex
 
   OpenApiSpex.schema(%Schema{
-    title: "Health",
+    title: "Ready",
     type: :object,
     example: %{
-      database: "pass"
+      ready: true
     },
     properties: %{
-      database: %Schema{
-        description: "The status of the database connection",
-        type: :string,
-        enum: ["pass", "fail"]
+      ready: %Schema{
+        description: "Trento Web platform ready",
+        type: :boolean
       }
     }
   })
 
   def response do
     Operation.response(
-      "Health",
+      "Ready",
       "application/json",
       __MODULE__
     )
