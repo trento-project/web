@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 
 import { faker } from '@faker-js/faker';
 
@@ -13,6 +15,8 @@ import {
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
 } from '@lib/test-utils/factories';
+
+import { renderWithRouter } from '@lib/test-utils';
 
 import '@testing-library/jest-dom';
 import CheckResultOutline from './CheckResultOutline';
@@ -32,9 +36,12 @@ const expectSameStatementResult = (expectationName, result) =>
   });
 
 describe('CheckResultOutline Component', () => {
-  it('should render a proper outline for a successful result', () => {
+  it('should render a proper outline for a successful result', async () => {
+    const user = userEvent.setup();
+
+    const clusterID = faker.datatype.uuid();
     const checkID = faker.datatype.uuid();
-    const clusterName = faker.animal.bear();
+    const clusterName = faker.lorem.word();
 
     const expectationName1 = faker.company.name();
     const expectationName2 = faker.color.human();
@@ -88,8 +95,9 @@ describe('CheckResultOutline Component', () => {
       expectSameStatementResult(expectSameExpectationName2, true),
     ];
 
-    render(
+    renderWithRouter(
       <CheckResultOutline
+        clusterID={clusterID}
         checkID={checkID}
         clusterName={clusterName}
         expectations={expectations}
@@ -110,6 +118,12 @@ describe('CheckResultOutline Component', () => {
       )
     ).toHaveLength(1);
     expect(screen.getAllByText('3/3 Expectations met.')).toHaveLength(2);
+
+    await act(async () => user.click(screen.getAllByText(clusterName)[0]));
+
+    expect(window.location.pathname).toEqual(
+      `/clusters/${clusterID}/executions/last/${checkID}/cluster/${clusterName}`
+    );
   });
 
   it('should render a proper outline when a fact gathering error occurs', () => {
@@ -139,7 +153,7 @@ describe('CheckResultOutline Component', () => {
 
     const expectationResults = [];
 
-    render(
+    renderWithRouter(
       <CheckResultOutline
         checkID={checkID}
         clusterName={clusterName}
