@@ -11,6 +11,7 @@ import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
 } from '@state/lastExecutions';
+import { getHostID } from '@state/selectors/cluster';
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';

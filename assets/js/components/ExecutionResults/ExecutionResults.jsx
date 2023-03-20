@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Modal from '@components/Modal';
 
+import { getHostID } from '@state/selectors/cluster';
 import {
   getCheckResults,
   getCheckDescription,
@@ -180,7 +181,7 @@ function ExecutionResults({
         clusterID={clusterID}
         hasAlreadyChecksResults={!!(executionData || executionLoading)}
         selectedChecks={clusterSelectedChecks}
-        hosts={hosts}
+        hosts={clusterHosts.map(getHostID)}
         onContentRefresh={onContentRefresh}
         onStartExecution={onStartExecution}
       >
