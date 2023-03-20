@@ -19,11 +19,11 @@ import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
 import ExecutionContainer from './ExecutionContainer';
 
-const addHostnameToTargets = (targets, hostnames) =>
+const addHostnameToTargets = (targets, clusterHosts) =>
   targets?.map((target) => {
     const { agent_id } = target;
 
-    const { hostname } = hostnames.find(({ id }) => agent_id === id);
+    const { hostname } = clusterHosts.find(({ id }) => agent_id === id);
     return {
       ...target,
       hostname,
@@ -98,7 +98,7 @@ function ExecutionResults({
   clusterName,
   clusterScenario,
   cloudProvider,
-  hostnames = [],
+  clusterHosts = [],
   catalogLoading,
   catalog,
   catalogError,
@@ -115,8 +115,6 @@ function ExecutionResults({
   const [predicates, setPredicates] = useState([]);
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const hosts = hostnames.map((item) => item.id);
 
   const onContentRefresh = () => {
     if (catalogError) {
@@ -150,7 +148,10 @@ function ExecutionResults({
         description: getCheckDescription(catalog, checkID),
         expectations: getCheckExpectations(catalog, checkID),
         expectationResults,
-        agentsCheckResults: addHostnameToTargets(agentsCheckResults, hostnames),
+        agentsCheckResults: addHostnameToTargets(
+          agentsCheckResults,
+          clusterHosts
+        ),
         onClick: () => {
           setModalOpen(true);
           setSelectedCheck(checkID);

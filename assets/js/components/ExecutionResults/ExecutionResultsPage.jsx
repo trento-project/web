@@ -18,7 +18,7 @@ function ExecutionResultsPage() {
   const dispatch = useDispatch();
 
   const {
-    hostnames,
+    clusterHosts,
     cluster,
     catalog: { loading: catalogLoading, data: catalog, error: catalogError },
     lastExecution: {
@@ -44,7 +44,7 @@ function ExecutionResultsPage() {
   return (
     <ExecutionResults
       clusterID={clusterID}
-      hostnames={hostnames}
+      clusterHosts={clusterHosts}
       clusterName={cluster?.name}
       clusterScenario={cluster?.type}
       cloudProvider={cluster?.provider}
