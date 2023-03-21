@@ -11,7 +11,7 @@ const targetTypeString = {
 
 function CheckResultInfoBox({ checkID, targetType, targetName, provider }) {
   return (
-    <div className="tn-cluster-details w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
+    <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
       <ListView
         className="grid-flow-row"
         titleClassName="text-lg"

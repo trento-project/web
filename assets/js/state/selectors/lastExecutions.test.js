@@ -76,13 +76,15 @@ describe('lastExecutions selector', () => {
       },
     };
 
-    const { hostnames, cluster, catalog, lastExecution } =
+    const { clusterHosts, cluster, catalog, lastExecution } =
       getLastExecutionData(clusterID)(state);
 
-    expect(hostnames).toEqual([
-      { id: agent1, hostname: hostname1 },
-      { id: agent2, hostname: hostname2 },
-    ]);
+    expect(clusterHosts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: agent1, hostname: hostname1 }),
+        expect.objectContaining({ id: agent2, hostname: hostname2 }),
+      ])
+    );
 
     expect(cluster.name).toEqual(clusterName);
     expect(catalog.data.length).toEqual(checksCatalog.length);

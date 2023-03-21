@@ -34,13 +34,13 @@ export const slesSubscriptionFactory = Factory.define(() => ({
   version: '15.3',
 }));
 
-export const hostFactory = Factory.define(({ params }) => {
+export const hostFactory = Factory.define(({ params, sequence }) => {
   const id = params.id || faker.datatype.uuid();
 
   return {
     id,
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
-    hostname: faker.name.firstName(),
+    hostname: `${faker.name.firstName()}_${sequence}`,
     cluster_id: faker.datatype.uuid(),
     ip_addresses: [faker.internet.ip()],
     provider: cloudProviderEnum(),

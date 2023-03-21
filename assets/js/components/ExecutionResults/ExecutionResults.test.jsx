@@ -7,7 +7,7 @@ import { renderWithRouter } from '@lib/test-utils';
 import {
   catalogFactory,
   catalogCheckFactory,
-  hostnameFactory,
+  hostFactory,
   checksExecutionCompletedFactory,
   emptyCheckResultFactory,
   addPassingExpectExpectation,
@@ -24,8 +24,8 @@ const prepareStateData = (checkExecutionStatus) => {
   const checkID1 = faker.datatype.uuid();
   const checkID2 = faker.datatype.uuid();
 
-  const hostnames = hostnameFactory.buildList(2);
-  const [{ id: agent1 }, { id: agent2 }] = hostnames;
+  const clusterHosts = hostFactory.buildList(2);
+  const [{ id: agent1 }, { id: agent2 }] = clusterHosts;
   const targets = [agent1, agent2];
 
   const expectationName1 = faker.company.name();
@@ -122,7 +122,7 @@ const prepareStateData = (checkExecutionStatus) => {
     executionStarted: executionData?.status !== 'requested',
     error,
     targets,
-    hostnames,
+    clusterHosts,
     checks: [checkID1, checkID2],
     executionLoading,
     executionData,
@@ -140,7 +140,7 @@ describe('ExecutionResults', () => {
     const clusterName = 'test-cluster';
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       checks: [checkID1, checkID2],
       loading,
       catalog,
@@ -157,7 +157,7 @@ describe('ExecutionResults', () => {
         clusterName={clusterName}
         clusterScenario="hana_scale_up"
         cloudProvider="azure"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -169,8 +169,8 @@ describe('ExecutionResults', () => {
     );
 
     expect(screen.getAllByText(clusterName)).toHaveLength(2);
-    expect(screen.getAllByText(hostnames[0].hostname)).toHaveLength(2);
-    expect(screen.getAllByText(hostnames[1].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(clusterHosts[0].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(clusterHosts[1].hostname)).toHaveLength(2);
     expect(
       screen.getAllByText(/Value `.*` is the same on all targets/)
     ).toHaveLength(1);
@@ -187,18 +187,18 @@ describe('ExecutionResults', () => {
     expect(tableRows[1]).toHaveTextContent(
       /Value `.*` is the same on all targets/
     );
-    expect(tableRows[1]).toHaveTextContent(hostnames[0].hostname);
+    expect(tableRows[1]).toHaveTextContent(clusterHosts[0].hostname);
     expect(tableRows[1]).toHaveTextContent('2/2 Expectations met.');
 
     expect(tableRows[2]).toHaveTextContent(checkID2);
-    expect(tableRows[3]).toHaveTextContent(hostnames[1].hostname);
+    expect(tableRows[3]).toHaveTextContent(clusterHosts[1].hostname);
     expect(tableRows[3]).toHaveTextContent('1/2 Expectations met');
   });
 
   it('should render the execution starting dialog, when an execution is not started yet', () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -209,7 +209,7 @@ describe('ExecutionResults', () => {
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         catalogError={error}
@@ -226,7 +226,7 @@ describe('ExecutionResults', () => {
   it('should render ExecutionResults with running state', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -239,7 +239,7 @@ describe('ExecutionResults', () => {
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         catalogError={error}
@@ -263,7 +263,7 @@ describe('ExecutionResults', () => {
         clusterName={faker.animal.cat()}
         clusterScenario={faker.animal.cat()}
         cloudProvider={faker.animal.cat()}
-        hostnames={[]}
+        clusterHosts={[]}
         catalogLoading={false}
         catalog={[]}
         executionStarted
@@ -285,7 +285,7 @@ describe('ExecutionResults', () => {
   it("should render ExecutionResults with successfully filtered 'passing' results", async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       checks: [checkID1, checkID2],
       loading,
       catalog,
@@ -302,7 +302,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider="azure"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -317,8 +317,8 @@ describe('ExecutionResults', () => {
     expect(screen.getAllByText('test-cluster')).toHaveLength(2);
     expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
+    expect(screen.getByText(clusterHosts[0].hostname)).toBeTruthy();
+    expect(screen.getByText(clusterHosts[1].hostname)).toBeTruthy();
     expect(screen.getAllByText(checkID1)).toHaveLength(1);
     expect(screen.queryByText(checkID2)).toBeNull();
   });
@@ -326,7 +326,7 @@ describe('ExecutionResults', () => {
   it("should render ExecutionResults with successfully filtered 'passing' and 'critical' results", async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       checks: [checkID1, checkID2],
       loading,
       catalog,
@@ -343,7 +343,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider="azure"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -361,8 +361,8 @@ describe('ExecutionResults', () => {
     expect(screen.getAllByText('test-cluster')).toHaveLength(2);
     expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getAllByText(hostnames[0].hostname)).toHaveLength(2);
-    expect(screen.getAllByText(hostnames[1].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(clusterHosts[0].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(clusterHosts[1].hostname)).toHaveLength(2);
     expect(screen.getAllByText(checkID1)).toHaveLength(1);
     expect(screen.getAllByText(checkID2)).toHaveLength(1);
   });
@@ -370,7 +370,7 @@ describe('ExecutionResults', () => {
   it('given provider is VMware, should render ExecutionResults with warning banner', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -386,7 +386,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider="vmware"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -409,7 +409,7 @@ describe('ExecutionResults', () => {
   it('given provider is unknown, should render ExecutionResults with warning banner', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -425,7 +425,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider={UNKNOWN_PROVIDER}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -448,7 +448,7 @@ describe('ExecutionResults', () => {
   it('should open remediation modal when clicking on checkID and close it when clicking outside', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       executionError,
@@ -460,7 +460,7 @@ describe('ExecutionResults', () => {
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionLoading={loading}
@@ -483,7 +483,7 @@ describe('ExecutionResults', () => {
   it('should not open remediation modal when clicking on description', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       executionError,
@@ -495,7 +495,7 @@ describe('ExecutionResults', () => {
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionLoading={loading}
