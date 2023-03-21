@@ -3,19 +3,15 @@ export const getCluster =
   ({ clustersList }) =>
     clustersList.clusters.find((cluster) => cluster.id === id);
 
-export const getClusterHostIDs =
+export const getClusterHosts =
   (clusterID) =>
-  ({ hostsList }) =>
-    hostsList.hosts
-      .filter((host) => host.cluster_id === clusterID)
-      .map(({ id: hostID }) => hostID);
+  ({ hostsList: { hosts } }) =>
+    hosts.filter(({ cluster_id }) => cluster_id === clusterID);
 
-export const getClusterHostNames =
-  (clusterID) =>
-  ({ hostsList }) =>
-    hostsList.hosts
-      .filter(({ cluster_id }) => cluster_id === clusterID)
-      .map(({ id, hostname }) => ({ id, hostname }));
+export const getHostID = ({ id: hostID }) => hostID;
+
+export const getClusterHostIDs = (clusterID) => (state) =>
+  getClusterHosts(clusterID)(state).map(getHostID);
 
 export const getClusterName =
   (clusterID) =>

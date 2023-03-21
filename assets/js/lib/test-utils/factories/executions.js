@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { hostnameFactory, resultEnum } from '.';
+import { hostFactory, resultEnum } from '.';
 
 export const checksExecutionStatusEnum = () =>
   faker.helpers.arrayElement(['running', 'completed']);
@@ -192,7 +192,7 @@ export const addPassingExpectSameExpectation = (checkResult, expectationName) =>
 export const agentsCheckResultsWithHostname = (agentsCheckResults) =>
   agentsCheckResults.map((agentCheckResult) => ({
     ...agentCheckResult,
-    hostname: hostnameFactory.build().hostname,
+    hostname: hostFactory.build().hostname,
   }));
 
 export const emptyCheckResultFactory = Factory.define(({ params }) => {
