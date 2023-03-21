@@ -36,3 +36,6 @@ npm-debug.log
 /assets/.env
 
 .pgdata/
+
+# Local dev.local.exs file
+config/dev.local.exs

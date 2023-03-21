@@ -124,3 +124,8 @@ config :joken,
   refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"
 
 config :trento, :checks_service, base_url: "http://localhost:4001"
+
+# Override with local dev.local.exs file
+if File.exists?("#{__DIR__}/dev.local.exs") do
+  import_config "dev.local.exs"
+end
