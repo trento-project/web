@@ -61,13 +61,7 @@ config :trento, Trento.Commanded,
     event_store: Trento.EventStore
   ],
   pubsub: :local,
-  registry: :local,
-  snapshotting: %{
-    Trento.Domain.SapSystem => [
-      snapshot_every: 200,
-      snapshot_version: 1
-    ]
-  }
+  registry: :local
 
 config :trento, Trento.StreamRollUpEventHandler, max_stream_version: 10_000
 
