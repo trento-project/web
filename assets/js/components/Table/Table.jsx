@@ -11,6 +11,7 @@ import {
 
 import CollapsibleTableRow from './CollapsibleTableRow';
 import Pagination from './Pagination';
+import EmptyTable from './EmptyTable';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
@@ -122,6 +123,33 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
   const renderedData = pagination
     ? page(currentPage, filteredData)
     : filteredData;
+  console.log('colums', columns);
+  if (data.length === 0) {
+    console.log('collums inside if', columns);
+    return (
+      <table className="min-w-full leading-normal table-fixed">
+        <thead>
+          <tr>
+            {columns.map(({ title, className }) => (
+              <th
+                key={title}
+                scope="col"
+                className={classNames(
+                  'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100',
+                  className
+                )}
+              >
+                {title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="h-full">
+          <EmptyTable colSpan={columns.length} />
+        </tbody>
+      </table>
+    );
+  }
 
   return (
     <div

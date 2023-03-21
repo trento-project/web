@@ -119,5 +119,25 @@ describe('Table component', () => {
         expect(table.querySelectorAll('tbody > tr')).toHaveLength(1);
       });
     });
+
+    it('should return empty state message when data is empty', async () => {
+      const data = [];
+      const emptyStateMessage = 'No data available';
+
+      render(
+        <Table config={tableConfig} data={data} setSearchParams={() => {}} />
+      );
+      const emptyStateElement = screen.getByText(emptyStateMessage);
+      expect(emptyStateElement).toBeInTheDocument();
+      const tableRows = screen.getAllByRole('row');
+      expect(tableRows.length).toBe(2);
+      const tableCell = screen.getByRole('cell');
+      expect(tableCell).toHaveTextContent(emptyStateMessage);
+
+      //   expect(screen.getByText(emptyStateMessage)).toBeInTheDocument();
+      //   expect(screen.getAllByRole('row')).toBe(2);
+      //   expect(screen.getByRole('cell')).toHaveTextContent(emptyStateMessage);
+      //   expect(screen.getByTestId('eos-svg-component')).toBeInTheDocument();
+    });
   });
 });
