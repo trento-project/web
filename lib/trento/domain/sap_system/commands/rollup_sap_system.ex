@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Commands.RollUpSapSystem do
   @moduledoc """
-  Start a sap_system aggregate rollup
+  Start a sap system aggregate rollup.
   """
 
   @required_fields :all

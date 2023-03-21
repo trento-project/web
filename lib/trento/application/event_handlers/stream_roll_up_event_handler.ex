@@ -105,7 +105,7 @@ defmodule Trento.StreamRollUpEventHandler do
 
     if stream_version > @max_stream_version do
       Logger.info(
-        "Rolling up sapsystem: #{sap_system_id} because  #{stream_version} > #{@max_stream_version}"
+        "Rolling up sap system: #{sap_system_id} because  #{stream_version} > #{@max_stream_version}"
       )
 
       commanded().dispatch(%RollUpSapSystem{sap_system_id: sap_system_id},

@@ -1,7 +1,7 @@
 defmodule Trento.Domain.Events.SapSystemRolledUp do
   @moduledoc """
   This event is emitted when a sap system roll-up is requested.
-  It is used to trigger the stream archiving process and it contains the snapshot of the host aggregate.
+  It is used to trigger the stream archiving process and it contains the snapshot of the sap system aggregate.
   """
 
   use Trento.Event

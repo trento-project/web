@@ -870,14 +870,14 @@ defmodule Trento.SapSystemTest do
       database_instance_registered_event =
         build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid)
 
-      events = [
+      initial_events = [
         build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
         database_instance_registered_event,
         build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid)
       ]
 
       assert_events_and_state(
-        events,
+        initial_events,
         RollUpSapSystem.new!(%{sap_system_id: sap_system_id}),
         %SapSystemRollUpRequested{
           sap_system_id: sap_system_id,
@@ -914,7 +914,7 @@ defmodule Trento.SapSystemTest do
       sap_system_id = UUID.uuid4()
       sid = UUID.uuid4()
 
-      events = [
+      initial_events = [
         build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
         build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
         build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid),
@@ -925,7 +925,7 @@ defmodule Trento.SapSystemTest do
       ]
 
       assert_error(
-        events,
+        initial_events,
         RegisterDatabaseInstance.new!(%{
           sap_system_id: sap_system_id,
           sid: Faker.StarWars.planet(),
@@ -941,7 +941,7 @@ defmodule Trento.SapSystemTest do
       )
 
       assert_error(
-        events,
+        initial_events,
         RollUpSapSystem.new!(%{
           sap_system_id: sap_system_id
         }),
