@@ -15,7 +15,8 @@ defmodule Trento.StreamRollUpEventHandler do
 
   alias Trento.Domain.Commands.{
     RollUpCluster,
-    RollUpHost
+    RollUpHost,
+    RollUpSapSystem
   }
 
   require Logger
@@ -39,6 +40,18 @@ defmodule Trento.StreamRollUpEventHandler do
     Trento.Domain.Events.HostRegistered,
     Trento.Domain.Events.ProviderUpdated,
     Trento.Domain.Events.SlesSubscriptionsUpdated
+  ]
+
+  @sap_system_events [
+    Trento.Domain.Events.ApplicationInstanceHealthChanged,
+    Trento.Domain.Events.ApplicationInstanceRegistered,
+    Trento.Domain.Events.DatabaseHealthChanged,
+    Trento.Domain.Events.DatabaseInstanceHealthChanged,
+    Trento.Domain.Events.DatabaseInstanceRegistered,
+    Trento.Domain.Events.DatabaseInstanceSystemReplicationChanged,
+    Trento.Domain.Events.DatabaseRegistered,
+    Trento.Domain.Events.SapSystemHealthChanged,
+    Trento.Domain.Events.SapSystemRegistered
   ]
 
   def handle(%event_type{host_id: host_id}, %{
@@ -75,6 +88,27 @@ defmodule Trento.StreamRollUpEventHandler do
       )
 
       commanded().dispatch(%RollUpCluster{cluster_id: cluster_id},
+        consistency: :strong
+      )
+    else
+      :ok
+    end
+  end
+
+  def handle(%event_type{sap_system_id: sap_system_id}, %{
+        stream_version: event_stream_version
+      })
+      when event_type in @sap_system_events and event_stream_version > @max_stream_version do
+    # This is needed to check if an event already triggered a roll-up
+    {:ok, %EventStore.Streams.StreamInfo{stream_version: stream_version}} =
+      Trento.EventStore.stream_info(sap_system_id)
+
+    if stream_version > @max_stream_version do
+      Logger.info(
+        "Rolling up sap system: #{sap_system_id} because  #{stream_version} > #{@max_stream_version}"
+      )
+
+      commanded().dispatch(%RollUpSapSystem{sap_system_id: sap_system_id},
         consistency: :strong
       )
     else

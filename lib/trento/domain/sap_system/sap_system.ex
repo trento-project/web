@@ -54,7 +54,8 @@ defmodule Trento.Domain.SapSystem do
 
   alias Trento.Domain.Commands.{
     RegisterApplicationInstance,
-    RegisterDatabaseInstance
+    RegisterDatabaseInstance,
+    RollUpSapSystem
   }
 
   alias Trento.Domain.Events.{
@@ -66,7 +67,9 @@ defmodule Trento.Domain.SapSystem do
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     SapSystemHealthChanged,
-    SapSystemRegistered
+    SapSystemRegistered,
+    SapSystemRolledUp,
+    SapSystemRollUpRequested
   }
 
   alias Trento.Domain.HealthService
@@ -79,6 +82,7 @@ defmodule Trento.Domain.SapSystem do
     field :sap_system_id, Ecto.UUID
     field :sid, :string
     field :health, Ecto.Enum, values: Health.values()
+    field :rolling_up, :boolean, default: false
 
     embeds_one :database, Database
     embeds_one :application, Application
@@ -127,6 +131,9 @@ defmodule Trento.Domain.SapSystem do
       }
     ]
   end
+
+  # Stop everything during the rollup process
+  def execute(%SapSystem{rolling_up: true}, _), do: {:error, :sap_system_rolling_up}
 
   # When a RegisterDatabaseInstance command is received by an existing SAP System aggregate,
   # the SAP System aggregate registers the Database instance if it is not already registered
@@ -252,6 +259,24 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.new()
     |> Multi.execute(fn _ -> event end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
+  end
+
+  # Start the rollup flow
+  def execute(
+        %SapSystem{sap_system_id: nil},
+        %RollUpSapSystem{}
+      ) do
+    {:error, :sap_system_not_registered}
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = snapshot,
+        %RollUpSapSystem{}
+      ) do
+    %SapSystemRollUpRequested{
+      sap_system_id: sap_system_id,
+      snapshot: snapshot
+    }
   end
 
   def apply(
@@ -454,6 +479,18 @@ defmodule Trento.Domain.SapSystem do
       sap_system
       | database: Map.put(database, :health, health)
     }
+  end
+
+  # Aggregate to rolling up state
+  def apply(%SapSystem{} = sap_system, %SapSystemRollUpRequested{}) do
+    %SapSystem{sap_system | rolling_up: true}
+  end
+
+  # Hydrate the aggregate with a rollup snapshot after rollup ends
+  def apply(%SapSystem{}, %SapSystemRolledUp{
+        snapshot: snapshot
+      }) do
+    snapshot
   end
 
   defp maybe_emit_database_instance_system_replication_changed_event(

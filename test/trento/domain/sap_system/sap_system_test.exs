@@ -5,7 +5,8 @@ defmodule Trento.SapSystemTest do
 
   alias Trento.Domain.Commands.{
     RegisterApplicationInstance,
-    RegisterDatabaseInstance
+    RegisterDatabaseInstance,
+    RollUpSapSystem
   }
 
   alias Trento.Domain.Events.{
@@ -17,7 +18,9 @@ defmodule Trento.SapSystemTest do
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     SapSystemHealthChanged,
-    SapSystemRegistered
+    SapSystemRegistered,
+    SapSystemRolledUp,
+    SapSystemRollUpRequested
   }
 
   alias Trento.Domain.SapSystem
@@ -847,6 +850,130 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{health: :warning} = state
+        end
+      )
+    end
+  end
+
+  describe "rollup" do
+    test "should not accept a rollup command if a sap_system was not registered yet" do
+      assert_error(
+        RollUpSapSystem.new!(%{sap_system_id: Faker.UUID.v4()}),
+        {:error, :sap_system_not_registered}
+      )
+    end
+
+    test "should change the sap_system state to rolling up" do
+      sap_system_id = UUID.uuid4()
+      sid = UUID.uuid4()
+
+      database_instance_registered_event =
+        build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid)
+
+      initial_events = [
+        build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
+        database_instance_registered_event,
+        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RollUpSapSystem.new!(%{sap_system_id: sap_system_id}),
+        %SapSystemRollUpRequested{
+          sap_system_id: sap_system_id,
+          snapshot: %SapSystem{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            health: :passing,
+            database: %SapSystem.Database{
+              sid: sid,
+              health: :passing,
+              instances: [
+                %SapSystem.Instance{
+                  sid: sid,
+                  instance_number: database_instance_registered_event.instance_number,
+                  health: database_instance_registered_event.health,
+                  features: database_instance_registered_event.features,
+                  host_id: database_instance_registered_event.host_id,
+                  system_replication: database_instance_registered_event.system_replication,
+                  system_replication_status:
+                    database_instance_registered_event.system_replication_status
+                }
+              ]
+            },
+            rolling_up: false
+          }
+        },
+        fn %SapSystem{rolling_up: rolling_up} ->
+          assert rolling_up
+        end
+      )
+    end
+
+    test "should not accept commands if a sap_system is in rolling up state" do
+      sap_system_id = UUID.uuid4()
+      sid = UUID.uuid4()
+
+      initial_events = [
+        build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
+        build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
+        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid),
+        %SapSystemRollUpRequested{
+          sap_system_id: sap_system_id,
+          snapshot: %SapSystem{}
+        }
+      ]
+
+      assert_error(
+        initial_events,
+        RegisterDatabaseInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: Faker.StarWars.planet(),
+          tenant: Faker.UUID.v4(),
+          host_id: Faker.UUID.v4(),
+          instance_number: "00",
+          features: Faker.Pokemon.name(),
+          http_port: 8080,
+          https_port: 8443,
+          health: :passing
+        }),
+        {:error, :sap_system_rolling_up}
+      )
+
+      assert_error(
+        initial_events,
+        RollUpSapSystem.new!(%{
+          sap_system_id: sap_system_id
+        }),
+        {:error, :sap_system_rolling_up}
+      )
+    end
+
+    test "should apply the rollup event and rehydrate the aggregate" do
+      sap_system_id = UUID.uuid4()
+
+      sap_system_registered_event =
+        build(:sap_system_registered_event, sap_system_id: sap_system_id)
+
+      assert_state(
+        [
+          sap_system_registered_event,
+          %SapSystemRolledUp{
+            sap_system_id: sap_system_id,
+            snapshot: %SapSystem{
+              sap_system_id: sap_system_registered_event.sap_system_id,
+              sid: sap_system_registered_event.sid,
+              health: sap_system_registered_event.health,
+              rolling_up: false
+            }
+          }
+        ],
+        [],
+        fn sap_system ->
+          refute sap_system.rolling_up
+          assert sap_system.sap_system_id == sap_system_registered_event.sap_system_id
+          assert sap_system.sid == sap_system_registered_event.sid
+          assert sap_system.health == sap_system_registered_event.health
         end
       )
     end
