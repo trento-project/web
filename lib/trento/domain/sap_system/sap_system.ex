@@ -67,9 +67,9 @@ defmodule Trento.Domain.SapSystem do
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     SapSystemHealthChanged,
+    SapSystemRegistered,
     SapSystemRolledUp,
-    SapSystemRollUpRequested,
-    SapSystemRegistered
+    SapSystemRollUpRequested
   }
 
   alias Trento.Domain.HealthService
