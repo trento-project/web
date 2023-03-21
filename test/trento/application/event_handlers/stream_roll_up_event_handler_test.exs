@@ -7,7 +7,8 @@ defmodule Trento.StreamRollUpEventHandlerTest do
 
   alias Trento.Domain.Commands.{
     RollUpCluster,
-    RollUpHost
+    RollUpHost,
+    RollUpSapSystem
   }
 
   alias Trento.StreamRollUpEventHandler
@@ -74,6 +75,37 @@ defmodule Trento.StreamRollUpEventHandlerTest do
     event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
 
     expect(Trento.Commanded.Mock, :dispatch, fn %RollUpCluster{cluster_id: ^cluster_id}, _ ->
+      :ok
+    end)
+
+    assert :ok =
+             StreamRollUpEventHandler.handle(event, %{stream_version: @max_stream_version + 1})
+  end
+
+  test "should dispatch the sap system roll-up command" do
+    sap_system_id = Faker.UUID.v4()
+
+    :ok =
+      Trento.EventStore.append_to_stream(
+        sap_system_id,
+        0,
+        Enum.map(0..@max_stream_version, fn _ ->
+          event = TestEvent.new!(%{"data" => Faker.StarWars.quote()})
+
+          %EventStore.EventData{
+            causation_id: UUID.uuid4(),
+            correlation_id: UUID.uuid4(),
+            event_type: TypeProvider.to_string(event),
+            data: event,
+            metadata: %{}
+          }
+        end)
+      )
+
+    event = build(:database_instance_registered_event, sap_system_id: sap_system_id)
+
+    expect(Trento.Commanded.Mock, :dispatch, fn %RollUpSapSystem{sap_system_id: ^sap_system_id},
+                                                _ ->
       :ok
     end)
 
