@@ -17,6 +17,7 @@ defmodule Trento.Router do
     RegisterHost,
     RollUpCluster,
     RollUpHost,
+    RollUpSapSystem,
     SelectChecks,
     UpdateHeartbeat,
     UpdateProvider,
@@ -51,6 +52,7 @@ defmodule Trento.Router do
 
   identify SapSystem, by: :sap_system_id
 
-  dispatch [RegisterApplicationInstance, RegisterDatabaseInstance],
-    to: SapSystem
+  dispatch [RegisterApplicationInstance, RegisterDatabaseInstance, RollUpSapSystem],
+    to: SapSystem,
+    lifespan: SapSystem.Lifespan
 end
