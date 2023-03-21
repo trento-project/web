@@ -11,6 +11,7 @@ import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
 } from '@state/lastExecutions';
+import { getHostID } from '@state/selectors/cluster';
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
@@ -23,7 +24,7 @@ function CheckResultDetailPage() {
   const dispatch = useDispatch();
 
   const {
-    hostnames,
+    clusterHosts,
     cluster,
     catalog: { loading: catalogLoading, data: catalog, error: catalogError },
     lastExecution: {
@@ -72,7 +73,7 @@ function CheckResultDetailPage() {
         clusterID={clusterID}
         hasAlreadyChecksResults={!!(executionData || executionLoading)}
         selectedChecks={cluster?.selected_checks}
-        hosts={hostnames.map((item) => item.id)}
+        hosts={clusterHosts.map(getHostID)}
         onContentRefresh={() => {
           if (catalogError) {
             dispatch(updateCatalog());
@@ -94,6 +95,7 @@ function CheckResultDetailPage() {
           targetType={targetType}
           targetName={targetName}
           executionData={executionData}
+          clusterHosts={clusterHosts}
         />
       </ResultsContainer>
     </ExecutionContainer>

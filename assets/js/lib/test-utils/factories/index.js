@@ -63,11 +63,6 @@ export const catalogFactory = Factory.define(() => ({
   error: null,
 }));
 
-export const hostnameFactory = Factory.define(({ sequence }) => ({
-  id: faker.datatype.uuid(),
-  hostname: `${faker.hacker.noun()}_${sequence}`,
-}));
-
 export const aboutFactory = Factory.define(() => ({
   flavor: faker.animal.cat(),
   sles_subscriptions: faker.datatype.number(),
