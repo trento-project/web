@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Events.ClusterDeregistered do
   @moduledoc """
-    This event is emitted when a cluster is decommissioned.
+  This event is emitted when a cluster is deregistered.
   """
 
   use Trento.Event
