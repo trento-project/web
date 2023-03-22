@@ -33,7 +33,7 @@ defmodule Trento.ClusterTest do
   require Trento.Domain.Enums.Health, as: Health
 
   describe "cluster registration" do
-    test "should register a cluster and add the node host to the cluster if the node is a DC" do
+    test "should register a cluster with full details and add the node host to the cluster if the node is a DC" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -81,7 +81,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should add a host to the cluster" do
+    test "should add a host to the cluster when the cluster has full details" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -116,25 +116,165 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should return an error if the cluster was not registered yet and a command from a non-DC is received" do
-      assert_error(
-        [],
+    test "should add a host the cluster when the cluster has empty/unknown details" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      host_id_two = Faker.UUID.v4()
+
+      name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [
+          build(
+            :cluster_registered_event,
+            cluster_id: cluster_id,
+            name: name,
+            sid: nil,
+            provider: :unknown,
+            type: :unknown,
+            health: :unknown,
+            details: nil
+          ),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id)
+        ],
         RegisterClusterHost.new!(%{
-          cluster_id: Faker.UUID.v4(),
-          host_id: Faker.UUID.v4(),
+          cluster_id: cluster_id,
+          host_id: host_id_two,
           name: Faker.StarWars.character(),
-          sid: Faker.StarWars.planet(),
-          discovered_health: :unknown,
+          sid: Faker.StarWars.character(),
           type: :hana_scale_up,
+          discovered_health: :unknown,
           designated_controller: false,
           provider: :azure
         }),
-        {:error, :cluster_not_found}
+        [
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id_two
+          }
+        ],
+        fn cluster ->
+          assert cluster_id == cluster.cluster_id
+          assert name == cluster.name
+          assert :unknown == cluster.type
+          assert :unknown == cluster.provider
+          assert 2 == cluster.hosts_number
+          assert [host_id_two, host_id] == cluster.hosts
+          assert :unknown == cluster.health
+        end
+      )
+    end
+
+    test "should create a cluster with empty details when the cluster was not registered yet and a command from a non-DC is received" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          discovered_health: :unknown,
+          provider: :unknown,
+          type: :unknown,
+          designated_controller: false
+        }),
+        [
+          %ClusterRegistered{
+            cluster_id: cluster_id,
+            name: name,
+            sid: nil,
+            provider: :unknown,
+            type: :unknown,
+            health: :unknown,
+            details: nil
+          },
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id
+          }
+        ],
+        %Cluster{
+          cluster_id: cluster_id,
+          name: name,
+          sid: nil,
+          type: :unknown,
+          provider: :unknown,
+          hosts: [host_id],
+          discovered_health: :unknown,
+          health: :unknown
+        }
       )
     end
   end
 
   describe "cluster details" do
+    test "should update cluster details when the cluster has empty details" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+      new_name = Faker.StarWars.character()
+      new_sid = Faker.StarWars.planet()
+
+      details = hana_cluster_details_value_object()
+
+      initial_events = [
+        build(
+          :cluster_registered_event,
+          cluster_id: cluster_id,
+          name: name,
+          sid: nil,
+          provider: :unknown,
+          type: :unknown,
+          health: :unknown,
+          details: nil
+        ),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: new_name,
+          sid: new_sid,
+          provider: :gcp,
+          type: :hana_scale_up,
+          resources_number: 2,
+          hosts_number: 1,
+          discovered_health: :unknown,
+          details: StructHelper.to_map(details),
+          designated_controller: true
+        }),
+        [
+          %ClusterDetailsUpdated{
+            cluster_id: cluster_id,
+            name: new_name,
+            sid: new_sid,
+            provider: :gcp,
+            type: :hana_scale_up,
+            resources_number: 2,
+            hosts_number: 1,
+            details: details
+          }
+        ],
+        fn cluster ->
+          %Cluster{
+            cluster_id: ^cluster_id,
+            name: ^new_name,
+            sid: ^new_sid,
+            provider: :gcp,
+            resources_number: 2,
+            hosts_number: 1,
+            details: ^details
+          } = cluster
+        end
+      )
+    end
+
     test "should update cluster details" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()

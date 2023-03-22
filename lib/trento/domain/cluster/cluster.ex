@@ -7,10 +7,18 @@ defmodule Trento.Domain.Cluster do
   SAP workloads.
 
   Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
-  to the same cluster are part of the same stream. A cluster is registered first time/details updated afterwards
-  only by cluster discovery messages coming from the **designated controller** node. Once a cluster is
-  registered other hosts can be added receiving discovery messages coming from other nodes. All the hosts
+  to the same cluster are part of the same stream.
+  A cluster is registered first time by cluster discovery messages coming from all the nodes of the cluster.
+  When the message for the first time arrives from a **designated controller** node, the cluster is created
+  with the full details, otherwise the cluster is created but with unknown details.
+  The details will be updated when the **designated controller** of the cluster register itself.
+
+  Once a cluster is registered the details will be updated only when a message from **designated controller** arrives.
+
+  Once a cluster is registered other hosts can be added receiving discovery messages coming from other nodes. All the hosts
   are listed in the `hosts` field.
+
+
 
   The cluster aggregate stores and updates information coming in the cluster discovery messages such as:
 
@@ -112,8 +120,9 @@ defmodule Trento.Domain.Cluster do
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
 
-  # When a DC cluster node is registered for the first time, a cluster is registered
-  # and the host of the node is added to the cluster
+  # When a DC cluster node is registered for the first time,
+  # a cluster is registered and the host of the node is added to the cluster,
+  # we took the full details of the cluster because the first host is DC
   def execute(
         %Cluster{cluster_id: nil},
         %RegisterClusterHost{
@@ -149,9 +158,32 @@ defmodule Trento.Domain.Cluster do
     ]
   end
 
-  # If no DC node was received yet, no cluster was registered.
-  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{designated_controller: false}),
-    do: {:error, :cluster_not_found}
+  # If no DC node was received yet, the cluster is registered with empty details
+  # The cluster details will be updated when a dc for the cluster will register itself
+  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{
+        cluster_id: cluster_id,
+        name: name,
+        host_id: host_id,
+        designated_controller: false
+      }) do
+    [
+      %ClusterRegistered{
+        cluster_id: cluster_id,
+        name: name,
+        type: :unknown,
+        sid: nil,
+        provider: :unknown,
+        resources_number: nil,
+        hosts_number: nil,
+        details: nil,
+        health: :unknown
+      },
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    ]
+  end
 
   def execute(
         %Cluster{} = cluster,
