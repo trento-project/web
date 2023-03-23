@@ -12,6 +12,7 @@ defmodule Trento.ClusterProjector do
 
   alias Trento.Domain.Events.{
     ChecksSelected,
+    ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
     ClusterRegistered
@@ -22,6 +23,21 @@ defmodule Trento.ClusterProjector do
   alias Trento.Repo
 
   import Trento.Clusters, only: [enrich_cluster_model: 1]
+
+  project(
+    %ClusterDeregistered{
+      cluster_id: cluster_id,
+      deregistered_at: deregistered_at
+    },
+    fn multi ->
+      changeset =
+        ClusterReadModel.changeset(%ClusterReadModel{id: cluster_id}, %{
+          deregistered_at: deregistered_at
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
 
   project(
     %ClusterRegistered{
@@ -147,6 +163,16 @@ defmodule Trento.ClusterProjector do
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_changed", %{
       cluster_id: cluster_id,
       health: health
+    })
+  end
+
+  @impl true
+  def after_update(%ClusterDeregistered{cluster_id: cluster_id}, _, _) do
+    %ClusterReadModel{name: name} = Repo.get!(ClusterReadModel, cluster_id)
+
+    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_deregistered", %{
+      cluster_id: cluster_id,
+      name: name
     })
   end
 
