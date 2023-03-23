@@ -123,31 +123,52 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
   const renderedData = pagination
     ? page(currentPage, filteredData)
     : filteredData;
-  console.log('colums', columns);
   if (data.length === 0) {
-    console.log('collums inside if', columns);
     return (
-      <table className="min-w-full leading-normal table-fixed">
-        <thead>
-          <tr>
-            {columns.map(({ title, className }) => (
-              <th
-                key={title}
-                scope="col"
-                className={classNames(
-                  'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100',
-                  className
-                )}
-              >
-                {title}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="h-full">
-          <EmptyTable colSpan={columns.length} />
-        </tbody>
-      </table>
+      <div
+        className={classNames('container mx-auto', {
+          'px-4 sm:px-8': usePadding,
+        })}
+      >
+        <div className="flex items-center px-4 space-x-4">
+          <TableFilters
+            config={config}
+            data={data}
+            filters={filters}
+            onChange={(newFilters) => {
+              setFilters(newFilters);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+        <div className="">
+          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 pt-4">
+            <div className="min-w-fit shadow rounded-lg">
+              <table className="min-w-full leading-normal table-fixed">
+                <thead>
+                  <tr>
+                    {columns.map(({ title, className }) => (
+                      <th
+                        key={title}
+                        scope="col"
+                        className={classNames(
+                          'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100',
+                          className
+                        )}
+                      >
+                        {title}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <EmptyTable colSpan={columns.length} />
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 

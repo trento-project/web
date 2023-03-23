@@ -133,11 +133,6 @@ describe('Table component', () => {
       expect(tableRows.length).toBe(2);
       const tableCell = screen.getByRole('cell');
       expect(tableCell).toHaveTextContent(emptyStateMessage);
-
-      //   expect(screen.getByText(emptyStateMessage)).toBeInTheDocument();
-      //   expect(screen.getAllByRole('row')).toBe(2);
-      //   expect(screen.getByRole('cell')).toHaveTextContent(emptyStateMessage);
-      //   expect(screen.getByTestId('eos-svg-component')).toBeInTheDocument();
     });
   });
 });
