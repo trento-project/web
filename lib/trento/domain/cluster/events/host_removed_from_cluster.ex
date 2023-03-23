@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Events.HostRemovedFromCluster do
   @moduledoc """
-    This event is emitted when a host is removed from a cluster.
+  This event is emitted when a host is removed from a cluster.
   """
 
   use Trento.Event
