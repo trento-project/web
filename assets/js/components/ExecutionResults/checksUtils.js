@@ -1,4 +1,4 @@
-import { uniq } from '@lib/lists';
+import { EXPECT, EXPECT_SAME, TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
 export const description = (catalog, checkId) =>
   catalog.find(({ id }) => id === checkId)?.description;
@@ -32,13 +32,6 @@ export const getCheckResults = (executionData) => {
   }
   return executionData.check_results;
 };
-
-export const getHosts = (checkResults) =>
-  uniq(
-    checkResults.flatMap(({ agents_check_results }) =>
-      agents_check_results.map(({ agent_id }) => agent_id)
-    )
-  );
 
 export const getChecks = (checkResults) =>
   checkResults.map(({ check_id }) => check_id);
@@ -125,3 +118,50 @@ export const getCheckExpectations = (catalog, checkID) => {
   }
   return [];
 };
+
+export const isTargetHost = (targetType) => targetType === TARGET_HOST;
+export const isTargetCluster = (targetType) => targetType === TARGET_CLUSTER;
+
+export const isExpect = ({ type }) => type === EXPECT;
+export const isExpectSame = ({ type }) => type === EXPECT_SAME;
+
+export const isAgentCheckError = ({ type }) => !!type;
+
+export const getExpectStatements = (expectationList) =>
+  expectationList.filter(isExpect);
+
+export const getExpectSameStatements = (expectationList) =>
+  expectationList.filter(isExpectSame);
+
+export const getExpectSameStatementResult = (expectationResults, name) => {
+  const expectSameStatement = getExpectSameStatements(expectationResults).find(
+    ({ name: resultExpectationName }) => name === resultExpectationName
+  );
+
+  if (!expectSameStatement) {
+    return {};
+  }
+
+  return expectSameStatement;
+};
+
+export const getCheckResultByAgentID = (executionData, checkID, agentID) => {
+  const checkResult = getCheckResults(executionData).find(
+    ({ check_id }) => check_id === checkID
+  );
+
+  if (!checkResult) {
+    return {};
+  }
+
+  const { agents_check_results = [] } = checkResult;
+
+  return (
+    agents_check_results.find(({ agent_id }) => agent_id === agentID) || {}
+  );
+};
+
+export const getExpectStatementsMet = (expectationEvaluations) =>
+  getExpectStatements(expectationEvaluations).filter(
+    ({ return_value }) => return_value
+  ).length;
