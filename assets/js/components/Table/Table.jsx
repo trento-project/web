@@ -124,44 +124,6 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
     ? page(currentPage, filteredData)
     : filteredData;
 
-  if (data.length === 0) {
-    return (
-      <div
-        className={classNames('container mx-auto', {
-          'px-4 sm:px-8': usePadding,
-        })}
-      >
-        <div className="">
-          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 pt-4">
-            <div className="min-w-fit shadow rounded-lg">
-              <table className="min-w-full leading-normal table-fixed">
-                <thead>
-                  <tr>
-                    {columns.map(({ title, className }) => (
-                      <th
-                        key={title}
-                        scope="col"
-                        className={classNames(
-                          'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100',
-                          className
-                        )}
-                      >
-                        {title}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <EmptyTable colSpan={columns.length} />
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
       className={classNames('container mx-auto', {
@@ -200,16 +162,20 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
                 </tr>
               </thead>
               <tbody>
-                {renderedData.map((item, index) => (
-                  <CollapsibleTableRow
-                    item={item}
-                    key={index}
-                    collapsibleDetailRenderer={collapsibleDetailRenderer}
-                    renderCells={renderCells}
-                    columns={columns}
-                    colSpan={columns.length}
-                  />
-                ))}
+                {data.length === 0 ? (
+                  <EmptyTable colSpan={columns.length} />
+                ) : (
+                  renderedData.map((item, index) => (
+                    <CollapsibleTableRow
+                      item={item}
+                      key={index}
+                      collapsibleDetailRenderer={collapsibleDetailRenderer}
+                      renderCells={renderCells}
+                      columns={columns}
+                      colSpan={columns.length}
+                    />
+                  ))
+                )}
               </tbody>
             </table>
             {pagination && (
