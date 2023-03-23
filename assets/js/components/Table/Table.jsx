@@ -123,6 +123,7 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
   const renderedData = pagination
     ? page(currentPage, filteredData)
     : filteredData;
+
   if (data.length === 0) {
     return (
       <div
@@ -130,17 +131,6 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
           'px-4 sm:px-8': usePadding,
         })}
       >
-        <div className="flex items-center px-4 space-x-4">
-          <TableFilters
-            config={config}
-            data={data}
-            filters={filters}
-            onChange={(newFilters) => {
-              setFilters(newFilters);
-              setCurrentPage(1);
-            }}
-          />
-        </div>
         <div className="">
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 pt-4">
             <div className="min-w-fit shadow rounded-lg">
