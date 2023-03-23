@@ -50,13 +50,33 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
     assert %{"Node Exporter" => "passing"} == response
   end
 
+  test "should return 404 if the host is not registered", %{conn: conn} do
+    expect(Trento.Integration.Prometheus.Mock, :get_exporters_status, fn _ ->
+      {:error, :host_not_found}
+    end)
+
+    response =
+      conn
+      |> get("/api/v1/hosts/#{Faker.UUID.v4()}/exporters_status")
+      |> json_response(404)
+
+    assert %{
+             "errors" => [
+               %{
+                 "detail" => "Host not found",
+                 "title" => "Not Found"
+               }
+             ]
+           } = response
+  end
+
   @tag capture_log: true
   test "should return a 500 if the exporters status cannot be fetched", %{conn: conn} do
     expect(Trento.Integration.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:error, :reason}
     end)
 
-    resp =
+    response =
       conn
       |> get("/api/v1/hosts/#{Faker.UUID.v4()}/exporters_status")
       |> json_response(500)
@@ -68,6 +88,6 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
                  "title" => "Internal Server Error"
                }
              ]
-           } = resp
+           } = response
   end
 end
