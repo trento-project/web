@@ -8,16 +8,14 @@ defmodule Trento.Domain.Cluster do
 
   Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
   to the same cluster are part of the same stream.
-  A cluster is registered first time by cluster discovery messages coming from all the nodes of the cluster.
-  When the message for the first time arrives from a **designated controller** node, the cluster is created
-  with the full details, otherwise the cluster is created but with unknown details.
-  The details will be updated when the **designated controller** of the cluster register itself.
 
-  Once a cluster is registered the details will be updated only when a message from **designated controller** arrives.
+  A new cluster is registered when a cluster discovery message from any of the nodes of the cluster is received.
 
-  Once a cluster is registered other hosts can be added receiving discovery messages coming from other nodes. All the hosts
-  are listed in the `hosts` field.
+  The cluster details will be populated if the received discovery message is coming from the **designated controller** node.
+  Otherwise the cluster details are left as unknown, and filled once a message from the **designated controller** is received.
+  Once a cluster is registered, other hosts will be added when cluster discovery messages from them are received.
 
+  All the hosts are listed in the `hosts` field.
 
 
   The cluster aggregate stores and updates information coming in the cluster discovery messages such as:
@@ -158,8 +156,9 @@ defmodule Trento.Domain.Cluster do
     ]
   end
 
-  # If no DC node was received yet, the cluster is registered with empty details
-  # The cluster details will be updated when a dc for the cluster will register itself
+  # When a message from a not registered cluster node is received, and this node is **not** a DC,
+  # a new cluster is registered including the host that sent the message.
+  # In this case, the cluster details are left empty as the node is not the DC
   def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{
         cluster_id: cluster_id,
         name: name,

@@ -81,7 +81,51 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should add a host to the cluster when the cluster has full details" do
+    test "should register a cluster with empty details when the cluster was not registered yet and a message from a non-DC is received" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          discovered_health: :unknown,
+          provider: :unknown,
+          type: :unknown,
+          designated_controller: false
+        }),
+        [
+          %ClusterRegistered{
+            cluster_id: cluster_id,
+            name: name,
+            sid: nil,
+            provider: :unknown,
+            type: :unknown,
+            health: :unknown,
+            details: nil
+          },
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id
+          }
+        ],
+        %Cluster{
+          cluster_id: cluster_id,
+          name: name,
+          sid: nil,
+          type: :unknown,
+          provider: :unknown,
+          hosts: [host_id],
+          discovered_health: :unknown,
+          health: :unknown
+        }
+      )
+    end
+
+    test "should add a host to the cluster" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -116,7 +160,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should add a host the cluster when the cluster has empty/unknown details" do
+    test "should add a new host to the cluster and keep the details as empty when a non-DC node message is received" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       host_id_two = Faker.UUID.v4()
@@ -162,50 +206,6 @@ defmodule Trento.ClusterTest do
           assert [host_id_two, host_id] == cluster.hosts
           assert :unknown == cluster.health
         end
-      )
-    end
-
-    test "should create a cluster with empty details when the cluster was not registered yet and a command from a non-DC is received" do
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
-
-      assert_events_and_state(
-        [],
-        RegisterClusterHost.new!(%{
-          cluster_id: cluster_id,
-          host_id: host_id,
-          name: name,
-          discovered_health: :unknown,
-          provider: :unknown,
-          type: :unknown,
-          designated_controller: false
-        }),
-        [
-          %ClusterRegistered{
-            cluster_id: cluster_id,
-            name: name,
-            sid: nil,
-            provider: :unknown,
-            type: :unknown,
-            health: :unknown,
-            details: nil
-          },
-          %HostAddedToCluster{
-            cluster_id: cluster_id,
-            host_id: host_id
-          }
-        ],
-        %Cluster{
-          cluster_id: cluster_id,
-          name: name,
-          sid: nil,
-          type: :unknown,
-          provider: :unknown,
-          hosts: [host_id],
-          discovered_health: :unknown,
-          health: :unknown
-        }
       )
     end
   end
