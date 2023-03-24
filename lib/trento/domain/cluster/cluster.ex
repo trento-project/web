@@ -194,7 +194,7 @@ defmodule Trento.Domain.Cluster do
     maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
-  # When a message arrives from a non DC host who belongs to a cluster, we explicitely add that host to the cluster
+  # When a message arrives from a non DC host who belongs to a cluster, we add that host to the cluster
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
