@@ -197,11 +197,13 @@ defmodule Trento.Domain.Cluster do
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
+          host_id: host_id,
           designated_controller: true
         } = command
       ) do
     cluster
     |> Multi.new()
+    |> Multi.execute(fn cluster -> maybe_emit_host_added_to_cluster_event(cluster, host_id) end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
     |> Multi.execute(fn cluster ->
       maybe_emit_cluster_discovered_health_changed_event(cluster, command)
