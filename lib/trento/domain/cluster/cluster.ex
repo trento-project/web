@@ -194,14 +194,17 @@ defmodule Trento.Domain.Cluster do
     maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
+  # When a message arrives from a non DC host who belongs to a cluster, we explicitely add that host to the cluster
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
-          designated_controller: true
+          designated_controller: true,
+          host_id: host_id
         } = command
       ) do
     cluster
     |> Multi.new()
+    |> Multi.execute(fn cluster -> maybe_emit_host_added_to_cluster_event(cluster, host_id) end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
     |> Multi.execute(fn cluster ->
       maybe_emit_cluster_discovered_health_changed_event(cluster, command)

@@ -289,6 +289,7 @@ defmodule Trento.ClusterTest do
 
     test "should use discovered cluster health when no checks are selected" do
       cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
       sid = Faker.StarWars.planet()
 
@@ -301,11 +302,17 @@ defmodule Trento.ClusterTest do
             sid: sid,
             details: nil,
             provider: :azure
+          ),
+          build(
+            :host_added_to_cluster_event,
+            cluster_id: cluster_id,
+            host_id: host_id
           )
         ],
         [
           build(
             :register_cluster_host,
+            host_id: host_id,
             cluster_id: cluster_id,
             name: name,
             sid: sid,
