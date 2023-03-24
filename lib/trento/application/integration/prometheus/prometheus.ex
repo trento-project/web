@@ -3,13 +3,11 @@ defmodule Trento.Integration.Prometheus do
   Prometheus integration service
   """
 
-  alias Trento.Repo
-
-  alias Trento.HostReadModel
+  alias Trento.Hosts
 
   @spec get_targets :: [map]
   def get_targets do
-    Repo.all(HostReadModel)
+    Hosts.get_all_hosts()
   end
 
   @spec get_exporters_status(String.t()) :: {:ok, map} | {:error, any}
