@@ -125,7 +125,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should add a host to the cluster" do
+    test "should add a host to the cluster when the host is not a DC" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -144,6 +144,50 @@ defmodule Trento.ClusterTest do
           type: :hana_scale_up,
           discovered_health: :unknown,
           designated_controller: false,
+          provider: :azure
+        }),
+        [
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   hosts: [^host_id | _]
+                 } = cluster
+        end
+      )
+    end
+
+    test "should add a host to the cluster when the host is a DC" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+      sid = Faker.StarWars.planet()
+
+      assert_events_and_state(
+        [
+          build(
+            :cluster_registered_event,
+            cluster_id: cluster_id,
+            provider: :azure,
+            sid: sid,
+            name: name,
+            details: nil
+          ),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id)
+        ],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          sid: sid,
+          type: :hana_scale_up,
+          discovered_health: :passing,
+          resources_number: 8,
+          hosts_number: 2,
+          designated_controller: true,
           provider: :azure
         }),
         [
