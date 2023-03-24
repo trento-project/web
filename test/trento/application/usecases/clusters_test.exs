@@ -17,11 +17,12 @@ defmodule Trento.ClustersTest do
   describe "checks execution with wanda adapter" do
     test "should start a checks execution on demand if checks are selected" do
       %{id: cluster_id} = insert(:cluster)
+      insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
       insert_list(2, :host, cluster_id: cluster_id)
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
         assert message.group_id == cluster_id
-
+        assert length(message.targets) == 2
         :ok
       end)
 
