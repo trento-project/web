@@ -118,9 +118,8 @@ defmodule Trento.Domain.Cluster do
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
 
-  # When a DC cluster node is registered for the first time,
-  # a cluster is registered and the host of the node is added to the cluster,
-  # we took the full details of the cluster because the first host is DC
+  # When a DC node is discovered, a cluster is registered and the host is added to the cluster.
+  # The cluster details are populated with the information coming from the DC node.
   def execute(
         %Cluster{cluster_id: nil},
         %RegisterClusterHost{
@@ -156,9 +155,8 @@ defmodule Trento.Domain.Cluster do
     ]
   end
 
-  # When a message from a not registered cluster node is received, and this node is **not** a DC,
-  # a new cluster is registered including the host that sent the message.
-  # In this case, the cluster details are left empty as the node is not the DC
+  # When a non-DC node is discovered, a cluster is registered and the host is added to the cluster.
+  # The cluster details are left as unknown, and filled once a message from the DC node is received.
   def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{
         cluster_id: cluster_id,
         name: name,
@@ -184,6 +182,7 @@ defmodule Trento.Domain.Cluster do
     ]
   end
 
+  # If the cluster is already registered, and the host was never discovered before, it is added to the cluster.
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
@@ -194,7 +193,9 @@ defmodule Trento.Domain.Cluster do
     maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
-  # When a message arrives from a non DC host who belongs to a cluster, we add that host to the cluster
+  # When a DC node is discovered, if the cluster is already registered,
+  # the cluster details are updated with the information coming from the DC node.
+  # The cluster discovered health is updated based on the new details.
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
