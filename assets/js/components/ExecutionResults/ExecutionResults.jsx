@@ -6,11 +6,13 @@ import remarkGfm from 'remark-gfm';
 import Modal from '@components/Modal';
 
 import { getHostID } from '@state/selectors/cluster';
+import PremiumPill from '@components/PremiumPill';
 import {
   getCheckResults,
   getCheckDescription,
   getCheckRemediation,
   getCheckExpectations,
+  isPremium,
 } from './checksUtils';
 
 import ResultsContainer from './ResultsContainer';
@@ -38,8 +40,8 @@ const resultsTableConfig = {
       key: 'checkID',
       fontSize: 'text-base',
       className: 'bg-gray-50 border-b',
-      render: (checkID, { onClick }) => (
-        <div className="whitespace-nowrap text-jungle-green-500">
+      render: (checkID, { onClick, premium }) => (
+        <div className="flex space-x-4 whitespace-nowrap text-jungle-green-500 justify-between">
           <span
             className="inline-block"
             aria-hidden="true"
@@ -50,6 +52,7 @@ const resultsTableConfig = {
           >
             {checkID}
           </span>
+          <span>{premium ? <PremiumPill /> : ' '}</span>
         </div>
       ),
     },
@@ -124,7 +127,6 @@ function ExecutionResults({
       onLastExecutionUpdate();
     }
   };
-
   const tableData = getCheckResults(executionData)
     .filter((check) => {
       if (predicates.length === 0) {
@@ -147,6 +149,7 @@ function ExecutionResults({
         executionState: executionData?.status,
         description: getCheckDescription(catalog, checkID),
         expectations: getCheckExpectations(catalog, checkID),
+        premium: isPremium(catalog, checkID),
         expectationResults,
         agentsCheckResults: addHostnameToTargets(
           agentsCheckResults,
@@ -158,7 +161,6 @@ function ExecutionResults({
         },
       })
     );
-
   return (
     <ExecutionContainer
       catalogLoading={catalogLoading}
