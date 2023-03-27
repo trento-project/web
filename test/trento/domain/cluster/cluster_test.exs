@@ -33,7 +33,7 @@ defmodule Trento.ClusterTest do
   require Trento.Domain.Enums.Health, as: Health
 
   describe "cluster registration" do
-    test "should register a cluster and add the node host to the cluster if the node is a DC" do
+    test "should register a cluster with full details and add the node host to the cluster if the node is a DC" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -81,7 +81,51 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should add a host to the cluster" do
+    test "should register a cluster with unknown details when the cluster was not registered yet and a message from a non-DC is received" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+
+      assert_events_and_state(
+        [],
+        RegisterClusterHost.new!(%{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          discovered_health: :unknown,
+          provider: :unknown,
+          type: :unknown,
+          designated_controller: false
+        }),
+        [
+          %ClusterRegistered{
+            cluster_id: cluster_id,
+            name: name,
+            sid: nil,
+            provider: :unknown,
+            type: :unknown,
+            health: :unknown,
+            details: nil
+          },
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id
+          }
+        ],
+        %Cluster{
+          cluster_id: cluster_id,
+          name: name,
+          sid: nil,
+          type: :unknown,
+          provider: :unknown,
+          hosts: [host_id],
+          discovered_health: :unknown,
+          health: :unknown
+        }
+      )
+    end
+
+    test "should add a host to the cluster if the host is not a DC and the cluster is already registered" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -116,20 +160,47 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should return an error if the cluster was not registered yet and a command from a non-DC is received" do
-      assert_error(
-        [],
+    test "should add a host to the cluster if the host is a DC and the cluster is already registered" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      name = Faker.StarWars.character()
+      sid = Faker.StarWars.planet()
+
+      assert_events_and_state(
+        [
+          build(
+            :cluster_registered_event,
+            cluster_id: cluster_id,
+            provider: :azure,
+            sid: sid,
+            name: name,
+            details: nil
+          ),
+          build(:host_added_to_cluster_event, cluster_id: cluster_id)
+        ],
         RegisterClusterHost.new!(%{
-          cluster_id: Faker.UUID.v4(),
-          host_id: Faker.UUID.v4(),
-          name: Faker.StarWars.character(),
-          sid: Faker.StarWars.planet(),
-          discovered_health: :unknown,
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          sid: sid,
           type: :hana_scale_up,
-          designated_controller: false,
+          discovered_health: :passing,
+          resources_number: 8,
+          hosts_number: 2,
+          designated_controller: true,
           provider: :azure
         }),
-        {:error, :cluster_not_found}
+        [
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   hosts: [^host_id | _]
+                 } = cluster
+        end
       )
     end
   end
@@ -262,6 +333,7 @@ defmodule Trento.ClusterTest do
 
     test "should use discovered cluster health when no checks are selected" do
       cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
       sid = Faker.StarWars.planet()
 
@@ -274,11 +346,17 @@ defmodule Trento.ClusterTest do
             sid: sid,
             details: nil,
             provider: :azure
+          ),
+          build(
+            :host_added_to_cluster_event,
+            cluster_id: cluster_id,
+            host_id: host_id
           )
         ],
         [
           build(
             :register_cluster_host,
+            host_id: host_id,
             cluster_id: cluster_id,
             name: name,
             sid: sid,

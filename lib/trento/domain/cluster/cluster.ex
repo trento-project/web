@@ -7,10 +7,16 @@ defmodule Trento.Domain.Cluster do
   SAP workloads.
 
   Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
-  to the same cluster are part of the same stream. A cluster is registered first time/details updated afterwards
-  only by cluster discovery messages coming from the **designated controller** node. Once a cluster is
-  registered other hosts can be added receiving discovery messages coming from other nodes. All the hosts
-  are listed in the `hosts` field.
+  to the same cluster are part of the same stream.
+
+  A new cluster is registered when a cluster discovery message from any of the nodes of the cluster is received.
+
+  The cluster details will be populated if the received discovery message is coming from the **designated controller** node.
+  Otherwise the cluster details are left as unknown, and filled once a message from the **designated controller** is received.
+  Once a cluster is registered, other hosts will be added when cluster discovery messages from them are received.
+
+  All the hosts are listed in the `hosts` field.
+
 
   The cluster aggregate stores and updates information coming in the cluster discovery messages such as:
 
@@ -112,8 +118,8 @@ defmodule Trento.Domain.Cluster do
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
 
-  # When a DC cluster node is registered for the first time, a cluster is registered
-  # and the host of the node is added to the cluster
+  # When a DC node is discovered, a cluster is registered and the host is added to the cluster.
+  # The cluster details are populated with the information coming from the DC node.
   def execute(
         %Cluster{cluster_id: nil},
         %RegisterClusterHost{
@@ -149,10 +155,34 @@ defmodule Trento.Domain.Cluster do
     ]
   end
 
-  # If no DC node was received yet, no cluster was registered.
-  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{designated_controller: false}),
-    do: {:error, :cluster_not_found}
+  # When a non-DC node is discovered, a cluster is registered and the host is added to the cluster.
+  # The cluster details are left as unknown, and filled once a message from the DC node is received.
+  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{
+        cluster_id: cluster_id,
+        name: name,
+        host_id: host_id,
+        designated_controller: false
+      }) do
+    [
+      %ClusterRegistered{
+        cluster_id: cluster_id,
+        name: name,
+        type: :unknown,
+        sid: nil,
+        provider: :unknown,
+        resources_number: nil,
+        hosts_number: nil,
+        details: nil,
+        health: :unknown
+      },
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    ]
+  end
 
+  # If the cluster is already registered, and the host was never discovered before, it is added to the cluster.
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
@@ -163,14 +193,19 @@ defmodule Trento.Domain.Cluster do
     maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
+  # When a DC node is discovered, if the cluster is already registered,
+  # the cluster details are updated with the information coming from the DC node.
+  # The cluster discovered health is updated based on the new details.
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
-          designated_controller: true
+          designated_controller: true,
+          host_id: host_id
         } = command
       ) do
     cluster
     |> Multi.new()
+    |> Multi.execute(fn cluster -> maybe_emit_host_added_to_cluster_event(cluster, host_id) end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
     |> Multi.execute(fn cluster ->
       maybe_emit_cluster_discovered_health_changed_event(cluster, command)
