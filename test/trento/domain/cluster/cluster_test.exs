@@ -81,7 +81,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should register a cluster with empty details when the cluster was not registered yet and a message from a non-DC is received" do
+    test "should register a cluster with unknown details when the cluster was not registered yet and a message from a non-DC is received" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -125,7 +125,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should add a host to the cluster when the host is not a DC" do
+    test "should add a host to the cluster if the host is not a DC and the cluster is already registered" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
@@ -160,7 +160,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should add a host to the cluster when the host is a DC" do
+    test "should add a host to the cluster if the host is a DC and the cluster is already registered" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
