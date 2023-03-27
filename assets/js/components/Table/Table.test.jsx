@@ -122,17 +122,21 @@ describe('Table component', () => {
 
     it('should return empty state message when data is empty', async () => {
       const data = [];
-      const emptyStateMessage = 'No data available';
-
+      const emptyStateText = faker.random.words(5);
       render(
-        <Table config={tableConfig} data={data} setSearchParams={() => {}} />
+        <Table
+          config={tableConfig}
+          data={data}
+          setSearchParams={() => {}}
+          emptyStateText={emptyStateText}
+        />
       );
-      const emptyStateElement = screen.getByText(emptyStateMessage);
+      const emptyStateElement = screen.getByText(emptyStateText);
       expect(emptyStateElement).toBeInTheDocument();
       const tableRows = screen.getAllByRole('row');
       expect(tableRows.length).toBe(2);
       const tableCell = screen.getByRole('cell');
-      expect(tableCell).toHaveTextContent(emptyStateMessage);
+      expect(tableCell).toHaveTextContent(emptyStateText);
     });
   });
 });
