@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ListView from '@components/ListView';
-import ObjectTree from '@components/ObjectTree/ObjectTree';
+import ObjectTree from '@components/ObjectTree';
 
 function GatheredFacts({ gatheredFacts = [] }) {
   const facts = gatheredFacts.map(({ name, value, type, message }) => {
@@ -10,11 +10,11 @@ function GatheredFacts({ gatheredFacts = [] }) {
     return {
       title: name,
       content: value,
-      render: (factValue) =>
+      render: (factValue = {}) =>
         isFactError ? (
           <span className="text-red-500">{message}</span>
         ) : (
-          <ObjectTree className="mt-3" data={factValue || {}} />
+          <ObjectTree className="mt-3" data={factValue} />
         ),
     };
   });

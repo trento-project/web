@@ -16,23 +16,24 @@ function CheckResultDetail({ checkID, targetID, targetType, executionData }) {
   const checkResult = getCheckResultByAgentID(executionData, checkID, targetID);
 
   const {
-    isCheckError = isAgentCheckError(checkResult),
     expectation_evaluations = [],
     values = [],
     facts = [],
     message,
   } = checkResult;
 
+  const isError = isAgentCheckError(checkResult);
+
   const expectStatementsResults = getExpectStatements(expectation_evaluations);
 
   return targetHost ? (
     <>
       <ExpectationsResults
-        isCheckError={isCheckError}
-        expectStatementsResults={expectStatementsResults}
+        isError={isError}
+        results={expectStatementsResults}
         errorMessage={message}
       />
-      <ExpectedValues isCheckError={isCheckError} expectedValues={values} />
+      <ExpectedValues isError={isError} expectedValues={values} />
       <GatheredFacts gatheredFacts={facts || []} />
     </>
   ) : (

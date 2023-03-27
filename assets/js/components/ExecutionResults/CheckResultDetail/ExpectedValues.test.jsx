@@ -19,7 +19,7 @@ describe('ExpectedValues Component', () => {
   });
 
   it('should render an error', () => {
-    render(<ExpectedValues expectedValues={[]} isCheckError />);
+    render(<ExpectedValues expectedValues={[]} isError />);
 
     expect(screen.getByText('Expected Values unavailable')).toBeVisible();
   });

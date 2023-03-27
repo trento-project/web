@@ -9,8 +9,8 @@ export const checksExecutionStatusEnum = () =>
 const expectationReturnTypeEnum = () =>
   faker.helpers.arrayElement(['expect', 'expect_same']);
 
-export const executionValueFactory = Factory.define(() => ({
-  name: faker.lorem.word(),
+export const executionValueFactory = Factory.define(({ sequence }) => ({
+  name: `${faker.lorem.word()}_${sequence}`,
   value: faker.datatype.number(),
 }));
 
@@ -50,9 +50,9 @@ export const expectationResultFactory = Factory.define(
   }
 );
 
-export const executionFactFactory = Factory.define(() => ({
+export const executionFactFactory = Factory.define(({ sequence }) => ({
   check_id: faker.datatype.uuid(),
-  name: faker.lorem.word(),
+  name: `${faker.lorem.word()}_${sequence}`,
   value: faker.datatype.number(),
 }));
 

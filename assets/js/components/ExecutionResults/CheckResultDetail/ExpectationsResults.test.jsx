@@ -10,7 +10,7 @@ import ExpectationsResults from './ExpectationsResults';
 
 describe('ExpectationsResults Component', () => {
   it('should render expect statements results', async () => {
-    const expectStatementsResults = [
+    const results = [
       ...executionExpectationEvaluationFactory.buildList(3, {
         return_value: true,
       }),
@@ -19,12 +19,9 @@ describe('ExpectationsResults Component', () => {
       }),
     ];
 
-    const [{ name: expectationName1 }, _, { name: expectationName3 }] =
-      expectStatementsResults;
+    const [{ name: expectationName1 }, _, { name: expectationName3 }] = results;
 
-    render(
-      <ExpectationsResults expectStatementsResults={expectStatementsResults} />
-    );
+    render(<ExpectationsResults results={results} />);
 
     expect(screen.getAllByText('Passing')).toHaveLength(3);
     expect(screen.getAllByText('Failing')).toHaveLength(2);
@@ -35,11 +32,7 @@ describe('ExpectationsResults Component', () => {
   it('should render an error', async () => {
     const anErrorMessage = faker.lorem.sentence();
     render(
-      <ExpectationsResults
-        expectStatementsResults={[]}
-        isCheckError
-        errorMessage={anErrorMessage}
-      />
+      <ExpectationsResults results={[]} isError errorMessage={anErrorMessage} />
     );
 
     expect(screen.getByText(anErrorMessage)).toBeVisible();

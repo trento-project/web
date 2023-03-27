@@ -2,11 +2,11 @@ import React from 'react';
 
 import ListView from '@components/ListView';
 
-function ExpectedValues({ expectedValues = [], isCheckError = false }) {
+function ExpectedValues({ expectedValues = [], isError = false }) {
   return (
     <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
       <div className="text-lg font-bold">Values</div>
-      {isCheckError ? (
+      {isError ? (
         <div className="mt-3 text-red-500">Expected Values unavailable</div>
       ) : (
         <ListView
