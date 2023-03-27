@@ -1,5 +1,4 @@
 import React, { Fragment, useState } from 'react';
-
 function CollapsibleTableRow({
   columns,
   item,

@@ -11,8 +11,8 @@ import {
 
 import CollapsibleTableRow from './CollapsibleTableRow';
 import Pagination from './Pagination';
-
-const defaultCellRender = (content) => (
+import PremiumPill from '@components/PremiumPill';
+const defaultCellRender = (content, item = true) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
 );
 
@@ -24,6 +24,14 @@ const renderCells = (columns, item) => (
         idx
       ) => {
         const content = item[key];
+        console.log(
+          'render cells colum',
+          columns,
+          'items ',
+          item,
+          'premium.',
+          item.premium
+        );
         return (
           <td
             key={idx}
@@ -61,6 +69,7 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
     usePadding = true,
   } = config;
 
+  console.log('DATA: ', data);
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 

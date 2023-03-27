@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm';
 import PremiumPill from '@components/PremiumPill';
 
 function CheckItem({ checkID, premium = false, description, remediation }) {
+  console.log('CheckID: ', checkID, 'PREMIUM: ', premium);
   return (
     <li>
       <Disclosure>

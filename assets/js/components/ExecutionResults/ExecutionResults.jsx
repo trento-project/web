@@ -11,6 +11,7 @@ import {
   getCheckDescription,
   getCheckRemediation,
   getCheckExpectations,
+  checkIsPremium,
 } from './checksUtils';
 
 import ResultsContainer from './ResultsContainer';
@@ -18,6 +19,7 @@ import { ExecutionIcon } from './ExecutionIcon';
 import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
 import ExecutionContainer from './ExecutionContainer';
+import PremiumPill from '@components/PremiumPill';
 
 const addHostnameToTargets = (targets, clusterHosts) =>
   targets?.map((target) => {
@@ -29,69 +31,6 @@ const addHostnameToTargets = (targets, clusterHosts) =>
       hostname,
     };
   });
-
-const resultsTableConfig = {
-  usePadding: false,
-  columns: [
-    {
-      title: 'Id',
-      key: 'checkID',
-      fontSize: 'text-base',
-      className: 'bg-gray-50 border-b',
-      render: (checkID, { onClick }) => (
-        <div className="whitespace-nowrap text-jungle-green-500">
-          <span
-            className="inline-block"
-            aria-hidden="true"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick();
-            }}
-          >
-            {checkID}
-          </span>
-        </div>
-      ),
-    },
-    {
-      title: 'Description',
-      key: 'description',
-      fontSize: 'text-base',
-      className: 'bg-gray-50 border-b',
-      render: (description) => (
-        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-          {description}
-        </ReactMarkdown>
-      ),
-    },
-    {
-      title: 'Result',
-      key: 'result',
-      fontSize: 'text-base',
-      className: 'bg-gray-50 border-b',
-      render: (_, { result, executionState }) => (
-        <ExecutionIcon executionState={executionState} health={result} />
-      ),
-    },
-  ],
-  collapsibleDetailRenderer: ({
-    clusterID,
-    checkID,
-    expectations,
-    agentsCheckResults,
-    expectationResults,
-    clusterName,
-  }) => (
-    <CheckResultOutline
-      clusterID={clusterID}
-      checkID={checkID}
-      expectations={expectations}
-      agentsCheckResults={agentsCheckResults}
-      expectationResults={expectationResults}
-      clusterName={clusterName}
-    />
-  ),
-};
 
 function ExecutionResults({
   clusterID,
@@ -116,6 +55,74 @@ function ExecutionResults({
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const resultsTableConfig = {
+    usePadding: false,
+    columns: [
+      {
+        title: 'Id',
+        key: 'checkID',
+        fontSize: 'text-base',
+        className: 'bg-gray-50 border-b',
+        render: (checkID, { onClick }) => (
+          <div className="flex space-x-2 items-center whitespace-nowrap text-jungle-green-500">
+            <span
+              className="inline-block"
+              aria-hidden="true"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+              }}
+            >
+              {checkID}
+              {checkIsPremium(catalog, checkID) ? (
+                <PremiumPill className="ml-1" />
+              ) : (
+                ' '
+              )}
+            </span>
+          </div>
+        ),
+      },
+      {
+        title: 'Description',
+        key: 'description',
+        fontSize: 'text-base',
+        className: 'bg-gray-50 border-b',
+        render: (description) => (
+          <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+            {description}
+          </ReactMarkdown>
+        ),
+      },
+      {
+        title: 'Result',
+        key: 'result',
+        fontSize: 'text-base',
+        className: 'bg-gray-50 border-b',
+        render: (_, { result, executionState }) => (
+          <ExecutionIcon executionState={executionState} health={result} />
+        ),
+      },
+    ],
+    collapsibleDetailRenderer: ({
+      clusterID,
+      checkID,
+      expectations,
+      agentsCheckResults,
+      expectationResults,
+      clusterName,
+    }) => (
+      <CheckResultOutline
+        clusterID={clusterID}
+        checkID={checkID}
+        expectations={expectations}
+        agentsCheckResults={agentsCheckResults}
+        expectationResults={expectationResults}
+        clusterName={clusterName}
+      />
+    ),
+  };
+
   const onContentRefresh = () => {
     if (catalogError) {
       onCatalogRefresh();
@@ -124,7 +131,8 @@ function ExecutionResults({
       onLastExecutionUpdate();
     }
   };
-
+  console.log('Catalog: ', catalog);
+  console.log('get chech results', getCheckResults(executionData));
   const tableData = getCheckResults(executionData)
     .filter((check) => {
       if (predicates.length === 0) {
@@ -147,6 +155,7 @@ function ExecutionResults({
         executionState: executionData?.status,
         description: getCheckDescription(catalog, checkID),
         expectations: getCheckExpectations(catalog, checkID),
+        premium: checkIsPremium(catalog, checkID),
         expectationResults,
         agentsCheckResults: addHostnameToTargets(
           agentsCheckResults,
@@ -158,7 +167,7 @@ function ExecutionResults({
         },
       })
     );
-
+  console.log('Table data from execution results', tableData);
   return (
     <ExecutionContainer
       catalogLoading={catalogLoading}
