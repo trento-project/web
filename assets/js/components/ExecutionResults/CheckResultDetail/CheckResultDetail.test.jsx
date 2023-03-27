@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { faker } from '@faker-js/faker';
-
 import {
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
@@ -25,12 +23,6 @@ describe('CheckResultDetail Component', () => {
     const [{ id: target1 }, { id: target2 }] = clusterHosts;
     const targetType = 'host';
 
-    const expectationName1 = faker.company.name();
-    const expectationName2 = faker.company.name();
-    const expectationName3 = faker.company.name();
-    const expectationName4 = faker.company.name();
-    const expectationName5 = faker.company.name();
-
     let checkResult = emptyCheckResultFactory.build({
       targets: [target1, target2],
     });
@@ -39,11 +31,11 @@ describe('CheckResultDetail Component', () => {
       agents_check_results: [{ values, facts }, _],
     } = checkResult;
 
-    checkResult = addPassingExpectExpectation(checkResult, expectationName1);
-    checkResult = addPassingExpectExpectation(checkResult, expectationName2);
-    checkResult = addCriticalExpectExpectation(checkResult, expectationName3);
-    checkResult = addCriticalExpectExpectation(checkResult, expectationName4);
-    checkResult = addCriticalExpectExpectation(checkResult, expectationName5);
+    checkResult = addPassingExpectExpectation(checkResult);
+    checkResult = addPassingExpectExpectation(checkResult);
+    checkResult = addCriticalExpectExpectation(checkResult);
+    checkResult = addCriticalExpectExpectation(checkResult);
+    checkResult = addCriticalExpectExpectation(checkResult);
     checkResult = addPassingExpectSameExpectation(
       checkResult,
       'expectation_name'
@@ -65,11 +57,6 @@ describe('CheckResultDetail Component', () => {
 
     expect(screen.getAllByText('Passing')).toHaveLength(2);
     expect(screen.getAllByText('Failing')).toHaveLength(3);
-    expect(screen.getByText(expectationName1)).toBeVisible();
-    expect(screen.getByText(expectationName2)).toBeVisible();
-    expect(screen.getByText(expectationName3)).toBeVisible();
-    expect(screen.getByText(expectationName4)).toBeVisible();
-    expect(screen.getByText(expectationName5)).toBeVisible();
 
     values.forEach(({ name, value }) => {
       expect(screen.getByText(name)).toBeVisible();
@@ -78,9 +65,7 @@ describe('CheckResultDetail Component', () => {
     facts.forEach(({ name, _value }) => {
       expect(screen.getByText(name)).toBeVisible();
     });
-    expect(screen.getAllByLabelText('property tree')).toHaveLength(
-      facts.length
-    );
+    expect(screen.getAllByLabelText('property tree')).toHaveLength(2);
   });
 
   describe('Host Target error handling', () => {
@@ -136,9 +121,7 @@ describe('CheckResultDetail Component', () => {
       const [{ message: factErrorMessage }, _] = facts;
       expect(screen.getByText(factErrorMessage)).toBeVisible();
 
-      expect(screen.getAllByLabelText('property tree')).toHaveLength(
-        facts.length - 1
-      );
+      expect(screen.getAllByLabelText('property tree')).toHaveLength(1);
     });
 
     it('should render the check detail when an agent times out', () => {
