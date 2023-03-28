@@ -120,7 +120,7 @@ describe('Table component', () => {
       });
     });
 
-    it('should return empty state message when data is empty', async () => {
+    test('should return empty state message when data is empty', () => {
       const data = [];
       const emptyStateText = faker.random.words(5);
       render(
