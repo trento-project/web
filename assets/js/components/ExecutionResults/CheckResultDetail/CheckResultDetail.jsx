@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  getCheckResultByAgentID,
+  getAgentCheckResultByAgentID,
   getExpectStatements,
   isAgentCheckError,
   isTargetHost,
@@ -13,7 +13,11 @@ import GatheredFacts from './GatheredFacts';
 function CheckResultDetail({ checkID, targetID, targetType, executionData }) {
   const targetHost = isTargetHost(targetType);
 
-  const checkResult = getCheckResultByAgentID(executionData, checkID, targetID);
+  const checkResult = getAgentCheckResultByAgentID(
+    executionData,
+    checkID,
+    targetID
+  );
 
   const {
     expectation_evaluations = [],
@@ -24,13 +28,15 @@ function CheckResultDetail({ checkID, targetID, targetType, executionData }) {
 
   const isError = isAgentCheckError(checkResult);
 
-  const expectStatementsResults = getExpectStatements(expectation_evaluations);
+  const expectStatementsEvaluations = getExpectStatements(
+    expectation_evaluations
+  );
 
   return targetHost ? (
     <>
       <ExpectationsResults
         isError={isError}
-        results={expectStatementsResults}
+        results={expectStatementsEvaluations}
         errorMessage={message}
       />
       <ExpectedValues isError={isError} expectedValues={values} />

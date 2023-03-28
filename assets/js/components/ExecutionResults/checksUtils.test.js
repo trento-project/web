@@ -26,7 +26,7 @@ import {
   getExpectStatements,
   getExpectSameStatements,
   getExpectSameStatementResult,
-  getCheckResultByAgentID,
+  getAgentCheckResultByAgentID,
   getExpectStatementsMet,
 } from './checksUtils';
 
@@ -247,14 +247,14 @@ describe('checksUtils', () => {
 
       const { agent_id: agentID } = agentCheckResult;
 
-      expect(getCheckResultByAgentID(executionResult, checkID, agentID)).toBe(
-        agentCheckResult
-      );
       expect(
-        getCheckResultByAgentID(executionResult, 'not-there', agentID)
+        getAgentCheckResultByAgentID(executionResult, checkID, agentID)
+      ).toBe(agentCheckResult);
+      expect(
+        getAgentCheckResultByAgentID(executionResult, 'not-there', agentID)
       ).toEqual({});
       expect(
-        getCheckResultByAgentID(executionResult, checkID, 'not-there')
+        getAgentCheckResultByAgentID(executionResult, checkID, 'not-there')
       ).toEqual({});
     });
 

@@ -8,7 +8,7 @@ function ExpectationsResults({
   isError = false,
   errorMessage = 'An error occurred',
 }) {
-  const expectationsResults = results.map(({ name, return_value }) => ({
+  const expectationsEvaluations = results.map(({ name, return_value }) => ({
     title: name,
     content: return_value,
     render: (returnValue) => (
@@ -32,7 +32,7 @@ function ExpectationsResults({
           className="mt-3"
           titleClassName="text-sm"
           orientation="horizontal"
-          data={expectationsResults}
+          data={expectationsEvaluations}
         />
       )}
     </div>

@@ -30,11 +30,11 @@ describe('ExpectationsResults Component', () => {
   });
 
   it('should render an error', async () => {
-    const anErrorMessage = faker.lorem.sentence();
+    const errorMessage = faker.lorem.sentence();
     render(
-      <ExpectationsResults results={[]} isError errorMessage={anErrorMessage} />
+      <ExpectationsResults results={[]} isError errorMessage={errorMessage} />
     );
 
-    expect(screen.getByText(anErrorMessage)).toBeVisible();
+    expect(screen.getByText(errorMessage)).toBeVisible();
   });
 });
