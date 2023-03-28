@@ -113,8 +113,8 @@ describe('HomeHealthSummary component', () => {
       expect(container.querySelector('tbody').childNodes.length).toEqual(4);
 
       const cases = [
-        ['passing', 0],
-        ['warning', 0],
+        ['passing', 1],
+        ['warning', 1],
         ['critical', 4],
       ];
 
