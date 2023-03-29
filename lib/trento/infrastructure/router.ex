@@ -11,6 +11,7 @@ defmodule Trento.Router do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
+    DeregisterClusterHost,
     DeregisterHost,
     RegisterApplicationInstance,
     RegisterClusterHost,
@@ -46,6 +47,7 @@ defmodule Trento.Router do
     by: :cluster_id
 
   dispatch [
+             DeregisterClusterHost,
              RollUpCluster,
              RegisterClusterHost,
              SelectChecks,
