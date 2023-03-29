@@ -2,6 +2,8 @@ defmodule Trento.DeregistrationProcessManagerTest do
   use ExUnit.Case
 
   alias Trento.Domain.Events.{
+    ClusterRolledUp,
+    HostAddedToCluster,
     HostDeregistered,
     HostDeregistrationRequested,
     HostRegistered,
@@ -9,6 +11,7 @@ defmodule Trento.DeregistrationProcessManagerTest do
   }
 
   alias Trento.DeregistrationProcessManager
+  alias Trento.Domain.Cluster
   alias Trento.Domain.Commands.DeregisterHost
 
   describe "events interested" do
@@ -24,6 +27,22 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
       assert {:start, ^host_id} =
                DeregistrationProcessManager.interested?(%HostRolledUp{host_id: host_id})
+    end
+
+    test "should start the process manager when HostAddedToCluster arrives" do
+      host_id = UUID.uuid4()
+
+      assert {:start, ^host_id} =
+               DeregistrationProcessManager.interested?(%HostAddedToCluster{host_id: host_id})
+    end
+
+    test "should start the process manager when ClusterRolledUp arrives" do
+      cluster_hosts = [UUID.uuid4(), UUID.uuid4()]
+
+      assert {:start, ^cluster_hosts} =
+               DeregistrationProcessManager.interested?(%ClusterRolledUp{
+                 snapshot: %Cluster{hosts: cluster_hosts}
+               })
     end
 
     test "should continue the process manager when HostDeregistrationRequested arrives" do
@@ -44,34 +63,36 @@ defmodule Trento.DeregistrationProcessManagerTest do
   end
 
   describe "host deregistration procedure" do
-    test "should update the state with the proper host id when HostRegistered event is emitted" do
+    test "should update the state with the proper cluster id when ClusterRolledUp event is emitted" do
       initial_state = %DeregistrationProcessManager{}
-      host_id = UUID.uuid4()
+      cluster_id = UUID.uuid4()
+      cluster_hosts = [UUID.uuid4(), UUID.uuid4()]
 
-      events = [%HostRegistered{host_id: host_id}]
+      events = [%ClusterRolledUp{cluster_id: cluster_id, snapshot: cluster_hosts}]
 
       {commands, state} = reduce_events(events, initial_state)
 
       assert [] == commands
-      assert %DeregistrationProcessManager{host_id: ^host_id} = state
+      assert %DeregistrationProcessManager{cluster_id: ^cluster_id} = state
     end
 
-    test "should update the state with the proper host when HostRolledUp event is emitted" do
+    test "should update the state with the proper cluster id when HostAddedToCluster event is emitted" do
       initial_state = %DeregistrationProcessManager{}
+      cluster_id = UUID.uuid4()
       host_id = UUID.uuid4()
 
-      events = [%HostRolledUp{host_id: host_id}]
+      events = [%HostAddedToCluster{cluster_id: cluster_id, host_id: host_id}]
 
       {commands, state} = reduce_events(events, initial_state)
 
       assert [] == commands
-      assert %DeregistrationProcessManager{host_id: ^host_id} = state
+      assert %DeregistrationProcessManager{cluster_id: ^cluster_id} = state
     end
 
     test "should dispatch DeregisterHost command when HostDeregistrationRequested is emitted" do
       host_id = UUID.uuid4()
       requested_at = DateTime.utc_now()
-      initial_state = %DeregistrationProcessManager{host_id: host_id}
+      initial_state = %DeregistrationProcessManager{}
 
       events = [%HostDeregistrationRequested{host_id: host_id, requested_at: requested_at}]
 
