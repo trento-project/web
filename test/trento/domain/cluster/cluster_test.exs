@@ -3,10 +3,12 @@ defmodule Trento.ClusterTest do
 
   import Trento.Factory
 
+  alias Trento.Domain.Events.HostRemovedFromCluster
   alias Trento.Support.StructHelper
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
+    DeregisterClusterHost,
     RegisterClusterHost,
     RollUpCluster,
     SelectChecks
@@ -18,6 +20,7 @@ defmodule Trento.ClusterTest do
     ChecksExecutionStarted,
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
@@ -753,6 +756,83 @@ defmodule Trento.ClusterTest do
         events,
         RollUpCluster.new!(%{cluster_id: cluster_id}),
         {:error, :cluster_rolling_up}
+      )
+    end
+  end
+
+  describe "deregistration" do
+    test "should emit the HostRemovedFromCluster event after a DeregisterClusterHost command and remove the host from the cluster aggregate state" do
+      cluster_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+      host_1_added_event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+
+      host_2_added_event =
+        %{host_id: host_2_id} = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+          host_1_added_event,
+          host_2_added_event
+        ],
+        [
+          %DeregisterClusterHost{
+            host_id: host_1_added_event.host_id,
+            cluster_id: cluster_id,
+            deregistered_at: dat
+          }
+        ],
+        [
+          %HostRemovedFromCluster{
+            host_id: host_1_added_event.host_id,
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{hosts: [^host_2_id], hosts_number: 1} = cluster
+        end
+      )
+    end
+
+    test "should emit the ClusterDeregistered event when the last ClusterHost is deregistered and set the deregistration date into the state" do
+      cluster_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+      host_1_added_event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+      host_2_added_event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+          host_1_added_event,
+          host_2_added_event
+        ],
+        [
+          %DeregisterClusterHost{
+            host_id: host_1_added_event.host_id,
+            cluster_id: cluster_id,
+            deregistered_at: dat
+          },
+          %DeregisterClusterHost{
+            host_id: host_2_added_event.host_id,
+            cluster_id: cluster_id,
+            deregistered_at: dat
+          }
+        ],
+        [
+          %HostRemovedFromCluster{
+            host_id: host_1_added_event.host_id,
+            cluster_id: cluster_id
+          },
+          %HostRemovedFromCluster{
+            host_id: host_2_added_event.host_id,
+            cluster_id: cluster_id
+          },
+          %ClusterDeregistered{
+            cluster_id: cluster_id,
+            deregistered_at: dat
+          }
+        ],
+        fn cluster -> assert dat == cluster.deregistered_at end
       )
     end
   end
