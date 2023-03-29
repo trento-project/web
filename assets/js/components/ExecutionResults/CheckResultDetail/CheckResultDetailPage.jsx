@@ -15,7 +15,7 @@ import { getHostID } from '@state/selectors/cluster';
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
-import { getCheckDescription } from '../checksUtils';
+import { getCheckDescription, isTargetHost } from '../checksUtils';
 import CheckDetailHeader from './CheckDetailHeader';
 
 function CheckResultDetailPage() {
@@ -48,6 +48,10 @@ function CheckResultDetailPage() {
   }
 
   const checkDescription = getCheckDescription(catalog, checkID);
+
+  const targetID = isTargetHost(targetType)
+    ? (clusterHosts.find(({ hostname }) => hostname === targetName) || {})?.id
+    : clusterID;
 
   return (
     <ExecutionContainer
@@ -89,11 +93,9 @@ function CheckResultDetailPage() {
         }
       >
         <CheckResultDetail
-          clusterID={clusterID}
           checkID={checkID}
-          checkDescription={checkDescription}
+          targetID={targetID}
           targetType={targetType}
-          targetName={targetName}
           executionData={executionData}
           clusterHosts={clusterHosts}
         />
