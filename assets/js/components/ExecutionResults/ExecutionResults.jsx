@@ -6,12 +6,13 @@ import remarkGfm from 'remark-gfm';
 import Modal from '@components/Modal';
 
 import { getHostID } from '@state/selectors/cluster';
+import PremiumPill from '@components/PremiumPill';
 import {
   getCheckResults,
   getCheckDescription,
   getCheckRemediation,
   getCheckExpectations,
-  checkIsPremium,
+  getCheckIsPremium,
 } from './checksUtils';
 
 import ResultsContainer from './ResultsContainer';
@@ -19,7 +20,6 @@ import { ExecutionIcon } from './ExecutionIcon';
 import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
 import ExecutionContainer from './ExecutionContainer';
-import PremiumPill from '@components/PremiumPill';
 
 const addHostnameToTargets = (targets, clusterHosts) =>
   targets?.map((target) => {
@@ -32,29 +32,7 @@ const addHostnameToTargets = (targets, clusterHosts) =>
     };
   });
 
-function ExecutionResults({
-  clusterID,
-  clusterName,
-  clusterScenario,
-  cloudProvider,
-  clusterHosts = [],
-  catalogLoading,
-  catalog,
-  catalogError,
-  executionLoading,
-  executionStarted,
-  executionRunning,
-  executionData,
-  executionError,
-  clusterSelectedChecks = [],
-  onCatalogRefresh = () => {},
-  onLastExecutionUpdate = () => {},
-  onStartExecution = () => {},
-}) {
-  const [predicates, setPredicates] = useState([]);
-  const [selectedCheck, setSelectedCheck] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-
+const configFunction = (catalog = []) => {
   const resultsTableConfig = {
     usePadding: false,
     columns: [
@@ -74,12 +52,12 @@ function ExecutionResults({
               }}
             >
               {checkID}
-              {checkIsPremium(catalog, checkID) ? (
-                <PremiumPill className="ml-1" />
-              ) : (
-                ' '
-              )}
             </span>
+            {getCheckIsPremium(catalog, checkID) ? (
+              <PremiumPill className="ml-1" />
+            ) : (
+              ' '
+            )}
           </div>
         ),
       },
@@ -122,6 +100,31 @@ function ExecutionResults({
       />
     ),
   };
+  return resultsTableConfig;
+};
+
+function ExecutionResults({
+  clusterID,
+  clusterName,
+  clusterScenario,
+  cloudProvider,
+  clusterHosts = [],
+  catalogLoading,
+  catalog,
+  catalogError,
+  executionLoading,
+  executionStarted,
+  executionRunning,
+  executionData,
+  executionError,
+  clusterSelectedChecks = [],
+  onCatalogRefresh = () => {},
+  onLastExecutionUpdate = () => {},
+  onStartExecution = () => {},
+}) {
+  const [predicates, setPredicates] = useState([]);
+  const [selectedCheck, setSelectedCheck] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const onContentRefresh = () => {
     if (catalogError) {
@@ -131,8 +134,6 @@ function ExecutionResults({
       onLastExecutionUpdate();
     }
   };
-  console.log('Catalog: ', catalog);
-  console.log('get chech results', getCheckResults(executionData));
   const tableData = getCheckResults(executionData)
     .filter((check) => {
       if (predicates.length === 0) {
@@ -155,7 +156,7 @@ function ExecutionResults({
         executionState: executionData?.status,
         description: getCheckDescription(catalog, checkID),
         expectations: getCheckExpectations(catalog, checkID),
-        premium: checkIsPremium(catalog, checkID),
+        premium: getCheckIsPremium(catalog, checkID),
         expectationResults,
         agentsCheckResults: addHostnameToTargets(
           agentsCheckResults,
@@ -167,7 +168,6 @@ function ExecutionResults({
         },
       })
     );
-  console.log('Table data from execution results', tableData);
   return (
     <ExecutionContainer
       catalogLoading={catalogLoading}
@@ -195,7 +195,7 @@ function ExecutionResults({
         onContentRefresh={onContentRefresh}
         onStartExecution={onStartExecution}
       >
-        <Table config={resultsTableConfig} data={tableData} />
+        <Table config={configFunction(catalog)} data={tableData} />
       </ResultsContainer>
       <Modal
         open={modalOpen}

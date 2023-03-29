@@ -1,13 +1,5 @@
 import { uniq } from '@lib/lists';
 
-
-export const checkIsPremium = (catalog, checkId) => {
-  console.log("check id: ", checkId, "check is premium: ", catalog.find(({ id }) => id === checkId).premium)
-  
-  return catalog.find(({ id }) => id === checkId).premium;
-
-}
-
 export const description = (catalog, checkId) =>
   catalog.find(({ id }) => id === checkId)?.description;
 
@@ -38,7 +30,6 @@ export const getCheckResults = (executionData) => {
   if (!executionData.check_results) {
     return [];
   }
-  console.log("executionData: ", executionData)
   return executionData.check_results;
 };
 
@@ -109,6 +100,11 @@ export const getCheckHealthByAgent = (checkResults, checkID, agentID) => {
     expectations: checkResult.expectation_results.length,
     failedExpectations,
   };
+};
+
+export const getCheckIsPremium = (catalog, checkID) => {
+  const check = findCheck(catalog, checkID);
+  return check.premium;
 };
 
 export const getCheckDescription = (catalog, checkID) => {
