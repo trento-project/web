@@ -1,13 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { EXPECT, EXPECT_SAME, TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
+import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import TargetResult from './TargetResult';
-
-const isExpect = ({ type }) => type === EXPECT;
-const isExpectSame = ({ type }) => type === EXPECT_SAME;
-
-const getExpectStatements = (expectationList) =>
-  expectationList.filter(isExpect);
+import {
+  getExpectSameStatementResult,
+  getExpectSameStatements,
+  getExpectStatements,
+  isAgentCheckError,
+  getExpectStatementsMet,
+  isTargetCluster,
+} from './checksUtils';
 
 const extractExpectResults = (expectations, agentsCheckResults) => {
   const expectStatementsCount = getExpectStatements(expectations).length;
@@ -17,16 +19,15 @@ const extractExpectResults = (expectations, agentsCheckResults) => {
   }
 
   return agentsCheckResults.map((agentCheckResult) => {
-    const { hostname, expectation_evaluations = [] } = agentCheckResult;
-
-    const isAgentCheckError = !!agentCheckResult?.type;
-
-    const metExpectations = getExpectStatements(expectation_evaluations).filter(
-      ({ return_value }) => return_value
-    ).length;
-
-    const expectationsSummary = isAgentCheckError
-      ? agentCheckResult.message
+    const {
+      hostname,
+      expectation_evaluations = [],
+      message,
+    } = agentCheckResult;
+    const isCheckError = isAgentCheckError(agentCheckResult);
+    const metExpectations = getExpectStatementsMet(expectation_evaluations);
+    const expectationsSummary = isCheckError
+      ? message
       : `${metExpectations}/${expectStatementsCount} Expectations met.`;
 
     return {
@@ -34,24 +35,9 @@ const extractExpectResults = (expectations, agentsCheckResults) => {
       targetName: hostname,
       expectationsSummary,
       isAgentCheckError:
-        isAgentCheckError || metExpectations < expectStatementsCount,
+        isCheckError || metExpectations < expectStatementsCount,
     };
   });
-};
-
-const getExpectSameStatements = (expectationList) =>
-  expectationList.filter(isExpectSame);
-
-const getExpectSameStatementResult = (expectationResults, name) => {
-  const expectSameStatement = getExpectSameStatements(expectationResults).find(
-    ({ name: resultExpectationName }) => name === resultExpectationName
-  );
-
-  if (!expectSameStatement) {
-    return {};
-  }
-
-  return expectSameStatement;
 };
 
 const extractExpectSameResults = (
@@ -111,14 +97,14 @@ function CheckResultOutline({
               targetName,
               expectationName,
               expectationsSummary,
-              isAgentCheckError,
+              isAgentCheckError: agentCheckError,
             }) => (
               <TargetResult
                 key={`${checkID}-${targetName}-${expectationName}`}
-                isCluster={targetType === TARGET_CLUSTER}
+                isCluster={isTargetCluster(targetType)}
                 targetName={targetName}
                 expectationsSummary={expectationsSummary}
-                isAgentCheckError={isAgentCheckError}
+                isAgentCheckError={agentCheckError}
                 onClick={() =>
                   navigate(
                     `/clusters/${clusterID}/executions/last/${checkID}/${targetType}/${targetName}`
