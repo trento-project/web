@@ -7,6 +7,8 @@ defmodule Trento.Integration.Prometheus.PrometheusApi do
 
   alias Trento.Repo
 
+  require Logger
+
   @behaviour Trento.Integration.Prometheus.Gen
 
   def get_exporters_status(host_id) do
@@ -22,13 +24,19 @@ defmodule Trento.Integration.Prometheus.PrometheusApi do
        |> Enum.into(%{})}
     else
       nil ->
-        {:error, :host_not_found}
+        {:error, :not_found}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, reason}
+      %HTTPoison.Response{status_code: status_code, body: body} ->
+        Logger.error(
+          "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
+        )
 
-      _ ->
         {:error, :unexpected_response}
+
+      {:error, reason} = error ->
+        Logger.error("Error fetching exporters status from Prometheus API: #{inspect(reason)}")
+
+        error
     end
   end
 

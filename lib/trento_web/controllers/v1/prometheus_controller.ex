@@ -37,17 +37,8 @@ defmodule TrentoWeb.V1.PrometheusController do
     ]
 
   def exporters_status(conn, %{"id" => host_id}) do
-    case Prometheus.get_exporters_status(host_id) do
-      {:ok, exporters_status} ->
-        render(conn, "exporters_status.json", status: exporters_status)
-
-      {:error, :host_not_found} ->
-        {:error, {:not_found, "Host not found"}}
-
-      {:error, reason} ->
-        Logger.error("Failed to get exporters status:", error: inspect(reason))
-
-        {:error, {:internal_error, "An error occurred in getting exporters status."}}
+    with {:ok, exporters_status} <- Prometheus.get_exporters_status(host_id) do
+      render(conn, "exporters_status.json", status: exporters_status)
     end
   end
 end
