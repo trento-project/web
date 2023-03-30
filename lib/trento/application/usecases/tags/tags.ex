@@ -12,7 +12,7 @@ defmodule Trento.Tags do
   @type taggable_resource :: :host | :cluster | :sap_system | :database
 
   @spec add_tag(String.t(), Ecto.UUID.t(), taggable_resource) ::
-          {:ok, Ecto.Schema.t()} | {:error, any}
+          {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
   def add_tag(value, resource_id, resource_type) do
     changeset =
       Tag.changeset(%Tag{}, %{
@@ -21,23 +21,13 @@ defmodule Trento.Tags do
         resource_type: resource_type
       })
 
-    case Repo.insert(changeset,
-           conflict_target: [:value, :resource_id],
-           on_conflict: :nothing
-         ) do
-      {:ok, _} = result ->
-        result
-
-      {:error, changeset} ->
-        {:error,
-         Ecto.Changeset.traverse_errors(
-           changeset,
-           fn {msg, _} -> msg end
-         )}
-    end
+    Repo.insert(changeset,
+      conflict_target: [:value, :resource_id],
+      on_conflict: :nothing
+    )
   end
 
-  @spec delete_tag(String.t(), Ecto.UUID.t()) :: :ok | :not_found
+  @spec delete_tag(String.t(), Ecto.UUID.t()) :: :ok | {:error, :not_found}
   def delete_tag(value, resource_id) do
     query =
       from t in Tag,
@@ -45,7 +35,7 @@ defmodule Trento.Tags do
 
     case Repo.delete_all(query) do
       {1, _} -> :ok
-      {0, _} -> :not_found
+      {0, _} -> {:error, :not_found}
     end
   end
 end

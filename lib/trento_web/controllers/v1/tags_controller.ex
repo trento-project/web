@@ -44,14 +44,10 @@ defmodule TrentoWeb.V1.TagsController do
       ) do
     %{value: value} = Map.get(conn, :body_params)
 
-    case Tags.add_tag(value, id, resource_type) do
-      {:ok, %Trento.Tag{value: value}} ->
-        conn
-        |> put_status(:created)
-        |> json(%{value: value})
-
-      {:error, errors} ->
-        {:error, {:unprocessable_entity, errors}}
+    with {:ok, %Trento.Tag{value: value}} <- Tags.add_tag(value, id, resource_type) do
+      conn
+      |> put_status(:created)
+      |> json(%{value: value})
     end
   end
 
@@ -82,12 +78,8 @@ defmodule TrentoWeb.V1.TagsController do
         id: resource_id,
         value: value
       }) do
-    case Tags.delete_tag(value, resource_id) do
-      :ok ->
-        send_resp(conn, :no_content, "")
-
-      :not_found ->
-        send_resp(conn, :not_found, "")
+    with :ok <- Tags.delete_tag(value, resource_id) do
+      send_resp(conn, :no_content, "")
     end
   end
 end
