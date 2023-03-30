@@ -26,7 +26,7 @@ defmodule Trento.Type do
       @derive Jason.Encoder
 
       @doc """
-      Returns an ok tuple if the params are valid, otherwise returns `{:error, errors}`.
+      Returns an ok tuple if the params are valid, otherwise returns `{:error, {:validation, errors}}`.
       Accepts a map or a list of maps.
       """
       @spec new(map | [map]) :: {:ok, t() | [t()]} | {:error, any}
@@ -37,7 +37,7 @@ defmodule Trento.Type do
           fn {is_valid, _} -> is_valid end,
           fn {_, decoding_value} -> decoding_value end
         )
-        |> decoding_results()
+        |> map_results()
       end
 
       def new(params) do
@@ -47,10 +47,11 @@ defmodule Trento.Type do
 
           changes ->
             {:error,
-             Ecto.Changeset.traverse_errors(
-               changes,
-               fn {msg, _} -> msg end
-             )}
+             {:validation,
+              Ecto.Changeset.traverse_errors(
+                changes,
+                fn {msg, _} -> msg end
+              )}}
         end
       end
 
@@ -61,7 +62,7 @@ defmodule Trento.Type do
       def new!(params) do
         case new(params) do
           {:ok, value} -> value
-          {:error, reason} -> raise RuntimeError, message: inspect(reason)
+          {:error, {:validation, reason}} -> raise RuntimeError, message: inspect(reason)
         end
       end
 
@@ -111,9 +112,14 @@ defmodule Trento.Type do
       def cast_and_validate_required_embed(changeset, field, required_fields),
         do: cast_embed(changeset, field, required: field in required_fields)
 
-      defp decoding_results(%{error: decoding_errors}), do: {:error, decoding_errors}
-      defp decoding_results(%{ok: decoding_results}), do: {:ok, decoding_results}
-      defp decoding_results(_), do: {:ok, []}
+      defp map_results(%{error: errors}),
+        do: {:error, map_errors(errors)}
+
+      defp map_results(%{ok: results}), do: {:ok, results}
+      defp map_results(_), do: {:ok, []}
+
+      defp map_errors(errors),
+        do: {:validation, Enum.map(errors, fn {:validation, error} -> error end)}
 
       defp fields, do: __MODULE__.__schema__(:fields) -- __MODULE__.__schema__(:embeds)
 
