@@ -29,6 +29,7 @@ defmodule Trento.DeregistrationProcessManager do
     HostDeregistered,
     HostDeregistrationRequested,
     HostRegistered,
+    HostRemovedFromCluster,
     HostRolledUp
   }
 
@@ -53,6 +54,7 @@ defmodule Trento.DeregistrationProcessManager do
   def interested?(%ClusterRolledUp{snapshot: %{hosts: hosts}}), do: {:start, hosts}
 
   def interested?(%HostDeregistrationRequested{host_id: host_id}), do: {:continue, host_id}
+  def interested?(%HostRemovedFromCluster{host_id: host_id}), do: {:continue, host_id}
 
   def interested?(%HostDeregistered{host_id: host_id}), do: {:stop, host_id}
 
@@ -91,5 +93,9 @@ defmodule Trento.DeregistrationProcessManager do
         cluster_id: cluster_id
       }) do
     %DeregistrationProcessManager{state | cluster_id: cluster_id}
+  end
+
+  def apply(%DeregistrationProcessManager{} = state, %HostRemovedFromCluster{}) do
+    %DeregistrationProcessManager{state | cluster_id: nil}
   end
 end

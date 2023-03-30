@@ -789,7 +789,7 @@ defmodule Trento.ClusterTest do
           }
         ],
         fn cluster ->
-          assert %Cluster{hosts: [^host_2_id], hosts_number: 1} = cluster
+          assert %Cluster{hosts: [^host_2_id]} = cluster
         end
       )
     end

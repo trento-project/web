@@ -277,12 +277,10 @@ defmodule Trento.Domain.Cluster do
     cluster
     |> Multi.new()
     |> Multi.execute(fn _ ->
-      [
-        %HostRemovedFromCluster{
-          cluster_id: cluster_id,
-          host_id: host_id
-        }
-      ]
+      %HostRemovedFromCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
     end)
     |> Multi.execute(&maybe_emit_cluster_deregistered_event(&1, command))
   end
@@ -396,10 +394,10 @@ defmodule Trento.Domain.Cluster do
     snapshot
   end
 
-  def apply(%Cluster{hosts: hosts, hosts_number: hosts_number} = cluster, %HostRemovedFromCluster{
+  def apply(%Cluster{hosts: hosts} = cluster, %HostRemovedFromCluster{
         host_id: host_id
       }) do
-    %Cluster{cluster | hosts: List.delete(hosts, host_id), hosts_number: hosts_number - 1}
+    %Cluster{cluster | hosts: List.delete(hosts, host_id)}
   end
 
   # Deregistration
@@ -506,13 +504,13 @@ defmodule Trento.Domain.Cluster do
   end
 
   defp maybe_emit_cluster_deregistered_event(
-         %Cluster{cluster_id: cluster_id, hosts_number: hosts_number},
+         %Cluster{cluster_id: cluster_id, hosts: hosts},
          %DeregisterClusterHost{
            cluster_id: cluster_id,
            deregistered_at: deregistered_at
          }
        ) do
-    if hosts_number == 0 do
+    if length(hosts) == 0 do
       %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at}
     end
   end

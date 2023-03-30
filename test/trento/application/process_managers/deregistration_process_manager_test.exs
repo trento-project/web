@@ -7,6 +7,7 @@ defmodule Trento.DeregistrationProcessManagerTest do
     HostDeregistered,
     HostDeregistrationRequested,
     HostRegistered,
+    HostRemovedFromCluster,
     HostRolledUp
   }
 
@@ -100,6 +101,22 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
       assert ^initial_state = state
       assert %DeregisterHost{host_id: ^host_id, deregistered_at: ^requested_at} = commands
+    end
+
+    test "should update the state and remove the cluster id when HostRemovedFromCluster event is emitted" do
+      initial_state = %DeregistrationProcessManager{}
+      cluster_id = UUID.uuid4()
+      host_id = UUID.uuid4()
+
+      events = [
+        %HostAddedToCluster{cluster_id: cluster_id, host_id: host_id},
+        %HostRemovedFromCluster{host_id: host_id}
+      ]
+
+      {commands, state} = reduce_events(events, initial_state)
+
+      assert [] == commands
+      assert %DeregistrationProcessManager{cluster_id: nil} = state
     end
   end
 
