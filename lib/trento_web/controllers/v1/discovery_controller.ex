@@ -32,17 +32,10 @@ defmodule TrentoWeb.V1.DiscoveryController do
       "payload" => body_params.payload
     }
 
-    case Discovery.handle(event) do
-      :ok ->
-        conn
-        |> put_status(:accepted)
-        |> json(%{})
-
-      {:error, :unknown_discovery_type} ->
-        {:error, {:unprocessable_entity, "Unknown discovery type"}}
-
-      {:error, error} ->
-        {:error, {:unprocessable_entity, error}}
+    with :ok <- Discovery.handle(event) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{})
     end
   end
 end

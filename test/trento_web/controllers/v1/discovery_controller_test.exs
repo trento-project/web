@@ -16,7 +16,7 @@ defmodule TrentoWeb.V1.DiscoveryControllerTest do
 
       assert %{
                "errors" => [
-                 %{"detail" => "Unknown discovery type", "title" => "Unprocessable Entity"}
+                 %{"detail" => "Unknown discovery type.", "title" => "Unprocessable Entity"}
                ]
              } = resp
     end

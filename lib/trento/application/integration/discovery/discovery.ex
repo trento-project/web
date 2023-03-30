@@ -21,15 +21,12 @@ defmodule Trento.Integration.Discovery do
 
   @spec handle(map) :: :ok | {:error, any}
   def handle(event) do
-    # TODO: Add a cast/validation step here
-    # credo:disable-for-next-line
     with {:ok, commands} <- do_handle(event),
          {:ok, _} <- store_discovery_event(event) do
       dispatch(commands)
     else
-      # TODO improve error handling, bubbling up validation / command dispatch errors
       {:error, reason} = error ->
-        Logger.error("Failed to handle discovery event", error: inspect(reason))
+        Logger.error("Failed to handle discovery event: #{inspect(reason)}")
         store_discarded_discovery_event(event, inspect(reason))
 
         error
