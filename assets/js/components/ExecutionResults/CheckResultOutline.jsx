@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import TargetResult from './TargetResult';
 import {
-  getExpectSameStatementResult,
-  getExpectSameStatements,
   getExpectStatements,
   isAgentCheckError,
   getExpectStatementsMet,
   isTargetCluster,
+  getExpectSameStatementsResults,
 } from './checksUtils';
 
 const extractExpectResults = (expectations, agentsCheckResults) => {
@@ -45,10 +44,8 @@ const extractExpectSameResults = (
   expectations,
   expectationResults
 ) =>
-  getExpectSameStatements(expectations).map(({ name }) => {
-    const { result } = getExpectSameStatementResult(expectationResults, name);
-
-    return {
+  getExpectSameStatementsResults(expectations, expectationResults).map(
+    ({ name, result }) => ({
       targetType: TARGET_CLUSTER,
       targetName,
       expectationName: name,
@@ -56,8 +53,8 @@ const extractExpectSameResults = (
         ? `Value \`${name}\` is the same on all targets`
         : `Value \`${name}\` is not the same on all targets`,
       isAgentCheckError: !result,
-    };
-  });
+    })
+  );
 
 function CheckResultOutline({
   clusterID,

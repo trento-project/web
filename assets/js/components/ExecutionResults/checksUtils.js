@@ -147,11 +147,19 @@ export const getExpectSameStatementResult = (expectationResults, name) => {
   );
 
   if (!expectSameStatement) {
-    return {};
+    return { name, result: null };
   }
 
   return expectSameStatement;
 };
+
+export const getExpectSameStatementsResults = (
+  expectations,
+  expectationResults
+) =>
+  getExpectSameStatements(expectations).map(({ name }) =>
+    getExpectSameStatementResult(expectationResults, name)
+  );
 
 export const getClusterCheckResults = (executionData, checkID) => {
   const checkResult = getCheckResults(executionData).find(

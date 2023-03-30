@@ -6,6 +6,8 @@ import {
   agentCheckErrorFactory,
   agentCheckResultFactory,
   catalogCheckFactory,
+  catalogExpectExpectationFactory,
+  catalogExpectSameExpectationFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   checkResultFactory,
@@ -30,6 +32,7 @@ import {
   getExpectStatementsMet,
   isPremium,
   getClusterCheckResults,
+  getExpectSameStatementsResults,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -218,6 +221,7 @@ describe('checksUtils', () => {
 
     it('should get expect_same statement result', () => {
       const expectationName = faker.lorem.word();
+      const anotherExpectationName = faker.color.human();
       const expectSameResult = expectationResultFactory.build({
         type: EXPECT_SAME,
         name: expectationName,
@@ -232,7 +236,48 @@ describe('checksUtils', () => {
       expect(getExpectSameStatementResult(resultList, expectationName)).toBe(
         expectSameResult
       );
-      expect(getExpectSameStatementResult(resultList, 'not-there')).toEqual({});
+      expect(
+        getExpectSameStatementResult(resultList, anotherExpectationName)
+      ).toEqual({
+        name: anotherExpectationName,
+        result: null,
+      });
+    });
+
+    it('should get expect_same statement results for a set of expectations', () => {
+      const expectationName = faker.lorem.word();
+      const anotherExpectationName = faker.color.human();
+
+      const expectations = [
+        ...catalogExpectExpectationFactory.buildList(2),
+        catalogExpectSameExpectationFactory.build({
+          name: expectationName,
+        }),
+        catalogExpectSameExpectationFactory.build({
+          name: anotherExpectationName,
+        }),
+      ];
+
+      const expectSameResult = expectationResultFactory.build({
+        type: EXPECT_SAME,
+        name: expectationName,
+      });
+      const expectationResults = [
+        ...expectationResultFactory.buildList(2, {
+          type: EXPECT,
+        }),
+        expectSameResult,
+      ];
+
+      expect(
+        getExpectSameStatementsResults(expectations, expectationResults)
+      ).toEqual([
+        expectSameResult,
+        {
+          name: anotherExpectationName,
+          result: null,
+        },
+      ]);
     });
 
     it('should get checks results for cluster', () => {
