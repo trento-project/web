@@ -504,16 +504,16 @@ defmodule Trento.Domain.Cluster do
   end
 
   defp maybe_emit_cluster_deregistered_event(
-         %Cluster{cluster_id: cluster_id, hosts: hosts},
+         %Cluster{cluster_id: cluster_id, hosts: []},
          %DeregisterClusterHost{
            cluster_id: cluster_id,
            deregistered_at: deregistered_at
          }
        ) do
-    if Enum.empty?(hosts) do
-      %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at}
-    end
+    %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at}
   end
+
+  defp maybe_emit_cluster_deregistered_event(_, _), do: nil
 
   defp maybe_add_checks_health(healths, _, []), do: healths
   defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]

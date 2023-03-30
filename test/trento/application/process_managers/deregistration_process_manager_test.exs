@@ -65,6 +65,13 @@ defmodule Trento.DeregistrationProcessManagerTest do
       assert {:stop, ^host_id} =
                DeregistrationProcessManager.interested?(%HostDeregistered{host_id: host_id})
     end
+
+    test "should continue the process manager when HostRemovedFromCluster arrives" do
+      host_id = UUID.uuid4()
+
+      assert {:continue, ^host_id} =
+               DeregistrationProcessManager.interested?(%HostRemovedFromCluster{host_id: host_id})
+    end
   end
 
   describe "host deregistration procedure" do

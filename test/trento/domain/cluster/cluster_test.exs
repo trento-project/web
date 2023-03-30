@@ -3,7 +3,6 @@ defmodule Trento.ClusterTest do
 
   import Trento.Factory
 
-  alias Trento.Domain.Events.HostRemovedFromCluster
   alias Trento.Support.StructHelper
 
   alias Trento.Domain.Commands.{
@@ -28,7 +27,8 @@ defmodule Trento.ClusterTest do
     ClusterRolledUp,
     ClusterRollUpRequested,
     HostAddedToCluster,
-    HostChecksExecutionCompleted
+    HostChecksExecutionCompleted,
+    HostRemovedFromCluster
   }
 
   alias Trento.Domain.Cluster

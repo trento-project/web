@@ -48,14 +48,15 @@ defmodule Trento.DeregistrationProcessManager do
 
     The process manager starts with a Deregistration request and stops when the host is fully deregistered.
   """
+  # Start the Process Manager
   def interested?(%HostRegistered{host_id: host_id}), do: {:start, host_id}
   def interested?(%HostRolledUp{host_id: host_id}), do: {:start, host_id}
   def interested?(%HostAddedToCluster{host_id: host_id}), do: {:start, host_id}
   def interested?(%ClusterRolledUp{snapshot: %{hosts: hosts}}), do: {:start, hosts}
-
+  # Continue the Process Manager
   def interested?(%HostDeregistrationRequested{host_id: host_id}), do: {:continue, host_id}
   def interested?(%HostRemovedFromCluster{host_id: host_id}), do: {:continue, host_id}
-
+  # Stop the Process Manager
   def interested?(%HostDeregistered{host_id: host_id}), do: {:stop, host_id}
 
   def interested?(_event), do: false
