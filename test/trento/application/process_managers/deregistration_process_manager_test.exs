@@ -13,7 +13,11 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
   alias Trento.DeregistrationProcessManager
   alias Trento.Domain.Cluster
-  alias Trento.Domain.Commands.DeregisterHost
+
+  alias Trento.Domain.Commands.{
+    DeregisterClusterHost,
+    DeregisterHost
+  }
 
   describe "events interested" do
     test "should start the process manager when HostRegistered event arrives" do
@@ -101,6 +105,28 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
       assert ^initial_state = state
       assert %DeregisterHost{host_id: ^host_id, deregistered_at: ^requested_at} = commands
+    end
+
+    test "should dispatch DeregisterClusterHost and then DeregisterHost commands when HostDeregistrationRequested is emitted and the host belongs to a cluster" do
+      host_id = UUID.uuid4()
+      cluster_id = UUID.uuid4()
+      requested_at = DateTime.utc_now()
+      initial_state = %DeregistrationProcessManager{cluster_id: cluster_id}
+
+      events = [%HostDeregistrationRequested{host_id: host_id, requested_at: requested_at}]
+
+      {commands, state} = reduce_events(events, initial_state)
+
+      assert ^initial_state = state
+
+      assert [
+               %DeregisterClusterHost{
+                 host_id: ^host_id,
+                 cluster_id: ^cluster_id,
+                 deregistered_at: ^requested_at
+               },
+               %DeregisterHost{host_id: ^host_id, deregistered_at: ^requested_at}
+             ] = commands
     end
 
     test "should update the state and remove the cluster id when HostRemovedFromCluster event is emitted" do

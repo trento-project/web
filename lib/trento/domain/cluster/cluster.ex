@@ -510,7 +510,7 @@ defmodule Trento.Domain.Cluster do
            deregistered_at: deregistered_at
          }
        ) do
-    if length(hosts) == 0 do
+    if Enum.empty?(hosts) do
       %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at}
     end
   end
