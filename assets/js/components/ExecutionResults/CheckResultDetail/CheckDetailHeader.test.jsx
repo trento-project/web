@@ -26,9 +26,13 @@ describe('CheckDetailHeader Component', () => {
         targetType={targetType}
         targetName={targetName}
         cloudProvider={cloudProvider}
+        result="passing"
       />
     );
 
+    const healthIcon = screen.getAllByTestId('eos-svg-component')[1];
+
+    expect(healthIcon).toHaveClass('fill-jungle-green-500');
     expect(screen.getByText('Back to Check Results')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
     expect(screen.getByText('Host')).toBeTruthy();

@@ -153,11 +153,7 @@ export const getExpectSameStatementResult = (expectationResults, name) => {
   return expectSameStatement;
 };
 
-export const getAgentCheckResultByAgentID = (
-  executionData,
-  checkID,
-  agentID
-) => {
+export const getClusterCheckResults = (executionData, checkID) => {
   const checkResult = getCheckResults(executionData).find(
     ({ check_id }) => check_id === checkID
   );
@@ -166,7 +162,18 @@ export const getAgentCheckResultByAgentID = (
     return {};
   }
 
-  const { agents_check_results = [] } = checkResult;
+  return checkResult;
+};
+
+export const getAgentCheckResultByAgentID = (
+  executionData,
+  checkID,
+  agentID
+) => {
+  const { agents_check_results = [] } = getClusterCheckResults(
+    executionData,
+    checkID
+  );
 
   return (
     agents_check_results.find(({ agent_id }) => agent_id === agentID) || {}

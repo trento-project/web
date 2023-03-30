@@ -29,6 +29,7 @@ import {
   getAgentCheckResultByAgentID,
   getExpectStatementsMet,
   isPremium,
+  getClusterCheckResults,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -232,6 +233,21 @@ describe('checksUtils', () => {
         expectSameResult
       );
       expect(getExpectSameStatementResult(resultList, 'not-there')).toEqual({});
+    });
+
+    it('should get checks results for cluster', () => {
+      const executionResult = checksExecutionCompletedFactory.build();
+
+      const {
+        check_results: [_, checkResult],
+      } = executionResult;
+
+      const { check_id: checkID } = checkResult;
+
+      expect(getClusterCheckResults(executionResult, checkID)).toBe(
+        checkResult
+      );
+      expect(getClusterCheckResults(executionResult, 'not-there')).toEqual({});
     });
 
     it('should get a check result for an agent', () => {
