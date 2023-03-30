@@ -42,7 +42,11 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
         |> ApiRedirector.call(latest_version: "v1", router: ErrorNotFoundRouter)
         |> json_response(404)
 
-      assert %{"errors" => [%{"detail" => "Not found", "title" => "Not Found"}]} == resp
+      assert %{
+               "errors" => [
+                 %{"title" => "Not Found", "detail" => "The requested resource cannot be found."}
+               ]
+             } == resp
     end
 
     test "should return 404 with the error view when the path is not recognized by the router because match the ApiRedirectorPlug",
@@ -61,7 +65,11 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
         |> ApiRedirector.call(latest_version: "v1", router: NotFoundRouter)
         |> json_response(404)
 
-      assert %{"errors" => [%{"detail" => "Not found", "title" => "Not Found"}]} == resp
+      assert %{
+               "errors" => [
+                 %{"title" => "Not Found", "detail" => "The requested resource cannot be found."}
+               ]
+             } == resp
     end
 
     test "should redirect to the correct path when the route is recognized with the latest version",

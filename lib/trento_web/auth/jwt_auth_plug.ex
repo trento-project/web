@@ -73,6 +73,8 @@ defmodule TrentoWeb.Auth.JWTAuthPlug do
         {:ok, conn}
 
       {:error, reason} ->
+        Logger.error("Invalid refresh token: #{inspect(reason)}")
+
         {:error, reason}
     end
   end
