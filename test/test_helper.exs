@@ -33,5 +33,5 @@ Application.put_env(:joken, :current_time_adapter, Joken.CurrentTime.Mock)
 
 Application.ensure_all_started(:ex_machina, :faker)
 
-ExUnit.start()
+ExUnit.start(capture_log: true)
 Ecto.Adapters.SQL.Sandbox.mode(Trento.Repo, :manual)
