@@ -10,7 +10,6 @@ defmodule Trento.Support.EventHandlerFailureContextTest do
     {:ok, %{handler: handler}}
   end
 
-  @tag :capture_log
   test "should retry 3 times before shutting down and call the callback functions", %{
     handler: handler
   } do
