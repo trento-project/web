@@ -33,7 +33,7 @@ defmodule Trento.ClustersTest do
         :ok
       end)
 
-      assert {:error, :cluster_not_found} = Clusters.request_checks_execution(UUID.uuid4())
+      assert {:error, :not_found} = Clusters.request_checks_execution(UUID.uuid4())
     end
 
     test "should not start checks execution if no checks are selected" do
@@ -50,10 +50,10 @@ defmodule Trento.ClustersTest do
       %{id: cluster_id} = insert(:cluster)
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn _, _ ->
-        {:error, :ampq_error}
+        {:error, :amqp_error}
       end)
 
-      assert {:error, :request_execution_failed} = Clusters.request_checks_execution(cluster_id)
+      assert {:error, :amqp_error} = Clusters.request_checks_execution(cluster_id)
     end
   end
 
