@@ -206,11 +206,15 @@ TrentoWeb.ErrorHelpers.html
 TrentoWeb.ErrorView.html
 TrentoWeb.FallbackController.html
 TrentoWeb.Gettext.html
+TrentoWeb.HealthController.html
+TrentoWeb.HealthView.html
 TrentoWeb.LayoutView.html
 TrentoWeb.MonitoringChannel.html
 TrentoWeb.OpenApi.ApiSpec.html
 TrentoWeb.OpenApi.Schema.BadRequest.html
+TrentoWeb.OpenApi.Schema.Health.html
 TrentoWeb.OpenApi.Schema.NotFound.html
+TrentoWeb.OpenApi.Schema.Ready.html
 TrentoWeb.PageController.html
 TrentoWeb.PageView.html
 TrentoWeb.Plugs.ApiRedirector.html
@@ -273,8 +277,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-5251BB81.js
-dist/sidebar_items-6487B08F.js
+dist/search_items-EE12A18C.js
+dist/sidebar_items-2A60E6B5.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
