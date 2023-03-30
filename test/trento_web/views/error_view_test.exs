@@ -3,17 +3,6 @@ defmodule TrentoWeb.ErrorViewTest do
 
   import Phoenix.View
 
-  test "should render a generic error based on the template name" do
-    assert %{
-             errors: [
-               %{
-                 detail: "An error has occurred.",
-                 title: "I'm a teapot"
-               }
-             ]
-           } == render(TrentoWeb.ErrorView, "418.json", [])
-  end
-
   test "should render a 400 error" do
     assert %{
              errors: [
@@ -33,7 +22,7 @@ defmodule TrentoWeb.ErrorViewTest do
                  title: "Unauthorized"
                }
              ]
-           } == render(TrentoWeb.ErrorView, "401.json", detail: "Invalid credentials.")
+           } == render(TrentoWeb.ErrorView, "401.json", reason: "Invalid credentials.")
   end
 
   test "should render a 404 error" do
@@ -45,9 +34,7 @@ defmodule TrentoWeb.ErrorViewTest do
                }
              ]
            } ==
-             render(TrentoWeb.ErrorView, "404.json",
-               detail: "The requested resource cannot be found."
-             )
+             render(TrentoWeb.ErrorView, "404.json", [])
   end
 
   test "should render a 422 error (string)" do
@@ -58,23 +45,49 @@ defmodule TrentoWeb.ErrorViewTest do
                  title: "Unprocessable Entity"
                }
              ]
-           } == render(TrentoWeb.ErrorView, "422.json", error: "Invalid values.")
+           } == render(TrentoWeb.ErrorView, "422.json", reason: "Invalid values.")
   end
 
   test "should render a 422 error (validation error)" do
-    {:error, validation_errors} = TestData.new(%{})
+    {:error, validation_error} = TestData.new(%{embedded: %{id: "invalid", name: 0}})
 
     assert %{
              errors: [
                %{
-                 detail: "can't be blank",
-                 title: "Invalid value",
-                 source: %{pointer: "/embedded"}
+                 detail: "is invalid",
+                 source: %{pointer: "/embedded/id"},
+                 title: "Invalid value"
+               },
+               %{
+                 detail: "is invalid",
+                 source: %{pointer: "/embedded/name"},
+                 title: "Invalid value"
                },
                %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
                %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"}
              ]
-           } == render(TrentoWeb.ErrorView, "422.json", error: validation_errors)
+           } == render(TrentoWeb.ErrorView, "422.json", reason: validation_error)
+  end
+
+  test "should render a 422 error (changeset)" do
+    changeset = TestData.changeset(%TestData{}, %{embedded: %{id: "invalid", name: 0}})
+
+    assert %{
+             errors: [
+               %{
+                 detail: "is invalid",
+                 source: %{pointer: "/embedded/id"},
+                 title: "Invalid value"
+               },
+               %{
+                 detail: "is invalid",
+                 source: %{pointer: "/embedded/name"},
+                 title: "Invalid value"
+               },
+               %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
+               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"}
+             ]
+           } == render(TrentoWeb.ErrorView, "422.json", changeset: changeset)
   end
 
   test "should render a 500 error" do
@@ -86,5 +99,16 @@ defmodule TrentoWeb.ErrorViewTest do
                }
              ]
            } == render(TrentoWeb.ErrorView, "500.json", detail: "Something went wrong.")
+  end
+
+  test "should render a generic error based on the template name" do
+    assert %{
+             errors: [
+               %{
+                 detail: "An error has occurred.",
+                 title: "I'm a teapot"
+               }
+             ]
+           } == render(TrentoWeb.ErrorView, "418.json", [])
   end
 end
