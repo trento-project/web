@@ -53,6 +53,12 @@ defmodule TrentoWeb.Router do
     forward "/", FunWithFlags.UI.Router, namespace: "feature-flags"
   end
 
+  scope "/api", TrentoWeb do
+    pipe_through :api
+    get "/healthz", HealthController, :health
+    get "/readyz", HealthController, :ready
+  end
+
   scope "/api" do
     pipe_through [:api, :protected_api]
 
