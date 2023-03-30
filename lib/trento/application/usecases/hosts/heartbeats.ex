@@ -46,8 +46,10 @@ defmodule Trento.Heartbeats do
       {:error, :command, :host_not_registered, _} ->
         {:error, :not_found}
 
-      error ->
-        Logger.error("Error while updating heartbeat for agent #{agent_id}", error: inspect(error))
+      {:error, reason} = error ->
+        Logger.error(
+          "Error while updating heartbeat for agent #{agent_id}, error: #{inspect(reason)}"
+        )
 
         error
     end
