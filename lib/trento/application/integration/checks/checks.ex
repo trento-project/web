@@ -14,7 +14,7 @@ defmodule Trento.Integration.Checks do
   require Logger
 
   @spec request_execution(String.t(), String.t(), Provider.t(), [map], [String.t()]) ::
-          :ok | {:error, :request_execution_failed}
+          :ok | {:error, :any}
   def request_execution(execution_id, cluster_id, provider, hosts, selected_checks) do
     execution_requested =
       ExecutionRequested.new!(
@@ -31,10 +31,10 @@ defmodule Trento.Integration.Checks do
       :ok ->
         :ok
 
-      {:error, reason} ->
+      {:error, reason} = error ->
         Logger.error("Failed to publish message to topic executions: #{inspect(reason)}")
 
-        {:error, :request_execution_failed}
+        error
     end
   end
 end
