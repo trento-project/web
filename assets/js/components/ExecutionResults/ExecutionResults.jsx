@@ -41,7 +41,7 @@ const resultsTableConfig = {
       fontSize: 'text-base',
       className: 'bg-gray-50 border-b',
       render: (checkID, { onClick, premium }) => (
-        <div className="flex space-x-4 whitespace-nowrap text-jungle-green-500 justify-between">
+        <div className="flex  whitespace-nowrap text-jungle-green-500 justify-between">
           <span
             className="inline-block"
             aria-hidden="true"
