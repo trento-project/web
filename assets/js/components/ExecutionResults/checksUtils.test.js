@@ -20,6 +20,7 @@ import {
   getCheckHealthByAgent,
   getHosts,
   getCheckExpectations,
+  isPremium,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -178,6 +179,30 @@ describe('checksUtils', () => {
       const { health } = getCheckHealthByAgent([checkResult], checkID, agentID);
 
       expect(health).toBe('warning');
+    });
+
+    it('should return true or false if a check is premium or not', () => {
+      const checkIds = [
+        faker.datatype.uuid(),
+        faker.datatype.uuid(),
+        faker.datatype.uuid(),
+        faker.datatype.uuid(),
+      ];
+      const expectedPremiumValues = [
+        true,
+        false,
+        undefined,
+        faker.animal.cat(),
+      ];
+      const checkCatalog = checkIds.map((id, index) =>
+        catalogCheckFactory.build({ id, premium: expectedPremiumValues[index] })
+      );
+
+      checkIds.forEach((checkId, index) => {
+        expect(isPremium(checkCatalog, checkId)).toBe(
+          expectedPremiumValues[index]
+        );
+      });
     });
   });
 });

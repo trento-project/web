@@ -52,7 +52,7 @@ const resultsTableConfig = {
           >
             {checkID}
           </span>
-          <span>{premium ? <PremiumPill /> : ' '}</span>
+          {premium && <PremiumPill />}
         </div>
       ),
     },
