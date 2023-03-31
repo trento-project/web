@@ -68,6 +68,7 @@ defmodule Trento.Domain.Cluster do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
+    DeregisterClusterHost,
     RegisterClusterHost,
     RollUpCluster,
     SelectChecks
@@ -79,6 +80,7 @@ defmodule Trento.Domain.Cluster do
     ChecksExecutionStarted,
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
@@ -86,7 +88,8 @@ defmodule Trento.Domain.Cluster do
     ClusterRolledUp,
     ClusterRollUpRequested,
     HostAddedToCluster,
-    HostChecksExecutionCompleted
+    HostChecksExecutionCompleted,
+    HostRemovedFromCluster
   }
 
   @required_fields []
@@ -113,6 +116,8 @@ defmodule Trento.Domain.Cluster do
     field :hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
     field :rolling_up, :boolean, default: false
+    field :deregistered_at, :utc_datetime_usec, default: nil
+
     embeds_one :details, HanaClusterDetails
   end
 
@@ -262,6 +267,24 @@ defmodule Trento.Domain.Cluster do
     }
   end
 
+  def execute(
+        %Cluster{cluster_id: cluster_id} = cluster,
+        %DeregisterClusterHost{
+          host_id: host_id,
+          cluster_id: cluster_id
+        } = command
+      ) do
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %HostRemovedFromCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    end)
+    |> Multi.execute(&maybe_emit_cluster_deregistered_event(&1, command))
+  end
+
   def apply(
         %Cluster{} = cluster,
         %ClusterRegistered{
@@ -371,6 +394,17 @@ defmodule Trento.Domain.Cluster do
     snapshot
   end
 
+  def apply(%Cluster{hosts: hosts} = cluster, %HostRemovedFromCluster{
+        host_id: host_id
+      }) do
+    %Cluster{cluster | hosts: List.delete(hosts, host_id)}
+  end
+
+  # Deregistration
+  def apply(%Cluster{} = cluster, %ClusterDeregistered{deregistered_at: deregistered_at}) do
+    %Cluster{cluster | deregistered_at: deregistered_at}
+  end
+
   def apply(cluster, %legacy_event{}) when legacy_event in @legacy_events, do: cluster
 
   defp maybe_emit_host_added_to_cluster_event(
@@ -468,6 +502,18 @@ defmodule Trento.Domain.Cluster do
       checks_health: checks_health
     }
   end
+
+  defp maybe_emit_cluster_deregistered_event(
+         %Cluster{cluster_id: cluster_id, hosts: []},
+         %DeregisterClusterHost{
+           cluster_id: cluster_id,
+           deregistered_at: deregistered_at
+         }
+       ) do
+    %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at}
+  end
+
+  defp maybe_emit_cluster_deregistered_event(_, _), do: nil
 
   defp maybe_add_checks_health(healths, _, []), do: healths
   defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
