@@ -3,27 +3,23 @@ import React from 'react';
 import ListView from '@components/ListView';
 import classNames from 'classnames';
 
-const mapExpectResult = ({ name, return_value }) => ({
-  name,
-  passing: !!return_value,
-});
-
-const mapExpectSameResults = ({ name, result }) => ({
-  name,
-  passing: !!result,
-});
-
 function ExpectationsResults({
   isTargetHost = true,
   results,
   isError = false,
   errorMessage = 'An error occurred',
 }) {
-  const mappedResults = isTargetHost
-    ? results.map(mapExpectResult)
-    : results.map(mapExpectSameResults);
+  const renderedResults = isTargetHost
+    ? results.map(({ name, return_value }) => ({
+        name,
+        passing: !!return_value,
+      }))
+    : results.map(({ name, result }) => ({
+        name,
+        passing: !!result,
+      }));
 
-  const expectationsEvaluations = mappedResults.map(({ name, passing }) => ({
+  const expectationsEvaluations = renderedResults.map(({ name, passing }) => ({
     title: name,
     content: passing,
     render: (isPassing) => (

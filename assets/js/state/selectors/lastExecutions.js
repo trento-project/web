@@ -7,15 +7,9 @@ export const getLastExecution =
     lastExecutions[groupID];
 
 const addHostnameToAgentsCheckResults = (
-  agentsCheckResults = [],
+  executionData = {},
   clusterHosts = []
-) =>
-  agentsCheckResults.map((target) => ({
-    ...target,
-    hostname: clusterHosts.find(({ id }) => target.agent_id === id)?.hostname,
-  }));
-
-const enrichExecutionData = (executionData = {}, clusterHosts = []) => {
+) => {
   const { data } = executionData;
   const { check_results = [] } = data || {};
 
@@ -29,9 +23,12 @@ const enrichExecutionData = (executionData = {}, clusterHosts = []) => {
       ...data,
       check_results: check_results.map((checkResult) => ({
         ...checkResult,
-        agents_check_results: addHostnameToAgentsCheckResults(
-          checkResult?.agents_check_results,
-          clusterHosts
+        agents_check_results: checkResult?.agents_check_results.map(
+          (target) => ({
+            ...target,
+            hostname: clusterHosts.find(({ id }) => target.agent_id === id)
+              ?.hostname,
+          })
         ),
       })),
     },
@@ -45,7 +42,7 @@ export const getLastExecutionData = (groupID) => (state) => {
   const lastExecution = getLastExecution(groupID)(state) || null;
 
   const enrichedExecution = lastExecution
-    ? enrichExecutionData(lastExecution, clusterHosts)
+    ? addHostnameToAgentsCheckResults(lastExecution, clusterHosts)
     : {};
 
   return {

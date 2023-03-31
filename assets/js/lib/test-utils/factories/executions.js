@@ -125,13 +125,21 @@ const checkResultForTarget = (agentId) =>
     agent_id: agentId,
   });
 
-export const checksExecutionCompletedForTargets = (targets) => {
-  const checkResults = checkResultFactory.buildList(2, {
-    agents_check_results: targets.map(checkResultForTarget),
-  });
+export const checksExecutionCompletedForTargetsFactory = Factory.define(
+  ({ params }) => {
+    const targets = params.targets || [
+      faker.datatype.uuid(),
+      faker.datatype.uuid(),
+    ];
+    const checkResults = checkResultFactory.buildList(2, {
+      agents_check_results: targets.map(checkResultForTarget),
+    });
 
-  return checksExecutionCompletedFactory.build({ check_results: checkResults });
-};
+    return checksExecutionCompletedFactory.build({
+      check_results: checkResults,
+    });
+  }
+);
 
 export const withEmptyExpectations = (checkResult) => {
   const agents = checkResult.agents_check_results.map((agent) => ({

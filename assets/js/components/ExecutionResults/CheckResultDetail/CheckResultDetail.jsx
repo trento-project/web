@@ -13,9 +13,6 @@ import ExpectationsResults from './ExpectationsResults';
 import ExpectedValues from './ExpectedValues';
 import GatheredFacts from './GatheredFacts';
 
-const getExpectStatementsResults = (expectationEvaluations) =>
-  getExpectStatements(expectationEvaluations);
-
 function CheckResultDetail({
   checkID,
   expectations,
@@ -41,7 +38,7 @@ function CheckResultDetail({
   const isError = isAgentCheckError(targetResult);
 
   const targetExpectationsResults = targetHost
-    ? getExpectStatementsResults(expectation_evaluations)
+    ? getExpectStatements(expectation_evaluations)
     : getExpectSameStatementsResults(expectations, expectation_results);
 
   const gatheredFacts = targetHost

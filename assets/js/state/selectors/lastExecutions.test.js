@@ -2,7 +2,7 @@ import {
   hostFactory,
   clusterFactory,
   catalogCheckFactory,
-  checksExecutionCompletedForTargets,
+  checksExecutionCompletedForTargetsFactory,
 } from '@lib/test-utils/factories';
 import { getLastExecution, getLastExecutionData } from './lastExecutions';
 
@@ -43,10 +43,9 @@ describe('lastExecutions selector', () => {
 
     const checksCatalog = catalogCheckFactory.buildList(3);
 
-    const completedExecution = checksExecutionCompletedForTargets([
-      agent1,
-      agent2,
-    ]);
+    const completedExecution = checksExecutionCompletedForTargetsFactory.build({
+      targets: [agent1, agent2],
+    });
 
     const state = {
       clustersList: {
