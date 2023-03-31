@@ -192,3 +192,29 @@ export const getExpectStatementsMet = (expectationEvaluations) =>
   getExpectStatements(expectationEvaluations).filter(
     ({ return_value }) => return_value
   ).length;
+
+const expectSameStatementResultFromAgentCheckResult =
+  (name) =>
+  ({ hostname, expectation_evaluations = [], message }) => ({
+    hostname,
+    message,
+    ...getExpectSameStatementResult(expectation_evaluations, name),
+  });
+
+const groupExpectSameStatementResultsByTarget = (
+  accumulator,
+  { hostname, message, return_value }
+) => {
+  accumulator[hostname] = return_value || message;
+  return accumulator;
+};
+
+export const getExpectSameFacts = (expectations, agentsCheckResults) =>
+  getExpectSameStatements(expectations).map(({ name }) => ({
+    name,
+    value: {
+      [name]: agentsCheckResults
+        .map(expectSameStatementResultFromAgentCheckResult(name))
+        .reduce(groupExpectSameStatementResultsByTarget, {}),
+    },
+  }));
