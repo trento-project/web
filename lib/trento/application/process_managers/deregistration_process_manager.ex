@@ -18,19 +18,25 @@ defmodule Trento.DeregistrationProcessManager do
     name: "deregistration_process_manager"
 
   deftype do
-    field :host_id, Ecto.UUID
+    field :cluster_id, Ecto.UUID
   end
 
   alias Trento.DeregistrationProcessManager
 
   alias Trento.Domain.Events.{
+    ClusterRolledUp,
+    HostAddedToCluster,
     HostDeregistered,
     HostDeregistrationRequested,
     HostRegistered,
+    HostRemovedFromCluster,
     HostRolledUp
   }
 
-  alias Trento.Domain.Commands.DeregisterHost
+  alias Trento.Domain.Commands.{
+    DeregisterClusterHost,
+    DeregisterHost
+  }
 
   @doc """
     The process manager is interested in HostRegistered which starts or joins an existing process
@@ -42,24 +48,55 @@ defmodule Trento.DeregistrationProcessManager do
 
     The process manager starts with a Deregistration request and stops when the host is fully deregistered.
   """
+  # Start the Process Manager
   def interested?(%HostRegistered{host_id: host_id}), do: {:start, host_id}
   def interested?(%HostRolledUp{host_id: host_id}), do: {:start, host_id}
+  def interested?(%HostAddedToCluster{host_id: host_id}), do: {:start, host_id}
+  def interested?(%ClusterRolledUp{snapshot: %{hosts: hosts}}), do: {:start, hosts}
+  # Continue the Process Manager
   def interested?(%HostDeregistrationRequested{host_id: host_id}), do: {:continue, host_id}
+  def interested?(%HostRemovedFromCluster{host_id: host_id}), do: {:continue, host_id}
+  # Stop the Process Manager
   def interested?(%HostDeregistered{host_id: host_id}), do: {:stop, host_id}
+
   def interested?(_event), do: false
 
-  def handle(%DeregistrationProcessManager{}, %HostDeregistrationRequested{
+  # Deregister host that doesn't belong to any cluster
+  def handle(%DeregistrationProcessManager{cluster_id: nil}, %HostDeregistrationRequested{
         host_id: host_id,
         requested_at: requested_at
       }) do
     %DeregisterHost{host_id: host_id, deregistered_at: requested_at}
   end
 
-  def apply(%DeregistrationProcessManager{} = state, %HostRegistered{host_id: host_id}) do
-    %DeregistrationProcessManager{state | host_id: host_id}
+  # First step in host deregistration when host belongs to a cluster
+  def handle(%DeregistrationProcessManager{cluster_id: cluster_id}, %HostDeregistrationRequested{
+        host_id: host_id,
+        requested_at: requested_at
+      }) do
+    [
+      %DeregisterClusterHost{
+        host_id: host_id,
+        cluster_id: cluster_id,
+        deregistered_at: requested_at
+      },
+      %DeregisterHost{host_id: host_id, deregistered_at: requested_at}
+    ]
   end
 
-  def apply(%DeregistrationProcessManager{} = state, %HostRolledUp{host_id: host_id}) do
-    %DeregistrationProcessManager{state | host_id: host_id}
+  def apply(%DeregistrationProcessManager{} = state, %ClusterRolledUp{
+        cluster_id: cluster_id
+      }) do
+    %DeregistrationProcessManager{state | cluster_id: cluster_id}
+  end
+
+  def apply(%DeregistrationProcessManager{} = state, %HostAddedToCluster{
+        cluster_id: cluster_id
+      }) do
+    %DeregistrationProcessManager{state | cluster_id: cluster_id}
+  end
+
+  def apply(%DeregistrationProcessManager{} = state, %HostRemovedFromCluster{}) do
+    %DeregistrationProcessManager{state | cluster_id: nil}
   end
 end
