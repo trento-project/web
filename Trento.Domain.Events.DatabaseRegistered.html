@@ -171,7 +171,7 @@ validates the required ones and returns a changeset.</p></div>
 
         </div>
 
-          <div class="summary-synopsis"><p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, errors}</code>.
+          <div class="summary-synopsis"><p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
 Accepts a map or a list of maps.</p></div>
 
       </div>
@@ -340,7 +340,7 @@ validates the required ones and returns a changeset.</p>
 
       </div>
 
-<p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, errors}</code>.
+<p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
 Accepts a map or a list of maps.</p>
   </section>
 </section>
