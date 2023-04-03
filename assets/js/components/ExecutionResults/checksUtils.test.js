@@ -28,6 +28,7 @@ import {
   getExpectSameStatementResult,
   getAgentCheckResultByAgentID,
   getExpectStatementsMet,
+  isPremium,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -274,6 +275,29 @@ describe('checksUtils', () => {
       ];
 
       expect(getExpectStatementsMet(expectationEvaluations)).toBe(3);
+    });
+    it('should return true or false if a check is premium or not', () => {
+      const checkIDs = [
+        faker.datatype.uuid(),
+        faker.datatype.uuid(),
+        faker.datatype.uuid(),
+        faker.datatype.uuid(),
+      ];
+      const expectedPremiumValues = [
+        true,
+        false,
+        undefined,
+        faker.animal.cat(),
+      ];
+      const checkCatalog = checkIDs.map((id, index) =>
+        catalogCheckFactory.build({ id, premium: expectedPremiumValues[index] })
+      );
+
+      checkIDs.forEach((checkID, index) => {
+        expect(isPremium(checkCatalog, checkID)).toBe(
+          expectedPremiumValues[index]
+        );
+      });
     });
   });
 });
