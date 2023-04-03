@@ -64,6 +64,7 @@ defmodule Trento.ClustersTest do
       cluster_id = Faker.UUID.v4()
 
       insert(:cluster, id: cluster_id)
+      insert(:cluster, deregistered_at: DateTime.utc_now())
       insert(:cluster_enrichment_data, cluster_id: cluster_id)
 
       [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
