@@ -67,8 +67,8 @@ defmodule Trento.Clusters do
       from(c in ClusterReadModel,
         select: c.id,
         where:
-          c.type == ^ClusterType.hana_scale_up() or
-            (c.type == ^ClusterType.hana_scale_out() and is_nil(c.deregistered_at))
+          (c.type == ^ClusterType.hana_scale_up() or
+             c.type == ^ClusterType.hana_scale_out()) and is_nil(c.deregistered_at)
       )
 
     query
