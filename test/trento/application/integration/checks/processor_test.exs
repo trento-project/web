@@ -106,7 +106,6 @@ defmodule Trento.Integration.Checks.AMQP.ProcessorTest do
       refute_broadcast "checks_execution_completed", %{cluster_id: ^group_id}, 1000
     end
 
-    @tag capture_log: true
     test "should return error if the event cannot be decoded" do
       message = %GenRMQ.Message{payload: "bad-payload", attributes: %{}, channel: nil}
       assert {:error, :decoding_error} = Processor.process(message)

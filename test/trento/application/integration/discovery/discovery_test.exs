@@ -106,7 +106,6 @@ defmodule Trento.Integration.DiscoveryTest do
     assert 0 == DiscardedDiscoveryEvent |> Trento.Repo.all() |> length()
   end
 
-  @tag capture_log: true
   test "should discard discovery events with invalid payload" do
     event = %{
       "agent_id" => "invalid_uuid",
