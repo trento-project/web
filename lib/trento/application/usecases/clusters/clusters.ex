@@ -35,7 +35,6 @@ defmodule Trento.Clusters do
       )
 
     query
-    |> first
     |> Repo.one()
     |> maybe_request_checks_execution()
   end
