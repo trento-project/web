@@ -10,7 +10,10 @@ import {
   checksExecutionRunningFactory,
   checkResultFactory,
   withEmptyExpectations,
+  executionExpectationEvaluationFactory,
+  expectationResultFactory,
 } from '@lib/test-utils/factories';
+import { EXPECT, EXPECT_SAME } from '@lib/model';
 
 import {
   getCheckDescription,
@@ -18,8 +21,13 @@ import {
   getCheckResults,
   getChecks,
   getCheckHealthByAgent,
-  getHosts,
   getCheckExpectations,
+  isAgentCheckError,
+  getExpectStatements,
+  getExpectSameStatements,
+  getExpectSameStatementResult,
+  getAgentCheckResultByAgentID,
+  getExpectStatementsMet,
   isPremium,
 } from './checksUtils';
 
@@ -39,19 +47,6 @@ describe('checksUtils', () => {
       const execution = checksExecutionRunningFactory.build();
       expect(getCheckResults(execution)).toStrictEqual([]);
     });
-  });
-
-  it('getHosts returns hostnames', () => {
-    const agent1 = agentCheckResultFactory.build();
-    const agent2 = agentCheckResultFactory.build();
-    const checkResults = checkResultFactory.buildList(1, {
-      agents_check_results: [agent1, agent2],
-    });
-
-    expect(getHosts(checkResults)).toStrictEqual([
-      agent1.agent_id,
-      agent2.agent_id,
-    ]);
   });
 
   it('getChecks should return a list of the checks', () => {
@@ -181,6 +176,106 @@ describe('checksUtils', () => {
       expect(health).toBe('warning');
     });
 
+    it('should detect a check error', () => {
+      const errorCheckResult = agentCheckErrorFactory.build({
+        type: 'fact_gathering_error',
+      });
+      const timeoutCheckResult = agentCheckErrorFactory.build({
+        type: 'timeout',
+      });
+      const successfulCheckResult = agentCheckResultFactory.build();
+
+      expect(isAgentCheckError(errorCheckResult)).toBe(true);
+      expect(isAgentCheckError(timeoutCheckResult)).toBe(true);
+      expect(isAgentCheckError(successfulCheckResult)).toBe(false);
+    });
+
+    it('should get expectation statements from a list', () => {
+      const evaluationList = [
+        ...executionExpectationEvaluationFactory.buildList(3, {
+          type: EXPECT,
+        }),
+        ...executionExpectationEvaluationFactory.buildList(4, {
+          type: EXPECT_SAME,
+        }),
+      ];
+      const resultList = [
+        ...expectationResultFactory.buildList(2, {
+          type: EXPECT,
+        }),
+        expectationResultFactory.build({
+          type: EXPECT_SAME,
+        }),
+      ];
+
+      expect(getExpectStatements(evaluationList)).toHaveLength(3);
+      expect(getExpectSameStatements(evaluationList)).toHaveLength(4);
+
+      expect(getExpectStatements(resultList)).toHaveLength(2);
+      expect(getExpectSameStatements(resultList)).toHaveLength(1);
+    });
+
+    it('should get expect_same statement result', () => {
+      const expectationName = faker.lorem.word();
+      const expectSameResult = expectationResultFactory.build({
+        type: EXPECT_SAME,
+        name: expectationName,
+      });
+      const resultList = [
+        ...expectationResultFactory.buildList(2, {
+          type: EXPECT,
+        }),
+        expectSameResult,
+      ];
+
+      expect(getExpectSameStatementResult(resultList, expectationName)).toBe(
+        expectSameResult
+      );
+      expect(getExpectSameStatementResult(resultList, 'not-there')).toEqual({});
+    });
+
+    it('should get a check result for an agent', () => {
+      const executionResult = checksExecutionCompletedFactory.build();
+
+      const {
+        check_results: [checkResult],
+      } = executionResult;
+
+      const {
+        check_id: checkID,
+        agents_check_results: [_, agentCheckResult],
+      } = checkResult;
+
+      const { agent_id: agentID } = agentCheckResult;
+
+      expect(
+        getAgentCheckResultByAgentID(executionResult, checkID, agentID)
+      ).toBe(agentCheckResult);
+      expect(
+        getAgentCheckResultByAgentID(executionResult, 'not-there', agentID)
+      ).toEqual({});
+      expect(
+        getAgentCheckResultByAgentID(executionResult, checkID, 'not-there')
+      ).toEqual({});
+    });
+
+    it('should count the expect statements met', () => {
+      const expectationEvaluations = [
+        executionExpectationEvaluationFactory.build({
+          type: EXPECT_SAME,
+        }),
+        ...executionExpectationEvaluationFactory.buildList(2, {
+          return_value: false,
+          type: EXPECT,
+        }),
+        ...executionExpectationEvaluationFactory.buildList(3, {
+          return_value: true,
+          type: EXPECT,
+        }),
+      ];
+
+      expect(getExpectStatementsMet(expectationEvaluations)).toBe(3);
+    });
     it('should return true or false if a check is premium or not', () => {
       const checkIDs = [
         faker.datatype.uuid(),
