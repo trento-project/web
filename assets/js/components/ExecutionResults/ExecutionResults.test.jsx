@@ -525,7 +525,6 @@ describe('ExecutionResults', () => {
       executionResult,
       checks,
     } = prepareStateData('completed');
-
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
@@ -539,6 +538,10 @@ describe('ExecutionResults', () => {
         clusterSelectedChecks={checks}
       />
     );
+
+    const checkID = screen.getByText(checks[0]);
+    const tableDataID = checkID.closest('div');
+    expect(tableDataID).toHaveTextContent('Premium');
     expect(screen.getByText('Premium')).toBeVisible();
     expect(screen.getAllByText('Premium')).toHaveLength(1);
   });

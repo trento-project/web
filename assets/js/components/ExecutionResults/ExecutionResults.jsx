@@ -41,9 +41,9 @@ const resultsTableConfig = {
       fontSize: 'text-base',
       className: 'bg-gray-50 border-b',
       render: (checkID, { onClick, premium }) => (
-        <div className="flex  whitespace-nowrap text-jungle-green-500 justify-between">
+        <div className="flex whitespace-nowrap text-jungle-green-500 justify-between">
           <span
-            className="inline-block"
+            className="inline-flex leading-5"
             aria-hidden="true"
             onClick={(e) => {
               e.stopPropagation();
@@ -52,7 +52,7 @@ const resultsTableConfig = {
           >
             {checkID}
           </span>
-          {premium && <PremiumPill />}
+          {premium && <PremiumPill className="ml-1" />}
         </div>
       ),
     },
