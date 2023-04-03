@@ -59,12 +59,23 @@ defmodule Trento.ClustersTest do
   end
 
   describe "get clusters" do
-    test "should return enriched clusters" do
+    test "should not return soft deleted clusters" do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
       cluster_id = Faker.UUID.v4()
 
       insert(:cluster, id: cluster_id)
       insert(:cluster, deregistered_at: DateTime.utc_now())
+      insert(:cluster_enrichment_data, cluster_id: cluster_id)
+
+      [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
+        Clusters.get_all_clusters()
+    end
+
+    test "should return enriched clusters" do
+      cib_last_written = Date.to_string(Faker.Date.forward(0))
+      cluster_id = Faker.UUID.v4()
+
+      insert(:cluster, id: cluster_id)
       insert(:cluster_enrichment_data, cluster_id: cluster_id)
 
       [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
