@@ -1,17 +1,6 @@
 defmodule TrentoWeb.ErrorView do
   use TrentoWeb, :view
 
-  def template_not_found(template, _assigns) do
-    %{
-      errors: [
-        %{
-          title: Phoenix.Controller.status_message_from_template(template),
-          detail: "An error has occurred."
-        }
-      ]
-    }
-  end
-
   def render("400.json", %{reason: %{exception: exception}}) do
     %{
       errors: [
@@ -23,51 +12,74 @@ defmodule TrentoWeb.ErrorView do
     }
   end
 
-  def render("401.json", %{detail: detail}) do
+  def render("401.json", %{reason: reason}) do
     %{
       errors: [
         %{
           title: "Unauthorized",
-          detail: detail
+          detail: reason
         }
       ]
     }
   end
 
-  def render("404.json", %{detail: detail}) do
+  def render("404.json", _) do
     %{
       errors: [
         %{
           title: "Not Found",
-          detail: detail
+          detail: "The requested resource cannot be found."
         }
       ]
     }
   end
 
-  def render("422.json", %{error: error}) when is_map(error) do
+  def render("422.json", %{changeset: changeset}) do
+    error =
+      Ecto.Changeset.traverse_errors(
+        changeset,
+        fn {message, _} -> message end
+      )
+
     %{
       errors: render_validation_error(error, "")
     }
   end
 
-  def render("422.json", %{error: error}) do
+  def render("422.json", %{reason: {:validation, error}}) do
+    %{
+      errors: render_validation_error(error, "")
+    }
+  end
+
+  def render("422.json", %{reason: reason}) do
     %{
       errors: [
         %{
           title: "Unprocessable Entity",
-          detail: error
+          detail: reason
         }
       ]
     }
   end
 
-  def render("500.json", %{detail: detail}) do
+  def render("500.json", _) do
     %{
       errors: [
         %{
           title: "Internal Server Error",
-          detail: detail
+          detail: "Something went wrong."
+        }
+      ]
+    }
+  end
+
+  def template_not_found(template, _assigns) do
+    %{
+      errors: [
+        %{
+          title: Phoenix.Controller.status_message_from_template(template),
+          detail: "An error has occurred."
         }
       ]
     }

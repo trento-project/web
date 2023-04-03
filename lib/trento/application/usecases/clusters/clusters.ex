@@ -22,16 +22,27 @@ defmodule Trento.Clusters do
 
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(cluster_id, checks) do
+    Logger.debug("Selecting checks, cluster: #{cluster_id}")
+
     with {:ok, command} <- SelectChecks.new(%{cluster_id: cluster_id, checks: checks}) do
       commanded().dispatch(command)
     end
   end
 
-  @spec request_checks_execution(String.t()) :: :ok | {:error, any}
+  @spec request_checks_execution(String.t()) ::
+          :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    ClusterReadModel
-    |> Repo.get(cluster_id)
-    |> maybe_request_checks_execution()
+    case Repo.get(ClusterReadModel, cluster_id) do
+      %ClusterReadModel{} = cluster ->
+        Logger.debug("Requesting checks execution, cluster: #{cluster_id}")
+
+        maybe_request_checks_execution(cluster)
+
+      nil ->
+        Logger.error("Requested checks execution for a non-existing cluster: #{cluster_id}")
+
+        {:error, :not_found}
+    end
   end
 
   @spec get_all_clusters :: [ClusterReadModel.t()]
@@ -71,7 +82,9 @@ defmodule Trento.Clusters do
           :ok
 
         {:error, reason} ->
-          Logger.error("Failed to request checks execution for cluster #{cluster_id}: #{reason}")
+          Logger.error(
+            "Failed to request checks execution, cluster: #{cluster_id}, reason: #{reason}"
+          )
       end
     end)
   end
@@ -96,7 +109,6 @@ defmodule Trento.Clusters do
     |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
   end
 
-  defp maybe_request_checks_execution(nil), do: {:error, :cluster_not_found}
   defp maybe_request_checks_execution(%{selected_checks: []}), do: :ok
 
   defp maybe_request_checks_execution(%{

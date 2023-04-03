@@ -47,15 +47,8 @@ defmodule TrentoWeb.V1.HostController do
     ]
 
   def heartbeat(conn, %{id: id}) do
-    case Heartbeats.heartbeat(id) do
-      {:ok, _} ->
-        send_resp(conn, 204, "")
-
-      {:error, :command, :host_not_registered, _} ->
-        {:error, {:not_found, "Host not found"}}
-
-      {:error, _, _, _} ->
-        {:error, {:internal_error, "An error occurred while updating the heartbeat."}}
+    with :ok <- Heartbeats.heartbeat(id) do
+      send_resp(conn, 204, "")
     end
   end
 end

@@ -52,7 +52,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
 
   test "should return 404 if the host is not registered", %{conn: conn} do
     expect(Trento.Integration.Prometheus.Mock, :get_exporters_status, fn _ ->
-      {:error, :host_not_found}
+      {:error, :not_found}
     end)
 
     response =
@@ -63,7 +63,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
     assert %{
              "errors" => [
                %{
-                 "detail" => "Host not found",
+                 "detail" => "The requested resource cannot be found.",
                  "title" => "Not Found"
                }
              ]
@@ -83,7 +83,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
     assert %{
              "errors" => [
                %{
-                 "detail" => "An error occurred in getting exporters status.",
+                 "detail" => "Something went wrong.",
                  "title" => "Internal Server Error"
                }
              ]

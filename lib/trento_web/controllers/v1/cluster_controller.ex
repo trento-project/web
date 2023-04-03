@@ -44,17 +44,10 @@ defmodule TrentoWeb.V1.ClusterController do
     ]
 
   def request_checks_execution(conn, %{cluster_id: cluster_id}) do
-    case Clusters.request_checks_execution(cluster_id) do
-      :ok ->
-        conn
-        |> put_status(:accepted)
-        |> json(%{})
-
-      {:error, :cluster_not_found} ->
-        {:error, {:not_found, "Cluster not found"}}
-
-      {:error, :request_execution_failed} ->
-        {:error, {:internal_error, "Something went wrong while triggering an Execution Request"}}
+    with :ok <- Clusters.request_checks_execution(cluster_id) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{})
     end
   end
 
@@ -80,14 +73,10 @@ defmodule TrentoWeb.V1.ClusterController do
   def select_checks(%{body_params: body_params} = conn, %{cluster_id: cluster_id}) do
     %{checks: checks} = body_params
 
-    case Clusters.select_checks(cluster_id, checks) do
-      :ok ->
-        conn
-        |> put_status(:accepted)
-        |> json(%{})
-
-      {:error, _} ->
-        {:error, {:internal_error, "Something went wrong when selecting checks"}}
+    with :ok <- Clusters.select_checks(cluster_id, checks) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{})
     end
   end
 end

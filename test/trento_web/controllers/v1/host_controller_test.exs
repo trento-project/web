@@ -41,7 +41,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> post("/api/v1/hosts/#{UUID.uuid4()}/heartbeat")
         |> json_response(:not_found)
 
-      assert %{"errors" => [%{"detail" => "Host not found", "title" => "Not Found"}]} = resp
+      assert %{
+               "errors" => [
+                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
+               ]
+             } == resp
     end
   end
 end

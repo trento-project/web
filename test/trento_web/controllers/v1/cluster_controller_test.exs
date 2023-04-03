@@ -51,7 +51,11 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> post("/api/v1/clusters/#{cluster_id}/checks/request_execution", %{})
         |> json_response(:not_found)
 
-      %{"errors" => [%{"detail" => "Cluster not found", "title" => "Not Found"}]} = resp
+      assert %{
+               "errors" => [
+                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
+               ]
+             } == resp
     end
 
     test "should return 500 if messaging returns an error", %{conn: conn} do
@@ -74,7 +78,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       assert %{
                "errors" => [
                  %{
-                   "detail" => "Something went wrong while triggering an Execution Request",
+                   "detail" => "Something went wrong.",
                    "title" => "Internal Server Error"
                  }
                ]

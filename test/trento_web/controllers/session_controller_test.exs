@@ -72,7 +72,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"errors" => [%{"detail" => "Invalid refresh token", "title" => "Unauthorized"}]} =
+      assert %{"errors" => [%{"detail" => "Invalid refresh token.", "title" => "Unauthorized"}]} =
                resp
     end
 
@@ -93,7 +93,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"errors" => [%{"detail" => "Invalid refresh token", "title" => "Unauthorized"}]} =
+      assert %{"errors" => [%{"detail" => "Invalid refresh token.", "title" => "Unauthorized"}]} =
                resp
     end
 
@@ -117,7 +117,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"errors" => [%{"detail" => "Invalid refresh token", "title" => "Unauthorized"}]} =
+      assert %{"errors" => [%{"detail" => "Invalid refresh token.", "title" => "Unauthorized"}]} =
                resp
     end
   end
@@ -195,7 +195,7 @@ defmodule TrentoWeb.SessionControllerTest do
 
       resp = json_response(conn, 401)
 
-      assert %{"errors" => [%{"detail" => "Invalid credentials", "title" => "Unauthorized"}]} =
+      assert %{"errors" => [%{"detail" => "Invalid credentials.", "title" => "Unauthorized"}]} =
                resp
     end
   end

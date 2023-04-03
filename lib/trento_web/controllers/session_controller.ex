@@ -76,7 +76,7 @@ defmodule TrentoWeb.SessionController do
         )
 
       {:error, _} ->
-        {:error, {:unauthorized, "Invalid credentials"}}
+        {:error, :invalid_credentials}
     end
   end
 
@@ -159,7 +159,7 @@ defmodule TrentoWeb.SessionController do
         )
 
       {:error, _} ->
-        {:error, {:unauthorized, "Invalid refresh token"}}
+        {:error, :invalid_refresh_token}
     end
   end
 end

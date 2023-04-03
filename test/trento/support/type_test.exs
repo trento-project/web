@@ -3,7 +3,7 @@ defmodule Trento.TypeTest do
 
   describe "build a struct" do
     test "should return errors if the parameters of an embedded field could not be validated" do
-      assert {:error, %{embedded: %{id: ["is invalid"]}}} =
+      assert {:error, {:validation, %{embedded: %{id: ["is invalid"]}}}} =
                TestData.new(%{
                  id: Faker.UUID.v4(),
                  name: "a",
@@ -28,7 +28,7 @@ defmodule Trento.TypeTest do
     end
 
     test "should validate the presence of a required embedded field" do
-      assert {:error, %{embedded: ["can't be blank"]}} ==
+      assert {:error, {:validation, %{embedded: ["can't be blank"]}}} ==
                TestData.new(%{
                  id: Faker.UUID.v4(),
                  name: "a"
@@ -38,13 +38,15 @@ defmodule Trento.TypeTest do
 
   describe "build a list of structs" do
     test "should validate the presence of a required embedded field" do
-      assert {:error, [%{embedded: ["can't be blank"]}, %{embedded: ["can't be blank"]}]} ==
+      assert {:error,
+              {:validation, [%{embedded: ["can't be blank"]}, %{embedded: ["can't be blank"]}]}} ==
                TestData.new([
                  %{id: Faker.UUID.v4(), name: "carbonara"},
                  %{id: Faker.UUID.v4(), name: "amatriciana"}
                ])
 
-      assert {:error, [%{embedded: ["can't be blank"]}, %{embedded: ["can't be blank"]}]} ==
+      assert {:error,
+              {:validation, [%{embedded: ["can't be blank"]}, %{embedded: ["can't be blank"]}]}} ==
                TestData.new([
                  %{id: Faker.UUID.v4(), name: "carbonara"},
                  %{id: Faker.UUID.v4(), name: "amatriciana"},

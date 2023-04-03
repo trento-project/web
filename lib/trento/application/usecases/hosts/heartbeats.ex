@@ -17,7 +17,7 @@ defmodule Trento.Heartbeats do
 
   @heartbeat_interval Application.compile_env!(:trento, __MODULE__)[:interval]
 
-  @spec heartbeat(String.t(), module()) :: {:ok, any} | {:error, any, any, any}
+  @spec heartbeat(String.t(), module()) :: :ok | {:error, any}
   def heartbeat(agent_id, date_service \\ DateService) do
     changeset =
       Heartbeat.changeset(
@@ -28,15 +28,31 @@ defmodule Trento.Heartbeats do
         }
       )
 
-    Multi.new()
-    |> Multi.insert(:insert, changeset,
-      conflict_target: :agent_id,
-      on_conflict: {:replace, [:timestamp]}
-    )
-    |> Multi.run(:command, fn _, _ ->
-      dispatch_command(agent_id, :passing)
-    end)
-    |> Repo.transaction()
+    result =
+      Multi.new()
+      |> Multi.insert(:insert, changeset,
+        conflict_target: :agent_id,
+        on_conflict: {:replace, [:timestamp]}
+      )
+      |> Multi.run(:command, fn _, _ ->
+        dispatch_command(agent_id, :passing)
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, _} ->
+        :ok
+
+      {:error, :command, :host_not_registered, _} ->
+        {:error, :not_found}
+
+      {:error, reason} = error ->
+        Logger.error(
+          "Error while updating heartbeat for agent #{agent_id}, error: #{inspect(reason)}"
+        )
+
+        error
+    end
   end
 
   @spec dispatch_heartbeat_failed_commands(module()) :: :ok
