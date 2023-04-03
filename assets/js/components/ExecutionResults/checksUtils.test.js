@@ -182,7 +182,7 @@ describe('checksUtils', () => {
     });
 
     it('should return true or false if a check is premium or not', () => {
-      const checkIds = [
+      const checkIDs = [
         faker.datatype.uuid(),
         faker.datatype.uuid(),
         faker.datatype.uuid(),
@@ -194,12 +194,12 @@ describe('checksUtils', () => {
         undefined,
         faker.animal.cat(),
       ];
-      const checkCatalog = checkIds.map((id, index) =>
+      const checkCatalog = checkIDs.map((id, index) =>
         catalogCheckFactory.build({ id, premium: expectedPremiumValues[index] })
       );
 
-      checkIds.forEach((checkId, index) => {
-        expect(isPremium(checkCatalog, checkId)).toBe(
+      checkIDs.forEach((checkID, index) => {
+        expect(isPremium(checkCatalog, checkID)).toBe(
           expectedPremiumValues[index]
         );
       });

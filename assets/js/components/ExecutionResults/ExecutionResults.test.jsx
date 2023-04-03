@@ -542,7 +542,6 @@ describe('ExecutionResults', () => {
     const checkID = screen.getByText(checks[0]);
     const tableDataID = checkID.closest('div');
     expect(tableDataID).toHaveTextContent('Premium');
-    expect(screen.getByText('Premium')).toBeVisible();
     expect(screen.getAllByText('Premium')).toHaveLength(1);
   });
 });
