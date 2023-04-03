@@ -103,6 +103,14 @@ export const getCheckHealthByAgent = (checkResults, checkID, agentID) => {
   };
 };
 
+export const isPremium = (catalog, checkID) => {
+  const check = findCheck(catalog, checkID);
+  if (check) {
+    return check.premium;
+  }
+  return false;
+};
+
 export const getCheckDescription = (catalog, checkID) => {
   const check = findCheck(catalog, checkID);
   if (check) {
