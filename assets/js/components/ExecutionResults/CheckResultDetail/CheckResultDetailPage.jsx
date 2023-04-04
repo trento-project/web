@@ -15,7 +15,12 @@ import { getHostID } from '@state/selectors/cluster';
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
-import { getCheckDescription, isTargetHost } from '../checksUtils';
+import {
+  getCheckDescription,
+  getCheckExpectations,
+  isTargetHost,
+  getClusterCheckResults,
+} from '../checksUtils';
 import CheckDetailHeader from './CheckDetailHeader';
 
 function CheckResultDetailPage() {
@@ -67,6 +72,7 @@ function CheckResultDetailPage() {
         targetType={targetType}
         targetName={targetName}
         cloudProvider={cluster?.provider}
+        result={getClusterCheckResults(executionData, checkID)?.result}
       />
       <ResultsContainer
         error={catalogError || executionError}
@@ -94,6 +100,7 @@ function CheckResultDetailPage() {
       >
         <CheckResultDetail
           checkID={checkID}
+          expectations={getCheckExpectations(catalog, checkID)}
           targetID={targetID}
           targetType={targetType}
           executionData={executionData}
