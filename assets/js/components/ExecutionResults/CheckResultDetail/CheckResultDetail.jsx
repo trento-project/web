@@ -2,48 +2,65 @@ import React from 'react';
 
 import {
   getAgentCheckResultByAgentID,
+  getExpectSameStatementsResults,
   getExpectStatements,
+  getClusterCheckResults,
   isAgentCheckError,
   isTargetHost,
+  getExpectSameFacts,
 } from '../checksUtils';
 import ExpectationsResults from './ExpectationsResults';
 import ExpectedValues from './ExpectedValues';
 import GatheredFacts from './GatheredFacts';
 
-function CheckResultDetail({ checkID, targetID, targetType, executionData }) {
+function CheckResultDetail({
+  checkID,
+  expectations,
+  targetID,
+  targetType,
+  executionData,
+}) {
   const targetHost = isTargetHost(targetType);
 
-  const checkResult = getAgentCheckResultByAgentID(
-    executionData,
-    checkID,
-    targetID
-  );
+  const targetResult = targetHost
+    ? getAgentCheckResultByAgentID(executionData, checkID, targetID)
+    : getClusterCheckResults(executionData, checkID);
 
   const {
+    expectation_results = [],
+    agents_check_results = [],
     expectation_evaluations = [],
     values = [],
     facts = [],
     message,
-  } = checkResult;
+  } = targetResult;
 
-  const isError = isAgentCheckError(checkResult);
+  const isError = isAgentCheckError(targetResult);
 
-  const expectStatementsEvaluations = getExpectStatements(
-    expectation_evaluations
-  );
+  const targetExpectationsResults = targetHost
+    ? getExpectStatements(expectation_evaluations)
+    : getExpectSameStatementsResults(expectations, expectation_results);
 
-  return targetHost ? (
+  const gatheredFacts = targetHost
+    ? facts
+    : getExpectSameFacts(expectations, agents_check_results);
+
+  return (
     <>
       <ExpectationsResults
+        isTargetHost={targetHost}
+        results={targetExpectationsResults}
         isError={isError}
-        results={expectStatementsEvaluations}
         errorMessage={message}
       />
-      <ExpectedValues isError={isError} expectedValues={values} />
-      <GatheredFacts gatheredFacts={facts || []} />
+      {targetHost && (
+        <ExpectedValues isError={isError} expectedValues={values} />
+      )}
+      <GatheredFacts
+        isTargetHost={targetHost}
+        gatheredFacts={gatheredFacts || []}
+      />
     </>
-  ) : (
-    <div>Cluster wide check</div>
   );
 }
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
+import { EXPECT_SAME } from '@lib/model';
+
 import {
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
@@ -12,9 +14,15 @@ import {
   agentCheckErrorFactory,
   executionFactErrorFactory,
   executionFactFactory,
+  agentCheckResultFactory,
+  agentsCheckResultsWithHostname,
+  catalogExpectSameExpectationFactory,
+  executionExpectationEvaluationFactory,
+  expectationResultFactory,
 } from '@lib/test-utils/factories';
 
 import '@testing-library/jest-dom';
+import { faker } from '@faker-js/faker';
 import CheckResultDetail from './CheckResultDetail';
 
 describe('CheckResultDetail Component', () => {
@@ -65,6 +73,95 @@ describe('CheckResultDetail Component', () => {
     facts.forEach(({ name, _value }) => {
       expect(screen.getByText(name)).toBeVisible();
     });
+    expect(screen.getAllByLabelText('property tree')).toHaveLength(2);
+  });
+
+  it('should render the result detail for a check on a cluster target - cluster wide check', () => {
+    const clusterHosts = hostFactory.buildList(2);
+    const [{ id: target1 }, { id: target2 }] = clusterHosts;
+    const targetType = 'cluster';
+
+    const expectationName = faker.lorem.word();
+    const anotherExpectationName = faker.color.human();
+
+    const expectations = [
+      catalogExpectSameExpectationFactory.build({
+        name: expectationName,
+      }),
+      catalogExpectSameExpectationFactory.build({
+        name: anotherExpectationName,
+      }),
+    ];
+
+    const agent1CheckResult = agentCheckResultFactory.build({
+      agent_id: target1,
+      expectation_evaluations: [
+        executionExpectationEvaluationFactory.build({
+          name: expectationName,
+          type: EXPECT_SAME,
+        }),
+        executionExpectationEvaluationFactory.build({
+          name: anotherExpectationName,
+          type: EXPECT_SAME,
+        }),
+      ],
+    });
+
+    const agent2CheckResult = agentCheckResultFactory.build({
+      agent_id: target2,
+      expectation_evaluations: [
+        executionExpectationEvaluationFactory.build({
+          name: expectationName,
+          type: EXPECT_SAME,
+        }),
+        executionExpectationEvaluationFactory.build({
+          name: anotherExpectationName,
+          type: EXPECT_SAME,
+        }),
+      ],
+    });
+
+    const agentsCheckResults = agentsCheckResultsWithHostname(
+      [agent1CheckResult, agent2CheckResult],
+      clusterHosts
+    );
+
+    const checkResult = checkResultFactory.build({
+      agents_check_results: [agentsCheckResults],
+      expectation_results: [
+        expectationResultFactory.build({
+          name: expectationName,
+          type: EXPECT_SAME,
+          result: true,
+        }),
+        expectationResultFactory.build({
+          name: anotherExpectationName,
+          type: EXPECT_SAME,
+          result: true,
+        }),
+      ],
+    });
+
+    const { check_id: checkID } = checkResult;
+
+    const executionData = checksExecutionCompletedFactory.build({
+      check_results: [checkResult],
+    });
+
+    render(
+      <CheckResultDetail
+        checkID={checkID}
+        expectations={expectations}
+        targetID={target1}
+        targetType={targetType}
+        executionData={executionData}
+        clusterHosts={clusterHosts}
+      />
+    );
+
+    expect(screen.getAllByText('Passing')).toHaveLength(2);
+    expect(screen.queryAllByText('Failing')).toHaveLength(0);
+    expect(screen.queryByText('Values')).toBeNull();
     expect(screen.getAllByLabelText('property tree')).toHaveLength(2);
   });
 

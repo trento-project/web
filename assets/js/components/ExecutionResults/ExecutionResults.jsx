@@ -21,17 +21,6 @@ import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
 import ExecutionContainer from './ExecutionContainer';
 
-const addHostnameToTargets = (targets, clusterHosts) =>
-  targets?.map((target) => {
-    const { agent_id } = target;
-
-    const { hostname } = clusterHosts.find(({ id }) => agent_id === id);
-    return {
-      ...target,
-      hostname,
-    };
-  });
-
 const resultsTableConfig = {
   usePadding: false,
   columns: [
@@ -151,10 +140,7 @@ function ExecutionResults({
         expectations: getCheckExpectations(catalog, checkID),
         premium: isPremium(catalog, checkID),
         expectationResults,
-        agentsCheckResults: addHostnameToTargets(
-          agentsCheckResults,
-          clusterHosts
-        ),
+        agentsCheckResults,
         onClick: () => {
           setModalOpen(true);
           setSelectedCheck(checkID);

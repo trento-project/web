@@ -2,7 +2,7 @@ import {
   hostFactory,
   clusterFactory,
   catalogCheckFactory,
-  checksExecutionCompletedFactory,
+  checksExecutionCompletedForTargetsFactory,
 } from '@lib/test-utils/factories';
 import { getLastExecution, getLastExecutionData } from './lastExecutions';
 
@@ -31,17 +31,21 @@ describe('lastExecutions selector', () => {
     const aCluster = clusterFactory.build();
     const { id: clusterID, name: clusterName } = aCluster;
 
-    const [
-      { id: agent1, hostname: hostname1 },
-      { id: agent2, hostname: hostname2 },
-    ] = [
+    const hostsList = [
       hostFactory.build({ cluster_id: clusterID }),
       hostFactory.build({ cluster_id: clusterID }),
     ];
 
+    const [
+      { id: agent1, hostname: hostname1 },
+      { id: agent2, hostname: hostname2 },
+    ] = hostsList;
+
     const checksCatalog = catalogCheckFactory.buildList(3);
 
-    const completedExecution = checksExecutionCompletedFactory.build();
+    const completedExecution = checksExecutionCompletedForTargetsFactory.build({
+      targets: [agent1, agent2],
+    });
 
     const state = {
       clustersList: {
@@ -89,5 +93,11 @@ describe('lastExecutions selector', () => {
     expect(cluster.name).toEqual(clusterName);
     expect(catalog.data.length).toEqual(checksCatalog.length);
     expect(lastExecution.data.result).toEqual(completedExecution.result);
+    expect(
+      lastExecution.data.check_results[0].agents_check_results[0].hostname
+    ).toEqual(hostname1);
+    expect(
+      lastExecution.data.check_results[0].agents_check_results[1].hostname
+    ).toEqual(hostname2);
   });
 });

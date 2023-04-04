@@ -26,9 +26,11 @@ describe('CheckDetailHeader Component', () => {
         targetType={targetType}
         targetName={targetName}
         cloudProvider={cloudProvider}
+        result="passing"
       />
     );
 
+    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(2);
     expect(screen.getByText('Back to Check Results')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
     expect(screen.getByText('Host')).toBeTruthy();

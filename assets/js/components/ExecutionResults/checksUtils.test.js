@@ -6,12 +6,16 @@ import {
   agentCheckErrorFactory,
   agentCheckResultFactory,
   catalogCheckFactory,
+  catalogExpectExpectationFactory,
+  catalogExpectSameExpectationFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   checkResultFactory,
   withEmptyExpectations,
   executionExpectationEvaluationFactory,
   expectationResultFactory,
+  agentsCheckResultsWithHostname,
+  hostFactory,
 } from '@lib/test-utils/factories';
 import { EXPECT, EXPECT_SAME } from '@lib/model';
 
@@ -29,6 +33,9 @@ import {
   getAgentCheckResultByAgentID,
   getExpectStatementsMet,
   isPremium,
+  getClusterCheckResults,
+  getExpectSameStatementsResults,
+  getExpectSameFacts,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -217,6 +224,7 @@ describe('checksUtils', () => {
 
     it('should get expect_same statement result', () => {
       const expectationName = faker.lorem.word();
+      const anotherExpectationName = faker.color.human();
       const expectSameResult = expectationResultFactory.build({
         type: EXPECT_SAME,
         name: expectationName,
@@ -231,7 +239,230 @@ describe('checksUtils', () => {
       expect(getExpectSameStatementResult(resultList, expectationName)).toBe(
         expectSameResult
       );
-      expect(getExpectSameStatementResult(resultList, 'not-there')).toEqual({});
+      expect(
+        getExpectSameStatementResult(resultList, anotherExpectationName)
+      ).toEqual({
+        name: anotherExpectationName,
+        result: null,
+      });
+    });
+
+    it('should get expect_same statement results for a set of catalog expectations', () => {
+      const expectationName = faker.lorem.word();
+      const anotherExpectationName = faker.color.human();
+
+      const expectations = [
+        ...catalogExpectExpectationFactory.buildList(2),
+        catalogExpectSameExpectationFactory.build({
+          name: expectationName,
+        }),
+        catalogExpectSameExpectationFactory.build({
+          name: anotherExpectationName,
+        }),
+      ];
+
+      const expectSameResult = expectationResultFactory.build({
+        type: EXPECT_SAME,
+        name: expectationName,
+      });
+      const expectationResults = [
+        ...expectationResultFactory.buildList(2, {
+          type: EXPECT,
+        }),
+        expectSameResult,
+      ];
+
+      expect(
+        getExpectSameStatementsResults(expectations, expectationResults)
+      ).toEqual([
+        expectSameResult,
+        {
+          name: anotherExpectationName,
+          result: null,
+        },
+      ]);
+    });
+
+    it('should get facts for expect_same statement', () => {
+      const clusterHosts = hostFactory.buildList(2);
+      const [
+        { id: agent1, hostname: hostname1 },
+        { id: agent2, hostname: hostname2 },
+      ] = clusterHosts;
+
+      const expectationName = faker.lorem.word();
+      const anotherExpectationName = faker.color.human();
+
+      const expectations = [
+        ...catalogExpectExpectationFactory.buildList(2),
+        catalogExpectSameExpectationFactory.build({
+          name: expectationName,
+        }),
+        catalogExpectSameExpectationFactory.build({
+          name: anotherExpectationName,
+        }),
+      ];
+
+      const factValueFromAgent1ForExpectation1 = faker.lorem.word();
+      const factValueFromAgent1ForExpectation2 = faker.lorem.sentence();
+      const factValueFromAgent2ForExpectation1 = faker.lorem.slug();
+      const factValueFromAgent2ForExpectation2 = faker.lorem.paragraph();
+
+      const agent1CheckResult = agentCheckResultFactory.build({
+        agent_id: agent1,
+        expectation_evaluations: [
+          executionExpectationEvaluationFactory.build({
+            name: expectationName,
+            type: EXPECT_SAME,
+            return_value: factValueFromAgent1ForExpectation1,
+          }),
+          executionExpectationEvaluationFactory.build({
+            name: anotherExpectationName,
+            type: EXPECT_SAME,
+            return_value: factValueFromAgent1ForExpectation2,
+          }),
+        ],
+      });
+
+      const agent2CheckResult = agentCheckResultFactory.build({
+        agent_id: agent2,
+        expectation_evaluations: [
+          executionExpectationEvaluationFactory.build({
+            name: expectationName,
+            type: EXPECT_SAME,
+            return_value: factValueFromAgent2ForExpectation1,
+          }),
+          executionExpectationEvaluationFactory.build({
+            name: anotherExpectationName,
+            type: EXPECT_SAME,
+            return_value: factValueFromAgent2ForExpectation2,
+          }),
+        ],
+      });
+
+      const agentsCheckResults = agentsCheckResultsWithHostname(
+        [agent1CheckResult, agent2CheckResult],
+        clusterHosts
+      );
+
+      expect(getExpectSameFacts(expectations, agentsCheckResults)).toEqual([
+        {
+          name: expectationName,
+          value: {
+            [expectationName]: {
+              [hostname1]: factValueFromAgent1ForExpectation1,
+              [hostname2]: factValueFromAgent2ForExpectation1,
+            },
+          },
+        },
+        {
+          name: anotherExpectationName,
+          value: {
+            [anotherExpectationName]: {
+              [hostname1]: factValueFromAgent1ForExpectation2,
+              [hostname2]: factValueFromAgent2ForExpectation2,
+            },
+          },
+        },
+      ]);
+    });
+
+    it('should get facts for expect_same statement in case of an error or timeout', () => {
+      const clusterHosts = hostFactory.buildList(3);
+      const [
+        { id: agent1, hostname: hostname1 },
+        { id: agent2, hostname: hostname2 },
+        { id: agent3, hostname: hostname3 },
+      ] = clusterHosts;
+
+      const expectationName = faker.lorem.word();
+      const anotherExpectationName = faker.color.human();
+
+      const expectations = [
+        ...catalogExpectExpectationFactory.buildList(2),
+        catalogExpectSameExpectationFactory.build({
+          name: expectationName,
+        }),
+        catalogExpectSameExpectationFactory.build({
+          name: anotherExpectationName,
+        }),
+      ];
+
+      const errorFromAgent1 = faker.lorem.sentence();
+      const errorFromAgent2 = faker.lorem.paragraph();
+
+      const errorCheckResult = agentCheckErrorFactory.build({
+        agent_id: agent1,
+        type: 'fact_gathering_error',
+        message: errorFromAgent1,
+      });
+      const timeoutCheckResult = agentCheckErrorFactory.build({
+        agent_id: agent2,
+        type: 'timeout',
+        message: errorFromAgent2,
+      });
+
+      const factValueFromAgent3ForExpectation1 = faker.lorem.word();
+      const factValueFromAgent3ForExpectation2 = faker.lorem.sentence();
+
+      const agent3CheckResult = agentCheckResultFactory.build({
+        agent_id: agent3,
+        expectation_evaluations: [
+          executionExpectationEvaluationFactory.build({
+            name: expectationName,
+            type: EXPECT_SAME,
+            return_value: factValueFromAgent3ForExpectation1,
+          }),
+          executionExpectationEvaluationFactory.build({
+            name: anotherExpectationName,
+            type: EXPECT_SAME,
+            return_value: factValueFromAgent3ForExpectation2,
+          }),
+        ],
+      });
+
+      const agentsCheckResults = agentsCheckResultsWithHostname(
+        [errorCheckResult, timeoutCheckResult, agent3CheckResult],
+        clusterHosts
+      );
+
+      expect(getExpectSameFacts(expectations, agentsCheckResults)).toEqual([
+        {
+          name: expectationName,
+          value: {
+            [expectationName]: {
+              [hostname1]: errorFromAgent1,
+              [hostname2]: errorFromAgent2,
+              [hostname3]: factValueFromAgent3ForExpectation1,
+            },
+          },
+        },
+        {
+          name: anotherExpectationName,
+          value: {
+            [anotherExpectationName]: {
+              [hostname1]: errorFromAgent1,
+              [hostname2]: errorFromAgent2,
+              [hostname3]: factValueFromAgent3ForExpectation2,
+            },
+          },
+        },
+      ]);
+    });
+
+    it('should get checks results for cluster', () => {
+      const executionResult = checksExecutionCompletedFactory.build();
+
+      const {
+        check_results: [_, checkResult],
+      } = executionResult;
+
+      const { check_id: checkID } = checkResult;
+
+      expect(getClusterCheckResults(executionResult, checkID)).toBe(
+        checkResult
+      );
+      expect(getClusterCheckResults(executionResult, 'not-there')).toEqual({});
     });
 
     it('should get a check result for an agent', () => {

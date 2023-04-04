@@ -147,17 +147,21 @@ export const getExpectSameStatementResult = (expectationResults, name) => {
   );
 
   if (!expectSameStatement) {
-    return {};
+    return { name, result: null };
   }
 
   return expectSameStatement;
 };
 
-export const getAgentCheckResultByAgentID = (
-  executionData,
-  checkID,
-  agentID
-) => {
+export const getExpectSameStatementsResults = (
+  expectations,
+  expectationResults
+) =>
+  getExpectSameStatements(expectations).map(({ name }) =>
+    getExpectSameStatementResult(expectationResults, name)
+  );
+
+export const getClusterCheckResults = (executionData, checkID) => {
   const checkResult = getCheckResults(executionData).find(
     ({ check_id }) => check_id === checkID
   );
@@ -166,7 +170,18 @@ export const getAgentCheckResultByAgentID = (
     return {};
   }
 
-  const { agents_check_results = [] } = checkResult;
+  return checkResult;
+};
+
+export const getAgentCheckResultByAgentID = (
+  executionData,
+  checkID,
+  agentID
+) => {
+  const { agents_check_results = [] } = getClusterCheckResults(
+    executionData,
+    checkID
+  );
 
   return (
     agents_check_results.find(({ agent_id }) => agent_id === agentID) || {}
@@ -177,3 +192,20 @@ export const getExpectStatementsMet = (expectationEvaluations) =>
   getExpectStatements(expectationEvaluations).filter(
     ({ return_value }) => return_value
   ).length;
+
+export const getExpectSameFacts = (expectations, agentsCheckResults) =>
+  getExpectSameStatements(expectations).map(({ name }) => ({
+    name,
+    value: {
+      [name]: agentsCheckResults
+        .map(({ hostname, expectation_evaluations = [], message }) => ({
+          hostname,
+          message,
+          ...getExpectSameStatementResult(expectation_evaluations, name),
+        }))
+        .reduce((accumulator, { hostname, message, return_value }) => {
+          accumulator[hostname] = return_value || message;
+          return accumulator;
+        }, {}),
+    },
+  }));
