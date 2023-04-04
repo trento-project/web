@@ -25,21 +25,6 @@ defmodule Trento.ClusterProjector do
   import Trento.Clusters, only: [enrich_cluster_model: 1]
 
   project(
-    %ClusterDeregistered{
-      cluster_id: cluster_id,
-      deregistered_at: deregistered_at
-    },
-    fn multi ->
-      changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{id: cluster_id}, %{
-          deregistered_at: deregistered_at
-        })
-
-      Ecto.Multi.update(multi, :cluster, changeset)
-    end
-  )
-
-  project(
     %ClusterRegistered{
       cluster_id: id,
       name: name,
@@ -66,6 +51,21 @@ defmodule Trento.ClusterProjector do
         })
 
       Ecto.Multi.insert(multi, :cluster, changeset)
+    end
+  )
+
+  project(
+    %ClusterDeregistered{
+      cluster_id: cluster_id,
+      deregistered_at: deregistered_at
+    },
+    fn multi ->
+      changeset =
+        ClusterReadModel.changeset(%ClusterReadModel{id: cluster_id}, %{
+          deregistered_at: deregistered_at
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
     end
   )
 
