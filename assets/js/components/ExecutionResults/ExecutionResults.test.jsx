@@ -15,6 +15,7 @@ import {
   addCriticalExpectExpectation,
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
+  agentsCheckResultsWithHostname,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom/extend-expect';
 import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
@@ -54,8 +55,16 @@ const prepareStateData = (checkExecutionStatus) => {
   checkResult2 = addPassingExpectExpectation(checkResult2, expectationName4);
   checkResult2 = addCriticalExpectExpectation(checkResult2, expectationName5);
 
+  const checkResults = [checkResult1, checkResult2].map((checkResult) => ({
+    ...checkResult,
+    agents_check_results: agentsCheckResultsWithHostname(
+      checkResult.agents_check_results,
+      clusterHosts
+    ),
+  }));
+
   const executionResult = checksExecutionCompletedFactory.build({
-    check_results: [checkResult1, checkResult2],
+    check_results: checkResults,
     targets,
     result: 'critical',
   });
@@ -103,9 +112,8 @@ const prepareStateData = (checkExecutionStatus) => {
   const lastExecution = {
     executionLoading: false,
     executionData: {
+      ...executionResult,
       status: checkExecutionStatus,
-      targets,
-      check_results: [checkResult1, checkResult2],
     },
     error: '',
   };
@@ -118,7 +126,6 @@ const prepareStateData = (checkExecutionStatus) => {
 
   return {
     clusterID,
-    executionResult,
     loading,
     catalog,
     executionStarted: executionData?.status !== 'requested',
@@ -134,11 +141,6 @@ const prepareStateData = (checkExecutionStatus) => {
 
 describe('ExecutionResults', () => {
   it('should render ExecutionResults with successfully fetched results', async () => {
-    window.IntersectionObserver = jest.fn().mockImplementation(() => ({
-      observe: () => null,
-      disconnect: () => null,
-    }));
-
     const clusterName = 'test-cluster';
     const {
       clusterID,
@@ -448,6 +450,11 @@ describe('ExecutionResults', () => {
   });
 
   it('should open remediation modal when clicking on checkID and close it when clicking outside', async () => {
+    window.IntersectionObserver = jest.fn().mockImplementation(() => ({
+      observe: () => null,
+      disconnect: () => null,
+    }));
+
     const {
       clusterID,
       clusterHosts,
@@ -455,7 +462,7 @@ describe('ExecutionResults', () => {
       catalog,
       executionError,
       executionStarted,
-      executionResult,
+      executionData,
       checks,
     } = prepareStateData('completed');
 
@@ -467,7 +474,7 @@ describe('ExecutionResults', () => {
         catalog={catalog}
         executionLoading={loading}
         executionStarted={executionStarted}
-        executionData={executionResult}
+        executionData={executionData}
         executionError={executionError}
         clusterSelectedChecks={checks}
       />
@@ -490,7 +497,7 @@ describe('ExecutionResults', () => {
       catalog,
       executionError,
       executionStarted,
-      executionResult,
+      executionData,
       checks,
     } = prepareStateData('completed');
 
@@ -502,7 +509,7 @@ describe('ExecutionResults', () => {
         catalog={catalog}
         executionLoading={loading}
         executionStarted={executionStarted}
-        executionData={executionResult}
+        executionData={executionData}
         executionError={executionError}
         clusterSelectedChecks={checks}
       />
@@ -522,7 +529,7 @@ describe('ExecutionResults', () => {
       catalog,
       executionError,
       executionStarted,
-      executionResult,
+      executionData,
       checks,
     } = prepareStateData('completed');
     renderWithRouter(
@@ -533,7 +540,7 @@ describe('ExecutionResults', () => {
         catalog={catalog}
         executionLoading={loading}
         executionStarted={executionStarted}
-        executionData={executionResult}
+        executionData={executionData}
         executionError={executionError}
         clusterSelectedChecks={checks}
       />

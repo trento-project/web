@@ -2,6 +2,7 @@ import React from 'react';
 
 import BackButton from '@components/BackButton';
 import { providerWarningBanners } from '@components/ClusterDetails/ClusterSettings';
+import HealthIcon from '@components/Health/HealthIcon';
 import CheckResultInfoBox from './CheckResultInfoBox';
 
 function CheckDetailHeader({
@@ -11,6 +12,7 @@ function CheckDetailHeader({
   targetType,
   targetName,
   cloudProvider,
+  result,
 }) {
   const warning = providerWarningBanners[cloudProvider];
 
@@ -20,7 +22,10 @@ function CheckDetailHeader({
         Back to Check Results
       </BackButton>
       <div className="flex mb-4 justify-between">
-        <h1 className="text-3xl w-3/5">
+        <h1 className="flex text-3xl">
+          <span className="inline-flex self-center mr-3">
+            <HealthIcon health={result} />
+          </span>
           <span className="font-medium">{checkDescription}</span>
         </h1>
       </div>

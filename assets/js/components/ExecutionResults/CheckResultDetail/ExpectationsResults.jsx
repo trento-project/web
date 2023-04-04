@@ -4,20 +4,31 @@ import ListView from '@components/ListView';
 import classNames from 'classnames';
 
 function ExpectationsResults({
+  isTargetHost = true,
   results,
   isError = false,
   errorMessage = 'An error occurred',
 }) {
-  const expectationsEvaluations = results.map(({ name, return_value }) => ({
+  const renderedResults = isTargetHost
+    ? results.map(({ name, return_value }) => ({
+        name,
+        passing: !!return_value,
+      }))
+    : results.map(({ name, result }) => ({
+        name,
+        passing: !!result,
+      }));
+
+  const expectationsEvaluations = renderedResults.map(({ name, passing }) => ({
     title: name,
-    content: return_value,
-    render: (returnValue) => (
+    content: passing,
+    render: (isPassing) => (
       <span
         className={classNames({
-          'text-red-500': !returnValue,
+          'text-red-500': !isPassing,
         })}
       >
-        {returnValue ? 'Passing' : 'Failing'}
+        {isPassing ? 'Passing' : 'Failing'}
       </span>
     ),
   }));

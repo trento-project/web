@@ -120,6 +120,27 @@ export const checksExecutionCompletedFactory = Factory.define(({ params }) =>
   withCompletedResults(checksExecutionRunningFactory.build(params))
 );
 
+const checkResultForTarget = (agentId) =>
+  agentCheckResultFactory.build({
+    agent_id: agentId,
+  });
+
+export const checksExecutionCompletedForTargetsFactory = Factory.define(
+  ({ params }) => {
+    const targets = params.targets || [
+      faker.datatype.uuid(),
+      faker.datatype.uuid(),
+    ];
+    const checkResults = checkResultFactory.buildList(2, {
+      agents_check_results: targets.map(checkResultForTarget),
+    });
+
+    return checksExecutionCompletedFactory.build({
+      check_results: checkResults,
+    });
+  }
+);
+
 export const withEmptyExpectations = (checkResult) => {
   const agents = checkResult.agents_check_results.map((agent) => ({
     ...agent,
@@ -196,10 +217,15 @@ export const addCriticalExpectExpectation = (checkResult, expectationName) =>
 export const addPassingExpectSameExpectation = (checkResult, expectationName) =>
   addPassingExpectation(checkResult, 'expect_same', expectationName);
 
-export const agentsCheckResultsWithHostname = (agentsCheckResults) =>
+export const agentsCheckResultsWithHostname = (
+  agentsCheckResults,
+  hostnames = []
+) =>
   agentsCheckResults.map((agentCheckResult) => ({
     ...agentCheckResult,
-    hostname: hostFactory.build().hostname,
+    hostname:
+      hostnames.find(({ id }) => agentCheckResult.agent_id === id)?.hostname ||
+      hostFactory.build().hostname,
   }));
 
 export const emptyCheckResultFactory = Factory.define(({ params }) => {
@@ -212,11 +238,7 @@ export const emptyCheckResultFactory = Factory.define(({ params }) => {
 
   const checkResult = checkResultFactory.build({
     check_id: checkID,
-    agents_check_results: targets.map((agentId) =>
-      agentCheckResultFactory.build({
-        agent_id: agentId,
-      })
-    ),
+    agents_check_results: targets.map(checkResultForTarget),
     result,
   });
 
