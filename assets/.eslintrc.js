@@ -18,6 +18,7 @@ module.exports = {
     'plugin:react/recommended',
     'airbnb',
     'prettier',
+    'plugin:storybook/recommended',
   ],
   overrides: [],
   parserOptions: {
@@ -41,7 +42,12 @@ module.exports = {
   plugins: ['react', 'jest'],
   rules: {
     'no-console': 'error',
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+      },
+    ],
     'react/prop-types': 'off',
     camelcase: 'off',
     'import/no-cycle': 'off',
@@ -49,7 +55,10 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'no-unused-expressions': [
       'error',
-      { allowShortCircuit: true, allowTernary: true },
+      {
+        allowShortCircuit: true,
+        allowTernary: true,
+      },
     ],
   },
 };
