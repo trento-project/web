@@ -130,7 +130,7 @@ defmodule Trento.HostProjectorTest do
     refute_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
   end
 
-  test "should project a host without the cluster when HostRemovedFromCluster event is received and the host is not deregistered yet" do
+  test "should project a host without the cluster when HostRemovedFromCluster event is received" do
     insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     insert(

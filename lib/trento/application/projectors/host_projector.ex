@@ -84,15 +84,16 @@ defmodule Trento.HostProjector do
 
   project(
     %HostRemovedFromCluster{
-      host_id: id
+      host_id: id,
+      cluster_id: cluster_id
     },
     fn multi ->
-      query =
-        Ecto.Query.from(h in HostReadModel,
-          where: is_nil(h.deregistered_at) and h.id == ^id
-        )
+      changeset =
+        HostReadModel.changeset(%HostReadModel{id: id, cluster_id: cluster_id}, %{
+          cluster_id: nil
+        })
 
-      Ecto.Multi.update_all(multi, :host, query, set: [cluster_id: nil])
+      Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
