@@ -32,7 +32,12 @@ defmodule Trento.Clusters do
   @spec request_checks_execution(String.t()) ::
           :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    case Repo.get(ClusterReadModel, cluster_id) do
+    query =
+      from(c in ClusterReadModel,
+        where: is_nil(c.deregistered_at) and c.id == ^cluster_id
+      )
+
+    case Repo.one(query) do
       %ClusterReadModel{} = cluster ->
         Logger.debug("Requesting checks execution, cluster: #{cluster_id}")
 
@@ -49,7 +54,8 @@ defmodule Trento.Clusters do
   def get_all_clusters do
     from(c in ClusterReadModel,
       order_by: [asc: c.name],
-      preload: [:tags]
+      preload: [:tags],
+      where: is_nil(c.deregistered_at)
     )
     |> enrich_cluster_model_query()
     |> Repo.all()
@@ -71,7 +77,9 @@ defmodule Trento.Clusters do
     query =
       from(c in ClusterReadModel,
         select: c.id,
-        where: c.type == ^ClusterType.hana_scale_up() or c.type == ^ClusterType.hana_scale_out()
+        where:
+          (c.type == ^ClusterType.hana_scale_up() or
+             c.type == ^ClusterType.hana_scale_out()) and is_nil(c.deregistered_at)
       )
 
     query

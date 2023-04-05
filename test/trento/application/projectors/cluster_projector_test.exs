@@ -8,6 +8,7 @@ defmodule Trento.ClusterProjectorTest do
   import Trento.Factory
 
   alias Trento.Domain.Events.{
+    ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterHealthChanged
   }
@@ -184,6 +185,22 @@ defmodule Trento.ClusterProjectorTest do
                        sid: _,
                        type: :hana_scale_up
                      },
+                     1000
+  end
+
+  test "should update the deregistered_at field when ClusterDeregistered is received" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4(), name: name = "deregistered_cluster")
+    deregistered_at = DateTime.utc_now()
+
+    event = ClusterDeregistered.new!(%{cluster_id: cluster_id, deregistered_at: deregistered_at})
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+    cluster_projection = Repo.get!(ClusterReadModel, event.cluster_id)
+
+    assert event.deregistered_at == cluster_projection.deregistered_at
+
+    assert_broadcast "cluster_deregistered",
+                     %{cluster_id: ^cluster_id, name: ^name},
                      1000
   end
 

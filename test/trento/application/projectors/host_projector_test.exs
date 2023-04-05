@@ -26,6 +26,7 @@ defmodule Trento.HostProjectorTest do
     HostAddedToCluster,
     HostDeregistered,
     HostDetailsUpdated,
+    HostRemovedFromCluster,
     ProviderUpdated
   }
 
@@ -127,6 +128,27 @@ defmodule Trento.HostProjectorTest do
     assert nil == host_projection.hostname
 
     refute_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
+  end
+
+  test "should project a host without the cluster when HostRemovedFromCluster event is received" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
+
+    insert(
+      :host,
+      id: host_id = UUID.uuid4(),
+      hostname: Faker.StarWars.character(),
+      cluster_id: cluster_id
+    )
+
+    event = %HostRemovedFromCluster{
+      host_id: host_id,
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    projection = Repo.get!(HostReadModel, host_id)
+
+    assert nil == projection.cluster_id
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{

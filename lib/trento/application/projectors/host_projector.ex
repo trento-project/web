@@ -19,6 +19,7 @@ defmodule Trento.HostProjector do
     HostDeregistered,
     HostDetailsUpdated,
     HostRegistered,
+    HostRemovedFromCluster,
     ProviderUpdated
   }
 
@@ -78,6 +79,21 @@ defmodule Trento.HostProjector do
         on_conflict: {:replace, [:cluster_id]},
         conflict_target: [:id]
       )
+    end
+  )
+
+  project(
+    %HostRemovedFromCluster{
+      host_id: id,
+      cluster_id: cluster_id
+    },
+    fn multi ->
+      changeset =
+        HostReadModel.changeset(%HostReadModel{id: id, cluster_id: cluster_id}, %{
+          cluster_id: nil
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
