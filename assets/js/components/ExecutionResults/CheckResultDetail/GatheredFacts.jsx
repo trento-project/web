@@ -1,7 +1,8 @@
 import React from 'react';
 
 import ListView from '@components/ListView';
-import ObjectTree from '@components/ObjectTree';
+
+import FactValue from './FactValue';
 
 const gatheredFactsToListView = (gatheredFacts) =>
   gatheredFacts.map(({ name, value, type, message }) => ({
@@ -11,7 +12,7 @@ const gatheredFactsToListView = (gatheredFacts) =>
       type ? (
         <span className="text-red-500">{message}</span>
       ) : (
-        <ObjectTree className="mt-3 text-sm" data={factValue} />
+        <FactValue className="mt-3 text-sm" data={factValue} />
       ),
   }));
 
@@ -35,7 +36,7 @@ function GatheredFacts({ isTargetHost = true, gatheredFacts = [] }) {
 
       {!isTargetHost &&
         gatheredFacts.map(({ name, value }) => (
-          <ObjectTree key={name} className="mt-3 text-sm" data={value} />
+          <FactValue key={name} className="mt-3 text-sm" data={value} />
         ))}
     </div>
   );
