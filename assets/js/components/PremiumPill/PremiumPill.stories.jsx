@@ -6,18 +6,6 @@ export default {
   component: PremiumPill,
 };
 
-export function PremiumPillDefault() {
+export function Default() {
   return <PremiumPill />;
-}
-
-export function PremiumPillRed() {
-  return <PremiumPill className="bg-red-100" />;
-}
-
-export function PremiumPillYellow() {
-  return <PremiumPill className="bg-yellow-100 text-black" />;
-}
-
-export function PremiumPillWithMarginLeft() {
-  return <PremiumPill className="ml-6" />;
 }
