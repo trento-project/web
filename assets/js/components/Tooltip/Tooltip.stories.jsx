@@ -13,8 +13,8 @@ export default {
 
 export function Default(args) {
   return (
-    <div class="p-12">
-      <div class="relative">
+    <div className="p-12">
+      <div className="relative">
         <Tooltip {...args}>Hover me!</Tooltip>
       </div>
     </div>
