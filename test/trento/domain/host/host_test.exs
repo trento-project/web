@@ -15,7 +15,7 @@ defmodule Trento.HostTest do
 
   alias Trento.Domain.Events.{
     HeartbeatFailed,
-    HeartbeatSucceded,
+    HeartbeatSucceeded,
     HostDeregistered,
     HostDeregistrationRequested,
     HostDetailsUpdated,
@@ -159,7 +159,7 @@ defmodule Trento.HostTest do
   end
 
   describe "heartbeat" do
-    test "should emit an HeartbeatSucceded event if the Host never received an heartbeat already" do
+    test "should emit a HeartbeatSucceeded event if the Host never received a heartbeat already" do
       host_id = Faker.UUID.v4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
@@ -169,7 +169,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           heartbeat: :passing
         }),
-        %HeartbeatSucceded{
+        %HeartbeatSucceeded{
           host_id: host_id
         },
         fn state ->
@@ -180,7 +180,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should emit an HeartbeatSucceded event if the Host is in a critical status" do
+    test "should emit a HeartbeatSucceeded event if the Host is in a critical status" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -196,7 +196,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           heartbeat: :passing
         }),
-        %HeartbeatSucceded{
+        %HeartbeatSucceeded{
           host_id: host_id
         },
         fn state ->
@@ -207,12 +207,12 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should not emit an HeartbeatSucceded event if the Host is in a passing status already" do
+    test "should not emit a HeartbeatSucceeded event if the Host is in a passing status already" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
-        %HeartbeatSucceded{
+        %HeartbeatSucceeded{
           host_id: host_id
         }
       ]
@@ -227,12 +227,12 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should emit an HeartbeatFailed event if the Host has never received an heartbeat" do
+    test "should emit a HeartbeatFailed event if the Host has never received a heartbeat" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
-        %HeartbeatSucceded{
+        %HeartbeatSucceeded{
           host_id: host_id
         }
       ]
@@ -254,7 +254,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should emit an HeartbeatFailed event if the Host is in a passing status" do
+    test "should emit a HeartbeatFailed event if the Host is in a passing status" do
       host_id = Faker.UUID.v4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
@@ -275,7 +275,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should not emit an HeartbeatFailed event if the Host is in a critical status already" do
+    test "should not emit a HeartbeatFailed event if the Host is in a critical status already" do
       host_id = Faker.UUID.v4()
 
       initial_events = [

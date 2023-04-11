@@ -16,12 +16,9 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
   @required_fields [
     :host_id,
     :instance_number,
-    :health,
     :sid,
     :db_host,
     :tenant,
-    :host_id,
-    :instance_number,
     :instance_hostname,
     :features,
     :http_port,
