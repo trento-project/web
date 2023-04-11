@@ -40,7 +40,7 @@ defmodule Trento.Domain.Host do
 
   alias Trento.Domain.Events.{
     HeartbeatFailed,
-    HeartbeatSucceded,
+    HeartbeatSucceeded,
     HostDeregistered,
     HostDeregistrationRequested,
     HostDetailsUpdated,
@@ -187,7 +187,7 @@ defmodule Trento.Domain.Host do
         %UpdateHeartbeat{heartbeat: :passing}
       )
       when heartbeat != :passing do
-    %HeartbeatSucceded{host_id: host_id}
+    %HeartbeatSucceeded{host_id: host_id}
   end
 
   def execute(
@@ -350,7 +350,7 @@ defmodule Trento.Domain.Host do
 
   def apply(
         %Host{} = host,
-        %HeartbeatSucceded{host_id: host_id}
+        %HeartbeatSucceeded{host_id: host_id}
       ) do
     %Host{
       host
