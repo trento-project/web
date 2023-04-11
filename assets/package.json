@@ -61,7 +61,7 @@
     "react-router-dom": "^6.10.0",
     "redux-saga": "^1.2.3",
     "remark-gfm": "^3.0.1",
-    "semver": "^7.3.8"
+    "semver": "^7.4.0"
   },
   "overrides": {
     "@testing-library/dom": "^9.0.1"
