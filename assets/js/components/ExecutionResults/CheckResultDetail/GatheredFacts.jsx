@@ -12,7 +12,7 @@ const gatheredFactsToListView = (gatheredFacts) =>
       type ? (
         <span className="text-red-500">{message}</span>
       ) : (
-        <FactValue className="mt-3 text-sm" data={factValue} />
+        <FactValue className="text-sm" data={factValue} />
       ),
   }));
 
@@ -36,7 +36,7 @@ function GatheredFacts({ isTargetHost = true, gatheredFacts = [] }) {
 
       {!isTargetHost &&
         gatheredFacts.map(({ name, value }) => (
-          <FactValue key={name} className="mt-3 text-sm" data={value} />
+          <FactValue key={name} className="text-sm" data={value} />
         ))}
     </div>
   );

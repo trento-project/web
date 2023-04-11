@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { hostFactory, resultEnum } from '.';
+import { hostFactory, resultEnum, randomObjectFactory } from '.';
 
 export const checksExecutionStatusEnum = () =>
   faker.helpers.arrayElement(['running', 'completed']);
@@ -53,7 +53,7 @@ export const expectationResultFactory = Factory.define(
 export const executionFactFactory = Factory.define(({ sequence }) => ({
   check_id: faker.datatype.uuid(),
   name: `${faker.lorem.word()}_${sequence}`,
-  value: faker.datatype.number(),
+  value: randomObjectFactory.build({ depth: 5 }),
 }));
 
 export const executionFactErrorFactory = Factory.define(() => ({

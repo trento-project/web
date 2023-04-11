@@ -8,6 +8,32 @@ export * from './sapSystems';
 export * from './clusters';
 export * from './databases';
 
+export const randomObjectFactory = Factory.define(({ params }) => {
+  const depth = params.depth || 2;
+  const length = faker.datatype.number({ min: 3, max: 10 });
+
+  const lastElement =
+    depth === 1
+      ? { key: faker.hacker.noun(), value: faker.name.firstName() }
+      : {
+          key: faker.hacker.noun(),
+          value: randomObjectFactory.build({ depth: depth - 1 }),
+        };
+
+  return Array.from({ length: length - 1 }, () => ({
+    key: faker.hacker.noun(),
+    value: faker.hacker.adjective(),
+  }))
+    .concat([lastElement])
+    .reduce(
+      (accumulator, { key, value }) => ({
+        ...accumulator,
+        [key]: value,
+      }),
+      {}
+    );
+});
+
 const healthEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
 
