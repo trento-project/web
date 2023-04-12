@@ -6,7 +6,6 @@ defmodule Trento.Domain.Events.DatabaseDeregistered do
   use Trento.Event
 
   defevent do
-    field :host_id, Ecto.UUID
     field :sap_system_id, Ecto.UUID
     field :deregistered_at, :utc_datetime_usec
   end
