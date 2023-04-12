@@ -8,8 +8,8 @@ export * from './sapSystems';
 export * from './clusters';
 export * from './databases';
 
-export const randomObjectFactory = Factory.define(({ params }) => {
-  const depth = params.depth || 2;
+export const randomObjectFactory = Factory.define(({ transientParams }) => {
+  const depth = transientParams.depth || 2;
   const length = faker.datatype.number({ min: 3, max: 10 });
 
   const lastElement =
@@ -17,7 +17,10 @@ export const randomObjectFactory = Factory.define(({ params }) => {
       ? { key: faker.hacker.noun(), value: faker.name.firstName() }
       : {
           key: faker.hacker.noun(),
-          value: randomObjectFactory.build({ depth: depth - 1 }),
+          value: randomObjectFactory.build(
+            {},
+            { transient: { depth: depth - 1 } }
+          ),
         };
 
   return Array.from({ length: length - 1 }, () => ({

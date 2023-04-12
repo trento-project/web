@@ -53,7 +53,7 @@ export const expectationResultFactory = Factory.define(
 export const executionFactFactory = Factory.define(({ sequence }) => ({
   check_id: faker.datatype.uuid(),
   name: `${faker.lorem.word()}_${sequence}`,
-  value: randomObjectFactory.build({ depth: 5 }),
+  value: randomObjectFactory.build({}, { transient: { depth: 5 } }),
 }));
 
 export const executionFactErrorFactory = Factory.define(() => ({
