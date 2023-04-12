@@ -60,5 +60,15 @@ module.exports = {
         allowTernary: true,
       },
     ],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: [
+          '**/*.stories.*',
+          '**/.storybook/**/*',
+          '**/*{.,_}{test,spec}.{js,jsx}',
+        ],
+      },
+    ],
   },
 };
