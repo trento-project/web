@@ -59,7 +59,7 @@ describe('CheckResultDetail Component', () => {
         targetID={target1}
         targetType={targetType}
         executionData={executionData}
-        clusterHosts={clusterHosts}
+        expectations={[]}
       />
     );
 
