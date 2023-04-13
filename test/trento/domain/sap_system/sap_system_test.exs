@@ -26,7 +26,138 @@ defmodule Trento.SapSystemTest do
   alias Trento.Domain.SapSystem
 
   describe "SAP System registration" do
-    test "should create an incomplete SAP system aggregate and register a database instance" do
+    test "should fail when a sap system not exists and the database instance has Secondary role with system replication ACTIVE" do
+      command =
+        build(:register_database_instance_command,
+          system_replication: "Secondary",
+          system_replication_status: "ACTIVE"
+        )
+
+      assert_error(
+        command,
+        {:error, :database_instance_not_primary}
+      )
+    end
+
+    test "should fail when a sap system already exists and the database instance has Secondary role with system replication ACTIVE" do
+      sap_system_id = Faker.UUID.v4()
+      sid = Faker.StarWars.planet()
+      tenant = Faker.Beer.style()
+      instance_number = "00"
+      features = Faker.Pokemon.name()
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant,
+          instance_number: "10"
+        )
+      ]
+
+      command =
+        build(
+          :register_database_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant,
+          instance_number: instance_number,
+          features: features,
+          host_id: host_id,
+          system_replication: "Secondary",
+          system_replication_status: "ACTIVE"
+        )
+
+      assert_error(
+        initial_events,
+        command,
+        {:error, :database_instance_not_primary}
+      )
+    end
+
+    test "should create an incomplete SAP system aggregate and register a database instance when the system replication is disabled" do
+      sap_system_id = Faker.UUID.v4()
+      sid = Faker.StarWars.planet()
+      tenant = Faker.Beer.style()
+      instance_number = "00"
+      instance_hostname = Faker.Airports.iata()
+      features = Faker.Pokemon.name()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      host_id = Faker.UUID.v4()
+
+      assert_events_and_state(
+        [],
+        RegisterDatabaseInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          system_replication: "Primary",
+          system_replication_status: "",
+          health: :passing
+        }),
+        [
+          %DatabaseRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            health: :passing
+          },
+          %DatabaseInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            tenant: tenant,
+            instance_number: instance_number,
+            instance_hostname: instance_hostname,
+            features: features,
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
+            host_id: host_id,
+            system_replication: "Primary",
+            system_replication_status: nil,
+            health: :passing
+          }
+        ],
+        %SapSystem{
+          sap_system_id: sap_system_id,
+          # The SAP System aggregate is not complete yet.
+          # The sid will be set when the first application instance is registered.
+          sid: nil,
+          database: %SapSystem.Database{
+            sid: sid,
+            health: :passing,
+            instances: [
+              %SapSystem.Instance{
+                sid: sid,
+                system_replication: "Primary",
+                system_replication_status: nil,
+                instance_number: instance_number,
+                features: features,
+                host_id: host_id,
+                health: :passing
+              }
+            ]
+          }
+        }
+      )
+    end
+
+    test "should create an incomplete SAP system aggregate and register a database instance when the system replication is enabled and the database role is primary" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       tenant = Faker.Beer.style()

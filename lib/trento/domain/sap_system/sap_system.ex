@@ -88,7 +88,18 @@ defmodule Trento.Domain.SapSystem do
     embeds_one :application, Application
   end
 
+  def execute(
+        %SapSystem{},
+        %RegisterDatabaseInstance{
+          system_replication: "Secondary",
+          system_replication_status: "ACTIVE"
+        }
+      ),
+      do: {:error, :database_instance_not_primary}
+
   # First time that a Database instance is registered, the SAP System starts its registration process.
+  # We accept the database instance when the system replication is disabled or when enabled, only if the database
+  # has a primary role
   # When an Application is discovered, the SAP System completes the registration process.
   def execute(
         %SapSystem{sap_system_id: nil},
