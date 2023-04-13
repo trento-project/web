@@ -16,4 +16,4 @@
   password: "adminpassword",
   confirm_password: "adminpassword"
 })
-|> Trento.Repo.insert!()
+|> Trento.Repo.insert!(on_conflict: :nothing)
