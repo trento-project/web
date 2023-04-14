@@ -39,7 +39,7 @@
     "prettier-eslint-cli": "^7.1.0",
     "redux-mock-store": "^1.5.4",
     "storybook": "^7.0.4",
-    "tailwindcss": "^3.2.7"
+    "tailwindcss": "^3.3.1"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.11",
