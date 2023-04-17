@@ -26,57 +26,13 @@ defmodule Trento.SapSystemTest do
   alias Trento.Domain.SapSystem
 
   describe "SAP System registration" do
-    test "should fail when a sap system not exists and the database instance has Secondary role with system replication ACTIVE" do
+    test "should fail when a sap system not exists and the database instance has Secondary role" do
       command =
         build(:register_database_instance_command,
-          system_replication: "Secondary",
-          system_replication_status: "ACTIVE"
+          system_replication: "Secondary"
         )
 
       assert_error(
-        command,
-        {:error, :sap_system_not_registered}
-      )
-    end
-
-    test "should fail when a sap system already exists and the database instance has Secondary role with system replication ACTIVE" do
-      sap_system_id = Faker.UUID.v4()
-      sid = Faker.StarWars.planet()
-      tenant = Faker.Beer.style()
-      instance_number = "00"
-      features = Faker.Pokemon.name()
-      host_id = Faker.UUID.v4()
-
-      initial_events = [
-        build(
-          :database_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid
-        ),
-        build(
-          :database_instance_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid,
-          tenant: tenant,
-          instance_number: "10"
-        )
-      ]
-
-      command =
-        build(
-          :register_database_instance_command,
-          sap_system_id: sap_system_id,
-          sid: sid,
-          tenant: tenant,
-          instance_number: instance_number,
-          features: features,
-          host_id: host_id,
-          system_replication: "Secondary",
-          system_replication_status: "ACTIVE"
-        )
-
-      assert_error(
-        initial_events,
         command,
         {:error, :sap_system_not_registered}
       )
@@ -107,8 +63,7 @@ defmodule Trento.SapSystemTest do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
-          system_replication: "Primary",
-          system_replication_status: "",
+          system_replication: nil,
           health: :passing
         }),
         [
@@ -128,7 +83,7 @@ defmodule Trento.SapSystemTest do
             https_port: https_port,
             start_priority: start_priority,
             host_id: host_id,
-            system_replication: "Primary",
+            system_replication: nil,
             system_replication_status: nil,
             health: :passing
           }
@@ -144,7 +99,7 @@ defmodule Trento.SapSystemTest do
             instances: [
               %SapSystem.Instance{
                 sid: sid,
-                system_replication: "Primary",
+                system_replication: nil,
                 system_replication_status: nil,
                 instance_number: instance_number,
                 features: features,
