@@ -139,4 +139,7 @@ if config_env() in [:prod, :demo] do
         schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
       ]
     ]
+
+  config :trento, :api_key_authentication,
+    enabled: System.get_env("ENABLE_API_KEY", "true") == "true"
 end
