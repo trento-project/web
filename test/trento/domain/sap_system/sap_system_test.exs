@@ -35,7 +35,7 @@ defmodule Trento.SapSystemTest do
 
       assert_error(
         command,
-        {:error, :database_instance_not_primary}
+        {:error, :sap_system_not_registered}
       )
     end
 
@@ -78,7 +78,7 @@ defmodule Trento.SapSystemTest do
       assert_error(
         initial_events,
         command,
-        {:error, :database_instance_not_primary}
+        {:error, :sap_system_not_registered}
       )
     end
 

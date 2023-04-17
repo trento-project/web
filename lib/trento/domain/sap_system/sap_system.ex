@@ -96,7 +96,7 @@ defmodule Trento.Domain.SapSystem do
           system_replication_status: "ACTIVE"
         }
       ),
-      do: {:error, :database_instance_not_primary}
+      do: {:error, :sap_system_not_registered}
 
   # First time that a Database instance is registered, the SAP System starts its registration process.
   # We accept the database instance when the system replication is disabled or when enabled, only if the database
