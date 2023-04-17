@@ -79,8 +79,6 @@ config :trento, :pow,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks
 
-config :trento, :api_key_authentication, enabled: true
-
 # Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
 config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
 
@@ -158,8 +156,11 @@ config :trento, :jwt_authentication,
   # Seconds, 10 minutes
   access_token_expiration: 600,
   # Seconds, 6 hours
-  refresh_token_expiration: 21600,
-  enabled: true
+  refresh_token_expiration: 21600
+
+config :trento,
+  api_key_authentication_enabled: true,
+  jwt_authentication_enabled: true
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

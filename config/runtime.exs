@@ -140,6 +140,6 @@ if config_env() in [:prod, :demo] do
       ]
     ]
 
-  config :trento, :api_key_authentication,
-    enabled: System.get_env("ENABLE_API_KEY", "true") == "true"
+  config :trento,
+    api_key_authentication_enabled: System.get_env("ENABLE_API_KEY", "true") == "true"
 end
