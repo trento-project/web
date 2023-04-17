@@ -20,17 +20,17 @@ defmodule TrentoWeb.Router do
   end
 
   pipeline :protected_api do
-    if Application.compile_env!(:trento, [:jwt_authentication, :enabled]) do
-      plug Pow.Plug.RequireAuthenticated,
-        error_handler: TrentoWeb.Auth.ApiAuthErrorHandler
-    end
+    plug Unplug,
+      if: {Unplug.Predicates.AppConfigEquals, {:trento, :jwt_authentication_enabled, true}},
+      do: {Pow.Plug.RequireAuthenticated, error_handler: TrentoWeb.Auth.ApiAuthErrorHandler}
   end
 
   pipeline :apikey_authenticated do
-    if Application.compile_env!(:trento, [:api_key_authentication, :enabled]) do
-      plug Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug,
-        error_handler: TrentoWeb.Auth.ApiAuthErrorHandler
-    end
+    plug Unplug,
+      if: {Unplug.Predicates.AppConfigEquals, {:trento, :api_key_authentication_enabled, true}},
+      do:
+        {Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug,
+         error_handler: TrentoWeb.Auth.ApiAuthErrorHandler}
   end
 
   scope "/" do

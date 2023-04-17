@@ -41,9 +41,9 @@ config :logger, level: :warn
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :trento, :api_key_authentication, enabled: false
-
-config :trento, :jwt_authentication, enabled: false
+config :trento,
+  api_key_authentication_enabled: false,
+  jwt_authentication_enabled: false
 
 config :trento, Trento.Integration.Checks.AMQP.Consumer,
   processor: GenRMQ.Processor.Mock,

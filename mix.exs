@@ -100,6 +100,7 @@ defmodule Trento.MixProject do
        github: "trento-project/contracts",
        ref: "b8e1036d0177c029ac40d34f237c366a7fb08bec",
        sparse: "elixir"},
+      {:unplug, "~> 1.0.0"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 2.0.0"},
       {:joken, "~> 2.5.0"}

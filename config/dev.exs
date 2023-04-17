@@ -117,13 +117,16 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :trento, :api_key_authentication, enabled: false
+config :trento,
+  api_key_authentication_enabled: false
 
 config :joken,
   access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",
   refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"
 
 config :trento, :checks_service, base_url: "http://localhost:4001"
+
+config :unplug, :init_mode, :runtime
 
 # Override with local dev.local.exs file
 if File.exists?("#{__DIR__}/dev.local.exs") do
