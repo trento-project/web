@@ -90,10 +90,9 @@ defmodule Trento.Domain.SapSystem do
   end
 
   def execute(
-        %SapSystem{},
+        %SapSystem{sap_system_id: nil},
         %RegisterDatabaseInstance{
-          system_replication: "Secondary",
-          system_replication_status: "ACTIVE"
+          system_replication: "Secondary"
         }
       ),
       do: {:error, :sap_system_not_registered}
