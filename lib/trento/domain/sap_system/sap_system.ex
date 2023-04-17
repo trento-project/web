@@ -29,7 +29,7 @@ defmodule Trento.Domain.SapSystem do
   That being said, this is the logical order of events in order to register a full system:
 
   1. A SAP system discovery message with a new database instance is received.
-     We ignore database with Secondary role in a system replicated scenarios.
+     Database instances with Secondary role in a system replication scenario are discarded.
      At this point, the registration process starts and the database is registered.
      Any application instance discovery message without an associated database is ignored.
   2. New database instances/updates coming from already registered database instances are registered/applied.
@@ -99,7 +99,7 @@ defmodule Trento.Domain.SapSystem do
       do: {:error, :sap_system_not_registered}
 
   # First time that a Database instance is registered, the SAP System starts its registration process.
-  # We accept the database instance when the system replication is disabled or when enabled, only if the database
+  # Database instance are accepted when the system replication is disabled or when enabled, only if the database
   # has a primary role
   # When an Application is discovered, the SAP System completes the registration process.
   def execute(
