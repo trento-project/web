@@ -36,7 +36,7 @@ function GatheredFacts({ isTargetHost = true, gatheredFacts = [] }) {
 
       {!isTargetHost &&
         gatheredFacts.map(({ name, value }) => (
-          <FactValue key={name} className="text-sm" data={value} />
+          <FactValue key={name} className="mt-3 text-sm" data={value} />
         ))}
     </div>
   );
