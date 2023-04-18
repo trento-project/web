@@ -7,6 +7,8 @@ import Modal from '@components/Modal';
 
 import { getHostID } from '@state/selectors/cluster';
 import PremiumPill from '@components/PremiumPill';
+import HealthIcon from '@components/Health';
+
 import {
   getCheckResults,
   getCheckDescription,
@@ -16,7 +18,6 @@ import {
 } from './checksUtils';
 
 import ResultsContainer from './ResultsContainer';
-import { ExecutionIcon } from './ExecutionIcon';
 import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
 import ExecutionContainer from './ExecutionContainer';
@@ -61,9 +62,7 @@ const resultsTableConfig = {
       key: 'result',
       fontSize: 'text-base',
       className: 'bg-gray-50 border-b',
-      render: (_, { result, executionState }) => (
-        <ExecutionIcon executionState={executionState} health={result} />
-      ),
+      render: (_, { result }) => <HealthIcon health={result} />,
     },
   ],
   collapsibleDetailRenderer: ({
@@ -116,6 +115,7 @@ function ExecutionResults({
       onLastExecutionUpdate();
     }
   };
+
   const tableData = getCheckResults(executionData)
     .filter((check) => {
       if (predicates.length === 0) {
