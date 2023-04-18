@@ -11,7 +11,9 @@ defmodule Trento.Router do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
+    DeregisterApplicationInstance,
     DeregisterClusterHost,
+    DeregisterDatabaseInstance,
     DeregisterHost,
     RegisterApplicationInstance,
     RegisterClusterHost,
@@ -58,7 +60,13 @@ defmodule Trento.Router do
 
   identify SapSystem, by: :sap_system_id
 
-  dispatch [RegisterApplicationInstance, RegisterDatabaseInstance, RollUpSapSystem],
-    to: SapSystem,
-    lifespan: SapSystem.Lifespan
+  dispatch [
+             DeregisterApplicationInstance,
+             DeregisterDatabaseInstance,
+             RegisterApplicationInstance,
+             RegisterDatabaseInstance,
+             RollUpSapSystem
+           ],
+           to: SapSystem,
+           lifespan: SapSystem.Lifespan
 end
