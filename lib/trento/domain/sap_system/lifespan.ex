@@ -9,13 +9,20 @@ defmodule Trento.Domain.SapSystem.Lifespan do
 
   alias Commanded.Aggregates.DefaultLifespan
 
-  alias Trento.Domain.Events.SapSystemRollUpRequested
+  alias Trento.Domain.Events.{
+    DatabaseDeregistered,
+    SapSystemRollUpRequested
+  }
 
   @doc """
   The SapSystem aggregate will be stopped after a SapSystemRollUpRequested event is received.
   This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.
+
+  The aggregate will also be stopped after a DatabaseDeregistered event is received.
   """
   def after_event(%SapSystemRollUpRequested{}), do: :stop
+  def after_event(%DatabaseDeregistered{}), do: :stop
+
   def after_event(event), do: DefaultLifespan.after_event(event)
 
   def after_command(command), do: DefaultLifespan.after_command(command)
