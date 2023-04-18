@@ -126,10 +126,9 @@ defmodule Trento.Clusters do
        }) do
     hosts_data =
       Repo.all(
-        from(h in HostReadModel,
+        from h in HostReadModel,
           select: %{host_id: h.id},
           where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
-        )
       )
 
     Checks.request_execution(
