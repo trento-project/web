@@ -26,7 +26,7 @@ defmodule Trento.SapSystemTest do
   alias Trento.Domain.SapSystem
 
   describe "SAP System registration" do
-    test "should fail when a sap system not exists and the database instance has Secondary role" do
+    test "should fail when a sap system does not exists and the database instance has Secondary role" do
       command =
         build(:register_database_instance_command,
           system_replication: "Secondary"

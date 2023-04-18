@@ -98,7 +98,7 @@ defmodule Trento.Domain.SapSystem do
       do: {:error, :sap_system_not_registered}
 
   # First time that a Database instance is registered, the SAP System starts its registration process.
-  # Database instance are accepted when the system replication is disabled or when enabled, only if the database
+  # Database instances are accepted when the system replication is disabled or when enabled, only if the database
   # has a primary role
   # When an Application is discovered, the SAP System completes the registration process.
   def execute(
