@@ -4,19 +4,25 @@ defmodule Trento.SapSystemTest do
   import Trento.Factory
 
   alias Trento.Domain.Commands.{
+    DeregisterApplicationInstance,
+    DeregisterDatabaseInstance,
     RegisterApplicationInstance,
     RegisterDatabaseInstance,
     RollUpSapSystem
   }
 
   alias Trento.Domain.Events.{
+    ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
     ApplicationInstanceRegistered,
+    DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
+    SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
     SapSystemRolledUp,
@@ -24,6 +30,12 @@ defmodule Trento.SapSystemTest do
   }
 
   alias Trento.Domain.SapSystem
+
+  alias Trento.Domain.SapSystem.{
+    Application,
+    Database,
+    Instance
+  }
 
   describe "SAP System registration" do
     test "should fail when a sap system does not exists and the database instance has Secondary role" do
@@ -1060,6 +1072,665 @@ defmodule Trento.SapSystemTest do
           assert sap_system.sap_system_id == sap_system_registered_event.sap_system_id
           assert sap_system.sid == sap_system_registered_event.sid
           assert sap_system.health == sap_system_registered_event.health
+        end
+      )
+    end
+  end
+
+  describe "deregistration" do
+    test "should deregister a single DB instance if no SR enabled" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      instances =
+        [
+          %DatabaseInstanceRegistered{
+            instance_number: instance_number_1,
+            host_id: host_id
+          },
+          %DatabaseInstanceRegistered{
+            instance_number: instance_number_2
+          }
+        ] =
+        build_list(
+          2,
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          system_replication: nil
+        )
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          )
+          | instances
+        ],
+        %DeregisterDatabaseInstance{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number_1,
+          deregistered_at: deregistered_at
+        },
+        %DatabaseInstanceDeregistered{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number_1,
+          deregistered_at: deregistered_at
+        },
+        fn sap_system ->
+          assert %SapSystem{
+                   database: %Database{
+                     instances: [%Instance{instance_number: ^instance_number_2}]
+                   }
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister a secondary DB instance" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      instances =
+        [
+          %DatabaseInstanceRegistered{
+            instance_number: instance_number_1,
+            host_id: host_id
+          },
+          %DatabaseInstanceRegistered{
+            instance_number: instance_number_2
+          }
+        ] = [
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            system_replication: "Secondary"
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            system_replication: "Primary"
+          )
+        ]
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          )
+          | instances
+        ],
+        %DeregisterDatabaseInstance{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number_1,
+          deregistered_at: deregistered_at
+        },
+        %DatabaseInstanceDeregistered{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number_1,
+          deregistered_at: deregistered_at
+        },
+        fn sap_system ->
+          assert %SapSystem{
+                   database: %Database{
+                     instances: [%Instance{instance_number: ^instance_number_2}]
+                   }
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister a Database and all the instances" do
+      sap_system_id = UUID.uuid4()
+      host_id = UUID.uuid4()
+      application_host_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+      instance_number = "00"
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: application_host_id,
+            instance_number: instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id
+          )
+        ],
+        %DeregisterDatabaseInstance{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          deregistered_at: deregistered_at
+        },
+        [
+          %DatabaseInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            deregistered_at: deregistered_at
+          },
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: application_host_id,
+            instance_number: instance_number,
+            deregistered_at: deregistered_at
+          },
+          %SapSystemDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   database: nil,
+                   application: nil
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister a Database and all the instances if Primary is removed" do
+      sap_system_id = UUID.uuid4()
+      host_id = UUID.uuid4()
+      secondary_database_host_id = UUID.uuid4()
+      application_host_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+      instance_number_1 = "00"
+      instance_number_2 = "01"
+      application_instance_number = "00"
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number_1,
+            system_replication: "Primary"
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: secondary_database_host_id,
+            instance_number: instance_number_2,
+            system_replication: "Secondary"
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: application_host_id,
+            instance_number: application_instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id
+          )
+        ],
+        %DeregisterDatabaseInstance{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number_1,
+          deregistered_at: deregistered_at
+        },
+        [
+          %DatabaseInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number_1,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: secondary_database_host_id,
+            instance_number: instance_number_2,
+            deregistered_at: deregistered_at
+          },
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: application_host_id,
+            instance_number: application_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %SapSystemDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   database: nil,
+                   application: nil
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister an ENQREP Application Instance" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      database_host_id = UUID.uuid4()
+      message_server_host_id = UUID.uuid4()
+      abap_host_id = UUID.uuid4()
+      enqrep_host_id = UUID.uuid4()
+
+      database_instance_number = "00"
+      message_server_instance_number = "01"
+      abap_instance_number = "02"
+      enqrep_server_instance_number = "03"
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: database_host_id,
+            instance_number: database_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "MESSAGESERVER|ENQUE",
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "ABAP|GATEWAY|ICMAN|IGS",
+            host_id: abap_host_id,
+            instance_number: abap_instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            features: "ENQREP"
+          )
+        ],
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: enqrep_host_id,
+          instance_number: enqrep_server_instance_number,
+          deregistered_at: deregistered_at
+        },
+        [
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   database: %Database{
+                     instances: [
+                       %Instance{
+                         instance_number: ^database_instance_number,
+                         host_id: ^database_host_id
+                       }
+                     ]
+                   },
+                   application: %Application{
+                     instances: [
+                       %Instance{
+                         host_id: ^abap_host_id,
+                         instance_number: ^abap_instance_number
+                       },
+                       %Instance{
+                         host_id: ^message_server_host_id,
+                         instance_number: ^message_server_instance_number
+                       }
+                     ]
+                   }
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister an ABAP Application Instance" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      database_host_id = UUID.uuid4()
+      message_server_host_id = UUID.uuid4()
+      abap_host_id = UUID.uuid4()
+      abap_2_host_id = UUID.uuid4()
+      enqrep_host_id = UUID.uuid4()
+
+      database_instance_number = "00"
+      message_server_instance_number = "01"
+      abap_instance_number = "02"
+      abap_2_instance_number = "03"
+      enqrep_server_instance_number = "04"
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: database_host_id,
+            instance_number: database_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "MESSAGESERVER|ENQUE",
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "ABAP|GATEWAY|ICMAN|IGS",
+            host_id: abap_host_id,
+            instance_number: abap_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "ABAP|GATEWAY|ICMAN|IGS",
+            host_id: abap_2_host_id,
+            instance_number: abap_2_instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            features: "ENQREP"
+          )
+        ],
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: abap_2_host_id,
+          instance_number: abap_2_instance_number,
+          deregistered_at: deregistered_at
+        },
+        [
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: abap_2_host_id,
+            instance_number: abap_2_instance_number,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   database: %Database{
+                     instances: [
+                       %Instance{
+                         instance_number: ^database_instance_number,
+                         host_id: ^database_host_id
+                       }
+                     ]
+                   },
+                   application: %Application{
+                     instances: [
+                       %Instance{
+                         host_id: ^enqrep_host_id,
+                         instance_number: ^enqrep_server_instance_number
+                       },
+                       %Instance{
+                         host_id: ^abap_host_id,
+                         instance_number: ^abap_instance_number
+                       },
+                       %Instance{
+                         host_id: ^message_server_host_id,
+                         instance_number: ^message_server_instance_number
+                       }
+                     ]
+                   }
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister last ABAP Application Instance, and deregister SAP System" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      database_host_id = UUID.uuid4()
+      message_server_host_id = UUID.uuid4()
+      abap_host_id = UUID.uuid4()
+      enqrep_host_id = UUID.uuid4()
+
+      database_instance_number = "00"
+      message_server_instance_number = "01"
+      abap_instance_number = "02"
+      enqrep_server_instance_number = "03"
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: database_host_id,
+            instance_number: database_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "MESSAGESERVER|ENQUE",
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "ABAP|GATEWAY|ICMAN|IGS",
+            host_id: abap_host_id,
+            instance_number: abap_instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            features: "ENQREP"
+          )
+        ],
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: abap_host_id,
+          instance_number: abap_instance_number,
+          deregistered_at: deregistered_at
+        },
+        [
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: abap_host_id,
+            instance_number: abap_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %SapSystemDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   database: %Database{
+                     instances: [
+                       %Instance{
+                         instance_number: ^database_instance_number,
+                         host_id: ^database_host_id
+                       }
+                     ]
+                   },
+                   application: %Application{
+                     instances: []
+                   }
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister Message Server, and deregister SAP System" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      database_host_id = UUID.uuid4()
+      message_server_host_id = UUID.uuid4()
+      abap_host_id = UUID.uuid4()
+      enqrep_host_id = UUID.uuid4()
+
+      database_instance_number = "00"
+      message_server_instance_number = "01"
+      abap_instance_number = "02"
+      enqrep_server_instance_number = "03"
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: database_host_id,
+            instance_number: database_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "MESSAGESERVER|ENQUE",
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "ABAP|GATEWAY|ICMAN|IGS",
+            host_id: abap_host_id,
+            instance_number: abap_instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            features: "ENQREP"
+          )
+        ],
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          deregistered_at: deregistered_at
+        },
+        [
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: abap_host_id,
+            instance_number: abap_instance_number,
+            deregistered_at: deregistered_at
+          },
+          %SapSystemDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   database: %Database{
+                     instances: [
+                       %Instance{
+                         instance_number: ^database_instance_number,
+                         host_id: ^database_host_id
+                       }
+                     ]
+                   },
+                   application: %Application{
+                     instances: []
+                   }
+                 } = sap_system
         end
       )
     end
