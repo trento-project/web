@@ -31,16 +31,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-      - name: Cache dependencies
-        id: node-modules-cache
-        uses: actions/cache@v3
-        with:
-          path: test/e2e/node_modules
-          key: node-modules-${{ hashFiles('test/e2e/package-lock.json') }}
-      - name: Install E2E NPM dependencies
-        if: steps.node-modules-cache.outputs.cache-hit != 'true'
-        working-directory: test/e2e
-        run: npm install
+          cache-dependency-path: test/e2e/package-lock.json
       - name: Checkout terraform repo
         uses: actions/checkout@v3
         with:
