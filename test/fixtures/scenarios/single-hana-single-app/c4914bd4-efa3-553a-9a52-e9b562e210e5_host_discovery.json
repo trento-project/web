@@ -1,0 +1,19 @@
+{
+  "agent_id": "c4914bd4-efa3-553a-9a52-e9b562e210e5",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "agent_version": "1.2.0+git.dev69.1681712424.63e3ee9",
+    "cpu_count": 4,
+    "hostname": "trento-hana01",
+    "installation_source": "Suse",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.0.1.10",
+      "fe80::bc:ffff:fe56:bd6a"
+    ],
+    "os_version": "15-SP4",
+    "socket_count": 1,
+    "total_memory_mb": 31578
+  }
+}

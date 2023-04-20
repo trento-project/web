@@ -1,0 +1,390 @@
+{
+  "agent_id": "e77ab524-c4e4-5381-bb59-5af8639d52a4",
+  "discovery_type": "sap_system_discovery",
+  "payload": [
+    {
+      "DBAddress": "10.0.1.10",
+      "Databases": null,
+      "Id": "21a7a8cebb6154d189240e900db3fa26",
+      "Instances": [
+        {
+          "HdbnsutilSRstate": null,
+          "Host": "trento-vmnetweaver01",
+          "HostConfiguration": null,
+          "Name": "ASCS00",
+          "SAPControl": {
+            "Instances": [
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "MESSAGESERVER|ENQUE",
+                "hostname": "sapha1as",
+                "httpPort": 50013,
+                "httpsPort": 50014,
+                "instanceNr": 0,
+                "startPriority": "1"
+              },
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "ABAP|GATEWAY|ICMAN|IGS",
+                "hostname": "sapha1pas",
+                "httpPort": 50113,
+                "httpsPort": 50114,
+                "instanceNr": 1,
+                "startPriority": "3"
+              }
+            ],
+            "Processes": [
+              {
+                "description": "MessageServer",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:46:50",
+                "name": "msg_server",
+                "pid": 4216,
+                "starttime": "2023 04 19 07:28:22",
+                "textstatus": "Running"
+              },
+              {
+                "description": "Enqueue Server 2",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:46:50",
+                "name": "enq_server",
+                "pid": 4217,
+                "starttime": "2023 04 19 07:28:22",
+                "textstatus": "Running"
+              }
+            ],
+            "Properties": [
+              {
+                "property": "Process List",
+                "propertytype": "NodeWebmethod",
+                "value": "GetProcessList"
+              },
+              {
+                "property": "Access Points",
+                "propertytype": "NodeWebmethod",
+                "value": "GetAccessPointList"
+              },
+              {
+                "property": "Parameter Documentation",
+                "propertytype": "NodeURL",
+                "value": "http://sapha1as:50013/sapparamEN.html"
+              },
+              {
+                "property": "Kernel Update",
+                "propertytype": "NodeURL",
+                "value": "https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943&_EVENT=DISPHIER&HEADER=Y&FUNCTIONBAR=N&EVENT=TREE&NE=NAVIGATE&ENR=73554900100200010526&V=MAINT"
+              },
+              {
+                "property": "Syslog",
+                "propertytype": "NodeWebmethod",
+                "value": "ABAPReadSyslog"
+              },
+              {
+                "property": "Enque Locks",
+                "propertytype": "NodeWebmethod",
+                "value": "EnqGetLockTable"
+              },
+              {
+                "property": "Enque Statistic",
+                "propertytype": "NodeWebmethod",
+                "value": "EnqGetStatistic"
+              },
+              {
+                "property": "Protected Webmethods",
+                "propertytype": "Attribute",
+                "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata"
+              },
+              {
+                "property": "CentralServices",
+                "propertytype": "Attribute",
+                "value": "YES"
+              },
+              {
+                "property": "StartPriority",
+                "propertytype": "Attribute",
+                "value": "1"
+              },
+              {
+                "property": "SAPSYSTEM",
+                "propertytype": "Attribute",
+                "value": "00"
+              },
+              {
+                "property": "SAPSYSTEMNAME",
+                "propertytype": "Attribute",
+                "value": "HA1"
+              },
+              {
+                "property": "SAPLOCALHOST",
+                "propertytype": "Attribute",
+                "value": "sapha1as"
+              },
+              {
+                "property": "INSTANCE_NAME",
+                "propertytype": "Attribute",
+                "value": "ASCS00"
+              },
+              {
+                "property": "SupportsUpdateSCSInstance",
+                "propertytype": "Attribute",
+                "value": "YES"
+              },
+              {
+                "property": "Webmethods",
+                "propertytype": "Attribute",
+                "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile"
+              }
+            ]
+          },
+          "SystemReplication": null,
+          "Type": 2
+        },
+        {
+          "HdbnsutilSRstate": null,
+          "Host": "trento-vmnetweaver01",
+          "HostConfiguration": null,
+          "Name": "D01",
+          "SAPControl": {
+            "Instances": [
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "MESSAGESERVER|ENQUE",
+                "hostname": "sapha1as",
+                "httpPort": 50013,
+                "httpsPort": 50014,
+                "instanceNr": 0,
+                "startPriority": "1"
+              },
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "ABAP|GATEWAY|ICMAN|IGS",
+                "hostname": "sapha1pas",
+                "httpPort": 50113,
+                "httpsPort": 50114,
+                "instanceNr": 1,
+                "startPriority": "3"
+              }
+            ],
+            "Processes": [
+              {
+                "description": "Dispatcher",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:40:30",
+                "name": "disp+work",
+                "pid": 5793,
+                "starttime": "2023 04 19 07:34:42",
+                "textstatus": "Running"
+              },
+              {
+                "description": "IGS Watchdog",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:40:30",
+                "name": "igswd_mt",
+                "pid": 5794,
+                "starttime": "2023 04 19 07:34:42",
+                "textstatus": "Running"
+              },
+              {
+                "description": "Gateway",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:40:29",
+                "name": "gwrd",
+                "pid": 5798,
+                "starttime": "2023 04 19 07:34:43",
+                "textstatus": "Running"
+              },
+              {
+                "description": "ICM",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:40:29",
+                "name": "icman",
+                "pid": 5799,
+                "starttime": "2023 04 19 07:34:43",
+                "textstatus": "Running"
+              }
+            ],
+            "Properties": [
+              {
+                "property": "Process List",
+                "propertytype": "NodeWebmethod",
+                "value": "GetProcessList"
+              },
+              {
+                "property": "Access Points",
+                "propertytype": "NodeWebmethod",
+                "value": "GetAccessPointList"
+              },
+              {
+                "property": "Parameter Documentation",
+                "propertytype": "NodeURL",
+                "value": "http://sapha1pas:50113/sapparamEN.html"
+              },
+              {
+                "property": "Kernel Update",
+                "propertytype": "NodeURL",
+                "value": "https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943&_EVENT=DISPHIER&HEADER=Y&FUNCTIONBAR=N&EVENT=TREE&NE=NAVIGATE&ENR=73554900100200010526&V=MAINT"
+              },
+              {
+                "property": "Current Status",
+                "propertytype": "NodeWebmethod",
+                "value": "GetAlertTree"
+              },
+              {
+                "property": "Open Alerts",
+                "propertytype": "NodeWebmethod",
+                "value": "GetAlertTree"
+              },
+              {
+                "property": "Syslog",
+                "propertytype": "NodeWebmethod",
+                "value": "ABAPReadSyslog"
+              },
+              {
+                "property": "Gateway Connections",
+                "propertytype": "NodeWebmethod",
+                "value": "GWGetConnectionList"
+              },
+              {
+                "property": "Gateway Clients",
+                "propertytype": "NodeWebmethod",
+                "value": "GWGetClientList"
+              },
+              {
+                "property": "Queue Statistic",
+                "propertytype": "NodeWebmethod",
+                "value": "GetQueueStatistic"
+              },
+              {
+                "property": "ABAP WP Table",
+                "propertytype": "NodeWebmethod",
+                "value": "ABAPGetWPTable"
+              },
+              {
+                "property": "ICM",
+                "propertytype": "NodeURL",
+                "value": "HTTP://sapha1pas:0/sap/admin/public/index.html"
+              },
+              {
+                "property": "ICM Threads",
+                "propertytype": "NodeWebmethod",
+                "value": "ICMGetThreadList"
+              },
+              {
+                "property": "ICM Connections",
+                "propertytype": "NodeWebmethod",
+                "value": "ICMGetConnectionList"
+              },
+              {
+                "property": "ICM Cache",
+                "propertytype": "NodeWebmethod",
+                "value": "ICMGetCacheEntries"
+              },
+              {
+                "property": "ICM Proxy Connections",
+                "propertytype": "NodeWebmethod",
+                "value": "ICMGetProxyConnectionList"
+              },
+              {
+                "property": "Protected Webmethods",
+                "propertytype": "Attribute",
+                "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata"
+              },
+              {
+                "property": "StartPriority",
+                "propertytype": "Attribute",
+                "value": "3"
+              },
+              {
+                "property": "SAPSYSTEM",
+                "propertytype": "Attribute",
+                "value": "01"
+              },
+              {
+                "property": "SAPSYSTEMNAME",
+                "propertytype": "Attribute",
+                "value": "HA1"
+              },
+              {
+                "property": "SAPLOCALHOST",
+                "propertytype": "Attribute",
+                "value": "sapha1pas"
+              },
+              {
+                "property": "INSTANCE_NAME",
+                "propertytype": "Attribute",
+                "value": "D01"
+              },
+              {
+                "property": "IGS",
+                "propertytype": "NodeURL",
+                "value": "http://sapha1pas:40180"
+              },
+              {
+                "property": "Webmethods",
+                "propertytype": "Attribute",
+                "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile"
+              }
+            ]
+          },
+          "SystemReplication": null,
+          "Type": 2
+        }
+      ],
+      "Profile": {
+        "auth/rfc_authority_check": "6",
+        "SAPDBHOST": "10.0.1.10",
+        "wdisp/add_xforwardedfor_header": "TRUE",
+        "rdisp/btctime": "0",
+        "service/protectedwebmethods": "SDEFAULT",
+        "rdisp/gui_auto_logout": "1H",
+        "j2ee/dbname": "PRD",
+        "enq/serverinst": "00",
+        "dbs/hdb/schema": "SAPHANADB",
+        "is/HTTP/show_detailed_errors": "FALSE",
+        "rdisp/msserv": "sapmsHA1",
+        "LOGFORMAT": "%t %a %u1 %r %s %b %Lms %{Host}i %w1 %w2",
+        "icf/set_HTTPonly_flag_on_cookies": "0",
+        "icm/HTTP/ASJava/disable_url_session_tracking": "TRUE",
+        "dbs/hdb/dbname": "PRD",
+        "icm/security_log": "LOGFILE=dev_icm_sec_%y_%m,LEVEL=3,MAXFILES=2,MAXSIZEKB=50000,SWITCHTF=month",
+        "auth/check/calltransaction": "3",
+        "system/secure_communication": "ON",
+        "rsec/ssfs_datapath": "$(DIR_GLOBAL)$(DIR_SEP)security$(DIR_SEP)rsecssfs$(DIR_SEP)data",
+        "enque/process_location": "REMOTESA",
+        "rsdb/ssfs_connect": "0",
+        "SAPSYSTEMNAME": "HA1",
+        "rdisp/bufrefmode": "sendoff",
+        "rdisp/vbdelete": "0",
+        "vmcj/enable": "off",
+        "icm/HTTP/logging_0": "PREFIX=/,LOGFILE=http_%y_%m.log,MAXFILES=2,MAXSIZEKB=50000,SWITCHTF=month,",
+        "gw/sec_info": "$(DIR_GLOBAL)$(DIR_SEP)secinfo$(FT_DAT)",
+        "gw/reg_no_conn_info": "255",
+        "gw/rem_start": "DISABLED",
+        "rdisp/mshost": "sapha1as",
+        "rdisp/autoabaptime": "0",
+        "enq/enable": "TRUE",
+        "gw/acl_mode": "1",
+        "enq/serverhost": "sapha1as",
+        "ms/HTTP/logging_0": "PREFIX=/,LOGFILE=$(DIR_LOGGING)/ms-http-%y-%m-%d.log%o,MAXFILES=7,MAXSIZEKB=10000,SWITCHTF=day,LOGFORMAT=%t %a %u %r %s %b %{Host}i",
+        "SAPGLOBALHOST": "sapha1as",
+        "rfc/callback_security_method": "3",
+        "j2ee/dbhost": "10.0.1.10",
+        "icf/user_recheck": "1",
+        "rfc/ext_debugging": "0",
+        "login/disable_cpic": "1",
+        "rdisp/msserv_internal": "3900",
+        "login/password_hash_algorithm": "encoding=RFC2307,algorithm=iSSHA-512,iterations=15000,saltsize=256",
+        "ms/http_logging": "1",
+        "system/type": "ABAP",
+        "rsec/ssfs_keypath": "$(DIR_GLOBAL)$(DIR_SEP)security$(DIR_SEP)rsecssfs$(DIR_SEP)key",
+        "login/password_downwards_compatibility": "0",
+        "auth/object_disabling_active": "N",
+        "icm/HTTP/logging_client_0": "PREFIX=/,LOGFILE=http_client_%y_%m.log,MAXFILES=2,MAXSIZEKB=50000,SWITCHTF=month,",
+        "login/system_client": "000",
+        "j2ee/dbtype": "hdb"
+      },
+      "SID": "HA1",
+      "Type": 2
+    }
+  ]
+}
