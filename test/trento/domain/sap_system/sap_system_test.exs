@@ -332,13 +332,12 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should register a SAP System and add an application instance" do
+    test "should register a SAP System and add an application instance when is already present a MESSAGESERVER instance and one ABAP istance is added" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
       tenant = Faker.Beer.style()
       instance_hostname = Faker.Airports.iata()
-      features = Faker.Pokemon.name()
       http_port = 80
       https_port = 443
       start_priority = "0.9"
@@ -355,6 +354,11 @@ defmodule Trento.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: sid,
           tenant: tenant
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER"
         )
       ]
 
@@ -367,7 +371,7 @@ defmodule Trento.SapSystemTest do
           tenant: tenant,
           instance_number: "00",
           instance_hostname: instance_hostname,
-          features: features,
+          features: "ABAP",
           http_port: http_port,
           https_port: https_port,
           start_priority: start_priority,
@@ -387,7 +391,7 @@ defmodule Trento.SapSystemTest do
             sid: sid,
             instance_number: "00",
             instance_hostname: instance_hostname,
-            features: features,
+            features: "ABAP",
             http_port: http_port,
             https_port: https_port,
             start_priority: start_priority,
@@ -404,9 +408,12 @@ defmodule Trento.SapSystemTest do
                        %SapSystem.Instance{
                          sid: ^sid,
                          instance_number: "00",
-                         features: ^features,
+                         features: "ABAP",
                          host_id: ^host_id,
                          health: :passing
+                       },
+                       %SapSystem.Instance{
+                         features: "MESSAGESERVER"
                        }
                      ]
                    }

@@ -236,7 +236,7 @@ defmodule Trento.Domain.SapSystem do
       instances_features =
         instances
         |> Enum.map(& &1.features)
-        |> Enum.concat(features)
+        |> Kernel.++([features])
         |> Enum.join()
 
       events =
@@ -291,7 +291,7 @@ defmodule Trento.Domain.SapSystem do
             }
         end
 
-      events = events ++ event
+      events = events ++ [event]
 
       sap_system
       |> Multi.new()
@@ -301,47 +301,6 @@ defmodule Trento.Domain.SapSystem do
       # TODO: Check error
       {:error, :sap_system_not_registered}
     end
-  end
-
-  # When an Application is discovered, the SAP System completes the registration process.
-  def execute(
-        %SapSystem{application: nil},
-        %RegisterApplicationInstance{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          instance_number: instance_number,
-          instance_hostname: instance_hostname,
-          tenant: tenant,
-          db_host: db_host,
-          features: features,
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          health: health
-        }
-      ) do
-    [
-      %SapSystemRegistered{
-        sap_system_id: sap_system_id,
-        sid: sid,
-        tenant: tenant,
-        db_host: db_host,
-        health: health
-      },
-      %ApplicationInstanceRegistered{
-        sap_system_id: sap_system_id,
-        sid: sid,
-        instance_number: instance_number,
-        instance_hostname: instance_hostname,
-        features: features,
-        http_port: http_port,
-        https_port: https_port,
-        start_priority: start_priority,
-        host_id: host_id,
-        health: health
-      }
-    ]
   end
 
   # When a RegisterApplicationInstance command is received by an existing SAP System aggregate,
