@@ -11,6 +11,7 @@ defmodule Trento.Factory do
     ClusterNode,
     ClusterResource,
     HanaClusterDetails,
+    SapSystem,
     SbdDevice,
     SlesSubscription
   }
@@ -347,6 +348,16 @@ defmodule Trento.Factory do
   def application_instance_factory do
     host = build(:host)
     build(:application_instance_without_host, host_id: host.id, host: host)
+  end
+
+  def sap_system_instance_factory do
+    %SapSystem.Instance{
+      sid: Faker.UUID.v4(),
+      instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
+      features: Faker.Pokemon.name(),
+      host_id: Faker.UUID.v4(),
+      health: :passing
+    }
   end
 
   def discovery_event_factory do
