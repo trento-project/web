@@ -254,26 +254,49 @@ defmodule Trento.Domain.SapSystem do
           []
         end
 
-      events =
-        events ++
-          %ApplicationInstanceRegistered{
-            sap_system_id: sap_system_id,
-            sid: sid,
-            instance_number: instance_number,
-            instance_hostname: instance_hostname,
-            features: features,
-            http_port: http_port,
-            https_port: https_port,
-            start_priority: start_priority,
-            host_id: host_id,
-            health: health
-          }
+      instance =
+        Enum.find(instances, fn
+          %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
+            true
+
+          _ ->
+            false
+        end)
+
+      event =
+        case instance do
+          %Instance{health: ^health} ->
+            nil
+
+          %Instance{host_id: host_id, instance_number: instance_number} ->
+            %ApplicationInstanceHealthChanged{
+              sap_system_id: sap_system_id,
+              host_id: host_id,
+              instance_number: instance_number,
+              health: health
+            }
+
+          nil ->
+            %ApplicationInstanceRegistered{
+              sap_system_id: sap_system_id,
+              sid: sid,
+              instance_number: instance_number,
+              instance_hostname: instance_hostname,
+              features: features,
+              http_port: http_port,
+              https_port: https_port,
+              start_priority: start_priority,
+              host_id: host_id,
+              health: health
+            }
+        end
+
+      events = events ++ event
 
       sap_system
       |> Multi.new()
       |> Multi.execute(fn _ -> events end)
-
-      # TODO: Add health event checking
+      |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
     else
       # TODO: Check error
       {:error, :sap_system_not_registered}
