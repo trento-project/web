@@ -31,6 +31,13 @@ export const userSlice = createSlice({
   },
 });
 
+export const PERFORM_LOGIN = 'PERFORM_LOGIN';
+
+export const performLogin = ({ username, password }) => ({
+  type: PERFORM_LOGIN,
+  payload: { username, password },
+});
+
 export const { setUserAsLogged, setUser, setAuthError, setAuthInProgress } =
   userSlice.actions;
 
