@@ -178,20 +178,20 @@ defmodule Trento.Domain.SapSystem do
   # Register a new application only if it's messageserver or abap
   # Otherwise reject
   def execute(
-    %SapSystem{sid: nil, application: nil},
-    %RegisterApplicationInstance{
-      sap_system_id: sap_system_id,
-      sid: sid,
-      instance_number: instance_number,
-      instance_hostname: instance_hostname,
-      features: features,
-      http_port: http_port,
-      https_port: https_port,
-      start_priority: start_priority,
-      host_id: host_id,
-      health: health
-    }
-  ) do
+        %SapSystem{sid: nil, application: nil},
+        %RegisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: health
+        }
+      ) do
     if abap_or_messageserver?(features) do
       %ApplicationInstanceRegistered{
         sap_system_id: sap_system_id,
@@ -211,33 +211,74 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-  # Sap system, not registered, application already present, if we add the application istance
-  # and we have at least one abap and one messageserver in the istances, register the istance
-  # and complete the sap system registration
+  # Sap system not registered, application already present
+  # If the istance is not one of MESSAGESERVER or ABAP we discard.
+  # Otherwise if the istance we want register together with already present istances
+  # have one MESSAGESERVER and one ABAP, we register the istance and the sap system
   def execute(
-    %SapSystem{sid: nil, application: %Application{instances: instances}} = sap_system,
-    %RegisterApplicationInstance{
-      sap_system_id: sap_system_id,
-      sid: sid,
-      instance_number: instance_number,
-      instance_hostname: instance_hostname,
-      tenant: tenant,
-      db_host: db_host,
-      features: features,
-      http_port: http_port,
-      https_port: https_port,
-      start_priority: start_priority,
-      host_id: host_id,
-      health: health
-    }
-    ) do
-      if abap_or_messageserver?(features) do
+        %SapSystem{sid: nil, application: %Application{instances: instances}} = sap_system,
+        %RegisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          tenant: tenant,
+          db_host: db_host,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: health
+        }
+      ) do
+    if abap_or_messageserver?(features) do
+      instances_features =
+        instances
+        |> Enum.map(& &1.features)
+        |> Enum.concat(features)
+        |> Enum.join()
 
-      else
+      events =
+        if abap_and_messageserver?(instances_features) do
+          [
+            %SapSystemRegistered{
+              sap_system_id: sap_system_id,
+              sid: sid,
+              tenant: tenant,
+              db_host: db_host,
+              health: health
+            }
+          ]
+        else
+          []
+        end
 
-      end
+      events =
+        events ++
+          %ApplicationInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            instance_number: instance_number,
+            instance_hostname: instance_hostname,
+            features: features,
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
+            host_id: host_id,
+            health: health
+          }
+
+      sap_system
+      |> Multi.new()
+      |> Multi.execute(fn _ -> events end)
+
+      # TODO: Add health event checking
+    else
+      # TODO: Check error
+      {:error, :sap_system_not_registered}
     end
-
+  end
 
   # When an Application is discovered, the SAP System completes the registration process.
   def execute(
@@ -804,5 +845,9 @@ defmodule Trento.Domain.SapSystem do
 
   defp abap_or_messageserver?(features) do
     String.contains?(features, ["MESSAGESERVER", "ABAP"])
+  end
+
+  defp abap_and_messageserver?(features) do
+    String.contains?(features, "ABAP") and String.contains?(features, "MESSAGESERVER")
   end
 end
