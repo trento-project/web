@@ -305,7 +305,7 @@ defmodule Trento.Domain.SapSystem do
           sap_system_id: sap_system_id,
           host_id: host_id,
           deregistered_at: deregistered_at
-        } = command
+        }
       ) do
     sap_system
     |> Multi.new()
@@ -320,7 +320,7 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_deregistration_events(
         sap_system,
-        command
+        deregistered_at
       )
     end)
   end
@@ -347,16 +347,14 @@ defmodule Trento.Domain.SapSystem do
   end
 
   def apply(
-        %SapSystem{application: %Application{instances: []}} = sap_system,
+        %SapSystem{} = sap_system,
         %SapSystemDeregistered{
-          sap_system_id: sap_system_id,
           deregistered_at: deregistered_at
         }
       ) do
     %SapSystem{
       sap_system
-      | sap_system_id: sap_system_id,
-        deregistered_at: deregistered_at
+      | deregistered_at: deregistered_at
     }
   end
 
@@ -710,10 +708,7 @@ defmodule Trento.Domain.SapSystem do
              instances: instances
            }
          },
-         %DeregisterApplicationInstance{
-           sap_system_id: sap_system_id,
-           deregistered_at: deregistered_at
-         }
+         deregistered_at
        ) do
     if !Enum.any?(instances, fn %Instance{features: features} ->
          String.contains?(features, "MESSAGESERVER")
