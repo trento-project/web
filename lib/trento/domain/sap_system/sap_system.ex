@@ -710,12 +710,12 @@ defmodule Trento.Domain.SapSystem do
          },
          deregistered_at
        ) do
-    if !Enum.any?(instances, fn %Instance{features: features} ->
-         String.contains?(features, "MESSAGESERVER")
-       end) ||
-         !Enum.any?(instances, fn %Instance{features: features} ->
-           String.contains?(features, "ABAP")
-         end) do
+    has_abap? = Enum.any?(instances, fn instance -> instance.features =~ "ABAP" end)
+
+    has_messageserver? =
+      Enum.any?(instances, fn instance -> instance.features =~ "MESSAGESERVER" end)
+
+    unless has_abap? and has_messageserver? do
       Enum.map(instances, fn %Instance{instance_number: instance_number, host_id: host_id} ->
         %ApplicationInstanceDeregistered{
           sap_system_id: sap_system_id,
