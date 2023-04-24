@@ -216,86 +216,23 @@ defmodule Trento.Domain.SapSystem do
   # Otherwise if the istance we want register together with already present istances
   # have one MESSAGESERVER and one ABAP, we register the istance and the sap system
   def execute(
-        %SapSystem{sid: nil, application: %Application{instances: instances}} = sap_system,
+        %SapSystem{sid: nil, application: %Application{}} = sap_system,
         %RegisterApplicationInstance{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          instance_number: instance_number,
-          instance_hostname: instance_hostname,
-          tenant: tenant,
-          db_host: db_host,
-          features: features,
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          health: health
-        }
+          features: features
+        } = instance
       ) do
     if abap_or_messageserver?(features) do
-      instances_features =
-        instances
-        |> Enum.map(& &1.features)
-        |> Kernel.++([features])
-        |> Enum.join()
-
-      events =
-        if abap_and_messageserver?(instances_features) do
-          [
-            %SapSystemRegistered{
-              sap_system_id: sap_system_id,
-              sid: sid,
-              tenant: tenant,
-              db_host: db_host,
-              health: health
-            }
-          ]
-        else
-          []
-        end
-
-      instance =
-        Enum.find(instances, fn
-          %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
-            true
-
-          _ ->
-            false
-        end)
-
-      event =
-        case instance do
-          %Instance{health: ^health} ->
-            nil
-
-          %Instance{host_id: host_id, instance_number: instance_number} ->
-            %ApplicationInstanceHealthChanged{
-              sap_system_id: sap_system_id,
-              host_id: host_id,
-              instance_number: instance_number,
-              health: health
-            }
-
-          nil ->
-            %ApplicationInstanceRegistered{
-              sap_system_id: sap_system_id,
-              sid: sid,
-              instance_number: instance_number,
-              instance_hostname: instance_hostname,
-              features: features,
-              http_port: http_port,
-              https_port: https_port,
-              start_priority: start_priority,
-              host_id: host_id,
-              health: health
-            }
-        end
-
-      events = events ++ [event]
-
       sap_system
       |> Multi.new()
-      |> Multi.execute(fn _ -> events end)
+      |> Multi.execute(fn sap_system ->
+        maybe_emit_sap_system_registered_event(sap_system, instance)
+      end)
+      |> Multi.execute(fn sap_system ->
+        emit_application_instance_registered_or_application_instance_health_changed(
+          sap_system,
+          instance
+        )
+      end)
       |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
     else
       # TODO: Check error
@@ -307,60 +244,17 @@ defmodule Trento.Domain.SapSystem do
   # the SAP System aggregate registers the Application instance if it is not already registered
   # and updates the health when needed.
   def execute(
-        %SapSystem{application: %Application{instances: instances}} = sap_system,
-        %RegisterApplicationInstance{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          instance_number: instance_number,
-          instance_hostname: instance_hostname,
-          features: features,
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          health: health
-        }
+        %SapSystem{application: %Application{instances: _instances}} = sap_system,
+        %RegisterApplicationInstance{} = instance
       ) do
-    instance =
-      Enum.find(instances, fn
-        %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
-          true
-
-        _ ->
-          false
-      end)
-
-    event =
-      case instance do
-        %Instance{health: ^health} ->
-          nil
-
-        %Instance{host_id: host_id, instance_number: instance_number} ->
-          %ApplicationInstanceHealthChanged{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number,
-            health: health
-          }
-
-        nil ->
-          %ApplicationInstanceRegistered{
-            sap_system_id: sap_system_id,
-            sid: sid,
-            instance_number: instance_number,
-            instance_hostname: instance_hostname,
-            features: features,
-            http_port: http_port,
-            https_port: https_port,
-            start_priority: start_priority,
-            host_id: host_id,
-            health: health
-          }
-      end
-
     sap_system
     |> Multi.new()
-    |> Multi.execute(fn _ -> event end)
+    |> Multi.execute(fn sap_system ->
+      emit_application_instance_registered_or_application_instance_health_changed(
+        sap_system,
+        instance
+      )
+    end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
@@ -831,5 +725,87 @@ defmodule Trento.Domain.SapSystem do
 
   defp abap_and_messageserver?(features) do
     String.contains?(features, "ABAP") and String.contains?(features, "MESSAGESERVER")
+  end
+
+  defp maybe_emit_sap_system_registered_event(
+         %SapSystem{application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           tenant: tenant,
+           db_host: db_host,
+           features: features,
+           health: health
+         }
+       ) do
+    instances_features =
+      instances
+      |> Enum.map(& &1.features)
+      |> Kernel.++([features])
+      |> Enum.join()
+
+    if abap_and_messageserver?(instances_features) do
+      %SapSystemRegistered{
+        sap_system_id: sap_system_id,
+        sid: sid,
+        tenant: tenant,
+        db_host: db_host,
+        health: health
+      }
+    else
+      nil
+    end
+  end
+
+  defp emit_application_instance_registered_or_application_instance_health_changed(
+         %SapSystem{application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           instance_number: instance_number,
+           instance_hostname: instance_hostname,
+           features: features,
+           http_port: http_port,
+           https_port: https_port,
+           start_priority: start_priority,
+           host_id: host_id,
+           health: health
+         }
+       ) do
+    instance =
+      Enum.find(instances, fn
+        %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
+          true
+
+        _ ->
+          false
+      end)
+
+    case instance do
+      %Instance{health: ^health} ->
+        nil
+
+      %Instance{host_id: host_id, instance_number: instance_number} ->
+        %ApplicationInstanceHealthChanged{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          health: health
+        }
+
+      nil ->
+        %ApplicationInstanceRegistered{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: health
+        }
+    end
   end
 end
