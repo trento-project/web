@@ -77,18 +77,18 @@ defmodule Trento.DeregistrationProcessManager do
 
   @doc """
     The Process Manager is started by the following events (provided the instance hasn't been started already):
-    - HostRegistered starts a Process Manager for a newly registered host.
-    - HostAddedToCluster starts a Process Manager when a Host gets added to a Cluster, as this event may arrive
-      prior to the HostRegistered event.
-    - DatabaseInstanceRegistered starts a Process Manager when an instance gets added to a SAP system, as this
-      event may arrive prior to the HostRegistered event.
-    - ApplicationInstanceRegistered starts a Process Manager when an instance gets added to a SAP system, as this
-      event may arrive prior to the HostRegistered event.
+    - HostRegistered for a newly registered host.
+    - HostAddedToCluster when a Host gets added to a Cluster, as this event may arrive prior to the
+      HostRegistered event.
+    - DatabaseInstanceRegistered when an instance gets added to a SAP system, as this event may arrive prior to the
+      HostRegistered event.
+    - ApplicationInstanceRegistered when an instance gets added to a SAP system, as this event may arrive prior to the
+      HostRegistered event.
     - "Rolled-Up" events:
-        - HostRolledUp starts the Process Manager as the HostRegistered event might have been rolled up.
-        - ClusterRolledUp starts the Process Manager as the HostAddedToCluster event might have been rolled up.
-        - SapSystemRolledUp starts the Process Manager as the DatabaseInstanceRegistered/ApplicationInstanceRegistered
-          events might have been rolled up.
+        - HostRolledUp as the HostRegistered event might have been rolled up.
+        - ClusterRolledUp as the HostAddedToCluster event might have been rolled up.
+        - SapSystemRolledUp as the DatabaseInstanceRegistered/ApplicationInstanceRegistered events might have been
+          rolled up.
 
     HostDeregistered stops a Process Manager for the Host identified by host_id.
   """
@@ -139,27 +139,6 @@ defmodule Trento.DeregistrationProcessManager do
   def handle(
         %DeregistrationProcessManager{
           cluster_id: cluster_id,
-          application_instances: [],
-          database_instances: []
-        },
-        %HostDeregistrationRequested{
-          host_id: host_id,
-          requested_at: requested_at
-        }
-      ) do
-    [
-      %DeregisterClusterHost{
-        host_id: host_id,
-        cluster_id: cluster_id,
-        deregistered_at: requested_at
-      },
-      %DeregisterHost{host_id: host_id, deregistered_at: requested_at}
-    ]
-  end
-
-  def handle(
-        %DeregistrationProcessManager{
-          cluster_id: cluster_id,
           database_instances: database_instances,
           application_instances: application_instances
         },
@@ -168,12 +147,7 @@ defmodule Trento.DeregistrationProcessManager do
           requested_at: requested_at
         }
       ) do
-    List.flatten([
-      %DeregisterClusterHost{
-        host_id: host_id,
-        cluster_id: cluster_id,
-        deregistered_at: requested_at
-      },
+    database_instances_deregister_commands =
       Enum.map(database_instances, fn %Instance{
                                         sap_system_id: sap_system_id,
                                         instance_number: instance_number
@@ -184,7 +158,9 @@ defmodule Trento.DeregistrationProcessManager do
           host_id: host_id,
           deregistered_at: requested_at
         }
-      end),
+      end)
+
+    application_instances_deregister_commands =
       Enum.map(application_instances, fn %Instance{
                                            sap_system_id: sap_system_id,
                                            instance_number: instance_number
@@ -195,9 +171,12 @@ defmodule Trento.DeregistrationProcessManager do
           host_id: host_id,
           deregistered_at: requested_at
         }
-      end),
-      %DeregisterHost{host_id: host_id, deregistered_at: requested_at}
-    ])
+      end)
+
+    database_instances_deregister_commands ++
+      application_instances_deregister_commands ++
+      maybe_deregister_cluster_host(cluster_id, host_id, requested_at) ++
+      [%DeregisterHost{host_id: host_id, deregistered_at: requested_at}]
   end
 
   def apply(%DeregistrationProcessManager{} = state, %HostAddedToCluster{
@@ -318,5 +297,17 @@ defmodule Trento.DeregistrationProcessManager do
             current_instance_number == instance_number
           end)
     }
+  end
+
+  defp maybe_deregister_cluster_host(nil, _, _), do: []
+
+  defp maybe_deregister_cluster_host(cluster_id, host_id, requested_at) do
+    [
+      %DeregisterClusterHost{
+        host_id: host_id,
+        cluster_id: cluster_id,
+        deregistered_at: requested_at
+      }
+    ]
   end
 end

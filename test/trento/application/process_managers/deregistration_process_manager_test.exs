@@ -84,18 +84,13 @@ defmodule Trento.DeregistrationProcessManagerTest do
     end
 
     test "should start process managers when SapSystemRolledUp arrives" do
-      db_host_id = UUID.uuid4()
-      app_host_id = UUID.uuid4()
+      [%{host_id: db_host_id_1}, %{host_id: db_host_id_2}] =
+        database_instances = build_list(2, :sap_system_instance)
 
-      database_instances = [
-        build(:sap_system_instance, host_id: db_host_id)
-      ]
+      [%{host_id: app_host_id_1}, %{host_id: app_host_id_2}] =
+        application_instances = build_list(2, :sap_system_instance)
 
-      application_instances = [
-        build(:sap_system_instance, host_id: app_host_id)
-      ]
-
-      assert {:start, [^db_host_id, ^app_host_id]} =
+      assert {:start, [^db_host_id_1, ^db_host_id_2, ^app_host_id_1, ^app_host_id_2]} =
                DeregistrationProcessManager.interested?(%SapSystemRolledUp{
                  snapshot: %SapSystem{
                    database: %SapSystem.Database{
@@ -257,13 +252,16 @@ defmodule Trento.DeregistrationProcessManagerTest do
       assert %DeregistrationProcessManager{cluster_id: ^cluster_id} = state
     end
 
-    test "should update state after when SapSystemRolledUp event received" do
+    test "should update state when SapSystemRolledUp event received" do
       sap_system_id = UUID.uuid4()
-      database_instance_number = "00"
-      application_instance_number = "01"
+      instance_number = "00"
+      database_instance_number = "01"
+      application_instance_number = "02"
 
       initial_state = %DeregistrationProcessManager{
-        database_instances: [],
+        database_instances: [
+          %Instance{sap_system_id: sap_system_id, instance_number: instance_number}
+        ],
         application_instances: []
       }
 
@@ -275,6 +273,9 @@ defmodule Trento.DeregistrationProcessManagerTest do
               instances: [
                 %SapSystem.Instance{
                   instance_number: database_instance_number
+                },
+                %SapSystem.Instance{
+                  instance_number: instance_number
                 }
               ]
             },
@@ -298,6 +299,10 @@ defmodule Trento.DeregistrationProcessManagerTest do
                  %Instance{
                    sap_system_id: ^sap_system_id,
                    instance_number: ^database_instance_number
+                 },
+                 %Instance{
+                   sap_system_id: ^sap_system_id,
+                   instance_number: ^instance_number
                  }
                ],
                application_instances: [
@@ -322,6 +327,46 @@ defmodule Trento.DeregistrationProcessManagerTest do
 
       assert ^initial_state = state
       assert %DeregisterHost{host_id: ^host_id, deregistered_at: ^requested_at} = commands
+    end
+
+    test "should dispatch commands when HostDeregistrationRequested is emitted and the host does not belong to a cluster and has instances associated" do
+      host_id = UUID.uuid4()
+      sap_system_id = UUID.uuid4()
+      db_instance_number = "00"
+      app_instance_number = "01"
+      requested_at = DateTime.utc_now()
+
+      initial_state = %DeregistrationProcessManager{
+        cluster_id: nil,
+        database_instances: [
+          %Instance{sap_system_id: sap_system_id, instance_number: db_instance_number}
+        ],
+        application_instances: [
+          %Instance{sap_system_id: sap_system_id, instance_number: app_instance_number}
+        ]
+      }
+
+      events = [%HostDeregistrationRequested{host_id: host_id, requested_at: requested_at}]
+
+      {commands, state} = reduce_events(events, initial_state)
+
+      assert ^initial_state = state
+
+      assert [
+               %DeregisterDatabaseInstance{
+                 sap_system_id: ^sap_system_id,
+                 instance_number: ^db_instance_number,
+                 host_id: ^host_id,
+                 deregistered_at: ^requested_at
+               },
+               %DeregisterApplicationInstance{
+                 sap_system_id: ^sap_system_id,
+                 instance_number: ^app_instance_number,
+                 host_id: ^host_id,
+                 deregistered_at: ^requested_at
+               },
+               %DeregisterHost{host_id: ^host_id, deregistered_at: ^requested_at}
+             ] = commands
     end
 
     test "should dispatch commands when HostDeregistrationRequested is emitted and the host belongs to a cluster and has no instances associated" do
@@ -376,11 +421,6 @@ defmodule Trento.DeregistrationProcessManagerTest do
       assert ^initial_state = state
 
       assert [
-               %DeregisterClusterHost{
-                 host_id: ^host_id,
-                 cluster_id: ^cluster_id,
-                 deregistered_at: ^requested_at
-               },
                %DeregisterDatabaseInstance{
                  sap_system_id: ^sap_system_id,
                  instance_number: ^db_instance_number,
@@ -391,6 +431,11 @@ defmodule Trento.DeregistrationProcessManagerTest do
                  sap_system_id: ^sap_system_id,
                  instance_number: ^app_instance_number,
                  host_id: ^host_id,
+                 deregistered_at: ^requested_at
+               },
+               %DeregisterClusterHost{
+                 host_id: ^host_id,
+                 cluster_id: ^cluster_id,
                  deregistered_at: ^requested_at
                },
                %DeregisterHost{host_id: ^host_id, deregistered_at: ^requested_at}

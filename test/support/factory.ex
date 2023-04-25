@@ -356,7 +356,7 @@ defmodule Trento.Factory do
       instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      health: :passing
+      health: Health.passing()
     }
   end
 
