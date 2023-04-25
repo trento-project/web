@@ -716,7 +716,7 @@ defmodule Trento.Domain.SapSystem do
     has_messageserver? =
       Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
 
-    unless has_abap? and has_messageserver? and sid != nil do
+    unless has_abap? and has_messageserver? and !is_nil(sid) do
       %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end
