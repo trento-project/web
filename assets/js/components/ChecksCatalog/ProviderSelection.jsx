@@ -3,9 +3,11 @@ import React, { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
-function ProviderSelection({ providers, selected, onChange }) {
+import classNames from 'classnames';
+
+function ProviderSelection({ className, providers, selected, onChange }) {
   return (
-    <div className="w-72 pb-4">
+    <div className={classNames("w-72 pb-4", className)}>
       <Listbox value={selected} onChange={onChange}>
         <div className="relative mt-1">
           <Listbox.Button className="cloud-provider-selection-dropdown relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">

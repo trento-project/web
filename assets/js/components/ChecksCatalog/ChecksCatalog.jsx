@@ -44,7 +44,15 @@ function ChecksCatalog() {
   }, [dispatch, selectedProvider]);
   return (
     <>
-      <PageHeader className="font-bold">Checks catalog</PageHeader>
+      <div className="flex">
+        <PageHeader className="font-bold">Checks catalog</PageHeader>
+        <ProviderSelection
+          className="ml-auto"
+          providers={providerLabels}
+          selected={selectedProvider}
+          onChange={setProviderSelected}
+        />
+      </div>
       <CatalogContainer
         onRefresh={() =>
           dispatch(
@@ -58,11 +66,6 @@ function ChecksCatalog() {
         catalogError={catalogError}
         loading={loading}
       >
-        <ProviderSelection
-          providers={providerLabels}
-          selected={selectedProvider}
-          onChange={setProviderSelected}
-        />
         <div>
           {Object.entries(groupBy(catalogData, 'group')).map(
             ([group, checks], idx) => (
