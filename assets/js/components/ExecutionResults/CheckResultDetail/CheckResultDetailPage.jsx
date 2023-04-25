@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/actions/catalog';
+
+import LoadingBox from '@components/LoadingBox';
+import { isValidTargetType } from '@lib/model';
+
 import {
   updateLastExecution,
   executionRequested,
@@ -15,6 +19,7 @@ import { getHostID } from '@state/selectors/cluster';
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
+import NotFound from '../../NotFound/NotFound';
 import {
   getCheckDescription,
   getCheckExpectations,
@@ -25,8 +30,12 @@ import CheckDetailHeader from './CheckDetailHeader';
 
 function CheckResultDetailPage() {
   const { clusterID, checkID, targetType, targetName } = useParams();
-
   const dispatch = useDispatch();
+  const navigateToUrl = useNavigate();
+
+  function onNavigate(path) {
+    navigateToUrl(path);
+  }
 
   const {
     clusterHosts,
@@ -38,7 +47,9 @@ function CheckResultDetailPage() {
       loading: executionLoading,
     },
   } = useSelector(getLastExecutionData(clusterID));
-
+  const clustersIDList = useSelector((state) =>
+    state.clustersList.clusters.map((clusterObj) => clusterObj.id)
+  );
   useEffect(() => {
     if (catalog.length === 0) {
       dispatch(updateCatalog());
@@ -48,8 +59,42 @@ function CheckResultDetailPage() {
     }
   }, []);
 
-  if (!cluster) {
-    return <div>Loading...</div>;
+  if (!clustersIDList.includes(clusterID) && clustersIDList.length > 0) {
+    return (
+      <NotFound
+        buttonText="Go back to cluster overview"
+        onNavigate={() => onNavigate('/clusters/')}
+      />
+    );
+  }
+
+  if (!cluster || !executionData || executionData.status === 'running') {
+    return (
+      <div>
+        <LoadingBox text="Loading..." />
+      </div>
+    );
+  }
+
+  const targetHost = isTargetHost(targetType);
+  const validClusterID = cluster.id === clusterID;
+  const validTarget =
+    isValidTargetType(targetType) &&
+    (targetHost
+      ? clusterHosts.some(({ hostname }) => hostname === targetName)
+      : targetName === cluster.name);
+
+  const validCheckID = executionData?.check_results.some(
+    ({ check_id }) => check_id === checkID
+  );
+
+  if (!validClusterID || !validTarget || !validCheckID) {
+    return (
+      <NotFound
+        buttonText="Go back to last execution"
+        onNavigate={() => onNavigate(`/clusters/${clusterID}/executions/last`)}
+      />
+    );
   }
 
   const checkDescription = getCheckDescription(catalog, checkID);
