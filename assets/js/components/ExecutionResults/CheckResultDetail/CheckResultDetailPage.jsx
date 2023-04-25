@@ -17,9 +17,10 @@ import {
 } from '@state/lastExecutions';
 import { getHostID } from '@state/selectors/cluster';
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
+import NotFound from '@components/NotFound/NotFound';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
-import NotFound from '../../NotFound/NotFound';
+
 import {
   getCheckDescription,
   getCheckExpectations,

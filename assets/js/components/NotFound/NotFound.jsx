@@ -1,11 +1,8 @@
 import React from 'react';
 import Button from '@components/Button';
 import TrentoLogo from '@static/trento-icon.png';
-import { useNavigate } from 'react-router-dom';
 
 function NotFound({ onNavigate, buttonText = 'Go back home' }) {
-  const navigate = useNavigate();
-
   return (
     <main className="bg-white relative overflow-hidden h-screen">
       <div className="container mx-auto h-screen pt-32 md:pt-0 px-6 z-10 flex items-center justify-between">
@@ -18,7 +15,13 @@ function NotFound({ onNavigate, buttonText = 'Go back home' }) {
             </h1>
             <Button
               className="px-2 py-2 w-36 mt-16"
-              onClick={() => (onNavigate ? onNavigate() : navigate('/'))}
+              onClick={() => {
+                if (onNavigate) {
+                  onNavigate();
+                } else {
+                  window.location.href = '/';
+                }
+              }}
             >
               {buttonText}
             </Button>

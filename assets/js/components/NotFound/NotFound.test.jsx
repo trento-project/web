@@ -12,7 +12,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('NotFound', () => {
-  it('should render correctly', () => {
+  it('should render NotFound component correctly with default parameter values', () => {
     const navigate = jest.fn();
     useNavigate.mockReturnValue(navigate);
     renderWithRouter(<NotFound />);
@@ -21,14 +21,13 @@ describe('NotFound', () => {
       screen.getByText(/Sorry,.*the page is in another castle/)
     ).toBeTruthy();
 
-    const backButton = screen.getByText('Go back home');
-    expect(backButton).toBeTruthy();
+    expect(screen.getByText('Go back home')).toBeTruthy();
 
-    fireEvent.click(backButton);
-    expect(navigate).toHaveBeenCalledWith('/');
+    fireEvent.click(screen.getByText('Go back home'));
+    expect(window.location.pathname).toEqual('/');
   });
 
-  it('should render correctly with passed props', () => {
+  it('should render NotFound correctly with passed props', () => {
     const url = faker.internet.url();
     const buttonText = faker.lorem.word();
     const navigate = jest.fn();
@@ -40,10 +39,9 @@ describe('NotFound', () => {
       screen.getByText(/Sorry,.*the page is in another castle/)
     ).toBeTruthy();
 
-    const backButton = screen.getByText(buttonText);
-    expect(backButton).toBeTruthy();
+    expect(screen.getByText(buttonText)).toBeTruthy();
 
-    fireEvent.click(backButton);
+    fireEvent.click(screen.getByText(buttonText));
     expect(navigate).toHaveBeenCalledWith(url);
   });
 });
