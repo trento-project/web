@@ -19,3 +19,16 @@ export function Selection() {
     />
   );
 }
+
+export function SelectionWithAll() {
+  const providersWithAll = ['all'].concat(providers);
+  const [selected, setSelected] = useState('all');
+
+  return (
+    <ProviderSelection
+      providers={providersWithAll}
+      selected={selected}
+      onChange={setSelected}
+    />
+  );
+}

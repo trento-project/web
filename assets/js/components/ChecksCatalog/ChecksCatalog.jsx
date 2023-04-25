@@ -6,7 +6,10 @@ import { groupBy } from '@lib/lists';
 
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import { providerData } from '@components/ProviderLabel/ProviderLabel';
+import {
+  providerData,
+  checkProviderExists,
+} from '@components/ProviderLabel/ProviderLabel';
 import PageHeader from '@components/PageHeader';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
@@ -19,7 +22,8 @@ const updatedProvider = {
   ...providerData,
 };
 
-const checkProviderExists = (provider) => providerData[provider] ? provider : null;
+const buildUpdateCatalogPayload = (provider) =>
+  checkProviderExists(provider) ? { provider } : {};
 
 // eslint-disable-next-line import/prefer-default-export
 function ChecksCatalog() {
@@ -33,7 +37,7 @@ function ChecksCatalog() {
   } = useSelector(getCatalog());
 
   useEffect(() => {
-    dispatch(updateCatalog({ provider: checkProviderExists(selectedProvider) }));
+    dispatch(updateCatalog(buildUpdateCatalogPayload(selectedProvider)));
   }, [dispatch, selectedProvider]);
   return (
     <>
@@ -48,7 +52,7 @@ function ChecksCatalog() {
       </div>
       <CatalogContainer
         onRefresh={() =>
-          dispatch(updateCatalog({ provider: checkProviderExists(selectedProvider) }))
+          dispatch(updateCatalog(buildUpdateCatalogPayload(selectedProvider)))
         }
         isCatalogEmpty={catalogData.length === 0}
         catalogError={catalogError}

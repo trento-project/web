@@ -36,6 +36,9 @@ export const providerData = {
   },
 };
 
+export const checkProviderExists = (provider) =>
+  providerData[provider] ? provider : null;
+
 function ProviderLabel({ provider }) {
   return (
     <span>
