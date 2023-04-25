@@ -6,22 +6,20 @@ import { groupBy } from '@lib/lists';
 
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import {
-  providerData,
-  getLabels,
-  getProviderByLabel,
-} from '@components/ProviderLabel/ProviderLabel';
+import { providerData } from '@components/ProviderLabel/ProviderLabel';
 import PageHeader from '@components/PageHeader';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 import ProviderSelection from './ProviderSelection';
 
-const ALL_FILTER = 'All';
+const ALL_FILTER = 'all';
+const ALL_FILTER_TEXT = 'All';
 const updatedProvider = {
-  default: { label: ALL_FILTER },
+  [ALL_FILTER]: { label: ALL_FILTER_TEXT },
   ...providerData,
 };
-const providerLabels = getLabels(updatedProvider);
+
+const checkProviderExists = (provider) => providerData[provider] ? provider : null;
 
 // eslint-disable-next-line import/prefer-default-export
 function ChecksCatalog() {
@@ -35,12 +33,7 @@ function ChecksCatalog() {
   } = useSelector(getCatalog());
 
   useEffect(() => {
-    const apiParams =
-      selectedProvider === ALL_FILTER
-        ? {}
-        : { provider: getProviderByLabel(updatedProvider, selectedProvider) };
-
-    dispatch(updateCatalog(apiParams));
+    dispatch(updateCatalog({ provider: checkProviderExists(selectedProvider) }));
   }, [dispatch, selectedProvider]);
   return (
     <>
@@ -48,19 +41,14 @@ function ChecksCatalog() {
         <PageHeader className="font-bold">Checks catalog</PageHeader>
         <ProviderSelection
           className="ml-auto"
-          providers={providerLabels}
+          providers={Object.keys(updatedProvider)}
           selected={selectedProvider}
           onChange={setProviderSelected}
         />
       </div>
       <CatalogContainer
         onRefresh={() =>
-          dispatch(
-            updateCatalog({
-              provider:
-                getProviderByLabel(providerData, selectedProvider) || null,
-            })
-          )
+          dispatch(updateCatalog({ provider: checkProviderExists(selectedProvider) }))
         }
         isCatalogEmpty={catalogData.length === 0}
         catalogError={catalogError}
