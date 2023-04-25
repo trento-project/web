@@ -84,7 +84,7 @@ defmodule Trento.Domain.SapSystem do
 
   deftype do
     field :sap_system_id, Ecto.UUID
-    field :sid, :string
+    field :sid, :string, default: nil
     field :health, Ecto.Enum, values: Health.values()
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
@@ -318,7 +318,7 @@ defmodule Trento.Domain.SapSystem do
       }
     end)
     |> Multi.execute(fn sap_system ->
-      maybe_emit_sap_system_deregistration_events(
+      maybe_emit_sap_system_deregistered_event(
         sap_system,
         deregistered_at
       )
@@ -701,30 +701,23 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-  defp maybe_emit_sap_system_deregistration_events(
+  defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{
            sap_system_id: sap_system_id,
+           sid: sid,
            application: %Application{
              instances: instances
            }
          },
          deregistered_at
        ) do
-    has_abap? = Enum.any?(instances, fn instance -> instance.features =~ "ABAP" end)
+    has_abap? = Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
 
     has_messageserver? =
-      Enum.any?(instances, fn instance -> instance.features =~ "MESSAGESERVER" end)
+      Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
 
-    unless has_abap? and has_messageserver? do
-      Enum.map(instances, fn %Instance{instance_number: instance_number, host_id: host_id} ->
-        %ApplicationInstanceDeregistered{
-          sap_system_id: sap_system_id,
-          instance_number: instance_number,
-          host_id: host_id,
-          deregistered_at: deregistered_at
-        }
-      end) ++
-        [%SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}]
+    unless has_abap? and has_messageserver? and sid != nil do
+      %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end
 

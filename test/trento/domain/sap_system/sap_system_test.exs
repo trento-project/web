@@ -1339,23 +1339,84 @@ defmodule Trento.SapSystemTest do
             instance_number: abap_instance_number,
             deregistered_at: deregistered_at
           },
-          %ApplicationInstanceDeregistered{
-            sap_system_id: sap_system_id,
-            host_id: enqrep_host_id,
-            instance_number: enqrep_server_instance_number,
-            deregistered_at: deregistered_at
-          },
-          %ApplicationInstanceDeregistered{
-            sap_system_id: sap_system_id,
-            host_id: message_server_host_id,
-            instance_number: message_server_instance_number,
-            deregistered_at: deregistered_at
-          },
           %SapSystemDeregistered{
             sap_system_id: sap_system_id,
             deregistered_at: deregistered_at
           }
         ],
+        fn sap_system ->
+          assert %SapSystem{
+                   database: %Database{
+                     instances: [
+                       %Instance{
+                         instance_number: ^database_instance_number,
+                         host_id: ^database_host_id
+                       }
+                     ]
+                   },
+                   application: %Application{
+                     instances: [
+                       %Instance{
+                         instance_number: ^enqrep_server_instance_number,
+                         host_id: ^enqrep_host_id
+                       },
+                       %Instance{
+                         instance_number: ^message_server_instance_number,
+                         host_id: ^message_server_host_id
+                       }
+                     ]
+                   },
+                   deregistered_at: ^deregistered_at
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should deregister just a Message Server from a not-fully-registered SAP system" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      database_host_id = UUID.uuid4()
+      message_server_host_id = UUID.uuid4()
+
+      database_instance_number = "00"
+      message_server_instance_number = "01"
+
+      assert_events_and_state(
+        [
+          build(
+            :database_registered_event,
+            sid: nil,
+            sap_system_id: sap_system_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: nil,
+            host_id: database_host_id,
+            instance_number: database_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: nil,
+            features: "MESSAGESERVER|ENQUE",
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number
+          )
+        ],
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          deregistered_at: deregistered_at
+        },
+        %ApplicationInstanceDeregistered{
+          sap_system_id: sap_system_id,
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          deregistered_at: deregistered_at
+        },
         fn sap_system ->
           assert %SapSystem{
                    database: %Database{
@@ -1440,18 +1501,6 @@ defmodule Trento.SapSystemTest do
             instance_number: message_server_instance_number,
             deregistered_at: deregistered_at
           },
-          %ApplicationInstanceDeregistered{
-            sap_system_id: sap_system_id,
-            host_id: enqrep_host_id,
-            instance_number: enqrep_server_instance_number,
-            deregistered_at: deregistered_at
-          },
-          %ApplicationInstanceDeregistered{
-            sap_system_id: sap_system_id,
-            host_id: abap_host_id,
-            instance_number: abap_instance_number,
-            deregistered_at: deregistered_at
-          },
           %SapSystemDeregistered{
             sap_system_id: sap_system_id,
             deregistered_at: deregistered_at
@@ -1468,7 +1517,16 @@ defmodule Trento.SapSystemTest do
                      ]
                    },
                    application: %Application{
-                     instances: []
+                     instances: [
+                       %Instance{
+                         host_id: ^enqrep_host_id,
+                         instance_number: ^enqrep_server_instance_number
+                       },
+                       %Instance{
+                         host_id: ^abap_host_id,
+                         instance_number: ^abap_instance_number
+                       }
+                     ]
                    },
                    deregistered_at: ^deregistered_at
                  } = sap_system
