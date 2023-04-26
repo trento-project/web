@@ -22,19 +22,6 @@ defmodule Trento.DeregistrationProcessManager do
     end
   end
 
-  defmodule Instance do
-    @moduledoc """
-    An application or database instance and which SAP System it belongs to.
-    """
-    @required_fields :all
-    use Trento.Type
-
-    deftype do
-      field :sap_system_id, Ecto.UUID
-      field :instance_number, :string
-    end
-  end
-
   @required_fields :all
 
   use Trento.Type
