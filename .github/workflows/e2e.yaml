@@ -67,7 +67,7 @@ jobs:
       - name: Checkout ansible repo        
         uses: actions/checkout@v3
         with:
-          repository: CDimonaco/trento-ansible
+          repository: trento-project/ansible
           path: ansible
       - name: Add pipx_bin to path        
         if: ${{ env.ACT }}
@@ -89,6 +89,14 @@ jobs:
                   hosts:
                     server:
                       ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }} 
+                postgres-hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
+                rabbitmq-hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
                 agents:
                   hosts:
                     hana01:
