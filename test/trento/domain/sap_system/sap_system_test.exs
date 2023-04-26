@@ -379,13 +379,6 @@ defmodule Trento.SapSystemTest do
           health: :passing
         }),
         [
-          %SapSystemRegistered{
-            sap_system_id: sap_system_id,
-            sid: sid,
-            db_host: db_host,
-            tenant: tenant,
-            health: :passing
-          },
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
@@ -396,6 +389,13 @@ defmodule Trento.SapSystemTest do
             https_port: https_port,
             start_priority: start_priority,
             host_id: host_id,
+            health: :passing
+          },
+          %SapSystemRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            db_host: db_host,
+            tenant: tenant,
             health: :passing
           }
         ],
@@ -469,13 +469,6 @@ defmodule Trento.SapSystemTest do
           health: :passing
         }),
         [
-          %SapSystemRegistered{
-            sap_system_id: sap_system_id,
-            sid: sid,
-            db_host: db_host,
-            tenant: tenant,
-            health: :passing
-          },
           %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: sid,
@@ -486,6 +479,13 @@ defmodule Trento.SapSystemTest do
             https_port: https_port,
             start_priority: start_priority,
             host_id: host_id,
+            health: :passing
+          },
+          %SapSystemRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            db_host: db_host,
+            tenant: tenant,
             health: :passing
           }
         ],
@@ -1031,13 +1031,6 @@ defmodule Trento.SapSystemTest do
           health: :critical
         ),
         [
-          %SapSystemRegistered{
-            sap_system_id: sap_system_id,
-            sid: sid,
-            db_host: db_host,
-            tenant: tenant,
-            health: :critical
-          },
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
@@ -1046,7 +1039,14 @@ defmodule Trento.SapSystemTest do
             features: features,
             host_id: host_id,
             health: :critical
-          )
+          ),
+          %SapSystemRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            db_host: db_host,
+            tenant: tenant,
+            health: :critical
+          }
         ],
         fn state ->
           assert %SapSystem{

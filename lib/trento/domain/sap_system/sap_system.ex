@@ -220,35 +220,12 @@ defmodule Trento.Domain.SapSystem do
   # If the instance is not one of MESSAGESERVER or ABAP we discard.
   # Otherwise if the instance we want register together with already present instances
   # have one MESSAGESERVER and one ABAP, we register the instance and the sap system
-  def execute(
-        %SapSystem{sid: nil, application: %Application{}} = sap_system,
-        %RegisterApplicationInstance{
-          features: features
-        } = instance
-      ) do
-    if abap_or_messageserver?(features) do
-      sap_system
-      |> Multi.new()
-      |> Multi.execute(fn sap_system ->
-        maybe_emit_sap_system_registered_event(sap_system, instance)
-      end)
-      |> Multi.execute(fn sap_system ->
-        emit_application_instance_registered_or_application_instance_health_changed(
-          sap_system,
-          instance
-        )
-      end)
-      |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
-    else
-      {:error, :sap_system_not_registered}
-    end
-  end
-
+  # OR
   # When a RegisterApplicationInstance command is received by an existing SAP System aggregate,
   # the SAP System aggregate registers the Application instance if it is not already registered
   # and updates the health when needed.
   def execute(
-        %SapSystem{application: %Application{instances: _instances}} = sap_system,
+        %SapSystem{application: %Application{}} = sap_system,
         %RegisterApplicationInstance{} = instance
       ) do
     sap_system
@@ -258,6 +235,9 @@ defmodule Trento.Domain.SapSystem do
         sap_system,
         instance
       )
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_sap_system_registered_event(sap_system, instance)
     end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
@@ -732,7 +712,7 @@ defmodule Trento.Domain.SapSystem do
   end
 
   defp maybe_emit_sap_system_registered_event(
-         %SapSystem{application: %Application{instances: instances}},
+         %SapSystem{sid: nil, application: %Application{instances: instances}},
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
            sid: sid,
@@ -760,6 +740,12 @@ defmodule Trento.Domain.SapSystem do
       nil
     end
   end
+
+  defp maybe_emit_sap_system_registered_event(
+         %SapSystem{},
+         %RegisterApplicationInstance{}
+       ),
+       do: nil
 
   defp emit_application_instance_registered_or_application_instance_health_changed(
          %SapSystem{application: %Application{instances: instances}},
