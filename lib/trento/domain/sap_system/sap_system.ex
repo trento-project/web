@@ -217,9 +217,9 @@ defmodule Trento.Domain.SapSystem do
   end
 
   # Sap system not registered, application already present
-  # If the istance is not one of MESSAGESERVER or ABAP we discard.
-  # Otherwise if the istance we want register together with already present istances
-  # have one MESSAGESERVER and one ABAP, we register the istance and the sap system
+  # If the instance is not one of MESSAGESERVER or ABAP we discard.
+  # Otherwise if the instance we want register together with already present instances
+  # have one MESSAGESERVER and one ABAP, we register the instance and the sap system
   def execute(
         %SapSystem{sid: nil, application: %Application{}} = sap_system,
         %RegisterApplicationInstance{

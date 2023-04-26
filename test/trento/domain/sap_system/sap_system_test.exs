@@ -557,7 +557,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should app an application istance to a non registered sap system when the instance is ABAP without complete a sap system registration" do
+    test "should app an application instance to a non registered sap system when the instance is ABAP without complete a sap system registration" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
@@ -632,7 +632,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should app an application istance to a non registered sap system when the instance is MESSAGESERVER without complete a sap system registration" do
+    test "should app an application instance to a non registered sap system when the instance is MESSAGESERVER without complete a sap system registration" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
