@@ -1419,6 +1419,7 @@ defmodule Trento.SapSystemTest do
         },
         fn sap_system ->
           assert %SapSystem{
+                   sid: nil,
                    database: %Database{
                      instances: [
                        %Instance{
@@ -1430,7 +1431,7 @@ defmodule Trento.SapSystemTest do
                    application: %Application{
                      instances: []
                    },
-                   deregistered_at: ^deregistered_at
+                   deregistered_at: nil
                  } = sap_system
         end
       )
