@@ -22,8 +22,10 @@ const updatedProvider = {
   ...providerData,
 };
 
-const buildUpdateCatalogPayload = (provider) =>
-  checkProviderExists(provider) ? { provider } : {};
+const buildUpdateCatalogAction = (provider) => {
+  const payload = checkProviderExists(provider) ? { provider } : {};
+  return updateCatalog(payload);
+};
 
 // eslint-disable-next-line import/prefer-default-export
 function ChecksCatalog() {
@@ -37,7 +39,7 @@ function ChecksCatalog() {
   } = useSelector(getCatalog());
 
   useEffect(() => {
-    dispatch(updateCatalog(buildUpdateCatalogPayload(selectedProvider)));
+    dispatch(buildUpdateCatalogAction(selectedProvider));
   }, [dispatch, selectedProvider]);
   return (
     <>
@@ -51,9 +53,7 @@ function ChecksCatalog() {
         />
       </div>
       <CatalogContainer
-        onRefresh={() =>
-          dispatch(updateCatalog(buildUpdateCatalogPayload(selectedProvider)))
-        }
+        onRefresh={() => dispatch(buildUpdateCatalogAction(selectedProvider))}
         isCatalogEmpty={catalogData.length === 0}
         catalogError={catalogError}
         loading={loading}
