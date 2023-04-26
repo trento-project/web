@@ -5,9 +5,11 @@ defmodule Trento.Domain.SapSystem do
   **The HANA database is the only supported database type.**
 
   In order to have a fully registered SAP system, both the database and application
-  composing this system must be registered. And each of the two layers might be composed
-  by multiple instances altogether. This means that a SAP system aggregate state can have
-  multiple application/database instances.
+  composing this system must be registered.
+  The minimum set of application features is ABAP and MESSAGESERVER, otherwise, a complete Sap system cannot exist.
+  And each of the two layers might be composed by multiple instances altogether.
+  This means that a SAP system aggregate state can have multiple application/database instances.
+
 
   ## SAP instance
 
@@ -33,9 +35,13 @@ defmodule Trento.Domain.SapSystem do
      At this point, the registration process starts and the database is registered.
      Any application instance discovery message without an associated database is ignored.
   2. New database instances/updates coming from already registered database instances are registered/applied.
-  3. A SAP system discovery with a new application instance is received, and the database associated to
-     this application exists, the application instance is registered together with the complete
-     SAP system. The SAP system is fully registered now.
+  3. When a SAP system discovery with a new application instance is received, and the database associated to
+     this application exists:
+      - If the application instance does not have ABAP or MESSAGESERVER as features, will be rejected
+      - If the application instance has ABAP or MESSAGESERVER as features, and is already present an ABAP or MESSAGESERVER application instance,
+        the application instance is registered together with the complete SAP system. The SAP system is fully registered now.
+      - If the application instance has ABAP or MESSAGESERVER as features, but there are no other instances with ABAP or MESSAGESERVER as features,
+        the application instance is registered without the complete sap system registration.
   4. New application instances/updates coming from already registered application instances are registered/applied.
 
   Find additional information about the application/database association in `Trento.Domain.Commands.RegisterApplicationInstance`.
@@ -206,7 +212,6 @@ defmodule Trento.Domain.SapSystem do
         health: health
       }
     else
-      # TODO: Check error
       {:error, :sap_system_not_registered}
     end
   end
@@ -235,7 +240,6 @@ defmodule Trento.Domain.SapSystem do
       end)
       |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
     else
-      # TODO: Check error
       {:error, :sap_system_not_registered}
     end
   end
