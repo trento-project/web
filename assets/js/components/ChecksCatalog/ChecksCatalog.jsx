@@ -8,20 +8,24 @@ import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
 import {
   providerData,
-  getLabels,
-  getProviderByLabel,
+  checkProviderExists,
 } from '@components/ProviderLabel/ProviderLabel';
 import PageHeader from '@components/PageHeader';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 import ProviderSelection from './ProviderSelection';
 
-const ALL_FILTER = 'All';
+const ALL_FILTER = 'all';
+const ALL_FILTER_TEXT = 'All';
 const updatedProvider = {
-  default: { label: ALL_FILTER },
+  [ALL_FILTER]: { label: ALL_FILTER_TEXT },
   ...providerData,
 };
-const providerLabels = getLabels(updatedProvider);
+
+const buildUpdateCatalogAction = (provider) => {
+  const payload = checkProviderExists(provider) ? { provider } : {};
+  return updateCatalog(payload);
+};
 
 // eslint-disable-next-line import/prefer-default-export
 function ChecksCatalog() {
@@ -35,34 +39,25 @@ function ChecksCatalog() {
   } = useSelector(getCatalog());
 
   useEffect(() => {
-    const apiParams =
-      selectedProvider === ALL_FILTER
-        ? {}
-        : { provider: getProviderByLabel(updatedProvider, selectedProvider) };
-
-    dispatch(updateCatalog(apiParams));
+    dispatch(buildUpdateCatalogAction(selectedProvider));
   }, [dispatch, selectedProvider]);
   return (
     <>
-      <PageHeader className="font-bold">Checks catalog</PageHeader>
+      <div className="flex">
+        <PageHeader className="font-bold">Checks catalog</PageHeader>
+        <ProviderSelection
+          className="ml-auto"
+          providers={Object.keys(updatedProvider)}
+          selected={selectedProvider}
+          onChange={setProviderSelected}
+        />
+      </div>
       <CatalogContainer
-        onRefresh={() =>
-          dispatch(
-            updateCatalog({
-              provider:
-                getProviderByLabel(providerData, selectedProvider) || null,
-            })
-          )
-        }
+        onRefresh={() => dispatch(buildUpdateCatalogAction(selectedProvider))}
         isCatalogEmpty={catalogData.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
-        <ProviderSelection
-          providers={providerLabels}
-          selected={selectedProvider}
-          onChange={setProviderSelected}
-        />
         <div>
           {Object.entries(groupBy(catalogData, 'group')).map(
             ([group, checks], idx) => (
