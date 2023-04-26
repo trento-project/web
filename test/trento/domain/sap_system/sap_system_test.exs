@@ -512,52 +512,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should not register an application instance to a not registered sap system if the instance is not an ABAP or MESSAGESERVER instance" do
-      sap_system_id = Faker.UUID.v4()
-      sid = Faker.StarWars.planet()
-      db_host = Faker.Internet.ip_v4_address()
-      tenant = Faker.Beer.style()
-      instance_hostname = Faker.Airports.iata()
-      http_port = 80
-      https_port = 443
-      start_priority = "0.9"
-      host_id = Faker.UUID.v4()
-
-      initial_events = [
-        build(
-          :database_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid
-        ),
-        build(
-          :database_instance_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid,
-          tenant: tenant
-        )
-      ]
-
-      assert_error(
-        initial_events,
-        RegisterApplicationInstance.new!(%{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          db_host: db_host,
-          tenant: tenant,
-          instance_number: "00",
-          instance_hostname: instance_hostname,
-          features: "HDB_WORKER",
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          health: :passing
-        }),
-        {:error, :sap_system_not_registered}
-      )
-    end
-
-    test "should app an application instance to a non registered sap system when the instance is ABAP without complete a sap system registration" do
+    test "should add an application instance to a non registered sap system when the instance is ABAP without complete a sap system registration" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
@@ -610,7 +565,8 @@ defmodule Trento.SapSystemTest do
             start_priority: start_priority,
             host_id: host_id,
             health: :passing
-          }
+          },
+          %SapSystemHealthChanged{health: :passing}
         ],
         fn state ->
           assert %SapSystem{
@@ -685,7 +641,8 @@ defmodule Trento.SapSystemTest do
             start_priority: start_priority,
             host_id: host_id,
             health: :passing
-          }
+          },
+          %SapSystemHealthChanged{health: :passing}
         ],
         fn state ->
           assert %SapSystem{

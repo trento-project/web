@@ -180,42 +180,6 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
-  # Sap system not registered, no applications.
-  # Register a new application only if it's messageserver or abap
-  # Otherwise reject
-  def execute(
-        %SapSystem{sid: nil, application: nil},
-        %RegisterApplicationInstance{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          instance_number: instance_number,
-          instance_hostname: instance_hostname,
-          features: features,
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          health: health
-        }
-      ) do
-    if abap_or_messageserver?(features) do
-      %ApplicationInstanceRegistered{
-        sap_system_id: sap_system_id,
-        sid: sid,
-        instance_number: instance_number,
-        instance_hostname: instance_hostname,
-        features: features,
-        http_port: http_port,
-        https_port: https_port,
-        start_priority: start_priority,
-        host_id: host_id,
-        health: health
-      }
-    else
-      {:error, :sap_system_not_registered}
-    end
-  end
-
   # Sap system not registered, application already present
   # If the instance is not one of MESSAGESERVER or ABAP we discard.
   # Otherwise if the instance we want register together with already present instances
@@ -225,7 +189,7 @@ defmodule Trento.Domain.SapSystem do
   # the SAP System aggregate registers the Application instance if it is not already registered
   # and updates the health when needed.
   def execute(
-        %SapSystem{application: %Application{}} = sap_system,
+        %SapSystem{} = sap_system,
         %RegisterApplicationInstance{} = instance
       ) do
     sap_system
@@ -746,6 +710,35 @@ defmodule Trento.Domain.SapSystem do
          %RegisterApplicationInstance{}
        ),
        do: nil
+
+  defp emit_application_instance_registered_or_application_instance_health_changed(
+         %SapSystem{application: nil},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           instance_number: instance_number,
+           instance_hostname: instance_hostname,
+           features: features,
+           http_port: http_port,
+           https_port: https_port,
+           start_priority: start_priority,
+           host_id: host_id,
+           health: health
+         }
+       ) do
+    %ApplicationInstanceRegistered{
+      sap_system_id: sap_system_id,
+      sid: sid,
+      instance_number: instance_number,
+      instance_hostname: instance_hostname,
+      features: features,
+      http_port: http_port,
+      https_port: https_port,
+      start_priority: start_priority,
+      host_id: host_id,
+      health: health
+    }
+  end
 
   defp emit_application_instance_registered_or_application_instance_health_changed(
          %SapSystem{application: %Application{instances: instances}},
