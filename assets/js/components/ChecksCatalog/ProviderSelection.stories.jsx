@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+
+import { providerData } from '@components/ProviderLabel/ProviderLabel';
+
 import ProviderSelection from './ProviderSelection';
 
-const providers = ['azure', 'aws', 'gcp'];
+const providers = Object.keys(providerData);
 
 export default {
   title: 'ProviderSelection',
