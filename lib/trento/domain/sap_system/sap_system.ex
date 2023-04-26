@@ -702,9 +702,14 @@ defmodule Trento.Domain.SapSystem do
   end
 
   defp maybe_emit_sap_system_deregistered_event(
+         %SapSystem{sid: nil},
+         _deregistered_at
+       ),
+       do: []
+
+  defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{
            sap_system_id: sap_system_id,
-           sid: sid,
            application: %Application{
              instances: instances
            }
@@ -716,7 +721,7 @@ defmodule Trento.Domain.SapSystem do
     has_messageserver? =
       Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
 
-    unless has_abap? and has_messageserver? and !is_nil(sid) do
+    unless has_abap? and has_messageserver? do
       %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end
