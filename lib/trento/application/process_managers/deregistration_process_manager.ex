@@ -9,7 +9,7 @@ defmodule Trento.DeregistrationProcessManager do
     For more information see https://hexdocs.pm/commanded/process-managers.html
   """
 
-  @required_fields :all
+  @required_fields []
 
   use Trento.Type
 
