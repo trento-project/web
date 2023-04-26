@@ -1168,7 +1168,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should deregister an ABAP Application Instance" do
+    test "should deregister an ABAP Application Instance without deregistering the SAP system" do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
 
@@ -1346,6 +1346,7 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
+                   sid: nil,
                    database: %Database{
                      instances: [
                        %Instance{
