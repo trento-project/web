@@ -332,7 +332,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should register a SAP System and add an application instance when is already present a MESSAGESERVER instance and one ABAP istance is added" do
+    test "should register a SAP System and add an application instance when is already present a MESSAGESERVER instance and one ABAP instance is added" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
@@ -414,6 +414,291 @@ defmodule Trento.SapSystemTest do
                        },
                        %SapSystem.Instance{
                          features: "MESSAGESERVER"
+                       }
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should register a SAP System and add an application instance when is already present a ABAP instance and one MESSAGESERVER instance is added" do
+      sap_system_id = Faker.UUID.v4()
+      sid = Faker.StarWars.planet()
+      db_host = Faker.Internet.ip_v4_address()
+      tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP"
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RegisterApplicationInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          instance_number: "00",
+          instance_hostname: instance_hostname,
+          features: "MESSAGESERVER",
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: :passing
+        }),
+        [
+          %SapSystemRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            db_host: db_host,
+            tenant: tenant,
+            health: :passing
+          },
+          %ApplicationInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            instance_number: "00",
+            instance_hostname: instance_hostname,
+            features: "MESSAGESERVER",
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
+            host_id: host_id,
+            health: :passing
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   sid: ^sid,
+                   application: %SapSystem.Application{
+                     sid: ^sid,
+                     instances: [
+                       %SapSystem.Instance{
+                         sid: ^sid,
+                         instance_number: "00",
+                         features: "MESSAGESERVER",
+                         host_id: ^host_id,
+                         health: :passing
+                       },
+                       %SapSystem.Instance{
+                         features: "ABAP"
+                       }
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should not register an application instance to a not registered sap system if the instance is not an ABAP or MESSAGESERVER instance" do
+      sap_system_id = Faker.UUID.v4()
+      sid = Faker.StarWars.planet()
+      db_host = Faker.Internet.ip_v4_address()
+      tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant
+        )
+      ]
+
+      assert_error(
+        initial_events,
+        RegisterApplicationInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          instance_number: "00",
+          instance_hostname: instance_hostname,
+          features: "HDB_WORKER",
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: :passing
+        }),
+        {:error, :sap_system_not_registered}
+      )
+    end
+
+    test "should app an application istance to a non registered sap system when the instance is ABAP without complete a sap system registration" do
+      sap_system_id = Faker.UUID.v4()
+      sid = Faker.StarWars.planet()
+      db_host = Faker.Internet.ip_v4_address()
+      tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RegisterApplicationInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          instance_number: "00",
+          instance_hostname: instance_hostname,
+          features: "ABAP",
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: :passing
+        }),
+        [
+          %ApplicationInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            instance_number: "00",
+            instance_hostname: instance_hostname,
+            features: "ABAP",
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
+            host_id: host_id,
+            health: :passing
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   sid: nil,
+                   application: %SapSystem.Application{
+                     sid: ^sid,
+                     instances: [
+                       %SapSystem.Instance{
+                         sid: ^sid,
+                         instance_number: "00",
+                         features: "ABAP",
+                         host_id: ^host_id,
+                         health: :passing
+                       }
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should app an application istance to a non registered sap system when the instance is MESSAGESERVER without complete a sap system registration" do
+      sap_system_id = Faker.UUID.v4()
+      sid = Faker.StarWars.planet()
+      db_host = Faker.Internet.ip_v4_address()
+      tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RegisterApplicationInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          instance_number: "00",
+          instance_hostname: instance_hostname,
+          features: "MESSAGESERVER",
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: :passing
+        }),
+        [
+          %ApplicationInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: sid,
+            instance_number: "00",
+            instance_hostname: instance_hostname,
+            features: "MESSAGESERVER",
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
+            host_id: host_id,
+            health: :passing
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   sid: nil,
+                   application: %SapSystem.Application{
+                     sid: ^sid,
+                     instances: [
+                       %SapSystem.Instance{
+                         sid: ^sid,
+                         instance_number: "00",
+                         features: "MESSAGESERVER",
+                         host_id: ^host_id,
+                         health: :passing
                        }
                      ]
                    }
@@ -710,12 +995,26 @@ defmodule Trento.SapSystemTest do
       tenant = Faker.Beer.style()
       db_host = Faker.Internet.ip_v4_address()
       instance_number = "00"
-      features = Faker.Pokemon.name()
+      features = "MESSAGESERVER"
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        build(:database_registered_event, sap_system_id: sap_system_id),
-        build(:database_instance_registered_event, sap_system_id: sap_system_id)
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP"
+        )
       ]
 
       assert_events_and_state(
@@ -756,6 +1055,9 @@ defmodule Trento.SapSystemTest do
                      instances: [
                        %SapSystem.Instance{
                          health: :critical
+                       },
+                       %SapSystem.Instance{
+                         health: :passing
                        }
                      ]
                    }
