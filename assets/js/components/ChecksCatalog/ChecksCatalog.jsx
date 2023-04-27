@@ -11,6 +11,7 @@ import {
   checkProviderExists,
 } from '@components/ProviderLabel/ProviderLabel';
 import PageHeader from '@components/PageHeader';
+import Accordion from '@components/Accordion';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 import ProviderSelection from './ProviderSelection';
@@ -61,16 +62,12 @@ function ChecksCatalog() {
         <div>
           {Object.entries(groupBy(catalogData, 'group')).map(
             ([group, checks], idx) => (
-              <div
-                key={idx}
-                className="check-group bg-white shadow overflow-hidden sm:rounded-md mb-8"
-              >
-                <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    {group}
-                  </h3>
-                </div>
-                <ul className="divide-y divide-gray-200">
+              <ul key={idx}>
+                <Accordion
+                  defaultOpen
+                  className="check-group mb-4"
+                  header={group}
+                >
                   {checks.map((check) => (
                     <CheckItem
                       key={check.id}
@@ -80,8 +77,8 @@ function ChecksCatalog() {
                       remediation={check.remediation}
                     />
                   ))}
-                </ul>
-              </div>
+                </Accordion>
+              </ul>
             )
           )}
         </div>
