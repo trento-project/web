@@ -17,7 +17,7 @@ import {
 } from '@state/lastExecutions';
 import { getHostID } from '@state/selectors/cluster';
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
-import NotFound from '@components/NotFound/NotFound';
+import NotFound from '@components/NotFound';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
 
@@ -32,11 +32,7 @@ import CheckDetailHeader from './CheckDetailHeader';
 function CheckResultDetailPage() {
   const { clusterID, checkID, targetType, targetName } = useParams();
   const dispatch = useDispatch();
-  const navigateToUrl = useNavigate();
-
-  function onNavigate(path) {
-    navigateToUrl(path);
-  }
+  const navigate = useNavigate();
 
   const {
     clusterHosts,
@@ -51,6 +47,7 @@ function CheckResultDetailPage() {
   const clustersIDList = useSelector((state) =>
     state.clustersList.clusters.map((clusterObj) => clusterObj.id)
   );
+
   useEffect(() => {
     if (catalog.length === 0) {
       dispatch(updateCatalog());
@@ -64,7 +61,7 @@ function CheckResultDetailPage() {
     return (
       <NotFound
         buttonText="Go back to cluster overview"
-        onNavigate={() => onNavigate('/clusters/')}
+        onNavigate={() => navigate('/clusters/')}
       />
     );
   }
@@ -93,7 +90,7 @@ function CheckResultDetailPage() {
     return (
       <NotFound
         buttonText="Go back to last execution"
-        onNavigate={() => onNavigate(`/clusters/${clusterID}/executions/last`)}
+        onNavigate={() => navigate(`/clusters/${clusterID}/executions/last`)}
       />
     );
   }
@@ -138,9 +135,9 @@ function CheckResultDetailPage() {
             dispatch(updateLastExecution(clusterID));
           }
         }}
-        onStartExecution={(clusterId, hosts, selectedChecks, navigate) =>
+        onStartExecution={(clusterId, hosts, selectedChecks, onNavigate) =>
           dispatch(
-            executionRequested(clusterId, hosts, selectedChecks, navigate)
+            executionRequested(clusterId, hosts, selectedChecks, onNavigate)
           )
         }
       >

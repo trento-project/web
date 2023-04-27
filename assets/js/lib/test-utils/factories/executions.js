@@ -133,19 +133,16 @@ export const checksExecutionCompletedForTargetsFactory = Factory.define(
     ];
 
     const checkResults = params.check_id
-      ? [
+      ? params.check_id.map((checkID) =>
           checkResultFactory.build({
             agents_check_results: targets.map(checkResultForTarget),
-            check_id: params.check_id[0],
-          }),
-          checkResultFactory.build({
-            agents_check_results: targets.map(checkResultForTarget),
-            check_id: params.check_id[1],
-          }),
-        ]
+            check_id: checkID,
+          })
+        )
       : checkResultFactory.buildList(2, {
           agents_check_results: targets.map(checkResultForTarget),
         });
+
     return checksExecutionCompletedFactory.build({
       check_results: checkResults,
     });
