@@ -604,6 +604,14 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
+  defp instances_have_abap?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
+  end
+
+  def instances_have_messageserver?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
+  end
+
   defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{sid: nil},
          _deregistered_at
@@ -619,12 +627,7 @@ defmodule Trento.Domain.SapSystem do
          },
          deregistered_at
        ) do
-    has_abap? = Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
-
-    has_messageserver? =
-      Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
-
-    unless has_abap? and has_messageserver? do
+    unless instances_have_abap?(instances) and instances_have_messageserver?(instances) do
       %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
     end
   end
@@ -720,10 +723,6 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-  defp abap_and_messageserver?(features) do
-    String.contains?(features, "ABAP") and String.contains?(features, "MESSAGESERVER")
-  end
-
   defp maybe_emit_sap_system_registered_event(
          %SapSystem{sid: nil, application: %Application{instances: instances}},
          %RegisterApplicationInstance{
@@ -731,17 +730,10 @@ defmodule Trento.Domain.SapSystem do
            sid: sid,
            tenant: tenant,
            db_host: db_host,
-           features: features,
            health: health
          }
        ) do
-    instances_features =
-      instances
-      |> Enum.map(& &1.features)
-      |> Kernel.++([features])
-      |> Enum.join()
-
-    if abap_and_messageserver?(instances_features) do
+    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRegistered{
         sap_system_id: sap_system_id,
         sid: sid,
@@ -749,8 +741,6 @@ defmodule Trento.Domain.SapSystem do
         db_host: db_host,
         health: health
       }
-    else
-      nil
     end
   end
 
