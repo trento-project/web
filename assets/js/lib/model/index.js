@@ -6,3 +6,6 @@ export const EXPECT_SAME = 'expect_same';
 
 export const TARGET_HOST = 'host';
 export const TARGET_CLUSTER = 'cluster';
+
+export const isValidTargetType = (targetType) =>
+  [TARGET_HOST, TARGET_CLUSTER].includes(targetType);
