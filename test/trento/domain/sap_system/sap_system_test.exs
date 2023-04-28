@@ -565,8 +565,7 @@ defmodule Trento.SapSystemTest do
             start_priority: start_priority,
             host_id: host_id,
             health: :passing
-          },
-          %SapSystemHealthChanged{health: :passing}
+          }
         ],
         fn state ->
           assert %SapSystem{
@@ -641,8 +640,7 @@ defmodule Trento.SapSystemTest do
             start_priority: start_priority,
             host_id: host_id,
             health: :passing
-          },
-          %SapSystemHealthChanged{health: :passing}
+          }
         ],
         fn state ->
           assert %SapSystem{

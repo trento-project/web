@@ -607,32 +607,7 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-  # Do not emit health changed event as the SAP system is not completely registered yet
-  defp maybe_emit_sap_system_health_changed_event(%SapSystem{application: nil}), do: nil
-
-  # Returns a SapSystemHealthChanged event when the aggregated health of the application instances
-  # and database is different from the previous SAP system health.
-  defp maybe_emit_sap_system_health_changed_event(%SapSystem{
-         sap_system_id: sap_system_id,
-         health: health,
-         application: %Application{instances: instances},
-         database: %Database{health: database_health}
-       }) do
-    new_health =
-      instances
-      |> Enum.map(& &1.health)
-      |> Kernel.++([database_health])
-      |> HealthService.compute_aggregated_health()
-
-    if new_health != health do
-      %SapSystemHealthChanged{
-        sap_system_id: sap_system_id,
-        health: new_health
-      }
-    end
-  end
-
-  defp maybe_emit_sap_system_deregistered_event(
+defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{sid: nil},
          _deregistered_at
        ),
@@ -666,50 +641,6 @@ defmodule Trento.Domain.SapSystem do
         false
     end)
   end
-
-  defp abap_or_messageserver?(features) do
-    String.contains?(features, ["MESSAGESERVER", "ABAP"])
-  end
-
-  defp abap_and_messageserver?(features) do
-    String.contains?(features, "ABAP") and String.contains?(features, "MESSAGESERVER")
-  end
-
-  defp maybe_emit_sap_system_registered_event(
-         %SapSystem{sid: nil, application: %Application{instances: instances}},
-         %RegisterApplicationInstance{
-           sap_system_id: sap_system_id,
-           sid: sid,
-           tenant: tenant,
-           db_host: db_host,
-           features: features,
-           health: health
-         }
-       ) do
-    instances_features =
-      instances
-      |> Enum.map(& &1.features)
-      |> Kernel.++([features])
-      |> Enum.join()
-
-    if abap_and_messageserver?(instances_features) do
-      %SapSystemRegistered{
-        sap_system_id: sap_system_id,
-        sid: sid,
-        tenant: tenant,
-        db_host: db_host,
-        health: health
-      }
-    else
-      nil
-    end
-  end
-
-  defp maybe_emit_sap_system_registered_event(
-         %SapSystem{},
-         %RegisterApplicationInstance{}
-       ),
-       do: nil
 
   defp emit_application_instance_registered_or_application_instance_health_changed(
          %SapSystem{application: nil},
@@ -789,6 +720,72 @@ defmodule Trento.Domain.SapSystem do
           host_id: host_id,
           health: health
         }
+    end
+  end
+
+  defp abap_and_messageserver?(features) do
+    String.contains?(features, "ABAP") and String.contains?(features, "MESSAGESERVER")
+  end
+
+  defp maybe_emit_sap_system_registered_event(
+         %SapSystem{sid: nil, application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           tenant: tenant,
+           db_host: db_host,
+           features: features,
+           health: health
+         }
+       ) do
+    instances_features =
+      instances
+      |> Enum.map(& &1.features)
+      |> Kernel.++([features])
+      |> Enum.join()
+
+    if abap_and_messageserver?(instances_features) do
+      %SapSystemRegistered{
+        sap_system_id: sap_system_id,
+        sid: sid,
+        tenant: tenant,
+        db_host: db_host,
+        health: health
+      }
+    else
+      nil
+    end
+  end
+
+  defp maybe_emit_sap_system_registered_event(
+         %SapSystem{},
+         %RegisterApplicationInstance{}
+       ),
+       do: nil
+
+  # Do not emit health changed event as the SAP system is not completely registered yet
+  defp maybe_emit_sap_system_health_changed_event(%SapSystem{application: nil}), do: nil
+  defp maybe_emit_sap_system_health_changed_event(%SapSystem{sid: nil}), do: nil
+
+  # Returns a SapSystemHealthChanged event when the aggregated health of the application instances
+  # and database is different from the previous SAP system health.
+  defp maybe_emit_sap_system_health_changed_event(%SapSystem{
+         sap_system_id: sap_system_id,
+         health: health,
+         application: %Application{instances: instances},
+         database: %Database{health: database_health}
+       }) do
+    new_health =
+      instances
+      |> Enum.map(& &1.health)
+      |> Kernel.++([database_health])
+      |> HealthService.compute_aggregated_health()
+
+    if new_health != health do
+      %SapSystemHealthChanged{
+        sap_system_id: sap_system_id,
+        health: new_health
+      }
     end
   end
 end
