@@ -131,9 +131,17 @@ export const checksExecutionCompletedForTargetsFactory = Factory.define(
       faker.datatype.uuid(),
       faker.datatype.uuid(),
     ];
-    const checkResults = checkResultFactory.buildList(2, {
-      agents_check_results: targets.map(checkResultForTarget),
-    });
+
+    const checkResults = params.check_id
+      ? params.check_id.map((checkID) =>
+          checkResultFactory.build({
+            agents_check_results: targets.map(checkResultForTarget),
+            check_id: checkID,
+          })
+        )
+      : checkResultFactory.buildList(2, {
+          agents_check_results: targets.map(checkResultForTarget),
+        });
 
     return checksExecutionCompletedFactory.build({
       check_results: checkResults,
