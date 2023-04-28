@@ -22,13 +22,12 @@ defmodule Trento.DeregistrationProcessManager do
     end
   end
 
-  @required_fields :all
-
-  use Trento.Type
-
   use Commanded.ProcessManagers.ProcessManager,
     application: Trento.Commanded,
     name: "deregistration_process_manager"
+
+  @required_fields []
+  use Trento.Type
 
   deftype do
     field :cluster_id, Ecto.UUID
@@ -233,26 +232,30 @@ defmodule Trento.DeregistrationProcessManager do
           }
         }
       ) do
+    new_database_instances =
+      snapshot_database_instances
+      |> Enum.map(fn %SapSystem.Instance{
+                       instance_number: instance_number
+                     } ->
+        %Instance{sap_system_id: snapshot_sap_system_id, instance_number: instance_number}
+      end)
+      |> Enum.concat(database_instances)
+      |> Enum.uniq()
+
+    new_application_instances =
+      snapshot_application_instances
+      |> Enum.map(fn %SapSystem.Instance{
+                       instance_number: instance_number
+                     } ->
+        %Instance{sap_system_id: snapshot_sap_system_id, instance_number: instance_number}
+      end)
+      |> Enum.concat(application_instances)
+      |> Enum.uniq()
+
     %DeregistrationProcessManager{
       state
-      | database_instances:
-          snapshot_database_instances
-          |> Enum.map(fn %SapSystem.Instance{
-                           instance_number: instance_number
-                         } ->
-            %Instance{sap_system_id: snapshot_sap_system_id, instance_number: instance_number}
-          end)
-          |> Enum.concat(database_instances)
-          |> Enum.uniq(),
-        application_instances:
-          snapshot_application_instances
-          |> Enum.map(fn %SapSystem.Instance{
-                           instance_number: instance_number
-                         } ->
-            %Instance{sap_system_id: snapshot_sap_system_id, instance_number: instance_number}
-          end)
-          |> Enum.concat(application_instances)
-          |> Enum.uniq()
+      | database_instances: new_database_instances,
+        application_instances: new_application_instances
     }
   end
 
