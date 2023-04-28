@@ -92,7 +92,6 @@ defmodule Trento.Domain.SapSystem do
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
 
-
     embeds_one :database, Database
     embeds_one :application, Application
   end
@@ -605,7 +604,7 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-defp maybe_emit_sap_system_deregistered_event(
+  defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{sid: nil},
          _deregistered_at
        ),
