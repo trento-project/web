@@ -9,3 +9,5 @@ export const TARGET_CLUSTER = 'cluster';
 
 export const isValidTargetType = (targetType) =>
   [TARGET_HOST, TARGET_CLUSTER].includes(targetType);
+
+export const UNKNOWN_PROVIDER = 'unknown';

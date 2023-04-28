@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
+import { UNKNOWN_PROVIDER } from '@lib/model';
 
 function WarningBanner({ children }) {
   return (
@@ -21,5 +22,50 @@ function WarningBanner({ children }) {
     </div>
   );
 }
+
+const providerWarningBanners = {
+  [UNKNOWN_PROVIDER]: {
+    default: (
+      <WarningBanner>
+        The following catalog is valid for on-premise bare metal platforms.
+        <br />
+        If you are running your HANA cluster on a different platform, please use
+        results with caution
+      </WarningBanner>
+    ),
+    result: (
+      <WarningBanner>
+        The following results are valid for on-premise bare metal platforms.
+        <br />
+        If you are running your HANA cluster on a different platform, please use
+        results with caution
+      </WarningBanner>
+    ),
+  },
+  vmware: {
+    default: (
+      <WarningBanner>
+        Configuration checks for HANA scale-up performance optimized clusters on
+        VMware are still in experimental phase. Please use results with caution.
+      </WarningBanner>
+    ),
+  },
+};
+
+export const getProviderWarningBanner = (provider) => {
+  const providerBanners = providerWarningBanners[provider];
+  if (!providerBanners) {
+    return null;
+  }
+  return providerBanners.default;
+};
+
+export const getResultProviderWarningBanner = (provider) => {
+  const providerBanners = providerWarningBanners[provider];
+  if (!providerBanners) {
+    return null;
+  }
+  return providerBanners.result || providerBanners.default;
+};
 
 export default WarningBanner;
