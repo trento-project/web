@@ -2,10 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 
 import BackButton from '@components/BackButton';
-import { providerWarningBanners } from '@components/ClusterDetails/ClusterSettings';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 
 import ChecksResultFilters from '@components/ExecutionResults/ChecksResultFilters';
+import { getResultProviderWarningBanner } from '@components/Banners/WarningBanner';
 
 function ExecutionHeader({
   clusterID,
@@ -14,7 +14,7 @@ function ExecutionHeader({
   clusterScenario,
   onFilterChange = () => {},
 }) {
-  const warning = providerWarningBanners[cloudProvider];
+  const warning = getResultProviderWarningBanner(cloudProvider);
 
   return (
     <>

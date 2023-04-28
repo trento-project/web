@@ -18,7 +18,7 @@ import {
   agentsCheckResultsWithHostname,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom/extend-expect';
-import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
+import { UNKNOWN_PROVIDER } from '@lib/model';
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
@@ -444,7 +444,7 @@ describe('ExecutionResults', () => {
     expect(screen.getByText('Provider not recognized')).toBeTruthy();
     expect(
       screen.getByText(
-        /The following catalog is valid for on-premise bare metal platforms.*If you are running your HANA cluster on a different platform, please use results with caution/
+        /The following results are valid for on-premise bare metal platforms.*If you are running your HANA cluster on a different platform, please use results with caution/
       )
     ).toBeTruthy();
   });

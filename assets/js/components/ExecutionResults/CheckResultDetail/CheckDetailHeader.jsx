@@ -1,8 +1,8 @@
 import React from 'react';
 
 import BackButton from '@components/BackButton';
-import { providerWarningBanners } from '@components/ClusterDetails/ClusterSettings';
 import HealthIcon from '@components/Health/HealthIcon';
+import { getResultProviderWarningBanner } from '@components/Banners/WarningBanner';
 import CheckResultInfoBox from './CheckResultInfoBox';
 
 function CheckDetailHeader({
@@ -14,7 +14,7 @@ function CheckDetailHeader({
   cloudProvider,
   result,
 }) {
-  const warning = providerWarningBanners[cloudProvider];
+  const warning = getResultProviderWarningBanner(cloudProvider);
 
   return (
     <>

@@ -8,30 +8,11 @@ import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import ChecksSelection from '@components/ClusterDetails/ChecksSelection';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
-import WarningBanner from '@components/Banners/WarningBanner';
 import { getClusterName } from '@components/ClusterLink';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 
 import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
-
-export const UNKNOWN_PROVIDER = 'unknown';
-
-export const providerWarningBanners = {
-  [UNKNOWN_PROVIDER]: (
-    <WarningBanner>
-      The following catalog is valid for on-premise bare metal platforms.
-      <br />
-      If you are running your HANA cluster on a different platform, please use
-      results with caution
-    </WarningBanner>
-  ),
-  vmware: (
-    <WarningBanner>
-      Configuration checks for HANA scale-up performance optimized clusters on
-      VMware are still in experimental phase. Please use results with caution.
-    </WarningBanner>
-  ),
-};
+import { getProviderWarningBanner } from '@components/Banners/WarningBanner';
 
 export function ClusterSettings() {
   const { clusterID } = useParams();
@@ -42,7 +23,7 @@ export function ClusterSettings() {
     return <div>Loading...</div>;
   }
 
-  const warning = providerWarningBanners[cluster.provider];
+  const warning = getProviderWarningBanner(cluster.provider);
 
   return (
     <div className="w-full px-2 sm:px-0">

@@ -47,7 +47,7 @@ describe('Cluster Checks results ExecutionHeader Component', () => {
     expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(
       screen.getByText(
-        /The following catalog is valid for on-premise bare metal platforms./
+        /The following results are valid for on-premise bare metal platforms./
       )
     ).toBeTruthy();
   });
