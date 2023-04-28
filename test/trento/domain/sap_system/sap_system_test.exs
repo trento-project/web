@@ -332,7 +332,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should register a SAP System and add an application instance when is already present a MESSAGESERVER instance and one ABAP instance is added" do
+    test "should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
@@ -422,7 +422,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should register a SAP System and add an application instance when is already present a ABAP instance and one MESSAGESERVER instance is added" do
+    test "should register a SAP System and add an application instance when an ABAP instance is already present and a new MESSAGESERVER instance is added" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
@@ -512,7 +512,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should add an application instance to a non registered sap system when the instance is ABAP without complete a sap system registration" do
+    test "should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()
@@ -587,7 +587,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should app an application instance to a non registered sap system when the instance is MESSAGESERVER without complete a sap system registration" do
+    test "should add an application instance to a non registered SAP system when the instance is MESSAGESERVER without completing a SAP system registration" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       db_host = Faker.Internet.ip_v4_address()

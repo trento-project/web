@@ -6,7 +6,7 @@ defmodule Trento.Domain.SapSystem do
 
   In order to have a fully registered SAP system, both the database and application
   composing this system must be registered.
-  The minimum set of application features is ABAP and MESSAGESERVER, otherwise, a complete Sap system cannot exist.
+  The minimum set of application features is ABAP and MESSAGESERVER. Otherwise, a complete SAP system cannot exist.
   And each of the two layers might be composed by multiple instances altogether.
   This means that a SAP system aggregate state can have multiple application/database instances.
 
@@ -37,11 +37,8 @@ defmodule Trento.Domain.SapSystem do
   2. New database instances/updates coming from already registered database instances are registered/applied.
   3. When a SAP system discovery with a new application instance is received, and the database associated to
      this application exists:
-      - If the application instance does not have ABAP or MESSAGESERVER as features, will be rejected
-      - If the application instance has ABAP or MESSAGESERVER as features, and is already present an ABAP or MESSAGESERVER application instance,
-        the application instance is registered together with the complete SAP system. The SAP system is fully registered now.
-      - If the application instance has ABAP or MESSAGESERVER as features, but there are no other instances with ABAP or MESSAGESERVER as features,
-        the application instance is registered without the complete sap system registration.
+      - Instances that are not MESSAGESERVER or ABAP will be added without completing a SAP system registration
+      - To have a fully registered SAP system, a MESSAGESERVER instance and one ABAP instance are required
   4. New application instances/updates coming from already registered application instances are registered/applied.
 
   Find additional information about the application/database association in `Trento.Domain.Commands.RegisterApplicationInstance`.
@@ -94,6 +91,7 @@ defmodule Trento.Domain.SapSystem do
     field :health, Ecto.Enum, values: Health.values()
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
+
 
     embeds_one :database, Database
     embeds_one :application, Application
@@ -180,10 +178,10 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
-  # Sap system not registered, application already present
+  # SAP system not registered, application already present
   # If the instance is not one of MESSAGESERVER or ABAP we discard.
   # Otherwise if the instance we want register together with already present instances
-  # have one MESSAGESERVER and one ABAP, we register the instance and the sap system
+  # have one MESSAGESERVER and one ABAP, we register the instance and the SAP system
   # OR
   # When a RegisterApplicationInstance command is received by an existing SAP System aggregate,
   # the SAP System aggregate registers the Application instance if it is not already registered
