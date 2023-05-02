@@ -1,54 +1,55 @@
 # This workflow requires the following secrets:
 # `SSH_PUBLIC_KEY`, `SSH_PRIVATE_KEY` ssh keys to access the e2e machines
-# `AWS_SECRET_ACCESS_KEY`, `AWS_ACCESS_KEY_ID` aws credentials, 
+# `AWS_SECRET_ACCESS_KEY`, `AWS_ACCESS_KEY_ID` aws credentials,
 # used by terraform to deploy the infrastructure.
-# 
-# An artifact containing the terraform state is uploaded in case something goes wrong, 
+#
+# An artifact containing the terraform state is uploaded in case something goes wrong,
 # so it's easy to destroy the infrastructure.
 
 name: e2e tests
 
 on:
   workflow_dispatch:
-   
+
 jobs:
   e2e_tests:
     name: E2E tests
     runs-on: ubuntu-latest
-    env:  
-      TF_VAR_aws_region: 'eu-central-1'
-      TF_VAR_aws_secret_key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-      TF_VAR_aws_access_key_id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
-      TF_VAR_public_key: '${{ secrets.SSH_PUBLIC_KEY }}' 
-      TF_VAR_hana_instancetype: 'r6i.xlarge'
+    env:
+      TF_VAR_aws_region: "eu-central-1"
+      TF_VAR_aws_secret_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      TF_VAR_aws_access_key_id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+      TF_VAR_public_key: "${{ secrets.SSH_PUBLIC_KEY }}"
+      TF_VAR_hana_instancetype: "r6i.xlarge"
       TF_VAR_hana_image_ids: '["ami-073792bfce1223304", "ami-0c3df2b35c3b0ec6f"]'
-      TF_VAR_trento_server_image_id: 'ami-073792bfce1223304'
+      TF_VAR_trento_server_image_id: "ami-00435b99a42e439bd"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          cache: 'npm'
+          node-version: "16"
+          cache: "npm"
           cache-dependency-path: test/e2e/package-lock.json
       - name: Checkout terraform repo
         uses: actions/checkout@v3
         with:
-          repository: fabriziosestito/trento-e2e
+          repository: trento-project/trento-e2e
           path: terraform
+          ref: 5c1daaf82e7a4565bf8ccab83431f6f211b75c63
       - name: Use branch workspace
         uses: dflook/terraform-new-workspace@v1
         with:
-          path: terraform/deployments/aws
-          workspace: 'trentoe2e'
+          path: terraform/deployments/aws/hana_ha_enabled
+          workspace: "trentoe2e"
           # workspace: ${{ github.head_ref }}
       - name: Deploy test infrastructure
         uses: dflook/terraform-apply@v1
         continue-on-error: true
         with:
-          path: terraform/deployments/aws
-          workspace: 'trentoe2e'
+          path: terraform/deployments/aws/hana_ha_enabled
+          workspace: "trentoe2e"
           # workspace: ${{ github.head_ref }}
           auto_approve: true
       - name: Upload tfstate
@@ -56,22 +57,22 @@ jobs:
         if: ${{ !env.ACT }}
         with:
           name: terraform-state
-          path: terraform/deployments/aws/terraform.tfstate.d
+          path: terraform/deployments/aws/hana_ha_enabled/terraform.tfstate.d
       - name: Get outputs
         uses: dflook/terraform-output@v1
         id: tf-outputs
         with:
-          path: terraform/deployments/aws
-          workspace: 'trentoe2e'
+          path: terraform/deployments/aws/hana_ha_enabled
+          workspace: "trentoe2e"
           # workspace: ${{ github.head_ref }}
-      - name: Checkout ansible repo        
+      - name: Checkout ansible repo
         uses: actions/checkout@v3
         with:
           repository: trento-project/ansible
           path: ansible
-      - name: Add pipx_bin to path        
+      - name: Add pipx_bin to path
         if: ${{ env.ACT }}
-        run: echo '/opt/pipx_bin' >> $GITHUB_PATH 
+        run: echo '/opt/pipx_bin' >> $GITHUB_PATH
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
@@ -102,7 +103,7 @@ jobs:
                     hana01:
                       ansible_host: ${{ fromJson(steps.tf-outputs.outputs.hana_public_ip)[0] }}  
                     hana02:
-                      ansible_host: ${{ fromJson(steps.tf-outputs.outputs.hana_public_ip)[1] }}  
+                      ansible_host: ${{ fromJson(steps.tf-outputs.outputs.hana_public_ip)[1] }}
           options: |
             --extra-vars "web_postgres_password='pass' \ 
             wanda_postgres_password='wanda' \ 
@@ -118,7 +119,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         env:
-          CYPRESS_BASE_URL: http://${{ steps.tf-outputs.outputs.trento_server_public_ip }} 
+          CYPRESS_BASE_URL: http://${{ steps.tf-outputs.outputs.trento_server_public_ip }}
           CYPRESS_REAL_CLUSTER_TESTS: true
         continue-on-error: true
         with:
@@ -128,8 +129,8 @@ jobs:
         uses: dflook/terraform-destroy-workspace@v1
         continue-on-error: true
         with:
-          path: terraform/deployments/aws
-          workspace: 'trentoe2e'
+          path: terraform/deployments/aws/hana_ha_enabled
+          workspace: "trentoe2e"
       - name: Install aws-delete-vpc
         uses: jaxxstorm/action-install-gh-release@v1.10.0
         with:
@@ -137,7 +138,7 @@ jobs:
           cache: enable
       - name: Destroy VPC
         env:
-          AWS_REGION: 'eu-central-1'
-          AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-          AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
+          AWS_REGION: "eu-central-1"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
         run: aws-delete-vpc --vpc-id ${{ steps.tf-outputs.outputs.vpc_id }}
