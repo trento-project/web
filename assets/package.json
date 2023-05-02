@@ -19,6 +19,7 @@
     "axios-mock-adapter": "^1.21.4",
     "babel-jest": "^29.5.0",
     "babel-loader": "^9.1.2",
+    "chromatic": "^6.17.3",
     "esbuild": "^0.17.16",
     "esbuild-plugin-path-alias": "^1.0.7",
     "eslint": "^8.38.0",
@@ -77,6 +78,7 @@
     "lint": "eslint . --ext js,jsx",
     "format:check": "prettier -c .",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "chromatic": "npx chromatic --exit-zero-on-changes"
   }
 }
