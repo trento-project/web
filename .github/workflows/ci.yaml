@@ -274,6 +274,56 @@ jobs:
       - name: Run JS tests
         run: cd assets && npm test
 
+  chromatic:
+    name: Chromatic deployment
+    needs: [elixir-deps, npm-deps]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v3
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/test
+            priv/plts
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Build CSS
+        run: npx tailwindcss --input=css/app.css --output=../priv/static/assets/app.css --postcss
+        working-directory: assets
+      - name: Build Frontend
+        run: npm run build
+        working-directory: assets
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          workingDir: assets
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
   npm-e2e-deps:
     name: Npm E2E dependencies
     runs-on: ubuntu-20.04
