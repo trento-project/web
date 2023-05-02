@@ -5,9 +5,11 @@ defmodule Trento.Domain.SapSystem do
   **The HANA database is the only supported database type.**
 
   In order to have a fully registered SAP system, both the database and application
-  composing this system must be registered. And each of the two layers might be composed
-  by multiple instances altogether. This means that a SAP system aggregate state can have
-  multiple application/database instances.
+  composing this system must be registered.
+  The minimum set of application features is ABAP and MESSAGESERVER. Otherwise, a complete SAP system cannot exist.
+  And each of the two layers might be composed by multiple instances altogether.
+  This means that a SAP system aggregate state can have multiple application/database instances.
+
 
   ## SAP instance
 
@@ -33,9 +35,10 @@ defmodule Trento.Domain.SapSystem do
      At this point, the registration process starts and the database is registered.
      Any application instance discovery message without an associated database is ignored.
   2. New database instances/updates coming from already registered database instances are registered/applied.
-  3. A SAP system discovery with a new application instance is received, and the database associated to
-     this application exists, the application instance is registered together with the complete
-     SAP system. The SAP system is fully registered now.
+  3. When a SAP system discovery with a new application instance is received, and the database associated to
+     this application exists:
+      - Instances that are not MESSAGESERVER or ABAP will be added without completing a SAP system registration
+      - To have a fully registered SAP system, a MESSAGESERVER instance and one ABAP instance are required
   4. New application instances/updates coming from already registered application instances are registered/applied.
 
   Find additional information about the application/database association in `Trento.Domain.Commands.RegisterApplicationInstance`.
@@ -174,105 +177,29 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
-  # When an Application is discovered, the SAP System completes the registration process.
-  def execute(
-        %SapSystem{application: nil},
-        %RegisterApplicationInstance{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          instance_number: instance_number,
-          instance_hostname: instance_hostname,
-          tenant: tenant,
-          db_host: db_host,
-          features: features,
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          health: health
-        }
-      ) do
-    [
-      %SapSystemRegistered{
-        sap_system_id: sap_system_id,
-        sid: sid,
-        tenant: tenant,
-        db_host: db_host,
-        health: health
-      },
-      %ApplicationInstanceRegistered{
-        sap_system_id: sap_system_id,
-        sid: sid,
-        instance_number: instance_number,
-        instance_hostname: instance_hostname,
-        features: features,
-        http_port: http_port,
-        https_port: https_port,
-        start_priority: start_priority,
-        host_id: host_id,
-        health: health
-      }
-    ]
-  end
-
+  # SAP system not registered, application already present
+  # If the instance is not one of MESSAGESERVER or ABAP we discard.
+  # Otherwise if the instance we want register together with already present instances
+  # have one MESSAGESERVER and one ABAP, we register the instance and the SAP system
+  # OR
   # When a RegisterApplicationInstance command is received by an existing SAP System aggregate,
   # the SAP System aggregate registers the Application instance if it is not already registered
   # and updates the health when needed.
   def execute(
-        %SapSystem{application: %Application{instances: instances}} = sap_system,
-        %RegisterApplicationInstance{
-          sap_system_id: sap_system_id,
-          sid: sid,
-          instance_number: instance_number,
-          instance_hostname: instance_hostname,
-          features: features,
-          http_port: http_port,
-          https_port: https_port,
-          start_priority: start_priority,
-          host_id: host_id,
-          health: health
-        }
+        %SapSystem{} = sap_system,
+        %RegisterApplicationInstance{} = instance
       ) do
-    instance =
-      Enum.find(instances, fn
-        %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
-          true
-
-        _ ->
-          false
-      end)
-
-    event =
-      case instance do
-        %Instance{health: ^health} ->
-          nil
-
-        %Instance{host_id: host_id, instance_number: instance_number} ->
-          %ApplicationInstanceHealthChanged{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number,
-            health: health
-          }
-
-        nil ->
-          %ApplicationInstanceRegistered{
-            sap_system_id: sap_system_id,
-            sid: sid,
-            instance_number: instance_number,
-            instance_hostname: instance_hostname,
-            features: features,
-            http_port: http_port,
-            https_port: https_port,
-            start_priority: start_priority,
-            host_id: host_id,
-            health: health
-          }
-      end
-
     sap_system
     |> Multi.new()
-    |> Multi.execute(fn _ -> event end)
+    |> Multi.execute(fn sap_system ->
+      emit_application_instance_registered_or_application_instance_health_changed(
+        sap_system,
+        instance
+      )
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_sap_system_registered_event(sap_system, instance)
+    end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
@@ -677,8 +604,155 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
+  defp instances_have_abap?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
+  end
+
+  def instances_have_messageserver?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
+  end
+
+  defp maybe_emit_sap_system_deregistered_event(
+         %SapSystem{sid: nil},
+         _deregistered_at
+       ),
+       do: []
+
+  defp maybe_emit_sap_system_deregistered_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           application: %Application{
+             instances: instances
+           }
+         },
+         deregistered_at
+       ) do
+    unless instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+      %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
+    end
+  end
+
+  defp get_instance(instances, host_id, instance_number) do
+    Enum.find(instances, fn
+      %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
+        true
+
+      _ ->
+        false
+    end)
+  end
+
+  defp emit_application_instance_registered_or_application_instance_health_changed(
+         %SapSystem{application: nil},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           instance_number: instance_number,
+           instance_hostname: instance_hostname,
+           features: features,
+           http_port: http_port,
+           https_port: https_port,
+           start_priority: start_priority,
+           host_id: host_id,
+           health: health
+         }
+       ) do
+    %ApplicationInstanceRegistered{
+      sap_system_id: sap_system_id,
+      sid: sid,
+      instance_number: instance_number,
+      instance_hostname: instance_hostname,
+      features: features,
+      http_port: http_port,
+      https_port: https_port,
+      start_priority: start_priority,
+      host_id: host_id,
+      health: health
+    }
+  end
+
+  defp emit_application_instance_registered_or_application_instance_health_changed(
+         %SapSystem{application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           instance_number: instance_number,
+           instance_hostname: instance_hostname,
+           features: features,
+           http_port: http_port,
+           https_port: https_port,
+           start_priority: start_priority,
+           host_id: host_id,
+           health: health
+         }
+       ) do
+    instance =
+      Enum.find(instances, fn
+        %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
+          true
+
+        _ ->
+          false
+      end)
+
+    case instance do
+      %Instance{health: ^health} ->
+        nil
+
+      %Instance{host_id: host_id, instance_number: instance_number} ->
+        %ApplicationInstanceHealthChanged{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          health: health
+        }
+
+      nil ->
+        %ApplicationInstanceRegistered{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: host_id,
+          health: health
+        }
+    end
+  end
+
+  defp maybe_emit_sap_system_registered_event(
+         %SapSystem{sid: nil, application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           tenant: tenant,
+           db_host: db_host,
+           health: health
+         }
+       ) do
+    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+      %SapSystemRegistered{
+        sap_system_id: sap_system_id,
+        sid: sid,
+        tenant: tenant,
+        db_host: db_host,
+        health: health
+      }
+    end
+  end
+
+  defp maybe_emit_sap_system_registered_event(
+         %SapSystem{},
+         %RegisterApplicationInstance{}
+       ),
+       do: nil
+
   # Do not emit health changed event as the SAP system is not completely registered yet
   defp maybe_emit_sap_system_health_changed_event(%SapSystem{application: nil}), do: nil
+  defp maybe_emit_sap_system_health_changed_event(%SapSystem{sid: nil}), do: nil
 
   # Returns a SapSystemHealthChanged event when the aggregated health of the application instances
   # and database is different from the previous SAP system health.
@@ -700,40 +774,5 @@ defmodule Trento.Domain.SapSystem do
         health: new_health
       }
     end
-  end
-
-  defp maybe_emit_sap_system_deregistered_event(
-         %SapSystem{sid: nil},
-         _deregistered_at
-       ),
-       do: []
-
-  defp maybe_emit_sap_system_deregistered_event(
-         %SapSystem{
-           sap_system_id: sap_system_id,
-           application: %Application{
-             instances: instances
-           }
-         },
-         deregistered_at
-       ) do
-    has_abap? = Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
-
-    has_messageserver? =
-      Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
-
-    unless has_abap? and has_messageserver? do
-      %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
-    end
-  end
-
-  defp get_instance(instances, host_id, instance_number) do
-    Enum.find(instances, fn
-      %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
-        true
-
-      _ ->
-        false
-    end)
   end
 end
