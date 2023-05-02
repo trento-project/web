@@ -2,7 +2,8 @@ import React from 'react';
 
 import BackButton from '@components/BackButton';
 import HealthIcon from '@components/Health/HealthIcon';
-import { getResultProviderWarningBanner } from '@components/Banners/WarningBanner';
+import WarningBanner from '@components/Banners/WarningBanner';
+import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
 import CheckResultInfoBox from './CheckResultInfoBox';
 
 function CheckDetailHeader({
@@ -14,8 +15,6 @@ function CheckDetailHeader({
   cloudProvider,
   result,
 }) {
-  const warning = getResultProviderWarningBanner(cloudProvider);
-
   return (
     <>
       <BackButton url={`/clusters/${clusterID}/executions/last`}>
@@ -29,7 +28,21 @@ function CheckDetailHeader({
           <span className="font-medium">{checkDescription}</span>
         </h1>
       </div>
-      {warning}
+      {cloudProvider === UNKNOWN_PROVIDER && (
+        <WarningBanner>
+          The following results are valid for on-premise bare metal platforms.
+          <br />
+          If you are running your HANA cluster on a different platform, please
+          use results with caution
+        </WarningBanner>
+      )}
+      {cloudProvider === VMWARE_PROVIDER && (
+        <WarningBanner>
+          Configuration checks for HANA scale-up performance optimized clusters
+          on VMware are still in experimental phase. Please use results with
+          caution.
+        </WarningBanner>
+      )}
       <CheckResultInfoBox
         checkID={checkID}
         targetType={targetType}

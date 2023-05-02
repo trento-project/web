@@ -5,7 +5,8 @@ import BackButton from '@components/BackButton';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 
 import ChecksResultFilters from '@components/ExecutionResults/ChecksResultFilters';
-import { getResultProviderWarningBanner } from '@components/Banners/WarningBanner';
+import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
+import WarningBanner from '@components/Banners/WarningBanner';
 
 function ExecutionHeader({
   clusterID,
@@ -14,8 +15,6 @@ function ExecutionHeader({
   clusterScenario,
   onFilterChange = () => {},
 }) {
-  const warning = getResultProviderWarningBanner(cloudProvider);
-
   return (
     <>
       <BackButton url={`/clusters/${clusterID}`}>
@@ -34,7 +33,21 @@ function ExecutionHeader({
         </h1>
         <ChecksResultFilters onChange={onFilterChange} />
       </div>
-      {warning}
+      {cloudProvider === UNKNOWN_PROVIDER && (
+        <WarningBanner>
+          The following results are valid for on-premise bare metal platforms.
+          <br />
+          If you are running your HANA cluster on a different platform, please
+          use results with caution
+        </WarningBanner>
+      )}
+      {cloudProvider === VMWARE_PROVIDER && (
+        <WarningBanner>
+          Configuration checks for HANA scale-up performance optimized clusters
+          on VMware are still in experimental phase. Please use results with
+          caution.
+        </WarningBanner>
+      )}
       <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
     </>
   );

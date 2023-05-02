@@ -11,3 +11,4 @@ export const isValidTargetType = (targetType) =>
   [TARGET_HOST, TARGET_CLUSTER].includes(targetType);
 
 export const UNKNOWN_PROVIDER = 'unknown';
+export const VMWARE_PROVIDER = 'vmware';
