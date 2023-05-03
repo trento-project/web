@@ -286,17 +286,6 @@ defmodule Trento.Domain.SapSystem do
 
   def apply(
         %SapSystem{database: %Database{instances: instances}} = sap_system,
-        %DatabaseInstanceDeregistered{}
-      )
-      when length(instances) == 1 do
-    %SapSystem{
-      sap_system
-      | database: nil
-    }
-  end
-
-  def apply(
-        %SapSystem{database: %Database{instances: instances}} = sap_system,
         %DatabaseInstanceDeregistered{
           instance_number: instance_number,
           host_id: host_id
@@ -338,13 +327,6 @@ defmodule Trento.Domain.SapSystem do
           instances: instances
         }
     }
-  end
-
-  def apply(
-        %SapSystem{database: nil} = sap_system,
-        %DatabaseDeregistered{}
-      ) do
-    sap_system
   end
 
   def apply(
@@ -706,7 +688,7 @@ defmodule Trento.Domain.SapSystem do
          %SapSystem{
            sap_system_id: sap_system_id,
            database: %Database{
-             instances: nil
+             instances: []
            }
          },
          deregistered_at
@@ -732,18 +714,8 @@ defmodule Trento.Domain.SapSystem do
          %SapSystem{
            sap_system_id: sap_system_id,
            database: %Database{
-             instances: nil
+             instances: []
            }
-         },
-         deregistered_at
-       ) do
-    %DatabaseDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
-  end
-
-  defp maybe_emit_database_deregistered_event(
-         %SapSystem{
-           sap_system_id: sap_system_id,
-           database: nil
          },
          deregistered_at
        ) do
@@ -770,20 +742,10 @@ defmodule Trento.Domain.SapSystem do
       end)
 
     if has_secondary? and !has_primary? do
-      [
-        %DatabaseDeregistered{
-          sap_system_id: sap_system_id,
-          deregistered_at: deregistered_at
-        }
-      ] ++
-        Enum.map(instances, fn %Instance{instance_number: instance_number, host_id: host_id} ->
-          %DatabaseInstanceDeregistered{
-            instance_number: instance_number,
-            host_id: host_id,
-            sap_system_id: sap_system_id,
-            deregistered_at: deregistered_at
-          }
-        end)
+      %DatabaseDeregistered{
+        sap_system_id: sap_system_id,
+        deregistered_at: deregistered_at
+      }
     end
   end
 

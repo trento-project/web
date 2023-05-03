@@ -1489,7 +1489,11 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
-                   database: nil,
+                   database: %Database{
+                     sid: nil,
+                     instances: [],
+                     health: nil
+                   },
                    application: nil,
                    deregistered_at: nil
                  } = sap_system
@@ -1555,12 +1559,6 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             deregistered_at: deregistered_at
           },
-          %DatabaseInstanceDeregistered{
-            sap_system_id: sap_system_id,
-            host_id: secondary_database_host_id,
-            instance_number: instance_number_2,
-            deregistered_at: deregistered_at
-          },
           %SapSystemDeregistered{
             sap_system_id: sap_system_id,
             deregistered_at: deregistered_at
@@ -1568,7 +1566,15 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
-                   database: nil,
+                   database: %Database{
+                     sid: nil,
+                     instances: [
+                       %Instance{
+                         instance_number: ^instance_number_2
+                       }
+                     ],
+                     health: nil
+                   },
                    application: %Application{
                      instances: [%Instance{instance_number: ^application_instance_number}]
                    },
