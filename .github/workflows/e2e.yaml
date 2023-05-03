@@ -11,6 +11,8 @@ name: e2e tests
 on:
   workflow_dispatch:
 
+concurrency: cluster_e2e_tests
+
 jobs:
   e2e_tests:
     name: E2E tests
@@ -22,7 +24,7 @@ jobs:
       TF_VAR_public_key: "${{ secrets.SSH_PUBLIC_KEY }}"
       TF_VAR_hana_instancetype: "r6i.xlarge"
       TF_VAR_hana_image_ids: '["ami-073792bfce1223304", "ami-0c3df2b35c3b0ec6f"]'
-      TF_VAR_trento_server_image_id: "ami-00435b99a42e439bd"
+      TF_VAR_trento_server_image_id: "ami-094a0810ca766cdce"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,7 +39,6 @@ jobs:
         with:
           repository: trento-project/trento-e2e
           path: terraform
-          ref: 5c1daaf82e7a4565bf8ccab83431f6f211b75c63
       - name: Use branch workspace
         uses: dflook/terraform-new-workspace@v1
         with:
