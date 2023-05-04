@@ -814,7 +814,7 @@ defmodule Trento.Domain.SapSystem do
          %SapSystem{
            sap_system_id: sap_system_id,
            database: %Database{
-             instances: []
+             sid: nil
            }
          },
          deregistered_at
