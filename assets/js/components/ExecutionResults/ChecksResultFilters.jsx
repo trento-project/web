@@ -4,39 +4,6 @@ import Filter from '@components/Table/Filter';
 
 export const RESULT_FILTER_FIELD = 'result';
 
-export const filterChecks = (checks, predicates) => {
-  if (predicates.length === 0) return checks;
-
-  return checks.filter((check) =>
-    predicates.some((predicate) => predicate(check))
-  );
-};
-
-export const useFilteredChecks = (cluster) => {
-  const [filtersPredicates, setFiltersPredicates] = useState([]);
-  const [filteredChecks, setFilteredChecks] = useState([]);
-
-  const checksForHost = (hostID) =>
-    filteredChecks
-      .filter((result) => result.host_id === hostID)
-      .map((result) => result.check_id);
-
-  useEffect(() => {
-    if (cluster?.checks_results.length > 0) {
-      const selectedCheckResults = cluster?.checks_results.filter((result) =>
-        cluster?.selected_checks.includes(result?.check_id)
-      );
-
-      setFilteredChecks(filterChecks(selectedCheckResults, filtersPredicates));
-    }
-  }, [cluster?.checks_results, cluster?.selected_checks, filtersPredicates]);
-
-  return {
-    setFiltersPredicates,
-    filteredChecksyByHost: checksForHost,
-  };
-};
-
 function ChecksResultFilters({ onChange }) {
   const [filtersForField, setFiltersForField] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();

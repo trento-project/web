@@ -1,67 +1,101 @@
 import React, { useState } from 'react';
-
-import classNames from 'classnames';
+import Table from '@components/Table';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { EOS_ERROR } from 'eos-icons-react';
 import Modal from '@components/Modal';
-import BackButton from '@components/BackButton';
-import LoadingBox from '@components/LoadingBox';
-import { providerWarningBanners } from '@components/ClusterDetails/ClusterSettings';
-import { ClusterInfoBox } from '@components/ClusterDetails';
-import NotificationBox from '@components/NotificationBox';
+
+import { getHostID } from '@state/selectors/cluster';
+import PremiumPill from '@components/PremiumPill';
+import HealthIcon from '@components/Health';
 
 import {
-  getCheckHealthByAgent,
   getCheckResults,
   getCheckDescription,
   getCheckRemediation,
+  getCheckExpectations,
+  isPremium,
 } from './checksUtils';
 
-import CheckResult from './CheckResult';
-import ChecksResultFilters from './ChecksResultFilters';
 import ResultsContainer from './ResultsContainer';
-import HostResultsWrapper from './HostResultsWrapper';
+import CheckResultOutline from './CheckResultOutline';
+import ExecutionHeader from './ExecutionHeader';
+import ExecutionContainer from './ExecutionContainer';
 
-const truncatedClusterNameClasses =
-  'font-bold truncate w-60 inline-block align-top';
-
-const getLabel = (status, health, error, expectations, failedExpectations) => {
-  if (status === 'running' || !health) {
-    return '';
-  }
-
-  if (error) {
-    return error;
-  }
-
-  if (health === 'passing') {
-    return `${expectations}/${expectations} expectations passed`;
-  }
-
-  return `${failedExpectations}/${expectations} expectations failed`;
+const resultsTableConfig = {
+  usePadding: false,
+  columns: [
+    {
+      title: 'Id',
+      key: 'checkID',
+      fontSize: 'text-base',
+      className: 'bg-gray-50 border-b',
+      render: (checkID, { onClick, premium }) => (
+        <div className="flex whitespace-nowrap text-jungle-green-500 justify-between">
+          <span
+            className="inline-flex leading-5"
+            aria-hidden="true"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick();
+            }}
+          >
+            {checkID}
+          </span>
+          {premium && <PremiumPill className="ml-1" />}
+        </div>
+      ),
+    },
+    {
+      title: 'Description',
+      key: 'description',
+      fontSize: 'text-base',
+      className: 'bg-gray-50 border-b',
+      render: (description) => (
+        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+          {description}
+        </ReactMarkdown>
+      ),
+    },
+    {
+      title: 'Result',
+      key: 'result',
+      fontSize: 'text-base',
+      className: 'bg-gray-50 border-b',
+      render: (_, { result }) => <HealthIcon health={result} />,
+    },
+  ],
+  collapsibleDetailRenderer: ({
+    clusterID,
+    checkID,
+    expectations,
+    agentsCheckResults,
+    expectationResults,
+    clusterName,
+  }) => (
+    <CheckResultOutline
+      clusterID={clusterID}
+      checkID={checkID}
+      expectations={expectations}
+      agentsCheckResults={agentsCheckResults}
+      expectationResults={expectationResults}
+      clusterName={clusterName}
+    />
+  ),
 };
-
-function MarkdownContent({ children }) {
-  return (
-    <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
-      {children}
-    </ReactMarkdown>
-  );
-}
 
 function ExecutionResults({
   clusterID,
   clusterName,
   clusterScenario,
   cloudProvider,
-  hostnames = [],
+  clusterHosts = [],
   catalogLoading,
   catalog,
   catalogError,
   executionLoading,
   executionStarted,
+  executionRunning,
   executionData,
   executionError,
   clusterSelectedChecks = [],
@@ -69,146 +103,93 @@ function ExecutionResults({
   onLastExecutionUpdate = () => {},
   onStartExecution = () => {},
 }) {
+  const [predicates, setPredicates] = useState([]);
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [predicates, setPredicates] = useState([]);
-  const hosts = hostnames.map((item) => item.id);
 
-  if (catalogLoading) {
-    return <LoadingBox text="Loading checks execution..." />;
-  }
+  const onContentRefresh = () => {
+    if (catalogError) {
+      onCatalogRefresh();
+    }
+    if (executionError) {
+      onLastExecutionUpdate();
+    }
+  };
 
-  if (!executionStarted) {
-    return <LoadingBox text="Checks execution starting..." />;
-  }
+  const tableData = getCheckResults(executionData)
+    .filter((check) => {
+      if (predicates.length === 0) {
+        return true;
+      }
 
-  if (catalogError || executionError) {
-    return (
-      <NotificationBox
-        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-        text={
-          catalogError && executionError
-            ? `${catalogError}\n${executionError}`
-            : catalogError || executionError
-        }
-        buttonText="Try again"
-        buttonOnClick={() => {
-          if (catalogError) {
-            onCatalogRefresh();
-          }
-          if (executionError) {
-            onLastExecutionUpdate();
-          }
-        }}
-      />
+      return predicates.some((predicate) => predicate(check));
+    })
+    .map(
+      ({
+        check_id: checkID,
+        result,
+        expectation_results: expectationResults,
+        agents_check_results: agentsCheckResults,
+      }) => ({
+        clusterID,
+        checkID,
+        result,
+        clusterName,
+        executionState: executionData?.status,
+        description: getCheckDescription(catalog, checkID),
+        expectations: getCheckExpectations(catalog, checkID),
+        premium: isPremium(catalog, checkID),
+        expectationResults,
+        agentsCheckResults,
+        onClick: () => {
+          setModalOpen(true);
+          setSelectedCheck(checkID);
+        },
+      })
     );
-  }
-
-  const checkResults = getCheckResults(executionData);
-  const warning = providerWarningBanners[cloudProvider];
-
   return (
-    <div>
-      <Modal
-        title={
-          <MarkdownContent>
-            {getCheckDescription(catalog, selectedCheck)}
-          </MarkdownContent>
-        }
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-      >
-        <MarkdownContent>
-          {getCheckRemediation(catalog, selectedCheck)}
-        </MarkdownContent>
-      </Modal>
-      <BackButton url={`/clusters/${clusterID}`}>
-        Back to Cluster Details
-      </BackButton>
-      <div className="flex mb-4 justify-between">
-        <h1 className="text-3xl w-3/5">
-          <span className="font-medium">Checks Results for cluster</span>{' '}
-          <span
-            className={classNames('font-bold', truncatedClusterNameClasses)}
-          >
-            {clusterName}
-          </span>
-        </h1>
-        <ChecksResultFilters
-          onChange={(newPredicates) => setPredicates(newPredicates)}
-        />
-      </div>
-      {warning}
-      <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
+    <ExecutionContainer
+      catalogLoading={catalogLoading}
+      executionLoading={executionLoading}
+      executionStarted={executionStarted}
+      executionRunning={executionRunning}
+    >
+      <ExecutionHeader
+        clusterID={clusterID}
+        clusterName={clusterName}
+        cloudProvider={cloudProvider}
+        clusterScenario={clusterScenario}
+        onFilterChange={(newPredicates) => setPredicates(newPredicates)}
+      />
       <ResultsContainer
-        catalogError={false}
+        error={catalogError || executionError}
+        errorContent={[
+          catalogError ? `Failed loading catalog: ${catalogError}` : null,
+          executionError ? `Failed loading execution: ${executionError}` : null,
+        ]}
         clusterID={clusterID}
         hasAlreadyChecksResults={!!(executionData || executionLoading)}
         selectedChecks={clusterSelectedChecks}
-        hosts={hosts}
-        onCatalogRefresh={onCatalogRefresh}
+        hosts={clusterHosts.map(getHostID)}
+        onContentRefresh={onContentRefresh}
         onStartExecution={onStartExecution}
       >
-        {executionData?.targets?.map(({ agent_id: hostID, checks }) => (
-          <HostResultsWrapper
-            key={hostID}
-            hostname={hostnames.find(({ id }) => hostID === id)?.hostname}
-          >
-            {checks
-              .map((checkID) => {
-                const { health, error, expectations, failedExpectations } =
-                  getCheckHealthByAgent(checkResults, checkID, hostID);
-
-                return {
-                  checkID,
-                  error,
-                  expectations,
-                  failedExpectations,
-                  result: health,
-                };
-              })
-              .filter((check) => {
-                if (predicates.length === 0) {
-                  return true;
-                }
-
-                return predicates.some((predicate) => predicate(check));
-              })
-              .map(
-                ({
-                  checkID,
-                  result,
-                  error,
-                  expectations,
-                  failedExpectations,
-                }) => {
-                  const label = getLabel(
-                    executionData?.status,
-                    result,
-                    error,
-                    expectations,
-                    failedExpectations
-                  );
-                  return (
-                    <CheckResult
-                      key={checkID}
-                      checkId={checkID}
-                      description={getCheckDescription(catalog, checkID)}
-                      executionState={executionData?.status}
-                      health={result}
-                      label={label}
-                      onClick={() => {
-                        setModalOpen(true);
-                        setSelectedCheck(checkID);
-                      }}
-                    />
-                  );
-                }
-              )}
-          </HostResultsWrapper>
-        ))}
+        <Table config={resultsTableConfig} data={tableData} />
       </ResultsContainer>
-    </div>
+      <Modal
+        open={modalOpen}
+        title={
+          <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+            {getCheckDescription(catalog, selectedCheck)}
+          </ReactMarkdown>
+        }
+        onClose={() => setModalOpen(false)}
+      >
+        <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+          {getCheckRemediation(catalog, selectedCheck)}
+        </ReactMarkdown>
+      </Modal>
+    </ExecutionContainer>
   );
 }
 

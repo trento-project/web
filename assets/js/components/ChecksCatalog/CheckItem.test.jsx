@@ -55,8 +55,7 @@ describe('ChecksCatalog CheckItem component', () => {
       />
     );
 
-    const checks = screen.getAllByRole('listitem');
-    const checkDiv = checks[0].querySelector('div');
+    const checkDiv = screen.getByText(check.id);
 
     expect(screen.queryByText(check.remediation)).not.toBeInTheDocument();
     await user.click(checkDiv);

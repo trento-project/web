@@ -1,80 +1,110 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-
 import userEvent from '@testing-library/user-event';
-
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
 
 import {
   catalogFactory,
   catalogCheckFactory,
-  hostnameFactory,
-  addCriticalExpectation,
-  addPassingExpectation,
-  agentCheckResultFactory,
+  hostFactory,
   checksExecutionCompletedFactory,
-  checkResultFactory,
-  withEmptyExpectations,
+  emptyCheckResultFactory,
+  addPassingExpectExpectation,
+  addPassingExpectSameExpectation,
+  addCriticalExpectExpectation,
+  catalogExpectExpectationFactory,
+  catalogExpectSameExpectationFactory,
+  agentsCheckResultsWithHostname,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom/extend-expect';
-import { UNKNOWN_PROVIDER } from '@components/ClusterDetails/ClusterSettings';
+import { UNKNOWN_PROVIDER } from '@lib/model';
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
-  const hostnames = hostnameFactory.buildList(2);
-  const [{ id: agentID1 }, { id: agentID2 }] = hostnames;
-  const agentCheckResult1 = agentCheckResultFactory.build({
-    agent_id: agentID1,
-  });
-  const agentCheckResult2 = agentCheckResultFactory.build({
-    agent_id: agentID2,
-  });
-  const agentCheckResult3 = agentCheckResultFactory.build({
-    agent_id: agentID1,
-  });
-  const agentCheckResult4 = agentCheckResultFactory.build({
-    agent_id: agentID2,
-  });
-  let checkResult1 = checkResultFactory.build({
-    agents_check_results: [agentCheckResult1, agentCheckResult2],
+  const checkID1 = faker.datatype.uuid();
+  const checkID2 = faker.datatype.uuid();
+
+  const clusterHosts = hostFactory.buildList(2);
+  const [{ id: agent1 }, { id: agent2 }] = clusterHosts;
+  const targets = [agent1, agent2];
+
+  const expectationName1 = faker.company.name();
+  const expectationName2 = faker.company.name();
+  const expectationName3 = faker.company.name();
+  const expectationName4 = faker.company.name();
+  const expectationName5 = faker.company.name();
+
+  let checkResult1 = emptyCheckResultFactory.build({
+    checkID: checkID1,
+    targets,
     result: 'passing',
   });
+  checkResult1 = addPassingExpectExpectation(checkResult1, expectationName1);
+  checkResult1 = addPassingExpectExpectation(checkResult1, expectationName2);
+  checkResult1 = addPassingExpectSameExpectation(
+    checkResult1,
+    expectationName3
+  );
 
-  checkResult1 = withEmptyExpectations(checkResult1);
-  checkResult1 = addPassingExpectation(checkResult1, 'expect');
-  checkResult1 = addPassingExpectation(checkResult1, 'expect_same');
-
-  let checkResult2 = checkResultFactory.build({
-    agents_check_results: [agentCheckResult3, agentCheckResult4],
+  let checkResult2 = emptyCheckResultFactory.build({
+    checkID: checkID2,
+    targets,
     result: 'critical',
   });
+  checkResult2 = addPassingExpectExpectation(checkResult2, expectationName4);
+  checkResult2 = addCriticalExpectExpectation(checkResult2, expectationName5);
 
-  checkResult2 = withEmptyExpectations(checkResult2);
-  checkResult2 = addPassingExpectation(checkResult2, 'expect');
-  checkResult2 = addCriticalExpectation(checkResult2, 'expect');
-
-  const { check_id: checkID1 } = checkResult1;
-  const { check_id: checkID2 } = checkResult2;
-
-  const targets = [
-    { agent_id: agentID1, checks: [checkID1, checkID2] },
-    { agent_id: agentID2, checks: [checkID1, checkID2] },
-  ];
+  const checkResults = [checkResult1, checkResult2].map((checkResult) => ({
+    ...checkResult,
+    agents_check_results: agentsCheckResultsWithHostname(
+      checkResult.agents_check_results,
+      clusterHosts
+    ),
+  }));
 
   const executionResult = checksExecutionCompletedFactory.build({
-    check_results: [checkResult1, checkResult2],
+    check_results: checkResults,
     targets,
     result: 'critical',
   });
 
   const { group_id: clusterID } = executionResult;
 
+  const aCheckDescription = faker.lorem.sentence();
+  const anotherCheckDescription = faker.lorem.sentence();
   const { loading, catalog, error } = catalogFactory.build({
     loading: false,
     catalog: [
-      catalogCheckFactory.build({ id: checkID1 }),
-      catalogCheckFactory.build({ id: checkID2 }),
+      catalogCheckFactory.build({
+        id: checkID1,
+        description: aCheckDescription,
+        premium: true,
+        expectations: [
+          catalogExpectExpectationFactory.build({
+            name: expectationName1,
+          }),
+          catalogExpectExpectationFactory.build({
+            name: expectationName2,
+          }),
+          catalogExpectSameExpectationFactory.build({
+            name: expectationName3,
+          }),
+        ],
+      }),
+      catalogCheckFactory.build({
+        id: checkID2,
+        description: anotherCheckDescription,
+        premium: false,
+        expectations: [
+          catalogExpectExpectationFactory.build({
+            name: expectationName4,
+          }),
+          catalogExpectExpectationFactory.build({
+            name: expectationName5,
+          }),
+        ],
+      }),
     ],
     error: null,
   });
@@ -82,9 +112,8 @@ const prepareStateData = (checkExecutionStatus) => {
   const lastExecution = {
     executionLoading: false,
     executionData: {
+      ...executionResult,
       status: checkExecutionStatus,
-      targets,
-      check_results: [checkResult1, checkResult2],
     },
     error: '',
   };
@@ -97,13 +126,12 @@ const prepareStateData = (checkExecutionStatus) => {
 
   return {
     clusterID,
-    executionResult,
     loading,
     catalog,
     executionStarted: executionData?.status !== 'requested',
     error,
     targets,
-    hostnames,
+    clusterHosts,
     checks: [checkID1, checkID2],
     executionLoading,
     executionData,
@@ -113,16 +141,10 @@ const prepareStateData = (checkExecutionStatus) => {
 
 describe('ExecutionResults', () => {
   it('should render ExecutionResults with successfully fetched results', async () => {
-    window.IntersectionObserver = jest.fn().mockImplementation(() => ({
-      observe: () => null,
-      disconnect: () => null,
-    }));
-
-    const user = userEvent.setup();
-
+    const clusterName = 'test-cluster';
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       checks: [checkID1, checkID2],
       loading,
       catalog,
@@ -136,10 +158,10 @@ describe('ExecutionResults', () => {
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        clusterName="test-cluster"
+        clusterName={clusterName}
         clusterScenario="hana_scale_up"
         cloudProvider="azure"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -150,26 +172,37 @@ describe('ExecutionResults', () => {
       />
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
-    expect(screen.getByText('HANA scale-up')).toBeTruthy();
-    expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
-    expect(screen.getAllByText(checkID2)).toHaveLength(2);
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
-    expect(screen.getAllByText('1/2 expectations failed')).toBeTruthy();
+    expect(screen.getAllByText(clusterName)).toHaveLength(2);
+    expect(screen.getAllByText(clusterHosts[0].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(clusterHosts[1].hostname)).toHaveLength(2);
+    expect(
+      screen.getAllByText(/Value `.*` is the same on all targets/)
+    ).toHaveLength(1);
+    expect(screen.getAllByText('2/2 Expectations met.')).toHaveLength(2);
+    expect(screen.getAllByText('1/2 Expectations met.')).toHaveLength(2);
 
-    const [{ remediation }] = catalog;
-    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
-    await user.click(screen.getAllByText(checkID1)[0]);
-    expect(screen.getByText(remediation)).toBeVisible();
+    const mainTable = screen.getByRole('table');
+    const tableRows = mainTable.querySelectorAll('tbody > tr');
+
+    expect(tableRows).toHaveLength(2 * executionData.check_results.length);
+
+    expect(tableRows[0]).toHaveTextContent(checkID1);
+    expect(tableRows[1]).toHaveTextContent(clusterName);
+    expect(tableRows[1]).toHaveTextContent(
+      /Value `.*` is the same on all targets/
+    );
+    expect(tableRows[1]).toHaveTextContent(clusterHosts[0].hostname);
+    expect(tableRows[1]).toHaveTextContent('2/2 Expectations met.');
+
+    expect(tableRows[2]).toHaveTextContent(checkID2);
+    expect(tableRows[3]).toHaveTextContent(clusterHosts[1].hostname);
+    expect(tableRows[3]).toHaveTextContent('1/2 Expectations met');
   });
 
   it('should render the execution starting dialog, when an execution is not started yet', () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -180,7 +213,7 @@ describe('ExecutionResults', () => {
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         catalogError={error}
@@ -197,7 +230,7 @@ describe('ExecutionResults', () => {
   it('should render ExecutionResults with running state', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -207,25 +240,21 @@ describe('ExecutionResults', () => {
       executionStarted,
     } = prepareStateData('running');
 
-    const { container } = renderWithRouter(
+    renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         catalogError={error}
         executionStarted={executionStarted}
         executionLoading={executionLoading}
+        executionRunning
         executionData={executionData}
         executionError={executionError}
       />
     );
-    const svgEl = container.querySelector("[data-testid='eos-svg-component']");
-    const transform = svgEl.getAttribute('transform');
-    expect(svgEl.classList.toString()).toContain(
-      'inline-block fill-jungle-green-500'
-    );
-    expect(transform).toEqual('rotate(0) translate(0, 0) scale(1, 1)');
+    screen.getByText('Checks execution running...');
   });
 
   it('should render ChecksSelectionHints when executionData is null or executionLoading is false', async () => {
@@ -238,7 +267,7 @@ describe('ExecutionResults', () => {
         clusterName={faker.animal.cat()}
         clusterScenario={faker.animal.cat()}
         cloudProvider={faker.animal.cat()}
-        hostnames={[]}
+        clusterHosts={[]}
         catalogLoading={false}
         catalog={[]}
         executionStarted
@@ -260,7 +289,7 @@ describe('ExecutionResults', () => {
   it("should render ExecutionResults with successfully filtered 'passing' results", async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       checks: [checkID1, checkID2],
       loading,
       catalog,
@@ -277,7 +306,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider="azure"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -289,20 +318,19 @@ describe('ExecutionResults', () => {
       { route: `/clusters/${clusterID}/executions/last?health=passing` }
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
     expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
+    expect(screen.getByText(clusterHosts[0].hostname)).toBeTruthy();
+    expect(screen.getByText(clusterHosts[1].hostname)).toBeTruthy();
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
     expect(screen.queryByText(checkID2)).toBeNull();
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
   });
 
-  it("should render ExecutionResults with successfully filtered 'passing' and 'ciritcal' results", async () => {
+  it("should render ExecutionResults with successfully filtered 'passing' and 'critical' results", async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       checks: [checkID1, checkID2],
       loading,
       catalog,
@@ -319,7 +347,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider="azure"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -334,21 +362,19 @@ describe('ExecutionResults', () => {
       }
     );
 
-    expect(screen.getByText('test-cluster')).toBeTruthy();
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
     expect(screen.getByText('HANA scale-up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText(hostnames[0].hostname)).toBeTruthy();
-    expect(screen.getByText(hostnames[1].hostname)).toBeTruthy();
-    expect(screen.getAllByText(checkID1)).toHaveLength(2);
-    expect(screen.getAllByText(checkID2)).toHaveLength(2);
-    expect(screen.getAllByText('2/2 expectations passed')).toBeTruthy();
-    expect(screen.getAllByText('1/2 expectations failed')).toBeTruthy();
+    expect(screen.getAllByText(clusterHosts[0].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(clusterHosts[1].hostname)).toHaveLength(2);
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
+    expect(screen.getAllByText(checkID2)).toHaveLength(1);
   });
 
   it('given provider is VMware, should render ExecutionResults with warning banner', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -364,7 +390,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider="vmware"
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -387,7 +413,7 @@ describe('ExecutionResults', () => {
   it('given provider is unknown, should render ExecutionResults with warning banner', async () => {
     const {
       clusterID,
-      hostnames,
+      clusterHosts,
       loading,
       catalog,
       error,
@@ -403,7 +429,7 @@ describe('ExecutionResults', () => {
         clusterName="test-cluster"
         clusterScenario="hana_scale_up"
         cloudProvider={UNKNOWN_PROVIDER}
-        hostnames={hostnames}
+        clusterHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -418,8 +444,111 @@ describe('ExecutionResults', () => {
     expect(screen.getByText('Provider not recognized')).toBeTruthy();
     expect(
       screen.getByText(
-        /The following catalog is valid for on-premise bare metal platforms.*If you are running your HANA cluster on a different platform, please use results with caution/
+        /The following results are valid for on-premise bare metal platforms.*If you are running your HANA cluster on a different platform, please use results with caution/
       )
     ).toBeTruthy();
+  });
+
+  it('should open remediation modal when clicking on checkID and close it when clicking outside', async () => {
+    window.IntersectionObserver = jest.fn().mockImplementation(() => ({
+      observe: () => null,
+      disconnect: () => null,
+    }));
+
+    const {
+      clusterID,
+      clusterHosts,
+      loading,
+      catalog,
+      executionError,
+      executionStarted,
+      executionData,
+      checks,
+    } = prepareStateData('completed');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterHosts={clusterHosts}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionLoading={loading}
+        executionStarted={executionStarted}
+        executionData={executionData}
+        executionError={executionError}
+        clusterSelectedChecks={checks}
+      />
+    );
+
+    const { id: checkID, remediation } = catalog[0];
+    expect(screen.getByText(checkID).textContent).toBe(checks[0]);
+    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByText(checkID));
+    expect(screen.queryByText(remediation)).toBeInTheDocument();
+    await userEvent.click(document.body);
+    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
+  });
+
+  it('should not open remediation modal when clicking on description', async () => {
+    const {
+      clusterID,
+      clusterHosts,
+      loading,
+      catalog,
+      executionError,
+      executionStarted,
+      executionData,
+      checks,
+    } = prepareStateData('completed');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterHosts={clusterHosts}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionLoading={loading}
+        executionStarted={executionStarted}
+        executionData={executionData}
+        executionError={executionError}
+        clusterSelectedChecks={checks}
+      />
+    );
+
+    const { remediation, description } = catalog[0];
+    expect(screen.getByText(description).textContent).toBe(description);
+    userEvent.click(screen.getByText(description));
+    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
+  });
+
+  it('should render PremiumPill if a check in catalog is premium', () => {
+    const {
+      clusterID,
+      clusterHosts,
+      loading,
+      catalog,
+      executionError,
+      executionStarted,
+      executionData,
+      checks,
+    } = prepareStateData('completed');
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterHosts={clusterHosts}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionLoading={loading}
+        executionStarted={executionStarted}
+        executionData={executionData}
+        executionError={executionError}
+        clusterSelectedChecks={checks}
+      />
+    );
+
+    const checkID = screen.getByText(checks[0]);
+    const tableDataID = checkID.closest('div');
+    expect(tableDataID).toHaveTextContent('Premium');
+    expect(screen.getAllByText('Premium')).toHaveLength(1);
   });
 });

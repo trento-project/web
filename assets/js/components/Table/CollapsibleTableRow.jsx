@@ -8,6 +8,7 @@ function CollapsibleTableRow({
   colSpan = 1,
 }) {
   const [rowExpanded, toggleRow] = useState(false);
+
   return (
     <>
       <tr

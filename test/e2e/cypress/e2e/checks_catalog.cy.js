@@ -29,7 +29,7 @@ context('Checks catalog', () => {
   describe('Checks grouping and identification is correct', () => {
     Object.entries(groupBy(catalog, 'group')).forEach(([group, checks]) => {
       it(`should include group '${group}'`, () => {
-        cy.get('.check-group > div > h3').should('contain', group);
+        cy.get('.check-group > div > div > h3').should('contain', group);
       });
       checks.forEach(({ id }) => {
         it(`should include check '${id}'`, () => {

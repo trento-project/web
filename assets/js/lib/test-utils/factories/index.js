@@ -8,6 +8,35 @@ export * from './sapSystems';
 export * from './clusters';
 export * from './databases';
 
+export const randomObjectFactory = Factory.define(({ transientParams }) => {
+  const depth = transientParams.depth || 2;
+  const length = faker.datatype.number({ min: 3, max: 10 });
+
+  const lastElement =
+    depth === 1
+      ? { key: faker.hacker.noun(), value: faker.name.firstName() }
+      : {
+          key: faker.hacker.noun(),
+          value: randomObjectFactory.build(
+            {},
+            { transient: { depth: depth - 1 } }
+          ),
+        };
+
+  return Array.from({ length: length - 1 }, () => ({
+    key: faker.hacker.noun(),
+    value: faker.hacker.adjective(),
+  }))
+    .concat([lastElement])
+    .reduce(
+      (accumulator, { key, value }) => ({
+        ...accumulator,
+        [key]: value,
+      }),
+      {}
+    );
+});
+
 const healthEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
 
@@ -35,6 +64,18 @@ export const healthSummaryFactory = Factory.define(() => ({
   }),
 }));
 
+export const catalogExpectExpectationFactory = Factory.define(() => ({
+  name: faker.animal.cat(),
+  type: 'expect',
+  expression: faker.lorem.sentence(),
+}));
+
+export const catalogExpectSameExpectationFactory = Factory.define(() => ({
+  name: faker.animal.cat(),
+  type: 'expect_same',
+  expression: faker.lorem.sentence(),
+}));
+
 export const catalogCheckFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   name: faker.animal.cat(),
@@ -42,6 +83,7 @@ export const catalogCheckFactory = Factory.define(() => ({
   description: faker.lorem.paragraph(),
   remediation: faker.lorem.paragraph(),
   premium: faker.datatype.boolean(),
+  expectations: catalogExpectExpectationFactory.buildList(3),
 }));
 
 export const catalogFactory = Factory.define(() => ({
@@ -50,13 +92,18 @@ export const catalogFactory = Factory.define(() => ({
   error: null,
 }));
 
-export const hostnameFactory = Factory.define(({ sequence }) => ({
-  id: faker.datatype.uuid(),
-  hostname: `${faker.hacker.noun()}_${sequence}`,
-}));
-
 export const aboutFactory = Factory.define(() => ({
   flavor: faker.animal.cat(),
   sles_subscriptions: faker.datatype.number(),
   version: faker.system.networkInterface(),
+}));
+
+export const objectTreeFactory = Factory.define(() => ({
+  number: faker.datatype.number(),
+  string: faker.word.adjective(),
+  array: faker.datatype.array(),
+  complexObject: {
+    nestedNumber: faker.datatype.number(),
+    nestedString: faker.word.noun(),
+  },
 }));
