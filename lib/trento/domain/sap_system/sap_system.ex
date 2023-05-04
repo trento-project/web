@@ -58,6 +58,7 @@ defmodule Trento.Domain.SapSystem do
 
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
+    DeregisterDatabaseInstance,
     RegisterApplicationInstance,
     RegisterDatabaseInstance,
     RollUpSapSystem
@@ -67,7 +68,9 @@ defmodule Trento.Domain.SapSystem do
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
     ApplicationInstanceRegistered,
+    DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
@@ -95,6 +98,9 @@ defmodule Trento.Domain.SapSystem do
     embeds_one :database, Database
     embeds_one :application, Application
   end
+
+  # Stop everything during the rollup process
+  def execute(%SapSystem{rolling_up: true}, _), do: {:error, :sap_system_rolling_up}
 
   def execute(
         %SapSystem{sap_system_id: nil},
@@ -149,9 +155,6 @@ defmodule Trento.Domain.SapSystem do
       }
     ]
   end
-
-  # Stop everything during the rollup process
-  def execute(%SapSystem{rolling_up: true}, _), do: {:error, :sap_system_rolling_up}
 
   # When a RegisterDatabaseInstance command is received by an existing SAP System aggregate,
   # the SAP System aggregate registers the Database instance if it is not already registered
@@ -221,6 +224,35 @@ defmodule Trento.Domain.SapSystem do
     }
   end
 
+  # Deregister a database instance and emit a DatabaseInstanceDeregistered
+  # also potentially emit SapSystemDeregistered and DatabaseDeregistered events
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = sap_system,
+        %DeregisterDatabaseInstance{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        }
+      ) do
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %DatabaseInstanceDeregistered{
+        sap_system_id: sap_system_id,
+        host_id: host_id,
+        instance_number: instance_number,
+        deregistered_at: deregistered_at
+      }
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_database_deregistered_event(sap_system, deregistered_at)
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_sap_system_deregistered_event(sap_system, deregistered_at)
+    end)
+  end
+
   # Deregister an application instance and emit a ApplicationInstanceDeregistered
   # also emit SapSystemDeregistered event if this was the last application instance
   def execute(
@@ -250,40 +282,6 @@ defmodule Trento.Domain.SapSystem do
         deregistered_at
       )
     end)
-  end
-
-  def apply(
-        %SapSystem{application: %Application{instances: instances}} = sap_system,
-        %ApplicationInstanceDeregistered{instance_number: instance_number, host_id: host_id}
-      ) do
-    instances =
-      Enum.reject(instances, fn
-        %Instance{instance_number: ^instance_number, host_id: ^host_id} ->
-          true
-
-        _ ->
-          false
-      end)
-
-    %SapSystem{
-      sap_system
-      | application: %Application{
-          instances: instances
-        }
-    }
-  end
-
-  def apply(
-        %SapSystem{} = sap_system,
-        %SapSystemDeregistered{
-          deregistered_at: deregistered_at
-        }
-      ) do
-    %SapSystem{
-      sap_system
-      | deregistered_at: deregistered_at,
-        sid: nil
-    }
   end
 
   def apply(
@@ -385,6 +383,15 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{sap_system | database: Map.put(database, :instances, instances)}
   end
 
+  def apply(%SapSystem{database: %Database{} = database} = sap_system, %DatabaseHealthChanged{
+        health: health
+      }) do
+    %SapSystem{
+      sap_system
+      | database: Map.put(database, :health, health)
+    }
+  end
+
   def apply(
         %SapSystem{application: nil} = sap_system,
         %ApplicationInstanceRegistered{
@@ -479,15 +486,6 @@ defmodule Trento.Domain.SapSystem do
     }
   end
 
-  def apply(%SapSystem{database: %Database{} = database} = sap_system, %DatabaseHealthChanged{
-        health: health
-      }) do
-    %SapSystem{
-      sap_system
-      | database: Map.put(database, :health, health)
-    }
-  end
-
   # Aggregate to rolling up state
   def apply(%SapSystem{} = sap_system, %SapSystemRollUpRequested{}) do
     %SapSystem{sap_system | rolling_up: true}
@@ -499,6 +497,111 @@ defmodule Trento.Domain.SapSystem do
       }) do
     snapshot
   end
+
+  def apply(
+        %SapSystem{database: %Database{instances: instances}} = sap_system,
+        %DatabaseInstanceDeregistered{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    instances =
+      Enum.reject(instances, fn
+        %Instance{instance_number: ^instance_number, host_id: ^host_id} ->
+          true
+
+        _ ->
+          false
+      end)
+
+    %SapSystem{
+      sap_system
+      | database: %Database{
+          instances: instances
+        }
+    }
+  end
+
+  def apply(
+        %SapSystem{application: %Application{instances: instances}} = sap_system,
+        %ApplicationInstanceDeregistered{instance_number: instance_number, host_id: host_id}
+      ) do
+    instances =
+      Enum.reject(instances, fn
+        %Instance{instance_number: ^instance_number, host_id: ^host_id} ->
+          true
+
+        _ ->
+          false
+      end)
+
+    %SapSystem{
+      sap_system
+      | application: %Application{
+          instances: instances
+        }
+    }
+  end
+
+  def apply(
+        %SapSystem{database: database} = sap_system,
+        %DatabaseDeregistered{}
+      ) do
+    %SapSystem{
+      sap_system
+      | database: Map.put(database, :sid, nil)
+    }
+  end
+
+  def apply(
+        %SapSystem{} = sap_system,
+        %SapSystemDeregistered{
+          deregistered_at: deregistered_at
+        }
+      ) do
+    %SapSystem{
+      sap_system
+      | deregistered_at: deregistered_at,
+        sid: nil
+    }
+  end
+
+  defp maybe_emit_database_instance_registered_event(
+         nil,
+         %RegisterDatabaseInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           tenant: tenant,
+           instance_number: instance_number,
+           instance_hostname: instance_hostname,
+           features: features,
+           http_port: http_port,
+           https_port: https_port,
+           start_priority: start_priority,
+           host_id: host_id,
+           system_replication: system_replication,
+           system_replication_status: system_replication_status,
+           health: health
+         }
+       ) do
+    %DatabaseInstanceRegistered{
+      sap_system_id: sap_system_id,
+      sid: sid,
+      tenant: tenant,
+      instance_number: instance_number,
+      instance_hostname: instance_hostname,
+      features: features,
+      http_port: http_port,
+      https_port: https_port,
+      start_priority: start_priority,
+      host_id: host_id,
+      system_replication: system_replication,
+      system_replication_status: system_replication_status,
+      health: health
+    }
+  end
+
+  defp maybe_emit_database_instance_registered_event(_, _), do: nil
 
   defp maybe_emit_database_instance_system_replication_changed_event(
          %Instance{
@@ -548,43 +651,6 @@ defmodule Trento.Domain.SapSystem do
 
   defp maybe_emit_database_instance_health_changed_event(_, _), do: nil
 
-  defp maybe_emit_database_instance_registered_event(
-         nil,
-         %RegisterDatabaseInstance{
-           sap_system_id: sap_system_id,
-           sid: sid,
-           tenant: tenant,
-           instance_number: instance_number,
-           instance_hostname: instance_hostname,
-           features: features,
-           http_port: http_port,
-           https_port: https_port,
-           start_priority: start_priority,
-           host_id: host_id,
-           system_replication: system_replication,
-           system_replication_status: system_replication_status,
-           health: health
-         }
-       ) do
-    %DatabaseInstanceRegistered{
-      sap_system_id: sap_system_id,
-      sid: sid,
-      tenant: tenant,
-      instance_number: instance_number,
-      instance_hostname: instance_hostname,
-      features: features,
-      http_port: http_port,
-      https_port: https_port,
-      start_priority: start_priority,
-      host_id: host_id,
-      system_replication: system_replication,
-      system_replication_status: system_replication_status,
-      health: health
-    }
-  end
-
-  defp maybe_emit_database_instance_registered_event(_, _), do: nil
-
   # Returns a DatabaseHealthChanged event if the newly computed aggregated health of all the instances
   # is different from the previous Database health.
   defp maybe_emit_database_health_changed_event(%SapSystem{
@@ -602,44 +668,6 @@ defmodule Trento.Domain.SapSystem do
         health: new_health
       }
     end
-  end
-
-  defp instances_have_abap?(instances) do
-    Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
-  end
-
-  def instances_have_messageserver?(instances) do
-    Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
-  end
-
-  defp maybe_emit_sap_system_deregistered_event(
-         %SapSystem{sid: nil},
-         _deregistered_at
-       ),
-       do: []
-
-  defp maybe_emit_sap_system_deregistered_event(
-         %SapSystem{
-           sap_system_id: sap_system_id,
-           application: %Application{
-             instances: instances
-           }
-         },
-         deregistered_at
-       ) do
-    unless instances_have_abap?(instances) and instances_have_messageserver?(instances) do
-      %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
-    end
-  end
-
-  defp get_instance(instances, host_id, instance_number) do
-    Enum.find(instances, fn
-      %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
-        true
-
-      _ ->
-        false
-    end)
   end
 
   defp emit_application_instance_registered_or_application_instance_health_changed(
@@ -774,5 +802,96 @@ defmodule Trento.Domain.SapSystem do
         health: new_health
       }
     end
+  end
+
+  defp maybe_emit_sap_system_deregistered_event(
+         %SapSystem{sid: nil},
+         _deregistered_at
+       ),
+       do: []
+
+  defp maybe_emit_sap_system_deregistered_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           database: %Database{
+             sid: nil
+           }
+         },
+         deregistered_at
+       ) do
+    %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
+  end
+
+  defp maybe_emit_sap_system_deregistered_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           application: %Application{
+             instances: instances
+           }
+         },
+         deregistered_at
+       ) do
+    unless instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+      %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
+    end
+  end
+
+  defp maybe_emit_database_deregistered_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           database: %Database{
+             instances: []
+           }
+         },
+         deregistered_at
+       ) do
+    %DatabaseDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
+  end
+
+  defp maybe_emit_database_deregistered_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           database: %Database{
+             instances: instances
+           }
+         },
+         deregistered_at
+       ) do
+    has_primary? =
+      Enum.any?(instances, fn %{system_replication: system_replication} ->
+        system_replication == "Primary"
+      end)
+
+    has_secondary? =
+      Enum.any?(instances, fn %{system_replication: system_replication} ->
+        system_replication == "Secondary"
+      end)
+
+    if has_secondary? and !has_primary? do
+      %DatabaseDeregistered{
+        sap_system_id: sap_system_id,
+        deregistered_at: deregistered_at
+      }
+    end
+  end
+
+  defp maybe_emit_database_deregistered_event(_, _), do: nil
+
+  defp instances_have_abap?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "ABAP" end)
+  end
+
+  def instances_have_messageserver?(instances) do
+    Enum.any?(instances, fn %{features: features} -> features =~ "MESSAGESERVER" end)
+  end
+
+  defp get_instance(instances, host_id, instance_number) do
+    Enum.find(instances, fn
+      %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
+        true
+
+      _ ->
+        false
+    end)
   end
 end
