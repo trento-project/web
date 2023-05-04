@@ -23,7 +23,9 @@ jobs:
       TF_VAR_aws_access_key_id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
       TF_VAR_public_key: "${{ secrets.SSH_PUBLIC_KEY }}"
       TF_VAR_hana_instancetype: "r6i.xlarge"
+      # vmhana01 and vmhana02 images built from https://github.com/SUSE/ha-sap-terraform-deployments
       TF_VAR_hana_image_ids: '["ami-073792bfce1223304", "ami-0c3df2b35c3b0ec6f"]'
+      # OpenSUSE Leap 15.4
       TF_VAR_trento_server_image_id: "ami-094a0810ca766cdce"
     steps:
       - name: Checkout
