@@ -64,16 +64,9 @@ context('Checks catalog', () => {
 
   describe('Individual checks data is expanded', () => {
     it('should expand check data when clicked', () => {
-      cy.get('div.check-row')
-        .first()
-        .parent()
-        .invoke('attr', 'id')
-        .then(() => {
-          cy.get('div.check-row').first().click();
-          cy.get(`.check-panel`).should('exist');
-          cy.get('div.check-row').first().click();
-          cy.get('.check-panel').should('not.exist');
-        });
+      cy.get('.check-panel').should('not.exist');
+      cy.get('div.check-row').first().click();
+      cy.get(`.check-panel`).should('exist');
     });
   });
 
