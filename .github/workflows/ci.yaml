@@ -323,6 +323,7 @@ jobs:
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          skip: dependabot/**
 
   npm-e2e-deps:
     name: Npm E2E dependencies
