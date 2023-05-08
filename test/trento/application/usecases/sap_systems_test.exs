@@ -14,13 +14,15 @@ defmodule Trento.SapSystemsTest do
   @moduletag :integration
 
   describe "sap_systems" do
-    test "should retrieve all the existing sap systems and the related instances" do
+    test "should retrieve all the currently registered existing sap systems and the related instances" do
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid,
         tenant: tenant,
         db_host: db_host
       } = insert(:sap_system)
+
+      insert(:sap_system, deregistered_at: DateTime.utc_now())
 
       application_instances =
         Enum.sort_by(

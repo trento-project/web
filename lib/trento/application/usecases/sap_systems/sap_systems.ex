@@ -15,11 +15,14 @@ defmodule Trento.SapSystems do
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
   def get_all_sap_systems do
     SapSystemReadModel
+    |> where([s], is_nil(s.deregistered_at))
     |> order_by(asc: :sid)
     |> Repo.all()
-    |> Repo.preload(:application_instances)
-    |> Repo.preload(:database_instances)
-    |> Repo.preload(:tags)
+    |> Repo.preload([
+      :application_instances,
+      :database_instances,
+      :tags
+    ])
   end
 
   @spec get_all_databases :: [map]
@@ -27,7 +30,9 @@ defmodule Trento.SapSystems do
     DatabaseReadModel
     |> order_by(asc: :sid)
     |> Repo.all()
-    |> Repo.preload(:database_instances)
-    |> Repo.preload(:tags)
+    |> Repo.preload([
+      :database_instances,
+      :tags
+    ])
   end
 end
