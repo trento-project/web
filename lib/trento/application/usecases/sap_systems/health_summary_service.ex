@@ -24,6 +24,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
   @spec get_health_summary :: [map()]
   def get_health_summary do
     SapSystemReadModel
+    |> where([s], is_nil(s.deregistered_at))
     |> order_by(asc: :sid)
     |> Repo.all()
     |> Repo.preload(application_instances: :host)
@@ -59,8 +60,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
     |> HealthService.compute_aggregated_health()
   end
 
-  @spec compute_clusters_health(instance_list) ::
-          Health.t()
+  @spec compute_clusters_health(instance_list) :: Health.t()
   defp compute_clusters_health(instances) do
     instances
     |> reject_unclustered_instances()
