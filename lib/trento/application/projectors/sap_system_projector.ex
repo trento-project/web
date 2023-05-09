@@ -210,7 +210,9 @@ defmodule Trento.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_deregistered",
-      %{id: sap_system_id}
+      SapSystemView.render("sap_system_deregistered.json",
+        sap_system_id: sap_system_id
+      )
     )
   end
 
