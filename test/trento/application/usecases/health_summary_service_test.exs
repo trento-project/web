@@ -59,6 +59,8 @@ defmodule Trento.HealthSummaryServiceTest do
         sid: sid
       } = insert(:sap_system, health: Health.critical())
 
+      insert(:sap_system, deregistered_at: DateTime.utc_now())
+
       database_instance =
         insert(
           :database_instance_without_host,

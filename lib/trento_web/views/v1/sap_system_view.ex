@@ -123,6 +123,9 @@ defmodule TrentoWeb.V1.SapSystemView do
 
   def render("sap_system_health_changed.json", %{health: health}), do: health
 
+  def render("sap_system_deregistered.json", %{sap_system_id: sap_system_id}),
+    do: %{sap_system_id: sap_system_id}
+
   defp add_system_replication_status_to_secondary_instance(
          %{database_instances: database_instances} = sap_system
        ) do

@@ -35,6 +35,8 @@ defmodule Trento.SapSystemReadModel do
       preload_order: [asc: :instance_number, asc: :host_id]
 
     has_many :tags, Trento.Tag, foreign_key: :resource_id
+
+    field :deregistered_at, :utc_datetime_usec
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

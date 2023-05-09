@@ -311,7 +311,8 @@ defmodule Trento.Factory do
       sid: Faker.StarWars.planet(),
       tenant: Faker.Beer.hop(),
       db_host: Faker.Internet.ip_v4_address(),
-      health: Health.unknown()
+      health: Health.unknown(),
+      deregistered_at: nil
     }
   end
 
