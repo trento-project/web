@@ -40,7 +40,7 @@ function ExpectationsResults({
         <div className="mt-3 text-red-500">{errorMessage}</div>
       ) : (
         <ListView
-          className="mt-3"
+          className="mt-3 text-sm"
           titleClassName="text-sm"
           orientation="horizontal"
           data={expectationsEvaluations}

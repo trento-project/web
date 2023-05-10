@@ -12,7 +12,7 @@ const gatheredFactsToListView = (gatheredFacts) =>
       type ? (
         <span className="text-red-500">{message}</span>
       ) : (
-        <FactValue className="text-sm" data={factValue} />
+        <FactValue data={factValue} />
       ),
   }));
 
@@ -22,12 +22,12 @@ function GatheredFacts({ isTargetHost = true, gatheredFacts = [] }) {
       <div className="text-lg font-bold">Facts</div>
 
       {gatheredFacts.length === 0 && (
-        <div className="mt-3 text-red-500">No facts were gathered</div>
+        <div className="mt-3 text-sm text-red-500">No facts were gathered</div>
       )}
 
       {isTargetHost && (
         <ListView
-          className="grid-flow-row mt-3"
+          className="grid-flow-row mt-3 text-sm"
           titleClassName="text-sm"
           orientation="horizontal"
           data={gatheredFactsToListView(gatheredFacts)}
