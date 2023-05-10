@@ -323,6 +323,7 @@ jobs:
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          autoAcceptChanges: true
           skip: dependabot/**
 
   npm-e2e-deps:
