@@ -162,34 +162,6 @@ Cypress.Commands.add('resetFilterSelection', (filterName) => {
     });
 });
 
-Cypress.Commands.add('setMockRunnerExpectedResult', (result) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
-
-  const requestResultBody = JSON.stringify({
-    expected_results: result,
-  });
-
-  const headers = {
-    'Content-Type': 'application/json;charset=UTF-8',
-  };
-
-  apiLogin().then(({ accessToken }) => {
-    const url = `http://${webAPIHost}:${webAPIPort}/api/mockrunner/expected_result`;
-    cy.request({
-      method: 'POST',
-      url: url,
-      body: requestResultBody,
-      headers: headers,
-      auth: {
-        bearer: accessToken,
-      },
-    });
-  });
-});
-
 Cypress.Commands.add('requestChecksExecution', (clusterId) => {
   const [webAPIHost, webAPIPort] = [
     Cypress.env('web_api_host'),
