@@ -17,6 +17,8 @@ const getClusterTypeLabel = (type) => {
       return 'HANA Scale Up';
     case 'hana_scale_out':
       return 'HANA Scale Out';
+    case 'ascs_ers':
+      return 'ASCS/ERS';
     default:
       return 'Unknown';
   }
