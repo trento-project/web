@@ -57,7 +57,18 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
   defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => nil}}),
     do: ClusterType.unknown()
 
-  defp parse_cluster_type(%{"crmmon" => %{"clones" => clones}}) when not is_nil(clones) do
+  defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => groups}}) do
+    sap_instance_count =
+      Enum.count(groups, fn %{"resources" => resources} ->
+        Enum.any?(resources, fn %{"agent" => agent} ->
+          agent == "ocf::heartbeat:SAPInstance"
+        end)
+      end)
+
+    do_detect_cluster_type(sap_instance_count)
+  end
+
+  defp parse_cluster_type(%{"crmmon" => %{"clones" => clones}}) do
     has_sap_hana_topology =
       Enum.any?(clones, fn %{"resources" => resources} ->
         Enum.any?(resources, fn %{"agent" => agent} -> agent == "ocf::suse:SAPHanaTopology" end)
@@ -76,17 +87,6 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
       end)
 
     do_detect_cluster_type(has_sap_hana_topology, has_sap_hana, has_sap_hana_controller)
-  end
-
-  defp parse_cluster_type(%{"crmmon" => %{"groups" => groups}}) do
-    sap_instance_count =
-      Enum.count(groups, fn %{"resources" => resources} ->
-        Enum.any?(resources, fn %{"agent" => agent} ->
-          agent == "ocf::heartbeat:SAPInstance"
-        end)
-      end)
-
-    do_detect_cluster_type(sap_instance_count)
   end
 
   defp parse_cluster_type(_), do: ClusterType.unknown()
