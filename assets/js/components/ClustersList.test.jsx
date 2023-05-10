@@ -73,13 +73,14 @@ describe('ClustersList component', () => {
       },
       {
         filter: 'Type',
-        options: ['hana_scale_up'],
+        options: ['hana_scale_up', 'ascs_ers'],
         state: {
           ...cleanInitialState,
           clustersList: {
             clusters: [].concat(
               clusterFactory.buildList(2, { type: 'unknown' }),
-              clusterFactory.buildList(2, { type: 'hana_scale_up' })
+              clusterFactory.buildList(2, { type: 'hana_scale_up' }),
+              clusterFactory.buildList(2, { type: 'ascs_ers' })
             ),
           },
         },
