@@ -215,6 +215,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
               name: "hana_cluster",
               sid: "PRD",
+              additional_sids: [],
               type: :hana_scale_up,
               hosts_number: 2,
               resources_number: 8,
@@ -236,6 +237,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
               name: "netweaver_cluster",
               sid: nil,
+              additional_sids: ["NWP"],
               type: :ascs_ers,
               hosts_number: 2,
               resources_number: 9,
@@ -257,6 +259,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
               name: "netweaver_cluster",
               sid: nil,
+              additional_sids: [],
               type: :unknown,
               hosts_number: 2,
               resources_number: 5,
@@ -278,6 +281,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
               name: "netweaver_cluster",
               sid: nil,
+              additional_sids: ["NWP", "NWD"],
               type: :ascs_ers,
               hosts_number: 2,
               resources_number: 17,
@@ -405,6 +409,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                provider: Provider.aws(),
                resources_number: 7,
                sid: "PRD",
+               additional_sids: [],
                type: :hana_scale_up
              }
            } ==
@@ -542,6 +547,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                provider: Provider.gcp(),
                resources_number: 9,
                sid: "PRD",
+               additional_sids: [],
                type: :hana_scale_up
              }
            } ==
@@ -748,6 +754,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
               name: nil,
               sid: "PRD",
+              additional_sids: [],
               type: :hana_scale_up,
               hosts_number: 2,
               resources_number: 8,

@@ -35,7 +35,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
            dc: designated_controller,
            provider: provider,
            cluster_type: cluster_type,
-           sid: sid
+           sid: sid,
+           additional_sids: additional_sids
          } = payload
        ) do
     cluster_details = parse_cluster_details(payload)
@@ -45,6 +46,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       host_id: agent_id,
       name: name,
       sid: sid,
+      additional_sids: additional_sids,
       type: cluster_type,
       designated_controller: designated_controller,
       resources_number: parse_resources_number(payload),

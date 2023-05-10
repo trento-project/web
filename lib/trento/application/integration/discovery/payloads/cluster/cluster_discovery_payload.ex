@@ -5,6 +5,7 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
 
   @required_fields [:dc, :provider, :id, :cluster_type, :cib, :sbd, :crmmon]
   @required_fields_hana [:sid]
+  @required_fields_ascs_ers [:additional_sids]
 
   use Trento.Type
 
@@ -28,6 +29,7 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
     field :name, :string
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
+    field :additional_sids, {:array, :string}
 
     embeds_one :cib, Cib
     embeds_one :sbd, Sbd
@@ -52,7 +54,17 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
   defp enrich_cluster_type(attrs),
     do: Map.put(attrs, "cluster_type", parse_cluster_type(attrs))
 
-  defp enrich_cluster_sid(attrs), do: Map.put(attrs, "sid", parse_cluster_sid(attrs))
+  defp enrich_cluster_sid(%{"cluster_type" => ClusterType.unknown()} = attrs) do
+    attrs
+    |> Map.put("sid", nil)
+    |> Map.put("additional_sids", [])
+  end
+
+  defp enrich_cluster_sid(attrs) do
+    attrs
+    |> Map.put("sid", parse_cluster_sid(attrs))
+    |> Map.put("additional_sids", parse_cluster_additional_sids(attrs))
+  end
 
   defp parse_cluster_type(%{"crmmon" => %{"clones" => nil, "groups" => nil}}),
     do: ClusterType.unknown()
@@ -125,11 +137,40 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
     end)
   end
 
+  defp parse_cluster_additional_sids(%{
+         "cib" => %{"configuration" => %{"resources" => %{"clones" => nil, "groups" => groups}}}
+       }) do
+    groups
+    |> Enum.flat_map(fn
+      %{"primitives" => primitives} -> primitives
+    end)
+    |> Enum.flat_map(fn
+      %{"type" => "SAPInstance", "instance_attributes" => attributes} ->
+        attributes
+
+      _ ->
+        []
+    end)
+    |> Enum.flat_map(fn
+      %{"name" => "InstanceName", "value" => value} when value != "" ->
+        value |> String.split("_") |> Enum.at(0) |> List.wrap()
+
+      _ ->
+        []
+    end)
+    |> Enum.uniq()
+  end
+
+  defp parse_cluster_additional_sids(_), do: []
+
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_up()}),
     do: validate_required(cluster, @required_fields_hana)
 
   defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.hana_scale_out()}),
     do: validate_required(cluster, @required_fields_hana)
+
+  defp maybe_validate_required_fields(cluster, %{"cluster_type" => ClusterType.ascs_ers()}),
+    do: validate_required(cluster, @required_fields_ascs_ers)
 
   defp maybe_validate_required_fields(cluster, _),
     do: cluster
