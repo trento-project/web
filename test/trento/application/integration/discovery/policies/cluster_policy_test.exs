@@ -226,6 +226,69 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
              |> ClusterPolicy.handle()
   end
 
+  test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers is handled" do
+    assert {:ok,
+            %RegisterClusterHost{
+              cib_last_written: "Tue Jan 11 13:43:06 2022",
+              cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
+              designated_controller: false,
+              details: nil,
+              host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
+              name: "netweaver_cluster",
+              sid: nil,
+              type: :ascs_ers,
+              hosts_number: 2,
+              resources_number: 9,
+              discovered_health: :unknown,
+              provider: Provider.azure()
+            }} ==
+             "ha_cluster_discovery_ascs_ers"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle()
+  end
+
+  test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with invalid data is handled" do
+    assert {:ok,
+            %RegisterClusterHost{
+              cib_last_written: "Tue Jan 11 13:43:06 2022",
+              cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
+              designated_controller: false,
+              details: nil,
+              host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
+              name: "netweaver_cluster",
+              sid: nil,
+              type: :unknown,
+              hosts_number: 2,
+              resources_number: 5,
+              discovered_health: :unknown,
+              provider: Provider.azure()
+            }} ==
+             "ha_cluster_discovery_ascs_ers_invalid"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle()
+  end
+
+  test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with multi sid setup is handled" do
+    assert {:ok,
+            %RegisterClusterHost{
+              cib_last_written: "Tue Jan 11 13:43:06 2022",
+              cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
+              designated_controller: false,
+              details: nil,
+              host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
+              name: "netweaver_cluster",
+              sid: nil,
+              type: :ascs_ers,
+              hosts_number: 2,
+              resources_number: 17,
+              discovered_health: :unknown,
+              provider: Provider.azure()
+            }} ==
+             "ha_cluster_discovery_ascs_ers_multi_sid"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle()
+  end
+
   test "should return the expected commands when a ha_cluster_discovery payload with aws provider" do
     assert {
              :ok,
