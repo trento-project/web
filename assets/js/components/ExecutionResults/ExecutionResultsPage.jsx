@@ -28,14 +28,16 @@ function ExecutionResultsPage() {
     },
   } = useSelector(getLastExecutionData(clusterID));
 
+  const cloudProvider = cluster?.provider;
+
   useEffect(() => {
-    if (catalog.length === 0) {
-      dispatch(updateCatalog());
+    if (cloudProvider) {
+      dispatch(updateCatalog({ provider: cloudProvider }));
     }
     if (!executionData) {
       dispatch(updateLastExecution(clusterID));
     }
-  }, []);
+  }, [cloudProvider]);
 
   if (!cluster) {
     return <div>Loading...</div>;
@@ -47,7 +49,7 @@ function ExecutionResultsPage() {
       clusterHosts={clusterHosts}
       clusterName={cluster?.name}
       clusterScenario={cluster?.type}
-      cloudProvider={cluster?.provider}
+      cloudProvider={cloudProvider}
       onCatalogRefresh={() => dispatch(updateCatalog())}
       onLastExecutionUpdate={() => dispatch(updateLastExecution(clusterID))}
       catalogLoading={catalogLoading}
