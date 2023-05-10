@@ -126,6 +126,11 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
         id: %Schema{type: :string, description: "Cluster ID", format: :uuid},
         name: %Schema{type: :string, description: "Cluster name"},
         sid: %Schema{type: :string, description: "SID"},
+        additional_sids: %Schema{
+          type: :array,
+          items: %Schema{type: :string},
+          description: "Additionally discovered SIDs, such as ASCS/ERS cluster SIDs"
+        },
         provider: Provider.SupportedProviders,
         type: %Schema{
           type: :string,
