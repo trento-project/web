@@ -42,6 +42,7 @@ defmodule Trento.ClusterTest do
       name = Faker.StarWars.character()
       type = :hana_scale_up
       sid = Faker.StarWars.planet()
+      additional_sids = ["HA1", "HA2"]
 
       assert_events_and_state(
         [],
@@ -50,6 +51,7 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: name,
           sid: sid,
+          additional_sids: additional_sids,
           provider: :azure,
           type: type,
           details: nil,
@@ -61,6 +63,7 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             name: name,
             sid: sid,
+            additional_sids: additional_sids,
             provider: :azure,
             type: type,
             health: :passing,
@@ -75,6 +78,7 @@ defmodule Trento.ClusterTest do
           cluster_id: cluster_id,
           name: name,
           sid: sid,
+          additional_sids: additional_sids,
           type: type,
           provider: :azure,
           hosts: [host_id],
@@ -105,6 +109,7 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             name: name,
             sid: nil,
+            additional_sids: [],
             provider: :unknown,
             type: :unknown,
             health: :unknown,
@@ -186,6 +191,7 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: name,
           sid: sid,
+          additional_sids: [],
           type: :hana_scale_up,
           discovered_health: :passing,
           resources_number: 8,
@@ -288,6 +294,7 @@ defmodule Trento.ClusterTest do
           host_id: host_id,
           name: name,
           sid: sid,
+          additional_sids: [],
           provider: :azure,
           resources_number: 8,
           hosts_number: 2,
@@ -520,6 +527,7 @@ defmodule Trento.ClusterTest do
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
           sid: cluster_registered_event.sid,
+          additional_sids: cluster_registered_event.additional_sids,
           provider: cluster_registered_event.provider,
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
@@ -568,6 +576,7 @@ defmodule Trento.ClusterTest do
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
           sid: cluster_registered_event.sid,
+          additional_sids: cluster_registered_event.additional_sids,
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
           hosts_number: cluster_registered_event.hosts_number,
@@ -614,6 +623,7 @@ defmodule Trento.ClusterTest do
           host_id: host_added_to_cluster_event.host_id,
           name: cluster_registered_event.name,
           sid: cluster_registered_event.sid,
+          additional_sids: cluster_registered_event.additional_sids,
           provider: :azure,
           type: cluster_registered_event.type,
           resources_number: cluster_registered_event.resources_number,
@@ -661,6 +671,7 @@ defmodule Trento.ClusterTest do
             name: cluster_registered_event.name,
             type: cluster_registered_event.type,
             sid: cluster_registered_event.sid,
+            additional_sids: cluster_registered_event.additional_sids,
             provider: cluster_registered_event.provider,
             resources_number: cluster_registered_event.resources_number,
             hosts_number: cluster_registered_event.hosts_number,
@@ -691,6 +702,7 @@ defmodule Trento.ClusterTest do
               name: cluster_registered_event.name,
               type: cluster_registered_event.type,
               sid: cluster_registered_event.sid,
+              additional_sids: cluster_registered_event.additional_sids,
               provider: cluster_registered_event.provider,
               resources_number: cluster_registered_event.resources_number,
               hosts_number: cluster_registered_event.hosts_number,
@@ -860,6 +872,7 @@ defmodule Trento.ClusterTest do
           assert cluster.name == cluster_registered_event.name
           assert cluster.type == cluster_registered_event.type
           assert cluster.sid == cluster_registered_event.sid
+          assert cluster.additional_sids == cluster_registered_event.additional_sids
           assert cluster.provider == cluster_registered_event.provider
           assert cluster.resources_number == cluster_registered_event.resources_number
           assert cluster.hosts_number == cluster_registered_event.hosts_number

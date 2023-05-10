@@ -107,6 +107,7 @@ defmodule Trento.Domain.Cluster do
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
+    field :additional_sids, {:array, :string}, default: []
     field :resources_number, :integer
     field :hosts_number, :integer
     field :provider, Ecto.Enum, values: Provider.values()
@@ -133,6 +134,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -147,6 +149,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -174,6 +177,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: :unknown,
         sid: nil,
+        additional_sids: [],
         provider: :unknown,
         resources_number: nil,
         hosts_number: nil,
@@ -292,6 +296,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -305,6 +310,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -338,6 +344,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -349,6 +356,7 @@ defmodule Trento.Domain.Cluster do
       | name: name,
         type: type,
         sid: sid,
+        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -428,6 +436,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -437,6 +446,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -453,6 +463,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -464,6 +475,7 @@ defmodule Trento.Domain.Cluster do
       name: name,
       type: type,
       sid: sid,
+      additional_sids: additional_sids,
       provider: provider,
       resources_number: resources_number,
       hosts_number: hosts_number,

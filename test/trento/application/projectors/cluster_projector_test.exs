@@ -45,6 +45,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
     assert event.sid == cluster_projection.sid
+    assert event.additional_sids == cluster_projection.additional_sids
     assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
@@ -132,6 +133,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
     assert event.sid == cluster_projection.sid
+    assert event.additional_sids == cluster_projection.additional_sids
     assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
