@@ -36,21 +36,21 @@ export const availableClusters = [
     type: 'HANA Scale Up',
   },
   {
+    id: '0eac831a-aa66-5f45-89a4-007fbd2c5714',
+    name: 'netweaver_cluster',
+    sid: 'NWP',
+    type: 'ASCS/ERS',
+  },
+  {
     id: '5284f376-c1f4-5178-8966-d490df3dab4f',
     name: 'netweaver_cluster',
-    sid: '',
+    sid: 'NWD',
     type: 'ASCS/ERS',
   },
   {
     id: 'fb861bce-d212-56b5-8786-74afd6eb58cb',
     name: 'netweaver_cluster',
-    sid: '',
-    type: 'ASCS/ERS',
-  },
-  {
-    id: '0eac831a-aa66-5f45-89a4-007fbd2c5714',
-    name: 'netweaver_cluster',
-    sid: '',
+    sid: 'NWQ',
     type: 'ASCS/ERS',
   },
 ];
