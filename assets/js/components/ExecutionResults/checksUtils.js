@@ -38,14 +38,18 @@ export const isPremium = (catalog, checkID) => {
   return false;
 };
 
-export const getCatalogCategoryList = (catalog, checksResults = []) =>
-  [
+export const getCatalogCategoryList = (catalog, checksResults = []) => {
+  if (catalog.length === 0) {
+    return [];
+  }
+  return [
     ...new Set(
       checksResults.map(
         ({ check_id }) => catalog.find((check) => check.id === check_id).group
       )
     ),
   ].sort();
+};
 
 export const getCheckDescription = (catalog, checkID) => {
   const check = findCheck(catalog, checkID);
