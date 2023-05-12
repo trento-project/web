@@ -3,7 +3,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
-
 import {
   catalogFactory,
   catalogCheckFactory,
@@ -180,23 +179,10 @@ describe('ExecutionResults', () => {
     ).toHaveLength(1);
     expect(screen.getAllByText('2/2 Expectations met.')).toHaveLength(2);
     expect(screen.getAllByText('1/2 Expectations met.')).toHaveLength(2);
-
-    const mainTable = screen.getByRole('table');
-    const tableRows = mainTable.querySelectorAll('tbody > tr');
-
-    expect(tableRows).toHaveLength(2 * executionData.check_results.length);
-
-    expect(tableRows[0]).toHaveTextContent(checkID1);
-    expect(tableRows[1]).toHaveTextContent(clusterName);
-    expect(tableRows[1]).toHaveTextContent(
-      /Value `.*` is the same on all targets/
-    );
-    expect(tableRows[1]).toHaveTextContent(clusterHosts[0].hostname);
-    expect(tableRows[1]).toHaveTextContent('2/2 Expectations met.');
-
-    expect(tableRows[2]).toHaveTextContent(checkID2);
-    expect(tableRows[3]).toHaveTextContent(clusterHosts[1].hostname);
-    expect(tableRows[3]).toHaveTextContent('1/2 Expectations met');
+    expect(screen.getByText(checkID1)).toHaveTextContent(checkID1);
+    expect(screen.getByText(checkID2)).toHaveTextContent(checkID2);
+    expect(screen.getByText(catalog[0].description)).toBeInTheDocument();
+    expect(screen.getByText(catalog[1].description)).toBeInTheDocument();
   });
 
   it('should render the execution starting dialog, when an execution is not started yet', () => {

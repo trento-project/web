@@ -15,7 +15,9 @@ import {
 import { EXPECT, EXPECT_SAME } from '@lib/model';
 
 import {
+  getCatalogCategoryList,
   getCheckDescription,
+  getCheckGroup,
   getCheckRemediation,
   getCheckResults,
   getCheckExpectations,
@@ -49,11 +51,48 @@ describe('checksUtils', () => {
     });
   });
 
+  it('getCatalogCategoryList should return a sorted category list where it is matching', () => {
+    const fakerListID = [
+      faker.datatype.number(),
+      faker.datatype.number(),
+      faker.datatype.number(),
+    ];
+    const execution = [
+      { check_id: fakerListID[0] },
+      { check_id: fakerListID[1] },
+      { check_id: fakerListID[2] },
+    ];
+    const catalog = [
+      { id: fakerListID[0], group: 'Category C' },
+      { id: fakerListID[1], group: 'Category A' },
+      { id: fakerListID[2], group: 'Category B' },
+    ];
+    const expected = ['Category A', 'Category B', 'Category C'];
+    expect(getCatalogCategoryList(catalog, execution)).toEqual(expected);
+  });
+
+  it('getCatalogCategoryList should return an empty array if checksResults is not provided', () => {
+    const fakerListID = [faker.datatype.number(), faker.datatype.number()];
+    const catalog = [
+      { id: fakerListID[0], group: faker.lorem.word() },
+      { id: fakerListID[1], group: faker.lorem.word() },
+    ];
+    const expected = [];
+    expect(getCatalogCategoryList(catalog, undefined)).toEqual(expected);
+  });
+
   it('getDescription should return a check description', () => {
     const catalog = catalogCheckFactory.buildList(2);
     const [{ id, description }] = catalog;
 
     expect(getCheckDescription(catalog, id)).toBe(description);
+  });
+
+  it('getCheckGroup should return a check grupp', () => {
+    const catalog = catalogCheckFactory.buildList(2);
+    const check = catalog[0];
+
+    expect(getCheckGroup(catalog, check.id)).toBe(check.group);
   });
 
   it('getCheckRemediation should return a check remediation', () => {
