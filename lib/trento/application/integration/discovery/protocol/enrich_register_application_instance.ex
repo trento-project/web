@@ -21,7 +21,7 @@ defimpl Trento.Support.Middleware.Enrichable,
         {:ok, %RegisterApplicationInstance{command | sap_system_id: sap_system_id}}
 
       nil ->
-        {:error, :database_not_found}
+        {:error, :database_not_registered}
     end
   end
 end
