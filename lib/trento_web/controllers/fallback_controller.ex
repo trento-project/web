@@ -25,7 +25,12 @@ defmodule TrentoWeb.FallbackController do
   end
 
   def call(conn, {:error, reason})
-      when reason in [:host_not_registered, :cluster_not_registered, :sap_system_not_registered] do
+      when reason in [
+             :host_not_registered,
+             :cluster_not_registered,
+             :sap_system_not_registered,
+             :database_not_registered
+           ] do
     conn
     |> put_status(:not_found)
     |> put_view(ErrorView)
@@ -52,6 +57,8 @@ defmodule TrentoWeb.FallbackController do
     |> put_view(ErrorView)
     |> render(:"422", reason: "Unknown discovery type.")
   end
+
+  def call(conn, {:error, [error | _]}), do: call(conn, error)
 
   def call(conn, {:error, _}) do
     conn
