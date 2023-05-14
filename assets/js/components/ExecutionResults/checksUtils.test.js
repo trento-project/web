@@ -52,33 +52,35 @@ describe('checksUtils', () => {
   });
 
   it('getCatalogCategoryList should return a sorted category list where it is matching', () => {
-    const fakerListID = [
+    const IDs = [
       faker.datatype.number(),
       faker.datatype.number(),
       faker.datatype.number(),
     ];
-    const execution = [
-      { check_id: fakerListID[0] },
-      { check_id: fakerListID[1] },
-      { check_id: fakerListID[2] },
+    const checksResults = [
+      { check_id: IDs[0] },
+      { check_id: IDs[1] },
+      { check_id: IDs[2] },
     ];
     const catalog = [
-      { id: fakerListID[0], group: 'Category C' },
-      { id: fakerListID[1], group: 'Category A' },
-      { id: fakerListID[2], group: 'Category B' },
+      { id: IDs[0], group: 'Category C' },
+      { id: IDs[1], group: 'Category A' },
+      { id: IDs[2], group: 'Category B' },
     ];
     const expected = ['Category A', 'Category B', 'Category C'];
-    expect(getCatalogCategoryList(catalog, execution)).toEqual(expected);
+    expect(getCatalogCategoryList(catalog, checksResults)).toEqual(expected);
   });
 
   it('getCatalogCategoryList should return an empty array if checksResults is not provided', () => {
-    const fakerListID = [faker.datatype.number(), faker.datatype.number()];
+    const IDs = [faker.datatype.number(), faker.datatype.number()];
     const catalog = [
-      { id: fakerListID[0], group: faker.lorem.word() },
-      { id: fakerListID[1], group: faker.lorem.word() },
+      { id: IDs[0], group: faker.lorem.word() },
+      { id: IDs[1], group: faker.lorem.word() },
     ];
     const expected = [];
-    expect(getCatalogCategoryList(catalog, undefined)).toEqual(expected);
+    [[], undefined, null].forEach((item) => {
+      expect(getCatalogCategoryList(catalog, item)).toEqual(expected);
+    });
   });
 
   it('getDescription should return a check description', () => {

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import Table from '@components/Table';
-import Accordion from '@components/Accordion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import Modal from '@components/Modal';
 import { getHostID } from '@state/selectors/cluster';
-import PremiumPill from '@components/PremiumPill';
+import Accordion from '@components/Accordion';
 import HealthIcon from '@components/Health';
-
+import Modal from '@components/Modal';
+import PremiumPill from '@components/PremiumPill';
+import Table from '@components/Table';
 import {
   getCatalogCategoryList,
   getCheckResults,
@@ -62,7 +61,7 @@ const resultsTableConfig = {
       title: 'Result',
       key: 'result',
       fontSize: 'text-base',
-      className: 'bg-gray-50 border-b w-1/6 h-auto text-base',
+      className: 'bg-gray-50 border-b w-1/6 h-auto',
       render: (_, { result }) => <HealthIcon health={result} />,
     },
   ],
@@ -151,6 +150,10 @@ function ExecutionResults({
         },
       })
     );
+  const filterAndSortData = (data, item) =>
+    data
+      .filter((obj) => obj.category === item)
+      .sort((a, b) => a.description.localeCompare(b.description));
 
   return (
     <ExecutionContainer
@@ -188,9 +191,7 @@ function ExecutionResults({
           >
             <Table
               config={resultsTableConfig}
-              data={tableData
-                .filter((obj) => obj.category === item)
-                .sort((a, b) => a.description.localeCompare(b.description))}
+              data={filterAndSortData(tableData, item)}
               withPadding={false}
             />
           </Accordion>
@@ -212,5 +213,4 @@ function ExecutionResults({
     </ExecutionContainer>
   );
 }
-
 export default ExecutionResults;

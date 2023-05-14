@@ -39,7 +39,7 @@ export const isPremium = (catalog, checkID) => {
 };
 
 export const getCatalogCategoryList = (catalog, checksResults = []) => {
-  if (catalog.length === 0) {
+  if (!catalog || catalog.length === 0 || !checksResults) {
     return [];
   }
   return [
