@@ -24,6 +24,7 @@ import ExecutionContainer from './ExecutionContainer';
 
 const resultsTableConfig = {
   usePadding: false,
+  rowClassName: 'tn-check-result-row',
   columns: [
     {
       title: 'Id',
