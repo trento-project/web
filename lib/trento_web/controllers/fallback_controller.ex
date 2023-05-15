@@ -58,7 +58,7 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Unknown discovery type.")
   end
 
-  def call(conn, {:error, [error | _]}), do: call(conn, error)
+  def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do
     conn
