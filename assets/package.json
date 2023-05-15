@@ -7,10 +7,10 @@
     "@faker-js/faker": "^7.6.0",
     "@storybook/addon-actions": "^7.0.11",
     "@storybook/addon-essentials": "^7.0.11",
-    "@storybook/addon-interactions": "^7.0.7",
+    "@storybook/addon-interactions": "^7.0.11",
     "@storybook/addon-links": "^7.0.11",
-    "@storybook/react": "^7.0.6",
-    "@storybook/react-webpack5": "^7.0.9",
+    "@storybook/react": "^7.0.11",
+    "@storybook/react-webpack5": "^7.0.11",
     "@storybook/testing-library": "^0.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
@@ -40,7 +40,7 @@
     "postcss": "^8.4.23",
     "prettier-eslint-cli": "^7.1.0",
     "redux-mock-store": "^1.5.4",
-    "storybook": "^7.0.7",
+    "storybook": "^7.0.11",
     "tailwindcss": "^3.3.1"
   },
   "dependencies": {
