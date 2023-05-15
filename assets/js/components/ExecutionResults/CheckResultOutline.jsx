@@ -75,7 +75,7 @@ function CheckResultOutline({
   );
 
   return (
-    <div className="p-5">
+    <div className="p-5 bg-gray-50">
       <div className="table w-full bg-white rounded shadow">
         <div className="table-header-group bg-gray-50 border-b border-gray">
           <div className="table-row">

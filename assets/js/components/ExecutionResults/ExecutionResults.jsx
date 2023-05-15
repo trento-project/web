@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import Table from '@components/Table';
-
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import Modal from '@components/Modal';
-
 import { getHostID } from '@state/selectors/cluster';
-import PremiumPill from '@components/PremiumPill';
+import Accordion from '@components/Accordion';
 import HealthIcon from '@components/Health';
-
+import Modal from '@components/Modal';
+import PremiumPill from '@components/PremiumPill';
+import Table from '@components/Table';
 import {
+  getCatalogCategoryList,
   getCheckResults,
   getCheckDescription,
   getCheckRemediation,
   getCheckExpectations,
+  getCheckGroup,
   isPremium,
 } from './checksUtils';
 
@@ -29,7 +29,7 @@ const resultsTableConfig = {
       title: 'Id',
       key: 'checkID',
       fontSize: 'text-base',
-      className: 'bg-gray-50 border-b',
+      className: 'bg-gray-50 border-b w-1/6 h-auto',
       render: (checkID, { onClick, premium }) => (
         <div className="flex whitespace-nowrap text-jungle-green-500 justify-between">
           <span
@@ -50,7 +50,7 @@ const resultsTableConfig = {
       title: 'Description',
       key: 'description',
       fontSize: 'text-base',
-      className: 'bg-gray-50 border-b',
+      className: 'bg-gray-50 border-b h-auto',
       render: (description) => (
         <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
           {description}
@@ -61,7 +61,7 @@ const resultsTableConfig = {
       title: 'Result',
       key: 'result',
       fontSize: 'text-base',
-      className: 'bg-gray-50 border-b',
+      className: 'bg-gray-50 border-b w-1/6 h-auto',
       render: (_, { result }) => <HealthIcon health={result} />,
     },
   ],
@@ -116,7 +116,9 @@ function ExecutionResults({
     }
   };
 
-  const tableData = getCheckResults(executionData)
+  const checksResults = getCheckResults(executionData);
+  const catalogCategoryList = getCatalogCategoryList(catalog, checksResults);
+  const tableData = checksResults
     .filter((check) => {
       if (predicates.length === 0) {
         return true;
@@ -135,6 +137,7 @@ function ExecutionResults({
         checkID,
         result,
         clusterName,
+        category: getCheckGroup(catalog, checkID),
         executionState: executionData?.status,
         description: getCheckDescription(catalog, checkID),
         expectations: getCheckExpectations(catalog, checkID),
@@ -147,6 +150,11 @@ function ExecutionResults({
         },
       })
     );
+  const filterAndSortData = (data, item) =>
+    data
+      .filter((obj) => obj.category === item)
+      .sort((a, b) => a.description.localeCompare(b.description));
+
   return (
     <ExecutionContainer
       catalogLoading={catalogLoading}
@@ -174,7 +182,20 @@ function ExecutionResults({
         onContentRefresh={onContentRefresh}
         onStartExecution={onStartExecution}
       >
-        <Table config={resultsTableConfig} data={tableData} />
+        {catalogCategoryList.map((item) => (
+          <Accordion
+            defaultOpen
+            className="check-group mb-4"
+            header={item}
+            key={item}
+          >
+            <Table
+              config={resultsTableConfig}
+              data={filterAndSortData(tableData, item)}
+              withPadding={false}
+            />
+          </Accordion>
+        ))}
       </ResultsContainer>
       <Modal
         open={modalOpen}
@@ -192,5 +213,4 @@ function ExecutionResults({
     </ExecutionContainer>
   );
 }
-
 export default ExecutionResults;

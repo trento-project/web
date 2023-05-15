@@ -60,6 +60,7 @@ function Table({
   searchParams,
   setSearchParams,
   emptyStateText = 'No data available',
+  withPadding = true,
 }) {
   const {
     columns,
@@ -148,7 +149,11 @@ function Table({
         />
       </div>
       <div className="">
-        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 pt-4">
+        <div
+          className={classNames('-mx-4 sm:-mx-8 px-4 sm:px-8', {
+            'pt-4': withPadding,
+          })}
+        >
           <div className="min-w-fit shadow rounded-lg">
             <table className="min-w-full leading-normal table-fixed">
               <thead>

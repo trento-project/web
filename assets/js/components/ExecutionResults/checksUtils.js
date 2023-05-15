@@ -38,10 +38,31 @@ export const isPremium = (catalog, checkID) => {
   return false;
 };
 
+export const getCatalogCategoryList = (catalog, checksResults = []) => {
+  if (!catalog || catalog.length === 0 || !checksResults) {
+    return [];
+  }
+  return [
+    ...new Set(
+      checksResults.map(
+        ({ check_id }) => catalog.find((check) => check.id === check_id).group
+      )
+    ),
+  ].sort();
+};
+
 export const getCheckDescription = (catalog, checkID) => {
   const check = findCheck(catalog, checkID);
   if (check) {
     return check.description;
+  }
+  return null;
+};
+
+export const getCheckGroup = (catalog, checkID) => {
+  const check = findCheck(catalog, checkID);
+  if (check) {
+    return check.group;
   }
   return null;
 };
