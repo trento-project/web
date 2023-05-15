@@ -74,10 +74,6 @@ defmodule Trento.Type do
         end
       end
 
-      @dialyzer {:no_match, changeset: 2}
-      # we need to ignore the no_match warning of the ` {_, Ecto.Embedded, _}` case
-      # since some spec is broken in the Ecto codebase
-
       @doc """
       Casts the fields by using Ecto reflection,
       validates the required ones and returns a changeset.
@@ -148,6 +144,10 @@ defmodule Trento.Type do
       end
 
       defp embedded_fields, do: __MODULE__.__schema__(:embeds)
+
+      @dialyzer {:no_match, polymorphic_fields: 0}
+      # we need to ignore the no_match warning of the `{:parameterized, PolymorphicEmbed, _}` case
+      # since some spec is broken in the Ecto codebase
 
       defp polymorphic_fields,
         do:
