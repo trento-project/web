@@ -252,3 +252,25 @@ export const emptyCheckResultFactory = Factory.define(({ params }) => {
 
   return withEmptyExpectations(checkResult);
 });
+
+export const withOverriddenValues = (
+  checkResult,
+  targetId,
+  overriddenValues
+) => {
+  const overridenResults = checkResult.agents_check_results.map(
+    (agentCheckResult) => {
+      if (targetId !== agentCheckResult.agent_id) return agentCheckResult;
+
+      return {
+        ...agentCheckResult,
+        values: overriddenValues,
+      };
+    }
+  );
+
+  return {
+    ...checkResult,
+    agents_check_results: overridenResults,
+  };
+};
