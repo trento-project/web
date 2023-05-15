@@ -44,9 +44,10 @@ export const getCatalogCategoryList = (catalog, checksResults = []) => {
   }
   return [
     ...new Set(
-      checksResults.map(
-        ({ check_id }) => catalog.find((check) => check.id === check_id).group
-      )
+      checksResults.map(({ check_id }) => {
+        const result = catalog.find((check) => check.id === check_id);
+        return !result ? '' : result.group;
+      })
     ),
   ].sort();
 };
