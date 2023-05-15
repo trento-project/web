@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import classNames from 'classnames';
 
 function CollapsibleTableRow({
   columns,
@@ -6,13 +7,16 @@ function CollapsibleTableRow({
   collapsibleDetailRenderer,
   renderCells = () => {},
   colSpan = 1,
+  className,
 }) {
   const [rowExpanded, toggleRow] = useState(false);
 
   return (
     <>
       <tr
-        className={collapsibleDetailRenderer ? 'cursor-pointer' : ''}
+        className={classNames(className, {
+          'cursor-pointer': !!collapsibleDetailRenderer,
+        })}
         onClick={() => {
           if (collapsibleDetailRenderer) {
             toggleRow(!rowExpanded);

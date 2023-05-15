@@ -62,6 +62,24 @@ describe('Table component', () => {
     column3: faker.animal.dog(),
   }));
 
+  it('should allow custom classes for table rows', () => {
+    const data = tableDataFactory.buildList(10);
+    const customRowClassName = 'custom-row-classname';
+
+    render(
+      <Table
+        config={{ rowClassName: customRowClassName, ...tableConfig }}
+        data={data}
+        setSearchParams={() => {}}
+      />
+    );
+
+    screen
+      .getByRole('table')
+      .querySelectorAll('tbody > tr')
+      .forEach((tableRow) => expect(tableRow).toHaveClass(customRowClassName));
+  });
+
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
       const data = tableDataFactory.buildList(10);
