@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
@@ -7,6 +6,7 @@ import {
   checksExecutionCompletedFactory,
   checkResultFactory,
   addCriticalExpectExpectation,
+  withOverriddenValues,
 } from '@lib/test-utils/factories';
 
 import CheckResultDetail from './CheckResultDetail';
@@ -28,13 +28,22 @@ checkResult = addCriticalExpectExpectation(checkResult);
 checkResult = addCriticalExpectExpectation(checkResult);
 checkResult = addPassingExpectSameExpectation(checkResult, 'expectation_name');
 
+const checkResultWithoutValues = withOverriddenValues(checkResult, target1, []);
+
 const executionData = checksExecutionCompletedFactory.build({
   check_results: [checkResultFactory.build(), checkResult],
+});
+
+const executionDataWithoutValues = checksExecutionCompletedFactory.build({
+  check_results: [checkResultFactory.build(), checkResultWithoutValues],
 });
 
 export default {
   title: 'CheckResultDetail',
   component: CheckResultDetail,
+};
+
+export const Default = {
   args: {
     checkID,
     targetID: target1,
@@ -44,6 +53,9 @@ export default {
   },
 };
 
-export function Default(args) {
-  return <CheckResultDetail {...args} />;
-}
+export const WithoutValues = {
+  args: {
+    ...Default.args,
+    executionData: executionDataWithoutValues,
+  },
+};

@@ -23,4 +23,10 @@ describe('ExpectedValues Component', () => {
 
     expect(screen.getByText('Expected Values unavailable')).toBeVisible();
   });
+
+  it('should not render when values are not available', () => {
+    render(<ExpectedValues expectedValues={[]} />);
+
+    expect(screen.queryByText('Values')).toBeNull();
+  });
 });

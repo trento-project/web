@@ -53,9 +53,11 @@ function CheckResultDetail({
         isError={isError}
         errorMessage={message}
       />
-      {targetHost && (
-        <ExpectedValues isError={isError} expectedValues={values} />
-      )}
+      <ExpectedValues
+        isTargetHost={targetHost}
+        isError={isError}
+        expectedValues={values}
+      />
       <GatheredFacts
         isTargetHost={targetHost}
         gatheredFacts={gatheredFacts || []}

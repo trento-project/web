@@ -2,7 +2,19 @@ import React from 'react';
 
 import ListView from '@components/ListView';
 
-function ExpectedValues({ expectedValues = [], isError = false }) {
+function ExpectedValues({
+  isTargetHost = true,
+  expectedValues = [],
+  isError = false,
+}) {
+  if (!isTargetHost) {
+    return null;
+  }
+
+  if (!isError && expectedValues.length === 0) {
+    return null;
+  }
+
   return (
     <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
       <div className="text-lg font-bold">Values</div>
