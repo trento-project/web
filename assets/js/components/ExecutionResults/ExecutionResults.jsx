@@ -7,7 +7,7 @@ import HealthIcon from '@components/Health';
 import Modal from '@components/Modal';
 import PremiumPill from '@components/PremiumPill';
 import Table from '@components/Table';
-import LoadingBox from '@components/LoadingBox';
+
 import {
   getCatalogCategoryList,
   getCheckResults,
@@ -117,11 +117,6 @@ function ExecutionResults({
       onLastExecutionUpdate();
     }
   };
-
-  if (catalogLoading) {
-    return <LoadingBox text="Loading checks catalog" />;
-  }
-
   const checksResults = getCheckResults(executionData);
   const catalogCategoryList = getCatalogCategoryList(catalog, checksResults);
   const tableData = checksResults
