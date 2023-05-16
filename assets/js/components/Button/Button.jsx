@@ -12,6 +12,8 @@ const getSizeClasses = (size) => {
 
 const getButtonClasses = (type) => {
   switch (type) {
+    case 'primary-white-fit':
+      return 'bg-white hover:opacity-75 focus:outline-none text-jungle-green-500 w-fit transition ease-in duration-200 text-center font-semibold rounded shadow';
     case 'primary-white':
       return 'bg-white hover:opacity-75 focus:outline-none text-jungle-green-500 w-full transition ease-in duration-200 text-center font-semibold rounded shadow';
     case 'primary-white-fit':

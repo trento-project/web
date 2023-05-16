@@ -13,6 +13,7 @@ import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
 import ClusterLink from '@components/ClusterLink';
+import DeregistrationModal from '@components/DeregistrationModal';
 import WarningBanner from '@components/Banners/WarningBanner';
 import SuseLogo from '@static/suse_logo.svg';
 import {
@@ -38,6 +39,7 @@ function HostDetails() {
   const { grafanaPublicUrl } = config;
 
   const [exportersStatus, setExportersStatus] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
@@ -58,6 +60,15 @@ function HostDetails() {
 
   return (
     <div>
+      <DeregistrationModal
+        host={host}
+        isOpen={modalIsOpen}
+        onClose={() => setModalIsOpen(false)}
+        onCleanUp={() => {
+          // eslint-disable-next-line no-console
+          console.log('clicked the big red button!');
+        }}
+      />
       <BackButton url="/hosts">Back to Hosts</BackButton>
       <div className="flex justify-between">
         <div className="flex">
@@ -88,7 +99,7 @@ function HostDetails() {
             type="primary-white"
             className="inline-block mx-0.5 border-green-500 border w-fit"
             size="small"
-            onClick={() => 123}
+            onClick={() => setModalIsOpen(true)}
           >
             <EOS_CLEANING_SERVICES
               size="base"
