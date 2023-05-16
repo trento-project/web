@@ -69,7 +69,9 @@ function ClustersList() {
         title: 'SID',
         key: 'sid',
         filterFromParams: true,
-        filter: true,
+        filter: (filter, key) => (element) =>
+          element[key].some((sid) => filter.includes(sid)),
+        render: (_, { sid }) => sid.join(', '),
       },
       {
         title: 'Hosts',
@@ -124,7 +126,7 @@ function ClustersList() {
     health: cluster.health,
     name: cluster.name,
     id: cluster.id,
-    sid: cluster.sid,
+    sid: (cluster.sid ? [cluster.sid] : []).concat(cluster.additional_sids),
     type: cluster.type,
     hosts_number: cluster.hosts_number,
     resources_number: cluster.resources_number,

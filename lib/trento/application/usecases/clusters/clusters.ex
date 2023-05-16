@@ -53,7 +53,7 @@ defmodule Trento.Clusters do
   @spec get_all_clusters :: [ClusterReadModel.t()]
   def get_all_clusters do
     from(c in ClusterReadModel,
-      order_by: [asc: c.name],
+      order_by: [asc: c.name, asc: c.id],
       preload: [:tags],
       where: is_nil(c.deregistered_at)
     )

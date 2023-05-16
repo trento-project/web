@@ -11,6 +11,7 @@ export const clusterFactory = Factory.define(({ sequence }) => ({
   id: faker.datatype.uuid(),
   name: `${faker.name.firstName()}_${sequence}`,
   sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
+  additional_sids: [],
   hosts_number: faker.datatype.number(),
   resources_number: faker.datatype.number(),
   type: clusterTypeEnum(),
