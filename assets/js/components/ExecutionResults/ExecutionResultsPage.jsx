@@ -11,6 +11,7 @@ import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
 } from '@state/lastExecutions';
+import LoadingBox from '@components/LoadingBox';
 import ExecutionResults from './ExecutionResults';
 
 function ExecutionResultsPage() {
@@ -40,7 +41,7 @@ function ExecutionResultsPage() {
   }, [cloudProvider]);
 
   if (!cluster) {
-    return <div>Loading...</div>;
+    return <LoadingBox text="Loading ..." />;
   }
 
   return (
