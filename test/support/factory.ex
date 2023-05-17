@@ -19,6 +19,7 @@ defmodule Trento.Factory do
   alias Trento.Domain.Events.{
     ApplicationInstanceRegistered,
     ClusterRegistered,
+    ClusterTombstoned,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     HostAddedToCluster,
@@ -460,6 +461,12 @@ defmodule Trento.Factory do
   def host_tombstoned_event_factory do
     HostTombstoned.new!(%{
       host_id: Faker.UUID.v4()
+    })
+  end
+
+  def cluster_tombstoned_event_factory do
+    ClusterTombstoned.new!(%{
+      cluster_id: Faker.UUID.v4()
     })
   end
 end

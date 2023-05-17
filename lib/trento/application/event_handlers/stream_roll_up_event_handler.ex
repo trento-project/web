@@ -20,6 +20,7 @@ defmodule Trento.StreamRollUpEventHandler do
   }
 
   alias Trento.Domain.Events.{
+    ClusterTombstoned,
     HostTombstoned
   }
 
@@ -124,6 +125,14 @@ defmodule Trento.StreamRollUpEventHandler do
     Logger.info("Rolling up host: #{host_id} because HostTombstoned is received")
 
     commanded().dispatch(%RollUpHost{host_id: host_id},
+      consistency: :strong
+    )
+  end
+
+  def handle(%ClusterTombstoned{cluster_id: cluster_id}, _) do
+    Logger.info("Rolling up cluster: #{cluster_id} because ClusterTombstoned is received")
+
+    commanded().dispatch(%RollUpCluster{cluster_id: cluster_id},
       consistency: :strong
     )
   end
