@@ -24,6 +24,7 @@ defmodule Trento.Factory do
     HostAddedToCluster,
     HostDetailsUpdated,
     HostRegistered,
+    HostTombstoned,
     SapSystemRegistered,
     SlesSubscriptionsUpdated
   }
@@ -454,5 +455,11 @@ defmodule Trento.Factory do
       "FailureIgnored" => false,
       "NodesRunningOn" => 1
     }
+  end
+
+  def host_tombstoned_event_factory do
+    HostTombstoned.new!(%{
+      host_id: Faker.UUID.v4()
+    })
   end
 end

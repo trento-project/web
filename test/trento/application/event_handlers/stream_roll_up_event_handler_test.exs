@@ -112,4 +112,15 @@ defmodule Trento.StreamRollUpEventHandlerTest do
     assert :ok =
              StreamRollUpEventHandler.handle(event, %{stream_version: @max_stream_version + 1})
   end
+
+  test "should dispatch the host roll-up command when HostTombstoned is received" do
+    host_id = UUID.uuid4()
+    event = build(:host_tombstoned_event, host_id: host_id)
+
+    expect(Trento.Commanded.Mock, :dispatch, fn %RollUpHost{host_id: ^host_id}, _ ->
+      :ok
+    end)
+
+    assert :ok = StreamRollUpEventHandler.handle(event, %{stream_version: 1})
+  end
 end

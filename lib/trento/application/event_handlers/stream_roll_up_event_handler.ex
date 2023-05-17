@@ -19,6 +19,10 @@ defmodule Trento.StreamRollUpEventHandler do
     RollUpSapSystem
   }
 
+  alias Trento.Domain.Events.{
+    HostTombstoned
+  }
+
   require Logger
 
   @max_stream_version Application.compile_env!(:trento, [__MODULE__, :max_stream_version])
@@ -114,6 +118,14 @@ defmodule Trento.StreamRollUpEventHandler do
     else
       :ok
     end
+  end
+
+  def handle(%HostTombstoned{host_id: host_id}, _) do
+    Logger.info("Rolling up host: #{host_id} because HostTombstoned is received")
+
+    commanded().dispatch(%RollUpHost{host_id: host_id},
+      consistency: :strong
+    )
   end
 
   defp commanded,
