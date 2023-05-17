@@ -10,20 +10,20 @@ defmodule Trento.Domain.Cluster.Lifespan do
   alias Commanded.Aggregates.DefaultLifespan
 
   alias Trento.Domain.Events.{
-    ClusterDeregistered,
-    ClusterRollUpRequested
+    ClusterRollUpRequested,
+    ClusterTombstoned
   }
 
   @doc """
   The cluster aggregate will be stopped after a ClusterRollUpRequested event is received.
   This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.
 
-  The cluster aggregate will be stopped after a ClusterDeregistered event is received.
+  The cluster aggregate will be stopped after a ClusterTombstoned event is received.
   This event is emitted when all hosts belonging to a cluster have been decommissioned,
   meaning the cluster aggregate can be safely stopped.
   """
   def after_event(%ClusterRollUpRequested{}), do: :stop
-  def after_event(%ClusterDeregistered{}), do: :stop
+  def after_event(%ClusterTombstoned{}), do: :stop
   def after_event(event), do: DefaultLifespan.after_event(event)
 
   def after_command(command), do: DefaultLifespan.after_command(command)

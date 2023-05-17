@@ -88,6 +88,7 @@ defmodule Trento.Domain.Cluster do
     ClusterRegistered,
     ClusterRolledUp,
     ClusterRollUpRequested,
+    ClusterTombstoned,
     HostAddedToCluster,
     HostChecksExecutionCompleted,
     HostRemovedFromCluster
@@ -424,6 +425,8 @@ defmodule Trento.Domain.Cluster do
 
   def apply(cluster, %legacy_event{}) when legacy_event in @legacy_events, do: cluster
 
+  def apply(%Cluster{} = cluster, %ClusterTombstoned{}), do: cluster
+
   defp maybe_emit_host_added_to_cluster_event(
          %Cluster{cluster_id: cluster_id, hosts: hosts},
          host_id
@@ -531,7 +534,10 @@ defmodule Trento.Domain.Cluster do
            deregistered_at: deregistered_at
          }
        ) do
-    %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at}
+    [
+      %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at},
+      %ClusterTombstoned{cluster_id: cluster_id}
+    ]
   end
 
   defp maybe_emit_cluster_deregistered_event(_, _), do: nil
