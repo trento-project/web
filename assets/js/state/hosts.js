@@ -65,8 +65,8 @@ export const hostsListSlice = createSlice({
     stopHostsLoading: (state) => {
       state.loading = false;
     },
-    removeHost: (state, action) => {
-      state.hosts = state.hosts.filter((host) => host.id !== action.payload.id);
+    removeHost: (state, { payload: { id } }) => {
+      state.hosts = state.hosts.filter((host) => host.id !== id);
     },
   },
 });

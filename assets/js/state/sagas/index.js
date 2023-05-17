@@ -31,6 +31,7 @@ import {
   updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
+  removeCluster,
 } from '@state/clusters';
 
 import {
@@ -44,6 +45,7 @@ import {
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
   updateApplicationInstanceHealth,
+  removeSAPSystem,
 } from '@state/sapSystems';
 
 import {
@@ -262,6 +264,26 @@ function* watchClusterDetailsUpdated() {
   yield takeEvery('CLUSTER_DETAILS_UPDATED', clusterDetailsUpdated);
 }
 
+function* clusterDeregistered({ payload }) {
+  yield put(removeCluster(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.name,
+      message: 'Cluster deregistered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `The cluster ${payload.name} has been deregistered.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
+function* watchClusterDeregistered() {
+  yield takeEvery('CLUSTER_DEREGISTERED', clusterDeregistered);
+}
+
 function* checksSelected({ payload }) {
   yield put(startSavingClusterChecksSelection());
 
@@ -405,6 +427,22 @@ function* applicationInstanceHealthChanged({ payload }) {
   yield put(updateApplicationInstanceHealth(payload));
 }
 
+function* sapSystemDeregistered({ payload }) {
+  yield put(removeSAPSystem(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.sid,
+      message: 'SAP System deregistered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `The SAP System ${payload.sid} has been deregistered.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 function* watchSapSystem() {
   yield takeEvery('SAP_SYSTEM_REGISTERED', sapSystemRegistered);
   yield takeEvery('SAP_SYSTEM_HEALTH_CHANGED', sapSystemHealthChanged);
@@ -416,6 +454,8 @@ function* watchSapSystem() {
     'APPLICATION_INSTANCE_HEALTH_CHANGED',
     applicationInstanceHealthChanged
   );
+  yield takeEvery('SAP_SYSTEM_DEREGISTERED', sapSystemDeregistered);
+  console.log('aqui!');
 }
 
 function* databaseRegistered({ payload }) {
@@ -552,9 +592,11 @@ export default function* rootSaga() {
     watchHostDetailsUpdated(),
     watchHeartbeatSucceded(),
     watchHeartbeatFailed(),
+    watchHostDeregistered(),
     watchClusterRegistered(),
     watchClusterDetailsUpdated(),
     watchClusterCibLastWrittenUpdated(),
+    watchClusterDeregistered(),
     watchNotifications(),
     watchChecksSelected(),
     watchChecksExecutionStarted(),

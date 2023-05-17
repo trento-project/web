@@ -100,6 +100,11 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
+    removeSAPSystem: (state, { payload: { sap_system_id } }) => {
+      state.sapSystems = state.sapSystems.filter(
+        ({ id }) => sap_system_id !== id
+      );
+    },
   },
 });
 
@@ -116,6 +121,7 @@ export const {
   updateSAPSystemDatabaseInstanceSystemReplication,
   addTagToSAPSystem,
   removeTagFromSAPSystem,
+  removeSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;
