@@ -47,6 +47,7 @@ defmodule Trento.Domain.Host do
     HostRegistered,
     HostRolledUp,
     HostRollUpRequested,
+    HostTombstoned,
     ProviderUpdated,
     SlesSubscriptionsUpdated
   }
@@ -286,10 +287,15 @@ defmodule Trento.Domain.Host do
         %Host{host_id: host_id},
         %DeregisterHost{deregistered_at: deregistered_at}
       ) do
-    %HostDeregistered{
-      host_id: host_id,
-      deregistered_at: deregistered_at
-    }
+    [
+      %HostDeregistered{
+        host_id: host_id,
+        deregistered_at: deregistered_at
+      },
+      %HostTombstoned{
+        host_id: host_id
+      }
+    ]
   end
 
   def apply(
@@ -408,4 +414,5 @@ defmodule Trento.Domain.Host do
   end
 
   def apply(%Host{} = host, %HostDeregistrationRequested{}), do: host
+  def apply(%Host{} = host, %HostTombstoned{}), do: host
 end

@@ -22,6 +22,7 @@ defmodule Trento.HostTest do
     HostRegistered,
     HostRolledUp,
     HostRollUpRequested,
+    HostTombstoned,
     ProviderUpdated,
     SlesSubscriptionsUpdated
   }
@@ -650,7 +651,7 @@ defmodule Trento.HostTest do
   end
 
   describe "deregistration" do
-    test "should emit the HostDeregistered event" do
+    test "should emit the HostDeregistered and HostTombstoned event" do
       host_id = Faker.UUID.v4()
       dat = DateTime.utc_now()
 
@@ -664,10 +665,15 @@ defmodule Trento.HostTest do
             deregistered_at: dat
           }
         ],
-        %HostDeregistered{
-          host_id: host_id,
-          deregistered_at: dat
-        }
+        [
+          %HostDeregistered{
+            host_id: host_id,
+            deregistered_at: dat
+          },
+          %HostTombstoned{
+            host_id: host_id
+          }
+        ]
       )
     end
 
