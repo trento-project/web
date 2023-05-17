@@ -8,8 +8,6 @@ module.exports = defineConfig({
     web_api_host: '127.0.0.1',
     web_api_port: 4000,
     heartbeat_interval: 5000,
-    db_host: '127.0.0.1',
-    db_port: 5432,
     project_root: '../..',
     photofinish_binary: 'photofinish',
     login_user: 'admin',
@@ -24,5 +22,6 @@ module.exports = defineConfig({
     },
     testIsolation: false,
     baseUrl: 'http://127.0.0.1:4000',
+    specPattern: 'cypress/e2e/mocked/**/*.cy.js',
   },
 });

@@ -124,10 +124,12 @@ jobs:
         env:
           CYPRESS_BASE_URL: http://${{ steps.tf-outputs.outputs.trento_server_public_ip }}
           CYPRESS_REAL_CLUSTER_TESTS: true
+          CYPRESS_web_api_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
+          CYPRESS_web_api_port: 80
         continue-on-error: true
         with:
           working-directory: test/e2e
-          spec: cypress/e2e/hana_scale_up_checks.cy.js
+          spec: cypress/e2e/real/**/*.cy.js
       - name: Destroy
         uses: dflook/terraform-destroy-workspace@v1
         continue-on-error: true

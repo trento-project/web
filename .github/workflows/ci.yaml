@@ -440,8 +440,6 @@ jobs:
         uses: cypress-io/github-action@v5
         env:
           cypress_video: false
-          cypress_db_host: postgres
-          cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e

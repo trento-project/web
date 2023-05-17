@@ -1,4 +1,4 @@
-import { selectedHost } from '../fixtures/host-details/selected_host';
+import { selectedHost } from '../../fixtures/host-details/selected_host';
 
 context('Host Details', () => {
   before(() => {

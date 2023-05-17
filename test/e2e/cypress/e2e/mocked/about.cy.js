@@ -1,4 +1,4 @@
-import { getValue } from '../support/common';
+import { getValue } from '../../support/common';
 
 describe('User account page', () => {
   before(() => {

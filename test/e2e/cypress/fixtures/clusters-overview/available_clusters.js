@@ -1,4 +1,4 @@
-const availableClusters = [
+export const availableClusters = [
   ['8a66f8fb-5fe9-51b3-a34c-24321271a4e3', 'drbd_cluster'],
   ['6bd7ec60-8cb1-5c6b-a892-29e1fd2f8380', 'drbd_cluster'],
   ['c7a1e943-bf46-590b-bd26-bfc7c78def97', 'drbd_cluster'],
@@ -9,15 +9,6 @@ const availableClusters = [
   ['fb861bce-d212-56b5-8786-74afd6eb58cb', 'netweaver_cluster'],
   ['0eac831a-aa66-5f45-89a4-007fbd2c5714', 'netweaver_cluster'],
 ];
-
-export const allClusterNames = () =>
-  availableClusters.map(([_, clusterName]) => clusterName);
-export const allClusterIds = () =>
-  availableClusters.map(([clusterId, _]) => clusterId);
-export const clusterIdByName = (clusterName) =>
-  availableClusters.find(([, name]) => name === clusterName)[0];
-export const clusterNameById = (clusterId) =>
-  availableClusters.find(([id]) => id === clusterId)[1];
 
 export const healthyClusterScenario = {
   clusterName: 'hana_cluster_2',

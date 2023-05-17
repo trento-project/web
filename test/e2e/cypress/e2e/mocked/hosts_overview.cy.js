@@ -1,7 +1,7 @@
 import {
   availableHosts,
   agents,
-} from '../fixtures/hosts-overview/available_hosts';
+} from '../../fixtures/hosts-overview/available_hosts';
 
 const availableHosts1stPage = availableHosts.slice(0, 10);
 

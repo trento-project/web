@@ -4,7 +4,7 @@ import {
   isHanaPrimary,
   isHanaSecondary,
   healthMap,
-} from '../fixtures/sap-systems-overview/available_sap_systems';
+} from '../../fixtures/sap-systems-overview/available_sap_systems';
 
 context('SAP Systems Overview', () => {
   before(() => {

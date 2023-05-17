@@ -1,48 +1,47 @@
-import { healthMap } from '../fixtures/sap-system-details/selected_system';
-
 import {
-  selectedDatabase,
+  selectedSystem,
   attachedHosts,
-} from '../fixtures/hana-database-details/selected_database';
+  healthMap,
+} from '../../fixtures/sap-system-details/selected_system';
 
-context('HANA database details', () => {
+context('SAP system details', () => {
   before(() => {
-    cy.visit(`/databases/${selectedDatabase.Id}`);
-    cy.url().should('include', `/databases/${selectedDatabase.Id}`);
+    cy.visit(`/sap_systems/${selectedSystem.Id}`);
+    cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
   });
 
-  describe('HANA database details page is available', () => {
-    it(`should display the "${selectedDatabase.Sid}" database details page`, () => {
-      cy.get('h1').should('contain', 'HANA Database Details');
+  describe('SAP system details page is available', () => {
+    it(`should display the "${selectedSystem.Sid}" system details page`, () => {
+      cy.get('h1').should('contain', 'SAP System Details');
       cy.get('div')
         .contains('Name')
         .next()
-        .should('contain', selectedDatabase.Sid);
+        .should('contain', selectedSystem.Sid);
       cy.get('div')
         .contains('Type')
         .next()
-        .should('contain', selectedDatabase.Type);
+        .should('contain', selectedSystem.Type);
     });
 
-    it(`should display "Not found" page when HANA database doesn't exist`, () => {
-      cy.visit(`/databases/other`, { failOnStatusCode: false });
-      cy.url().should('include', `/databases/other`);
+    it(`should display "Not found" page when SAP system doesn't exist`, () => {
+      cy.visit(`/sap_systems/other`, { failOnStatusCode: false });
+      cy.url().should('include', `/sap_systems/other`);
       cy.get('div').should('contain', 'Not Found');
     });
   });
 
-  describe('The database layout shows all the running instances', () => {
+  describe('The system layout shows all the running instances', () => {
     before(() => {
-      cy.visit(`/databases/${selectedDatabase.Id}`);
-      cy.url().should('include', `/databases/${selectedDatabase.Id}`);
+      cy.visit(`/sap_systems/${selectedSystem.Id}`);
+      cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
     });
 
     after(() => {
       // Restore instance health
-      cy.loadScenario('hana-database-detail-GREEN');
+      cy.loadScenario('sap-system-detail-GREEN');
     });
 
-    selectedDatabase.Hosts.forEach((instance, index) => {
+    selectedSystem.Hosts.forEach((instance, index) => {
       it(`should show hostname "${instance.Hostname}" with the correct values`, () => {
         cy.get('table.table-fixed')
           .eq(0)
@@ -68,36 +67,41 @@ context('HANA database details', () => {
 
     Object.entries(healthMap).forEach(([state, health]) => {
       it(`should show ${state} badge in instance when SAPControl-${state} state is received`, () => {
-        cy.loadScenario(`hana-database-detail-${state}`);
-        // using row 1 as the changed instance is the 3rd in order based on instance_number
+        cy.loadScenario(`sap-system-detail-${state}`);
+        // using row 3 as the changed instance is the 3rd in order based on instance_number
         cy.get('table.table-fixed')
           .eq(0)
           .find('tr')
-          .eq(1)
+          .eq(3)
           .find('td')
           .as('tableCell');
         cy.get('@tableCell').eq(6).should('contain', `SAPControl-${state}`);
         cy.get('@tableCell').eq(6).find('span').should('have.class', health);
       });
     });
-    /* This test is commented because there is not any option to remove added database instances or
+    /* This test is commented because there is not any option to remove added SAP instances or
     resetting the database afterwards, and it affects the rest of the test suite.
     it(`should show a new instance when an event with a new SAP instance is received`, () => {
-      cy.loadScenario(`hana-database-detail-NEW`);
-      cy.get('table.table-fixed').eq(0).find('tr').should('have.length', 4);
+      cy.loadScenario(`sap-system-detail-NEW`);
+      cy.get('table.table-fixed').eq(0).find('tr').should('have.length', 6);
       cy.get('table.table-fixed')
         .eq(0)
         .find('tr')
         .eq(-1)
         .find('td')
         .as('tableCell');
-      cy.get('@tableCell').eq(0).should('contain', 'vmhdbdev02');
-      cy.get('@tableCell').eq(1).should('contain', '11');
+      cy.get('@tableCell').eq(0).should('contain', 'sapnwdaas1');
+      cy.get('@tableCell').eq(1).should('contain', '99');
     });
     */
   });
 
-  describe('The hosts table shows the attached hosts to this HANA database', () => {
+  describe('The hosts table shows the attached hosts to this SAP system', () => {
+    before(() => {
+      cy.visit(`/sap_systems/${selectedSystem.Id}`);
+      cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
+    });
+
     attachedHosts.forEach((host, index) => {
       it(`should show ${host.Name} with the data`, () => {
         cy.get('table.table-fixed')

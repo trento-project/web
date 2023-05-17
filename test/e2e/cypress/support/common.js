@@ -13,3 +13,15 @@ export const getValue = (key, defaultValue) => {
       return defaultValue;
   }
 };
+
+export const allClusterNames = (availableClusters) =>
+  availableClusters.map(([_, clusterName]) => clusterName);
+
+export const allClusterIds = (availableClusters) =>
+  availableClusters.map(([clusterId, _]) => clusterId);
+
+export const clusterIdByName = (availableClusters, clusterName) =>
+  availableClusters.find(([, name]) => name === clusterName)[0];
+
+export const clusterNameById = (availableClusters, clusterId) =>
+  availableClusters.find(([id]) => id === clusterId)[1];
