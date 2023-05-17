@@ -8,9 +8,9 @@ defmodule Trento.Factory do
   require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.Domain.{
-    ClusterNode,
     ClusterResource,
     HanaClusterDetails,
+    HanaClusterNode,
     SapSystem,
     SbdDevice,
     SlesSubscription
@@ -263,7 +263,7 @@ defmodule Trento.Factory do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
       nodes: [
-        %ClusterNode{
+        %HanaClusterNode{
           attributes: %{"attribute" => Faker.Beer.name()},
           hana_status: "Secondary",
           name: Faker.StarWars.character(),
@@ -422,5 +422,37 @@ defmodule Trento.Factory do
       system_replication_status: "ACTIVE",
       health: Health.passing()
     })
+  end
+
+  def cib_resource_factory do
+    %{
+      "Id" => Faker.UUID.v4(),
+      "Type" => Faker.StarWars.planet(),
+      "Class" => "ocf",
+      "Provider" => "heartbeat",
+      "Operations" => [],
+      "MetaAttributes" => %{},
+      "InstanceAttributes" => []
+    }
+  end
+
+  def crm_resource_factory do
+    %{
+      "Id" => Faker.UUID.v4(),
+      "Node" => %{
+        "Id" => "1",
+        "Name" => Faker.StarWars.planet(),
+        "Cached" => true
+      },
+      "Role" => "Started",
+      "Agent" => Faker.Pokemon.name(),
+      "Active" => true,
+      "Failed" => false,
+      "Blocked" => false,
+      "Managed" => true,
+      "Orphaned" => false,
+      "FailureIgnored" => false,
+      "NodesRunningOn" => 1
+    }
   end
 end

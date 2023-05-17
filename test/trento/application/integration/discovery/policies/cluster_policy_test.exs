@@ -4,6 +4,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
 
   import Trento.Integration.DiscoveryFixturesHelper
 
+  import Trento.Factory
+
   require Trento.Domain.Enums.Provider, as: Provider
 
   alias Trento.Integration.Discovery.ClusterPolicy
@@ -11,9 +13,11 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
   alias Trento.Domain.Commands.RegisterClusterHost
 
   alias Trento.Domain.{
-    ClusterNode,
+    AscsErsClusterDetails,
+    AscsErsClusterSapSystem,
     ClusterResource,
     HanaClusterDetails,
+    HanaClusterNode,
     SbdDevice
   }
 
@@ -26,7 +30,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               details: %HanaClusterDetails{
                 fencing_type: "external/sbd",
                 nodes: [
-                  %ClusterNode{
+                  %HanaClusterNode{
                     attributes: %{
                       "hana_prd_clone_state" => "PROMOTED",
                       "hana_prd_op_mode" => "logreplay",
@@ -103,7 +107,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                     site: "PRIMARY_SITE_NAME",
                     virtual_ip: "192.168.123.200"
                   },
-                  %ClusterNode{
+                  %HanaClusterNode{
                     attributes: %{
                       "hana_prd_clone_state" => "DEMOTED",
                       "hana_prd_op_mode" => "logreplay",
@@ -233,7 +237,24 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               cib_last_written: "Tue Jan 11 13:43:06 2022",
               cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
               designated_controller: false,
-              details: nil,
+              details: %AscsErsClusterDetails{
+                fencing_type: "external/sbd",
+                sap_systems: [
+                  %AscsErsClusterSapSystem{
+                    sid: "NWP",
+                    filesystem_resource_based: true,
+                    distributed: true
+                  }
+                ],
+                stopped_resources: [],
+                sbd_devices: [
+                  %SbdDevice{
+                    device:
+                      "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
+                    status: "healthy"
+                  }
+                ]
+              },
               host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
               name: "netweaver_cluster",
               sid: nil,
@@ -241,7 +262,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               type: :ascs_ers,
               hosts_number: 2,
               resources_number: 9,
-              discovered_health: :unknown,
+              discovered_health: :passing,
               provider: Provider.azure()
             }} ==
              "ha_cluster_discovery_ascs_ers"
@@ -277,7 +298,29 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               cib_last_written: "Tue Jan 11 13:43:06 2022",
               cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
               designated_controller: false,
-              details: nil,
+              details: %AscsErsClusterDetails{
+                fencing_type: "external/sbd",
+                sap_systems: [
+                  %AscsErsClusterSapSystem{
+                    sid: "NWP",
+                    filesystem_resource_based: true,
+                    distributed: true
+                  },
+                  %AscsErsClusterSapSystem{
+                    sid: "NWD",
+                    filesystem_resource_based: true,
+                    distributed: true
+                  }
+                ],
+                stopped_resources: [],
+                sbd_devices: [
+                  %SbdDevice{
+                    device:
+                      "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
+                    status: "healthy"
+                  }
+                ]
+              },
               host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
               name: "netweaver_cluster",
               sid: nil,
@@ -285,12 +328,196 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               type: :ascs_ers,
               hosts_number: 2,
               resources_number: 17,
-              discovered_health: :unknown,
+              discovered_health: :passing,
               provider: Provider.azure()
             }} ==
              "ha_cluster_discovery_ascs_ers_multi_sid"
              |> load_discovery_event_fixture()
              |> ClusterPolicy.handle()
+  end
+
+  test "should set the filesystem_resource_based to false if no Filesystem resources are found" do
+    group_1 = %{
+      "Id" => "Group1",
+      "Primitives" => [
+        build(:cib_resource, %{
+          "Id" => "rsc_sap_NWP_ASCS00",
+          "Type" => "SAPInstance",
+          "InstanceAttributes" => [
+            %{"Id" => "Id1", "Name" => "InstanceName", "Value" => "NWP_ASCS00_sapnwpas"}
+          ]
+        })
+      ]
+    }
+
+    group_2 = %{
+      "Id" => "Group2",
+      "Primitives" => [
+        build(:cib_resource, %{
+          "Id" => "rsc_sap_NWP_ERS10",
+          "Type" => "SAPInstance",
+          "InstanceAttributes" => [
+            %{"Id" => "Id2", "Name" => "InstanceName", "Value" => "NWP_ERS10_sapnwpas"}
+          ]
+        })
+      ]
+    }
+
+    assert {:ok,
+            %RegisterClusterHost{
+              details: %AscsErsClusterDetails{
+                sap_systems: [
+                  %AscsErsClusterSapSystem{
+                    sid: "NWP",
+                    filesystem_resource_based: false,
+                    distributed: true
+                  }
+                ]
+              }
+            }} =
+             "ha_cluster_discovery_ascs_ers"
+             |> load_discovery_event_fixture()
+             |> put_in(["payload", "Cib", "Configuration", "Resources", "Groups"], [
+               group_1,
+               group_2
+             ])
+             |> ClusterPolicy.handle()
+  end
+
+  describe "ascs/ers clusters health" do
+    test "should set the health to critical when one of the nodes is unclean" do
+      assert {:ok,
+              %RegisterClusterHost{
+                details: %AscsErsClusterDetails{
+                  sap_systems: [
+                    %AscsErsClusterSapSystem{
+                      sid: "NWP",
+                      distributed: false
+                    }
+                  ]
+                },
+                discovered_health: :critical
+              }} =
+               "ha_cluster_discovery_ascs_ers"
+               |> load_discovery_event_fixture()
+               |> put_in(["payload", "Crmmon", "Nodes"], [
+                 %{"Unclean" => true, "Online" => false, "Name" => "vmnwprd01"},
+                 %{"Unclean" => false, "Online" => true, "Name" => "vmnwprd02"}
+               ])
+               |> ClusterPolicy.handle()
+    end
+
+    test "should set the health to critical when the SAPInstance resource is Stopped" do
+      group_1_resources =
+        build_list(1, :crm_resource, %{
+          "Id" => "rsc_sap_NWP_ASCS00",
+          "Agent" => "ocf::heartbeat:SAPInstance",
+          "Role" => "Started",
+          "Node" => %{"Name" => "vmnwpd01"}
+        })
+
+      group_2_resources =
+        build_list(1, :crm_resource, %{
+          "Id" => "rsc_sap_NWP_ERS10",
+          "Agent" => "ocf::heartbeat:SAPInstance",
+          "Role" => "Stopped",
+          "Node" => %{"Name" => "vmnwpd02"}
+        })
+
+      assert {:ok,
+              %RegisterClusterHost{
+                details: %AscsErsClusterDetails{
+                  sap_systems: [
+                    %AscsErsClusterSapSystem{
+                      sid: "NWP",
+                      distributed: false
+                    }
+                  ]
+                },
+                discovered_health: :critical
+              }} =
+               "ha_cluster_discovery_ascs_ers"
+               |> load_discovery_event_fixture()
+               |> put_in(["payload", "Crmmon", "Groups"], [
+                 %{"Resources" => group_1_resources},
+                 %{"Resources" => group_2_resources}
+               ])
+               |> ClusterPolicy.handle()
+    end
+
+    test "should set the health to critical when the SAPInstance resourece is running the same node" do
+      group_1_resources =
+        build_list(1, :crm_resource, %{
+          "Id" => "rsc_sap_NWP_ASCS00",
+          "Agent" => "ocf::heartbeat:SAPInstance",
+          "Node" => %{"Name" => "vmnwpd01"}
+        })
+
+      group_2_resources =
+        build_list(1, :crm_resource, %{
+          "Id" => "rsc_sap_NWP_ERS10",
+          "Agent" => "ocf::heartbeat:SAPInstance",
+          "Node" => %{"Name" => "vmnwpd01"}
+        })
+
+      assert {:ok,
+              %RegisterClusterHost{
+                details: %AscsErsClusterDetails{
+                  sap_systems: [
+                    %AscsErsClusterSapSystem{
+                      sid: "NWP",
+                      distributed: false
+                    }
+                  ]
+                },
+                discovered_health: :critical
+              }} =
+               "ha_cluster_discovery_ascs_ers"
+               |> load_discovery_event_fixture()
+               |> put_in(["payload", "Crmmon", "Groups"], [
+                 %{"Resources" => group_1_resources},
+                 %{"Resources" => group_2_resources}
+               ])
+               |> ClusterPolicy.handle()
+    end
+
+    test "should set the health to critical when the SAPInstance is on failed state" do
+      group_1_resources =
+        build_list(1, :crm_resource, %{
+          "Id" => "rsc_sap_NWP_ASCS00",
+          "Agent" => "ocf::heartbeat:SAPInstance",
+          "Failed" => true,
+          "Node" => %{"Name" => "vmnwpd01"}
+        })
+
+      group_2_resources =
+        build_list(1, :crm_resource, %{
+          "Id" => "rsc_sap_NWP_ERS10",
+          "Agent" => "ocf::heartbeat:SAPInstance",
+          "Failed" => false,
+          "Node" => %{"Name" => "vmnwpd01"}
+        })
+
+      assert {:ok,
+              %RegisterClusterHost{
+                details: %AscsErsClusterDetails{
+                  sap_systems: [
+                    %AscsErsClusterSapSystem{
+                      sid: "NWP",
+                      distributed: false
+                    }
+                  ]
+                },
+                discovered_health: :critical
+              }} =
+               "ha_cluster_discovery_ascs_ers"
+               |> load_discovery_event_fixture()
+               |> put_in(["payload", "Crmmon", "Groups"], [
+                 %{"Resources" => group_1_resources},
+                 %{"Resources" => group_2_resources}
+               ])
+               |> ClusterPolicy.handle()
+    end
   end
 
   test "should return the expected commands when a ha_cluster_discovery payload with aws provider" do
@@ -303,7 +530,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                details: %Trento.Domain.HanaClusterDetails{
                  fencing_type: "external/ec2",
                  nodes: [
-                   %Trento.Domain.ClusterNode{
+                   %Trento.Domain.HanaClusterNode{
                      attributes: %{
                        "hana_prd_clone_state" => "PROMOTED",
                        "hana_prd_op_mode" => "logreplay",
@@ -359,7 +586,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                      site: "Site1",
                      virtual_ip: "192.168.1.10"
                    },
-                   %Trento.Domain.ClusterNode{
+                   %Trento.Domain.HanaClusterNode{
                      attributes: %{
                        "hana_prd_clone_state" => "DEMOTED",
                        "hana_prd_op_mode" => "logreplay",
@@ -428,7 +655,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                details: %Trento.Domain.HanaClusterDetails{
                  fencing_type: "fence_gce",
                  nodes: [
-                   %Trento.Domain.ClusterNode{
+                   %Trento.Domain.HanaClusterNode{
                      attributes: %{
                        "hana_prd_clone_state" => "UNDEFINED",
                        "hana_prd_op_mode" => "logreplay",
@@ -469,7 +696,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                      site: "Site1",
                      virtual_ip: "10.0.0.12"
                    },
-                   %Trento.Domain.ClusterNode{
+                   %Trento.Domain.HanaClusterNode{
                      attributes: %{
                        "hana_prd_clone_state" => "DEMOTED",
                        "hana_prd_op_mode" => "logreplay",
@@ -565,7 +792,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
               details: %HanaClusterDetails{
                 fencing_type: "external/sbd",
                 nodes: [
-                  %ClusterNode{
+                  %HanaClusterNode{
                     attributes: %{
                       "hana_prd_clone_state" => "PROMOTED",
                       "hana_prd_op_mode" => "logreplay",
@@ -642,7 +869,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                     site: "PRIMARY_SITE_NAME",
                     virtual_ip: "192.168.123.200"
                   },
-                  %ClusterNode{
+                  %HanaClusterNode{
                     attributes: %{
                       "hana_prd_clone_state" => "DEMOTED",
                       "hana_prd_op_mode" => "logreplay",
