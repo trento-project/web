@@ -224,7 +224,7 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon do
   defp nodes_changeset(nodes, attrs) do
     nodes
     |> cast(attrs, [:id, :name, :online, :unclean])
-    |> validate_required_fields([:id, :name])
+    |> validate_required([:id, :name])
   end
 
   defp groups_changeset(groups, attrs) do

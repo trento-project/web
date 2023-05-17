@@ -401,8 +401,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                "ha_cluster_discovery_ascs_ers"
                |> load_discovery_event_fixture()
                |> put_in(["payload", "Crmmon", "Nodes"], [
-                 %{"Unclean" => true, "Online" => false, "Name" => "vmnwprd01"},
-                 %{"Unclean" => false, "Online" => true, "Name" => "vmnwprd02"}
+                 %{"Id" => "1", "Unclean" => true, "Online" => false, "Name" => "vmnwprd01"},
+                 %{"Id" => "2", "Unclean" => false, "Online" => true, "Name" => "vmnwprd02"}
                ])
                |> ClusterPolicy.handle()
     end
