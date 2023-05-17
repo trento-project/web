@@ -25,12 +25,12 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
     })
   end
 
-  defmodule ClusterNode do
+  defmodule HanaClusterNode do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "ClusterNode",
-      description: "A Cluster Node",
+      title: "HanaClusterNode",
+      description: "A HANA Cluster Node",
       type: :object,
       properties: %{
         name: %Schema{type: :string},
@@ -44,7 +44,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
         virtual_ip: %Schema{type: :string},
         resources: %Schema{
           title: "ClustrNodeResources",
-          description: "A list of ClusterNodes",
+          description: "A list of Cluster resources",
           type: :array,
           items: ClusterResource
         }
@@ -91,7 +91,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
         nodes: %Schema{
           title: "HanaClusterNodes",
           type: :array,
-          items: ClusterNode
+          items: HanaClusterNode
         },
         sbd_devices: %Schema{
           title: "SbdDevice",

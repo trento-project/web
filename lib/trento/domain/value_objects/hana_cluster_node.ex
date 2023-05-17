@@ -1,4 +1,4 @@
-defmodule Trento.Domain.ClusterNode do
+defmodule Trento.Domain.HanaClusterNode do
   @moduledoc """
   Represents the node of a HANA cluster.
   """
