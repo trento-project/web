@@ -169,8 +169,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
        ) do
     Enum.map(nodes, fn %{name: name, attributes: attributes} ->
       attributes =
-        Enum.reduce(attributes, %{}, fn %{name: name, value: value}, acc ->
-          Map.put(acc, name, value)
+        Enum.into(attributes, %{}, fn %{name: name, value: value} ->
+          {name, value}
         end)
 
       node_resources = parse_node_resources(name, crmmon)
@@ -427,7 +427,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     %{
       sid: sid,
       filesystem_resource_based: is_filesystem_resource_based,
-      distributed: is_distributed(payload, resources_by_sid)
+      distributed: is_distributed(payload, resources_by_sid),
+      nodes: parse_ascs_ers_cluster_nodes(payload, resources_by_sid)
     }
   end
 
@@ -493,6 +494,71 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     end)
     |> Enum.count() == 2
   end
+
+  defp parse_ascs_ers_cluster_nodes(
+         %{
+           provider: provider,
+           crmmon: %{nodes: nodes, node_attributes: %{nodes: node_attributes}} = crmmon
+         },
+         cib_resources_by_sid
+       ) do
+    Enum.map(nodes, fn %{name: node_name} ->
+      cib_resource_ids = Enum.map(cib_resources_by_sid, fn %{id: id} -> id end)
+
+      crm_node_resources =
+        node_name
+        |> parse_node_resources(crmmon)
+        |> Enum.filter(fn %{id: id} -> id in cib_resource_ids end)
+
+      crm_node_resource_ids = Enum.map(crm_node_resources, fn %{id: id} -> id end)
+
+      cib_node_resources =
+        Enum.filter(cib_resources_by_sid, fn %{id: id} -> id in crm_node_resource_ids end)
+
+      attributes =
+        node_attributes
+        |> Enum.find_value([], fn
+          %{name: ^node_name, attributes: attributes} -> attributes
+          _ -> false
+        end)
+        |> Enum.into(%{}, fn %{name: name, value: value} ->
+          {name, value}
+        end)
+
+      roles =
+        cib_node_resources
+        |> parse_resource_by_type("SAPInstance", "IS_ERS")
+        |> Enum.map(fn
+          "true" -> :ers
+          _ -> :ascs
+        end)
+
+      virtual_ip_type = get_virtual_ip_type_suffix_by_provider(provider)
+
+      %{
+        name: node_name,
+        roles: roles,
+        virtual_ips: parse_resource_by_type(cib_node_resources, virtual_ip_type, "ip"),
+        filesystems: parse_resource_by_type(cib_node_resources, "Filesystem", "directory"),
+        attributes: attributes,
+        resources: crm_node_resources
+      }
+    end)
+  end
+
+  defp parse_resource_by_type(resources, type, attribute_name),
+    do:
+      resources
+      |> Enum.filter(fn
+        %{type: ^type} -> true
+        _ -> nil
+      end)
+      |> Enum.map(fn %{instance_attributes: instance_attributes} ->
+        Enum.find_value(instance_attributes, nil, fn
+          %{name: ^attribute_name, value: value} -> value
+          _ -> nil
+        end)
+      end)
 
   defp parse_cib_last_written(%{
          crmmon: %{summary: %{last_change: %{time: cib_last_written}}}

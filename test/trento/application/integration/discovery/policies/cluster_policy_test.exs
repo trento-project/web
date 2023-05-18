@@ -14,6 +14,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
 
   alias Trento.Domain.{
     AscsErsClusterDetails,
+    AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
     HanaClusterDetails,
@@ -246,7 +247,83 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                     %AscsErsClusterSapSystem{
                       sid: "NWP",
                       filesystem_resource_based: true,
-                      distributed: true
+                      distributed: true,
+                      nodes: [
+                        %AscsErsClusterNode{
+                          name: "vmnwprd01",
+                          roles: [:ascs],
+                          virtual_ips: ["10.80.1.25"],
+                          filesystems: ["/usr/sap/NWP/ASCS00"],
+                          attributes: %{},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWP_ASCS00",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWP_ASCS00",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWP_ASCS00",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWP_ASCS00",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        },
+                        %AscsErsClusterNode{
+                          name: "vmnwprd02",
+                          roles: [:ers],
+                          virtual_ips: ["10.80.1.26"],
+                          filesystems: ["/usr/sap/NWP/ERS10"],
+                          attributes: %{"runs_ers_NWP" => "1"},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWP_ERS10",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWP_ERS10",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWP_ERS10",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWP_ERS10",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ],
                   stopped_resources: [],
@@ -271,6 +348,54 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
             ]} ==
              "ha_cluster_discovery_ascs_ers"
              |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
+  test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with resources running in the same node is handled" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                details: %AscsErsClusterDetails{
+                  sap_systems: [
+                    %AscsErsClusterSapSystem{
+                      sid: "NWP",
+                      filesystem_resource_based: true,
+                      distributed: false,
+                      nodes: [
+                        %AscsErsClusterNode{
+                          name: "vmnwprd01",
+                          roles: [:ascs, :ers],
+                          virtual_ips: ["10.80.1.25", "10.80.1.26"],
+                          filesystems: ["/usr/sap/NWP/ASCS00", "/usr/sap/NWP/ERS10"]
+                        },
+                        %AscsErsClusterNode{
+                          name: "vmnwprd02",
+                          roles: [],
+                          virtual_ips: [],
+                          filesystems: []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]} =
+             "ha_cluster_discovery_ascs_ers"
+             |> load_discovery_event_fixture()
+             |> update_in(
+               ["payload", "Crmmon", "Groups"],
+               &Enum.map(&1, fn group ->
+                 update_in(
+                   group,
+                   ["Resources"],
+                   fn resources ->
+                     Enum.map(resources, fn resource ->
+                       put_in(resource, ["Node", "Name"], "vmnwprd01")
+                     end)
+                   end
+                 )
+               end)
+             )
              |> ClusterPolicy.handle(nil)
   end
 
@@ -311,12 +436,164 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
                     %AscsErsClusterSapSystem{
                       sid: "NWP",
                       filesystem_resource_based: true,
-                      distributed: true
+                      distributed: true,
+                      nodes: [
+                        %AscsErsClusterNode{
+                          name: "vmnwprd01",
+                          roles: [:ascs],
+                          virtual_ips: ["10.80.1.25"],
+                          filesystems: ["/usr/sap/NWP/ASCS00"],
+                          attributes: %{},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWP_ASCS00",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWP_ASCS00",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWP_ASCS00",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWP_ASCS00",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        },
+                        %AscsErsClusterNode{
+                          name: "vmnwprd02",
+                          roles: [:ers],
+                          virtual_ips: ["10.80.1.26"],
+                          filesystems: ["/usr/sap/NWP/ERS10"],
+                          attributes: %{"runs_ers_NWD" => "1", "runs_ers_NWP" => "1"},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWP_ERS10",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWP_ERS10",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWP_ERS10",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWP_ERS10",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        }
+                      ]
                     },
                     %AscsErsClusterSapSystem{
                       sid: "NWD",
                       filesystem_resource_based: true,
-                      distributed: true
+                      distributed: true,
+                      nodes: [
+                        %AscsErsClusterNode{
+                          name: "vmnwprd01",
+                          roles: [:ascs],
+                          virtual_ips: ["10.80.2.25"],
+                          filesystems: ["/usr/sap/NWD/ASCS01"],
+                          attributes: %{},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWD_ASCS01",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWD_ASCS01",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWD_ASCS01",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWD_ASCS01",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        },
+                        %AscsErsClusterNode{
+                          name: "vmnwprd02",
+                          roles: [:ers],
+                          virtual_ips: ["10.80.2.26"],
+                          filesystems: ["/usr/sap/NWD/ERS11"],
+                          attributes: %{"runs_ers_NWD" => "1", "runs_ers_NWP" => "1"},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWD_ERS11",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWD_ERS11",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWD_ERS11",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWD_ERS11",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ],
                   stopped_resources: [],
