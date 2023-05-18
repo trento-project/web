@@ -55,19 +55,9 @@ export function ClusterDetailsPage() {
       clusterNodes={renderedNodes}
       details={cluster.details}
       lastExecution={lastExecution}
-      onStartExecution={(
-        _,
-        hostList,
-        checks,
-        navigateFunction
-      ) =>
+      onStartExecution={(_, hostList, checks, navigateFunction) =>
         dispatch(
-          executionRequested(
-            clusterID,
-            hostList,
-            checks,
-            navigateFunction
-          )
+          executionRequested(clusterID, hostList, checks, navigateFunction)
         )
       }
       navigate={navigate}

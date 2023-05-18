@@ -67,8 +67,7 @@ export function ClusterDetails({
   clusterNodes,
   details,
   lastExecution,
-  executionRequested,
-  dispatch,
+  onStartExecution,
   navigate,
 }) {
   return (
@@ -109,21 +108,7 @@ export function ClusterDetails({
               disabled={!hasSelectedChecks}
               hosts={hosts}
               checks={selectedChecks}
-              onStartExecution={(
-                _,
-                hostList,
-                checks,
-                navigateFunction
-              ) =>
-                dispatch(
-                  executionRequested(
-                    clusterID,
-                    hostList,
-                    checks,
-                    navigateFunction
-                  )
-                )
-              }
+              onStartExecution={onStartExecution}
             >
               <EOS_PLAY_CIRCLE
                 className={classNames('inline-block fill-jungle-green-500', {
@@ -158,9 +143,7 @@ export function ClusterDetails({
               {
                 title: 'Cluster type',
                 content:
-                  clusterType === 'hana_scale_up'
-                    ? 'HANA scale-up'
-                    : 'Unknown',
+                  clusterType === 'hana_scale_up' ? 'HANA scale-up' : 'Unknown',
               },
               {
                 title: 'SAPHanaSR health state',
@@ -172,19 +155,15 @@ export function ClusterDetails({
               },
               {
                 title: 'HANA log replication mode',
-                content:
-                  details && details.system_replication_mode,
+                content: details && details.system_replication_mode,
               },
               {
                 title: 'HANA secondary sync state',
-                content:
-                  details && details.secondary_sync_state,
+                content: details && details.secondary_sync_state,
               },
               {
                 title: 'HANA log operation mode',
-                content:
-                  details &&
-                  details.system_replication_operation_mode,
+                content: details && details.system_replication_operation_mode,
               },
             ]}
           />
@@ -212,18 +191,16 @@ export function ClusterDetails({
       </div>
 
       <div className="mt-2 tn-site-details">
-        {Object.entries(groupBy(details.nodes, 'site')).map(
-          ([siteName]) => (
-            <div key={siteName} className={`tn-site-details-${siteName} mt-4`}>
-              <h3 className="text-l font-bold tn-site-name">{siteName}</h3>
-              <Table
-                className="tn-site-table"
-                config={siteDetailsConfig}
-                data={clusterNodes.filter(({ site }) => site === siteName)}
-              />
-            </div>
-          )
-        )}
+        {Object.entries(groupBy(details.nodes, 'site')).map(([siteName]) => (
+          <div key={siteName} className={`tn-site-details-${siteName} mt-4`}>
+            <h3 className="text-l font-bold tn-site-name">{siteName}</h3>
+            <Table
+              className="tn-site-table"
+              config={siteDetailsConfig}
+              data={clusterNodes.filter(({ site }) => site === siteName)}
+            />
+          </div>
+        ))}
       </div>
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
