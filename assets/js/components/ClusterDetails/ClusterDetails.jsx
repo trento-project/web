@@ -8,7 +8,6 @@ import BackButton from '@components/BackButton';
 import Button from '@components/Button';
 
 import ListView from '@components/ListView';
-import Pill from '@components/Pill';
 import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
@@ -18,6 +17,8 @@ import ProviderLabel from '@components/ProviderLabel';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import SiteDetails from './SiteDetails';
+import SBDDetails from './SBDDetails';
+import StoppedResources from './StoppedResources';
 
 const siteDetailsConfig = {
   usePadding: false,
@@ -52,13 +53,6 @@ const siteDetailsConfig = {
     },
   ],
 };
-
-const getStatusPill = (status) =>
-  status === 'healthy' ? (
-    <Pill className="bg-green-200 text-green-800 mr-2">Healthy</Pill>
-  ) : (
-    <Pill className="bg-red-200 text-red-800 mr-2">Unhealthy</Pill>
-  );
 
 export function ClusterDetails({
   clusterID,
@@ -208,20 +202,7 @@ export function ClusterDetails({
       </div>
 
       {details && details.stopped_resources.length > 0 && (
-        <div className="mt-16">
-          <div className="flex flex-direction-row">
-            <h2 className="text-2xl font-bold self-center">
-              Stopped resources
-            </h2>
-          </div>
-          <div className="mt-2">
-            {details.stopped_resources.map(({ id }) => (
-              <Pill className="bg-gray-200 text-gray-800" key={id}>
-                {id}
-              </Pill>
-            ))}
-          </div>
-        </div>
+        <StoppedResources resources={details.stopped_resources} />
       )}
 
       <div className="mt-8">
@@ -244,19 +225,7 @@ export function ClusterDetails({
           )
         )}
       </div>
-
-      <div className="mt-8">
-        <div>
-          <h2 className="text-2xl font-bold">SBD/Fencing</h2>
-        </div>
-      </div>
-      <div className="mt-2 bg-white shadow rounded-lg py-4 px-8 tn-sbd-details">
-        {details.sbd_devices.map(({ device, status }) => (
-          <div key={device}>
-            {getStatusPill(status)} {device}
-          </div>
-        ))}
-      </div>
+      <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
   );
 }
