@@ -1,8 +1,9 @@
 import clustersReducer, { removeCluster } from '@state/clusters';
+import { clusterFactory } from '@lib/test-utils/factories';
 
 describe('Clusters reducer', () => {
   it('should remove cluster from state', () => {
-    const cluster = { id: 'test-cluster-id' };
+    const cluster = clusterFactory.build();
     const initialState = {
       clusters: [cluster],
     };

@@ -1,16 +1,16 @@
 import { recordSaga } from '@lib/test-utils';
 import { clusterDeregistered } from '@state/sagas/clusters';
 import { removeCluster } from '@state/clusters';
+import { CLUSTER_DEREGISTERED } from '@state/actions/cluster';
+import { clusterFactory } from '@lib/test-utils/factories';
 
 describe('Clusters sagas', () => {
   it('should trigger reducer to remove cluster', async () => {
-    const payload = {
-      name: 'test-cluster',
-      id: 'test-cluster-id',
-    };
+    const { id, name } = clusterFactory.build();
+    const payload = { id, name };
 
     const dispatched = await recordSaga(clusterDeregistered, {
-      type: 'CLUSTER_DEREGISTERED',
+      type: CLUSTER_DEREGISTERED,
       payload,
     });
 

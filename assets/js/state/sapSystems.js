@@ -102,7 +102,7 @@ export const sapSystemsListSlice = createSlice({
     },
     removeSAPSystem: (state, { payload: { id } }) => {
       state.sapSystems = state.sapSystems.filter(
-        (sapSystem) => id !== sapSystem.id
+        (sapSystem) => sapSystem.id !== id
       );
     },
   },

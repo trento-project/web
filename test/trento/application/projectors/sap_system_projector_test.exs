@@ -158,7 +158,7 @@ defmodule Trento.SapSystemProjectorTest do
   test "should update read model after deregistration" do
     deregistered_at = DateTime.utc_now()
 
-    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+    %{sid: sid} = insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
 
     event = %SapSystemDeregistered{
       sap_system_id: sap_system_id,
@@ -170,7 +170,7 @@ defmodule Trento.SapSystemProjectorTest do
     projection = Repo.get(SapSystemReadModel, sap_system_id)
 
     assert_broadcast "sap_system_deregistered",
-                     %{sap_system_id: ^sap_system_id},
+                     %{sap_system_id: ^sap_system_id, sid: ^sid},
                      1000
 
     assert deregistered_at == projection.deregistered_at

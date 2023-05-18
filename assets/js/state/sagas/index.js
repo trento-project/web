@@ -69,7 +69,7 @@ import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { hostDeregistered } from '@state/sagas/hosts';
-import { clusterDeregistered } from '@state/sagas/clusters';
+import { watchClusterDeregistered } from '@state/sagas/clusters';
 import { sapSystemDeregistered } from '@state/sagas/sapSystems';
 import {
   watchUpdateLastExecution,
@@ -246,10 +246,6 @@ function* clusterDetailsUpdated({ payload }) {
 
 function* watchClusterDetailsUpdated() {
   yield takeEvery('CLUSTER_DETAILS_UPDATED', clusterDetailsUpdated);
-}
-
-function* watchClusterDeregistered() {
-  yield takeEvery('CLUSTER_DEREGISTERED', clusterDeregistered);
 }
 
 function* checksSelected({ payload }) {
