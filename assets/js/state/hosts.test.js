@@ -1,8 +1,9 @@
 import hostsReducer, { removeHost } from '@state/hosts';
+import { hostFactory } from '@lib/test-utils/factories';
 
 describe('Hosts reducer', () => {
   it('should remove host from state', () => {
-    const host = { id: 'test-host-id' };
+    const host = hostFactory.build();
     const initialState = {
       hosts: [host],
     };

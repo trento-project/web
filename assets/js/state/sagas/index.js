@@ -68,7 +68,7 @@ import { setEulaVisible, setIsPremium } from '@state/settings';
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
-import { hostDeregistered } from '@state/sagas/hosts';
+import { watchHostDeregistered } from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
 import { sapSystemDeregistered } from '@state/sagas/sapSystems';
 import {
@@ -206,10 +206,6 @@ function* heartbeatFailed({ payload }) {
 
 function* watchHeartbeatFailed() {
   yield takeEvery('HEARTBEAT_FAILED', heartbeatFailed);
-}
-
-function* watchHostDeregistered() {
-  yield takeEvery('HOST_DEREGISTERED', hostDeregistered);
 }
 
 function* clusterRegistered({ payload }) {

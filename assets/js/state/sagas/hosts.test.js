@@ -1,16 +1,16 @@
 import { recordSaga } from '@lib/test-utils';
 import { hostDeregistered } from '@state/sagas/hosts';
 import { removeHost } from '@state/hosts';
+import { HOST_DEREGISTERED } from '@state/actions/host';
+import { hostFactory } from '@lib/test-utils/factories';
 
 describe('Hosts sagas', () => {
   it('should trigger reducer to remove host', async () => {
-    const payload = {
-      hostname: 'test-host',
-      id: 'test-host-id',
-    };
+    const { id, hostname } = hostFactory.build();
+    const payload = { id, hostname };
 
     const dispatched = await recordSaga(hostDeregistered, {
-      type: 'HOST_DEREGISTERED',
+      type: HOST_DEREGISTERED,
       payload,
     });
 
