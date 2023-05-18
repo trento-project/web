@@ -79,7 +79,8 @@ defmodule Trento.Domain.SapSystem do
     SapSystemHealthChanged,
     SapSystemRegistered,
     SapSystemRolledUp,
-    SapSystemRollUpRequested
+    SapSystemRollUpRequested,
+    SapSystemTombstoned
   }
 
   alias Trento.Domain.HealthService
@@ -251,6 +252,7 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_deregistered_event(sap_system, deregistered_at)
     end)
+    |> Multi.execute(&maybe_emit_sap_system_tombstoned_event/1)
   end
 
   # Deregister an application instance and emit a ApplicationInstanceDeregistered
@@ -282,6 +284,7 @@ defmodule Trento.Domain.SapSystem do
         deregistered_at
       )
     end)
+    |> Multi.execute(&maybe_emit_sap_system_tombstoned_event/1)
   end
 
   def apply(
@@ -567,6 +570,8 @@ defmodule Trento.Domain.SapSystem do
     }
   end
 
+  def apply(%SapSystem{} = sap_system, %SapSystemTombstoned{}), do: sap_system
+
   defp maybe_emit_database_instance_registered_event(
          nil,
          %RegisterDatabaseInstance{
@@ -839,6 +844,20 @@ defmodule Trento.Domain.SapSystem do
   end
 
   defp maybe_emit_sap_system_deregistered_event(_, _), do: nil
+
+  defp maybe_emit_sap_system_tombstoned_event(%SapSystem{
+         sap_system_id: sap_system_id,
+         application: %Application{
+           instances: []
+         },
+         database: %Database{
+           instances: []
+         }
+       }) do
+    %SapSystemTombstoned{sap_system_id: sap_system_id}
+  end
+
+  defp maybe_emit_sap_system_tombstoned_event(_), do: nil
 
   defp maybe_emit_database_deregistered_event(
          %SapSystem{
