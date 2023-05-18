@@ -2,12 +2,12 @@ import hostsReducer, { removeHost } from '@state/hosts';
 
 describe('Hosts reducer', () => {
   it('should remove host from state', () => {
-    const id = 'test-host-id';
+    const host = { id: 'test-host-id' };
     const initialState = {
-      hosts: [{ id }],
+      hosts: [host],
     };
 
-    const action = removeHost({ id });
+    const action = removeHost(host);
 
     const expectedState = {
       hosts: [],

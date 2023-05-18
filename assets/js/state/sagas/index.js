@@ -30,7 +30,6 @@ import {
   updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
-  removeCluster,
 } from '@state/clusters';
 
 import {
@@ -44,7 +43,6 @@ import {
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
   updateApplicationInstanceHealth,
-  removeSAPSystem,
 } from '@state/sapSystems';
 
 import {
@@ -71,6 +69,8 @@ import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { hostDeregistered } from '@state/sagas/hosts';
+import { clusterDeregistered } from '@state/sagas/clusters';
+import { sapSystemDeregistered } from '@state/sagas/sapSystems';
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
@@ -248,22 +248,6 @@ function* watchClusterDetailsUpdated() {
   yield takeEvery('CLUSTER_DETAILS_UPDATED', clusterDetailsUpdated);
 }
 
-function* clusterDeregistered({ payload }) {
-  yield put(removeCluster(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.name,
-      message: 'Cluster deregistered.',
-    })
-  );
-  yield put(
-    notify({
-      text: `The cluster ${payload.name} has been deregistered.`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
 function* watchClusterDeregistered() {
   yield takeEvery('CLUSTER_DEREGISTERED', clusterDeregistered);
 }
@@ -409,22 +393,6 @@ function* applicationInstanceRegistered({ payload }) {
 
 function* applicationInstanceHealthChanged({ payload }) {
   yield put(updateApplicationInstanceHealth(payload));
-}
-
-function* sapSystemDeregistered({ payload }) {
-  yield put(removeSAPSystem(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'SAP System deregistered.',
-    })
-  );
-  yield put(
-    notify({
-      text: `The SAP System ${payload.sid} has been deregistered.`,
-      icon: 'ℹ️',
-    })
-  );
 }
 
 function* watchSapSystem() {

@@ -4,8 +4,6 @@ import { removeHost } from '@state/hosts';
 
 describe('Hosts sagas', () => {
   it('should trigger reducer to remove host', async () => {
-    const id = 'test-host-id';
-
     const payload = {
       hostname: 'test-host',
       id: 'test-host-id',
@@ -13,12 +11,9 @@ describe('Hosts sagas', () => {
 
     const dispatched = await recordSaga(hostDeregistered, {
       type: 'HOST_DEREGISTERED',
-      payload: {
-        id,
-        hostname: 'test-host',
-      },
+      payload,
     });
 
-    expect(dispatched).toContainEqual(removeHost(payload, id));
+    expect(dispatched).toContainEqual(removeHost(payload));
   });
 });

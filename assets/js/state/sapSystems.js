@@ -100,9 +100,9 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
-    removeSAPSystem: (state, { payload: { sap_system_id } }) => {
+    removeSAPSystem: (state, { payload: { id } }) => {
       state.sapSystems = state.sapSystems.filter(
-        ({ id }) => sap_system_id !== id
+        (sapSystem) => id !== sapSystem.id
       );
     },
   },

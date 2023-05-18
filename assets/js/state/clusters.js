@@ -95,10 +95,8 @@ export const clustersListSlice = createSlice({
         return cluster;
       });
     },
-    removeCluster: (state, { payload: { cluster_id } }) => {
-      state.clusters = state.clusters.filter(
-        (cluster) => cluster.id !== cluster_id
-      );
+    removeCluster: (state, { payload: { id } }) => {
+      state.clusters = state.clusters.filter((cluster) => cluster.id !== id);
     },
   },
 });
