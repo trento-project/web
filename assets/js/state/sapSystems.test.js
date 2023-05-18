@@ -1,8 +1,9 @@
 import sapSystemsReducer, { removeSAPSystem } from '@state/sapSystems';
+import { sapSystemFactory } from '@lib/test-utils/factories/sapSystems';
 
 describe('SAP Systems reducer', () => {
   it('should remove SAP system from state', () => {
-    const sapSystem = { id: 'test-sap-system-id' };
+    const sapSystem = sapSystemFactory.build();
     const initialState = {
       sapSystems: [sapSystem],
     };
