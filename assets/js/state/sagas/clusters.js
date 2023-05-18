@@ -1,6 +1,5 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { removeCluster } from '@state/clusters';
-import { CLUSTER_DEREGISTERED } from '@state/actions/cluster';
+import { CLUSTER_DEREGISTERED, removeCluster } from '@state/clusters';
 import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
 

@@ -1,5 +1,10 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 import {
+  SAP_SYSTEM_REGISTERED,
+  SAP_SYSTEM_HEALTH_CHANGED,
+  APPLICATION_INSTANCE_REGISTERED,
+  APPLICATION_INSTANCE_HEALTH_CHANGED,
+  SAP_SYSTEM_DEREGISTERED,
   appendSapsystem,
   updateSapSystemHealth,
   appendApplicationInstance,
@@ -7,13 +12,6 @@ import {
   removeSAPSystem,
 } from '@state/sapSystems';
 import { getSapSystem } from '@state/selectors';
-import {
-  SAP_SYSTEM_REGISTERED,
-  SAP_SYSTEM_HEALTH_CHANGED,
-  APPLICATION_INSTANCE_REGISTERED,
-  APPLICATION_INSTANCE_HEALTH_CHANGED,
-  SAP_SYSTEM_DEREGISTERED,
-} from '@state/actions/sapSystem';
 import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
 

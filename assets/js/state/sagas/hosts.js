@@ -1,6 +1,5 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { removeHost } from '@state/hosts';
-import { HOST_DEREGISTERED } from '@state/actions/host';
+import { HOST_DEREGISTERED, removeHost } from '@state/hosts';
 import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
 

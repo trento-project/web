@@ -1,7 +1,6 @@
 import { recordSaga } from '@lib/test-utils';
 import { clusterDeregistered } from '@state/sagas/clusters';
-import { removeCluster } from '@state/clusters';
-import { CLUSTER_DEREGISTERED } from '@state/actions/cluster';
+import { CLUSTER_DEREGISTERED, removeCluster } from '@state/clusters';
 import { clusterFactory } from '@lib/test-utils/factories';
 
 describe('Clusters sagas', () => {

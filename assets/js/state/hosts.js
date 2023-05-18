@@ -71,6 +71,8 @@ export const hostsListSlice = createSlice({
   },
 });
 
+export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
+
 export const {
   setHosts,
   appendHost,

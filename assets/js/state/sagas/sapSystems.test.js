@@ -1,7 +1,6 @@
 import { recordSaga } from '@lib/test-utils';
 import { sapSystemDeregistered } from '@state/sagas/sapSystems';
-import { removeSAPSystem } from '@state/sapSystems';
-import { SAP_SYSTEM_DEREGISTERED } from '@state/actions/sapSystem';
+import { SAP_SYSTEM_DEREGISTERED, removeSAPSystem } from '@state/sapSystems';
 import { sapSystemFactory } from '@lib/test-utils/factories';
 
 describe('SAP Systems sagas', () => {

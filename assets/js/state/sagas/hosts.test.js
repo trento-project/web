@@ -1,7 +1,6 @@
 import { recordSaga } from '@lib/test-utils';
 import { hostDeregistered } from '@state/sagas/hosts';
-import { removeHost } from '@state/hosts';
-import { HOST_DEREGISTERED } from '@state/actions/host';
+import { HOST_DEREGISTERED, removeHost } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
 
 describe('Hosts sagas', () => {

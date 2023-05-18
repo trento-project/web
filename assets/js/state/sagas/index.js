@@ -21,6 +21,7 @@ import {
 } from '@state/hosts';
 
 import {
+  CHECKS_SELECTED,
   setClusters,
   appendCluster,
   updateCluster,
@@ -82,7 +83,6 @@ import {
   stopSavingClusterChecksSelection,
 } from '@state/clusterChecksSelection';
 
-import { CHECKS_SELECTED } from '@state/actions/cluster';
 import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
