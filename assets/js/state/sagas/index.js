@@ -18,7 +18,6 @@ import {
   stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
-  removeHost,
 } from '@state/hosts';
 
 import {
@@ -71,6 +70,7 @@ import { setEulaVisible, setIsPremium } from '@state/settings';
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
+import { hostDeregistered } from '@state/sagas/hosts';
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
@@ -206,22 +206,6 @@ function* heartbeatFailed({ payload }) {
 
 function* watchHeartbeatFailed() {
   yield takeEvery('HEARTBEAT_FAILED', heartbeatFailed);
-}
-
-function* hostDeregistered({ payload }) {
-  yield put(removeHost(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.hostname,
-      message: 'Host deregistered.',
-    })
-  );
-  yield put(
-    notify({
-      text: `The host ${payload.hostname} has been deregistered.`,
-      icon: 'ℹ️',
-    })
-  );
 }
 
 function* watchHostDeregistered() {
@@ -455,7 +439,6 @@ function* watchSapSystem() {
     applicationInstanceHealthChanged
   );
   yield takeEvery('SAP_SYSTEM_DEREGISTERED', sapSystemDeregistered);
-  console.log('aqui!');
 }
 
 function* databaseRegistered({ payload }) {
