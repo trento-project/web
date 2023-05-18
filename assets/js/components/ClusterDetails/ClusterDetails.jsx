@@ -20,7 +20,11 @@ import ProviderLabel from '@components/ProviderLabel';
 import { getClusterName } from '@components/ClusterLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
-import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
+import {
+  getCluster,
+  getClusterHosts,
+  getClusterHostIDs,
+} from '@state/selectors/cluster';
 import {
   updateLastExecution,
   executionRequested,
@@ -35,13 +39,13 @@ const siteDetailsConfig = {
       title: 'Hostname',
       key: '',
       render: (_, hostData) => (
-        <HostLink hostId={hostData.hostId}>{hostData.name}</HostLink>
+        <HostLink hostId={hostData.id}>{hostData.name}</HostLink>
       ),
     },
     { title: 'Role', key: 'hana_status' },
     {
       title: 'IP',
-      key: 'ips',
+      key: 'ip_addresses',
       className: 'table-col-m',
       render: (content) => content?.join(', '),
     },
@@ -82,32 +86,16 @@ export function ClusterDetails() {
     dispatch(updateLastExecution(clusterID));
   }, [dispatch]);
 
-  // FIXME: move this to a specific selector in the selectors folder
-  const hostsData = useSelector((state) =>
-    state.hostsList.hosts.reduce((accumulator, current) => {
-      if (current.cluster_id === clusterID) {
-        return {
-          ...accumulator,
-          [current.hostname]: { hostId: current.id, ips: current.ip_addresses },
-        };
-      }
-      return accumulator;
-    }, {})
-  );
+  const clusterHosts = useSelector(getClusterHosts(clusterID));
 
   if (!cluster) {
     return <div>Loading...</div>;
   }
 
-  const renderedNodes = cluster.details?.nodes?.map((node) =>
-    hostsData[node.name]
-      ? {
-          ...node,
-          ips: hostsData[node.name].ips,
-          hostId: hostsData[node.name].hostId,
-        }
-      : node
-  );
+  const renderedNodes = cluster.details?.nodes?.map((node) => ({
+    ...node,
+    ...clusterHosts.find(({ hostname }) => hostname === node.name),
+  }));
 
   const hasSelectedChecks = cluster.selected_checks.length > 0;
 
