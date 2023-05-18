@@ -13,7 +13,9 @@ import Home from '@components/Home';
 import AboutPage from '@components/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
-import ClusterDetails, { ClusterSettings } from '@components/ClusterDetails';
+import ClusterDetailsPage, {
+  ClusterSettings,
+} from '@components/ClusterDetails';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails from '@components/HostDetails';
@@ -71,7 +73,7 @@ function App() {
                   <Route path="databases/:id" element={<DatabaseDetails />} />
                   <Route
                     path="clusters/:clusterID"
-                    element={<ClusterDetails />}
+                    element={<ClusterDetailsPage />}
                   />
                   <Route
                     path="clusters/:clusterID/settings"

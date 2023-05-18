@@ -1,6 +1,4 @@
-import React, { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 
 import { groupBy } from '@lib/lists';
 import classNames from 'classnames';
@@ -17,19 +15,8 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 import HostLink from '@components/HostLink';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import ProviderLabel from '@components/ProviderLabel';
-import { getClusterName } from '@components/ClusterLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
-import {
-  getCluster,
-  getClusterHosts,
-  getClusterHostIDs,
-} from '@state/selectors/cluster';
-import {
-  updateLastExecution,
-  executionRequested,
-} from '@state/actions/lastExecutions';
-import { getLastExecution } from '@state/selectors/lastExecutions';
 import SiteDetails from './SiteDetails';
 
 const siteDetailsConfig = {
@@ -73,32 +60,23 @@ const getStatusPill = (status) =>
     <Pill className="bg-red-200 text-red-800 mr-2">Unhealthy</Pill>
   );
 
-export function ClusterDetails() {
-  const { clusterID } = useParams();
-  const navigate = useNavigate();
-
-  const cluster = useSelector(getCluster(clusterID));
-
-  const dispatch = useDispatch();
-  const lastExecution = useSelector(getLastExecution(clusterID));
-  const hosts = useSelector(getClusterHostIDs(clusterID));
-  useEffect(() => {
-    dispatch(updateLastExecution(clusterID));
-  }, [dispatch]);
-
-  const clusterHosts = useSelector(getClusterHosts(clusterID));
-
-  if (!cluster) {
-    return <div>Loading...</div>;
-  }
-
-  const renderedNodes = cluster.details?.nodes?.map((node) => ({
-    ...node,
-    ...clusterHosts.find(({ hostname }) => hostname === node.name),
-  }));
-
-  const hasSelectedChecks = cluster.selected_checks.length > 0;
-
+export function ClusterDetails({
+  clusterID,
+  clusterName,
+  selectedChecks,
+  hasSelectedChecks,
+  hosts,
+  clusterType,
+  cibLastWritten,
+  sid,
+  provider,
+  clusterNodes,
+  details,
+  lastExecution,
+  executionRequested,
+  dispatch,
+  navigate,
+}) {
   return (
     <div>
       <BackButton url="/clusters">Back to Clusters</BackButton>
@@ -106,7 +84,7 @@ export function ClusterDetails() {
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
           <PageHeader className="whitespace-normal">
             Pacemaker Cluster Details:{' '}
-            <span className="font-bold">{getClusterName(cluster)}</span>
+            <span className="font-bold">{clusterName}</span>
           </PageHeader>
         </div>
         <div className="flex w-1/2 justify-end">
@@ -136,18 +114,18 @@ export function ClusterDetails() {
               clusterId={clusterID}
               disabled={!hasSelectedChecks}
               hosts={hosts}
-              checks={cluster.selected_checks}
+              checks={selectedChecks}
               onStartExecution={(
                 _,
                 hostList,
-                selectedChecks,
+                checks,
                 navigateFunction
               ) =>
                 dispatch(
                   executionRequested(
                     clusterID,
                     hostList,
-                    selectedChecks,
+                    checks,
                     navigateFunction
                   )
                 )
@@ -175,44 +153,44 @@ export function ClusterDetails() {
             data={[
               {
                 title: 'Provider',
-                content: cluster.provider || 'Not defined',
+                content: provider || 'Not defined',
                 render: (content) => <ProviderLabel provider={content} />,
               },
-              { title: 'SID', content: cluster.sid },
+              { title: 'SID', content: sid },
               {
                 title: 'Fencing type',
-                content: cluster.details && cluster.details.fencing_type,
+                content: details && details.fencing_type,
               },
               {
                 title: 'Cluster type',
                 content:
-                  cluster.type === 'hana_scale_up'
+                  clusterType === 'hana_scale_up'
                     ? 'HANA scale-up'
                     : 'Unknown',
               },
               {
                 title: 'SAPHanaSR health state',
-                content: cluster.details && cluster.details.sr_health_state,
+                content: details && details.sr_health_state,
               },
               {
                 title: 'CIB last written',
-                content: cluster.cib_last_written || '-',
+                content: cibLastWritten || '-',
               },
               {
                 title: 'HANA log replication mode',
                 content:
-                  cluster.details && cluster.details.system_replication_mode,
+                  details && details.system_replication_mode,
               },
               {
                 title: 'HANA secondary sync state',
                 content:
-                  cluster.details && cluster.details.secondary_sync_state,
+                  details && details.secondary_sync_state,
               },
               {
                 title: 'HANA log operation mode',
                 content:
-                  cluster.details &&
-                  cluster.details.system_replication_operation_mode,
+                  details &&
+                  details.system_replication_operation_mode,
               },
             ]}
           />
@@ -229,7 +207,7 @@ export function ClusterDetails() {
         </div>
       </div>
 
-      {cluster.details && cluster.details.stopped_resources.length > 0 && (
+      {details && details.stopped_resources.length > 0 && (
         <div className="mt-16">
           <div className="flex flex-direction-row">
             <h2 className="text-2xl font-bold self-center">
@@ -237,7 +215,7 @@ export function ClusterDetails() {
             </h2>
           </div>
           <div className="mt-2">
-            {cluster.details.stopped_resources.map(({ id }) => (
+            {details.stopped_resources.map(({ id }) => (
               <Pill className="bg-gray-200 text-gray-800" key={id}>
                 {id}
               </Pill>
@@ -253,14 +231,14 @@ export function ClusterDetails() {
       </div>
 
       <div className="mt-2 tn-site-details">
-        {Object.entries(groupBy(cluster.details.nodes, 'site')).map(
+        {Object.entries(groupBy(details.nodes, 'site')).map(
           ([siteName]) => (
             <div key={siteName} className={`tn-site-details-${siteName} mt-4`}>
               <h3 className="text-l font-bold tn-site-name">{siteName}</h3>
               <Table
                 className="tn-site-table"
                 config={siteDetailsConfig}
-                data={renderedNodes.filter(({ site }) => site === siteName)}
+                data={clusterNodes.filter(({ site }) => site === siteName)}
               />
             </div>
           )
@@ -273,7 +251,7 @@ export function ClusterDetails() {
         </div>
       </div>
       <div className="mt-2 bg-white shadow rounded-lg py-4 px-8 tn-sbd-details">
-        {cluster.details.sbd_devices.map(({ device, status }) => (
+        {details.sbd_devices.map(({ device, status }) => (
           <div key={device}>
             {getStatusPill(status)} {device}
           </div>
