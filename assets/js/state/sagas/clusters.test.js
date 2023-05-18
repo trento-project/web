@@ -5,7 +5,7 @@ import { CLUSTER_DEREGISTERED } from '@state/actions/cluster';
 import { clusterFactory } from '@lib/test-utils/factories';
 
 describe('Clusters sagas', () => {
-  it('should trigger reducer to remove cluster', async () => {
+  it('should remove the cluster', async () => {
     const { id, name } = clusterFactory.build();
     const payload = { id, name };
 

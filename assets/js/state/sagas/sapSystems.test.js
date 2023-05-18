@@ -5,7 +5,7 @@ import { SAP_SYSTEM_DEREGISTERED } from '@state/actions/sapSystem';
 import { sapSystemFactory } from '@lib/test-utils/factories';
 
 describe('SAP Systems sagas', () => {
-  it('should trigger reducer to remove a SAP system', async () => {
+  it('should remove the SAP system', async () => {
     const { id, sid } = sapSystemFactory.build();
     const payload = { id, sid };
 
