@@ -54,7 +54,7 @@ const siteDetailsConfig = {
   ],
 };
 
-export function ClusterDetails({
+function ClusterDetails({
   clusterID,
   clusterName,
   selectedChecks,
@@ -206,3 +206,5 @@ export function ClusterDetails({
     </div>
   );
 }
+
+export default ClusterDetails;

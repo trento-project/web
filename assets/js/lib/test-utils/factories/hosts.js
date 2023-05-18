@@ -14,7 +14,7 @@ const slesSubscriptionIdentifierEnum = () =>
     'sle-ha',
   ]);
 
-const cloudProviderEnum = () =>
+export const cloudProviderEnum = () =>
   faker.helpers.arrayElement(['azure', 'aws', 'gcp', 'nutanix']);
 
 const heartbeatEnum = () =>

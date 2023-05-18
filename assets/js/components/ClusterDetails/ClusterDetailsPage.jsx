@@ -12,7 +12,7 @@ import {
   executionRequested,
 } from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import { ClusterDetails } from './ClusterDetails';
+import ClusterDetails from './ClusterDetails';
 import { getClusterName } from '../ClusterLink';
 
 export function ClusterDetailsPage() {
@@ -44,7 +44,7 @@ export function ClusterDetailsPage() {
   return (
     <ClusterDetails
       clusterID={clusterID}
-      clusterName={getClusterName(clusterID)}
+      clusterName={getClusterName(cluster)}
       selectedChecks={cluster.selected_checks}
       hasSelectedChecks={hasSelectedChecks}
       hosts={hosts}
