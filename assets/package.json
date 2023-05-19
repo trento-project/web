@@ -61,7 +61,7 @@
     "react-hot-toast": "^2.4.1",
     "react-markdown": "^8.0.7",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.11.1",
+    "react-router-dom": "^6.11.2",
     "redux-saga": "^1.2.3",
     "remark-gfm": "^3.0.1",
     "semver": "^7.5.1"
