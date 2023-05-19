@@ -13,7 +13,9 @@ function ExecutionHeader({
   clusterName,
   cloudProvider,
   clusterScenario,
+  savedFilters,
   onFilterChange = () => {},
+  onFilterSave = () => {},
 }) {
   return (
     <>
@@ -31,7 +33,11 @@ function ExecutionHeader({
             {clusterName}
           </span>
         </h1>
-        <ChecksResultFilters onChange={onFilterChange} />
+        <ChecksResultFilters
+          savedFilters={savedFilters}
+          onChange={onFilterChange}
+          onSave={onFilterSave}
+        />
       </div>
       {cloudProvider === UNKNOWN_PROVIDER && (
         <WarningBanner>

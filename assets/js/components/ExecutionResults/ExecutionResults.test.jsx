@@ -313,6 +313,47 @@ describe('ExecutionResults', () => {
     expect(screen.queryByText(checkID2)).toBeNull();
   });
 
+  it("should render ExecutionResults with saved 'passing' filter", async () => {
+    const {
+      clusterID,
+      clusterHosts,
+      checks: [checkID1, checkID2],
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('passing');
+
+    renderWithRouter(
+      <ExecutionResults
+        clusterID={clusterID}
+        clusterName="test-cluster"
+        clusterScenario="hana_scale_up"
+        cloudProvider="azure"
+        clusterHosts={clusterHosts}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+        savedFilters={['passing']}
+      />
+    );
+
+    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
+    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('Azure')).toBeTruthy();
+    expect(screen.getByText(clusterHosts[0].hostname)).toBeTruthy();
+    expect(screen.getByText(clusterHosts[1].hostname)).toBeTruthy();
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
+    expect(screen.queryByText(checkID2)).toBeNull();
+  });
+
   it("should render ExecutionResults with successfully filtered 'passing' and 'critical' results", async () => {
     const {
       clusterID,
@@ -518,6 +559,7 @@ describe('ExecutionResults', () => {
       executionData,
       checks,
     } = prepareStateData('completed');
+
     renderWithRouter(
       <ExecutionResults
         clusterID={clusterID}

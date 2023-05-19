@@ -23,6 +23,13 @@ import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
 import ExecutionContainer from './ExecutionContainer';
 
+// To have an array as a default prop that is also used in a useEffect's dependency
+// array we need to declare it outside the scope as a `const`, in order to prevent
+// rerendering loops.
+//
+// https://github.com/facebook/react/issues/18123
+const defaultSavedFilters = [];
+
 const resultsTableConfig = {
   usePadding: false,
   rowClassName: 'tn-check-result-row',
@@ -101,9 +108,11 @@ function ExecutionResults({
   executionData,
   executionError,
   clusterSelectedChecks = [],
+  savedFilters = defaultSavedFilters,
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
   onStartExecution = () => {},
+  onSaveFilters = () => {},
 }) {
   const [predicates, setPredicates] = useState([]);
   const [selectedCheck, setSelectedCheck] = useState(null);
@@ -117,6 +126,7 @@ function ExecutionResults({
       onLastExecutionUpdate();
     }
   };
+
   const checksResults = getCheckResults(executionData);
   const catalogCategoryList = getCatalogCategoryList(catalog, checksResults);
   const tableData = checksResults
@@ -168,7 +178,9 @@ function ExecutionResults({
         clusterName={clusterName}
         cloudProvider={cloudProvider}
         clusterScenario={clusterScenario}
+        savedFilters={savedFilters}
         onFilterChange={(newPredicates) => setPredicates(newPredicates)}
+        onFilterSave={onSaveFilters}
       />
       <ResultsContainer
         error={catalogError || executionError}
