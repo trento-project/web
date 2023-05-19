@@ -3,15 +3,15 @@ import { hostFactory } from '@lib/test-utils/factories';
 
 describe('Hosts reducer', () => {
   it('should remove host from state', () => {
-    const host = hostFactory.build();
+    const [host1, host2] = hostFactory.buildList(2);
     const initialState = {
-      hosts: [host],
+      hosts: [host1, host2],
     };
 
-    const action = removeHost(host);
+    const action = removeHost(host1);
 
     const expectedState = {
-      hosts: [],
+      hosts: [host2],
     };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);
