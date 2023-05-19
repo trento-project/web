@@ -6,13 +6,12 @@ import { clusterFactory } from '@lib/test-utils/factories';
 describe('Clusters sagas', () => {
   it('should remove the cluster', async () => {
     const { id, name } = clusterFactory.build();
-    const payload = { id, name };
 
     const dispatched = await recordSaga(clusterDeregistered, {
       type: CLUSTER_DEREGISTERED,
-      payload,
+      payload: { cluster_id: id, name },
     });
 
-    expect(dispatched).toContainEqual(removeCluster(payload));
+    expect(dispatched).toContainEqual(removeCluster({ id }));
   });
 });

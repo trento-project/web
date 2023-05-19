@@ -6,13 +6,12 @@ import { sapSystemFactory } from '@lib/test-utils/factories';
 describe('SAP Systems sagas', () => {
   it('should remove the SAP system', async () => {
     const { id, sid } = sapSystemFactory.build();
-    const payload = { id, sid };
 
     const dispatched = await recordSaga(sapSystemDeregistered, {
       type: SAP_SYSTEM_DEREGISTERED,
-      payload,
+      payload: { sap_system_id: id, sid },
     });
 
-    expect(dispatched).toContainEqual(removeSAPSystem(payload));
+    expect(dispatched).toContainEqual(removeSAPSystem({ id }));
   });
 });

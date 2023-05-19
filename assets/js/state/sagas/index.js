@@ -34,6 +34,8 @@ import {
 } from '@state/clusters';
 
 import {
+  SAP_SYSTEM_REGISTERED,
+  SAP_SYSTEM_HEALTH_CHANGED,
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
@@ -430,7 +432,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'SAP_SYSTEM_REGISTERED',
+    SAP_SYSTEM_REGISTERED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
@@ -450,7 +452,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'SAP_SYSTEM_HEALTH_CHANGED',
+    SAP_SYSTEM_HEALTH_CHANGED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
