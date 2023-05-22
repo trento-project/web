@@ -1,19 +1,12 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { CLUSTER_DEREGISTERED, removeCluster } from '@state/clusters';
-import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
 
-export function* clusterDeregistered({ payload: { name, cluster_id } }) {
-  yield put(removeCluster({ id: cluster_id }));
-  yield put(
-    appendEntryToLiveFeed({
-      source: name || cluster_id,
-      message: 'Cluster deregistered.',
-    })
-  );
+export function* clusterDeregistered({ payload: { name, id } }) {
+  yield put(removeCluster({ id }));
   yield put(
     notify({
-      text: `The cluster ${name || cluster_id} has been deregistered.`,
+      text: `The cluster ${name || id} has been deregistered.`,
       icon: 'ℹ️',
     })
   );

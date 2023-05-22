@@ -1,6 +1,6 @@
 import { recordSaga } from '@lib/test-utils';
 import { hostDeregistered } from '@state/sagas/hosts';
-import { HOST_DEREGISTERED, removeHost } from '@state/hosts';
+import { removeHost } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
 
 describe('Hosts sagas', () => {
@@ -9,7 +9,6 @@ describe('Hosts sagas', () => {
     const payload = { id, hostname };
 
     const dispatched = await recordSaga(hostDeregistered, {
-      type: HOST_DEREGISTERED,
       payload,
     });
 

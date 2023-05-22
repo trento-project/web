@@ -64,14 +64,8 @@ function* applicationInstanceHealthChanged({ payload }) {
   yield put(updateApplicationInstanceHealth(payload));
 }
 
-export function* sapSystemDeregistered({ payload: { sap_system_id, sid } }) {
-  yield put(removeSAPSystem({ id: sap_system_id }));
-  yield put(
-    appendEntryToLiveFeed({
-      source: sid,
-      message: 'SAP System deregistered.',
-    })
-  );
+export function* sapSystemDeregistered({ payload: { id, sid } }) {
+  yield put(removeSAPSystem({ id }));
   yield put(
     notify({
       text: `The SAP System ${sid} has been deregistered.`,

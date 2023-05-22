@@ -175,7 +175,7 @@ defmodule Trento.ClusterProjector do
     %ClusterReadModel{name: name} = Repo.get!(ClusterReadModel, cluster_id)
 
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_deregistered", %{
-      cluster_id: cluster_id,
+      id: cluster_id,
       name: name
     })
   end

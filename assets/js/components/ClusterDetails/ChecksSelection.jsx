@@ -8,7 +8,7 @@ import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import { checksSelected } from '@state/clusters';
+import { checksSelected } from '@state/actions/cluster';
 import { executionRequested } from '@state/actions/lastExecutions';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
