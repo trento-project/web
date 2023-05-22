@@ -126,7 +126,9 @@ describe('ClusterDetails ChecksSelection component', () => {
     const expectedActions = [
       {
         type: 'UPDATE_CATALOG',
-        payload: {},
+        payload: {
+          provider: cluster.provider,
+        },
       },
       {
         type: 'CHECKS_SELECTED',
