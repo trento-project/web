@@ -170,7 +170,7 @@ defmodule Trento.SapSystemProjectorTest do
     projection = Repo.get(SapSystemReadModel, sap_system_id)
 
     assert_broadcast "sap_system_deregistered",
-                     %{sap_system_id: ^sap_system_id, sid: ^sid},
+                     %{id: ^sap_system_id, sid: ^sid},
                      1000
 
     assert deregistered_at == projection.deregistered_at
