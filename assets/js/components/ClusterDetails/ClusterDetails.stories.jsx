@@ -9,6 +9,36 @@ import {
 
 import ClusterDetails from './ClusterDetails';
 
+const {
+  id: clusterID,
+  name: clusterName,
+  sid,
+  type: clusterType,
+  selected_checks: selectedChecks,
+  provider,
+  cib_last_written: cibLastWritten,
+  details,
+} = clusterFactory.build({ type: 'hana_scale_up' });
+
+const lastExecution = {
+  data: checksExecutionCompletedFactory.build({
+    result: 'passing',
+    passing_count: 3,
+    warning_count: 2,
+    critical_count: 1,
+  }),
+};
+
+const hosts = [
+  hostFactory.build({ hostname: details.nodes[0].name }),
+  hostFactory.build({ hostname: details.nodes[1].name }),
+];
+
+const clusterNodes = details.nodes.map((node) => ({
+  ...node,
+  ...hosts.find(({ hostname }) => hostname === node.name),
+}));
+
 export default {
   title: 'ClusterDetails',
   components: ClusterDetails,
@@ -27,54 +57,26 @@ function ContainerWrapper({ children }) {
   );
 }
 
-export function Hana() {
-  const {
-    id,
-    name,
+export const Hana = {
+  args: {
+    clusterID,
+    clusterName,
+    selectedChecks,
+    hasSelectedChecks: true,
+    hosts: hosts.map(({ id: hostID }) => hostID),
+    clusterType,
+    cibLastWritten,
     sid,
-    type,
-    selected_checks,
     provider,
-    cib_last_written,
+    clusterNodes,
     details,
-  } = clusterFactory.build({ type: 'hana_scale_up' });
-
-  const lastExecution = {
-    data: checksExecutionCompletedFactory.build({
-      result: 'passing',
-      passing_count: 3,
-      warning_count: 2,
-      critical_count: 1,
-    }),
-  };
-
-  const hosts = [
-    hostFactory.build({ hostname: details.nodes[0].name }),
-    hostFactory.build({ hostname: details.nodes[1].name }),
-  ];
-  const clusterNodes = details.nodes.map((node) => ({
-    ...node,
-    ...hosts.find(({ hostname }) => hostname === node.name),
-  }));
-
-  return (
+    lastExecution,
+    onStartExecution: () => {},
+    navigate: () => {},
+  },
+  render: (args) => (
     <ContainerWrapper>
-      <ClusterDetails
-        clusterID={id}
-        clusterName={name}
-        selectedChecks={selected_checks}
-        hasSelectedChecks
-        hosts={hosts.map(({ id: hostID }) => hostID)}
-        clusterType={type}
-        cibLastWritten={cib_last_written}
-        sid={sid}
-        provider={provider}
-        clusterNodes={clusterNodes}
-        details={details}
-        lastExecution={lastExecution}
-        onStartExecution={() => {}}
-        navigate={() => {}}
-      />
+      <ClusterDetails {...args} />
     </ContainerWrapper>
-  );
-}
+  ),
+};
