@@ -18,7 +18,7 @@ defmodule Trento.Domain.Events.ClusterDetailsUpdated do
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
-    field :additional_sids, {:array, :string}
+    field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :resources_number, :integer
     field :hosts_number, :integer
