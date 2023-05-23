@@ -495,6 +495,9 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     |> Enum.count() == 2
   end
 
+  # Parse details from each node for a specific sid.
+  # The runtime information of where the resource is running belongs to crmmon payload,
+  # but the data itself is in the cib payload, so both payloads must be crossed.
   defp parse_ascs_ers_cluster_nodes(
          %{
            provider: provider,
