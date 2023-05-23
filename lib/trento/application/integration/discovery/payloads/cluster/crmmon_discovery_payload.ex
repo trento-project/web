@@ -165,6 +165,13 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon do
 
     embeds_one :summary, Summary
 
+    embeds_many :nodes, Node, primary_key: false do
+      field :id, :string
+      field :name, :string
+      field :online, :boolean
+      field :unclean, :boolean
+    end
+
     embeds_many :resources, CrmmonResource
 
     embeds_many :groups, CrmmonGroup, primary_key: false do
@@ -205,12 +212,19 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon do
     crmmon
     |> cast(transformed_attrs, [:version])
     |> cast_embed(:summary)
+    |> cast_embed(:nodes, with: &nodes_changeset/2)
     |> cast_embed(:resources)
     |> cast_embed(:groups, with: &groups_changeset/2)
     |> cast_embed(:clones, with: &clones_changeset/2)
     |> cast_embed(:node_history)
     |> cast_embed(:node_attributes, with: &node_attributes_changeset/2)
     |> validate_required_fields(@required_fields)
+  end
+
+  defp nodes_changeset(nodes, attrs) do
+    nodes
+    |> cast(attrs, [:id, :name, :online, :unclean])
+    |> validate_required([:id, :name])
   end
 
   defp groups_changeset(groups, attrs) do
@@ -239,11 +253,11 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon do
   defp node_attributes_changeset(node_attributes, attrs) do
     node_attributes
     |> cast(attrs, [])
-    |> cast_embed(:nodes, with: &nodes_changeset/2)
+    |> cast_embed(:nodes, with: &node_attributes_nodes_changeset/2)
     |> validate_required_fields([:nodes])
   end
 
-  defp nodes_changeset(nodes, attrs) do
+  defp node_attributes_nodes_changeset(nodes, attrs) do
     nodes
     |> cast(attrs, [:name])
     |> cast_embed(:attributes, with: &attributes_changeset/2)
@@ -257,9 +271,11 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon do
   end
 
   defp transform_nil_lists(
-         %{"groups" => groups, "clones" => clones, "resources" => resources} = attrs
+         %{"nodes" => nodes, "groups" => groups, "clones" => clones, "resources" => resources} =
+           attrs
        ) do
     attrs
+    |> Map.put("nodes", ListHelper.to_list(nodes))
     |> Map.put("groups", ListHelper.to_list(groups))
     |> Map.put("clones", ListHelper.to_list(clones))
     |> Map.put("resources", ListHelper.to_list(resources))

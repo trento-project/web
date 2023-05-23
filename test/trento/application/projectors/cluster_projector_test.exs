@@ -61,7 +61,7 @@ defmodule Trento.ClusterProjectorTest do
                        details: %Trento.Domain.HanaClusterDetails{
                          fencing_type: "external/sbd",
                          nodes: [
-                           %Trento.Domain.ClusterNode{
+                           %Trento.Domain.HanaClusterNode{
                              attributes: _,
                              hana_status: "Secondary",
                              name: _,
@@ -145,7 +145,7 @@ defmodule Trento.ClusterProjectorTest do
                        details: %Trento.Domain.HanaClusterDetails{
                          fencing_type: "external/sbd",
                          nodes: [
-                           %Trento.Domain.ClusterNode{
+                           %Trento.Domain.HanaClusterNode{
                              attributes: _,
                              hana_status: "Secondary",
                              name: _,

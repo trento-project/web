@@ -61,6 +61,7 @@ defmodule Trento.Domain.Cluster do
   alias Commanded.Aggregate.Multi
 
   alias Trento.Domain.{
+    AscsErsClusterDetails,
     Cluster,
     HanaClusterDetails,
     HealthService
@@ -119,7 +120,15 @@ defmodule Trento.Domain.Cluster do
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
 
-    embeds_one :details, HanaClusterDetails
+    field :details, PolymorphicEmbed,
+      types: [
+        hana_scale_up: [
+          module: HanaClusterDetails,
+          identify_by_fields: [:system_replication_mode]
+        ],
+        ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
+      ],
+      on_replace: :update
   end
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
