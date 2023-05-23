@@ -7,20 +7,20 @@ export default {
   argTypes: {
     pages: {
       type: 'array',
-      description: 'List of items that are paginated'
+      description: 'List of items that are paginated',
     },
     initialSelectedIndex: {
       type: 'number',
       description: 'Initial index for the pagination',
       control: {
-        type: 'number'
-      }
+        type: 'number',
+      },
     },
     onChange: {
       type: '',
-      description: 'Function executed when a new page is selected'
-    }
-  }
+      description: 'Function executed when a new page is selected',
+    },
+  },
 };
 
 const PAGES = ['page 1', 'page 2', 'page 3'];
@@ -31,10 +31,7 @@ function UnnumberedPaginationWithHooks(args) {
 
   return (
     <div>
-      <UnnumberedPagination
-        {...args}
-        onChange={setPage}
-      />
+      <UnnumberedPagination {...args} onChange={setPage} />
       <span>{page}</span>
     </div>
   );
@@ -44,15 +41,15 @@ export const Multiple = {
   args: {
     pages: PAGES,
     initialSelectedIndex: 0,
-    onChange: (() => {})
+    onChange: () => {},
   },
-  render: (args) => <UnnumberedPaginationWithHooks {...args} />
-}
+  render: (args) => <UnnumberedPaginationWithHooks {...args} />,
+};
 
 export const Single = {
   args: {
     ...Multiple.args,
     pages: PAGES.slice(0, 1),
   },
-  render: (args) => <UnnumberedPaginationWithHooks {...args}/>
-}
+  render: (args) => <UnnumberedPaginationWithHooks {...args} />,
+};

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   EOS_KEYBOARD_ARROW_LEFT_FILLED,
@@ -29,6 +29,13 @@ function UnnumberedPagination({
   onChange = () => {},
 }) {
   const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
+
+  useEffect(() => {
+    const newIndex =
+      selectedIndex >= pages.length ? pages.length - 1 : selectedIndex;
+    setSelectedIndex(newIndex);
+    onChange(pages[newIndex]);
+  }, [pages]);
 
   return (
     <div className="flex items-center">
@@ -59,7 +66,7 @@ function UnnumberedPagination({
           const newIndex =
             selectedIndex < pages.length - 1
               ? selectedIndex + 1
-              : selectedIndex;
+              : pages.length - 1;
           setSelectedIndex(newIndex);
           onChange(pages[newIndex]);
         }}

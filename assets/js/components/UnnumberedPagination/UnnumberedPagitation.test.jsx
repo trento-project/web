@@ -53,4 +53,23 @@ describe('UnnumberedPagination component', () => {
       expect(onChange).toHaveBeenCalledWith(page);
     });
   });
+
+  it('updates the page in case of pages overflow', () => {
+    const pages = ['page1', 'page2'];
+    const onChange = jest.fn();
+
+    render(
+      <UnnumberedPagination
+        pages={pages}
+        initialSelectedIndex={2} // overflowed index
+        onChange={onChange}
+      />
+    );
+
+    const icons = screen.getAllByTestId('eos-svg-component');
+    expect(icons.length).toBe(4);
+    expect(icons[1].classList.toString()).toContain('fill-gray-500');
+    expect(icons[2].classList.toString()).toContain('fill-jungle-green-500');
+    expect(onChange).toHaveBeenCalledWith('page2');
+  });
 });
