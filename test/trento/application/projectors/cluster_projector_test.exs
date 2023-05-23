@@ -202,7 +202,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.deregistered_at == cluster_projection.deregistered_at
 
     assert_broadcast "cluster_deregistered",
-                     %{cluster_id: ^cluster_id, name: ^name},
+                     %{id: ^cluster_id, name: ^name},
                      1000
   end
 

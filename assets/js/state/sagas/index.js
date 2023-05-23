@@ -33,16 +33,14 @@ import {
 } from '@state/clusters';
 
 import {
+  SAP_SYSTEM_REGISTERED,
+  SAP_SYSTEM_HEALTH_CHANGED,
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
-  appendSapsystem,
   appendDatabaseInstanceToSapSystem,
-  appendApplicationInstance,
-  updateSapSystemHealth,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
-  updateApplicationInstanceHealth,
 } from '@state/sapSystems';
 
 import {
@@ -68,13 +66,16 @@ import { setEulaVisible, setIsPremium } from '@state/settings';
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
+import { watchHostDeregistered } from '@state/sagas/hosts';
+import { watchClusterDeregistered } from '@state/sagas/clusters';
+import { watchSapSystem } from '@state/sagas/sapSystems';
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
 } from '@state/sagas/lastExecutions';
 import { watchPerformLogin } from '@state/sagas/user';
 
-import { getDatabase, getSapSystem } from '@state/selectors';
+import { getDatabase } from '@state/selectors';
 import { getClusterName } from '@state/selectors/cluster';
 import {
   setClusterChecksSelectionSavingError,
@@ -335,68 +336,6 @@ function* watchClusterHealthChanged() {
   yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
 }
 
-function* sapSystemRegistered({ payload }) {
-  yield put(appendSapsystem(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New SAP System registered.',
-    })
-  );
-  yield put(
-    notify({
-      text: `A new SAP System, ${payload.sid}, has been discovered.`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
-function* sapSystemHealthChanged({ payload }) {
-  const sid =
-    (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
-
-  yield put(updateSapSystemHealth(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: sid,
-      message: `SAP System Health changed to ${payload.health}`,
-    })
-  );
-  yield put(
-    notify({
-      text: `The SAP System ${sid} health is ${payload.health}!`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
-function* applicationInstanceRegistered({ payload }) {
-  yield put(appendApplicationInstance(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New Application instance registered.',
-    })
-  );
-}
-
-function* applicationInstanceHealthChanged({ payload }) {
-  yield put(updateApplicationInstanceHealth(payload));
-}
-
-function* watchSapSystem() {
-  yield takeEvery('SAP_SYSTEM_REGISTERED', sapSystemRegistered);
-  yield takeEvery('SAP_SYSTEM_HEALTH_CHANGED', sapSystemHealthChanged);
-  yield takeEvery(
-    'APPLICATION_INSTANCE_REGISTERED',
-    applicationInstanceRegistered
-  );
-  yield takeEvery(
-    'APPLICATION_INSTANCE_HEALTH_CHANGED',
-    applicationInstanceHealthChanged
-  );
-}
-
 function* databaseRegistered({ payload }) {
   yield put(appendDatabase(payload));
   yield put(
@@ -493,7 +432,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'SAP_SYSTEM_REGISTERED',
+    SAP_SYSTEM_REGISTERED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
@@ -513,7 +452,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'SAP_SYSTEM_HEALTH_CHANGED',
+    SAP_SYSTEM_HEALTH_CHANGED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
@@ -531,9 +470,11 @@ export default function* rootSaga() {
     watchHostDetailsUpdated(),
     watchHeartbeatSucceded(),
     watchHeartbeatFailed(),
+    watchHostDeregistered(),
     watchClusterRegistered(),
     watchClusterDetailsUpdated(),
     watchClusterCibLastWrittenUpdated(),
+    watchClusterDeregistered(),
     watchNotifications(),
     watchChecksSelected(),
     watchChecksExecutionStarted(),
