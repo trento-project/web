@@ -33,7 +33,9 @@ function UnnumberedPagination({
 
   useEffect(() => {
     const newIndex =
-      selectedIndex >= pagesLength ? pagesLength - 1 : selectedIndex;
+      selectedIndex >= pagesLength
+        ? Math.max(pagesLength - 1, 0)
+        : selectedIndex;
     setSelectedIndex(newIndex);
     onChange(pages[newIndex]);
   }, [pages]);
