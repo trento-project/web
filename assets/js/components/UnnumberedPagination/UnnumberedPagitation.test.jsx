@@ -21,8 +21,8 @@ describe('UnnumberedPagination component', () => {
     const icons = screen.getAllByTestId('eos-svg-component');
     expect(icons.length).toBe(5);
     expect(icons[1].classList.toString()).toContain('fill-jungle-green-500');
-    expect(icons[2].classList.toString()).toContain('fill-gray-500');
-    expect(icons[3].classList.toString()).toContain('fill-gray-500');
+    expect(icons[2].classList.toString()).toContain('fill-gray-300');
+    expect(icons[3].classList.toString()).toContain('fill-gray-300');
   });
 
   it('paginates correctly', () => {
@@ -68,7 +68,7 @@ describe('UnnumberedPagination component', () => {
 
     const icons = screen.getAllByTestId('eos-svg-component');
     expect(icons.length).toBe(4);
-    expect(icons[1].classList.toString()).toContain('fill-gray-500');
+    expect(icons[1].classList.toString()).toContain('fill-gray-300');
     expect(icons[2].classList.toString()).toContain('fill-jungle-green-500');
     expect(onChange).toHaveBeenCalledWith('page2');
   });

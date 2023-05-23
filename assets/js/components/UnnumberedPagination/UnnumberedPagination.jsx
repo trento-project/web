@@ -38,7 +38,7 @@ function UnnumberedPagination({
           onChange(pages[newIndex]);
         }}
       >
-        <EOS_KEYBOARD_ARROW_LEFT_FILLED className="fill-gray-500" size="l" />
+        <EOS_KEYBOARD_ARROW_LEFT_FILLED className="fill-gray-300 hover:fill-gray-400" size="l" />
       </Arrow>
       {Array(pagesLength)
         .fill()
@@ -47,7 +47,7 @@ function UnnumberedPagination({
             key={pageIndex}
             className={classNames({
               'fill-jungle-green-500': pageIndex === selectedIndex,
-              'fill-gray-500': pageIndex !== selectedIndex,
+              'fill-gray-300': pageIndex !== selectedIndex,
               'mr-2': pageIndex !== pagesLength - 1,
             })}
             size="s"
@@ -63,7 +63,7 @@ function UnnumberedPagination({
           onChange(pages[newIndex]);
         }}
       >
-        <EOS_KEYBOARD_ARROW_RIGHT_FILLED className="fill-gray-500" size="l" />
+        <EOS_KEYBOARD_ARROW_RIGHT_FILLED className="fill-gray-300 hover:fill-gray-400" size="l" />
       </Arrow>
     </div>
   );
