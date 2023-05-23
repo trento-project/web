@@ -28,11 +28,12 @@ function UnnumberedPagination({
   initialSelectedIndex = 0,
   onChange = () => {},
 }) {
+  const pagesLength = pages.length;
   const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
 
   useEffect(() => {
     const newIndex =
-      selectedIndex >= pages.length ? pages.length - 1 : selectedIndex;
+      selectedIndex >= pagesLength ? pagesLength - 1 : selectedIndex;
     setSelectedIndex(newIndex);
     onChange(pages[newIndex]);
   }, [pages]);
@@ -48,7 +49,7 @@ function UnnumberedPagination({
       >
         <EOS_KEYBOARD_ARROW_LEFT_FILLED className="fill-gray-500" size="l" />
       </Arrow>
-      {Array(pages.length)
+      {Array(pagesLength)
         .fill()
         .map((_, pageIndex) => (
           <EOS_LENS_FILLED
@@ -56,7 +57,7 @@ function UnnumberedPagination({
             className={classNames({
               'fill-jungle-green-500': pageIndex === selectedIndex,
               'fill-gray-500': pageIndex !== selectedIndex,
-              'mr-2': pageIndex !== pages.length - 1,
+              'mr-2': pageIndex !== pagesLength - 1,
             })}
             size="s"
           />
@@ -64,9 +65,9 @@ function UnnumberedPagination({
       <Arrow
         onClick={() => {
           const newIndex =
-            selectedIndex < pages.length - 1
+            selectedIndex < pagesLength - 1
               ? selectedIndex + 1
-              : pages.length - 1;
+              : pagesLength - 1;
           setSelectedIndex(newIndex);
           onChange(pages[newIndex]);
         }}
