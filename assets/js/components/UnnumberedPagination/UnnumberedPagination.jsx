@@ -10,18 +10,7 @@ import {
 
 import classNames from 'classnames';
 
-function Arrow({ children, onClick }) {
-  return (
-    <div
-      aria-hidden="true"
-      role="button"
-      className="cursor-pointer"
-      onClick={() => onClick()}
-    >
-      {children}
-    </div>
-  );
-}
+import Arrow from './Arrow';
 
 function UnnumberedPagination({
   pages = [],
