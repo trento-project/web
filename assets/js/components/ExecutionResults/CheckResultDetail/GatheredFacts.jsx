@@ -19,7 +19,7 @@ const gatheredFactsToListView = (gatheredFacts) =>
 function GatheredFacts({ isTargetHost = true, gatheredFacts = [] }) {
   return (
     <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
-      <div className="text-lg font-bold">Facts</div>
+      <div className="text-lg font-bold">Gathered Facts</div>
 
       {gatheredFacts.length === 0 && (
         <div className="mt-3 text-sm text-red-500">No facts were gathered</div>
