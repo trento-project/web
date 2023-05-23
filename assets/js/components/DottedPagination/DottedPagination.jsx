@@ -12,7 +12,7 @@ import classNames from 'classnames';
 
 import Arrow from './Arrow';
 
-function UnnumberedPagination({
+function DottedPagination({
   pages = [],
   initialSelectedIndex = 0,
   onChange = () => {},
@@ -38,7 +38,10 @@ function UnnumberedPagination({
           onChange(pages[newIndex]);
         }}
       >
-        <EOS_KEYBOARD_ARROW_LEFT_FILLED className="fill-gray-300 hover:fill-gray-400" size="l" />
+        <EOS_KEYBOARD_ARROW_LEFT_FILLED
+          className="fill-gray-300 hover:fill-gray-400"
+          size="l"
+        />
       </Arrow>
       {Array(pagesLength)
         .fill()
@@ -63,10 +66,13 @@ function UnnumberedPagination({
           onChange(pages[newIndex]);
         }}
       >
-        <EOS_KEYBOARD_ARROW_RIGHT_FILLED className="fill-gray-300 hover:fill-gray-400" size="l" />
+        <EOS_KEYBOARD_ARROW_RIGHT_FILLED
+          className="fill-gray-300 hover:fill-gray-400"
+          size="l"
+        />
       </Arrow>
     </div>
   );
 }
 
-export default UnnumberedPagination;
+export default DottedPagination;

@@ -4,14 +4,14 @@ import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
-import UnnumberedPagination from '.';
+import DottedPagination from '.';
 
-describe('UnnumberedPagination component', () => {
+describe('DottedPagination component', () => {
   it('shows the correct number of pages', () => {
     const pages = Array(3);
 
     render(
-      <UnnumberedPagination
+      <DottedPagination
         pages={pages}
         initialSelectedIndex={0}
         onChange={() => {}}
@@ -31,7 +31,7 @@ describe('UnnumberedPagination component', () => {
     const onChange = jest.fn();
 
     render(
-      <UnnumberedPagination
+      <DottedPagination
         pages={pages}
         initialSelectedIndex={0}
         onChange={onChange}
@@ -59,7 +59,7 @@ describe('UnnumberedPagination component', () => {
     const onChange = jest.fn();
 
     render(
-      <UnnumberedPagination
+      <DottedPagination
         pages={pages}
         initialSelectedIndex={2} // overflowed index
         onChange={onChange}

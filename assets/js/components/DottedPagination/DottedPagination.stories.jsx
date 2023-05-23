@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import UnnumberedPagination from '.';
+import DottedPagination from '.';
 
 export default {
-  title: 'UnnumberedPagination',
-  component: UnnumberedPagination,
+  title: 'DottedPagination',
+  component: DottedPagination,
   argTypes: {
     pages: {
       type: 'array',
@@ -25,13 +25,13 @@ export default {
 
 const PAGES = ['page 1', 'page 2', 'page 3'];
 
-function UnnumberedPaginationWithHooks(args) {
+function DottedPaginationWithHooks(args) {
   const { pages, initialSelectedIndex } = args;
   const [page, setPage] = useState(pages[initialSelectedIndex]);
 
   return (
     <div>
-      <UnnumberedPagination {...args} onChange={setPage} />
+      <DottedPagination {...args} onChange={setPage} />
       <span>{page}</span>
     </div>
   );
@@ -43,7 +43,7 @@ export const Multiple = {
     initialSelectedIndex: 0,
     onChange: () => {},
   },
-  render: (args) => <UnnumberedPaginationWithHooks {...args} />,
+  render: (args) => <DottedPaginationWithHooks {...args} />,
 };
 
 export const Single = {
@@ -51,5 +51,5 @@ export const Single = {
     ...Multiple.args,
     pages: PAGES.slice(0, 1),
   },
-  render: (args) => <UnnumberedPaginationWithHooks {...args} />,
+  render: (args) => <DottedPaginationWithHooks {...args} />,
 };
