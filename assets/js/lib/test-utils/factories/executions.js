@@ -16,14 +16,29 @@ export const executionValueFactory = Factory.define(({ sequence }) => ({
 
 export const executionExpectationEvaluationFactory = Factory.define(
   ({ sequence, params }) => {
-    const name = params.name || `expectation_${sequence}`;
+    const {
+      name = `expectation_${sequence}`,
+      failure_message = params.failure_message
+        ? { failure_message: params.failure_message }
+        : {},
+    } = params;
 
     return {
       name,
       return_value: faker.datatype.number(),
       type: expectationReturnTypeEnum(),
+      ...failure_message,
     };
   }
+);
+
+export const failingExpectEvaluationFactory = Factory.define(({ params }) =>
+  executionExpectationEvaluationFactory.build({
+    ...params,
+    return_value: false,
+    type: 'expect',
+    failure_message: faker.lorem.sentence(),
+  })
 );
 
 export const executionExpectationEvaluationErrorFactory = Factory.define(
@@ -40,14 +55,29 @@ export const executionExpectationEvaluationErrorFactory = Factory.define(
 
 export const expectationResultFactory = Factory.define(
   ({ sequence, params }) => {
-    const name = params.name || `expectation_${sequence}`;
+    const {
+      name = `expectation_${sequence}`,
+      failure_message = params.failure_message
+        ? { failure_message: params.failure_message }
+        : {},
+    } = params;
 
     return {
       name,
       result: faker.datatype.boolean(),
       type: expectationReturnTypeEnum(),
+      ...failure_message,
     };
   }
+);
+
+export const failingExpectationResultFactory = Factory.define(({ params }) =>
+  expectationResultFactory.build({
+    ...params,
+    result: false,
+    type: expectationReturnTypeEnum(),
+    failure_message: faker.lorem.sentence(),
+  })
 );
 
 export const executionFactFactory = Factory.define(({ sequence }) => ({
