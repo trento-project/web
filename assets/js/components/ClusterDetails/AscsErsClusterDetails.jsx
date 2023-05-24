@@ -7,6 +7,8 @@ import ListView from '@components/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
 
+import ChecksComingSoon from '@static/checks-coming-soon.svg';
+
 import SBDDetails from './SBDDetails';
 import StoppedResources from './StoppedResources';
 
@@ -97,6 +99,11 @@ function AscsErsClusterDetails({
           <div className="flex flex-col items-center">
             <h1 className="text-center text-2xl font-bold">Check Results</h1>
             <h6 className="opacity-60 text-xs">Coming soon for ASCS/ERS</h6>
+            <img
+              className="w-full"
+              alt="checks comming soon"
+              src={ChecksComingSoon}
+            />
           </div>
         </div>
       </div>
