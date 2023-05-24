@@ -20,9 +20,9 @@ describe('DottedPagination component', () => {
 
     const icons = screen.getAllByTestId('eos-svg-component');
     expect(icons.length).toBe(5);
-    expect(icons[1].classList.toString()).toContain('fill-jungle-green-500');
-    expect(icons[2].classList.toString()).toContain('fill-gray-300');
-    expect(icons[3].classList.toString()).toContain('fill-gray-300');
+    expect(icons[1]).toHaveClass('fill-jungle-green-500');
+    expect(icons[2]).toHaveClass('fill-gray-300');
+    expect(icons[3]).toHaveClass('fill-gray-300');
   });
 
   it('paginates correctly', () => {
@@ -46,10 +46,8 @@ describe('DottedPagination component', () => {
     ].forEach(async (direction, iconNumber, page) => {
       await user.click(screen.getAllByTestId('eos-svg-component')[direction]);
       expect(
-        screen
-          .getAllByTestId('eos-svg-component')
-          [iconNumber].classList.toString()
-      ).toContain('fill-jungle-green-500');
+        screen.getAllByTestId('eos-svg-component')[iconNumber]
+      ).toHaveClass('fill-jungle-green-500');
       expect(onChange).toHaveBeenCalledWith(page);
     });
   });
@@ -68,8 +66,8 @@ describe('DottedPagination component', () => {
 
     const icons = screen.getAllByTestId('eos-svg-component');
     expect(icons.length).toBe(4);
-    expect(icons[1].classList.toString()).toContain('fill-gray-300');
-    expect(icons[2].classList.toString()).toContain('fill-jungle-green-500');
+    expect(icons[1]).toHaveClass('fill-gray-300');
+    expect(icons[2]).toHaveClass('fill-jungle-green-500');
     expect(onChange).toHaveBeenCalledWith('page2');
   });
 });
