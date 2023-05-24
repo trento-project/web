@@ -48,4 +48,54 @@ defmodule TrentoWeb.V1.HostControllerTest do
              } == resp
     end
   end
+
+  describe "delete" do
+    test "should delete the host", %{conn: conn} do
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn _ ->
+          :ok
+        end
+      )
+
+      %{id: agent_id} = insert(:host, heartbeat: :critical)
+      insert(:heartbeat, agent_id: agent_id, timestamp: DateTime.from_unix!(0))
+
+      conn
+      |> delete("/api/v1/hosts/#{agent_id}")
+      |> response(204)
+    end
+
+    test "should delete the host even if no heartbeat", %{conn: conn} do
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn _ ->
+          :ok
+        end
+      )
+
+      %{id: agent_id} = insert(:host, heartbeat: :critical)
+
+      conn
+      |> delete("/api/v1/hosts/#{agent_id}")
+      |> response(204)
+    end
+
+    test "should return 422 if the host is still alive", %{conn: conn} do
+      %{id: agent_id} = insert(:host, heartbeat: :critical)
+      insert(:heartbeat, agent_id: agent_id)
+
+      conn
+      |> delete("/api/v1/hosts/#{agent_id}")
+      |> response(422)
+    end
+
+    test "should return 404 if the host was not found", %{conn: conn} do
+      conn
+      |> delete("/api/v1/hosts/#{UUID.uuid4()}")
+      |> response(:not_found)
+    end
+  end
 end

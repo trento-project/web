@@ -7,6 +7,7 @@ defmodule Trento.Heartbeat do
 
   @type t :: %__MODULE__{}
 
+  @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:agent_id, :string, autogenerate: false}
   schema "heartbeats" do
     field :timestamp, :utc_datetime_usec

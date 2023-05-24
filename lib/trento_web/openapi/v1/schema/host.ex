@@ -69,6 +69,20 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           description: "A list of the available SLES Subscriptions on a host",
           type: :array,
           items: SlesSubscription
+        },
+        deregistered_at: %Schema{
+          title: "DeregisteredAt",
+          description: "Timestamp of the last deregistration of the host",
+          type: :string,
+          nullable: true,
+          format: :"date-time"
+        },
+        heartbeat_timestamp: %Schema{
+          title: "HeartbeatTimestamp",
+          description: "Timestamp of the last heartbeat received from the host",
+          type: :string,
+          nullable: true,
+          format: :"date-time"
         }
       }
     })
