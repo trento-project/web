@@ -7,7 +7,7 @@ import {
   hostFactory,
 } from '@lib/test-utils/factories';
 
-import ClusterDetails from './ClusterDetails';
+import HanaClusterDetails from './HanaClusterDetails';
 
 const {
   id: clusterID,
@@ -40,8 +40,8 @@ const clusterNodes = details.nodes.map((node) => ({
 }));
 
 export default {
-  title: 'ClusterDetails',
-  components: ClusterDetails,
+  title: 'HanaClusterDetails',
+  components: HanaClusterDetails,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -76,7 +76,7 @@ export const Hana = {
   },
   render: (args) => (
     <ContainerWrapper>
-      <ClusterDetails {...args} />
+      <HanaClusterDetails {...args} />
     </ContainerWrapper>
   ),
 };

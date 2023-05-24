@@ -12,7 +12,7 @@ import {
   executionRequested,
 } from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import ClusterDetails from './ClusterDetails';
+import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from '../ClusterLink';
 
 export function ClusterDetailsPage() {
@@ -42,7 +42,7 @@ export function ClusterDetailsPage() {
   const hasSelectedChecks = cluster.selected_checks.length > 0;
 
   return (
-    <ClusterDetails
+    <HanaClusterDetails
       clusterID={clusterID}
       clusterName={getClusterName(cluster)}
       selectedChecks={cluster.selected_checks}

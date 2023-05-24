@@ -54,7 +54,7 @@ const siteDetailsConfig = {
   ],
 };
 
-function ClusterDetails({
+function HanaClusterDetails({
   clusterID,
   clusterName,
   selectedChecks,
@@ -207,4 +207,4 @@ function ClusterDetails({
   );
 }
 
-export default ClusterDetails;
+export default HanaClusterDetails;
