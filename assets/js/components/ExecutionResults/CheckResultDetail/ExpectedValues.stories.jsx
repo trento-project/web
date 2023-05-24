@@ -1,4 +1,6 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
+
 import ExpectedValues from './ExpectedValues';
 
 export default {
@@ -7,8 +9,8 @@ export default {
   args: {
     isTargetHost: true,
     expectedValues: [
-      { name: 'First passing  Evaluationresult', value: 10 },
-      { name: 'Second failing Evaluation result', value: 20 },
+      { name: faker.animal.bear(), value: faker.datatype.number() },
+      { name: faker.animal.bear(), value: faker.datatype.number() },
     ],
     isError: false,
   },

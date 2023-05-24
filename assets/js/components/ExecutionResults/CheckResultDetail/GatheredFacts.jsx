@@ -24,7 +24,6 @@ function GatheredFacts({ isTargetHost = true, gatheredFacts = [] }) {
       {gatheredFacts.length === 0 && (
         <div className="mt-3 text-sm text-red-500">No facts were gathered</div>
       )}
-
       {isTargetHost && (
         <ListView
           className="grid-flow-row mt-3 text-sm"

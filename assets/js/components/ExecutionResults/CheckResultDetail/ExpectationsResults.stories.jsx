@@ -1,4 +1,5 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import ExpectationsResults from './ExpectationsResults';
 
 export default {
@@ -7,8 +8,8 @@ export default {
   args: {
     isTargetHost: true,
     results: [
-      { name: 'First passing  Evaluationresult', return_value: true },
-      { name: 'Second failing Evaluation result', return_value: false },
+      { name: faker.animal.bear(), return_value: true },
+      { name: faker.animal.bear(), return_value: false },
     ],
     isError: false,
     errorMessage: 'An error occurred',

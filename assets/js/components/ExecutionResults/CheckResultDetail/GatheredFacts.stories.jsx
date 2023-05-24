@@ -1,6 +1,19 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
+
 import GatheredFacts from './GatheredFacts';
 
+const factValues = {
+  application: faker.animal.bear(),
+  firewall: faker.lorem.sentence(),
+  protocol: faker.animal.bear(),
+  harddrive: faker.animal.bear(),
+  pixel: [
+    faker.lorem.sentence(),
+    faker.lorem.sentence(),
+    [faker.lorem.sentence(), faker.lorem.sentence()],
+  ],
+};
 export default {
   title: 'GatheredFacts',
   component: GatheredFacts,
@@ -8,16 +21,14 @@ export default {
     isTargetHost: true,
     gatheredFacts: [
       {
-        name: 'Bail Prestor Organa',
-        value: '1',
-        type: 'best type',
-        message: 'wow',
+        value: factValues,
+        type: faker.lorem.sentence(),
+        message: faker.lorem.sentence(),
+        name: faker.animal.bear(),
       },
       {
-        name: 'Yoda',
-        value: '2',
-        type: 'second best type',
-        message: 'second wow',
+        value: factValues,
+        name: faker.animal.bear(),
       },
     ],
   },
