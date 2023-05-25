@@ -1344,11 +1344,17 @@ defmodule Trento.SapSystemTest do
   describe "deregistration" do
     test "should deregister a Database and SAP system when the Primary database instance is removed" do
       sap_system_id = UUID.uuid4()
-      host_id = UUID.uuid4()
+
+      primary_database_host_id = UUID.uuid4()
       secondary_database_host_id = UUID.uuid4()
+
       deregistered_at = DateTime.utc_now()
+
       db_instance_number_1 = "00"
       db_instance_number_2 = "01"
+
+      db_sid = UUID.uuid4()
+      application_sid = UUID.uuid4()
 
       message_server_host_id = UUID.uuid4()
       message_server_instance_number = "00"
@@ -1359,12 +1365,14 @@ defmodule Trento.SapSystemTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
           ),
           build(
             :database_instance_registered_event,
             sap_system_id: sap_system_id,
-            host_id: host_id,
+            host_id: primary_database_host_id,
+            sid: db_sid,
             instance_number: db_instance_number_1,
             system_replication: "Primary"
           ),
@@ -1373,37 +1381,41 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             host_id: secondary_database_host_id,
             instance_number: db_instance_number_2,
-            system_replication: "Secondary"
+            system_replication: "Secondary",
+            sid: db_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             features: "MESSAGESERVER|ENQUE",
             host_id: message_server_host_id,
-            instance_number: message_server_instance_number
+            instance_number: message_server_instance_number,
+            sid: application_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             features: "ABAP|GATEWAY|ICMAN|IGS",
             host_id: abap_host_id,
-            instance_number: abap_instance_number
+            instance_number: abap_instance_number,
+            sid: application_sid
           ),
           build(
             :sap_system_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: application_sid
           )
         ],
         %DeregisterDatabaseInstance{
           sap_system_id: sap_system_id,
-          host_id: host_id,
+          host_id: primary_database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         },
         [
           %DatabaseInstanceDeregistered{
             sap_system_id: sap_system_id,
-            host_id: host_id,
+            host_id: primary_database_host_id,
             instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
@@ -1418,19 +1430,27 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
+                   sid: ^application_sid,
                    database: %Database{
-                     sid: nil,
+                     sid: ^db_sid,
                      instances: [
                        %Instance{
-                         instance_number: ^db_instance_number_2
+                         instance_number: ^db_instance_number_2,
+                         sid: ^db_sid,
+                         host_id: ^secondary_database_host_id
                        }
                      ],
-                     health: nil
+                     health: :passing,
+                     deregistered_at: ^deregistered_at
                    },
                    application: %Application{
+                     sid: ^application_sid,
                      instances: [
-                       %Instance{instance_number: ^abap_instance_number},
-                       %Instance{instance_number: ^message_server_instance_number}
+                       %Instance{instance_number: ^abap_instance_number, sid: ^application_sid},
+                       %Instance{
+                         instance_number: ^message_server_instance_number,
+                         sid: ^application_sid
+                       }
                      ]
                    },
                    deregistered_at: ^deregistered_at
@@ -1439,93 +1459,101 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should deregister a secondary DB instance" do
+    test "should deregister a secondary DB instance, no SAP system registered." do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
 
-      instances =
-        [
-          %DatabaseInstanceRegistered{
-            instance_number: instance_number_1,
-            host_id: host_id
-          },
-          %DatabaseInstanceRegistered{
-            instance_number: instance_number_2
-          }
-        ] = [
-          build(
-            :database_instance_registered_event,
-            sap_system_id: sap_system_id,
-            system_replication: "Secondary"
-          ),
-          build(
-            :database_instance_registered_event,
-            sap_system_id: sap_system_id,
-            system_replication: "Primary"
-          )
-        ]
+      instance_number_1 = "00"
+      instance_number_2 = "01"
+
+      db_sid = UUID.uuid4()
+
+      primary_db_host_id = UUID.uuid4()
+      secondary_db_host_id = UUID.uuid4()
 
       assert_events_and_state(
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            system_replication: "Primary",
+            sid: db_sid,
+            instance_number: instance_number_1,
+            host_id: primary_db_host_id
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            system_replication: "Secondary",
+            sid: db_sid,
+            host_id: secondary_db_host_id,
+            instance_number: instance_number_2
           )
-          | instances
         ],
         %DeregisterDatabaseInstance{
           sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number_1,
+          host_id: secondary_db_host_id,
+          instance_number: instance_number_2,
           deregistered_at: deregistered_at
         },
         %DatabaseInstanceDeregistered{
           sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number_1,
+          host_id: secondary_db_host_id,
+          instance_number: instance_number_2,
           deregistered_at: deregistered_at
         },
         fn sap_system ->
           assert %SapSystem{
+                   sid: nil,
                    database: %Database{
-                     instances: [%Instance{instance_number: ^instance_number_2}]
+                     sid: ^db_sid,
+                     deregistered_at: nil,
+                     instances: [%Instance{instance_number: ^instance_number_1}]
                    }
                  } = sap_system
         end
       )
     end
 
-    test "should deregister the last database instance and deregister the entire database" do
+    test "should deregister the only database instance and deregister the entire database, no SAP system registered, system replication disabled" do
       sap_system_id = UUID.uuid4()
-      host_id = UUID.uuid4()
+      database_host_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
-      instance_number = "00"
+      db_instance_number_1 = "00"
+      db_sid = UUID.uuid4()
 
       assert_events_and_state(
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
           ),
           build(
             :database_instance_registered_event,
             sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number,
-            system_replication: nil
+            host_id: database_host_id,
+            instance_number: db_instance_number_1,
+            system_replication: nil,
+            sid: db_sid
           )
         ],
         %DeregisterDatabaseInstance{
           sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number,
+          host_id: database_host_id,
+          instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         },
         [
           %DatabaseInstanceDeregistered{
             sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number,
+            host_id: database_host_id,
+            instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
           %DatabaseDeregistered{
@@ -1535,10 +1563,12 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
+                   sid: nil,
                    database: %Database{
-                     sid: nil,
+                     sid: ^db_sid,
                      instances: [],
-                     health: nil
+                     health: :passing,
+                     deregistered_at: ^deregistered_at
                    },
                    application: nil,
                    deregistered_at: nil
@@ -1547,79 +1577,85 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should deregister a single DB instance if no SR enabled" do
+    test "should deregister a single DB instance of two if no SR enabled, SAP system not registered" do
       sap_system_id = UUID.uuid4()
+      database_host_id = UUID.uuid4()
+      second_database_host_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
+      db_instance_number_1 = "00"
+      db_instance_number_2 = "01"
 
-      instances =
-        [
-          %DatabaseInstanceRegistered{
-            instance_number: instance_number_1,
-            host_id: host_id
-          },
-          %DatabaseInstanceRegistered{
-            instance_number: instance_number_2
-          }
-        ] =
-        build_list(
-          2,
-          :database_instance_registered_event,
-          sap_system_id: sap_system_id,
-          system_replication: nil
-        )
+      db_sid = UUID.uuid4()
 
       assert_events_and_state(
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: database_host_id,
+            instance_number: db_instance_number_1,
+            system_replication: nil,
+            sid: db_sid
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: second_database_host_id,
+            instance_number: db_instance_number_2,
+            system_replication: nil,
+            sid: db_sid
           )
-          | instances
         ],
         %DeregisterDatabaseInstance{
           sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number_1,
+          host_id: database_host_id,
+          instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         },
         %DatabaseInstanceDeregistered{
           sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number_1,
+          host_id: database_host_id,
+          instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         },
         fn sap_system ->
           assert %SapSystem{
                    database: %Database{
-                     instances: [%Instance{instance_number: ^instance_number_2}]
+                     sid: ^db_sid,
+                     deregistered_at: nil,
+                     instances: [%Instance{instance_number: ^db_instance_number_2}]
                    }
                  } = sap_system
         end
       )
     end
 
-    test "should deregister the primary instance, the entire database and then the secondary instance without deregistering the database" do
+    test "should deregister the primary instance, the entire database and then the secondary instance without deregistering the database a second time, SAP system not registered" do
       sap_system_id = UUID.uuid4()
-      host_id = UUID.uuid4()
+      primary_database_host_id = UUID.uuid4()
       secondary_database_host_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
       db_instance_number_1 = "00"
       db_instance_number_2 = "01"
 
-      message_server_host_id = UUID.uuid4()
-      message_server_instance_number = "00"
-      abap_host_id = UUID.uuid4()
-      abap_instance_number = "01"
+      db_sid = UUID.uuid4()
 
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: sap_system_id
+          sap_system_id: sap_system_id,
+          sid: db_sid
         ),
         build(
           :database_instance_registered_event,
           sap_system_id: sap_system_id,
-          host_id: host_id,
+          host_id: primary_database_host_id,
+          sid: db_sid,
           instance_number: db_instance_number_1,
           system_replication: "Primary"
         ),
@@ -1637,7 +1673,7 @@ defmodule Trento.SapSystemTest do
         [
           %DeregisterDatabaseInstance{
             sap_system_id: sap_system_id,
-            host_id: host_id,
+            host_id: primary_database_host_id,
             instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
@@ -1651,7 +1687,7 @@ defmodule Trento.SapSystemTest do
         [
           %DatabaseInstanceDeregistered{
             sap_system_id: sap_system_id,
-            host_id: host_id,
+            host_id: primary_database_host_id,
             instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
@@ -1669,7 +1705,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should deregister an ENQREP Application Instance" do
+    test "should deregister an ENQREP Application Instance, SAP system registered" do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
 
@@ -1683,22 +1719,29 @@ defmodule Trento.SapSystemTest do
       abap_instance_number = "02"
       enqrep_server_instance_number = "03"
 
+      db_sid = UUID.uuid4()
+      application_sid = UUID.uuid4()
+
       assert_events_and_state(
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
           ),
           build(
             :database_instance_registered_event,
             sap_system_id: sap_system_id,
             host_id: database_host_id,
-            instance_number: database_instance_number
+            sid: db_sid,
+            instance_number: database_instance_number,
+            system_replication: nil
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             features: "MESSAGESERVER|ENQUE",
+            sid: application_sid,
             host_id: message_server_host_id,
             instance_number: message_server_instance_number
           ),
@@ -1706,18 +1749,21 @@ defmodule Trento.SapSystemTest do
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             features: "ABAP|GATEWAY|ICMAN|IGS",
+            sid: application_sid,
             host_id: abap_host_id,
             instance_number: abap_instance_number
           ),
           build(
             :sap_system_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: application_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             host_id: enqrep_host_id,
             instance_number: enqrep_server_instance_number,
+            sid: application_sid,
             features: "ENQREP"
           )
         ],
@@ -1737,7 +1783,11 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
+                   sid: ^application_sid,
+                   deregistered_at: nil,
                    database: %Database{
+                     sid: ^db_sid,
+                     deregistered_at: nil,
                      instances: [
                        %Instance{
                          instance_number: ^database_instance_number,
@@ -1746,6 +1796,7 @@ defmodule Trento.SapSystemTest do
                      ]
                    },
                    application: %Application{
+                     sid: ^application_sid,
                      instances: [
                        %Instance{
                          host_id: ^abap_host_id,
@@ -1766,6 +1817,9 @@ defmodule Trento.SapSystemTest do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
 
+      application_sid = UUID.uuid4()
+      db_sid = UUID.uuid4()
+
       database_host_id = UUID.uuid4()
       message_server_host_id = UUID.uuid4()
       abap_host_id = UUID.uuid4()
@@ -1782,17 +1836,21 @@ defmodule Trento.SapSystemTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
           ),
           build(
             :database_instance_registered_event,
             sap_system_id: sap_system_id,
             host_id: database_host_id,
-            instance_number: database_instance_number
+            sid: db_sid,
+            instance_number: database_instance_number,
+            system_replication: nil
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
+            sid: application_sid,
             features: "MESSAGESERVER|ENQUE",
             host_id: message_server_host_id,
             instance_number: message_server_instance_number
@@ -1802,22 +1860,26 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             features: "ABAP|GATEWAY|ICMAN|IGS",
             host_id: abap_host_id,
+            sid: application_sid,
             instance_number: abap_instance_number
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
+            sid: application_sid,
             features: "ABAP|GATEWAY|ICMAN|IGS",
             host_id: abap_2_host_id,
             instance_number: abap_2_instance_number
           ),
           build(
             :sap_system_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: application_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
+            sid: application_sid,
             host_id: enqrep_host_id,
             instance_number: enqrep_server_instance_number,
             features: "ENQREP"
@@ -1839,7 +1901,11 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
+                   sid: ^application_sid,
+                   deregistered_at: nil,
                    database: %Database{
+                     sid: ^db_sid,
+                     deregistered_at: nil,
                      instances: [
                        %Instance{
                          instance_number: ^database_instance_number,
@@ -1848,6 +1914,7 @@ defmodule Trento.SapSystemTest do
                      ]
                    },
                    application: %Application{
+                     sid: ^application_sid,
                      instances: [
                        %Instance{
                          host_id: ^enqrep_host_id,
@@ -1871,6 +1938,8 @@ defmodule Trento.SapSystemTest do
     test "should deregister last ABAP Application Instance and deregister SAP System" do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
+      db_sid = UUID.uuid4()
+      application_sid = UUID.uuid4()
 
       database_host_id = UUID.uuid4()
       message_server_host_id = UUID.uuid4()
@@ -1886,12 +1955,14 @@ defmodule Trento.SapSystemTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
           ),
           build(
             :database_instance_registered_event,
             sap_system_id: sap_system_id,
             host_id: database_host_id,
+            sid: db_sid,
             instance_number: database_instance_number
           ),
           build(
@@ -1899,6 +1970,7 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             features: "MESSAGESERVER|ENQUE",
             host_id: message_server_host_id,
+            sid: application_sid,
             instance_number: message_server_instance_number
           ),
           build(
@@ -1906,15 +1978,18 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             features: "ABAP|GATEWAY|ICMAN|IGS",
             host_id: abap_host_id,
+            sid: application_sid,
             instance_number: abap_instance_number
           ),
           build(
             :sap_system_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: application_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
+            sid: application_sid,
             host_id: enqrep_host_id,
             instance_number: enqrep_server_instance_number,
             features: "ENQREP"
@@ -1940,8 +2015,10 @@ defmodule Trento.SapSystemTest do
         ],
         fn sap_system ->
           assert %SapSystem{
-                   sid: nil,
+                   sid: ^application_sid,
                    database: %Database{
+                     deregistered_at: nil,
+                     sid: ^db_sid,
                      instances: [
                        %Instance{
                          instance_number: ^database_instance_number,
@@ -1977,24 +2054,27 @@ defmodule Trento.SapSystemTest do
       database_instance_number = "00"
       message_server_instance_number = "01"
 
+      application_sid = UUID.uuid4()
+      database_sid = UUID.uuid4()
+
       assert_events_and_state(
         [
           build(
             :database_registered_event,
-            sid: nil,
+            sid: database_sid,
             sap_system_id: sap_system_id
           ),
           build(
             :database_instance_registered_event,
             sap_system_id: sap_system_id,
-            sid: nil,
+            sid: database_sid,
             host_id: database_host_id,
             instance_number: database_instance_number
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
-            sid: nil,
+            sid: application_sid,
             features: "MESSAGESERVER|ENQUE",
             host_id: message_server_host_id,
             instance_number: message_server_instance_number
@@ -2014,7 +2094,10 @@ defmodule Trento.SapSystemTest do
         },
         fn sap_system ->
           assert %SapSystem{
+                   sid: nil,
                    database: %Database{
+                     sid: ^database_sid,
+                     deregistered_at: nil,
                      instances: [
                        %Instance{
                          instance_number: ^database_instance_number,
