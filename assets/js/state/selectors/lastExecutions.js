@@ -21,7 +21,7 @@ const addHostnameToAgentsCheckResults = (
     ...executionData,
     data: {
       ...data,
-      check_results: check_results.map((checkResult) => ({
+      check_results: check_results?.map((checkResult) => ({
         ...checkResult,
         agents_check_results: checkResult?.agents_check_results.map(
           (target) => ({

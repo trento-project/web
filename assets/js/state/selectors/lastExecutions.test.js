@@ -3,6 +3,7 @@ import {
   clusterFactory,
   catalogCheckFactory,
   checksExecutionCompletedForTargetsFactory,
+  checksExecutionRunningFactory,
 } from '@lib/test-utils/factories';
 import { getLastExecution, getLastExecutionData } from './lastExecutions';
 
@@ -99,5 +100,35 @@ describe('lastExecutions selector', () => {
     expect(
       lastExecution.data.check_results[0].agents_check_results[1].hostname
     ).toEqual(hostname2);
+  });
+
+  it('should properly handle running executions', () => {
+    const { id: clusterID } = clusterFactory.build();
+    const runningExecution = checksExecutionRunningFactory.build({
+      group_id: clusterID,
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [],
+      },
+      hostsList: {
+        hosts: [],
+      },
+      catalog: {},
+      lastExecutions: {
+        [clusterID]: {
+          loading: false,
+          data: runningExecution,
+          error: null,
+        },
+      },
+    };
+
+    const { lastExecution } = getLastExecutionData(clusterID)(state);
+
+    expect(lastExecution.data.result).toBeNull();
+    expect(lastExecution.data.check_results).toBeUndefined();
+    expect(lastExecution.data.status).toEqual('running');
   });
 });
