@@ -499,7 +499,7 @@ defmodule Trento.Domain.SapSystem do
   end
 
   def apply(
-        %SapSystem{database: %Database{instances: instances}} = sap_system,
+        %SapSystem{database: %Database{instances: instances} = database} = sap_system,
         %DatabaseInstanceDeregistered{
           instance_number: instance_number,
           host_id: host_id
@@ -517,13 +517,14 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{
       sap_system
       | database: %Database{
-          instances: instances
+          database
+          | instances: instances
         }
     }
   end
 
   def apply(
-        %SapSystem{application: %Application{instances: instances}} = sap_system,
+        %SapSystem{application: %Application{instances: instances} = application} = sap_system,
         %ApplicationInstanceDeregistered{instance_number: instance_number, host_id: host_id}
       ) do
     instances =
@@ -538,7 +539,8 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{
       sap_system
       | application: %Application{
-          instances: instances
+          application
+          | instances: instances
         }
     }
   end
