@@ -547,11 +547,11 @@ defmodule Trento.Domain.SapSystem do
 
   def apply(
         %SapSystem{database: database} = sap_system,
-        %DatabaseDeregistered{}
+        %DatabaseDeregistered{deregistered_at: deregistered_at}
       ) do
     %SapSystem{
       sap_system
-      | database: Map.put(database, :sid, nil)
+      | database: Map.put(database, :deregistered_at, deregistered_at)
     }
   end
 
