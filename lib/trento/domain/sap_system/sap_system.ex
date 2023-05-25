@@ -563,8 +563,7 @@ defmodule Trento.Domain.SapSystem do
       ) do
     %SapSystem{
       sap_system
-      | deregistered_at: deregistered_at,
-        sid: nil
+      | deregistered_at: deregistered_at
     }
   end
 
