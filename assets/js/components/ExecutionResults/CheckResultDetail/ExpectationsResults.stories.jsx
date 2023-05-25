@@ -1,10 +1,12 @@
-import React from 'react';
 import { faker } from '@faker-js/faker';
 import ExpectationsResults from './ExpectationsResults';
 
 export default {
   title: 'ExpectationsResults',
   component: ExpectationsResults,
+};
+
+export const Default = {
   args: {
     isTargetHost: true,
     results: [
@@ -15,7 +17,3 @@ export default {
     errorMessage: 'An error occurred',
   },
 };
-
-export function Default(args) {
-  return <ExpectationsResults {...args} />;
-}

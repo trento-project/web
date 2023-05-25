@@ -1,4 +1,3 @@
-import React from 'react';
 import { faker } from '@faker-js/faker';
 
 import GatheredFacts from './GatheredFacts';
@@ -17,6 +16,9 @@ const factValues = {
 export default {
   title: 'GatheredFacts',
   component: GatheredFacts,
+};
+
+export const Default = {
   args: {
     isTargetHost: true,
     gatheredFacts: [
@@ -33,7 +35,3 @@ export default {
     ],
   },
 };
-
-export function Default(args) {
-  return <GatheredFacts {...args} />;
-}

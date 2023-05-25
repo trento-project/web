@@ -1,4 +1,3 @@
-import React from 'react';
 import { faker } from '@faker-js/faker';
 
 import ExpectedValues from './ExpectedValues';
@@ -6,6 +5,9 @@ import ExpectedValues from './ExpectedValues';
 export default {
   title: 'ExpectedValues',
   component: ExpectedValues,
+};
+
+export const Default = {
   args: {
     isTargetHost: true,
     expectedValues: [
@@ -15,7 +17,3 @@ export default {
     isError: false,
   },
 };
-
-export function Default(args) {
-  return <ExpectedValues {...args} />;
-}
