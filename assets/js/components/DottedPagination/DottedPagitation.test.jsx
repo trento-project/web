@@ -38,13 +38,13 @@ describe('DottedPagination component', () => {
       />
     );
     [
-      [0, 1, 'page1'],
-      [4, 2, 'page2'],
-      [4, 3, 'page3'],
-      [4, 3, 'page3'],
-      [0, 2, 'page2'],
-    ].forEach(async (direction, iconNumber, page) => {
-      await user.click(screen.getAllByTestId('eos-svg-component')[direction]);
+      ['left', 1, 'page1'],
+      ['right', 2, 'page2'],
+      ['right', 3, 'page3'],
+      ['right', 3, 'page3'],
+      ['left', 2, 'page2'],
+    ].forEach(async ([direction, iconNumber, page]) => {
+      await user.click(screen.getByTestId(`${direction}-arrow`));
       expect(
         screen.getAllByTestId('eos-svg-component')[iconNumber]
       ).toHaveClass('fill-jungle-green-500');
