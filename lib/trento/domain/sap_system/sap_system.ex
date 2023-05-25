@@ -814,12 +814,10 @@ defmodule Trento.Domain.SapSystem do
   defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{
            sap_system_id: sap_system_id,
-           database: %Database{
-             sid: nil
-           }
+           database: %Database{deregistered_at: database_deregistered_at}
          },
          deregistered_at
-       ) do
+       ) when not is_nil(database_deregistered_at) do
     %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
   end
 
