@@ -34,11 +34,6 @@ const hosts = [
   hostFactory.build({ hostname: details.nodes[1].name }),
 ];
 
-const clusterNodes = details.nodes.map((node) => ({
-  ...node,
-  ...hosts.find(({ hostname }) => hostname === node.name),
-}));
-
 export default {
   title: 'HanaClusterDetails',
   components: HanaClusterDetails,
@@ -63,12 +58,11 @@ export const Hana = {
     clusterName,
     selectedChecks,
     hasSelectedChecks: true,
-    hosts: hosts.map(({ id: hostID }) => hostID),
+    hosts,
     clusterType,
     cibLastWritten,
     sid,
     provider,
-    clusterNodes,
     details,
     lastExecution,
     onStartExecution: () => {},
