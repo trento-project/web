@@ -2,17 +2,13 @@ import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import {
-  getCluster,
-  getClusterHosts,
-  getClusterHostIDs,
-} from '@state/selectors/cluster';
+import { getCluster, getClusterHosts } from '@state/selectors/cluster';
 import {
   updateLastExecution,
   executionRequested,
 } from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import ClusterDetails from './ClusterDetails';
+import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from '../ClusterLink';
 
 export function ClusterDetailsPage() {
@@ -23,7 +19,6 @@ export function ClusterDetailsPage() {
 
   const dispatch = useDispatch();
   const lastExecution = useSelector(getLastExecution(clusterID));
-  const hosts = useSelector(getClusterHostIDs(clusterID));
   useEffect(() => {
     dispatch(updateLastExecution(clusterID));
   }, [dispatch]);
@@ -34,33 +29,35 @@ export function ClusterDetailsPage() {
     return <div>Loading...</div>;
   }
 
-  const renderedNodes = cluster.details?.nodes?.map((node) => ({
-    ...node,
-    ...clusterHosts.find(({ hostname }) => hostname === node.name),
-  }));
-
   const hasSelectedChecks = cluster.selected_checks.length > 0;
 
-  return (
-    <ClusterDetails
-      clusterID={clusterID}
-      clusterName={getClusterName(cluster)}
-      selectedChecks={cluster.selected_checks}
-      hasSelectedChecks={hasSelectedChecks}
-      hosts={hosts}
-      clusterType={cluster.type}
-      cibLastWritten={cluster.cib_last_written}
-      sid={cluster.sid}
-      provider={cluster.provider}
-      clusterNodes={renderedNodes}
-      details={cluster.details}
-      lastExecution={lastExecution}
-      onStartExecution={(_, hostList, checks, navigateFunction) =>
-        dispatch(
-          executionRequested(clusterID, hostList, checks, navigateFunction)
-        )
-      }
-      navigate={navigate}
-    />
-  );
+  switch (cluster.type) {
+    case 'hana_scale_up':
+    case 'hana_scale_out':
+      return (
+        <HanaClusterDetails
+          clusterID={clusterID}
+          clusterName={getClusterName(cluster)}
+          selectedChecks={cluster.selected_checks}
+          hasSelectedChecks={hasSelectedChecks}
+          hosts={clusterHosts}
+          clusterType={cluster.type}
+          cibLastWritten={cluster.cib_last_written}
+          sid={cluster.sid}
+          provider={cluster.provider}
+          details={cluster.details}
+          lastExecution={lastExecution}
+          onStartExecution={(_, hostList, checks, navigateFunction) =>
+            dispatch(
+              executionRequested(clusterID, hostList, checks, navigateFunction)
+            )
+          }
+          navigate={navigate}
+        />
+      );
+    case 'ascs_ers':
+      return <div>ASCS/ERS</div>;
+    default:
+      return <div>Unknown cluster type</div>;
+  }
 }

@@ -10,6 +10,11 @@ const clusterTypeEnum = () =>
 
 const hanaStatus = () => faker.helpers.arrayElement(['Primary', 'Failed']);
 
+export const sbdDevicesFactory = Factory.define(() => ({
+  device: faker.system.filePath(),
+  status: faker.helpers.arrayElement(['healthy', 'unhealthy']),
+}));
+
 export const clusterResourceFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   role: faker.animal.bear(),
@@ -18,7 +23,7 @@ export const clusterResourceFactory = Factory.define(() => ({
   fail_count: faker.datatype.number(),
 }));
 
-export const clusterDetailsNodesFactory = Factory.define(() => ({
+export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
   name: faker.animal.dog(),
   site: faker.address.city(),
   virtual_ip: faker.internet.ip(),
@@ -33,12 +38,18 @@ export const clusterDetailsNodesFactory = Factory.define(() => ({
   resources: clusterResourceFactory.buildList(5),
 }));
 
-export const sbdDevicesFactory = Factory.define(() => ({
-  device: faker.system.filePath(),
-  status: faker.helpers.arrayElement(['healthy', 'unhealthy']),
+export const hanaClusterDetailsFactory = Factory.define(() => ({
+  fencing_type: 'external/sbd',
+  nodes: hanaClusterDetailsNodesFactory.buildList(2),
+  sbd_devices: sbdDevicesFactory.buildList(3),
+  secondary_sync_state: 'SOK',
+  sr_health_state: '4',
+  stopped_resources: clusterResourceFactory.buildList(2),
+  system_replication_mode: 'sync',
+  system_replication_operation_mode: 'logreplay',
 }));
 
-export const clusterFactory = Factory.define(({ sequence }) => ({
+export const clusterFactory = Factory.define(({ sequence, params }) => ({
   id: faker.datatype.uuid(),
   name: `${faker.name.firstName()}_${sequence}`,
   sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
@@ -49,14 +60,5 @@ export const clusterFactory = Factory.define(({ sequence }) => ({
   selected_checks: [],
   provider: cloudProviderEnum(),
   cib_last_written: day(faker.date.recent()).format(),
-  details: {
-    fencing_type: 'external/sbd',
-    nodes: clusterDetailsNodesFactory.buildList(2),
-    sbd_devices: sbdDevicesFactory.buildList(3),
-    secondary_sync_state: 'SOK',
-    sr_health_state: '4',
-    stopped_resources: clusterResourceFactory.buildList(2),
-    system_replication_mode: 'sync',
-    system_replication_operation_mode: 'logreplay',
-  },
+  details: hanaClusterDetailsFactory.build(params.details),
 }));

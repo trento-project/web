@@ -54,7 +54,7 @@ const siteDetailsConfig = {
   ],
 };
 
-function ClusterDetails({
+function HanaClusterDetails({
   clusterID,
   clusterName,
   selectedChecks,
@@ -64,12 +64,16 @@ function ClusterDetails({
   cibLastWritten,
   sid,
   provider,
-  clusterNodes,
   details,
   lastExecution,
   onStartExecution,
   navigate,
 }) {
+  const enrichedNodes = details?.nodes?.map((node) => ({
+    ...node,
+    ...hosts.find(({ hostname }) => hostname === node.name),
+  }));
+
   return (
     <div>
       <BackButton url="/clusters">Back to Clusters</BackButton>
@@ -106,7 +110,7 @@ function ClusterDetails({
               cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
               clusterId={clusterID}
               disabled={!hasSelectedChecks}
-              hosts={hosts}
+              hosts={hosts.map(({ id }) => id)}
               checks={selectedChecks}
               onStartExecution={onStartExecution}
             >
@@ -197,7 +201,7 @@ function ClusterDetails({
             <Table
               className="tn-site-table"
               config={siteDetailsConfig}
-              data={clusterNodes.filter(({ site }) => site === siteName)}
+              data={enrichedNodes.filter(({ site }) => site === siteName)}
             />
           </div>
         ))}
@@ -207,4 +211,4 @@ function ClusterDetails({
   );
 }
 
-export default ClusterDetails;
+export default HanaClusterDetails;
