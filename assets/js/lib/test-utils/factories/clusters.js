@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import day from 'dayjs';
 
-import { resultEnum, cloudProviderEnum } from '.';
+import { resultEnum, cloudProviderEnum, hostFactory } from '.';
 
 const clusterTypeEnum = () =>
   faker.helpers.arrayElement(['unknown', 'hana_scale_up']);
@@ -111,3 +111,8 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     details,
   };
 });
+
+export const addHostsToAscsErsClusterDetails = (details) =>
+  details.sap_systems
+    .flatMap(({ nodes }) => nodes)
+    .map(({ name }) => hostFactory.build({ hostname: name }));

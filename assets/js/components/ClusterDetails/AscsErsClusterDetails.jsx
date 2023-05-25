@@ -2,27 +2,78 @@ import React, { useState, useEffect } from 'react';
 
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
-
+import Table from '@components/Table';
 import ListView from '@components/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
+import HostLink from '@components/HostLink';
 
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
 import SBDDetails from './SBDDetails';
+import SiteDetails from './SiteDetails';
 import StoppedResources from './StoppedResources';
+
+const nodeDetailsConfig = {
+  usePadding: false,
+  columns: [
+    {
+      title: 'Hostname',
+      key: '',
+      render: (_, { id, name }) => <HostLink hostId={id}>{name}</HostLink>,
+    },
+    {
+      title: 'Role',
+      key: 'roles',
+      render: (content) =>
+        content?.map((role) => role.toUpperCase()).join(', '),
+    },
+    {
+      title: 'Virtual IP',
+      key: 'virtual_ips',
+      className: 'table-col-m',
+      render: (content) => content?.join(', '),
+    },
+    {
+      title: 'Filesystem',
+      key: 'filesystems',
+      className: 'table-col-m',
+      render: (content) => content?.join(', '),
+    },
+    {
+      title: '',
+      key: '',
+      className: 'table-col-xs',
+      render: (_, item) => {
+        const { attributes, resources } = item;
+        return <SiteDetails attributes={attributes} resources={resources} />;
+      },
+    },
+  ],
+};
 
 function AscsErsClusterDetails({
   clusterName,
   cibLastWritten,
   provider,
+  hosts,
   details,
 }) {
+  const [sapSystems, setSapSystems] = useState([]);
   const [currentSapSystem, setSapSystem] = useState(null);
 
   useEffect(() => {
-    setSapSystem(details?.sap_systems[0]);
-  }, [details]);
+    const enrichedSapSystems = details?.sap_systems.map((sapSystem) => ({
+      ...sapSystem,
+      nodes: sapSystem?.nodes.map((node) => ({
+        ...node,
+        ...hosts.find(({ hostname }) => hostname === node.name),
+      })),
+    }));
+
+    setSapSystems(enrichedSapSystems);
+    setSapSystem(enrichedSapSystems[0]);
+  }, [hosts, details]);
 
   return (
     <div>
@@ -90,10 +141,7 @@ function AscsErsClusterDetails({
             ]}
           />
           <div className="flex justify-center">
-            <DottedPagination
-              pages={details?.sap_systems}
-              onChange={setSapSystem}
-            />
+            <DottedPagination pages={sapSystems} onChange={setSapSystem} />
           </div>
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
@@ -112,6 +160,10 @@ function AscsErsClusterDetails({
       {details && details.stopped_resources.length > 0 && (
         <StoppedResources resources={details.stopped_resources} />
       )}
+
+      <div className="mt-2">
+        <Table config={nodeDetailsConfig} data={currentSapSystem?.nodes} />
+      </div>
 
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
