@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
-const KNOWN_TYPES = ['hana_scale_up', 'hana_scale_out', 'ascs_ers'];
+import { CLUSTER_TYPES } from '@lib/model';
 
 export const getClusterName = (cluster) => cluster?.name || cluster?.id;
 
@@ -13,7 +13,7 @@ function ClusterLink({ cluster }) {
     'truncate w-32 inline-block align-middle'
   );
 
-  if (KNOWN_TYPES.includes(cluster?.type)) {
+  if (CLUSTER_TYPES.includes(cluster?.type)) {
     return (
       <Link
         className="text-jungle-green-500 hover:opacity-75"

@@ -12,3 +12,5 @@ export const isValidTargetType = (targetType) =>
 
 export const UNKNOWN_PROVIDER = 'unknown';
 export const VMWARE_PROVIDER = 'vmware';
+
+export const CLUSTER_TYPES = ['hana_scale_up', 'hana_scale_out', 'ascs_ers'];
