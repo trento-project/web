@@ -16,14 +16,29 @@ export const executionValueFactory = Factory.define(({ sequence }) => ({
 
 export const executionExpectationEvaluationFactory = Factory.define(
   ({ sequence, params }) => {
-    const name = params.name || `expectation_${sequence}`;
+    const {
+      name = `expectation_${sequence}`,
+      failure_message = params.failure_message
+        ? { failure_message: params.failure_message }
+        : {},
+    } = params;
 
     return {
       name,
       return_value: faker.datatype.number(),
       type: expectationReturnTypeEnum(),
+      ...failure_message,
     };
   }
+);
+
+export const failingExpectEvaluationFactory = Factory.define(({ params }) =>
+  executionExpectationEvaluationFactory.build({
+    ...params,
+    return_value: false,
+    type: 'expect',
+    failure_message: faker.lorem.sentence(),
+  })
 );
 
 export const executionExpectationEvaluationErrorFactory = Factory.define(
@@ -40,14 +55,29 @@ export const executionExpectationEvaluationErrorFactory = Factory.define(
 
 export const expectationResultFactory = Factory.define(
   ({ sequence, params }) => {
-    const name = params.name || `expectation_${sequence}`;
+    const {
+      name = `expectation_${sequence}`,
+      failure_message = params.failure_message
+        ? { failure_message: params.failure_message }
+        : {},
+    } = params;
 
     return {
       name,
       result: faker.datatype.boolean(),
       type: expectationReturnTypeEnum(),
+      ...failure_message,
     };
   }
+);
+
+export const failingExpectationResultFactory = Factory.define(({ params }) =>
+  expectationResultFactory.build({
+    ...params,
+    result: false,
+    type: expectationReturnTypeEnum(),
+    failure_message: faker.lorem.sentence(),
+  })
 );
 
 export const executionFactFactory = Factory.define(({ sequence }) => ({
@@ -196,17 +226,6 @@ export const addPassingExpectation = (checkResult, type, expectationName) => {
   return addExpectation(checkResult, name, expectation, true);
 };
 
-export const addCriticalExpectation = (checkResult, type, expectationName) => {
-  const name = expectationName || faker.company.name();
-  const expectation = executionExpectationEvaluationFactory.build({
-    name,
-    type,
-    return_value: false,
-  });
-
-  return addExpectation(checkResult, name, expectation, false);
-};
-
 export const addExpectationWithError = (checkResult, expectationName) => {
   const name = expectationName || faker.company.name();
   const expectation = executionExpectationEvaluationErrorFactory.build({
@@ -219,9 +238,14 @@ export const addExpectationWithError = (checkResult, expectationName) => {
 export const addPassingExpectExpectation = (checkResult, expectationName) =>
   addPassingExpectation(checkResult, 'expect', expectationName);
 
-export const addCriticalExpectExpectation = (checkResult, expectationName) =>
-  addCriticalExpectation(checkResult, 'expect', expectationName);
+export const addCriticalExpectExpectation = (checkResult, expectationName) => {
+  const name = expectationName || faker.company.name();
+  const expectation = failingExpectEvaluationFactory.build({
+    name,
+  });
 
+  return addExpectation(checkResult, name, expectation, false);
+};
 export const addPassingExpectSameExpectation = (checkResult, expectationName) =>
   addPassingExpectation(checkResult, 'expect_same', expectationName);
 

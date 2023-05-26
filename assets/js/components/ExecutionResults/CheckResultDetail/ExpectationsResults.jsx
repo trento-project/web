@@ -10,28 +10,33 @@ function ExpectationsResults({
   errorMessage = 'An error occurred',
 }) {
   const renderedResults = isTargetHost
-    ? results.map(({ name, return_value }) => ({
+    ? results.map(({ name, return_value, failure_message }) => ({
         name,
         passing: !!return_value,
+        failureMessage: failure_message,
       }))
-    : results.map(({ name, result }) => ({
+    : results.map(({ name, result, failure_message }) => ({
         name,
         passing: !!result,
+        failureMessage: failure_message,
       }));
 
-  const expectationsEvaluations = renderedResults.map(({ name, passing }) => ({
-    title: name,
-    content: passing,
-    render: (isPassing) => (
-      <span
-        className={classNames({
-          'text-red-500': !isPassing,
-        })}
-      >
-        {isPassing ? 'Passing' : 'Failing'}
-      </span>
-    ),
-  }));
+  const expectationsEvaluations = renderedResults.map(
+    ({ name, passing, failureMessage }) => ({
+      title: name,
+      content: passing,
+      render: (isPassing) => (
+        <div
+          className={classNames({
+            'text-red-500': !isPassing,
+          })}
+        >
+          <span>{isPassing ? 'Passing' : 'Failing'}</span>
+          {failureMessage && <span className="block">{failureMessage}</span>}
+        </div>
+      ),
+    })
+  );
 
   return (
     <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
