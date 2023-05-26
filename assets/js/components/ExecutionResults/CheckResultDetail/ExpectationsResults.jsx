@@ -40,7 +40,7 @@ function ExpectationsResults({
 
   return (
     <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
-      <div className="text-lg font-bold">Expectations</div>
+      <div className="text-lg font-bold">Evaluation Results</div>
       {isError ? (
         <div className="mt-3 text-red-500">{errorMessage}</div>
       ) : (

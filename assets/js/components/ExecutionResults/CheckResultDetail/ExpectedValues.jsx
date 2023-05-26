@@ -17,7 +17,7 @@ function ExpectedValues({
 
   return (
     <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
-      <div className="text-lg font-bold">Values</div>
+      <div className="text-lg font-bold">Expected Values</div>
       {isError ? (
         <div className="mt-3 text-red-500 text-sm">
           Expected Values unavailable
