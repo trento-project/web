@@ -61,6 +61,18 @@ defmodule Trento.Clusters do
     |> Repo.all()
   end
 
+  @spec get_cluster_id_by_host_id(String.t()) :: String.t() | nil
+  def get_cluster_id_by_host_id(host_id) do
+    query =
+      from c in ClusterReadModel,
+        join: h in HostReadModel,
+        on: h.cluster_id == c.id,
+        where: h.id == ^host_id,
+        select: c.id
+
+    Repo.one(query)
+  end
+
   @spec enrich_cluster_model(ClusterReadModel.t()) :: ClusterReadModel.t()
   def enrich_cluster_model(%ClusterReadModel{id: id} = cluster) do
     case Repo.get(ClusterEnrichmentData, id) do
