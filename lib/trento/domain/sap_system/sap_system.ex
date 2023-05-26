@@ -817,7 +817,8 @@ defmodule Trento.Domain.SapSystem do
            database: %Database{deregistered_at: database_deregistered_at}
          },
          deregistered_at
-       ) when not is_nil(database_deregistered_at) do
+       )
+       when not is_nil(database_deregistered_at) do
     %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
   end
 
