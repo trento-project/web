@@ -7,24 +7,67 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   require Trento.Domain.Enums.ClusterType, as: ClusterType
   require Trento.Domain.Enums.Health, as: Health
 
-  alias Trento.{
-    Domain.Commands.RegisterClusterHost,
-    Integration.Discovery.ClusterDiscoveryPayload
+  alias Trento.Domain.Commands.{
+    DeregisterClusterHost,
+    RegisterClusterHost
   }
+
+  alias Trento.Integration.Discovery.ClusterDiscoveryPayload
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
-  def handle(%{
-        "discovery_type" => "ha_cluster_discovery",
-        "agent_id" => agent_id,
-        "payload" => payload
-      }) do
-    payload
-    |> ProperCase.to_snake_case()
-    |> ClusterDiscoveryPayload.new()
-    |> case do
-      {:ok, decoded_payload} -> build_register_cluster_host_command(agent_id, decoded_payload)
-      error -> error
+  def handle(
+        %{
+          "discovery_type" => "ha_cluster_discovery",
+          "agent_id" => agent_id,
+          "payload" => nil
+        },
+        current_cluster_id
+      ) do
+    {:ok,
+     Enum.reject(
+       [
+         build_deregister_cluster_host_command(agent_id, nil, current_cluster_id)
+       ],
+       &is_nil/1
+     )}
+  end
+
+  def handle(
+        %{
+          "discovery_type" => "ha_cluster_discovery",
+          "agent_id" => agent_id,
+          "payload" => payload
+        },
+        current_cluster_id
+      ) do
+    with {:ok, %ClusterDiscoveryPayload{id: cluster_id} = decoded_payload} <-
+           payload
+           |> ProperCase.to_snake_case()
+           |> ClusterDiscoveryPayload.new(),
+         {:ok, register_cluster_host_command} <-
+           build_register_cluster_host_command(agent_id, decoded_payload) do
+      {:ok,
+       Enum.reject(
+         [
+           build_deregister_cluster_host_command(agent_id, cluster_id, current_cluster_id),
+           register_cluster_host_command
+         ],
+         &is_nil/1
+       )}
+    end
+  end
+
+  defp build_deregister_cluster_host_command(_, _, nil),
+    do: nil
+
+  defp build_deregister_cluster_host_command(agent_id, cluster_id, current_cluster_id) do
+    if cluster_id != current_cluster_id do
+      DeregisterClusterHost.new!(%{
+        host_id: agent_id,
+        cluster_id: current_cluster_id,
+        deregistered_at: DateTime.utc_now()
+      })
     end
   end
 
