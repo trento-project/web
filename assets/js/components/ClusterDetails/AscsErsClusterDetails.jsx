@@ -38,7 +38,7 @@ function AscsErsClusterDetails({
         </div>
       </div>
       <div className="flex xl:flex-row flex-col">
-        <div className="mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-1/3 mr-4">
+        <div className="mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-2/5 mr-4">
           <ListView
             className="grid-rows-2"
             titleClassName="text-lg"
@@ -65,7 +65,7 @@ function AscsErsClusterDetails({
             ]}
           />
         </div>
-        <div className="mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-1/3 mr-4">
+        <div className="mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-2/5 mr-4">
           <ListView
             className="grid-rows-2 mb-10"
             titleClassName="text-lg"
@@ -95,7 +95,7 @@ function AscsErsClusterDetails({
             <DottedPagination pages={sapSystems} onChange={setSapSystem} />
           </div>
         </div>
-        <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
+        <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
           <div className="flex flex-col items-center">
             <h1 className="text-center text-2xl font-bold">Check Results</h1>
             <h6 className="opacity-60 text-xs">Coming soon for ASCS/ERS</h6>
