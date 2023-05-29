@@ -553,7 +553,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     resources
     |> Enum.filter(fn
       %{type: ^type} -> true
-      _ -> nil
+      _ -> false
     end)
     |> Enum.map(fn %{instance_attributes: instance_attributes} ->
       Enum.find_value(instance_attributes, nil, fn
