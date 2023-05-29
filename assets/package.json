@@ -37,7 +37,7 @@
     "intersection-observer": "^0.12.2",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
-    "postcss": "^8.4.23",
+    "postcss": "^8.4.24",
     "prettier-eslint-cli": "^7.1.0",
     "redux-mock-store": "^1.5.4",
     "storybook": "^7.0.17",
