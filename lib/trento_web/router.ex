@@ -84,8 +84,6 @@ defmodule TrentoWeb.Router do
       get "/sap_systems/health", HealthOverviewController, :overview
       get "/databases", SapSystemController, :list_databases
 
-      delete "/hosts/:id", HostController, :delete
-
       post "/clusters/:cluster_id/checks", ClusterController, :select_checks
 
       post "/clusters/:cluster_id/checks/request_execution",
@@ -95,6 +93,8 @@ defmodule TrentoWeb.Router do
       post "/hosts/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :host},
         as: :hosts_tagging
+
+      delete "/hosts/:id", HostController, :delete
 
       delete "/hosts/:id/tags/:value", TagsController, :remove_tag, as: :hosts_tagging
 

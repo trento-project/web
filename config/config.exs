@@ -82,6 +82,10 @@ config :trento, :pow,
 # Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
 config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
 
+# This is passed to the frontend as the time after the last heartbeat
+# to wait before displaying the deregistration button
+config :trento, deregistration_debounce: :timer.seconds(0)
+
 config :trento, Trento.Scheduler,
   jobs: [
     heartbeat_check: [
@@ -161,9 +165,6 @@ config :trento, :jwt_authentication,
 config :trento,
   api_key_authentication_enabled: true,
   jwt_authentication_enabled: true
-
-config :trento,
-  deregistration_debounce: :timer.seconds(0)
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

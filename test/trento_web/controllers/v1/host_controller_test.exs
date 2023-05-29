@@ -50,51 +50,51 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "delete" do
-    test "should delete the host", %{conn: conn} do
+    test "should send 204 response when successful host deletion", %{conn: conn} do
+      %{id: host_id} = insert(:host)
+
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn _ ->
+        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
           :ok
         end
       )
 
-      %{id: agent_id} = insert(:host, heartbeat: :critical)
-      insert(:heartbeat, agent_id: agent_id, timestamp: DateTime.from_unix!(0))
-
       conn
-      |> delete("/api/v1/hosts/#{agent_id}")
+      |> delete("/api/v1/hosts/#{host_id}")
       |> response(204)
     end
 
-    test "should delete the host even if no heartbeat", %{conn: conn} do
+    test "should send 422 response if the host is still alive", %{conn: conn} do
+      %{id: host_id} = insert(:host)
+
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn _ ->
-          :ok
+        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+          {:error, :host_alive}
         end
       )
 
-      %{id: agent_id} = insert(:host, heartbeat: :critical)
-
       conn
-      |> delete("/api/v1/hosts/#{agent_id}")
-      |> response(204)
-    end
-
-    test "should return 422 if the host is still alive", %{conn: conn} do
-      %{id: agent_id} = insert(:host, heartbeat: :critical)
-      insert(:heartbeat, agent_id: agent_id)
-
-      conn
-      |> delete("/api/v1/hosts/#{agent_id}")
+      |> delete("/api/v1/hosts/#{host_id}")
       |> response(422)
     end
 
     test "should return 404 if the host was not found", %{conn: conn} do
+      %{id: host_id} = insert(:host)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+          {:error, :host_not_registered}
+        end
+      )
+
       conn
-      |> delete("/api/v1/hosts/#{UUID.uuid4()}")
+      |> delete("/api/v1/hosts/#{host_id}")
       |> response(:not_found)
     end
   end

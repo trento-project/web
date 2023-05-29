@@ -6,7 +6,6 @@ defmodule Trento.Hosts do
   import Ecto.Query
 
   alias Trento.{
-    Heartbeat,
     HostReadModel,
     Repo,
     SlesSubscriptionReadModel
@@ -15,12 +14,6 @@ defmodule Trento.Hosts do
   alias Trento.Support.DateService
 
   alias Trento.Domain.Commands.RequestHostDeregistration
-
-  @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]
-  @deregistration_debounce Application.compile_env!(
-                             :trento,
-                             :deregistration_debounce
-                           )
 
   @spec get_all_hosts :: [HostReadModel.t()]
   def get_all_hosts do
@@ -47,39 +40,14 @@ defmodule Trento.Hosts do
     end
   end
 
-  @spec deregister_host(Ecto.UUID.t(), DateService) :: :ok | {:error, any}
+  @spec deregister_host(Ecto.UUID.t(), DateService) ::
+          :ok | {:error, :host_alive} | {:error, :host_not_registered}
   def deregister_host(host_id, date_service \\ DateService) do
-    case Repo.get_by(HostReadModel, id: host_id) do
-      nil ->
-        {:error, :host_not_found}
-
-      _ ->
-        maybe_dispatch_host_deregistration_request(host_id, date_service)
-    end
+    commanded().dispatch(
+      RequestHostDeregistration.new!(%{host_id: host_id, requested_at: date_service.utc_now()})
+    )
   end
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
-
-  defp maybe_dispatch_host_deregistration_request(host_id, date_service) do
-    now = date_service.utc_now()
-    total_deregistration_debounce = @heartbeat_interval + @deregistration_debounce
-
-    query =
-      from h in Heartbeat,
-        where:
-          h.timestamp >
-            ^DateTime.add(now, -total_deregistration_debounce, :millisecond) and
-            h.agent_id == ^host_id
-
-    case Repo.exists?(query) do
-      false ->
-        commanded().dispatch(
-          RequestHostDeregistration.new!(%{host_id: host_id, requested_at: now})
-        )
-
-      true ->
-        {:error, :host_alive}
-    end
-  end
 end
