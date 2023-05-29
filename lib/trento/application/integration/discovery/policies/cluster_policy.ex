@@ -549,19 +549,19 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     end)
   end
 
-  defp parse_resource_by_type(resources, type, attribute_name),
-    do:
-      resources
-      |> Enum.filter(fn
-        %{type: ^type} -> true
+  defp parse_resource_by_type(resources, type, attribute_name) do
+    resources
+    |> Enum.filter(fn
+      %{type: ^type} -> true
+      _ -> nil
+    end)
+    |> Enum.map(fn %{instance_attributes: instance_attributes} ->
+      Enum.find_value(instance_attributes, nil, fn
+        %{name: ^attribute_name, value: value} -> value
         _ -> nil
       end)
-      |> Enum.map(fn %{instance_attributes: instance_attributes} ->
-        Enum.find_value(instance_attributes, nil, fn
-          %{name: ^attribute_name, value: value} -> value
-          _ -> nil
-        end)
-      end)
+    end)
+  end
 
   defp parse_cib_last_written(%{
          crmmon: %{summary: %{last_change: %{time: cib_last_written}}}
