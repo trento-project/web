@@ -101,7 +101,7 @@ function AscsErsClusterDetails({
             <h6 className="opacity-60 text-xs">Coming soon for ASCS/ERS</h6>
             <img
               className="w-full"
-              alt="checks comming soon"
+              alt="checks coming soon"
               src={ChecksComingSoon}
             />
           </div>
