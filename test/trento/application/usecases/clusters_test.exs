@@ -83,6 +83,22 @@ defmodule Trento.ClustersTest do
     end
   end
 
+  describe "get_cluster_id_by_host_id/1" do
+    test "should return nil if the host is not part of any cluster" do
+      assert nil == Clusters.get_cluster_id_by_host_id(UUID.uuid4())
+    end
+
+    test "should return the cluster_id" do
+      cluster_id = UUID.uuid4()
+      host_id = UUID.uuid4()
+
+      insert(:cluster, id: cluster_id)
+      insert(:host, id: host_id, cluster_id: cluster_id)
+
+      assert cluster_id == Clusters.get_cluster_id_by_host_id(host_id)
+    end
+  end
+
   describe "update cib_last_written" do
     test "should create a new enriched cluster entry" do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
