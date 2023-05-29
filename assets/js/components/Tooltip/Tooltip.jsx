@@ -2,7 +2,7 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-function Tooltip({ children, tooltipText, width = 'w-full' }) {
+function Tooltip({ children, tooltipText, width = '' }) {
   const tipRef = React.createRef(null);
 
   const handleMouseEnter = () => {
@@ -29,7 +29,7 @@ function Tooltip({ children, tooltipText, width = 'w-full' }) {
       <div
         className={classNames(
           width,
-          'absolute whitespace-no-wrap bg-gradient-to-r from-black to-gray-700 text-white px-4 py-2 rounded flex items-center transition-all duration-150'
+          'absolute whitespace-no-wrap bg-black text-white px-4 py-2 rounded flex items-center transition-all duration-150'
         )}
         style={{ top: '100%', opacity: 0 }}
         ref={tipRef}
