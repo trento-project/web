@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { setSelectedFilters } from '@state/checksResultsFilters';
+import { getSelectedFilters } from '@state/selectors/checksResultsFilters';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/actions/catalog';
 import {
@@ -28,6 +30,8 @@ function ExecutionResultsPage() {
       loading: executionLoading,
     },
   } = useSelector(getLastExecutionData(clusterID));
+
+  const savedFilters = useSelector(getSelectedFilters(clusterID));
 
   const cloudProvider = cluster?.provider;
 
@@ -62,8 +66,12 @@ function ExecutionResultsPage() {
       executionData={executionData}
       executionError={executionError}
       clusterSelectedChecks={cluster?.selected_checks}
+      savedFilters={savedFilters}
       onStartExecution={(clusterId, hosts, selectedChecks, navigate) =>
         dispatch(executionRequested(clusterId, hosts, selectedChecks, navigate))
+      }
+      onSaveFilters={(filters) =>
+        dispatch(setSelectedFilters({ resourceID: clusterID, filters }))
       }
     />
   );

@@ -4,14 +4,25 @@ import Filter from '@components/Table/Filter';
 
 export const RESULT_FILTER_FIELD = 'result';
 
-function ChecksResultFilters({ onChange }) {
+const defaultSavedFilters = [];
+
+const getFilters = (savedFilters, searchParams) =>
+  savedFilters.length >= 0 && searchParams.getAll('health').length === 0
+    ? savedFilters
+    : searchParams.getAll('health');
+
+function ChecksResultFilters({
+  savedFilters = defaultSavedFilters,
+  onChange = () => {},
+  onSave = () => {},
+}) {
   const [filtersForField, setFiltersForField] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   // This structure is the foundation for a multi field filters
   // we can reuse later this structure in other parts of the application
 
   useEffect(() => {
-    const selectedFilters = searchParams.getAll('health');
+    const selectedFilters = getFilters(savedFilters, searchParams);
 
     setFiltersForField({
       RESULT_FILTER_FIELD: {
@@ -21,7 +32,7 @@ function ChecksResultFilters({ onChange }) {
         values: selectedFilters,
       },
     });
-  }, [searchParams]);
+  }, [searchParams, savedFilters]);
 
   useEffect(() => {
     if (Object.keys(filtersForField).length >= 0) {
@@ -40,8 +51,9 @@ function ChecksResultFilters({ onChange }) {
         key={RESULT_FILTER_FIELD}
         title="checks result"
         options={['passing', 'warning', 'critical', 'unknown']}
-        value={searchParams.getAll('health')}
+        value={getFilters(savedFilters, searchParams)}
         onChange={(list) => {
+          onSave(list);
           setSearchParams(createSearchParams({ health: list }));
         }}
       />

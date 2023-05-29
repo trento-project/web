@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
+
 import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
 import clusterChecksSelectionReducer from './clusterChecksSelection';
+import checksResultsFiltersReducer from './checksResultsFilters';
 import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
 import catalogReducer from './catalog';
@@ -21,6 +23,7 @@ export const store = configureStore({
     hostsList: hostsListReducer,
     clustersList: clustersListReducer,
     clusterChecksSelection: clusterChecksSelectionReducer,
+    checksResultsFilters: checksResultsFiltersReducer,
     sapSystemsList: sapSystemListReducer,
     databasesList: databasesListReducer,
     catalog: catalogReducer,
