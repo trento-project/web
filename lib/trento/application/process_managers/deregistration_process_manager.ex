@@ -289,6 +289,17 @@ defmodule Trento.DeregistrationProcessManager do
     }
   end
 
+  # Retry the rollup errors, stop the process on other errors
+
+  def error({:error, :host_rolling_up}, _command_or_event, %{context: context}),
+    do: {:retry, context}
+
+  def error({:error, :cluster_rolling_up}, _command_or_event, %{context: context}),
+    do: {:retry, context}
+
+  def error({:error, :sap_system_rolling_up}, _command_or_event, %{context: context}),
+    do: {:retry, context}
+
   defp maybe_deregister_cluster_host(nil, _, _), do: []
 
   defp maybe_deregister_cluster_host(cluster_id, host_id, requested_at) do
