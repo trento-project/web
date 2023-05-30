@@ -1353,7 +1353,7 @@ defmodule Trento.SapSystemTest do
       db_instance_number_1 = "00"
       db_instance_number_2 = "01"
 
-      db_sid = UUID.uuid4()
+      db_sid = fake_sid()
       application_sid = UUID.uuid4()
 
       message_server_host_id = UUID.uuid4()
@@ -1466,7 +1466,7 @@ defmodule Trento.SapSystemTest do
       instance_number_1 = "00"
       instance_number_2 = "01"
 
-      db_sid = UUID.uuid4()
+      db_sid = fake_sid()
 
       primary_db_host_id = UUID.uuid4()
       secondary_db_host_id = UUID.uuid4()
@@ -1525,7 +1525,7 @@ defmodule Trento.SapSystemTest do
       database_host_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
       db_instance_number_1 = "00"
-      db_sid = UUID.uuid4()
+      db_sid = fake_sid()
 
       assert_events_and_state(
         [
@@ -1585,7 +1585,7 @@ defmodule Trento.SapSystemTest do
       db_instance_number_1 = "00"
       db_instance_number_2 = "01"
 
-      db_sid = UUID.uuid4()
+      db_sid = fake_sid()
 
       assert_events_and_state(
         [
@@ -1643,7 +1643,7 @@ defmodule Trento.SapSystemTest do
       db_instance_number_1 = "00"
       db_instance_number_2 = "01"
 
-      db_sid = UUID.uuid4()
+      db_sid = fake_sid()
 
       initial_events = [
         build(
@@ -1720,7 +1720,7 @@ defmodule Trento.SapSystemTest do
       db_instance_number_3 = "02"
       db_instance_number_4 = "03"
 
-      db_sid = UUID.uuid4()
+      db_sid = fake_sid()
 
       initial_events = [
         build(
@@ -1835,8 +1835,8 @@ defmodule Trento.SapSystemTest do
       abap_instance_number = "02"
       enqrep_server_instance_number = "03"
 
-      db_sid = UUID.uuid4()
-      application_sid = UUID.uuid4()
+      db_sid = fake_sid()
+      application_sid = fake_sid()
 
       assert_events_and_state(
         [
@@ -1933,8 +1933,8 @@ defmodule Trento.SapSystemTest do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
 
-      application_sid = UUID.uuid4()
-      db_sid = UUID.uuid4()
+      application_sid = fake_sid()
+      db_sid = fake_sid()
 
       database_host_id = UUID.uuid4()
       message_server_host_id = UUID.uuid4()
@@ -2054,8 +2054,8 @@ defmodule Trento.SapSystemTest do
     test "should deregister last ABAP Application Instance and deregister SAP System" do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
-      db_sid = UUID.uuid4()
-      application_sid = UUID.uuid4()
+      db_sid = fake_sid()
+      application_sid = fake_sid()
 
       database_host_id = UUID.uuid4()
       message_server_host_id = UUID.uuid4()
@@ -2170,8 +2170,8 @@ defmodule Trento.SapSystemTest do
       database_instance_number = "00"
       message_server_instance_number = "01"
 
-      application_sid = UUID.uuid4()
-      database_sid = UUID.uuid4()
+      application_sid = fake_sid()
+      database_sid = fake_sid()
 
       assert_events_and_state(
         [
@@ -2244,42 +2244,51 @@ defmodule Trento.SapSystemTest do
       abap_instance_number = "02"
       enqrep_server_instance_number = "03"
 
+      db_sid = fake_sid()
+      application_sid = fake_sid()
+
       assert_events_and_state(
         [
           build(
             :database_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: db_sid
           ),
           build(
             :database_instance_registered_event,
             sap_system_id: sap_system_id,
             host_id: database_host_id,
-            instance_number: database_instance_number
+            instance_number: database_instance_number,
+            sid: db_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             features: "MESSAGESERVER|ENQUE",
             host_id: message_server_host_id,
-            instance_number: message_server_instance_number
+            instance_number: message_server_instance_number,
+            sid: application_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             features: "ABAP|GATEWAY|ICMAN|IGS",
             host_id: abap_host_id,
-            instance_number: abap_instance_number
+            instance_number: abap_instance_number,
+            sid: application_sid
           ),
           build(
             :sap_system_registered_event,
-            sap_system_id: sap_system_id
+            sap_system_id: sap_system_id,
+            sid: application_sid
           ),
           build(
             :application_instance_registered_event,
             sap_system_id: sap_system_id,
             host_id: enqrep_host_id,
             instance_number: enqrep_server_instance_number,
-            features: "ENQREP"
+            features: "ENQREP",
+            sid: application_sid
           )
         ],
         %DeregisterApplicationInstance{
@@ -2303,6 +2312,7 @@ defmodule Trento.SapSystemTest do
         fn sap_system ->
           assert %SapSystem{
                    database: %Database{
+                     sid: ^db_sid,
                      instances: [
                        %Instance{
                          instance_number: ^database_instance_number,
@@ -2322,10 +2332,14 @@ defmodule Trento.SapSystemTest do
                        }
                      ]
                    },
-                   deregistered_at: ^deregistered_at
+                   deregistered_at: ^deregistered_at,
+                   sid: ^application_sid
                  } = sap_system
         end
       )
     end
   end
+
+  defp fake_sid,
+    do: Enum.join([Faker.Util.letter(), Faker.Util.letter(), Faker.Util.letter()])
 end
