@@ -88,12 +88,20 @@ defmodule Trento.HostProjector do
       cluster_id: cluster_id
     },
     fn multi ->
-      changeset =
-        HostReadModel.changeset(%HostReadModel{id: id, cluster_id: cluster_id}, %{
-          cluster_id: nil
-        })
+      host = Repo.get!(HostReadModel, id)
+      # Only remove the cluster_id if it matches the one in the event
+      # We cannot guarantee the order of the events during the delta deregistration,
+      # so we need to make sure we don't remove the cluster_id if it has been overwritten by HostAddedToCluster
+      if host.cluster_id == cluster_id do
+        changeset =
+          HostReadModel.changeset(host, %{
+            cluster_id: nil
+          })
 
-      Ecto.Multi.update(multi, :host, changeset)
+        Ecto.Multi.update(multi, :host, changeset)
+      else
+        multi
+      end
     end
   )
 
