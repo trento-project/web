@@ -60,7 +60,7 @@ function AscsErsClusterDetails({
   details,
 }) {
   const [sapSystems, setSapSystems] = useState([]);
-  const [currentSapSystem, setSapSystem] = useState(null);
+  const [currentSapSystem, setCurrentSapSystem] = useState(null);
 
   useEffect(() => {
     const enrichedSapSystems = details?.sap_systems.map((sapSystem) => ({
@@ -72,7 +72,7 @@ function AscsErsClusterDetails({
     }));
 
     setSapSystems(enrichedSapSystems);
-    setSapSystem(enrichedSapSystems[0]);
+    setCurrentSapSystem(enrichedSapSystems[0]);
   }, [hosts, details]);
 
   return (
@@ -141,7 +141,7 @@ function AscsErsClusterDetails({
             ]}
           />
           <div className="flex justify-center">
-            <DottedPagination pages={sapSystems} onChange={setSapSystem} />
+            <DottedPagination pages={sapSystems} onChange={setCurrentSapSystem} />
           </div>
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
