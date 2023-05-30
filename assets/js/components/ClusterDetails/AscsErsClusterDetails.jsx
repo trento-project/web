@@ -13,6 +13,7 @@ import ChecksComingSoon from '@static/checks-coming-soon.svg';
 import SBDDetails from './SBDDetails';
 import SiteDetails from './SiteDetails';
 import StoppedResources from './StoppedResources';
+import { enrichNodes } from './HanaClusterDetails';
 
 const nodeDetailsConfig = {
   usePadding: false,
@@ -65,10 +66,7 @@ function AscsErsClusterDetails({
   useEffect(() => {
     const enrichedSapSystems = details?.sap_systems.map((sapSystem) => ({
       ...sapSystem,
-      nodes: sapSystem?.nodes.map((node) => ({
-        ...node,
-        ...hosts.find(({ hostname }) => hostname === node.name),
-      })),
+      nodes: enrichNodes(sapSystem?.nodes, hosts),
     }));
 
     setSapSystems(enrichedSapSystems);
@@ -141,7 +139,10 @@ function AscsErsClusterDetails({
             ]}
           />
           <div className="flex justify-center">
-            <DottedPagination pages={sapSystems} onChange={setCurrentSapSystem} />
+            <DottedPagination
+              pages={sapSystems}
+              onChange={setCurrentSapSystem}
+            />
           </div>
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
