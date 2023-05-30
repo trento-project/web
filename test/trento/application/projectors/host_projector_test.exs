@@ -130,7 +130,7 @@ defmodule Trento.HostProjectorTest do
     refute_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
   end
 
-  test "should project a host without the cluster when HostRemovedFromCluster event is received" do
+  test "should set the cluster_id to nil if a HostRemovedFromCluster event is received and the host is still part of the cluster" do
     insert(:cluster, id: cluster_id = Faker.UUID.v4())
 
     insert(
@@ -149,6 +149,27 @@ defmodule Trento.HostProjectorTest do
     projection = Repo.get!(HostReadModel, host_id)
 
     assert nil == projection.cluster_id
+  end
+
+  test "should not set the cluster_id to nil if a HostRemovedFromCluster event is received and the host is not part of the cluster anymore" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
+
+    insert(
+      :host,
+      id: host_id = UUID.uuid4(),
+      hostname: Faker.StarWars.character(),
+      cluster_id: cluster_id
+    )
+
+    event = %HostRemovedFromCluster{
+      host_id: host_id,
+      cluster_id: UUID.uuid4()
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    projection = Repo.get!(HostReadModel, host_id)
+
+    assert cluster_id == projection.cluster_id
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{
