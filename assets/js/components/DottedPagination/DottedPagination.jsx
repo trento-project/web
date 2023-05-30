@@ -32,6 +32,7 @@ function DottedPagination({
   return (
     <div className="flex items-center">
       <Arrow
+        data-testid="left-arrow"
         onClick={() => {
           const newIndex = selectedIndex > 0 ? selectedIndex - 1 : 0;
           setSelectedIndex(newIndex);
@@ -57,6 +58,7 @@ function DottedPagination({
           />
         ))}
       <Arrow
+        data-testid="right-arrow"
         onClick={() => {
           const newIndex =
             selectedIndex < pagesLength - 1

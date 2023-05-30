@@ -8,6 +8,7 @@ import {
   executionRequested,
 } from '@state/actions/lastExecutions';
 import { getLastExecution } from '@state/selectors/lastExecutions';
+import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from '../ClusterLink';
 
@@ -56,7 +57,15 @@ export function ClusterDetailsPage() {
         />
       );
     case 'ascs_ers':
-      return <div>ASCS/ERS</div>;
+      return (
+        <AscsErsClusterDetails
+          clusterName={getClusterName(cluster)}
+          cibLastWritten={cluster.cib_last_written}
+          provider={cluster.provider}
+          hosts={clusterHosts}
+          details={cluster.details}
+        />
+      );
     default:
       return <div>Unknown cluster type</div>;
   }
