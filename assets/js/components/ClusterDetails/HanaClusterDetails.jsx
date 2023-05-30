@@ -121,7 +121,10 @@ function HanaClusterDetails({
               />{' '}
               <span>Start Execution</span>
               {!hasSelectedChecks && (
-                <Tooltip tooltipText="Select some Checks first!" />
+                <Tooltip
+                  tooltipText="Select some Checks first!"
+                  width="-translate-x-1/4"
+                />
               )}
             </TriggerChecksExecutionRequest>
           </div>
