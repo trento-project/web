@@ -853,7 +853,8 @@ defmodule Trento.Domain.SapSystem do
          %SapSystem{
            sap_system_id: sap_system_id,
            database: %Database{
-             instances: instances
+             instances: instances,
+             deregistered_at: nil
            }
          },
          deregistered_at

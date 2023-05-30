@@ -1705,6 +1705,122 @@ defmodule Trento.SapSystemTest do
       )
     end
 
+    test "should correctly deregister the database in a scale out scenarion, with two primary and two secondary, no SAP system registered" do
+      sap_system_id = UUID.uuid4()
+      first_primary_database_host_id = UUID.uuid4()
+      other_primary_database_host_id = UUID.uuid4()
+
+      secondary_database_host_id = UUID.uuid4()
+      other_secondary_database_host_id = UUID.uuid4()
+
+      deregistered_at = DateTime.utc_now()
+
+      db_instance_number_1 = "00"
+      db_instance_number_2 = "01"
+      db_instance_number_3 = "02"
+      db_instance_number_4 = "03"
+
+      db_sid = UUID.uuid4()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: db_sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: first_primary_database_host_id,
+          sid: db_sid,
+          instance_number: db_instance_number_1,
+          system_replication: "Primary"
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: other_primary_database_host_id,
+          sid: db_sid,
+          instance_number: db_instance_number_2,
+          system_replication: "Primary"
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: secondary_database_host_id,
+          instance_number: db_instance_number_3,
+          system_replication: "Secondary"
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: other_secondary_database_host_id,
+          instance_number: db_instance_number_4,
+          system_replication: "Secondary"
+        )
+      ]
+
+      assert_events(
+        initial_events,
+        [
+          %DeregisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: first_primary_database_host_id,
+            instance_number: db_instance_number_1,
+            deregistered_at: deregistered_at
+          },
+          %DeregisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: other_primary_database_host_id,
+            instance_number: db_instance_number_2,
+            deregistered_at: deregistered_at
+          },
+          %DeregisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: secondary_database_host_id,
+            instance_number: db_instance_number_3,
+            deregistered_at: deregistered_at
+          },
+          %DeregisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: other_secondary_database_host_id,
+            instance_number: db_instance_number_4,
+            deregistered_at: deregistered_at
+          }
+        ],
+        [
+          %DatabaseInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: first_primary_database_host_id,
+            instance_number: db_instance_number_1,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: other_primary_database_host_id,
+            instance_number: db_instance_number_2,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: secondary_database_host_id,
+            instance_number: db_instance_number_3,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: other_secondary_database_host_id,
+            instance_number: db_instance_number_4,
+            deregistered_at: deregistered_at
+          }
+        ]
+      )
+    end
+
     test "should deregister an ENQREP Application Instance, SAP system registered" do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
