@@ -18,11 +18,9 @@ function AscsErsClusterDetails({
   provider,
   details,
 }) {
-  const [sapSystems, setSapSystems] = useState([]);
   const [currentSapSystem, setSapSystem] = useState(null);
 
   useEffect(() => {
-    setSapSystems(details?.sap_systems);
     setSapSystem(details?.sap_systems[0]);
   }, [details]);
 
@@ -92,7 +90,10 @@ function AscsErsClusterDetails({
             ]}
           />
           <div className="flex justify-center">
-            <DottedPagination pages={sapSystems} onChange={setSapSystem} />
+            <DottedPagination
+              pages={details?.sap_systems}
+              onChange={setSapSystem}
+            />
           </div>
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
