@@ -1705,7 +1705,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should correctly deregister the database in a scale out scenarion, with two primary and two secondary, no SAP system registered" do
+    test "should correctly deregister the database in a scale out scenario, with two primary and two secondary, no SAP system registered" do
       sap_system_id = UUID.uuid4()
       first_primary_database_host_id = UUID.uuid4()
       other_primary_database_host_id = UUID.uuid4()
