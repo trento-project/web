@@ -14,6 +14,7 @@ defmodule Trento.Domain.SapSystem.Database do
   deftype do
     field :sid, :string
     embeds_many :instances, Instance
+    field :deregistered_at, :utc_datetime_usec
     field :health, Ecto.Enum, values: Health.values()
   end
 end

@@ -499,7 +499,7 @@ defmodule Trento.Domain.SapSystem do
   end
 
   def apply(
-        %SapSystem{database: %Database{instances: instances}} = sap_system,
+        %SapSystem{database: %Database{instances: instances} = database} = sap_system,
         %DatabaseInstanceDeregistered{
           instance_number: instance_number,
           host_id: host_id
@@ -517,13 +517,14 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{
       sap_system
       | database: %Database{
-          instances: instances
+          database
+          | instances: instances
         }
     }
   end
 
   def apply(
-        %SapSystem{application: %Application{instances: instances}} = sap_system,
+        %SapSystem{application: %Application{instances: instances} = application} = sap_system,
         %ApplicationInstanceDeregistered{instance_number: instance_number, host_id: host_id}
       ) do
     instances =
@@ -538,18 +539,19 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{
       sap_system
       | application: %Application{
-          instances: instances
+          application
+          | instances: instances
         }
     }
   end
 
   def apply(
         %SapSystem{database: database} = sap_system,
-        %DatabaseDeregistered{}
+        %DatabaseDeregistered{deregistered_at: deregistered_at}
       ) do
     %SapSystem{
       sap_system
-      | database: Map.put(database, :sid, nil)
+      | database: Map.put(database, :deregistered_at, deregistered_at)
     }
   end
 
@@ -561,8 +563,7 @@ defmodule Trento.Domain.SapSystem do
       ) do
     %SapSystem{
       sap_system
-      | deregistered_at: deregistered_at,
-        sid: nil
+      | deregistered_at: deregistered_at
     }
   end
 
@@ -813,18 +814,19 @@ defmodule Trento.Domain.SapSystem do
   defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{
            sap_system_id: sap_system_id,
-           database: %Database{
-             sid: nil
-           }
+           deregistered_at: nil,
+           database: %Database{deregistered_at: database_deregistered_at}
          },
          deregistered_at
-       ) do
+       )
+       when not is_nil(database_deregistered_at) do
     %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
   end
 
   defp maybe_emit_sap_system_deregistered_event(
          %SapSystem{
            sap_system_id: sap_system_id,
+           deregistered_at: nil,
            application: %Application{
              instances: instances
            }
@@ -836,10 +838,13 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
+  defp maybe_emit_sap_system_deregistered_event(_, _), do: nil
+
   defp maybe_emit_database_deregistered_event(
          %SapSystem{
            sap_system_id: sap_system_id,
            database: %Database{
+             deregistered_at: nil,
              instances: []
            }
          },
@@ -852,7 +857,8 @@ defmodule Trento.Domain.SapSystem do
          %SapSystem{
            sap_system_id: sap_system_id,
            database: %Database{
-             instances: instances
+             instances: instances,
+             deregistered_at: nil
            }
          },
          deregistered_at
