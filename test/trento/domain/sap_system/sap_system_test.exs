@@ -1635,7 +1635,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should deregister the primary instance, the entire database and then the secondary instance without deregistering the database a second time, SAP system not registered" do
+    test "should deregister the primary instance, the entire database and then the secondary instance, SAP system not registered" do
       sap_system_id = UUID.uuid4()
       primary_database_host_id = UUID.uuid4()
       secondary_database_host_id = UUID.uuid4()
@@ -2339,7 +2339,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should deregister the primary instance of database, the SAP system and deregister the ABAP application instance without deregistering the SAP system a second time" do
+    test "should deregister the primary instance of database, the SAP system and deregister the ABAP application instance" do
       sap_system_id = UUID.uuid4()
       deregistered_at = DateTime.utc_now()
 
