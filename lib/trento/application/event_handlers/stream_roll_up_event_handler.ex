@@ -21,7 +21,8 @@ defmodule Trento.StreamRollUpEventHandler do
 
   alias Trento.Domain.Events.{
     ClusterTombstoned,
-    HostTombstoned
+    HostTombstoned,
+    SapSystemTombstoned
   }
 
   require Logger
@@ -133,6 +134,14 @@ defmodule Trento.StreamRollUpEventHandler do
     Logger.info("Rolling up cluster: #{cluster_id} because ClusterTombstoned is received")
 
     commanded().dispatch(%RollUpCluster{cluster_id: cluster_id},
+      consistency: :strong
+    )
+  end
+
+  def handle(%SapSystemTombstoned{sap_system_id: sap_system_id}, _) do
+    Logger.info("Rolling up sap system: #{sap_system_id} because SapSystemTombstoned is received")
+
+    commanded().dispatch(%RollUpSapSystem{sap_system_id: sap_system_id},
       consistency: :strong
     )
   end

@@ -27,6 +27,7 @@ defmodule Trento.Factory do
     HostRegistered,
     HostTombstoned,
     SapSystemRegistered,
+    SapSystemTombstoned,
     SlesSubscriptionsUpdated
   }
 
@@ -467,6 +468,12 @@ defmodule Trento.Factory do
   def cluster_tombstoned_event_factory do
     ClusterTombstoned.new!(%{
       cluster_id: Faker.UUID.v4()
+    })
+  end
+
+  def sap_system_tombstoned_event_factory do
+    SapSystemTombstoned.new!(%{
+      sap_system_id: Faker.UUID.v4()
     })
   end
 end
