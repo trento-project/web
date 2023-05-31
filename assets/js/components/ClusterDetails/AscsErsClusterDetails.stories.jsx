@@ -1,8 +1,13 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
+import { faker } from '@faker-js/faker';
+
 import {
+  addHostsToAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
+  ascsErsClusterNodeFactory,
+  ascsErsSapSystemFactory,
   clusterFactory,
 } from '@lib/test-utils/factories';
 
@@ -14,6 +19,27 @@ const {
   cib_last_written: cibLastWritten,
   details,
 } = clusterFactory.build({ type: 'ascs_ers' });
+
+const multiSidDetails = ascsErsClusterDetailsFactory.build({
+  sap_systems_count: 3,
+});
+
+const nodes = [
+  ascsErsClusterNodeFactory.build({
+    roles: ['ascs', 'ers'],
+    virtual_ips: [faker.internet.ip(), faker.internet.ip()],
+    filesystems: [faker.system.filePath(), faker.system.filePath()],
+  }),
+  ascsErsClusterNodeFactory.build({
+    roles: [],
+    virtual_ips: [],
+    filesystems: [],
+  }),
+];
+
+const failoverDetails = ascsErsClusterDetailsFactory.build({
+  sap_systems: [ascsErsSapSystemFactory.build({ nodes, distributed: false })],
+});
 
 export default {
   title: 'AscsErsClusterDetails',
@@ -38,6 +64,7 @@ export const Single = {
     clusterName,
     cibLastWritten,
     provider,
+    hosts: addHostsToAscsErsClusterDetails(details),
     details,
   },
   render: (args) => (
@@ -50,7 +77,23 @@ export const Single = {
 export const MultiSID = {
   args: {
     ...Single.args,
-    details: ascsErsClusterDetailsFactory.build({ sap_systems_count: 3 }),
+    hosts: addHostsToAscsErsClusterDetails(multiSidDetails),
+    details: multiSidDetails,
+  },
+  render: (args) => (
+    <ContainerWrapper>
+      <AscsErsClusterDetails {...args} />
+    </ContainerWrapper>
+  ),
+};
+
+export const Failover = {
+  args: {
+    clusterName,
+    cibLastWritten,
+    provider,
+    hosts: addHostsToAscsErsClusterDetails(failoverDetails),
+    details: failoverDetails,
   },
   render: (args) => (
     <ContainerWrapper>

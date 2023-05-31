@@ -2,27 +2,76 @@ import React, { useState, useEffect } from 'react';
 
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
-
+import Table from '@components/Table';
 import ListView from '@components/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
+import HostLink from '@components/HostLink';
 
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
 import SBDDetails from './SBDDetails';
+import SiteDetails from './SiteDetails';
 import StoppedResources from './StoppedResources';
+import { enrichNodes } from './HanaClusterDetails';
+
+const nodeDetailsConfig = {
+  usePadding: false,
+  columns: [
+    {
+      title: 'Hostname',
+      key: '',
+      render: (_, { id, name }) => <HostLink hostId={id}>{name}</HostLink>,
+    },
+    {
+      title: 'Role',
+      key: 'roles',
+      render: (content) =>
+        content?.map((role) => role.toUpperCase()).join(', '),
+    },
+    {
+      title: 'Virtual IP',
+      key: 'virtual_ips',
+      className: 'table-col-m',
+      render: (content) => content?.join(', '),
+    },
+    {
+      title: 'Filesystem',
+      key: 'filesystems',
+      className: 'table-col-m',
+      render: (content) => content?.join(', '),
+    },
+    {
+      title: '',
+      key: '',
+      className: 'table-col-xs',
+      render: (_, item) => {
+        const { attributes, resources } = item;
+        return <SiteDetails attributes={attributes} resources={resources} />;
+      },
+    },
+  ],
+};
 
 function AscsErsClusterDetails({
   clusterName,
   cibLastWritten,
   provider,
+  hosts,
   details,
 }) {
-  const [currentSapSystem, setSapSystem] = useState(null);
+  const [sapSystems, setSapSystems] = useState([]);
+  const [currentSapSystem, setCurrentSapSystem] = useState(null);
 
   useEffect(() => {
-    setSapSystem(details?.sap_systems[0]);
-  }, [details]);
+    const enrichedSapSystems = details?.sap_systems.map((sapSystem) => ({
+      ...sapSystem,
+      nodes: enrichNodes(sapSystem?.nodes, hosts),
+    }));
+
+    setSapSystems(enrichedSapSystems);
+    setCurrentSapSystem(enrichedSapSystems[0]);
+  }, [hosts, details]);
 
   return (
     <div>
@@ -91,8 +140,8 @@ function AscsErsClusterDetails({
           />
           <div className="flex justify-center">
             <DottedPagination
-              pages={details?.sap_systems}
-              onChange={setSapSystem}
+              pages={sapSystems}
+              onChange={setCurrentSapSystem}
             />
           </div>
         </div>
@@ -112,6 +161,10 @@ function AscsErsClusterDetails({
       {details && details.stopped_resources.length > 0 && (
         <StoppedResources resources={details.stopped_resources} />
       )}
+
+      <div className="mt-2">
+        <Table config={nodeDetailsConfig} data={currentSapSystem?.nodes} />
+      </div>
 
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>

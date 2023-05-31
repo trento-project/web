@@ -20,6 +20,12 @@ import SiteDetails from './SiteDetails';
 import SBDDetails from './SBDDetails';
 import StoppedResources from './StoppedResources';
 
+export const enrichNodes = (clusterNodes, hosts) =>
+  clusterNodes?.map((node) => ({
+    ...node,
+    ...hosts.find(({ hostname }) => hostname === node.name),
+  }));
+
 const siteDetailsConfig = {
   usePadding: false,
   columns: [
@@ -69,10 +75,7 @@ function HanaClusterDetails({
   onStartExecution,
   navigate,
 }) {
-  const enrichedNodes = details?.nodes?.map((node) => ({
-    ...node,
-    ...hosts.find(({ hostname }) => hostname === node.name),
-  }));
+  const enrichedNodes = enrichNodes(details?.nodes, hosts);
 
   return (
     <div>
