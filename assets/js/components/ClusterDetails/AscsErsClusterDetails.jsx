@@ -146,11 +146,11 @@ function AscsErsClusterDetails({
           </div>
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center h-full">
             <h1 className="text-center text-2xl font-bold">Check Results</h1>
             <h6 className="opacity-60 text-xs">Coming soon for ASCS/ERS</h6>
             <img
-              className="w-full"
+              className="h-full inline-block align-middle"
               alt="checks coming soon"
               src={ChecksComingSoon}
             />
