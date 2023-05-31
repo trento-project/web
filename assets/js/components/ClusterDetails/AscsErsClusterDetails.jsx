@@ -112,9 +112,9 @@ function AscsErsClusterDetails({
             ]}
           />
         </div>
-        <div className="mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-2/5 mr-4">
+        <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
           <ListView
-            className="grid-rows-2 mb-10"
+            className="grid-rows-2"
             titleClassName="text-lg"
             orientation="vertical"
             data={[
@@ -138,7 +138,7 @@ function AscsErsClusterDetails({
               },
             ]}
           />
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-auto pt-8 mb-2">
             <DottedPagination
               pages={sapSystems}
               onChange={setCurrentSapSystem}
