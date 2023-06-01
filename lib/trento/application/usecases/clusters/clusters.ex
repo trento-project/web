@@ -114,6 +114,7 @@ defmodule Trento.Clusters do
   defp maybe_request_checks_execution(%{
          id: cluster_id,
          provider: provider,
+         type: cluster_type,
          selected_checks: selected_checks
        }) do
     hosts_data =
@@ -126,7 +127,10 @@ defmodule Trento.Clusters do
     Checks.request_execution(
       UUID.uuid4(),
       cluster_id,
-      provider,
+      %{
+        "provider" => provider,
+        "cluster_type" => cluster_type
+      },
       hosts_data,
       selected_checks
     )
