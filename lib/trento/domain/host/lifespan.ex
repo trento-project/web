@@ -9,16 +9,11 @@ defmodule Trento.Domain.Host.Lifespan do
 
   alias Commanded.Aggregates.DefaultLifespan
 
-  alias Trento.Domain.Events.{
-    HostRollUpRequested
-  }
+  alias Trento.Domain.Events.HostRollUpRequested
 
   @doc """
   The host aggregate will be stopped after a HostRollUpRequested event is received.
   This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.
-
-  The host aggregate will be stopped after a HostTombstoned event is received.
-  The host is decommissioned and can be safely stopped.
   """
   def after_event(%HostRollUpRequested{}), do: :stop
   def after_event(event), do: DefaultLifespan.after_event(event)
