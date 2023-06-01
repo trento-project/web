@@ -17,7 +17,7 @@ function SBDDetails({ sbdDevices }) {
           <h2 className="text-2xl font-bold">SBD/Fencing</h2>
         </div>
       </div>
-      <div className="mt-2 bg-white shadow rounded-lg py-4 px-8 tn-sbd-details">
+      <div className="mt-2 bg-white shadow rounded-lg py-4 px-8 space-y-2 tn-sbd-details">
         {sbdDevices.map(({ device, status }) => (
           <div key={device}>
             {getStatusPill(status)} {device}

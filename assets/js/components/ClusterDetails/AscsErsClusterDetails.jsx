@@ -112,9 +112,9 @@ function AscsErsClusterDetails({
             ]}
           />
         </div>
-        <div className="mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-2/5 mr-4">
+        <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
           <ListView
-            className="grid-rows-2 mb-10"
+            className="grid-rows-2"
             titleClassName="text-lg"
             orientation="vertical"
             data={[
@@ -138,7 +138,7 @@ function AscsErsClusterDetails({
               },
             ]}
           />
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-auto pt-8 mb-2">
             <DottedPagination
               pages={sapSystems}
               onChange={setCurrentSapSystem}
@@ -146,11 +146,11 @@ function AscsErsClusterDetails({
           </div>
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center h-full">
             <h1 className="text-center text-2xl font-bold">Check Results</h1>
             <h6 className="opacity-60 text-xs">Coming soon for ASCS/ERS</h6>
             <img
-              className="w-full"
+              className="h-full inline-block align-middle"
               alt="checks coming soon"
               src={ChecksComingSoon}
             />
