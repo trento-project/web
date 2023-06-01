@@ -6,6 +6,6 @@ defmodule Trento.Domain.Events.HostTombstoned do
   use Trento.Event
 
   defevent do
-    field(:host_id, Ecto.UUID)
+    field :host_id, Ecto.UUID
   end
 end

@@ -6,6 +6,6 @@ defmodule Trento.Domain.Events.ClusterTombstoned do
   use Trento.Event
 
   defevent do
-    field(:cluster_id, Ecto.UUID)
+    field :cluster_id, Ecto.UUID
   end
 end
