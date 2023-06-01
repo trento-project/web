@@ -15,7 +15,15 @@ defmodule Trento.Integration.ChecksTest do
   test "should publish an ExecutionRequested event" do
     execution_id = UUID.uuid4()
     group_id = UUID.uuid4()
-    provider = :some_provider
+
+    env = %{
+      "string" => "string",
+      "bool" => false,
+      "number" => 1,
+      "nil" => nil,
+      "atom" => :atom
+    }
+
     selected_checks = ["check_1", "check_2"]
 
     hosts = [
@@ -31,7 +39,13 @@ defmodule Trento.Integration.ChecksTest do
                  %Target{agent_id: "agent_1", checks: ^selected_checks},
                  %Target{agent_id: "agent_2", checks: ^selected_checks}
                ],
-               env: %{"provider" => %{kind: {:string_value, "some_provider"}}}
+               env: %{
+                 "string" => %{kind: {:string_value, "string"}},
+                 "bool" => %{kind: {:bool_value, false}},
+                 "number" => %{kind: {:number_value, 1}},
+                 "nil" => %{kind: {:null_value, nil}},
+                 "atom" => %{kind: {:string_value, "atom"}}
+               }
              } = event
 
       :ok
@@ -41,7 +55,7 @@ defmodule Trento.Integration.ChecksTest do
              Checks.request_execution(
                execution_id,
                group_id,
-               provider,
+               env,
                hosts,
                selected_checks
              )
