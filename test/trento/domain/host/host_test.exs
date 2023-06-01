@@ -651,7 +651,7 @@ defmodule Trento.HostTest do
   end
 
   describe "deregistration" do
-    test "should emit the HostDeregistered and HostTombstoned event" do
+    test "should emit the HostDeregistered and HostTombstoned events" do
       host_id = Faker.UUID.v4()
       dat = DateTime.utc_now()
 

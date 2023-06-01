@@ -1,7 +1,6 @@
 defmodule Trento.Domain.Events.SapSystemTombstoned do
   @moduledoc """
-  This event is emitted when a SAP system is deregistered (decommissioned) and all the database/application instances
-  are also deregistered. This event shutdown the aggregate
+  This event is emitted when a SAP system is deregistered (decommissioned)
   """
 
   use Trento.Event

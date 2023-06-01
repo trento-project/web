@@ -810,7 +810,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should emit the ClusterDeregistered event and ClusterTombstoned event when the last ClusterHost is deregistered and set the deregistration date into the state" do
+    test "should emit the ClusterDeregistered and ClusterTombstoned events when the last ClusterHost is deregistered and set the deregistration date into the state" do
       cluster_id = Faker.UUID.v4()
       dat = DateTime.utc_now()
       host_1_added_event = build(:host_added_to_cluster_event, cluster_id: cluster_id)

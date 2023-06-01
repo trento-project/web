@@ -1343,7 +1343,7 @@ defmodule Trento.SapSystemTest do
   end
 
   describe "tombstoning" do
-    test "should tombstone a deregistered SAP system when no applications and no databases instances are left" do
+    test "should tombstone a deregistered SAP system when no application and no database instances are left" do
       sap_system_id = UUID.uuid4()
       host_id = UUID.uuid4()
       secondary_database_host_id = UUID.uuid4()
