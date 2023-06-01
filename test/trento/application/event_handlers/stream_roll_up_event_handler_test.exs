@@ -112,4 +112,38 @@ defmodule Trento.StreamRollUpEventHandlerTest do
     assert :ok =
              StreamRollUpEventHandler.handle(event, %{stream_version: @max_stream_version + 1})
   end
+
+  test "should dispatch the host roll-up command when HostTombstoned is received" do
+    host_id = UUID.uuid4()
+    event = build(:host_tombstoned_event, host_id: host_id)
+
+    expect(Trento.Commanded.Mock, :dispatch, fn %RollUpHost{host_id: ^host_id}, _ ->
+      :ok
+    end)
+
+    assert :ok = StreamRollUpEventHandler.handle(event, %{stream_version: 1})
+  end
+
+  test "should dispatch the cluster roll-up command when ClusterTombstoned is received" do
+    cluster_id = UUID.uuid4()
+    event = build(:cluster_tombstoned_event, cluster_id: cluster_id)
+
+    expect(Trento.Commanded.Mock, :dispatch, fn %RollUpCluster{cluster_id: ^cluster_id}, _ ->
+      :ok
+    end)
+
+    assert :ok = StreamRollUpEventHandler.handle(event, %{stream_version: 1})
+  end
+
+  test "should dispatch the SAP system roll-up command when SapSystemTombstoned is received" do
+    sap_system_id = UUID.uuid4()
+    event = build(:sap_system_tombstoned_event, sap_system_id: sap_system_id)
+
+    expect(Trento.Commanded.Mock, :dispatch, fn %RollUpSapSystem{sap_system_id: ^sap_system_id},
+                                                _ ->
+      :ok
+    end)
+
+    assert :ok = StreamRollUpEventHandler.handle(event, %{stream_version: 1})
+  end
 end

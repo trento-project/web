@@ -19,12 +19,15 @@ defmodule Trento.Factory do
   alias Trento.Domain.Events.{
     ApplicationInstanceRegistered,
     ClusterRegistered,
+    ClusterTombstoned,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     HostAddedToCluster,
     HostDetailsUpdated,
     HostRegistered,
+    HostTombstoned,
     SapSystemRegistered,
+    SapSystemTombstoned,
     SlesSubscriptionsUpdated
   }
 
@@ -454,5 +457,23 @@ defmodule Trento.Factory do
       "FailureIgnored" => false,
       "NodesRunningOn" => 1
     }
+  end
+
+  def host_tombstoned_event_factory do
+    HostTombstoned.new!(%{
+      host_id: Faker.UUID.v4()
+    })
+  end
+
+  def cluster_tombstoned_event_factory do
+    ClusterTombstoned.new!(%{
+      cluster_id: Faker.UUID.v4()
+    })
+  end
+
+  def sap_system_tombstoned_event_factory do
+    SapSystemTombstoned.new!(%{
+      sap_system_id: Faker.UUID.v4()
+    })
   end
 end
