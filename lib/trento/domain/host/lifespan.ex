@@ -10,8 +10,7 @@ defmodule Trento.Domain.Host.Lifespan do
   alias Commanded.Aggregates.DefaultLifespan
 
   alias Trento.Domain.Events.{
-    HostRollUpRequested,
-    HostTombstoned
+    HostRollUpRequested
   }
 
   @doc """
@@ -22,7 +21,6 @@ defmodule Trento.Domain.Host.Lifespan do
   The host is decommissioned and can be safely stopped.
   """
   def after_event(%HostRollUpRequested{}), do: :stop
-  def after_event(%HostTombstoned{}), do: :stop
   def after_event(event), do: DefaultLifespan.after_event(event)
 
   def after_command(command), do: DefaultLifespan.after_command(command)

@@ -10,8 +10,7 @@ defmodule Trento.Domain.Cluster.Lifespan do
   alias Commanded.Aggregates.DefaultLifespan
 
   alias Trento.Domain.Events.{
-    ClusterRollUpRequested,
-    ClusterTombstoned
+    ClusterRollUpRequested
   }
 
   @doc """
@@ -23,7 +22,6 @@ defmodule Trento.Domain.Cluster.Lifespan do
   meaning the cluster aggregate can be safely stopped.
   """
   def after_event(%ClusterRollUpRequested{}), do: :stop
-  def after_event(%ClusterTombstoned{}), do: :stop
   def after_event(event), do: DefaultLifespan.after_event(event)
 
   def after_command(command), do: DefaultLifespan.after_command(command)

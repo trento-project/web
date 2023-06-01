@@ -10,8 +10,7 @@ defmodule Trento.Domain.SapSystem.Lifespan do
   alias Commanded.Aggregates.DefaultLifespan
 
   alias Trento.Domain.Events.{
-    SapSystemRollUpRequested,
-    SapSystemTombstoned
+    SapSystemRollUpRequested
   }
 
   @doc """
@@ -22,7 +21,6 @@ defmodule Trento.Domain.SapSystem.Lifespan do
   and without applications/databases left.
   """
   def after_event(%SapSystemRollUpRequested{}), do: :stop
-  def after_event(%SapSystemTombstoned{}), do: :stop
 
   def after_event(event), do: DefaultLifespan.after_event(event)
 
