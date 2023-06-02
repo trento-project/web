@@ -10,19 +10,21 @@ function ExpectationsResults({
   errorMessage = 'An error occurred',
 }) {
   const renderedResults = isTargetHost
-    ? results.map(({ name, return_value, failure_message }) => ({
+    ? results.map(({ name, return_value, failure_message, message }) => ({
         name,
         passing: !!return_value,
         failureMessage: failure_message,
+        evaluationErrorMessage: message,
       }))
-    : results.map(({ name, result, failure_message }) => ({
+    : results.map(({ name, result, failure_message, message }) => ({
         name,
         passing: !!result,
         failureMessage: failure_message,
+        evaluationErrorMessage: message,
       }));
 
   const expectationsEvaluations = renderedResults.map(
-    ({ name, passing, failureMessage }) => ({
+    ({ name, passing, failureMessage, evaluationErrorMessage }) => ({
       title: name,
       content: passing,
       render: (isPassing) => (
@@ -33,6 +35,9 @@ function ExpectationsResults({
         >
           <span>{isPassing ? 'Passing' : 'Failing'}</span>
           {failureMessage && <span className="block">{failureMessage}</span>}
+          {evaluationErrorMessage && (
+            <span className="block">{evaluationErrorMessage}</span>
+          )}
         </div>
       ),
     })
