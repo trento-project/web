@@ -16,6 +16,7 @@ import {
   executionFactFactory,
   agentCheckResultFactory,
   agentsCheckResultsWithHostname,
+  catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
   executionExpectationEvaluationFactory,
   expectationResultFactory,
@@ -31,6 +32,20 @@ describe('CheckResultDetail Component', () => {
     const [{ id: target1 }, { id: target2 }] = clusterHosts;
     const targetType = 'host';
 
+    const expectations = [
+      ...catalogExpectExpectationFactory.buildList(5),
+      catalogExpectSameExpectationFactory.build(),
+    ];
+
+    const [
+      { name: expectationName1 },
+      { name: expectationName2 },
+      { name: expectationName3 },
+      { name: expectationName4 },
+      { name: expectationName5 },
+      { name: expectationName6 },
+    ] = expectations;
+
     let checkResult = emptyCheckResultFactory.build({
       targets: [target1, target2],
     });
@@ -39,14 +54,14 @@ describe('CheckResultDetail Component', () => {
       agents_check_results: [{ values, facts }, _],
     } = checkResult;
 
-    checkResult = addPassingExpectExpectation(checkResult);
-    checkResult = addPassingExpectExpectation(checkResult);
-    checkResult = addCriticalExpectExpectation(checkResult);
-    checkResult = addCriticalExpectExpectation(checkResult);
-    checkResult = addCriticalExpectExpectation(checkResult);
+    checkResult = addPassingExpectExpectation(checkResult, expectationName1);
+    checkResult = addPassingExpectExpectation(checkResult, expectationName2);
+    checkResult = addCriticalExpectExpectation(checkResult, expectationName3);
+    checkResult = addCriticalExpectExpectation(checkResult, expectationName4);
+    checkResult = addCriticalExpectExpectation(checkResult, expectationName5);
     checkResult = addPassingExpectSameExpectation(
       checkResult,
-      'expectation_name'
+      expectationName6
     );
 
     const executionData = checksExecutionCompletedFactory.build({
@@ -59,7 +74,7 @@ describe('CheckResultDetail Component', () => {
         targetID={target1}
         targetType={targetType}
         executionData={executionData}
-        expectations={[]}
+        expectations={expectations}
       />
     );
 

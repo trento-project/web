@@ -2,8 +2,8 @@ import React from 'react';
 
 import {
   getAgentCheckResultByAgentID,
+  getExpectStatementsResults,
   getExpectSameStatementsResults,
-  getExpectStatements,
   getClusterCheckResults,
   isAgentCheckError,
   isTargetHost,
@@ -15,7 +15,7 @@ import GatheredFacts from './GatheredFacts';
 
 function CheckResultDetail({
   checkID,
-  expectations,
+  expectations = [],
   targetID,
   targetType,
   executionData,
@@ -38,7 +38,7 @@ function CheckResultDetail({
   const isError = isAgentCheckError(targetResult);
 
   const targetExpectationsResults = targetHost
-    ? getExpectStatements(expectation_evaluations)
+    ? getExpectStatementsResults(expectations, expectation_evaluations)
     : getExpectSameStatementsResults(expectations, expectation_results);
 
   const gatheredFacts = targetHost
