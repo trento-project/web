@@ -7,6 +7,8 @@ defmodule TrentoWeb.V1.HostController do
     Hosts
   }
 
+  alias TrentoWeb.OpenApi.V1.Schema
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
@@ -17,8 +19,7 @@ defmodule TrentoWeb.V1.HostController do
     description: "List all the discovered hosts on the target infrastructure",
     responses: [
       ok:
-        {"A collection of the discovered hosts", "application/json",
-         TrentoWeb.OpenApi.Schema.Host.HostsCollection}
+        {"A collection of the discovered hosts", "application/json", Schema.Host.HostsCollection}
     ]
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
@@ -41,8 +42,8 @@ defmodule TrentoWeb.V1.HostController do
     ],
     responses: [
       no_content: "The heartbeat has been updated",
-      not_found: TrentoWeb.OpenApi.Schema.NotFound.response(),
-      bad_request: TrentoWeb.OpenApi.Schema.BadRequest.response(),
+      not_found: Schema.NotFound.response(),
+      bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
     ]
 

@@ -4,7 +4,7 @@ defmodule TrentoWeb.HealthController do
 
   alias Ecto.Adapters.SQL
 
-  alias TrentoWeb.OpenApi.Schema.{
+  alias TrentoWeb.OpenApi.V1.Schema.{
     Health,
     Ready
   }

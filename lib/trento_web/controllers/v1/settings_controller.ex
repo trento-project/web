@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   alias Trento.Installation
 
-  alias TrentoWeb.OpenApi.Schema
+  alias TrentoWeb.OpenApi.V1.Schema
 
   use OpenApiSpex.ControllerSpecs
 
