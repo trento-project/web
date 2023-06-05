@@ -31,15 +31,15 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
     if Enum.empty?(available_api_versions),
       do: raise(ArgumentError, ":available_api_versions must have 1 element at least")
 
-    opts[:router] || raise ArgumentError, "expected :router option"
+    Keyword.get(opts, :router) || raise ArgumentError, "expected :router option"
 
     opts
   end
 
   @impl true
   def call(%Plug.Conn{path_info: [_ | path_parts], method: method} = conn, opts) do
-    router = opts[:router]
-    available_api_versions = opts[:available_api_versions]
+    router = Keyword.get(opts, :router)
+    available_api_versions = Keyword.get(opts, :available_api_versions)
 
     case find_versioned_path(router, available_api_versions, path_parts, method) do
       nil ->
