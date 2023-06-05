@@ -11,8 +11,10 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
   end
 
   describe "call/2" do
-    test "should raise ArgumentError when :latest_version option is missing", %{conn: conn} do
-      assert_raise ArgumentError, "expected :latest_version option", fn ->
+    test "should raise ArgumentError when :available_api_versions option is missing", %{
+      conn: conn
+    } do
+      assert_raise ArgumentError, "expected :available_api_versions option", fn ->
         conn = %{conn | path_info: ["api", "hosts"]}
 
         ApiRedirector.call(conn, [])
@@ -23,7 +25,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       assert_raise ArgumentError, "expected :router option", fn ->
         conn = %{conn | path_info: ["api", "hosts"]}
 
-        ApiRedirector.call(conn, latest_version: "v1")
+        ApiRedirector.call(conn, available_api_versions: ["v2", "v1"])
       end
     end
 
@@ -39,7 +41,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       resp =
         conn
         |> Map.put(:path_info, ["api", "hosts"])
-        |> ApiRedirector.call(latest_version: "v1", router: ErrorNotFoundRouter)
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: ErrorNotFoundRouter)
         |> json_response(404)
 
       assert %{
@@ -62,7 +64,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       resp =
         conn
         |> Map.put(:path_info, ["api", "hosts"])
-        |> ApiRedirector.call(latest_version: "v1", router: NotFoundRouter)
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: NotFoundRouter)
         |> json_response(404)
 
       assert %{
@@ -72,12 +74,36 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
              } == resp
     end
 
-    test "should redirect to the correct path when the route is recognized with the latest version",
+    test "should redirect to the newest path when the route with the newest version is available",
          %{conn: conn} do
       conn =
         conn
         |> Map.put(:path_info, ["api", "test"])
-        |> ApiRedirector.call(latest_version: "v1", router: FoundRouter)
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: FoundRouter)
+
+      assert 307 == conn.status
+
+      location_header = get_resp_header(conn, "location")
+
+      assert ["/api/v2/test"] == location_header
+    end
+
+    test "should redirect to the next newest path when the route when it is the first available version",
+         %{conn: conn} do
+      defmodule V1FoundRouter do
+        def __match_route__(_, ["api", "v1", "test"], _) do
+          {%{}, %{}, %{}, {%{}, %{}}}
+        end
+
+        def __match_route__(_, _, _) do
+          :error
+        end
+      end
+
+      conn =
+        conn
+        |> Map.put(:path_info, ["api", "test"])
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: V1FoundRouter)
 
       assert 307 == conn.status
 
@@ -86,18 +112,18 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       assert ["/api/v1/test"] == location_header
     end
 
-    test "should redirect to the correct path with a subroute path when the route is recognized with the latest version",
+    test "should redirect to the correct path with a subroute path when the route is recognized in the available versions list",
          %{conn: conn} do
       conn =
         conn
         |> Map.put(:path_info, ["api", "some-resource", "12345"])
-        |> ApiRedirector.call(latest_version: "v1", router: FoundRouter)
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: FoundRouter)
 
       assert 307 == conn.status
 
       location_header = get_resp_header(conn, "location")
 
-      assert ["/api/v1/some-resource/12345"] == location_header
+      assert ["/api/v2/some-resource/12345"] == location_header
     end
   end
 end
