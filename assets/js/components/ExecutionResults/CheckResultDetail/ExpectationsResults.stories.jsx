@@ -1,4 +1,9 @@
 import { faker } from '@faker-js/faker';
+import {
+  executionExpectationEvaluationErrorFactory,
+  failingExpectEvaluationFactory,
+} from '@lib/test-utils/factories';
+
 import ExpectationsResults from './ExpectationsResults';
 
 export default {
@@ -15,5 +20,19 @@ export const Default = {
     ],
     isError: false,
     errorMessage: 'An error occurred',
+  },
+};
+
+export const WithFailureMessage = {
+  args: {
+    ...Default.args,
+    results: [failingExpectEvaluationFactory.build()],
+  },
+};
+
+export const WithEvaluationError = {
+  args: {
+    ...Default.args,
+    results: [executionExpectationEvaluationErrorFactory.build()],
   },
 };
