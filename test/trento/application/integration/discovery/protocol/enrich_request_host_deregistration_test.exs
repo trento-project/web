@@ -8,7 +8,7 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
   alias Trento.Support.Middleware.Enrichable
 
   describe "enrich RequestHostDeregistration" do
-    test "should return the original command if a host with critical health is requested to be deregistered" do
+    test "should deregister host if deregistration request is outside debounce period" do
       now = DateTime.utc_now()
 
       %{id: id} = insert(:host)
@@ -20,7 +20,7 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
                Enrichable.enrich(command, %{})
     end
 
-    test "should return the original command if a host with unknown health is requested to be deregistered after debounce" do
+    test "should deregister host if host does not have a heartbeat entry" do
       now = DateTime.utc_now()
 
       %{id: id} = insert(:host)
@@ -31,7 +31,7 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
                Enrichable.enrich(command, %{})
     end
 
-    test "should return an error if a host with critical health is requested to be deregistered before debounce timer" do
+    test "should return an error if deregistration request is within debounce period" do
       now = DateTime.utc_now()
 
       %{id: id} = insert(:host)
@@ -42,18 +42,7 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
       assert {:error, :host_alive} == Enrichable.enrich(command, %{})
     end
 
-    test "should return an error if a host with passing health is requested to be deregistered" do
-      now = DateTime.utc_now()
-
-      %{id: id} = insert(:host)
-      insert(:heartbeat, agent_id: id, timestamp: DateTime.add(DateTime.utc_now(), -1, :second))
-
-      command = RequestHostDeregistration.new!(%{host_id: id, requested_at: now})
-
-      assert {:error, :host_alive} == Enrichable.enrich(command, %{})
-    end
-
-    test "should return error if host does not exist" do
+    test "should return an error if host does not exist" do
       command =
         RequestHostDeregistration.new!(%{host_id: UUID.uuid4(), requested_at: DateTime.utc_now()})
 
