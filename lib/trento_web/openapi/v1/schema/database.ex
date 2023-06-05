@@ -1,10 +1,10 @@
-defmodule TrentoWeb.OpenApi.Schema.Database do
+defmodule TrentoWeb.OpenApi.V1.Schema.Database do
   @moduledoc false
 
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.Schema.{ResourceHealth, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{ResourceHealth, Tags}
 
   defmodule DatabaseInstance do
     @moduledoc false

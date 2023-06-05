@@ -1,10 +1,10 @@
-defmodule TrentoWeb.OpenApi.Schema.Host do
+defmodule TrentoWeb.OpenApi.V1.Schema.Host do
   @moduledoc false
 
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.Schema.{Provider, SlesSubscription, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{Provider, SlesSubscription, Tags}
 
   defmodule IPv4 do
     @moduledoc false

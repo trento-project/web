@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.Platform do
+defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
   @moduledoc false
 
   require OpenApiSpex

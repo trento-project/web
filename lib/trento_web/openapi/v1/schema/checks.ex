@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.Checks.ChecksSelectionRequest do
+defmodule TrentoWeb.OpenApi.V1.Schema.Checks.ChecksSelectionRequest do
   @moduledoc false
   require OpenApiSpex
   alias OpenApiSpex.Schema

@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.Ready do
+defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
   @moduledoc """
   Ready
   """

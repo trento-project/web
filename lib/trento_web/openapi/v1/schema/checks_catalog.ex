@@ -1,10 +1,10 @@
-defmodule TrentoWeb.OpenApi.Schema.ChecksCatalog do
+defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
   @moduledoc false
 
   require OpenApiSpex
 
   alias OpenApiSpex.Schema
-  alias TrentoWeb.OpenApi.Schema.Provider
+  alias TrentoWeb.OpenApi.V1.Schema.Provider
 
   defmodule Check do
     @moduledoc false

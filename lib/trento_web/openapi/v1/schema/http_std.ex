@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.HttpStd do
+defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
   @moduledoc false
 
   require OpenApiSpex

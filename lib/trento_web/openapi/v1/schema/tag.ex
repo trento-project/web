@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.Tags do
+defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
   @moduledoc false
 
   require OpenApiSpex
