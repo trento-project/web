@@ -28,7 +28,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       @behaviour OpenApi
 
       @impl OpenApi
-      def spec do
+      def spec(router \\ Router) do
         OpenApiSpex.resolve_schema_modules(%OpenApi{
           servers: [
             endpoint()
@@ -42,7 +42,7 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
             securitySchemes: %{"authorization" => %SecurityScheme{type: "http", scheme: "bearer"}}
           },
           security: [%{"authorization" => []}],
-          paths: build_paths_for_version(unquote(api_version)),
+          paths: build_paths_for_version(unquote(api_version), router),
           tags: [
             %Tag{
               name: "Target Infrastructure",
@@ -72,10 +72,10 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
         end
       end
 
-      defp build_paths_for_version(version) do
-        excluded_versions = List.delete(Router.available_api_versions(), version)
+      defp build_paths_for_version(version, router) do
+        excluded_versions = List.delete(router.available_api_versions(), version)
 
-        Router
+        router
         |> Paths.from_router()
         |> Enum.reject(fn {path, _info} ->
           current_version =
