@@ -2,7 +2,8 @@ defmodule TrentoWeb.Router do
   use TrentoWeb, :router
   use Pow.Phoenix.Router
 
-  @latest_api_version "v1"
+  # From newest to oldest
+  @available_api_versions ["v1"]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -138,7 +139,7 @@ defmodule TrentoWeb.Router do
     pipe_through :api
 
     match :*, "/*path/", TrentoWeb.Plugs.ApiRedirector,
-      latest_version: @latest_api_version,
+      available_api_versions: @available_api_versions,
       router: __MODULE__
   end
 

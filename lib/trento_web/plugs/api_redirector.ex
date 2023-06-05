@@ -1,14 +1,18 @@
 defmodule TrentoWeb.Plugs.ApiRedirector do
   @moduledoc """
     This Plug is responsible for redirecting api requests without a specific version
-    to the latest version, when the requested path exists
+    to the latest available version, when the requested path exists
 
     For example:
-      Requesting /api/test, will redirect to /api/<latest version/test, only if the /api/<latest version/test exists.
+      Requesting /api/test, will try to redirect to to /api/<latest version>/test,
+      only if the /api/<latest version>/test exists, otherwise, it will continue with the next available version.
+      If the route doesn't match with any of the available versions, it returns a not found error.
 
-    router and latest_version options should be provided.
+    router and available_api_versions options should be provided.
 
-    latest_version option should be a string,which will be interpolated with the path.
+    `available_api_versions` option should be a list with the available version from newest to oldest.
+
+    For example: ["v3", "v2", "v1"]
   """
   @behaviour Plug
 
@@ -19,38 +23,50 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
   import Plug.Conn
 
   @impl true
-  def init(opts), do: opts
+  def init(opts) do
+    available_api_versions =
+      Keyword.get(opts, :available_api_versions) ||
+        raise ArgumentError, "expected :available_api_versions option"
+
+    if Enum.empty?(available_api_versions),
+      do: raise(ArgumentError, ":available_api_versions must have 1 element at least")
+
+    Keyword.get(opts, :router) || raise ArgumentError, "expected :router option"
+
+    opts
+  end
 
   @impl true
   def call(%Plug.Conn{path_info: [_ | path_parts], method: method} = conn, opts) do
-    latest_version = Keyword.get(opts, :latest_version)
     router = Keyword.get(opts, :router)
+    available_api_versions = Keyword.get(opts, :available_api_versions)
 
-    unless latest_version do
-      raise ArgumentError, "expected :latest_version option"
-    end
+    case find_versioned_path(router, available_api_versions, path_parts, method) do
+      nil ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> resp(:not_found, Jason.encode!(ErrorView.render("404.json", %{detail: "Not found"})))
+        |> halt()
 
-    unless router do
-      raise ArgumentError, "expected :router option"
-    end
-
-    redirect_path = build_path(latest_version, path_parts)
-
-    if route_exists?(router, redirect_path, method) do
-      conn
-      |> put_status(307)
-      |> redirect(redirect_path)
-      |> halt()
-    else
-      conn
-      |> put_resp_content_type("application/json")
-      |> resp(:not_found, Jason.encode!(ErrorView.render("404.json", %{detail: "Not found"})))
-      |> halt()
+      versioned_path ->
+        conn
+        |> put_status(307)
+        |> redirect(versioned_path)
+        |> halt()
     end
   end
 
-  defp build_path(version, path_parts) do
-    "/api/" <> version <> "/" <> Enum.join(path_parts, "/")
+  # Find first available versioned path. If none is found nil is returned.
+  defp find_versioned_path(router, available_api_vesions, path_parts, method) do
+    available_api_vesions
+    |> Enum.map(fn version ->
+      ["/api", version]
+      |> Enum.concat(path_parts)
+      |> Enum.join("/")
+    end)
+    |> Enum.find_value(nil, fn path ->
+      if route_exists?(router, path, method), do: path
+    end)
   end
 
   defp redirect(conn, to) do
