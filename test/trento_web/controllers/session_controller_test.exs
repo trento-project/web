@@ -6,7 +6,7 @@ defmodule TrentoWeb.SessionControllerTest do
   import Mox
   import OpenApiSpex.TestAssertions
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   setup [:set_mox_from_context, :verify_on_exit!]
 

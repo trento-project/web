@@ -5,7 +5,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
   import OpenApiSpex.TestAssertions
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   describe "list" do
     test "should list all sap_systems", %{conn: conn} do
