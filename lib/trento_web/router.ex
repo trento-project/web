@@ -16,8 +16,12 @@ defmodule TrentoWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.ApiSpec
     plug TrentoWeb.Auth.JWTAuthPlug, otp_app: :trento
+  end
+
+  pipeline :api_v1 do
+    plug :api
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.V1.ApiSpec
   end
 
   pipeline :protected_api do
@@ -38,8 +42,10 @@ defmodule TrentoWeb.Router do
     pipe_through :browser
 
     get "/api/doc", OpenApiSpex.Plug.SwaggerUI,
-      path: "/api/openapi",
-      urls: [%{url: "/api/openapi", name: "Version 1"}]
+      path: "/api/v1/openapi",
+      urls: [
+        %{url: "/api/v1/openapi", name: "Version 1"}
+      ]
   end
 
   scope "/api", TrentoWeb do
@@ -66,6 +72,8 @@ defmodule TrentoWeb.Router do
     get "/me", TrentoWeb.SessionController, :show, as: :me
 
     scope "/v1", TrentoWeb.V1 do
+      pipe_through [:api_v1]
+
       get "/about", AboutController, :info
 
       get "/installation/api-key", InstallationController, :get_api_key
@@ -117,6 +125,8 @@ defmodule TrentoWeb.Router do
     pipe_through [:api, :apikey_authenticated]
 
     scope "/v1", TrentoWeb.V1 do
+      pipe_through [:api_v1]
+
       post "/collect", DiscoveryController, :collect
       post "/hosts/:id/heartbeat", HostController, :heartbeat
     end
@@ -126,13 +136,19 @@ defmodule TrentoWeb.Router do
     pipe_through :api
 
     scope "/v1", TrentoWeb.V1 do
+      pipe_through [:api_v1]
+
       get "/prometheus/targets", PrometheusController, :targets
     end
   end
 
   scope "/api" do
     pipe_through :api
-    get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+
+    scope "/v1" do
+      pipe_through :api_v1
+      get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+    end
   end
 
   scope "/api" do
@@ -186,4 +202,6 @@ defmodule TrentoWeb.Router do
 
     get "/", PageController, :index
   end
+
+  def available_api_versions, do: @available_api_versions
 end
