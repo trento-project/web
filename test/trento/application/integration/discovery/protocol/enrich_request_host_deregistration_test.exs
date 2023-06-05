@@ -55,7 +55,11 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
       insert(:heartbeat,
         agent_id: id,
         timestamp:
-          DateTime.add(DateTime.utc_now(), -(@total_deregistration_debounce - 2_000), :millisecond)
+          DateTime.add(
+            DateTime.utc_now(),
+            -(@total_deregistration_debounce - 2_000),
+            :millisecond
+          )
       )
 
       command = RequestHostDeregistration.new!(%{host_id: id, requested_at: now})

@@ -3,11 +3,7 @@ defimpl Trento.Support.Middleware.Enrichable,
   alias Trento.Domain.Commands.RequestHostDeregistration
 
   alias Trento.Repo
-
-  alias Trento.Heartbeat
   alias Trento.HostReadModel
-
-  import Ecto.Query
 
   @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]
   @deregistration_debounce Application.compile_env!(
@@ -21,25 +17,29 @@ defimpl Trento.Support.Middleware.Enrichable,
           | {:error, :host_alive}
           | {:error, :host_not_registered}
   def enrich(%RequestHostDeregistration{host_id: host_id} = command, _) do
-    with true <- Repo.exists?(HostReadModel, id: host_id),
-         :ok <- host_deregisterable(host_id) do
-      {:ok, command}
-    else
-      {:error, :host_alive} -> {:error, :host_alive}
-      _ -> {:error, :host_not_registered}
-    end
+    Repo.get(HostReadModel, host_id)
+    |> Repo.preload([:heartbeat_timestamp])
+    |> host_deregisterable(command)
   end
 
-  @spec host_deregisterable(Ecto.UUID) :: :ok | {:error, :host_alive}
-  defp host_deregisterable(host_id) do
-    query =
-      from(h in Heartbeat,
-        where:
-          ^DateTime.utc_now() <
-            datetime_add(h.timestamp, @total_deregistration_debounce, "millisecond") and
-            h.agent_id == ^host_id
-      )
+  defp host_deregisterable(
+         %HostReadModel{heartbeat_timestamp: nil},
+         %RequestHostDeregistration{} = command
+       ),
+       do: {:ok, command}
 
-    if Repo.exists?(query), do: {:error, :host_alive}, else: :ok
+  defp host_deregisterable(
+         %HostReadModel{heartbeat_timestamp: %Trento.Heartbeat{timestamp: timestamp}},
+         %RequestHostDeregistration{} = command
+       ) do
+    if :lt ==
+         DateTime.compare(
+           DateTime.utc_now(),
+           DateTime.add(timestamp, @total_deregistration_debounce, :millisecond)
+         ),
+       do: {:error, :host_alive},
+       else: {:ok, command}
   end
+
+  defp host_deregisterable(_, _), do: {:error, :host_not_registered}
 end
