@@ -7,12 +7,28 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
   alias Trento.Domain.Commands.RequestHostDeregistration
   alias Trento.Support.Middleware.Enrichable
 
+  @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]
+  @deregistration_debounce Application.compile_env!(
+                             :trento,
+                             :deregistration_debounce
+                           )
+  @total_deregistration_debounce @heartbeat_interval + @deregistration_debounce
+
   describe "enrich RequestHostDeregistration" do
     test "should deregister host if deregistration request is outside debounce period" do
       now = DateTime.utc_now()
 
       %{id: id} = insert(:host)
-      insert(:heartbeat, agent_id: id, timestamp: DateTime.add(DateTime.utc_now(), -30, :second))
+
+      insert(:heartbeat,
+        agent_id: id,
+        timestamp:
+          DateTime.add(
+            DateTime.utc_now(),
+            -(@total_deregistration_debounce + 10_000),
+            :millisecond
+          )
+      )
 
       command = RequestHostDeregistration.new!(%{host_id: id, requested_at: now})
 
@@ -35,7 +51,12 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
       now = DateTime.utc_now()
 
       %{id: id} = insert(:host)
-      insert(:heartbeat, agent_id: id, timestamp: DateTime.add(DateTime.utc_now(), -6, :second))
+
+      insert(:heartbeat,
+        agent_id: id,
+        timestamp:
+          DateTime.add(DateTime.utc_now(), -(@total_deregistration_debounce - 2_000), :millisecond)
+      )
 
       command = RequestHostDeregistration.new!(%{host_id: id, requested_at: now})
 
