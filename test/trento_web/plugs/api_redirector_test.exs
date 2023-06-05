@@ -10,25 +10,27 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
     end
   end
 
-  describe "call/2" do
-    test "should raise ArgumentError when :available_api_versions option is missing", %{
-      conn: conn
-    } do
+  describe "init/1" do
+    test "should raise ArgumentError when :available_api_versions option is missing" do
       assert_raise ArgumentError, "expected :available_api_versions option", fn ->
-        conn = %{conn | path_info: ["api", "hosts"]}
-
-        ApiRedirector.call(conn, [])
+        ApiRedirector.init([])
       end
     end
 
-    test "should raise ArgumentError when :router option is missing", %{conn: conn} do
+    test "should raise ArgumentError when :available_api_versions is an empty list" do
+      assert_raise ArgumentError, ":available_api_versions must have 1 element at least", fn ->
+        ApiRedirector.init(available_api_versions: [])
+      end
+    end
+
+    test "should raise ArgumentError when :router option is missing" do
       assert_raise ArgumentError, "expected :router option", fn ->
-        conn = %{conn | path_info: ["api", "hosts"]}
-
-        ApiRedirector.call(conn, available_api_versions: ["v2", "v1"])
+        ApiRedirector.init(available_api_versions: ["v2", "v1"])
       end
     end
+  end
 
+  describe "call/2" do
     test "should return 404 with the error view when the path is not recognized by the router", %{
       conn: conn
     } do
@@ -74,7 +76,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
              } == resp
     end
 
-    test "should redirect to the newest path when the route with the newest version is available",
+    test "should redirect to the newest version path when this version is available",
          %{conn: conn} do
       conn =
         conn
@@ -88,7 +90,7 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       assert ["/api/v2/test"] == location_header
     end
 
-    test "should redirect to the next newest path when the route when it is the first available version",
+    test "should redirect to the next available version path if the newest version is not available",
          %{conn: conn} do
       defmodule V1FoundRouter do
         def __match_route__(_, ["api", "v1", "test"], _) do
