@@ -127,9 +127,9 @@ defmodule Trento.Clusters do
     Checks.request_execution(
       UUID.uuid4(),
       cluster_id,
-      %{
-        "provider" => provider,
-        "cluster_type" => cluster_type
+      %Checks.ClusterExecutionEnv{
+        provider: provider,
+        cluster_type: cluster_type
       },
       hosts_data,
       selected_checks

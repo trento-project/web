@@ -10,9 +10,11 @@ defmodule Trento.Integration.Checks do
     Target
   }
 
+  alias Trento.Integration.Checks.ClusterExecutionEnv
+
   require Logger
 
-  @spec request_execution(String.t(), String.t(), map, [map], [String.t()]) ::
+  @spec request_execution(String.t(), String.t(), ClusterExecutionEnv.t(), [map], [String.t()]) ::
           :ok | {:error, :any}
   def request_execution(execution_id, cluster_id, env, hosts, selected_checks) do
     execution_requested =
@@ -37,14 +39,10 @@ defmodule Trento.Integration.Checks do
     end
   end
 
-  defp build_env(env) do
-    Enum.into(env, %{}, fn {k, v} -> {k, %{kind: build_env_entry(v)}} end)
+  defp build_env(%ClusterExecutionEnv{cluster_type: cluster_type, provider: provider}) do
+    %{
+      "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
+      "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
+    }
   end
-
-  # :struct_value and :list_value are missing
-  defp build_env_entry(value) when is_binary(value), do: {:string_value, value}
-  defp build_env_entry(value) when is_boolean(value), do: {:bool_value, value}
-  defp build_env_entry(value) when is_number(value), do: {:number_value, value}
-  defp build_env_entry(value) when is_nil(value), do: {:null_value, value}
-  defp build_env_entry(value) when is_atom(value), do: {:string_value, Atom.to_string(value)}
 end

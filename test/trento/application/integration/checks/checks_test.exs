@@ -12,16 +12,13 @@ defmodule Trento.Integration.ChecksTest do
     Target
   }
 
-  test "should publish an ExecutionRequested event" do
+  test "should publish an ExecutionRequested event with cluster env" do
     execution_id = UUID.uuid4()
     group_id = UUID.uuid4()
 
-    env = %{
-      "string" => "string",
-      "bool" => false,
-      "number" => 1,
-      "nil" => nil,
-      "atom" => :atom
+    env = %Checks.ClusterExecutionEnv{
+      cluster_type: :hana_scale_up,
+      provider: :azure
     }
 
     selected_checks = ["check_1", "check_2"]
@@ -40,11 +37,8 @@ defmodule Trento.Integration.ChecksTest do
                  %Target{agent_id: "agent_2", checks: ^selected_checks}
                ],
                env: %{
-                 "string" => %{kind: {:string_value, "string"}},
-                 "bool" => %{kind: {:bool_value, false}},
-                 "number" => %{kind: {:number_value, 1}},
-                 "nil" => %{kind: {:null_value, nil}},
-                 "atom" => %{kind: {:string_value, "atom"}}
+                 "cluster_type" => %{kind: {:string_value, "hana_scale_up"}},
+                 "provider" => %{kind: {:string_value, "azure"}}
                }
              } = event
 
