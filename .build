@@ -104,6 +104,7 @@ Trento.Infrastructure.Messaging.html
 Trento.Installation.html
 Trento.Integration.Checks.AMQP.Consumer.html
 Trento.Integration.Checks.AMQP.Processor.html
+Trento.Integration.Checks.ClusterExecutionEnv.html
 Trento.Integration.Checks.html
 Trento.Integration.Discovery.CloudDiscoveryPayload.AwsMetadata.html
 Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.Compute.OsProfile.html
@@ -277,8 +278,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-1D4B27EA.js
-dist/sidebar_items-8AB6E5DE.js
+dist/search_items-D48D01A5.js
+dist/sidebar_items-51C87DE2.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

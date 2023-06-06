@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-8AB6E5DE.js"></script>
+    <script src="dist/sidebar_items-51C87DE2.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -133,7 +133,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#request_execution/5" translate="no">request_execution(execution_id, cluster_id, provider, hosts, selected_checks)</a>
+          <a href="#request_execution/5" translate="no">request_execution(execution_id, cluster_id, env, hosts, selected_checks)</a>
 
         </div>
 
@@ -160,9 +160,9 @@ Functions
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">request_execution(execution_id, cluster_id, provider, hosts, selected_checks)</h1>
+    <h1 class="signature" translate="no">request_execution(execution_id, cluster_id, env, hosts, selected_checks)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/checks/checks.ex#L18" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/checks/checks.ex#L19" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -177,11 +177,10 @@ Functions
           <pre translate="no"><span class="attribute">@spec</span> request_execution(
   <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
-  <a href="Trento.Domain.Enums.Provider.html#t:t/0">Trento.Domain.Enums.Provider.t</a>(),
+  <a href="Trento.Integration.Checks.ClusterExecutionEnv.html#t:t/0">Trento.Integration.Checks.ClusterExecutionEnv.t</a>(),
   [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()],
   [<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()]
-) ::
-  :ok | {:error, :any}</pre>
+) :: :ok | {:error, :any}</pre>
 
       </div>
 
