@@ -1,14 +1,15 @@
-defmodule TrentoWeb.OpenApi.Schema.NotFound do
+defmodule TrentoWeb.OpenApi.V1.Schema.BadRequest do
   @moduledoc """
-  404 - Not Found
+  Bad Request
   """
+
   require OpenApiSpex
 
   alias OpenApiSpex.Operation
   alias OpenApiSpex.Schema
 
   OpenApiSpex.schema(%{
-    title: "NotFound",
+    title: "BadRequest",
     type: :object,
     properties: %{
       errors: %Schema{
@@ -16,8 +17,11 @@ defmodule TrentoWeb.OpenApi.Schema.NotFound do
         items: %Schema{
           type: :object,
           properties: %{
-            detail: %Schema{type: :string, example: "The requested resource cannot be found."},
-            title: %Schema{type: :string, example: "Not Found"}
+            detail: %Schema{
+              type: :string,
+              example: "Invalid request payload."
+            },
+            title: %Schema{type: :string, example: "Bad Request"}
           }
         }
       }
@@ -26,7 +30,7 @@ defmodule TrentoWeb.OpenApi.Schema.NotFound do
 
   def response do
     Operation.response(
-      "Not Found",
+      "Bad Request",
       "application/json",
       __MODULE__
     )

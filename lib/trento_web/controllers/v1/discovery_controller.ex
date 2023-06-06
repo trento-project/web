@@ -4,7 +4,7 @@ defmodule TrentoWeb.V1.DiscoveryController do
 
   alias Trento.Integration.Discovery
 
-  alias TrentoWeb.OpenApi.Schema
+  alias TrentoWeb.OpenApi.V1.Schema
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController

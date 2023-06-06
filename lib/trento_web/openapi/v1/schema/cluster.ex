@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.Cluster do
+defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
   @moduledoc false
 
   require OpenApiSpex
@@ -6,7 +6,7 @@ defmodule TrentoWeb.OpenApi.Schema.Cluster do
 
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.Schema.{Provider, ResourceHealth, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{Provider, ResourceHealth, Tags}
 
   defmodule ClusterResource do
     @moduledoc false

@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.Health do
+defmodule TrentoWeb.OpenApi.V1.Schema.Health do
   @moduledoc """
   Healthcheck
   """

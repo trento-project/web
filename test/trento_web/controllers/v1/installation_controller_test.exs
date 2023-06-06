@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.InstallationControllerTest do
 
   import OpenApiSpex.TestAssertions
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   test "should return the api key", %{conn: conn} do
     api_spec = ApiSpec.spec()

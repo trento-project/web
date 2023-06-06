@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   import OpenApiSpex.TestAssertions
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   import Trento.Factory
 

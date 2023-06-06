@@ -1,7 +1,7 @@
 defmodule TrentoWeb.V1.PrometheusControllerTest do
   use TrentoWeb.ConnCase, async: true
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   import OpenApiSpex.TestAssertions
   import Mox

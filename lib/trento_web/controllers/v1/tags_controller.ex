@@ -4,7 +4,7 @@ defmodule TrentoWeb.V1.TagsController do
 
   alias Trento.Tags
 
-  alias TrentoWeb.OpenApi.Schema
+  alias TrentoWeb.OpenApi.V1.Schema
 
   action_fallback TrentoWeb.FallbackController
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
@@ -69,7 +69,7 @@ defmodule TrentoWeb.V1.TagsController do
     ],
     responses: [
       no_content: "The tag has been removed from the resource",
-      bad_request: TrentoWeb.OpenApi.Schema.BadRequest.response(),
+      bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response(),
       not_found: OpenApiSpex.JsonErrorResponse.response()
     ]

@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.DiscoveryEvent do
+defmodule TrentoWeb.OpenApi.V1.Schema.DiscoveryEvent do
   @moduledoc false
 
   alias OpenApiSpex.Schema

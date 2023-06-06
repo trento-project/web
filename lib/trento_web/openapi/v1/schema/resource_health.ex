@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.ResourceHealth do
+defmodule TrentoWeb.OpenApi.V1.Schema.ResourceHealth do
   @moduledoc false
 
   require OpenApiSpex

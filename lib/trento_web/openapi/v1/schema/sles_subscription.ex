@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.SlesSubscription do
+defmodule TrentoWeb.OpenApi.V1.Schema.SlesSubscription do
   @moduledoc false
 
   require OpenApiSpex

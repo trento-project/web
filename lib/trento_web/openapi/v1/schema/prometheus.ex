@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.Schema.Prometheus do
+defmodule TrentoWeb.OpenApi.V1.Schema.Prometheus do
   @moduledoc false
 
   require OpenApiSpex
