@@ -68,36 +68,36 @@ function handleResponseStatus(response) {
   return response;
 }
 
-export const post = function post(url, data) {
+export const post = function post(url, data, config = null) {
   return networkClient
-    .post(url, data)
+    .post(url, data, config)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);
     });
 };
 
-export const del = function del(url) {
+export const del = function del(url, config = null) {
   return networkClient
-    .delete(url)
+    .delete(url, config)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);
     });
 };
 
-export const put = function put(url, data) {
+export const put = function put(url, data, config = null) {
   return networkClient
-    .put(url, data)
+    .put(url, data, config)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);
     });
 };
 
-export const get = function get(url) {
+export const get = function get(url, config = null) {
   return networkClient
-    .get(url)
+    .get(url, config)
     .then(handleResponseStatus)
     .catch((error) => {
       handleError(error);
