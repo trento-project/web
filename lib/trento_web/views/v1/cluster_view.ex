@@ -23,33 +23,6 @@ defmodule TrentoWeb.V1.ClusterView do
     |> Map.put(:id, data.cluster_id)
   end
 
-  def render("settings.json", %{settings: settings}) do
-    render_many(settings, __MODULE__, "setting.json", as: :setting)
-  end
-
-  def render("setting.json", %{
-        setting: %{
-          host_id: host_id,
-          hostname: hostname,
-          user: user,
-          provider_data: provider_data
-        }
-      }) do
-    %{
-      host_id: host_id,
-      hostname: hostname,
-      user: user,
-      default_user: determine_default_connection_user(provider_data)
-    }
-  end
-
-  defp determine_default_connection_user(%{
-         "admin_username" => admin_username
-       }),
-       do: admin_username
-
-  defp determine_default_connection_user(_), do: "root"
-
   defp adapt_v1(%{type: type} = cluster) when type in [:hana_scale_up, :hana_scale_out, :unknown],
     do: cluster
 
