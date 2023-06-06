@@ -11,6 +11,10 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
+  setup do
+    %{api_spec: ApiSpec.spec()}
+  end
+
   describe "list" do
     test "should list all hosts", %{conn: conn} do
       %{id: host_id} = insert(:host)
@@ -66,7 +70,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> response(204)
     end
 
-    test "should send 422 response if the host is still alive", %{conn: conn} do
+    test "should send 422 response if the host is still alive", %{conn: conn, api_spec: api_spec} do
       %{id: host_id} = insert(:host)
 
       expect(
@@ -79,10 +83,11 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       conn
       |> delete("/api/v1/hosts/#{host_id}")
-      |> response(422)
+      |> json_response(422)
+      |> assert_schema("UnprocessableEntity", api_spec)
     end
 
-    test "should return 404 if the host was not found", %{conn: conn} do
+    test "should return 404 if the host was not found", %{conn: conn, api_spec: api_spec} do
       %{id: host_id} = insert(:host)
 
       expect(
@@ -95,7 +100,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       conn
       |> delete("/api/v1/hosts/#{host_id}")
-      |> response(:not_found)
+      |> json_response(404)
+      |> assert_schema("NotFound", api_spec)
     end
   end
 end

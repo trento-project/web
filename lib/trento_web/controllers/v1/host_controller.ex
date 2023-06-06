@@ -7,9 +7,12 @@ defmodule TrentoWeb.V1.HostController do
     Hosts
   }
 
-  alias TrentoWeb.OpenApi.Schema.{
+  alias TrentoWeb.OpenApi.V1.Schema
+
+  alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
-    NotFound
+    NotFound,
+    UnprocessableEntity
   }
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
@@ -44,8 +47,8 @@ defmodule TrentoWeb.V1.HostController do
     ],
     responses: [
       no_content: "The host has been deregistered",
-      not_found: TrentoWeb.OpenApi.Schema.NotFound.response(),
-      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+      not_found: NotFound.response(),
+      unprocessable_entity: UnprocessableEntity.response()
     ]
 
   @spec delete(Plug.Conn.t(), map) :: Plug.Conn.t()
