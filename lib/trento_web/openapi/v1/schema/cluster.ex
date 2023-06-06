@@ -2,7 +2,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
   @moduledoc false
 
   require OpenApiSpex
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias OpenApiSpex.Schema
 
@@ -37,13 +36,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         site: %Schema{type: :string},
         hana_status: %Schema{type: :string},
         attributes: %Schema{
-          title: "ClusterNodeAttributes",
-          type: :array,
-          items: %Schema{type: :string}
+          type: :object,
+          description: "Node attributes"
         },
         virtual_ip: %Schema{type: :string},
         resources: %Schema{
-          title: "ClustrNodeResources",
           description: "A list of Cluster resources",
           type: :array,
           items: ClusterResource
@@ -57,7 +54,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
     OpenApiSpex.schema(%{
       title: "SbdDevice",
-      description: "Ad Sbd Device",
+      description: "SBD Device",
       type: :object,
       properties: %{
         device: %Schema{type: :string},
@@ -83,22 +80,20 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         sr_health_state: %Schema{type: :string, description: "SR health state"},
         fencing_type: %Schema{type: :string, description: "Fencing Type"},
         stopped_resources: %Schema{
-          title: "ClusterResource",
           description: "A list of the stopped resources on this HANA Cluster",
           type: :array,
           items: ClusterResource
         },
         nodes: %Schema{
-          title: "HanaClusterNodes",
           type: :array,
           items: HanaClusterNode
         },
         sbd_devices: %Schema{
-          title: "SbdDevice",
           type: :array,
           items: SbdDevice
         }
-      }
+      },
+      required: [:nodes]
     })
   end
 
@@ -106,7 +101,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "PacemakerClusterDetail",
+      title: "PacemakerClusterDetails",
       description: "Details of the detected PacemakerCluster",
       nullable: true,
       oneOf: [
@@ -135,7 +130,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         type: %Schema{
           type: :string,
           description: "Detected type of the cluster",
-          enum: ClusterType.values()
+          enum: [:hana_scale_up, :hana_scale_out, :unknown]
         },
         selected_checks: %Schema{
           title: "SelectedChecks",
