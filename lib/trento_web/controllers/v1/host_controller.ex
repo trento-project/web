@@ -52,7 +52,6 @@ defmodule TrentoWeb.V1.HostController do
   def delete(conn, %{id: host_id}) do
     case Hosts.deregister_host(host_id) do
       :ok -> send_resp(conn, 204, "")
-      {:error, :host_alive} -> send_resp(conn, 422, "")
       {:error, error} -> {:error, error}
     end
   end

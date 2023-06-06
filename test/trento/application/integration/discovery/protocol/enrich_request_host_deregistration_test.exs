@@ -48,8 +48,6 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
     end
 
     test "should return an error if deregistration request is within debounce period" do
-      now = DateTime.utc_now()
-
       %{id: id} = insert(:host)
 
       insert(:heartbeat,
@@ -62,9 +60,35 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
           )
       )
 
-      command = RequestHostDeregistration.new!(%{host_id: id, requested_at: now})
+      command = RequestHostDeregistration.new!(%{host_id: id, requested_at: DateTime.utc_now()})
 
       assert {:error, :host_alive} == Enrichable.enrich(command, %{})
+    end
+
+    test "should return an error when deregistering a host that is already deregistered" do
+      %{id: id} = insert(:host, deregistered_at: DateTime.utc_now())
+
+      insert(:heartbeat,
+        agent_id: id,
+        timestamp:
+          DateTime.add(
+            DateTime.utc_now(),
+            -(@total_deregistration_debounce + 10_000),
+            :millisecond
+          )
+      )
+
+      command = RequestHostDeregistration.new!(%{host_id: id, requested_at: DateTime.utc_now()})
+
+      assert {:error, :host_not_registered} == Enrichable.enrich(command, %{})
+    end
+
+    test "should return an error when deregistering a host that is already deregistered and does not have a heartbeat entry" do
+      %{id: id} = insert(:host, deregistered_at: DateTime.utc_now())
+
+      command = RequestHostDeregistration.new!(%{host_id: id, requested_at: DateTime.utc_now()})
+
+      assert {:error, :host_not_registered} == Enrichable.enrich(command, %{})
     end
 
     test "should return an error if host does not exist" do

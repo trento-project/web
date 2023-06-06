@@ -58,6 +58,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Unknown discovery type.")
   end
 
+  def call(conn, {:error, :host_alive}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Requested operation not allowed for live hosts.")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do

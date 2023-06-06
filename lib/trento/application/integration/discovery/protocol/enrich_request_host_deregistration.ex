@@ -23,13 +23,16 @@ defimpl Trento.Support.Middleware.Enrichable,
   end
 
   defp host_deregisterable(
-         %HostReadModel{heartbeat_timestamp: nil},
+         %HostReadModel{heartbeat_timestamp: nil, deregistered_at: nil},
          %RequestHostDeregistration{} = command
        ),
        do: {:ok, command}
 
   defp host_deregisterable(
-         %HostReadModel{heartbeat_timestamp: %Trento.Heartbeat{timestamp: timestamp}},
+         %HostReadModel{
+           heartbeat_timestamp: %Trento.Heartbeat{timestamp: timestamp},
+           deregistered_at: nil
+         },
          %RequestHostDeregistration{} = command
        ) do
     if :lt ==
