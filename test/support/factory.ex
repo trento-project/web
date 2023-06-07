@@ -21,6 +21,7 @@ defmodule Trento.Factory do
 
   alias Trento.Domain.Events.{
     ApplicationInstanceRegistered,
+    ClusterDeregistered,
     ClusterRegistered,
     ClusterTombstoned,
     DatabaseInstanceRegistered,
@@ -28,6 +29,7 @@ defmodule Trento.Factory do
     HostAddedToCluster,
     HostDetailsUpdated,
     HostRegistered,
+    HostRemovedFromCluster,
     HostTombstoned,
     SapSystemRegistered,
     SapSystemTombstoned,
@@ -127,6 +129,21 @@ defmodule Trento.Factory do
       discovered_health: Health.passing(),
       designated_controller: true
     }
+  end
+
+  def host_removed_from_cluster_event_factory do
+    HostRemovedFromCluster.new!(%{
+      host_id: Faker.UUID.v4(),
+      cluster_id: Faker.UUID.v4(),
+      deregistered_at: DateTime.utc_now()
+    })
+  end
+
+  def cluster_deregistered_event_factory do
+    ClusterDeregistered.new!(%{
+      cluster_id: Faker.UUID.v4(),
+      deregistered_at: DateTime.utc_now()
+    })
   end
 
   def cluster_registered_event_factory do

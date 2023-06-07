@@ -233,7 +233,10 @@ defmodule Trento.Domain.Cluster do
   end
 
   def execute(%Cluster{cluster_id: nil}, _),
-    do: {:error, :cluster_not_found}
+    do: {:error, :cluster_not_registered}
+
+  def execute(%Cluster{deregistered_at: deregistered_at}, _) when not is_nil(deregistered_at),
+    do: {:error, :cluster_not_registered}
 
   # Checks selected
   def execute(
