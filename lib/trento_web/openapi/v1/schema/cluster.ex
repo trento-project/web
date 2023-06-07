@@ -37,7 +37,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         hana_status: %Schema{type: :string},
         attributes: %Schema{
           type: :object,
-          description: "Node attributes"
+          description: "Node attributes",
+          additionalProperties: %Schema{type: :string}
         },
         virtual_ip: %Schema{type: :string},
         resources: %Schema{
@@ -134,7 +135,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         },
         selected_checks: %Schema{
           title: "SelectedChecks",
-          description: "A list ids of the checks selected for execution on this cluster",
+          description: "A list of check ids selected for an execution on this cluster",
           type: :array,
           items: %Schema{type: :string}
         },

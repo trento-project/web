@@ -18,7 +18,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
       properties: %{
         attributes: %Schema{
           type: :object,
-          description: "Node attributes"
+          description: "Node attributes",
+          additionalProperties: %Schema{type: :string}
         },
         filesystems: %Schema{
           type: :array,
@@ -63,7 +64,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         filesystem_resource_based: %Schema{
           type: :boolean,
           description:
-            "ACSS and ERS filesystems are handled by the cluster with the Filesystem resource agent"
+            "ASCS and ERS filesystems are handled by the cluster with the Filesystem resource agent"
         },
         nodes: %Schema{
           type: :array,
@@ -144,7 +145,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         },
         selected_checks: %Schema{
           title: "SelectedChecks",
-          description: "A list ids of the checks selected for execution on this cluster",
+          description: "A list of check ids selected for an execution on this cluster",
           type: :array,
           items: %Schema{type: :string}
         },
