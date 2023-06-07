@@ -11,6 +11,8 @@ import {
   expectationResultFactory,
   agentsCheckResultsWithHostname,
   hostFactory,
+  executionExpectationEvaluationErrorFactory,
+  failingExpectEvaluationFactory,
 } from '@lib/test-utils/factories';
 import { EXPECT, EXPECT_SAME } from '@lib/model';
 
@@ -31,6 +33,7 @@ import {
   getClusterCheckResults,
   getExpectSameStatementsResults,
   getExpectSameFacts,
+  getExpectStatementsResults,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -150,6 +153,62 @@ describe('checksUtils', () => {
 
     expect(getExpectStatements(resultList)).toHaveLength(2);
     expect(getExpectSameStatements(resultList)).toHaveLength(1);
+  });
+
+  it('should get expect statements results', () => {
+    const expectations = [
+      ...catalogExpectExpectationFactory.buildList(3),
+      catalogExpectSameExpectationFactory.build(),
+    ];
+
+    const [
+      { name: expectation1 },
+      { name: expectation2 },
+      { name: expectation3 },
+      { name: expectation4 },
+    ] = expectations;
+
+    const evaluationsList = [
+      executionExpectationEvaluationFactory.build({
+        name: expectation1,
+        type: EXPECT,
+      }),
+      executionExpectationEvaluationErrorFactory.build({
+        name: expectation2,
+      }),
+      failingExpectEvaluationFactory.build({
+        name: expectation3,
+      }),
+      executionExpectationEvaluationFactory.build({
+        name: expectation4,
+        type: EXPECT_SAME,
+      }),
+    ];
+
+    const [
+      { return_value: returnValue1 },
+      { message, type },
+      { failure_message, return_value: returnValue3 },
+    ] = evaluationsList;
+
+    expect(getExpectStatementsResults(expectations, evaluationsList)).toEqual([
+      {
+        name: expectation1,
+        return_value: returnValue1,
+        type: 'expect',
+      },
+      {
+        name: expectation2,
+        message,
+        type,
+      },
+      {
+        name: expectation3,
+        type: 'expect',
+        failure_message,
+        return_value: returnValue3,
+      },
+    ]);
   });
 
   it('should get expect_same statement result', () => {

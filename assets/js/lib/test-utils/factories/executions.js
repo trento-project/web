@@ -16,12 +16,11 @@ export const executionValueFactory = Factory.define(({ sequence }) => ({
 
 export const executionExpectationEvaluationFactory = Factory.define(
   ({ sequence, params }) => {
-    const {
-      name = `expectation_${sequence}`,
-      failure_message = params.failure_message
-        ? { failure_message: params.failure_message }
-        : {},
-    } = params;
+    const { name = `expectation_${sequence}` } = params;
+
+    const failure_message = params.failure_message
+      ? { failure_message: params.failure_message }
+      : {};
 
     return {
       name,
@@ -55,12 +54,11 @@ export const executionExpectationEvaluationErrorFactory = Factory.define(
 
 export const expectationResultFactory = Factory.define(
   ({ sequence, params }) => {
-    const {
-      name = `expectation_${sequence}`,
-      failure_message = params.failure_message
-        ? { failure_message: params.failure_message }
-        : {},
-    } = params;
+    const { name = `expectation_${sequence}` } = params;
+
+    const failure_message = params.failure_message
+      ? { failure_message: params.failure_message }
+      : {};
 
     return {
       name,

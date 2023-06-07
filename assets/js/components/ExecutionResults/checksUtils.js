@@ -90,10 +90,21 @@ export const getExpectStatements = (expectationList) =>
 export const getExpectSameStatements = (expectationList) =>
   expectationList.filter(isExpectSame);
 
-export const getExpectSameStatementResult = (expectationResults, name) => {
-  const expectSameStatement = getExpectSameStatements(expectationResults).find(
-    ({ name: resultExpectationName }) => name === resultExpectationName
+const expectationByName =
+  (expectationName) =>
+  ({ name }) =>
+    name === expectationName;
+
+export const getExpectStatementsResults = (
+  expectations,
+  expectationEvaluations
+) =>
+  getExpectStatements(expectations).map(
+    ({ name }) => expectationEvaluations.find(expectationByName(name)) || {}
   );
+
+export const getExpectSameStatementResult = (expectationResults, name) => {
+  const expectSameStatement = expectationResults.find(expectationByName(name));
 
   if (!expectSameStatement) {
     return { name, result: null };

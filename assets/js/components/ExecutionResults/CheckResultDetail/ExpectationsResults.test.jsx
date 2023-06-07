@@ -5,6 +5,7 @@ import { faker } from '@faker-js/faker';
 
 import {
   executionExpectationEvaluationFactory,
+  executionExpectationEvaluationErrorFactory,
   failingExpectEvaluationFactory,
   expectationResultFactory,
   failingExpectationResultFactory,
@@ -16,12 +17,17 @@ import ExpectationsResults from './ExpectationsResults';
 describe('ExpectationsResults Component', () => {
   it('should render expect statements results', () => {
     const failureMessage = faker.lorem.sentence();
+    const evaluationErrorMessage = faker.lorem.sentence();
     const results = [
       ...executionExpectationEvaluationFactory.buildList(3, {
         return_value: true,
       }),
       ...failingExpectEvaluationFactory.buildList(2, {
         failure_message: failureMessage,
+      }),
+      executionExpectationEvaluationErrorFactory.build({
+        name: 'erroring_evaluation',
+        message: evaluationErrorMessage,
       }),
     ];
 
@@ -30,8 +36,9 @@ describe('ExpectationsResults Component', () => {
     render(<ExpectationsResults results={results} />);
 
     expect(screen.getAllByText('Passing')).toHaveLength(3);
-    expect(screen.getAllByText('Failing')).toHaveLength(2);
+    expect(screen.getAllByText('Failing')).toHaveLength(3);
     expect(screen.getAllByText(failureMessage)).toHaveLength(2);
+    expect(screen.getAllByText(evaluationErrorMessage)).toHaveLength(1);
     expect(screen.getByText(expectationName1)).toBeVisible();
     expect(screen.getByText(expectationName3)).toBeVisible();
   });
