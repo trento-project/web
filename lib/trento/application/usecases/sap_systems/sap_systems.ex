@@ -6,6 +6,8 @@ defmodule Trento.SapSystems do
   import Ecto.Query
 
   alias Trento.{
+    ApplicationInstanceReadModel,
+    DatabaseInstanceReadModel,
     DatabaseReadModel,
     SapSystemReadModel
   }
@@ -25,7 +27,7 @@ defmodule Trento.SapSystems do
     ])
   end
 
-  @spec get_all_databases :: [map]
+  @spec get_all_databases :: [DatabaseReadModel.t()]
   def get_all_databases do
     DatabaseReadModel
     |> order_by(asc: :sid)
@@ -34,5 +36,19 @@ defmodule Trento.SapSystems do
       :database_instances,
       :tags
     ])
+  end
+
+  @spec get_application_instances_by_host_id(String.t()) :: [ApplicationInstanceReadModel.t()]
+  def get_application_instances_by_host_id(host_id) do
+    ApplicationInstanceReadModel
+    |> where([a], a.host_id == ^host_id)
+    |> Repo.all()
+  end
+
+  @spec get_database_instances_by_host_id(String.t()) :: [DatabaseInstanceReadModel.t()]
+  def get_database_instances_by_host_id(host_id) do
+    DatabaseInstanceReadModel
+    |> where([d], d.host_id == ^host_id)
+    |> Repo.all()
   end
 end
