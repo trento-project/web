@@ -2,11 +2,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Trento.Factory
+
   import Trento.Integration.DiscoveryFixturesHelper
 
   alias Trento.Integration.Discovery.SapSystemPolicy
 
   alias Trento.Domain.Commands.{
+    DeregisterDatabaseInstance,
     RegisterApplicationInstance,
     RegisterDatabaseInstance
   }
@@ -28,7 +31,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_database"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle()
+             |> SapSystemPolicy.handle([])
   end
 
   test "should return the expected commands when a sap_system payload of type database is handled in the event of a stopped instance" do
@@ -48,7 +51,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_database_stopped_instance"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle()
+             |> SapSystemPolicy.handle([])
   end
 
   test "should return the expected commands when a sap_system payload of type application is handled" do
@@ -67,7 +70,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_application"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle()
+             |> SapSystemPolicy.handle([])
   end
 
   test "should return the expected commands when a sap_system payload of type application and diagnostics is handled" do
@@ -86,6 +89,58 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
             ]} =
              "sap_system_discovery_application_diagnostics"
              |> load_discovery_event_fixture()
-             |> SapSystemPolicy.handle()
+             |> SapSystemPolicy.handle([])
+  end
+
+  describe "delta deregistration" do
+    test "should deregister the old instances and register the new ones" do
+      [%{sap_system_id: sap_system_id_1}, %{sap_system_id: sap_system_id_2}] =
+        database_instances =
+        build_list(
+          2,
+          :database_instance
+        )
+
+      assert {:ok,
+              [
+                %DeregisterDatabaseInstance{
+                  sap_system_id: ^sap_system_id_1
+                },
+                %DeregisterDatabaseInstance{
+                  sap_system_id: ^sap_system_id_2
+                },
+                %RegisterDatabaseInstance{}
+              ]} =
+               "sap_system_discovery_database"
+               |> load_discovery_event_fixture()
+               |> SapSystemPolicy.handle(database_instances)
+    end
+
+    test "should not deregister any instance if the discovered instances did not change" do
+      application_instance =
+        build(:application_instance,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+          instance_number: "02",
+          sid: "HA1"
+        )
+
+      assert {:ok,
+              [
+                %RegisterApplicationInstance{
+                  db_host: "10.74.1.12",
+                  features: "ABAP|GATEWAY|ICMAN|IGS",
+                  host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                  instance_number: "02",
+                  sap_system_id: nil,
+                  sid: "HA1",
+                  tenant: "PRD",
+                  health: :passing
+                }
+              ]} =
+               "sap_system_discovery_application"
+               |> load_discovery_event_fixture()
+               |> SapSystemPolicy.handle([application_instance])
+    end
   end
 end
