@@ -3,7 +3,7 @@ defmodule TrentoWeb.Router do
   use Pow.Phoenix.Router
 
   # From newest to oldest
-  @available_api_versions ["v1"]
+  @available_api_versions ["v2", "v1"]
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -22,6 +22,11 @@ defmodule TrentoWeb.Router do
   pipeline :api_v1 do
     plug :api
     plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.V1.ApiSpec
+  end
+
+  pipeline :api_v2 do
+    plug :api
+    plug OpenApiSpex.Plug.PutApiSpec, module: TrentoWeb.OpenApi.V2.ApiSpec
   end
 
   pipeline :protected_api do
@@ -44,7 +49,8 @@ defmodule TrentoWeb.Router do
     get "/api/doc", OpenApiSpex.Plug.SwaggerUI,
       path: "/api/v1/openapi",
       urls: [
-        %{url: "/api/v1/openapi", name: "Version 1"}
+        %{url: "/api/v1/openapi", name: "Version 1"},
+        %{url: "/api/v2/openapi", name: "Version 2"}
       ]
   end
 
@@ -121,6 +127,12 @@ defmodule TrentoWeb.Router do
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
     end
+
+    scope "/v2", TrentoWeb.V2 do
+      pipe_through [:api_v2]
+
+      get "/clusters", ClusterController, :list
+    end
   end
 
   scope "/api" do
@@ -149,6 +161,11 @@ defmodule TrentoWeb.Router do
 
     scope "/v1" do
       pipe_through :api_v1
+      get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+    end
+
+    scope "/v2" do
+      pipe_through :api_v2
       get "/openapi", OpenApiSpex.Plug.RenderSpec, []
     end
   end

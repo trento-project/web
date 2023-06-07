@@ -8,7 +8,7 @@ defmodule Trento.ClusterProjector do
     repo: Trento.Repo,
     name: "cluster_projector"
 
-  alias TrentoWeb.V1.ClusterView
+  alias TrentoWeb.V2.ClusterView
 
   alias Trento.Domain.Events.{
     ChecksSelected,

@@ -119,7 +119,9 @@ function* initialDataFetch() {
   yield put(stopHostsLoading());
 
   yield put(startClustersLoading());
-  const { data: clusters } = yield call(get, '/clusters');
+  const { data: clusters } = yield call(get, '/clusters', {
+    baseURL: '/api/v2',
+  });
   yield put(setClusters(clusters));
   yield put(stopClustersLoading());
 

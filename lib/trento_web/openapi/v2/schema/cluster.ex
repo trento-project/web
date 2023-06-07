@@ -1,100 +1,109 @@
-defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
+defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
   @moduledoc false
 
   require OpenApiSpex
+  require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.V1.Schema.{Provider, ResourceHealth, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{Cluster, Provider, ResourceHealth, Tags}
 
-  defmodule ClusterResource do
+  defmodule AscsErsClusterNode do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "ClusterResource",
-      description: "A Cluster Resource",
+      title: "AscsErsClusterNode",
+      description: "ASCS/ERS Cluster Node",
       type: :object,
       properties: %{
-        id: %Schema{type: :string},
-        type: %Schema{type: :string},
-        role: %Schema{type: :string},
-        status: %Schema{type: :string},
-        fail_count: %Schema{type: :integer}
-      }
-    })
-  end
-
-  defmodule HanaClusterNode do
-    @moduledoc false
-
-    OpenApiSpex.schema(%{
-      title: "HanaClusterNode",
-      description: "A HANA Cluster Node",
-      type: :object,
-      properties: %{
-        name: %Schema{type: :string},
-        site: %Schema{type: :string},
-        hana_status: %Schema{type: :string},
         attributes: %Schema{
           type: :object,
           description: "Node attributes",
           additionalProperties: %Schema{type: :string}
         },
-        virtual_ip: %Schema{type: :string},
-        resources: %Schema{
-          description: "A list of Cluster resources",
+        filesystems: %Schema{
           type: :array,
-          items: ClusterResource
+          items: %Schema{type: :string},
+          description: "List of filesystems managed in this node"
+        },
+        name: %Schema{
+          type: :string,
+          description: "Node name"
+        },
+        resources: %Schema{
+          type: :array,
+          items: Cluster.ClusterResource,
+          description: "A list of Cluster resources"
+        },
+        roles: %Schema{
+          type: :array,
+          items: %Schema{type: :string, enum: ["ascs", "ers"]},
+          description: "List of roles managed in this node"
+        },
+        virtual_ips: %Schema{
+          type: :array,
+          items: %Schema{type: :string},
+          description: "List of virtual IPs managed in this node"
         }
       }
     })
   end
 
-  defmodule SbdDevice do
+  defmodule AscsErsClusterSAPSystem do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "SbdDevice",
-      description: "SBD Device",
+      title: "AscsErsClusterSAPSystem",
+      description: "SAP system managed by a ASCS/ERS cluster",
       type: :object,
       properties: %{
-        device: %Schema{type: :string},
-        status: %Schema{type: :string}
-      }
-    })
-  end
-
-  defmodule HanaClusterDetails do
-    @moduledoc false
-
-    OpenApiSpex.schema(%{
-      title: "HanaClusterDetails",
-      description: "Details of a HANA Pacemaker Cluster",
-      type: :object,
-      properties: %{
-        system_replication_mode: %Schema{type: :string, description: "System Replication Mode"},
-        system_replication_operation_mode: %Schema{
-          type: :string,
-          description: "System Replication Operation Mode"
+        distributed: %Schema{
+          type: :boolean,
+          description: "ASCS and ERS instances are distributed and running in different nodes"
         },
-        secondary_sync_state: %Schema{type: :string, description: "Secondary Sync State"},
-        sr_health_state: %Schema{type: :string, description: "SR health state"},
-        fencing_type: %Schema{type: :string, description: "Fencing Type"},
-        stopped_resources: %Schema{
-          description: "A list of the stopped resources on this HANA Cluster",
-          type: :array,
-          items: ClusterResource
+        filesystem_resource_based: %Schema{
+          type: :boolean,
+          description:
+            "ASCS and ERS filesystems are handled by the cluster with the Filesystem resource agent"
         },
         nodes: %Schema{
           type: :array,
-          items: HanaClusterNode
+          items: AscsErsClusterNode,
+          description: "List of ASCS/ERS nodes for this SAP system"
+        }
+      }
+    })
+  end
+
+  defmodule AscsErsClusterDetails do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "AscsErsClusterDetails",
+      description: "Details of a ASCS/ERS Pacemaker Cluster",
+      type: :object,
+      properties: %{
+        fencing_type: %Schema{
+          type: :string,
+          description: "Fencing type"
+        },
+        sap_systems: %Schema{
+          type: :array,
+          items: AscsErsClusterSAPSystem,
+          description: "List of managed SAP systems in a single or multi SID cluster"
         },
         sbd_devices: %Schema{
           type: :array,
-          items: SbdDevice
+          items: Cluster.SbdDevice,
+          description: "List of SBD devices used in the cluster"
+        },
+        stopped_resources: %Schema{
+          type: :array,
+          items: Cluster.ClusterResource,
+          description: "List of the stopped resources on this HANA Cluster"
         }
       },
-      required: [:nodes]
+      required: [:sap_systems]
     })
   end
 
@@ -106,7 +115,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
       description: "Details of the detected PacemakerCluster",
       nullable: true,
       oneOf: [
-        HanaClusterDetails
+        AscsErsClusterDetails,
+        Cluster.HanaClusterDetails
       ]
     })
   end
@@ -131,7 +141,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         type: %Schema{
           type: :string,
           description: "Detected type of the cluster",
-          enum: [:hana_scale_up, :hana_scale_out, :unknown]
+          enum: ClusterType.values()
         },
         selected_checks: %Schema{
           title: "SelectedChecks",

@@ -8,6 +8,9 @@ defmodule Trento.Factory do
   require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.Domain.{
+    AscsErsClusterDetails,
+    AscsErsClusterNode,
+    AscsErsClusterSapSystem,
     ClusterResource,
     HanaClusterDetails,
     HanaClusterNode,
@@ -302,6 +305,54 @@ defmodule Trento.Factory do
       ],
       system_replication_mode: "sync",
       system_replication_operation_mode: "logreplay"
+    }
+  end
+
+  def ascs_ers_cluster_node_factory do
+    %AscsErsClusterNode{
+      name: Faker.Pokemon.name(),
+      roles: [Enum.random(["ascs", "ers"])],
+      virtual_ips: [Faker.Internet.ip_v4_address()],
+      filesystems: [Faker.File.file_name()],
+      attributes: %{
+        Faker.Pokemon.name() => Faker.Pokemon.name()
+      },
+      resources: build_list(5, :cluster_resource)
+    }
+  end
+
+  def ascs_ers_cluster_sap_system_factory do
+    %AscsErsClusterSapSystem{
+      sid: sequence(:sid, &"PR#{&1}"),
+      filesystem_resource_based: Enum.random([false, true]),
+      distributed: Enum.random([false, true]),
+      nodes: build_list(2, :ascs_ers_cluster_node)
+    }
+  end
+
+  def sbd_device_factory do
+    %SbdDevice{
+      device: Faker.File.file_name(),
+      status: Enum.random(["healthy", "unhealthy"])
+    }
+  end
+
+  def cluster_resource_factory do
+    %ClusterResource{
+      id: Faker.UUID.v4(),
+      type: Faker.StarWars.planet(),
+      role: Faker.Beer.hop(),
+      status: Faker.Pokemon.name(),
+      fail_count: Enum.random(0..100)
+    }
+  end
+
+  def ascs_ers_cluster_details_factory do
+    %AscsErsClusterDetails{
+      fencing_type: Faker.Beer.hop(),
+      sap_systems: build_list(2, :ascs_ers_cluster_sap_system),
+      sbd_devices: build_list(2, :sbd_device),
+      stopped_resources: build_list(2, :cluster_resource)
     }
   end
 
