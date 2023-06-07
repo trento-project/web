@@ -528,4 +528,13 @@ defmodule Trento.Factory do
       sap_system_id: Faker.UUID.v4()
     })
   end
+
+  def sapcontrol_process_factory do
+    %{
+      "name" => Faker.Pokemon.name(),
+      "description" => Faker.StarWars.planet(),
+      "dispstatus" => "SAPControl-GREEN",
+      "pid" => Enum.random(0..100)
+    }
+  end
 end

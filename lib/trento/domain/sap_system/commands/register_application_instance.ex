@@ -29,6 +29,7 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
 
   use Trento.Command
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health
 
   defcommand do
@@ -44,5 +45,6 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
     field :https_port, :integer
     field :start_priority, :string
     field :health, Ecto.Enum, values: Health.values()
+    field :ensa_version, Ecto.Enum, values: EnsaVersion.values()
   end
 end
