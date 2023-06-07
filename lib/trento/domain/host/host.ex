@@ -175,10 +175,10 @@ defmodule Trento.Domain.Host do
     }
   end
 
-  # Heartbeat received
+  # Reject all the commands, except for the registration ones when the host_id does not exists
   def execute(
         %Host{host_id: nil},
-        %UpdateHeartbeat{}
+        _
       ) do
     {:error, :host_not_registered}
   end
@@ -206,14 +206,6 @@ defmodule Trento.Domain.Host do
     []
   end
 
-  # Update provider received
-  def execute(
-        %Host{host_id: nil},
-        %UpdateProvider{}
-      ) do
-    {:error, :host_not_registered}
-  end
-
   def execute(
         %Host{provider: provider, provider_data: provider_data},
         %UpdateProvider{provider: provider, provider_data: provider_data}
@@ -232,13 +224,6 @@ defmodule Trento.Domain.Host do
     }
   end
 
-  def execute(
-        %Host{host_id: nil},
-        %UpdateSlesSubscriptions{}
-      ) do
-    {:error, :host_not_registered}
-  end
-
   def execute(%Host{subscriptions: subscriptions}, %UpdateSlesSubscriptions{
         subscriptions: subscriptions
       }) do
@@ -253,14 +238,6 @@ defmodule Trento.Domain.Host do
       host_id: host_id,
       subscriptions: subscriptions
     }
-  end
-
-  # Start the rollup flow
-  def execute(
-        %Host{host_id: nil},
-        %RollUpHost{}
-      ) do
-    {:error, :host_not_registered}
   end
 
   def execute(
