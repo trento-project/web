@@ -17,3 +17,19 @@ export const getClusterName =
   (clusterID) =>
   ({ clustersList }) =>
     getCluster(clusterID)({ clustersList })?.name || '';
+
+export const getClusterSapSystems = (clusterID) => (state) => {
+  const clusterHostIDs = getClusterHostIDs(clusterID)(state);
+  const {
+    sapSystemsList: { sapSystems },
+  } = state;
+
+  return sapSystems.filter(({ application_instances, database_instances }) =>
+    clusterHostIDs.some((hostID) =>
+      application_instances
+        .concat(database_instances)
+        .map(({ host_id }) => host_id)
+        .includes(hostID)
+    )
+  );
+};
