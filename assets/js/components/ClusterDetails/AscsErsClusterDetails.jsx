@@ -58,20 +58,22 @@ function AscsErsClusterDetails({
   cibLastWritten,
   provider,
   hosts,
+  sapSystems,
   details,
 }) {
-  const [sapSystems, setSapSystems] = useState([]);
+  const [enrichedSapSystems, setEnrichedSapSystems] = useState([]);
   const [currentSapSystem, setCurrentSapSystem] = useState(null);
 
   useEffect(() => {
-    const enrichedSapSystems = details?.sap_systems.map((sapSystem) => ({
-      ...sapSystem,
-      nodes: enrichNodes(sapSystem?.nodes, hosts),
+    const systems = details?.sap_systems.map((system) => ({
+      ...system,
+      ...sapSystems.find(({ sid }) => sid === system.sid),
+      nodes: enrichNodes(system?.nodes, hosts),
     }));
 
-    setSapSystems(enrichedSapSystems);
-    setCurrentSapSystem(enrichedSapSystems[0]);
-  }, [hosts, details]);
+    setEnrichedSapSystems(systems);
+    setCurrentSapSystem(systems[0]);
+  }, [hosts, sapSystems, details]);
 
   return (
     <div>
@@ -127,8 +129,9 @@ function AscsErsClusterDetails({
                 content: currentSapSystem?.distributed ? 'Yes' : 'No',
               },
               {
-                title: 'ENSA type',
-                content: '_',
+                title: 'ENSA version',
+                content: currentSapSystem?.ensa_version || '-',
+                render: (content) => content.toUpperCase(),
               },
               {
                 title: 'Filesystem resource based',
@@ -140,7 +143,7 @@ function AscsErsClusterDetails({
           />
           <div className="flex justify-center mt-auto pt-8 mb-2">
             <DottedPagination
-              pages={sapSystems}
+              pages={enrichedSapSystems}
               onChange={setCurrentSapSystem}
             />
           </div>

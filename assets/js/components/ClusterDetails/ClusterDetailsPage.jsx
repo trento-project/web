@@ -2,7 +2,11 @@ import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getCluster, getClusterHosts } from '@state/selectors/cluster';
+import {
+  getCluster,
+  getClusterHosts,
+  getClusterSapSystems,
+} from '@state/selectors/cluster';
 import {
   updateLastExecution,
   executionRequested,
@@ -25,6 +29,8 @@ export function ClusterDetailsPage() {
   }, [dispatch]);
 
   const clusterHosts = useSelector(getClusterHosts(clusterID));
+
+  const clusterSapSystems = useSelector(getClusterSapSystems(clusterID));
 
   if (!cluster) {
     return <div>Loading...</div>;
@@ -63,6 +69,7 @@ export function ClusterDetailsPage() {
           cibLastWritten={cluster.cib_last_written}
           provider={cluster.provider}
           hosts={clusterHosts}
+          sapSystems={clusterSapSystems}
           details={cluster.details}
         />
       );
