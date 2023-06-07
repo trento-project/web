@@ -4,7 +4,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { faker } from '@faker-js/faker';
 
 import {
-  addHostsToAscsErsClusterDetails,
+  buildHostsFromAscsErsClusterDetails,
+  buildSapSystemsFromAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
   ascsErsClusterNodeFactory,
   ascsErsSapSystemFactory,
@@ -64,7 +65,8 @@ export const Single = {
     clusterName,
     cibLastWritten,
     provider,
-    hosts: addHostsToAscsErsClusterDetails(details),
+    hosts: buildHostsFromAscsErsClusterDetails(details),
+    sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
     details,
   },
   render: (args) => (
@@ -77,7 +79,8 @@ export const Single = {
 export const MultiSID = {
   args: {
     ...Single.args,
-    hosts: addHostsToAscsErsClusterDetails(multiSidDetails),
+    hosts: buildHostsFromAscsErsClusterDetails(multiSidDetails),
+    sapSystems: buildSapSystemsFromAscsErsClusterDetails(multiSidDetails),
     details: multiSidDetails,
   },
   render: (args) => (
@@ -92,7 +95,8 @@ export const Failover = {
     clusterName,
     cibLastWritten,
     provider,
-    hosts: addHostsToAscsErsClusterDetails(failoverDetails),
+    hosts: buildHostsFromAscsErsClusterDetails(failoverDetails),
+    sapSystems: buildSapSystemsFromAscsErsClusterDetails(failoverDetails),
     details: failoverDetails,
   },
   render: (args) => (

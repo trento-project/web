@@ -6,7 +6,8 @@ import { renderWithRouter } from '@lib/test-utils';
 import userEvent from '@testing-library/user-event';
 
 import {
-  addHostsToAscsErsClusterDetails,
+  buildHostsFromAscsErsClusterDetails,
+  buildSapSystemsFromAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
   clusterFactory,
 } from '@lib/test-utils/factories';
@@ -32,12 +33,16 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
       filesystem_resource_based: filesystemResourceBased,
     } = details.sap_systems[0];
 
+    const sapSystems = buildSapSystemsFromAscsErsClusterDetails(details);
+    const { ensa_version: ensaVersion } = sapSystems[0];
+
     renderWithRouter(
       <AscsErsClusterDetails
         clusterName={name}
         cibLastWritten={cibLastWritten}
         provider={provider}
-        hosts={addHostsToAscsErsClusterDetails(details)}
+        hosts={buildHostsFromAscsErsClusterDetails(details)}
+        sapSystems={sapSystems}
         details={details}
       />
     );
@@ -55,6 +60,9 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     );
 
     expect(screen.getByText('SID').nextSibling).toHaveTextContent(sid);
+    expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent(
+      ensaVersion.toUpperCase()
+    );
     expect(
       screen.getByText('ASCS/ERS distributed').nextSibling
     ).toHaveTextContent(distributed ? 'Yes' : 'No');
@@ -80,7 +88,8 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         clusterName={name}
         cibLastWritten={cibLastWritten}
         provider={provider}
-        hosts={addHostsToAscsErsClusterDetails(details)}
+        hosts={buildHostsFromAscsErsClusterDetails(details)}
+        sapSystems={buildSapSystemsFromAscsErsClusterDetails(details)}
         details={details}
       />
     );
@@ -144,7 +153,8 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         clusterName={name}
         cibLastWritten={cibLastWritten}
         provider={provider}
-        hosts={addHostsToAscsErsClusterDetails(details)}
+        hosts={buildHostsFromAscsErsClusterDetails(details)}
+        sapSystems={buildSapSystemsFromAscsErsClusterDetails(details)}
         details={details}
       />
     );

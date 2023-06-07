@@ -5,6 +5,7 @@ import { Factory } from 'fishery';
 const healthEnum = () => faker.helpers.arrayElement(['passing', 'critical']);
 
 export const databaseInstanceFactory = Factory.define(() => ({
+  host_id: faker.datatype.uuid(),
   sap_system_id: faker.datatype.uuid(),
   sid: faker.random.alpha({ casing: 'upper', count: 3 }),
 }));
