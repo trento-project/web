@@ -3,6 +3,7 @@ defmodule Trento.HostsTest do
   use Trento.DataCase
 
   import Trento.Factory
+  import Mox
 
   alias Trento.Hosts
   alias Trento.Repo
@@ -10,6 +11,8 @@ defmodule Trento.HostsTest do
   alias Trento.SlesSubscriptionReadModel
 
   @moduletag :integration
+
+  setup :verify_on_exit!
 
   describe "SLES Subscriptions" do
     test "No SLES4SAP Subscriptions detected" do

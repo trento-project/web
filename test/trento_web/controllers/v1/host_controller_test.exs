@@ -11,6 +11,10 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
+  setup do
+    %{api_spec: ApiSpec.spec()}
+  end
+
   describe "list" do
     test "should list all hosts", %{conn: conn} do
       %{id: host_id} = insert(:host)
@@ -46,6 +50,58 @@ defmodule TrentoWeb.V1.HostControllerTest do
                  %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
                ]
              } == resp
+    end
+  end
+
+  describe "delete" do
+    test "should send 204 response when successful host deletion", %{conn: conn} do
+      %{id: host_id} = insert(:host)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+          :ok
+        end
+      )
+
+      conn
+      |> delete("/api/v1/hosts/#{host_id}")
+      |> response(204)
+    end
+
+    test "should send 422 response if the host is still alive", %{conn: conn, api_spec: api_spec} do
+      %{id: host_id} = insert(:host)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+          {:error, :host_alive}
+        end
+      )
+
+      conn
+      |> delete("/api/v1/hosts/#{host_id}")
+      |> json_response(422)
+      |> assert_schema("UnprocessableEntity", api_spec)
+    end
+
+    test "should return 404 if the host was not found", %{conn: conn, api_spec: api_spec} do
+      %{id: host_id} = insert(:host)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+          {:error, :host_not_registered}
+        end
+      )
+
+      conn
+      |> delete("/api/v1/hosts/#{host_id}")
+      |> json_response(404)
+      |> assert_schema("NotFound", api_spec)
     end
   end
 end

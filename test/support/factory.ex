@@ -96,7 +96,8 @@ defmodule Trento.Factory do
       cluster_id: Faker.UUID.v4(),
       heartbeat: :unknown,
       provider: Enum.random(Provider.values()),
-      provider_data: nil
+      provider_data: nil,
+      deregistered_at: nil
     }
   end
 

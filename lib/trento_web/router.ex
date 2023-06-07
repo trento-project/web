@@ -94,6 +94,8 @@ defmodule TrentoWeb.Router do
         assigns: %{resource_type: :host},
         as: :hosts_tagging
 
+      delete "/hosts/:id", HostController, :delete
+
       delete "/hosts/:id/tags/:value", TagsController, :remove_tag, as: :hosts_tagging
 
       post "/clusters/:id/tags", TagsController, :add_tag,

@@ -41,6 +41,13 @@ config :logger, level: :warn
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
+# Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
+config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
+
+# This is passed to the frontend as the time after the last heartbeat
+# to wait before displaying the deregistration button
+config :trento, deregistration_debounce: :timer.seconds(5)
+
 config :trento,
   api_key_authentication_enabled: false,
   jwt_authentication_enabled: false
