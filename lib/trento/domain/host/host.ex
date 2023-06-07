@@ -184,6 +184,14 @@ defmodule Trento.Domain.Host do
   end
 
   def execute(
+        %Host{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :host_not_registered}
+  end
+
+  def execute(
         %Host{host_id: host_id, heartbeat: heartbeat},
         %UpdateHeartbeat{heartbeat: :passing}
       )

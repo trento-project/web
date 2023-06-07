@@ -651,6 +651,48 @@ defmodule Trento.HostTest do
   end
 
   describe "deregistration" do
+    test "should reject all the commands except the registration ones when the host is deregistered" do
+      host_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: dat
+        }
+      ]
+
+      commands_to_reject = [
+        %DeregisterHost{},
+        %RequestHostDeregistration{},
+        %RollUpHost{},
+        %UpdateHeartbeat{},
+        %UpdateProvider{},
+        %UpdateSlesSubscriptions{}
+      ]
+
+      for command <- commands_to_reject do
+        assert_error(initial_events, command, {:error, :host_not_registered})
+      end
+
+      register_host_command = build(:register_host_command, host_id: host_id)
+
+      assert_events(initial_events, [register_host_command], [
+        %HostDetailsUpdated{
+          agent_version: register_host_command.agent_version,
+          cpu_count: register_host_command.cpu_count,
+          host_id: register_host_command.host_id,
+          hostname: register_host_command.hostname,
+          installation_source: register_host_command.installation_source,
+          ip_addresses: register_host_command.ip_addresses,
+          os_version: register_host_command.os_version,
+          socket_count: register_host_command.socket_count,
+          total_memory_mb: register_host_command.total_memory_mb
+        }
+      ])
+    end
+
     test "should emit the HostDeregistered and HostTombstoned events" do
       host_id = Faker.UUID.v4()
       dat = DateTime.utc_now()

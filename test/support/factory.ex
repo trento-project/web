@@ -37,7 +37,8 @@ defmodule Trento.Factory do
   alias Trento.Domain.Commands.{
     RegisterApplicationInstance,
     RegisterClusterHost,
-    RegisterDatabaseInstance
+    RegisterDatabaseInstance,
+    RegisterHost
   }
 
   alias Trento.{
@@ -536,5 +537,19 @@ defmodule Trento.Factory do
       "dispstatus" => "SAPControl-GREEN",
       "pid" => Enum.random(0..100)
     }
+  end
+
+  def register_host_command_factory do
+    RegisterHost.new!(%{
+      host_id: Faker.UUID.v4(),
+      hostname: Faker.StarWars.character(),
+      ip_addresses: [Faker.Internet.ip_v4_address()],
+      agent_version: Faker.App.semver(),
+      cpu_count: Enum.random(1..16),
+      total_memory_mb: Enum.random(1..128),
+      socket_count: Enum.random(1..16),
+      os_version: Faker.App.semver(),
+      installation_source: Enum.random([:community, :suse, :unknown])
+    })
   end
 end
