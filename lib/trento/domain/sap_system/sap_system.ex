@@ -210,7 +210,7 @@ defmodule Trento.Domain.SapSystem do
   # Start the rollup flow
   def execute(
         %SapSystem{sap_system_id: nil},
-        %RollUpSapSystem{}
+        _
       ) do
     {:error, :sap_system_not_registered}
   end
