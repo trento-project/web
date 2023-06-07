@@ -2,19 +2,21 @@ import React from 'react';
 import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 
+import { keysToCamel } from '@lib/serialization';
 import { APPLICATION_TYPE } from '@lib/model';
 import { renderWithRouter } from '@lib/test-utils';
-import { sapSystemFactory } from '@lib/test-utils/factories';
+import { hostFactory, sapSystemFactory } from '@lib/test-utils/factories';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
 
 describe('GenericSystemDetails', () => {
   it('should render correctly', () => {
     const title = faker.datatype.uuid();
-    const sapSystem = sapSystemFactory.build();
+    const sapSystem = keysToCamel(sapSystemFactory.build());
+    sapSystem.hosts = hostFactory.buildList(5);
 
-    const { sid, instances } = sapSystem;
-    const { features } = instances[0];
+    const { sid, applicationInstances } = sapSystem;
+    const { features } = applicationInstances[0];
 
     renderWithRouter(
       <GenericSystemDetails
