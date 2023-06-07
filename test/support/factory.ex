@@ -24,6 +24,8 @@ defmodule Trento.Factory do
     ClusterDeregistered,
     ClusterRegistered,
     ClusterTombstoned,
+    DatabaseDeregistered,
+    DatabaseInstanceDeregistered,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     HostAddedToCluster,
@@ -31,16 +33,20 @@ defmodule Trento.Factory do
     HostRegistered,
     HostRemovedFromCluster,
     HostTombstoned,
+    SapSystemDeregistered,
     SapSystemRegistered,
     SapSystemTombstoned,
     SlesSubscriptionsUpdated
   }
 
   alias Trento.Domain.Commands.{
+    DeregisterApplicationInstance,
+    DeregisterDatabaseInstance,
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
-    RegisterHost
+    RegisterHost,
+    RollUpSapSystem
   }
 
   alias Trento.{
@@ -251,6 +257,31 @@ defmodule Trento.Factory do
     }
   end
 
+  def database_instance_deregistered_event_factory do
+    DatabaseInstanceDeregistered.new!(%{
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      sap_system_id: Faker.UUID.v4(),
+      deregistered_at: DateTime.utc_now()
+    })
+  end
+
+  def deregister_database_instance_command_factory do
+    DeregisterDatabaseInstance.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      deregistered_at: DateTime.utc_now(),
+      host_id: Faker.UUID.v4(),
+      instance_number: "00"
+    })
+  end
+
+  def database_deregistered_event_factory do
+    DatabaseDeregistered.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      deregistered_at: DateTime.utc_now()
+    })
+  end
+
   def application_instance_registered_event_factory do
     %ApplicationInstanceRegistered{
       sap_system_id: Faker.UUID.v4(),
@@ -264,6 +295,15 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       health: Health.passing()
     }
+  end
+
+  def deregister_application_instance_command_factory do
+    DeregisterApplicationInstance.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      deregistered_at: DateTime.utc_now(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4()
+    })
   end
 
   def database_registered_event_factory do
@@ -282,6 +322,19 @@ defmodule Trento.Factory do
       tenant: Faker.Beer.hop(),
       health: Health.passing()
     }
+  end
+
+  def sap_system_deregistered_event_factory do
+    SapSystemDeregistered.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      deregistered_at: DateTime.utc_now()
+    })
+  end
+
+  def rollup_sap_system_command_factory do
+    RollUpSapSystem.new!(%{
+      sap_system_id: Faker.UUID.v4()
+    })
   end
 
   def hana_cluster_details_value_object do

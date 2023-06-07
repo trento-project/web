@@ -1489,6 +1489,109 @@ defmodule Trento.SapSystemTest do
   end
 
   describe "deregistration" do
+    test "should reject all the commands except for the registration/instance deregistration ones, when the SAP system is deregistered" do
+      sap_system_id = UUID.uuid4()
+
+      primary_database_host_id = UUID.uuid4()
+      secondary_database_host_id = UUID.uuid4()
+
+      deregistered_at = DateTime.utc_now()
+
+      db_instance_number_1 = "00"
+      db_instance_number_2 = "01"
+
+      db_sid = fake_sid()
+      application_sid = fake_sid()
+
+      message_server_host_id = UUID.uuid4()
+      message_server_instance_number = "00"
+      abap_host_id = UUID.uuid4()
+      abap_instance_number = "01"
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: db_sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: primary_database_host_id,
+          sid: db_sid,
+          instance_number: db_instance_number_1,
+          system_replication: "Primary"
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: secondary_database_host_id,
+          instance_number: db_instance_number_2,
+          system_replication: "Secondary",
+          sid: db_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "MESSAGESERVER|ENQUE",
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          host_id: abap_host_id,
+          instance_number: abap_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: application_sid
+        ),
+        build(:database_instance_deregistered_event,
+          sap_system_id: sap_system_id,
+          host_id: primary_database_host_id,
+          instance_number: db_instance_number_1,
+          deregistered_at: deregistered_at
+        ),
+        build(:database_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        ),
+        build(:sap_system_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        )
+      ]
+
+      commands_to_accept = [
+        build(:register_database_instance_command),
+        build(:register_application_instance_command),
+        build(:deregister_database_instance_command, sap_system_id: sap_system_id),
+        build(:deregister_application_instance_command, sap_system_id: sap_system_id)
+      ]
+
+      for command <- commands_to_accept do
+        assert match?({:ok, _, _}, aggregate_run(initial_events, command)),
+               "Command #{inspect(command)} should be accepted by a deregistered SAP system"
+      end
+
+      commands_to_reject = [
+        build(:rollup_sap_system_command)
+      ]
+
+      for command <- commands_to_reject do
+        assert match?(
+                 {:error, :sap_system_not_registered},
+                 aggregate_run(initial_events, command)
+               ),
+               "Command #{inspect(command)} should be rejected by a deregistered SAP system"
+      end
+    end
+
     test "should deregister a Database and SAP system when the Primary database instance is removed" do
       sap_system_id = UUID.uuid4()
 
