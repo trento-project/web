@@ -77,9 +77,9 @@ function HanaClusterDetails({
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
 
-  const { loading: executionLoading } = lastExecution;
+  const { loading: executionLoading } = lastExecution || { loading: true };
 
-  const shouldDisableStartExecutionBtn =
+  const startExecutionDisabled =
     executionLoading ||
     !hasSelectedChecks ||
     RUNNING_STATES.includes(lastExecution?.data?.status);
@@ -119,14 +119,14 @@ function HanaClusterDetails({
             <TriggerChecksExecutionRequest
               cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
               clusterId={clusterID}
-              disabled={shouldDisableStartExecutionBtn}
+              disabled={startExecutionDisabled}
               hosts={hosts.map(({ id }) => id)}
               checks={selectedChecks}
               onStartExecution={onStartExecution}
             >
               <EOS_PLAY_CIRCLE
                 className={classNames('inline-block fill-jungle-green-500', {
-                  'fill-slate-500': shouldDisableStartExecutionBtn,
+                  'fill-slate-500': startExecutionDisabled,
                 })}
               />{' '}
               <span>Start Execution</span>
