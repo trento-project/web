@@ -6,6 +6,7 @@ defmodule Trento.Hosts do
   import Ecto.Query
 
   alias Trento.{
+    Heartbeat,
     HostReadModel,
     Repo,
     SlesSubscriptionReadModel
@@ -20,8 +21,9 @@ defmodule Trento.Hosts do
     HostReadModel
     |> where([h], not is_nil(h.hostname) and is_nil(h.deregistered_at))
     |> order_by(asc: :hostname)
+    |> enrich_host_read_model_query()
     |> Repo.all()
-    |> Repo.preload([:sles_subscriptions, :tags, :heartbeat_timestamp])
+    |> Repo.preload([:sles_subscriptions, :tags])
   end
 
   @spec get_all_sles_subscriptions :: non_neg_integer()
@@ -46,6 +48,13 @@ defmodule Trento.Hosts do
     commanded().dispatch(
       RequestHostDeregistration.new!(%{host_id: host_id, requested_at: date_service.utc_now()})
     )
+  end
+
+  @spec enrich_host_read_model_query(Ecto.Query.t()) :: Ecto.Query.t()
+  defp enrich_host_read_model_query(query) do
+    query
+    |> join(:left, [h], hb in Heartbeat, on: type(h.id, :string) == hb.agent_id)
+    |> select_merge([h, hb], %{last_heartbeat_timestamp: hb.timestamp})
   end
 
   defp commanded,

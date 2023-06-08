@@ -32,9 +32,7 @@ defmodule Trento.HostReadModel do
       foreign_key: :host_id,
       preload_order: [desc: :identifier]
 
-    has_one :heartbeat_timestamp, Trento.Heartbeat,
-      references: :id,
-      foreign_key: :agent_id
+    field :last_heartbeat_timestamp, :utc_datetime_usec, virtual: true
 
     field :deregistered_at, :utc_datetime_usec
   end
