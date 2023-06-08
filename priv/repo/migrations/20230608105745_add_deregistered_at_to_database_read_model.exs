@@ -1,4 +1,4 @@
-defmodule Trento.Repo.Migrations.AddDeregisteredAtFieldDbRm do
+defmodule Trento.Repo.Migrations.AddDeregisteredAtToDatabaseReadModel do
   use Ecto.Migration
 
   def change do
