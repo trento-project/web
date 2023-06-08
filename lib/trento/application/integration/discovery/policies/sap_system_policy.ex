@@ -3,6 +3,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   This module contains functions to transform SAP system related integration events into commands..
   """
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
@@ -129,7 +131,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         https_port: parse_https_port(instance),
         start_priority: parse_start_priority(instance),
         host_id: host_id,
-        health: parse_dispstatus(instance)
+        health: parse_dispstatus(instance),
+        ensa_version: parse_ensa_version(instance)
       })
     end)
   end
@@ -224,4 +227,16 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          SystemReplication: %SystemReplication{overall_replication_status: status}
        }),
        do: status
+
+  defp parse_ensa_version(%Instance{SAPControl: %SapControl{Processes: processes}}) do
+    Enum.find_value(processes, EnsaVersion.no_ensa(), fn
+      %{name: "enserver"} -> EnsaVersion.ensa1()
+      %{name: "enrepserver"} -> EnsaVersion.ensa1()
+      %{name: "enq_server"} -> EnsaVersion.ensa2()
+      %{name: "enq_replicator"} -> EnsaVersion.ensa2()
+      _ -> nil
+    end)
+  end
+
+  defp parse_ensa_version(_), do: EnsaVersion.no_ensa()
 end

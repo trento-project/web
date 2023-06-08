@@ -4,6 +4,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
 
   import Trento.Factory
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+
   import Trento.Integration.DiscoveryFixturesHelper
 
   alias Trento.Integration.Discovery.SapSystemPolicy
@@ -66,7 +68,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing
+                health: :passing,
+                ensa_version: EnsaVersion.no_ensa()
               }
             ]} =
              "sap_system_discovery_application"
@@ -91,6 +94,50 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
              "sap_system_discovery_application_diagnostics"
              |> load_discovery_event_fixture()
              |> SapSystemPolicy.handle([])
+  end
+
+  test "should return the expected commands when a sap_system payload of type application with ensa version is handled" do
+    Enum.each(
+      [
+        ["enserver", EnsaVersion.ensa1()],
+        ["enrepserver", EnsaVersion.ensa1()],
+        ["enq_server", EnsaVersion.ensa2()],
+        ["enq_replicator", EnsaVersion.ensa2()]
+      ],
+      fn [process_name, expected_ensa_version] ->
+        assert {:ok,
+                [
+                  %RegisterApplicationInstance{
+                    ensa_version: ^expected_ensa_version
+                  }
+                ]} =
+                 "sap_system_discovery_application"
+                 |> load_discovery_event_fixture()
+                 |> update_in(
+                   ["payload"],
+                   &Enum.map(&1, fn sap_system ->
+                     update_in(
+                       sap_system,
+                       ["Instances"],
+                       fn instances ->
+                         Enum.map(instances, fn instance ->
+                           put_in(
+                             instance,
+                             ["SAPControl", "Processes"],
+                             [
+                               build(:sapcontrol_process),
+                               build(:sapcontrol_process, %{"name" => process_name}),
+                               build(:sapcontrol_process)
+                             ]
+                           )
+                         end)
+                       end
+                     )
+                   end)
+                 )
+                 |> SapSystemPolicy.handle([])
+      end
+    )
   end
 
   test "should return an empty list of commands if an empty payload is received" do
