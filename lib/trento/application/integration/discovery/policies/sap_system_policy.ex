@@ -229,7 +229,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
        do: status
 
   defp parse_ensa_version(%Instance{SAPControl: %SapControl{Processes: processes}}) do
-    Enum.find_value(processes, nil, fn
+    Enum.find_value(processes, EnsaVersion.no_ensa(), fn
       %{name: "enserver"} -> EnsaVersion.ensa1()
       %{name: "enrepserver"} -> EnsaVersion.ensa1()
       %{name: "enq_server"} -> EnsaVersion.ensa2()
@@ -238,5 +238,5 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end)
   end
 
-  defp parse_ensa_version(_), do: nil
+  defp parse_ensa_version(_), do: EnsaVersion.no_ensa()
 end

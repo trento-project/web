@@ -69,7 +69,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
                 sid: "HA1",
                 tenant: "PRD",
                 health: :passing,
-                ensa_version: nil
+                ensa_version: EnsaVersion.no_ensa()
               }
             ]} =
              "sap_system_discovery_application"

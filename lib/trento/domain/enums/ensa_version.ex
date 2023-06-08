@@ -3,5 +3,5 @@ defmodule Trento.Domain.Enums.EnsaVersion do
   Type that represents the supported ENSA versions.
   """
 
-  use Trento.Support.Enum, values: [:ensa1, :ensa2, nil]
+  use Trento.Support.Enum, values: [:no_ensa, :ensa1, :ensa2]
 end
