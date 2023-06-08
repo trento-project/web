@@ -125,6 +125,12 @@ defmodule TrentoWeb.V1.SapSystemView do
 
   def render("sap_system_deregistered.json", %{id: id, sid: sid}), do: %{id: id, sid: sid}
 
+  def render("database_deregistered.json", %{
+        id: id,
+        sid: sid
+      }),
+      do: %{id: id, sid: sid}
+
   defp add_system_replication_status_to_secondary_instance(
          %{database_instances: database_instances} = sap_system
        ) do

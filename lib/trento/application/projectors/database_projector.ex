@@ -16,12 +16,15 @@ defmodule Trento.DatabaseProjector do
   alias TrentoWeb.V1.SapSystemView
 
   alias Trento.Domain.Events.{
+    DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceHealthChanged,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered
   }
+
+  alias Trento.Repo
 
   @databases_topic "monitoring:databases"
 
@@ -138,6 +141,24 @@ defmodule Trento.DatabaseProjector do
     end
   )
 
+  project(
+    %DatabaseDeregistered{
+      sap_system_id: sap_system_id,
+      deregistered_at: deregistered_at
+    },
+    fn multi ->
+      changeset =
+        DatabaseReadModel.changeset(
+          %DatabaseReadModel{
+            id: sap_system_id
+          },
+          %{deregistered_at: deregistered_at}
+        )
+
+      Ecto.Multi.update(multi, :database, changeset)
+    end
+  )
+
   @impl true
   def after_update(
         %DatabaseRegistered{},
@@ -236,6 +257,28 @@ defmodule Trento.DatabaseProjector do
           system_replication: system_replication,
           system_replication_status: system_replication_status
         }
+      )
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseDeregistered{
+          sap_system_id: sap_system_id
+        },
+        _,
+        _
+      ) do
+    %DatabaseReadModel{
+      sid: sid
+    } = Repo.get(DatabaseReadModel, sap_system_id)
+
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_deregistered",
+      SapSystemView.render("database_deregistered.json",
+        id: sap_system_id,
+        sid: sid
       )
     )
   end
