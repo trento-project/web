@@ -21,13 +21,14 @@ export const getClusterName =
 export const getClusterSapSystems = (clusterID) => (state) => {
   const clusterHostIDs = getClusterHostIDs(clusterID)(state);
   const {
-    sapSystemsList: { sapSystems },
+    sapSystemsList: { sapSystems, applicationInstances, databaseInstances },
   } = state;
 
-  return sapSystems.filter(({ application_instances, database_instances }) =>
+  return sapSystems.filter((sapSystem) =>
     clusterHostIDs.some((hostID) =>
-      application_instances
-        .concat(database_instances)
+      applicationInstances
+        .concat(databaseInstances)
+        .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
         .map(({ host_id }) => host_id)
         .includes(hostID)
     )

@@ -106,27 +106,39 @@ describe('Cluster selector', () => {
       { id: host5 },
     ] = hosts.slice(0, 5);
 
-    const sapSystems = [
-      sapSystemFactory.build(),
-      sapSystemFactory.build({
-        application_instances: [
-          sapSystemApplicationInstanceFactory.build({ host_id: host1 }),
-        ],
-        database_instances: [databaseInstanceFactory.build({ host_id: host2 })],
+    const sapSystems = sapSystemFactory.buildList(5);
+    const [
+      _sapSystem1,
+      { id: sapSystems2 },
+      { id: sapSystems3 },
+      { id: sapSystems4 },
+      _sapSystem5,
+    ] = sapSystems;
+
+    const applicationInstances = [
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystems2,
+        host_id: host1,
       }),
-      sapSystemFactory.build({
-        application_instances: [
-          sapSystemApplicationInstanceFactory.build({ host_id: host3 }),
-        ],
-        database_instances: [databaseInstanceFactory.build({ host_id: host4 })],
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystems3,
+        host_id: host3,
       }),
-      sapSystemFactory.build({
-        application_instances: [
-          sapSystemApplicationInstanceFactory.build({ host_id: host5 }),
-        ],
-        database_instances: [],
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystems4,
+        host_id: host5,
       }),
-      sapSystemFactory.build(),
+    ];
+
+    const databaseInstances = [
+      databaseInstanceFactory.build({
+        sap_system_id: sapSystems2,
+        host_id: host2,
+      }),
+      databaseInstanceFactory.build({
+        sap_system_id: sapSystems3,
+        host_id: host4,
+      }),
     ];
 
     const state = {
@@ -138,6 +150,8 @@ describe('Cluster selector', () => {
       },
       sapSystemsList: {
         sapSystems,
+        applicationInstances,
+        databaseInstances,
       },
     };
     expect(getClusterSapSystems(clusterID)(state)).toEqual(
