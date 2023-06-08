@@ -18,6 +18,7 @@ defmodule Trento.DatabaseReadModel do
   schema "databases" do
     field :sid, :string
     field :health, Ecto.Enum, values: Health.values()
+    field :deregistered_at, :utc_datetime_usec
 
     has_many :tags, Trento.Tag, foreign_key: :resource_id
 
