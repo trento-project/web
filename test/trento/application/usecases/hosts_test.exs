@@ -51,4 +51,22 @@ defmodule Trento.HostsTest do
       refute deregistered_host.id in hosts_ids
     end
   end
+
+  describe "get_host_by_id/1" do
+    test "should return host" do
+      %Trento.HostReadModel{id: id} = insert(:host)
+      %Trento.Heartbeat{timestamp: timestamp} = insert(:heartbeat, agent_id: id)
+
+      host = Hosts.get_host_by_id(id)
+
+      assert host.id == id
+      assert host.last_heartbeat_timestamp == timestamp
+    end
+
+    test "should return nil if host does not exist" do
+      host = Hosts.get_host_by_id(UUID.uuid4())
+
+      assert host == nil
+    end
+  end
 end
