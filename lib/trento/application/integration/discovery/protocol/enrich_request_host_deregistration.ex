@@ -18,9 +18,8 @@ defimpl Trento.Support.Middleware.Enrichable,
           {:ok, RequestHostDeregistration.t()}
           | {:error, :host_alive}
           | {:error, :host_not_registered}
-  def enrich(%RequestHostDeregistration{host_id: host_id} = command, _) do
-    host_deregisterable(Hosts.get_host_by_id(host_id), command)
-  end
+  def enrich(%RequestHostDeregistration{host_id: host_id} = command, _),
+    do: host_deregisterable(Hosts.get_host_by_id(host_id), command)
 
   defp host_deregisterable(
          %HostReadModel{last_heartbeat_timestamp: nil, deregistered_at: nil},
