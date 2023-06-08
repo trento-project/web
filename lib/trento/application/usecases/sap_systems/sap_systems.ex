@@ -30,6 +30,7 @@ defmodule Trento.SapSystems do
   @spec get_all_databases :: [DatabaseReadModel.t()]
   def get_all_databases do
     DatabaseReadModel
+    |> where([d], is_nil(d.deregistered_at))
     |> order_by(asc: :sid)
     |> Repo.all()
     |> Repo.preload([

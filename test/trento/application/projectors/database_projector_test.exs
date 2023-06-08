@@ -14,6 +14,7 @@ defmodule Trento.DatabaseProjectorTest do
   }
 
   alias Trento.Domain.Events.{
+    DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceHealthChanged,
     DatabaseInstanceSystemReplicationChanged
@@ -241,5 +242,26 @@ defmodule Trento.DatabaseProjectorTest do
                        health: :critical
                      },
                      1000
+  end
+
+  test "should update the database read model after a deregistration" do
+    deregistered_at = DateTime.utc_now()
+
+    insert(:database, id: sap_system_id = Faker.UUID.v4())
+
+    event = %DatabaseDeregistered{
+      sap_system_id: sap_system_id,
+      deregistered_at: deregistered_at
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    projection = %{sid: sid} = Repo.get(DatabaseReadModel, sap_system_id)
+
+    assert_broadcast "database_deregistered",
+                     %{id: ^sap_system_id, sid: ^sid},
+                     1000
+
+    assert deregistered_at == projection.deregistered_at
   end
 end

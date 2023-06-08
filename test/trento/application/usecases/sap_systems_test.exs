@@ -48,11 +48,13 @@ defmodule Trento.SapSystemsTest do
              ] = SapSystems.get_all_sap_systems()
     end
 
-    test "should retrieve all the existing databases and the related instances" do
+    test "should retrieve all the currently registered existing databases and the related instances" do
       %DatabaseReadModel{
         id: sap_system_id,
         sid: sid
       } = insert(:database)
+
+      insert(:database, deregistered_at: DateTime.utc_now())
 
       database_instances =
         Enum.sort_by(
