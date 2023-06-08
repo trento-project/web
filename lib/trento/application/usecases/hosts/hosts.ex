@@ -26,7 +26,7 @@ defmodule Trento.Hosts do
     |> Repo.preload([:sles_subscriptions, :tags])
   end
 
-  @spec get_host_by_id(Ecto.UUID.t()) :: HostReadModel.t()
+  @spec get_host_by_id(Ecto.UUID.t()) :: HostReadModel.t() | nil
   def get_host_by_id(id) do
     HostReadModel
     |> where([h], h.id == ^id)
