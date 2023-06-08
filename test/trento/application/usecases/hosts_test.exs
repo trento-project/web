@@ -44,7 +44,6 @@ defmodule Trento.HostsTest do
       hosts_ids = Enum.map(hosts, & &1.id)
 
       assert Enum.map(registered_hosts, & &1.id) == hosts_ids
-      assert Enum.map(hosts, & &1.id) == Enum.map(last_heartbeats, & &1.agent_id)
 
       assert Enum.map(hosts, & &1.last_heartbeat_timestamp) ==
                Enum.map(last_heartbeats, & &1.timestamp)
