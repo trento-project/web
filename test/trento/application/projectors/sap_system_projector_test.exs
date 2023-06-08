@@ -14,6 +14,7 @@ defmodule Trento.SapSystemProjectorTest do
   }
 
   alias Trento.Domain.Events.{
+    ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged
@@ -174,5 +175,34 @@ defmodule Trento.SapSystemProjectorTest do
                      1000
 
     assert deregistered_at == projection.deregistered_at
+  end
+
+  test "should remove an application instance from the read model after a deregistration" do
+    deregistered_at = DateTime.utc_now()
+
+    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+
+    %{instance_number: instance_number, host_id: host_id} =
+      insert(:application_instance, sap_system_id: sap_system_id)
+
+    event = %ApplicationInstanceDeregistered{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      deregistered_at: deregistered_at
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    assert nil ==
+             Repo.get_by(ApplicationInstanceReadModel,
+               sap_system_id: sap_system_id,
+               instance_number: instance_number,
+               host_id: host_id
+             )
+
+    assert_broadcast "application_instance_deregistered",
+                     %{id: ^sap_system_id, instance_number: ^instance_number, host_id: ^host_id},
+                     1000
   end
 end

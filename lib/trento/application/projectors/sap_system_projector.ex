@@ -9,6 +9,7 @@ defmodule Trento.SapSystemProjector do
     name: "sap_system_projector"
 
   alias Trento.Domain.Events.{
+    ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
     ApplicationInstanceRegistered,
     SapSystemDeregistered,
@@ -130,6 +131,25 @@ defmodule Trento.SapSystemProjector do
     end
   )
 
+  project(
+    %ApplicationInstanceDeregistered{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      deregistered_at: _deregistered_at
+    },
+    fn multi ->
+      deregistered_instance =
+        Repo.get_by(ApplicationInstanceReadModel,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+
+      Ecto.Multi.delete(multi, :application_instance, deregistered_instance)
+    end
+  )
+
   @sap_systems_topic "monitoring:sap_systems"
 
   @impl true
@@ -217,6 +237,27 @@ defmodule Trento.SapSystemProjector do
       SapSystemView.render("sap_system_deregistered.json",
         id: sap_system_id,
         sid: sid
+      )
+    )
+  end
+
+  @impl true
+  def after_update(
+        %ApplicationInstanceDeregistered{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "application_instance_deregistered",
+      SapSystemView.render("application_instance_deregistered.json",
+        id: sap_system_id,
+        instance_number: instance_number,
+        host_id: host_id
       )
     )
   end
