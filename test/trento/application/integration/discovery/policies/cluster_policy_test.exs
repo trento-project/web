@@ -1315,5 +1315,17 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
         |> load_discovery_event_fixture()
         |> ClusterPolicy.handle(current_cluster_id)
     end
+
+    test "should not deregister the host if the cluster does not change" do
+      current_cluster_id = "34a94290-2236-5e4d-8def-05beb32d14d4"
+
+      assert {:ok,
+              [
+                %RegisterClusterHost{cluster_id: ^current_cluster_id}
+              ]} =
+               "ha_cluster_discovery_hana_scale_up"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(current_cluster_id)
+    end
   end
 end

@@ -17,7 +17,7 @@ defmodule Trento.Integration.Discovery do
     SapSystemPolicy
   }
 
-  alias Trento.Clusters
+  alias Trento.{Clusters, SapSystems}
 
   @type command :: struct
 
@@ -137,8 +137,12 @@ defmodule Trento.Integration.Discovery do
     ClusterPolicy.handle(event, current_cluster_id)
   end
 
-  defp do_handle(%{"discovery_type" => "sap_system_discovery"} = event),
-    do: SapSystemPolicy.handle(event)
+  defp do_handle(%{"discovery_type" => "sap_system_discovery", "agent_id" => agent_id} = event) do
+    current_application_instances = SapSystems.get_application_instances_by_host_id(agent_id)
+    current_database_instances = SapSystems.get_database_instances_by_host_id(agent_id)
+
+    SapSystemPolicy.handle(event, current_application_instances ++ current_database_instances)
+  end
 
   defp do_handle(_),
     do: {:error, :unknown_discovery_type}

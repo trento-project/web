@@ -62,7 +62,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     do: nil
 
   defp build_deregister_cluster_host_command(agent_id, cluster_id, current_cluster_id) do
-    if cluster_id != current_cluster_id do
+    if generate_cluster_id(cluster_id) != current_cluster_id do
       DeregisterClusterHost.new!(%{
         host_id: agent_id,
         cluster_id: current_cluster_id,
@@ -568,6 +568,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
        }),
        do: cib_last_written
 
+  defp generate_cluster_id(nil), do: nil
   defp generate_cluster_id(id), do: UUID.uuid5(@uuid_namespace, id)
 
   defp parse_cluster_health(details, cluster_type)
