@@ -28,6 +28,15 @@ describe('lastExecutions selector', () => {
     expect(getLastExecution('someID')(state)).toEqual(expectedState);
   });
 
+  it('should return a default loading lastExecution when none was found in the state', () => {
+    const { id: clusterID } = clusterFactory.build();
+    const state = {
+      lastExecutions: {},
+    };
+
+    expect(getLastExecution(clusterID)(state)).toEqual({ loading: true });
+  });
+
   it('should return the expected last execution context by group ID', () => {
     const aCluster = clusterFactory.build();
     const { id: clusterID, name: clusterName } = aCluster;

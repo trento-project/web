@@ -4,7 +4,7 @@ import { getCluster, getClusterHosts } from '@state/selectors/cluster';
 export const getLastExecution =
   (groupID) =>
   ({ lastExecutions }) =>
-    lastExecutions[groupID];
+    lastExecutions[groupID] || { loading: true };
 
 const addHostnameToAgentsCheckResults = (
   executionData = {},
