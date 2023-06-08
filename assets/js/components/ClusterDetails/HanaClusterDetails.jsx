@@ -2,7 +2,6 @@ import React from 'react';
 
 import { groupBy } from '@lib/lists';
 import classNames from 'classnames';
-
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
@@ -16,6 +15,7 @@ import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOvervie
 import ProviderLabel from '@components/ProviderLabel';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
+import { RUNNING_STATES } from '@state/lastExecutions';
 import SiteDetails from './SiteDetails';
 import SBDDetails from './SBDDetails';
 import StoppedResources from './StoppedResources';
@@ -72,10 +72,17 @@ function HanaClusterDetails({
   provider,
   details,
   lastExecution,
-  onStartExecution,
-  navigate,
+  onStartExecution = () => {},
+  navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
+
+  const { loading: executionLoading } = lastExecution || { loading: true };
+
+  const startExecutionDisabled =
+    executionLoading ||
+    !hasSelectedChecks ||
+    RUNNING_STATES.includes(lastExecution?.data?.status);
 
   return (
     <div>
@@ -112,14 +119,14 @@ function HanaClusterDetails({
             <TriggerChecksExecutionRequest
               cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
               clusterId={clusterID}
-              disabled={!hasSelectedChecks}
+              disabled={startExecutionDisabled}
               hosts={hosts.map(({ id }) => id)}
               checks={selectedChecks}
               onStartExecution={onStartExecution}
             >
               <EOS_PLAY_CIRCLE
                 className={classNames('inline-block fill-jungle-green-500', {
-                  'fill-slate-500': !hasSelectedChecks,
+                  'fill-slate-500': startExecutionDisabled,
                 })}
               />{' '}
               <span>Start Execution</span>

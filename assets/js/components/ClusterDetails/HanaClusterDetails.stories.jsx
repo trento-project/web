@@ -3,8 +3,9 @@ import { MemoryRouter } from 'react-router-dom';
 
 import {
   clusterFactory,
-  checksExecutionCompletedFactory,
   hostFactory,
+  checksExecutionCompletedFactory,
+  checksExecutionRunningFactory,
 } from '@lib/test-utils/factories';
 
 import HanaClusterDetails from './HanaClusterDetails';
@@ -34,6 +35,12 @@ const hosts = [
   hostFactory.build({ hostname: details.nodes[1].name }),
 ];
 
+function ContainerWrapper({ children }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
+  );
+}
+
 export default {
   title: 'HanaClusterDetails',
   components: HanaClusterDetails,
@@ -44,13 +51,12 @@ export default {
       </MemoryRouter>
     ),
   ],
+  render: (args) => (
+    <ContainerWrapper>
+      <HanaClusterDetails {...args} />
+    </ContainerWrapper>
+  ),
 };
-
-function ContainerWrapper({ children }) {
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
-  );
-}
 
 export const Hana = {
   args: {
@@ -68,9 +74,19 @@ export const Hana = {
     onStartExecution: () => {},
     navigate: () => {},
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <HanaClusterDetails {...args} />
-    </ContainerWrapper>
-  ),
+};
+
+export const WithNoSelectedChecks = {
+  args: {
+    ...Hana.args,
+    selectedChecks: [],
+    hasSelectedChecks: false,
+  },
+};
+
+export const WithRunningExecution = {
+  args: {
+    ...Hana.args,
+    lastExecution: { data: checksExecutionRunningFactory.build() },
+  },
 };

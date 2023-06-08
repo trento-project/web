@@ -4,7 +4,7 @@ import { Factory } from 'fishery';
 import { hostFactory, resultEnum, randomObjectFactory } from '.';
 
 export const checksExecutionStatusEnum = () =>
-  faker.helpers.arrayElement(['running', 'completed']);
+  faker.helpers.arrayElement(['running', 'completed', 'requested']);
 
 const expectationReturnTypeEnum = () =>
   faker.helpers.arrayElement(['expect', 'expect_same']);
@@ -139,7 +139,7 @@ export const checksExecutionRunningFactory = Factory.define(() => ({
 export const withCompletedResults = (execution, result, checkResults) => ({
   ...execution,
   status: 'completed',
-  result: result || checksExecutionStatusEnum(),
+  result,
   check_results: checkResults || checkResultFactory.buildList(2),
   completed_at: faker.date.soon(),
 });
