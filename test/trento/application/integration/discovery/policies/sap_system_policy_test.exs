@@ -9,6 +9,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
   alias Trento.Integration.Discovery.SapSystemPolicy
 
   alias Trento.Domain.Commands.{
+    DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
     RegisterApplicationInstance,
     RegisterDatabaseInstance
@@ -92,33 +93,68 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
              |> SapSystemPolicy.handle([])
   end
 
+  test "should return an empty list of commands if an empty payload is received" do
+    assert {:ok, []} =
+             "sap_system_discovery_empty"
+             |> load_discovery_event_fixture()
+             |> SapSystemPolicy.handle([])
+  end
+
   describe "delta deregistration" do
     test "should deregister the old instances and register the new ones" do
-      [%{sap_system_id: sap_system_id_1}, %{sap_system_id: sap_system_id_2}] =
+      database_sap_system_id = UUID.uuid4()
+
+      [
+        %{instance_number: database_instance_number_1},
+        %{instance_number: database_instance_number_2}
+      ] =
         database_instances =
         build_list(
           2,
-          :database_instance
+          :database_instance_without_host,
+          sap_system_id: database_sap_system_id
+        )
+
+      [
+        %{instance_number: application_instance_number_1},
+        %{instance_number: application_instance_number_2}
+      ] =
+        application_instances =
+        build_list(
+          2,
+          :application_instance_without_host
         )
 
       assert {:ok,
               [
                 %DeregisterDatabaseInstance{
-                  sap_system_id: ^sap_system_id_1
+                  sap_system_id: ^database_sap_system_id,
+                  instance_number: ^database_instance_number_1
                 },
                 %DeregisterDatabaseInstance{
-                  sap_system_id: ^sap_system_id_2
+                  sap_system_id: ^database_sap_system_id,
+                  instance_number: ^database_instance_number_2
                 },
-                %RegisterDatabaseInstance{}
+                %DeregisterApplicationInstance{
+                  instance_number: ^application_instance_number_1
+                },
+                %DeregisterApplicationInstance{
+                  instance_number: ^application_instance_number_2
+                },
+                %RegisterDatabaseInstance{
+                  instance_number: "00",
+                  sap_system_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
+                  sid: "PRD"
+                }
               ]} =
                "sap_system_discovery_database"
                |> load_discovery_event_fixture()
-               |> SapSystemPolicy.handle(database_instances)
+               |> SapSystemPolicy.handle(database_instances ++ application_instances)
     end
 
     test "should not deregister any instance if the discovered instances did not change" do
       application_instance =
-        build(:application_instance,
+        build(:application_instance_without_host,
           features: "ABAP|GATEWAY|ICMAN|IGS",
           host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
           instance_number: "02",
@@ -141,6 +177,31 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
                "sap_system_discovery_application"
                |> load_discovery_event_fixture()
                |> SapSystemPolicy.handle([application_instance])
+    end
+
+    test "should deregister all instances if the discovered instances is an empty list" do
+      application_instance =
+        build(:application_instance_without_host,
+          instance_number: "02"
+        )
+
+      database_instance =
+        build(:database_instance_without_host,
+          instance_number: "10"
+        )
+
+      assert {:ok,
+              [
+                %DeregisterApplicationInstance{
+                  instance_number: "02"
+                },
+                %DeregisterDatabaseInstance{
+                  instance_number: "10"
+                }
+              ]} =
+               "sap_system_discovery_empty"
+               |> load_discovery_event_fixture()
+               |> SapSystemPolicy.handle([application_instance, database_instance])
     end
   end
 end
