@@ -12,6 +12,10 @@ describe('ChecksResultOverview component', () => {
     render(<ChecksResultOverview loading />);
 
     expect(screen.getByRole('alert')).toBeVisible();
+    expect(screen.queryByText('Check Summary')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Checks execution running...')
+    ).toBeInTheDocument();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
     expect(screen.queryByText('Warning')).not.toBeInTheDocument();
     expect(screen.queryByText('Critical')).not.toBeInTheDocument();
