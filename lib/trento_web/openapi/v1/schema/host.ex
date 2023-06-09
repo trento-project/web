@@ -77,15 +77,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           nullable: true,
           format: :"date-time"
         },
-        heartbeat_timestamp: %Schema{
-          title: "HeartbeatTimestamp",
+        last_heartbeat_timestamp: %Schema{
+          title: "LastHeartbeatTimestamp",
           description: "Timestamp of the last heartbeat received from the host",
-          type: :object,
+          type: :string,
           nullable: true,
-          properties: %{
-            agent_id: %Schema{type: :string, description: "Host ID", format: :uuid},
-            timestamp: %Schema{type: :string, format: :"date-time"}
-          }
+          format: :"date-time"
         }
       }
     })

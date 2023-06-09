@@ -2,8 +2,10 @@ defimpl Trento.Support.Middleware.Enrichable,
   for: Trento.Domain.Commands.RequestHostDeregistration do
   alias Trento.Domain.Commands.RequestHostDeregistration
 
-  alias Trento.Repo
-  alias Trento.HostReadModel
+  alias Trento.{
+    Hosts,
+    HostReadModel
+  }
 
   @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]
   @deregistration_debounce Application.compile_env!(
@@ -16,21 +18,18 @@ defimpl Trento.Support.Middleware.Enrichable,
           {:ok, RequestHostDeregistration.t()}
           | {:error, :host_alive}
           | {:error, :host_not_registered}
-  def enrich(%RequestHostDeregistration{host_id: host_id} = command, _) do
-    Repo.get(HostReadModel, host_id)
-    |> Repo.preload([:heartbeat_timestamp])
-    |> host_deregisterable(command)
-  end
+  def enrich(%RequestHostDeregistration{host_id: host_id} = command, _),
+    do: host_deregisterable(Hosts.get_host_by_id(host_id), command)
 
   defp host_deregisterable(
-         %HostReadModel{heartbeat_timestamp: nil, deregistered_at: nil},
+         %HostReadModel{last_heartbeat_timestamp: nil, deregistered_at: nil},
          %RequestHostDeregistration{} = command
        ),
        do: {:ok, command}
 
   defp host_deregisterable(
          %HostReadModel{
-           heartbeat_timestamp: %Trento.Heartbeat{timestamp: timestamp},
+           last_heartbeat_timestamp: last_heartbeat_timestamp,
            deregistered_at: nil
          },
          %RequestHostDeregistration{} = command
@@ -38,7 +37,7 @@ defimpl Trento.Support.Middleware.Enrichable,
     if :lt ==
          DateTime.compare(
            DateTime.utc_now(),
-           DateTime.add(timestamp, @total_deregistration_debounce, :millisecond)
+           DateTime.add(last_heartbeat_timestamp, @total_deregistration_debounce, :millisecond)
          ),
        do: {:error, :host_alive},
        else: {:ok, command}
