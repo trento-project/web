@@ -1,19 +1,10 @@
 import React from 'react';
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
-function Spinner({
-  centered = false,
-  wrapperClassName = '',
-  size = 'm',
-  spinnerColor = 'fill-jungle-green-500',
-}) {
+function Spinner({ className = '', size = 'm' }) {
   return (
-    <div role="alert" aria-label="Loading" className={wrapperClassName}>
-      <EOS_LOADING_ANIMATED
-        size={size}
-        centered={centered}
-        className={spinnerColor}
-      />
+    <div role="alert" aria-label="Loading" className={className}>
+      <EOS_LOADING_ANIMATED size={size} className={'fill-jungle-green-500'} />
     </div>
   );
 }

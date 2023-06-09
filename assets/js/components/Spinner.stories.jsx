@@ -7,14 +7,7 @@ export default {
 
 export const Default = {
   argTypes: {
-    centered: {
-      control: 'boolean',
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
-      },
-    },
-    wrapperClassName: {
+    className: {
       control: 'text',
       description: 'Add padding or margin',
       table: {
@@ -29,13 +22,6 @@ export const Default = {
       table: {
         type: { summary: 'string' },
         defaultValue: { summary: 'm' },
-      },
-    },
-    spinnerColor: {
-      description: 'Set tailwind fill color',
-      control: 'text',
-      table: {
-        type: { summary: 'string' },
       },
     },
   },

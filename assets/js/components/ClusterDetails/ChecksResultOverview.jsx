@@ -23,7 +23,7 @@ function ChecksResultOverview({
         <span className="text-sm text-gray-600">
           Checks execution running...
         </span>
-        <Spinner size="xl" wrapperClassName="pt-12" />
+        <Spinner size="xl" className="pt-12" />
       </div>
     );
   }
