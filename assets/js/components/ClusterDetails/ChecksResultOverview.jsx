@@ -18,8 +18,14 @@ function ChecksResultOverview({
 }) {
   if (loading || pendingStates.includes(data?.status)) {
     return (
-      <div className="flex flex-col items-center mt-2 px-4">
-        <Spinner />
+      <div className="flex flex-col items-center px-4">
+        <h1 className="text-center text-2xl font-bold">Check Summary</h1>
+        <span className="text-sm">Checks execution running...</span>
+        <Spinner
+          spinnerColor="fill-jungle-green-500"
+          size="xl"
+          wrapperClassName="pt-12"
+        />
       </div>
     );
   }

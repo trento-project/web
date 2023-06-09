@@ -1,13 +1,18 @@
 import React from 'react';
-import { computedIconCssClass } from '@lib/icon';
-
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
-function Spinner({ centered = false }) {
+function Spinner({
+  centered = false,
+  wrapperClassName = '',
+  size = 'm',
+  spinnerColor = 'fill-jungle-green-500',
+}) {
   return (
-    <div role="alert" aria-label="Loading">
+    <div role="alert" aria-label="Loading" className={wrapperClassName}>
       <EOS_LOADING_ANIMATED
-        className={computedIconCssClass('fill-jungle-green-500', centered)}
+        size={size}
+        centered={centered}
+        className={spinnerColor}
       />
     </div>
   );
