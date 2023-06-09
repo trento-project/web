@@ -29,7 +29,7 @@ defmodule Trento.Hosts do
   @spec get_host_by_id(Ecto.UUID.t()) :: HostReadModel.t() | nil
   def get_host_by_id(id) do
     HostReadModel
-    |> where([h], h.id == ^id)
+    |> where([h], h.id == ^id and is_nil(h.deregistered_at))
     |> enrich_host_read_model_query()
     |> Repo.one()
     |> Repo.preload([:sles_subscriptions, :tags])

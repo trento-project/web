@@ -63,6 +63,14 @@ defmodule Trento.HostsTest do
       assert host.last_heartbeat_timestamp == timestamp
     end
 
+    test "should return nil if host is deregistered" do
+      %Trento.HostReadModel{id: id} = insert(:host, deregistered_at: DateTime.utc_now())
+
+      host = Hosts.get_host_by_id(id)
+
+      assert host == nil
+    end
+
     test "should return nil if host does not exist" do
       host = Hosts.get_host_by_id(UUID.uuid4())
 
