@@ -12,7 +12,6 @@ export const Default = {
       description: 'Add padding or margin',
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: '""' },
       },
     },
     size: {
