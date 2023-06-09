@@ -46,9 +46,12 @@ context('Checks catalog', () => {
       ['gcp', 'GCP', 4],
     ].forEach(([provider, label, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
-        cy.intercept(`${checksCatalogURL}?provider=${provider}`, {
-          body: { items: catalog.slice(0, checkCount) },
-        }).as('request');
+        cy.intercept(
+          `${checksCatalogURL}?provider=${provider}&resource_type=cluster`,
+          {
+            body: { items: catalog.slice(0, checkCount) },
+          }
+        ).as('request');
 
         cy.get('.cloud-provider-selection-dropdown').click();
         cy.get('.cloud-provider-selection-dropdown')
