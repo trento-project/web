@@ -203,8 +203,10 @@ defmodule Trento.SapSystemProjectorTest do
                host_id: host_id
              )
 
-    query = from(d in ApplicationInstanceReadModel, select: fragment("count(?)", d.sap_system_id))
-    assert Repo.all(query) == [4]
+    assert 4 ==
+             ApplicationInstanceReadModel
+             |> Repo.all()
+             |> Enum.count()
 
     assert_broadcast "application_instance_deregistered",
                      %{

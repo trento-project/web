@@ -291,8 +291,10 @@ defmodule Trento.DatabaseProjectorTest do
                host_id: host_id
              )
 
-    query = from(d in DatabaseInstanceReadModel, select: fragment("count(?)", d.sap_system_id))
-    assert Repo.all(query) == [4]
+    assert 4 ==
+             DatabaseInstanceReadModel
+             |> Repo.all()
+             |> Enum.count()
 
     assert_broadcast "database_instance_deregistered",
                      %{
