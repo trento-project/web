@@ -7,6 +7,8 @@ defmodule Trento.SapSystemProjectorTest do
 
   import Trento.Factory
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+
   alias Trento.{
     ApplicationInstanceReadModel,
     SapSystemProjector,
@@ -17,7 +19,8 @@ defmodule Trento.SapSystemProjectorTest do
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
     SapSystemDeregistered,
-    SapSystemHealthChanged
+    SapSystemHealthChanged,
+    SapSystemUpdated
   }
 
   alias Trento.ProjectorTestHelper
@@ -41,13 +44,20 @@ defmodule Trento.SapSystemProjectorTest do
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
-    %{db_host: db_host, tenant: tenant, id: id, sid: sid, health: health} =
-      projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
+    %{
+      db_host: db_host,
+      tenant: tenant,
+      id: id,
+      sid: sid,
+      health: health,
+      ensa_version: ensa_version
+    } = projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
 
     assert event.sid == projection.sid
     assert event.tenant == projection.tenant
     assert event.db_host == projection.db_host
     assert event.health == projection.health
+    assert event.ensa_version == projection.ensa_version
 
     assert_broadcast "sap_system_registered",
                      %{
@@ -55,7 +65,8 @@ defmodule Trento.SapSystemProjectorTest do
                        health: ^health,
                        id: ^id,
                        sid: ^sid,
-                       tenant: ^tenant
+                       tenant: ^tenant,
+                       ensa_version: ^ensa_version
                      },
                      1000
   end
@@ -215,5 +226,20 @@ defmodule Trento.SapSystemProjectorTest do
                        host_id: ^host_id
                      },
                      1000
+  end
+
+  test "should update an already existing SAP System when a SapSystemUpdated event is received" do
+    insert(:sap_system, id: sap_system_id = Faker.UUID.v4(), ensa_version: EnsaVersion.no_ensa())
+
+    event = %SapSystemUpdated{
+      sap_system_id: sap_system_id,
+      ensa_version: EnsaVersion.ensa1()
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
+
+    assert event.ensa_version == projection.ensa_version
   end
 end

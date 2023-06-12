@@ -14,7 +14,8 @@ defmodule Trento.SapSystemProjector do
     ApplicationInstanceRegistered,
     SapSystemDeregistered,
     SapSystemHealthChanged,
-    SapSystemRegistered
+    SapSystemRegistered,
+    SapSystemUpdated
   }
 
   alias TrentoWeb.V1.SapSystemView
@@ -32,7 +33,8 @@ defmodule Trento.SapSystemProjector do
       sid: sid,
       tenant: tenant,
       db_host: db_host,
-      health: health
+      health: health,
+      ensa_version: ensa_version
     },
     fn multi ->
       changeset =
@@ -41,7 +43,8 @@ defmodule Trento.SapSystemProjector do
           sid: sid,
           tenant: tenant,
           db_host: db_host,
-          health: health
+          health: health,
+          ensa_version: ensa_version
         })
 
       Ecto.Multi.insert(multi, :sap_system, changeset)
@@ -146,6 +149,21 @@ defmodule Trento.SapSystemProjector do
         )
 
       Ecto.Multi.delete(multi, :application_instance, deregistered_instance)
+    end
+  )
+
+  project(
+    %SapSystemUpdated{
+      sap_system_id: sap_system_id,
+      ensa_version: ensa_version
+    },
+    fn multi ->
+      changeset =
+        SapSystemReadModel.changeset(%SapSystemReadModel{id: sap_system_id}, %{
+          ensa_version: ensa_version
+        })
+
+      Ecto.Multi.update(multi, :sap_system, changeset)
     end
   )
 
