@@ -128,6 +128,7 @@ describe('ClusterDetails ChecksSelection component', () => {
         type: 'UPDATE_CATALOG',
         payload: {
           provider: cluster.provider,
+          resource_type: 'cluster',
         },
       },
       {
