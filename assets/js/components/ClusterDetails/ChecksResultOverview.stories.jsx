@@ -14,11 +14,12 @@ export const Default = {
       warning_count: faker.datatype.number(),
       critical_count: faker.datatype.number(),
     },
-    error: false,
+    error: '',
     loading: false,
-    onCheckCLick: {},
+    onCheckClick: () => {},
   },
 };
 
 export const Loading = { args: { ...Default.args, loading: true } };
+export const Error = { args: { ...Default.args, error: 'Network Error' } };
 export const NoData = { ...Default.args, data: {} };
