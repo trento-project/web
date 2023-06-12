@@ -7,6 +7,7 @@ defmodule Trento.SapSystemReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.{
@@ -23,6 +24,7 @@ defmodule Trento.SapSystemReadModel do
     field :tenant, :string
     field :db_host, :string
     field :health, Ecto.Enum, values: Health.values()
+    field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
