@@ -24,7 +24,9 @@ const updatedProvider = {
 };
 
 const buildUpdateCatalogAction = (provider) => {
-  const payload = checkProviderExists(provider) ? { provider } : {};
+  const payload = checkProviderExists(provider)
+    ? { provider, resource_type: 'cluster' }
+    : {};
   return updateCatalog(payload);
 };
 
