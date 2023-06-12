@@ -4,6 +4,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+
   alias TrentoWeb.OpenApi.V1.Schema.{Database, ResourceHealth, Tags}
 
   defmodule ApplicationInstance do
@@ -53,6 +55,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
         tenant: %Schema{type: :string, description: "Tenant"},
         db_host: %Schema{type: :string, description: "Address of the connected Database"},
         health: ResourceHealth,
+        ensa_version: %Schema{
+          type: :string,
+          enum: EnsaVersion.values(),
+          description: "ENSA version of the SAP system"
+        },
         application_instances: %Schema{
           title: "ApplicationInstances",
           description: "A list of the discovered Application Instances for current SAP Systems",
