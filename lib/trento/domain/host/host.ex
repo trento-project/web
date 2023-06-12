@@ -148,6 +148,22 @@ defmodule Trento.Domain.Host do
     []
   end
 
+  # Reject all the commands, except for the registration ones when the host_id does not exists
+  def execute(
+        %Host{host_id: nil},
+        _
+      ) do
+    {:error, :host_not_registered}
+  end
+
+  def execute(
+        %Host{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :host_not_registered}
+  end
+
   def execute(
         %Host{},
         %RegisterHost{
@@ -173,22 +189,6 @@ defmodule Trento.Domain.Host do
       os_version: os_version,
       installation_source: installation_source
     }
-  end
-
-  # Reject all the commands, except for the registration ones when the host_id does not exists
-  def execute(
-        %Host{host_id: nil},
-        _
-      ) do
-    {:error, :host_not_registered}
-  end
-
-  def execute(
-        %Host{deregistered_at: deregistered_at},
-        _
-      )
-      when not is_nil(deregistered_at) do
-    {:error, :host_not_registered}
   end
 
   def execute(
