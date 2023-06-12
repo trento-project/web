@@ -5,6 +5,7 @@ defmodule Trento.Factory do
 
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.Domain.{
@@ -262,7 +263,8 @@ defmodule Trento.Factory do
       sid: Faker.UUID.v4(),
       db_host: Faker.Internet.ip_v4_address(),
       tenant: Faker.Beer.hop(),
-      health: Health.passing()
+      health: Health.passing(),
+      ensa_version: EnsaVersion.ensa1()
     }
   end
 
@@ -370,6 +372,7 @@ defmodule Trento.Factory do
       tenant: Faker.Beer.hop(),
       db_host: Faker.Internet.ip_v4_address(),
       health: Health.unknown(),
+      ensa_version: EnsaVersion.ensa1(),
       deregistered_at: nil
     }
   end
@@ -457,7 +460,8 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: Health.passing()
+      health: Health.passing(),
+      ensa_version: EnsaVersion.ensa1()
     })
   end
 
