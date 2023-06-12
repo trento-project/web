@@ -185,6 +185,8 @@ defmodule Trento.SapSystemProjectorTest do
     %{instance_number: instance_number, host_id: host_id} =
       insert(:application_instance, sap_system_id: sap_system_id)
 
+    insert_list(4, :application_instance)
+
     event = %ApplicationInstanceDeregistered{
       instance_number: instance_number,
       host_id: host_id,
@@ -201,8 +203,15 @@ defmodule Trento.SapSystemProjectorTest do
                host_id: host_id
              )
 
+    query = from(d in ApplicationInstanceReadModel, select: fragment("count(?)", d.sap_system_id))
+    assert Repo.all(query) == [4]
+
     assert_broadcast "application_instance_deregistered",
-                     %{id: ^sap_system_id, instance_number: ^instance_number, host_id: ^host_id},
+                     %{
+                       sap_system_id: ^sap_system_id,
+                       instance_number: ^instance_number,
+                       host_id: ^host_id
+                     },
                      1000
   end
 end

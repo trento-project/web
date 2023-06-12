@@ -270,6 +270,7 @@ defmodule Trento.DatabaseProjectorTest do
     deregistered_at = DateTime.utc_now()
 
     insert(:database, id: sap_system_id = Faker.UUID.v4())
+    insert_list(4, :database_instance)
 
     %{instance_number: instance_number, host_id: host_id} =
       insert(:database_instance, sap_system_id: sap_system_id)
@@ -290,8 +291,15 @@ defmodule Trento.DatabaseProjectorTest do
                host_id: host_id
              )
 
+    query = from(d in DatabaseInstanceReadModel, select: fragment("count(?)", d.sap_system_id))
+    assert Repo.all(query) == [4]
+
     assert_broadcast "database_instance_deregistered",
-                     %{id: ^sap_system_id, instance_number: ^instance_number, host_id: ^host_id},
+                     %{
+                       sap_system_id: ^sap_system_id,
+                       instance_number: ^instance_number,
+                       host_id: ^host_id
+                     },
                      1000
   end
 end
