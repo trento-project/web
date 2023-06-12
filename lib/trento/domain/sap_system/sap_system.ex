@@ -80,7 +80,8 @@ defmodule Trento.Domain.SapSystem do
     SapSystemRegistered,
     SapSystemRolledUp,
     SapSystemRollUpRequested,
-    SapSystemTombstoned
+    SapSystemTombstoned,
+    SapSystemUpdated
   }
 
   alias Trento.Domain.HealthService
@@ -202,7 +203,7 @@ defmodule Trento.Domain.SapSystem do
       )
     end)
     |> Multi.execute(fn sap_system ->
-      maybe_emit_sap_system_registered_event(sap_system, instance)
+      maybe_emit_sap_system_registered_or_updated_event(sap_system, instance)
     end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
@@ -474,11 +475,16 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{sap_system | application: Map.put(application, :instances, instances)}
   end
 
-  def apply(%SapSystem{} = sap_system, %SapSystemRegistered{sid: sid, health: health}) do
+  def apply(%SapSystem{application: application} = sap_system, %SapSystemRegistered{
+        sid: sid,
+        health: health,
+        ensa_version: ensa_version
+      }) do
     %SapSystem{
       sap_system
       | sid: sid,
-        health: health
+        health: health,
+        application: Map.put(application, :ensa_version, ensa_version)
     }
   end
 
@@ -486,6 +492,15 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{
       sap_system
       | health: health
+    }
+  end
+
+  def apply(%SapSystem{application: application} = sap_system, %SapSystemUpdated{
+        ensa_version: ensa_version
+      }) do
+    %SapSystem{
+      sap_system
+      | application: Map.put(application, :ensa_version, ensa_version)
     }
   end
 
@@ -720,14 +735,7 @@ defmodule Trento.Domain.SapSystem do
            health: health
          }
        ) do
-    instance =
-      Enum.find(instances, fn
-        %Instance{host_id: ^host_id, instance_number: ^instance_number} ->
-          true
-
-        _ ->
-          false
-      end)
+    instance = get_instance(instances, host_id, instance_number)
 
     case instance do
       %Instance{health: ^health} ->
@@ -757,14 +765,15 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-  defp maybe_emit_sap_system_registered_event(
+  defp maybe_emit_sap_system_registered_or_updated_event(
          %SapSystem{sid: nil, application: %Application{instances: instances}},
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
            sid: sid,
            tenant: tenant,
            db_host: db_host,
-           health: health
+           health: health,
+           ensa_version: ensa_version
          }
        ) do
     if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
@@ -773,16 +782,39 @@ defmodule Trento.Domain.SapSystem do
         sid: sid,
         tenant: tenant,
         db_host: db_host,
-        health: health
+        health: health,
+        ensa_version: ensa_version
       }
     end
   end
 
-  defp maybe_emit_sap_system_registered_event(
-         %SapSystem{},
-         %RegisterApplicationInstance{}
+  # Values didn't update
+  defp maybe_emit_sap_system_registered_or_updated_event(
+         %SapSystem{application: %Application{ensa_version: ensa_version}},
+         %RegisterApplicationInstance{
+           ensa_version: ensa_version
+         }
        ),
        do: nil
+
+  # Don't update if ensa_version is no_ensa, as this means that the coming app is not
+  # message or enqueue replicator type
+  defp maybe_emit_sap_system_registered_or_updated_event(
+         %SapSystem{},
+         %RegisterApplicationInstance{
+           ensa_version: :no_ensa
+         }
+       ),
+       do: nil
+
+  defp maybe_emit_sap_system_registered_or_updated_event(
+         %SapSystem{},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           ensa_version: ensa_version
+         }
+       ),
+       do: %SapSystemUpdated{sap_system_id: sap_system_id, ensa_version: ensa_version}
 
   # Do not emit health changed event as the SAP system is not completely registered yet
   defp maybe_emit_sap_system_health_changed_event(%SapSystem{application: nil}), do: nil
