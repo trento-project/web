@@ -164,16 +164,14 @@ defmodule Trento.DatabaseProjector do
     %DatabaseInstanceDeregistered{
       instance_number: instance_number,
       host_id: host_id,
-      sap_system_id: sap_system_id,
-      deregistered_at: _deregistered_at
+      sap_system_id: sap_system_id
     },
     fn multi ->
-      deregistered_instance =
-        Repo.get_by(DatabaseInstanceReadModel,
-          sap_system_id: sap_system_id,
-          instance_number: instance_number,
-          host_id: host_id
-        )
+      deregistered_instance = %DatabaseInstanceReadModel{
+        sap_system_id: sap_system_id,
+        instance_number: instance_number,
+        host_id: host_id
+      }
 
       Ecto.Multi.delete(multi, :database_instance, deregistered_instance)
     end
@@ -316,8 +314,8 @@ defmodule Trento.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_deregistered",
-      SapSystemView.render("database_instance_deregistered.json",
-        id: sap_system_id,
+      SapSystemView.render("instance_deregistered.json",
+        sap_system_id: sap_system_id,
         instance_number: instance_number,
         host_id: host_id
       )

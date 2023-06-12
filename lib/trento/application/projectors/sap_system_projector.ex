@@ -135,8 +135,7 @@ defmodule Trento.SapSystemProjector do
     %ApplicationInstanceDeregistered{
       instance_number: instance_number,
       host_id: host_id,
-      sap_system_id: sap_system_id,
-      deregistered_at: _deregistered_at
+      sap_system_id: sap_system_id
     },
     fn multi ->
       deregistered_instance =
@@ -254,8 +253,8 @@ defmodule Trento.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_deregistered",
-      SapSystemView.render("application_instance_deregistered.json",
-        id: sap_system_id,
+      SapSystemView.render("instance_deregistered.json",
+        sap_system_id: sap_system_id,
         instance_number: instance_number,
         host_id: host_id
       )
