@@ -538,8 +538,66 @@ defmodule Trento.SapSystemTest do
           sid: sid,
           instance_number: instance_number,
           host_id: host_id,
-          features: "MESSAGESERVER",
+          features: "ABAP",
           ensa_version: EnsaVersion.no_ensa()
+        ),
+        [],
+        fn state ->
+          assert %SapSystem{
+                   sid: ^sid,
+                   application: %SapSystem.Application{
+                     sid: ^sid,
+                     ensa_version: ^ensa_version
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should not update a SAP System if the coming data didn't change the current state" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      ensa_version = EnsaVersion.ensa1()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        %{instance_number: instance_number, host_id: host_id} =
+          build(:application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: sid,
+            features: "MESSAGESERVER"
+          ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP"
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          ensa_version: ensa_version
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        build(:register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          host_id: host_id,
+          features: "MESSAGESERVER",
+          ensa_version: ensa_version
         ),
         [],
         fn state ->
