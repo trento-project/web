@@ -4,7 +4,8 @@ import { Factory } from 'fishery';
 
 import { databaseInstanceFactory } from './databases';
 
-const ensaVersion = () => faker.helpers.arrayElement(['ensa1', 'ensa2']);
+const ensaVersion = () =>
+  faker.helpers.arrayElement(['no_ensa', 'ensa1', 'ensa2']);
 const healthEnum = () => faker.helpers.arrayElement(['passing', 'critical']);
 const roles = () =>
   faker.helpers.arrayElements([

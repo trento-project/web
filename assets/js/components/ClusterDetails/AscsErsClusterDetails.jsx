@@ -131,7 +131,8 @@ function AscsErsClusterDetails({
               {
                 title: 'ENSA version',
                 content: currentSapSystem?.ensa_version || '-',
-                render: (content) => content.toUpperCase(),
+                render: (content) =>
+                  content === 'no_ensa' ? '-' : content.toUpperCase(),
               },
               {
                 title: 'Filesystem resource based',

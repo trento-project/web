@@ -61,7 +61,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
 
     expect(screen.getByText('SID').nextSibling).toHaveTextContent(sid);
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent(
-      ensaVersion.toUpperCase()
+      ensaVersion === 'no_ensa' ? '-' : ensaVersion.toUpperCase()
     );
     expect(
       screen.getByText('ASCS/ERS distributed').nextSibling
