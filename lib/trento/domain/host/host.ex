@@ -131,7 +131,7 @@ defmodule Trento.Domain.Host do
     {:error, :host_not_registered}
   end
 
-  # Restore the host when a registerhost command is received for a deregistered host
+  # Restore the host when a RegisterHost command is received for a deregistered host
   def execute(
         %Host{
           host_id: host_id,

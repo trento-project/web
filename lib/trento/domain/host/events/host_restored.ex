@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Events.HostRestored do
   @moduledoc """
-    This event is emitted when an host is restored from a deregistered state
+  This event is emitted when a host is restored from a deregistered state
   """
 
   use Trento.Event

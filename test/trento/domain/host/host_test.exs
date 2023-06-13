@@ -652,7 +652,7 @@ defmodule Trento.HostTest do
   end
 
   describe "deregistration" do
-    test "should restore the host when a RegisterHost command with no new host information is received by a deregistered host" do
+    test "should restore a deregistered host when a RegisterHost command with no new host information is received" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -691,7 +691,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should restore and update the host when a RegisterHost command with new host information is received by a deregistered host" do
+    test "should restore and update a deregistered host when a RegisterHost command with new host information is received" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
