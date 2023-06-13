@@ -669,8 +669,7 @@ defmodule Trento.HostTest do
         %RollUpHost{},
         %UpdateHeartbeat{},
         %UpdateProvider{},
-        %UpdateSlesSubscriptions{},
-        %HostDetailsUpdated{}
+        %UpdateSlesSubscriptions{}
       ]
 
       for command <- commands_to_reject do
