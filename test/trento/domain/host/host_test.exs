@@ -20,6 +20,7 @@ defmodule Trento.HostTest do
     HostDeregistrationRequested,
     HostDetailsUpdated,
     HostRegistered,
+    HostRestored,
     HostRolledUp,
     HostRollUpRequested,
     HostTombstoned,
@@ -651,6 +652,83 @@ defmodule Trento.HostTest do
   end
 
   describe "deregistration" do
+    test "should restore the host when a RegisterHost command with no new host information is received by a deregistered host" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        host_registered_event = build(:host_registered_event, host_id: host_id),
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: DateTime.utc_now()
+        }
+      ]
+
+      restoration_command =
+        build(
+          :register_host_command,
+          host_id: host_id,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          cpu_count: host_registered_event.cpu_count,
+          total_memory_mb: host_registered_event.total_memory_mb,
+          socket_count: host_registered_event.socket_count,
+          os_version: host_registered_event.os_version,
+          installation_source: host_registered_event.installation_source
+        )
+
+      assert_events_and_state(
+        initial_events,
+        [
+          restoration_command
+        ],
+        [
+          %HostRestored{host_id: host_id}
+        ],
+        fn host ->
+          assert nil == host.deregistered_at
+        end
+      )
+    end
+
+    test "should restore and update the host when a RegisterHost command with new host information is received by a deregistered host" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: DateTime.utc_now()
+        }
+      ]
+
+      restoration_command = build(:register_host_command, host_id: host_id)
+
+      assert_events_and_state(
+        initial_events,
+        [
+          restoration_command
+        ],
+        [
+          %HostRestored{host_id: host_id},
+          %HostDetailsUpdated{
+            host_id: restoration_command.host_id,
+            hostname: restoration_command.hostname,
+            ip_addresses: restoration_command.ip_addresses,
+            agent_version: restoration_command.agent_version,
+            cpu_count: restoration_command.cpu_count,
+            total_memory_mb: restoration_command.total_memory_mb,
+            socket_count: restoration_command.socket_count,
+            os_version: restoration_command.os_version,
+            installation_source: restoration_command.installation_source
+          }
+        ],
+        fn host ->
+          assert nil == host.deregistered_at
+        end
+      )
+    end
+
     test "should reject all the commands except the registration ones when the host is deregistered" do
       host_id = Faker.UUID.v4()
       dat = DateTime.utc_now()
