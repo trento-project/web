@@ -657,7 +657,7 @@ defmodule Trento.ClusterTest do
     test "should not accept a rollup command if a cluster was not registered yet" do
       assert_error(
         RollUpCluster.new!(%{cluster_id: Faker.UUID.v4()}),
-        {:error, :cluster_not_found}
+        {:error, :cluster_not_registered}
       )
     end
 
@@ -777,6 +777,39 @@ defmodule Trento.ClusterTest do
   end
 
   describe "deregistration" do
+    test "should reject all the commands when the host is deregistered" do
+      host_one_id = UUID.uuid4()
+      host_two_id = UUID.uuid4()
+
+      cluster_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:cluster_deregistered_event,
+          cluster_id: cluster_id,
+          deregistered_at: deregistered_at
+        )
+      ]
+
+      commands_to_reject = [
+        %CompleteChecksExecution{},
+        %DeregisterClusterHost{},
+        %RollUpCluster{},
+        %SelectChecks{},
+        %RegisterClusterHost{}
+      ]
+
+      for command <- commands_to_reject do
+        assert match?({:error, :cluster_not_registered}, aggregate_run(initial_events, command)),
+               "Command #{inspect(command)} should be rejected by the aggregate"
+      end
+    end
+
     test "should emit the HostRemovedFromCluster event after a DeregisterClusterHost command and remove the host from the cluster aggregate state" do
       cluster_id = Faker.UUID.v4()
       dat = DateTime.utc_now()

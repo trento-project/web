@@ -207,22 +207,11 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
-  # Start the rollup flow
   def execute(
         %SapSystem{sap_system_id: nil},
         _
       ) do
     {:error, :sap_system_not_registered}
-  end
-
-  def execute(
-        %SapSystem{sap_system_id: sap_system_id} = snapshot,
-        %RollUpSapSystem{}
-      ) do
-    %SapSystemRollUpRequested{
-      sap_system_id: sap_system_id,
-      snapshot: snapshot
-    }
   end
 
   # Deregister a database instance and emit a DatabaseInstanceDeregistered
@@ -285,6 +274,24 @@ defmodule Trento.Domain.SapSystem do
       )
     end)
     |> Multi.execute(&maybe_emit_sap_system_tombstoned_event/1)
+  end
+
+  def execute(
+        %SapSystem{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :sap_system_not_registered}
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = snapshot,
+        %RollUpSapSystem{}
+      ) do
+    %SapSystemRollUpRequested{
+      sap_system_id: sap_system_id,
+      snapshot: snapshot
+    }
   end
 
   def apply(

@@ -201,6 +201,12 @@ defmodule Trento.Domain.Cluster do
     ]
   end
 
+  def execute(%Cluster{cluster_id: nil}, _),
+    do: {:error, :cluster_not_registered}
+
+  def execute(%Cluster{deregistered_at: deregistered_at}, _) when not is_nil(deregistered_at),
+    do: {:error, :cluster_not_registered}
+
   # If the cluster is already registered, and the host was never discovered before, it is added to the cluster.
   def execute(
         %Cluster{} = cluster,
@@ -231,9 +237,6 @@ defmodule Trento.Domain.Cluster do
     end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
   end
-
-  def execute(%Cluster{cluster_id: nil}, _),
-    do: {:error, :cluster_not_found}
 
   # Checks selected
   def execute(
