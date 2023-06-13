@@ -47,7 +47,7 @@ context('Checks catalog', () => {
     ].forEach(([provider, label, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
         cy.intercept(
-          `${checksCatalogURL}?provider=${provider}&resource_type=cluster`,
+          `${checksCatalogURL}?provider=${provider}&target_type=cluster`,
           {
             body: { items: catalog.slice(0, checkCount) },
           }
