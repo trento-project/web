@@ -58,7 +58,7 @@ function ChecksSelection({ clusterId, cluster }) {
   const [groupSelection, setGroupSelection] = useState([]);
   const catalogEnv = {
     provider: cluster.provider,
-    resource_type: 'cluster',
+    target_type: 'cluster',
   };
 
   useEffect(() => {

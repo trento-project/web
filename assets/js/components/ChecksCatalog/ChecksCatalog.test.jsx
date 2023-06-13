@@ -71,7 +71,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       },
       {
         type: 'UPDATE_CATALOG',
-        payload: { provider: 'aws', resource_type: 'cluster' },
+        payload: { provider: 'aws', target_type: 'cluster' },
       },
     ];
     expect(actions).toEqual(expectedActions);
