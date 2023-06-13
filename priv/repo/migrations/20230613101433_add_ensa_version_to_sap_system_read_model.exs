@@ -3,7 +3,7 @@ defmodule Trento.Repo.Migrations.AddEnsaVersionToSapSystemReadModel do
 
   def change do
     alter table(:sap_systems) do
-      add :ensa_version, :string, default: "no_ensa"
+      add :ensa_version, :string
     end
   end
 end
