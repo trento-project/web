@@ -20,6 +20,7 @@ defmodule Trento.HostProjector do
     HostDetailsUpdated,
     HostRegistered,
     HostRemovedFromCluster,
+    HostRestored,
     ProviderUpdated
   }
 
@@ -58,6 +59,22 @@ defmodule Trento.HostProjector do
       changeset =
         HostReadModel.changeset(%HostReadModel{id: id}, %{
           deregistered_at: deregistered_at
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
+    end
+  )
+
+  project(
+    %HostRestored{
+      host_id: id
+    },
+    fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
+      changeset =
+        HostReadModel.changeset(host, %{
+          deregistered_at: nil
         })
 
       Ecto.Multi.update(multi, :host, changeset)
@@ -175,6 +192,20 @@ defmodule Trento.HostProjector do
         _
       ) do
     # We need to hit the database to get the cluster_id
+    host = Repo.get!(HostReadModel, id)
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_registered",
+      HostView.render("host_registered.json", host: host)
+    )
+  end
+
+  def after_update(
+        %HostRestored{host_id: id},
+        _,
+        _
+      ) do
     host = Repo.get!(HostReadModel, id)
 
     TrentoWeb.Endpoint.broadcast(

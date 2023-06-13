@@ -27,6 +27,7 @@ defmodule Trento.HostProjectorTest do
     HostDeregistered,
     HostDetailsUpdated,
     HostRemovedFromCluster,
+    HostRestored,
     ProviderUpdated
   }
 
@@ -385,6 +386,44 @@ defmodule Trento.HostProjectorTest do
                        id: ^host_id,
                        provider: :gcp,
                        provider_data: ^broadcast_provider_data
+                     },
+                     1000
+  end
+
+  test "should set deregistered_at to nil when HostRestored is received" do
+    host_id = UUID.uuid4()
+    insert(:host, id: host_id, deregistered_at: DateTime.utc_now())
+
+    event = %HostRestored{
+      host_id: host_id
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+    %{
+      agent_version: agent_version,
+      heartbeat: heartbeat,
+      hostname: hostname,
+      id: id,
+      ip_addresses: ip_addresses,
+      cluster_id: cluster_id,
+      provider: provider,
+      provider_data: provider_data,
+      deregistered_at: deregistered_at
+    } = host_projection = Repo.get!(HostReadModel, host_id)
+
+    assert nil == deregistered_at
+
+    assert_broadcast "host_registered",
+                     %{
+                       agent_version: ^agent_version,
+                       cluster_id: ^cluster_id,
+                       heartbeat: ^heartbeat,
+                       hostname: ^hostname,
+                       id: ^id,
+                       ip_addresses: ^ip_addresses,
+                       provider: ^provider,
+                       provider_data: ^provider_data
                      },
                      1000
   end
