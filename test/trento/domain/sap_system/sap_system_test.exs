@@ -3,6 +3,8 @@ defmodule Trento.SapSystemTest do
 
   import Trento.Factory
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
@@ -27,7 +29,8 @@ defmodule Trento.SapSystemTest do
     SapSystemRegistered,
     SapSystemRolledUp,
     SapSystemRollUpRequested,
-    SapSystemTombstoned
+    SapSystemTombstoned,
+    SapSystemUpdated
   }
 
   alias Trento.Domain.SapSystem
@@ -346,6 +349,7 @@ defmodule Trento.SapSystemTest do
       https_port = 443
       start_priority = "0.9"
       host_id = Faker.UUID.v4()
+      ensa_version = EnsaVersion.ensa1()
 
       initial_events = [
         build(
@@ -380,7 +384,8 @@ defmodule Trento.SapSystemTest do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
-          health: :passing
+          health: :passing,
+          ensa_version: ensa_version
         }),
         [
           %ApplicationInstanceRegistered{
@@ -400,7 +405,8 @@ defmodule Trento.SapSystemTest do
             sid: sid,
             db_host: db_host,
             tenant: tenant,
-            health: :passing
+            health: :passing,
+            ensa_version: ensa_version
           }
         ],
         fn state ->
@@ -408,6 +414,7 @@ defmodule Trento.SapSystemTest do
                    sid: ^sid,
                    application: %SapSystem.Application{
                      sid: ^sid,
+                     ensa_version: ^ensa_version,
                      instances: [
                        %SapSystem.Instance{
                          sid: ^sid,
@@ -426,6 +433,185 @@ defmodule Trento.SapSystemTest do
       )
     end
 
+    test "should update a SAP System ENSA version if it was not set" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      ensa_version = EnsaVersion.ensa1()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        %{instance_number: instance_number, host_id: host_id} =
+          build(:application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: sid,
+            features: "MESSAGESERVER"
+          ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP"
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          ensa_version: EnsaVersion.no_ensa()
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        build(:register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          host_id: host_id,
+          features: "MESSAGESERVER",
+          ensa_version: ensa_version
+        ),
+        [
+          %SapSystemUpdated{
+            sap_system_id: sap_system_id,
+            ensa_version: ensa_version
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   sid: ^sid,
+                   application: %SapSystem.Application{
+                     sid: ^sid,
+                     ensa_version: ^ensa_version
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should not update a SAP System ENSA version if the coming application instance does not have ENSA data" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      ensa_version = EnsaVersion.ensa1()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        %{instance_number: instance_number, host_id: host_id} =
+          build(:application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: sid,
+            features: "MESSAGESERVER"
+          ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP"
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          ensa_version: ensa_version
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        build(:register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          host_id: host_id,
+          features: "ABAP",
+          ensa_version: EnsaVersion.no_ensa()
+        ),
+        [],
+        fn state ->
+          assert %SapSystem{
+                   sid: ^sid,
+                   application: %SapSystem.Application{
+                     sid: ^sid,
+                     ensa_version: ^ensa_version
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should not update a SAP System if the coming data didn't change the current state" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      ensa_version = EnsaVersion.ensa1()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        %{instance_number: instance_number, host_id: host_id} =
+          build(:application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: sid,
+            features: "MESSAGESERVER"
+          ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP"
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          ensa_version: ensa_version
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        build(:register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          instance_number: instance_number,
+          host_id: host_id,
+          features: "MESSAGESERVER",
+          ensa_version: ensa_version
+        ),
+        [],
+        fn state ->
+          assert %SapSystem{
+                   sid: ^sid,
+                   application: %SapSystem.Application{
+                     sid: ^sid,
+                     ensa_version: ^ensa_version
+                   }
+                 } = state
+        end
+      )
+    end
+
     test "should register a SAP System and add an application instance when an ABAP instance is already present and a new MESSAGESERVER instance is added" do
       sap_system_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
@@ -436,6 +622,7 @@ defmodule Trento.SapSystemTest do
       https_port = 443
       start_priority = "0.9"
       host_id = Faker.UUID.v4()
+      ensa_version = EnsaVersion.ensa1()
 
       initial_events = [
         build(
@@ -470,7 +657,8 @@ defmodule Trento.SapSystemTest do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
-          health: :passing
+          health: :passing,
+          ensa_version: ensa_version
         }),
         [
           %ApplicationInstanceRegistered{
@@ -490,7 +678,8 @@ defmodule Trento.SapSystemTest do
             sid: sid,
             db_host: db_host,
             tenant: tenant,
-            health: :passing
+            health: :passing,
+            ensa_version: ensa_version
           }
         ],
         fn state ->
@@ -526,6 +715,7 @@ defmodule Trento.SapSystemTest do
       https_port = 443
       start_priority = "0.9"
       host_id = Faker.UUID.v4()
+      ensa_version = EnsaVersion.ensa1()
 
       initial_events = [
         build(
@@ -555,7 +745,8 @@ defmodule Trento.SapSystemTest do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
-          health: :passing
+          health: :passing,
+          ensa_version: ensa_version
         }),
         [
           %ApplicationInstanceRegistered{
@@ -601,6 +792,7 @@ defmodule Trento.SapSystemTest do
       https_port = 443
       start_priority = "0.9"
       host_id = Faker.UUID.v4()
+      ensa_version = EnsaVersion.ensa1()
 
       initial_events = [
         build(
@@ -630,7 +822,8 @@ defmodule Trento.SapSystemTest do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
-          health: :passing
+          health: :passing,
+          ensa_version: ensa_version
         }),
         [
           %ApplicationInstanceRegistered{
@@ -673,8 +866,8 @@ defmodule Trento.SapSystemTest do
       initial_events = [
         build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
         build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
-        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid),
-        build(:application_instance_registered_event, sap_system_id: sap_system_id, sid: sid)
+        build(:application_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
+        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid)
       ]
 
       new_instance_db_host = Faker.Internet.ip_v4_address()
@@ -734,8 +927,8 @@ defmodule Trento.SapSystemTest do
       initial_events = [
         build(:database_registered_event, sap_system_id: sap_system_id),
         build(:database_instance_registered_event, sap_system_id: sap_system_id),
-        build(:sap_system_registered_event, sap_system_id: sap_system_id),
-        application_instance_registered_event
+        application_instance_registered_event,
+        build(:sap_system_registered_event, sap_system_id: sap_system_id)
       ]
 
       assert_events(
@@ -956,6 +1149,7 @@ defmodule Trento.SapSystemTest do
       instance_number = "00"
       features = "MESSAGESERVER"
       host_id = Faker.UUID.v4()
+      ensa_version = EnsaVersion.ensa1()
 
       initial_events = [
         build(
@@ -1004,13 +1198,15 @@ defmodule Trento.SapSystemTest do
             sid: sid,
             db_host: db_host,
             tenant: tenant,
-            health: :critical
+            health: :critical,
+            ensa_version: ensa_version
           }
         ],
         fn state ->
           assert %SapSystem{
                    health: :critical,
                    application: %SapSystem.Application{
+                     ensa_version: ^ensa_version,
                      instances: [
                        %SapSystem.Instance{
                          health: :critical
@@ -1105,8 +1301,8 @@ defmodule Trento.SapSystemTest do
           sap_system_id: sap_system_id,
           health: :warning
         ),
-        sap_system_registered_event,
-        application_instance_registered_event
+        application_instance_registered_event,
+        sap_system_registered_event
       ]
 
       assert_events_and_state(
@@ -1175,8 +1371,8 @@ defmodule Trento.SapSystemTest do
         build(:database_registered_event, sap_system_id: sap_system_id),
         database_instance_registered_event =
           build(:database_instance_registered_event, sap_system_id: sap_system_id),
-        build(:sap_system_registered_event, sap_system_id: sap_system_id),
-        build(:application_instance_registered_event, sap_system_id: sap_system_id)
+        build(:application_instance_registered_event, sap_system_id: sap_system_id),
+        build(:sap_system_registered_event, sap_system_id: sap_system_id)
       ]
 
       assert_events_and_state(
@@ -1216,6 +1412,9 @@ defmodule Trento.SapSystemTest do
         end
       )
     end
+
+    test "should update the SAP system if some of the fields have been changed" do
+    end
   end
 
   describe "rollup" do
@@ -1233,10 +1432,15 @@ defmodule Trento.SapSystemTest do
       database_instance_registered_event =
         build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid)
 
+      application_instance_registered_event =
+        build(:application_instance_registered_event, sap_system_id: sap_system_id, sid: sid)
+
       initial_events = [
         build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
         database_instance_registered_event,
-        build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid)
+        application_instance_registered_event,
+        %{ensa_version: ensa_version} =
+          build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid)
       ]
 
       assert_events_and_state(
@@ -1248,6 +1452,21 @@ defmodule Trento.SapSystemTest do
             sap_system_id: sap_system_id,
             sid: sid,
             health: :passing,
+            application: %SapSystem.Application{
+              sid: sid,
+              ensa_version: ensa_version,
+              instances: [
+                %SapSystem.Instance{
+                  sid: sid,
+                  instance_number: application_instance_registered_event.instance_number,
+                  health: application_instance_registered_event.health,
+                  features: application_instance_registered_event.features,
+                  host_id: application_instance_registered_event.host_id,
+                  system_replication: nil,
+                  system_replication_status: nil
+                }
+              ]
+            },
             database: %SapSystem.Database{
               sid: sid,
               health: :passing,
@@ -1280,6 +1499,7 @@ defmodule Trento.SapSystemTest do
       initial_events = [
         build(:database_registered_event, sap_system_id: sap_system_id, sid: sid),
         build(:database_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
+        build(:application_instance_registered_event, sap_system_id: sap_system_id, sid: sid),
         build(:sap_system_registered_event, sap_system_id: sap_system_id, sid: sid),
         %SapSystemRollUpRequested{
           sap_system_id: sap_system_id,
@@ -1318,19 +1538,22 @@ defmodule Trento.SapSystemTest do
       sap_system_registered_event =
         build(:sap_system_registered_event, sap_system_id: sap_system_id)
 
-      assert_state(
-        [
-          sap_system_registered_event,
-          %SapSystemRolledUp{
-            sap_system_id: sap_system_id,
-            snapshot: %SapSystem{
-              sap_system_id: sap_system_registered_event.sap_system_id,
-              sid: sap_system_registered_event.sid,
-              health: sap_system_registered_event.health,
-              rolling_up: false
-            }
+      initial_events = [
+        build(:application_instance_registered_event, sap_system_id: sap_system_id),
+        sap_system_registered_event,
+        %SapSystemRolledUp{
+          sap_system_id: sap_system_id,
+          snapshot: %SapSystem{
+            sap_system_id: sap_system_registered_event.sap_system_id,
+            sid: sap_system_registered_event.sid,
+            health: sap_system_registered_event.health,
+            rolling_up: false
           }
-        ],
+        }
+      ]
+
+      assert_state(
+        initial_events,
         [],
         fn sap_system ->
           refute sap_system.rolling_up
