@@ -105,6 +105,14 @@ export const sapSystemsListSlice = createSlice({
         (sapSystem) => sapSystem.id !== id
       );
     },
+    updateSAPSystem: (state, { payload }) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === payload.id) {
+          sapSystem = { ...sapSystem, ...payload };
+        }
+        return sapSystem;
+      });
+    },
   },
 });
 
@@ -115,6 +123,7 @@ export const APPLICATION_INSTANCE_REGISTERED =
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
   'APPLICATION_INSTANCE_HEALTH_CHANGED';
 export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
+export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
 
 export const {
   startSapSystemsLoading,
@@ -130,6 +139,7 @@ export const {
   addTagToSAPSystem,
   removeTagFromSAPSystem,
   removeSAPSystem,
+  updateSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;

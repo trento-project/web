@@ -5,11 +5,13 @@ import {
   APPLICATION_INSTANCE_REGISTERED,
   APPLICATION_INSTANCE_HEALTH_CHANGED,
   SAP_SYSTEM_DEREGISTERED,
+  SAP_SYSTEM_UPDATED,
   appendSapsystem,
   updateSapSystemHealth,
   appendApplicationInstance,
   updateApplicationInstanceHealth,
   removeSAPSystem,
+  updateSAPSystem,
 } from '@state/sapSystems';
 import { getSapSystem } from '@state/selectors';
 import { appendEntryToLiveFeed } from '@state/liveFeed';
@@ -74,6 +76,10 @@ export function* sapSystemDeregistered({ payload: { id, sid } }) {
   );
 }
 
+export function* sapSystemUpdated({ payload }) {
+  yield put(updateSAPSystem(payload));
+}
+
 export function* watchSapSystem() {
   yield takeEvery(SAP_SYSTEM_REGISTERED, sapSystemRegistered);
   yield takeEvery(SAP_SYSTEM_HEALTH_CHANGED, sapSystemHealthChanged);
@@ -86,4 +92,5 @@ export function* watchSapSystem() {
     applicationInstanceHealthChanged
   );
   yield takeEvery(SAP_SYSTEM_DEREGISTERED, sapSystemDeregistered);
+  yield takeEvery(SAP_SYSTEM_UPDATED, sapSystemUpdated);
 }

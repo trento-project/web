@@ -39,6 +39,7 @@ const processChannelEvents = (reduxStore, socket) => {
     'application_instance_registered',
     'application_instance_health_changed',
     'sap_system_deregistered',
+    'sap_system_updated',
   ]);
   registerEvents(reduxStore, socket, 'monitoring:databases', [
     'database_registered',

@@ -44,5 +44,6 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     tags: [],
     tenant: faker.random.alphaNumeric(3, { casing: 'upper' }),
     hosts: hostFactory.buildList(5),
+    ensa_version: 'ensa1',
   };
 });

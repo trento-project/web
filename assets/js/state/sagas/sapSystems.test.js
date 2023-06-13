@@ -1,6 +1,9 @@
 import { recordSaga } from '@lib/test-utils';
-import { sapSystemDeregistered } from '@state/sagas/sapSystems';
-import { removeSAPSystem } from '@state/sapSystems';
+import {
+  sapSystemDeregistered,
+  sapSystemUpdated,
+} from '@state/sagas/sapSystems';
+import { removeSAPSystem, updateSAPSystem } from '@state/sapSystems';
 import { sapSystemFactory } from '@lib/test-utils/factories';
 
 describe('SAP Systems sagas', () => {
@@ -12,5 +15,15 @@ describe('SAP Systems sagas', () => {
     });
 
     expect(dispatched).toContainEqual(removeSAPSystem({ id }));
+  });
+
+  it('should updated the SAP system', async () => {
+    const { id, ensa_version } = sapSystemFactory.build();
+
+    const dispatched = await recordSaga(sapSystemUpdated, {
+      payload: { id, ensa_version },
+    });
+
+    expect(dispatched).toContainEqual(updateSAPSystem({ id, ensa_version }));
   });
 });
