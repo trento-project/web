@@ -238,8 +238,18 @@ defmodule Trento.SapSystemProjectorTest do
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
-    projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
+    %{
+      id: id,
+      ensa_version: ensa_version
+    } = Repo.get!(SapSystemReadModel, event.sap_system_id)
 
-    assert event.ensa_version == projection.ensa_version
+    assert event.ensa_version == ensa_version
+
+    assert_broadcast "sap_system_updated",
+                     %{
+                       id: ^id,
+                       ensa_version: ^ensa_version
+                     },
+                     1000
   end
 end
