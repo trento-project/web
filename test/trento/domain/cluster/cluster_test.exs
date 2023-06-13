@@ -777,7 +777,7 @@ defmodule Trento.ClusterTest do
   end
 
   describe "deregistration" do
-    test "should reject all the commands except for registration ones when the host is deregistered" do
+    test "should reject all the commands when the host is deregistered" do
       host_one_id = UUID.uuid4()
       host_two_id = UUID.uuid4()
 
@@ -800,17 +800,14 @@ defmodule Trento.ClusterTest do
         %CompleteChecksExecution{},
         %DeregisterClusterHost{},
         %RollUpCluster{},
-        %SelectChecks{}
+        %SelectChecks{},
+        %RegisterClusterHost{}
       ]
 
       for command <- commands_to_reject do
-        assert_error(initial_events, command, {:error, :cluster_not_registered})
+        assert match?({:error, :cluster_not_registered}, aggregate_run(initial_events, command)),
+               "Command #{inspect(command)} should be rejected by the aggregate"
       end
-
-      register_cluster_host_command = build(:register_cluster_host)
-      # We just care that there are no errors
-
-      assert {:ok, _, _} = aggregate_run(initial_events, register_cluster_host_command)
     end
 
     test "should emit the HostRemovedFromCluster event after a DeregisterClusterHost command and remove the host from the cluster aggregate state" do
