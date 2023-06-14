@@ -280,5 +280,21 @@ defmodule Trento.SapSystemProjector do
   end
 
   @impl true
+  def after_update(
+        %SapSystemUpdated{sap_system_id: sap_system_id, ensa_version: ensa_version},
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_updated",
+      SapSystemView.render("sap_system_updated.json",
+        id: sap_system_id,
+        ensa_version: ensa_version
+      )
+    )
+  end
+
+  @impl true
   def after_update(_, _, _), do: :ok
 end

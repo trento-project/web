@@ -121,6 +121,9 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> Map.delete(:tags)
   end
 
+  def render("sap_system_updated.json", %{id: id, ensa_version: ensa_version}),
+    do: %{id: id, ensa_version: ensa_version}
+
   def render("sap_system_health_changed.json", %{health: health}), do: health
 
   def render("sap_system_deregistered.json", %{id: id, sid: sid}), do: %{id: id, sid: sid}
