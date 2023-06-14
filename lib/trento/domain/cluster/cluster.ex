@@ -224,18 +224,12 @@ defmodule Trento.Domain.Cluster do
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
-          designated_controller: true,
-          host_id: host_id
+          designated_controller: true
         } = command
       ) do
     cluster
     |> Multi.new()
-    |> Multi.execute(fn cluster -> maybe_emit_host_added_to_cluster_event(cluster, host_id) end)
-    |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
-    |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_discovered_health_changed_event(cluster, command)
-    end)
-    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
+    |> maybe_update_cluster(command)
   end
 
   # Checks selected
@@ -444,6 +438,19 @@ defmodule Trento.Domain.Cluster do
         }
       ]
     end
+  end
+
+  defp maybe_update_cluster(
+         multi,
+         %RegisterClusterHost{host_id: host_id} = command
+       ) do
+    multi
+    |> Multi.execute(fn cluster -> maybe_emit_host_added_to_cluster_event(cluster, host_id) end)
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_discovered_health_changed_event(cluster, command)
+    end)
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
   end
 
   defp maybe_emit_cluster_details_updated_event(
