@@ -45,6 +45,7 @@ defmodule Trento.Domain.Host do
     HostDeregistrationRequested,
     HostDetailsUpdated,
     HostRegistered,
+    HostRestored,
     HostRolledUp,
     HostRollUpRequested,
     HostTombstoned,
@@ -122,6 +123,88 @@ defmodule Trento.Domain.Host do
     }
   end
 
+  # Reject all the commands, except for the registration ones when the host_id does not exists
+  def execute(
+        %Host{host_id: nil},
+        _
+      ) do
+    {:error, :host_not_registered}
+  end
+
+  # Restore the host when a RegisterHost command is received for a deregistered host
+  def execute(
+        %Host{
+          host_id: host_id,
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source,
+          deregistered_at: deregistered_at
+        },
+        %RegisterHost{
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source
+        }
+      )
+      when not is_nil(deregistered_at) do
+    %HostRestored{
+      host_id: host_id
+    }
+  end
+
+  def execute(
+        %Host{
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        },
+        %RegisterHost{
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source
+        }
+      )
+      when not is_nil(deregistered_at) do
+    [
+      %HostRestored{
+        host_id: host_id
+      },
+      %HostDetailsUpdated{
+        host_id: host_id,
+        hostname: hostname,
+        ip_addresses: ip_addresses,
+        agent_version: agent_version,
+        cpu_count: cpu_count,
+        total_memory_mb: total_memory_mb,
+        socket_count: socket_count,
+        os_version: os_version,
+        installation_source: installation_source
+      }
+    ]
+  end
+
+  def execute(
+        %Host{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :host_not_registered}
+  end
+
   # Host exists but details didn't change
   def execute(
         %Host{
@@ -146,22 +229,6 @@ defmodule Trento.Domain.Host do
         }
       ) do
     []
-  end
-
-  # Reject all the commands, except for the registration ones when the host_id does not exists
-  def execute(
-        %Host{host_id: nil},
-        _
-      ) do
-    {:error, :host_not_registered}
-  end
-
-  def execute(
-        %Host{deregistered_at: deregistered_at},
-        _
-      )
-      when not is_nil(deregistered_at) do
-    {:error, :host_not_registered}
   end
 
   def execute(
@@ -400,4 +467,9 @@ defmodule Trento.Domain.Host do
 
   def apply(%Host{} = host, %HostDeregistrationRequested{}), do: host
   def apply(%Host{} = host, %HostTombstoned{}), do: host
+
+  # Restoration
+  def apply(%Host{} = host, %HostRestored{}) do
+    %Host{host | deregistered_at: nil}
+  end
 end
