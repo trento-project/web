@@ -7,13 +7,15 @@ defmodule Trento.Domain.AscsErsClusterNode do
     :name
   ]
 
+  require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
+
   use Trento.Type
 
   alias Trento.Domain.ClusterResource
 
   deftype do
     field :name, :string
-    field :roles, {:array, Ecto.Enum}, values: [:ascs, :ers]
+    field :roles, {:array, Ecto.Enum}, values: AscsErsClusterRole.values()
     field :virtual_ips, {:array, :string}
     field :filesystems, {:array, :string}
     field :attributes, {:map, :string}
