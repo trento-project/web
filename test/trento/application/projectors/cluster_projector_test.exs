@@ -10,7 +10,8 @@ defmodule Trento.ClusterProjectorTest do
   alias Trento.Domain.Events.{
     ClusterDeregistered,
     ClusterDetailsUpdated,
-    ClusterHealthChanged
+    ClusterHealthChanged,
+    ClusterRestored
   }
 
   alias Trento.{
@@ -203,6 +204,31 @@ defmodule Trento.ClusterProjectorTest do
 
     assert_broadcast "cluster_deregistered",
                      %{id: ^cluster_id, name: ^name},
+                     1000
+  end
+
+  test "should set deregistered_at field to nil when ClusterRestored is received" do
+    insert(:cluster,
+      id: cluster_id = Faker.UUID.v4(),
+      name: name = "deregistered_cluster",
+      selected_checks: [],
+      deregistered_at: DateTime.utc_now()
+    )
+
+    event = ClusterRestored.new!(%{cluster_id: cluster_id})
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+    cluster_projection = Repo.get!(ClusterReadModel, event.cluster_id)
+
+    assert nil == cluster_projection.deregistered_at
+
+    assert_broadcast "cluster_registered",
+                     %{
+                       cib_last_written: nil,
+                       id: ^cluster_id,
+                       name: ^name,
+                       type: :hana_scale_up
+                     },
                      1000
   end
 
