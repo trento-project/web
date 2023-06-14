@@ -86,6 +86,7 @@ defmodule Trento.Domain.Cluster do
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
+    ClusterRestored,
     ClusterRolledUp,
     ClusterRollUpRequested,
     ClusterTombstoned,
@@ -203,6 +204,48 @@ defmodule Trento.Domain.Cluster do
 
   def execute(%Cluster{cluster_id: nil}, _),
     do: {:error, :cluster_not_registered}
+
+  # Restoration, when a RegisterClusterHost command is received for a deregistered Cluster
+  # the cluster is restored, the host is added to cluster and if the host is a DC
+  # cluster details will be updated
+  def execute(
+        %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id},
+        %RegisterClusterHost{
+          host_id: host_id,
+          designated_controller: false
+        }
+      )
+      when not is_nil(deregistered_at) do
+    [
+      %ClusterRestored{cluster_id: cluster_id},
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    ]
+  end
+
+  def execute(
+        %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id} = cluster,
+        %RegisterClusterHost{
+          host_id: host_id,
+          designated_controller: true
+        } = command
+      )
+      when not is_nil(deregistered_at) do
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %ClusterRestored{cluster_id: cluster_id}
+    end)
+    |> Multi.execute(fn _ ->
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    end)
+    |> maybe_update_cluster(command)
+  end
 
   def execute(%Cluster{deregistered_at: deregistered_at}, _) when not is_nil(deregistered_at),
     do: {:error, :cluster_not_registered}
@@ -418,6 +461,11 @@ defmodule Trento.Domain.Cluster do
   # Deregistration
   def apply(%Cluster{} = cluster, %ClusterDeregistered{deregistered_at: deregistered_at}) do
     %Cluster{cluster | deregistered_at: deregistered_at}
+  end
+
+  # Restoration
+  def apply(%Cluster{} = cluster, %ClusterRestored{}) do
+    %Cluster{cluster | deregistered_at: nil}
   end
 
   def apply(cluster, %legacy_event{}) when legacy_event in @legacy_events, do: cluster
