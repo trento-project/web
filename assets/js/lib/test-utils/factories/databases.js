@@ -6,6 +6,8 @@ const healthEnum = () => faker.helpers.arrayElement(['passing', 'critical']);
 
 export const databaseInstanceFactory = Factory.define(() => ({
   sap_system_id: faker.datatype.uuid(),
+  host_id: faker.datatype.uuid(),
+  instance_number: faker.datatype.number({ min: 10, max: 99 }).toString(),
   sid: faker.random.alpha({ casing: 'upper', count: 3 }),
 }));
 

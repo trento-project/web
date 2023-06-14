@@ -3,7 +3,10 @@ import sapSystemsReducer, {
   removeApplicationInstance,
   updateSAPSystem,
 } from '@state/sapSystems';
-import { sapSystemFactory } from '@lib/test-utils/factories/sapSystems';
+import {
+  sapSystemFactory,
+  sapSystemApplicationInstanceFactory,
+} from '@lib/test-utils/factories/sapSystems';
 
 describe('SAP Systems reducer', () => {
   it('should remove SAP system from state', () => {
@@ -24,14 +27,15 @@ describe('SAP Systems reducer', () => {
   it('should remove an application instance from state', () => {
     const [instance1, instance2] =
       sapSystemApplicationInstanceFactory.buildList(2);
+
     const initialState = {
-      instances: [instance1, instance2],
+      applicationInstances: [instance1, instance2],
     };
 
     const action = removeApplicationInstance(instance1);
 
     const expectedState = {
-      instances: [instance2],
+      applicationInstances: [instance2],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);

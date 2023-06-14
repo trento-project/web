@@ -313,7 +313,7 @@ defmodule Trento.DatabaseProjector do
       ) do
     %DatabaseReadModel{
       sid: sid
-    } = Repo.get(DatabaseReadModel, sap_system_id)
+    } = Repo.get!(DatabaseReadModel, sap_system_id)
 
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,

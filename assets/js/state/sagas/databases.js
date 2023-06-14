@@ -11,10 +11,12 @@ import {
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
   updateDatabaseInstanceSystemReplication,
+  removeDatabaseInstance,
 } from '@state/databases';
 
 import {
   appendDatabaseInstanceToSapSystem,
+  removeDatabaseInstanceFromSapSystem,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
 } from '@state/sapSystems';
@@ -75,7 +77,7 @@ function* databaseInstanceRegistered({ payload }) {
   );
 }
 
-function* databaseInstanceDeregistered({ payload }) {
+export function* databaseInstanceDeregistered({ payload }) {
   yield put(removeDatabaseInstance(payload));
   yield put(removeDatabaseInstanceFromSapSystem(payload));
   yield put(
@@ -86,7 +88,7 @@ function* databaseInstanceDeregistered({ payload }) {
   );
   yield put(
     notify({
-      text: `A database instance has been deregistered from ${payload.sid}.`,
+      text: `The database instance ${payload.instance_number} has been deregistered from ${payload.sid}.`,
       icon: 'ℹ️',
     })
   );

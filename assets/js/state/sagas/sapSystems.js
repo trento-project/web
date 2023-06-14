@@ -10,6 +10,7 @@ import {
   appendSapsystem,
   updateSapSystemHealth,
   appendApplicationInstance,
+  removeApplicationInstance,
   updateApplicationInstanceHealth,
   removeSAPSystem,
   updateSAPSystem,
@@ -17,7 +18,6 @@ import {
 import { getSapSystem } from '@state/selectors';
 import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
-import { removeApplicationInstance } from '../sapSystems';
 
 function* sapSystemRegistered({ payload }) {
   yield put(appendSapsystem(payload));
@@ -64,7 +64,7 @@ function* applicationInstanceRegistered({ payload }) {
   );
 }
 
-function* applicationInstanceDeregistered({ payload }) {
+export function* applicationInstanceDeregistered({ payload }) {
   yield put(removeApplicationInstance(payload));
   yield put(
     appendEntryToLiveFeed({

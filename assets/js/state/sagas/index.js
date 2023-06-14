@@ -38,10 +38,6 @@ import {
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
-  appendDatabaseInstanceToSapSystem,
-  removeDatabaseInstanceFromSapSystem,
-  updateSAPSystemDatabaseInstanceHealth,
-  updateSAPSystemDatabaseInstanceSystemReplication,
 } from '@state/sapSystems';
 
 import {
@@ -68,6 +64,7 @@ import { watchSapSystem } from '@state/sagas/sapSystems';
 import { watchDatabase } from '@state/sagas/databases';
 import { watchHostDeregistered } from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
+
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
@@ -87,7 +84,6 @@ import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
-import { removeDatabaseInstance } from '../databases';
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
