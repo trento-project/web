@@ -410,7 +410,7 @@ defmodule Trento.HostProjectorTest do
       provider: provider,
       provider_data: provider_data,
       deregistered_at: deregistered_at
-    } = host_projection = Repo.get!(HostReadModel, host_id)
+    } = Repo.get!(HostReadModel, host_id)
 
     assert nil == deregistered_at
 

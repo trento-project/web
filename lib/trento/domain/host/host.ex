@@ -197,6 +197,14 @@ defmodule Trento.Domain.Host do
     ]
   end
 
+  def execute(
+        %Host{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :host_not_registered}
+  end
+
   # Host exists but details didn't change
   def execute(
         %Host{
@@ -221,14 +229,6 @@ defmodule Trento.Domain.Host do
         }
       ) do
     []
-  end
-
-  def execute(
-        %Host{deregistered_at: deregistered_at},
-        _
-      )
-      when not is_nil(deregistered_at) do
-    {:error, :host_not_registered}
   end
 
   def execute(
