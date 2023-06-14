@@ -208,12 +208,13 @@ defmodule Trento.ClusterProjectorTest do
   end
 
   test "should set deregistered_at field to nil when ClusterRestored is received" do
-    insert(:cluster,
-      id: cluster_id = Faker.UUID.v4(),
-      name: name = "deregistered_cluster",
-      selected_checks: [],
-      deregistered_at: DateTime.utc_now()
-    )
+    %{id: cluster_id, name: name, type: type} =
+      insert(:cluster,
+        id: Faker.UUID.v4(),
+        name: "deregistered_cluster",
+        selected_checks: [],
+        deregistered_at: DateTime.utc_now()
+      )
 
     event = ClusterRestored.new!(%{cluster_id: cluster_id})
 
@@ -227,7 +228,7 @@ defmodule Trento.ClusterProjectorTest do
                        cib_last_written: nil,
                        id: ^cluster_id,
                        name: ^name,
-                       type: :hana_scale_up
+                       type: ^type
                      },
                      1000
   end

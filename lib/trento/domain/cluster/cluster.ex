@@ -207,7 +207,7 @@ defmodule Trento.Domain.Cluster do
 
   # Restoration, when a RegisterClusterHost command is received for a deregistered Cluster
   # the cluster is restored, the host is added to cluster and if the host is a DC
-  # cluster details will be updated
+  # cluster details are be updated
   def execute(
         %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id},
         %RegisterClusterHost{
