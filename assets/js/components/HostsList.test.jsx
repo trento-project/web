@@ -97,6 +97,34 @@ describe('HostsLists component', () => {
         )
       ).toBeInTheDocument();
     });
+
+    // jest.useFakeTimers();
+    it.only('should display correct visibility of \'Clean Up\' button', () => {
+      const hostPassing = hostFactory.build({ heartbeat: 'passing' });
+      const hostCritical = hostFactory.build({ heartbeat: 'critical' });
+      const hostUnknown = hostFactory.build({ heartbeat: 'unknown' });
+
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [hostPassing, hostCritical, hostUnknown]
+        },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+
+      renderWithRouter(StatefulHostsList);
+
+      const table = screen.getByRole('table');
+      const hostPassingCleanUpButton = table.querySelector('tr:nth-child(1) > td:nth-child(9) > button');
+      expect(hostPassingCleanUpButton).toHaveClass('invisible');
+
+      const hostCriticalCleanUpButton = table.querySelector('tr:nth-child(2) > td:nth-child(9) > button');
+      expect(hostCriticalCleanUpButton).toHaveClass('visible');
+
+      const hostUnknownCleanUpButton = table.querySelector('tr:nth-child(3) > td:nth-child(9) > button');
+      expect(hostUnknownCleanUpButton).toHaveClass('visible');
+    });
   });
 
   describe('filtering', () => {

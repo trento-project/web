@@ -45,6 +45,9 @@ const removeTag = (tag, hostId) => {
 };
 
 function HostsList() {
+  // eslint-disable-next-line no-undef
+  const deregistrationDebounce = config?.deregistrationDebounce ?? 0;
+
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
   const { applicationInstances, databaseInstances } = useSelector(
@@ -60,7 +63,7 @@ function HostsList() {
   // eslint-disable-next-line no-console
   console.log('hosts', hosts);
 
-  const config = {
+  const tableConfig = {
     pagination: true,
     usePadding: false,
     columns: [
@@ -191,7 +194,9 @@ function HostsList() {
         render: (_content, host) => (
           <Button
             type="primary-white"
-            className="inline-block mx-0.5 border-green-500 border w-fit"
+            className={`inline-block mx-0.5 border-green-500 border w-fit ${
+              host.heartbeat === 'passing' ? 'invisible' : 'visible'
+            }`}
             size="small"
             onClick={() => {
               setSelectedHost(host);
@@ -249,7 +254,7 @@ function HostsList() {
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
-          config={config}
+          config={tableConfig}
           data={data}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
