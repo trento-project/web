@@ -3,6 +3,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
   require OpenApiSpex
   require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
   alias OpenApiSpex.Schema
 
@@ -37,7 +38,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         },
         roles: %Schema{
           type: :array,
-          items: %Schema{type: :string, enum: ["ascs", "ers"]},
+          items: %Schema{type: :string, enum: AscsErsClusterRole.values()},
           description: "List of roles managed in this node"
         },
         virtual_ips: %Schema{

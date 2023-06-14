@@ -6,6 +6,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
   require Trento.Domain.Enums.Health, as: Health
+  require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
   alias Trento.Domain.Commands.{
     DeregisterClusterHost,
@@ -532,8 +533,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
         cib_node_resources
         |> parse_resource_by_type("SAPInstance", "IS_ERS")
         |> Enum.map(fn
-          "true" -> :ers
-          _ -> :ascs
+          "true" -> AscsErsClusterRole.ers()
+          _ -> AscsErsClusterRole.ascs()
         end)
 
       virtual_ip_type = get_virtual_ip_type_suffix_by_provider(provider)
