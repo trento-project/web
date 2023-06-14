@@ -38,6 +38,10 @@ import {
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
+  appendDatabaseInstanceToSapSystem,
+  removeDatabaseInstanceFromSapSystem,
+  updateSAPSystemDatabaseInstanceHealth,
+  updateSAPSystemDatabaseInstanceSystemReplication,
 } from '@state/sapSystems';
 
 import {
@@ -83,6 +87,7 @@ import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
+import { removeDatabaseInstance } from '../databases';
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());

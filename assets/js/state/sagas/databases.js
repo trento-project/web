@@ -3,6 +3,7 @@ import {
   DATABASE_REGISTERED,
   DATABASE_HEALTH_CHANGED,
   DATABASE_INSTANCE_REGISTERED,
+  DATABASE_INSTANCE_DEREGISTERED,
   DATABASE_INSTANCE_HEALTH_CHANGED,
   DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
   appendDatabase,
@@ -74,6 +75,23 @@ function* databaseInstanceRegistered({ payload }) {
   );
 }
 
+function* databaseInstanceDeregistered({ payload }) {
+  yield put(removeDatabaseInstance(payload));
+  yield put(removeDatabaseInstanceFromSapSystem(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.sid,
+      message: 'Database instance deregistered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `A database instance has been deregistered from ${payload.sid}.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 function* databaseInstanceHealthChanged({ payload }) {
   yield put(updateDatabaseInstanceHealth(payload));
   yield put(updateSAPSystemDatabaseInstanceHealth(payload));
@@ -88,6 +106,7 @@ export function* watchDatabase() {
   yield takeEvery(DATABASE_REGISTERED, databaseRegistered);
   yield takeEvery(DATABASE_HEALTH_CHANGED, databaseHealthChanged);
   yield takeEvery(DATABASE_INSTANCE_REGISTERED, databaseInstanceRegistered);
+  yield takeEvery(DATABASE_INSTANCE_DEREGISTERED, databaseInstanceDeregistered);
   yield takeEvery(
     DATABASE_INSTANCE_HEALTH_CHANGED,
     databaseInstanceHealthChanged

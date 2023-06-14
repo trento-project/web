@@ -4,6 +4,7 @@ import {
   SAP_SYSTEM_HEALTH_CHANGED,
   APPLICATION_INSTANCE_REGISTERED,
   APPLICATION_INSTANCE_HEALTH_CHANGED,
+  APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
   SAP_SYSTEM_UPDATED,
   appendSapsystem,
@@ -16,6 +17,7 @@ import {
 import { getSapSystem } from '@state/selectors';
 import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
+import { removeApplicationInstance } from '../sapSystems';
 
 function* sapSystemRegistered({ payload }) {
   yield put(appendSapsystem(payload));
@@ -62,6 +64,22 @@ function* applicationInstanceRegistered({ payload }) {
   );
 }
 
+function* applicationInstanceDeregistered({ payload }) {
+  yield put(removeApplicationInstance(payload));
+  yield put(
+    appendEntryToLiveFeed({
+      source: payload.sid,
+      message: 'Application instance deregistered.',
+    })
+  );
+  yield put(
+    notify({
+      text: `An application instance has been deregistered from ${payload.sid}.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 function* applicationInstanceHealthChanged({ payload }) {
   yield put(updateApplicationInstanceHealth(payload));
 }
@@ -86,6 +104,10 @@ export function* watchSapSystem() {
   yield takeEvery(
     APPLICATION_INSTANCE_REGISTERED,
     applicationInstanceRegistered
+  );
+  yield takeEvery(
+    APPLICATION_INSTANCE_DEREGISTERED,
+    applicationInstanceDeregistered
   );
   yield takeEvery(
     APPLICATION_INSTANCE_HEALTH_CHANGED,
