@@ -268,13 +268,18 @@ defmodule Trento.SapSystemProjector do
         _,
         _
       ) do
+    %SapSystemReadModel{
+      sid: sid
+    } = Repo.get(SapSystemReadModel, sap_system_id)
+
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_deregistered",
       SapSystemView.render("instance_deregistered.json",
         sap_system_id: sap_system_id,
         instance_number: instance_number,
-        host_id: host_id
+        host_id: host_id,
+        sid: sid
       )
     )
   end

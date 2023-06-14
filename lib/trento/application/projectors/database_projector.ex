@@ -311,13 +311,18 @@ defmodule Trento.DatabaseProjector do
         _,
         _
       ) do
+    %DatabaseReadModel{
+      sid: sid
+    } = Repo.get(DatabaseReadModel, sap_system_id)
+
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_deregistered",
       SapSystemView.render("instance_deregistered.json",
         sap_system_id: sap_system_id,
         instance_number: instance_number,
-        host_id: host_id
+        host_id: host_id,
+        sid: sid
       )
     )
   end
