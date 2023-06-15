@@ -24,6 +24,7 @@ defmodule Trento.ClusterTest do
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
+    ClusterRestored,
     ClusterRolledUp,
     ClusterRollUpRequested,
     ClusterTombstoned,
@@ -777,6 +778,120 @@ defmodule Trento.ClusterTest do
   end
 
   describe "deregistration" do
+    test "should restore a deregistered cluster when a RegisterClusterHost command from a non DC host is received" do
+      host_one_id = UUID.uuid4()
+      host_two_id = UUID.uuid4()
+
+      cluster_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:cluster_deregistered_event,
+          cluster_id: cluster_id,
+          deregistered_at: deregistered_at
+        )
+      ]
+
+      new_host_id = UUID.uuid4()
+
+      restoration_command =
+        build(
+          :register_cluster_host,
+          cluster_id: cluster_id,
+          host_id: new_host_id,
+          designated_controller: false
+        )
+
+      assert_events_and_state(
+        initial_events,
+        [restoration_command],
+        [
+          %ClusterRestored{
+            cluster_id: cluster_id
+          },
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: new_host_id
+          }
+        ],
+        fn cluster ->
+          assert nil == cluster.deregistered_at
+        end
+      )
+    end
+
+    test "should restore a deregistered cluster and perform the cluster update procedure when a RegisterClusterHost command from a DC host is received" do
+      host_one_id = UUID.uuid4()
+      host_two_id = UUID.uuid4()
+
+      cluster_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_one_id),
+        build(:host_removed_from_cluster_event, cluster_id: cluster_id, host_id: host_two_id),
+        build(:cluster_deregistered_event,
+          cluster_id: cluster_id,
+          deregistered_at: deregistered_at
+        )
+      ]
+
+      new_host_id = UUID.uuid4()
+
+      restoration_command =
+        build(
+          :register_cluster_host,
+          cluster_id: cluster_id,
+          host_id: new_host_id,
+          discovered_health: :critical,
+          designated_controller: true
+        )
+
+      assert_events_and_state(
+        initial_events,
+        [restoration_command],
+        [
+          %ClusterRestored{
+            cluster_id: cluster_id
+          },
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: new_host_id
+          },
+          %ClusterDetailsUpdated{
+            cluster_id: cluster_id,
+            name: restoration_command.name,
+            type: restoration_command.type,
+            sid: restoration_command.sid,
+            additional_sids: restoration_command.additional_sids,
+            provider: restoration_command.provider,
+            resources_number: restoration_command.resources_number,
+            hosts_number: restoration_command.hosts_number,
+            details: restoration_command.details
+          },
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_id,
+            discovered_health: :critical
+          },
+          %ClusterHealthChanged{
+            cluster_id: cluster_id,
+            health: :critical
+          }
+        ],
+        fn cluster ->
+          assert nil == cluster.deregistered_at
+        end
+      )
+    end
+
     test "should reject all the commands when the host is deregistered" do
       host_one_id = UUID.uuid4()
       host_two_id = UUID.uuid4()
