@@ -103,6 +103,13 @@ export const sapSystemsListSlice = createSlice({
   },
 });
 
+export const SAP_SYSTEM_REGISTERED = 'SAP_SYSTEM_REGISTERED';
+export const SAP_SYSTEM_HEALTH_CHANGED = 'SAP_SYSTEM_HEALTH_CHANGED';
+export const APPLICATION_INSTANCE_REGISTERED =
+  'APPLICATION_INSTANCE_REGISTERED';
+export const APPLICATION_INSTANCE_HEALTH_CHANGED =
+  'APPLICATION_INSTANCE_HEALTH_CHANGED';
+
 export const {
   startSapSystemsLoading,
   stopSapSystemsLoading,
