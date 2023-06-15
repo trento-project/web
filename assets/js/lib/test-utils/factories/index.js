@@ -37,16 +37,16 @@ export const randomObjectFactory = Factory.define(({ transientParams }) => {
     );
 });
 
-const healthEnum = () =>
+const executionStateEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
 
-export const resultEnum = () =>
-  faker.helpers.arrayElement(['passing', 'critical', 'warning']);
+export const healthEnum = () =>
+  faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 
 export const checkFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
   description: faker.lorem.paragraph(),
-  executionState: healthEnum,
+  executionState: executionStateEnum,
   health: healthEnum,
 }));
 
@@ -58,10 +58,8 @@ export const healthSummaryFactory = Factory.define(() => ({
   hostsHealth: healthEnum(),
   id: faker.datatype.uuid(),
   sapsystemHealth: healthEnum(),
-  sid: faker.random.alphaNumeric({
-    length: 3,
-    casing: 'upper',
-  }),
+  sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
+  tenant: faker.random.alphaNumeric(3, { casing: 'upper' }),
 }));
 
 export const catalogExpectExpectationFactory = Factory.define(

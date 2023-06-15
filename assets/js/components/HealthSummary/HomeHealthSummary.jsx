@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Table from '@components/Table';
 import HealthIcon from '@components/Health/HealthIcon';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import PageHeader from '@components/PageHeader';
 import HealthSummary from '@components/HealthSummary';
 import useQueryStringValues from '@hooks/useQueryStringValues';
@@ -78,11 +77,7 @@ const healthSummaryTableConfig = {
   ],
 };
 
-export function HomeHealthSummary() {
-  const { loading, sapSystemsHealth } = useSelector(
-    (state) => state.sapSystemsHealthSummary
-  );
-
+function HomeHealthSummary({ sapSystemsHealth, loading }) {
   const {
     extractedParams: { health: healthFilters = [] },
     setQueryValues,
@@ -146,3 +141,5 @@ export function HomeHealthSummary() {
     </div>
   );
 }
+
+export default HomeHealthSummary;
