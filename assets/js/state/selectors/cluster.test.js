@@ -1,5 +1,16 @@
-import { hostFactory } from '@lib/test-utils/factories';
-import { getClusterHostIDs, getClusterHosts, getClusterName } from './cluster';
+import {
+  clusterFactory,
+  hostFactory,
+  databaseInstanceFactory,
+  sapSystemApplicationInstanceFactory,
+  sapSystemFactory,
+} from '@lib/test-utils/factories';
+import {
+  getClusterHostIDs,
+  getClusterHosts,
+  getClusterName,
+  getClusterSapSystems,
+} from './cluster';
 
 describe('Cluster selector', () => {
   it('should return the cluster hosts IDs', () => {
@@ -77,5 +88,74 @@ describe('Cluster selector', () => {
 
     expect(getClusterName('cluster1')(state)).toEqual('cluster-name');
     expect(getClusterName('cluster2')(state)).toEqual('');
+  });
+
+  it('should return SAP systems associated to the cluster', () => {
+    const clusters = clusterFactory.buildList(2);
+    const { id: clusterID } = clusters[0];
+
+    const hosts = hostFactory
+      .buildList(5, { cluster_id: clusterID })
+      .concat(hostFactory.buildList(5));
+
+    const [
+      { id: host1 },
+      { id: host2 },
+      { id: host3 },
+      { id: host4 },
+      { id: host5 },
+    ] = hosts.slice(0, 5);
+
+    const sapSystems = sapSystemFactory.buildList(5);
+    const [
+      _sapSystem1,
+      { id: sapSystems2 },
+      { id: sapSystems3 },
+      { id: sapSystems4 },
+      _sapSystem5,
+    ] = sapSystems;
+
+    const applicationInstances = [
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystems2,
+        host_id: host1,
+      }),
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystems3,
+        host_id: host3,
+      }),
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystems4,
+        host_id: host5,
+      }),
+    ];
+
+    const databaseInstances = [
+      databaseInstanceFactory.build({
+        sap_system_id: sapSystems2,
+        host_id: host2,
+      }),
+      databaseInstanceFactory.build({
+        sap_system_id: sapSystems3,
+        host_id: host4,
+      }),
+    ];
+
+    const state = {
+      clustersList: {
+        clusters,
+      },
+      hostsList: {
+        hosts,
+      },
+      sapSystemsList: {
+        sapSystems,
+        applicationInstances,
+        databaseInstances,
+      },
+    };
+    expect(getClusterSapSystems(clusterID)(state)).toEqual(
+      sapSystems.slice(1, 4)
+    );
   });
 });
