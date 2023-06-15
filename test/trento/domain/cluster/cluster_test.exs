@@ -778,7 +778,7 @@ defmodule Trento.ClusterTest do
   end
 
   describe "deregistration" do
-    test "should restore a deregistered cluster when a RegisterHost command from a non DC host is received" do
+    test "should restore a deregistered cluster when a RegisterClusterHost command from a non DC host is received" do
       host_one_id = UUID.uuid4()
       host_two_id = UUID.uuid4()
 
@@ -799,7 +799,7 @@ defmodule Trento.ClusterTest do
 
       new_host_id = UUID.uuid4()
 
-      restoration_event =
+      restoration_command =
         build(
           :register_cluster_host,
           cluster_id: cluster_id,
@@ -809,7 +809,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         initial_events,
-        [restoration_event],
+        [restoration_command],
         [
           %ClusterRestored{
             cluster_id: cluster_id
@@ -825,7 +825,7 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should restore a deregistered cluster and perform the cluster update procedure when a RegisterHost command from a DC host is received" do
+    test "should restore a deregistered cluster and perform the cluster update procedure when a RegisterClusterHost command from a DC host is received" do
       host_one_id = UUID.uuid4()
       host_two_id = UUID.uuid4()
 
@@ -846,7 +846,7 @@ defmodule Trento.ClusterTest do
 
       new_host_id = UUID.uuid4()
 
-      restoration_event =
+      restoration_command =
         build(
           :register_cluster_host,
           cluster_id: cluster_id,
@@ -857,7 +857,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         initial_events,
-        [restoration_event],
+        [restoration_command],
         [
           %ClusterRestored{
             cluster_id: cluster_id
@@ -868,14 +868,14 @@ defmodule Trento.ClusterTest do
           },
           %ClusterDetailsUpdated{
             cluster_id: cluster_id,
-            name: restoration_event.name,
-            type: restoration_event.type,
-            sid: restoration_event.sid,
-            additional_sids: restoration_event.additional_sids,
-            provider: restoration_event.provider,
-            resources_number: restoration_event.resources_number,
-            hosts_number: restoration_event.hosts_number,
-            details: restoration_event.details
+            name: restoration_command.name,
+            type: restoration_command.type,
+            sid: restoration_command.sid,
+            additional_sids: restoration_command.additional_sids,
+            provider: restoration_command.provider,
+            resources_number: restoration_command.resources_number,
+            hosts_number: restoration_command.hosts_number,
+            details: restoration_command.details
           },
           %ClusterDiscoveredHealthChanged{
             cluster_id: cluster_id,
