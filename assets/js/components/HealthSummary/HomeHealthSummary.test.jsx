@@ -3,12 +3,12 @@ import { screen, fireEvent } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
-import { renderWithRouter, withState } from '@lib/test-utils';
+import { renderWithRouter } from '@lib/test-utils';
 import { healthSummaryFactory } from '@lib/test-utils/factories';
 
-import { HomeHealthSummary } from './HomeHealthSummary';
+import HomeHealthSummary from './HomeHealthSummary';
 
-const homeHealthSummaryActionPayload = [
+const homeHealthSummaryData = [
   healthSummaryFactory.build({
     clustersHealth: 'passing',
     databaseHealth: 'passing',
@@ -38,21 +38,15 @@ const homeHealthSummaryActionPayload = [
   }),
 ];
 
-const initialState = {
-  sapSystemsHealthSummary: {
-    sapSystemsHealth: homeHealthSummaryActionPayload,
-    loading: false,
-  },
-};
-
 describe('HomeHealthSummary component', () => {
   it('should have a clickable SAP INSTANCE icon with link to the belonging instance', () => {
-    const [StatefulHomeHealthSummary] = withState(
-      <HomeHealthSummary />,
-      initialState
+    const { container } = renderWithRouter(
+      <HomeHealthSummary
+        sapSystemsHealth={homeHealthSummaryData}
+        loading={false}
+      />
     );
-    const { container } = renderWithRouter(StatefulHomeHealthSummary);
-    const [{ id }] = homeHealthSummaryActionPayload;
+    const [{ id }] = homeHealthSummaryData;
 
     expect(
       container
@@ -62,12 +56,13 @@ describe('HomeHealthSummary component', () => {
   });
 
   it('should have a clickable PACEMAKER CLUSTER icon with link to the belonging cluster when available', () => {
-    const [StatefulHomeHealthSummary] = withState(
-      <HomeHealthSummary />,
-      initialState
+    const { container } = renderWithRouter(
+      <HomeHealthSummary
+        sapSystemsHealth={homeHealthSummaryData}
+        loading={false}
+      />
     );
-    const { container } = renderWithRouter(StatefulHomeHealthSummary);
-    const [{ clusterId }] = homeHealthSummaryActionPayload;
+    const [{ clusterId }] = homeHealthSummaryData;
 
     expect(
       container
@@ -89,11 +84,12 @@ describe('HomeHealthSummary component', () => {
 
 describe('HomeHealthSummary component', () => {
   it('should have a working link to the passing checks in the overview component', () => {
-    const [StatefulHomeHealthSummary] = withState(
-      <HomeHealthSummary />,
-      initialState
+    const { container } = renderWithRouter(
+      <HomeHealthSummary
+        sapSystemsHealth={homeHealthSummaryData}
+        loading={false}
+      />
     );
-    const { container } = renderWithRouter(StatefulHomeHealthSummary);
 
     expect(
       container
@@ -104,11 +100,12 @@ describe('HomeHealthSummary component', () => {
 
   describe('health box filter behaviour', () => {
     it('should put the filters values in the query string when health filters are selected', async () => {
-      const [StatefulHomeHealthSummary] = withState(
-        <HomeHealthSummary />,
-        initialState
+      const { container } = renderWithRouter(
+        <HomeHealthSummary
+          sapSystemsHealth={homeHealthSummaryData}
+          loading={false}
+        />
       );
-      const { container } = renderWithRouter(StatefulHomeHealthSummary);
 
       expect(container.querySelector('tbody').childNodes.length).toEqual(4);
 
