@@ -130,5 +130,58 @@ defmodule Trento.HealthSummaryServiceTest do
                }
              ] == HealthSummaryService.get_health_summary()
     end
+
+    test "should set as unknown the clusters health when they are not available" do
+      %HostReadModel{id: db_host_id} =
+        db_host = insert(:host, cluster_id: nil, heartbeat: Health.passing())
+
+      %HostReadModel{id: app_host_id} =
+        app_host = insert(:host, cluster_id: nil, heartbeat: Health.passing())
+
+      %SapSystemReadModel{
+        id: sap_system_id,
+        sid: sid
+      } = insert(:sap_system, health: Health.critical())
+
+      insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+      database_instances =
+        insert_list(
+          1,
+          :database_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "00",
+          sid: "HDD",
+          host_id: db_host_id,
+          health: Health.warning(),
+          host: db_host
+        )
+
+      application_instances =
+        insert_list(
+          1,
+          :application_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "10",
+          sid: sid,
+          host_id: app_host_id,
+          health: Health.passing(),
+          host: app_host
+        )
+
+      assert [
+               %{
+                 id: sap_system_id,
+                 sid: sid,
+                 sapsystem_health: Health.critical(),
+                 database_health: Health.warning(),
+                 database_cluster_health: Health.unknown(),
+                 application_cluster_health: Health.unknown(),
+                 hosts_health: Health.passing(),
+                 database_instances: database_instances,
+                 application_instances: application_instances
+               }
+             ] == HealthSummaryService.get_health_summary()
+    end
   end
 end

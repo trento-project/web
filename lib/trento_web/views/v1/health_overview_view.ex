@@ -52,11 +52,16 @@ defmodule TrentoWeb.V1.HealthOverviewView do
           String.t()
   defp extract_cluster_id([]), do: nil
 
-  defp extract_cluster_id([%ApplicationInstanceReadModel{host: %{cluster_id: cluster_id}} | _]),
-    do: cluster_id
-
   defp extract_cluster_id([%DatabaseInstanceReadModel{host: %{cluster_id: cluster_id}} | _]),
     do: cluster_id
+
+  defp extract_cluster_id(application_instances) do
+    Enum.find_value(application_instances, nil, fn
+      %{host: %{cluster_id: nil}} -> false
+      %{host: %{cluster_id: cluster_id}} -> cluster_id
+      _ -> false
+    end)
+  end
 
   @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t()
   defp extract_tenant([]), do: nil
