@@ -46,7 +46,7 @@ const removeTag = (tag, hostId) => {
 
 function HostsList() {
   // eslint-disable-next-line no-undef
-  const deregistrationDebounce = config?.deregistrationDebounce ?? 0;
+  const deregistrationDebounce = config.deregistrationDebounce ?? 0;
 
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
@@ -55,13 +55,25 @@ function HostsList() {
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
-  // const [cleanUpModalVisible, setCleanUpModalVisible] = useState(false);
+  const [cleanUpModalVisible, setCleanUpModalVisible] = useState(false);
   const [selectedHost, setSelectedHost] = useState(undefined);
+
+  console.log(hosts)
 
   const dispatch = useDispatch();
 
-  // eslint-disable-next-line no-console
-  console.log('hosts', hosts);
+  const displayCleanUpButton = ({ heartbeat, last_heartbeat_timestamp }) => {
+    const lastHeartbeat = new Date(last_heartbeat_timestamp);
+    const deregistrationDisabledPeriod = new Date(
+      lastHeartbeat.getTime() + deregistrationDebounce
+    );
+
+    return (
+      heartbeat === 'unknown' ||
+      (heartbeat === 'critical' &&
+        new Date(Date.now()) > deregistrationDisabledPeriod)
+    );
+  };
 
   const tableConfig = {
     pagination: true,
@@ -116,8 +128,8 @@ function HostsList() {
         filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
-        render: (sids, { sap_systems }) => {
-          const sidsArray = sap_systems.map((instance, index) => [
+        render: (sids, { sap_systems }) =>
+          sap_systems.map((instance, index) => [
             index > 0 && ', ',
             <SapSystemLink
               key={`${instance?.sap_system_id}-${instance?.id}`}
@@ -126,10 +138,7 @@ function HostsList() {
             >
               {instance?.sid}
             </SapSystemLink>,
-          ]);
-
-          return sidsArray;
-        },
+          ]),
       },
       {
         title: 'Agent version',
@@ -191,27 +200,26 @@ function HostsList() {
         title: '',
         key: 'Clean up',
         className: 'w-48',
-        render: (_content, host) => (
-          <Button
-            type="primary-white"
-            className={`inline-block mx-0.5 border-green-500 border w-fit ${
-              host.heartbeat === 'passing' ? 'invisible' : 'visible'
-            }`}
-            size="small"
-            onClick={() => {
-              setSelectedHost(host);
-              // setCleanUpModalVisible(!cleanUpModalVisible);
-            }}
-          >
-            <EOS_CLEANING_SERVICES
-              size="base"
-              className="fill-jungle-green-500 inline"
-            />
-            <span className="text-jungle-green-500 text-sm font-bold pl-1.5">
-              Clean up
-            </span>
-          </Button>
-        ),
+        render: (_content, host) =>
+          displayCleanUpButton(host) && (
+            <Button
+              type="primary-white"
+              className="inline-block mx-0.5 border-green-500 border w-fit"
+              size="small"
+              onClick={() => {
+                setSelectedHost(host);
+                setCleanUpModalVisible(!cleanUpModalVisible);
+              }}
+            >
+              <EOS_CLEANING_SERVICES
+                size="base"
+                className="fill-jungle-green-500 inline"
+              />
+              <span className="text-jungle-green-500 text-sm font-bold pl-1.5">
+                Clean up
+              </span>
+            </Button>
+          ),
       },
     ],
   };
@@ -225,15 +233,11 @@ function HostsList() {
     );
 
     return {
-      heartbeat: host.heartbeat,
-      hostname: host.hostname,
+      ...host,
       ip: host.ip_addresses,
-      provider: host.provider,
       sid: sapSystemList.map((sapSystem) => sapSystem.sid),
       cluster,
-      agent_version: host.agent_version,
-      id: host.id,
-      tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
+      tags: host.tags?.map((tag) => tag.value) || [],
       sap_systems: sapSystemList,
     };
   });
@@ -243,13 +247,14 @@ function HostsList() {
     <>
       <PageHeader className="font-bold">Hosts</PageHeader>
       <DeregistrationModal
-        host={selectedHost}
+        hostName={selectedHost.hostname}
         isOpen={!!selectedHost}
-        onClose={() => setSelectedHost(undefined)}
         onCleanUp={() => {
           // eslint-disable-next-line no-console
           console.log('clicked the big red button!');
+          setSelectedHost(undefined);
         }}
+        onClose={() => setSelectedHost(undefined)}
       />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />

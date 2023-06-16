@@ -98,8 +98,60 @@ describe('HostsLists component', () => {
       ).toBeInTheDocument();
     });
 
-    // jest.useFakeTimers();
-    it.only('should display correct visibility of \'Clean Up\' button', () => {
+    it("should display correct visibility of 'Clean Up' button given debounce period has passed", () => {
+      const timestampNDaysInPast = (n) => {
+        const time = new Date();
+        time.setDate(time.getDate() - n);
+
+        return time.toISOString();
+      };
+
+      const lastHeartbeat = timestampNDaysInPast(1);
+
+      const hostPassing = hostFactory.build({
+        heartbeat: 'passing',
+        last_heartbeat_timestamp: lastHeartbeat,
+      });
+      const hostCritical = hostFactory.build({
+        heartbeat: 'critical',
+        last_heartbeat_timestamp: lastHeartbeat,
+      });
+      const hostUnknown = hostFactory.build({
+        heartbeat: 'unknown',
+        last_heartbeat_timestamp: lastHeartbeat,
+      });
+
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [hostPassing, hostCritical, hostUnknown],
+        },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+
+      window.config = { deregistrationDebounce: 0 };
+
+      renderWithRouter(StatefulHostsList);
+
+      const table = screen.getByRole('table');
+      const hostPassingCleanUpCell = table.querySelector(
+        'tr:nth-child(1) > td:nth-child(9)'
+      );
+      expect(hostPassingCleanUpCell).not.toHaveTextContent('Clean up');
+
+      const hostCriticalCleanUpCell = table.querySelector(
+        'tr:nth-child(2) > td:nth-child(9)'
+      );
+      expect(hostCriticalCleanUpCell).toHaveTextContent('Clean up');
+
+      const hostUnknownCleanUpCell = table.querySelector(
+        'tr:nth-child(3) > td:nth-child(9)'
+      );
+      expect(hostUnknownCleanUpCell).toHaveTextContent('Clean up');
+    });
+
+    it("should display correct visibility of 'Clean Up' button given debounce period has not passed", () => {
       const hostPassing = hostFactory.build({ heartbeat: 'passing' });
       const hostCritical = hostFactory.build({ heartbeat: 'critical' });
       const hostUnknown = hostFactory.build({ heartbeat: 'unknown' });
@@ -107,23 +159,31 @@ describe('HostsLists component', () => {
       const state = {
         ...defaultInitialState,
         hostsList: {
-          hosts: [hostPassing, hostCritical, hostUnknown]
+          hosts: [hostPassing, hostCritical, hostUnknown],
         },
       };
 
       const [StatefulHostsList] = withState(<HostsList />, state);
 
+      window.config = { deregistrationDebounce: 60e3 };
+
       renderWithRouter(StatefulHostsList);
 
       const table = screen.getByRole('table');
-      const hostPassingCleanUpButton = table.querySelector('tr:nth-child(1) > td:nth-child(9) > button');
-      expect(hostPassingCleanUpButton).toHaveClass('invisible');
+      const hostPassingCleanUpCell = table.querySelector(
+        'tr:nth-child(1) > td:nth-child(9)'
+      );
+      expect(hostPassingCleanUpCell).not.toHaveTextContent('Clean up');
 
-      const hostCriticalCleanUpButton = table.querySelector('tr:nth-child(2) > td:nth-child(9) > button');
-      expect(hostCriticalCleanUpButton).toHaveClass('visible');
+      const hostCriticalCleanUpCell = table.querySelector(
+        'tr:nth-child(2) > td:nth-child(9)'
+      );
+      expect(hostCriticalCleanUpCell).not.toHaveTextContent('Clean up');
 
-      const hostUnknownCleanUpButton = table.querySelector('tr:nth-child(3) > td:nth-child(9) > button');
-      expect(hostUnknownCleanUpButton).toHaveClass('visible');
+      const hostUnknownCleanUpCell = table.querySelector(
+        'tr:nth-child(3) > td:nth-child(9)'
+      );
+      expect(hostUnknownCleanUpCell).toHaveTextContent('Clean up');
     });
   });
 
