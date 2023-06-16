@@ -64,17 +64,21 @@ export const healthSummaryFactory = Factory.define(() => ({
   }),
 }));
 
-export const catalogExpectExpectationFactory = Factory.define(() => ({
-  name: faker.animal.cat(),
-  type: 'expect',
-  expression: faker.lorem.sentence(),
-}));
+export const catalogExpectExpectationFactory = Factory.define(
+  ({ sequence }) => ({
+    name: `${faker.lorem.word()}_${sequence}`,
+    type: 'expect',
+    expression: faker.lorem.sentence(),
+  })
+);
 
-export const catalogExpectSameExpectationFactory = Factory.define(() => ({
-  name: faker.animal.cat(),
-  type: 'expect_same',
-  expression: faker.lorem.sentence(),
-}));
+export const catalogExpectSameExpectationFactory = Factory.define(
+  ({ sequence }) => ({
+    name: `${faker.lorem.word()}_${sequence}`,
+    type: 'expect_same',
+    expression: faker.lorem.sentence(),
+  })
+);
 
 export const catalogCheckFactory = Factory.define(() => ({
   id: faker.datatype.uuid(),
