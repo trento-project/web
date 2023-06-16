@@ -38,9 +38,6 @@ import {
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
-  appendDatabaseInstanceToSapSystem,
-  updateSAPSystemDatabaseInstanceHealth,
-  updateSAPSystemDatabaseInstanceSystemReplication,
 } from '@state/sapSystems';
 
 import {
@@ -50,14 +47,11 @@ import {
 } from '@state/healthSummary';
 
 import {
-  appendDatabase,
-  appendDatabaseInstance,
+  DATABASE_REGISTERED,
+  DATABASE_HEALTH_CHANGED,
   setDatabases,
   startDatabasesLoading,
   stopDatabasesLoading,
-  updateDatabaseHealth,
-  updateDatabaseInstanceHealth,
-  updateDatabaseInstanceSystemReplication,
 } from '@state/databases';
 
 import { appendEntryToLiveFeed } from '@state/liveFeed';
@@ -66,16 +60,16 @@ import { setEulaVisible, setIsPremium } from '@state/settings';
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
+import { watchSapSystem } from '@state/sagas/sapSystems';
+import { watchDatabase } from '@state/sagas/databases';
 import { watchHostDeregistered } from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
-import { watchSapSystem } from '@state/sagas/sapSystems';
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
 } from '@state/sagas/lastExecutions';
 import { watchPerformLogin } from '@state/sagas/user';
 
-import { getDatabase } from '@state/selectors';
 import { getClusterName } from '@state/selectors/cluster';
 import {
   setClusterChecksSelectionSavingError,
@@ -338,82 +332,6 @@ function* watchClusterHealthChanged() {
   yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
 }
 
-function* databaseRegistered({ payload }) {
-  yield put(appendDatabase(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New Database registered.',
-    })
-  );
-  yield put(
-    notify({
-      text: `A new Database, ${payload.sid}, has been discovered.`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
-function* databaseHealthChanged({ payload }) {
-  const sid =
-    (yield select(getDatabase(payload.id)))?.sid || 'unable to determine SID';
-
-  yield put(updateDatabaseHealth(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: sid,
-      message: `Database Health changed to ${payload.health}`,
-    })
-  );
-  yield put(
-    notify({
-      text: `The Database ${sid} health is ${payload.health}!`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
-function* databaseInstanceRegistered({ payload }) {
-  yield put(appendDatabaseInstance(payload));
-  yield put(appendDatabaseInstanceToSapSystem(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New Database instance registered.',
-    })
-  );
-  yield put(
-    notify({
-      text: `A new Database instance, ${payload.sid}, has been discovered.`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
-function* databaseInstanceHealthChanged({ payload }) {
-  yield put(updateDatabaseInstanceHealth(payload));
-  yield put(updateSAPSystemDatabaseInstanceHealth(payload));
-}
-
-function* databaseInstanceSystemReplicationChanged({ payload }) {
-  yield put(updateDatabaseInstanceSystemReplication(payload));
-  yield put(updateSAPSystemDatabaseInstanceSystemReplication(payload));
-}
-
-function* watchDatabase() {
-  yield takeEvery('DATABASE_REGISTERED', databaseRegistered);
-  yield takeEvery('DATABASE_HEALTH_CHANGED', databaseHealthChanged);
-  yield takeEvery('DATABASE_INSTANCE_REGISTERED', databaseInstanceRegistered);
-  yield takeEvery(
-    'DATABASE_INSTANCE_HEALTH_CHANGED',
-    databaseInstanceHealthChanged
-  );
-  yield takeEvery(
-    'DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED',
-    databaseInstanceSystemReplicationChanged
-  );
-}
-
 function* refreshHealthSummaryOnComnponentsHealthChange() {
   const debounceDuration = 5000;
 
@@ -429,7 +347,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'DATABASE_REGISTERED',
+    DATABASE_REGISTERED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
@@ -449,7 +367,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'DATABASE_HEALTH_CHANGED',
+    DATABASE_HEALTH_CHANGED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
