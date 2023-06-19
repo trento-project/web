@@ -22,7 +22,8 @@ defmodule Trento.DatabaseProjector do
     DatabaseInstanceHealthChanged,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
-    DatabaseRegistered
+    DatabaseRegistered,
+    DatabaseRestored
   }
 
   alias Trento.Repo
@@ -161,6 +162,25 @@ defmodule Trento.DatabaseProjector do
   )
 
   project(
+    %DatabaseRestored{
+      sap_system_id: sap_system_id,
+      sid: sid,
+      health: health
+    },
+    fn multi ->
+      db = Repo.get!(DatabaseReadModel, sap_system_id)
+
+      changeset =
+        DatabaseReadModel.changeset(
+          db,
+          %{deregistered_at: nil, sid: sid, health: health}
+        )
+
+      Ecto.Multi.update(multi, :database, changeset)
+    end
+  )
+
+  project(
     %DatabaseInstanceDeregistered{
       instance_number: instance_number,
       host_id: host_id,
@@ -276,6 +296,21 @@ defmodule Trento.DatabaseProjector do
           system_replication_status: system_replication_status
         }
       )
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseRestored{sap_system_id: sap_system_id},
+        _,
+        _
+      ) do
+    database = Repo.get!(DatabaseReadModel, sap_system_id)
+
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_registered",
+      SapSystemView.render("database_registered.json", database: database)
     )
   end
 
