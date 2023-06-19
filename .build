@@ -37,6 +37,7 @@ Trento.Domain.Commands.RollUpCluster.html
 Trento.Domain.Commands.RollUpHost.html
 Trento.Domain.Commands.RollUpSapSystem.html
 Trento.Domain.Commands.SelectChecks.html
+Trento.Domain.Commands.SelectHostChecks.html
 Trento.Domain.Commands.UpdateHeartbeat.html
 Trento.Domain.Commands.UpdateProvider.html
 Trento.Domain.Commands.UpdateSlesSubscriptions.html
@@ -65,6 +66,7 @@ Trento.Domain.Events.HeartbeatFailed.html
 Trento.Domain.Events.HeartbeatSucceded.html
 Trento.Domain.Events.HostAddedToCluster.html
 Trento.Domain.Events.HostChecksExecutionCompleted.html
+Trento.Domain.Events.HostChecksSelected.html
 Trento.Domain.Events.HostDetailsUpdated.html
 Trento.Domain.Events.HostRegistered.html
 Trento.Domain.Events.HostRollUpRequested.html
@@ -278,8 +280,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-D48D01A5.js
-dist/sidebar_items-51C87DE2.js
+dist/search_items-54B56D32.js
+dist/sidebar_items-429928B8.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
