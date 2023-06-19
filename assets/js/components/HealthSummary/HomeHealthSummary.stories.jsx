@@ -20,6 +20,12 @@ const unClusteredSummary = healthSummaryFactory.buildList(3, {
   sapsystemHealth: 'passing',
 });
 
+function ContainerWrapper({ children }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
+  );
+}
+
 export default {
   title: 'HomeHealthSummary',
   components: HomeHealthSummary,
@@ -30,24 +36,18 @@ export default {
       </MemoryRouter>
     ),
   ],
+  render: (args) => (
+    <ContainerWrapper>
+      <HomeHealthSummary {...args} />
+    </ContainerWrapper>
+  ),
 };
-
-function ContainerWrapper({ children }) {
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
-  );
-}
 
 export const Random = {
   args: {
     sapSystemsHealth: randomSummary,
     loading: false,
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <HomeHealthSummary {...args} />
-    </ContainerWrapper>
-  ),
 };
 
 export const Healthy = {
@@ -55,11 +55,6 @@ export const Healthy = {
     ...Random.args,
     sapSystemsHealth: healthySummary,
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <HomeHealthSummary {...args} />
-    </ContainerWrapper>
-  ),
 };
 
 export const UnClustered = {
@@ -67,9 +62,4 @@ export const UnClustered = {
     ...Random.args,
     sapSystemsHealth: unClusteredSummary,
   },
-  render: (args) => (
-    <ContainerWrapper>
-      <HomeHealthSummary {...args} />
-    </ContainerWrapper>
-  ),
 };
