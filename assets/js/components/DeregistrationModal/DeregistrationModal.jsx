@@ -18,8 +18,9 @@ function DeregistrationModal({
       onClose={onCancel}
     >
       <div className="text-gray-500">
-        This will ignore all the past events collected by the agent instance
-        until this point. This the action is not reversible.
+        This action will cause Trento to stop tracking all the components
+        discovered by the agent in this host, including the host itself and any
+        other component depending on it.
       </div>
       <div className="flex justify-start gap-2 mt-4">
         <Button
