@@ -191,10 +191,10 @@ defmodule Trento.SapSystemProjectorTest do
   test "should remove an application instance from the read model after a deregistration" do
     deregistered_at = DateTime.utc_now()
 
-    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+    %{sid: sid} = insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
 
     %{instance_number: instance_number, host_id: host_id} =
-      insert(:application_instance, sap_system_id: sap_system_id)
+      insert(:application_instance, sap_system_id: sap_system_id, sid: sid)
 
     insert_list(4, :application_instance)
 
@@ -223,7 +223,8 @@ defmodule Trento.SapSystemProjectorTest do
                      %{
                        sap_system_id: ^sap_system_id,
                        instance_number: ^instance_number,
-                       host_id: ^host_id
+                       host_id: ^host_id,
+                       sid: ^sid
                      },
                      1000
   end

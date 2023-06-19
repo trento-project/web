@@ -18,14 +18,14 @@ const roles = () =>
 export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   features: roles().join('|'),
   health: healthEnum(),
-  hostId: faker.datatype.uuid(),
-  httpPort: faker.internet.port(),
-  httpsPort: faker.internet.port(),
-  instanceHostname: faker.hacker.noun(),
-  instanceNumber: faker.datatype.number({ min: 10, max: 99 }).toString(),
+  host_id: faker.datatype.uuid(),
+  http_port: faker.internet.port(),
+  https_port: faker.internet.port(),
+  instance_hostname: faker.hacker.noun(),
+  instance_number: faker.datatype.number({ min: 10, max: 99 }).toString(),
   sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
-  startPriority: faker.datatype.number({ min: 1, max: 9 }).toString(),
-  sapSystemId: faker.datatype.uuid(),
+  start_priority: faker.datatype.number({ min: 1, max: 9 }).toString(),
+  sap_system_id: faker.datatype.uuid(),
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {

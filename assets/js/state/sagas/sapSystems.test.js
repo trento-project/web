@@ -1,10 +1,18 @@
 import { recordSaga } from '@lib/test-utils';
 import {
+  applicationInstanceDeregistered,
   sapSystemDeregistered,
   sapSystemUpdated,
 } from '@state/sagas/sapSystems';
-import { removeSAPSystem, updateSAPSystem } from '@state/sapSystems';
-import { sapSystemFactory } from '@lib/test-utils/factories';
+import {
+  removeSAPSystem,
+  removeApplicationInstance,
+  updateSAPSystem,
+} from '@state/sapSystems';
+import {
+  sapSystemFactory,
+  sapSystemApplicationInstanceFactory,
+} from '@lib/test-utils/factories';
 
 describe('SAP Systems sagas', () => {
   it('should remove the SAP system', async () => {
@@ -15,6 +23,19 @@ describe('SAP Systems sagas', () => {
     });
 
     expect(dispatched).toContainEqual(removeSAPSystem({ id }));
+  });
+
+  it('should remove the application instance', async () => {
+    const { sap_system_id, host_id, instance_number } =
+      sapSystemApplicationInstanceFactory.build();
+
+    const dispatched = await recordSaga(applicationInstanceDeregistered, {
+      payload: { sap_system_id, host_id, instance_number },
+    });
+
+    expect(dispatched).toContainEqual(
+      removeApplicationInstance({ sap_system_id, host_id, instance_number })
+    );
   });
 
   it('should updated the SAP system', async () => {

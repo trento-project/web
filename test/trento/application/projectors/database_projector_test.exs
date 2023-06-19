@@ -269,11 +269,11 @@ defmodule Trento.DatabaseProjectorTest do
   test "should remove a database instance from the read model after a deregistration" do
     deregistered_at = DateTime.utc_now()
 
-    insert(:database, id: sap_system_id = Faker.UUID.v4())
+    %{sid: sid} = insert(:database, id: sap_system_id = Faker.UUID.v4())
     insert_list(4, :database_instance)
 
     %{instance_number: instance_number, host_id: host_id} =
-      insert(:database_instance, sap_system_id: sap_system_id)
+      insert(:database_instance, sap_system_id: sap_system_id, sid: sid)
 
     event = %DatabaseInstanceDeregistered{
       instance_number: instance_number,
@@ -300,7 +300,8 @@ defmodule Trento.DatabaseProjectorTest do
                      %{
                        sap_system_id: ^sap_system_id,
                        instance_number: ^instance_number,
-                       host_id: ^host_id
+                       host_id: ^host_id,
+                       sid: ^sid
                      },
                      1000
   end
