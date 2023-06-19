@@ -10,10 +10,13 @@ import HostLink from '@components/HostLink';
 
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
+import { APPLICATION_TYPE } from '@lib/model';
+
 import SBDDetails from './SBDDetails';
 import SiteDetails from './SiteDetails';
 import StoppedResources from './StoppedResources';
 import { enrichNodes } from './HanaClusterDetails';
+import SapSystemLink from './SapSystemLink';
 
 const nodeDetailsConfig = {
   usePadding: false,
@@ -122,7 +125,14 @@ function AscsErsClusterDetails({
             data={[
               {
                 title: 'SID',
-                content: currentSapSystem?.sid,
+                content: currentSapSystem,
+                render: (content) => (
+                  <SapSystemLink
+                    id={content?.id}
+                    sid={content?.sid}
+                    type={APPLICATION_TYPE}
+                  />
+                ),
               },
               {
                 title: 'ASCS/ERS distributed',
