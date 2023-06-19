@@ -17,7 +17,7 @@ describe('Deregistration Modal component', () => {
       />
     );
 
-    expect(await screen.findByText(new RegExp(hostName))).toBeTruthy();
+    expect(await screen.findByText(hostName, { exact: false })).toBeTruthy();
     expect(
       await screen.findByRole('button', { name: /Clean up/i })
     ).toBeTruthy();
