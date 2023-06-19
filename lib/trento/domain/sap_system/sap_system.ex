@@ -77,6 +77,7 @@ defmodule Trento.Domain.SapSystem do
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
+    DatabaseRestored,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -142,6 +143,61 @@ defmodule Trento.Domain.SapSystem do
         sap_system_id: sap_system_id,
         sid: sid,
         health: health
+      },
+      %DatabaseInstanceRegistered{
+        sap_system_id: sap_system_id,
+        sid: sid,
+        tenant: tenant,
+        instance_number: instance_number,
+        instance_hostname: instance_hostname,
+        features: features,
+        http_port: http_port,
+        https_port: https_port,
+        start_priority: start_priority,
+        host_id: host_id,
+        system_replication: system_replication,
+        system_replication_status: system_replication_status,
+        health: health
+      }
+    ]
+  end
+
+  # Database restore
+  def execute(
+        %SapSystem{database: %Database{deregistered_at: deregistered_at}},
+        %RegisterDatabaseInstance{
+          system_replication: "Secondary"
+        }
+      )
+      when not is_nil(deregistered_at),
+      do: {:error, :sap_system_not_registered}
+
+  # When a deregistered database is present, we add the new database instance
+  # and restore the database, the conditions are the same as registration
+  def execute(
+        %SapSystem{database: %Database{deregistered_at: deregistered_at}},
+        %RegisterDatabaseInstance{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant,
+          host_id: host_id,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status,
+          health: health
+        }
+      )
+      when not is_nil(deregistered_at) do
+    [
+      %DatabaseRestored{
+        sap_system_id: sap_system_id,
+        health: health,
+        sid: sid
       },
       %DatabaseInstanceRegistered{
         sap_system_id: sap_system_id,
@@ -612,6 +668,26 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{
       sap_system
       | database: Map.put(database, :deregistered_at, deregistered_at)
+    }
+  end
+
+  def apply(
+        %SapSystem{database: database} = sap_system,
+        %DatabaseRestored{
+          sap_system_id: sap_system_id,
+          health: health,
+          sid: sid
+        }
+      ) do
+    %SapSystem{
+      sap_system
+      | sap_system_id: sap_system_id,
+        database: %Database{
+          database
+          | health: health,
+            sid: sid,
+            deregistered_at: nil
+        }
     }
   end
 
