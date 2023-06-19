@@ -76,6 +76,7 @@ defmodule TrentoWeb.Router do
       get "/databases", SapSystemController, :list_databases
 
       post "/clusters/:cluster_id/checks", ClusterController, :select_checks
+      post "/hosts/:id/checks", HostController, :select_checks
 
       post "/clusters/:cluster_id/checks/request_execution",
            ClusterController,
