@@ -13,7 +13,7 @@ describe('Deregistration Modal component', () => {
         hostname={hostname}
         isOpen
         onCleanUp={() => {}}
-        onClose={() => {}}
+        onCancel={() => {}}
       />
     );
 
