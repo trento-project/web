@@ -11,6 +11,7 @@ defmodule Trento.HealthSummaryServiceTest do
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias Trento.{
+    ClusterReadModel,
     HostReadModel,
     SapSystemReadModel
   }
@@ -31,7 +32,6 @@ defmodule Trento.HealthSummaryServiceTest do
       insert(
         :database_instance_without_host,
         sap_system_id: sap_system_id,
-        sid: "HDD",
         host_id: a_host_id
       )
 
@@ -48,49 +48,136 @@ defmodule Trento.HealthSummaryServiceTest do
     end
 
     test "should determine health summary for a SAP System" do
-      %Trento.ClusterReadModel{id: cluster_id} =
+      %ClusterReadModel{id: db_cluster_id} =
         insert(:cluster, type: ClusterType.hana_scale_up(), health: Health.passing())
 
-      %Trento.HostReadModel{id: host_1_id} =
-        host_one = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
+      %ClusterReadModel{id: app_cluster_id} =
+        insert(:cluster, type: ClusterType.ascs_ers(), health: Health.warning())
 
-      %Trento.SapSystemReadModel{
+      %HostReadModel{id: db_host_id} =
+        db_host = insert(:host, cluster_id: db_cluster_id, heartbeat: Health.unknown())
+
+      %HostReadModel{id: db_host_id_2} =
+        db_host_2 = insert(:host, cluster_id: nil, heartbeat: Health.passing())
+
+      %HostReadModel{id: app_host_id} =
+        app_host = insert(:host, cluster_id: app_cluster_id, heartbeat: Health.passing())
+
+      %HostReadModel{id: app_host_id_2} =
+        app_host_2 = insert(:host, cluster_id: nil, heartbeat: Health.critical())
+
+      %SapSystemReadModel{
         id: sap_system_id,
         sid: sid
       } = insert(:sap_system, health: Health.critical())
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
-      database_instance =
+      database_instances = [
         insert(
-          :database_instance_without_host,
+          :database_instance,
           sap_system_id: sap_system_id,
-          sid: "HDD",
-          host_id: host_1_id,
-          health: Health.warning()
+          instance_number: "00",
+          host_id: db_host_id,
+          health: Health.warning(),
+          host: db_host
+        ),
+        insert(
+          :database_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "01",
+          host_id: db_host_id_2,
+          health: Health.passing(),
+          host: db_host_2
         )
+      ]
 
-      insert(
-        :application_instance_without_host,
-        sap_system_id: sap_system_id,
-        sid: sid,
-        host_id: host_1_id,
-        health: Health.critical()
-      )
-
-      expected_db_instance = %{database_instance | host: host_one}
+      application_instances = [
+        insert(
+          :application_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "10",
+          sid: sid,
+          host_id: app_host_id,
+          health: Health.passing(),
+          host: app_host
+        ),
+        insert(
+          :application_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "11",
+          sid: sid,
+          host_id: app_host_id_2,
+          health: Health.critical(),
+          host: app_host_2
+        )
+      ]
 
       assert [
                %{
-                 id: ^sap_system_id,
-                 sid: ^sid,
-                 sapsystem_health: :critical,
-                 database_health: :warning,
-                 clusters_health: :passing,
-                 hosts_health: :unknown,
-                 database_instances: [^expected_db_instance]
+                 id: sap_system_id,
+                 sid: sid,
+                 sapsystem_health: Health.critical(),
+                 database_health: Health.warning(),
+                 database_cluster_health: Health.passing(),
+                 application_cluster_health: Health.warning(),
+                 hosts_health: Health.unknown(),
+                 database_instances: database_instances,
+                 application_instances: application_instances
                }
-             ] = HealthSummaryService.get_health_summary()
+             ] == HealthSummaryService.get_health_summary()
+    end
+
+    test "should set as unknown the clusters health when they are not available" do
+      %HostReadModel{id: db_host_id} =
+        db_host = insert(:host, cluster_id: nil, heartbeat: Health.passing())
+
+      %HostReadModel{id: app_host_id} =
+        app_host = insert(:host, cluster_id: nil, heartbeat: Health.passing())
+
+      %SapSystemReadModel{
+        id: sap_system_id,
+        sid: sid
+      } = insert(:sap_system, health: Health.critical())
+
+      insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+      database_instances =
+        insert_list(
+          1,
+          :database_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "00",
+          host_id: db_host_id,
+          health: Health.warning(),
+          host: db_host
+        )
+
+      application_instances =
+        insert_list(
+          1,
+          :application_instance,
+          sap_system_id: sap_system_id,
+          instance_number: "10",
+          sid: sid,
+          host_id: app_host_id,
+          health: Health.passing(),
+          host: app_host
+        )
+
+      assert [
+               %{
+                 id: sap_system_id,
+                 sid: sid,
+                 sapsystem_health: Health.critical(),
+                 database_health: Health.warning(),
+                 database_cluster_health: Health.unknown(),
+                 application_cluster_health: Health.unknown(),
+                 hosts_health: Health.passing(),
+                 database_instances: database_instances,
+                 application_instances: application_instances
+               }
+             ] == HealthSummaryService.get_health_summary()
     end
   end
 end

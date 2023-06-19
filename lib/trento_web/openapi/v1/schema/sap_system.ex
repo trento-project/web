@@ -93,10 +93,35 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
       properties: %{
         id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
+        cluster_id: %Schema{
+          type: :string,
+          description: "Cluster ID",
+          format: :uuid,
+          deprecated: true
+        },
+        application_cluster_id: %Schema{
+          type: :string,
+          description: "Application cluster ID",
+          format: :uuid
+        },
+        database_cluster_id: %Schema{
+          type: :string,
+          description: "Database cluster ID",
+          format: :uuid
+        },
+        database_id: %Schema{type: :string, description: "Database ID", format: :uuid},
         sapsystem_health: ResourceHealth,
         database_health: ResourceHealth,
         hosts_health: ResourceHealth,
-        clusters_health: ResourceHealth
+        clusters_heatlh: %Schema{
+          allOf: [
+            ResourceHealth,
+            %Schema{deprecated: true}
+          ]
+        },
+        application_cluster_health: ResourceHealth,
+        database_cluster_health: ResourceHealth,
+        tenant: %Schema{type: :string, description: "Tenant database SID"}
       }
     })
   end
