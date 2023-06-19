@@ -9,13 +9,13 @@ function DeregistrationModal({
   hostName,
   isOpen = false,
   onCleanUp,
-  onClose = () => {},
+  onCancel,
 }) {
   return (
     <Modal
       title={`Clean up data discovered by agent on host ${hostName}`}
       open={isOpen}
-      onClose={onClose}
+      onClose={onCancel}
     >
       <div className="text-gray-500">
         This will ignore all the past events collected by the agent instance
@@ -35,7 +35,7 @@ function DeregistrationModal({
           type="primary-white-fit"
           className="inline-block mx-0.5 border-green-500 border"
           size="small"
-          onClick={onClose}
+          onClick={onCancel}
         >
           Cancel
         </Button>

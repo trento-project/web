@@ -56,7 +56,7 @@ function ButtonToOpenModal({ hostName }) {
           setDeregistered(true);
           setOpen(false);
         }}
-        onClose={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
       />
     </>
   );
