@@ -6,12 +6,6 @@ import DeregistrationModal from '.';
 export default {
   title: 'DeregistrationModal',
   component: DeregistrationModal,
-
-  args: {
-    hostName: 'example host',
-    isOpen: false,
-  },
-
   argTypes: {
     hostName: {
       type: 'string',
@@ -36,7 +30,7 @@ export default {
   },
 };
 
-export function Default({ hostName, onCleanUp, onClose }) {
+function ButtonToOpenModal({ hostName }) {
   const [open, setOpen] = useState(false);
   const [deregistered, setDeregistered] = useState(false);
 
@@ -59,15 +53,18 @@ export function Default({ hostName, onCleanUp, onClose }) {
         hostName={hostName}
         isOpen={open}
         onCleanUp={() => {
-          onCleanUp();
           setDeregistered(true);
           setOpen(false);
         }}
-        onClose={() => {
-          onClose();
-          setOpen(false);
-        }}
+        onClose={() => setOpen(false)}
       />
     </>
   );
 }
+
+export const Default = {
+  args: {
+    hostName: 'example host',
+  },
+  render: (args) => <ButtonToOpenModal {...args} />,
+};
