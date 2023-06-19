@@ -42,14 +42,14 @@ defmodule TrentoWeb.V1.HealthOverviewView do
     }
   end
 
-  @spec extract_database_id([DatabaseInstanceReadModel.t()]) :: String.t()
+  @spec extract_database_id([DatabaseInstanceReadModel.t()]) :: String.t() | nil
   defp extract_database_id([]), do: nil
 
   defp extract_database_id([%DatabaseInstanceReadModel{sap_system_id: sap_system_id} | _]),
     do: sap_system_id
 
-  @spec extract_cluster_id([ApplicationInstanceReadModel.t() | DatabaseInstanceReadModel.t()]) ::
-          String.t()
+  @spec extract_cluster_id([ApplicationInstanceReadModel.t()] | [DatabaseInstanceReadModel.t()]) ::
+          String.t() | nil
   defp extract_cluster_id([]), do: nil
 
   defp extract_cluster_id([%DatabaseInstanceReadModel{host: %{cluster_id: cluster_id}} | _]),
@@ -63,7 +63,7 @@ defmodule TrentoWeb.V1.HealthOverviewView do
     end)
   end
 
-  @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t()
+  @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t() | nil
   defp extract_tenant([]), do: nil
 
   defp extract_tenant([%DatabaseInstanceReadModel{tenant: tenant} | _]),

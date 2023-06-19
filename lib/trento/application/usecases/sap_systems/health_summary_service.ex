@@ -19,8 +19,6 @@ defmodule Trento.SapSystems.HealthSummaryService do
 
   alias Trento.Repo
 
-  @type instance_list :: [DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]
-
   @spec get_health_summary :: [map()]
   def get_health_summary do
     SapSystemReadModel
@@ -62,7 +60,10 @@ defmodule Trento.SapSystems.HealthSummaryService do
     |> HealthService.compute_aggregated_health()
   end
 
-  @spec compute_cluster_health(instance_list) :: Health.t()
+  @spec compute_cluster_health(
+          [DatabaseInstanceReadModel.t()]
+          | [ApplicationInstanceReadModel.t()]
+        ) :: Health.t()
   defp compute_cluster_health(instances) do
     cluster_id =
       Enum.find_value(instances, nil, fn
@@ -77,7 +78,8 @@ defmodule Trento.SapSystems.HealthSummaryService do
     end
   end
 
-  @spec compute_hosts_health(instance_list) :: Health.t()
+  @spec compute_hosts_health([DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]) ::
+          Health.t()
   defp compute_hosts_health(instances) do
     instances
     |> Enum.filter(fn %{host: host} -> host end)
