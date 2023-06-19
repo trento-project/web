@@ -74,7 +74,7 @@ export function* applicationInstanceDeregistered({ payload }) {
   );
   yield put(
     notify({
-      text: `An application instance has been deregistered from ${payload.sid}.`,
+      text: `The application instance ${payload.instance_number} has been deregistered from ${payload.sid}.`,
       icon: 'ℹ️',
     })
   );
