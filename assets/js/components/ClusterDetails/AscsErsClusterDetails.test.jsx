@@ -59,7 +59,13 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
       cibLastWritten
     );
 
-    expect(screen.getByText('SID').nextSibling).toHaveTextContent(sid);
+    const sidContainer = screen.getByText('SID').nextSibling;
+
+    expect(sidContainer).toHaveTextContent(sid);
+    expect(sidContainer.querySelector('a')).toHaveAttribute(
+      'href',
+      `/sap_systems/${sapSystems[0].id}`
+    );
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent(
       ensaVersion === 'no_ensa' ? '-' : ensaVersion.toUpperCase()
     );
@@ -164,5 +170,34 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     await user.click(screen.getByTestId('right-arrow'));
     expect(screen.getByText(sid2)).toBeInTheDocument();
     expect(screen.getByText(nodeName2)).toBeInTheDocument();
+  });
+
+  it('should show the SID even if the sap systems enriched data is not available', () => {
+    const {
+      name,
+      cib_last_written: cibLastWritten,
+      provider,
+      details,
+    } = clusterFactory.build({
+      type: 'ascs_ers',
+    });
+
+    const { sid } = details.sap_systems[0];
+
+    renderWithRouter(
+      <AscsErsClusterDetails
+        clusterName={name}
+        cibLastWritten={cibLastWritten}
+        provider={provider}
+        hosts={buildHostsFromAscsErsClusterDetails(details)}
+        sapSystems={[]}
+        details={details}
+      />
+    );
+
+    const sidContainer = screen.getByText('SID').nextSibling;
+
+    expect(sidContainer).toHaveTextContent(sid);
+    expect(sidContainer.querySelector('a')).toBeNull();
   });
 });
