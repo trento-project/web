@@ -270,7 +270,7 @@ defmodule Trento.SapSystemProjector do
       ) do
     %SapSystemReadModel{
       sid: sid
-    } = Repo.get(SapSystemReadModel, sap_system_id)
+    } = Repo.get!(SapSystemReadModel, sap_system_id)
 
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
