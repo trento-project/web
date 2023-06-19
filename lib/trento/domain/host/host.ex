@@ -31,6 +31,7 @@ defmodule Trento.Domain.Host do
   alias Trento.Domain.Commands.{
     RegisterHost,
     RollUpHost,
+    SelectHostChecks,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -39,6 +40,7 @@ defmodule Trento.Domain.Host do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostChecksSelected,
     HostDetailsUpdated,
     HostRegistered,
     HostRolledUp,
@@ -66,6 +68,7 @@ defmodule Trento.Domain.Host do
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :rolling_up, :boolean, default: false
+    field :selected_checks, {:array, :string}, default: []
 
     embeds_many :subscriptions, SlesSubscription
 
@@ -267,6 +270,27 @@ defmodule Trento.Domain.Host do
     }
   end
 
+  def execute(
+        %Host{host_id: nil},
+        %SelectHostChecks{}
+      ) do
+    {:error, :host_not_registered}
+  end
+
+  def execute(
+        %Host{
+          host_id: host_id
+        },
+        %SelectHostChecks{
+          checks: selected_checks
+        }
+      ) do
+    %HostChecksSelected{
+      host_id: host_id,
+      checks: selected_checks
+    }
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -372,5 +396,17 @@ defmodule Trento.Domain.Host do
         snapshot: snapshot
       }) do
     snapshot
+  end
+
+  def apply(
+        %Host{} = host,
+        %HostChecksSelected{
+          checks: selected_checks
+        }
+      ) do
+    %Host{
+      host
+      | selected_checks: selected_checks
+    }
   end
 end

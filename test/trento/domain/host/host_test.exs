@@ -6,6 +6,7 @@ defmodule Trento.HostTest do
   alias Trento.Domain.Commands.{
     RegisterHost,
     RollUpHost,
+    SelectHostChecks,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSlesSubscriptions
@@ -14,6 +15,7 @@ defmodule Trento.HostTest do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostChecksSelected,
     HostDetailsUpdated,
     HostRegistered,
     HostRolledUp,
@@ -150,6 +152,46 @@ defmodule Trento.HostTest do
           installation_source: host_registered_event.installation_source
         }),
         []
+      )
+    end
+  end
+
+  describe "host checks selection" do
+    test "should select desired checks for host" do
+      host_id = Faker.UUID.v4()
+      selected_host_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_events_and_state(
+        host_registered_event,
+        SelectHostChecks.new!(%{
+          host_id: host_id,
+          checks: selected_host_checks
+        }),
+        [
+          %HostChecksSelected{
+            host_id: host_id,
+            checks: selected_host_checks
+          }
+        ],
+        fn host ->
+          assert %Host{
+                   selected_checks: ^selected_host_checks
+                 } = host
+        end
+      )
+    end
+
+    test "should not accept checks selection if a host is not registered yet" do
+      host_id = Faker.UUID.v4()
+      selected_host_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_error(
+        SelectHostChecks.new!(%{
+          host_id: host_id,
+          checks: selected_host_checks
+        }),
+        {:error, :host_not_registered}
       )
     end
   end
