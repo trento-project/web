@@ -7,16 +7,14 @@ import ListView from '@components/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
 import HostLink from '@components/HostLink';
+import SapSystemLink from '@components/SapSystemLink';
 
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
-
-import { APPLICATION_TYPE } from '@lib/model';
 
 import SBDDetails from './SBDDetails';
 import SiteDetails from './SiteDetails';
 import StoppedResources from './StoppedResources';
 import { enrichNodes } from './HanaClusterDetails';
-import SapSystemLink from './SapSystemLink';
 
 const nodeDetailsConfig = {
   usePadding: false,
@@ -128,10 +126,11 @@ function AscsErsClusterDetails({
                 content: currentSapSystem,
                 render: (content) => (
                   <SapSystemLink
-                    id={content?.id}
-                    sid={content?.sid}
-                    type={APPLICATION_TYPE}
-                  />
+                    sapSystemId={content?.id}
+                    systemType="sap_systems"
+                  >
+                    {content?.sid}
+                  </SapSystemLink>
                 ),
               },
               {

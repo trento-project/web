@@ -13,14 +13,13 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 import HostLink from '@components/HostLink';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import ProviderLabel from '@components/ProviderLabel';
-import { DATABASE_TYPE } from '@lib/model';
+import SapSystemLink from '@components/SapSystemLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 import SiteDetails from './SiteDetails';
 import SBDDetails from './SBDDetails';
 import StoppedResources from './StoppedResources';
-import SapSystemLink from './SapSystemLink';
 
 export const enrichNodes = (clusterNodes, hosts) =>
   clusterNodes?.map((node) => ({
@@ -164,10 +163,11 @@ function HanaClusterDetails({
                 content: enrichedSapSystem,
                 render: (content) => (
                   <SapSystemLink
-                    id={content?.id}
-                    sid={content?.tenant}
-                    type={DATABASE_TYPE}
-                  />
+                    sapSystemId={content?.id}
+                    systemType="databases"
+                  >
+                    {content?.tenant}
+                  </SapSystemLink>
                 ),
               },
               {
