@@ -7,7 +7,7 @@ export default {
   title: 'DeregistrationModal',
   component: DeregistrationModal,
   argTypes: {
-    hostName: {
+    hostname: {
       type: 'string',
       description: 'The host name to confirm deregistration of',
       control: { type: 'text' },
@@ -30,7 +30,7 @@ export default {
   },
 };
 
-function ButtonToOpenModal({ hostName }) {
+function ButtonToOpenModal({ hostname }) {
   const [open, setOpen] = useState(false);
   const [deregistered, setDeregistered] = useState(false);
 
@@ -45,12 +45,12 @@ function ButtonToOpenModal({ hostName }) {
         onClick={() => setOpen(true)}
       >
         {deregistered
-          ? `Host ${hostName} deregistered`
+          ? `Host ${hostname} deregistered`
           : 'Click me to open modal'}
       </Button>
 
       <DeregistrationModal
-        hostName={hostName}
+        hostname={hostname}
         isOpen={open}
         onCleanUp={() => {
           setDeregistered(true);
@@ -64,7 +64,7 @@ function ButtonToOpenModal({ hostName }) {
 
 export const Default = {
   args: {
-    hostName: 'example host',
+    hostname: 'example host',
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };

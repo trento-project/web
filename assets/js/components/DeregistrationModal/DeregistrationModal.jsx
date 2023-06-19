@@ -6,14 +6,14 @@ import Modal from '@components/Modal';
 import Button from '@components/Button';
 
 function DeregistrationModal({
-  hostName,
+  hostname,
   isOpen = false,
   onCleanUp,
   onCancel,
 }) {
   return (
     <Modal
-      title={`Clean up data discovered by agent on host ${hostName}`}
+      title={`Clean up data discovered by agent on host ${hostname}`}
       open={isOpen}
       onClose={onCancel}
     >
