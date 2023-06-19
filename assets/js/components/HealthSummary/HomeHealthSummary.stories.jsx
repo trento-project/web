@@ -12,6 +12,13 @@ const healthySummary = healthSummaryFactory.buildList(3, {
   hostsHealth: 'passing',
   sapsystemHealth: 'passing',
 });
+const unClusteredSummary = healthSummaryFactory.buildList(3, {
+  clusterId: null,
+  clustersHealth: 'unknown',
+  databaseHealth: 'passing',
+  hostsHealth: 'passing',
+  sapsystemHealth: 'passing',
+});
 
 export default {
   title: 'HomeHealthSummary',
@@ -47,6 +54,18 @@ export const Healthy = {
   args: {
     ...Random.args,
     sapSystemsHealth: healthySummary,
+  },
+  render: (args) => (
+    <ContainerWrapper>
+      <HomeHealthSummary {...args} />
+    </ContainerWrapper>
+  ),
+};
+
+export const UnClustered = {
+  args: {
+    ...Random.args,
+    sapSystemsHealth: unClusteredSummary,
   },
   render: (args) => (
     <ContainerWrapper>
