@@ -7,14 +7,17 @@ import HomeHealthSummary from './HomeHealthSummary';
 
 const randomSummary = healthSummaryFactory.buildList(3);
 const healthySummary = healthSummaryFactory.buildList(3, {
-  clustersHealth: 'passing',
+  applicationClusterHealth: 'passing',
+  databaseClusterHealth: 'passing',
   databaseHealth: 'passing',
   hostsHealth: 'passing',
   sapsystemHealth: 'passing',
 });
 const unClusteredSummary = healthSummaryFactory.buildList(3, {
-  clusterId: null,
-  clustersHealth: 'unknown',
+  applicationClusterId: null,
+  databaseClusterId: null,
+  applicationClusterHealth: 'unknown',
+  databaseClusterHealth: 'unknown',
   databaseHealth: 'passing',
   hostsHealth: 'passing',
   sapsystemHealth: 'passing',

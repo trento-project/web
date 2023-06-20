@@ -10,7 +10,8 @@ import HomeHealthSummary from './HomeHealthSummary';
 
 const homeHealthSummaryData = [
   healthSummaryFactory.build({
-    clustersHealth: 'passing',
+    applicationClusterHealth: 'passing',
+    databaseClusterHealth: 'passing',
     databaseHealth: 'passing',
     hostsHealth: 'critical',
     sapsystemHealth: 'passing',
@@ -18,20 +19,22 @@ const homeHealthSummaryData = [
     tenant: 'HDD',
   }),
   healthSummaryFactory.build({
-    clustersHealth: 'passing',
+    applicationClusterHealth: 'passing',
     databaseHealth: 'passing',
     hostsHealth: 'critical',
     sapsystemHealth: 'passing',
   }),
   healthSummaryFactory.build({
-    clustersHealth: 'passing',
+    databaseClusterHealth: 'passing',
     databaseHealth: 'passing',
     hostsHealth: 'critical',
     sapsystemHealth: 'passing',
   }),
   healthSummaryFactory.build({
-    clusterId: null,
-    clustersHealth: 'unknown',
+    applicationClusterId: null,
+    databaseClusterId: null,
+    applicationClusterHealth: 'unknown',
+    databaseClusterHealth: 'unknown',
     databaseHealth: 'passing',
     hostsHealth: 'critical',
     sapsystemHealth: 'passing',
@@ -55,28 +58,38 @@ describe('HomeHealthSummary component', () => {
     ).toContain(`/sap_systems/${id}`);
   });
 
-  it('should have a clickable PACEMAKER CLUSTER icon with link to the belonging cluster when available', () => {
+  it('should have clickable cluster icons with links to the correct cluster when available', () => {
     const { container } = renderWithRouter(
       <HomeHealthSummary
         sapSystemsHealth={homeHealthSummaryData}
         loading={false}
       />
     );
-    const [{ clusterId }] = homeHealthSummaryData;
+    const [{ applicationClusterId, databaseClusterId }] = homeHealthSummaryData;
 
     expect(
       container
-        .querySelector(':nth-child(1) > :nth-child(4) > a')
+        .querySelector(':nth-child(1) > :nth-child(3) > a')
         .getAttribute('href')
-    ).toContain(`/clusters/${clusterId}`);
+    ).toContain(`/clusters/${applicationClusterId}`);
 
     expect(
-      container.querySelector(':nth-child(4) > :nth-child(4) > a')
+      container
+        .querySelector(':nth-child(1) > :nth-child(5) > a')
+        .getAttribute('href')
+    ).toContain(`/clusters/${databaseClusterId}`);
+
+    expect(
+      container.querySelector(':nth-child(4) > :nth-child(3) > a')
+    ).toBeNull();
+
+    expect(
+      container.querySelector(':nth-child(4) > :nth-child(5) > a')
     ).toBeNull();
 
     expect(
       container
-        .querySelector(':nth-child(4) > :nth-child(4) > svg')
+        .querySelector(':nth-child(4) > :nth-child(3) > svg')
         .classList.toString()
     ).toContain('hover:opacity-100');
   });
@@ -93,7 +106,7 @@ describe('HomeHealthSummary component', () => {
 
     expect(
       container
-        .querySelector(':nth-child(1) > :nth-child(5) > a')
+        .querySelector(':nth-child(1) > :nth-child(6) > a')
         .getAttribute('href')
     ).toContain('/hosts?sid=NWD&sid=HDD');
   });

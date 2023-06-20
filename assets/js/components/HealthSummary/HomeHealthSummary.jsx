@@ -13,6 +13,7 @@ const healthSummaryTableConfig = {
     {
       title: 'SID',
       key: 'sid',
+      className: 'w-1/6',
       render: (content, item) => (
         <Link
           className="text-jungle-green-500 hover:opacity-75"
@@ -25,7 +26,7 @@ const healthSummaryTableConfig = {
     {
       title: 'SAP Instances',
       key: 'sapsystemHealth',
-      className: 'text-center',
+      className: 'text-center w-1/6',
       render: (content, item) => (
         <Link to={`/sap_systems/${item.id}`}>
           <HealthIcon health={content} centered />
@@ -33,9 +34,25 @@ const healthSummaryTableConfig = {
       ),
     },
     {
+      title: 'Application cluster',
+      key: 'applicationClusterHealth',
+      className: 'text-center w-1/6',
+      render: (content, item) => {
+        const linkToCluster = `/clusters/${item.applicationClusterId}`;
+
+        return item?.applicationClusterId ? (
+          <Link to={linkToCluster}>
+            <HealthIcon health={content} centered />
+          </Link>
+        ) : (
+          <HealthIcon health={content} centered hoverOpacity={false} />
+        );
+      },
+    },
+    {
       title: 'Database',
       key: 'databaseHealth',
-      className: 'text-center',
+      className: 'text-center w-1/6',
       render: (content, item) => {
         const linkToDatabase = `/databases/${item.databaseId}`;
         return (
@@ -46,13 +63,13 @@ const healthSummaryTableConfig = {
       },
     },
     {
-      title: 'Pacemaker Clusters',
-      key: 'clustersHealth',
-      className: 'text-center',
+      title: 'Database cluster',
+      key: 'databaseClusterHealth',
+      className: 'text-center w-1/6',
       render: (content, item) => {
-        const linkToCluster = `/clusters/${item.clusterId}`;
+        const linkToCluster = `/clusters/${item.databaseClusterId}`;
 
-        return item?.clusterId ? (
+        return item?.databaseClusterId ? (
           <Link to={linkToCluster}>
             <HealthIcon health={content} centered />
           </Link>
@@ -64,7 +81,7 @@ const healthSummaryTableConfig = {
     {
       title: 'Hosts',
       key: 'hostsHealth',
-      className: 'text-center',
+      className: 'text-center w-1/6',
       render: (content, item) => {
         const linkToHosts = `/hosts?sid=${item.sid}&sid=${item.tenant}`;
         return (
