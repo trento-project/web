@@ -44,6 +44,7 @@ defmodule Trento.Domain.SapSystem do
   Find additional information about the application/database association in `Trento.Domain.Commands.RegisterApplicationInstance`.
   """
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health
 
   alias Commanded.Aggregate.Multi
@@ -94,6 +95,7 @@ defmodule Trento.Domain.SapSystem do
     field :sap_system_id, Ecto.UUID
     field :sid, :string, default: nil
     field :health, Ecto.Enum, values: Health.values()
+    field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
 
@@ -482,7 +484,7 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{sap_system | application: Map.put(application, :instances, instances)}
   end
 
-  def apply(%SapSystem{application: application} = sap_system, %SapSystemRegistered{
+  def apply(%SapSystem{} = sap_system, %SapSystemRegistered{
         sid: sid,
         health: health,
         ensa_version: ensa_version
@@ -491,7 +493,7 @@ defmodule Trento.Domain.SapSystem do
       sap_system
       | sid: sid,
         health: health,
-        application: Map.put(application, :ensa_version, ensa_version)
+        ensa_version: ensa_version
     }
   end
 
@@ -502,12 +504,12 @@ defmodule Trento.Domain.SapSystem do
     }
   end
 
-  def apply(%SapSystem{application: application} = sap_system, %SapSystemUpdated{
+  def apply(%SapSystem{} = sap_system, %SapSystemUpdated{
         ensa_version: ensa_version
       }) do
     %SapSystem{
       sap_system
-      | application: Map.put(application, :ensa_version, ensa_version)
+      | ensa_version: ensa_version
     }
   end
 
@@ -797,7 +799,7 @@ defmodule Trento.Domain.SapSystem do
 
   # Values didn't update
   defp maybe_emit_sap_system_registered_or_updated_event(
-         %SapSystem{application: %Application{ensa_version: ensa_version}},
+         %SapSystem{ensa_version: ensa_version},
          %RegisterApplicationInstance{
            ensa_version: ensa_version
          }
