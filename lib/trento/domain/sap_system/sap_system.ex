@@ -81,6 +81,7 @@ defmodule Trento.Domain.SapSystem do
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
+    SapSystemRestored,
     SapSystemRolledUp,
     SapSystemRollUpRequested,
     SapSystemTombstoned,
@@ -238,6 +239,27 @@ defmodule Trento.Domain.SapSystem do
       maybe_emit_database_instance_registered_event(instance, command)
     end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
+    |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
+  end
+
+  # Restore sap system
+  # Same registration rules
+  def execute(
+        %SapSystem{deregistered_at: deregistered_at} = sap_system,
+        %RegisterApplicationInstance{} = instance
+      )
+      when not is_nil(deregistered_at) do
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn sap_system ->
+      emit_application_instance_registered_or_application_instance_health_changed(
+        sap_system,
+        instance
+      )
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_sap_system_restored_event(sap_system, instance)
+    end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
@@ -703,6 +725,18 @@ defmodule Trento.Domain.SapSystem do
     }
   end
 
+  def apply(%SapSystem{} = sap_system, %SapSystemRestored{
+        sid: sid,
+        health: health
+      }) do
+    %SapSystem{
+      sap_system
+      | sid: sid,
+        health: health,
+        deregistered_at: nil
+    }
+  end
+
   def apply(%SapSystem{} = sap_system, %SapSystemTombstoned{}), do: sap_system
 
   defp maybe_emit_database_instance_registered_event(
@@ -901,6 +935,27 @@ defmodule Trento.Domain.SapSystem do
         host_id: host_id,
         instance_number: instance_number,
         health: health
+      }
+    end
+  end
+
+  defp maybe_emit_sap_system_restored_event(
+         %SapSystem{application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           sid: sid,
+           tenant: tenant,
+           db_host: db_host,
+           health: health
+         }
+       ) do
+    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+      %SapSystemRestored{
+        db_host: db_host,
+        health: health,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        tenant: tenant
       }
     end
   end

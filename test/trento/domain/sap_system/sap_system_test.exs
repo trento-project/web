@@ -29,6 +29,7 @@ defmodule Trento.SapSystemTest do
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
+    SapSystemRestored,
     SapSystemRolledUp,
     SapSystemRollUpRequested,
     SapSystemTombstoned,
@@ -2451,6 +2452,275 @@ defmodule Trento.SapSystemTest do
                        },
                        %Instance{}
                      ]
+                   }
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should not restore a sap system when no abap/messageserver instances are present" do
+      sap_system_id = UUID.uuid4()
+
+      primary_database_host_id = UUID.uuid4()
+      secondary_database_host_id = UUID.uuid4()
+
+      deregistered_at = DateTime.utc_now()
+
+      db_instance_number_1 = "00"
+      db_instance_number_2 = "01"
+
+      db_sid = fake_sid()
+      application_sid = fake_sid()
+
+      message_server_host_id = UUID.uuid4()
+      message_server_instance_number = "00"
+      abap_host_id = UUID.uuid4()
+      abap_instance_number = "01"
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: db_sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: primary_database_host_id,
+          sid: db_sid,
+          instance_number: db_instance_number_1,
+          system_replication: "Primary"
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: secondary_database_host_id,
+          instance_number: db_instance_number_2,
+          system_replication: "Secondary",
+          sid: db_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "MESSAGESERVER|ENQUE",
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          host_id: abap_host_id,
+          instance_number: abap_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: application_sid
+        ),
+        build(:database_instance_deregistered_event,
+          sap_system_id: sap_system_id,
+          host_id: primary_database_host_id,
+          instance_number: db_instance_number_1,
+          deregistered_at: deregistered_at
+        ),
+        build(:database_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        ),
+        build(:sap_system_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        ),
+        build(:application_instance_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at,
+          instance_number: message_server_instance_number,
+          host_id: message_server_host_id
+        ),
+        build(:database_instance_registered_event,
+          system_replication: "Primary",
+          sid: db_sid,
+          sap_system_id: sap_system_id
+        ),
+        build(:database_restored_event,
+          sap_system_id: sap_system_id,
+          sid: db_sid
+        )
+      ]
+
+      command =
+        build(
+          :register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: application_sid,
+          db_host: primary_database_host_id,
+          features: "IGS"
+        )
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [
+          %ApplicationInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: application_sid,
+            host_id: command.host_id,
+            instance_number: command.instance_number,
+            instance_hostname: command.instance_hostname,
+            features: command.features,
+            http_port: command.http_port,
+            https_port: command.https_port,
+            start_priority: command.start_priority,
+            health: command.health
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   deregistered_at: ^deregistered_at,
+                   database: %Database{
+                     deregistered_at: nil,
+                     sid: ^db_sid
+                   }
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should restore a sap system when abap/messageserver instances are present" do
+      sap_system_id = UUID.uuid4()
+
+      primary_database_host_id = UUID.uuid4()
+      secondary_database_host_id = UUID.uuid4()
+
+      deregistered_at = DateTime.utc_now()
+
+      db_instance_number_1 = "00"
+      db_instance_number_2 = "01"
+
+      db_sid = fake_sid()
+      application_sid = fake_sid()
+
+      message_server_host_id = UUID.uuid4()
+      message_server_instance_number = "00"
+      abap_host_id = UUID.uuid4()
+      abap_instance_number = "01"
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: db_sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: primary_database_host_id,
+          sid: db_sid,
+          instance_number: db_instance_number_1,
+          system_replication: "Primary"
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          host_id: secondary_database_host_id,
+          instance_number: db_instance_number_2,
+          system_replication: "Secondary",
+          sid: db_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "MESSAGESERVER|ENQUE",
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          host_id: abap_host_id,
+          instance_number: abap_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: application_sid
+        ),
+        build(:database_instance_deregistered_event,
+          sap_system_id: sap_system_id,
+          host_id: primary_database_host_id,
+          instance_number: db_instance_number_1,
+          deregistered_at: deregistered_at
+        ),
+        build(:database_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        ),
+        build(:sap_system_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        ),
+        build(:application_instance_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at,
+          instance_number: message_server_instance_number,
+          host_id: message_server_host_id
+        ),
+        build(:database_instance_registered_event,
+          system_replication: "Primary",
+          sid: db_sid,
+          sap_system_id: sap_system_id
+        ),
+        build(:database_restored_event,
+          sap_system_id: sap_system_id,
+          sid: db_sid
+        )
+      ]
+
+      command =
+        build(
+          :register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: application_sid,
+          db_host: primary_database_host_id,
+          features: "MESSAGESERVER"
+        )
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [
+          %ApplicationInstanceRegistered{
+            sap_system_id: sap_system_id,
+            sid: application_sid,
+            host_id: command.host_id,
+            instance_number: command.instance_number,
+            instance_hostname: command.instance_hostname,
+            features: command.features,
+            http_port: command.http_port,
+            https_port: command.https_port,
+            start_priority: command.start_priority,
+            health: command.health
+          },
+          %SapSystemRestored{
+            sap_system_id: sap_system_id,
+            sid: application_sid,
+            tenant: command.tenant,
+            db_host: command.db_host,
+            health: command.health
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   deregistered_at: nil,
+                   database: %Database{
+                     deregistered_at: nil,
+                     sid: ^db_sid
                    }
                  } = sap_system
         end
