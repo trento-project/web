@@ -43,11 +43,12 @@ describe('CheckResultOutline Component', () => {
     const checkID = faker.datatype.uuid();
     const clusterName = faker.lorem.word();
 
-    const expectationName1 = faker.company.name();
-    const expectationName2 = faker.color.human();
-    const expectationName3 = faker.color.human();
-    const expectSameExpectationName1 = faker.lorem.word();
-    const expectSameExpectationName2 = faker.lorem.word();
+    // expectation names are not required to be uuids. using uuids for their uniqueness.
+    const expectationName1 = faker.datatype.uuid();
+    const expectationName2 = faker.datatype.uuid();
+    const expectationName3 = faker.datatype.uuid();
+    const expectSameExpectationName1 = faker.datatype.uuid();
+    const expectSameExpectationName2 = faker.datatype.uuid();
 
     const expectations = [
       catalogExpectExpectationFactory.build({
