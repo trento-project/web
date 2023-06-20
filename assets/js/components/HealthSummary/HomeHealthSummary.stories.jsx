@@ -50,6 +50,13 @@ export const Random = {
   },
 };
 
+export const Empty = {
+  args: {
+    ...Random.args,
+    sapSystemsHealth: [],
+  },
+};
+
 export const Healthy = {
   args: {
     ...Random.args,
