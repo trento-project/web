@@ -1794,24 +1794,13 @@ defmodule Trento.SapSystemTest do
         build(:register_database_instance_command),
         build(:register_application_instance_command),
         build(:deregister_database_instance_command, sap_system_id: sap_system_id),
-        build(:deregister_application_instance_command, sap_system_id: sap_system_id)
+        build(:deregister_application_instance_command, sap_system_id: sap_system_id),
+        build(:rollup_sap_system_command)
       ]
 
       for command <- commands_to_accept do
         assert match?({:ok, _, _}, aggregate_run(initial_events, command)),
                "Command #{inspect(command)} should be accepted by a deregistered SAP system"
-      end
-
-      commands_to_reject = [
-        build(:rollup_sap_system_command)
-      ]
-
-      for command <- commands_to_reject do
-        assert match?(
-                 {:error, :sap_system_not_registered},
-                 aggregate_run(initial_events, command)
-               ),
-               "Command #{inspect(command)} should be rejected by a deregistered SAP system"
       end
     end
 
