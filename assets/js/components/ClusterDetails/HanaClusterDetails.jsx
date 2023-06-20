@@ -13,6 +13,7 @@ import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionReq
 import HostLink from '@components/HostLink';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import ProviderLabel from '@components/ProviderLabel';
+import SapSystemLink from '@components/SapSystemLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
@@ -70,12 +71,17 @@ function HanaClusterDetails({
   cibLastWritten,
   sid,
   provider,
+  sapSystems,
   details,
   lastExecution,
   onStartExecution = () => {},
   navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
+  const enrichedSapSystem = {
+    tenant: sid,
+    ...sapSystems.find(({ tenant }) => tenant === sid),
+  };
 
   const { loading: executionLoading } = lastExecution || { loading: true };
 
@@ -152,7 +158,18 @@ function HanaClusterDetails({
                 content: provider || 'Not defined',
                 render: (content) => <ProviderLabel provider={content} />,
               },
-              { title: 'SID', content: sid },
+              {
+                title: 'SID',
+                content: enrichedSapSystem,
+                render: (content) => (
+                  <SapSystemLink
+                    sapSystemId={content?.id}
+                    systemType="databases"
+                  >
+                    {content?.tenant}
+                  </SapSystemLink>
+                ),
+              },
               {
                 title: 'Fencing type',
                 content: details && details.fencing_type,

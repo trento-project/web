@@ -8,6 +8,7 @@ import {
   hostFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
+  sapSystemFactory,
 } from '@lib/test-utils/factories';
 import { faker } from '@faker-js/faker';
 import HanaClusterDetails from './HanaClusterDetails';
@@ -79,6 +80,8 @@ describe('HanaClusterDetails component', () => {
 
       const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
+      const sapSystems = sapSystemFactory.buildList(2, { tenant: sid });
+
       renderWithRouter(
         <HanaClusterDetails
           clusterID={clusterID}
@@ -90,6 +93,7 @@ describe('HanaClusterDetails component', () => {
           cibLastWritten={cibLastWritten}
           sid={sid}
           provider={provider}
+          sapSystems={sapSystems}
           details={details}
           lastExecution={lastExecution}
         />
@@ -100,4 +104,81 @@ describe('HanaClusterDetails component', () => {
       ).toBeDisabled();
     }
   );
+
+  it('should show correctly the SID and a link to the SAP system', () => {
+    const {
+      clusterID,
+      clusterName,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sid,
+      provider,
+      details,
+    } = clusterFactory.build();
+
+    const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+    const sapSystems = sapSystemFactory.buildList(2, { tenant: sid });
+
+    renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        clusterName={clusterName}
+        selectedChecks={[]}
+        hasSelectedChecks={false}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        sid={sid}
+        provider={provider}
+        sapSystems={sapSystems}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    const sidContainer = screen.getByText('SID').nextSibling;
+
+    expect(sidContainer).toHaveTextContent(sid);
+    expect(sidContainer.querySelector('a')).toHaveAttribute(
+      'href',
+      `/databases/${sapSystems[0].id}`
+    );
+  });
+
+  it('should show the SID even if the sap systems enriched data is not available', () => {
+    const {
+      clusterID,
+      clusterName,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sid,
+      provider,
+      details,
+    } = clusterFactory.build();
+
+    const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+    renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        clusterName={clusterName}
+        selectedChecks={[]}
+        hasSelectedChecks={false}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        sid={sid}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    const sidContainer = screen.getByText('SID').nextSibling;
+
+    expect(sidContainer).toHaveTextContent(sid);
+    expect(sidContainer.querySelector('a')).toBeNull();
+  });
 });

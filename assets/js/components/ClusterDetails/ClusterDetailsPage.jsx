@@ -52,6 +52,7 @@ export function ClusterDetailsPage() {
           cibLastWritten={cluster.cib_last_written}
           sid={cluster.sid}
           provider={cluster.provider}
+          sapSystems={clusterSapSystems}
           details={cluster.details}
           lastExecution={lastExecution}
           onStartExecution={(_, hostList, checks, navigateFunction) =>

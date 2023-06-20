@@ -7,6 +7,7 @@ import ListView from '@components/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
 import HostLink from '@components/HostLink';
+import SapSystemLink from '@components/SapSystemLink';
 
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
@@ -122,7 +123,15 @@ function AscsErsClusterDetails({
             data={[
               {
                 title: 'SID',
-                content: currentSapSystem?.sid,
+                content: currentSapSystem,
+                render: (content) => (
+                  <SapSystemLink
+                    sapSystemId={content?.id}
+                    systemType="sap_systems"
+                  >
+                    {content?.sid}
+                  </SapSystemLink>
+                ),
               },
               {
                 title: 'ASCS/ERS distributed',

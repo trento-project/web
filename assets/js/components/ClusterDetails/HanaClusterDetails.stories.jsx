@@ -6,6 +6,7 @@ import {
   hostFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
+  sapSystemFactory,
 } from '@lib/test-utils/factories';
 
 import HanaClusterDetails from './HanaClusterDetails';
@@ -34,6 +35,8 @@ const hosts = [
   hostFactory.build({ hostname: details.nodes[0].name }),
   hostFactory.build({ hostname: details.nodes[1].name }),
 ];
+
+const sapSystems = sapSystemFactory.buildList(1, { tenant: sid });
 
 function ContainerWrapper({ children }) {
   return (
@@ -69,6 +72,7 @@ export const Hana = {
     cibLastWritten,
     sid,
     provider,
+    sapSystems,
     details,
     lastExecution,
     onStartExecution: () => {},
