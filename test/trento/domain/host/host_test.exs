@@ -744,7 +744,6 @@ defmodule Trento.HostTest do
       commands_to_reject = [
         %DeregisterHost{},
         %RequestHostDeregistration{},
-        %RollUpHost{},
         %UpdateHeartbeat{},
         %UpdateProvider{},
         %UpdateSlesSubscriptions{}
@@ -752,6 +751,15 @@ defmodule Trento.HostTest do
 
       for command <- commands_to_reject do
         assert_error(initial_events, command, {:error, :host_not_registered})
+      end
+
+      commands_to_accept = [
+        %RollUpHost{}
+      ]
+
+      for command <- commands_to_accept do
+        assert match?({:ok, _, _}, aggregate_run(initial_events, command)),
+               "Command #{inspect(command)} should be accepted by a deregistered host"
       end
     end
 
