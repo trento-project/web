@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { HomeHealthSummary } from '@components/HealthSummary';
+import { HomeHealthSummaryPage } from '@components/HealthSummary';
 
 function Home() {
-  return <HomeHealthSummary />;
+  return <HomeHealthSummaryPage />;
 }
 
 export default Home;

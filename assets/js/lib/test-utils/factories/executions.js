@@ -1,10 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { hostFactory, resultEnum, randomObjectFactory } from '.';
+import { hostFactory, randomObjectFactory } from '.';
 
 export const checksExecutionStatusEnum = () =>
   faker.helpers.arrayElement(['running', 'completed', 'requested']);
+
+const resultEnum = () =>
+  faker.helpers.arrayElement(['passing', 'critical', 'warning']);
 
 const expectationReturnTypeEnum = () =>
   faker.helpers.arrayElement(['expect', 'expect_same']);

@@ -4,7 +4,7 @@ import { Factory } from 'fishery';
 import day from 'dayjs';
 
 import {
-  resultEnum,
+  healthEnum,
   cloudProviderEnum,
   hostFactory,
   sapSystemFactory,
@@ -109,7 +109,7 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     hosts_number: faker.datatype.number(),
     resources_number: faker.datatype.number(),
     type: clusterTypeEnum(),
-    health: resultEnum(),
+    health: healthEnum(),
     selected_checks: [],
     provider: cloudProviderEnum(),
     cib_last_written: day(faker.date.recent()).format('ddd MMM D h:mm:ss YYYY'),
