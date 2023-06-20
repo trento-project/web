@@ -247,6 +247,16 @@ defmodule Trento.Domain.Cluster do
     |> maybe_update_cluster(command)
   end
 
+  def execute(
+        %Cluster{cluster_id: cluster_id} = snapshot,
+        %RollUpCluster{}
+      ) do
+    %ClusterRollUpRequested{
+      cluster_id: cluster_id,
+      snapshot: snapshot
+    }
+  end
+
   def execute(%Cluster{deregistered_at: deregistered_at}, _) when not is_nil(deregistered_at),
     do: {:error, :cluster_not_registered}
 
@@ -309,16 +319,6 @@ defmodule Trento.Domain.Cluster do
     |> Multi.new()
     |> Multi.execute(&maybe_emit_cluster_checks_health_changed_event(&1, command))
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
-  end
-
-  def execute(
-        %Cluster{cluster_id: cluster_id} = snapshot,
-        %RollUpCluster{}
-      ) do
-    %ClusterRollUpRequested{
-      cluster_id: cluster_id,
-      snapshot: snapshot
-    }
   end
 
   def execute(
