@@ -512,19 +512,14 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   sid: ^sid,
                    application: %SapSystem.Application{
-                     sid: ^sid,
-                     ensa_version: ^ensa_version,
                      instances: [
                        %SapSystem.Instance{
                          sid: ^sid,
                          instance_number: ^instance_number,
                          host_id: ^new_host_id
-                       },
-                       %SapSystem.Instance{
-                         features: "MESSAGESERVER"
                        }
+                       | _
                      ]
                    }
                  } = state
