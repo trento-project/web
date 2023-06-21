@@ -50,7 +50,7 @@ export function GenericSystemDetails({ title, type, system }) {
               ? [
                   {
                     title: 'ENSA version',
-                    content: system.ensaVersion,
+                    content: system.ensaVersion || '-',
                     render: (content) => renderEnsaVersion(content),
                   },
                 ]
