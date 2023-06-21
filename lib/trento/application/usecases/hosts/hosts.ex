@@ -5,10 +5,14 @@ defmodule Trento.Hosts do
 
   import Ecto.Query
 
+  require Logger
+
   alias Trento.{
     HostReadModel,
     SlesSubscriptionReadModel
   }
+
+  alias Trento.Domain.Commands.SelectHostChecks
 
   alias Trento.Repo
 
@@ -36,4 +40,16 @@ defmodule Trento.Hosts do
         subscription_count
     end
   end
+
+  @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
+  def select_checks(host_id, checks) do
+    Logger.debug("Selecting checks, host: #{host_id}")
+
+    with {:ok, command} <- SelectHostChecks.new(%{host_id: host_id, checks: checks}) do
+      commanded().dispatch(command)
+    end
+  end
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

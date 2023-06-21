@@ -48,4 +48,136 @@ defmodule TrentoWeb.V1.HostControllerTest do
              } == resp
     end
   end
+
+  describe "Checks Selection" do
+    test "should return 202 when the checks were selected", %{conn: conn} do
+      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
+        :ok
+      end)
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{Faker.UUID.v4()}/checks", %{
+          "checks" => [Faker.Lorem.word()]
+        })
+        |> json_response(:accepted)
+
+      assert %{} = resp
+    end
+
+    test "should return 404 if the host was not registered", %{conn: conn} do
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn _ ->
+          {:error, :host_not_registered}
+        end
+      )
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{Faker.UUID.v4()}/checks", %{
+          "checks" => [Faker.Lorem.word()]
+        })
+        |> json_response(:not_found)
+
+      assert %{
+               "errors" => [
+                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
+               ]
+             } == resp
+    end
+
+    test "should return 422 on invalid input", %{conn: conn} do
+      scenarios = [
+        %{
+          name: "invalid host id",
+          request: fn conn ->
+            post(conn, "/api/v1/hosts/an_inv4lid_uuid/checks", %{
+              "checks" => [Faker.Lorem.word()]
+            })
+          end,
+          expected_response: %{
+            "errors" => [
+              %{
+                "detail" => "Invalid format. Expected :uuid",
+                "source" => %{
+                  "pointer" => "/id"
+                },
+                "title" => "Invalid value"
+              }
+            ]
+          }
+        },
+        %{
+          name: "invalid check",
+          request: fn conn ->
+            post(conn, "/api/v1/hosts/#{Faker.UUID.v4()}/checks", %{
+              "checks" => [Faker.Lorem.word(), 2]
+            })
+          end,
+          expected_response: %{
+            "errors" => [
+              %{
+                "detail" => "Invalid string. Got: integer",
+                "source" => %{
+                  "pointer" => "/checks/1"
+                },
+                "title" => "Invalid value"
+              }
+            ]
+          }
+        }
+      ]
+
+      for %{
+            request: request,
+            expected_response: expected_response
+          } <- scenarios do
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          0,
+          fn _ -> nil end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> request.()
+          |> json_response(:unprocessable_entity)
+
+        assert expected_response == resp
+      end
+    end
+
+    test "should return 500 on any other error", %{conn: conn} do
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn _ ->
+          {:error, :some_error}
+        end
+      )
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{Faker.UUID.v4()}/checks", %{
+          "checks" => [Faker.Lorem.word()]
+        })
+        |> json_response(:internal_server_error)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Something went wrong.",
+                   "title" => "Internal Server Error"
+                 }
+               ]
+             } == resp
+    end
+  end
 end
