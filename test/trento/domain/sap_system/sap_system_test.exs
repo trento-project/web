@@ -367,7 +367,8 @@ defmodule Trento.SapSystemTest do
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
-          features: "MESSAGESERVER"
+          features: "MESSAGESERVER",
+          instance_number: "00"
         )
       ]
 
@@ -468,7 +469,7 @@ defmodule Trento.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: sid,
           features: "ABAP",
-          instance_number: "10",
+          instance_number: instance_number,
           instance_hostname: instance_hostname,
           http_port: http_port,
           https_port: https_port,
@@ -518,7 +519,7 @@ defmodule Trento.SapSystemTest do
                      instances: [
                        %SapSystem.Instance{
                          sid: ^sid,
-                         instance_number: "10",
+                         instance_number: ^instance_number,
                          host_id: ^new_host_id
                        },
                        %SapSystem.Instance{

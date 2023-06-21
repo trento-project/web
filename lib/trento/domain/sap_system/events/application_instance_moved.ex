@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Events.ApplicationInstanceMoved do
   @moduledoc """
-  This event is emitted when a database application is moved from a host to another.
+  This event is emitted when an application instance is moved from a host to another.
   """
 
   use Trento.Event
