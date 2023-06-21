@@ -20,19 +20,6 @@ defmodule TrentoWeb.V1.HostView do
     |> Map.delete(:provider)
   end
 
-  def render("host_checks_updated.json", %{host: host}) do
-    render("host.json", %{host: host})
-    |> Map.delete(:sles_subscriptions)
-    |> Map.delete(:tags)
-    |> Map.delete(:cluster_id)
-    |> Map.delete(:heartbeat)
-    |> Map.delete(:provider)
-    |> Map.delete(:agent_version)
-    |> Map.delete(:hostname)
-    |> Map.delete(:ip_addresses)
-    |> Map.delete(:provider_data)
-  end
-
   def render("host_registered.json", %{host: host}) do
     render("host.json", %{host: host})
     |> Map.delete(:sles_subscriptions)

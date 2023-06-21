@@ -94,9 +94,6 @@ defmodule Trento.HostProjector do
       changeset =
         HostReadModel
         |> Repo.get(id)
-        # TODO: couldn't make it work with Ecto.Multi
-        # With following line when we receive an empty list of selected checks, the readmodel does not get updated
-        # %ClusterReadModel{id: id}
         |> HostReadModel.changeset(%{
           selected_checks: checks
         })
@@ -250,17 +247,19 @@ defmodule Trento.HostProjector do
   end
 
   def after_update(
-        %HostChecksSelected{checks: checks},
+        %HostChecksSelected{host_id: host_id, checks: checks},
         _,
-        %{host: %HostReadModel{id: id}}
+        _
       ) do
+    host = %HostReadModel{id: host_id, selected_checks: checks}
+
     message =
       HostView.render(
-        "host_checks_updated.json",
-        %{host: %HostReadModel{id: id, selected_checks: checks}}
+        "host_details_updated.json",
+        %{host: host}
       )
 
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_checks_updated", message)
+    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", message)
   end
 
   def after_update(_, _, _), do: :ok
