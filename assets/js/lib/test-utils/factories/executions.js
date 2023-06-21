@@ -12,8 +12,8 @@ const resultEnum = () =>
 const expectationReturnTypeEnum = () =>
   faker.helpers.arrayElement(['expect', 'expect_same']);
 
-export const executionValueFactory = Factory.define(({ sequence }) => ({
-  name: `${faker.lorem.word()}_${sequence}`,
+export const executionValueFactory = Factory.define(() => ({
+  name: `value_${faker.datatype.uuid()}`,
   value: faker.datatype.number(),
 }));
 
@@ -81,9 +81,9 @@ export const failingExpectationResultFactory = Factory.define(({ params }) =>
   })
 );
 
-export const executionFactFactory = Factory.define(({ sequence }) => ({
+export const executionFactFactory = Factory.define(() => ({
   check_id: faker.datatype.uuid(),
-  name: `${faker.lorem.word()}_${sequence}`,
+  name: `fact_${faker.datatype.uuid()}`,
   value: randomObjectFactory.build({}, { transient: { depth: 5 } }),
 }));
 
