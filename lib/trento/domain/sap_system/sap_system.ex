@@ -68,6 +68,7 @@ defmodule Trento.Domain.SapSystem do
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
+    ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     DatabaseDeregistered,
     DatabaseHealthChanged,
@@ -199,7 +200,13 @@ defmodule Trento.Domain.SapSystem do
     sap_system
     |> Multi.new()
     |> Multi.execute(fn sap_system ->
-      emit_application_instance_registered_or_application_instance_health_changed(
+      maybe_emit_application_instance_registered_or_moved_event(
+        sap_system,
+        instance
+      )
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_application_instance_health_changed_event(
         sap_system,
         instance
       )
@@ -463,6 +470,32 @@ defmodule Trento.Domain.SapSystem do
 
   def apply(
         %SapSystem{application: %Application{instances: instances} = application} = sap_system,
+        %ApplicationInstanceMoved{
+          instance_number: instance_number,
+          old_host_id: old_host_id,
+          new_host_id: new_host_id
+        }
+      ) do
+    instances =
+      Enum.map(instances, fn
+        %Instance{
+          instance_number: ^instance_number,
+          host_id: ^old_host_id
+        } = instance ->
+          %Instance{instance | host_id: new_host_id}
+
+        instance ->
+          instance
+      end)
+
+    %SapSystem{
+      sap_system
+      | application: Map.put(application, :instances, instances)
+    }
+  end
+
+  def apply(
+        %SapSystem{application: %Application{instances: instances} = application} = sap_system,
         %ApplicationInstanceHealthChanged{
           host_id: host_id,
           instance_number: instance_number,
@@ -700,7 +733,7 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-  defp emit_application_instance_registered_or_application_instance_health_changed(
+  defp maybe_emit_application_instance_registered_or_moved_event(
          %SapSystem{application: nil},
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
@@ -729,7 +762,7 @@ defmodule Trento.Domain.SapSystem do
     }
   end
 
-  defp emit_application_instance_registered_or_application_instance_health_changed(
+  defp maybe_emit_application_instance_registered_or_moved_event(
          %SapSystem{application: %Application{instances: instances}},
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
@@ -744,21 +777,11 @@ defmodule Trento.Domain.SapSystem do
            health: health
          }
        ) do
-    instance = get_instance(instances, host_id, instance_number)
+    instance =
+      Enum.find(instances, fn instance -> instance.instance_number == instance_number end)
 
-    case instance do
-      %Instance{health: ^health} ->
-        nil
-
-      %Instance{host_id: host_id, instance_number: instance_number} ->
-        %ApplicationInstanceHealthChanged{
-          sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number,
-          health: health
-        }
-
-      nil ->
+    cond do
+      is_nil(instance) ->
         %ApplicationInstanceRegistered{
           sap_system_id: sap_system_id,
           sid: sid,
@@ -771,6 +794,38 @@ defmodule Trento.Domain.SapSystem do
           host_id: host_id,
           health: health
         }
+
+      instance.host_id != host_id ->
+        %ApplicationInstanceMoved{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          old_host_id: instance.host_id,
+          new_host_id: host_id
+        }
+
+      true ->
+        nil
+    end
+  end
+
+  defp maybe_emit_application_instance_health_changed_event(
+         %SapSystem{application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           instance_number: instance_number,
+           host_id: host_id,
+           health: health
+         }
+       ) do
+    instance = get_instance(instances, host_id, instance_number)
+
+    if instance && instance.health != health do
+      %ApplicationInstanceHealthChanged{
+        sap_system_id: sap_system_id,
+        host_id: host_id,
+        instance_number: instance_number,
+        health: health
+      }
     end
   end
 
