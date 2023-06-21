@@ -21,7 +21,7 @@ defmodule Trento.HostReadModel do
     field :agent_version, :string
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
-
+    field :selected_checks, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :provider_data, :map
 
