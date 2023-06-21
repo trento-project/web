@@ -12,6 +12,9 @@ import {
   systemInstancesTableConfiguration,
 } from './tableConfigs';
 
+export const renderEnsaVersion = (ensaVersion) =>
+  ensaVersion === 'no_ensa' ? '-' : ensaVersion.toUpperCase();
+
 const renderType = (t) =>
   t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
 
@@ -43,6 +46,15 @@ export function GenericSystemDetails({ title, type, system }) {
               title: 'Type',
               content: renderType(type),
             },
+            ...(type === APPLICATION_TYPE
+              ? [
+                  {
+                    title: 'ENSA version',
+                    content: system.ensaVersion,
+                    render: (content) => renderEnsaVersion(content),
+                  },
+                ]
+              : []),
             {
               title: '',
               content: type,
