@@ -8,6 +8,7 @@ import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
 import HostLink from '@components/HostLink';
 import SapSystemLink from '@components/SapSystemLink';
+import { renderEnsaVersion } from '@components/SapSystemDetails';
 
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
@@ -140,8 +141,7 @@ function AscsErsClusterDetails({
               {
                 title: 'ENSA version',
                 content: currentSapSystem?.ensa_version || '-',
-                render: (content) =>
-                  content === 'no_ensa' ? '-' : content.toUpperCase(),
+                render: (content) => renderEnsaVersion(content),
               },
               {
                 title: 'Filesystem resource based',

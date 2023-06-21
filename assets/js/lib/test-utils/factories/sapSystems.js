@@ -6,7 +6,8 @@ import { databaseInstanceFactory } from './databases';
 
 const ensaVersion = () =>
   faker.helpers.arrayElement(['no_ensa', 'ensa1', 'ensa2']);
-const healthEnum = () => faker.helpers.arrayElement(['passing', 'critical']);
+const healthEnum = () =>
+  faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 const roles = () =>
   faker.helpers.arrayElements([
     'MESSAGESERVER',
