@@ -914,7 +914,6 @@ defmodule Trento.ClusterTest do
       commands_to_reject = [
         %CompleteChecksExecution{},
         %DeregisterClusterHost{},
-        %RollUpCluster{},
         %SelectChecks{},
         %RegisterClusterHost{}
       ]
@@ -922,6 +921,15 @@ defmodule Trento.ClusterTest do
       for command <- commands_to_reject do
         assert match?({:error, :cluster_not_registered}, aggregate_run(initial_events, command)),
                "Command #{inspect(command)} should be rejected by the aggregate"
+      end
+
+      commands_to_accept = [
+        %RollUpCluster{}
+      ]
+
+      for command <- commands_to_accept do
+        assert match?({:ok, _, _}, aggregate_run(initial_events, command)),
+               "Command #{inspect(command)} should be accepted by a deregistered cluster"
       end
     end
 

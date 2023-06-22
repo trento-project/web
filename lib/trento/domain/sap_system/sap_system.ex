@@ -287,14 +287,6 @@ defmodule Trento.Domain.SapSystem do
   end
 
   def execute(
-        %SapSystem{deregistered_at: deregistered_at},
-        _
-      )
-      when not is_nil(deregistered_at) do
-    {:error, :sap_system_not_registered}
-  end
-
-  def execute(
         %SapSystem{sap_system_id: sap_system_id} = snapshot,
         %RollUpSapSystem{}
       ) do
@@ -302,6 +294,14 @@ defmodule Trento.Domain.SapSystem do
       sap_system_id: sap_system_id,
       snapshot: snapshot
     }
+  end
+
+  def execute(
+        %SapSystem{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :sap_system_not_registered}
   end
 
   def apply(

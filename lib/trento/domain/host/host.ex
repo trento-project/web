@@ -198,6 +198,16 @@ defmodule Trento.Domain.Host do
   end
 
   def execute(
+        %Host{host_id: host_id} = snapshot,
+        %RollUpHost{}
+      ) do
+    %HostRollUpRequested{
+      host_id: host_id,
+      snapshot: snapshot
+    }
+  end
+
+  def execute(
         %Host{deregistered_at: deregistered_at},
         _
       )
@@ -312,16 +322,6 @@ defmodule Trento.Domain.Host do
     %SlesSubscriptionsUpdated{
       host_id: host_id,
       subscriptions: subscriptions
-    }
-  end
-
-  def execute(
-        %Host{host_id: host_id} = snapshot,
-        %RollUpHost{}
-      ) do
-    %HostRollUpRequested{
-      host_id: host_id,
-      snapshot: snapshot
     }
   end
 
