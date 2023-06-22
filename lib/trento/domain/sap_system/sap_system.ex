@@ -260,7 +260,6 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_restored_event(sap_system, instance)
     end)
-    |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
   # SAP system not registered, application already present
