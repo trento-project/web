@@ -272,7 +272,6 @@ defmodule Trento.Factory do
   def database_restored_event_factory do
     DatabaseRestored.new!(%{
       sap_system_id: Faker.UUID.v4(),
-      sid: Faker.UUID.v4(),
       health: Health.passing()
     })
   end

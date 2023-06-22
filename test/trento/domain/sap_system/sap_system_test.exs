@@ -2003,7 +2003,6 @@ defmodule Trento.SapSystemTest do
         [
           %DatabaseRestored{
             sap_system_id: sap_system_id,
-            sid: db_sid,
             health: command.health
           },
           %DatabaseInstanceRegistered{
@@ -2141,7 +2140,6 @@ defmodule Trento.SapSystemTest do
         [
           %DatabaseRestored{
             sap_system_id: sap_system_id,
-            sid: db_sid,
             health: command.health
           },
           %DatabaseInstanceRegistered{
@@ -2281,7 +2279,6 @@ defmodule Trento.SapSystemTest do
         [
           %DatabaseRestored{
             sap_system_id: sap_system_id,
-            sid: db_sid,
             health: command.health
           },
           %DatabaseInstanceRegistered{
@@ -2415,7 +2412,6 @@ defmodule Trento.SapSystemTest do
         [
           %DatabaseRestored{
             sap_system_id: sap_system_id,
-            sid: db_sid,
             health: command.health
           },
           %DatabaseInstanceRegistered{
@@ -2546,8 +2542,7 @@ defmodule Trento.SapSystemTest do
           sap_system_id: sap_system_id
         ),
         build(:database_restored_event,
-          sap_system_id: sap_system_id,
-          sid: db_sid
+          sap_system_id: sap_system_id
         )
       ]
 
@@ -2677,8 +2672,7 @@ defmodule Trento.SapSystemTest do
           sap_system_id: sap_system_id
         ),
         build(:database_restored_event,
-          sap_system_id: sap_system_id,
-          sid: db_sid
+          sap_system_id: sap_system_id
         )
       ]
 

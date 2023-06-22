@@ -164,7 +164,6 @@ defmodule Trento.DatabaseProjector do
   project(
     %DatabaseRestored{
       sap_system_id: sap_system_id,
-      sid: sid,
       health: health
     },
     fn multi ->
@@ -173,7 +172,7 @@ defmodule Trento.DatabaseProjector do
       changeset =
         DatabaseReadModel.changeset(
           db,
-          %{deregistered_at: nil, sid: sid, health: health}
+          %{deregistered_at: nil, health: health}
         )
 
       Ecto.Multi.update(multi, :database, changeset)

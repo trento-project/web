@@ -317,7 +317,6 @@ defmodule Trento.DatabaseProjectorTest do
 
     event = %DatabaseRestored{
       sap_system_id: sap_system_id,
-      sid: "NWD",
       health: :passing
     }
 
@@ -325,7 +324,6 @@ defmodule Trento.DatabaseProjectorTest do
 
     projection = Repo.get(DatabaseReadModel, sap_system_id)
     assert nil == projection.deregistered_at
-    assert "NWD" == projection.sid
     assert :passing == projection.health
 
     assert_broadcast "database_registered",

@@ -197,8 +197,7 @@ defmodule Trento.Domain.SapSystem do
     [
       %DatabaseRestored{
         sap_system_id: sap_system_id,
-        health: health,
-        sid: sid
+        health: health
       },
       %DatabaseInstanceRegistered{
         sap_system_id: sap_system_id,
@@ -695,8 +694,7 @@ defmodule Trento.Domain.SapSystem do
   def apply(
         %SapSystem{database: database} = sap_system,
         %DatabaseRestored{
-          health: health,
-          sid: sid
+          health: health
         }
       ) do
     %SapSystem{
@@ -704,7 +702,6 @@ defmodule Trento.Domain.SapSystem do
       | database: %Database{
           database
           | health: health,
-            sid: sid,
             deregistered_at: nil
         }
     }
