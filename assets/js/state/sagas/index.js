@@ -14,6 +14,7 @@ import {
   setHosts,
   appendHost,
   updateHost,
+  setHostNotDeregisterable,
   startHostsLoading,
   stopHostsLoading,
   setHeartbeatPassing,
@@ -62,7 +63,7 @@ import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { watchSapSystem } from '@state/sagas/sapSystems';
 import { watchDatabase } from '@state/sagas/databases';
-import { watchHostDeregistered } from '@state/sagas/hosts';
+import { watchHostDeregistered, hostDeregisterable } from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
 
 import {
@@ -176,6 +177,7 @@ function* watchHostDetailsUpdated() {
 }
 
 function* heartbeatSucceded({ payload }) {
+  yield put(setHostNotDeregisterable(payload));
   yield put(setHeartbeatPassing(payload));
   yield put(
     notify({
@@ -190,6 +192,7 @@ function* watchHeartbeatSucceded() {
 }
 
 function* heartbeatFailed({ payload }) {
+  yield hostDeregisterable({ payload });
   yield put(setHeartbeatCritical(payload));
   yield put(
     notify({

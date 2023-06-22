@@ -58,17 +58,20 @@ function HostsList() {
   const [cleanUpModalVisible, setCleanUpModalVisible] = useState(false);
   const [selectedHost, setSelectedHost] = useState(undefined);
 
-  console.log(hosts)
-
   const dispatch = useDispatch();
 
-  const displayCleanUpButton = ({ heartbeat, last_heartbeat_timestamp }) => {
+  const displayCleanUpButton = ({
+    heartbeat,
+    last_heartbeat_timestamp,
+    isDeregisterable,
+  }) => {
     const lastHeartbeat = new Date(last_heartbeat_timestamp);
     const deregistrationDisabledPeriod = new Date(
       lastHeartbeat.getTime() + deregistrationDebounce
     );
 
     return (
+      isDeregisterable ||
       heartbeat === 'unknown' ||
       (heartbeat === 'critical' &&
         new Date(Date.now()) > deregistrationDisabledPeriod)
@@ -247,14 +250,14 @@ function HostsList() {
     <>
       <PageHeader className="font-bold">Hosts</PageHeader>
       <DeregistrationModal
-        hostName={selectedHost.hostname}
+        hostname={selectedHost?.hostname}
         isOpen={!!selectedHost}
         onCleanUp={() => {
           // eslint-disable-next-line no-console
           console.log('clicked the big red button!');
           setSelectedHost(undefined);
         }}
-        onClose={() => setSelectedHost(undefined)}
+        onCancel={() => setSelectedHost(undefined)}
       />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
