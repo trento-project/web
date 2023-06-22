@@ -695,15 +695,13 @@ defmodule Trento.Domain.SapSystem do
   def apply(
         %SapSystem{database: database} = sap_system,
         %DatabaseRestored{
-          sap_system_id: sap_system_id,
           health: health,
           sid: sid
         }
       ) do
     %SapSystem{
       sap_system
-      | sap_system_id: sap_system_id,
-        database: %Database{
+      | database: %Database{
           database
           | health: health,
             sid: sid,
