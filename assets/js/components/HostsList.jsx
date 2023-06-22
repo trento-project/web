@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
+import { EOS_CLEANING_SERVICES, EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Table from '@components/Table';
 import HealthIcon from '@components/Health/HealthIcon';
@@ -175,6 +175,22 @@ function HostsList() {
               );
             }}
           />
+        ),
+      },
+      {
+        title: '',
+        key: 'Clean up',
+        className: 'w-48',
+        render: () => (
+          <span>
+            <EOS_CLEANING_SERVICES
+              size="base"
+              className="fill-jungle-green-500 inline"
+            />
+            <span className="text-jungle-green-500 text-sm font-bold pl-1.5">
+              Clean up
+            </span>
+          </span>
         ),
       },
     ],
