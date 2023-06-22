@@ -20,6 +20,7 @@ defmodule Trento.SapSystemProjectorTest do
     ApplicationInstanceHealthChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
+    SapSystemRestored,
     SapSystemUpdated
   }
 
@@ -186,6 +187,38 @@ defmodule Trento.SapSystemProjectorTest do
                      1000
 
     assert deregistered_at == projection.deregistered_at
+  end
+
+  test "should restore a SAP system when SapSystemRestored is received" do
+    %{tenant: tenant, id: sap_system_id, sid: sid} =
+      insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+    new_db_host = Faker.Internet.ip_v4_address()
+    new_health = :passing
+
+    event = %SapSystemRestored{
+      sap_system_id: sap_system_id,
+      tenant: tenant,
+      db_host: new_db_host,
+      health: new_health,
+      sid: sid
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    projection = Repo.get(SapSystemReadModel, sap_system_id)
+
+    assert_broadcast "sap_system_registered",
+                     %{
+                       db_host: ^new_db_host,
+                       health: ^new_health,
+                       id: ^sap_system_id,
+                       sid: ^sid,
+                       tenant: ^tenant
+                     },
+                     1000
+
+    assert nil == projection.deregistered_at
   end
 
   test "should remove an application instance from the read model after a deregistration" do
