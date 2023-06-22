@@ -742,11 +742,11 @@ defmodule Trento.HostTest do
       ]
 
       commands_to_reject = [
-        %DeregisterHost{},
-        %RequestHostDeregistration{},
-        %UpdateHeartbeat{},
-        %UpdateProvider{},
-        %UpdateSlesSubscriptions{}
+        %DeregisterHost{host_id: host_id},
+        %RequestHostDeregistration{host_id: host_id},
+        %UpdateHeartbeat{host_id: host_id},
+        %UpdateProvider{host_id: host_id},
+        %UpdateSlesSubscriptions{host_id: host_id}
       ]
 
       for command <- commands_to_reject do
@@ -754,7 +754,8 @@ defmodule Trento.HostTest do
       end
 
       commands_to_accept = [
-        %RollUpHost{}
+        %RollUpHost{host_id: host_id},
+        %RegisterHost{host_id: host_id}
       ]
 
       for command <- commands_to_accept do

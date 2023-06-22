@@ -912,10 +912,9 @@ defmodule Trento.ClusterTest do
       ]
 
       commands_to_reject = [
-        %CompleteChecksExecution{},
-        %DeregisterClusterHost{},
-        %SelectChecks{},
-        %RegisterClusterHost{}
+        %CompleteChecksExecution{cluster_id: cluster_id},
+        %DeregisterClusterHost{cluster_id: cluster_id},
+        %SelectChecks{cluster_id: cluster_id}
       ]
 
       for command <- commands_to_reject do
@@ -924,7 +923,9 @@ defmodule Trento.ClusterTest do
       end
 
       commands_to_accept = [
-        %RollUpCluster{}
+        %RollUpCluster{cluster_id: cluster_id},
+        %RegisterClusterHost{cluster_id: cluster_id, designated_controller: true},
+        %RegisterClusterHost{cluster_id: cluster_id, designated_controller: false}
       ]
 
       for command <- commands_to_accept do
