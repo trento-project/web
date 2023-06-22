@@ -252,7 +252,7 @@ defmodule Trento.Domain.SapSystem do
     sap_system
     |> Multi.new()
     |> Multi.execute(fn sap_system ->
-      emit_application_instance_registered_or_application_instance_health_changed(
+      maybe_emit_application_instance_registered_or_moved_event(
         sap_system,
         instance
       )
