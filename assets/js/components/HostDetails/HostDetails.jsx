@@ -63,11 +63,11 @@ function HostDetails() {
       <DeregistrationModal
         host={host}
         isOpen={modalIsOpen}
-        onClose={() => setModalIsOpen(false)}
         onCleanUp={() => {
           // eslint-disable-next-line no-console
           console.log('clicked the big red button!');
         }}
+        onCancel={() => setModalIsOpen(false)}
       />
       <BackButton url="/hosts">Back to Hosts</BackButton>
       <div className="flex justify-between">
