@@ -138,7 +138,6 @@ defmodule Trento.SapSystemProjector do
   project(
     %SapSystemRestored{
       sap_system_id: sap_system_id,
-      sid: sid,
       tenant: tenant,
       db_host: db_host,
       health: health
@@ -148,7 +147,6 @@ defmodule Trento.SapSystemProjector do
 
       changeset =
         SapSystemReadModel.changeset(sap_system, %{
-          sid: sid,
           tenant: tenant,
           db_host: db_host,
           health: health,

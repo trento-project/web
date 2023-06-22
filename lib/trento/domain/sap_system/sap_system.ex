@@ -720,13 +720,11 @@ defmodule Trento.Domain.SapSystem do
   end
 
   def apply(%SapSystem{} = sap_system, %SapSystemRestored{
-        sid: sid,
         health: health
       }) do
     %SapSystem{
       sap_system
-      | sid: sid,
-        health: health,
+      | health: health,
         deregistered_at: nil
     }
   end
@@ -937,7 +935,6 @@ defmodule Trento.Domain.SapSystem do
          %SapSystem{application: %Application{instances: instances}},
          %RegisterApplicationInstance{
            sap_system_id: sap_system_id,
-           sid: sid,
            tenant: tenant,
            db_host: db_host,
            health: health
@@ -948,7 +945,6 @@ defmodule Trento.Domain.SapSystem do
         db_host: db_host,
         health: health,
         sap_system_id: sap_system_id,
-        sid: sid,
         tenant: tenant
       }
     end

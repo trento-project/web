@@ -9,7 +9,6 @@ defmodule Trento.Domain.Events.SapSystemRestored do
 
   defevent do
     field :sap_system_id, Ecto.UUID
-    field :sid, :string
     field :tenant, :string
     field :db_host, :string
     field :health, Ecto.Enum, values: Health.values()

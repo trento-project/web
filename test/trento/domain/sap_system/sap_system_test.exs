@@ -2703,7 +2703,6 @@ defmodule Trento.SapSystemTest do
           },
           %SapSystemRestored{
             sap_system_id: sap_system_id,
-            sid: application_sid,
             tenant: command.tenant,
             db_host: command.db_host,
             health: command.health

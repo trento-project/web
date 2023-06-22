@@ -200,8 +200,7 @@ defmodule Trento.SapSystemProjectorTest do
       sap_system_id: sap_system_id,
       tenant: tenant,
       db_host: new_db_host,
-      health: new_health,
-      sid: sid
+      health: new_health
     }
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
