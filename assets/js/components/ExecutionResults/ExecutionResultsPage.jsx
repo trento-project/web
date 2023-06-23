@@ -37,7 +37,9 @@ function ExecutionResultsPage() {
 
   useEffect(() => {
     if (cloudProvider) {
-      dispatch(updateCatalog({ provider: cloudProvider }));
+      dispatch(
+        updateCatalog({ provider: cloudProvider, target_type: 'cluster' })
+      );
     }
     if (!executionData) {
       dispatch(updateLastExecution(clusterID));
