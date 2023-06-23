@@ -17,16 +17,15 @@ defmodule Trento.Integration.Checks do
   @spec request_execution(String.t(), String.t(), ClusterExecutionEnv.t(), [map], [String.t()]) ::
           :ok | {:error, :any}
   def request_execution(execution_id, cluster_id, env, hosts, selected_checks) do
-    execution_requested =
-      ExecutionRequested.new!(
-        execution_id: execution_id,
-        group_id: cluster_id,
-        targets:
-          Enum.map(hosts, fn %{host_id: host_id} ->
-            Target.new!(agent_id: host_id, checks: selected_checks)
-          end),
-        env: build_env(env)
-      )
+    execution_requested = %ExecutionRequested{
+      execution_id: execution_id,
+      group_id: cluster_id,
+      targets:
+        Enum.map(hosts, fn %{host_id: host_id} ->
+          %Target{agent_id: host_id, checks: selected_checks}
+        end),
+      env: build_env(env)
+    }
 
     case Messaging.publish("executions", execution_requested) do
       :ok ->
