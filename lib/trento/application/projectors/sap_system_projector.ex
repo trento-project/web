@@ -11,6 +11,7 @@ defmodule Trento.SapSystemProjector do
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
+    ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     SapSystemDeregistered,
     SapSystemHealthChanged,
@@ -94,6 +95,26 @@ defmodule Trento.SapSystemProjector do
         })
 
       Ecto.Multi.insert(multi, :application_instance, changeset)
+    end
+  )
+
+  project(
+    %ApplicationInstanceMoved{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      old_host_id: old_host_id,
+      new_host_id: new_host_id
+    },
+    fn multi ->
+      instance =
+        Repo.get_by(ApplicationInstanceReadModel,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: old_host_id
+        )
+
+      changeset = ApplicationInstanceReadModel.changeset(instance, %{host_id: new_host_id})
+      Ecto.Multi.update(multi, :application_instance, changeset)
     end
   )
 
@@ -234,6 +255,31 @@ defmodule Trento.SapSystemProjector do
       @sap_systems_topic,
       "application_instance_registered",
       SapSystemView.render("application_instance.json", instance: instance)
+    )
+  end
+
+  @impl true
+  def after_update(
+        %ApplicationInstanceMoved{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          old_host_id: old_host_id,
+          new_host_id: new_host_id
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "application_instance_moved",
+      SapSystemView.render("application_instance_moved.json",
+        instance_moved: %{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          old_host_id: old_host_id,
+          new_host_id: new_host_id
+        }
+      )
     )
   end
 

@@ -79,6 +79,9 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> Map.delete(:host)
   end
 
+  def render("application_instance_moved.json", %{instance_moved: instance_moved}),
+    do: instance_moved
+
   def render("application_instance_health_changed.json", %{health: health}), do: health
 
   def render("sap_systems.json", %{sap_systems: sap_systems}) do
