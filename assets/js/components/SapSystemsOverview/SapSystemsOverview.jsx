@@ -1,18 +1,20 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
+
 import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import SAPSystemItemOverview from '@components/SapSystemsOverview/SapSystemItemOverview';
 import Tags from '@components/Tags';
+import HealthSummary from '@components/HealthSummary/HealthSummary';
+import { getCounters } from '@components/HealthSummary/summarySelection';
+import { renderEnsaVersion } from '@components/SapSystemDetails';
 
 import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
 
 import { post, del } from '@lib/network';
-import HealthSummary from '@components/HealthSummary/HealthSummary';
-import { getCounters } from '@components/HealthSummary/summarySelection';
 
 const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
 
@@ -83,6 +85,11 @@ function SapSystemsOverview() {
         key: 'dbAddress',
       },
       {
+        title: 'ENSA version',
+        key: 'ensaVersion',
+        render: (content) => renderEnsaVersion(content),
+      },
+      {
         title: 'Tags',
         key: 'tags',
         className: 'w-80',
@@ -122,6 +129,7 @@ function SapSystemsOverview() {
     attachedRdbms: sapSystem.tenant,
     tenant: sapSystem.tenant,
     dbAddress: sapSystem.db_host,
+    ensaVersion: sapSystem.ensa_version || '-',
     applicationInstances: applicationInstances.filter(
       bySapSystem(sapSystem.id)
     ),
