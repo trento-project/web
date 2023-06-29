@@ -36,13 +36,8 @@ export const providerData = {
   },
 };
 
-export const getLabels = (providerDataObject) =>
-  Object.values(providerDataObject).map((item) => item.label);
-
-export const getProviderByLabel = (providerDataObject, providerLabel) =>
-  Object.entries(providerDataObject).find(
-    ([_, value]) => value.label === providerLabel
-  )[0];
+export const checkProviderExists = (provider) =>
+  providerData[provider] ? provider : null;
 
 function ProviderLabel({ provider }) {
   return (

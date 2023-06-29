@@ -29,7 +29,7 @@ context('Checks catalog', () => {
   describe('Checks grouping and identification is correct', () => {
     Object.entries(groupBy(catalog, 'group')).forEach(([group, checks]) => {
       it(`should include group '${group}'`, () => {
-        cy.get('.check-group > div > h3').should('contain', group);
+        cy.get('.check-group > div > div > h3').should('contain', group);
       });
       checks.forEach(({ id }) => {
         it(`should include check '${id}'`, () => {
@@ -46,9 +46,12 @@ context('Checks catalog', () => {
       ['gcp', 'GCP', 4],
     ].forEach(([provider, label, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
-        cy.intercept(`${checksCatalogURL}?provider=${provider}`, {
-          body: { items: catalog.slice(0, checkCount) },
-        }).as('request');
+        cy.intercept(
+          `${checksCatalogURL}?provider=${provider}&target_type=cluster`,
+          {
+            body: { items: catalog.slice(0, checkCount) },
+          }
+        ).as('request');
 
         cy.get('.cloud-provider-selection-dropdown').click();
         cy.get('.cloud-provider-selection-dropdown')
@@ -64,16 +67,9 @@ context('Checks catalog', () => {
 
   describe('Individual checks data is expanded', () => {
     it('should expand check data when clicked', () => {
-      cy.get('div.check-row')
-        .first()
-        .parent()
-        .invoke('attr', 'id')
-        .then(() => {
-          cy.get('div.check-row').first().click();
-          cy.get(`.check-panel`).should('exist');
-          cy.get('div.check-row').first().click();
-          cy.get('.check-panel').should('not.exist');
-        });
+      cy.get('.check-panel').should('not.exist');
+      cy.get('div.check-row').first().click();
+      cy.get(`.check-panel`).should('exist');
     });
   });
 

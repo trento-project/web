@@ -1,7 +1,7 @@
-import { ClusterDetails } from './ClusterDetails';
+import { ClusterDetailsPage } from './ClusterDetailsPage';
 
 export { ClusterSettings } from './ClusterSettings';
 export { ExecutionIcon } from './ExecutionIcon';
 export { ClusterInfoBox } from './ClusterInfoBox';
 
-export default ClusterDetails;
+export default ClusterDetailsPage;

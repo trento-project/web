@@ -20,9 +20,13 @@ module.exports = {
       '@state': path.resolve(__dirname, '../js/state'),
       '@static': path.resolve(__dirname, '../static'),
     };
+
+    config.resolve.roots = [path.resolve(__dirname, '../../priv/static')];
+
     return config;
   },
   docs: {
     autodocs: true,
   },
+  staticDirs: ['../../priv/static'],
 };

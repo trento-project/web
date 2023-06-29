@@ -2,6 +2,10 @@
 
 directories = ["./test/fixtures/scenarios/healthy-27-node-SAP-cluster"]
 
+[single-hana-single-app]
+
+directories = ["./test/fixtures/scenarios/single-hana-single-app"]
+
 [aws-landscape]
 
 directories = ["./test/fixtures/scenarios/aws-landscape"]

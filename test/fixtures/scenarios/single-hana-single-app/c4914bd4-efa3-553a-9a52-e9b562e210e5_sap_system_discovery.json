@@ -1,0 +1,229 @@
+{
+  "agent_id": "c4914bd4-efa3-553a-9a52-e9b562e210e5",
+  "discovery_type": "sap_system_discovery",
+  "payload": [
+    {
+      "DBAddress": "",
+      "Databases": [
+        {
+          "Active": "yes",
+          "Container": "",
+          "Database": "PRD",
+          "Group": "",
+          "GroupId": "",
+          "Host": "trento-hana01",
+          "SqlPort": "30015",
+          "User": "",
+          "UserId": ""
+        }
+      ],
+      "Id": "e058aaacf42f039937c4a43bf3df350b",
+      "Instances": [
+        {
+          "HdbnsutilSRstate": { "mode": "none", "online": "true" },
+          "Host": "trento-hana01",
+          "HostConfiguration": {
+            "failoverActualGroup": "default",
+            "failoverConfigGroup": "default",
+            "failoverStatus": "",
+            "host": "trento-hana01",
+            "hostActive": "yes",
+            "hostActualRoles": "worker",
+            "hostConfigRoles": "worker",
+            "hostStatus": "ok",
+            "indexServerActualRole": "master",
+            "indexServerConfigRole": "worker",
+            "nameServerActualRole": "master",
+            "nameServerConfigRole": "master 1",
+            "removeStatus": "",
+            "storageActualPartition": "1",
+            "storageConfigPartition": "1",
+            "storagePartition": "1",
+            "workerActualGroups": "default",
+            "workerConfigGroups": "default"
+          },
+          "Name": "HDB00",
+          "SAPControl": {
+            "Instances": [
+              {
+                "dispstatus": "SAPControl-GREEN",
+                "features": "HDB|HDB_WORKER",
+                "hostname": "trento-hana01",
+                "httpPort": 50013,
+                "httpsPort": 50014,
+                "instanceNr": 0,
+                "startPriority": "0.3"
+              }
+            ],
+            "Processes": [
+              {
+                "description": "HDB Daemon",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:46:57",
+                "name": "hdbdaemon",
+                "pid": 4869,
+                "starttime": "2023 04 19 07:28:10",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Compileserver",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:42:54",
+                "name": "hdbcompileserver",
+                "pid": 5600,
+                "starttime": "2023 04 19 07:32:13",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Deployment Infrastructure Server-PRD",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:41:06",
+                "name": "hdbdiserver",
+                "pid": 6500,
+                "starttime": "2023 04 19 07:34:01",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB DocStore-PRD",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:42:52",
+                "name": "hdbdocstore",
+                "pid": 5737,
+                "starttime": "2023 04 19 07:32:15",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB DPserver-PRD",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:42:52",
+                "name": "hdbdpserver",
+                "pid": 5740,
+                "starttime": "2023 04 19 07:32:15",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Indexserver-PRD",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:42:52",
+                "name": "hdbindexserver",
+                "pid": 5743,
+                "starttime": "2023 04 19 07:32:15",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Nameserver",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:46:34",
+                "name": "hdbnameserver",
+                "pid": 4976,
+                "starttime": "2023 04 19 07:28:33",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Preprocessor",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:42:54",
+                "name": "hdbpreprocessor",
+                "pid": 5603,
+                "starttime": "2023 04 19 07:32:13",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB Web Dispatcher",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:41:06",
+                "name": "hdbwebdispatcher",
+                "pid": 6503,
+                "starttime": "2023 04 19 07:34:01",
+                "textstatus": "Running"
+              },
+              {
+                "description": "HDB XSEngine-PRD",
+                "dispstatus": "SAPControl-GREEN",
+                "elapsedtime": "0:42:52",
+                "name": "hdbxsengine",
+                "pid": 5746,
+                "starttime": "2023 04 19 07:32:15",
+                "textstatus": "Running"
+              }
+            ],
+            "Properties": [
+              {
+                "property": "Process List",
+                "propertytype": "NodeWebmethod",
+                "value": "GetProcessList"
+              },
+              {
+                "property": "Access Points",
+                "propertytype": "NodeWebmethod",
+                "value": "GetAccessPointList"
+              },
+              {
+                "property": "Parameter Documentation",
+                "propertytype": "NodeURL",
+                "value": "http://trento-hana01:50013/sapparamEN.html"
+              },
+              {
+                "property": "Protected Webmethods",
+                "propertytype": "Attribute",
+                "value": "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata"
+              },
+              {
+                "property": "DBServices",
+                "propertytype": "Attribute",
+                "value": "YES"
+              },
+              {
+                "property": "HANA Roles",
+                "propertytype": "Attribute",
+                "value": "worker"
+              },
+              {
+                "property": "StartPriority",
+                "propertytype": "Attribute",
+                "value": "0.3"
+              },
+              {
+                "property": "SAPSYSTEM",
+                "propertytype": "Attribute",
+                "value": "00"
+              },
+              {
+                "property": "SAPSYSTEMNAME",
+                "propertytype": "Attribute",
+                "value": "PRD"
+              },
+              {
+                "property": "SAPLOCALHOST",
+                "propertytype": "Attribute",
+                "value": "trento-hana01"
+              },
+              {
+                "property": "INSTANCE_NAME",
+                "propertytype": "Attribute",
+                "value": "HDB00"
+              },
+              {
+                "property": "Webmethods",
+                "propertytype": "Attribute",
+                "value": "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile"
+              }
+            ]
+          },
+          "SystemReplication": { "local_site_id": "0" },
+          "Type": 1
+        }
+      ],
+      "Profile": {
+        "HDB_LINKED_BINARIES": "yes",
+        "HDB_SHARED_BINARIES": "yes",
+        "SAPGLOBALHOST": "trento-hana01",
+        "SAPSYSTEMNAME": "PRD",
+        "hdbConfigType": "DEFAULT",
+        "ssl/ciphersuites": "135:PFS:HIGH::EC_P256:EC_HIGH"
+      },
+      "SID": "PRD",
+      "Type": 1
+    }
+  ]
+}

@@ -8,30 +8,12 @@ import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import ChecksSelection from '@components/ClusterDetails/ChecksSelection';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
-import WarningBanner from '@components/Banners/WarningBanner';
 import { getClusterName } from '@components/ClusterLink';
 import { ClusterInfoBox } from '@components/ClusterDetails';
 
 import { getCluster, getClusterHostIDs } from '@state/selectors/cluster';
-
-export const UNKNOWN_PROVIDER = 'unknown';
-
-export const providerWarningBanners = {
-  [UNKNOWN_PROVIDER]: (
-    <WarningBanner>
-      The following catalog is valid for on-premise bare metal platforms.
-      <br />
-      If you are running your HANA cluster on a different platform, please use
-      results with caution
-    </WarningBanner>
-  ),
-  vmware: (
-    <WarningBanner>
-      Configuration checks for HANA scale-up performance optimized clusters on
-      VMware are still in experimental phase. Please use results with caution.
-    </WarningBanner>
-  ),
-};
+import WarningBanner from '@components/Banners/WarningBanner';
+import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
 
 export function ClusterSettings() {
   const { clusterID } = useParams();
@@ -42,8 +24,6 @@ export function ClusterSettings() {
     return <div>Loading...</div>;
   }
 
-  const warning = providerWarningBanners[cluster.provider];
-
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/clusters/${clusterID}`}>
@@ -53,7 +33,21 @@ export function ClusterSettings() {
         Cluster Settings for{' '}
         <span className="font-bold">{getClusterName(cluster)}</span>
       </PageHeader>
-      {warning}
+      {cluster.provider === UNKNOWN_PROVIDER && (
+        <WarningBanner>
+          The following catalog is valid for on-premise bare metal platforms.
+          <br />
+          If you are running your HANA cluster on a different platform, please
+          use results with caution
+        </WarningBanner>
+      )}
+      {cluster.provider === VMWARE_PROVIDER && (
+        <WarningBanner>
+          Configuration checks for HANA scale-up performance optimized clusters
+          on VMware are still in experimental phase. Please use results with
+          caution.
+        </WarningBanner>
+      )}
       <ClusterInfoBox haScenario={cluster.type} provider={cluster.provider} />
       <ChecksSelection clusterId={clusterID} cluster={cluster} />
     </div>

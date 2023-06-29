@@ -4,47 +4,25 @@ import Filter from '@components/Table/Filter';
 
 export const RESULT_FILTER_FIELD = 'result';
 
-export const filterChecks = (checks, predicates) => {
-  if (predicates.length === 0) return checks;
+const defaultSavedFilters = [];
 
-  return checks.filter((check) =>
-    predicates.some((predicate) => predicate(check))
-  );
-};
+const getFilters = (savedFilters, searchParams) =>
+  savedFilters.length >= 0 && searchParams.getAll('health').length === 0
+    ? savedFilters
+    : searchParams.getAll('health');
 
-export const useFilteredChecks = (cluster) => {
-  const [filtersPredicates, setFiltersPredicates] = useState([]);
-  const [filteredChecks, setFilteredChecks] = useState([]);
-
-  const checksForHost = (hostID) =>
-    filteredChecks
-      .filter((result) => result.host_id === hostID)
-      .map((result) => result.check_id);
-
-  useEffect(() => {
-    if (cluster?.checks_results.length > 0) {
-      const selectedCheckResults = cluster?.checks_results.filter((result) =>
-        cluster?.selected_checks.includes(result?.check_id)
-      );
-
-      setFilteredChecks(filterChecks(selectedCheckResults, filtersPredicates));
-    }
-  }, [cluster?.checks_results, cluster?.selected_checks, filtersPredicates]);
-
-  return {
-    setFiltersPredicates,
-    filteredChecksyByHost: checksForHost,
-  };
-};
-
-function ChecksResultFilters({ onChange }) {
+function ChecksResultFilters({
+  savedFilters = defaultSavedFilters,
+  onChange = () => {},
+  onSave = () => {},
+}) {
   const [filtersForField, setFiltersForField] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   // This structure is the foundation for a multi field filters
   // we can reuse later this structure in other parts of the application
 
   useEffect(() => {
-    const selectedFilters = searchParams.getAll('health');
+    const selectedFilters = getFilters(savedFilters, searchParams);
 
     setFiltersForField({
       RESULT_FILTER_FIELD: {
@@ -54,7 +32,7 @@ function ChecksResultFilters({ onChange }) {
         values: selectedFilters,
       },
     });
-  }, [searchParams]);
+  }, [searchParams, savedFilters]);
 
   useEffect(() => {
     if (Object.keys(filtersForField).length >= 0) {
@@ -73,8 +51,9 @@ function ChecksResultFilters({ onChange }) {
         key={RESULT_FILTER_FIELD}
         title="checks result"
         options={['passing', 'warning', 'critical', 'unknown']}
-        value={searchParams.getAll('health')}
+        value={getFilters(savedFilters, searchParams)}
         onChange={(list) => {
+          onSave(list);
           setSearchParams(createSearchParams({ health: list }));
         }}
       />

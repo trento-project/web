@@ -18,9 +18,8 @@ defmodule TrentoWeb.V1.HostController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  tags ["Target Infrastructure"]
-
   operation :list,
+    tags: ["Target Infrastructure"],
     summary: "List hosts",
     description: "List all the discovered hosts on the target infrastructure",
     responses: [
@@ -80,6 +79,34 @@ defmodule TrentoWeb.V1.HostController do
   def heartbeat(conn, %{id: id}) do
     with :ok <- Heartbeats.heartbeat(id) do
       send_resp(conn, 204, "")
+    end
+  end
+
+  operation :select_checks,
+    summary: "Select Checks for a Host",
+    tags: ["Checks"],
+    description: "Select the Checks eligible for execution on the target infrastructure",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        type: %OpenApiSpex.Schema{type: :string, format: :uuid}
+      ]
+    ],
+    request_body: {"Checks Selection", "application/json", Schema.Checks.ChecksSelectionRequest},
+    responses: [
+      accepted: "The Selection has been successfully collected",
+      not_found: NotFound.response(),
+      unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
+    ]
+
+  def select_checks(%{body_params: body_params} = conn, %{id: host_id}) do
+    %{checks: checks} = body_params
+
+    with :ok <- Hosts.select_checks(host_id, checks) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{})
     end
   end
 end

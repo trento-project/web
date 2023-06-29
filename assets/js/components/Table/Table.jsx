@@ -11,6 +11,7 @@ import {
 
 import CollapsibleTableRow from './CollapsibleTableRow';
 import Pagination from './Pagination';
+import EmptyState from './EmptyState';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
@@ -18,20 +19,26 @@ const defaultCellRender = (content) => (
 
 const renderCells = (columns, item) => (
   <>
-    {columns.map(({ key, className, render = defaultCellRender }, idx) => {
-      const content = item[key];
-      return (
-        <td
-          key={idx}
-          className={classNames(
-            'px-5 py-5 border-b border-gray-200 bg-white text-sm',
-            className
-          )}
-        >
-          {render(content, item)}
-        </td>
-      );
-    })}
+    {columns.map(
+      (
+        { key, className, fontSize = 'text-sm', render = defaultCellRender },
+        idx
+      ) => {
+        const content = item[key];
+        return (
+          <td
+            key={idx}
+            className={classNames(
+              'px-5 py-5 border-b border-gray-200 bg-white',
+              className,
+              fontSize
+            )}
+          >
+            {render(content, item)}
+          </td>
+        );
+      }
+    )}
   </>
 );
 
@@ -47,10 +54,18 @@ const updateSearchParams = (searchParams, values) => {
   return searchParams;
 };
 
-function Table({ config, data = [], searchParams, setSearchParams }) {
+function Table({
+  config,
+  data = [],
+  searchParams,
+  setSearchParams,
+  emptyStateText = 'No data available',
+  withPadding = true,
+}) {
   const {
     columns,
     collapsibleDetailRenderer = undefined,
+    rowClassName = '',
     pagination,
     usePadding = true,
   } = config;
@@ -135,7 +150,11 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
         />
       </div>
       <div className="">
-        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 pt-4">
+        <div
+          className={classNames('-mx-4 sm:-mx-8 px-4 sm:px-8', {
+            'pt-4': withPadding,
+          })}
+        >
           <div className="min-w-fit shadow rounded-lg">
             <table className="min-w-full leading-normal table-fixed">
               <thead>
@@ -155,16 +174,24 @@ function Table({ config, data = [], searchParams, setSearchParams }) {
                 </tr>
               </thead>
               <tbody>
-                {renderedData.map((item, index) => (
-                  <CollapsibleTableRow
-                    item={item}
-                    key={index}
-                    collapsibleDetailRenderer={collapsibleDetailRenderer}
-                    renderCells={renderCells}
-                    columns={columns}
+                {data.length === 0 ? (
+                  <EmptyState
                     colSpan={columns.length}
+                    emptyStateText={emptyStateText}
                   />
-                ))}
+                ) : (
+                  renderedData.map((item, index) => (
+                    <CollapsibleTableRow
+                      item={item}
+                      key={index}
+                      collapsibleDetailRenderer={collapsibleDetailRenderer}
+                      renderCells={renderCells}
+                      columns={columns}
+                      colSpan={columns.length}
+                      className={rowClassName}
+                    />
+                  ))
+                )}
               </tbody>
             </table>
             {pagination && (

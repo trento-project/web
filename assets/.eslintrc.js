@@ -44,9 +44,7 @@ module.exports = {
     'no-console': 'error',
     'no-unused-vars': [
       'error',
-      {
-        argsIgnorePattern: '^_',
-      },
+      { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' },
     ],
     'react/prop-types': 'off',
     camelcase: 'off',

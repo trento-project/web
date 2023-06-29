@@ -1,0 +1,26 @@
+{
+  "agent_id": "e77ab524-c4e4-5381-bb59-5af8639d52a4",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "agent_version": "1.2.0+git.dev69.1681712424.63e3ee9",
+    "cpu_count": 2,
+    "hostname": "trento-vmnetweaver01",
+    "installation_source": "Suse",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.0.2.30",
+      "192.168.1.30",
+      "192.168.1.31",
+      "fe80::f9:9cff:fe45:2cde",
+      "172.17.0.1",
+      "172.18.0.1",
+      "fe80::42:deff:fead:fa7d",
+      "fe80::8d3:33ff:feee:9701",
+      "fe80::ec17:89ff:feb6:a456"
+    ],
+    "os_version": "15-SP4",
+    "socket_count": 1,
+    "total_memory_mb": 15699
+  }
+}

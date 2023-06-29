@@ -4,6 +4,11 @@ export const RUNNING_EXECUTION_STATE = 'running';
 export const REQUESTED_EXECUTION_STATE = 'requested';
 export const COMPLETED_EXECUTION_STATE = 'completed';
 
+export const RUNNING_STATES = [
+  RUNNING_EXECUTION_STATE,
+  REQUESTED_EXECUTION_STATE,
+];
+
 const initialState = {};
 
 const initialExecutionState = {

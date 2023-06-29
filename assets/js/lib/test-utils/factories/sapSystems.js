@@ -2,9 +2,12 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
-import { hostFactory } from './hosts';
+import { databaseInstanceFactory } from './databases';
 
-const healthEnum = () => faker.helpers.arrayElement(['passing', 'critical']);
+const ensaVersion = () =>
+  faker.helpers.arrayElement(['no_ensa', 'ensa1', 'ensa2']);
+const healthEnum = () =>
+  faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 const roles = () =>
   faker.helpers.arrayElements([
     'MESSAGESERVER',
@@ -29,21 +32,25 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {
-  const sapSystemId = params.sapSystemId || faker.datatype.uuid();
-  const sid = faker.random.alphaNumeric(3, { casing: 'upper' });
+  const sapSystemID = params.sapSystemId || faker.datatype.uuid();
+  const sid = params.sid || faker.random.alphaNumeric(3, { casing: 'upper' });
 
   return {
-    dbHost: faker.internet.ip(),
-    health: healthEnum(),
-    id: sapSystemId,
-    instances: sapSystemApplicationInstanceFactory.buildList(2, {
-      sapSystemId,
+    application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
+      sap_system_id: sapSystemID,
       sid,
     }),
+    database_instances: databaseInstanceFactory.buildList(2, {
+      sap_system_id: sapSystemID,
+      sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
+    }),
+    db_host: faker.internet.ip(),
+    deregistered_at: null,
+    ensa_version: ensaVersion(),
+    health: healthEnum(),
+    id: sapSystemID,
     sid,
     tags: [],
     tenant: faker.random.alphaNumeric(3, { casing: 'upper' }),
-    hosts: hostFactory.buildList(5),
-    ensa_version: 'ensa1',
   };
 });

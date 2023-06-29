@@ -13,7 +13,9 @@ import Home from '@components/Home';
 import AboutPage from '@components/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
-import ClusterDetails, { ClusterSettings } from '@components/ClusterDetails';
+import ClusterDetailsPage, {
+  ClusterSettings,
+} from '@components/ClusterDetails';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails from '@components/HostDetails';
@@ -27,6 +29,7 @@ import Login from '@components/Login';
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';
+import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import { store } from './state';
@@ -70,7 +73,7 @@ function App() {
                   <Route path="databases/:id" element={<DatabaseDetails />} />
                   <Route
                     path="clusters/:clusterID"
-                    element={<ClusterDetails />}
+                    element={<ClusterDetailsPage />}
                   />
                   <Route
                     path="clusters/:clusterID/settings"
@@ -79,6 +82,10 @@ function App() {
                   <Route
                     path="clusters/:clusterID/executions/last"
                     element={<ExecutionResultsPage />}
+                  />
+                  <Route
+                    path="clusters/:clusterID/executions/last/:checkID/:targetType/:targetName"
+                    element={<CheckResultDetailPage />}
                   />
                 </Route>
               </Route>

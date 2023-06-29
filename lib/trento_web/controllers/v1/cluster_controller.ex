@@ -52,7 +52,7 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   operation :select_checks,
-    summary: "Select Checks",
+    summary: "Select Checks for a Cluster",
     tags: ["Checks"],
     description: "Select the Checks eligible for execution on the target infrastructure",
     parameters: [

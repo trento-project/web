@@ -12,7 +12,8 @@ import {
 import { catalogCheckFactory, clusterFactory } from '@lib/test-utils/factories';
 
 import { Route, Routes, MemoryRouter } from 'react-router-dom';
-import { ClusterSettings, UNKNOWN_PROVIDER } from './ClusterSettings';
+import { UNKNOWN_PROVIDER } from '@lib/model';
+import { ClusterSettings } from './ClusterSettings';
 
 describe('ClusterDetails ClusterSettings component', () => {
   it('should render the cluster info box and the catalog container', async () => {

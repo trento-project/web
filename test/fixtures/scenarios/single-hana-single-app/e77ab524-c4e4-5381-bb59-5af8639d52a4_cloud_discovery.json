@@ -1,0 +1,17 @@
+{
+  "agent_id": "e77ab524-c4e4-5381-bb59-5af8639d52a4",
+  "discovery_type": "cloud_discovery",
+  "payload": {
+    "Metadata": {
+      "account_id": "838635059921",
+      "ami_id": "ami-0e30116103fc0be89",
+      "availability_zone": "eu-central-1a",
+      "data_disk_number": 1,
+      "instance_id": "i-0a2cb8a39a01a668d",
+      "instance_type": "r5.large",
+      "region": "eu-central-1",
+      "vpc_id": "vpc-02a97b82ca71f2b68"
+    },
+    "Provider": "aws"
+  }
+}

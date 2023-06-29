@@ -1,5 +1,5 @@
 import HealthSummary from './HealthSummary';
 
-export { HomeHealthSummary } from './HomeHealthSummary';
+export { HomeHealthSummaryPage } from './HomeHealthSummaryPage';
 
 export default HealthSummary;

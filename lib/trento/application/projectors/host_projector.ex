@@ -16,6 +16,7 @@ defmodule Trento.HostProjector do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostAddedToCluster,
+    HostChecksSelected,
     HostDeregistered,
     HostDetailsUpdated,
     HostRegistered,
@@ -135,6 +136,23 @@ defmodule Trento.HostProjector do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
+    end
+  )
+
+  project(
+    %HostChecksSelected{
+      host_id: id,
+      checks: checks
+    },
+    fn multi ->
+      changeset =
+        HostReadModel
+        |> Repo.get(id)
+        |> HostReadModel.changeset(%{
+          selected_checks: checks
         })
 
       Ecto.Multi.update(multi, :host, changeset)
@@ -314,6 +332,22 @@ defmodule Trento.HostProjector do
       provider: provider,
       provider_data: provider_data
     })
+  end
+
+  def after_update(
+        %HostChecksSelected{host_id: host_id, checks: checks},
+        _,
+        _
+      ) do
+    host = %HostReadModel{id: host_id, selected_checks: checks}
+
+    message =
+      HostView.render(
+        "host_details_updated.json",
+        %{host: host}
+      )
+
+    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", message)
   end
 
   def after_update(_, _, _), do: :ok

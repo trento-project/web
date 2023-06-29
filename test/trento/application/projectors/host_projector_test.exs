@@ -24,6 +24,7 @@ defmodule Trento.HostProjectorTest do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostAddedToCluster,
+    HostChecksSelected,
     HostDeregistered,
     HostDetailsUpdated,
     HostRemovedFromCluster,
@@ -209,6 +210,28 @@ defmodule Trento.HostProjectorTest do
                        provider_data: nil
                      },
                      1000
+  end
+
+  test "should update the selected_checks field when event is received" do
+    %{id: host_id} = insert(:host)
+
+    cases = [
+      %{checks: [Faker.StarWars.character(), Faker.StarWars.character()]},
+      %{checks: []}
+    ]
+
+    Enum.each(cases, fn %{checks: checks} ->
+      event = %HostChecksSelected{host_id: host_id, checks: checks}
+
+      ProjectorTestHelper.project(HostProjector, event, "host_projector")
+      host_projection = Repo.get!(HostReadModel, event.host_id)
+
+      assert event.checks == host_projection.selected_checks
+
+      assert_broadcast "host_details_updated",
+                       %{selected_checks: ^checks, id: ^host_id},
+                       1000
+    end)
   end
 
   test "should update the heartbeat field to passing status when HeartbeatSucceded is received",

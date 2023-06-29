@@ -62,6 +62,24 @@ describe('Table component', () => {
     column3: faker.animal.dog(),
   }));
 
+  it('should allow custom classes for table rows', () => {
+    const data = tableDataFactory.buildList(10);
+    const customRowClassName = 'custom-row-classname';
+
+    render(
+      <Table
+        config={{ rowClassName: customRowClassName, ...tableConfig }}
+        data={data}
+        setSearchParams={() => {}}
+      />
+    );
+
+    screen
+      .getByRole('table')
+      .querySelectorAll('tbody > tr')
+      .forEach((tableRow) => expect(tableRow).toHaveClass(customRowClassName));
+  });
+
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
       const data = tableDataFactory.buildList(10);
@@ -118,6 +136,25 @@ describe('Table component', () => {
         const table = screen.getByRole('table');
         expect(table.querySelectorAll('tbody > tr')).toHaveLength(1);
       });
+    });
+
+    test('should return empty state message when data is empty', () => {
+      const data = [];
+      const emptyStateText = faker.random.words(5);
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          setSearchParams={() => {}}
+          emptyStateText={emptyStateText}
+        />
+      );
+      const emptyStateElement = screen.getByText(emptyStateText);
+      expect(emptyStateElement).toBeInTheDocument();
+      const tableRows = screen.getAllByRole('row');
+      expect(tableRows.length).toBe(2);
+      const tableCell = screen.getByRole('cell');
+      expect(tableCell).toHaveTextContent(emptyStateText);
     });
   });
 });

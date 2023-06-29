@@ -2,11 +2,15 @@ defmodule Trento.HostsTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Mox
+
   import Trento.Factory
   import Mox
 
   alias Trento.Hosts
   alias Trento.Repo
+
+  alias Trento.Domain.Commands.SelectHostChecks
 
   alias Trento.SlesSubscriptionReadModel
 
@@ -75,6 +79,44 @@ defmodule Trento.HostsTest do
       host = Hosts.get_host_by_id(UUID.uuid4())
 
       assert host == nil
+    end
+  end
+
+  describe "Check Selection" do
+    test "should dispatch command on Check Selection" do
+      host_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.UUID.v4() end)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %SelectHostChecks{
+             host_id: ^host_id,
+             checks: ^selected_checks
+           } ->
+          :ok
+        end
+      )
+
+      assert :ok = Hosts.select_checks(host_id, selected_checks)
+    end
+
+    test "should return command dispatching error" do
+      host_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.UUID.v4() end)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %SelectHostChecks{
+             host_id: ^host_id,
+             checks: ^selected_checks
+           } ->
+          {:error, :some_error}
+        end
+      )
+
+      assert {:error, :some_error} = Hosts.select_checks(host_id, selected_checks)
     end
   end
 end
