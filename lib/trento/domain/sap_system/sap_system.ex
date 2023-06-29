@@ -77,9 +77,11 @@ defmodule Trento.Domain.SapSystem do
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
+    DatabaseRestored,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
+    SapSystemRestored,
     SapSystemRolledUp,
     SapSystemRollUpRequested,
     SapSystemTombstoned,
@@ -161,6 +163,60 @@ defmodule Trento.Domain.SapSystem do
     ]
   end
 
+  # Database restore
+  def execute(
+        %SapSystem{database: %Database{deregistered_at: deregistered_at}},
+        %RegisterDatabaseInstance{
+          system_replication: "Secondary"
+        }
+      )
+      when not is_nil(deregistered_at),
+      do: {:error, :sap_system_not_registered}
+
+  # When a deregistered database is present, we add the new database instance
+  # and restore the database, the conditions are the same as registration
+  def execute(
+        %SapSystem{database: %Database{deregistered_at: deregistered_at}},
+        %RegisterDatabaseInstance{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          tenant: tenant,
+          host_id: host_id,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: features,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          system_replication: system_replication,
+          system_replication_status: system_replication_status,
+          health: health
+        }
+      )
+      when not is_nil(deregistered_at) do
+    [
+      %DatabaseRestored{
+        sap_system_id: sap_system_id,
+        health: health
+      },
+      %DatabaseInstanceRegistered{
+        sap_system_id: sap_system_id,
+        sid: sid,
+        tenant: tenant,
+        instance_number: instance_number,
+        instance_hostname: instance_hostname,
+        features: features,
+        http_port: http_port,
+        https_port: https_port,
+        start_priority: start_priority,
+        host_id: host_id,
+        system_replication: system_replication,
+        system_replication_status: system_replication_status,
+        health: health
+      }
+    ]
+  end
+
   # When a RegisterDatabaseInstance command is received by an existing SAP System aggregate,
   # the SAP System aggregate registers the Database instance if it is not already registered
   # and updates the health when needed.
@@ -183,6 +239,26 @@ defmodule Trento.Domain.SapSystem do
     end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
+  end
+
+  # Restore sap system
+  # Same registration rules
+  def execute(
+        %SapSystem{deregistered_at: deregistered_at} = sap_system,
+        %RegisterApplicationInstance{} = instance
+      )
+      when not is_nil(deregistered_at) do
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_application_instance_registered_or_moved_event(
+        sap_system,
+        instance
+      )
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_sap_system_restored_event(sap_system, instance)
+    end)
   end
 
   # SAP system not registered, application already present
@@ -616,6 +692,22 @@ defmodule Trento.Domain.SapSystem do
   end
 
   def apply(
+        %SapSystem{database: database} = sap_system,
+        %DatabaseRestored{
+          health: health
+        }
+      ) do
+    %SapSystem{
+      sap_system
+      | database: %Database{
+          database
+          | health: health,
+            deregistered_at: nil
+        }
+    }
+  end
+
+  def apply(
         %SapSystem{} = sap_system,
         %SapSystemDeregistered{
           deregistered_at: deregistered_at
@@ -624,6 +716,16 @@ defmodule Trento.Domain.SapSystem do
     %SapSystem{
       sap_system
       | deregistered_at: deregistered_at
+    }
+  end
+
+  def apply(%SapSystem{} = sap_system, %SapSystemRestored{
+        health: health
+      }) do
+    %SapSystem{
+      sap_system
+      | health: health,
+        deregistered_at: nil
     }
   end
 
@@ -825,6 +927,25 @@ defmodule Trento.Domain.SapSystem do
         host_id: host_id,
         instance_number: instance_number,
         health: health
+      }
+    end
+  end
+
+  defp maybe_emit_sap_system_restored_event(
+         %SapSystem{application: %Application{instances: instances}},
+         %RegisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           tenant: tenant,
+           db_host: db_host,
+           health: health
+         }
+       ) do
+    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+      %SapSystemRestored{
+        db_host: db_host,
+        health: health,
+        sap_system_id: sap_system_id,
+        tenant: tenant
       }
     end
   end
