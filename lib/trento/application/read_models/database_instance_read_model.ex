@@ -30,7 +30,10 @@ defmodule Trento.DatabaseInstanceReadModel do
     field :system_replication_status, :string, default: ""
     field :health, Ecto.Enum, values: Health.values()
 
-    has_one :host, HostReadModel, references: :host_id, foreign_key: :id
+    has_one :host, HostReadModel,
+      references: :host_id,
+      foreign_key: :id,
+      where: [deregistered_at: nil]
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

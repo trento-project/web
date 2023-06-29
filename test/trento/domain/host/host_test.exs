@@ -4,7 +4,9 @@ defmodule Trento.HostTest do
   import Trento.Factory
 
   alias Trento.Domain.Commands.{
+    DeregisterHost,
     RegisterHost,
+    RequestHostDeregistration,
     RollUpHost,
     SelectHostChecks,
     UpdateHeartbeat,
@@ -16,10 +18,14 @@ defmodule Trento.HostTest do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostChecksSelected,
+    HostDeregistered,
+    HostDeregistrationRequested,
     HostDetailsUpdated,
     HostRegistered,
+    HostRestored,
     HostRolledUp,
     HostRollUpRequested,
+    HostTombstoned,
     ProviderUpdated,
     SlesSubscriptionsUpdated
   }
@@ -197,7 +203,7 @@ defmodule Trento.HostTest do
   end
 
   describe "heartbeat" do
-    test "should emit an HeartbeatSucceded event if the Host never received an heartbeat already" do
+    test "should emit a HeartbeatSucceded event if the Host never received a heartbeat already" do
       host_id = Faker.UUID.v4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
@@ -218,7 +224,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should emit an HeartbeatSucceded event if the Host is in a critical status" do
+    test "should emit a HeartbeatSucceded event if the Host is in a critical status" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -245,7 +251,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should not emit an HeartbeatSucceded event if the Host is in a passing status already" do
+    test "should not emit a HeartbeatSucceded event if the Host is in a passing status already" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -265,7 +271,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should emit an HeartbeatFailed event if the Host has never received an heartbeat" do
+    test "should emit a HeartbeatFailed event if the Host has never received a heartbeat" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -292,7 +298,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should emit an HeartbeatFailed event if the Host is in a passing status" do
+    test "should emit a HeartbeatFailed event if the Host is in a passing status" do
       host_id = Faker.UUID.v4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
@@ -313,7 +319,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should not emit an HeartbeatFailed event if the Host is in a critical status already" do
+    test "should not emit a HeartbeatFailed event if the Host is in a critical status already" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -682,6 +688,188 @@ defmodule Trento.HostTest do
           assert host.os_version == host_registered_event.os_version
           assert host.installation_source == host_registered_event.installation_source
           assert host.heartbeat == :unknown
+        end
+      )
+    end
+  end
+
+  describe "deregistration" do
+    test "should restore a deregistered host when a RegisterHost command with no new host information is received" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        host_registered_event = build(:host_registered_event, host_id: host_id),
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: DateTime.utc_now()
+        }
+      ]
+
+      restoration_command =
+        build(
+          :register_host_command,
+          host_id: host_id,
+          hostname: host_registered_event.hostname,
+          ip_addresses: host_registered_event.ip_addresses,
+          agent_version: host_registered_event.agent_version,
+          cpu_count: host_registered_event.cpu_count,
+          total_memory_mb: host_registered_event.total_memory_mb,
+          socket_count: host_registered_event.socket_count,
+          os_version: host_registered_event.os_version,
+          installation_source: host_registered_event.installation_source
+        )
+
+      assert_events_and_state(
+        initial_events,
+        [
+          restoration_command
+        ],
+        [
+          %HostRestored{host_id: host_id}
+        ],
+        fn host ->
+          assert nil == host.deregistered_at
+        end
+      )
+    end
+
+    test "should restore and update a deregistered host when a RegisterHost command with new host information is received" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: DateTime.utc_now()
+        }
+      ]
+
+      restoration_command = build(:register_host_command, host_id: host_id)
+
+      assert_events_and_state(
+        initial_events,
+        [
+          restoration_command
+        ],
+        [
+          %HostRestored{host_id: host_id},
+          %HostDetailsUpdated{
+            host_id: restoration_command.host_id,
+            hostname: restoration_command.hostname,
+            ip_addresses: restoration_command.ip_addresses,
+            agent_version: restoration_command.agent_version,
+            cpu_count: restoration_command.cpu_count,
+            total_memory_mb: restoration_command.total_memory_mb,
+            socket_count: restoration_command.socket_count,
+            os_version: restoration_command.os_version,
+            installation_source: restoration_command.installation_source
+          }
+        ],
+        fn host ->
+          assert nil == host.deregistered_at
+        end
+      )
+    end
+
+    test "should reject all the commands except the registration ones when the host is deregistered" do
+      host_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        %HostDeregistered{
+          host_id: host_id,
+          deregistered_at: dat
+        }
+      ]
+
+      commands_to_reject = [
+        %DeregisterHost{host_id: host_id},
+        %RequestHostDeregistration{host_id: host_id},
+        %UpdateHeartbeat{host_id: host_id},
+        %UpdateProvider{host_id: host_id},
+        %UpdateSlesSubscriptions{host_id: host_id}
+      ]
+
+      for command <- commands_to_reject do
+        assert_error(initial_events, command, {:error, :host_not_registered})
+      end
+
+      commands_to_accept = [
+        %RollUpHost{host_id: host_id},
+        %RegisterHost{host_id: host_id}
+      ]
+
+      for command <- commands_to_accept do
+        assert match?({:ok, _, _}, aggregate_run(initial_events, command)),
+               "Command #{inspect(command)} should be accepted by a deregistered host"
+      end
+    end
+
+    test "should emit the HostDeregistered and HostTombstoned events" do
+      host_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_events(
+        [host_registered_event],
+        [
+          %DeregisterHost{
+            host_id: host_id,
+            deregistered_at: dat
+          }
+        ],
+        [
+          %HostDeregistered{
+            host_id: host_id,
+            deregistered_at: dat
+          },
+          %HostTombstoned{
+            host_id: host_id
+          }
+        ]
+      )
+    end
+
+    test "should emit the HostDeregistrationRequest Event" do
+      host_id = Faker.UUID.v4()
+      requested_at = DateTime.utc_now()
+
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_events(
+        [host_registered_event],
+        [
+          %RequestHostDeregistration{
+            host_id: host_id,
+            requested_at: requested_at
+          }
+        ],
+        %HostDeregistrationRequested{
+          host_id: host_id,
+          requested_at: requested_at
+        }
+      )
+    end
+
+    test "should apply the HostDeregistered event and set the deregistration date into the state" do
+      host_id = Faker.UUID.v4()
+      dat = DateTime.utc_now()
+
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      assert_state(
+        [
+          host_registered_event,
+          %HostDeregistered{
+            host_id: host_id,
+            deregistered_at: dat
+          }
+        ],
+        [],
+        fn host ->
+          assert dat == host.deregistered_at
         end
       )
     end

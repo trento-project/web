@@ -13,8 +13,8 @@ defmodule Trento.Domain.HanaClusterDetails do
   use Trento.Type
 
   alias Trento.Domain.{
-    ClusterNode,
     ClusterResource,
+    HanaClusterNode,
     SbdDevice
   }
 
@@ -26,7 +26,7 @@ defmodule Trento.Domain.HanaClusterDetails do
     field :fencing_type, :string
 
     embeds_many :stopped_resources, ClusterResource
-    embeds_many :nodes, ClusterNode
+    embeds_many :nodes, HanaClusterNode
     embeds_many :sbd_devices, SbdDevice
   end
 end

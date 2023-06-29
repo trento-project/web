@@ -45,10 +45,36 @@ export const sapSystemsListSlice = createSlice({
         action.payload,
       ];
     },
+    removeApplicationInstance: (
+      state,
+      { payload: { sap_system_id, host_id, instance_number } }
+    ) => {
+      state.applicationInstances = state.applicationInstances.filter(
+        (applicationInstance) =>
+          !(
+            applicationInstance.sap_system_id === sap_system_id &&
+            applicationInstance.host_id === host_id &&
+            applicationInstance.instance_number === instance_number
+          )
+      );
+    },
     // When a new DatabaseInstanceRegistered comes in,
     // it need to be appended to the list of the database instances of the relative sap system
     appendDatabaseInstanceToSapSystem: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
+    },
+    removeDatabaseInstanceFromSapSystem: (
+      state,
+      { payload: { sap_system_id, host_id, instance_number } }
+    ) => {
+      state.databaseInstances = state.databaseInstances.filter(
+        (databaseInstance) =>
+          !(
+            databaseInstance.sap_system_id === sap_system_id &&
+            databaseInstance.host_id === host_id &&
+            databaseInstance.instance_number === instance_number
+          )
+      );
     },
     updateSapSystemHealth: (state, action) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
@@ -100,6 +126,19 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
+    removeSAPSystem: (state, { payload: { id } }) => {
+      state.sapSystems = state.sapSystems.filter(
+        (sapSystem) => sapSystem.id !== id
+      );
+    },
+    updateSAPSystem: (state, { payload }) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === payload.id) {
+          sapSystem = { ...sapSystem, ...payload };
+        }
+        return sapSystem;
+      });
+    },
   },
 });
 
@@ -107,8 +146,12 @@ export const SAP_SYSTEM_REGISTERED = 'SAP_SYSTEM_REGISTERED';
 export const SAP_SYSTEM_HEALTH_CHANGED = 'SAP_SYSTEM_HEALTH_CHANGED';
 export const APPLICATION_INSTANCE_REGISTERED =
   'APPLICATION_INSTANCE_REGISTERED';
+export const APPLICATION_INSTANCE_DEREGISTERED =
+  'APPLICATION_INSTANCE_DEREGISTERED';
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
   'APPLICATION_INSTANCE_HEALTH_CHANGED';
+export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
+export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
 
 export const {
   startSapSystemsLoading,
@@ -116,13 +159,17 @@ export const {
   setSapSystems,
   appendSapsystem,
   appendApplicationInstance,
+  removeApplicationInstance,
   appendDatabaseInstanceToSapSystem,
+  removeDatabaseInstanceFromSapSystem,
   updateSapSystemHealth,
   updateApplicationInstanceHealth,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
   addTagToSAPSystem,
   removeTagFromSAPSystem,
+  removeSAPSystem,
+  updateSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;

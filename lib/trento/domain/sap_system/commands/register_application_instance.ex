@@ -16,12 +16,9 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
   @required_fields [
     :host_id,
     :instance_number,
-    :health,
     :sid,
     :db_host,
     :tenant,
-    :host_id,
-    :instance_number,
     :instance_hostname,
     :features,
     :http_port,
@@ -32,6 +29,7 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
 
   use Trento.Command
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health
 
   defcommand do
@@ -47,5 +45,6 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
     field :https_port, :integer
     field :start_priority, :string
     field :health, Ecto.Enum, values: Health.values()
+    field :ensa_version, Ecto.Enum, values: EnsaVersion.values()
   end
 end

@@ -8,13 +8,15 @@ defmodule Trento.ClusterProjector do
     repo: Trento.Repo,
     name: "cluster_projector"
 
-  alias TrentoWeb.V1.ClusterView
+  alias TrentoWeb.V2.ClusterView
 
   alias Trento.Domain.Events.{
     ChecksSelected,
+    ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
-    ClusterRegistered
+    ClusterRegistered,
+    ClusterRestored
   }
 
   alias Trento.ClusterReadModel
@@ -28,6 +30,7 @@ defmodule Trento.ClusterProjector do
       cluster_id: id,
       name: name,
       sid: sid,
+      additional_sids: additional_sids,
       provider: provider,
       type: type,
       resources_number: resources_number,
@@ -41,6 +44,7 @@ defmodule Trento.ClusterProjector do
           id: id,
           name: name,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           type: type,
           resources_number: resources_number,
@@ -54,10 +58,42 @@ defmodule Trento.ClusterProjector do
   )
 
   project(
+    %ClusterDeregistered{
+      cluster_id: cluster_id,
+      deregistered_at: deregistered_at
+    },
+    fn multi ->
+      changeset =
+        ClusterReadModel.changeset(%ClusterReadModel{id: cluster_id}, %{
+          deregistered_at: deregistered_at
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
+
+  project(
+    %ClusterRestored{
+      cluster_id: cluster_id
+    },
+    fn multi ->
+      cluster = Repo.get!(ClusterReadModel, cluster_id)
+
+      changeset =
+        ClusterReadModel.changeset(cluster, %{
+          deregistered_at: nil
+        })
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
+
+  project(
     %ClusterDetailsUpdated{
       cluster_id: id,
       name: name,
       sid: sid,
+      additional_sids: additional_sids,
       provider: provider,
       type: type,
       resources_number: resources_number,
@@ -69,6 +105,7 @@ defmodule Trento.ClusterProjector do
         ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
           name: name,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           type: type,
           resources_number: resources_number,
@@ -145,6 +182,29 @@ defmodule Trento.ClusterProjector do
       cluster_id: cluster_id,
       health: health
     })
+  end
+
+  @impl true
+  def after_update(%ClusterDeregistered{cluster_id: cluster_id}, _, _) do
+    %ClusterReadModel{name: name} = Repo.get!(ClusterReadModel, cluster_id)
+
+    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_deregistered", %{
+      id: cluster_id,
+      name: name
+    })
+  end
+
+  @impl true
+  def after_update(%ClusterRestored{cluster_id: cluster_id}, _, _) do
+    cluster = Repo.get!(ClusterReadModel, cluster_id)
+
+    restored_cluster = enrich_cluster_model(cluster)
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "cluster_registered",
+      ClusterView.render("cluster_registered.json", cluster: restored_cluster)
+    )
   end
 
   def after_update(_, _, _), do: :ok

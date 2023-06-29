@@ -25,6 +25,8 @@ defmodule Trento.DatabaseReadModel do
       references: :id,
       foreign_key: :sap_system_id,
       preload_order: [asc: :instance_number, asc: :host_id]
+
+    field :deregistered_at, :utc_datetime_usec
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

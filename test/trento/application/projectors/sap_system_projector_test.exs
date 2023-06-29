@@ -7,6 +7,8 @@ defmodule Trento.SapSystemProjectorTest do
 
   import Trento.Factory
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+
   alias Trento.{
     ApplicationInstanceReadModel,
     SapSystemProjector,
@@ -14,8 +16,12 @@ defmodule Trento.SapSystemProjectorTest do
   }
 
   alias Trento.Domain.Events.{
+    ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
-    SapSystemHealthChanged
+    SapSystemDeregistered,
+    SapSystemHealthChanged,
+    SapSystemRestored,
+    SapSystemUpdated
   }
 
   alias Trento.ProjectorTestHelper
@@ -39,13 +45,20 @@ defmodule Trento.SapSystemProjectorTest do
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
-    %{db_host: db_host, tenant: tenant, id: id, sid: sid, health: health} =
-      projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
+    %{
+      db_host: db_host,
+      tenant: tenant,
+      id: id,
+      sid: sid,
+      health: health,
+      ensa_version: ensa_version
+    } = projection = Repo.get!(SapSystemReadModel, event.sap_system_id)
 
     assert event.sid == projection.sid
     assert event.tenant == projection.tenant
     assert event.db_host == projection.db_host
     assert event.health == projection.health
+    assert event.ensa_version == projection.ensa_version
 
     assert_broadcast "sap_system_registered",
                      %{
@@ -53,7 +66,8 @@ defmodule Trento.SapSystemProjectorTest do
                        health: ^health,
                        id: ^id,
                        sid: ^sid,
-                       tenant: ^tenant
+                       tenant: ^tenant,
+                       ensa_version: ^ensa_version
                      },
                      1000
   end
@@ -150,6 +164,124 @@ defmodule Trento.SapSystemProjectorTest do
                        host_id: ^host_id,
                        instance_number: ^instance_number,
                        sap_system_id: ^sap_system_id
+                     },
+                     1000
+  end
+
+  test "should update read model after deregistration" do
+    deregistered_at = DateTime.utc_now()
+
+    %{sid: sid} = insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+
+    event = %SapSystemDeregistered{
+      sap_system_id: sap_system_id,
+      deregistered_at: deregistered_at
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    projection = Repo.get(SapSystemReadModel, sap_system_id)
+
+    assert_broadcast "sap_system_deregistered",
+                     %{id: ^sap_system_id, sid: ^sid},
+                     1000
+
+    assert deregistered_at == projection.deregistered_at
+  end
+
+  test "should restore a SAP system when SapSystemRestored is received" do
+    %{tenant: tenant, id: sap_system_id, sid: sid} =
+      insert(:sap_system, deregistered_at: DateTime.utc_now())
+
+    new_db_host = Faker.Internet.ip_v4_address()
+    new_health = :passing
+
+    event = %SapSystemRestored{
+      sap_system_id: sap_system_id,
+      tenant: tenant,
+      db_host: new_db_host,
+      health: new_health
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    projection = Repo.get(SapSystemReadModel, sap_system_id)
+
+    assert_broadcast "sap_system_registered",
+                     %{
+                       db_host: ^new_db_host,
+                       health: ^new_health,
+                       id: ^sap_system_id,
+                       sid: ^sid,
+                       tenant: ^tenant
+                     },
+                     1000
+
+    assert nil == projection.deregistered_at
+  end
+
+  test "should remove an application instance from the read model after a deregistration" do
+    deregistered_at = DateTime.utc_now()
+
+    %{sid: sid} = insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+
+    %{instance_number: instance_number, host_id: host_id} =
+      insert(:application_instance, sap_system_id: sap_system_id, sid: sid)
+
+    insert_list(4, :application_instance)
+
+    event = %ApplicationInstanceDeregistered{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      deregistered_at: deregistered_at
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    assert nil ==
+             Repo.get_by(ApplicationInstanceReadModel,
+               sap_system_id: sap_system_id,
+               instance_number: instance_number,
+               host_id: host_id
+             )
+
+    assert 4 ==
+             ApplicationInstanceReadModel
+             |> Repo.all()
+             |> Enum.count()
+
+    assert_broadcast "application_instance_deregistered",
+                     %{
+                       sap_system_id: ^sap_system_id,
+                       instance_number: ^instance_number,
+                       host_id: ^host_id,
+                       sid: ^sid
+                     },
+                     1000
+  end
+
+  test "should update an already existing SAP System when a SapSystemUpdated event is received" do
+    insert(:sap_system, id: sap_system_id = Faker.UUID.v4(), ensa_version: EnsaVersion.no_ensa())
+
+    event = %SapSystemUpdated{
+      sap_system_id: sap_system_id,
+      ensa_version: EnsaVersion.ensa1()
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    %{
+      id: id,
+      ensa_version: ensa_version
+    } = Repo.get!(SapSystemReadModel, event.sap_system_id)
+
+    assert event.ensa_version == ensa_version
+
+    assert_broadcast "sap_system_updated",
+                     %{
+                       id: ^id,
+                       ensa_version: ^ensa_version
                      },
                      1000
   end

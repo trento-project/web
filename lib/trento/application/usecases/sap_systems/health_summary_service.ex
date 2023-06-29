@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
 
   import Ecto.Query
 
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.Health, as: HealthEnum
 
   alias Trento.{
     ApplicationInstanceReadModel,
@@ -19,11 +19,10 @@ defmodule Trento.SapSystems.HealthSummaryService do
 
   alias Trento.Repo
 
-  @type instance_list :: [DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]
-
   @spec get_health_summary :: [map()]
   def get_health_summary do
     SapSystemReadModel
+    |> where([s], is_nil(s.deregistered_at))
     |> order_by(asc: :sid)
     |> Repo.all()
     |> Repo.preload(application_instances: :host)
@@ -46,8 +45,10 @@ defmodule Trento.SapSystems.HealthSummaryService do
       sid: sid,
       sapsystem_health: health,
       database_health: compute_database_health(database_instances),
-      clusters_health: compute_clusters_health(all_instances),
+      application_cluster_health: compute_cluster_health(application_instances),
+      database_cluster_health: compute_cluster_health(database_instances),
       hosts_health: compute_hosts_health(all_instances),
+      application_instances: application_instances,
       database_instances: database_instances
     }
   end
@@ -59,48 +60,26 @@ defmodule Trento.SapSystems.HealthSummaryService do
     |> HealthService.compute_aggregated_health()
   end
 
-  @spec compute_clusters_health(instance_list) ::
+  @spec compute_cluster_health(
+          [DatabaseInstanceReadModel.t()]
+          | [ApplicationInstanceReadModel.t()]
+        ) :: Health.t()
+  defp compute_cluster_health(instances) do
+    cluster_id =
+      Enum.find_value(instances, nil, fn
+        %{host: %{cluster_id: nil}} -> false
+        %{host: %{cluster_id: cluster_id}} -> cluster_id
+        _ -> false
+      end)
+
+    case cluster_id do
+      nil -> HealthEnum.unknown()
+      cluster_id -> ClusterReadModel |> Repo.get!(cluster_id) |> Map.get(:health)
+    end
+  end
+
+  @spec compute_hosts_health([DatabaseInstanceReadModel.t() | ApplicationInstanceReadModel.t()]) ::
           Health.t()
-  defp compute_clusters_health(instances) do
-    instances
-    |> reject_unclustered_instances()
-    |> clusters_from_instance()
-    |> keep_only_hana_scale_up_clusters()
-    |> health_from_cluster()
-    |> HealthService.compute_aggregated_health()
-  end
-
-  @spec clusters_from_instance(instance_list) :: [ClusterReadModel.t()]
-  defp clusters_from_instance(instances) do
-    instances
-    |> Enum.filter(fn %{host: host} -> host end)
-    |> Enum.map(fn %{host: %{cluster_id: cluster_id}} -> cluster_id end)
-    |> Enum.uniq()
-    |> Enum.map(fn cluster_id -> Repo.get!(ClusterReadModel, cluster_id) end)
-  end
-
-  @spec health_from_cluster([ClusterReadModel.t()]) :: [String.t()]
-  defp health_from_cluster(clusters) do
-    Enum.map(clusters, fn %ClusterReadModel{health: health} -> health end)
-  end
-
-  @spec reject_unclustered_instances(instance_list) :: instance_list
-  defp reject_unclustered_instances(instances) do
-    Enum.reject(instances, fn
-      %{host: %{cluster_id: nil}} -> true
-      _ -> false
-    end)
-  end
-
-  @spec keep_only_hana_scale_up_clusters([ClusterReadModel.t()]) :: [ClusterReadModel.t()]
-  defp keep_only_hana_scale_up_clusters(clusters) do
-    Enum.filter(clusters, fn
-      %ClusterReadModel{type: ClusterType.hana_scale_up()} -> true
-      _ -> false
-    end)
-  end
-
-  @spec compute_hosts_health(instance_list) :: Health.t()
   defp compute_hosts_health(instances) do
     instances
     |> Enum.filter(fn %{host: host} -> host end)

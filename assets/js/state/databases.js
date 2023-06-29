@@ -30,6 +30,19 @@ export const databasesListSlice = createSlice({
     appendDatabaseInstance: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
     },
+    removeDatabaseInstance: (
+      state,
+      { payload: { sap_system_id, host_id, instance_number } }
+    ) => {
+      state.databaseInstances = state.databaseInstances.filter(
+        (databaseInstance) =>
+          !(
+            databaseInstance.sap_system_id === sap_system_id &&
+            databaseInstance.host_id === host_id &&
+            databaseInstance.instance_number === instance_number
+          )
+      );
+    },
     updateDatabaseHealth: (state, action) => {
       state.databases = state.databases.map((database) => {
         if (database.id === action.payload.id) {
@@ -81,6 +94,7 @@ export const databasesListSlice = createSlice({
 export const DATABASE_REGISTERED = 'DATABASE_REGISTERED';
 export const DATABASE_HEALTH_CHANGED = 'DATABASE_HEALTH_CHANGED';
 export const DATABASE_INSTANCE_REGISTERED = 'DATABASE_INSTANCE_REGISTERED';
+export const DATABASE_INSTANCE_DEREGISTERED = 'DATABASE_INSTANCE_DEREGISTERED';
 export const DATABASE_INSTANCE_HEALTH_CHANGED =
   'DATABASE_INSTANCE_HEALTH_CHANGED';
 export const DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED =
@@ -91,6 +105,7 @@ export const {
   stopDatabasesLoading,
   setDatabases,
   appendDatabase,
+  removeDatabaseInstance,
   appendDatabaseInstance,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,

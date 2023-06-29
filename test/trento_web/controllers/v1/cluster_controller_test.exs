@@ -5,7 +5,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   import Mox
   import Trento.Factory
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   setup [:set_mox_from_context, :verify_on_exit!]
 

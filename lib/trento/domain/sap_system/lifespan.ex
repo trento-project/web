@@ -16,6 +16,7 @@ defmodule Trento.Domain.SapSystem.Lifespan do
   This is needed to reset the aggregate version, so the aggregate can start appending events to the new stream.
   """
   def after_event(%SapSystemRollUpRequested{}), do: :stop
+
   def after_event(event), do: DefaultLifespan.after_event(event)
 
   def after_command(command), do: DefaultLifespan.after_command(command)

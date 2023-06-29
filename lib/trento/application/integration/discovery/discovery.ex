@@ -17,7 +17,14 @@ defmodule Trento.Integration.Discovery do
     SapSystemPolicy
   }
 
+  alias Trento.{Clusters, SapSystems}
+
   @type command :: struct
+
+  @doc """
+  Transform a discovery in a list of commands event by using the appropriate policy.
+  Store the event in the discovery events log for auditing purposes and dispatch the commands.
+  """
 
   @spec handle(map) :: :ok | {:error, any}
   def handle(event) do
@@ -33,6 +40,9 @@ defmodule Trento.Integration.Discovery do
     end
   end
 
+  @doc """
+  Get the discovery events that were handled to build the current state of the system.
+  """
   @spec get_current_discovery_events :: [DiscoveryEvent.t()]
   def get_current_discovery_events do
     subquery =
@@ -47,6 +57,9 @@ defmodule Trento.Integration.Discovery do
     Repo.all(query)
   end
 
+  @doc """
+  Get the discovery events that were dead-lettered.
+  """
   @spec get_discarded_discovery_events(number) :: [DiscardedDiscoveryEvent.t()]
   def get_discarded_discovery_events(event_number) do
     query =
@@ -57,6 +70,9 @@ defmodule Trento.Integration.Discovery do
     Repo.all(query)
   end
 
+  @doc """
+  Prune the discovery events log by removing the events older than the given number of days. 
+  """
   @spec prune_events(number) :: non_neg_integer()
   def prune_events(days) do
     end_datetime = Timex.shift(DateTime.utc_now(), days: -days)
@@ -69,6 +85,9 @@ defmodule Trento.Integration.Discovery do
     events_number
   end
 
+  @doc """
+  Prune the discarded discovery events log by removing the events older than the given number of days. 
+  """
   @spec prune_discarded_discovery_events(number) :: non_neg_integer()
   def prune_discarded_discovery_events(days) do
     end_datetime = Timex.shift(DateTime.utc_now(), days: -days)
@@ -112,11 +131,18 @@ defmodule Trento.Integration.Discovery do
   defp do_handle(%{"discovery_type" => "subscription_discovery"} = event),
     do: HostPolicy.handle(event)
 
-  defp do_handle(%{"discovery_type" => "ha_cluster_discovery"} = event),
-    do: ClusterPolicy.handle(event)
+  defp do_handle(%{"discovery_type" => "ha_cluster_discovery", "agent_id" => agent_id} = event) do
+    current_cluster_id = Clusters.get_cluster_id_by_host_id(agent_id)
 
-  defp do_handle(%{"discovery_type" => "sap_system_discovery"} = event),
-    do: SapSystemPolicy.handle(event)
+    ClusterPolicy.handle(event, current_cluster_id)
+  end
+
+  defp do_handle(%{"discovery_type" => "sap_system_discovery", "agent_id" => agent_id} = event) do
+    current_application_instances = SapSystems.get_application_instances_by_host_id(agent_id)
+    current_database_instances = SapSystems.get_database_instances_by_host_id(agent_id)
+
+    SapSystemPolicy.handle(event, current_application_instances ++ current_database_instances)
+  end
 
   defp do_handle(_),
     do: {:error, :unknown_discovery_type}

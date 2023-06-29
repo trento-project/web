@@ -8,8 +8,10 @@ defmodule Trento.ClusterProjectorTest do
   import Trento.Factory
 
   alias Trento.Domain.Events.{
+    ClusterDeregistered,
     ClusterDetailsUpdated,
-    ClusterHealthChanged
+    ClusterHealthChanged,
+    ClusterRestored
   }
 
   alias Trento.{
@@ -44,6 +46,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
     assert event.sid == cluster_projection.sid
+    assert event.additional_sids == cluster_projection.additional_sids
     assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
@@ -59,7 +62,7 @@ defmodule Trento.ClusterProjectorTest do
                        details: %Trento.Domain.HanaClusterDetails{
                          fencing_type: "external/sbd",
                          nodes: [
-                           %Trento.Domain.ClusterNode{
+                           %Trento.Domain.HanaClusterNode{
                              attributes: _,
                              hana_status: "Secondary",
                              name: _,
@@ -131,6 +134,7 @@ defmodule Trento.ClusterProjectorTest do
     assert event.cluster_id == cluster_projection.id
     assert event.name == cluster_projection.name
     assert event.sid == cluster_projection.sid
+    assert event.additional_sids == cluster_projection.additional_sids
     assert event.provider == cluster_projection.provider
     assert event.type == cluster_projection.type
     assert event.resources_number == cluster_projection.resources_number
@@ -142,7 +146,7 @@ defmodule Trento.ClusterProjectorTest do
                        details: %Trento.Domain.HanaClusterDetails{
                          fencing_type: "external/sbd",
                          nodes: [
-                           %Trento.Domain.ClusterNode{
+                           %Trento.Domain.HanaClusterNode{
                              attributes: _,
                              hana_status: "Secondary",
                              name: _,
@@ -183,6 +187,48 @@ defmodule Trento.ClusterProjectorTest do
                        resources_number: 8,
                        sid: _,
                        type: :hana_scale_up
+                     },
+                     1000
+  end
+
+  test "should update the deregistered_at field when ClusterDeregistered is received" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4(), name: name = "deregistered_cluster")
+    deregistered_at = DateTime.utc_now()
+
+    event = ClusterDeregistered.new!(%{cluster_id: cluster_id, deregistered_at: deregistered_at})
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+    cluster_projection = Repo.get!(ClusterReadModel, event.cluster_id)
+
+    assert event.deregistered_at == cluster_projection.deregistered_at
+
+    assert_broadcast "cluster_deregistered",
+                     %{id: ^cluster_id, name: ^name},
+                     1000
+  end
+
+  test "should set deregistered_at field to nil when ClusterRestored is received" do
+    %{id: cluster_id, name: name, type: type} =
+      insert(:cluster,
+        id: Faker.UUID.v4(),
+        name: "deregistered_cluster",
+        selected_checks: [],
+        deregistered_at: DateTime.utc_now()
+      )
+
+    event = ClusterRestored.new!(%{cluster_id: cluster_id})
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+    cluster_projection = Repo.get!(ClusterReadModel, event.cluster_id)
+
+    assert nil == cluster_projection.deregistered_at
+
+    assert_broadcast "cluster_registered",
+                     %{
+                       cib_last_written: nil,
+                       id: ^cluster_id,
+                       name: ^name,
+                       type: ^type
                      },
                      1000
   end

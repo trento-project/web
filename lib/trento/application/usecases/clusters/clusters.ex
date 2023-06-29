@@ -32,7 +32,12 @@ defmodule Trento.Clusters do
   @spec request_checks_execution(String.t()) ::
           :ok | {:error, any}
   def request_checks_execution(cluster_id) do
-    case Repo.get(ClusterReadModel, cluster_id) do
+    query =
+      from(c in ClusterReadModel,
+        where: is_nil(c.deregistered_at) and c.id == ^cluster_id
+      )
+
+    case Repo.one(query) do
       %ClusterReadModel{} = cluster ->
         Logger.debug("Requesting checks execution, cluster: #{cluster_id}")
 
@@ -48,11 +53,24 @@ defmodule Trento.Clusters do
   @spec get_all_clusters :: [ClusterReadModel.t()]
   def get_all_clusters do
     from(c in ClusterReadModel,
-      order_by: [asc: c.name],
-      preload: [:tags]
+      order_by: [asc: c.name, asc: c.id],
+      preload: [:tags],
+      where: is_nil(c.deregistered_at)
     )
     |> enrich_cluster_model_query()
     |> Repo.all()
+  end
+
+  @spec get_cluster_id_by_host_id(String.t()) :: String.t() | nil
+  def get_cluster_id_by_host_id(host_id) do
+    query =
+      from c in ClusterReadModel,
+        join: h in HostReadModel,
+        on: h.cluster_id == c.id,
+        where: h.id == ^host_id,
+        select: c.id
+
+    Repo.one(query)
   end
 
   @spec enrich_cluster_model(ClusterReadModel.t()) :: ClusterReadModel.t()
@@ -71,7 +89,9 @@ defmodule Trento.Clusters do
     query =
       from(c in ClusterReadModel,
         select: c.id,
-        where: c.type == ^ClusterType.hana_scale_up() or c.type == ^ClusterType.hana_scale_out()
+        where:
+          (c.type == ^ClusterType.hana_scale_up() or
+             c.type == ^ClusterType.hana_scale_out()) and is_nil(c.deregistered_at)
       )
 
     query
@@ -121,7 +141,7 @@ defmodule Trento.Clusters do
       Repo.all(
         from h in HostReadModel,
           select: %{host_id: h.id},
-          where: h.cluster_id == ^cluster_id
+          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
       )
 
     Checks.request_execution(

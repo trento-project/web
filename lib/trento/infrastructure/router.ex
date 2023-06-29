@@ -11,10 +11,15 @@ defmodule Trento.Router do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
+    DeregisterApplicationInstance,
+    DeregisterClusterHost,
+    DeregisterDatabaseInstance,
+    DeregisterHost,
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
     RegisterHost,
+    RequestHostDeregistration,
     RollUpCluster,
     RollUpHost,
     RollUpSapSystem,
@@ -34,8 +39,10 @@ defmodule Trento.Router do
              UpdateHeartbeat,
              UpdateProvider,
              UpdateSlesSubscriptions,
+             SelectHostChecks,
              RollUpHost,
-             SelectHostChecks
+             RequestHostDeregistration,
+             DeregisterHost
            ],
            to: Host,
            lifespan: Host.Lifespan
@@ -44,6 +51,7 @@ defmodule Trento.Router do
     by: :cluster_id
 
   dispatch [
+             DeregisterClusterHost,
              RollUpCluster,
              RegisterClusterHost,
              SelectChecks,
@@ -54,7 +62,13 @@ defmodule Trento.Router do
 
   identify SapSystem, by: :sap_system_id
 
-  dispatch [RegisterApplicationInstance, RegisterDatabaseInstance, RollUpSapSystem],
-    to: SapSystem,
-    lifespan: SapSystem.Lifespan
+  dispatch [
+             DeregisterApplicationInstance,
+             DeregisterDatabaseInstance,
+             RegisterApplicationInstance,
+             RegisterDatabaseInstance,
+             RollUpSapSystem
+           ],
+           to: SapSystem,
+           lifespan: SapSystem.Lifespan
 end

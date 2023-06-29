@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
   import OpenApiSpex.TestAssertions
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   test "should return the settings according to the schema", %{conn: conn} do
     api_spec = ApiSpec.spec()

@@ -64,7 +64,12 @@ defmodule TrentoWeb.ErrorViewTest do
                  title: "Invalid value"
                },
                %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
-               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"}
+               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"},
+               %{
+                 detail: "can't be blank",
+                 source: %{pointer: "/polymorphic"},
+                 title: "Invalid value"
+               }
              ]
            } == render(TrentoWeb.ErrorView, "422.json", reason: validation_error)
   end
@@ -85,7 +90,12 @@ defmodule TrentoWeb.ErrorViewTest do
                  title: "Invalid value"
                },
                %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
-               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"}
+               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"},
+               %{
+                 detail: "can't be blank",
+                 source: %{pointer: "/polymorphic"},
+                 title: "Invalid value"
+               }
              ]
            } == render(TrentoWeb.ErrorView, "422.json", changeset: changeset)
   end

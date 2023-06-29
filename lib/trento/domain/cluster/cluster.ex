@@ -7,10 +7,16 @@ defmodule Trento.Domain.Cluster do
   SAP workloads.
 
   Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
-  to the same cluster are part of the same stream. A cluster is registered first time/details updated afterwards
-  only by cluster discovery messages coming from the **designated controller** node. Once a cluster is
-  registered other hosts can be added receiving discovery messages coming from other nodes. All the hosts
-  are listed in the `hosts` field.
+  to the same cluster are part of the same stream.
+
+  A new cluster is registered when a cluster discovery message from any of the nodes of the cluster is received.
+
+  The cluster details will be populated if the received discovery message is coming from the **designated controller** node.
+  Otherwise the cluster details are left as unknown, and filled once a message from the **designated controller** is received.
+  Once a cluster is registered, other hosts will be added when cluster discovery messages from them are received.
+
+  All the hosts are listed in the `hosts` field.
+
 
   The cluster aggregate stores and updates information coming in the cluster discovery messages such as:
 
@@ -55,6 +61,7 @@ defmodule Trento.Domain.Cluster do
   alias Commanded.Aggregate.Multi
 
   alias Trento.Domain.{
+    AscsErsClusterDetails,
     Cluster,
     HanaClusterDetails,
     HealthService
@@ -62,6 +69,7 @@ defmodule Trento.Domain.Cluster do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
+    DeregisterClusterHost,
     RegisterClusterHost,
     RollUpCluster,
     SelectChecks
@@ -73,14 +81,18 @@ defmodule Trento.Domain.Cluster do
     ChecksExecutionStarted,
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
+    ClusterRestored,
     ClusterRolledUp,
     ClusterRollUpRequested,
+    ClusterTombstoned,
     HostAddedToCluster,
-    HostChecksExecutionCompleted
+    HostChecksExecutionCompleted,
+    HostRemovedFromCluster
   }
 
   @required_fields []
@@ -98,6 +110,7 @@ defmodule Trento.Domain.Cluster do
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
+    field :additional_sids, {:array, :string}, default: []
     field :resources_number, :integer
     field :hosts_number, :integer
     field :provider, Ecto.Enum, values: Provider.values()
@@ -107,13 +120,23 @@ defmodule Trento.Domain.Cluster do
     field :hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
     field :rolling_up, :boolean, default: false
-    embeds_one :details, HanaClusterDetails
+    field :deregistered_at, :utc_datetime_usec, default: nil
+
+    field :details, PolymorphicEmbed,
+      types: [
+        hana_scale_up: [
+          module: HanaClusterDetails,
+          identify_by_fields: [:system_replication_mode]
+        ],
+        ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
+      ],
+      on_replace: :update
   end
 
   def execute(%Cluster{rolling_up: true}, _), do: {:error, :cluster_rolling_up}
 
-  # When a DC cluster node is registered for the first time, a cluster is registered
-  # and the host of the node is added to the cluster
+  # When a DC node is discovered, a cluster is registered and the host is added to the cluster.
+  # The cluster details are populated with the information coming from the DC node.
   def execute(
         %Cluster{cluster_id: nil},
         %RegisterClusterHost{
@@ -122,6 +145,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -136,6 +160,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -149,10 +174,93 @@ defmodule Trento.Domain.Cluster do
     ]
   end
 
-  # If no DC node was received yet, no cluster was registered.
-  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{designated_controller: false}),
-    do: {:error, :cluster_not_found}
+  # When a non-DC node is discovered, a cluster is registered and the host is added to the cluster.
+  # The cluster details are left as unknown, and filled once a message from the DC node is received.
+  def execute(%Cluster{cluster_id: nil}, %RegisterClusterHost{
+        cluster_id: cluster_id,
+        name: name,
+        host_id: host_id,
+        designated_controller: false
+      }) do
+    [
+      %ClusterRegistered{
+        cluster_id: cluster_id,
+        name: name,
+        type: :unknown,
+        sid: nil,
+        additional_sids: [],
+        provider: :unknown,
+        resources_number: nil,
+        hosts_number: nil,
+        details: nil,
+        health: :unknown
+      },
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    ]
+  end
 
+  def execute(%Cluster{cluster_id: nil}, _),
+    do: {:error, :cluster_not_registered}
+
+  # Restoration, when a RegisterClusterHost command is received for a deregistered Cluster
+  # the cluster is restored, the host is added to cluster and if the host is a DC
+  # cluster details are updated
+  def execute(
+        %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id},
+        %RegisterClusterHost{
+          host_id: host_id,
+          designated_controller: false
+        }
+      )
+      when not is_nil(deregistered_at) do
+    [
+      %ClusterRestored{cluster_id: cluster_id},
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    ]
+  end
+
+  def execute(
+        %Cluster{deregistered_at: deregistered_at, cluster_id: cluster_id} = cluster,
+        %RegisterClusterHost{
+          host_id: host_id,
+          designated_controller: true
+        } = command
+      )
+      when not is_nil(deregistered_at) do
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %ClusterRestored{cluster_id: cluster_id}
+    end)
+    |> Multi.execute(fn _ ->
+      %HostAddedToCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    end)
+    |> maybe_update_cluster(command)
+  end
+
+  def execute(
+        %Cluster{cluster_id: cluster_id} = snapshot,
+        %RollUpCluster{}
+      ) do
+    %ClusterRollUpRequested{
+      cluster_id: cluster_id,
+      snapshot: snapshot
+    }
+  end
+
+  def execute(%Cluster{deregistered_at: deregistered_at}, _) when not is_nil(deregistered_at),
+    do: {:error, :cluster_not_registered}
+
+  # If the cluster is already registered, and the host was never discovered before, it is added to the cluster.
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
@@ -163,6 +271,9 @@ defmodule Trento.Domain.Cluster do
     maybe_emit_host_added_to_cluster_event(cluster, host_id)
   end
 
+  # When a DC node is discovered, if the cluster is already registered,
+  # the cluster details are updated with the information coming from the DC node.
+  # The cluster discovered health is updated based on the new details.
   def execute(
         %Cluster{} = cluster,
         %RegisterClusterHost{
@@ -171,15 +282,8 @@ defmodule Trento.Domain.Cluster do
       ) do
     cluster
     |> Multi.new()
-    |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
-    |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_discovered_health_changed_event(cluster, command)
-    end)
-    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
+    |> maybe_update_cluster(command)
   end
-
-  def execute(%Cluster{cluster_id: nil}, _),
-    do: {:error, :cluster_not_found}
 
   # Checks selected
   def execute(
@@ -218,13 +322,21 @@ defmodule Trento.Domain.Cluster do
   end
 
   def execute(
-        %Cluster{cluster_id: cluster_id} = snapshot,
-        %RollUpCluster{}
+        %Cluster{cluster_id: cluster_id} = cluster,
+        %DeregisterClusterHost{
+          host_id: host_id,
+          cluster_id: cluster_id
+        } = command
       ) do
-    %ClusterRollUpRequested{
-      cluster_id: cluster_id,
-      snapshot: snapshot
-    }
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %HostRemovedFromCluster{
+        cluster_id: cluster_id,
+        host_id: host_id
+      }
+    end)
+    |> Multi.execute(&maybe_emit_cluster_deregistered_event(&1, command))
   end
 
   def apply(
@@ -234,6 +346,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -247,6 +360,7 @@ defmodule Trento.Domain.Cluster do
         name: name,
         type: type,
         sid: sid,
+        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -280,6 +394,7 @@ defmodule Trento.Domain.Cluster do
           name: name,
           type: type,
           sid: sid,
+          additional_sids: additional_sids,
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
@@ -291,6 +406,7 @@ defmodule Trento.Domain.Cluster do
       | name: name,
         type: type,
         sid: sid,
+        additional_sids: additional_sids,
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
@@ -336,7 +452,25 @@ defmodule Trento.Domain.Cluster do
     snapshot
   end
 
+  def apply(%Cluster{hosts: hosts} = cluster, %HostRemovedFromCluster{
+        host_id: host_id
+      }) do
+    %Cluster{cluster | hosts: List.delete(hosts, host_id)}
+  end
+
+  # Deregistration
+  def apply(%Cluster{} = cluster, %ClusterDeregistered{deregistered_at: deregistered_at}) do
+    %Cluster{cluster | deregistered_at: deregistered_at}
+  end
+
+  # Restoration
+  def apply(%Cluster{} = cluster, %ClusterRestored{}) do
+    %Cluster{cluster | deregistered_at: nil}
+  end
+
   def apply(cluster, %legacy_event{}) when legacy_event in @legacy_events, do: cluster
+
+  def apply(%Cluster{} = cluster, %ClusterTombstoned{}), do: cluster
 
   defp maybe_emit_host_added_to_cluster_event(
          %Cluster{cluster_id: cluster_id, hosts: hosts},
@@ -354,11 +488,25 @@ defmodule Trento.Domain.Cluster do
     end
   end
 
+  defp maybe_update_cluster(
+         multi,
+         %RegisterClusterHost{host_id: host_id} = command
+       ) do
+    multi
+    |> Multi.execute(fn cluster -> maybe_emit_host_added_to_cluster_event(cluster, host_id) end)
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_discovered_health_changed_event(cluster, command)
+    end)
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
+  end
+
   defp maybe_emit_cluster_details_updated_event(
          %Cluster{
            name: name,
            type: type,
            sid: sid,
+           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -368,6 +516,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -384,6 +533,7 @@ defmodule Trento.Domain.Cluster do
            name: name,
            type: type,
            sid: sid,
+           additional_sids: additional_sids,
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
@@ -395,6 +545,7 @@ defmodule Trento.Domain.Cluster do
       name: name,
       type: type,
       sid: sid,
+      additional_sids: additional_sids,
       provider: provider,
       resources_number: resources_number,
       hosts_number: hosts_number,
@@ -433,6 +584,21 @@ defmodule Trento.Domain.Cluster do
       checks_health: checks_health
     }
   end
+
+  defp maybe_emit_cluster_deregistered_event(
+         %Cluster{cluster_id: cluster_id, hosts: []},
+         %DeregisterClusterHost{
+           cluster_id: cluster_id,
+           deregistered_at: deregistered_at
+         }
+       ) do
+    [
+      %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at},
+      %ClusterTombstoned{cluster_id: cluster_id}
+    ]
+  end
+
+  defp maybe_emit_cluster_deregistered_event(_, _), do: nil
 
   defp maybe_add_checks_health(healths, _, []), do: healths
   defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]

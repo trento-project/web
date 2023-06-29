@@ -17,8 +17,11 @@ defmodule Trento.HostProjector do
     HeartbeatSucceded,
     HostAddedToCluster,
     HostChecksSelected,
+    HostDeregistered,
     HostDetailsUpdated,
     HostRegistered,
+    HostRemovedFromCluster,
+    HostRestored,
     ProviderUpdated
   }
 
@@ -49,6 +52,37 @@ defmodule Trento.HostProjector do
   )
 
   project(
+    %HostDeregistered{
+      host_id: id,
+      deregistered_at: deregistered_at
+    },
+    fn multi ->
+      changeset =
+        HostReadModel.changeset(%HostReadModel{id: id}, %{
+          deregistered_at: deregistered_at
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
+    end
+  )
+
+  project(
+    %HostRestored{
+      host_id: id
+    },
+    fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
+      changeset =
+        HostReadModel.changeset(host, %{
+          deregistered_at: nil
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
+    end
+  )
+
+  project(
     %HostAddedToCluster{
       host_id: id,
       cluster_id: cluster_id
@@ -63,6 +97,29 @@ defmodule Trento.HostProjector do
         on_conflict: {:replace, [:cluster_id]},
         conflict_target: [:id]
       )
+    end
+  )
+
+  project(
+    %HostRemovedFromCluster{
+      host_id: id,
+      cluster_id: cluster_id
+    },
+    fn multi ->
+      host = Repo.get!(HostReadModel, id)
+      # Only remove the cluster_id if it matches the one in the event
+      # We cannot guarantee the order of the events during the delta deregistration,
+      # so we need to make sure we don't remove the cluster_id if it has been overwritten by HostAddedToCluster
+      if host.cluster_id == cluster_id do
+        changeset =
+          HostReadModel.changeset(host, %{
+            cluster_id: nil
+          })
+
+        Ecto.Multi.update(multi, :host, changeset)
+      else
+        multi
+      end
     end
   )
 
@@ -159,6 +216,37 @@ defmodule Trento.HostProjector do
       "monitoring:hosts",
       "host_registered",
       HostView.render("host_registered.json", host: host)
+    )
+  end
+
+  def after_update(
+        %HostRestored{host_id: id},
+        _,
+        _
+      ) do
+    host = Repo.get!(HostReadModel, id)
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_registered",
+      HostView.render("host_registered.json", host: host)
+    )
+  end
+
+  def after_update(
+        %HostDeregistered{host_id: id},
+        _,
+        _
+      ) do
+    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
+
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_deregistered",
+      %{
+        id: id,
+        hostname: hostname
+      }
     )
   end
 

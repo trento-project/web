@@ -5,7 +5,7 @@ defmodule TrentoWeb.V1.PrometheusController do
 
   alias Trento.Integration.Prometheus
 
-  alias TrentoWeb.OpenApi.Schema
+  alias TrentoWeb.OpenApi.V1.Schema
 
   require Logger
 

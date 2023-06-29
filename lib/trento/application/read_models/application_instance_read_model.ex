@@ -27,7 +27,10 @@ defmodule Trento.ApplicationInstanceReadModel do
     field :host_id, Ecto.UUID, primary_key: true
     field :health, Ecto.Enum, values: Health.values()
 
-    has_one :host, HostReadModel, references: :host_id, foreign_key: :id
+    has_one :host, HostReadModel,
+      references: :host_id,
+      foreign_key: :id,
+      where: [deregistered_at: nil]
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

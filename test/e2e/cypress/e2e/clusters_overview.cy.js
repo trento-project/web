@@ -1,12 +1,13 @@
 import {
-  allClusterNames,
-  clusterIdByName,
+  availableClusters,
   healthyClusterScenario,
   unhealthyClusterScenario,
 } from '../fixtures/clusters-overview/available_clusters';
 
+const clusterIdByName = (clusterName) =>
+  availableClusters.find(({ name }) => name === clusterName).id;
+
 context('Clusters Overview', () => {
-  const availableClusters = allClusterNames();
   beforeEach(() => {
     cy.visit('/clusters');
     cy.url().should('include', '/clusters');
@@ -21,14 +22,35 @@ context('Clusters Overview', () => {
     it('should have 1 pages', () => {
       cy.get('.tn-page-item').its('length').should('eq', 1);
     });
-    describe('Discovered clusternames are the expected ones', () => {
-      availableClusters.forEach((clusterName) => {
-        it(`should have a cluster named ${clusterName}`, () => {
-          cy.get('.tn-clustername').each(($link) => {
-            const displayedClusterName = $link.text().trim();
-            expect(availableClusters).to.include(displayedClusterName);
+    it('should show the expected clusters data', () => {
+      cy.get('.container').eq(0).as('clustersTable');
+      availableClusters.forEach((cluster, index) => {
+        cy.get('@clustersTable')
+          .find('tr')
+          .eq(index + 1)
+          .find('td')
+          .as('clusterRow');
+
+        cy.get('@clustersTable')
+          .contains('th', 'Name')
+          .invoke('index')
+          .then((i) => {
+            cy.get('@clusterRow').eq(i).should('contain', cluster.name);
           });
-        });
+
+        cy.get('@clustersTable')
+          .contains('th', 'SID')
+          .invoke('index')
+          .then((i) => {
+            cy.get('@clusterRow').eq(i).should('contain', cluster.sid);
+          });
+
+        cy.get('@clustersTable')
+          .contains('th', 'Type')
+          .invoke('index')
+          .then((i) => {
+            cy.get('@clusterRow').eq(i).should('contain', cluster.type);
+          });
       });
     });
     describe('Unnamed cluster', () => {
@@ -116,6 +138,7 @@ context('Clusters Overview', () => {
       taggingRules.forEach(([pattern, tag]) => {
         describe(`Add tag '${tag}' to all clusters with '${pattern}' in the cluster name`, () => {
           availableClusters
+            .map(({ name }) => name)
             .filter(clustersByMatchingPattern(pattern))
             .forEach((clusterName) => {
               it(`should tag cluster '${clusterName}'`, () => {

@@ -5,25 +5,70 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
-  alias Trento.{
-    Domain.Commands.RegisterClusterHost,
-    Integration.Discovery.ClusterDiscoveryPayload
+  alias Trento.Domain.Commands.{
+    DeregisterClusterHost,
+    RegisterClusterHost
   }
+
+  alias Trento.Integration.Discovery.ClusterDiscoveryPayload
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
-  def handle(%{
-        "discovery_type" => "ha_cluster_discovery",
-        "agent_id" => agent_id,
-        "payload" => payload
-      }) do
-    payload
-    |> ProperCase.to_snake_case()
-    |> ClusterDiscoveryPayload.new()
-    |> case do
-      {:ok, decoded_payload} -> build_register_cluster_host_command(agent_id, decoded_payload)
-      error -> error
+  def handle(
+        %{
+          "discovery_type" => "ha_cluster_discovery",
+          "agent_id" => agent_id,
+          "payload" => nil
+        },
+        current_cluster_id
+      ) do
+    {:ok,
+     Enum.reject(
+       [
+         build_deregister_cluster_host_command(agent_id, nil, current_cluster_id)
+       ],
+       &is_nil/1
+     )}
+  end
+
+  def handle(
+        %{
+          "discovery_type" => "ha_cluster_discovery",
+          "agent_id" => agent_id,
+          "payload" => payload
+        },
+        current_cluster_id
+      ) do
+    with {:ok, %ClusterDiscoveryPayload{id: cluster_id} = decoded_payload} <-
+           payload
+           |> ProperCase.to_snake_case()
+           |> ClusterDiscoveryPayload.new(),
+         {:ok, register_cluster_host_command} <-
+           build_register_cluster_host_command(agent_id, decoded_payload) do
+      {:ok,
+       Enum.reject(
+         [
+           build_deregister_cluster_host_command(agent_id, cluster_id, current_cluster_id),
+           register_cluster_host_command
+         ],
+         &is_nil/1
+       )}
+    end
+  end
+
+  defp build_deregister_cluster_host_command(_, _, nil),
+    do: nil
+
+  defp build_deregister_cluster_host_command(agent_id, cluster_id, current_cluster_id) do
+    if generate_cluster_id(cluster_id) != current_cluster_id do
+      DeregisterClusterHost.new!(%{
+        host_id: agent_id,
+        cluster_id: current_cluster_id,
+        deregistered_at: DateTime.utc_now()
+      })
     end
   end
 
@@ -35,7 +80,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
            dc: designated_controller,
            provider: provider,
            cluster_type: cluster_type,
-           sid: sid
+           sid: sid,
+           additional_sids: additional_sids
          } = payload
        ) do
     cluster_details = parse_cluster_details(payload)
@@ -45,6 +91,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
       host_id: agent_id,
       name: name,
       sid: sid,
+      additional_sids: additional_sids,
       type: cluster_type,
       designated_controller: designated_controller,
       resources_number: parse_resources_number(payload),
@@ -84,6 +131,22 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     }
   end
 
+  defp parse_cluster_details(
+         %{
+           crmmon: crmmon,
+           sbd: sbd,
+           cluster_type: ClusterType.ascs_ers(),
+           additional_sids: additional_sids
+         } = payload
+       ) do
+    %{
+      sap_systems: Enum.map(additional_sids, &parse_ascs_ers_cluster_sap_system(payload, &1)),
+      fencing_type: parse_cluster_fencing_type(crmmon),
+      stopped_resources: parse_cluster_stopped_resources(crmmon),
+      sbd_devices: parse_sbd_devices(sbd)
+    }
+  end
+
   defp parse_cluster_details(_) do
     nil
   end
@@ -107,8 +170,8 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
        ) do
     Enum.map(nodes, fn %{name: name, attributes: attributes} ->
       attributes =
-        Enum.reduce(attributes, %{}, fn %{name: name, value: value}, acc ->
-          Map.put(acc, name, value)
+        Enum.into(attributes, %{}, fn %{name: name, value: value} ->
+          {name, value}
         end)
 
       node_resources = parse_node_resources(name, crmmon)
@@ -353,27 +416,182 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   defp do_parse_hana_status("S", _), do: "Failed"
   defp do_parse_hana_status(_, _), do: "Unknown"
 
+  defp parse_ascs_ers_cluster_sap_system(payload, sid) do
+    resources_by_sid = get_resources_by_sid(payload, sid)
+
+    is_filesystem_resource_based =
+      Enum.count(resources_by_sid, fn
+        %{type: "Filesystem"} -> true
+        _ -> false
+      end) == 2
+
+    %{
+      sid: sid,
+      filesystem_resource_based: is_filesystem_resource_based,
+      distributed: is_distributed(payload, resources_by_sid),
+      nodes: parse_ascs_ers_cluster_nodes(payload, resources_by_sid)
+    }
+  end
+
+  defp get_resources_by_sid(%{cib: %{configuration: %{resources: %{groups: groups}}}}, sid) do
+    Enum.flat_map(groups, fn
+      %{primitives: primitives} ->
+        primitives
+        |> Enum.find_value([], fn
+          %{type: "SAPInstance", instance_attributes: attributes} ->
+            attributes
+
+          _ ->
+            nil
+        end)
+        |> Enum.find_value([], fn
+          %{name: "InstanceName", value: value} ->
+            # The nesting level looks reasonable to avoid having a new function
+            # credo:disable-for-next-line /\.Nesting/
+            if value |> String.split("_") |> Enum.at(0) == sid, do: primitives
+
+          _ ->
+            nil
+        end)
+    end)
+  end
+
+  # Check if the SAPInstance resource is running in different nodes only using
+  # the resources belonging to a specific SAP system.
+  # The next conditions must met for the SAPInstance resources:
+  # - Role is Started
+  # - Failed is false
+  # - The nodes are in a clean state
+  # - The 2 SAPInstance resources are running in different nodes
+  defp is_distributed(%{crmmon: %{nodes: nodes, groups: groups}}, resources) do
+    resource_ids = Enum.map(resources, fn %{id: id} -> id end)
+
+    clean_nodes =
+      Enum.flat_map(nodes, fn
+        %{name: name, online: true, unclean: false} -> [name]
+        _ -> []
+      end)
+
+    groups
+    |> Enum.flat_map(fn
+      %{resources: resources} -> resources
+      _ -> []
+    end)
+    |> Enum.filter(fn
+      %{
+        id: id,
+        agent: "ocf::heartbeat:SAPInstance",
+        role: "Started",
+        failed: false,
+        node: %{name: name}
+      } ->
+        id in resource_ids and name in clean_nodes
+
+      _ ->
+        false
+    end)
+    |> Enum.uniq_by(fn
+      %{node: %{name: name}} -> name
+    end)
+    |> Enum.count() == 2
+  end
+
+  # Parse details from each node for a specific sid.
+  # The runtime information of where the resource is running belongs to crmmon payload,
+  # but the data itself is in the cib payload, so both payloads must be crossed.
+  defp parse_ascs_ers_cluster_nodes(
+         %{
+           provider: provider,
+           crmmon: %{nodes: nodes, node_attributes: %{nodes: node_attributes}} = crmmon
+         },
+         cib_resources_by_sid
+       ) do
+    Enum.map(nodes, fn %{name: node_name} ->
+      cib_resource_ids = Enum.map(cib_resources_by_sid, fn %{id: id} -> id end)
+
+      crm_node_resources =
+        node_name
+        |> parse_node_resources(crmmon)
+        |> Enum.filter(fn %{id: id} -> id in cib_resource_ids end)
+
+      crm_node_resource_ids = Enum.map(crm_node_resources, fn %{id: id} -> id end)
+
+      cib_node_resources =
+        Enum.filter(cib_resources_by_sid, fn %{id: id} -> id in crm_node_resource_ids end)
+
+      attributes =
+        node_attributes
+        |> Enum.find_value([], fn
+          %{name: ^node_name, attributes: attributes} -> attributes
+          _ -> false
+        end)
+        |> Enum.into(%{}, fn %{name: name, value: value} ->
+          {name, value}
+        end)
+
+      roles =
+        cib_node_resources
+        |> parse_resource_by_type("SAPInstance", "IS_ERS")
+        |> Enum.map(fn
+          "true" -> AscsErsClusterRole.ers()
+          _ -> AscsErsClusterRole.ascs()
+        end)
+
+      virtual_ip_type = get_virtual_ip_type_suffix_by_provider(provider)
+
+      %{
+        name: node_name,
+        roles: roles,
+        virtual_ips: parse_resource_by_type(cib_node_resources, virtual_ip_type, "ip"),
+        filesystems: parse_resource_by_type(cib_node_resources, "Filesystem", "directory"),
+        attributes: attributes,
+        resources: crm_node_resources
+      }
+    end)
+  end
+
+  defp parse_resource_by_type(resources, type, attribute_name) do
+    resources
+    |> Enum.filter(fn
+      %{type: ^type} -> true
+      _ -> false
+    end)
+    |> Enum.map(fn %{instance_attributes: instance_attributes} ->
+      Enum.find_value(instance_attributes, nil, fn
+        %{name: ^attribute_name, value: value} -> value
+        _ -> nil
+      end)
+    end)
+  end
+
   defp parse_cib_last_written(%{
          crmmon: %{summary: %{last_change: %{time: cib_last_written}}}
        }),
        do: cib_last_written
 
+  defp generate_cluster_id(nil), do: nil
   defp generate_cluster_id(id), do: UUID.uuid5(@uuid_namespace, id)
 
   defp parse_cluster_health(details, cluster_type)
        when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
        do: parse_hana_cluster_health(details)
 
-  defp parse_cluster_health(_, _), do: :unknown
+  defp parse_cluster_health(%{sap_systems: sap_systems}, ClusterType.ascs_ers()) do
+    Enum.find_value(sap_systems, Health.passing(), fn %{distributed: distributed} ->
+      if not distributed, do: Health.critical()
+    end)
+  end
+
+  defp parse_cluster_health(_, _), do: Health.unknown()
 
   # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
   # If data is not present for some reason the state goes to unknown
   defp parse_hana_cluster_health(%{sr_health_state: "4", secondary_sync_state: "SOK"}),
-    do: :passing
+    do: Health.passing()
 
   defp parse_hana_cluster_health(%{sr_health_state: "", secondary_sync_state: ""}),
-    do: :unknown
+    do: Health.unknown()
 
   defp parse_hana_cluster_health(%{sr_health_state: _, secondary_sync_state: _}),
-    do: :critical
+    do: Health.critical()
 end

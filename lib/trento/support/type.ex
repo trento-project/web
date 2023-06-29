@@ -19,6 +19,8 @@ defmodule Trento.Type do
 
       import Ecto.Changeset
 
+      import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
+
       @type t() :: %__MODULE__{}
 
       @primary_key false
@@ -48,9 +50,15 @@ defmodule Trento.Type do
           changes ->
             {:error,
              {:validation,
-              Ecto.Changeset.traverse_errors(
-                changes,
-                fn {msg, _} -> msg end
+              Map.merge(
+                Ecto.Changeset.traverse_errors(
+                  changes,
+                  fn {msg, _} -> msg end
+                ),
+                PolymorphicEmbed.traverse_errors(
+                  changes,
+                  fn {msg, _} -> msg end
+                )
               )}}
         end
       end
@@ -66,10 +74,6 @@ defmodule Trento.Type do
         end
       end
 
-      @dialyzer {:no_match, changeset: 2}
-      # we need to ignore the no_match warning of the ` {_, Ecto.Embedded, _}` case
-      # since some spec is broken in the Ecto codebase
-
       @doc """
       Casts the fields by using Ecto reflection,
       validates the required ones and returns a changeset.
@@ -80,8 +84,13 @@ defmodule Trento.Type do
           |> cast(params, fields())
           |> validate_required_fields(@required_fields)
 
-        Enum.reduce(embedded_fields(), changeset, fn field, changeset ->
-          cast_and_validate_required_embed(changeset, field, @required_fields)
+        changeset =
+          Enum.reduce(embedded_fields(), changeset, fn field, changeset ->
+            cast_and_validate_required_embed(changeset, field, @required_fields)
+          end)
+
+        Enum.reduce(polymorphic_fields(), changeset, fn field, changeset ->
+          cast_and_validate_required_polymorphic_embed(changeset, field, @required_fields)
         end)
       end
 
@@ -112,6 +121,15 @@ defmodule Trento.Type do
       def cast_and_validate_required_embed(changeset, field, required_fields),
         do: cast_embed(changeset, field, required: field in required_fields)
 
+      def cast_and_validate_required_polymorphic_embed(changeset, field, nil),
+        do: cast_polymorphic_embed(changeset, field, required: false)
+
+      def cast_and_validate_required_polymorphic_embed(changeset, field, :all),
+        do: cast_polymorphic_embed(changeset, field, required: true)
+
+      def cast_and_validate_required_polymorphic_embed(changeset, field, required_fields),
+        do: cast_polymorphic_embed(changeset, field, required: field in required_fields)
+
       defp map_results(%{error: errors}),
         do: {:error, map_errors(errors)}
 
@@ -121,9 +139,24 @@ defmodule Trento.Type do
       defp map_errors(errors),
         do: {:validation, Enum.map(errors, fn {:validation, error} -> error end)}
 
-      defp fields, do: __MODULE__.__schema__(:fields) -- __MODULE__.__schema__(:embeds)
+      defp fields do
+        (__MODULE__.__schema__(:fields) -- embedded_fields()) -- polymorphic_fields()
+      end
 
       defp embedded_fields, do: __MODULE__.__schema__(:embeds)
+
+      @dialyzer {:no_match, polymorphic_fields: 0}
+      # we need to ignore the no_match warning of the `{:parameterized, PolymorphicEmbed, _}` case
+      # since some spec is broken in the Ecto codebase
+
+      defp polymorphic_fields,
+        do:
+          Enum.filter(__MODULE__.__schema__(:fields), fn field ->
+            case __MODULE__.__schema__(:type, field) do
+              {:parameterized, PolymorphicEmbed, _} -> true
+              _ -> false
+            end
+          end)
 
       defoverridable new: 1
       defoverridable changeset: 2

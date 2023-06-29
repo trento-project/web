@@ -4,7 +4,7 @@ defmodule TrentoWeb.V1.AboutController do
 
   alias Trento.Hosts
 
-  alias TrentoWeb.OpenApi.Schema
+  alias TrentoWeb.OpenApi.V1.Schema
 
   @version Mix.Project.config()[:version]
 

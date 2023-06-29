@@ -29,7 +29,9 @@ defmodule Trento.Domain.Host do
   }
 
   alias Trento.Domain.Commands.{
+    DeregisterHost,
     RegisterHost,
+    RequestHostDeregistration,
     RollUpHost,
     SelectHostChecks,
     UpdateHeartbeat,
@@ -41,10 +43,14 @@ defmodule Trento.Domain.Host do
     HeartbeatFailed,
     HeartbeatSucceded,
     HostChecksSelected,
+    HostDeregistered,
+    HostDeregistrationRequested,
     HostDetailsUpdated,
     HostRegistered,
+    HostRestored,
     HostRolledUp,
     HostRollUpRequested,
+    HostTombstoned,
     ProviderUpdated,
     SlesSubscriptionsUpdated
   }
@@ -69,6 +75,7 @@ defmodule Trento.Domain.Host do
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :rolling_up, :boolean, default: false
     field :selected_checks, {:array, :string}, default: []
+    field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_many :subscriptions, SlesSubscription
 
@@ -117,6 +124,98 @@ defmodule Trento.Domain.Host do
       installation_source: installation_source,
       heartbeat: :unknown
     }
+  end
+
+  # Reject all the commands, except for the registration ones when the host_id does not exists
+  def execute(
+        %Host{host_id: nil},
+        _
+      ) do
+    {:error, :host_not_registered}
+  end
+
+  # Restore the host when a RegisterHost command is received for a deregistered host
+  def execute(
+        %Host{
+          host_id: host_id,
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source,
+          deregistered_at: deregistered_at
+        },
+        %RegisterHost{
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source
+        }
+      )
+      when not is_nil(deregistered_at) do
+    %HostRestored{
+      host_id: host_id
+    }
+  end
+
+  def execute(
+        %Host{
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        },
+        %RegisterHost{
+          hostname: hostname,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source
+        }
+      )
+      when not is_nil(deregistered_at) do
+    [
+      %HostRestored{
+        host_id: host_id
+      },
+      %HostDetailsUpdated{
+        host_id: host_id,
+        hostname: hostname,
+        ip_addresses: ip_addresses,
+        agent_version: agent_version,
+        cpu_count: cpu_count,
+        total_memory_mb: total_memory_mb,
+        socket_count: socket_count,
+        os_version: os_version,
+        installation_source: installation_source
+      }
+    ]
+  end
+
+  def execute(
+        %Host{host_id: host_id} = snapshot,
+        %RollUpHost{}
+      ) do
+    %HostRollUpRequested{
+      host_id: host_id,
+      snapshot: snapshot
+    }
+  end
+
+  def execute(
+        %Host{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :host_not_registered}
   end
 
   # Host exists but details didn't change
@@ -172,14 +271,6 @@ defmodule Trento.Domain.Host do
     }
   end
 
-  # Heartbeat received
-  def execute(
-        %Host{host_id: nil},
-        %UpdateHeartbeat{}
-      ) do
-    {:error, :host_not_registered}
-  end
-
   def execute(
         %Host{host_id: host_id, heartbeat: heartbeat},
         %UpdateHeartbeat{heartbeat: :passing}
@@ -203,14 +294,6 @@ defmodule Trento.Domain.Host do
     []
   end
 
-  # Update provider received
-  def execute(
-        %Host{host_id: nil},
-        %UpdateProvider{}
-      ) do
-    {:error, :host_not_registered}
-  end
-
   def execute(
         %Host{provider: provider, provider_data: provider_data},
         %UpdateProvider{provider: provider, provider_data: provider_data}
@@ -229,13 +312,6 @@ defmodule Trento.Domain.Host do
     }
   end
 
-  def execute(
-        %Host{host_id: nil},
-        %UpdateSlesSubscriptions{}
-      ) do
-    {:error, :host_not_registered}
-  end
-
   def execute(%Host{subscriptions: subscriptions}, %UpdateSlesSubscriptions{
         subscriptions: subscriptions
       }) do
@@ -252,29 +328,29 @@ defmodule Trento.Domain.Host do
     }
   end
 
-  # Start the rollup flow
   def execute(
-        %Host{host_id: nil},
-        %RollUpHost{}
+        %Host{host_id: host_id},
+        %RequestHostDeregistration{requested_at: requested_at}
       ) do
-    {:error, :host_not_registered}
-  end
-
-  def execute(
-        %Host{host_id: host_id} = snapshot,
-        %RollUpHost{}
-      ) do
-    %HostRollUpRequested{
+    %HostDeregistrationRequested{
       host_id: host_id,
-      snapshot: snapshot
+      requested_at: requested_at
     }
   end
 
   def execute(
-        %Host{host_id: nil},
-        %SelectHostChecks{}
+        %Host{host_id: host_id},
+        %DeregisterHost{deregistered_at: deregistered_at}
       ) do
-    {:error, :host_not_registered}
+    [
+      %HostDeregistered{
+        host_id: host_id,
+        deregistered_at: deregistered_at
+      },
+      %HostTombstoned{
+        host_id: host_id
+      }
+    ]
   end
 
   def execute(
@@ -408,5 +484,21 @@ defmodule Trento.Domain.Host do
       host
       | selected_checks: selected_checks
     }
+  end
+
+  # Deregistration
+
+  def apply(%Host{} = host, %HostDeregistered{
+        deregistered_at: deregistered_at
+      }) do
+    %Host{host | deregistered_at: deregistered_at}
+  end
+
+  def apply(%Host{} = host, %HostDeregistrationRequested{}), do: host
+  def apply(%Host{} = host, %HostTombstoned{}), do: host
+
+  # Restoration
+  def apply(%Host{} = host, %HostRestored{}) do
+    %Host{host | deregistered_at: nil}
   end
 end

@@ -3,6 +3,8 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   alias Trento.SapSystems
 
+  alias TrentoWeb.OpenApi.V1.Schema
+
   use OpenApiSpex.ControllerSpecs
 
   tags ["Target Infrastructure"]
@@ -13,7 +15,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     responses: [
       ok:
         {"A collection of the discovered SAP Systems", "application/json",
-         TrentoWeb.OpenApi.Schema.SAPSystem.SAPSystemsCollection}
+         Schema.SAPSystem.SAPSystemsCollection}
     ]
 
   def list(conn, _) do
@@ -28,7 +30,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     responses: [
       ok:
         {"A collection of the discovered HANA Databases", "application/json",
-         TrentoWeb.OpenApi.Schema.Database.DatabasesCollection}
+         Schema.Database.DatabasesCollection}
     ]
 
   def list_databases(conn, _) do

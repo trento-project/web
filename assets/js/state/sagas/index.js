@@ -62,6 +62,9 @@ import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { watchSapSystem } from '@state/sagas/sapSystems';
 import { watchDatabase } from '@state/sagas/databases';
+import { watchHostDeregistered } from '@state/sagas/hosts';
+import { watchClusterDeregistered } from '@state/sagas/clusters';
+
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
@@ -111,7 +114,9 @@ function* initialDataFetch() {
   yield put(stopHostsLoading());
 
   yield put(startClustersLoading());
-  const { data: clusters } = yield call(get, '/clusters');
+  const { data: clusters } = yield call(get, '/clusters', {
+    baseURL: '/api/v2',
+  });
   yield put(setClusters(clusters));
   yield put(stopClustersLoading());
 
@@ -386,9 +391,11 @@ export default function* rootSaga() {
     watchHostDetailsUpdated(),
     watchHeartbeatSucceded(),
     watchHeartbeatFailed(),
+    watchHostDeregistered(),
     watchClusterRegistered(),
     watchClusterDetailsUpdated(),
     watchClusterCibLastWrittenUpdated(),
+    watchClusterDeregistered(),
     watchNotifications(),
     watchChecksSelected(),
     watchChecksExecutionStarted(),

@@ -3,5 +3,5 @@ defmodule Trento.Domain.Enums.ClusterType do
   Type that represents the supported cluster types.
   """
 
-  use Trento.Support.Enum, values: [:hana_scale_up, :hana_scale_out, :unknown]
+  use Trento.Support.Enum, values: [:hana_scale_up, :hana_scale_out, :ascs_ers, :unknown]
 end

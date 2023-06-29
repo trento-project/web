@@ -3,10 +3,16 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   This module contains functions to transform SAP system related integration events into commands..
   """
 
+  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+
   alias Trento.Domain.Commands.{
+    DeregisterApplicationInstance,
+    DeregisterDatabaseInstance,
     RegisterApplicationInstance,
     RegisterDatabaseInstance
   }
+
+  alias Trento.{ApplicationInstanceReadModel, DatabaseInstanceReadModel}
 
   alias Trento.Integration.Discovery.SapSystemDiscoveryPayload
 
@@ -24,31 +30,53 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   @application_type 2
   @diagnostics_type 3
 
-  @spec handle(map) ::
-          {:ok, [RegisterApplicationInstance.t() | RegisterDatabaseInstance.t()]} | {:error, any}
-  def handle(%{
-        "discovery_type" => "sap_system_discovery",
-        "agent_id" => agent_id,
-        "payload" => payload
-      }) do
-    case SapSystemDiscoveryPayload.new(payload) do
-      {:ok, sap_systems} ->
-        sap_systems
-        |> Enum.flat_map(fn sap_system -> build_commands(sap_system, agent_id) end)
-        |> Enum.reduce_while(
-          {:ok, []},
-          fn
-            {:ok, command}, {:ok, commands} -> {:cont, {:ok, commands ++ [command]}}
-            {:error, _} = error, _ -> {:halt, error}
-          end
-        )
+  @spec handle(map, [ApplicationInstanceReadModel.t() | DatabaseInstanceReadModel.t()]) ::
+          {:ok,
+           [
+             DeregisterApplicationInstance.t()
+             | DeregisterDatabaseInstance.t()
+             | RegisterApplicationInstance.t()
+             | RegisterDatabaseInstance.t()
+           ]}
+          | {:error, any}
+  def handle(
+        %{
+          "discovery_type" => "sap_system_discovery",
+          "agent_id" => agent_id,
+          "payload" => payload
+        },
+        current_instances
+      ) do
+    with {:ok, sap_systems} <- SapSystemDiscoveryPayload.new(payload),
+         {:ok, register_instance_commands} <-
+           sap_systems
+           |> Enum.flat_map(fn sap_system ->
+             build_register_instances_commands(sap_system, agent_id)
+           end)
+           |> Enum.reduce_while(
+             {:ok, []},
+             fn
+               {:ok, command}, {:ok, commands} -> {:cont, {:ok, commands ++ [command]}}
+               {:error, _} = error, _ -> {:halt, error}
+             end
+           ) do
+      # Build deregistration commands but only for instances that are not
+      # present in the discovery payload anymore.
+      deregister_instance_commands =
+        current_instances
+        |> Enum.reject(fn current_instance ->
+          Enum.any?(register_instance_commands, fn instance ->
+            instance.host_id == current_instance.host_id &&
+              instance.instance_number == current_instance.instance_number
+          end)
+        end)
+        |> build_deregister_instances_commands()
 
-      error ->
-        error
+      {:ok, deregister_instance_commands ++ register_instance_commands}
     end
   end
 
-  defp build_commands(
+  defp build_register_instances_commands(
          %SapSystemDiscoveryPayload{
            Id: id,
            SID: sid,
@@ -79,7 +107,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end)
   end
 
-  defp build_commands(
+  defp build_register_instances_commands(
          %SapSystemDiscoveryPayload{
            SID: sid,
            Type: @application_type,
@@ -103,13 +131,39 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         https_port: parse_https_port(instance),
         start_priority: parse_start_priority(instance),
         host_id: host_id,
-        health: parse_dispstatus(instance)
+        health: parse_dispstatus(instance),
+        ensa_version: parse_ensa_version(instance)
       })
     end)
   end
 
-  defp build_commands(%SapSystemDiscoveryPayload{Type: @diagnostics_type}, _), do: []
-  defp build_commands(%SapSystemDiscoveryPayload{Type: @unknown_type}, _), do: []
+  defp build_register_instances_commands(%SapSystemDiscoveryPayload{Type: @diagnostics_type}, _),
+    do: []
+
+  defp build_register_instances_commands(%SapSystemDiscoveryPayload{Type: @unknown_type}, _),
+    do: []
+
+  defp build_deregister_instances_commands(current_instances) do
+    Enum.map(current_instances, fn
+      %ApplicationInstanceReadModel{} = instance ->
+        DeregisterApplicationInstance.new!(%{
+          sid: instance.sid,
+          host_id: instance.host_id,
+          instance_number: instance.instance_number,
+          sap_system_id: instance.sap_system_id,
+          deregistered_at: DateTime.utc_now()
+        })
+
+      %DatabaseInstanceReadModel{} = instance ->
+        DeregisterDatabaseInstance.new!(%{
+          sid: instance.sid,
+          host_id: instance.host_id,
+          instance_number: instance.instance_number,
+          sap_system_id: instance.sap_system_id,
+          deregistered_at: DateTime.utc_now()
+        })
+    end)
+  end
 
   defp parse_instance_number(instance), do: parse_sap_control_property("SAPSYSTEM", instance)
 
@@ -173,4 +227,16 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          SystemReplication: %SystemReplication{overall_replication_status: status}
        }),
        do: status
+
+  defp parse_ensa_version(%Instance{SAPControl: %SapControl{Processes: processes}}) do
+    Enum.find_value(processes, EnsaVersion.no_ensa(), fn
+      %{name: "enserver"} -> EnsaVersion.ensa1()
+      %{name: "enrepserver"} -> EnsaVersion.ensa1()
+      %{name: "enq_server"} -> EnsaVersion.ensa2()
+      %{name: "enq_replicator"} -> EnsaVersion.ensa2()
+      _ -> nil
+    end)
+  end
+
+  defp parse_ensa_version(_), do: EnsaVersion.no_ensa()
 end

@@ -4,7 +4,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
   import OpenApiSpex.TestAssertions
   import Trento.Factory
 
-  alias TrentoWeb.OpenApi.ApiSpec
+  alias TrentoWeb.OpenApi.V1.ApiSpec
 
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType

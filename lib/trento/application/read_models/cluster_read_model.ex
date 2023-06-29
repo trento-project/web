@@ -18,6 +18,7 @@ defmodule Trento.ClusterReadModel do
   schema "clusters" do
     field :name, :string, default: ""
     field :sid, :string
+    field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :type, Ecto.Enum, values: ClusterType.values()
     field :selected_checks, {:array, :string}, default: []
@@ -30,6 +31,8 @@ defmodule Trento.ClusterReadModel do
 
     # Virtually enriched fields
     field :cib_last_written, :string, virtual: true
+
+    field :deregistered_at, :utc_datetime_usec
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

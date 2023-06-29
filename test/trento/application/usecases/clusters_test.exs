@@ -17,10 +17,12 @@ defmodule Trento.ClustersTest do
   describe "checks execution with wanda adapter" do
     test "should start a checks execution on demand if checks are selected" do
       %{id: cluster_id, provider: provider, type: cluster_type} = insert(:cluster)
+      insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
       insert_list(2, :host, cluster_id: cluster_id)
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
         assert message.group_id == cluster_id
+        assert length(message.targets) == 2
 
         assert message.env == %{
                  "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
@@ -63,6 +65,18 @@ defmodule Trento.ClustersTest do
   end
 
   describe "get clusters" do
+    test "should not return soft deleted clusters" do
+      cib_last_written = Date.to_string(Faker.Date.forward(0))
+      cluster_id = Faker.UUID.v4()
+
+      insert(:cluster, id: cluster_id)
+      insert(:cluster, deregistered_at: DateTime.utc_now())
+      insert(:cluster_enrichment_data, cluster_id: cluster_id)
+
+      [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
+        Clusters.get_all_clusters()
+    end
+
     test "should return enriched clusters" do
       cib_last_written = Date.to_string(Faker.Date.forward(0))
       cluster_id = Faker.UUID.v4()
@@ -72,6 +86,22 @@ defmodule Trento.ClustersTest do
 
       [%ClusterReadModel{id: ^cluster_id, cib_last_written: ^cib_last_written}] =
         Clusters.get_all_clusters()
+    end
+  end
+
+  describe "get_cluster_id_by_host_id/1" do
+    test "should return nil if the host is not part of any cluster" do
+      assert nil == Clusters.get_cluster_id_by_host_id(UUID.uuid4())
+    end
+
+    test "should return the cluster_id" do
+      cluster_id = UUID.uuid4()
+      host_id = UUID.uuid4()
+
+      insert(:cluster, id: cluster_id)
+      insert(:host, id: host_id, cluster_id: cluster_id)
+
+      assert cluster_id == Clusters.get_cluster_id_by_host_id(host_id)
     end
   end
 

@@ -58,14 +58,18 @@ describe('ClustersList component', () => {
       },
       {
         filter: 'SID',
-        options: ['PRD', 'QAS'],
+        options: ['PRD', 'QAS', 'HA1', 'HA2'],
         state: {
           ...cleanInitialState,
           clustersList: {
             clusters: [].concat(
               clusterFactory.buildList(4),
               clusterFactory.buildList(2, { sid: 'PRD' }),
-              clusterFactory.buildList(2, { sid: 'QAS' })
+              clusterFactory.buildList(2, { sid: 'QAS' }),
+              clusterFactory.buildList(2, {
+                sid: null,
+                additional_sids: ['HA1', 'HA2'],
+              })
             ),
           },
         },
@@ -73,13 +77,14 @@ describe('ClustersList component', () => {
       },
       {
         filter: 'Type',
-        options: ['hana_scale_up'],
+        options: ['hana_scale_up', 'ascs_ers'],
         state: {
           ...cleanInitialState,
           clustersList: {
             clusters: [].concat(
               clusterFactory.buildList(2, { type: 'unknown' }),
-              clusterFactory.buildList(2, { type: 'hana_scale_up' })
+              clusterFactory.buildList(2, { type: 'hana_scale_up' }),
+              clusterFactory.buildList(2, { type: 'ascs_ers' })
             ),
           },
         },
@@ -122,6 +127,24 @@ describe('ClustersList component', () => {
         });
       }
     );
+
+    it('should show SIDs delimited by comma in multi-sid clusters', () => {
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: clusterFactory.buildList(1, {
+            sid: null,
+            additional_sids: ['HA1', 'HA2'],
+          }),
+        },
+      };
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+
+      renderWithRouter(StatefulClustersList);
+
+      expect(screen.getByText('HA1, HA2')).toBeVisible();
+    });
 
     it('should put the filters values in the query string when filters are selected', () => {
       const tag = 'Tag1';

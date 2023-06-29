@@ -25,7 +25,10 @@ defmodule Trento.HostProjectorTest do
     HeartbeatSucceded,
     HostAddedToCluster,
     HostChecksSelected,
+    HostDeregistered,
     HostDetailsUpdated,
+    HostRemovedFromCluster,
+    HostRestored,
     ProviderUpdated
   }
 
@@ -46,9 +49,9 @@ defmodule Trento.HostProjectorTest do
   end
 
   setup do
-    %HostReadModel{id: host_id} = insert(:host)
+    %HostReadModel{id: host_id, hostname: hostname} = insert(:host)
 
-    %{host_id: host_id}
+    %{host_id: host_id, hostname: hostname}
   end
 
   test "should project a new host when HostRegistered event is received" do
@@ -127,6 +130,48 @@ defmodule Trento.HostProjectorTest do
     assert nil == host_projection.hostname
 
     refute_broadcast "host_details_updated", %{id: ^host_id, cluster_id: ^cluster_id}, 1000
+  end
+
+  test "should set the cluster_id to nil if a HostRemovedFromCluster event is received and the host is still part of the cluster" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
+
+    insert(
+      :host,
+      id: host_id = UUID.uuid4(),
+      hostname: Faker.StarWars.character(),
+      cluster_id: cluster_id
+    )
+
+    event = %HostRemovedFromCluster{
+      host_id: host_id,
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    projection = Repo.get!(HostReadModel, host_id)
+
+    assert nil == projection.cluster_id
+  end
+
+  test "should not set the cluster_id to nil if a HostRemovedFromCluster event is received and the host is not part of the cluster anymore" do
+    insert(:cluster, id: cluster_id = Faker.UUID.v4())
+
+    insert(
+      :host,
+      id: host_id = UUID.uuid4(),
+      hostname: Faker.StarWars.character(),
+      cluster_id: cluster_id
+    )
+
+    event = %HostRemovedFromCluster{
+      host_id: host_id,
+      cluster_id: UUID.uuid4()
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    projection = Repo.get!(HostReadModel, host_id)
+
+    assert cluster_id == projection.cluster_id
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{
@@ -364,6 +409,69 @@ defmodule Trento.HostProjectorTest do
                        id: ^host_id,
                        provider: :gcp,
                        provider_data: ^broadcast_provider_data
+                     },
+                     1000
+  end
+
+  test "should set deregistered_at to nil when HostRestored is received" do
+    host_id = UUID.uuid4()
+    insert(:host, id: host_id, deregistered_at: DateTime.utc_now())
+
+    event = %HostRestored{
+      host_id: host_id
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+    %{
+      agent_version: agent_version,
+      heartbeat: heartbeat,
+      hostname: hostname,
+      id: id,
+      ip_addresses: ip_addresses,
+      cluster_id: cluster_id,
+      provider: provider,
+      provider_data: provider_data,
+      deregistered_at: deregistered_at
+    } = Repo.get!(HostReadModel, host_id)
+
+    assert nil == deregistered_at
+
+    assert_broadcast "host_registered",
+                     %{
+                       agent_version: ^agent_version,
+                       cluster_id: ^cluster_id,
+                       heartbeat: ^heartbeat,
+                       hostname: ^hostname,
+                       id: ^id,
+                       ip_addresses: ^ip_addresses,
+                       provider: ^provider,
+                       provider_data: ^provider_data
+                     },
+                     1000
+  end
+
+  test "should update the deregistered_at field when HostDeregistered is received",
+       %{
+         host_id: host_id,
+         hostname: hostname
+       } do
+    timestamp = DateTime.utc_now()
+
+    event = %HostDeregistered{
+      host_id: host_id,
+      deregistered_at: timestamp
+    }
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, host_id)
+
+    assert timestamp == host_projection.deregistered_at
+
+    assert_broadcast "host_deregistered",
+                     %{
+                       id: ^host_id,
+                       hostname: ^hostname
                      },
                      1000
   end

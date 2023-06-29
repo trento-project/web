@@ -14,9 +14,12 @@ defmodule Trento.DatabaseProjectorTest do
   }
 
   alias Trento.Domain.Events.{
+    DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
-    DatabaseInstanceSystemReplicationChanged
+    DatabaseInstanceSystemReplicationChanged,
+    DatabaseRestored
   }
 
   alias Trento.ProjectorTestHelper
@@ -239,6 +242,95 @@ defmodule Trento.DatabaseProjectorTest do
                        host_id: ^host_id,
                        instance_number: ^instance_number,
                        health: :critical
+                     },
+                     1000
+  end
+
+  test "should update the database read model after a deregistration" do
+    deregistered_at = DateTime.utc_now()
+
+    insert(:database, id: sap_system_id = Faker.UUID.v4())
+
+    event = %DatabaseDeregistered{
+      sap_system_id: sap_system_id,
+      deregistered_at: deregistered_at
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    projection = %{sid: sid} = Repo.get(DatabaseReadModel, sap_system_id)
+
+    assert_broadcast "database_deregistered",
+                     %{id: ^sap_system_id, sid: ^sid},
+                     1000
+
+    assert deregistered_at == projection.deregistered_at
+  end
+
+  test "should remove a database instance from the read model after a deregistration" do
+    deregistered_at = DateTime.utc_now()
+
+    %{sid: sid} = insert(:database, id: sap_system_id = Faker.UUID.v4())
+    insert_list(4, :database_instance)
+
+    %{instance_number: instance_number, host_id: host_id} =
+      insert(:database_instance, sap_system_id: sap_system_id, sid: sid)
+
+    event = %DatabaseInstanceDeregistered{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      deregistered_at: deregistered_at
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    assert nil ==
+             Repo.get_by(DatabaseInstanceReadModel,
+               sap_system_id: sap_system_id,
+               instance_number: instance_number,
+               host_id: host_id
+             )
+
+    assert 4 ==
+             DatabaseInstanceReadModel
+             |> Repo.all()
+             |> Enum.count()
+
+    assert_broadcast "database_instance_deregistered",
+                     %{
+                       sap_system_id: ^sap_system_id,
+                       instance_number: ^instance_number,
+                       host_id: ^host_id,
+                       sid: ^sid
+                     },
+                     1000
+  end
+
+  test "should restore a deregistered database when DatabaseRestored is received" do
+    insert(:database,
+      id: sap_system_id = Faker.UUID.v4(),
+      sid: "NWD",
+      deregistered_at: DateTime.utc_now(),
+      health: :critical
+    )
+
+    event = %DatabaseRestored{
+      sap_system_id: sap_system_id,
+      health: :passing
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    projection = Repo.get(DatabaseReadModel, sap_system_id)
+    assert nil == projection.deregistered_at
+    assert :passing == projection.health
+
+    assert_broadcast "database_registered",
+                     %{
+                       health: :passing,
+                       id: ^sap_system_id,
+                       sid: "NWD"
                      },
                      1000
   end

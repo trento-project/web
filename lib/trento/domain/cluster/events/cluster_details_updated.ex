@@ -8,17 +8,29 @@ defmodule Trento.Domain.Events.ClusterDetailsUpdated do
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-  alias Trento.Domain.HanaClusterDetails
+  alias Trento.Domain.{
+    AscsErsClusterDetails,
+    HanaClusterDetails
+  }
 
   defevent do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
     field :sid, :string
+    field :additional_sids, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :resources_number, :integer
     field :hosts_number, :integer
 
-    embeds_one :details, HanaClusterDetails
+    field :details, PolymorphicEmbed,
+      types: [
+        hana_scale_up: [
+          module: HanaClusterDetails,
+          identify_by_fields: [:system_replication_mode]
+        ],
+        ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
+      ],
+      on_replace: :update
   end
 end

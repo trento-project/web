@@ -24,6 +24,22 @@ describe('networkClient', () => {
     clearCredentialsFromStore();
   });
 
+  it('should use default baseURL', async () => {
+    axiosMock.onGet('/api/v1/test').reply(200, { ok: 'ok' });
+
+    const response = await networkClient.get('/test');
+
+    expect(response.data).toEqual({ ok: 'ok' });
+  });
+
+  it('should apply the specific config in each request', async () => {
+    axiosMock.onGet('/base/test').reply(200, { ok: 'ok' });
+
+    const response = await networkClient.get('/test', { baseURL: '/base' });
+
+    expect(response.data).toEqual({ ok: 'ok' });
+  });
+
   it('should attach the access token from the store when a request is made', async () => {
     storeAccessToken('test-access');
 
