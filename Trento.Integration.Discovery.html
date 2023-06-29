@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-F3F9C9CF.js"></script>
+    <script src="dist/sidebar_items-812CA5F6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -152,6 +152,8 @@ Trento Web
 
         </div>
 
+          <div class="summary-synopsis"><p>Get the discovery events that were handled to build the current state of the system.</p></div>
+
       </div>
 
       <div class="summary-row">
@@ -159,6 +161,8 @@ Trento Web
           <a href="#get_discarded_discovery_events/1" translate="no">get_discarded_discovery_events(event_number)</a>
 
         </div>
+
+          <div class="summary-synopsis"><p>Get the discovery events that were dead-lettered.</p></div>
 
       </div>
 
@@ -168,6 +172,9 @@ Trento Web
 
         </div>
 
+          <div class="summary-synopsis"><p>Transform a discovery in a list of commands event by using the appropriate policy.
+Store the event in the discovery events log for auditing purposes and dispatch the commands.</p></div>
+
       </div>
 
       <div class="summary-row">
@@ -176,6 +183,8 @@ Trento Web
 
         </div>
 
+          <div class="summary-synopsis"><p>Prune the discarded discovery events log by removing the events older than the given number of days. </p></div>
+
       </div>
 
       <div class="summary-row">
@@ -183,6 +192,8 @@ Trento Web
           <a href="#prune_events/1" translate="no">prune_events(days)</a>
 
         </div>
+
+          <div class="summary-synopsis"><p>Prune the discovery events log by removing the events older than the given number of days. </p></div>
 
       </div>
 
@@ -209,7 +220,7 @@ Types
     </a>
     <h1 class="signature" translate="no">command()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L20" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L22" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -250,7 +261,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_current_discovery_events()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L37" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L47" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -268,7 +279,7 @@ Functions
 
       </div>
 
-
+<p>Get the discovery events that were handled to build the current state of the system.</p>
   </section>
 </section>
 <section class="detail" id="get_discarded_discovery_events/1">
@@ -280,7 +291,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_discarded_discovery_events(event_number)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L51" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L64" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -298,7 +309,7 @@ Functions
 
       </div>
 
-
+<p>Get the discovery events that were dead-lettered.</p>
   </section>
 </section>
 <section class="detail" id="handle/1">
@@ -310,7 +321,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">handle(event)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L23" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L30" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -326,7 +337,8 @@ Functions
 
       </div>
 
-
+<p>Transform a discovery in a list of commands event by using the appropriate policy.
+Store the event in the discovery events log for auditing purposes and dispatch the commands.</p>
   </section>
 </section>
 <section class="detail" id="prune_discarded_discovery_events/1">
@@ -338,7 +350,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prune_discarded_discovery_events(days)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L73" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L92" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -354,7 +366,7 @@ Functions
 
       </div>
 
-
+<p>Prune the discarded discovery events log by removing the events older than the given number of days. </p>
   </section>
 </section>
 <section class="detail" id="prune_events/1">
@@ -366,7 +378,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prune_events(days)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L61" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/discovery.ex#L77" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -382,7 +394,7 @@ Functions
 
       </div>
 
-
+<p>Prune the discovery events log by removing the events older than the given number of days. </p>
   </section>
 </section>
 

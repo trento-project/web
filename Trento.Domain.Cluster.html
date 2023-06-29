@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-F3F9C9CF.js"></script>
+    <script src="dist/sidebar_items-812CA5F6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -118,10 +118,9 @@ deployed HA Clusters (Pacemaker, Corosync, etc).
 The HA cluster is used to handle the high availability scenarios on the installed
 SAP infrastructure. That's why this domain is tailored to work on clusters managing
 SAP workloads.</p><p>Each deployed cluster is registered as a new aggregate entry, meaning that all the hosts belonging
-to the same cluster are part of the same stream. A cluster is registered first time/details updated afterwards
-only by cluster discovery messages coming from the <strong>designated controller</strong> node. Once a cluster is
-registered other hosts can be added receiving discovery messages coming from other nodes. All the hosts
-are listed in the <code class="inline">hosts</code> field.</p><p>The cluster aggregate stores and updates information coming in the cluster discovery messages such as:</p><ul><li>Cluster name</li><li>Number of hosts and cluster resources</li><li>Platform where the host is running (the cloud provider for instance)</li><li>Managed SAP workload SID</li></ul><h2 id="module-cluster-health" class="section-heading">
+to the same cluster are part of the same stream.</p><p>A new cluster is registered when a cluster discovery message from any of the nodes of the cluster is received.</p><p>The cluster details will be populated if the received discovery message is coming from the <strong>designated controller</strong> node.
+Otherwise the cluster details are left as unknown, and filled once a message from the <strong>designated controller</strong> is received.
+Once a cluster is registered, other hosts will be added when cluster discovery messages from them are received.</p><p>All the hosts are listed in the <code class="inline">hosts</code> field.</p><p>The cluster aggregate stores and updates information coming in the cluster discovery messages such as:</p><ul><li>Cluster name</li><li>Number of hosts and cluster resources</li><li>Platform where the host is running (the cloud provider for instance)</li><li>Managed SAP workload SID</li></ul><h2 id="module-cluster-health" class="section-heading">
   <a href="#module-cluster-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">cluster-health</p>
   </a>
@@ -199,6 +198,14 @@ project scheduler configuration.</p><p>This domain only knows about the health, 
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#cast_and_validate_required_polymorphic_embed/3" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#changeset/2" translate="no">changeset(struct, params)</a>
 
         </div>
@@ -268,7 +275,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L94" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L106" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -281,8 +288,10 @@ Types
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.Cluster{
+  additional_sids: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   checks_health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   cluster_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  deregistered_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   details: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   discovered_health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
@@ -324,7 +333,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">apply(cluster, arg2)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L230" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L342" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -346,7 +355,29 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L94" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L106" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cast_and_validate_required_polymorphic_embed/3">
+
+  <div class="detail-header">
+    <a href="#cast_and_validate_required_polymorphic_embed/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L106" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -368,7 +399,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L94" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L106" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -391,7 +422,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">execute(cluster, command)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L113" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L136" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -413,7 +444,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L94" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L106" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -442,7 +473,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L94" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L106" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -470,7 +501,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L94" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/cluster/cluster.ex#L106" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

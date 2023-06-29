@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-F3F9C9CF.js"></script>
+    <script src="dist/sidebar_items-812CA5F6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -133,7 +133,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#handle/1" translate="no">handle(map)</a>
+          <a href="#handle/2" translate="no">handle(map, current_instances)</a>
 
         </div>
 
@@ -153,16 +153,16 @@ Trento Web
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="handle/1">
+<section class="detail" id="handle/2">
 
   <div class="detail-header">
-    <a href="#handle/1" class="detail-link" title="Link to this function">
+    <a href="#handle/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">handle(map)</h1>
+    <h1 class="signature" translate="no">handle(map, current_instances)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/policies/sap_system_policy.ex#L29" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/policies/sap_system_policy.ex#L42" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -174,10 +174,14 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> handle(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> handle(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), [
+  <a href="Trento.ApplicationInstanceReadModel.html#t:t/0">Trento.ApplicationInstanceReadModel.t</a>() | <a href="Trento.DatabaseInstanceReadModel.html#t:t/0">Trento.DatabaseInstanceReadModel.t</a>()
+]) ::
   {:ok,
    [
-     <a href="Trento.Domain.Commands.RegisterApplicationInstance.html#t:t/0">Trento.Domain.Commands.RegisterApplicationInstance.t</a>()
+     <a href="Trento.Domain.Commands.DeregisterApplicationInstance.html#t:t/0">Trento.Domain.Commands.DeregisterApplicationInstance.t</a>()
+     | <a href="Trento.Domain.Commands.DeregisterDatabaseInstance.html#t:t/0">Trento.Domain.Commands.DeregisterDatabaseInstance.t</a>()
+     | <a href="Trento.Domain.Commands.RegisterApplicationInstance.html#t:t/0">Trento.Domain.Commands.RegisterApplicationInstance.t</a>()
      | <a href="Trento.Domain.Commands.RegisterDatabaseInstance.html#t:t/0">Trento.Domain.Commands.RegisterDatabaseInstance.t</a>()
    ]}
   | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
