@@ -84,6 +84,20 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
+    updateApplicationInstanceHost: (state, action) => {
+      state.applicationInstances = state.applicationInstances.map(
+        (instance) => {
+          if (
+            action.payload.sap_system_id === instance.sap_system_id &&
+            action.payload.old_host_id === instance.host_id &&
+            action.payload.instance_number === instance.instance_number
+          ) {
+            instance.host_id = action.payload.new_host_id;
+          }
+          return instance;
+        }
+      );
+    },
     updateApplicationInstanceHealth: (state, action) => {
       state.applicationInstances = state.applicationInstances.map((instance) =>
         maybeUpdateInstanceHealth(action.payload, instance)
@@ -146,6 +160,7 @@ export const SAP_SYSTEM_REGISTERED = 'SAP_SYSTEM_REGISTERED';
 export const SAP_SYSTEM_HEALTH_CHANGED = 'SAP_SYSTEM_HEALTH_CHANGED';
 export const APPLICATION_INSTANCE_REGISTERED =
   'APPLICATION_INSTANCE_REGISTERED';
+export const APPLICATION_INSTANCE_MOVED = 'APPLICATION_INSTANCE_MOVED';
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'APPLICATION_INSTANCE_DEREGISTERED';
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
@@ -163,6 +178,7 @@ export const {
   appendDatabaseInstanceToSapSystem,
   removeDatabaseInstanceFromSapSystem,
   updateSapSystemHealth,
+  updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
