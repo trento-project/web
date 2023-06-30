@@ -3,6 +3,7 @@ import {
   SAP_SYSTEM_REGISTERED,
   SAP_SYSTEM_HEALTH_CHANGED,
   APPLICATION_INSTANCE_REGISTERED,
+  APPLICATION_INSTANCE_MOVED,
   APPLICATION_INSTANCE_HEALTH_CHANGED,
   APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
@@ -11,6 +12,7 @@ import {
   updateSapSystemHealth,
   appendApplicationInstance,
   removeApplicationInstance,
+  updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
   removeSAPSystem,
   updateSAPSystem,
@@ -64,6 +66,16 @@ function* applicationInstanceRegistered({ payload }) {
   );
 }
 
+export function* applicationInstanceMoved({ payload }) {
+  yield put(updateApplicationInstanceHost(payload));
+  yield put(
+    notify({
+      text: `The application instance ${payload.instance_number} has been moved.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 export function* applicationInstanceDeregistered({ payload }) {
   yield put(removeApplicationInstance(payload));
   yield put(
@@ -105,6 +117,7 @@ export function* watchSapSystem() {
     APPLICATION_INSTANCE_REGISTERED,
     applicationInstanceRegistered
   );
+  yield takeEvery(APPLICATION_INSTANCE_MOVED, applicationInstanceMoved);
   yield takeEvery(
     APPLICATION_INSTANCE_DEREGISTERED,
     applicationInstanceDeregistered

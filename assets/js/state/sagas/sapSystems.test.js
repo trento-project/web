@@ -1,11 +1,13 @@
 import { recordSaga } from '@lib/test-utils';
 import {
+  applicationInstanceMoved,
   applicationInstanceDeregistered,
   sapSystemDeregistered,
   sapSystemUpdated,
 } from '@state/sagas/sapSystems';
 import {
   removeSAPSystem,
+  updateApplicationInstanceHost,
   removeApplicationInstance,
   updateSAPSystem,
 } from '@state/sapSystems';
@@ -13,6 +15,7 @@ import {
   sapSystemFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
+import { faker } from '@faker-js/faker';
 
 describe('SAP Systems sagas', () => {
   it('should remove the SAP system', async () => {
@@ -23,6 +26,25 @@ describe('SAP Systems sagas', () => {
     });
 
     expect(dispatched).toContainEqual(removeSAPSystem({ id }));
+  });
+
+  it('should update the application instance host', async () => {
+    const { sap_system_id, instance_number, old_host_id } =
+      sapSystemApplicationInstanceFactory.build();
+    const new_host_id = faker.datatype.uuid();
+
+    const dispatched = await recordSaga(applicationInstanceMoved, {
+      payload: { sap_system_id, instance_number, old_host_id, new_host_id },
+    });
+
+    expect(dispatched).toContainEqual(
+      updateApplicationInstanceHost({
+        sap_system_id,
+        instance_number,
+        old_host_id,
+        new_host_id,
+      })
+    );
   });
 
   it('should remove the application instance', async () => {
@@ -38,7 +60,7 @@ describe('SAP Systems sagas', () => {
     );
   });
 
-  it('should updated the SAP system', async () => {
+  it('should update the SAP system', async () => {
     const { id, ensa_version } = sapSystemFactory.build();
 
     const dispatched = await recordSaga(sapSystemUpdated, {
