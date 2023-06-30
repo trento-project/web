@@ -45,6 +45,7 @@ function ChecksSelection({
   onUpdateCatalog = () => {},
   onStartExecution = () => {},
   onSave = () => {},
+  onClear = () => {},
 }) {
   const [selectedChecks, setSelectedChecks] = useState(selected);
 
@@ -65,7 +66,8 @@ function ChecksSelection({
 
   useEffect(() => {
     onUpdateCatalog();
-  }, [onUpdateCatalog]);
+    onClear();
+  }, [onUpdateCatalog, onClear]);
 
   return (
     <div className={classNames('bg-white rounded p-3', className)}>
@@ -91,6 +93,8 @@ function ChecksSelection({
                       uniq([...selectedChecks, ...groupChecks])
                     );
                   }
+
+                  onClear();
                 }}
               >
                 {checks.map((check) => (
@@ -103,6 +107,7 @@ function ChecksSelection({
                     selected={check.selected}
                     onChange={() => {
                       setSelectedChecks(toggle(check.id, selectedChecks));
+                      onClear();
                     }}
                   />
                 ))}
@@ -126,7 +131,7 @@ function ChecksSelection({
               )}
             </button>
             {error && (
-              <FailAlert onClose={() => {}}>
+              <FailAlert onClose={onClear}>
                 <p>{error}</p>
               </FailAlert>
             )}
@@ -135,7 +140,7 @@ function ChecksSelection({
                 resourceID={resourceID}
                 selectedChecks={selectedChecks}
                 hosts={hosts}
-                onClose={() => {}}
+                onClose={onClear}
                 onStartExecution={onStartExecution}
               />
             )}

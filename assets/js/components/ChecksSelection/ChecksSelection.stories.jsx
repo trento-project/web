@@ -75,6 +75,11 @@ export default {
     onUpdateCatalog: { action: 'Update catalog' },
     onStartExecution: { action: 'Start execution' },
     onSave: { action: 'Save' },
+    onClear: {
+      action: 'Clear',
+      description:
+        'Gets called on mount and when checks are selected. It can be used to clear any external state.',
+    },
   },
 };
 
