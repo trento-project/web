@@ -252,9 +252,8 @@ function HostsList() {
       <DeregistrationModal
         hostname={selectedHost?.hostname}
         isOpen={!!selectedHost}
-        onCleanUp={() => {
-          // eslint-disable-next-line no-console
-          console.log('clicked the big red button!');
+        onCleanUp={async () => {
+          await del(`/hosts/${selectedHost.id}`);
           setSelectedHost(undefined);
         }}
         onCancel={() => setSelectedHost(undefined)}
