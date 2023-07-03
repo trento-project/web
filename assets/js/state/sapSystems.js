@@ -19,12 +19,8 @@ export const sapSystemsListSlice = createSlice({
     setSapSystems: (state, { payload }) => {
       state.sapSystems = payload;
 
-      state.applicationInstances = payload.flatMap(
-        (sapSystem) => sapSystem.application_instances
-      );
-      state.databaseInstances = payload.flatMap(
-        (sapSystem) => sapSystem.database_instances
-      );
+      state.applicationInstances = payload.flatMap((sapSystem) => sapSystem.application_instances);
+      state.databaseInstances = payload.flatMap((sapSystem) => sapSystem.database_instances);
     },
     startSapSystemsLoading: (state) => {
       state.loading = true;
@@ -40,10 +36,7 @@ export const sapSystemsListSlice = createSlice({
     // When a new ApplicationInstanceRegistered comes in,
     // it need to be appended to the list of the application instances of the relative sap system
     appendApplicationInstance: (state, action) => {
-      state.applicationInstances = [
-        ...state.applicationInstances,
-        action.payload,
-      ];
+      state.applicationInstances = [...state.applicationInstances, action.payload];
     },
     removeApplicationInstance: (
       state,
@@ -84,6 +77,21 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
+    updateApplicationInstanceHost: (
+      state,
+      { payload: { sap_system_id, old_host_id, new_host_id, instance_number } }
+    ) => {
+      state.applicationInstances = state.applicationInstances.map((instance) => {
+        if (
+          instance.sap_system_id === sap_system_id &&
+          instance.host_id === old_host_id &&
+          instance.instance_number === instance_number
+        ) {
+          instance.host_id = new_host_id;
+        }
+        return instance;
+      });
+    },
     updateApplicationInstanceHealth: (state, action) => {
       state.applicationInstances = state.applicationInstances.map((instance) =>
         maybeUpdateInstanceHealth(action.payload, instance)
@@ -102,8 +110,7 @@ export const sapSystemsListSlice = createSlice({
           action.payload.instance_number === instance.instance_number
         ) {
           instance.system_replication = action.payload.system_replication;
-          instance.system_replication_status =
-            action.payload.system_replication_status;
+          instance.system_replication_status = action.payload.system_replication_status;
         }
         return instance;
       });
@@ -127,9 +134,7 @@ export const sapSystemsListSlice = createSlice({
       });
     },
     removeSAPSystem: (state, { payload: { id } }) => {
-      state.sapSystems = state.sapSystems.filter(
-        (sapSystem) => sapSystem.id !== id
-      );
+      state.sapSystems = state.sapSystems.filter((sapSystem) => sapSystem.id !== id);
     },
     updateSAPSystem: (state, { payload }) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
@@ -144,12 +149,10 @@ export const sapSystemsListSlice = createSlice({
 
 export const SAP_SYSTEM_REGISTERED = 'SAP_SYSTEM_REGISTERED';
 export const SAP_SYSTEM_HEALTH_CHANGED = 'SAP_SYSTEM_HEALTH_CHANGED';
-export const APPLICATION_INSTANCE_REGISTERED =
-  'APPLICATION_INSTANCE_REGISTERED';
-export const APPLICATION_INSTANCE_DEREGISTERED =
-  'APPLICATION_INSTANCE_DEREGISTERED';
-export const APPLICATION_INSTANCE_HEALTH_CHANGED =
-  'APPLICATION_INSTANCE_HEALTH_CHANGED';
+export const APPLICATION_INSTANCE_REGISTERED = 'APPLICATION_INSTANCE_REGISTERED';
+export const APPLICATION_INSTANCE_MOVED = 'APPLICATION_INSTANCE_MOVED';
+export const APPLICATION_INSTANCE_DEREGISTERED = 'APPLICATION_INSTANCE_DEREGISTERED';
+export const APPLICATION_INSTANCE_HEALTH_CHANGED = 'APPLICATION_INSTANCE_HEALTH_CHANGED';
 export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
 export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
 
@@ -163,6 +166,7 @@ export const {
   appendDatabaseInstanceToSapSystem,
   removeDatabaseInstanceFromSapSystem,
   updateSapSystemHealth,
+  updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,

@@ -3,6 +3,7 @@ import {
   SAP_SYSTEM_REGISTERED,
   SAP_SYSTEM_HEALTH_CHANGED,
   APPLICATION_INSTANCE_REGISTERED,
+  APPLICATION_INSTANCE_MOVED,
   APPLICATION_INSTANCE_HEALTH_CHANGED,
   APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
@@ -11,6 +12,7 @@ import {
   updateSapSystemHealth,
   appendApplicationInstance,
   removeApplicationInstance,
+  updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
   removeSAPSystem,
   updateSAPSystem,
@@ -36,8 +38,7 @@ function* sapSystemRegistered({ payload }) {
 }
 
 function* sapSystemHealthChanged({ payload }) {
-  const sid =
-    (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
+  const sid = (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
 
   yield put(updateSapSystemHealth(payload));
   yield put(
@@ -60,6 +61,16 @@ function* applicationInstanceRegistered({ payload }) {
     appendEntryToLiveFeed({
       source: payload.sid,
       message: 'New Application instance registered.',
+    })
+  );
+}
+
+export function* applicationInstanceMoved({ payload: { sid, instance_number } }) {
+  yield put(updateApplicationInstanceHost(payload));
+  yield put(
+    notify({
+      text: `The application instance ${instance_number} in ${sid} has been moved.`,
+      icon: 'ℹ️',
     })
   );
 }
@@ -101,18 +112,10 @@ export function* sapSystemUpdated({ payload }) {
 export function* watchSapSystem() {
   yield takeEvery(SAP_SYSTEM_REGISTERED, sapSystemRegistered);
   yield takeEvery(SAP_SYSTEM_HEALTH_CHANGED, sapSystemHealthChanged);
-  yield takeEvery(
-    APPLICATION_INSTANCE_REGISTERED,
-    applicationInstanceRegistered
-  );
-  yield takeEvery(
-    APPLICATION_INSTANCE_DEREGISTERED,
-    applicationInstanceDeregistered
-  );
-  yield takeEvery(
-    APPLICATION_INSTANCE_HEALTH_CHANGED,
-    applicationInstanceHealthChanged
-  );
+  yield takeEvery(APPLICATION_INSTANCE_REGISTERED, applicationInstanceRegistered);
+  yield takeEvery(APPLICATION_INSTANCE_MOVED, applicationInstanceMoved);
+  yield takeEvery(APPLICATION_INSTANCE_DEREGISTERED, applicationInstanceDeregistered);
+  yield takeEvery(APPLICATION_INSTANCE_HEALTH_CHANGED, applicationInstanceHealthChanged);
   yield takeEvery(SAP_SYSTEM_DEREGISTERED, sapSystemDeregistered);
   yield takeEvery(SAP_SYSTEM_UPDATED, sapSystemUpdated);
 }

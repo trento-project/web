@@ -1,5 +1,6 @@
 import sapSystemsReducer, {
   removeSAPSystem,
+  updateApplicationInstanceHost,
   removeApplicationInstance,
   updateSAPSystem,
 } from '@state/sapSystems';
@@ -7,6 +8,7 @@ import {
   sapSystemFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories/sapSystems';
+import { faker } from '@faker-js/faker';
 
 describe('SAP Systems reducer', () => {
   it('should remove SAP system from state', () => {
@@ -22,6 +24,26 @@ describe('SAP Systems reducer', () => {
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should change the host of an application instance', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const newHostId = faker.datatype.uuid();
+    const payload = {
+      sap_system_id: instance.sap_system_id,
+      instance_number: instance.instance_number,
+      old_host_id: instance.host_id,
+      new_host_id: newHostId,
+    };
+    const action = updateApplicationInstanceHost(payload);
+
+    const state = sapSystemsReducer(initialState, action);
+    expect(state.applicationInstances[0].host_id).toEqual(newHostId);
   });
 
   it('should remove an application instance from state', () => {
