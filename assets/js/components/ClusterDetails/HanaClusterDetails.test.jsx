@@ -6,6 +6,7 @@ import { renderWithRouter } from '@lib/test-utils';
 import {
   clusterFactory,
   hostFactory,
+  hanaClusterDetailsNodesFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   sapSystemFactory,
@@ -180,5 +181,51 @@ describe('HanaClusterDetails component', () => {
 
     expect(sidContainer).toHaveTextContent(sid);
     expect(sidContainer.querySelector('a')).toBeNull();
+  });
+
+  it('should display a host link in the site details if the host is registered', () => {
+    const unregisteredClusterNode = hanaClusterDetailsNodesFactory.build({ name: "unknownhost" })
+    const registeredClusterNode = hanaClusterDetailsNodesFactory.build({ name: "registeredhost" })
+
+
+    const {
+      clusterID,
+      clusterName,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sid,
+      provider,
+      details,
+    } = clusterFactory.build({ nodes: [unregisteredClusterNode, registeredClusterNode] });
+
+    const hosts = hostFactory.buildList(2, { hostname: "registeredhost", cluster_id: clusterID });
+
+    const sapSystems = sapSystemFactory.buildList(2, { tenant: sid });
+
+    renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        clusterName={clusterName}
+        selectedChecks={[]}
+        hasSelectedChecks={false}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        sid={sid}
+        provider={provider}
+        sapSystems={sapSystems}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    const unregisteredHostContainer = screen.getByText('unknownhost').nextSibling;
+    const registeredHostContainer = screen.getByText('unknownhost');
+
+    expect(registeredHostContainer).toBeInTheDocument();
+    expect(unregisteredHostContainer.querySelector('a')).toHaveAttribute(
+      'href',
+      `/hosts/registeredhost}`
+    );
   });
 });
