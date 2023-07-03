@@ -220,7 +220,7 @@ describe('HanaClusterDetails component', () => {
     );
 
     const unregisteredHostContainer = screen.getByText('unknownhost').nextSibling;
-    const registeredHostContainer = screen.getByText('unknownhost');
+    const registeredHostContainer = screen.getByText('registeredhost');
 
     expect(registeredHostContainer).toBeInTheDocument();
     expect(unregisteredHostContainer.querySelector('a')).toHaveAttribute(
