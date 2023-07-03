@@ -170,4 +170,52 @@ context('Hosts Overview', () => {
       });
     });
   });
+
+  describe('Host Deregistration', () => {
+    describe('Hosts List should correctly display the deregistration buttons', () => {
+      before(() => {
+        cy.visit('/hosts');
+        cy.url().should('include', '/hosts');
+        // cy.task('startAgentHeartbeat', agents());
+      });
+
+      it("clicking 'Clean Up' button, then clicking 'Cancel' button in modal should not deregister Host", () => {
+        cy.get(`tr:has(#host-${availableHosts1stPage[0].id})`).as('firstHost');
+
+        cy.get(`@firstHost`)
+          .find('button')
+          .should('contain', 'Clean up')
+          .click();
+
+        cy.get('#headlessui-portal-root').as('deregistrationModal');
+
+        cy.get('@deregistrationModal', { timeout: 15000 })
+          .find('button')
+          .contains('Cancel')
+          .click();
+        cy.get('@deregistrationModal', { timeout: 15000 }).should('not.exist');
+
+        cy.get('@firstHost').should('exist');
+      });
+
+      it("clicking 'Clean Up' button, then clicking confirmation button in modal should deregister Host", () => {
+        cy.get(`tr:has(#host-${availableHosts1stPage[0].id})`).as('firstHost');
+
+        cy.get(`@firstHost`)
+          .find('button')
+          .should('contain', 'Clean up')
+          .click();
+
+        cy.get('#headlessui-portal-root').as('deregistrationModal');
+
+        cy.get('@deregistrationModal', { timeout: 15000 })
+          .find('button')
+          .contains('Clean up')
+          .click();
+        cy.get('@deregistrationModal', { timeout: 15000 }).should('not.exist');
+
+        cy.get('@firstHost', { timeout: 15000 }).should('not.exist');
+      });
+    });
+  });
 });
