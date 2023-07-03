@@ -98,7 +98,7 @@ defmodule Trento.MixProject do
       {:timex, "~> 3.7.7"},
       {:trento_contracts,
        github: "trento-project/contracts",
-       ref: "53bce57d28b18fd4d73cab30a6e0793b8204139b",
+       ref: "cd285f49e0cbdf168ae9aa3d86d92252b3754139",
        sparse: "elixir"},
       {:unplug, "~> 1.0.0"},
       {:proper_case, "~> 1.3.1"},
