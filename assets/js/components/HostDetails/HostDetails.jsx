@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { EOS_CLEANING_SERVICES } from 'eos-icons-react';
 
 import { networkClient } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
@@ -11,9 +10,7 @@ import Table from '@components/Table';
 
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
-import Button from '@components/Button';
 import ClusterLink from '@components/ClusterLink';
-import DeregistrationModal from '@components/DeregistrationModal';
 import WarningBanner from '@components/Banners/WarningBanner';
 import SuseLogo from '@static/suse_logo.svg';
 import {
@@ -39,7 +36,6 @@ function HostDetails() {
   const { grafanaPublicUrl } = config;
 
   const [exportersStatus, setExportersStatus] = useState([]);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
@@ -60,56 +56,29 @@ function HostDetails() {
 
   return (
     <div>
-      <DeregistrationModal
-        host={host}
-        isOpen={modalIsOpen}
-        onCleanUp={() => {
-          // eslint-disable-next-line no-console
-          console.log('clicked the big red button!');
-        }}
-        onCancel={() => setModalIsOpen(false)}
-      />
       <BackButton url="/hosts">Back to Hosts</BackButton>
-      <div className="flex justify-between">
-        <div className="flex">
-          <PageHeader>
-            Host Details: <span className="font-bold">{host.hostname}</span>
-          </PageHeader>
-          <StatusPill
-            className="self-center ml-4 shadow"
-            heartbeat={host.heartbeat}
-          >
-            Agent
-          </StatusPill>
+      <div className="flex">
+        <PageHeader>
+          Host Details: <span className="font-bold">{host.hostname}</span>
+        </PageHeader>
+        <StatusPill
+          className="self-center ml-4 shadow"
+          heartbeat={host.heartbeat}
+        >
+          Agent
+        </StatusPill>
 
-          {Object.entries(exportersStatus).map(
-            ([exporterName, exporterStatus]) => (
-              <StatusPill
-                key={exporterName}
-                className="self-center ml-4 shadow"
-                heartbeat={exporterStatus}
-              >
-                {exporterName}
-              </StatusPill>
-            )
-          )}
-        </div>
-        <div className="flex w-fit">
-          <Button
-            type="primary-white"
-            className="inline-block mx-0.5 border-green-500 border w-fit"
-            size="small"
-            onClick={() => setModalIsOpen(true)}
-          >
-            <EOS_CLEANING_SERVICES
-              size="base"
-              className="fill-jungle-green-500 inline"
-            />
-            <span className="text-jungle-green-500 text-sm font-bold pl-1.5">
-              Clean up
-            </span>
-          </Button>
-        </div>
+        {Object.entries(exportersStatus).map(
+          ([exporterName, exporterStatus]) => (
+            <StatusPill
+              key={exporterName}
+              className="self-center ml-4 shadow"
+              heartbeat={exporterStatus}
+            >
+              {exporterName}
+            </StatusPill>
+          )
+        )}
       </div>
       {versionWarningMessage && (
         <WarningBanner>{versionWarningMessage}</WarningBanner>
