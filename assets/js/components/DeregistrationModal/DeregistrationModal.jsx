@@ -8,6 +8,7 @@ import Button from '@components/Button';
 function DeregistrationModal({
   hostname,
   isOpen = false,
+  isError = false,
   onCleanUp,
   onCancel,
 }) {
@@ -22,6 +23,14 @@ function DeregistrationModal({
         discovered by the agent in this host, including the host itself and any
         other component depending on it.
       </div>
+      {isError && (
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mt-3 rounded relative"
+          role="alert"
+        >
+          Error occurred when requesting deregistration of host
+        </div>
+      )}
       <div className="flex justify-start gap-2 mt-4">
         <Button
           type="default-fit"
