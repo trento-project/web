@@ -1,6 +1,6 @@
 import { recordSaga } from '@lib/test-utils';
-import { hostDeregistered } from '@state/sagas/hosts';
-import { removeHost } from '@state/hosts';
+import { hostDeregistered, hostDeregisterable } from '@state/sagas/hosts';
+import { removeHost, setHostDeregisterable } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
 
 describe('Hosts sagas', () => {
@@ -13,5 +13,16 @@ describe('Hosts sagas', () => {
     });
 
     expect(dispatched).toContainEqual(removeHost(payload));
+  });
+
+  it('should mark the host as deregisterable', async () => {
+    const { id, hostname } = hostFactory.build();
+    const payload = { id, hostname };
+
+    const dispatched = await recordSaga(hostDeregisterable, {
+      payload,
+    });
+
+    expect(dispatched).toContainEqual(setHostDeregisterable(payload));
   });
 });
