@@ -38,7 +38,8 @@ function* sapSystemRegistered({ payload }) {
 }
 
 function* sapSystemHealthChanged({ payload }) {
-  const sid = (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
+  const sid =
+    (yield select(getSapSystem(payload.id)))?.sid || 'unable to determine SID';
 
   yield put(updateSapSystemHealth(payload));
   yield put(
@@ -65,7 +66,8 @@ function* applicationInstanceRegistered({ payload }) {
   );
 }
 
-export function* applicationInstanceMoved({ payload: { sid, instance_number } }) {
+export function* applicationInstanceMoved({ payload }) {
+  const { sid, instance_number } = payload;
   yield put(updateApplicationInstanceHost(payload));
   yield put(
     notify({
@@ -112,10 +114,19 @@ export function* sapSystemUpdated({ payload }) {
 export function* watchSapSystem() {
   yield takeEvery(SAP_SYSTEM_REGISTERED, sapSystemRegistered);
   yield takeEvery(SAP_SYSTEM_HEALTH_CHANGED, sapSystemHealthChanged);
-  yield takeEvery(APPLICATION_INSTANCE_REGISTERED, applicationInstanceRegistered);
+  yield takeEvery(
+    APPLICATION_INSTANCE_REGISTERED,
+    applicationInstanceRegistered
+  );
   yield takeEvery(APPLICATION_INSTANCE_MOVED, applicationInstanceMoved);
-  yield takeEvery(APPLICATION_INSTANCE_DEREGISTERED, applicationInstanceDeregistered);
-  yield takeEvery(APPLICATION_INSTANCE_HEALTH_CHANGED, applicationInstanceHealthChanged);
+  yield takeEvery(
+    APPLICATION_INSTANCE_DEREGISTERED,
+    applicationInstanceDeregistered
+  );
+  yield takeEvery(
+    APPLICATION_INSTANCE_HEALTH_CHANGED,
+    applicationInstanceHealthChanged
+  );
   yield takeEvery(SAP_SYSTEM_DEREGISTERED, sapSystemDeregistered);
   yield takeEvery(SAP_SYSTEM_UPDATED, sapSystemUpdated);
 }
