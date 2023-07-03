@@ -34,8 +34,8 @@ const siteDetailsConfig = {
       title: 'Hostname',
       key: '',
       render: (_, hostData) => {
-        if (hostData.hostId) {
-          return (<HostLink hostId={hostData.hostId}>{hostData.name}</HostLink>);
+        if (hostData.id) {
+          return (<HostLink hostId={hostData.id}>{hostData.name}</HostLink>);
         }
         return (
           <span className="group flex items-center relative">
