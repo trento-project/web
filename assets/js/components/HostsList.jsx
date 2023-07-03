@@ -60,6 +60,12 @@ function HostsList() {
 
   const dispatch = useDispatch();
 
+  const requestDeregistration = async (id) => {
+    await del(`/hosts/${id}`);
+    // FIXME: handle unhappy path here
+    setSelectedHost(undefined);
+  }
+
   const displayCleanUpButton = ({
     heartbeat,
     last_heartbeat_timestamp,
@@ -252,10 +258,7 @@ function HostsList() {
       <DeregistrationModal
         hostname={selectedHost?.hostname}
         isOpen={!!selectedHost}
-        onCleanUp={async () => {
-          await del(`/hosts/${selectedHost.id}`);
-          setSelectedHost(undefined);
-        }}
+        onCleanUp={() => requestDeregistration(selectedHost.id)}
         onCancel={() => setSelectedHost(undefined)}
       />
       <div className="bg-white rounded-lg shadow">
