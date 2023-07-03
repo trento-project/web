@@ -51,10 +51,12 @@ export const checkFactory = Factory.define(() => ({
 }));
 
 export const healthSummaryFactory = Factory.define(() => ({
-  clusterId: faker.datatype.uuid(),
-  clustersHealth: healthEnum(),
+  applicationClusterId: faker.datatype.uuid(),
+  applicationClusterHealth: healthEnum(),
   databaseHealth: healthEnum(),
   databaseId: faker.datatype.uuid(),
+  databaseClusterId: faker.datatype.uuid(),
+  databaseClusterHealth: healthEnum(),
   hostsHealth: healthEnum(),
   id: faker.datatype.uuid(),
   sapsystemHealth: healthEnum(),
