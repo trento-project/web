@@ -143,7 +143,7 @@ defmodule Trento.SapSystemProjectorTest do
   test "should move the application instance when an ApplicationInstanceMoved is received" do
     insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
 
-    %{host_id: old_host_id, instance_number: instance_number} =
+    %{host_id: old_host_id, instance_number: instance_number, sid: sid} =
       insert(:application_instance, sap_system_id: sap_system_id)
 
     event = %ApplicationInstanceMoved{
@@ -169,7 +169,8 @@ defmodule Trento.SapSystemProjectorTest do
         sap_system_id: ^sap_system_id,
         instance_number: ^instance_number,
         old_host_id: ^old_host_id,
-        new_host_id: ^new_host_id
+        new_host_id: ^new_host_id,
+        sid: ^sid
       },
       1000
     )
@@ -253,15 +254,17 @@ defmodule Trento.SapSystemProjectorTest do
 
     projection = Repo.get(SapSystemReadModel, sap_system_id)
 
-    assert_broadcast "sap_system_registered",
-                     %{
-                       db_host: ^new_db_host,
-                       health: ^new_health,
-                       id: ^sap_system_id,
-                       sid: ^sid,
-                       tenant: ^tenant
-                     },
-                     1000
+    assert_broadcast(
+      "sap_system_registered",
+      %{
+        db_host: ^new_db_host,
+        health: ^new_health,
+        id: ^sap_system_id,
+        sid: ^sid,
+        tenant: ^tenant
+      },
+      1000
+    )
 
     assert nil == projection.deregistered_at
   end

@@ -267,7 +267,9 @@ defmodule Trento.SapSystemProjector do
           new_host_id: new_host_id
         },
         _,
-        _
+        %{
+          application_instance: %ApplicationInstanceReadModel{sid: sid}
+        }
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
@@ -277,7 +279,8 @@ defmodule Trento.SapSystemProjector do
           sap_system_id: sap_system_id,
           instance_number: instance_number,
           old_host_id: old_host_id,
-          new_host_id: new_host_id
+          new_host_id: new_host_id,
+          sid: sid
         }
       )
     )
