@@ -8,8 +8,8 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 import {
-  DEREGISTER_HOST,
-  CANCEL_DEREGISTER_HOST,
+  CHECK_HOST_IS_DEREGISTERABLE,
+  CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
   HOST_DEREGISTERED,
   removeHost,
   setHostDeregisterable,
@@ -22,31 +22,32 @@ export function* markDeregisterableHosts(hosts) {
       .filter(({ heartbeat }) => heartbeat !== 'passing')
       .map((host) =>
         put({
-          type: DEREGISTER_HOST,
+          type: CHECK_HOST_IS_DEREGISTERABLE,
           payload: host,
         })
       )
   );
 }
 
-function* deregisterHostDetail(payload) {
+function* hostDeregisterable(payload) {
   // eslint-disable-next-line no-undef
   yield delay(config.deregistrationDebounce ?? 0);
   yield put(setHostDeregisterable(payload));
 }
 
-function* deregisterHost({ payload }) {
+function* checkHostIsDeregisterable({ payload }) {
   yield race({
-    response: call(deregisterHostDetail, payload),
+    response: call(hostDeregisterable, payload),
     cancel: take(
       ({ type, payload: cancelPayload }) =>
-        type === CANCEL_DEREGISTER_HOST && cancelPayload.id === payload.id
+        type === CANCEL_CHECK_HOST_IS_DEREGISTERABLE &&
+        cancelPayload.id === payload.id
     ),
   });
 }
 
-export function* watchDeregisterHost() {
-  yield takeEvery(DEREGISTER_HOST, deregisterHost);
+export function* watchHostDeregisterable() {
+  yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostIsDeregisterable);
 }
 
 export function* hostDeregistered({ payload }) {

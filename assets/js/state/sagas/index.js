@@ -20,8 +20,8 @@ import {
   setHostNotDeregisterable,
   startHostsLoading,
   stopHostsLoading,
-  DEREGISTER_HOST,
-  CANCEL_DEREGISTER_HOST,
+  CHECK_HOST_IS_DEREGISTERABLE,
+  CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
 } from '@state/hosts';
 
 import {
@@ -69,7 +69,7 @@ import { watchDatabase } from '@state/sagas/databases';
 import {
   markDeregisterableHosts,
   watchHostDeregistered,
-  watchDeregisterHost,
+  watchHostDeregisterable,
 } from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
 
@@ -193,7 +193,7 @@ function* heartbeatSucceded({ payload }) {
     })
   );
   yield put(setHostNotDeregisterable(payload));
-  yield put({ type: CANCEL_DEREGISTER_HOST, payload });
+  yield put({ type: CANCEL_CHECK_HOST_IS_DEREGISTERABLE, payload });
 }
 
 function* watchHeartbeatSucceded() {
@@ -208,7 +208,7 @@ function* heartbeatFailed({ payload }) {
       icon: '💔',
     })
   );
-  yield put({ type: DEREGISTER_HOST, payload });
+  yield put({ type: CHECK_HOST_IS_DEREGISTERABLE, payload });
 }
 
 function* watchHeartbeatFailed() {
@@ -422,6 +422,6 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),
-    watchDeregisterHost(),
+    watchHostDeregisterable(),
   ]);
 }
