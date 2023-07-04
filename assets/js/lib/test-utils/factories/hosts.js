@@ -56,5 +56,6 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
       vm_size: faker.hacker.noun(),
     },
     sles_subscriptions: slesSubscriptionFactory.buildList(4, { host_id: id }),
+    deregisterable: false,
   };
 });
