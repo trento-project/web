@@ -59,6 +59,22 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
+    setHostDeregisterable: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.id) {
+          host.deregisterable = true;
+        }
+        return host;
+      });
+    },
+    setHostNotDeregisterable: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.id) {
+          host.deregisterable = false;
+        }
+        return host;
+      });
+    },
     startHostsLoading: (state) => {
       state.loading = true;
     },
@@ -71,6 +87,8 @@ export const hostsListSlice = createSlice({
   },
 });
 
+export const DEREGISTER_HOST = 'DEREGISTER_HOST';
+export const CANCEL_DEREGISTER_HOST = 'CANCEL_DEREGISTER_HOST';
 export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
 
 export const {
@@ -79,10 +97,12 @@ export const {
   updateHost,
   addTagToHost,
   removeTagFromHost,
-  startHostsLoading,
-  stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
+  setHostDeregisterable,
+  setHostNotDeregisterable,
+  startHostsLoading,
+  stopHostsLoading,
   removeHost,
 } = hostsListSlice.actions;
 

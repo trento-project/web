@@ -3,6 +3,7 @@ import {
   put,
   all,
   call,
+  fork,
   takeEvery,
   select,
   debounce,
@@ -14,10 +15,13 @@ import {
   setHosts,
   appendHost,
   updateHost,
-  startHostsLoading,
-  stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
+  setHostNotDeregisterable,
+  startHostsLoading,
+  stopHostsLoading,
+  DEREGISTER_HOST,
+  CANCEL_DEREGISTER_HOST,
 } from '@state/hosts';
 
 import {
@@ -62,7 +66,11 @@ import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { watchSapSystem } from '@state/sagas/sapSystems';
 import { watchDatabase } from '@state/sagas/databases';
-import { watchHostDeregistered } from '@state/sagas/hosts';
+import {
+  markDeregisterableHosts,
+  watchHostDeregistered,
+  watchDeregisterHost,
+} from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
 
 import {
@@ -111,6 +119,7 @@ function* initialDataFetch() {
   yield put(startHostsLoading());
   const { data: hosts } = yield call(get, '/hosts');
   yield put(setHosts(hosts));
+  yield fork(markDeregisterableHosts, hosts);
   yield put(stopHostsLoading());
 
   yield put(startClustersLoading());
@@ -183,6 +192,8 @@ function* heartbeatSucceded({ payload }) {
       icon: '❤️',
     })
   );
+  yield put(setHostNotDeregisterable(payload));
+  yield put({ type: CANCEL_DEREGISTER_HOST, payload });
 }
 
 function* watchHeartbeatSucceded() {
@@ -197,6 +208,7 @@ function* heartbeatFailed({ payload }) {
       icon: '💔',
     })
   );
+  yield put({ type: DEREGISTER_HOST, payload });
 }
 
 function* watchHeartbeatFailed() {
@@ -410,5 +422,6 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),
+    watchDeregisterHost(),
   ]);
 }
