@@ -35,14 +35,15 @@ function* hostDeregisterable(payload) {
   yield put(setHostDeregisterable(payload));
 }
 
+const matchHost =
+  (hostId) =>
+  ({ type, payload }) =>
+    type === CANCEL_CHECK_HOST_IS_DEREGISTERABLE && hostId === payload.id;
+
 function* checkHostIsDeregisterable({ payload }) {
   yield race({
     response: call(hostDeregisterable, payload),
-    cancel: take(
-      ({ type, payload: cancelPayload }) =>
-        type === CANCEL_CHECK_HOST_IS_DEREGISTERABLE &&
-        cancelPayload.id === payload.id
-    ),
+    cancel: take(matchHost(payload.id)),
   });
 }
 
