@@ -119,4 +119,31 @@ defmodule Trento.HeartbeatsTest do
 
     Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
   end
+
+  test "filter deregistered hosts from heartbeat failed check" do
+    %{id: agent_id} = insert(:host, heartbeat: :passing, deregistered_at: DateTime.utc_now())
+    %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
+
+    expired_time =
+      DateTime.add(
+        now,
+        Application.get_env(:trento, Heartbeats)[:interval] + 1,
+        :millisecond
+      )
+
+    expect(
+      Trento.Support.DateService.Mock,
+      :utc_now,
+      fn -> expired_time end
+    )
+
+    expect(
+      Trento.Commanded.Mock,
+      :dispatch,
+      0,
+      fn _ -> :ok end
+    )
+
+    Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
+  end
 end
