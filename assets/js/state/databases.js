@@ -30,6 +30,11 @@ export const databasesListSlice = createSlice({
     appendDatabaseInstance: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
     },
+    removeDatabase: (state, { payload: { id } }) => {
+      state.databases = state.databases.filter(
+        (database) => database.id !== id
+      );
+    },
     removeDatabaseInstance: (
       state,
       { payload: { sap_system_id, host_id, instance_number } }
@@ -92,6 +97,7 @@ export const databasesListSlice = createSlice({
 });
 
 export const DATABASE_REGISTERED = 'DATABASE_REGISTERED';
+export const DATABASE_DEREGISTERED = 'DATABASE_DEREGISTERED';
 export const DATABASE_HEALTH_CHANGED = 'DATABASE_HEALTH_CHANGED';
 export const DATABASE_INSTANCE_REGISTERED = 'DATABASE_INSTANCE_REGISTERED';
 export const DATABASE_INSTANCE_DEREGISTERED = 'DATABASE_INSTANCE_DEREGISTERED';
@@ -105,6 +111,7 @@ export const {
   stopDatabasesLoading,
   setDatabases,
   appendDatabase,
+  removeDatabase,
   removeDatabaseInstance,
   appendDatabaseInstance,
   updateDatabaseHealth,

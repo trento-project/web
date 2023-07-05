@@ -1,8 +1,14 @@
 import { recordSaga } from '@lib/test-utils';
-import { databaseInstanceDeregistered } from '@state/sagas/databases';
-import { removeDatabaseInstance } from '@state/databases';
+import {
+  databaseDeregistered,
+  databaseInstanceDeregistered,
+} from '@state/sagas/databases';
+import { removeDatabase, removeDatabaseInstance } from '@state/databases';
 import { removeDatabaseInstanceFromSapSystem } from '@state/sapSystems';
-import { databaseInstanceFactory } from '@lib/test-utils/factories';
+import {
+  databaseFactory,
+  databaseInstanceFactory,
+} from '@lib/test-utils/factories';
 import { notify } from '@state/actions/notifications';
 
 describe('SAP Systems sagas', () => {
@@ -28,6 +34,23 @@ describe('SAP Systems sagas', () => {
     expect(dispatched).toContainEqual(
       notify({
         text: `The database instance ${instance_number} has been deregistered from ${sid}.`,
+        icon: 'ℹ️',
+      })
+    );
+  });
+
+  it('should remove the database', async () => {
+    const { id, sid } = databaseFactory.build();
+
+    const dispatched = await recordSaga(databaseDeregistered, {
+      payload: { id, sid },
+    });
+
+    expect(dispatched).toContainEqual(removeDatabase({ id, sid }));
+
+    expect(dispatched).toContainEqual(
+      notify({
+        text: `The database ${sid} has been deregistered.`,
         icon: 'ℹ️',
       })
     );
