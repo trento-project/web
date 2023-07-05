@@ -29,9 +29,8 @@ export function* markDeregisterableHosts(hosts) {
   );
 }
 
-function* hostDeregisterable(payload) {
-  // eslint-disable-next-line no-undef
-  yield delay(config.deregistrationDebounce ?? 0);
+function* hostDeregisterable(debounce, payload) {
+  yield delay(debounce);
   yield put(setHostDeregisterable(payload));
 }
 
@@ -40,15 +39,19 @@ const matchHost =
   ({ type, payload }) =>
     type === CANCEL_CHECK_HOST_IS_DEREGISTERABLE && hostId === payload.id;
 
-function* checkHostIsDeregisterable({ payload }) {
+function* checkHostIsDeregisterable(debounce, { payload }) {
   yield race({
-    response: call(hostDeregisterable, payload),
+    response: call(hostDeregisterable, debounce, payload),
     cancel: take(matchHost(payload.id)),
   });
 }
 
-export function* watchHostDeregisterable() {
-  yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostIsDeregisterable);
+export function* watchHostDeregisterable(debounce) {
+  yield takeEvery(
+    CHECK_HOST_IS_DEREGISTERABLE,
+    checkHostIsDeregisterable,
+    debounce
+  );
 }
 
 export function* hostDeregistered({ payload }) {

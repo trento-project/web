@@ -422,6 +422,7 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),
-    watchHostDeregisterable(),
+    // eslint-disable-next-line no-undef
+    watchHostDeregisterable(config.deregistrationDebounce ?? 0),
   ]);
 }
