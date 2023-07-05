@@ -88,12 +88,6 @@ defmodule Trento.Domain.Host do
       on_replace: :update
   end
 
-  def changeset(event, attrs) do
-    event
-    |> cast(attrs, [:host_id, :provider])
-    |> cast_polymorphic_embed(:provider_data, required: false)
-  end
-
   # Stop everything during the rollup process
   def execute(%Host{rolling_up: true}, _), do: {:error, :host_rolling_up}
 
