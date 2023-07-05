@@ -45,6 +45,7 @@ const processChannelEvents = (reduxStore, socket) => {
   ]);
   registerEvents(reduxStore, socket, 'monitoring:databases', [
     'database_registered',
+    'database_deregistered',
     'database_health_changed',
     'database_instance_registered',
     'database_instance_deregistered',
