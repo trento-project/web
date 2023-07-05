@@ -20,8 +20,8 @@ import {
   setHostNotDeregisterable,
   startHostsLoading,
   stopHostsLoading,
-  CHECK_HOST_IS_DEREGISTERABLE,
-  CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
+  checkHostIsDeregisterable,
+  cancelCheckHostIsDeregisterable,
 } from '@state/hosts';
 
 import {
@@ -187,7 +187,7 @@ function* watchHostDetailsUpdated() {
 function* heartbeatSucceded({ payload }) {
   yield put(setHeartbeatPassing(payload));
   yield put(setHostNotDeregisterable(payload));
-  yield put({ type: CANCEL_CHECK_HOST_IS_DEREGISTERABLE, payload });
+  yield put(cancelCheckHostIsDeregisterable(payload));
   yield put(
     notify({
       text: `The host ${payload.hostname} heartbeat is alive.`,
@@ -202,7 +202,7 @@ function* watchHeartbeatSucceded() {
 
 function* heartbeatFailed({ payload }) {
   yield put(setHeartbeatCritical(payload));
-  yield put({ type: CHECK_HOST_IS_DEREGISTERABLE, payload });
+  yield put(checkHostIsDeregisterable(payload));
   yield put(
     notify({
       text: `The host ${payload.hostname} heartbeat is failing.`,

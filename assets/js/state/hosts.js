@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loading: false,
@@ -91,6 +91,13 @@ export const CHECK_HOST_IS_DEREGISTERABLE = 'CHECK_HOST_IS_DEREGISTERABLE';
 export const CANCEL_CHECK_HOST_IS_DEREGISTERABLE =
   'CANCEL_CHECK_HOST_IS_DEREGISTERABLE';
 export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
+
+export const checkHostIsDeregisterable = createAction(
+  CHECK_HOST_IS_DEREGISTERABLE
+);
+export const cancelCheckHostIsDeregisterable = createAction(
+  CANCEL_CHECK_HOST_IS_DEREGISTERABLE
+);
 
 export const {
   setHosts,

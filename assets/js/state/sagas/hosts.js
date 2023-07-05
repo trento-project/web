@@ -13,6 +13,7 @@ import {
   HOST_DEREGISTERED,
   removeHost,
   setHostDeregisterable,
+  checkHostIsDeregisterable,
 } from '@state/hosts';
 import { notify } from '@state/actions/notifications';
 
@@ -20,12 +21,7 @@ export function* markDeregisterableHosts(hosts) {
   yield all(
     hosts
       .filter(({ heartbeat }) => heartbeat !== 'passing')
-      .map((host) =>
-        put({
-          type: CHECK_HOST_IS_DEREGISTERABLE,
-          payload: host,
-        })
-      )
+      .map((host) => put(checkHostIsDeregisterable(host)))
   );
 }
 
@@ -39,7 +35,7 @@ const matchHost =
   ({ type, payload }) =>
     type === CANCEL_CHECK_HOST_IS_DEREGISTERABLE && hostId === payload.id;
 
-function* checkHostIsDeregisterable(debounce, { payload }) {
+function* checkHostDeregisterable(debounce, { payload }) {
   yield race({
     response: call(hostDeregisterable, debounce, payload),
     cancel: take(matchHost(payload.id)),
@@ -49,7 +45,7 @@ function* checkHostIsDeregisterable(debounce, { payload }) {
 export function* watchHostDeregisterable(debounce) {
   yield takeEvery(
     CHECK_HOST_IS_DEREGISTERABLE,
-    checkHostIsDeregisterable,
+    checkHostDeregisterable,
     debounce
   );
 }
