@@ -4,7 +4,12 @@ defmodule Trento.Heartbeats do
   """
 
   alias Trento.Domain.Commands.UpdateHeartbeat
-  alias Trento.Heartbeat
+
+  alias Trento.{
+    Heartbeat,
+    HostReadModel
+  }
+
   alias Trento.Support.DateService
 
   alias Trento.Repo
@@ -65,9 +70,12 @@ defmodule Trento.Heartbeats do
   defp get_all_expired_heartbeats(date_service) do
     query =
       from h in Heartbeat,
+        join: host in HostReadModel,
+        on: h.agent_id == type(host.id, :string),
         where:
-          h.timestamp <
-            ^DateTime.add(date_service.utc_now(), -@heartbeat_interval, :millisecond)
+          is_nil(host.deregistered_at) and
+            h.timestamp <
+              ^DateTime.add(date_service.utc_now(), -@heartbeat_interval, :millisecond)
 
     Repo.all(query)
   end
