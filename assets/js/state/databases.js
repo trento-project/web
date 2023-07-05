@@ -32,7 +32,7 @@ export const databasesListSlice = createSlice({
     },
     removeDatabase: (state, { payload: { id } }) => {
       state.databases = state.databases.filter(
-        (database) => !(database.id === id)
+        (database) => database.id !== id
       );
     },
     removeDatabaseInstance: (

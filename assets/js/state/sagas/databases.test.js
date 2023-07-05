@@ -40,18 +40,13 @@ describe('SAP Systems sagas', () => {
   });
 
   it('should remove the database', async () => {
-    const { sap_system_id: id, sid } = databaseFactory.build();
+    const { id, sid } = databaseFactory.build();
 
     const dispatched = await recordSaga(databaseDeregistered, {
       payload: { id, sid },
     });
 
-    expect(dispatched).toContainEqual(
-      removeDatabase({
-        id,
-        sid,
-      })
-    );
+    expect(dispatched).toContainEqual(removeDatabase({ id, sid }));
 
     expect(dispatched).toContainEqual(
       notify({
