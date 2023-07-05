@@ -12,9 +12,18 @@ const catalog = [
   catalogCheckFactory.build({ group: 'Corosync' }),
   catalogCheckFactory.build({ group: 'SBD' }),
   catalogCheckFactory.build({ group: 'SBD' }),
+  catalogCheckFactory.build({ group: 'Miscellaneous' }),
+  catalogCheckFactory.build({ group: 'Miscellaneous' }),
 ];
 
-const resourceID = faker.datatype.uuid();
+const selectedChecks = [
+  catalog[0].id,
+  catalog[1].id,
+  catalog[5].id,
+  catalog[6].id,
+];
+
+const targetID = faker.datatype.uuid();
 
 export default {
   title: 'ChecksSelection',
@@ -29,14 +38,14 @@ export default {
     },
     catalog: {
       control: 'object',
-      description: 'catalog data',
+      description: 'Catalog data',
       table: {
         type: { summary: 'object' },
       },
     },
     resourceID: {
       control: 'text',
-      description: 'resource ID',
+      description: 'Resource ID',
       table: {
         type: { summary: 'string' },
       },
@@ -86,30 +95,34 @@ export default {
 export const Default = {
   args: {
     catalog,
-    resourceID,
+    targetID,
   },
 };
 
 export const Loading = {
   args: {
-    catalog,
-    resourceID,
+    ...Default.args,
     loading: true,
+  },
+};
+
+export const WithSelection = {
+  args: {
+    ...Default.args,
+    selected: selectedChecks,
   },
 };
 
 export const WithError = {
   args: {
-    catalog,
-    resourceID,
+    ...WithSelection.args,
     error: 'Error saving checks selection',
   },
 };
 
 export const Saving = {
   args: {
-    catalog,
-    resourceID,
+    ...WithSelection.args,
     saving: true,
   },
 };
