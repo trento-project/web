@@ -93,6 +93,9 @@ import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
 
+// eslint-disable-next-line no-undef
+const deregistrationDebounce = config.deregistrationDebounce ?? 0;
+
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
   const { data: healthSummary } = yield call(get, '/sap_systems/health');
@@ -422,7 +425,6 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),
-    // eslint-disable-next-line no-undef
-    watchHostDeregisterable(config.deregistrationDebounce ?? 0),
+    watchHostDeregisterable(deregistrationDebounce),
   ]);
 }
