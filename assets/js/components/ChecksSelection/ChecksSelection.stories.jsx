@@ -43,9 +43,9 @@ export default {
         type: { summary: 'object' },
       },
     },
-    resourceID: {
+    targetID: {
       control: 'text',
-      description: 'Resource ID',
+      description: 'Target ID',
       table: {
         type: { summary: 'string' },
       },

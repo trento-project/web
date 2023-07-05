@@ -4,7 +4,7 @@ import { EOS_CANCEL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 
 function ExecutionSuggestion({
-  resourceID,
+  targetID,
   selectedChecks,
   hosts,
   onClose = () => {},
@@ -21,7 +21,7 @@ function ExecutionSuggestion({
         </p>
         <TriggerChecksExecutionRequest
           cssClasses="tn-checks-start-execute rounded-full group flex rounded-full items-center text-sm px-2 bg-jungle-green-500 text-white"
-          clusterId={resourceID}
+          clusterId={targetID}
           hosts={hosts}
           checks={selectedChecks}
           onStartExecution={onStartExecution}

@@ -88,18 +88,14 @@ describe('ChecksSelection component', () => {
   it('should call the onSave callback when saving the modifications', async () => {
     const onSave = jest.fn();
     const user = userEvent.setup();
-    const resourceID = faker.datatype.uuid();
+    const targetID = faker.datatype.uuid();
 
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
     const [{ id: checkID1 }, { id: checkID2 }] = catalog;
 
     renderWithRouter(
-      <ChecksSelection
-        catalog={catalog}
-        resourceID={resourceID}
-        onSave={onSave}
-      />
+      <ChecksSelection catalog={catalog} targetID={targetID} onSave={onSave} />
     );
 
     const switches = screen.getAllByRole('switch');
@@ -107,6 +103,6 @@ describe('ChecksSelection component', () => {
     await user.click(switches[0]);
     await user.click(screen.getByText('Select Checks for Execution'));
 
-    expect(onSave).toBeCalledWith([checkID1, checkID2], resourceID);
+    expect(onSave).toBeCalledWith([checkID1, checkID2], targetID);
   });
 });

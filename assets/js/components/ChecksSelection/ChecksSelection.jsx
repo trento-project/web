@@ -33,7 +33,7 @@ const defaultSelectedChecks = [];
 
 function ChecksSelection({
   className,
-  resourceID,
+  targetID,
   catalog,
   selected = defaultSelectedChecks,
   loading = false,
@@ -118,7 +118,7 @@ function ChecksSelection({
             <button
               className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
               disabled={saving}
-              onClick={() => onSave(selectedChecks, resourceID)}
+              onClick={() => onSave(selectedChecks, targetID)}
               type="button"
               data-testid="save-selection-button"
             >
@@ -137,7 +137,7 @@ function ChecksSelection({
             )}
             {success && selectedChecks.length > 0 && (
               <ExecutionSuggestion
-                resourceID={resourceID}
+                targetID={targetID}
                 selectedChecks={selectedChecks}
                 hosts={hosts}
                 onClose={onClear}
