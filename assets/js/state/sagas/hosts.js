@@ -42,14 +42,6 @@ function* checkHostDeregisterable(debounce, { payload }) {
   });
 }
 
-export function* watchHostDeregisterable(debounce) {
-  yield takeEvery(
-    CHECK_HOST_IS_DEREGISTERABLE,
-    checkHostDeregisterable,
-    debounce
-  );
-}
-
 export function* hostDeregistered({ payload }) {
   yield put(removeHost(payload));
   yield put(
@@ -57,6 +49,14 @@ export function* hostDeregistered({ payload }) {
       text: `The host ${payload.hostname} has been deregistered.`,
       icon: 'ℹ️',
     })
+  );
+}
+
+export function* watchHostDeregisterable(debounce) {
+  yield takeEvery(
+    CHECK_HOST_IS_DEREGISTERABLE,
+    checkHostDeregisterable,
+    debounce
   );
 }
 
