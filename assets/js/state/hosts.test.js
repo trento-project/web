@@ -20,10 +20,9 @@ describe('Hosts reducer', () => {
   });
 
   it('should mark host as not deregisterable', () => {
-    const [host1, host2] = hostFactory.buildList(2);
-    const initialState = {
-      hosts: [{ ...host1, deregisterable: true }, host2],
-    };
+    const host1 = hostFactory.build({ deregisterable: true });
+    const host2 = hostFactory.build();
+    const initialState = { hosts: [host1, host2] };
 
     const action = setHostNotDeregisterable(host1);
 
