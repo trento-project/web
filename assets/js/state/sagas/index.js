@@ -186,14 +186,14 @@ function* watchHostDetailsUpdated() {
 
 function* heartbeatSucceded({ payload }) {
   yield put(setHeartbeatPassing(payload));
+  yield put(setHostNotDeregisterable(payload));
+  yield put({ type: CANCEL_CHECK_HOST_IS_DEREGISTERABLE, payload });
   yield put(
     notify({
       text: `The host ${payload.hostname} heartbeat is alive.`,
       icon: '❤️',
     })
   );
-  yield put(setHostNotDeregisterable(payload));
-  yield put({ type: CANCEL_CHECK_HOST_IS_DEREGISTERABLE, payload });
 }
 
 function* watchHeartbeatSucceded() {
@@ -202,13 +202,13 @@ function* watchHeartbeatSucceded() {
 
 function* heartbeatFailed({ payload }) {
   yield put(setHeartbeatCritical(payload));
+  yield put({ type: CHECK_HOST_IS_DEREGISTERABLE, payload });
   yield put(
     notify({
       text: `The host ${payload.hostname} heartbeat is failing.`,
       icon: '💔',
     })
   );
-  yield put({ type: CHECK_HOST_IS_DEREGISTERABLE, payload });
 }
 
 function* watchHeartbeatFailed() {
