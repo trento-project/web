@@ -59,11 +59,14 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    setHostDeregisterable: (state, action) => {
+    setHostsDeregisterable: (state, { payload }) => {
+      const ids = payload.map((host) => host.id);
+
       state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.id) {
+        if (ids.includes(host.id)) {
           host.deregisterable = true;
         }
+
         return host;
       });
     },
@@ -107,7 +110,7 @@ export const {
   removeTagFromHost,
   setHeartbeatPassing,
   setHeartbeatCritical,
-  setHostDeregisterable,
+  setHostsDeregisterable,
   setHostNotDeregisterable,
   startHostsLoading,
   stopHostsLoading,

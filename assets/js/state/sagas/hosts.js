@@ -1,33 +1,24 @@
-import {
-  all,
-  delay,
-  put,
-  race,
-  call,
-  take,
-  takeEvery,
-} from 'redux-saga/effects';
+import { delay, put, race, call, take, takeEvery } from 'redux-saga/effects';
 import {
   CHECK_HOST_IS_DEREGISTERABLE,
   CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
   HOST_DEREGISTERED,
   removeHost,
-  setHostDeregisterable,
-  checkHostIsDeregisterable,
+  setHostsDeregisterable,
 } from '@state/hosts';
 import { notify } from '@state/actions/notifications';
 
 export function* markDeregisterableHosts(hosts) {
-  yield all(
-    hosts
-      .filter(({ heartbeat }) => heartbeat !== 'passing')
-      .map((host) => put(checkHostIsDeregisterable(host)))
+  yield put(
+    setHostsDeregisterable(
+      hosts.filter(({ heartbeat }) => heartbeat !== 'passing')
+    )
   );
 }
 
-function* hostDeregisterable(debounce, payload) {
+function* hostDeregisterable(debounce, host) {
   yield delay(debounce);
-  yield put(setHostDeregisterable(payload));
+  yield put(setHostsDeregisterable([host]));
 }
 
 const matchHost =
