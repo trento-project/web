@@ -17,7 +17,16 @@ describe('ChecksSelection component', () => {
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
 
-    renderWithRouter(<ChecksSelection catalog={catalog} />);
+    const onUpdateCatalog = jest.fn();
+    const onClear = jest.fn();
+
+    renderWithRouter(
+      <ChecksSelection
+        catalog={catalog}
+        onUpdateCatalog={onUpdateCatalog}
+        onClear={onClear}
+      />
+    );
 
     const groupItem = await waitFor(() => screen.getByText(group));
 
@@ -42,6 +51,8 @@ describe('ChecksSelection component', () => {
 
     expect(unselectedSwitches[1]).not.toBeChecked();
     expect(unselectedSwitches[2]).not.toBeChecked();
+    expect(onUpdateCatalog).toBeCalled();
+    expect(onClear).toBeCalled();
   });
 
   it('should change group check switch accordingly if the children check switches are clicked', async () => {
@@ -51,8 +62,16 @@ describe('ChecksSelection component', () => {
     const catalog = catalogCheckFactory.buildList(2, { group });
     const selectedChecks = [catalog[0].id, catalog[1].id];
 
+    const onUpdateCatalog = jest.fn();
+    const onClear = jest.fn();
+
     renderWithRouter(
-      <ChecksSelection catalog={catalog} selected={selectedChecks} />
+      <ChecksSelection
+        catalog={catalog}
+        selected={selectedChecks}
+        onUpdateCatalog={onUpdateCatalog}
+        onClear={onClear}
+      />
     );
 
     const groupItem = await waitFor(() => screen.getByText(group));
@@ -74,19 +93,34 @@ describe('ChecksSelection component', () => {
     await user.click(offSwitches[2]);
 
     expect(screen.getAllByRole('switch')[0]).not.toBeChecked();
+    expect(onUpdateCatalog).toBeCalled();
+    expect(onClear).toBeCalled();
   });
 
   it('should display the error message if any', () => {
     const error = faker.lorem.word();
     const catalog = catalogCheckFactory.buildList(10);
+    const onUpdateCatalog = jest.fn();
+    const onClear = jest.fn();
 
-    renderWithRouter(<ChecksSelection catalog={catalog} error={error} />);
+    renderWithRouter(
+      <ChecksSelection
+        catalog={catalog}
+        error={error}
+        onUpdateCatalog={onUpdateCatalog}
+        onClear={onClear}
+      />
+    );
 
     expect(screen.getByText(error)).toBeVisible();
+    expect(onUpdateCatalog).toBeCalled();
+    expect(onClear).toBeCalled();
   });
 
   it('should call the onSave callback when saving the modifications', async () => {
     const onSave = jest.fn();
+    const onUpdateCatalog = jest.fn();
+    const onClear = jest.fn();
     const user = userEvent.setup();
     const targetID = faker.datatype.uuid();
 
@@ -95,7 +129,13 @@ describe('ChecksSelection component', () => {
     const [{ id: checkID1 }, { id: checkID2 }] = catalog;
 
     renderWithRouter(
-      <ChecksSelection catalog={catalog} targetID={targetID} onSave={onSave} />
+      <ChecksSelection
+        catalog={catalog}
+        targetID={targetID}
+        onSave={onSave}
+        onUpdateCatalog={onUpdateCatalog}
+        onClear={onClear}
+      />
     );
 
     const switches = screen.getAllByRole('switch');
@@ -104,5 +144,7 @@ describe('ChecksSelection component', () => {
     await user.click(screen.getByText('Select Checks for Execution'));
 
     expect(onSave).toBeCalledWith([checkID1, checkID2], targetID);
+    expect(onUpdateCatalog).toBeCalled();
+    expect(onClear).toBeCalled();
   });
 });

@@ -42,10 +42,10 @@ function ChecksSelection({
   success = false,
   catalogError,
   hosts,
-  onUpdateCatalog = () => {},
-  onStartExecution = () => {},
-  onSave = () => {},
-  onClear = () => {},
+  onUpdateCatalog,
+  onStartExecution,
+  onSave,
+  onClear,
 }) {
   const [selectedChecks, setSelectedChecks] = useState(selected);
 
@@ -69,6 +69,16 @@ function ChecksSelection({
     onClear();
   }, [onUpdateCatalog, onClear]);
 
+  const onCheckSelectionGroupChange = (checks, groupSelected) => {
+    const groupChecks = checks.map((check) => check.id);
+    if (allSelected(groupSelected)) {
+      setSelectedChecks(remove(groupChecks, selectedChecks));
+    } else {
+      setSelectedChecks(uniq([...selectedChecks, ...groupChecks]));
+    }
+    onClear();
+  };
+
   return (
     <div className={classNames('bg-white rounded p-3', className)}>
       <CatalogContainer
@@ -84,18 +94,9 @@ function ChecksSelection({
                 key={group}
                 group={group}
                 selected={groupSelected}
-                onChange={() => {
-                  const groupChecks = checks.map((check) => check.id);
-                  if (allSelected(groupSelected)) {
-                    setSelectedChecks(remove(groupChecks, selectedChecks));
-                  } else {
-                    setSelectedChecks(
-                      uniq([...selectedChecks, ...groupChecks])
-                    );
-                  }
-
-                  onClear();
-                }}
+                onChange={() =>
+                  onCheckSelectionGroupChange(checks, groupSelected)
+                }
               >
                 {checks.map((check) => (
                   <ChecksSelectionItem
