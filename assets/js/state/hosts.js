@@ -79,6 +79,22 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
+    setHostDeregistering: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.id) {
+          return { ...host, deregistering: true };
+        }
+        return host;
+      });
+    },
+    setHostNotDeregistering: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.id) {
+          return { ...host, deregistering: false };
+        }
+        return host;
+      });
+    },
     startHostsLoading: (state) => {
       state.loading = true;
     },
@@ -95,6 +111,7 @@ export const CHECK_HOST_IS_DEREGISTERABLE = 'CHECK_HOST_IS_DEREGISTERABLE';
 export const CANCEL_CHECK_HOST_IS_DEREGISTERABLE =
   'CANCEL_CHECK_HOST_IS_DEREGISTERABLE';
 export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
+export const DEREGISTER_HOST = 'DEREGISTER_HOST';
 
 export const checkHostIsDeregisterable = createAction(
   CHECK_HOST_IS_DEREGISTERABLE
@@ -102,6 +119,7 @@ export const checkHostIsDeregisterable = createAction(
 export const cancelCheckHostIsDeregisterable = createAction(
   CANCEL_CHECK_HOST_IS_DEREGISTERABLE
 );
+export const deregisterHost = createAction(DEREGISTER_HOST);
 
 export const {
   setHosts,
@@ -113,6 +131,8 @@ export const {
   setHeartbeatCritical,
   setHostListDeregisterable,
   setHostNotDeregisterable,
+  setHostDeregistering,
+  setHostNotDeregistering,
   startHostsLoading,
   stopHostsLoading,
   removeHost,
