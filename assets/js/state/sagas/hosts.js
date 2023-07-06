@@ -3,9 +3,14 @@ import {
   CHECK_HOST_IS_DEREGISTERABLE,
   CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
   HOST_DEREGISTERED,
+  DEREGISTER_HOST,
   removeHost,
   setHostListDeregisterable,
+  setHostDeregistering,
+  setHostNotDeregistering,
 } from '@state/hosts';
+
+import { del } from '@lib/network';
 import { notify } from '@state/actions/notifications';
 
 export function* markDeregisterableHosts(hosts) {
@@ -43,10 +48,30 @@ export function* hostDeregistered({ payload }) {
   );
 }
 
+export function* deregisterHost({ payload }) {
+  yield put(setHostDeregistering(payload));
+  try {
+    yield call(del, `/hosts/${payload.id}`);
+  } catch (error) {
+    yield put(
+      notify({
+        text: `Error deregistering host ${payload?.hostname}.`,
+        icon: '❌',
+      })
+    );
+  } finally {
+    yield put(setHostNotDeregistering(payload));
+  }
+}
+
 export function* watchHostDeregisterable() {
   yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostDeregisterable);
 }
 
 export function* watchHostDeregistered() {
   yield takeEvery(HOST_DEREGISTERED, hostDeregistered);
+}
+
+export function* watchDeregisterHost() {
+  yield takeEvery(DEREGISTER_HOST, deregisterHost);
 }

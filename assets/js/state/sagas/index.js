@@ -70,6 +70,7 @@ import {
   markDeregisterableHosts,
   watchHostDeregistered,
   watchHostDeregisterable,
+  watchDeregisterHost,
 } from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
 
@@ -428,5 +429,6 @@ export default function* rootSaga() {
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),
     watchHostDeregisterable(),
+    watchDeregisterHost(),
   ]);
 }

@@ -1,18 +1,39 @@
+import MockAdapter from 'axios-mock-adapter';
+
 import { recordSaga } from '@lib/test-utils';
 import {
   markDeregisterableHosts,
   matchHost,
   checkHostDeregisterable,
   hostDeregistered,
+  deregisterHost,
 } from '@state/sagas/hosts';
+
 import {
   cancelCheckHostIsDeregisterable,
   setHostListDeregisterable,
   removeHost,
+  setHostDeregistering,
+  setHostNotDeregistering,
 } from '@state/hosts';
+
+import { networkClient } from '@lib/network';
+import { notify } from '@state/actions/notifications';
 import { hostFactory } from '@lib/test-utils/factories';
 
+const axiosMock = new MockAdapter(networkClient);
+
 describe('Hosts sagas', () => {
+  beforeEach(() => {
+    axiosMock.reset();
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
+  });
+
   it('should mark hosts as deregisterable', async () => {
     const passingHost = hostFactory.build({ heartbeat: 'passing' });
     const criticalHost = hostFactory.build({ heartbeat: 'critical' });
@@ -58,5 +79,39 @@ describe('Hosts sagas', () => {
     });
 
     expect(dispatched).toContainEqual(removeHost(payload));
+  });
+
+  it('should send host deregister request', async () => {
+    const host = hostFactory.build();
+
+    axiosMock.onDelete(`/hosts/${host.id}`).reply(204, {});
+
+    const dispatched = await recordSaga(deregisterHost, {
+      payload: host,
+    });
+
+    expect(dispatched).toEqual([
+      setHostDeregistering(host),
+      setHostNotDeregistering(host),
+    ]);
+  });
+
+  it('should notify error on host deregistration request', async () => {
+    const host = hostFactory.build();
+
+    axiosMock.onDelete(`/hosts/${host.id}`).reply(404, {});
+
+    const dispatched = await recordSaga(deregisterHost, {
+      payload: host,
+    });
+
+    expect(dispatched).toEqual([
+      setHostDeregistering(host),
+      notify({
+        text: `Error deregistering host ${host.hostname}.`,
+        icon: '❌',
+      }),
+      setHostNotDeregistering(host),
+    ]);
   });
 });
