@@ -196,14 +196,17 @@ defmodule Trento.ClusterProjector do
 
   @impl true
   def after_update(%ClusterRestored{cluster_id: cluster_id}, _, _) do
-    cluster = Repo.get!(ClusterReadModel, cluster_id)
+    cluster =
+      ClusterReadModel
+      |> Repo.get!(cluster_id)
+      |> Repo.preload([:tags])
 
     restored_cluster = enrich_cluster_model(cluster)
 
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
       "cluster_registered",
-      ClusterView.render("cluster_registered.json", cluster: restored_cluster)
+      ClusterView.render("cluster_restored.json", cluster: restored_cluster)
     )
   end
 

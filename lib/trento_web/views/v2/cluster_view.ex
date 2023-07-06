@@ -15,6 +15,10 @@ defmodule TrentoWeb.V2.ClusterView do
     Map.delete(render("cluster.json", %{cluster: cluster}), :tags)
   end
 
+  def render("cluster_restored.json", %{cluster: cluster}) do
+    render("cluster.json", %{cluster: cluster})
+  end
+
   def render("cluster_details_updated.json", %{data: data}) do
     data
     |> Map.from_struct()

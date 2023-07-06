@@ -224,12 +224,15 @@ defmodule Trento.HostProjector do
         _,
         _
       ) do
-    host = Repo.get!(HostReadModel, id)
+    host =
+      HostReadModel
+      |> Repo.get!(id)
+      |> Repo.preload([:sles_subscriptions, :tags])
 
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_registered",
-      HostView.render("host_registered.json", host: host)
+      HostView.render("host_restored.json", host: host)
     )
   end
 

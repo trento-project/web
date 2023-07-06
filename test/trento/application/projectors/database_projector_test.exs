@@ -308,12 +308,14 @@ defmodule Trento.DatabaseProjectorTest do
   end
 
   test "should restore a deregistered database when DatabaseRestored is received" do
-    insert(:database,
-      id: sap_system_id = Faker.UUID.v4(),
-      sid: "NWD",
-      deregistered_at: DateTime.utc_now(),
-      health: :critical
-    )
+    %{id: sap_system_id} =
+      insert(:database,
+        sid: "NWD",
+        deregistered_at: DateTime.utc_now(),
+        health: :critical
+      )
+
+    insert_list(5, :tag, resource_id: sap_system_id)
 
     event = %DatabaseRestored{
       sap_system_id: sap_system_id,
@@ -322,7 +324,12 @@ defmodule Trento.DatabaseProjectorTest do
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
-    projection = Repo.get(DatabaseReadModel, sap_system_id)
+    %{tags: tags} =
+      projection =
+      DatabaseReadModel
+      |> Repo.get(sap_system_id)
+      |> Repo.preload([:tags])
+
     assert nil == projection.deregistered_at
     assert :passing == projection.health
 
@@ -330,7 +337,8 @@ defmodule Trento.DatabaseProjectorTest do
                      %{
                        health: :passing,
                        id: ^sap_system_id,
-                       sid: "NWD"
+                       sid: "NWD",
+                       tags: ^tags
                      },
                      1000
   end

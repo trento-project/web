@@ -36,6 +36,13 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> Map.delete(:database_instances)
   end
 
+  def render("database_restored.json", %{database: database}) do
+    database
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:database_instances)
+  end
+
   def render("database_health_changed.json", %{health: health}), do: health
 
   def render("database_instance_health_changed.json", %{
@@ -122,6 +129,14 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> Map.delete(:database_instances)
     |> Map.delete(:application_instances)
     |> Map.delete(:tags)
+  end
+
+  def render("sap_system_restored.json", %{sap_system: sap_system}) do
+    sap_system
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:database_instances)
+    |> Map.delete(:application_instances)
   end
 
   def render("sap_system_updated.json", %{id: id, ensa_version: ensa_version}),

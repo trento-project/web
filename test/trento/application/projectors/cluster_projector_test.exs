@@ -210,16 +210,22 @@ defmodule Trento.ClusterProjectorTest do
   test "should set deregistered_at field to nil when ClusterRestored is received" do
     %{id: cluster_id, name: name, type: type} =
       insert(:cluster,
-        id: Faker.UUID.v4(),
         name: "deregistered_cluster",
         selected_checks: [],
         deregistered_at: DateTime.utc_now()
       )
 
+    insert_list(5, :tag, resource_id: cluster_id)
+
     event = ClusterRestored.new!(%{cluster_id: cluster_id})
 
     ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
-    cluster_projection = Repo.get!(ClusterReadModel, event.cluster_id)
+
+    %{tags: tags} =
+      cluster_projection =
+      ClusterReadModel
+      |> Repo.get!(event.cluster_id)
+      |> Repo.preload([:tags])
 
     assert nil == cluster_projection.deregistered_at
 
@@ -228,7 +234,8 @@ defmodule Trento.ClusterProjectorTest do
                        cib_last_written: nil,
                        id: ^cluster_id,
                        name: ^name,
-                       type: ^type
+                       type: ^type,
+                       tags: ^tags
                      },
                      1000
   end
