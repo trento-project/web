@@ -16,17 +16,17 @@ export function* markDeregisterableHosts(hosts) {
   );
 }
 
-function* hostDeregisterable(debounce, host) {
+export function* hostDeregisterable(debounce, host) {
   yield delay(debounce);
   yield put(setHostsDeregisterable([host]));
 }
 
-const matchHost =
+export const matchHost =
   (hostId) =>
   ({ type, payload }) =>
     type === CANCEL_CHECK_HOST_IS_DEREGISTERABLE && hostId === payload.id;
 
-function* checkHostDeregisterable(debounce, { payload }) {
+export function* checkHostDeregisterable(debounce, { payload }) {
   yield race({
     response: call(hostDeregisterable, debounce, payload),
     cancel: take(matchHost(payload.id)),
