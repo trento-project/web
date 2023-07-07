@@ -31,17 +31,12 @@ describe('Hosts sagas', () => {
 
   it('should only cancel for the correct host', async () => {
     const matchedHost = hostFactory.build();
-    const otherHosts = hostFactory.buildList(2);
-
-    const actions = [...otherHosts, matchedHost].map((host) =>
-      cancelCheckHostIsDeregisterable(host)
-    );
+    const otherHost = hostFactory.build();
 
     const match = matchHost(matchedHost.id);
 
-    expect(actions.map((action) => match(action))).toStrictEqual(
-      new Array(otherHosts.length).fill(false).concat(true)
-    );
+    expect(match(cancelCheckHostIsDeregisterable(matchedHost))).toBeTruthy();
+    expect(match(cancelCheckHostIsDeregisterable(otherHost))).toBeFalsy();
   });
 
   it('should mark a host as deregisterable', async () => {
