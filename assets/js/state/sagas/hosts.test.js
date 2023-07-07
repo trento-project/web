@@ -46,7 +46,7 @@ describe('Hosts sagas', () => {
     expect(dispatched[0]).toEqual(setHostListDeregisterable([host]));
   });
 
-  it('should only match on correct actions', async () => {
+  it('should only cancel for the correct host', async () => {
     const matchedHost = hostFactory.build();
     const otherHosts = hostFactory.buildList(2);
 
