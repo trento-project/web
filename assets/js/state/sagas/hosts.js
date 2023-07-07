@@ -4,13 +4,13 @@ import {
   CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
   HOST_DEREGISTERED,
   removeHost,
-  setHostsDeregisterable,
+  setHostListDeregisterable,
 } from '@state/hosts';
 import { notify } from '@state/actions/notifications';
 
 export function* markDeregisterableHosts(hosts) {
   yield put(
-    setHostsDeregisterable(
+    setHostListDeregisterable(
       hosts.filter(({ heartbeat }) => heartbeat !== 'passing')
     )
   );
@@ -18,7 +18,7 @@ export function* markDeregisterableHosts(hosts) {
 
 export function* hostDeregisterable(debounce, host) {
   yield delay(debounce);
-  yield put(setHostsDeregisterable([host]));
+  yield put(setHostListDeregisterable([host]));
 }
 
 export const matchHost =

@@ -1,6 +1,6 @@
 import hostsReducer, {
   removeHost,
-  setHostsDeregisterable,
+  setHostListDeregisterable,
   setHostNotDeregisterable,
 } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
@@ -12,7 +12,7 @@ describe('Hosts reducer', () => {
     const host3 = hostFactory.build();
     const initialState = { hosts: [host1, host2, host3] };
 
-    const action = setHostsDeregisterable([host2, host3]);
+    const action = setHostListDeregisterable([host2, host3]);
 
     const expectedState = {
       hosts: [

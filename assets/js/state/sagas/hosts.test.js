@@ -9,7 +9,7 @@ import {
 } from '@state/sagas/hosts';
 import {
   cancelCheckHostIsDeregisterable,
-  setHostsDeregisterable,
+  setHostListDeregisterable,
   removeHost,
 } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
@@ -27,7 +27,7 @@ describe('Hosts sagas', () => {
     ]);
 
     expect(dispatched).toContainEqual(
-      setHostsDeregisterable([criticalHost, unknownHost])
+      setHostListDeregisterable([criticalHost, unknownHost])
     );
   });
 
@@ -43,7 +43,7 @@ describe('Hosts sagas', () => {
       host
     ).toPromise();
 
-    expect(dispatched[0]).toEqual(setHostsDeregisterable([host]));
+    expect(dispatched[0]).toEqual(setHostListDeregisterable([host]));
   });
 
   it('should only match on correct actions', async () => {
@@ -81,7 +81,7 @@ describe('Hosts sagas', () => {
     await Promise.all(promises);
 
     expect(dispatched).toEqual(
-      hosts.map((host) => setHostsDeregisterable([host]))
+      hosts.map((host) => setHostListDeregisterable([host]))
     );
   });
 

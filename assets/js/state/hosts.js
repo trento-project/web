@@ -59,7 +59,7 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    setHostsDeregisterable: (state, { payload }) => {
+    setHostListDeregisterable: (state, { payload }) => {
       const ids = payload.map((host) => host.id);
 
       state.hosts = state.hosts.map((host) => {
@@ -110,7 +110,7 @@ export const {
   removeTagFromHost,
   setHeartbeatPassing,
   setHeartbeatCritical,
-  setHostsDeregisterable,
+  setHostListDeregisterable,
   setHostNotDeregisterable,
   startHostsLoading,
   stopHostsLoading,
