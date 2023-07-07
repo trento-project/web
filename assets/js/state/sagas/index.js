@@ -205,7 +205,9 @@ function* watchHeartbeatSucceded() {
 
 function* heartbeatFailed({ payload }) {
   yield put(setHeartbeatCritical(payload));
-  yield put(checkHostIsDeregisterable(payload));
+  yield put(
+    checkHostIsDeregisterable({ ...payload, debounce: deregistrationDebounce })
+  );
   yield put(
     notify({
       text: `The host ${payload.hostname} heartbeat is failing.`,
@@ -425,6 +427,6 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),
-    watchHostDeregisterable(deregistrationDebounce),
+    watchHostDeregisterable(),
   ]);
 }

@@ -1,8 +1,6 @@
-import { runSaga } from 'redux-saga';
 import { recordSaga } from '@lib/test-utils';
 import {
   markDeregisterableHosts,
-  hostDeregisterable,
   matchHost,
   checkHostDeregisterable,
   hostDeregistered,
@@ -31,21 +29,6 @@ describe('Hosts sagas', () => {
     );
   });
 
-  it('should mark a host as deregisterable', async () => {
-    const host = hostFactory.build();
-
-    const dispatched = [];
-
-    await runSaga(
-      { dispatch: (action) => dispatched.push(action) },
-      hostDeregisterable,
-      0,
-      host
-    ).toPromise();
-
-    expect(dispatched[0]).toEqual(setHostListDeregisterable([host]));
-  });
-
   it('should only cancel for the correct host', async () => {
     const matchedHost = hostFactory.build();
     const otherHosts = hostFactory.buildList(2);
@@ -61,28 +44,14 @@ describe('Hosts sagas', () => {
     );
   });
 
-  it('should correctly mark hosts as deregisterable', async () => {
-    const passingHost = hostFactory.build({ heartbeat: 'passing' });
-    const criticalHost = hostFactory.build({ heartbeat: 'critical' });
-    const unknownHost = hostFactory.build({ heartbeat: 'unknown' });
-    const hosts = [passingHost, criticalHost, unknownHost];
+  it('should mark a host as deregisterable', async () => {
+    const { id } = hostFactory.build();
 
-    const dispatched = [];
+    const dispatched = await recordSaga(checkHostDeregisterable, {
+      payload: { id, debounce: 0 },
+    });
 
-    const promises = hosts.map((host) =>
-      runSaga(
-        { dispatch: (action) => dispatched.push(action) },
-        checkHostDeregisterable,
-        0,
-        { payload: host }
-      ).toPromise()
-    );
-
-    await Promise.all(promises);
-
-    expect(dispatched).toEqual(
-      hosts.map((host) => setHostListDeregisterable([host]))
-    );
+    expect(dispatched).toContainEqual(setHostListDeregisterable([{ id }]));
   });
 
   it('should remove the host', async () => {

@@ -16,9 +16,9 @@ export function* markDeregisterableHosts(hosts) {
   );
 }
 
-export function* hostDeregisterable(debounce, host) {
+function* hostDeregisterable({ debounce, id }) {
   yield delay(debounce);
-  yield put(setHostListDeregisterable([host]));
+  yield put(setHostListDeregisterable([{ id }]));
 }
 
 export const matchHost =
@@ -26,9 +26,9 @@ export const matchHost =
   ({ type, payload }) =>
     type === CANCEL_CHECK_HOST_IS_DEREGISTERABLE && hostId === payload.id;
 
-export function* checkHostDeregisterable(debounce, { payload }) {
+export function* checkHostDeregisterable({ payload }) {
   yield race({
-    response: call(hostDeregisterable, debounce, payload),
+    response: call(hostDeregisterable, payload),
     cancel: take(matchHost(payload.id)),
   });
 }
@@ -43,12 +43,8 @@ export function* hostDeregistered({ payload }) {
   );
 }
 
-export function* watchHostDeregisterable(debounce) {
-  yield takeEvery(
-    CHECK_HOST_IS_DEREGISTERABLE,
-    checkHostDeregisterable,
-    debounce
-  );
+export function* watchHostDeregisterable() {
+  yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostDeregisterable);
 }
 
 export function* watchHostDeregistered() {
