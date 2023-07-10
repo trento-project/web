@@ -240,6 +240,8 @@ defmodule Trento.SapSystemProjectorTest do
     %{tenant: tenant, id: sap_system_id, sid: sid} =
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
+    insert_list(5, :tag, resource_id: sap_system_id)
+
     new_db_host = Faker.Internet.ip_v4_address()
     new_health = :passing
 
@@ -252,7 +254,11 @@ defmodule Trento.SapSystemProjectorTest do
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
-    projection = Repo.get(SapSystemReadModel, sap_system_id)
+    %{tags: tags} =
+      projection =
+      SapSystemReadModel
+      |> Repo.get(sap_system_id)
+      |> Repo.preload([:tags])
 
     assert_broadcast(
       "sap_system_registered",
@@ -261,7 +267,8 @@ defmodule Trento.SapSystemProjectorTest do
         health: ^new_health,
         id: ^sap_system_id,
         sid: ^sid,
-        tenant: ^tenant
+        tenant: ^tenant,
+        tags: ^tags
       },
       1000
     )

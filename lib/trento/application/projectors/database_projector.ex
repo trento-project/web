@@ -304,12 +304,15 @@ defmodule Trento.DatabaseProjector do
         _,
         _
       ) do
-    database = Repo.get!(DatabaseReadModel, sap_system_id)
+    database =
+      DatabaseReadModel
+      |> Repo.get!(sap_system_id)
+      |> Repo.preload([:tags])
 
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_registered",
-      SapSystemView.render("database_registered.json", database: database)
+      SapSystemView.render("database_restored.json", database: database)
     )
   end
 

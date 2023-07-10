@@ -414,8 +414,14 @@ defmodule Trento.HostProjectorTest do
   end
 
   test "should set deregistered_at to nil when HostRestored is received" do
-    host_id = UUID.uuid4()
-    insert(:host, id: host_id, deregistered_at: DateTime.utc_now())
+    %{id: host_id} =
+      insert(
+        :host,
+        deregistered_at: DateTime.utc_now()
+      )
+
+    insert_list(5, :tag, resource_id: host_id)
+    insert_list(5, :sles_subscription, host_id: host_id)
 
     event = %HostRestored{
       host_id: host_id
@@ -432,8 +438,13 @@ defmodule Trento.HostProjectorTest do
       cluster_id: cluster_id,
       provider: provider,
       provider_data: provider_data,
-      deregistered_at: deregistered_at
-    } = Repo.get!(HostReadModel, host_id)
+      deregistered_at: deregistered_at,
+      sles_subscriptions: sles_subscriptions,
+      tags: tags
+    } =
+      HostReadModel
+      |> Repo.get!(host_id)
+      |> Repo.preload([:sles_subscriptions, :tags])
 
     assert nil == deregistered_at
 
@@ -446,7 +457,9 @@ defmodule Trento.HostProjectorTest do
                        id: ^id,
                        ip_addresses: ^ip_addresses,
                        provider: ^provider,
-                       provider_data: ^provider_data
+                       provider_data: ^provider_data,
+                       sles_subscriptions: ^sles_subscriptions,
+                       tags: ^tags
                      },
                      1000
   end

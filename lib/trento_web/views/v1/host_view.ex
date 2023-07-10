@@ -26,6 +26,10 @@ defmodule TrentoWeb.V1.HostView do
     |> Map.delete(:tags)
   end
 
+  def render("host_restored.json", %{host: host}) do
+    render("host.json", %{host: host})
+  end
+
   def render("heartbeat_result.json", %{host: %{id: id, hostname: hostname}}) do
     %{id: id, hostname: hostname}
   end
