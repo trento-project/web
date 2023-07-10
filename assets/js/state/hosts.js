@@ -64,7 +64,7 @@ export const hostsListSlice = createSlice({
 
       state.hosts = state.hosts.map((host) => {
         if (ids.includes(host.id)) {
-          host.deregisterable = true;
+          return { ...host, deregisterable: true };
         }
 
         return host;
@@ -73,8 +73,9 @@ export const hostsListSlice = createSlice({
     setHostNotDeregisterable: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
-          host.deregisterable = false;
+          return { ...host, deregisterable: false };
         }
+
         return host;
       });
     },
