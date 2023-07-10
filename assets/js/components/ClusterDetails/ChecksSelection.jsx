@@ -105,7 +105,7 @@ function ChecksSelection({ clusterId, cluster }) {
     <div className="bg-white rounded p-3">
       <CatalogContainer
         onRefresh={() => dispatch(updateCatalog(catalogEnv))}
-        isCatalogEmpty={catalogData.size === 0}
+        isCatalogEmpty={catalogData.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
