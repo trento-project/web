@@ -16,6 +16,7 @@ function HostInfoBox({ provider, agentVersion }) {
           },
           { title: 'Agent version', content: agentVersion },
           {
+            // This empty item in the list view is a hack to get the desired spacing rendered
             title: '',
             content: '',
           },
