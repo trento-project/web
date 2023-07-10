@@ -3,6 +3,7 @@ import {
   put,
   all,
   call,
+  fork,
   takeEvery,
   select,
   debounce,
@@ -14,10 +15,13 @@ import {
   setHosts,
   appendHost,
   updateHost,
-  startHostsLoading,
-  stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
+  setHostNotDeregisterable,
+  startHostsLoading,
+  stopHostsLoading,
+  checkHostIsDeregisterable,
+  cancelCheckHostIsDeregisterable,
 } from '@state/hosts';
 
 import {
@@ -62,7 +66,11 @@ import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { watchSapSystem } from '@state/sagas/sapSystems';
 import { watchDatabase } from '@state/sagas/databases';
-import { watchHostDeregistered } from '@state/sagas/hosts';
+import {
+  markDeregisterableHosts,
+  watchHostDeregistered,
+  watchHostDeregisterable,
+} from '@state/sagas/hosts';
 import { watchClusterDeregistered } from '@state/sagas/clusters';
 
 import {
@@ -84,6 +92,9 @@ import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
+
+// eslint-disable-next-line no-undef
+const deregistrationDebounce = config.deregistrationDebounce ?? 0;
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
@@ -111,6 +122,7 @@ function* initialDataFetch() {
   yield put(startHostsLoading());
   const { data: hosts } = yield call(get, '/hosts');
   yield put(setHosts(hosts));
+  yield fork(markDeregisterableHosts, hosts);
   yield put(stopHostsLoading());
 
   yield put(startClustersLoading());
@@ -177,6 +189,8 @@ function* watchHostDetailsUpdated() {
 
 function* heartbeatSucceded({ payload }) {
   yield put(setHeartbeatPassing(payload));
+  yield put(setHostNotDeregisterable(payload));
+  yield put(cancelCheckHostIsDeregisterable(payload));
   yield put(
     notify({
       text: `The host ${payload.hostname} heartbeat is alive.`,
@@ -191,6 +205,9 @@ function* watchHeartbeatSucceded() {
 
 function* heartbeatFailed({ payload }) {
   yield put(setHeartbeatCritical(payload));
+  yield put(
+    checkHostIsDeregisterable({ ...payload, debounce: deregistrationDebounce })
+  );
   yield put(
     notify({
       text: `The host ${payload.hostname} heartbeat is failing.`,
@@ -410,5 +427,6 @@ export default function* rootSaga() {
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),
+    watchHostDeregisterable(),
   ]);
 }

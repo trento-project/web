@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loading: false,
@@ -59,6 +59,26 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
+    setHostListDeregisterable: (state, { payload }) => {
+      const ids = payload.map((host) => host.id);
+
+      state.hosts = state.hosts.map((host) => {
+        if (ids.includes(host.id)) {
+          return { ...host, deregisterable: true };
+        }
+
+        return host;
+      });
+    },
+    setHostNotDeregisterable: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.id) {
+          return { ...host, deregisterable: false };
+        }
+
+        return host;
+      });
+    },
     startHostsLoading: (state) => {
       state.loading = true;
     },
@@ -71,7 +91,17 @@ export const hostsListSlice = createSlice({
   },
 });
 
+export const CHECK_HOST_IS_DEREGISTERABLE = 'CHECK_HOST_IS_DEREGISTERABLE';
+export const CANCEL_CHECK_HOST_IS_DEREGISTERABLE =
+  'CANCEL_CHECK_HOST_IS_DEREGISTERABLE';
 export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
+
+export const checkHostIsDeregisterable = createAction(
+  CHECK_HOST_IS_DEREGISTERABLE
+);
+export const cancelCheckHostIsDeregisterable = createAction(
+  CANCEL_CHECK_HOST_IS_DEREGISTERABLE
+);
 
 export const {
   setHosts,
@@ -79,10 +109,12 @@ export const {
   updateHost,
   addTagToHost,
   removeTagFromHost,
-  startHostsLoading,
-  stopHostsLoading,
   setHeartbeatPassing,
   setHeartbeatCritical,
+  setHostListDeregisterable,
+  setHostNotDeregisterable,
+  startHostsLoading,
+  stopHostsLoading,
   removeHost,
 } = hostsListSlice.actions;
 
