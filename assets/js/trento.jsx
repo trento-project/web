@@ -18,7 +18,7 @@ import ClusterDetailsPage, {
 } from '@components/ClusterDetails';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
-import HostDetails from '@components/HostDetails';
+import HostDetails, { HostSettingsPage } from '@components/HostDetails';
 import DatabasesOverview from '@components/DatabasesOverview';
 import ChecksCatalog from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
@@ -30,7 +30,6 @@ import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';
 import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
-import HostSettingsPage from '@components/HostDetails/HostSettingsPage';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import { store } from './state';

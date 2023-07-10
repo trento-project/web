@@ -24,10 +24,20 @@ function HostSettingsPage() {
   if (!host) {
     return <LoadingBox text="Loading..." />;
   }
+  const {
+    hostname: hostName,
+    provider,
+    agent_version: agentVersion,
+    selected_checks: selectedChecks,
+  } = host;
 
   return (
     <HostChecksSelection
-      host={host}
+      hostID={hostID}
+      hostName={hostName}
+      provider={provider}
+      agentVersion={agentVersion}
+      selectedChecks={selectedChecks}
       catalog={catalog}
       catalogError={catalogError}
       catalogLoading={catalogLoading}
