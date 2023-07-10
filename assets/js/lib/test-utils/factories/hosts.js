@@ -57,5 +57,6 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     },
     sles_subscriptions: slesSubscriptionFactory.buildList(4, { host_id: id }),
     deregisterable: false,
+    selected_checks: [],
   };
 });

@@ -22,13 +22,21 @@ describe('HostChecksSelection component', () => {
 
     const onUpdateCatalog = jest.fn();
 
-    const host = hostFactory.build({ provider: 'azure' });
-
-    const { agent_version: agentVersion } = host;
+    const {
+      id: hostID,
+      hostname: hostName,
+      provider,
+      agent_version: agentVersion,
+      selected_checks: selectedChecks,
+    } = hostFactory.build({ provider: 'azure' });
 
     renderWithRouter(
       <HostChecksSelection
-        host={host}
+        hostID={hostID}
+        hostName={hostName}
+        provider={provider}
+        agentVersion={agentVersion}
+        selectedChecks={selectedChecks}
         catalog={catalog}
         catalogError={null}
         catalogLoading={false}

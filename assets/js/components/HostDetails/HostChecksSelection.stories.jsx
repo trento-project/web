@@ -19,7 +19,10 @@ const selectedChecks = [
   catalog[6].id,
 ];
 
-const host = hostFactory.build({ provider: 'azure' });
+const host = hostFactory.build({
+  provider: 'azure',
+  selected_checks: selectedChecks,
+});
 
 export default {
   title: 'HostChecksSelection',
@@ -32,12 +35,37 @@ export default {
     ),
   ],
   argTypes: {
-    host: {
-      control: 'object',
-      description: 'The host for which to select checks',
+    hostID: {
+      control: 'string',
+      description: 'The host identifier',
       table: {
-        type: { summary: 'object' },
+        type: { summary: 'string' },
       },
+    },
+    hostName: {
+      control: 'string',
+      description: 'The host name',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    provider: {
+      control: 'string',
+      description: 'The discovered CSP where the host is running',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    agentVersion: {
+      control: 'string',
+      description: 'The version of the installed agent',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    selectedChecks: {
+      control: 'array',
+      description: 'The check selection',
     },
     catalog: {
       control: 'object',
@@ -48,7 +76,7 @@ export default {
     },
     catalogError: {
       control: 'text',
-      description: 'Error occurred while loading che relevant checks catalog',
+      description: 'Error occurred while loading the relevant checks catalog',
       table: {
         type: { summary: 'string' },
         defaultValue: { summary: null },
@@ -71,7 +99,11 @@ export default {
 
 export const Default = {
   args: {
-    host: { ...host, selected_checks: selectedChecks },
+    hostID: host.id,
+    hostName: host.hostname,
+    provider: host.provider,
+    agentVersion: host.agent_version,
+    selectedChecks: host.selected_checks,
     catalog,
     catalogError: null,
     catalogLoading: false,
