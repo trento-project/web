@@ -148,8 +148,12 @@ defmodule Trento.HostProjectorTest do
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    projection = Repo.get!(HostReadModel, host_id)
 
+    assert_broadcast "host_details_updated",
+                     %{id: ^host_id},
+                     1000
+
+    projection = Repo.get!(HostReadModel, host_id)
     assert nil == projection.cluster_id
   end
 
@@ -169,8 +173,12 @@ defmodule Trento.HostProjectorTest do
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    projection = Repo.get!(HostReadModel, host_id)
 
+    refute_broadcast "host_details_updated",
+                     %{id: ^host_id},
+                     1000
+
+    projection = Repo.get!(HostReadModel, host_id)
     assert cluster_id == projection.cluster_id
   end
 
