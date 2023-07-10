@@ -30,6 +30,7 @@ import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';
 import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
+import HostSettingsPage from '@components/HostDetails/HostSettingsPage';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 import { store } from './state';
@@ -59,6 +60,10 @@ function App() {
                 <Route element={<Layout />}>
                   <Route index element={<Home />} />
                   <Route index path="hosts" element={<HostsList />} />
+                  <Route
+                    path="hosts/:hostID/settings"
+                    element={<HostSettingsPage />}
+                  />
                   <Route path="clusters" element={<ClustersList />} />
                   <Route path="sap_systems" element={<SapSystemsOverview />} />
                   <Route path="databases" element={<DatabasesOverview />} />
