@@ -99,6 +99,13 @@ export const Default = {
   },
 };
 
+export const Empty = {
+  args: {
+    ...Default.args,
+    catalog: [],
+  },
+};
+
 export const Loading = {
   args: {
     ...Default.args,
