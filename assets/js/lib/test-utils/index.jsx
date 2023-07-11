@@ -27,6 +27,7 @@ export const defaultInitialState = {
     ),
   },
   clusterChecksSelection: {},
+  checksSelection: {},
   catalog: { loading: false, data: [], error: null },
 };
 

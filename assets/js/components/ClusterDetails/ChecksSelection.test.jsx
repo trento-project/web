@@ -132,7 +132,7 @@ describe('ClusterDetails ChecksSelection component', () => {
         },
       },
       {
-        type: 'CHECKS_SELECTED',
+        type: 'CLUSTER_CHECKS_SELECTED',
         payload: {
           checks: selectedChecks,
           clusterID: cluster.id,

@@ -6,7 +6,7 @@ import {
   CLUSTER_DEREGISTERED,
   removeCluster,
   updateSelectedChecks,
-  CHECKS_SELECTED,
+  CLUSTER_CHECKS_SELECTED,
 } from '@state/clusters';
 import {
   setClusterChecksSelectionSavingError,
@@ -50,8 +50,8 @@ export function* clusterDeregistered({ payload: { name, id } }) {
   );
 }
 
-export function* watchChecksSelected() {
-  yield takeEvery(CHECKS_SELECTED, checksSelected);
+export function* watchClusterChecksSelection() {
+  yield takeEvery(CLUSTER_CHECKS_SELECTED, checksSelected);
 }
 
 export function* watchClusterDeregistered() {

@@ -103,8 +103,8 @@ export const clustersListSlice = createSlice({
 
 export const CLUSTER_DEREGISTERED = 'CLUSTER_DEREGISTERED';
 
-export const CHECKS_SELECTED = 'CHECKS_SELECTED';
-export const checksSelected = createAction(CHECKS_SELECTED);
+export const CLUSTER_CHECKS_SELECTED = 'CLUSTER_CHECKS_SELECTED';
+export const checksSelected = createAction(CLUSTER_CHECKS_SELECTED);
 
 export const {
   setClusters,
