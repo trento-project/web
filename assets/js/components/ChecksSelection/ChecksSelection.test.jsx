@@ -141,7 +141,7 @@ describe('ChecksSelection component', () => {
     const switches = screen.getAllByRole('switch');
 
     await user.click(switches[0]);
-    await user.click(screen.getByText('Select Checks for Execution'));
+    await user.click(screen.getByText('Save Check Selection'));
 
     expect(onSave).toBeCalledWith([checkID1, checkID2], targetID);
     expect(onUpdateCatalog).toBeCalled();

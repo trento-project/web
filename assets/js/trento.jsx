@@ -18,7 +18,7 @@ import ClusterDetailsPage, {
 } from '@components/ClusterDetails';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
-import HostDetails from '@components/HostDetails';
+import HostDetails, { HostSettingsPage } from '@components/HostDetails';
 import DatabasesOverview from '@components/DatabasesOverview';
 import ChecksCatalog from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
@@ -59,6 +59,10 @@ function App() {
                 <Route element={<Layout />}>
                   <Route index element={<Home />} />
                   <Route index path="hosts" element={<HostsList />} />
+                  <Route
+                    path="hosts/:hostID/settings"
+                    element={<HostSettingsPage />}
+                  />
                   <Route path="clusters" element={<ClustersList />} />
                   <Route path="sap_systems" element={<SapSystemsOverview />} />
                   <Route path="databases" element={<DatabasesOverview />} />

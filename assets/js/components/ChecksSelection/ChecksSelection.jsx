@@ -67,7 +67,7 @@ function ChecksSelection({
   useEffect(() => {
     onUpdateCatalog();
     onClear();
-  }, [onUpdateCatalog, onClear]);
+  }, []);
 
   const onCheckSelectionGroupChange = (checks, groupSelected) => {
     const groupChecks = checks.map((check) => check.id);
@@ -83,7 +83,7 @@ function ChecksSelection({
     <div className={classNames('bg-white rounded p-3', className)}>
       <CatalogContainer
         onRefresh={onUpdateCatalog}
-        isCatalogEmpty={catalog.size === 0}
+        isCatalogEmpty={catalog.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
@@ -128,7 +128,7 @@ function ChecksSelection({
                   <EOS_LOADING_ANIMATED color="green" size={25} />
                 </span>
               ) : (
-                'Select Checks for Execution'
+                'Save Check Selection'
               )}
             </button>
             {error && (
