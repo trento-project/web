@@ -177,9 +177,7 @@ defmodule Trento.HostProjectorTest do
 
     assert cluster_id == projection.cluster_id
 
-    refute_broadcast "host_details_updated",
-                     %{id: ^host_id},
-                     100
+    refute_broadcast "host_details_updated", %{id: ^host_id}
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{
