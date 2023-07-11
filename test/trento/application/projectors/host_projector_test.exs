@@ -151,6 +151,10 @@ defmodule Trento.HostProjectorTest do
     projection = Repo.get!(HostReadModel, host_id)
 
     assert nil == projection.cluster_id
+
+    assert_broadcast "host_details_updated",
+                     %{id: ^host_id, cluster_id: nil},
+                     1000
   end
 
   test "should not set the cluster_id to nil if a HostRemovedFromCluster event is received and the host is not part of the cluster anymore" do
@@ -172,6 +176,8 @@ defmodule Trento.HostProjectorTest do
     projection = Repo.get!(HostReadModel, host_id)
 
     assert cluster_id == projection.cluster_id
+
+    refute_broadcast "host_details_updated", %{id: ^host_id}
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{

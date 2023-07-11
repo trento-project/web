@@ -276,6 +276,17 @@ defmodule Trento.HostProjector do
   end
 
   def after_update(
+        %HostRemovedFromCluster{host_id: host_id},
+        _,
+        %{host: %Trento.HostReadModel{cluster_id: nil}}
+      ) do
+    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", %{
+      id: host_id,
+      cluster_id: nil
+    })
+  end
+
+  def after_update(
         %HostDetailsUpdated{},
         _,
         %{host: host}
