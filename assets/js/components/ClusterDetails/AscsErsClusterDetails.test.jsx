@@ -200,4 +200,31 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     expect(sidContainer).toHaveTextContent(sid);
     expect(sidContainer.querySelector('a')).toBeNull();
   });
+
+  it('should display a host link for registered hosts', () => {
+    const {
+      name,
+      cib_last_written: cibLastWritten,
+      provider,
+      details,
+    } = clusterFactory.build({ type: 'ascs_ers' });
+
+    const hosts = buildHostsFromAscsErsClusterDetails(details);
+    renderWithRouter(
+      <AscsErsClusterDetails
+        clusterName={name}
+        hosts={hosts}
+        cibLastWritten={cibLastWritten}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+      />
+    );
+    const registeredHostContainer = screen.getByText(hosts[0].hostname);
+
+    expect(registeredHostContainer).toHaveAttribute(
+      'href',
+      `/hosts/${hosts[0].id}`
+    );
+  });
 });

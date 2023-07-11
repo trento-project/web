@@ -76,6 +76,18 @@ export const Single = {
   ),
 };
 
+export const WithUnregisteredHost = {
+  args: {
+    ...Single.args,
+    hosts: [buildHostsFromAscsErsClusterDetails(details).pop()],
+  },
+  render: (args) => (
+    <ContainerWrapper>
+      <AscsErsClusterDetails {...args} />
+    </ContainerWrapper>
+  ),
+};
+
 export const MultiSID = {
   args: {
     ...Single.args,

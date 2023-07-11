@@ -6,7 +6,7 @@ import Table from '@components/Table';
 import ListView from '@components/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
-import HostLink from '@components/HostLink';
+import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';
 import { renderEnsaVersion } from '@components/SapSystemDetails';
 
@@ -23,7 +23,7 @@ const nodeDetailsConfig = {
     {
       title: 'Hostname',
       key: '',
-      render: (_, { id, name }) => <HostLink hostId={id}>{name}</HostLink>,
+      render: (_, { id, name }) => <ClusterNodeLink name={name} hostId={id} />,
     },
     {
       title: 'Role',

@@ -184,9 +184,9 @@ describe('HanaClusterDetails component', () => {
   });
 
   it('should display a host link in the site details if the host is registered', () => {
-    const unregisteredClusterNode = hanaClusterDetailsNodesFactory.build({ name: "unknownhost" })
-    const registeredClusterNode = hanaClusterDetailsNodesFactory.build({ name: "registeredhost" })
-
+    const registeredClusterNode = hanaClusterDetailsNodesFactory.build({
+      name: 'registeredhost',
+    });
 
     const {
       clusterID,
@@ -196,9 +196,12 @@ describe('HanaClusterDetails component', () => {
       sid,
       provider,
       details,
-    } = clusterFactory.build({ nodes: [unregisteredClusterNode, registeredClusterNode] });
+    } = clusterFactory.build({ details: { nodes: [registeredClusterNode] } });
 
-    const hosts = hostFactory.buildList(2, { hostname: "registeredhost", cluster_id: clusterID });
+    const host = hostFactory.build({
+      hostname: registeredClusterNode.name,
+      cluster_id: clusterID,
+    });
 
     const sapSystems = sapSystemFactory.buildList(2, { tenant: sid });
 
@@ -208,7 +211,7 @@ describe('HanaClusterDetails component', () => {
         clusterName={clusterName}
         selectedChecks={[]}
         hasSelectedChecks={false}
-        hosts={hosts}
+        hosts={[host]}
         clusterType={clusterType}
         cibLastWritten={cibLastWritten}
         sid={sid}
@@ -219,13 +222,11 @@ describe('HanaClusterDetails component', () => {
       />
     );
 
-    const unregisteredHostContainer = screen.getByText('unknownhost').nextSibling;
     const registeredHostContainer = screen.getByText('registeredhost');
 
-    expect(registeredHostContainer).toBeInTheDocument();
-    expect(unregisteredHostContainer.querySelector('a')).toHaveAttribute(
+    expect(registeredHostContainer).toHaveAttribute(
       'href',
-      `/hosts/registeredhost}`
+      `/hosts/${host.id}`
     );
   });
 });

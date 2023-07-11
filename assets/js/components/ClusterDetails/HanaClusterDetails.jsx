@@ -10,11 +10,11 @@ import ListView from '@components/ListView';
 import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
-import HostLink from '@components/HostLink';
+import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import ProviderLabel from '@components/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
-import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_WARNING_OUTLINED } from 'eos-icons-react';
+import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 import SiteDetails from './SiteDetails';
@@ -33,21 +33,9 @@ const siteDetailsConfig = {
     {
       title: 'Hostname',
       key: '',
-      render: (_, hostData) => {
-        if (hostData.id) {
-          return (<HostLink hostId={hostData.id}>{hostData.name}</HostLink>);
-        }
-        return (
-          <span className="group flex items-center relative">
-            <EOS_WARNING_OUTLINED
-              size="base"
-              className="centered fill-yellow-500"
-            />
-            <span className="ml-1 truncate max-w-[100px]">{hostData.name}</span>
-            <Tooltip tooltipText="Host currently not registered." width="w-52 -translate-x-1/3" />
-          </span>
-        );
-      }
+      render: (_, hostData) => (
+        <ClusterNodeLink name={hostData.name} hostId={hostData.id} />
+      ),
     },
     { title: 'Role', key: 'hana_status' },
     {
@@ -86,8 +74,8 @@ function HanaClusterDetails({
   sapSystems,
   details,
   lastExecution,
-  onStartExecution = () => { },
-  navigate = () => { },
+  onStartExecution = () => {},
+  navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
   const enrichedSapSystem = {
