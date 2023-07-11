@@ -2,6 +2,8 @@ import hostsReducer, {
   removeHost,
   setHostListDeregisterable,
   setHostNotDeregisterable,
+  setHostDeregistering,
+  setHostNotDeregistering,
 } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
 
@@ -34,6 +36,34 @@ describe('Hosts reducer', () => {
 
     const expectedState = {
       hosts: [{ ...host1, deregisterable: false }, host2],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should set host in deregistering state', () => {
+    const [host1, host2] = hostFactory.buildList(2);
+    const initialState = { hosts: [host1, host2] };
+
+    const action = setHostDeregistering(host1);
+
+    const expectedState = {
+      hosts: [{ ...host1, deregistering: true }, host2],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should remove deregistering state from host', () => {
+    const [host1, host2] = hostFactory.buildList(2);
+    const initialState = {
+      hosts: [host1, host2],
+    };
+
+    const action = setHostNotDeregistering(host1);
+
+    const expectedState = {
+      hosts: [{ ...host1, deregistering: false }, host2],
     };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Table from '@components/Table';
+import DeregistrationModal from '@components/DeregistrationModal';
 import HealthIcon from '@components/Health/HealthIcon';
 import Tags from '@components/Tags';
 import HostLink from '@components/HostLink';
@@ -16,8 +17,10 @@ import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
 import Tooltip from '@components/Tooltip';
+import CleanUpButton from '@components/CleanUpButton';
 
-import { addTagToHost, removeTagFromHost } from '@state/hosts';
+import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
+
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
 
@@ -50,8 +53,20 @@ function HostsList() {
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
+  const [hostToDeregister, setHostToDeregister] = useState(undefined);
 
   const dispatch = useDispatch();
+
+  const openDeregistrationModal = (host) => {
+    setHostToDeregister(host);
+    setCleanUpModalOpen(true);
+  };
+
+  const cleanUpHost = (host) => {
+    setCleanUpModalOpen(false);
+    dispatch(deregisterHost(host));
+  };
 
   const config = {
     pagination: true,
@@ -177,6 +192,20 @@ function HostsList() {
           />
         ),
       },
+      {
+        title: '',
+        key: 'deregisterable',
+        className: 'w-48',
+        render: (content, item) =>
+          content && (
+            <CleanUpButton
+              cleaning={item.deregistering}
+              onClick={() => {
+                openDeregistrationModal(item);
+              }}
+            />
+          ),
+      },
     ],
   };
 
@@ -199,6 +228,8 @@ function HostsList() {
       id: host.id,
       tags: (host.tags && host.tags.map((tag) => tag.value)) || [],
       sap_systems: sapSystemList,
+      deregisterable: host.deregisterable,
+      deregistering: host.deregistering,
     };
   });
 
@@ -206,6 +237,16 @@ function HostsList() {
   return (
     <>
       <PageHeader className="font-bold">Hosts</PageHeader>
+      <DeregistrationModal
+        hostname={hostToDeregister?.hostname}
+        isOpen={!!cleanUpModalOpen}
+        onCleanUp={() => {
+          cleanUpHost(hostToDeregister);
+        }}
+        onCancel={() => {
+          setCleanUpModalOpen(false);
+        }}
+      />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table

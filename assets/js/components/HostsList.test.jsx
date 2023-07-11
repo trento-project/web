@@ -99,6 +99,97 @@ describe('HostsLists component', () => {
     });
   });
 
+  describe('deregistration', () => {
+    it('should show the clean up button when the host is deregisterable', () => {
+      const host1 = hostFactory.build({ deregisterable: true });
+      const host2 = hostFactory.build({ deregisterable: false });
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [].concat(host1, host2),
+        },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+
+      renderWithRouter(StatefulHostsList);
+      const table = screen.getByRole('table');
+      const cleanUpCell1 = table.querySelector(
+        'tr:nth-child(1) > td:nth-child(9)'
+      );
+      const cleanUpCell2 = table.querySelector(
+        'tr:nth-child(2) > td:nth-child(9)'
+      );
+      expect(cleanUpCell1).toHaveTextContent('Clean up');
+      expect(cleanUpCell2).not.toHaveTextContent('Clean up');
+    });
+
+    it('should show the host in deregistering state', () => {
+      const host = hostFactory.build({
+        deregisterable: true,
+        deregistering: true,
+      });
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [host],
+        },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+
+      renderWithRouter(StatefulHostsList);
+      expect(screen.getByLabelText('Loading')).toBeInTheDocument();
+    });
+
+    it('should request a deregistration when the clean up button in the modal is clicked', async () => {
+      const user = userEvent.setup();
+
+      const host = hostFactory.build({ deregisterable: true });
+      const state = {
+        ...defaultInitialState,
+        hostsList: {
+          hosts: [host],
+        },
+      };
+
+      const [StatefulHostsList, store] = withState(<HostsList />, state);
+
+      renderWithRouter(StatefulHostsList);
+
+      const table = screen.getByRole('table');
+      const cleanUpButton = table.querySelector(
+        'tr:nth-child(1) > td:nth-child(9) > button'
+      );
+
+      await user.click(cleanUpButton);
+
+      expect(
+        screen.getByText(
+          `Clean up data discovered by agent on host ${host.hostname}`
+        )
+      ).toBeInTheDocument();
+
+      const cleanUpModalButton = screen.getAllByRole('button', {
+        name: 'Clean up',
+      })[1];
+
+      await user.click(cleanUpModalButton);
+
+      const actions = store.getActions();
+      const expectedActions = [
+        {
+          type: 'DEREGISTER_HOST',
+          payload: expect.objectContaining({
+            id: host.id,
+            hostname: host.hostname,
+          }),
+        },
+      ];
+      expect(actions).toEqual(expect.arrayContaining(expectedActions));
+    });
+  });
+
   describe('filtering', () => {
     const cleanInitialState = {
       hostsList: {
