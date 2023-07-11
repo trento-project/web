@@ -5,6 +5,7 @@ import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
 import clusterChecksSelectionReducer from './clusterChecksSelection';
+import checksSelectionReducer from './checksSelection';
 import checksResultsFiltersReducer from './checksResultsFilters';
 import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
@@ -23,6 +24,7 @@ export const store = configureStore({
     hostsList: hostsListReducer,
     clustersList: clustersListReducer,
     clusterChecksSelection: clusterChecksSelectionReducer,
+    checksSelection: checksSelectionReducer,
     checksResultsFilters: checksResultsFiltersReducer,
     sapSystemsList: sapSystemListReducer,
     databasesList: databasesListReducer,
