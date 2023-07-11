@@ -152,7 +152,7 @@ defmodule Trento.HostProjectorTest do
     assert nil == projection.cluster_id
 
     assert_broadcast "host_details_updated",
-                     %{id: ^host_id},
+                     %{id: ^host_id, cluster_id: nil},
                      1000
   end
 
