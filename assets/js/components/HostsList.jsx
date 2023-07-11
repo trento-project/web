@@ -58,6 +58,16 @@ function HostsList() {
 
   const dispatch = useDispatch();
 
+  const openDeregistrationModal = (host) => {
+    setHostToDeregister(host);
+    setCleanUpModalOpen(true);
+  };
+
+  const cleanUpHost = (host) => {
+    setCleanUpModalOpen(false);
+    dispatch(deregisterHost(host));
+  };
+
   const config = {
     pagination: true,
     usePadding: false,
@@ -191,8 +201,7 @@ function HostsList() {
             <CleanUpButton
               cleaning={item.deregistering}
               onClick={() => {
-                setHostToDeregister(item);
-                setCleanUpModalOpen(true);
+                openDeregistrationModal(item);
               }}
             />
           ),
@@ -232,8 +241,7 @@ function HostsList() {
         hostname={hostToDeregister?.hostname}
         isOpen={!!cleanUpModalOpen}
         onCleanUp={() => {
-          setCleanUpModalOpen(false);
-          dispatch(deregisterHost(hostToDeregister));
+          cleanUpHost(hostToDeregister);
         }}
         onCancel={() => {
           setCleanUpModalOpen(false);
