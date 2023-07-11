@@ -54,7 +54,7 @@ function HostsList() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
-  const [selectedHost, setSelectedHost] = useState(undefined);
+  const [hostToDeregister, setHostToDeregister] = useState(undefined);
 
   const dispatch = useDispatch();
 
@@ -191,7 +191,7 @@ function HostsList() {
             <CleanUpButton
               cleaning={item.deregistering}
               onClick={() => {
-                setSelectedHost(item);
+                setHostToDeregister(item);
                 setCleanUpModalOpen(true);
               }}
             />
@@ -229,11 +229,11 @@ function HostsList() {
     <>
       <PageHeader className="font-bold">Hosts</PageHeader>
       <DeregistrationModal
-        hostname={selectedHost?.hostname}
+        hostname={hostToDeregister?.hostname}
         isOpen={!!cleanUpModalOpen}
         onCleanUp={() => {
           setCleanUpModalOpen(false);
-          dispatch(deregisterHost(selectedHost));
+          dispatch(deregisterHost(hostToDeregister));
         }}
         onCancel={() => {
           setCleanUpModalOpen(false);
