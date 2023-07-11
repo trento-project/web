@@ -179,7 +179,7 @@ defmodule Trento.HostProjectorTest do
 
     refute_broadcast "host_details_updated",
                      %{id: ^host_id},
-                     1000
+                     100
   end
 
   test "should update an existing host when HostDetailsUpdated event is received", %{
