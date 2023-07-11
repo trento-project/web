@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loading: false,
@@ -102,6 +102,9 @@ export const clustersListSlice = createSlice({
 });
 
 export const CLUSTER_DEREGISTERED = 'CLUSTER_DEREGISTERED';
+
+export const CHECKS_SELECTED = 'CHECKS_SELECTED';
+export const checksSelected = createAction(CHECKS_SELECTED);
 
 export const {
   setClusters,

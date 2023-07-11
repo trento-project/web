@@ -8,7 +8,7 @@ import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import { checksSelected } from '@state/actions/cluster';
+import { checksSelected } from '@state/clusters';
 import { executionRequested } from '@state/actions/lastExecutions';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
@@ -149,7 +149,12 @@ function ChecksSelection({ clusterId, cluster }) {
             <button
               className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
               onClick={() =>
-                dispatch(checksSelected(selectedChecks, clusterId))
+                dispatch(
+                  checksSelected({
+                    checks: selectedChecks,
+                    clusterID: clusterId,
+                  })
+                )
               }
               type="button"
               data-testid="save-selection-button"

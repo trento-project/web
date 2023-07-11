@@ -34,6 +34,7 @@ import {
   updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
+  CHECKS_SELECTED,
 } from '@state/clusters';
 
 import {
@@ -88,7 +89,6 @@ import {
   stopSavingClusterChecksSelection,
 } from '@state/clusterChecksSelection';
 
-import { CHECKS_SELECTED } from '@state/actions/cluster';
 import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
