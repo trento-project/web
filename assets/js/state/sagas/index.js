@@ -1,4 +1,4 @@
-import { get, post } from '@lib/network';
+import { get } from '@lib/network';
 import {
   put,
   all,
@@ -29,12 +29,10 @@ import {
   appendCluster,
   updateCluster,
   updateCibLastWritten,
-  updateSelectedChecks,
   updateChecksResults,
   updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
-  CHECKS_SELECTED,
 } from '@state/clusters';
 
 import {
@@ -73,7 +71,10 @@ import {
   watchHostDeregisterable,
   watchDeregisterHost,
 } from '@state/sagas/hosts';
-import { watchClusterDeregistered } from '@state/sagas/clusters';
+import {
+  watchClusterDeregistered,
+  watchChecksSelected,
+} from '@state/sagas/clusters';
 
 import {
   watchUpdateLastExecution,
@@ -82,12 +83,6 @@ import {
 import { watchPerformLogin } from '@state/sagas/user';
 
 import { getClusterName } from '@state/selectors/cluster';
-import {
-  setClusterChecksSelectionSavingError,
-  setClusterChecksSelectionSavingSuccess,
-  startSavingClusterChecksSelection,
-  stopSavingClusterChecksSelection,
-} from '@state/clusterChecksSelection';
 
 import { notify } from '@state/actions/notifications';
 import { initSocketConnection } from '@lib/network/socket';
@@ -255,40 +250,6 @@ function* clusterDetailsUpdated({ payload }) {
 
 function* watchClusterDetailsUpdated() {
   yield takeEvery('CLUSTER_DETAILS_UPDATED', clusterDetailsUpdated);
-}
-
-function* checksSelected({ payload }) {
-  yield put(startSavingClusterChecksSelection());
-
-  try {
-    yield call(post, `/clusters/${payload.clusterID}/checks`, {
-      checks: payload.checks,
-    });
-    yield put(updateSelectedChecks(payload));
-
-    const clusterName = yield select(getClusterName(payload.clusterID));
-    yield put(
-      appendEntryToLiveFeed({
-        source: clusterName,
-        message: 'Checks selection changed.',
-      })
-    );
-
-    yield put(
-      notify({
-        text: 'Checks selection saved',
-        icon: '💾',
-      })
-    );
-    yield put(setClusterChecksSelectionSavingSuccess());
-  } catch (error) {
-    yield put(setClusterChecksSelectionSavingError());
-  }
-  yield put(stopSavingClusterChecksSelection());
-}
-
-function* watchChecksSelected() {
-  yield takeEvery(CHECKS_SELECTED, checksSelected);
 }
 
 function* checksExecutionStarted({ payload }) {
