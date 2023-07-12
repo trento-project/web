@@ -10,6 +10,7 @@ import {
   buildSapSystemsFromAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
   clusterFactory,
+  hostFactory,
 } from '@lib/test-utils/factories';
 
 import { providerData } from '@components/ProviderLabel/ProviderLabel';
@@ -105,7 +106,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     nodes.forEach(
       async (
         {
-          id: clusterID,
+          id: hostId,
           name: nodeName,
           role,
           virtual_ip: virtualIp,
@@ -119,7 +120,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
           expect(hostnameCell).toHaveTextContent(nodeName);
           expect(hostnameCell)
             .querySelector('a')
-            .toHaveAttributes('href', clusterID);
+            .toHaveAttributes('href', hostId);
           expect(row.querySelector('td:nth-child(1)')).toHaveTextContent(role);
           expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
             virtualIp
@@ -201,7 +202,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     expect(sidContainer.querySelector('a')).toBeNull();
   });
 
-  it('should display a host link for registered hosts', () => {
+  it('should not display a host link for unregistered hosts', () => {
     const {
       name,
       cib_last_written: cibLastWritten,
@@ -210,6 +211,8 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     } = clusterFactory.build({ type: 'ascs_ers' });
 
     const hosts = buildHostsFromAscsErsClusterDetails(details);
+    const unregisteredHost = hosts.pop()
+
     renderWithRouter(
       <AscsErsClusterDetails
         clusterName={name}
@@ -220,11 +223,10 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         details={details}
       />
     );
-    const registeredHostContainer = screen.getByText(hosts[0].hostname);
+    const unregisteredHostContainer = screen.getByText(unregisteredHost.hostname);
 
-    expect(registeredHostContainer).toHaveAttribute(
-      'href',
-      `/hosts/${hosts[0].id}`
+    expect(unregisteredHostContainer).not.toHaveAttribute(
+      'href'
     );
   });
 });
