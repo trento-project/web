@@ -13,6 +13,7 @@ import {
 import { hostFactory } from '@lib/test-utils/factories';
 import { networkClient } from '@lib/network';
 
+import { DEREGISTER_HOST } from '@state/hosts';
 import HostDetails from './HostDetails';
 
 // delayResponse is need to avoid component updates on axios requests
@@ -179,7 +180,7 @@ describe('HostDetails component', () => {
       const actions = store.getActions();
       const expectedActions = [
         {
-          type: 'DEREGISTER_HOST',
+          type: DEREGISTER_HOST,
           payload: expect.objectContaining({ id, hostname }),
         },
       ];
