@@ -45,7 +45,7 @@ export const hostsListSlice = createSlice({
     },
     updateSelectedChecks: (state, action) => {
       state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.targetID) {
+        if (host.id === action.payload.hostID) {
           host.selected_checks = action.payload.checks;
         }
         return host;

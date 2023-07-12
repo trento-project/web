@@ -14,11 +14,10 @@ import {
 } from '@state/hosts';
 
 import {
-  setChecksSelectionSavingSuccess,
   startSavingChecksSelection,
   stopSavingChecksSelection,
-  CHECKS_SELECTED,
-} from '@state/checksSelection';
+  HOST_CHECKS_SELECTED,
+} from '@state/hostChecksSelection';
 
 import { notify } from '@state/actions/notifications';
 
@@ -74,26 +73,25 @@ export function* deregisterHost({ payload }) {
 }
 
 export function* checksSelected({ payload }) {
-  const { targetID, targetName } = payload;
+  const { hostID, hostName, checks } = payload;
   yield put(startSavingChecksSelection());
 
   try {
-    yield call(post, `/hosts/${targetID}/checks`, {
-      checks: payload.checks,
+    yield call(post, `/hosts/${hostID}/checks`, {
+      checks,
     });
 
     yield put(updateSelectedChecks(payload));
     yield put(
       notify({
-        text: `Checks selection for ${targetName} saved`,
+        text: `Checks selection for ${hostName} saved`,
         icon: '💾',
       })
     );
-    yield put(setChecksSelectionSavingSuccess());
   } catch (error) {
     yield put(
       notify({
-        text: `Unable to save selection for ${targetName}`,
+        text: `Unable to save selection for ${hostName}`,
         icon: '❌',
       })
     );
@@ -114,5 +112,5 @@ export function* watchDeregisterHost() {
 }
 
 export function* watchHostChecksSelection() {
-  yield takeEvery(CHECKS_SELECTED, checksSelected);
+  yield takeEvery(HOST_CHECKS_SELECTED, checksSelected);
 }

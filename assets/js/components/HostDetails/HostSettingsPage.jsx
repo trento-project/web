@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import LoadingBox from '@components/LoadingBox';
 
-import { checksSelected } from '@state/checksSelection';
+import { checksSelected } from '@state/hostChecksSelection';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost } from '@state/selectors';
@@ -58,9 +58,8 @@ function HostSettingsPage() {
       onSaveSelection={(selection, targetID) =>
         dispatch(
           checksSelected({
-            targetID,
-            targetType: 'host',
-            targetName: host.hostname,
+            hostID: targetID,
+            hostName: host.hostname,
             checks: selection,
           })
         )

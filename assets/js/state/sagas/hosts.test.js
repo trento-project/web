@@ -21,10 +21,9 @@ import {
 } from '@state/hosts';
 
 import {
-  setChecksSelectionSavingSuccess,
   startSavingChecksSelection,
   stopSavingChecksSelection,
-} from '@state/checksSelection';
+} from '@state/hostChecksSelection';
 
 import { networkClient } from '@lib/network';
 import { notify } from '@state/actions/notifications';
@@ -130,8 +129,8 @@ describe('Hosts sagas', () => {
     axiosMock.onPost(`/hosts/${host.id}/checks`).reply(202, {});
 
     const actionPayload = {
-      targetID: host.id,
-      targetName: host.hostname,
+      hostID: host.id,
+      hostName: host.hostname,
       checks: [faker.datatype.uuid(), faker.datatype.uuid()],
     };
     const dispatched = await recordSaga(checksSelected, {
@@ -145,7 +144,6 @@ describe('Hosts sagas', () => {
         text: `Checks selection for ${host.hostname} saved`,
         icon: '💾',
       }),
-      setChecksSelectionSavingSuccess(),
       stopSavingChecksSelection(),
     ]);
   });
@@ -156,8 +154,8 @@ describe('Hosts sagas', () => {
     axiosMock.onPost(`/hosts/${host.id}/checks`).reply(400, {});
 
     const actionPayload = {
-      targetID: host.id,
-      targetName: host.hostname,
+      hostID: host.id,
+      hostName: host.hostname,
       checks: [faker.datatype.uuid(), faker.datatype.uuid()],
     };
     const dispatched = await recordSaga(checksSelected, {

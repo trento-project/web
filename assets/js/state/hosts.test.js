@@ -98,7 +98,7 @@ describe('Hosts reducer', () => {
     const newChecksSelection = [faker.datatype.uuid(), faker.datatype.uuid()];
 
     const action = updateSelectedChecks({
-      targetID: host1.id,
+      hostID: host1.id,
       checks: newChecksSelection,
     });
 
