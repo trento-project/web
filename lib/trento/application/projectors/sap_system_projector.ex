@@ -59,8 +59,9 @@ defmodule Trento.SapSystemProjector do
       health: health
     },
     fn multi ->
-      changeset =
-        SapSystemReadModel.changeset(%SapSystemReadModel{id: sap_system_id}, %{health: health})
+      sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
+
+      changeset = SapSystemReadModel.changeset(sap_system, %{health: health})
 
       Ecto.Multi.update(multi, :sap_system, changeset)
     end
@@ -126,13 +127,16 @@ defmodule Trento.SapSystemProjector do
       health: health
     },
     fn multi ->
+      instance =
+        Repo.get_by(ApplicationInstanceReadModel,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+
       changeset =
         ApplicationInstanceReadModel.changeset(
-          %ApplicationInstanceReadModel{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number
-          },
+          instance,
           %{health: health}
         )
 
@@ -146,9 +150,11 @@ defmodule Trento.SapSystemProjector do
       deregistered_at: deregistered_at
     },
     fn multi ->
+      sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
+
       changeset =
         SapSystemReadModel.changeset(
-          %SapSystemReadModel{id: sap_system_id},
+          sap_system,
           %{deregistered_at: deregistered_at}
         )
 
@@ -202,8 +208,10 @@ defmodule Trento.SapSystemProjector do
       ensa_version: ensa_version
     },
     fn multi ->
+      sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
+
       changeset =
-        SapSystemReadModel.changeset(%SapSystemReadModel{id: sap_system_id}, %{
+        SapSystemReadModel.changeset(sap_system, %{
           ensa_version: ensa_version
         })
 
@@ -317,10 +325,8 @@ defmodule Trento.SapSystemProjector do
   def after_update(
         %SapSystemDeregistered{sap_system_id: sap_system_id},
         _,
-        _
+        %{sap_system: %SapSystemReadModel{sid: sid}}
       ) do
-    %SapSystemReadModel{sid: sid} = Repo.get!(SapSystemReadModel, sap_system_id)
-
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_deregistered",
