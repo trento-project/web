@@ -3,9 +3,7 @@ import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
-import {
-  hostFactory
-} from '@lib/test-utils/factories';
+import { hostFactory } from '@lib/test-utils/factories';
 
 describe('ClusterNodeLink', () => {
   it('renders HostLink when hostId is provided', () => {

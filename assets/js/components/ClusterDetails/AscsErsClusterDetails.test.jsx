@@ -104,13 +104,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
 
     nodes.forEach(
       async (
-        {
-          id: hostId,
-          name: nodeName,
-          role,
-          virtual_ip: virtualIp,
-          filesysten,
-        },
+        { id: hostId, name: nodeName, role, virtual_ip: virtualIp, filesysten },
         index
       ) => {
         await waitFor(() => {
@@ -210,7 +204,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     } = clusterFactory.build({ type: 'ascs_ers' });
 
     const hosts = buildHostsFromAscsErsClusterDetails(details);
-    const unregisteredHost = hosts.pop()
+    const unregisteredHost = hosts.pop();
 
     renderWithRouter(
       <AscsErsClusterDetails
@@ -222,10 +216,10 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         details={details}
       />
     );
-    const unregisteredHostContainer = screen.getByText(unregisteredHost.hostname);
-
-    expect(unregisteredHostContainer).not.toHaveAttribute(
-      'href'
+    const unregisteredHostContainer = screen.getByText(
+      unregisteredHost.hostname
     );
+
+    expect(unregisteredHostContainer).not.toHaveAttribute('href');
   });
 });

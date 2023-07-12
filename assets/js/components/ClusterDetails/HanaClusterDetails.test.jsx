@@ -220,7 +220,9 @@ describe('HanaClusterDetails component', () => {
       />
     );
 
-    const registeredHostContainer = screen.getByText(registeredClusterNode.name);
+    const registeredHostContainer = screen.getByText(
+      registeredClusterNode.name
+    );
 
     expect(registeredHostContainer).toHaveAttribute(
       'href',
