@@ -4,9 +4,11 @@ import { useParams } from 'react-router-dom';
 
 import LoadingBox from '@components/LoadingBox';
 
+import { checksSelected } from '@state/checksSelection';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost } from '@state/selectors';
+import { getCheckSelection } from '@state/selectors/checksSelection';
 import HostChecksSelection from './HostChecksSelection';
 
 function HostSettingsPage() {
@@ -21,9 +23,12 @@ function HostSettingsPage() {
     loading: catalogLoading,
   } = useSelector(getCatalog());
 
+  const { saving } = useSelector(getCheckSelection());
+
   if (!host) {
     return <LoadingBox text="Loading..." />;
   }
+
   const {
     hostname: hostName,
     provider,
@@ -46,6 +51,17 @@ function HostSettingsPage() {
           updateCatalog({
             provider: host.provider,
             target_type: 'host',
+          })
+        )
+      }
+      isSavingSelection={saving}
+      onSaveSelection={(selection, targetID) =>
+        dispatch(
+          checksSelected({
+            targetID,
+            targetType: 'host',
+            targetName: host.hostname,
+            checks: selection,
           })
         )
       }

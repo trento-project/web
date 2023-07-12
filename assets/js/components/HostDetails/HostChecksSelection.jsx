@@ -15,6 +15,8 @@ function HostChecksSelection({
   catalogError,
   catalogLoading,
   onUpdateCatalog,
+  onSaveSelection,
+  isSavingSelection,
 }) {
   return (
     <div className="w-full px-2 sm:px-0">
@@ -29,16 +31,12 @@ function HostChecksSelection({
         catalogError={catalogError}
         loading={catalogLoading}
         selected={selectedChecks}
-        onSave={(_selectedChecks, _hostID) => {
-          // TODO: dispatch check selection for a host
-        }}
+        onSave={(selection, targetID) => onSaveSelection(selection, targetID)}
         onUpdateCatalog={() => onUpdateCatalog()}
         onClear={() => {
           // TODO
         }}
-        saving={false}
-        error={null}
-        success={false}
+        saving={isSavingSelection}
       />
     </div>
   );
