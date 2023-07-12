@@ -11,7 +11,7 @@ describe('ClusterNodeLink', () => {
   it('renders HostLink when hostId is provided', () => {
     const { id, hostname } = hostFactory.build();
 
-    renderWithRouter(<ClusterNodeLink hostId={id} name={hostname} />);
+    renderWithRouter(<ClusterNodeLink hostId={id}>{hostname}</ClusterNodeLink>);
 
     const hostLinkElement = screen.getByRole('link', { hostname });
 
@@ -22,7 +22,7 @@ describe('ClusterNodeLink', () => {
   it('renders warning span when hostId is not provided', () => {
     const { hostname } = hostFactory.build();
 
-    render(<ClusterNodeLink name={hostname} />);
+    render(<ClusterNodeLink>{hostname}</ClusterNodeLink>);
     expect(
       screen.getByText('Host currently not registered.')
     ).toBeInTheDocument();

@@ -34,7 +34,7 @@ const siteDetailsConfig = {
       title: 'Hostname',
       key: '',
       render: (_, hostData) => (
-        <ClusterNodeLink name={hostData.name} hostId={hostData.id} />
+        <ClusterNodeLink hostId={hostData.id}>{hostData.name}</ClusterNodeLink>
       ),
     },
     { title: 'Role', key: 'hana_status' },
@@ -74,8 +74,8 @@ function HanaClusterDetails({
   sapSystems,
   details,
   lastExecution,
-  onStartExecution = () => {},
-  navigate = () => {},
+  onStartExecution = () => { },
+  navigate = () => { },
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
   const enrichedSapSystem = {

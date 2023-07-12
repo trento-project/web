@@ -23,7 +23,7 @@ const nodeDetailsConfig = {
     {
       title: 'Hostname',
       key: '',
-      render: (_, { id, name }) => <ClusterNodeLink name={name} hostId={id} />,
+      render: (_, { id, name }) => <ClusterNodeLink hostId={id}>{name}</ClusterNodeLink>,
     },
     {
       title: 'Role',
