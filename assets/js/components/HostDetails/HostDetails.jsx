@@ -42,10 +42,6 @@ function HostDetails() {
 
   const dispatch = useDispatch();
 
-  const openDeregistrationModal = () => {
-    setCleanUpModalOpen(true);
-  };
-
   const cleanUpHost = () => {
     setCleanUpModalOpen(false);
     dispatch(deregisterHost(host));
@@ -109,7 +105,7 @@ function HostDetails() {
               <CleanUpButton
                 cleaning={host.deregistering}
                 onClick={() => {
-                  openDeregistrationModal();
+                  setCleanUpModalOpen(true);
                 }}
               />
             </div>
