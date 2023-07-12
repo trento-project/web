@@ -50,8 +50,9 @@ defmodule Trento.DatabaseProjector do
       health: health
     },
     fn multi ->
-      changeset =
-        DatabaseReadModel.changeset(%DatabaseReadModel{id: sap_system_id}, %{health: health})
+      db = Repo.get!(DatabaseReadModel, sap_system_id)
+
+      changeset = DatabaseReadModel.changeset(db, %{health: health})
 
       Ecto.Multi.update(multi, :database, changeset)
     end
@@ -103,13 +104,16 @@ defmodule Trento.DatabaseProjector do
       health: health
     },
     fn multi ->
+      db_instance =
+        Repo.get_by(DatabaseInstanceReadModel,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+
       changeset =
         DatabaseInstanceReadModel.changeset(
-          %DatabaseInstanceReadModel{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number
-          },
+          db_instance,
           %{health: health}
         )
 
@@ -126,13 +130,16 @@ defmodule Trento.DatabaseProjector do
       system_replication_status: system_replication_status
     },
     fn multi ->
+      db_instance =
+        Repo.get_by(DatabaseInstanceReadModel,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+
       changeset =
         DatabaseInstanceReadModel.changeset(
-          %DatabaseInstanceReadModel{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number
-          },
+          db_instance,
           %{
             system_replication: system_replication,
             system_replication_status: system_replication_status
@@ -149,11 +156,11 @@ defmodule Trento.DatabaseProjector do
       deregistered_at: deregistered_at
     },
     fn multi ->
+      db = Repo.get!(DatabaseReadModel, sap_system_id)
+
       changeset =
         DatabaseReadModel.changeset(
-          %DatabaseReadModel{
-            id: sap_system_id
-          },
+          db,
           %{deregistered_at: deregistered_at}
         )
 
@@ -323,12 +330,12 @@ defmodule Trento.DatabaseProjector do
           sap_system_id: sap_system_id
         },
         _,
-        _
+        %{
+          database: %DatabaseReadModel{
+            sid: sid
+          }
+        }
       ) do
-    %DatabaseReadModel{
-      sid: sid
-    } = Repo.get(DatabaseReadModel, sap_system_id)
-
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_deregistered",
