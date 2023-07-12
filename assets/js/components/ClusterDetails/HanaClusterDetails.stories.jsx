@@ -75,8 +75,8 @@ export const Hana = {
     sapSystems,
     details,
     lastExecution,
-    onStartExecution: () => { },
-    navigate: () => { },
+    onStartExecution: () => {},
+    navigate: () => {},
   },
 };
 

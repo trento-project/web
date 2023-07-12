@@ -74,8 +74,8 @@ function HanaClusterDetails({
   sapSystems,
   details,
   lastExecution,
-  onStartExecution = () => { },
-  navigate = () => { },
+  onStartExecution = () => {},
+  navigate = () => {},
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
   const enrichedSapSystem = {
