@@ -10,7 +10,6 @@ import {
   buildSapSystemsFromAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
   clusterFactory,
-  hostFactory,
 } from '@lib/test-utils/factories';
 
 import { providerData } from '@components/ProviderLabel/ProviderLabel';
