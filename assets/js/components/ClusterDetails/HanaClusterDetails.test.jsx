@@ -184,9 +184,7 @@ describe('HanaClusterDetails component', () => {
   });
 
   it('should display a host link in the site details if the host is registered', () => {
-    const registeredClusterNode = hanaClusterDetailsNodesFactory.build({
-      name: 'registeredhost',
-    });
+    const registeredClusterNode = hanaClusterDetailsNodesFactory.build();
 
     const {
       clusterID,
@@ -222,7 +220,7 @@ describe('HanaClusterDetails component', () => {
       />
     );
 
-    const registeredHostContainer = screen.getByText('registeredhost');
+    const registeredHostContainer = screen.getByText(registeredClusterNode.name);
 
     expect(registeredHostContainer).toHaveAttribute(
       'href',
