@@ -57,8 +57,10 @@ defmodule Trento.HostProjector do
       deregistered_at: deregistered_at
     },
     fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel.changeset(host, %{
           deregistered_at: deregistered_at
         })
 
@@ -131,8 +133,10 @@ defmodule Trento.HostProjector do
       agent_version: agent_version
     },
     fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel.changeset(host, %{
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
@@ -162,8 +166,10 @@ defmodule Trento.HostProjector do
   project(
     %HeartbeatSucceded{host_id: id},
     fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel.changeset(host, %{
           heartbeat: :passing
         })
 
@@ -174,8 +180,10 @@ defmodule Trento.HostProjector do
   project(
     %HeartbeatFailed{host_id: id},
     fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel.changeset(host, %{
           heartbeat: :critical
         })
 
@@ -186,8 +194,10 @@ defmodule Trento.HostProjector do
   project(
     %ProviderUpdated{host_id: id, provider: provider, provider_data: provider_data},
     fn multi ->
+      host = Repo.get!(HostReadModel, id)
+
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel.changeset(host, %{
           provider: provider,
           provider_data: handle_provider_data(provider_data)
         })
@@ -205,13 +215,10 @@ defmodule Trento.HostProjector do
   @impl true
   @spec after_update(any, any, any) :: :ok | {:error, any}
   def after_update(
-        %HostRegistered{host_id: id},
+        %HostRegistered{},
         _,
-        _
+        %{host: %HostReadModel{} = host}
       ) do
-    # We need to hit the database to get the cluster_id
-    host = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_registered",
@@ -239,10 +246,8 @@ defmodule Trento.HostProjector do
   def after_update(
         %HostDeregistered{host_id: id},
         _,
-        _
+        %{host: %HostReadModel{hostname: hostname}}
       ) do
-    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_deregistered",
@@ -289,7 +294,7 @@ defmodule Trento.HostProjector do
   def after_update(
         %HostDetailsUpdated{},
         _,
-        %{host: host}
+        %{host: %HostReadModel{} = host}
       ) do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
@@ -301,10 +306,8 @@ defmodule Trento.HostProjector do
   def after_update(
         %HeartbeatSucceded{host_id: id},
         _,
-        _
+        %{host: %HostReadModel{hostname: hostname}}
       ) do
-    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_succeded",
@@ -320,10 +323,8 @@ defmodule Trento.HostProjector do
   def after_update(
         %HeartbeatFailed{host_id: id},
         _,
-        _
+        %{host: %HostReadModel{hostname: hostname}}
       ) do
-    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_failed",
@@ -349,12 +350,10 @@ defmodule Trento.HostProjector do
   end
 
   def after_update(
-        %HostChecksSelected{host_id: host_id, checks: checks},
+        %HostChecksSelected{checks: checks},
         _,
-        _
+        %{host: %HostReadModel{selected_checks: checks} = host}
       ) do
-    host = %HostReadModel{id: host_id, selected_checks: checks}
-
     message =
       HostView.render(
         "host_details_updated.json",
