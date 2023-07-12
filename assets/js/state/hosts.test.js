@@ -95,7 +95,7 @@ describe('Hosts reducer', () => {
     const host2 = hostFactory.build();
     const initialState = { hosts: [host1, host2] };
 
-    const newChecksSelection = ['ABABAB', 'CDCDCD'];
+    const newChecksSelection = [faker.datatype.uuid(), faker.datatype.uuid()];
 
     const action = updateSelectedChecks({
       targetID: host1.id,

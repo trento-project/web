@@ -4,9 +4,9 @@ import { post } from '@lib/network';
 import { notify } from '@state/actions/notifications';
 import {
   CLUSTER_DEREGISTERED,
+  CLUSTER_CHECKS_SELECTED,
   removeCluster,
   updateSelectedChecks,
-  CLUSTER_CHECKS_SELECTED,
 } from '@state/clusters';
 import {
   setClusterChecksSelectionSavingError,
