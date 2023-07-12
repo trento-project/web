@@ -68,7 +68,7 @@ describe('HostDetails component', () => {
     ).toBeInTheDocument();
   });
 
-  it("should not display 'Clean up' button when host is not deregisterable", () => {
+  it('should not display clean up button when host is not deregisterable', () => {
     const hosts = hostFactory.buildList(1, { deregisterable: false });
     const state = {
       ...defaultInitialState,
@@ -88,7 +88,7 @@ describe('HostDetails component', () => {
     expect(cleanUpButton).not.toBeInTheDocument();
   });
 
-  it("should display 'Clean up' button when host is deregisterable", () => {
+  it('should display clean up button when host is deregisterable', () => {
     const hosts = hostFactory.buildList(1, { deregisterable: true });
 
     const state = {
