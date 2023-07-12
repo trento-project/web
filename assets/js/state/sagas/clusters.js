@@ -16,16 +16,16 @@ import {
 } from '@state/clusterChecksSelection';
 import { getClusterName } from '@state/selectors/cluster';
 
-function* checksSelected({ payload }) {
+export function* checksSelected({ payload }) {
   yield put(startSavingClusterChecksSelection());
+
+  const clusterName = yield select(getClusterName(payload.clusterID));
 
   try {
     yield call(post, `/clusters/${payload.clusterID}/checks`, {
       checks: payload.checks,
     });
     yield put(updateSelectedChecks(payload));
-
-    const clusterName = yield select(getClusterName(payload.clusterID));
 
     yield put(
       notify({
@@ -35,6 +35,12 @@ function* checksSelected({ payload }) {
     );
     yield put(setClusterChecksSelectionSavingSuccess());
   } catch (error) {
+    yield put(
+      notify({
+        text: `Unable to save selection for ${clusterName}`,
+        icon: '❌',
+      })
+    );
     yield put(setClusterChecksSelectionSavingError());
   }
   yield put(stopSavingClusterChecksSelection());
