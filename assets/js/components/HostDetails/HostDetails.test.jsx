@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import MockAdapter from 'axios-mock-adapter';
@@ -143,6 +144,7 @@ describe('HostDetails component', () => {
     });
 
     it('should request a deregistration when the clean up button in the modal is clicked', async () => {
+      const user = userEvent.setup();
       const host = hostFactory.build({ deregisterable: true });
       const state = {
         ...defaultInitialState,
@@ -161,7 +163,7 @@ describe('HostDetails component', () => {
       });
 
       const cleanUpButton = screen.getByRole('button', { name: 'Clean up' });
-      fireEvent.click(cleanUpButton);
+      await user.click(cleanUpButton);
 
       expect(
         screen.getByText(
@@ -172,7 +174,7 @@ describe('HostDetails component', () => {
       const cleanUpModalButton = screen.getAllByRole('button', {
         name: 'Clean up',
       })[1];
-      fireEvent.click(cleanUpModalButton);
+      await user.click(cleanUpModalButton);
 
       const actions = store.getActions();
       const expectedActions = [
