@@ -79,7 +79,7 @@ export const Single = {
 export const WithUnregisteredHost = {
   args: {
     ...Single.args,
-    hosts: [buildHostsFromAscsErsClusterDetails(details).pop()],
+    hosts: Single.args.hosts.slice(0, 1),
   },
   render: (args) => (
     <ContainerWrapper>

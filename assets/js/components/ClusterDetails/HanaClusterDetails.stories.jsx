@@ -75,15 +75,15 @@ export const Hana = {
     sapSystems,
     details,
     lastExecution,
-    onStartExecution: () => {},
-    navigate: () => {},
+    onStartExecution: () => { },
+    navigate: () => { },
   },
 };
 
 export const WithUnregisteredHost = {
   args: {
     ...Hana.args,
-    hosts: [hosts.pop()],
+    hosts: hosts.slice(0, 1),
   },
 };
 
