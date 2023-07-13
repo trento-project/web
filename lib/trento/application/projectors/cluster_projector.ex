@@ -191,9 +191,9 @@ defmodule Trento.ClusterProjector do
   end
 
   @impl true
-  def after_update(%ClusterDeregistered{cluster_id: cluster_id}, _, _) do
-    %ClusterReadModel{name: name} = Repo.get!(ClusterReadModel, cluster_id)
-
+  def after_update(%ClusterDeregistered{cluster_id: cluster_id}, _, %{
+        cluster: %ClusterReadModel{name: name}
+      }) do
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_deregistered", %{
       id: cluster_id,
       name: name
