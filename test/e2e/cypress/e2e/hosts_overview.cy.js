@@ -173,20 +173,38 @@ context('Hosts Overview', () => {
 
   describe('Clean-up', () => {
     describe('Clean-up buttons should be visible only when needed', () => {
+      const heartbeatTargets = agents();
+      const failingHost = heartbeatTargets.shift();
       before(() => {
-        const heartbeatTargets = agents();
-        heartbeatTargets.shift();
         cy.task('startAgentHeartbeat', heartbeatTargets);
       });
 
       it('should hide all Clean-up buttons when heartbeat starts except the first one', () => {
         cy.get(
-          ':nth-child(2) > .w-48 > .bg-white > .text-jungle-green-500'
-        ).should('not.exist');
-
-        cy.get(
           ':nth-child(1) > .w-48 > .bg-white > .text-jungle-green-500'
         ).should('contain.text', 'Clean up');
+
+        for (let i = 2; i < 11; i++) {
+          cy.get(
+            `:nth-child(${i}) > .w-48 > .bg-white > .text-jungle-green-500`
+          ).should('not.exist');
+        }
+      });
+
+      it('should display a confirmation to remove the host after clicking on Clean up', () => {
+        cy.get(
+          ':nth-child(1) > .w-48 > .bg-white > .text-jungle-green-500'
+        ).click();
+
+        cy.get('.min-h-screen > .w-full').should(
+          'contain.text',
+          'This action will cause Trento to stop tracking all the components discovered by the agent in this host, including the host itself and any other component depending on it.'
+        );
+      });
+
+      it('should remove a host after confirming host cleanup', () => {
+        cy.get('.bg-jungle-green-500').click();
+        cy.get(`#host-${failingHost}`).should('not.exist');
       });
     });
   });
