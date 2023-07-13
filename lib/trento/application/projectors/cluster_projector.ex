@@ -63,10 +63,10 @@ defmodule Trento.ClusterProjector do
       deregistered_at: deregistered_at
     },
     fn multi ->
-      cluster = Repo.get!(ClusterReadModel, cluster_id)
-
       changeset =
-        ClusterReadModel.changeset(cluster, %{
+        ClusterReadModel
+        |> Repo.get!(cluster_id)
+        |> ClusterReadModel.changeset(%{
           deregistered_at: deregistered_at
         })
 
@@ -79,10 +79,10 @@ defmodule Trento.ClusterProjector do
       cluster_id: cluster_id
     },
     fn multi ->
-      cluster = Repo.get!(ClusterReadModel, cluster_id)
-
       changeset =
-        ClusterReadModel.changeset(cluster, %{
+        ClusterReadModel
+        |> Repo.get!(cluster_id)
+        |> ClusterReadModel.changeset(%{
           deregistered_at: nil
         })
 
@@ -103,10 +103,10 @@ defmodule Trento.ClusterProjector do
       details: details
     },
     fn multi ->
-      cluster = Repo.get!(ClusterReadModel, id)
-
       changeset =
-        ClusterReadModel.changeset(cluster, %{
+        ClusterReadModel
+        |> Repo.get!(id)
+        |> ClusterReadModel.changeset(%{
           name: name,
           sid: sid,
           additional_sids: additional_sids,
@@ -139,9 +139,10 @@ defmodule Trento.ClusterProjector do
   )
 
   project(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, fn multi ->
-    cluster = Repo.get!(ClusterReadModel, cluster_id)
-
-    changeset = ClusterReadModel.changeset(cluster, %{health: health})
+    changeset =
+      ClusterReadModel
+      |> Repo.get!(cluster_id)
+      |> ClusterReadModel.changeset(%{health: health})
 
     Ecto.Multi.update(multi, :cluster, changeset)
   end)
