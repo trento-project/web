@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
@@ -101,13 +101,14 @@ function ChecksSelection({ clusterId, cluster }) {
     }
   }, [loading]);
 
-  const saveSelection = () =>
+  const saveSelection = useCallback(() =>
     dispatch(
       checksSelected({
         checks: selectedChecks,
         clusterID: clusterId,
       })
-    );
+    )
+  );
 
   return (
     <div className="bg-white rounded p-3">
