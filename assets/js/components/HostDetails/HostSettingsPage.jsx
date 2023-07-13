@@ -44,11 +44,11 @@ function HostSettingsPage() {
       })
     );
 
-  const saveSelection = (selection, targetID) =>
+  const saveSelection = (selection, targetID, targetName) =>
     dispatch(
       checksSelected({
         hostID: targetID,
-        hostName: host.hostname,
+        hostName: targetName,
         checks: selection,
       })
     );

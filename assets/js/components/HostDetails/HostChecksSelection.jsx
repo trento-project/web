@@ -27,11 +27,14 @@ function HostChecksSelection({
       <HostInfoBox provider={provider} agentVersion={agentVersion} />
       <ChecksSelection
         targetID={hostID}
+        targetName={hostName}
         catalog={catalog}
         catalogError={catalogError}
         loading={catalogLoading}
         selected={selectedChecks}
-        onSave={(selection, targetID) => onSaveSelection(selection, targetID)}
+        onSave={(selection, targetID, targetName) =>
+          onSaveSelection(selection, targetID, targetName)
+        }
         onUpdateCatalog={() => onUpdateCatalog()}
         onClear={() => {
           // TODO
