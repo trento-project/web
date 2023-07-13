@@ -32,8 +32,8 @@ function HostChecksSelection({
         catalogError={catalogError}
         loading={catalogLoading}
         selected={selectedChecks}
-        onSave={(selection, targetID, targetName) =>
-          onSaveSelection(selection, targetID, targetName)
+        onSave={(newSelectedChecks, targetID, targetName) =>
+          onSaveSelection(newSelectedChecks, targetID, targetName)
         }
         onUpdateCatalog={() => onUpdateCatalog()}
         onClear={() => {
