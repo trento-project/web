@@ -50,9 +50,10 @@ defmodule Trento.DatabaseProjector do
       health: health
     },
     fn multi ->
-      db = Repo.get!(DatabaseReadModel, sap_system_id)
-
-      changeset = DatabaseReadModel.changeset(db, %{health: health})
+      changeset =
+        DatabaseReadModel
+        |> Repo.get!(sap_system_id)
+        |> DatabaseReadModel.changeset(%{health: health})
 
       Ecto.Multi.update(multi, :database, changeset)
     end
@@ -104,18 +105,14 @@ defmodule Trento.DatabaseProjector do
       health: health
     },
     fn multi ->
-      db_instance =
-        Repo.get_by(DatabaseInstanceReadModel,
+      changeset =
+        DatabaseInstanceReadModel
+        |> Repo.get_by(
           sap_system_id: sap_system_id,
           instance_number: instance_number,
           host_id: host_id
         )
-
-      changeset =
-        DatabaseInstanceReadModel.changeset(
-          db_instance,
-          %{health: health}
-        )
+        |> DatabaseInstanceReadModel.changeset(%{health: health})
 
       Ecto.Multi.update(multi, :database_instance, changeset)
     end
@@ -130,21 +127,17 @@ defmodule Trento.DatabaseProjector do
       system_replication_status: system_replication_status
     },
     fn multi ->
-      db_instance =
-        Repo.get_by(DatabaseInstanceReadModel,
+      changeset =
+        DatabaseInstanceReadModel
+        |> Repo.get_by(
           sap_system_id: sap_system_id,
           instance_number: instance_number,
           host_id: host_id
         )
-
-      changeset =
-        DatabaseInstanceReadModel.changeset(
-          db_instance,
-          %{
-            system_replication: system_replication,
-            system_replication_status: system_replication_status
-          }
-        )
+        |> DatabaseInstanceReadModel.changeset(%{
+          system_replication: system_replication,
+          system_replication_status: system_replication_status
+        })
 
       Ecto.Multi.update(multi, :database_instance, changeset)
     end
@@ -156,13 +149,10 @@ defmodule Trento.DatabaseProjector do
       deregistered_at: deregistered_at
     },
     fn multi ->
-      db = Repo.get!(DatabaseReadModel, sap_system_id)
-
       changeset =
-        DatabaseReadModel.changeset(
-          db,
-          %{deregistered_at: deregistered_at}
-        )
+        DatabaseReadModel
+        |> Repo.get!(sap_system_id)
+        |> DatabaseReadModel.changeset(%{deregistered_at: deregistered_at})
 
       Ecto.Multi.update(multi, :database, changeset)
     end
@@ -174,13 +164,10 @@ defmodule Trento.DatabaseProjector do
       health: health
     },
     fn multi ->
-      db = Repo.get!(DatabaseReadModel, sap_system_id)
-
       changeset =
-        DatabaseReadModel.changeset(
-          db,
-          %{deregistered_at: nil, health: health}
-        )
+        DatabaseReadModel
+        |> Repo.get!(sap_system_id)
+        |> DatabaseReadModel.changeset(%{deregistered_at: nil, health: health})
 
       Ecto.Multi.update(multi, :database, changeset)
     end
