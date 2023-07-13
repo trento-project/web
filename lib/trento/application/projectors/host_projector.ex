@@ -57,10 +57,10 @@ defmodule Trento.HostProjector do
       deregistered_at: deregistered_at
     },
     fn multi ->
-      host = Repo.get!(HostReadModel, id)
-
       changeset =
-        HostReadModel.changeset(host, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           deregistered_at: deregistered_at
         })
 
@@ -73,10 +73,10 @@ defmodule Trento.HostProjector do
       host_id: id
     },
     fn multi ->
-      host = Repo.get!(HostReadModel, id)
-
       changeset =
-        HostReadModel.changeset(host, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           deregistered_at: nil
         })
 
@@ -134,10 +134,10 @@ defmodule Trento.HostProjector do
       agent_version: agent_version
     },
     fn multi ->
-      host = Repo.get!(HostReadModel, id)
-
       changeset =
-        HostReadModel.changeset(host, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
@@ -167,10 +167,10 @@ defmodule Trento.HostProjector do
   project(
     %HeartbeatSucceded{host_id: id},
     fn multi ->
-      host = Repo.get!(HostReadModel, id)
-
       changeset =
-        HostReadModel.changeset(host, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           heartbeat: :passing
         })
 
@@ -181,10 +181,10 @@ defmodule Trento.HostProjector do
   project(
     %HeartbeatFailed{host_id: id},
     fn multi ->
-      host = Repo.get!(HostReadModel, id)
-
       changeset =
-        HostReadModel.changeset(host, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           heartbeat: :critical
         })
 
@@ -195,10 +195,10 @@ defmodule Trento.HostProjector do
   project(
     %ProviderUpdated{host_id: id, provider: provider, provider_data: provider_data},
     fn multi ->
-      host = Repo.get!(HostReadModel, id)
-
       changeset =
-        HostReadModel.changeset(host, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           provider: provider,
           provider_data: handle_provider_data(provider_data)
         })
