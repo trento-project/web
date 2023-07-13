@@ -170,4 +170,24 @@ context('Hosts Overview', () => {
       });
     });
   });
+
+  describe('Clean-up', () => {
+    describe('Clean-up buttons should be visible only when needed', () => {
+      before(() => {
+        const heartbeatTargets = agents();
+        heartbeatTargets.shift();
+        cy.task('startAgentHeartbeat', heartbeatTargets);
+      });
+
+      it('should hide all Clean-up buttons when heartbeat starts except the first one', () => {
+        cy.get(
+          ':nth-child(2) > .w-48 > .bg-white > .text-jungle-green-500'
+        ).should('not.exist');
+
+        cy.get(
+          ':nth-child(1) > .w-48 > .bg-white > .text-jungle-green-500'
+        ).should('contain.text', 'Clean up');
+      });
+    });
+  });
 });
