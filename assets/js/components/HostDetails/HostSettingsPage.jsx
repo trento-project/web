@@ -36,6 +36,23 @@ function HostSettingsPage() {
     selected_checks: selectedChecks,
   } = host;
 
+  const refreshCatalog = () =>
+    dispatch(
+      updateCatalog({
+        provider: host.provider,
+        target_type: 'host',
+      })
+    );
+
+  const saveSelection = (selection, targetID) =>
+    dispatch(
+      checksSelected({
+        hostID: targetID,
+        hostName: host.hostname,
+        checks: selection,
+      })
+    );
+
   return (
     <HostChecksSelection
       hostID={hostID}
@@ -46,24 +63,9 @@ function HostSettingsPage() {
       catalog={catalog}
       catalogError={catalogError}
       catalogLoading={catalogLoading}
-      onUpdateCatalog={() =>
-        dispatch(
-          updateCatalog({
-            provider: host.provider,
-            target_type: 'host',
-          })
-        )
-      }
+      onUpdateCatalog={refreshCatalog}
       isSavingSelection={saving}
-      onSaveSelection={(selection, targetID) =>
-        dispatch(
-          checksSelected({
-            hostID: targetID,
-            hostName: host.hostname,
-            checks: selection,
-          })
-        )
-      }
+      onSaveSelection={saveSelection}
     />
   );
 }

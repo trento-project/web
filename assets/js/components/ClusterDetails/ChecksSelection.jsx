@@ -101,6 +101,14 @@ function ChecksSelection({ clusterId, cluster }) {
     }
   }, [loading]);
 
+  const saveSelection = () =>
+    dispatch(
+      checksSelected({
+        checks: selectedChecks,
+        clusterID: clusterId,
+      })
+    );
+
   return (
     <div className="bg-white rounded p-3">
       <CatalogContainer
@@ -148,14 +156,7 @@ function ChecksSelection({ clusterId, cluster }) {
           <div className="place-items-end flex">
             <button
               className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
-              onClick={() =>
-                dispatch(
-                  checksSelected({
-                    checks: selectedChecks,
-                    clusterID: clusterId,
-                  })
-                )
-              }
+              onClick={saveSelection}
               type="button"
               data-testid="save-selection-button"
             >
