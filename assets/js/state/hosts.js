@@ -43,6 +43,14 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
+    updateSelectedChecks: (state, action) => {
+      state.hosts = state.hosts.map((host) => {
+        if (host.id === action.payload.hostID) {
+          host.selected_checks = action.payload.checks;
+        }
+        return host;
+      });
+    },
     setHeartbeatPassing: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
@@ -127,6 +135,7 @@ export const {
   updateHost,
   addTagToHost,
   removeTagFromHost,
+  updateSelectedChecks,
   setHeartbeatPassing,
   setHeartbeatCritical,
   setHostListDeregisterable,

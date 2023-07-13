@@ -123,6 +123,7 @@ describe('ChecksSelection component', () => {
     const onClear = jest.fn();
     const user = userEvent.setup();
     const targetID = faker.datatype.uuid();
+    const targetName = faker.lorem.word();
 
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
@@ -132,6 +133,7 @@ describe('ChecksSelection component', () => {
       <ChecksSelection
         catalog={catalog}
         targetID={targetID}
+        targetName={targetName}
         onSave={onSave}
         onUpdateCatalog={onUpdateCatalog}
         onClear={onClear}
@@ -143,7 +145,7 @@ describe('ChecksSelection component', () => {
     await user.click(switches[0]);
     await user.click(screen.getByText('Save Check Selection'));
 
-    expect(onSave).toBeCalledWith([checkID1, checkID2], targetID);
+    expect(onSave).toBeCalledWith([checkID1, checkID2], targetID, targetName);
     expect(onUpdateCatalog).toBeCalled();
     expect(onClear).toBeCalled();
   });

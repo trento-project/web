@@ -1,9 +1,11 @@
+import { faker } from '@faker-js/faker';
 import hostsReducer, {
   removeHost,
   setHostListDeregisterable,
   setHostNotDeregisterable,
   setHostDeregistering,
   setHostNotDeregistering,
+  updateSelectedChecks,
 } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
 
@@ -79,6 +81,29 @@ describe('Hosts reducer', () => {
 
     const expectedState = {
       hosts: [host2],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the check selection for a host', () => {
+    const initialCheckSelection = [
+      faker.datatype.uuid(),
+      faker.datatype.uuid(),
+    ];
+    const host1 = hostFactory.build({ selected_checks: initialCheckSelection });
+    const host2 = hostFactory.build();
+    const initialState = { hosts: [host1, host2] };
+
+    const newChecksSelection = [faker.datatype.uuid(), faker.datatype.uuid()];
+
+    const action = updateSelectedChecks({
+      hostID: host1.id,
+      checks: newChecksSelection,
+    });
+
+    const expectedState = {
+      hosts: [{ ...host1, selected_checks: newChecksSelection }, host2],
     };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);

@@ -1,4 +1,6 @@
 import { delay, put, race, call, take, takeEvery } from 'redux-saga/effects';
+import { post, del } from '@lib/network';
+
 import {
   CHECK_HOST_IS_DEREGISTERABLE,
   CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
@@ -8,9 +10,15 @@ import {
   setHostListDeregisterable,
   setHostDeregistering,
   setHostNotDeregistering,
+  updateSelectedChecks,
 } from '@state/hosts';
 
-import { del } from '@lib/network';
+import {
+  startSavingChecksSelection,
+  stopSavingChecksSelection,
+  HOST_CHECKS_SELECTED,
+} from '@state/hostChecksSelection';
+
 import { notify } from '@state/actions/notifications';
 
 export function* markDeregisterableHosts(hosts) {
@@ -64,6 +72,33 @@ export function* deregisterHost({ payload }) {
   }
 }
 
+export function* checksSelected({ payload }) {
+  const { hostID, hostName, checks } = payload;
+  yield put(startSavingChecksSelection());
+
+  try {
+    yield call(post, `/hosts/${hostID}/checks`, {
+      checks,
+    });
+
+    yield put(updateSelectedChecks(payload));
+    yield put(
+      notify({
+        text: `Checks selection for ${hostName} saved`,
+        icon: '💾',
+      })
+    );
+  } catch (error) {
+    yield put(
+      notify({
+        text: `Unable to save selection for ${hostName}`,
+        icon: '❌',
+      })
+    );
+  }
+  yield put(stopSavingChecksSelection());
+}
+
 export function* watchHostDeregisterable() {
   yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostDeregisterable);
 }
@@ -74,4 +109,8 @@ export function* watchHostDeregistered() {
 
 export function* watchDeregisterHost() {
   yield takeEvery(DEREGISTER_HOST, deregisterHost);
+}
+
+export function* watchHostChecksSelection() {
+  yield takeEvery(HOST_CHECKS_SELECTED, checksSelected);
 }

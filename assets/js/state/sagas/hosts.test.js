@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import MockAdapter from 'axios-mock-adapter';
 
 import { recordSaga } from '@lib/test-utils';
@@ -7,6 +8,7 @@ import {
   checkHostDeregisterable,
   hostDeregistered,
   deregisterHost,
+  checksSelected,
 } from '@state/sagas/hosts';
 
 import {
@@ -15,7 +17,13 @@ import {
   removeHost,
   setHostDeregistering,
   setHostNotDeregistering,
+  updateSelectedChecks,
 } from '@state/hosts';
+
+import {
+  startSavingChecksSelection,
+  stopSavingChecksSelection,
+} from '@state/hostChecksSelection';
 
 import { networkClient } from '@lib/network';
 import { notify } from '@state/actions/notifications';
@@ -112,6 +120,55 @@ describe('Hosts sagas', () => {
         icon: '❌',
       }),
       setHostNotDeregistering(host),
+    ]);
+  });
+
+  it('should save check selection for a host', async () => {
+    const host = hostFactory.build();
+
+    axiosMock.onPost(`/hosts/${host.id}/checks`).reply(202, {});
+
+    const actionPayload = {
+      hostID: host.id,
+      hostName: host.hostname,
+      checks: [faker.datatype.uuid(), faker.datatype.uuid()],
+    };
+    const dispatched = await recordSaga(checksSelected, {
+      payload: actionPayload,
+    });
+
+    expect(dispatched).toEqual([
+      startSavingChecksSelection(),
+      updateSelectedChecks(actionPayload),
+      notify({
+        text: `Checks selection for ${host.hostname} saved`,
+        icon: '💾',
+      }),
+      stopSavingChecksSelection(),
+    ]);
+  });
+
+  it('should notify an error when saving check selection fails', async () => {
+    const host = hostFactory.build();
+
+    axiosMock.onPost(`/hosts/${host.id}/checks`).reply(400, {});
+
+    const actionPayload = {
+      hostID: host.id,
+      hostName: host.hostname,
+      checks: [faker.datatype.uuid(), faker.datatype.uuid()],
+    };
+    const dispatched = await recordSaga(checksSelected, {
+      payload: actionPayload,
+    });
+
+    expect(dispatched).toEqual([
+      startSavingChecksSelection(),
+      notify({
+        text: `Unable to save selection for ${host.hostname}`,
+        icon: '❌',
+      }),
+      stopSavingChecksSelection(),
     ]);
   });
 });

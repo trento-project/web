@@ -34,6 +34,7 @@ const defaultSelectedChecks = [];
 function ChecksSelection({
   className,
   targetID,
+  targetName,
   catalog,
   selected = defaultSelectedChecks,
   loading = false,
@@ -119,7 +120,7 @@ function ChecksSelection({
             <button
               className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
               disabled={saving}
-              onClick={() => onSave(selectedChecks, targetID)}
+              onClick={() => onSave(selectedChecks, targetID, targetName)}
               type="button"
               data-testid="save-selection-button"
             >

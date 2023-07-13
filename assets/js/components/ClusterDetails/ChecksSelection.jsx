@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
@@ -8,7 +8,7 @@ import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import { checksSelected } from '@state/actions/cluster';
+import { checksSelected } from '@state/clusters';
 import { executionRequested } from '@state/actions/lastExecutions';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
@@ -101,6 +101,15 @@ function ChecksSelection({ clusterId, cluster }) {
     }
   }, [loading]);
 
+  const saveSelection = useCallback(() =>
+    dispatch(
+      checksSelected({
+        checks: selectedChecks,
+        clusterID: clusterId,
+      })
+    )
+  );
+
   return (
     <div className="bg-white rounded p-3">
       <CatalogContainer
@@ -148,9 +157,7 @@ function ChecksSelection({ clusterId, cluster }) {
           <div className="place-items-end flex">
             <button
               className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
-              onClick={() =>
-                dispatch(checksSelected(selectedChecks, clusterId))
-              }
+              onClick={saveSelection}
               type="button"
               data-testid="save-selection-button"
             >
