@@ -8,7 +8,7 @@ import { checksSelected } from '@state/hostChecksSelection';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost } from '@state/selectors';
-import { getCheckSelection } from '@state/selectors/checksSelection';
+import { getCheckSelection } from '@state/selectors/hostChecksSelection';
 import HostChecksSelection from './HostChecksSelection';
 
 function HostSettingsPage() {

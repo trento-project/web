@@ -1,17 +1,15 @@
-import { getCheckSelection } from './checksSelection';
+import { getCheckSelection } from './hostChecksSelection';
 
 describe('Checks Selection selector', () => {
   it('should get the state of the check selection', () => {
     expect(
       getCheckSelection()({
-        checksSelection: {
+        hostChecksSelection: {
           saving: false,
-          savingSuccess: false,
         },
       })
     ).toEqual({
       saving: false,
-      savingSuccess: false,
     });
   });
 });

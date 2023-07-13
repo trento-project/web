@@ -1,4 +1,4 @@
-import checksSelectionReducer, {
+import hostChecksSelectionReducer, {
   startSavingChecksSelection,
   stopSavingChecksSelection,
 } from '@state/hostChecksSelection';
@@ -15,7 +15,9 @@ describe('Checks Selection reducer', () => {
       saving: true,
     };
 
-    expect(checksSelectionReducer(initialState, action)).toEqual(expectedState);
+    expect(hostChecksSelectionReducer(initialState, action)).toEqual(
+      expectedState
+    );
   });
 
   it('should mark a check selection as completed', () => {
@@ -29,6 +31,8 @@ describe('Checks Selection reducer', () => {
       saving: false,
     };
 
-    expect(checksSelectionReducer(initialState, action)).toEqual(expectedState);
+    expect(hostChecksSelectionReducer(initialState, action)).toEqual(
+      expectedState
+    );
   });
 });

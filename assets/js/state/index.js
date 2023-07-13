@@ -24,7 +24,7 @@ export const store = configureStore({
     hostsList: hostsListReducer,
     clustersList: clustersListReducer,
     clusterChecksSelection: clusterChecksSelectionReducer,
-    checksSelection: hostChecksSelectionReducer,
+    hostChecksSelection: hostChecksSelectionReducer,
     checksResultsFilters: checksResultsFiltersReducer,
     sapSystemsList: sapSystemListReducer,
     databasesList: databasesListReducer,

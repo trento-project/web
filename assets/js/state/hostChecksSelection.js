@@ -4,8 +4,8 @@ const initialState = {
   saving: false,
 };
 
-export const checksSelectionSlice = createSlice({
-  name: 'checksSelection',
+export const hostChecksSelectionSlice = createSlice({
+  name: 'hostChecksSelection',
   initialState,
   reducers: {
     startSavingChecksSelection: (state) => {
@@ -21,6 +21,6 @@ export const HOST_CHECKS_SELECTED = 'HOST_CHECKS_SELECTED';
 export const checksSelected = createAction(HOST_CHECKS_SELECTED);
 
 export const { startSavingChecksSelection, stopSavingChecksSelection } =
-  checksSelectionSlice.actions;
+  hostChecksSelectionSlice.actions;
 
-export default checksSelectionSlice.reducer;
+export default hostChecksSelectionSlice.reducer;
