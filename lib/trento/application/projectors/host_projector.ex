@@ -97,7 +97,8 @@ defmodule Trento.HostProjector do
 
       Ecto.Multi.insert(multi, :host, changeset,
         on_conflict: {:replace, [:cluster_id]},
-        conflict_target: [:id]
+        conflict_target: [:id],
+        returning: true
       )
     end
   )
@@ -258,26 +259,24 @@ defmodule Trento.HostProjector do
     )
   end
 
+  def after_update(%HostAddedToCluster{}, _, %{
+        host: %HostReadModel{hostname: nil}
+      }),
+      do: :ok
+
   def after_update(
         %HostAddedToCluster{host_id: id, cluster_id: cluster_id},
         _,
         _
       ) do
-    case Repo.get!(HostReadModel, id) do
-      # In case the host was not registered yet, we don't want to broadcast
-      %HostReadModel{hostname: nil} ->
-        :ok
-
-      %HostReadModel{} ->
-        TrentoWeb.Endpoint.broadcast(
-          "monitoring:hosts",
-          "host_details_updated",
-          %{
-            id: id,
-            cluster_id: cluster_id
-          }
-        )
-    end
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_details_updated",
+      %{
+        id: id,
+        cluster_id: cluster_id
+      }
+    )
   end
 
   def after_update(
