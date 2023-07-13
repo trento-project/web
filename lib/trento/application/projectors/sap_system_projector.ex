@@ -59,9 +59,10 @@ defmodule Trento.SapSystemProjector do
       health: health
     },
     fn multi ->
-      sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
-
-      changeset = SapSystemReadModel.changeset(sap_system, %{health: health})
+      changeset =
+        SapSystemReadModel
+        |> Repo.get!(sap_system_id)
+        |> SapSystemReadModel.changeset(%{health: health})
 
       Ecto.Multi.update(multi, :sap_system, changeset)
     end
@@ -107,14 +108,15 @@ defmodule Trento.SapSystemProjector do
       new_host_id: new_host_id
     },
     fn multi ->
-      instance =
-        Repo.get_by(ApplicationInstanceReadModel,
+      changeset =
+        ApplicationInstanceReadModel
+        |> Repo.get_by(
           sap_system_id: sap_system_id,
           instance_number: instance_number,
           host_id: old_host_id
         )
+        |> ApplicationInstanceReadModel.changeset(%{host_id: new_host_id})
 
-      changeset = ApplicationInstanceReadModel.changeset(instance, %{host_id: new_host_id})
       Ecto.Multi.update(multi, :application_instance, changeset)
     end
   )
@@ -127,18 +129,14 @@ defmodule Trento.SapSystemProjector do
       health: health
     },
     fn multi ->
-      instance =
-        Repo.get_by(ApplicationInstanceReadModel,
+      changeset =
+        ApplicationInstanceReadModel
+        |> Repo.get_by(
           sap_system_id: sap_system_id,
           instance_number: instance_number,
           host_id: host_id
         )
-
-      changeset =
-        ApplicationInstanceReadModel.changeset(
-          instance,
-          %{health: health}
-        )
+        |> ApplicationInstanceReadModel.changeset(%{health: health})
 
       Ecto.Multi.update(multi, :application_instance, changeset)
     end
@@ -150,13 +148,10 @@ defmodule Trento.SapSystemProjector do
       deregistered_at: deregistered_at
     },
     fn multi ->
-      sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
-
       changeset =
-        SapSystemReadModel.changeset(
-          sap_system,
-          %{deregistered_at: deregistered_at}
-        )
+        SapSystemReadModel
+        |> Repo.get!(sap_system_id)
+        |> SapSystemReadModel.changeset(%{deregistered_at: deregistered_at})
 
       Ecto.Multi.update(multi, :sap_system, changeset)
     end
@@ -170,10 +165,10 @@ defmodule Trento.SapSystemProjector do
       health: health
     },
     fn multi ->
-      sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
-
       changeset =
-        SapSystemReadModel.changeset(sap_system, %{
+        SapSystemReadModel
+        |> Repo.get!(sap_system_id)
+        |> SapSystemReadModel.changeset(%{
           tenant: tenant,
           db_host: db_host,
           health: health,
@@ -208,10 +203,10 @@ defmodule Trento.SapSystemProjector do
       ensa_version: ensa_version
     },
     fn multi ->
-      sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
-
       changeset =
-        SapSystemReadModel.changeset(sap_system, %{
+        SapSystemReadModel
+        |> Repo.get!(sap_system_id)
+        |> SapSystemReadModel.changeset(%{
           ensa_version: ensa_version
         })
 
