@@ -58,7 +58,9 @@ defmodule Trento.HostProjector do
     },
     fn multi ->
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           deregistered_at: deregistered_at
         })
 
@@ -71,10 +73,10 @@ defmodule Trento.HostProjector do
       host_id: id
     },
     fn multi ->
-      host = Repo.get!(HostReadModel, id)
-
       changeset =
-        HostReadModel.changeset(host, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           deregistered_at: nil
         })
 
@@ -95,7 +97,8 @@ defmodule Trento.HostProjector do
 
       Ecto.Multi.insert(multi, :host, changeset,
         on_conflict: {:replace, [:cluster_id]},
-        conflict_target: [:id]
+        conflict_target: [:id],
+        returning: true
       )
     end
   )
@@ -132,7 +135,9 @@ defmodule Trento.HostProjector do
     },
     fn multi ->
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version
@@ -163,7 +168,9 @@ defmodule Trento.HostProjector do
     %HeartbeatSucceded{host_id: id},
     fn multi ->
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           heartbeat: :passing
         })
 
@@ -175,7 +182,9 @@ defmodule Trento.HostProjector do
     %HeartbeatFailed{host_id: id},
     fn multi ->
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           heartbeat: :critical
         })
 
@@ -187,7 +196,9 @@ defmodule Trento.HostProjector do
     %ProviderUpdated{host_id: id, provider: provider, provider_data: provider_data},
     fn multi ->
       changeset =
-        HostReadModel.changeset(%HostReadModel{id: id}, %{
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
           provider: provider,
           provider_data: handle_provider_data(provider_data)
         })
@@ -205,13 +216,10 @@ defmodule Trento.HostProjector do
   @impl true
   @spec after_update(any, any, any) :: :ok | {:error, any}
   def after_update(
-        %HostRegistered{host_id: id},
+        %HostRegistered{},
         _,
-        _
+        %{host: %HostReadModel{} = host}
       ) do
-    # We need to hit the database to get the cluster_id
-    host = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_registered",
@@ -239,10 +247,8 @@ defmodule Trento.HostProjector do
   def after_update(
         %HostDeregistered{host_id: id},
         _,
-        _
+        %{host: %HostReadModel{hostname: hostname}}
       ) do
-    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "host_deregistered",
@@ -253,32 +259,30 @@ defmodule Trento.HostProjector do
     )
   end
 
+  def after_update(%HostAddedToCluster{}, _, %{
+        host: %HostReadModel{hostname: nil}
+      }),
+      do: :ok
+
   def after_update(
         %HostAddedToCluster{host_id: id, cluster_id: cluster_id},
         _,
         _
       ) do
-    case Repo.get!(HostReadModel, id) do
-      # In case the host was not registered yet, we don't want to broadcast
-      %HostReadModel{hostname: nil} ->
-        :ok
-
-      %HostReadModel{} ->
-        TrentoWeb.Endpoint.broadcast(
-          "monitoring:hosts",
-          "host_details_updated",
-          %{
-            id: id,
-            cluster_id: cluster_id
-          }
-        )
-    end
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:hosts",
+      "host_details_updated",
+      %{
+        id: id,
+        cluster_id: cluster_id
+      }
+    )
   end
 
   def after_update(
         %HostRemovedFromCluster{host_id: host_id},
         _,
-        %{host: %Trento.HostReadModel{cluster_id: nil}}
+        %{host: %HostReadModel{cluster_id: nil}}
       ) do
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", %{
       id: host_id,
@@ -289,7 +293,7 @@ defmodule Trento.HostProjector do
   def after_update(
         %HostDetailsUpdated{},
         _,
-        %{host: host}
+        %{host: %HostReadModel{} = host}
       ) do
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
@@ -301,10 +305,8 @@ defmodule Trento.HostProjector do
   def after_update(
         %HeartbeatSucceded{host_id: id},
         _,
-        _
+        %{host: %HostReadModel{hostname: hostname}}
       ) do
-    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_succeded",
@@ -320,10 +322,8 @@ defmodule Trento.HostProjector do
   def after_update(
         %HeartbeatFailed{host_id: id},
         _,
-        _
+        %{host: %HostReadModel{hostname: hostname}}
       ) do
-    %HostReadModel{hostname: hostname} = Repo.get!(HostReadModel, id)
-
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
       "heartbeat_failed",
@@ -349,12 +349,10 @@ defmodule Trento.HostProjector do
   end
 
   def after_update(
-        %HostChecksSelected{host_id: host_id, checks: checks},
+        %HostChecksSelected{checks: checks},
         _,
-        _
+        %{host: %HostReadModel{selected_checks: checks} = host}
       ) do
-    host = %HostReadModel{id: host_id, selected_checks: checks}
-
     message =
       HostView.render(
         "host_details_updated.json",

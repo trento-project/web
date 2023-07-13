@@ -64,7 +64,9 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{id: cluster_id}, %{
+        ClusterReadModel
+        |> Repo.get!(cluster_id)
+        |> ClusterReadModel.changeset(%{
           deregistered_at: deregistered_at
         })
 
@@ -77,10 +79,10 @@ defmodule Trento.ClusterProjector do
       cluster_id: cluster_id
     },
     fn multi ->
-      cluster = Repo.get!(ClusterReadModel, cluster_id)
-
       changeset =
-        ClusterReadModel.changeset(cluster, %{
+        ClusterReadModel
+        |> Repo.get!(cluster_id)
+        |> ClusterReadModel.changeset(%{
           deregistered_at: nil
         })
 
@@ -102,7 +104,9 @@ defmodule Trento.ClusterProjector do
     },
     fn multi ->
       changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{id: id}, %{
+        ClusterReadModel
+        |> Repo.get!(id)
+        |> ClusterReadModel.changeset(%{
           name: name,
           sid: sid,
           additional_sids: additional_sids,
@@ -135,7 +139,10 @@ defmodule Trento.ClusterProjector do
   )
 
   project(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, fn multi ->
-    changeset = ClusterReadModel.changeset(%ClusterReadModel{id: cluster_id}, %{health: health})
+    changeset =
+      ClusterReadModel
+      |> Repo.get!(cluster_id)
+      |> ClusterReadModel.changeset(%{health: health})
 
     Ecto.Multi.update(multi, :cluster, changeset)
   end)
@@ -185,9 +192,9 @@ defmodule Trento.ClusterProjector do
   end
 
   @impl true
-  def after_update(%ClusterDeregistered{cluster_id: cluster_id}, _, _) do
-    %ClusterReadModel{name: name} = Repo.get!(ClusterReadModel, cluster_id)
-
+  def after_update(%ClusterDeregistered{cluster_id: cluster_id}, _, %{
+        cluster: %ClusterReadModel{name: name}
+      }) do
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_deregistered", %{
       id: cluster_id,
       name: name
