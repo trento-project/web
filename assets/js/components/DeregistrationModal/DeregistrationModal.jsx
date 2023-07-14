@@ -30,7 +30,12 @@ function DeregistrationModal({
           onClick={onCleanUp}
         >
           <EOS_CLEANING_SERVICES size="base" className="fill-white inline" />
-          <span className="text-white text-sm font-bold pl-1.5">Clean up</span>
+          <span
+            id="cleanup-confirm"
+            className="text-white text-sm font-bold pl-1.5"
+          >
+            Clean up
+          </span>
         </Button>
         <Button
           type="primary-white-fit"
