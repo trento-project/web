@@ -80,6 +80,13 @@ export const Hana = {
   },
 };
 
+export const WithUnregisteredHost = {
+  args: {
+    ...Hana.args,
+    hosts: hosts.slice(0, 1),
+  },
+};
+
 export const WithNoSelectedChecks = {
   args: {
     ...Hana.args,

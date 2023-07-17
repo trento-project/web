@@ -10,7 +10,7 @@ import ListView from '@components/ListView';
 import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
-import HostLink from '@components/HostLink';
+import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import ProviderLabel from '@components/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
@@ -34,7 +34,7 @@ const siteDetailsConfig = {
       title: 'Hostname',
       key: '',
       render: (_, hostData) => (
-        <HostLink hostId={hostData.id}>{hostData.name}</HostLink>
+        <ClusterNodeLink hostId={hostData.id}>{hostData.name}</ClusterNodeLink>
       ),
     },
     { title: 'Role', key: 'hana_status' },

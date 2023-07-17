@@ -104,13 +104,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
 
     nodes.forEach(
       async (
-        {
-          id: clusterID,
-          name: nodeName,
-          role,
-          virtual_ip: virtualIp,
-          filesysten,
-        },
+        { id: hostId, name: nodeName, role, virtual_ip: virtualIp, filesysten },
         index
       ) => {
         await waitFor(() => {
@@ -119,7 +113,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
           expect(hostnameCell).toHaveTextContent(nodeName);
           expect(hostnameCell)
             .querySelector('a')
-            .toHaveAttributes('href', clusterID);
+            .toHaveAttributes('href', hostId);
           expect(row.querySelector('td:nth-child(1)')).toHaveTextContent(role);
           expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
             virtualIp
@@ -199,5 +193,33 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
 
     expect(sidContainer).toHaveTextContent(sid);
     expect(sidContainer.querySelector('a')).toBeNull();
+  });
+
+  it('should not display a host link for unregistered hosts', () => {
+    const {
+      name,
+      cib_last_written: cibLastWritten,
+      provider,
+      details,
+    } = clusterFactory.build({ type: 'ascs_ers' });
+
+    const hosts = buildHostsFromAscsErsClusterDetails(details);
+    const unregisteredHost = hosts.pop();
+
+    renderWithRouter(
+      <AscsErsClusterDetails
+        clusterName={name}
+        hosts={hosts}
+        cibLastWritten={cibLastWritten}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+      />
+    );
+    const unregisteredHostContainer = screen.getByText(
+      unregisteredHost.hostname
+    );
+
+    expect(unregisteredHostContainer).not.toHaveAttribute('href');
   });
 });
