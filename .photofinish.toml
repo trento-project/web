@@ -202,3 +202,13 @@ files = [
 files = [
     "./test/fixtures/scenarios/host-details/9cd46919-5f19-59aa-993e-cf3736c71053_cloud_discovery_unknown.json",
 ]
+
+[host-vmdrbddev01-restore]
+
+files = [
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/240f96b1-8d26-53b7-9e99-ffb0f2e735bf_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/240f96b1-8d26-53b7-9e99-ffb0f2e735bf_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/240f96b1-8d26-53b7-9e99-ffb0f2e735bf_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/240f96b1-8d26-53b7-9e99-ffb0f2e735bf_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/240f96b1-8d26-53b7-9e99-ffb0f2e735bf_sap_system_discovery.json"
+]
