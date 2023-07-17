@@ -48,19 +48,20 @@ export function* hostDeregistered({ payload }) {
   );
 }
 
-export function* deregisterHost({ payload }) {
-  yield put(setHostDeregistering(payload));
+export function* deregisterHost({ payload: { host, navigate } }) {
+  yield put(setHostDeregistering(host));
   try {
-    yield call(del, `/hosts/${payload.id}`);
+    yield call(del, `/hosts/${host.id}`);
+    navigate?.('/hosts');
   } catch (error) {
     yield put(
       notify({
-        text: `Error deregistering host ${payload?.hostname}.`,
+        text: `Error deregistering host ${host?.hostname}.`,
         icon: '❌',
       })
     );
   } finally {
-    yield put(setHostNotDeregistering(payload));
+    yield put(setHostNotDeregistering(host));
   }
 }
 

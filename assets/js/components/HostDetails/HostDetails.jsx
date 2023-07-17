@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { networkClient } from '@lib/network';
@@ -41,10 +41,11 @@ function HostDetails() {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const cleanUpHost = (selectedHost) => {
     setCleanUpModalOpen(false);
-    dispatch(deregisterHost(selectedHost));
+    dispatch(deregisterHost({ host: selectedHost, navigate }));
   };
 
   const getExportersStatus = async () => {

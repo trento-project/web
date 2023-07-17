@@ -87,7 +87,7 @@ describe('Hosts sagas', () => {
     axiosMock.onDelete(`/hosts/${host.id}`).reply(204, {});
 
     const dispatched = await recordSaga(deregisterHost, {
-      payload: host,
+      payload: { host },
     });
 
     expect(dispatched).toEqual([
@@ -102,7 +102,7 @@ describe('Hosts sagas', () => {
     axiosMock.onDelete(`/hosts/${host.id}`).reply(404, {});
 
     const dispatched = await recordSaga(deregisterHost, {
-      payload: host,
+      payload: { host },
     });
 
     expect(dispatched).toEqual([
