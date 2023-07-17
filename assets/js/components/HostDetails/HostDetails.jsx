@@ -42,9 +42,9 @@ function HostDetails() {
 
   const dispatch = useDispatch();
 
-  const cleanUpHost = () => {
+  const cleanUpHost = (selectedHost) => {
     setCleanUpModalOpen(false);
-    dispatch(deregisterHost(host));
+    dispatch(deregisterHost(selectedHost));
   };
 
   const getExportersStatus = async () => {
@@ -70,7 +70,7 @@ function HostDetails() {
         hostname={host.hostname}
         isOpen={!!cleanUpModalOpen}
         onCleanUp={() => {
-          cleanUpHost();
+          cleanUpHost(host);
         }}
         onCancel={() => {
           setCleanUpModalOpen(false);
