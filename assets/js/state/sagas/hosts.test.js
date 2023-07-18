@@ -84,7 +84,7 @@ describe('Hosts sagas', () => {
   it('should send host deregister request', async () => {
     const host = hostFactory.build();
 
-    const mockNavigate = (route) => route;
+    const mockNavigate = () => {};
     axiosMock.onDelete(`/hosts/${host.id}`).reply(204, {});
 
     const payload = { ...host, navigate: mockNavigate };
