@@ -43,10 +43,8 @@ function HostDetails() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const cleanUpHost = (selectedHost) => {
+  const cleanUpHost = ({ id, hostname }) => {
     setCleanUpModalOpen(false);
-
-    const { id, hostname } = selectedHost;
     dispatch(deregisterHost({ id, hostname, navigate }));
   };
 
