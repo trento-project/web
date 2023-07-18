@@ -1,0 +1,120 @@
+name:  Pull request environment cleanup
+
+on:
+  pull_request:
+    types:
+      - closed
+
+env:
+  MANTAINERS: "[\"cdimonaco\", \"dottorblaster\", \"fabriziosestito\", \"rtorrero\", \"nelsonkopliku\", \"arbulu89\",\"jagabomb\",\"emaksy\",\"jamie-suse\"]"
+  PR_ENV_LABEL: env
+  PR_NUMBER: "${{ github.event.pull_request.number }}"
+
+jobs:
+  check_env_creation_privilege:
+    name: Check if the environment deletion criteria are met, store in the job output
+    runs-on: ubuntu-latest
+    outputs:
+      create_env: ${{ steps.check.outputs.create_env }}
+    steps:
+      - id: check
+        run: echo "create_env=${{ contains(github.event.pull_request.labels.*.name, env.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
+
+  delete-pr-image:
+    needs: check_env_creation_privilege
+    name: Build and push pull request container image
+    runs-on: ubuntu-latest
+    if: needs.check_env_creation_privilege.outputs.create_env == 'true'
+    permissions:
+      contents: read
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
+      IMAGE_TAG: ${{ github.event.pull_request.number }}-env
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-buildx-action@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete the container image
+        uses: bots-house/ghcr-delete-image-action@v1.1.0
+        with:
+          name: ${{ env.IMAGE_REPOSITORY }}
+          tag: ${{ env.IMAGE_TAG }}
+          owner: ${{ github.actor }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  delete_pr_environment:
+    name: Delete the pr environment
+    runs-on: ubuntu-latest
+    needs: build-and-push-pr-image
+    steps:
+      - name: Checkout ansible repo
+        uses: actions/checkout@v3
+        with:
+          repository: trento-project/ansible
+          path: ansible
+      - name: Add pipx_bin to path
+        if: ${{ env.ACT }}
+        run: echo '/opt/pipx_bin' >> $GITHUB_PATH
+      - name: Install galaxy deps
+        run: ansible-galaxy install -r ansible/requirements.yml
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: ansible/playbook.cleanup.yml
+          key: ${{ secrets.SSH_PR_MACHINE_KEY }}
+          inventory: |
+            all:
+              vars:
+                ansible_user: ec2-user
+              children:
+                trento-server:
+                  hosts:
+                    server:
+                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }} 
+                postgres-hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
+                rabbitmq-hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
+          options: |
+            --extra-vars "web_postgres_db='${{ env.PR_NUMBER}}db' \
+            web_postgres_event_store='${{ env.PR_NUMBER}}edb' \
+            wanda_postgres_db='${{ env.PR_NUMBER}}wandadb' \
+            web_postgres_user='${{ env.PR_NUMBER}}web' \
+            wanda_postgres_user='${{ env.PR_NUMBER}}wanda' \
+            web_container_name='${{ env.PR_NUMBER}}web' \
+            web_container_image='ghcr.io/trento-project/trento-web:${{ env.PR_NUMBER}}-env' \
+            wanda_container_name='${{ env.PR_NUMBER}}wanda' \
+            docker_network_name='${{ env.PR_NUMBER}}net' \
+            nginx_vhost_filename='${{ env.PR_NUMBER}}' \
+            trento_server_name='${{ env.PR_BASE_URL}}' \
+            web_postgres_password='trento' \
+            wanda_postgres_password='wanda' \
+            rabbitmq_vhost='${{ env.PR_NUMBER}}' \
+            rabbitmq_password='trento' \
+            prometheus_url='http://localhost' \
+            web_admin_password='adminpassword' \
+            enable_api_key='false' \
+            nginx_vhost_listen_port='443' \
+            force_recreate_wanda_container='true' \
+            force_recreate_web_container='true' \
+            web_upstream_name='${{ env.PR_NUMBER}}web' \
+            wanda_upstream_name='${{ env.PR_NUMBER}}wanda' \
+            grafana_upstream_name='${{ env.PR_NUMBER}}grafana' \
+            trento_server_url='http://${{ env.PR_BASE_URL}}'"
