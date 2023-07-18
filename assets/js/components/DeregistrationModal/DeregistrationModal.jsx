@@ -24,18 +24,14 @@ function DeregistrationModal({
       </div>
       <div className="flex justify-start gap-2 mt-4">
         <Button
+          data-testid="cleanup-confirm"
           type="default-fit"
           className="inline-block mx-0.5 border-green-500 border w-fit"
           size="small"
           onClick={onCleanUp}
         >
           <EOS_CLEANING_SERVICES size="base" className="fill-white inline" />
-          <span
-            id="cleanup-confirm"
-            className="text-white text-sm font-bold pl-1.5"
-          >
-            Clean up
-          </span>
+          <span className="text-white text-sm font-bold pl-1.5">Clean up</span>
         </Button>
         <Button
           type="primary-white-fit"
