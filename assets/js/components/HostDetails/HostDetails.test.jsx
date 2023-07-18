@@ -181,9 +181,7 @@ describe('HostDetails component', () => {
       const expectedActions = [
         {
           type: DEREGISTER_HOST,
-          payload: expect.objectContaining({
-            host: expect.objectContaining({ id, hostname }),
-          }),
+          payload: expect.objectContaining({ id, hostname }),
         },
       ];
       expect(actions).toEqual(expect.arrayContaining(expectedActions));
