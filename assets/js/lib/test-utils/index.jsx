@@ -33,8 +33,6 @@ export const defaultInitialState = {
       (database) => database.database_instances
     ),
   },
-  clusterChecksSelection: {},
-  hostChecksSelection: {},
   checksSelection: { host: {}, cluster: {} },
   catalog: { loading: false, data: [], error: null },
 };
