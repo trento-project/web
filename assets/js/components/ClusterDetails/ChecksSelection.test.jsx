@@ -20,7 +20,6 @@ describe('ClusterDetails ChecksSelection component', () => {
 
     const initialState = {
       catalog: { loading: false, data: catalog, error: null },
-      clusterChecksSelection: {},
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelection clusterId={cluster.id} cluster={cluster} />,
@@ -64,7 +63,6 @@ describe('ClusterDetails ChecksSelection component', () => {
 
     const initialState = {
       catalog: { loading: false, data: catalog, error: null },
-      clusterChecksSelection: {},
     };
     const [statefulChecksSelection] = withState(
       <ChecksSelection clusterId={cluster.id} cluster={cluster} />,
@@ -106,7 +104,6 @@ describe('ClusterDetails ChecksSelection component', () => {
 
     const initialState = {
       catalog: { loading: false, data: catalog, error: null },
-      clusterChecksSelection: {},
     };
     const [statefulChecksSelection, store] = withState(
       <ChecksSelection clusterId={cluster.id} cluster={cluster} />,
@@ -136,6 +133,7 @@ describe('ClusterDetails ChecksSelection component', () => {
         payload: {
           checks: selectedChecks,
           clusterID: cluster.id,
+          clusterName: cluster.name,
         },
       },
     ];
