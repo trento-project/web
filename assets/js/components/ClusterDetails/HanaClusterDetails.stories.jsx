@@ -36,7 +36,7 @@ const hosts = [
   hostFactory.build({ hostname: details.nodes[1].name }),
 ];
 
-const sapSystems = sapSystemFactory.buildList(1, { tenant: sid });
+const sapSystems = sapSystemFactory.buildList(1, { sid });
 
 function ContainerWrapper({ children }) {
   return (

@@ -48,9 +48,8 @@ const removeTag = (tag, hostId) => {
 function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const { applicationInstances, databaseInstances } = useSelector(
-    (state) => state.sapSystemsList
-  );
+  const { applicationInstances } = useSelector((state) => state.sapSystemsList);
+  const { databaseInstances } = useSelector((state) => state.databasesList);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);

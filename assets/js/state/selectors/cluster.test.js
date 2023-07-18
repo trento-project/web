@@ -2,6 +2,7 @@ import {
   clusterFactory,
   hostFactory,
   databaseInstanceFactory,
+  databaseFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
@@ -109,34 +110,38 @@ describe('Cluster selector', () => {
     const sapSystems = sapSystemFactory.buildList(5);
     const [
       _sapSystem1,
-      { id: sapSystems2 },
-      { id: sapSystems3 },
-      { id: sapSystems4 },
+      { id: sapSystem2 },
+      { id: sapSystem3 },
+      { id: sapSystem4 },
       _sapSystem5,
     ] = sapSystems;
 
     const applicationInstances = [
       sapSystemApplicationInstanceFactory.build({
-        sap_system_id: sapSystems2,
+        sap_system_id: sapSystem2,
         host_id: host1,
       }),
       sapSystemApplicationInstanceFactory.build({
-        sap_system_id: sapSystems3,
+        sap_system_id: sapSystem3,
         host_id: host3,
       }),
       sapSystemApplicationInstanceFactory.build({
-        sap_system_id: sapSystems4,
+        sap_system_id: sapSystem4,
         host_id: host5,
       }),
     ];
 
+    const databases = databaseFactory.buildList(4);
+    const [_database1, { id: database2 }, { id: database3 }, _database4] =
+      databases;
+
     const databaseInstances = [
       databaseInstanceFactory.build({
-        sap_system_id: sapSystems2,
+        sap_system_id: database2,
         host_id: host2,
       }),
       databaseInstanceFactory.build({
-        sap_system_id: sapSystems3,
+        sap_system_id: database3,
         host_id: host4,
       }),
     ];
@@ -153,9 +158,13 @@ describe('Cluster selector', () => {
         applicationInstances,
         databaseInstances,
       },
+      databasesList: {
+        databases,
+        databaseInstances,
+      },
     };
     expect(getClusterSapSystems(clusterID)(state)).toEqual(
-      sapSystems.slice(1, 4)
+      sapSystems.slice(1, 4).concat(databases.slice(1, 3))
     );
   });
 });

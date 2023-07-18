@@ -81,8 +81,6 @@ describe('HanaClusterDetails component', () => {
 
       const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
-      const sapSystems = sapSystemFactory.buildList(2, { tenant: sid });
-
       renderWithRouter(
         <HanaClusterDetails
           clusterID={clusterID}
@@ -94,7 +92,7 @@ describe('HanaClusterDetails component', () => {
           cibLastWritten={cibLastWritten}
           sid={sid}
           provider={provider}
-          sapSystems={sapSystems}
+          sapSystems={[]}
           details={details}
           lastExecution={lastExecution}
         />
@@ -119,7 +117,7 @@ describe('HanaClusterDetails component', () => {
 
     const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
-    const sapSystems = sapSystemFactory.buildList(2, { tenant: sid });
+    const sapSystems = sapSystemFactory.buildList(2, { sid });
 
     renderWithRouter(
       <HanaClusterDetails
@@ -201,8 +199,6 @@ describe('HanaClusterDetails component', () => {
       cluster_id: clusterID,
     });
 
-    const sapSystems = sapSystemFactory.buildList(2, { tenant: sid });
-
     renderWithRouter(
       <HanaClusterDetails
         clusterID={clusterID}
@@ -214,7 +210,7 @@ describe('HanaClusterDetails component', () => {
         cibLastWritten={cibLastWritten}
         sid={sid}
         provider={provider}
-        sapSystems={sapSystems}
+        sapSystems={[]}
         details={details}
         lastExecution={null}
       />

@@ -10,6 +10,7 @@ import { runSaga } from 'redux-saga';
 import hosts from './data/hosts';
 import clusters from './data/clusters';
 import sapSystems from './data/sapSystems';
+import databases from './data/databases';
 
 const middlewares = [];
 const mockStore = configureStore(middlewares);
@@ -24,6 +25,12 @@ export const defaultInitialState = {
     ),
     databaseInstances: sapSystems.flatMap(
       (sapSystem) => sapSystem.database_instances
+    ),
+  },
+  databasesList: {
+    databases,
+    databaseInstances: databases.flatMap(
+      (database) => database.database_instances
     ),
   },
   clusterChecksSelection: {},
