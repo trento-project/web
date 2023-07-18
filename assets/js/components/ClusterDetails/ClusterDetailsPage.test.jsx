@@ -20,7 +20,8 @@ describe('ClusterDetails ClusterDetailsPage component', () => {
       const initialState = {
         clustersList: { clusters: [cluster] },
         hostsList: { hosts: [] },
-        sapSystemsList: { sapSystems: [] },
+        sapSystemsList: { sapSystems: [], applicationInstances: [] },
+        databasesList: { databases: [], databaseInstances: [] },
         lastExecutions: {
           [cluster.id]: { data: null, loading: false, error: null },
         },
