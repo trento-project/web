@@ -79,8 +79,8 @@ function HanaClusterDetails({
 }) {
   const enrichedNodes = enrichNodes(details?.nodes, hosts);
   const enrichedSapSystem = {
-    tenant: sid,
-    ...sapSystems.find(({ tenant }) => tenant === sid),
+    sid,
+    ...sapSystems.find(({ sid: currentSid }) => currentSid === sid),
   };
 
   const { loading: executionLoading } = lastExecution || { loading: true };
@@ -166,7 +166,7 @@ function HanaClusterDetails({
                     sapSystemId={content?.id}
                     systemType="databases"
                   >
-                    {content?.tenant}
+                    {content?.sid}
                   </SapSystemLink>
                 ),
               },
