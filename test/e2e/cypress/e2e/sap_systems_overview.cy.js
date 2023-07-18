@@ -291,4 +291,22 @@ context('SAP Systems Overview', () => {
       cy.get('table.table-fixed').should('not.contain', 'DAA');
     });
   });
+
+  describe('Deregistration', () => {
+    const sap_system_nwp = {
+      sid: 'NWP',
+      hana_primary: {
+        name: 'vmhdbprd01',
+        id: '9cd46919-5f19-59aa-993e-cf3736c71053',
+      },
+    };
+
+    before(() => {
+      cy.deregisterHost(sap_system_nwp.hana_primary.id);
+    });
+
+    it(`should not display SAP System ${sap_system_nwp.sid} after deregistering the primary instance`, () => {
+      cy.contains(sap_system_nwp.sid).should('not.exist');
+    });
+  });
 });
