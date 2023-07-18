@@ -25,6 +25,8 @@ describe('HostsLists component', () => {
         provider: 'Azure',
         cluster: 'hana_cluster_1',
         sid: 'HDD',
+        sap_system_id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+        sap_system_type: 'databases',
         version: '1.1.0+git.dev17.1660137228.fe5ba8a',
       },
       {
@@ -33,29 +35,48 @@ describe('HostsLists component', () => {
         provider: '',
         cluster: '',
         sid: 'NWQ',
+        sap_system_id: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
+        sap_system_type: 'sap_systems',
         version: '1.1.0+git.dev17.1660137228.fe5ba8a',
       },
-    ].forEach(({ host, ip, provider, cluster, sid, version }) => {
-      it(`should show the correct values in the hosts list for host ${host}`, () => {
-        const [StatefulHostsList] = withDefaultState(<HostsList />);
-        const params = { route: `/hosts?hostname=${host}` };
-        renderWithRouter(StatefulHostsList, params);
+    ].forEach(
+      ({
+        host,
+        ip,
+        provider,
+        cluster,
+        sid,
+        sap_system_id,
+        sap_system_type,
+        version,
+      }) => {
+        it(`should show the correct values in the hosts list for host ${host}`, () => {
+          const [StatefulHostsList] = withDefaultState(<HostsList />);
+          const params = { route: `/hosts?hostname=${host}` };
+          renderWithRouter(StatefulHostsList, params);
 
-        const table = screen.getByRole('table');
-        expect(table.querySelector('td:nth-child(2)')).toHaveTextContent(host);
-        expect(table.querySelector('td:nth-child(3)')).toHaveTextContent(ip);
-        expect(table.querySelector('td:nth-child(4)')).toHaveTextContent(
-          provider
-        );
-        expect(table.querySelector('td:nth-child(5)')).toHaveTextContent(
-          cluster
-        );
-        expect(table.querySelector('td:nth-child(6)')).toHaveTextContent(sid);
-        expect(table.querySelector('td:nth-child(7)')).toHaveTextContent(
-          version
-        );
-      });
-    });
+          const table = screen.getByRole('table');
+          expect(table.querySelector('td:nth-child(2)')).toHaveTextContent(
+            host
+          );
+          expect(table.querySelector('td:nth-child(3)')).toHaveTextContent(ip);
+          expect(table.querySelector('td:nth-child(4)')).toHaveTextContent(
+            provider
+          );
+          expect(table.querySelector('td:nth-child(5)')).toHaveTextContent(
+            cluster
+          );
+          expect(table.querySelector('td:nth-child(6)')).toHaveTextContent(sid);
+          expect(table.querySelector('td:nth-child(6) > a')).toHaveAttribute(
+            'href',
+            `/${sap_system_type}/${sap_system_id}`
+          );
+          expect(table.querySelector('td:nth-child(7)')).toHaveTextContent(
+            version
+          );
+        });
+      }
+    );
 
     it('should show a warning state if the agent version is not compatible', () => {
       const user = userEvent.setup();
@@ -201,6 +222,10 @@ describe('HostsLists component', () => {
       sapSystemsList: {
         sapSystems: [],
         applicationInstances: [],
+        databaseInstances: [],
+      },
+      databasesList: {
+        databases: [],
         databaseInstances: [],
       },
     };

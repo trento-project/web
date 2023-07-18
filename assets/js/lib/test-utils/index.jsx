@@ -26,6 +26,11 @@ export const defaultInitialState = {
       (sapSystem) => sapSystem.database_instances
     ),
   },
+  databasesList: {
+    databaseInstances: sapSystems.flatMap(
+      (sapSystem) => sapSystem.database_instances
+    ),
+  },
   clusterChecksSelection: {},
   hostChecksSelection: {},
   catalog: { loading: false, data: [], error: null },
