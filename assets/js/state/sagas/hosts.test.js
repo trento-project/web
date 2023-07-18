@@ -84,15 +84,15 @@ describe('Hosts sagas', () => {
   it('should send host deregister request', async () => {
     const host = hostFactory.build();
 
+    const mockNavigate = (route) => route;
     axiosMock.onDelete(`/hosts/${host.id}`).reply(204, {});
 
-    const dispatched = await recordSaga(deregisterHost, {
-      payload: host,
-    });
+    const payload = { ...host, navigate: mockNavigate };
+    const dispatched = await recordSaga(deregisterHost, { payload });
 
     expect(dispatched).toEqual([
-      setHostDeregistering(host),
-      setHostNotDeregistering(host),
+      setHostDeregistering(payload),
+      setHostNotDeregistering(payload),
     ]);
   });
 
