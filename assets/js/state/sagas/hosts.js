@@ -50,7 +50,7 @@ export function* hostDeregistered({ payload }) {
 
 export function* deregisterHost({
   payload,
-  payload: { hostname, id, navigate },
+  payload: { id, hostname, navigate },
 }) {
   yield put(setHostDeregistering(payload));
   try {

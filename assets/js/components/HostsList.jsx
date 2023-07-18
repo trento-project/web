@@ -66,7 +66,9 @@ function HostsList() {
 
   const cleanUpHost = (host) => {
     setCleanUpModalOpen(false);
-    dispatch(deregisterHost({ ...host, navigate }));
+
+    const { id, hostname } = host;
+    dispatch(deregisterHost({ id, hostname, navigate }));
   };
 
   const config = {

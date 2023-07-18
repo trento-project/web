@@ -45,7 +45,9 @@ function HostDetails() {
 
   const cleanUpHost = (selectedHost) => {
     setCleanUpModalOpen(false);
-    dispatch(deregisterHost({ ...selectedHost, navigate }));
+
+    const { id, hostname } = selectedHost;
+    dispatch(deregisterHost({ id, hostname, navigate }));
   };
 
   const getExportersStatus = async () => {
