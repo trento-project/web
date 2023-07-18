@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import checksSelectionReducer, {
   startSavingChecksSelection,
-  markSavingSuccessful,
-  markSavingFailed,
+  setSavingSuccessful,
+  setSavingFailed,
 } from '@state/checksSelection';
 
 describe('Checks Selection reducer', () => {
@@ -38,7 +38,7 @@ describe('Checks Selection reducer', () => {
   it.each(scenarios)(
     '$name: should mark a check selection as completed successfully',
     ({ targetID, targetType }) => {
-      const action = markSavingSuccessful({ targetID, targetType });
+      const action = setSavingSuccessful({ targetID, targetType });
 
       const newState = checksSelectionReducer(initialState, action);
 
@@ -51,7 +51,7 @@ describe('Checks Selection reducer', () => {
   it.each(scenarios)(
     '$name: should mark a check selection as completed with failure',
     ({ targetID, targetType }) => {
-      const action = markSavingFailed({ targetID, targetType });
+      const action = setSavingFailed({ targetID, targetType });
 
       const newState = checksSelectionReducer(initialState, action);
 
@@ -76,8 +76,8 @@ describe('Checks Selection reducer', () => {
 
       [
         startSavingChecksSelection,
-        markSavingSuccessful,
-        markSavingFailed,
+        setSavingSuccessful,
+        setSavingFailed,
       ].forEach((actionFunction) => {
         const targetID = faker.datatype.uuid();
         const action = actionFunction({ targetID, targetType });

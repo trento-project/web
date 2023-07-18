@@ -10,8 +10,8 @@ import { updateSelectedChecks as updateHostSelectedChecks } from '@state/hosts';
 
 import {
   startSavingChecksSelection,
-  markSavingSuccessful,
-  markSavingFailed,
+  setSavingSuccessful,
+  setSavingFailed,
 } from '@state/checksSelection';
 
 import { notify } from '@state/actions/notifications';
@@ -47,7 +47,7 @@ describe('Checks Selection saga', () => {
           hostID,
           checks,
         }),
-        markSavingSuccessful(payload),
+        setSavingSuccessful(payload),
         notify({
           text: `Checks selection for ${hostName} saved`,
           icon: '💾',
@@ -76,7 +76,7 @@ describe('Checks Selection saga', () => {
 
       expect(dispatched).toEqual([
         startSavingChecksSelection(payload),
-        markSavingFailed(payload),
+        setSavingFailed(payload),
         notify({
           text: `Unable to save selection for ${hostName}`,
           icon: '❌',

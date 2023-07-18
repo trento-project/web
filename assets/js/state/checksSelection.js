@@ -34,12 +34,12 @@ export const checksSelectionSlice = createSlice({
         status: SAVING,
       });
     },
-    markSavingSuccessful: (state, { payload: { targetID, targetType } }) => {
+    setSavingSuccessful: (state, { payload: { targetID, targetType } }) => {
       updateTargetState(state, targetType, targetID, {
         status: SUCCESSFULLY_SAVED,
       });
     },
-    markSavingFailed: (state, { payload: { targetID, targetType } }) => {
+    setSavingFailed: (state, { payload: { targetID, targetType } }) => {
       updateTargetState(state, targetType, targetID, {
         status: SAVING_FAILED,
       });
@@ -55,8 +55,8 @@ export const clusterChecksSelected = createAction(CLUSTER_CHECKS_SELECTED);
 
 export const {
   startSavingChecksSelection,
-  markSavingSuccessful,
-  markSavingFailed,
+  setSavingSuccessful,
+  setSavingFailed,
 } = checksSelectionSlice.actions;
 
 export default checksSelectionSlice.reducer;

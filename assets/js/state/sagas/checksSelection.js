@@ -8,8 +8,8 @@ import { notify } from '@state/actions/notifications';
 import {
   HOST_CHECKS_SELECTED,
   startSavingChecksSelection,
-  markSavingSuccessful,
-  markSavingFailed,
+  setSavingSuccessful,
+  setSavingFailed,
 } from '@state/checksSelection';
 
 import { updateSelectedChecks as updateHostSelectedChecks } from '@state/hosts';
@@ -44,7 +44,7 @@ function* checksSelected({ targetID, targetType, targetName, checks }) {
   try {
     yield saveChecksSelection(targetID, targetType, checks);
 
-    yield put(markSavingSuccessful({ targetID, targetType }));
+    yield put(setSavingSuccessful({ targetID, targetType }));
     yield put(
       notify({
         text: `Checks selection for ${targetName} saved`,
@@ -52,7 +52,7 @@ function* checksSelected({ targetID, targetType, targetName, checks }) {
       })
     );
   } catch (error) {
-    yield put(markSavingFailed({ targetID, targetType }));
+    yield put(setSavingFailed({ targetID, targetType }));
     yield put(
       notify({
         text: `Unable to save selection for ${targetName}`,
