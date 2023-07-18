@@ -31,7 +31,7 @@ describe('Checks Selection reducer', () => {
 
       const newState = checksSelectionReducer(initialState, action);
 
-      expect(newState[targetType][targetID]).toEqual({ status: 'saving' });
+      expect(newState[targetType][targetID]).toEqual({ status: 'SAVING' });
     }
   );
 
@@ -43,7 +43,7 @@ describe('Checks Selection reducer', () => {
       const newState = checksSelectionReducer(initialState, action);
 
       expect(newState[targetType][targetID]).toEqual({
-        status: 'successfully_saved',
+        status: 'SUCCESSFULLY_SAVED',
       });
     }
   );
@@ -56,7 +56,7 @@ describe('Checks Selection reducer', () => {
       const newState = checksSelectionReducer(initialState, action);
 
       expect(newState[targetType][targetID]).toEqual({
-        status: 'saving_failed',
+        status: 'SAVING_FAILED',
       });
     }
   );

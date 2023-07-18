@@ -1,9 +1,9 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
-const SAVING = 'saving';
-const SUCCESSFULLY_SAVED = 'successfully_saved';
-const SAVING_FAILED = 'saving_failed';
+const SAVING = 'SAVING';
+const SUCCESSFULLY_SAVED = 'SUCCESSFULLY_SAVED';
+const SAVING_FAILED = 'SAVING_FAILED';
 
 const supportsTarget = (target) =>
   [TARGET_CLUSTER, TARGET_HOST].includes(target);
@@ -14,10 +14,12 @@ const initialState = {
 };
 
 const updateTargetState = (state, targetType, targetID, newState) => {
-  state[targetType] = {
-    ...state[targetType],
-    [targetID]: newState,
-  };
+  if (supportsTarget(targetType)) {
+    state[targetType] = {
+      ...state[targetType],
+      [targetID]: newState,
+    };
+  }
 };
 
 export const checksSelectionSlice = createSlice({
@@ -28,25 +30,19 @@ export const checksSelectionSlice = createSlice({
       state,
       { payload: { targetID, targetType } }
     ) => {
-      if (supportsTarget(targetType)) {
-        updateTargetState(state, targetType, targetID, {
-          status: SAVING,
-        });
-      }
+      updateTargetState(state, targetType, targetID, {
+        status: SAVING,
+      });
     },
     markSavingSuccessful: (state, { payload: { targetID, targetType } }) => {
-      if (supportsTarget(targetType)) {
-        updateTargetState(state, targetType, targetID, {
-          status: SUCCESSFULLY_SAVED,
-        });
-      }
+      updateTargetState(state, targetType, targetID, {
+        status: SUCCESSFULLY_SAVED,
+      });
     },
     markSavingFailed: (state, { payload: { targetID, targetType } }) => {
-      if (supportsTarget(targetType)) {
-        updateTargetState(state, targetType, targetID, {
-          status: SAVING_FAILED,
-        });
-      }
+      updateTargetState(state, targetType, targetID, {
+        status: SAVING_FAILED,
+      });
     },
   },
 });
