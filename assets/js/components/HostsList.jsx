@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
@@ -57,6 +57,7 @@ function HostsList() {
   const [hostToDeregister, setHostToDeregister] = useState(undefined);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const openDeregistrationModal = (host) => {
     setHostToDeregister(host);
@@ -65,7 +66,7 @@ function HostsList() {
 
   const cleanUpHost = (host) => {
     setCleanUpModalOpen(false);
-    dispatch(deregisterHost(host));
+    dispatch(deregisterHost({ ...host, navigate }));
   };
 
   const config = {
