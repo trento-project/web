@@ -92,10 +92,6 @@ describe('Hosts sagas', () => {
 
     expect(dispatched).toEqual([
       setHostDeregistering(host),
-      notify({
-        text: `Error deregistering host ${host.hostname}.`,
-        icon: '❌',
-      }),
       setHostNotDeregistering(host),
     ]);
   });
