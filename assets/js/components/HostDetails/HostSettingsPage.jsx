@@ -4,11 +4,13 @@ import { useParams } from 'react-router-dom';
 
 import LoadingBox from '@components/LoadingBox';
 
-import { checksSelected } from '@state/hostChecksSelection';
+import { TARGET_HOST } from '@lib/model';
+
+import { hostChecksSelected, isSaving } from '@state/checksSelection';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost } from '@state/selectors';
-import { getCheckSelection } from '@state/selectors/hostChecksSelection';
+import { getHostCheckSelection } from '@state/selectors/checksSelection';
 import HostChecksSelection from './HostChecksSelection';
 
 function HostSettingsPage() {
@@ -23,7 +25,7 @@ function HostSettingsPage() {
     loading: catalogLoading,
   } = useSelector(getCatalog());
 
-  const { saving } = useSelector(getCheckSelection());
+  const { status } = useSelector(getHostCheckSelection(hostID));
 
   if (!host) {
     return <LoadingBox text="Loading..." />;
@@ -40,16 +42,16 @@ function HostSettingsPage() {
     dispatch(
       updateCatalog({
         provider: host.provider,
-        target_type: 'host',
+        target_type: TARGET_HOST,
       })
     );
 
-  const saveSelection = (selection, targetID, targetName) =>
+  const saveSelection = (newSelection, targetID, targetName) =>
     dispatch(
-      checksSelected({
+      hostChecksSelected({
         hostID: targetID,
         hostName: targetName,
-        checks: selection,
+        checks: newSelection,
       })
     );
 
@@ -64,7 +66,7 @@ function HostSettingsPage() {
       catalogError={catalogError}
       catalogLoading={catalogLoading}
       onUpdateCatalog={refreshCatalog}
-      isSavingSelection={saving}
+      isSavingSelection={isSaving(status)}
       onSaveSelection={saveSelection}
     />
   );

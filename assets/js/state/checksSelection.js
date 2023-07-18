@@ -5,6 +5,10 @@ const SAVING = 'SAVING';
 const SUCCESSFULLY_SAVED = 'SUCCESSFULLY_SAVED';
 const SAVING_FAILED = 'SAVING_FAILED';
 
+export const isSaving = (status) => SAVING === status;
+export const isSuccessfullySaved = (status) => SUCCESSFULLY_SAVED === status;
+export const isSavingFailed = (status) => SAVING_FAILED === status;
+
 const supportsTarget = (target) =>
   [TARGET_CLUSTER, TARGET_HOST].includes(target);
 
