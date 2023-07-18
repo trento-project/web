@@ -22,8 +22,6 @@ export const getClusterSapSystems = (clusterID) => (state) => {
   const clusterHostIDs = getClusterHostIDs(clusterID)(state);
   const {
     sapSystemsList: { sapSystems, applicationInstances },
-  } = state;
-  const {
     databasesList: { databases, databaseInstances },
   } = state;
 
