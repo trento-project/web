@@ -90,36 +90,34 @@ describe('Hosts sagas', () => {
   });
 
   it('should send host deregister request', async () => {
-    const host = hostFactory.build();
+    const { id, hostname } = hostFactory.build();
+    const payload = { id, hostname, navigate: () => {} };
 
-    axiosMock.onDelete(`/hosts/${host.id}`).reply(204, {});
+    axiosMock.onDelete(`/hosts/${id}`).reply(204, {});
 
-    const dispatched = await recordSaga(deregisterHost, {
-      payload: host,
-    });
+    const dispatched = await recordSaga(deregisterHost, { payload });
 
     expect(dispatched).toEqual([
-      setHostDeregistering(host),
-      setHostNotDeregistering(host),
+      setHostDeregistering(payload),
+      setHostNotDeregistering(payload),
     ]);
   });
 
   it('should notify error on host deregistration request', async () => {
-    const host = hostFactory.build();
+    const { id, hostname } = hostFactory.build();
+    const payload = { id, hostname, navigate: () => {} };
 
-    axiosMock.onDelete(`/hosts/${host.id}`).reply(404, {});
+    axiosMock.onDelete(`/hosts/${id}`).reply(404, {});
 
-    const dispatched = await recordSaga(deregisterHost, {
-      payload: host,
-    });
+    const dispatched = await recordSaga(deregisterHost, { payload });
 
     expect(dispatched).toEqual([
-      setHostDeregistering(host),
+      setHostDeregistering(payload),
       notify({
-        text: `Error deregistering host ${host.hostname}.`,
+        text: `Error deregistering host ${hostname}.`,
         icon: '❌',
       }),
-      setHostNotDeregistering(host),
+      setHostNotDeregistering(payload),
     ]);
   });
 
