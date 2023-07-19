@@ -151,7 +151,7 @@ context('Clusters Overview', () => {
   });
 
   describe('Deregistration', () => {
-    const hana_cluster_1 = {
+    const hanaCluster1 = {
       name: 'hana_cluster_1',
       hosts: [
         {
@@ -165,13 +165,12 @@ context('Clusters Overview', () => {
       ],
     };
 
-    before(() => {
-      cy.deregisterHost(hana_cluster_1.hosts[0].id);
-      cy.deregisterHost(hana_cluster_1.hosts[1].id);
-    });
+    before(() => {});
 
-    it(`should not display '${hana_cluster_1.name}' after deregistering all its nodes`, () => {
-      cy.contains(hana_cluster_1.name).should('not.exist');
+    it(`should not display '${hanaCluster1.name}' after deregistering all its nodes`, () => {
+      cy.deregisterHost(hanaCluster1.hosts[0].id);
+      cy.deregisterHost(hanaCluster1.hosts[1].id);
+      cy.contains(hanaCluster1.name).should('not.exist');
     });
   });
 });
