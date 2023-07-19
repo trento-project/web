@@ -57,7 +57,6 @@ import {
   stopDatabasesLoading,
 } from '@state/databases';
 
-import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { setEulaVisible, setIsPremium } from '@state/settings';
 
 import { watchNotifications } from '@state/sagas/notifications';
@@ -158,12 +157,6 @@ function* watchResetState() {
 function* hostRegistered({ payload }) {
   yield put(appendHost(payload));
   yield put(
-    appendEntryToLiveFeed({
-      source: payload.hostname,
-      message: 'New host registered.',
-    })
-  );
-  yield put(
     notify({
       text: `A new host, ${payload.hostname}, has been discovered.`,
       icon: 'ℹ️',
@@ -219,12 +212,6 @@ function* watchHeartbeatFailed() {
 function* clusterRegistered({ payload }) {
   yield put(appendCluster(payload));
   yield put(
-    appendEntryToLiveFeed({
-      source: payload.name,
-      message: 'New cluster registered.',
-    })
-  );
-  yield put(
     notify({
       text: `A new cluster, ${payload.name}, has been discovered.`,
       icon: 'ℹ️',
@@ -254,14 +241,6 @@ function* watchClusterDetailsUpdated() {
 
 function* checksExecutionStarted({ payload }) {
   const clusterName = yield select(getClusterName(payload.cluster_id));
-
-  yield put(
-    appendEntryToLiveFeed({
-      source: clusterName,
-      message: 'Checks execution started.',
-    })
-  );
-
   yield put(
     notify({
       text: `Checks execution started, cluster: ${clusterName}`,
@@ -276,14 +255,6 @@ function* watchChecksExecutionStarted() {
 
 function* checksExecutionCompleted({ payload }) {
   const clusterName = yield select(getClusterName(payload.cluster_id));
-
-  yield put(
-    appendEntryToLiveFeed({
-      source: clusterName,
-      message: 'Checks execution completed.',
-    })
-  );
-
   yield put(
     notify({
       text: `Checks execution completed, cluster: ${clusterName}`,

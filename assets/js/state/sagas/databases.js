@@ -24,17 +24,10 @@ import {
 } from '@state/sapSystems';
 
 import { getDatabase } from '@state/selectors';
-import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
 
 function* databaseRegistered({ payload }) {
   yield put(appendDatabase(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New Database registered.',
-    })
-  );
   yield put(
     notify({
       text: `A new Database, ${payload.sid}, has been discovered.`,
@@ -49,12 +42,6 @@ function* databaseHealthChanged({ payload }) {
 
   yield put(updateDatabaseHealth(payload));
   yield put(
-    appendEntryToLiveFeed({
-      source: sid,
-      message: `Database Health changed to ${payload.health}`,
-    })
-  );
-  yield put(
     notify({
       text: `The Database ${sid} health is ${payload.health}!`,
       icon: 'ℹ️',
@@ -65,12 +52,6 @@ function* databaseHealthChanged({ payload }) {
 function* databaseInstanceRegistered({ payload }) {
   yield put(appendDatabaseInstance(payload));
   yield put(appendDatabaseInstanceToSapSystem(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New Database instance registered.',
-    })
-  );
   yield put(
     notify({
       text: `A new Database instance, ${payload.sid}, has been discovered.`,
@@ -92,12 +73,6 @@ export function* databaseDeregistered({ payload }) {
 export function* databaseInstanceDeregistered({ payload }) {
   yield put(removeDatabaseInstance(payload));
   yield put(removeDatabaseInstanceFromSapSystem(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'Database instance deregistered.',
-    })
-  );
   yield put(
     notify({
       text: `The database instance ${payload.instance_number} has been deregistered from ${payload.sid}.`,
