@@ -6,11 +6,11 @@ import LoadingBox from '@components/LoadingBox';
 
 import { TARGET_HOST } from '@lib/model';
 
-import { hostChecksSelected, isSaving } from '@state/checksSelection';
+import { hostChecksSelected } from '@state/checksSelection';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost } from '@state/selectors';
-import { getHostCheckSelection } from '@state/selectors/checksSelection';
+import { isSaving } from '@state/selectors/checksSelection';
 import HostChecksSelection from './HostChecksSelection';
 
 function HostSettingsPage() {
@@ -25,7 +25,7 @@ function HostSettingsPage() {
     loading: catalogLoading,
   } = useSelector(getCatalog());
 
-  const { status } = useSelector(getHostCheckSelection(hostID));
+  const saving = useSelector(isSaving(TARGET_HOST, hostID));
 
   if (!host) {
     return <LoadingBox text="Loading..." />;
@@ -66,7 +66,7 @@ function HostSettingsPage() {
       catalogError={catalogError}
       catalogLoading={catalogLoading}
       onUpdateCatalog={refreshCatalog}
-      isSavingSelection={isSaving(status)}
+      isSavingSelection={saving}
       onSaveSelection={saveSelection}
     />
   );

@@ -5,17 +5,18 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
+import { TARGET_CLUSTER } from '@lib/model';
+
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
 import { executionRequested } from '@state/actions/lastExecutions';
-import { getClusterCheckSelection } from '@state/selectors/checksSelection';
 import {
-  clusterChecksSelected,
   isSaving,
   isSuccessfullySaved,
   isSavingFailed,
-} from '@state/checksSelection';
+} from '@state/selectors/checksSelection';
+import { clusterChecksSelected } from '@state/checksSelection';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 import {
@@ -46,10 +47,11 @@ const getGroupSelectedState = (checks, selectedChecks) => {
 function ChecksSelection({ clusterId, cluster }) {
   const dispatch = useDispatch();
 
-  const { status } = useSelector(getClusterCheckSelection(clusterId));
-  const saving = isSaving(status);
-  const savingSuccess = isSuccessfullySaved(status);
-  const savingError = isSavingFailed(status);
+  const saving = useSelector(isSaving(TARGET_CLUSTER, clusterId));
+  const savingSuccess = useSelector(
+    isSuccessfullySaved(TARGET_CLUSTER, clusterId)
+  );
+  const savingError = useSelector(isSavingFailed(TARGET_CLUSTER, clusterId));
 
   const {
     data: catalogData,

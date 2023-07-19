@@ -1,13 +1,9 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
-const SAVING = 'SAVING';
-const SUCCESSFULLY_SAVED = 'SUCCESSFULLY_SAVED';
-const SAVING_FAILED = 'SAVING_FAILED';
-
-export const isSaving = (status) => SAVING === status;
-export const isSuccessfullySaved = (status) => SUCCESSFULLY_SAVED === status;
-export const isSavingFailed = (status) => SAVING_FAILED === status;
+export const SAVING = 'SAVING';
+export const SUCCESSFULLY_SAVED = 'SUCCESSFULLY_SAVED';
+export const SAVING_FAILED = 'SAVING_FAILED';
 
 const supportsTarget = (target) =>
   [TARGET_CLUSTER, TARGET_HOST].includes(target);
