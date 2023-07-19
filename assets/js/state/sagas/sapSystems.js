@@ -18,17 +18,10 @@ import {
   updateSAPSystem,
 } from '@state/sapSystems';
 import { getSapSystem } from '@state/selectors';
-import { appendEntryToLiveFeed } from '@state/liveFeed';
 import { notify } from '@state/actions/notifications';
 
 function* sapSystemRegistered({ payload }) {
   yield put(appendSapsystem(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New SAP System registered.',
-    })
-  );
   yield put(
     notify({
       text: `A new SAP System, ${payload.sid}, has been discovered.`,
@@ -43,12 +36,6 @@ function* sapSystemHealthChanged({ payload }) {
 
   yield put(updateSapSystemHealth(payload));
   yield put(
-    appendEntryToLiveFeed({
-      source: sid,
-      message: `SAP System Health changed to ${payload.health}`,
-    })
-  );
-  yield put(
     notify({
       text: `The SAP System ${sid} health is ${payload.health}!`,
       icon: 'ℹ️',
@@ -58,12 +45,6 @@ function* sapSystemHealthChanged({ payload }) {
 
 function* applicationInstanceRegistered({ payload }) {
   yield put(appendApplicationInstance(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'New Application instance registered.',
-    })
-  );
 }
 
 export function* applicationInstanceMoved({ payload }) {
@@ -79,12 +60,6 @@ export function* applicationInstanceMoved({ payload }) {
 
 export function* applicationInstanceDeregistered({ payload }) {
   yield put(removeApplicationInstance(payload));
-  yield put(
-    appendEntryToLiveFeed({
-      source: payload.sid,
-      message: 'Application instance deregistered.',
-    })
-  );
   yield put(
     notify({
       text: `The application instance ${payload.instance_number} has been deregistered from ${payload.sid}.`,
