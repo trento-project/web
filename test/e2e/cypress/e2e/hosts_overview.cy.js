@@ -170,4 +170,64 @@ context('Hosts Overview', () => {
       });
     });
   });
+
+  describe('Deregistration', () => {
+    const hostToDeregister = {
+      name: 'vmdrbddev01',
+      id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
+    };
+
+    describe('Clean-up buttons should be visible only when needed', () => {
+      before(() => {
+        cy.visit('/hosts');
+        cy.url().should('include', '/hosts');
+        cy.task('startAgentHeartbeat', [hostToDeregister.id]);
+      });
+
+      it(`should not display a clean-up button for host ${hostToDeregister.name}`, () => {
+        cy.contains(hostToDeregister.name).within(() => {
+          cy.get('td:nth-child(9)').should('not.exist');
+        });
+      });
+
+      it('should show all other cleanup buttons', () => {
+        for (let i = 2; i < 11; i++) {
+          cy.get(`tr:nth-child(${i})`).within(() => {
+            cy.get('[data-testid="cleanup-button"]').should('exist');
+          });
+        }
+      });
+
+      it(`should display the cleanup button for host ${hostToDeregister.name} once heartbeat is lost`, () => {
+        cy.task('stopAgentsHeartbeat');
+
+        cy.get('tr:nth-child(1) > .w-48 > [data-testid="cleanup-button"]', {
+          timeout: 15000,
+        }).should('exist');
+      });
+    });
+
+    describe('Clean-up button should deregister a host', () => {
+      before(() => {
+        cy.visit('/hosts');
+        cy.url().should('include', '/hosts');
+        cy.task('stopAgentsHeartbeat');
+      });
+
+      it('should allow to deregister a host after clean up confirmation', () => {
+        cy.get('tr:nth-child(1) > .w-48 > [data-testid="cleanup-button"]', {
+          timeout: 15000,
+        }).click();
+
+        cy.get('.min-h-screen > .w-full').should(
+          'contain.text',
+          'This action will cause Trento to stop tracking all the components discovered by the agent in this host, including the host itself and any other component depending on it.'
+        );
+
+        cy.get('[data-testid="cleanup-confirm"]').click();
+
+        cy.contains(hostToDeregister.name).should('not.exist');
+      });
+    });
+  });
 });
