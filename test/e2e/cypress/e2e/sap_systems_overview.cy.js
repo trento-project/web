@@ -293,20 +293,50 @@ context('SAP Systems Overview', () => {
   });
 
   describe('Deregistration', () => {
-    const sap_system_nwp = {
+    const sapSystemNwp = {
       sid: 'NWP',
-      hana_primary: {
+      hanaPrimary: {
         name: 'vmhdbprd01',
         id: '9cd46919-5f19-59aa-993e-cf3736c71053',
       },
     };
 
-    before(() => {
-      cy.deregisterHost(sap_system_nwp.hana_primary.id);
+    const sapSystemNwq = {
+      sid: 'NWQ',
+      messageserverInstance: {
+        name: 'vmnwqas01',
+        id: '25677e37-fd33-5005-896c-9275b1284534',
+      },
+    };
+
+    const sapSystemNwd = {
+      sid: 'NWD',
+      applicationInstances: [
+        {
+          name: 'vmnwdev03',
+          id: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+        },
+        {
+          name: 'vmnwdev04',
+          id: '1b0e9297-97dd-55d6-9874-8efde4d84c90',
+        },
+      ],
+    };
+
+    it(`should not display SAP System ${sapSystemNwp.sid} after deregistering the primary instance`, () => {
+      cy.deregisterHost(sapSystemNwp.hanaPrimary.id);
+      cy.contains(sapSystemNwp.sid).should('not.exist');
     });
 
-    it(`should not display SAP System ${sap_system_nwp.sid} after deregistering the primary instance`, () => {
-      cy.contains(sap_system_nwp.sid).should('not.exist');
+    it(`should not display SAP System ${sapSystemNwq.sid} after deregistering the instance running the messageserver`, () => {
+      cy.deregisterHost(sapSystemNwq.messageserverInstance.id);
+      cy.contains(sapSystemNwq.sid).should('not.exist');
+    });
+
+    it(`should not display SAP System ${sapSystemNwd.sid} after deregistering both application instances`, () => {
+      cy.deregisterHost(sapSystemNwd.applicationInstances[0].id);
+      cy.deregisterHost(sapSystemNwd.applicationInstances[1].id);
+      cy.contains(sapSystemNwd.sid).should('not.exist');
     });
   });
 });
