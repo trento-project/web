@@ -363,7 +363,7 @@ context('Host Details', () => {
         cy.contains('button', 'Clean up').should('not.exist');
       });
 
-      it('should show the "Clean up" button once heartbeat is lost and debounce preiod has elapsed', () => {
+      it('should show the "Clean up" button once heartbeat is lost and debounce period has elapsed', () => {
         cy.task('stopAgentsHeartbeat');
         cy.contains('button', 'Clean up', { timeout: 15000 }).should('exist');
       });
@@ -377,14 +377,18 @@ context('Host Details', () => {
       it('should allow to deregister a host after clean-up confirmation', () => {
         cy.contains('button', 'Clean up', { timeout: 15000 }).click();
 
-        cy.get('#headlessui-portal-root .w-full').should(
-          'contain.text',
-          `Clean up data discovered by agent on host ${selectedHost.hostName}`
-        );
+        cy.get('#headlessui-portal-root').as('modal');
 
-        cy.contains('#headlessui-portal-root button', 'Clean up').click();
-        cy.get('#headlessui-portal-root').should('not.exist');
-        cy.url().should('eq', Cypress.config().baseUrl + '/hosts');
+        cy.get('@modal')
+          .find('.w-full')
+          .should(
+            'contain.text',
+            `Clean up data discovered by agent on host ${selectedHost.hostName}`
+          );
+        cy.get('@modal').contains('button', 'Clean up').click();
+
+        cy.get('@modal').should('not.exist');
+        cy.url().should('eq', cy.config().baseUrl + '/hosts');
       });
     });
   });
