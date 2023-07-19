@@ -172,7 +172,7 @@ context('Hosts Overview', () => {
   });
 
   describe('Deregistration', () => {
-    const host = {
+    const hostToDeregister = {
       name: 'vmdrbddev01',
       id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
     };
@@ -181,11 +181,11 @@ context('Hosts Overview', () => {
       before(() => {
         cy.visit('/hosts');
         cy.url().should('include', '/hosts');
-        cy.task('startAgentHeartbeat', [host.id]);
+        cy.task('startAgentHeartbeat', [hostToDeregister.id]);
       });
 
-      it(`should not display a clean-up button for host ${host.name}`, () => {
-        cy.contains(host.name).within(() => {
+      it(`should not display a clean-up button for host ${hostToDeregister.name}`, () => {
+        cy.contains(hostToDeregister.name).within(() => {
           cy.get('td:nth-child(9)').should('not.exist');
         });
       });
@@ -198,7 +198,7 @@ context('Hosts Overview', () => {
         }
       });
 
-      it(`should display the cleanup button for host ${host.name} once heartbeat is lost`, () => {
+      it(`should display the cleanup button for host ${hostToDeregister.name} once heartbeat is lost`, () => {
         cy.task('stopAgentsHeartbeat');
 
         cy.get('tr:nth-child(1) > .w-48 > [data-testid="cleanup-button"]', {
@@ -226,7 +226,7 @@ context('Hosts Overview', () => {
 
         cy.get('[data-testid="cleanup-confirm"]').click();
 
-        cy.contains(host.name).should('not.exist');
+        cy.contains(hostToDeregister.name).should('not.exist');
       });
     });
   });
