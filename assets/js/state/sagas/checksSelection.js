@@ -1,18 +1,20 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
 import { post } from '@lib/network';
 
-import { TARGET_HOST } from '@lib/model';
+import { TARGET_HOST, TARGET_CLUSTER } from '@lib/model';
 
 import { notify } from '@state/actions/notifications';
 
 import {
   HOST_CHECKS_SELECTED,
+  CLUSTER_CHECKS_SELECTED,
   startSavingChecksSelection,
   setSavingSuccessful,
   setSavingFailed,
 } from '@state/checksSelection';
 
 import { updateSelectedChecks as updateHostSelectedChecks } from '@state/hosts';
+import { updateSelectedChecks as updateClusterSelectedChecks } from '@state/clusters';
 
 function* saveHostChecksSelection({ hostID, checks }) {
   yield call(post, `/hosts/${hostID}/checks`, {
@@ -26,11 +28,29 @@ function* saveHostChecksSelection({ hostID, checks }) {
   );
 }
 
+function* saveClusterChecksSelection({ clusterID, checks }) {
+  yield call(post, `/clusters/${clusterID}/checks`, {
+    checks,
+  });
+  yield put(
+    updateClusterSelectedChecks({
+      clusterID,
+      checks,
+    })
+  );
+}
+
 function* saveChecksSelection(targetID, targetType, checks) {
   switch (targetType) {
     case TARGET_HOST:
       yield saveHostChecksSelection({
         hostID: targetID,
+        checks,
+      });
+      break;
+    case TARGET_CLUSTER:
+      yield saveClusterChecksSelection({
+        clusterID: targetID,
         checks,
       });
       break;
@@ -71,6 +91,18 @@ export function* selectHostChecks({ payload: { hostID, hostName, checks } }) {
   });
 }
 
+export function* selectClusterChecks({
+  payload: { clusterID, clusterName, checks },
+}) {
+  yield checksSelected({
+    targetID: clusterID,
+    targetType: TARGET_CLUSTER,
+    targetName: clusterName,
+    checks,
+  });
+}
+
 export function* watchChecksSelection() {
   yield takeEvery(HOST_CHECKS_SELECTED, selectHostChecks);
+  yield takeEvery(CLUSTER_CHECKS_SELECTED, selectClusterChecks);
 }

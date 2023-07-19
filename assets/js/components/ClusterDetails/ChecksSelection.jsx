@@ -5,11 +5,18 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
+import { TARGET_CLUSTER } from '@lib/model';
+
 import { remove, uniq, toggle, groupBy } from '@lib/lists';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import { checksSelected } from '@state/clusters';
 import { executionRequested } from '@state/actions/lastExecutions';
+import {
+  isSaving,
+  isSuccessfullySaved,
+  isSavingFailed,
+} from '@state/selectors/checksSelection';
+import { clusterChecksSelected } from '@state/checksSelection';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 import {
@@ -40,9 +47,11 @@ const getGroupSelectedState = (checks, selectedChecks) => {
 function ChecksSelection({ clusterId, cluster }) {
   const dispatch = useDispatch();
 
-  const { saving, savingError, savingSuccess } = useSelector(
-    (state) => state.clusterChecksSelection
+  const saving = useSelector(isSaving(TARGET_CLUSTER, clusterId));
+  const savingSuccess = useSelector(
+    isSuccessfullySaved(TARGET_CLUSTER, clusterId)
   );
+  const savingError = useSelector(isSavingFailed(TARGET_CLUSTER, clusterId));
 
   const {
     data: catalogData,
@@ -84,7 +93,11 @@ function ChecksSelection({ clusterId, cluster }) {
   }, [catalogData, selectedChecks]);
 
   useEffect(() => {
-    setLocalSavingError(savingError);
+    if (savingError === true) {
+      setLocalSavingError(
+        'An unexpected error happened while selecting your desired checks'
+      );
+    }
     setLocalSavingSuccess(savingSuccess);
   }, [savingError, savingSuccess]);
 
@@ -103,9 +116,10 @@ function ChecksSelection({ clusterId, cluster }) {
 
   const saveSelection = useCallback(() =>
     dispatch(
-      checksSelected({
-        checks: selectedChecks,
+      clusterChecksSelected({
         clusterID: clusterId,
+        clusterName: cluster.name,
+        checks: selectedChecks,
       })
     )
   );
@@ -158,6 +172,7 @@ function ChecksSelection({ clusterId, cluster }) {
             <button
               className="flex justify-center items-center bg-jungle-green-500 hover:opacity-75 text-white font-bold py-2 px-4 rounded"
               onClick={saveSelection}
+              disabled={saving}
               type="button"
               data-testid="save-selection-button"
             >
@@ -169,9 +184,9 @@ function ChecksSelection({ clusterId, cluster }) {
                 'Select Checks for Execution'
               )}
             </button>
-            {localSavingError && (
+            {savingError && (
               <SavingFailedAlert onClose={() => setLocalSavingError(null)}>
-                <p>{savingError}</p>
+                <p>{localSavingError}</p>
               </SavingFailedAlert>
             )}
             {localSavingSuccess && selectedChecks.length > 0 && (

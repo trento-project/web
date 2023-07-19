@@ -4,8 +4,7 @@ import createSagaMiddleware from 'redux-saga';
 import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
-import clusterChecksSelectionReducer from './clusterChecksSelection';
-import hostChecksSelectionReducer from './hostChecksSelection';
+import checksSelectionReducer from './checksSelection';
 import checksResultsFiltersReducer from './checksResultsFilters';
 import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
@@ -22,8 +21,7 @@ export const store = configureStore({
     sapSystemsHealthSummary: sapSystemsHealthSummaryReducer,
     hostsList: hostsListReducer,
     clustersList: clustersListReducer,
-    clusterChecksSelection: clusterChecksSelectionReducer,
-    hostChecksSelection: hostChecksSelectionReducer,
+    checksSelection: checksSelectionReducer,
     checksResultsFilters: checksResultsFiltersReducer,
     sapSystemsList: sapSystemListReducer,
     databasesList: databasesListReducer,

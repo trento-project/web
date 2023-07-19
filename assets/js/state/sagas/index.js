@@ -69,17 +69,14 @@ import {
   watchHostDeregistered,
   watchHostDeregisterable,
   watchDeregisterHost,
-  watchHostChecksSelection,
 } from '@state/sagas/hosts';
-import {
-  watchClusterDeregistered,
-  watchClusterChecksSelection,
-} from '@state/sagas/clusters';
+import { watchClusterDeregistered } from '@state/sagas/clusters';
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
 } from '@state/sagas/lastExecutions';
 import { watchPerformLogin } from '@state/sagas/user';
+import { watchChecksSelection } from '@state/sagas/checksSelection';
 
 import { getClusterName } from '@state/selectors/cluster';
 
@@ -347,8 +344,7 @@ export default function* rootSaga() {
     watchClusterCibLastWrittenUpdated(),
     watchClusterDeregistered(),
     watchNotifications(),
-    watchClusterChecksSelection(),
-    watchHostChecksSelection(),
+    watchChecksSelection(),
     watchChecksExecutionStarted(),
     watchChecksExecutionCompleted(),
     watchChecksResultsUpdated(),
