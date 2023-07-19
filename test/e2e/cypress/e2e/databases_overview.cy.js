@@ -5,7 +5,7 @@ context('Databases Overview', () => {
   });
 
   describe('Deregistration', () => {
-    const hdq_database = {
+    const hdqDatabase = {
       sid: 'HDQ',
       hana_primary: {
         name: 'vmhdbqas01',
@@ -14,11 +14,11 @@ context('Databases Overview', () => {
     };
 
     before(() => {
-      cy.deregisterHost(hdq_database.hana_primary.id);
+      cy.deregisterHost(hdqDatabase.hana_primary.id);
     });
 
-    it(`should not display DB ${hdq_database.hana_primary.name} after deregistering the primary instance`, () => {
-      cy.contains(hdq_database.sid).should('not.exist');
+    it(`should not display DB ${hdqDatabase.sid} after deregistering the primary instance`, () => {
+      cy.contains(hdqDatabase.sid).should('not.exist');
     });
   });
 });
