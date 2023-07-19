@@ -47,11 +47,9 @@ function ChecksSelection({ clusterId, cluster }) {
   const dispatch = useDispatch();
 
   const { status } = useSelector(getClusterCheckSelection(clusterId));
-  const { saving, savingError, savingSuccess } = {
-    saving: isSaving(status),
-    savingSuccess: isSuccessfullySaved(status),
-    savingError: isSavingFailed(status),
-  };
+  const saving = isSaving(status);
+  const savingSuccess = isSuccessfullySaved(status);
+  const savingError = isSavingFailed(status);
 
   const {
     data: catalogData,
