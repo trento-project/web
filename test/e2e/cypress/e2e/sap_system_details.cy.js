@@ -132,4 +132,21 @@ context('SAP system details', () => {
       });
     });
   });
+
+  describe('Deregistration', () => {
+    const hostToDeregister = {
+      name: 'vmnwdev02',
+      id: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
+    };
+
+    before(() => {
+      cy.visit(`/sap_systems/${selectedSystem.Id}`);
+      cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
+      cy.deregisterHost(hostToDeregister.id);
+    });
+
+    it(`should not include ${hostToDeregister.name} in the list of hosts`, () => {
+      cy.contains(hostToDeregister.name).should('not.exist');
+    });
+  });
 });
