@@ -24,7 +24,6 @@ function DeregistrationModal({
       </div>
       <div className="flex justify-start gap-2 mt-4">
         <Button
-          data-testid="cleanup-confirm"
           type="default-fit"
           className="inline-block mx-0.5 border-green-500 border w-fit"
           size="small"

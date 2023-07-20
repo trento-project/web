@@ -355,4 +355,42 @@ context('Host Details', () => {
       cy.get('span').find('svg').should('exist');
     });
   });
+
+  describe('Deregistration', () => {
+    describe('"Clean up" button should be visible only for an unhealthy host', () => {
+      it('should not display the "Clean up" button for healthy host', () => {
+        cy.task('startAgentHeartbeat', [selectedHost.id]);
+        cy.contains('button', 'Clean up').should('not.exist');
+      });
+
+      it('should show the "Clean up" button once heartbeat is lost and debounce period has elapsed', () => {
+        cy.task('stopAgentsHeartbeat');
+        cy.contains('button', 'Clean up', { timeout: 15000 }).should('exist');
+      });
+    });
+
+    describe('"Clean up" button should deregister a host', () => {
+      before(() => {
+        cy.task('stopAgentsHeartbeat');
+      });
+
+      it('should allow to deregister a host after clean-up confirmation', () => {
+        cy.contains('button', 'Clean up', { timeout: 15000 }).click();
+
+        cy.get('#headlessui-portal-root').as('modal');
+
+        cy.get('@modal')
+          .find('.w-full')
+          .should(
+            'contain.text',
+            `Clean up data discovered by agent on host ${selectedHost.hostName}`
+          );
+        cy.get('@modal').contains('button', 'Clean up').click();
+
+        cy.get('@modal').should('not.exist');
+        cy.url().should('eq', cy.config().baseUrl + '/hosts');
+        cy.get(`#host-${selectedHost.agentId}`).should('not.exist');
+      });
+    });
+  });
 });

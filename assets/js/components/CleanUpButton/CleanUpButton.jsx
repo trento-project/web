@@ -13,7 +13,6 @@ function CleanUpButton({ cleaning, onClick }) {
       size="small"
       disabled={cleaning}
       onClick={() => onClick()}
-      data-testid="cleanup-button"
     >
       {cleaning === true ? (
         <Spinner className="justify-center flex" />
