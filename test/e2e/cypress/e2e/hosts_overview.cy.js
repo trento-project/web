@@ -192,18 +192,18 @@ context('Hosts Overview', () => {
 
       it('should show all other cleanup buttons', () => {
         for (let i = 2; i < 11; i++) {
-          cy.get(`tr:nth-child(${i})`).within(() => {
-            cy.get('[data-testid="cleanup-button"]').should('exist');
-          });
+          cy.get(`tr:nth-child(${i})`)
+            .contains('button', 'Clean up')
+            .should('exist');
         }
       });
 
       it(`should display the cleanup button for host ${hostToDeregister.name} once heartbeat is lost`, () => {
         cy.task('stopAgentsHeartbeat');
 
-        cy.get('tr:nth-child(1) > .w-48 > [data-testid="cleanup-button"]', {
-          timeout: 15000,
-        }).should('exist');
+        cy.get('tr:nth-child(1)')
+          .contains('button', 'Clean up', { timeout: 15000 })
+          .should('exist');
       });
     });
 
@@ -215,18 +215,22 @@ context('Hosts Overview', () => {
       });
 
       it('should allow to deregister a host after clean up confirmation', () => {
-        cy.get('tr:nth-child(1) > .w-48 > [data-testid="cleanup-button"]', {
-          timeout: 15000,
-        }).click();
+        cy.get('tr:nth-child(1)')
+          .contains('button', 'Clean up', { timeout: 15000 })
+          .click();
 
-        cy.get('.min-h-screen > .w-full').should(
-          'contain.text',
-          'This action will cause Trento to stop tracking all the components discovered by the agent in this host, including the host itself and any other component depending on it.'
-        );
+        cy.get('#headlessui-portal-root').as('modal');
 
-        cy.get('[data-testid="cleanup-confirm"]').click();
+        cy.get('@modal')
+          .find('.w-full')
+          .should(
+            'contain.text',
+            'This action will cause Trento to stop tracking all the components discovered by the agent in this host, including the host itself and any other component depending on it.'
+          );
 
-        cy.contains(hostToDeregister.name).should('not.exist');
+        cy.get('@modal').contains('button', 'Clean up').click();
+
+        cy.get(`#host-${hostToDeregister.id}`).should('not.exist');
       });
     });
   });
