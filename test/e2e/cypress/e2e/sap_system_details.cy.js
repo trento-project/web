@@ -132,4 +132,18 @@ context('SAP system details', () => {
       });
     });
   });
+
+  describe('Deregistration', () => {
+    const hostToDeregister = {
+      name: 'vmnwdev02',
+      id: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
+      features: 'ENQREP',
+    };
+
+    it(`should not include ${hostToDeregister.name} in the list of hosts`, () => {
+      cy.deregisterHost(hostToDeregister.id);
+      cy.contains(hostToDeregister.name).should('not.exist');
+      cy.contains(hostToDeregister.features).should('not.exist');
+    });
+  });
 });

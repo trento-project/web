@@ -263,4 +263,24 @@ context('HANA cluster details', () => {
       cy.get('li').first().contains(5000);
     });
   });
+
+  describe('Deregistration', () => {
+    const hostToDeregister = {
+      name: 'vmhdbprd02',
+      id: 'b767b3e9-e802-587e-a442-541d093b86b9',
+      sid: 'WDF',
+    };
+
+    before(() => {
+      cy.visit(`/clusters/${availableHanaCluster.id}`);
+      cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
+    });
+
+    it(`should not include a working link to ${hostToDeregister.name} in the list of sites`, () => {
+      cy.deregisterHost(hostToDeregister.id);
+      cy.get(`.tn-site-details-${hostToDeregister.sid}`)
+        .contains('a', hostToDeregister.name)
+        .should('not.exist');
+    });
+  });
 });

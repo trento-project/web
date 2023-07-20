@@ -8,7 +8,7 @@ const clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
 
 context('Clusters Overview', () => {
-  beforeEach(() => {
+  before(() => {
     cy.visit('/clusters');
     cy.url().should('include', '/clusters');
   });
@@ -122,31 +122,47 @@ context('Clusters Overview', () => {
           .should('have.class', 'fill-red-500');
       });
     });
+  });
 
-    describe('Clusters Tagging', () => {
-      before(() => {
-        cy.removeTagsFromView();
-      });
-      const clustersByMatchingPattern = (pattern) => (clusterName) =>
-        clusterName.includes(pattern);
-      const taggingRules = [
-        ['hana_cluster_1', 'env1'],
-        ['hana_cluster_2', 'env2'],
-        ['hana_cluster_3', 'env3'],
-      ];
+  describe('Clusters Tagging', () => {
+    before(() => {
+      cy.removeTagsFromView();
+    });
+    const clustersByMatchingPattern = (pattern) => (clusterName) =>
+      clusterName.includes(pattern);
+    const taggingRules = [
+      ['hana_cluster_1', 'env1'],
+      ['hana_cluster_2', 'env2'],
+      ['hana_cluster_3', 'env3'],
+    ];
 
-      taggingRules.forEach(([pattern, tag]) => {
-        describe(`Add tag '${tag}' to all clusters with '${pattern}' in the cluster name`, () => {
-          availableClusters
-            .map(({ name }) => name)
-            .filter(clustersByMatchingPattern(pattern))
-            .forEach((clusterName) => {
-              it(`should tag cluster '${clusterName}'`, () => {
-                cy.addTagByColumnValue(clusterName, tag);
-              });
+    taggingRules.forEach(([pattern, tag]) => {
+      describe(`Add tag '${tag}' to all clusters with '${pattern}' in the cluster name`, () => {
+        availableClusters
+          .map(({ name }) => name)
+          .filter(clustersByMatchingPattern(pattern))
+          .forEach((clusterName) => {
+            it(`should tag cluster '${clusterName}'`, () => {
+              cy.addTagByColumnValue(clusterName, tag);
             });
-        });
+          });
       });
+    });
+  });
+
+  describe('Deregistration', () => {
+    const hanaCluster1 = {
+      name: 'hana_cluster_1',
+      hosts: [
+        '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+        '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
+      ],
+    };
+
+    it(`should not display '${hanaCluster1.name}' after deregistering all its nodes`, () => {
+      cy.deregisterHost(hanaCluster1.hosts[0]);
+      cy.deregisterHost(hanaCluster1.hosts[1]);
+      cy.contains(hanaCluster1.name).should('not.exist');
     });
   });
 });
