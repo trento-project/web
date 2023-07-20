@@ -12,6 +12,7 @@ import {
 import { keysToCamel } from '@lib/serialization';
 
 import {
+  HOST_DEREGISTERED,
   setHosts,
   appendHost,
   updateHost,
@@ -25,6 +26,7 @@ import {
 } from '@state/hosts';
 
 import {
+  CLUSTER_DEREGISTERED,
   setClusters,
   appendCluster,
   updateCluster,
@@ -38,6 +40,7 @@ import {
 import {
   SAP_SYSTEM_REGISTERED,
   SAP_SYSTEM_HEALTH_CHANGED,
+  SAP_SYSTEM_DEREGISTERED,
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
@@ -326,6 +329,21 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   yield debounce(
     debounceDuration,
     'CLUSTER_HEALTH_CHANGED',
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    SAP_SYSTEM_DEREGISTERED,
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    CLUSTER_DEREGISTERED,
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    HOST_DEREGISTERED,
     loadSapSystemsHealthSummary
   );
 }
