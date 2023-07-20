@@ -389,6 +389,7 @@ context('Host Details', () => {
 
         cy.get('@modal').should('not.exist');
         cy.url().should('eq', cy.config().baseUrl + '/hosts');
+        cy.get(`#host-${selectedHost.agentId}`).should('not.exist');
       });
     });
   });
