@@ -154,22 +154,14 @@ context('Clusters Overview', () => {
     const hanaCluster1 = {
       name: 'hana_cluster_1',
       hosts: [
-        {
-          id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
-          name: 'vmhdbdev01',
-        },
-        {
-          id: '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
-          name: 'vmhdbdev02',
-        },
+        '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+        '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
       ],
     };
 
-    before(() => {});
-
     it(`should not display '${hanaCluster1.name}' after deregistering all its nodes`, () => {
-      cy.deregisterHost(hanaCluster1.hosts[0].id);
-      cy.deregisterHost(hanaCluster1.hosts[1].id);
+      cy.deregisterHost(hanaCluster1.hosts[0]);
+      cy.deregisterHost(hanaCluster1.hosts[1]);
       cy.contains(hanaCluster1.name).should('not.exist');
     });
   });

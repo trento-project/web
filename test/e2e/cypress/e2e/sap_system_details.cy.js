@@ -142,10 +142,10 @@ context('SAP system details', () => {
     before(() => {
       cy.visit(`/sap_systems/${selectedSystem.Id}`);
       cy.url().should('include', `/sap_systems/${selectedSystem.Id}`);
-      cy.deregisterHost(hostToDeregister.id);
     });
 
     it(`should not include ${hostToDeregister.name} in the list of hosts`, () => {
+      cy.deregisterHost(hostToDeregister.id);
       cy.contains(hostToDeregister.name).should('not.exist');
     });
   });
