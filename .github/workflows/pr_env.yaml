@@ -125,6 +125,9 @@ jobs:
             force_recreate_wanda_container='true' \
             force_recreate_web_container='true' \
             force_pull_images='true' \
+            web_upstream_name='${{ env.PR_NUMBER}}web' \
+            wanda_upstream_name='${{ env.PR_NUMBER}}wanda' \
+            grafana_upstream_name='${{ env.PR_NUMBER}}grafana' \
             trento_server_url='http://${{ env.PR_BASE_URL}}'"
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the pr environment
