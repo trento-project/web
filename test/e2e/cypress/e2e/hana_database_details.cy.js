@@ -130,11 +130,8 @@ context('HANA database details', () => {
   });
 
   describe('Deregistration', () => {
-    before(() => {
-      cy.deregisterHost(attachedHosts[0].AgentId);
-    });
-
     it(`should not include host ${attachedHosts[0].Name} in the list of hosts`, () => {
+      cy.deregisterHost(attachedHosts[0].AgentId);
       cy.contains(attachedHosts[0].Name).should('not.exist');
     });
   });

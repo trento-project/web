@@ -272,12 +272,12 @@ context('HANA cluster details', () => {
     };
 
     before(() => {
-      cy.deregisterHost(hostToDeregister.id);
       cy.visit(`/clusters/${availableHanaCluster.id}`);
       cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
     });
 
     it(`should not include a working link to ${hostToDeregister.name} in the list of sites`, () => {
+      cy.deregisterHost(hostToDeregister.id);
       cy.get(`.tn-site-details-${hostToDeregister.sid}`)
         .contains('a', hostToDeregister.name)
         .should('not.exist');
