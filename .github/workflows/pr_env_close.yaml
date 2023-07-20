@@ -30,7 +30,6 @@ jobs:
       packages: write
     env:
       REGISTRY: ghcr.io
-      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/trento-web
       IMAGE_TAG: ${{ github.event.pull_request.number }}-env
     steps:
       - name: Cancel Previous Runs
@@ -48,17 +47,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete the container image
-        uses: bots-house/ghcr-delete-image-action@v1.1.0
+        uses: bots-house/ghcr-delete-image-action@v1.0.0
         with:
-          name: ${{ env.IMAGE_REPOSITORY }}
+          owner: ${{ github.repository_owner }}
+          name: trento-web
           tag: ${{ env.IMAGE_TAG }}
-          owner: ${{ github.actor }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
   delete_pr_environment:
     name: Delete the pr environment
     runs-on: ubuntu-latest
-    needs: build-and-push-pr-image
+    needs: delete-pr-image
     steps:
       - name: Checkout ansible repo
         uses: actions/checkout@v3
@@ -108,13 +107,4 @@ jobs:
             wanda_postgres_password='wanda' \
             rabbitmq_vhost='${{ env.PR_NUMBER}}' \
             rabbitmq_password='trento' \
-            prometheus_url='http://localhost' \
-            web_admin_password='adminpassword' \
-            enable_api_key='false' \
-            nginx_vhost_listen_port='443' \
-            force_recreate_wanda_container='true' \
-            force_recreate_web_container='true' \
-            web_upstream_name='${{ env.PR_NUMBER}}web' \
-            wanda_upstream_name='${{ env.PR_NUMBER}}wanda' \
-            grafana_upstream_name='${{ env.PR_NUMBER}}grafana' \
-            trento_server_url='http://${{ env.PR_BASE_URL}}'"
+            remove_wanda_container_image='false'"
