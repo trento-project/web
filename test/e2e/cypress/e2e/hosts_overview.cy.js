@@ -225,7 +225,7 @@ context('Hosts Overview', () => {
           .find('.w-full')
           .should(
             'contain.text',
-            'This action will cause Trento to stop tracking all the components discovered by the agent in this host, including the host itself and any other component depending on it.'
+            `Clean up data discovered by agent on host ${hostToDeregister.name}`
           );
 
         cy.get('@modal').contains('button', 'Clean up').click();
