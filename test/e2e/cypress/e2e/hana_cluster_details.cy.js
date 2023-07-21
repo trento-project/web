@@ -177,9 +177,9 @@ context('HANA cluster details', () => {
     });
   });
 
-  describe.skip('Settings should allow to enable checks from the checks catalog', () => {
+  describe.skip('Check Selection should allow to enable checks from the checks catalog', () => {
     it('should take me to the cluster settings when pressing the settings button', () => {
-      cy.get('button').contains('Settings').click();
+      cy.get('button').contains('Check Selection').click();
     });
 
     it('should include the relevant checks section', () => {
@@ -212,7 +212,7 @@ context('HANA cluster details', () => {
     });
 
     it(`should show a warning message in the check selection view`, () => {
-      cy.contains('button', 'Settings').click();
+      cy.contains('button', 'Check Selection').click();
       cy.get('[data-testid="warning-banner"]').contains(
         'The following catalog is valid for on-premise bare metal platforms.'
       );
@@ -233,7 +233,7 @@ context('HANA cluster details', () => {
     });
 
     it(`should show the default catalog`, () => {
-      cy.contains('button', 'Settings').click();
+      cy.contains('button', 'Check Selection').click();
       cy.contains('Corosync').click();
       cy.get('li').first().contains(5000);
     });
@@ -246,7 +246,7 @@ context('HANA cluster details', () => {
     });
 
     it(`should recognize the provider as vmware`, () => {
-      cy.contains('button', 'Settings').click();
+      cy.contains('button', 'Check Selection').click();
       cy.contains('VMware');
     });
   });
@@ -258,7 +258,7 @@ context('HANA cluster details', () => {
     });
 
     it(`should show the default catalog`, () => {
-      cy.contains('button', 'Settings').click();
+      cy.contains('button', 'Check Selection').click();
       cy.contains('Corosync').click();
       cy.get('li').first().contains(5000);
     });
