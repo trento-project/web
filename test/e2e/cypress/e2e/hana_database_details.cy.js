@@ -135,4 +135,11 @@ context('HANA database details', () => {
       cy.contains(attachedHosts[0].Name).should('not.exist');
     });
   });
+
+  describe('Restoration', () => {
+    it(`should include host ${attachedHosts[0].Name} again in the list of hosts`, () => {
+      cy.loadScenario(`host-${attachedHosts[0].Name}-restore`);
+      cy.contains(attachedHosts[0].Name).should('exist');
+    });
+  });
 });
