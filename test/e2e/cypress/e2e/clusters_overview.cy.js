@@ -165,4 +165,19 @@ context('Clusters Overview', () => {
       cy.contains(hanaCluster1.name).should('not.exist');
     });
   });
+
+  describe('Restoration', () => {
+    const hanaClusterToRestore = {
+      name: 'hana_cluster_1',
+      hosts: [
+        '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+        '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
+      ],
+    };
+
+    it(`should show cluster ${hanaClusterToRestore.name}`, () => {
+      cy.loadScenario(`cluster-${hanaClusterToRestore.name}-restore`);
+      cy.contains(hanaClusterToRestore.name).should('exist');
+    });
+  });
 });
