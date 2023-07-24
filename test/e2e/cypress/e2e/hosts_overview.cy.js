@@ -256,5 +256,17 @@ context('Hosts Overview', () => {
         cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
       });
     });
+
+    describe('Restoration', () => {
+      const hostToRestore = {
+        name: 'vmdrbddev01',
+        id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
+      };
+
+      it(`should show host ${hostToRestore.name} registered again`, () => {
+        cy.loadScenario(`host-${hostToRestore.name}-restore`);
+        cy.contains(hostToRestore.name).should('exist');
+      });
+    });
   });
 });
