@@ -283,4 +283,19 @@ context('HANA cluster details', () => {
         .should('not.exist');
     });
   });
+
+  describe('Restoration', () => {
+    const hostToRestore = {
+      name: 'vmhdbprd02',
+      id: 'b767b3e9-e802-587e-a442-541d093b86b9',
+      sid: 'WDF',
+    };
+
+    it(`should show host ${hostToRestore.name} again with a working link`, () => {
+      cy.loadScenario(`host-${hostToRestore.name}-restore`);
+      cy.get(`.tn-site-details-${hostToRestore.sid}`)
+        .contains('a', hostToRestore.name)
+        .should('exist');
+    });
+  });
 });
