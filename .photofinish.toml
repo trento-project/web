@@ -223,6 +223,16 @@ files = [
     "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_sap_system_discovery.json"
 ]
 
+[host-vmnwdev02-restore]
+
+files = [
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_subscription_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_cloud_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_sap_system_discovery.json"
+]
+
 [sapsystem-NWD-restore]
 
 files = [
