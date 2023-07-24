@@ -12,14 +12,13 @@ import ChecksCatalog from './ChecksCatalog';
 
 describe('ChecksCatalog ChecksCatalog component', () => {
   it('should render the checks catalog with fetched data', async () => {
-    const groupName1 = faker.animal.cat();
-    const groupName2 = faker.animal.cat();
+    const groupName1 = faker.datatype.uuid();
+    const groupName2 = faker.datatype.uuid();
     const group1 = catalogCheckFactory.buildList(5, { group: groupName1 });
     const group2 = catalogCheckFactory.buildList(5, { group: groupName2 });
-    const catalog = group1.concat(group2);
 
     const initialState = {
-      catalog: { loading: false, data: catalog, error: null },
+      catalog: { loading: false, data: [...group1, ...group2], error: null },
     };
     const [statefulCatalog, store] = withState(<ChecksCatalog />, initialState);
 
