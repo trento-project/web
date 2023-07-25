@@ -30,7 +30,7 @@ export function ClusterSettings() {
         Back to Cluster Details
       </BackButton>
       <PageHeader>
-        Cluster Settings for{' '}
+        Check Settings for{' '}
         <span className="font-bold">{getClusterName(cluster)}</span>
       </PageHeader>
       {cluster.provider === UNKNOWN_PROVIDER && (
