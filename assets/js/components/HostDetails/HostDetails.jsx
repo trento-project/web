@@ -70,6 +70,18 @@ function HostDetails() {
 
   const versionWarningMessage = agentVersionWarning(host.agent_version);
 
+  const renderedExporters = Object.entries(exportersStatus).map(
+    ([exporterName, exporterStatus]) => (
+      <StatusPill
+        key={exporterName}
+        className="self-center ml-4 shadow"
+        heartbeat={exporterStatus}
+      >
+        {exporterName}
+      </StatusPill>
+    )
+  );
+
   return (
     <>
       <DeregistrationModal
@@ -147,17 +159,7 @@ function HostDetails() {
             >
               Agent
             </StatusPill>
-            {Object.entries(exportersStatus).map(
-              ([exporterName, exporterStatus]) => (
-                <StatusPill
-                  key={exporterName}
-                  className="self-center ml-4 shadow"
-                  heartbeat={exporterStatus}
-                >
-                  {exporterName}
-                </StatusPill>
-              )
-            )}
+            {renderedExporters}
           </div>
         </div>
         {versionWarningMessage && (
