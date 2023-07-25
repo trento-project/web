@@ -109,7 +109,7 @@ function HanaClusterDetails({
               onClick={() => navigate(`/clusters/${clusterID}/settings`)}
             >
               <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
-              Settings
+              Check Selection
             </Button>
 
             <Button

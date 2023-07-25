@@ -24,6 +24,31 @@ describe('HostDetails component', () => {
     axiosMock.reset();
   });
 
+  it('should show the Checks related action buttons', () => {
+    const host = hostFactory.build();
+    const { id: hostID } = host;
+    const state = {
+      ...defaultInitialState,
+      hostsList: {
+        hosts: [host],
+      },
+    };
+    const [StatefulHostDetails] = withState(<HostDetails />, state);
+
+    renderWithRouterMatch(StatefulHostDetails, {
+      path: '/hosts/:hostID',
+      route: `/hosts/${hostID}`,
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Check Selection' })
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Show Results' })).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Start Execution' })
+    ).toBeVisible();
+  });
+
   describe('agent version', () => {
     it('should not show any warning message if the agent version is correct', () => {
       const hosts = hostFactory.buildList(1, { agent_version: '2.0.0' });
