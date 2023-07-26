@@ -10,7 +10,7 @@
     "@storybook/addon-interactions": "^7.1.0",
     "@storybook/addon-links": "^7.1.0",
     "@storybook/react": "^7.1.0",
-    "@storybook/react-webpack5": "^7.1.0",
+    "@storybook/react-webpack5": "^7.1.1",
     "@storybook/testing-library": "^0.2.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
