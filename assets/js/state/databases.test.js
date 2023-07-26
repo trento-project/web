@@ -25,14 +25,24 @@ describe('Databases reducer', () => {
 
   it('should remove a database from state', () => {
     const [database1, database2] = databaseFactory.buildList(2);
+    const database1DatabaseInstances = databaseInstanceFactory.buildList({
+      sap_system_id: database1.id,
+    });
+    const database2DatabaseInstances = databaseInstanceFactory.buildList({
+      sap_system_id: database2.id,
+    });
     const initialState = {
       databases: [database1, database2],
+      databaseInstances: database1DatabaseInstances.concat(
+        database2DatabaseInstances
+      ),
     };
 
     const action = removeDatabase(database1);
 
     const expectedState = {
       databases: [database2],
+      databaseInstances: database2DatabaseInstances,
     };
 
     expect(databaseReducer(initialState, action)).toEqual(expectedState);

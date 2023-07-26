@@ -147,6 +147,12 @@ export const sapSystemsListSlice = createSlice({
       state.sapSystems = state.sapSystems.filter(
         (sapSystem) => sapSystem.id !== id
       );
+      state.applicationInstances = state.applicationInstances.filter(
+        (applicationInstance) => applicationInstance.sap_system_id !== id
+      );
+      state.databaseInstances = state.databaseInstances.filter(
+        (databaseInstance) => databaseInstance.sap_system_id !== id
+      );
     },
     updateSAPSystem: (state, { payload }) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {

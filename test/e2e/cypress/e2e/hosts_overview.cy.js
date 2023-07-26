@@ -233,5 +233,28 @@ context('Hosts Overview', () => {
         cy.get(`#host-${hostToDeregister.id}`).should('not.exist');
       });
     });
+
+    describe('Deregistration of hosts should update remaining hosts data', () => {
+      const sapSystemHostToDeregister = {
+        id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+        sid: 'NWD',
+      };
+
+      before(() => {
+        cy.visit('/hosts');
+        cy.url().should('include', '/hosts');
+      });
+
+      beforeEach(() => {
+        cy.contains('button', '1').click(); // Move to 1st host list view page
+      });
+
+      it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
+        cy.contains('button', '2').click();
+        cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
+        cy.deregisterHost(sapSystemHostToDeregister.id);
+        cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
+      });
+    });
   });
 });

@@ -34,6 +34,9 @@ export const databasesListSlice = createSlice({
       state.databases = state.databases.filter(
         (database) => database.id !== id
       );
+      state.databaseInstances = state.databaseInstances.filter(
+        (databaseInstance) => databaseInstance.sap_system_id !== id
+      );
     },
     removeDatabaseInstance: (
       state,
