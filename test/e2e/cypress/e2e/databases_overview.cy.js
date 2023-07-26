@@ -30,8 +30,14 @@ context('Databases Overview', () => {
 
     it(`should include both instances in DB ${hdqDatabase.sid} after restoring the primary instance`, () => {
       cy.contains('tr', hdqDatabase.sid).should('exist').click();
-      cy.contains(hdqDatabase.instances[0].name).should('exist');
-      cy.contains(hdqDatabase.instances[1].name).should('exist');
+      cy.contains('div', hdqDatabase.instances[0].name).should('exist');
+      cy.contains('div', hdqDatabase.instances[1].name).should('exist');
+    });
+
+    it('should show the ACTIVE pill in the right host', () => {
+      cy.contains('div', hdqDatabase.instances[1].name).within(() => {
+        cy.contains('ACTIVE');
+      });
     });
   });
 });
