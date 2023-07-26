@@ -336,7 +336,7 @@ defmodule Trento.DatabaseProjectorTest do
     assert nil == projection.deregistered_at
     assert :passing == projection.health
 
-    assert_broadcast "database_registered",
+    assert_broadcast "database_restored",
                      %{
                        health: :passing,
                        id: ^sap_system_id,

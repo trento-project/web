@@ -240,6 +240,18 @@ defmodule Trento.SapSystemProjectorTest do
     %{tenant: tenant, id: sap_system_id, sid: sid} =
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
+    database_instance =
+      insert(:database_instance_without_host, sap_system_id: sap_system_id)
+      |> Map.from_struct()
+      |> Map.delete(:__meta__)
+      |> Map.delete(:host)
+
+    application_instance =
+      insert(:application_instance_without_host, sap_system_id: sap_system_id)
+      |> Map.from_struct()
+      |> Map.delete(:__meta__)
+      |> Map.delete(:host)
+
     insert_list(5, :tag, resource_id: sap_system_id)
 
     new_db_host = Faker.Internet.ip_v4_address()
@@ -261,13 +273,15 @@ defmodule Trento.SapSystemProjectorTest do
       |> Repo.preload([:tags])
 
     assert_broadcast(
-      "sap_system_registered",
+      "sap_system_restored",
       %{
         db_host: ^new_db_host,
         health: ^new_health,
         id: ^sap_system_id,
         sid: ^sid,
         tenant: ^tenant,
+        database_instances: [^database_instance],
+        application_instances: [^application_instance],
         tags: ^tags
       },
       1000

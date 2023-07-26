@@ -341,11 +341,11 @@ defmodule Trento.SapSystemProjector do
     sap_system =
       SapSystemReadModel
       |> Repo.get!(sap_system_id)
-      |> Repo.preload([:tags])
+      |> Repo.preload([:tags, :database_instances, :application_instances])
 
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
-      "sap_system_registered",
+      "sap_system_restored",
       SapSystemView.render("sap_system_restored.json", sap_system: sap_system)
     )
   end

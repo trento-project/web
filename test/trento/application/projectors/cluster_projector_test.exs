@@ -229,7 +229,7 @@ defmodule Trento.ClusterProjectorTest do
 
     assert nil == cluster_projection.deregistered_at
 
-    assert_broadcast "cluster_registered",
+    assert_broadcast "cluster_restored",
                      %{
                        cib_last_written: nil,
                        id: ^cluster_id,

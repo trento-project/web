@@ -240,7 +240,7 @@ defmodule Trento.HostProjector do
 
     TrentoWeb.Endpoint.broadcast(
       "monitoring:hosts",
-      "host_registered",
+      "host_restored",
       HostView.render("host_restored.json", host: host)
     )
   end

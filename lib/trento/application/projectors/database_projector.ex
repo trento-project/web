@@ -306,7 +306,7 @@ defmodule Trento.DatabaseProjector do
 
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
-      "database_registered",
+      "database_restored",
       SapSystemView.render("database_restored.json", database: database)
     )
   end

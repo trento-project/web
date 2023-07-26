@@ -471,7 +471,7 @@ defmodule Trento.HostProjectorTest do
 
     assert nil == deregistered_at
 
-    assert_broadcast "host_registered",
+    assert_broadcast "host_restored",
                      %{
                        agent_version: ^agent_version,
                        cluster_id: ^cluster_id,

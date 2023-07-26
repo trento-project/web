@@ -132,11 +132,7 @@ defmodule TrentoWeb.V1.SapSystemView do
   end
 
   def render("sap_system_restored.json", %{sap_system: sap_system}) do
-    sap_system
-    |> Map.from_struct()
-    |> Map.delete(:__meta__)
-    |> Map.delete(:database_instances)
-    |> Map.delete(:application_instances)
+    render("sap_system.json", sap_system: sap_system)
   end
 
   def render("sap_system_updated.json", %{id: id, ensa_version: ensa_version}),
