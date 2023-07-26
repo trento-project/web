@@ -176,6 +176,7 @@ context('Hosts Overview', () => {
       name: 'vmhdbdev01',
       id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
       tablePos: 7,
+      tag: 'tag1',
     };
 
     describe('Clean-up buttons should be visible only when needed', () => {
@@ -214,6 +215,7 @@ context('Hosts Overview', () => {
         cy.visit('/hosts');
         cy.url().should('include', '/hosts');
         cy.task('stopAgentsHeartbeat');
+        cy.addTagByColumnValue(hostToDeregister.name, hostToDeregister.tag);
       });
 
       it('should allow to deregister a host after clean up confirmation', () => {
@@ -236,9 +238,12 @@ context('Hosts Overview', () => {
       });
 
       describe('Restoration', () => {
-        it(`should show host ${hostToDeregister.name} registered again after restoring the host`, () => {
+        it(`should show host ${hostToDeregister.name} registered again after restoring the host with the tag`, () => {
           cy.loadScenario(`host-${hostToDeregister.name}-restore`);
-          cy.contains('tr', hostToDeregister.name).should('exist');
+          cy.contains(hostToDeregister.name).should('exist');
+          cy.contains('tr', hostToDeregister.name).within(() => {
+            cy.contains(hostToDeregister.tag).should('exist');
+          });
         });
       });
 
