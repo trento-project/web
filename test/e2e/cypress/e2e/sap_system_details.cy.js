@@ -145,19 +145,11 @@ context('SAP system details', () => {
       cy.contains(hostToDeregister.name).should('not.exist');
       cy.contains(hostToDeregister.features).should('not.exist');
     });
-  });
 
-  describe('Restoration', () => {
-    const hostToRestore = {
-      name: 'vmnwdev02',
-      id: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
-      features: 'ENQREP',
-    };
-
-    it(`should include ${hostToRestore.name} again in the list of hosts`, () => {
-      cy.loadScenario(`host-${hostToRestore.name}-restore`);
-      cy.contains(hostToRestore.name).should('exist');
-      cy.contains(hostToRestore.features).should('exist');
+    it(`should include ${hostToDeregister.name} again in the list of hosts`, () => {
+      cy.loadScenario(`host-${hostToDeregister.name}-restore`);
+      cy.contains(hostToDeregister.name).should('exist');
+      cy.contains(hostToDeregister.features).should('exist');
     });
   });
 });

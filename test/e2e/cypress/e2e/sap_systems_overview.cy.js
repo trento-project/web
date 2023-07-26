@@ -338,34 +338,10 @@ context('SAP Systems Overview', () => {
       cy.deregisterHost(sapSystemNwd.applicationInstances[1].id);
       cy.contains(sapSystemNwd.sid).should('not.exist');
     });
-  });
 
-  describe('Restoration', () => {
-    const sapSystemToRestore = {
-      sid: 'NWD',
-      hosts: [
-        {
-          name: 'vmnwdev01',
-          id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
-        },
-        {
-          name: 'vmnwdev02',
-          id: 'fb2c6b8a-9915-5969-a6b7-8b5a42de1971',
-        },
-        {
-          name: 'vmnwdev03',
-          id: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
-        },
-        {
-          name: 'vmnwdev04',
-          id: '1b0e9297-97dd-55d6-9874-8efde4d84c90',
-        },
-      ],
-    };
-
-    it(`should show host ${sapSystemToRestore.sid} registered again`, () => {
-      cy.loadScenario(`sapsystem-${sapSystemToRestore.sid}-restore`);
-      cy.contains(sapSystemToRestore.sid).should('exist');
+    it(`should show host ${sapSystemNwd.sid} registered again after restoring it`, () => {
+      cy.loadScenario(`sapsystem-${sapSystemNwd.sid}-restore`);
+      cy.contains(sapSystemNwd.sid).should('exist');
     });
   });
 });

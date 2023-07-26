@@ -282,19 +282,11 @@ context('HANA cluster details', () => {
         .contains('a', hostToDeregister.name)
         .should('not.exist');
     });
-  });
 
-  describe('Restoration', () => {
-    const hostToRestore = {
-      name: 'vmhdbprd02',
-      id: 'b767b3e9-e802-587e-a442-541d093b86b9',
-      sid: 'WDF',
-    };
-
-    it(`should show host ${hostToRestore.name} again with a working link`, () => {
-      cy.loadScenario(`host-${hostToRestore.name}-restore`);
-      cy.get(`.tn-site-details-${hostToRestore.sid}`)
-        .contains('a', hostToRestore.name)
+    it(`should show host ${hostToDeregister.name} again with a working link after restorign it`, () => {
+      cy.loadScenario(`host-${hostToDeregister.name}-restore`);
+      cy.get(`.tn-site-details-${hostToDeregister.sid}`)
+        .contains('a', hostToDeregister.name)
         .should('exist');
     });
   });
