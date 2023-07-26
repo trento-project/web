@@ -8,19 +8,43 @@ import {
   sapSystemFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories/sapSystems';
+import { databaseInstanceFactory } from '@lib/test-utils/factories/databases';
 import { faker } from '@faker-js/faker';
 
 describe('SAP Systems reducer', () => {
   it('should remove SAP system from state', () => {
     const [sapSystem1, sapSystem2] = sapSystemFactory.buildList(2);
+    const sapSystem1ApplicationInstances =
+      sapSystemApplicationInstanceFactory.buildList({
+        sap_system_id: sapSystem1.id,
+      });
+    const sapSystem1DatabaseInstances = databaseInstanceFactory.buildList({
+      sap_system_id: sapSystem1.id,
+    });
+    const sapSystem2ApplicationInstances =
+      sapSystemApplicationInstanceFactory.buildList({
+        sap_system_id: sapSystem2.id,
+      });
+    const sapSystem2DatabaseInstances = databaseInstanceFactory.buildList({
+      sap_system_id: sapSystem2.id,
+    });
+
     const initialState = {
       sapSystems: [sapSystem1, sapSystem2],
+      applicationInstances: sapSystem1ApplicationInstances.concat(
+        sapSystem2ApplicationInstances
+      ),
+      databaseInstances: sapSystem1DatabaseInstances.concat(
+        sapSystem2DatabaseInstances
+      ),
     };
 
     const action = removeSAPSystem(sapSystem1);
 
     const expectedState = {
       sapSystems: [sapSystem2],
+      applicationInstances: sapSystem2ApplicationInstances,
+      databaseInstances: sapSystem2DatabaseInstances,
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
