@@ -173,8 +173,9 @@ context('Hosts Overview', () => {
 
   describe('Deregistration', () => {
     const hostToDeregister = {
-      name: 'vmdrbddev01',
-      id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
+      name: 'vmhdbdev01',
+      id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+      tablePos: 7,
     };
 
     describe('Clean-up buttons should be visible only when needed', () => {
@@ -191,7 +192,8 @@ context('Hosts Overview', () => {
       });
 
       it('should show all other cleanup buttons', () => {
-        for (let i = 2; i < 11; i++) {
+        for (let i = 1; i < 11; i++) {
+          if (i == hostToDeregister.tablePos) continue;
           cy.get(`tr:nth-child(${i})`)
             .contains('button', 'Clean up')
             .should('exist');
@@ -201,7 +203,7 @@ context('Hosts Overview', () => {
       it(`should display the cleanup button for host ${hostToDeregister.name} once heartbeat is lost`, () => {
         cy.task('stopAgentsHeartbeat');
 
-        cy.get('tr:nth-child(1)')
+        cy.get(`tr:nth-child(${hostToDeregister.tablePos})`)
           .contains('button', 'Clean up', { timeout: 15000 })
           .should('exist');
       });
@@ -215,7 +217,7 @@ context('Hosts Overview', () => {
       });
 
       it('should allow to deregister a host after clean up confirmation', () => {
-        cy.get('tr:nth-child(1)')
+        cy.get(`tr:nth-child(${hostToDeregister.tablePos})`)
           .contains('button', 'Clean up', { timeout: 15000 })
           .click();
 
@@ -234,7 +236,7 @@ context('Hosts Overview', () => {
       });
 
       describe('Restoration', () => {
-        it(`should show host ${hostToDeregister.name} registered again`, () => {
+        it(`should show host ${hostToDeregister.name} registered again after restoring the host`, () => {
           cy.loadScenario(`host-${hostToDeregister.name}-restore`);
           cy.contains('tr', hostToDeregister.name).should('exist');
         });
@@ -249,6 +251,7 @@ context('Hosts Overview', () => {
         before(() => {
           cy.visit('/hosts');
           cy.url().should('include', '/hosts');
+          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
         });
 
         beforeEach(() => {
