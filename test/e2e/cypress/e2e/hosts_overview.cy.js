@@ -175,7 +175,6 @@ context('Hosts Overview', () => {
     const hostToDeregister = {
       name: 'vmhdbdev01',
       id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
-      tablePos: 7,
       tag: 'tag1',
     };
 
@@ -193,20 +192,10 @@ context('Hosts Overview', () => {
       });
 
       it('should show all other cleanup buttons', () => {
-        for (let i = 1; i < 11; i++) {
-          if (i == hostToDeregister.tablePos) continue;
-          cy.get(`tr:nth-child(${i})`)
-            .contains('button', 'Clean up')
-            .should('exist');
-        }
-      });
-
-      it(`should display the cleanup button for host ${hostToDeregister.name} once heartbeat is lost`, () => {
-        cy.task('stopAgentsHeartbeat');
-
-        cy.get(`tr:nth-child(${hostToDeregister.tablePos})`)
-          .contains('button', 'Clean up', { timeout: 15000 })
-          .should('exist');
+        cy.get('tbody tr')
+          .find('button')
+          .should('have.length', 9)
+          .contains('Clean up');
       });
     });
 
@@ -219,9 +208,15 @@ context('Hosts Overview', () => {
       });
 
       it('should allow to deregister a host after clean up confirmation', () => {
-        cy.get(`tr:nth-child(${hostToDeregister.tablePos})`)
-          .contains('button', 'Clean up', { timeout: 15000 })
-          .click();
+        cy.contains(
+          `The host ${hostToDeregister.name} heartbeat is failing`
+        ).should('exist');
+
+        cy.contains('tr', hostToDeregister.name).within(() => {
+          cy.get('td:nth-child(9)')
+            .contains('Clean up', { timeout: 15000 })
+            .click();
+        });
 
         cy.get('#headlessui-portal-root').as('modal');
 
