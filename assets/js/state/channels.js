@@ -22,6 +22,7 @@ const processChannelEvents = (reduxStore, socket) => {
     'heartbeat_succeded',
     'heartbeat_failed',
     'host_deregistered',
+    'host_restored',
   ]);
   registerEvents(reduxStore, socket, 'monitoring:clusters', [
     'cluster_registered',
@@ -32,6 +33,7 @@ const processChannelEvents = (reduxStore, socket) => {
     'cluster_health_changed',
     'cluster_cib_last_written_updated',
     'cluster_deregistered',
+    'cluster_restored',
   ]);
   registerEvents(reduxStore, socket, 'monitoring:sap_systems', [
     'sap_system_registered',
@@ -41,11 +43,13 @@ const processChannelEvents = (reduxStore, socket) => {
     'application_instance_deregistered',
     'application_instance_health_changed',
     'sap_system_deregistered',
+    'sap_system_restored',
     'sap_system_updated',
   ]);
   registerEvents(reduxStore, socket, 'monitoring:databases', [
     'database_registered',
     'database_deregistered',
+    'database_restored',
     'database_health_changed',
     'database_instance_registered',
     'database_instance_deregistered',
