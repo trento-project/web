@@ -3,14 +3,19 @@ import {
   applicationInstanceMoved,
   applicationInstanceDeregistered,
   sapSystemDeregistered,
+  sapSystemRestored,
   sapSystemUpdated,
 } from '@state/sagas/sapSystems';
 import {
+  appendSapsystem,
   removeSAPSystem,
+  upsertDatabaseInstances,
   updateApplicationInstanceHost,
+  upsertApplicationInstances,
   removeApplicationInstance,
   updateSAPSystem,
 } from '@state/sapSystems';
+import { notify } from '@state/actions/notifications';
 import {
   sapSystemFactory,
   sapSystemApplicationInstanceFactory,
@@ -26,6 +31,24 @@ describe('SAP Systems sagas', () => {
     });
 
     expect(dispatched).toContainEqual(removeSAPSystem({ id }));
+  });
+
+  it('should restore the SAP system', async () => {
+    const sapSystem = sapSystemFactory.build();
+
+    const dispatched = await recordSaga(sapSystemRestored, {
+      payload: sapSystem,
+    });
+
+    expect(dispatched).toEqual([
+      appendSapsystem(sapSystem),
+      upsertDatabaseInstances(sapSystem.database_instances),
+      upsertApplicationInstances(sapSystem.application_instances),
+      notify({
+        text: `SAP System, ${sapSystem.sid}, has been restored.`,
+        icon: 'ℹ️',
+      }),
+    ]);
   });
 
   it('should update the application instance host', async () => {

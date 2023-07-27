@@ -7,9 +7,12 @@ import {
   APPLICATION_INSTANCE_HEALTH_CHANGED,
   APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
+  SAP_SYSTEM_RESTORED,
   SAP_SYSTEM_UPDATED,
   appendSapsystem,
   updateSapSystemHealth,
+  upsertDatabaseInstances,
+  upsertApplicationInstances,
   appendApplicationInstance,
   removeApplicationInstance,
   updateApplicationInstanceHost,
@@ -82,6 +85,25 @@ export function* sapSystemDeregistered({ payload: { id, sid } }) {
   );
 }
 
+export function* sapSystemRestored({ payload }) {
+  yield put(appendSapsystem(payload));
+
+  const {
+    database_instances: databaseInstances,
+    application_instances: applicationInstances,
+  } = payload;
+
+  yield put(upsertDatabaseInstances(databaseInstances));
+  yield put(upsertApplicationInstances(applicationInstances));
+
+  yield put(
+    notify({
+      text: `SAP System, ${payload.sid}, has been restored.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 export function* sapSystemUpdated({ payload }) {
   yield put(updateSAPSystem(payload));
 }
@@ -103,5 +125,6 @@ export function* watchSapSystem() {
     applicationInstanceHealthChanged
   );
   yield takeEvery(SAP_SYSTEM_DEREGISTERED, sapSystemDeregistered);
+  yield takeEvery(SAP_SYSTEM_RESTORED, sapSystemRestored);
   yield takeEvery(SAP_SYSTEM_UPDATED, sapSystemUpdated);
 }
