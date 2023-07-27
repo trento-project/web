@@ -282,5 +282,12 @@ context('HANA cluster details', () => {
         .contains('a', hostToDeregister.name)
         .should('not.exist');
     });
+
+    it(`should show host ${hostToDeregister.name} again with a working link after restoring it`, () => {
+      cy.loadScenario(`host-${hostToDeregister.name}-restore`);
+      cy.get(`.tn-site-details-${hostToDeregister.sid}`)
+        .contains('a', hostToDeregister.name)
+        .should('exist');
+    });
   });
 });

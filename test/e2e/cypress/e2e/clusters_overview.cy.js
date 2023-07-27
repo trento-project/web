@@ -7,6 +7,12 @@ import {
 const clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
 
+const clusterTags = {
+  hana_cluster_1: 'env1',
+  hana_cluster_2: 'env2',
+  hana_cluster_3: 'env3',
+};
+
 context('Clusters Overview', () => {
   before(() => {
     cy.visit('/clusters');
@@ -131,9 +137,9 @@ context('Clusters Overview', () => {
     const clustersByMatchingPattern = (pattern) => (clusterName) =>
       clusterName.includes(pattern);
     const taggingRules = [
-      ['hana_cluster_1', 'env1'],
-      ['hana_cluster_2', 'env2'],
-      ['hana_cluster_3', 'env3'],
+      ['hana_cluster_1', clusterTags.hana_cluster_1],
+      ['hana_cluster_2', clusterTags.hana_cluster_2],
+      ['hana_cluster_3', clusterTags.hana_cluster_3],
     ];
 
     taggingRules.forEach(([pattern, tag]) => {
@@ -163,6 +169,14 @@ context('Clusters Overview', () => {
       cy.deregisterHost(hanaCluster1.hosts[0]);
       cy.deregisterHost(hanaCluster1.hosts[1]);
       cy.contains(hanaCluster1.name).should('not.exist');
+    });
+
+    it(`should show cluster ${hanaCluster1.name} after registering it again with the previous tags`, () => {
+      cy.loadScenario(`cluster-${hanaCluster1.name}-restore`);
+      cy.contains(hanaCluster1.name).should('exist');
+      cy.contains('tr', hanaCluster1.name).within(() => {
+        cy.contains(clusterTags[hanaCluster1.name]).should('exist');
+      });
     });
   });
 });

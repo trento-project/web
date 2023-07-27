@@ -338,5 +338,10 @@ context('SAP Systems Overview', () => {
       cy.deregisterHost(sapSystemNwd.applicationInstances[1].id);
       cy.contains(sapSystemNwd.sid).should('not.exist');
     });
+
+    it(`should show host ${sapSystemNwd.sid} registered again after restoring it`, () => {
+      cy.loadScenario(`sapsystem-${sapSystemNwd.sid}-restore`);
+      cy.contains(sapSystemNwd.sid).should('exist');
+    });
   });
 });

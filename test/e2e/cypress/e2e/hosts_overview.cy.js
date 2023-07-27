@@ -173,8 +173,9 @@ context('Hosts Overview', () => {
 
   describe('Deregistration', () => {
     const hostToDeregister = {
-      name: 'vmdrbddev01',
-      id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',
+      name: 'vmhdbdev01',
+      id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+      tag: 'tag1',
     };
 
     describe('Clean-up buttons should be visible only when needed', () => {
@@ -191,19 +192,10 @@ context('Hosts Overview', () => {
       });
 
       it('should show all other cleanup buttons', () => {
-        for (let i = 2; i < 11; i++) {
-          cy.get(`tr:nth-child(${i})`)
-            .contains('button', 'Clean up')
-            .should('exist');
-        }
-      });
-
-      it(`should display the cleanup button for host ${hostToDeregister.name} once heartbeat is lost`, () => {
-        cy.task('stopAgentsHeartbeat');
-
-        cy.get('tr:nth-child(1)')
-          .contains('button', 'Clean up', { timeout: 15000 })
-          .should('exist');
+        cy.get('tbody tr')
+          .find('button')
+          .should('have.length', 9)
+          .contains('Clean up');
       });
     });
 
@@ -212,12 +204,19 @@ context('Hosts Overview', () => {
         cy.visit('/hosts');
         cy.url().should('include', '/hosts');
         cy.task('stopAgentsHeartbeat');
+        cy.addTagByColumnValue(hostToDeregister.name, hostToDeregister.tag);
       });
 
       it('should allow to deregister a host after clean up confirmation', () => {
-        cy.get('tr:nth-child(1)')
-          .contains('button', 'Clean up', { timeout: 15000 })
-          .click();
+        cy.contains(
+          `The host ${hostToDeregister.name} heartbeat is failing`
+        ).should('exist');
+
+        cy.contains('tr', hostToDeregister.name).within(() => {
+          cy.get('td:nth-child(9)')
+            .contains('Clean up', { timeout: 15000 })
+            .click();
+        });
 
         cy.get('#headlessui-portal-root').as('modal');
 
@@ -232,28 +231,39 @@ context('Hosts Overview', () => {
 
         cy.get(`#host-${hostToDeregister.id}`).should('not.exist');
       });
-    });
 
-    describe('Deregistration of hosts should update remaining hosts data', () => {
-      const sapSystemHostToDeregister = {
-        id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
-        sid: 'NWD',
-      };
-
-      before(() => {
-        cy.visit('/hosts');
-        cy.url().should('include', '/hosts');
+      describe('Restoration', () => {
+        it(`should show host ${hostToDeregister.name} registered again after restoring the host with the tag`, () => {
+          cy.loadScenario(`host-${hostToDeregister.name}-restore`);
+          cy.contains(hostToDeregister.name).should('exist');
+          cy.contains('tr', hostToDeregister.name).within(() => {
+            cy.contains(hostToDeregister.tag).should('exist');
+          });
+        });
       });
 
-      beforeEach(() => {
-        cy.contains('button', '1').click(); // Move to 1st host list view page
-      });
+      describe('Deregistration of hosts should update remaining hosts data', () => {
+        const sapSystemHostToDeregister = {
+          id: '7269ee51-5007-5849-aaa7-7c4a98b0c9ce',
+          sid: 'NWD',
+        };
 
-      it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
-        cy.contains('button', '2').click();
-        cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
-        cy.deregisterHost(sapSystemHostToDeregister.id);
-        cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
+        before(() => {
+          cy.visit('/hosts');
+          cy.url().should('include', '/hosts');
+          cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
+        });
+
+        beforeEach(() => {
+          cy.contains('button', '1').click(); // Move to 1st host list view page
+        });
+
+        it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
+          cy.contains('button', '2').click();
+          cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
+          cy.deregisterHost(sapSystemHostToDeregister.id);
+          cy.contains('a', sapSystemHostToDeregister.sid).should('not.exist');
+        });
       });
     });
   });

@@ -145,5 +145,11 @@ context('SAP system details', () => {
       cy.contains(hostToDeregister.name).should('not.exist');
       cy.contains(hostToDeregister.features).should('not.exist');
     });
+
+    it(`should include ${hostToDeregister.name} again in the list of hosts`, () => {
+      cy.loadScenario(`host-${hostToDeregister.name}-restore`);
+      cy.contains(hostToDeregister.name).should('exist');
+      cy.contains(hostToDeregister.features).should('exist');
+    });
   });
 });

@@ -134,5 +134,10 @@ context('HANA database details', () => {
       cy.deregisterHost(attachedHosts[0].AgentId);
       cy.contains(attachedHosts[0].Name).should('not.exist');
     });
+
+    it(`should include host ${attachedHosts[0].Name} again in the list of hosts after restoring it`, () => {
+      cy.loadScenario(`host-${attachedHosts[0].Name}-restore`);
+      cy.contains(attachedHosts[0].Name).should('exist');
+    });
   });
 });
