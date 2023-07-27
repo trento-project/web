@@ -6,10 +6,12 @@ import {
   CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
   HOST_DEREGISTERED,
   DEREGISTER_HOST,
+  HOST_RESTORED,
   removeHost,
   setHostListDeregisterable,
   setHostDeregistering,
   setHostNotDeregistering,
+  appendHost,
 } from '@state/hosts';
 
 import { notify } from '@state/actions/notifications';
@@ -69,6 +71,16 @@ export function* deregisterHost({
   }
 }
 
+export function* hostRestored({ payload }) {
+  yield put(appendHost(payload));
+  yield put(
+    notify({
+      text: `Host ${payload.hostname} has been restored.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 export function* watchHostDeregisterable() {
   yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostDeregisterable);
 }
@@ -79,4 +91,8 @@ export function* watchHostDeregistered() {
 
 export function* watchDeregisterHost() {
   yield takeEvery(DEREGISTER_HOST, deregisterHost);
+}
+
+export function* watchHostRestored() {
+  yield takeEvery(HOST_RESTORED, hostRestored);
 }
