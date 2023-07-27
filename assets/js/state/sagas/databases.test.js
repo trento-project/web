@@ -2,8 +2,13 @@ import { recordSaga } from '@lib/test-utils';
 import {
   databaseDeregistered,
   databaseInstanceDeregistered,
+  databaseRestored,
 } from '@state/sagas/databases';
-import { removeDatabase, removeDatabaseInstance } from '@state/databases';
+import {
+  removeDatabase,
+  removeDatabaseInstance,
+  appendDatabase,
+} from '@state/databases';
 import { removeDatabaseInstanceFromSapSystem } from '@state/sapSystems';
 import {
   databaseFactory,
@@ -54,5 +59,21 @@ describe('SAP Systems sagas', () => {
         icon: 'ℹ️',
       })
     );
+  });
+
+  it('should restore the database', async () => {
+    const database = databaseFactory.build();
+
+    const dispatched = await recordSaga(databaseRestored, {
+      payload: database,
+    });
+
+    expect(dispatched).toEqual([
+      appendDatabase(database),
+      notify({
+        text: `The database ${database.sid} has been restored.`,
+        icon: 'ℹ️',
+      }),
+    ]);
   });
 });

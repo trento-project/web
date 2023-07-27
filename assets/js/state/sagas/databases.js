@@ -2,6 +2,7 @@ import { put, select, takeEvery } from 'redux-saga/effects';
 import {
   DATABASE_REGISTERED,
   DATABASE_DEREGISTERED,
+  DATABASE_RESTORED,
   DATABASE_HEALTH_CHANGED,
   DATABASE_INSTANCE_REGISTERED,
   DATABASE_INSTANCE_DEREGISTERED,
@@ -70,6 +71,16 @@ export function* databaseDeregistered({ payload }) {
   );
 }
 
+export function* databaseRestored({ payload }) {
+  yield put(appendDatabase(payload));
+  yield put(
+    notify({
+      text: `The database ${payload.sid} has been restored.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 export function* databaseInstanceDeregistered({ payload }) {
   yield put(removeDatabaseInstance(payload));
   yield put(removeDatabaseInstanceFromSapSystem(payload));
@@ -94,6 +105,7 @@ function* databaseInstanceSystemReplicationChanged({ payload }) {
 export function* watchDatabase() {
   yield takeEvery(DATABASE_REGISTERED, databaseRegistered);
   yield takeEvery(DATABASE_DEREGISTERED, databaseDeregistered);
+  yield takeEvery(DATABASE_RESTORED, databaseRestored);
   yield takeEvery(DATABASE_HEALTH_CHANGED, databaseHealthChanged);
   yield takeEvery(DATABASE_INSTANCE_REGISTERED, databaseInstanceRegistered);
   yield takeEvery(DATABASE_INSTANCE_DEREGISTERED, databaseInstanceDeregistered);
