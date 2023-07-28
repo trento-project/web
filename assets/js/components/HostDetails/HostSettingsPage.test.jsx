@@ -68,8 +68,6 @@ describe('HostSettingsPage component', () => {
     expect(screen.getByText(group1)).toBeVisible();
     expect(screen.getByText(group2)).toBeVisible();
 
-    expect(
-      screen.getByRole('button', { name: 'Save Check Selection' })
-    ).toBeVisible();
+    expect(screen.getByText('Save Checks Selection')).toBeVisible();
   });
 });
