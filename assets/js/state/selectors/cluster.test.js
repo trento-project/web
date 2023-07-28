@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import {
   clusterFactory,
   hostFactory,
@@ -11,6 +12,7 @@ import {
   getClusterHosts,
   getClusterName,
   getClusterSapSystems,
+  getClusterSelectedChecks,
 } from './cluster';
 
 describe('Cluster selector', () => {
@@ -166,5 +168,23 @@ describe('Cluster selector', () => {
     expect(getClusterSapSystems(clusterID)(state)).toEqual(
       sapSystems.slice(1, 4).concat(databases.slice(1, 3))
     );
+  });
+
+  it('should return selected checks for a cluster', () => {
+    const clusterID = faker.datatype.uuid();
+    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const cluster = clusterFactory.build({
+      id: clusterID,
+      selected_checks: checks,
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getClusterSelectedChecks(clusterID)(state)).toEqual(checks);
+    expect(getClusterSelectedChecks(faker.datatype.uuid())(state)).toEqual([]);
   });
 });
