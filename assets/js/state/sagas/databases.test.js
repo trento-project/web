@@ -5,6 +5,7 @@ import {
   databaseRestored,
 } from '@state/sagas/databases';
 import {
+  upsertDatabaseInstances,
   removeDatabase,
   removeDatabaseInstance,
   appendDatabase,
@@ -70,6 +71,7 @@ describe('SAP Systems sagas', () => {
 
     expect(dispatched).toEqual([
       appendDatabase(database),
+      upsertDatabaseInstances(database.database_instances),
       notify({
         text: `The database ${database.sid} has been restored.`,
         icon: 'ℹ️',

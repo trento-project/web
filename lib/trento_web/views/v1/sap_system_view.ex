@@ -40,7 +40,6 @@ defmodule TrentoWeb.V1.SapSystemView do
     database
     |> Map.from_struct()
     |> Map.delete(:__meta__)
-    |> Map.delete(:database_instances)
   end
 
   def render("database_health_changed.json", %{health: health}), do: health

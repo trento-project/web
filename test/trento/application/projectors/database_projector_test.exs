@@ -318,6 +318,11 @@ defmodule Trento.DatabaseProjectorTest do
         health: :critical
       )
 
+    insert(:database_instance_without_host, sap_system_id: sap_system_id)
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:host)
+
     insert_list(5, :tag, resource_id: sap_system_id)
 
     event = %DatabaseRestored{
@@ -327,11 +332,11 @@ defmodule Trento.DatabaseProjectorTest do
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
-    %{tags: tags} =
+    %{tags: tags, database_instances: database_instances} =
       projection =
       DatabaseReadModel
       |> Repo.get(sap_system_id)
-      |> Repo.preload([:tags])
+      |> Repo.preload([:tags, :database_instances])
 
     assert nil == projection.deregistered_at
     assert :passing == projection.health
@@ -341,6 +346,7 @@ defmodule Trento.DatabaseProjectorTest do
                        health: :passing,
                        id: ^sap_system_id,
                        sid: "NWD",
+                       database_instances: ^database_instances,
                        tags: ^tags
                      },
                      1000

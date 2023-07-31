@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { maybeUpdateInstanceHealth } from './instances';
+import { filterByInstances, maybeUpdateInstanceHealth } from './instances';
 
 const initialState = {
   loading: false,
@@ -29,6 +29,12 @@ export const databasesListSlice = createSlice({
     },
     appendDatabaseInstance: (state, action) => {
       state.databaseInstances = [...state.databaseInstances, action.payload];
+    },
+    upsertDatabaseInstances: (state, action) => {
+      state.databaseInstances = filterByInstances(
+        state.databaseInstances,
+        action.payload
+      ).concat(action.payload);
     },
     removeDatabase: (state, { payload: { id } }) => {
       state.databases = state.databases.filter(
@@ -118,6 +124,7 @@ export const {
   removeDatabase,
   removeDatabaseInstance,
   appendDatabaseInstance,
+  upsertDatabaseInstances,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
   updateDatabaseInstanceSystemReplication,
