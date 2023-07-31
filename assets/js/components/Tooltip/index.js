@@ -1,3 +1,5 @@
-import Tooltip from './Tooltip';
+import Tooltip, { TooltipNext } from './Tooltip';
+
+export { TooltipNext };
 
 export default Tooltip;
