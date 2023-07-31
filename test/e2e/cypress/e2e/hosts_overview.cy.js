@@ -254,9 +254,9 @@ context('Hosts Overview', () => {
           cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
         });
 
-        beforeEach(() => {
-          cy.contains('button', '1').click(); // Move to 1st host list view page
-        });
+        // beforeEach(() => {
+        //   cy.contains('button', '1').click(); // Move to 1st host list view page
+        // });
 
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
           cy.contains('button', '2').click();
