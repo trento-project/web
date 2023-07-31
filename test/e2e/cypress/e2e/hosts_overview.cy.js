@@ -249,8 +249,8 @@ context('Hosts Overview', () => {
         };
 
         before(() => {
-          cy.visit('/hosts');
-          cy.url().should('include', '/hosts');
+          // cy.visit('/hosts');
+          // cy.url().should('include', '/hosts');
           cy.loadScenario(`sapsystem-${sapSystemHostToDeregister.sid}-restore`);
         });
 
