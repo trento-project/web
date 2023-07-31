@@ -336,7 +336,12 @@ defmodule Trento.DatabaseProjectorTest do
       projection =
       DatabaseReadModel
       |> Repo.get(sap_system_id)
-      |> Repo.preload([:tags, [database_instances: :host]])
+      |> Repo.preload([
+        :tags,
+        :database_instances,
+        database_instances: [host: :tags],
+        database_instances: [host: :sles_subscriptions]
+      ])
 
     assert nil == projection.deregistered_at
     assert :passing == projection.health
