@@ -259,7 +259,7 @@ context('Hosts Overview', () => {
         // });
 
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
-          cy.contains('button', '2').click();
+          // cy.contains('button', '2').click();
           cy.contains('a', sapSystemHostToDeregister.sid, {
             timeout: 15000,
           }).should('exist');
