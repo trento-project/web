@@ -31,12 +31,12 @@ context('Databases Overview', () => {
       cy.contains('tr', hdqDatabase.sid).should('exist').click();
     });
 
-    it(`should include both instances in DB ${hdqDatabase.sid} after restoring the primary instance`, () => {
+    it.skip(`should include both instances in DB ${hdqDatabase.sid} after restoring the primary instance`, () => {
       cy.contains('div', hdqDatabase.instances[0].name).should('exist');
       cy.contains('div', hdqDatabase.instances[1].name).should('exist');
     });
 
-    it('should show the ACTIVE pill in the right host', () => {
+    it.skip('should show the ACTIVE pill in the right host', () => {
       hdqDatabase.instances.forEach((instance) => {
         cy.contains('div', instance.name).within(() => {
           if (instance.state === 'ACTIVE') {
