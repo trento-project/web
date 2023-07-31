@@ -143,17 +143,18 @@ function HostsList() {
           const warning = agentVersionWarning(content);
           if (warning) {
             return (
-              <Pill
-                size="xs"
-                className="bg-yellow-100 text-yellow-800 group flex items-center relative"
-              >
-                <EOS_WARNING_OUTLINED
-                  size="base"
-                  className="centered fill-yellow-800"
-                />
-                <span className="ml-1 truncate max-w-[100px]">{content}</span>
-                <Tooltip tooltipText={warning} width="w-52 -translate-x-1/3" />
-              </Pill>
+              <Tooltip className="w-52" content={warning} place="bottom">
+                <Pill
+                  size="xs"
+                  className="bg-yellow-100 text-yellow-800 group flex items-center relative"
+                >
+                  <EOS_WARNING_OUTLINED
+                    size="base"
+                    className="centered fill-yellow-800"
+                  />
+                  <span className="ml-1 truncate max-w-[100px]">{content}</span>
+                </Pill>
+              </Tooltip>
             );
           }
           return (

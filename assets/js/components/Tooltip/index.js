@@ -1,5 +1,3 @@
-import Tooltip, { TooltipNext } from './Tooltip';
-
-export { TooltipNext };
+import Tooltip from './Tooltip';
 
 export default Tooltip;

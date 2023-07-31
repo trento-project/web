@@ -49,7 +49,7 @@ export function WithTooltip() {
   return (
     <Pill className="bg-green-100 text-green-800 relative">
       With tooltip!
-      <Tooltip tooltipText="Oh yeah!" />
+      <Tooltip content="Oh yeah!" />
     </Pill>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen, render, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
@@ -17,12 +18,16 @@ describe('ClusterNodeLink', () => {
     expect(hostLinkElement).toHaveAttribute('href', `/hosts/${id}`);
   });
 
-  it('renders warning span when hostId is not provided', () => {
+  it('renders warning span when hostId is not provided', async () => {
+    const user = userEvent.setup();
     const { hostname } = hostFactory.build();
 
     render(<ClusterNodeLink>{hostname}</ClusterNodeLink>);
-    expect(
-      screen.getByText('Host currently not registered.')
-    ).toBeInTheDocument();
+
+    await act(async () => user.hover(screen.queryByText(hostname)));
+
+    await waitFor(() =>
+      expect(screen.getByText('Host currently not registered.')).toBeVisible()
+    );
   });
 });

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { TooltipNext } from '.';
+import Tooltip from '.';
 import { PLACES } from './Tooltip';
 
 export default {
   title: 'Tooltip',
-  component: TooltipNext,
+  component: Tooltip,
   argTypes: {
     content: {
       type: 'string',
@@ -37,11 +37,11 @@ export default {
   },
   render: (args) => (
     <div className="p-12 flex items-center justify-center">
-      <TooltipNext {...args}>
+      <Tooltip {...args}>
         <div className="bg-sky-400 p-2 text-white font-semibold rounded">
           Hover me!
         </div>
-      </TooltipNext>
+      </Tooltip>
     </div>
   ),
 };

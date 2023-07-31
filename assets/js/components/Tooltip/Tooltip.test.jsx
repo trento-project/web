@@ -4,19 +4,15 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { TooltipNext } from '.';
+import Tooltip from '.';
 
 describe('Tooltip', () => {
   it('should show a text when mouse is hovering', async () => {
-    global.CSS = { supports: () => true };
-
     const user = userEvent.setup();
 
     render(
       <div>
-        <TooltipNext content="This is my tooltip text">
-          This is my anchor
-        </TooltipNext>
+        <Tooltip content="This is my tooltip text">This is my anchor</Tooltip>
       </div>
     );
 
