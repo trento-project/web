@@ -73,7 +73,14 @@ defmodule Trento.DatabaseProjectorTest do
 
   test "should project a new database instance when DatabaseInstanceRegistered event is received" do
     insert(:database, id: sap_system_id = Faker.UUID.v4())
-    event = build(:database_instance_registered_event, sap_system_id: sap_system_id)
+
+    event =
+      build(
+        :database_instance_registered_event,
+        sap_system_id: sap_system_id,
+        system_replication: "",
+        system_replication_status: ""
+      )
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
@@ -82,9 +89,7 @@ defmodule Trento.DatabaseProjectorTest do
       sid: sid,
       features: features,
       host_id: host_id,
-      tenant: tenant,
-      system_replication: system_replication,
-      system_replication_status: system_replication_status
+      tenant: tenant
     } =
       database_instance_projection =
       Repo.get_by(DatabaseInstanceReadModel,
@@ -99,11 +104,6 @@ defmodule Trento.DatabaseProjectorTest do
     assert event.instance_number == database_instance_projection.instance_number
     assert event.features == database_instance_projection.features
     assert event.host_id == database_instance_projection.host_id
-    assert event.system_replication == database_instance_projection.system_replication
-
-    assert event.system_replication_status ==
-             database_instance_projection.system_replication_status
-
     assert event.health == database_instance_projection.health
 
     assert_broadcast "database_instance_registered",
@@ -118,9 +118,58 @@ defmodule Trento.DatabaseProjectorTest do
                        instance_number: "00",
                        sap_system_id: ^sap_system_id,
                        start_priority: "0.3",
-                       system_replication: ^system_replication,
-                       system_replication_status: ^system_replication_status,
+                       system_replication: "",
+                       system_replication_status: "",
                        tenant: ^tenant
+                     },
+                     1000
+  end
+
+  test "should project a new database instance as Primary" do
+    insert(:database, id: sap_system_id = Faker.UUID.v4())
+
+    event =
+      build(
+        :database_instance_registered_event,
+        sap_system_id: sap_system_id,
+        system_replication: "Primary",
+        system_replication_status: "ACTIVE"
+      )
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    assert_broadcast "database_instance_registered",
+                     %{
+                       system_replication: "Primary",
+                       system_replication_status: ""
+                     },
+                     1000
+  end
+
+  test "should project a new database instance as Secondary" do
+    %{id: sap_system_id} = insert(:database)
+
+    insert(
+      :database_instance,
+      sap_system_id: sap_system_id,
+      system_replication: "Primary",
+      system_replication_status: "ACTIVE"
+    )
+
+    event =
+      build(
+        :database_instance_registered_event,
+        sap_system_id: sap_system_id,
+        system_replication: "Secondary",
+        system_replication_status: ""
+      )
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    assert_broadcast "database_instance_registered",
+                     %{
+                       system_replication: "Secondary",
+                       system_replication_status: "ACTIVE"
                      },
                      1000
   end

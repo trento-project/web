@@ -226,13 +226,23 @@ defmodule Trento.DatabaseProjector do
   def after_update(
         %DatabaseInstanceRegistered{},
         _,
-        %{database_instance: %DatabaseInstanceReadModel{} = instance}
+        %{database_instance: %DatabaseInstanceReadModel{sap_system_id: sap_system_id} = instance}
       ) do
+    # All database instances are required to compute the system replication status in the current instance
+    database_instances =
+      DatabaseInstanceReadModel
+      |> where([i], i.sap_system_id == ^sap_system_id)
+      |> Repo.all()
+
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_registered",
-      SapSystemView.render("database_instance.json",
-        instance: instance
+      SapSystemView.render(
+        "database_instance_with_sr_status.json",
+        %{
+          instance: instance,
+          database_instances: database_instances
+        }
       )
     )
   end
