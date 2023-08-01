@@ -302,12 +302,7 @@ defmodule Trento.DatabaseProjector do
     database =
       DatabaseReadModel
       |> Repo.get!(sap_system_id)
-      |> Repo.preload([
-        :tags,
-        :database_instances,
-        database_instances: [host: :tags],
-        database_instances: [host: :sles_subscriptions]
-      ])
+      |> Repo.preload([:tags, :database_instances, [database_instances: :host]])
 
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,

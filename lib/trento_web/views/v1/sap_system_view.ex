@@ -37,9 +37,7 @@ defmodule TrentoWeb.V1.SapSystemView do
   end
 
   def render("database_restored.json", %{database: database}) do
-    database
-    |> Map.from_struct()
-    |> Map.delete(:__meta__)
+    render("database.json", database: database)
   end
 
   def render("database_health_changed.json", %{health: health}), do: health
