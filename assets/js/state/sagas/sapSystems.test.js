@@ -9,7 +9,7 @@ import {
 import {
   appendSapsystem,
   removeSAPSystem,
-  upsertDatabaseInstances,
+  upsertDatabaseInstancesToSapSystem,
   updateApplicationInstanceHost,
   upsertApplicationInstances,
   removeApplicationInstance,
@@ -42,7 +42,7 @@ describe('SAP Systems sagas', () => {
 
     expect(dispatched).toEqual([
       appendSapsystem(sapSystem),
-      upsertDatabaseInstances(sapSystem.database_instances),
+      upsertDatabaseInstancesToSapSystem(sapSystem.database_instances),
       upsertApplicationInstances(sapSystem.application_instances),
       notify({
         text: `SAP System, ${sapSystem.sid}, has been restored.`,

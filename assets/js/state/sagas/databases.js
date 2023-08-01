@@ -9,7 +9,6 @@ import {
   DATABASE_INSTANCE_HEALTH_CHANGED,
   DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
   appendDatabase,
-  appendDatabaseInstance,
   upsertDatabaseInstances,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
@@ -19,7 +18,7 @@ import {
 } from '@state/databases';
 
 import {
-  appendDatabaseInstanceToSapSystem,
+  upsertDatabaseInstancesToSapSystem,
   removeDatabaseInstanceFromSapSystem,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
@@ -52,8 +51,8 @@ function* databaseHealthChanged({ payload }) {
 }
 
 function* databaseInstanceRegistered({ payload }) {
-  yield put(appendDatabaseInstance(payload));
-  yield put(appendDatabaseInstanceToSapSystem(payload));
+  yield put(upsertDatabaseInstances([payload]));
+  yield put(upsertDatabaseInstancesToSapSystem([payload]));
   yield put(
     notify({
       text: `A new Database instance, ${payload.sid}, has been discovered.`,

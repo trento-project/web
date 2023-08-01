@@ -1,6 +1,6 @@
 import sapSystemsReducer, {
   removeSAPSystem,
-  upsertDatabaseInstances,
+  upsertDatabaseInstancesToSapSystem,
   upsertApplicationInstances,
   updateApplicationInstanceHost,
   removeApplicationInstance,
@@ -130,7 +130,7 @@ describe('SAP Systems reducer', () => {
     const newInstance = databaseInstanceFactory.build();
     const newInstances = [updatedInstance, newInstance];
 
-    const action = upsertDatabaseInstances(newInstances);
+    const action = upsertDatabaseInstancesToSapSystem(newInstances);
 
     const expectedState = {
       databaseInstances: [initialInstances[1], ...newInstances],

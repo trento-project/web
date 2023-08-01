@@ -11,9 +11,8 @@ import {
   SAP_SYSTEM_UPDATED,
   appendSapsystem,
   updateSapSystemHealth,
-  upsertDatabaseInstances,
+  upsertDatabaseInstancesToSapSystem,
   upsertApplicationInstances,
-  appendApplicationInstance,
   removeApplicationInstance,
   updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
@@ -47,7 +46,7 @@ function* sapSystemHealthChanged({ payload }) {
 }
 
 function* applicationInstanceRegistered({ payload }) {
-  yield put(appendApplicationInstance(payload));
+  yield put(upsertApplicationInstances([payload]));
 }
 
 export function* applicationInstanceMoved({ payload }) {
@@ -93,7 +92,7 @@ export function* sapSystemRestored({ payload }) {
     application_instances: applicationInstances,
   } = payload;
 
-  yield put(upsertDatabaseInstances(databaseInstances));
+  yield put(upsertDatabaseInstancesToSapSystem(databaseInstances));
   yield put(upsertApplicationInstances(applicationInstances));
 
   yield put(
