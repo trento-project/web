@@ -31,8 +31,8 @@ function Tooltip({
 }) {
   const anchorReference = `tooltip-anchor-${Date.now()}`;
   return (
-    <div className="flex tooltip-container">
-      <div className={`flex ${anchorReference}`}>{children}</div>
+    <span className="flex tooltip-container">
+      <span className={`flex ${anchorReference}`}>{children}</span>
       <ReactTooltip
         hidden={!isEnabled}
         className={classNames(
@@ -52,7 +52,7 @@ function Tooltip({
         disableStyleInjection
         {...rest}
       />
-    </div>
+    </span>
   );
 }
 
