@@ -50,14 +50,14 @@ describe('Databases reducer', () => {
   });
 
   it('should upsert database instances', () => {
-    const changedIndex = 0;
+    const initialInstances = databaseInstanceFactory.buildList(2);
 
     const initialState = {
-      databaseInstances: databaseInstanceFactory.buildList(2),
+      databaseInstances: initialInstances,
     };
 
     const updatedInstance = {
-      ...initialState.databaseInstances[changedIndex],
+      ...initialState.databaseInstances[0],
       instance_hostname: 'my_name_has_changed',
     };
     const newInstance = databaseInstanceFactory.build();
@@ -66,9 +66,7 @@ describe('Databases reducer', () => {
     const action = upsertDatabaseInstances(newInstances);
 
     const expectedState = {
-      databaseInstances: initialState.databaseInstances
-        .filter((_instance, index) => index !== changedIndex)
-        .concat(newInstances),
+      databaseInstances: [initialInstances[1], ...newInstances],
     };
 
     expect(databaseReducer(initialState, action)).toEqual(expectedState);

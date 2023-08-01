@@ -117,14 +117,14 @@ describe('SAP Systems reducer', () => {
   });
 
   it('should upsert database instances', () => {
-    const changedIndex = 0;
+    const initialInstances = databaseInstanceFactory.buildList(2);
 
     const initialState = {
-      databaseInstances: databaseInstanceFactory.buildList(2),
+      databaseInstances: initialInstances,
     };
 
     const updatedInstance = {
-      ...initialState.databaseInstances[changedIndex],
+      ...initialState.databaseInstances[0],
       instance_hostname: 'my_name_has_changed',
     };
     const newInstance = databaseInstanceFactory.build();
@@ -133,23 +133,21 @@ describe('SAP Systems reducer', () => {
     const action = upsertDatabaseInstances(newInstances);
 
     const expectedState = {
-      databaseInstances: initialState.databaseInstances
-        .filter((_instance, index) => index !== changedIndex)
-        .concat(newInstances),
+      databaseInstances: [initialInstances[1], ...newInstances],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
   });
 
   it('should upsert application instances', () => {
-    const changedIndex = 0;
+    const initialInstances = sapSystemApplicationInstanceFactory.buildList(2);
 
     const initialState = {
-      applicationInstances: sapSystemApplicationInstanceFactory.buildList(2),
+      applicationInstances: initialInstances,
     };
 
     const updatedInstance = {
-      ...initialState.applicationInstances[changedIndex],
+      ...initialState.applicationInstances[0],
       instance_hostname: 'my_name_has_changed',
     };
     const newInstance = sapSystemApplicationInstanceFactory.build();
@@ -158,9 +156,7 @@ describe('SAP Systems reducer', () => {
     const action = upsertApplicationInstances(newInstances);
 
     const expectedState = {
-      applicationInstances: initialState.applicationInstances
-        .filter((_instance, index) => index !== changedIndex)
-        .concat(newInstances),
+      applicationInstances: [initialInstances[1], ...newInstances],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);

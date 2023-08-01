@@ -346,17 +346,7 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    SAP_SYSTEM_RESTORED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
     CLUSTER_DEREGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    CLUSTER_RESTORED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
@@ -368,6 +358,16 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   yield debounce(
     debounceDuration,
     DATABASE_RESTORED,
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    CLUSTER_RESTORED,
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    SAP_SYSTEM_RESTORED,
     loadSapSystemsHealthSummary
   );
 }
