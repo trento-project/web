@@ -10,7 +10,10 @@ import {
   removeDatabaseInstance,
   appendDatabase,
 } from '@state/databases';
-import { removeDatabaseInstanceFromSapSystem } from '@state/sapSystems';
+import {
+  removeDatabaseInstanceFromSapSystem,
+  upsertDatabaseInstancesToSapSystem,
+} from '@state/sapSystems';
 import {
   databaseFactory,
   databaseInstanceFactory,
@@ -72,6 +75,7 @@ describe('SAP Systems sagas', () => {
     expect(dispatched).toEqual([
       appendDatabase(database),
       upsertDatabaseInstances(database.database_instances),
+      upsertDatabaseInstancesToSapSystem(database.database_instances),
       notify({
         text: `The database ${database.sid} has been restored.`,
         icon: 'ℹ️',

@@ -74,6 +74,7 @@ export function* databaseDeregistered({ payload }) {
 export function* databaseRestored({ payload }) {
   yield put(appendDatabase(payload));
   yield put(upsertDatabaseInstances(payload.database_instances));
+  yield put(upsertDatabaseInstancesToSapSystem(payload.database_instances));
   yield put(
     notify({
       text: `The database ${payload.sid} has been restored.`,
