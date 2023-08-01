@@ -2001,10 +2001,6 @@ defmodule Trento.SapSystemTest do
         initial_events,
         command,
         [
-          %DatabaseRestored{
-            sap_system_id: sap_system_id,
-            health: command.health
-          },
           %DatabaseInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: db_sid,
@@ -2018,6 +2014,10 @@ defmodule Trento.SapSystemTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
+            health: command.health
+          },
+          %DatabaseRestored{
+            sap_system_id: sap_system_id,
             health: command.health
           }
         ],
@@ -2138,10 +2138,6 @@ defmodule Trento.SapSystemTest do
         initial_events,
         command,
         [
-          %DatabaseRestored{
-            sap_system_id: sap_system_id,
-            health: command.health
-          },
           %DatabaseInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: db_sid,
@@ -2155,6 +2151,10 @@ defmodule Trento.SapSystemTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
+            health: command.health
+          },
+          %DatabaseRestored{
+            sap_system_id: sap_system_id,
             health: command.health
           }
         ],
@@ -2277,10 +2277,6 @@ defmodule Trento.SapSystemTest do
         initial_events,
         command,
         [
-          %DatabaseRestored{
-            sap_system_id: sap_system_id,
-            health: command.health
-          },
           %DatabaseInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: db_sid,
@@ -2294,6 +2290,10 @@ defmodule Trento.SapSystemTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
+            health: command.health
+          },
+          %DatabaseRestored{
+            sap_system_id: sap_system_id,
             health: command.health
           }
         ],
@@ -2410,10 +2410,6 @@ defmodule Trento.SapSystemTest do
         initial_events,
         command,
         [
-          %DatabaseRestored{
-            sap_system_id: sap_system_id,
-            health: command.health
-          },
           %DatabaseInstanceRegistered{
             sap_system_id: sap_system_id,
             sid: db_sid,
@@ -2427,6 +2423,10 @@ defmodule Trento.SapSystemTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
+            health: command.health
+          },
+          %DatabaseRestored{
+            sap_system_id: sap_system_id,
             health: command.health
           }
         ],

@@ -195,10 +195,6 @@ defmodule Trento.Domain.SapSystem do
       )
       when not is_nil(deregistered_at) do
     [
-      %DatabaseRestored{
-        sap_system_id: sap_system_id,
-        health: health
-      },
       %DatabaseInstanceRegistered{
         sap_system_id: sap_system_id,
         sid: sid,
@@ -212,6 +208,10 @@ defmodule Trento.Domain.SapSystem do
         host_id: host_id,
         system_replication: system_replication,
         system_replication_status: system_replication_status,
+        health: health
+      },
+      %DatabaseRestored{
+        sap_system_id: sap_system_id,
         health: health
       }
     ]
