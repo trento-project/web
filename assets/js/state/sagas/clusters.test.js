@@ -25,7 +25,7 @@ describe('Clusters sagas', () => {
     expect(dispatched).toEqual([
       appendCluster(payload),
       notify({
-        text: `Cluster, ${payload.name}, has been restored.`,
+        text: `Cluster ${payload.name} has been restored.`,
         icon: 'ℹ️',
       }),
     ]);

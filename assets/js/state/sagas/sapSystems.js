@@ -97,7 +97,7 @@ export function* sapSystemRestored({ payload }) {
 
   yield put(
     notify({
-      text: `SAP System, ${payload.sid}, has been restored.`,
+      text: `SAP System ${payload.sid} has been restored.`,
       icon: 'ℹ️',
     })
   );

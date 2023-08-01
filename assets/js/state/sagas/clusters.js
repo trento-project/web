@@ -22,7 +22,7 @@ export function* clusterRestored({ payload }) {
   yield put(appendCluster(payload));
   yield put(
     notify({
-      text: `Cluster, ${payload.name}, has been restored.`,
+      text: `Cluster ${payload.name} has been restored.`,
       icon: 'ℹ️',
     })
   );
