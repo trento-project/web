@@ -302,11 +302,11 @@ defmodule Trento.DatabaseProjector do
     database =
       DatabaseReadModel
       |> Repo.get!(sap_system_id)
-      |> Repo.preload([:tags])
+      |> Repo.preload([:tags, :database_instances])
 
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
-      "database_registered",
+      "database_restored",
       SapSystemView.render("database_restored.json", database: database)
     )
   end

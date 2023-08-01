@@ -334,19 +334,17 @@ defmodule Trento.SapSystemProjector do
 
   @impl true
   def after_update(
-        %SapSystemRestored{sap_system_id: sap_system_id},
+        %SapSystemRestored{},
         _,
-        _
+        %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
-    sap_system =
-      SapSystemReadModel
-      |> Repo.get!(sap_system_id)
-      |> Repo.preload([:tags])
+    enriched_sap_system =
+      Repo.preload(sap_system, [:tags, :database_instances, :application_instances])
 
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
-      "sap_system_registered",
-      SapSystemView.render("sap_system_restored.json", sap_system: sap_system)
+      "sap_system_restored",
+      SapSystemView.render("sap_system_restored.json", sap_system: enriched_sap_system)
     )
   end
 

@@ -212,7 +212,7 @@ defmodule Trento.ClusterProjector do
 
     TrentoWeb.Endpoint.broadcast(
       "monitoring:clusters",
-      "cluster_registered",
+      "cluster_restored",
       ClusterView.render("cluster_restored.json", cluster: restored_cluster)
     )
   end

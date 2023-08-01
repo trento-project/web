@@ -1,5 +1,7 @@
 import sapSystemsReducer, {
   removeSAPSystem,
+  upsertDatabaseInstancesToSapSystem,
+  upsertApplicationInstances,
   updateApplicationInstanceHost,
   removeApplicationInstance,
   updateSAPSystem,
@@ -109,6 +111,52 @@ describe('SAP Systems reducer', () => {
 
     const expectedState = {
       sapSystems: expectedSapSystems,
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should upsert database instances', () => {
+    const initialInstances = databaseInstanceFactory.buildList(2);
+
+    const initialState = {
+      databaseInstances: initialInstances,
+    };
+
+    const updatedInstance = {
+      ...initialState.databaseInstances[0],
+      instance_hostname: 'my_name_has_changed',
+    };
+    const newInstance = databaseInstanceFactory.build();
+    const newInstances = [updatedInstance, newInstance];
+
+    const action = upsertDatabaseInstancesToSapSystem(newInstances);
+
+    const expectedState = {
+      databaseInstances: [initialInstances[1], ...newInstances],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should upsert application instances', () => {
+    const initialInstances = sapSystemApplicationInstanceFactory.buildList(2);
+
+    const initialState = {
+      applicationInstances: initialInstances,
+    };
+
+    const updatedInstance = {
+      ...initialState.applicationInstances[0],
+      instance_hostname: 'my_name_has_changed',
+    };
+    const newInstance = sapSystemApplicationInstanceFactory.build();
+    const newInstances = [updatedInstance, newInstance];
+
+    const action = upsertApplicationInstances(newInstances);
+
+    const expectedState = {
+      applicationInstances: [initialInstances[1], ...newInstances],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { maybeUpdateInstanceHealth } from './instances';
+import { upsertInstances, maybeUpdateInstanceHealth } from './instances';
 
 const initialState = {
   loading: false,
@@ -27,8 +27,11 @@ export const databasesListSlice = createSlice({
     appendDatabase: (state, action) => {
       state.databases = [...state.databases, action.payload];
     },
-    appendDatabaseInstance: (state, action) => {
-      state.databaseInstances = [...state.databaseInstances, action.payload];
+    upsertDatabaseInstances: (state, action) => {
+      state.databaseInstances = upsertInstances(
+        state.databaseInstances,
+        action.payload
+      );
     },
     removeDatabase: (state, { payload: { id } }) => {
       state.databases = state.databases.filter(
@@ -101,6 +104,7 @@ export const databasesListSlice = createSlice({
 
 export const DATABASE_REGISTERED = 'DATABASE_REGISTERED';
 export const DATABASE_DEREGISTERED = 'DATABASE_DEREGISTERED';
+export const DATABASE_RESTORED = 'DATABASE_RESTORED';
 export const DATABASE_HEALTH_CHANGED = 'DATABASE_HEALTH_CHANGED';
 export const DATABASE_INSTANCE_REGISTERED = 'DATABASE_INSTANCE_REGISTERED';
 export const DATABASE_INSTANCE_DEREGISTERED = 'DATABASE_INSTANCE_DEREGISTERED';
@@ -116,7 +120,7 @@ export const {
   appendDatabase,
   removeDatabase,
   removeDatabaseInstance,
-  appendDatabaseInstance,
+  upsertDatabaseInstances,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
   updateDatabaseInstanceSystemReplication,

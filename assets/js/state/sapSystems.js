@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { maybeUpdateInstanceHealth } from './instances';
+import { upsertInstances, maybeUpdateInstanceHealth } from './instances';
 
 const initialState = {
   loading: false,
@@ -39,11 +39,11 @@ export const sapSystemsListSlice = createSlice({
     },
     // When a new ApplicationInstanceRegistered comes in,
     // it need to be appended to the list of the application instances of the relative sap system
-    appendApplicationInstance: (state, action) => {
-      state.applicationInstances = [
-        ...state.applicationInstances,
-        action.payload,
-      ];
+    upsertApplicationInstances: (state, action) => {
+      state.applicationInstances = upsertInstances(
+        state.applicationInstances,
+        action.payload
+      );
     },
     removeApplicationInstance: (
       state,
@@ -60,8 +60,11 @@ export const sapSystemsListSlice = createSlice({
     },
     // When a new DatabaseInstanceRegistered comes in,
     // it need to be appended to the list of the database instances of the relative sap system
-    appendDatabaseInstanceToSapSystem: (state, action) => {
-      state.databaseInstances = [...state.databaseInstances, action.payload];
+    upsertDatabaseInstancesToSapSystem: (state, action) => {
+      state.databaseInstances = upsertInstances(
+        state.databaseInstances,
+        action.payload
+      );
     },
     removeDatabaseInstanceFromSapSystem: (
       state,
@@ -175,6 +178,7 @@ export const APPLICATION_INSTANCE_DEREGISTERED =
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
   'APPLICATION_INSTANCE_HEALTH_CHANGED';
 export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
+export const SAP_SYSTEM_RESTORED = 'SAP_SYSTEM_RESTORED';
 export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
 
 export const {
@@ -182,9 +186,9 @@ export const {
   stopSapSystemsLoading,
   setSapSystems,
   appendSapsystem,
-  appendApplicationInstance,
+  upsertApplicationInstances,
   removeApplicationInstance,
-  appendDatabaseInstanceToSapSystem,
+  upsertDatabaseInstancesToSapSystem,
   removeDatabaseInstanceFromSapSystem,
   updateSapSystemHealth,
   updateApplicationInstanceHost,

@@ -31,7 +31,7 @@ context('Databases Overview', () => {
       cy.contains('tr', hdqDatabase.sid).should('exist').click();
     });
 
-    it.skip(`should include both instances in DB ${hdqDatabase.sid} after restoring the primary instance`, () => {
+    it(`should include both instances in DB ${hdqDatabase.sid} after restoring the primary instance`, () => {
       cy.contains('div', hdqDatabase.instances[0].name).should('exist');
       cy.contains('div', hdqDatabase.instances[1].name).should('exist');
     });

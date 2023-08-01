@@ -7,6 +7,7 @@ import {
   checkHostDeregisterable,
   hostDeregistered,
   deregisterHost,
+  hostRestored,
 } from '@state/sagas/hosts';
 
 import {
@@ -15,6 +16,7 @@ import {
   removeHost,
   setHostDeregistering,
   setHostNotDeregistering,
+  appendHost,
 } from '@state/hosts';
 
 import { networkClient } from '@lib/network';
@@ -110,6 +112,20 @@ describe('Hosts sagas', () => {
         icon: '❌',
       }),
       setHostNotDeregistering(payload),
+    ]);
+  });
+
+  it('should restore a host', async () => {
+    const host = hostFactory.build();
+
+    const dispatched = await recordSaga(hostRestored, { payload: host });
+
+    expect(dispatched).toEqual([
+      appendHost(host),
+      notify({
+        text: `Host ${host.hostname} has been restored.`,
+        icon: 'ℹ️',
+      }),
     ]);
   });
 });

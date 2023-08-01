@@ -2,13 +2,14 @@ import { put, select, takeEvery } from 'redux-saga/effects';
 import {
   DATABASE_REGISTERED,
   DATABASE_DEREGISTERED,
+  DATABASE_RESTORED,
   DATABASE_HEALTH_CHANGED,
   DATABASE_INSTANCE_REGISTERED,
   DATABASE_INSTANCE_DEREGISTERED,
   DATABASE_INSTANCE_HEALTH_CHANGED,
   DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
   appendDatabase,
-  appendDatabaseInstance,
+  upsertDatabaseInstances,
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
   updateDatabaseInstanceSystemReplication,
@@ -17,7 +18,7 @@ import {
 } from '@state/databases';
 
 import {
-  appendDatabaseInstanceToSapSystem,
+  upsertDatabaseInstancesToSapSystem,
   removeDatabaseInstanceFromSapSystem,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
@@ -50,8 +51,8 @@ function* databaseHealthChanged({ payload }) {
 }
 
 function* databaseInstanceRegistered({ payload }) {
-  yield put(appendDatabaseInstance(payload));
-  yield put(appendDatabaseInstanceToSapSystem(payload));
+  yield put(upsertDatabaseInstances([payload]));
+  yield put(upsertDatabaseInstancesToSapSystem([payload]));
   yield put(
     notify({
       text: `A new Database instance, ${payload.sid}, has been discovered.`,
@@ -65,6 +66,18 @@ export function* databaseDeregistered({ payload }) {
   yield put(
     notify({
       text: `The database ${payload.sid} has been deregistered.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
+export function* databaseRestored({ payload }) {
+  yield put(appendDatabase(payload));
+  yield put(upsertDatabaseInstances(payload.database_instances));
+  yield put(upsertDatabaseInstancesToSapSystem(payload.database_instances));
+  yield put(
+    notify({
+      text: `The database ${payload.sid} has been restored.`,
       icon: 'ℹ️',
     })
   );
@@ -94,6 +107,7 @@ function* databaseInstanceSystemReplicationChanged({ payload }) {
 export function* watchDatabase() {
   yield takeEvery(DATABASE_REGISTERED, databaseRegistered);
   yield takeEvery(DATABASE_DEREGISTERED, databaseDeregistered);
+  yield takeEvery(DATABASE_RESTORED, databaseRestored);
   yield takeEvery(DATABASE_HEALTH_CHANGED, databaseHealthChanged);
   yield takeEvery(DATABASE_INSTANCE_REGISTERED, databaseInstanceRegistered);
   yield takeEvery(DATABASE_INSTANCE_DEREGISTERED, databaseInstanceDeregistered);

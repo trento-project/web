@@ -13,6 +13,7 @@ import { keysToCamel } from '@lib/serialization';
 
 import {
   HOST_DEREGISTERED,
+  HOST_RESTORED,
   setHosts,
   appendHost,
   updateHost,
@@ -27,6 +28,7 @@ import {
 
 import {
   CLUSTER_DEREGISTERED,
+  CLUSTER_RESTORED,
   setClusters,
   appendCluster,
   updateCluster,
@@ -41,6 +43,7 @@ import {
   SAP_SYSTEM_REGISTERED,
   SAP_SYSTEM_HEALTH_CHANGED,
   SAP_SYSTEM_DEREGISTERED,
+  SAP_SYSTEM_RESTORED,
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
@@ -54,6 +57,7 @@ import {
 
 import {
   DATABASE_REGISTERED,
+  DATABASE_RESTORED,
   DATABASE_HEALTH_CHANGED,
   setDatabases,
   startDatabasesLoading,
@@ -72,8 +76,12 @@ import {
   watchHostDeregistered,
   watchHostDeregisterable,
   watchDeregisterHost,
+  watchHostRestored,
 } from '@state/sagas/hosts';
-import { watchClusterDeregistered } from '@state/sagas/clusters';
+import {
+  watchClusterDeregistered,
+  watchClusterRestored,
+} from '@state/sagas/clusters';
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
@@ -346,6 +354,22 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
     HOST_DEREGISTERED,
     loadSapSystemsHealthSummary
   );
+  yield debounce(debounceDuration, HOST_RESTORED, loadSapSystemsHealthSummary);
+  yield debounce(
+    debounceDuration,
+    DATABASE_RESTORED,
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    CLUSTER_RESTORED,
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
+    SAP_SYSTEM_RESTORED,
+    loadSapSystemsHealthSummary
+  );
 }
 
 export default function* rootSaga() {
@@ -357,10 +381,12 @@ export default function* rootSaga() {
     watchHeartbeatSucceded(),
     watchHeartbeatFailed(),
     watchHostDeregistered(),
+    watchHostRestored(),
     watchClusterRegistered(),
     watchClusterDetailsUpdated(),
     watchClusterCibLastWrittenUpdated(),
     watchClusterDeregistered(),
+    watchClusterRestored(),
     watchNotifications(),
     watchChecksSelection(),
     watchChecksExecutionStarted(),

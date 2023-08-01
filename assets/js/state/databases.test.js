@@ -1,6 +1,7 @@
 import databaseReducer, {
   removeDatabase,
   removeDatabaseInstance,
+  upsertDatabaseInstances,
 } from '@state/databases';
 import {
   databaseFactory,
@@ -43,6 +44,29 @@ describe('Databases reducer', () => {
     const expectedState = {
       databases: [database2],
       databaseInstances: database2DatabaseInstances,
+    };
+
+    expect(databaseReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should upsert database instances', () => {
+    const initialInstances = databaseInstanceFactory.buildList(2);
+
+    const initialState = {
+      databaseInstances: initialInstances,
+    };
+
+    const updatedInstance = {
+      ...initialState.databaseInstances[0],
+      instance_hostname: 'my_name_has_changed',
+    };
+    const newInstance = databaseInstanceFactory.build();
+    const newInstances = [updatedInstance, newInstance];
+
+    const action = upsertDatabaseInstances(newInstances);
+
+    const expectedState = {
+      databaseInstances: [initialInstances[1], ...newInstances],
     };
 
     expect(databaseReducer(initialState, action)).toEqual(expectedState);
