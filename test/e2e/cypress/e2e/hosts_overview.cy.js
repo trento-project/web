@@ -258,7 +258,7 @@ context('Hosts Overview', () => {
           cy.contains('button', '1').click(); // Move to 1st host list view page
         });
 
-        it.skip('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
+        it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
           cy.contains('button', '2').click();
           cy.contains('a', sapSystemHostToDeregister.sid).should('exist');
           cy.deregisterHost(sapSystemHostToDeregister.id);
