@@ -4,7 +4,9 @@ import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
-import ChecksSelection from '@components/ChecksSelection';
+import ChecksSelection, {
+  canStartExecution,
+} from '@components/ChecksSelection';
 
 import HostInfoBox from './HostInfoBox';
 
@@ -39,7 +41,7 @@ function HostChecksSelection({
               type="primary"
               className="mx-1"
               onClick={() => onSaveSelection(selection, hostID, hostName)}
-              disabled={isSavingSelection}
+              disabled={!canStartExecution(selectedChecks, isSavingSelection)}
             >
               Save Checks Selection
             </Button>

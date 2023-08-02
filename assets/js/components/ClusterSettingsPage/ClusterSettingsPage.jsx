@@ -113,7 +113,7 @@ function ClusterSettingsPage() {
               type="primary"
               className="mx-1"
               onClick={requestExecution}
-              disabled={canStartExecution(selection, savingSuccessful)}
+              disabled={!canStartExecution(selectedChecks, saving)}
             >
               <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
               Start Execution

@@ -140,24 +140,31 @@ describe('ChecksSelection component', () => {
 });
 
 describe('canStartExecution function', () => {
-  it('should not allow an execution if selected checks are empty and did not save', () => {
+  it('should not allow an execution if selected checks are empty and not saving', () => {
     const selectedChecks = [];
-    const savingSuccessful = false;
+    const saving = false;
 
-    expect(canStartExecution(selectedChecks, savingSuccessful)).toBe(false);
+    expect(canStartExecution(selectedChecks, saving)).toBe(false);
   });
 
-  it('should not allow an execution if selected checks are empty and did save', () => {
+  it('should not allow an execution if selected checks are empty and not saving', () => {
     const selectedChecks = [];
-    const savingSuccessful = true;
+    const saving = true;
 
-    expect(canStartExecution(selectedChecks, savingSuccessful)).toBe(false);
+    expect(canStartExecution(selectedChecks, saving)).toBe(false);
   });
 
-  it('should allow an execution if selected checks are populated and did save', () => {
+  it('should not allow an execution if selected checks are populated and saving', () => {
     const selectedChecks = [faker.datatype.uuid()];
-    const savingSuccessful = true;
+    const saving = true;
 
-    expect(canStartExecution(selectedChecks, savingSuccessful)).toBe(true);
+    expect(canStartExecution(selectedChecks, saving)).toBe(false);
+  });
+
+  it('should allow an execution if selected checks are empty and not saving', () => {
+    const selectedChecks = [faker.datatype.uuid()];
+    const saving = false;
+
+    expect(canStartExecution(selectedChecks, saving)).toBe(true);
   });
 });
