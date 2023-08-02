@@ -36,9 +36,9 @@ context('Databases Overview', () => {
       cy.contains('div', hdqDatabase.instances[1].name).should('exist');
     });
 
-    it.skip('should show the ACTIVE pill in the right host', () => {
+    it('should show the ACTIVE pill in the right host', () => {
       hdqDatabase.instances.forEach((instance) => {
-        cy.contains('div', instance.name).within(() => {
+        cy.contains('div.table-row', instance.name).within(() => {
           if (instance.state === 'ACTIVE') {
             cy.contains('ACTIVE').should('exist');
           } else {

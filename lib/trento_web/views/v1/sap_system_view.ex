@@ -28,6 +28,15 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> Map.delete(:host)
   end
 
+  def render("database_instance_with_sr_status.json", %{
+        instance: instance,
+        database_instances: database_instances
+      }) do
+    "database_instance.json"
+    |> render(%{instance: instance})
+    |> add_system_replication_status(database_instances)
+  end
+
   def render("database_registered.json", %{database: database}) do
     database
     |> Map.from_struct()
@@ -152,32 +161,43 @@ defmodule TrentoWeb.V1.SapSystemView do
   defp add_system_replication_status_to_secondary_instance(
          %{database_instances: database_instances} = sap_system
        ) do
-    system_replication_status =
-      Enum.find_value(database_instances, fn
-        %{
-          system_replication: "Primary",
-          system_replication_status: system_replication_status
-        } ->
-          system_replication_status
-
-        _ ->
-          false
-      end)
+    system_replication_status = get_system_replication_status(database_instances)
 
     database_instances =
-      Enum.map(database_instances, fn
-        %{
-          system_replication: "Secondary"
-        } = instance ->
-          %{instance | system_replication_status: system_replication_status}
-
-        %{system_replication: "Primary"} = instance ->
-          %{instance | system_replication_status: ""}
-
-        instance ->
-          instance
-      end)
+      Enum.map(
+        database_instances,
+        &map_system_replication_status_to_secondary(&1, system_replication_status)
+      )
 
     Map.put(sap_system, :database_instances, database_instances)
   end
+
+  defp add_system_replication_status(instance, database_instances) do
+    system_replication_status = get_system_replication_status(database_instances)
+    map_system_replication_status_to_secondary(instance, system_replication_status)
+  end
+
+  defp get_system_replication_status(database_instances) do
+    Enum.find_value(database_instances, fn
+      %{
+        system_replication: "Primary",
+        system_replication_status: system_replication_status
+      } ->
+        system_replication_status
+
+      _ ->
+        false
+    end)
+  end
+
+  defp map_system_replication_status_to_secondary(
+         %{system_replication: "Secondary"} = instance,
+         system_replication_status
+       ),
+       do: %{instance | system_replication_status: system_replication_status}
+
+  defp map_system_replication_status_to_secondary(%{system_replication: "Primary"} = instance, _),
+    do: %{instance | system_replication_status: ""}
+
+  defp map_system_replication_status_to_secondary(instance, _), do: instance
 end
