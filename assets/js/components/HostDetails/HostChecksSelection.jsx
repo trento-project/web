@@ -41,11 +41,16 @@ function HostChecksSelection({
               type="primary"
               className="mx-1"
               onClick={() => onSaveSelection(selection, hostID, hostName)}
-              disabled={!canStartExecution(selectedChecks, isSavingSelection)}
+              disabled={isSavingSelection}
             >
               Save Checks Selection
             </Button>
-            <Button type="primary" className="mx-1" onClick={() => {}} disabled>
+            <Button
+              type="primary"
+              className="mx-1"
+              onClick={() => {}}
+              disabled={!canStartExecution(selectedChecks, isSavingSelection)}
+            >
               <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
               Start Execution
             </Button>

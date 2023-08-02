@@ -12,10 +12,7 @@ import {
 } from '@state/selectors/cluster';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
-import {
-  isSaving,
-  isSuccessfullySaved,
-} from '@state/selectors/checksSelection';
+import { isSaving } from '@state/selectors/checksSelection';
 import { executionRequested } from '@state/actions/lastExecutions';
 
 import Button from '@components/Button';
@@ -38,9 +35,6 @@ function ClusterSettingsPage() {
   const cluster = useSelector(getCluster(clusterID));
   const clusterHosts = useSelector(getClusterHosts(clusterID));
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
-  const savingSuccessful = useSelector(
-    isSuccessfullySaved(TARGET_CLUSTER, clusterID)
-  );
   const selectedChecks = useSelector(getClusterSelectedChecks(clusterID));
   const clusterName = useSelector(getClusterName(clusterID));
 
