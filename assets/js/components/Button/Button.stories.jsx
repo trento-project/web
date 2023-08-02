@@ -34,3 +34,7 @@ export function SmallSecondary() {
     </Button>
   );
 }
+
+export function Disabled() {
+  return <Button disabled>Hello world!</Button>;
+}

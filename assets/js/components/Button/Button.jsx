@@ -27,14 +27,21 @@ const getButtonClasses = (type) => {
   }
 };
 
-function Button({ children, className, type, size, ...props }) {
+function Button({ children, className, type, size, disabled, ...props }) {
   const buttonClasses = classNames(
     getButtonClasses(type),
     getSizeClasses(size),
+    { 'opacity-50': disabled },
     className
   );
+
   return (
-    <button type="button" className={buttonClasses} {...props}>
+    <button
+      type="button"
+      className={buttonClasses}
+      disabled={disabled}
+      {...props}
+    >
       {children}
     </button>
   );

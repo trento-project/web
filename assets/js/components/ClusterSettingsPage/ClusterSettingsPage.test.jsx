@@ -40,9 +40,7 @@ describe('ClusterDetails ClusterSettings component', () => {
     expect(screen.getByText('Provider')).toBeVisible();
     expect(screen.getByText('Azure')).toBeVisible();
     expect(screen.getByText(group)).toBeVisible();
-    expect(
-      screen.getByRole('button', { name: 'Save Check Selection' })
-    ).toBeVisible();
+    expect(screen.getByText('Save Checks Selection')).toBeVisible();
   });
 
   it('given VMware provider, should render the warning banner', async () => {

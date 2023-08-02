@@ -11,6 +11,7 @@ import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost } from '@state/selectors';
 import { isSaving } from '@state/selectors/checksSelection';
+
 import HostChecksSelection from './HostChecksSelection';
 
 function HostSettingsPage() {

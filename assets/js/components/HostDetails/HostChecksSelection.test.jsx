@@ -55,7 +55,7 @@ describe('HostChecksSelection component', () => {
       screen.getByRole('button', { name: 'Back to Host Details' })
     ).toBeVisible();
     expect(
-      screen.getByRole('button', { name: 'Save Check Selection' })
+      screen.getByRole('button', { name: 'Save Checks Selection' })
     ).toBeVisible();
     expect(onUpdateCatalog).toHaveBeenCalled();
   });
