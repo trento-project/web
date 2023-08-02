@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { clusterChecksSelected } from '@state/checksSelection';
-import { getCluster } from '@state/selectors/cluster';
+import {
+  getCluster,
+  getClusterName,
+  getClusterSelectedChecks,
+  getClusterHosts,
+} from '@state/selectors/cluster';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { isSaving } from '@state/selectors/checksSelection';
+import { executionRequested } from '@state/actions/lastExecutions';
 
+import Button from '@components/Button';
 import { ClusterInfoBox } from '@components/ClusterDetails';
-import ChecksSelection from '@components/ChecksSelection';
+import ChecksSelection, {
+  canStartExecution,
+} from '@components/ChecksSelection';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import LoadingBox from '@components/LoadingBox';
@@ -18,11 +28,15 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
 function ClusterSettingsPage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
+  const clusterHosts = useSelector(getClusterHosts(clusterID));
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
+  const selectedChecks = useSelector(getClusterSelectedChecks(clusterID));
+  const clusterName = useSelector(getClusterName(clusterID));
 
   const {
     data: catalog,
@@ -30,16 +44,29 @@ function ClusterSettingsPage() {
     loading: catalogLoading,
   } = useSelector(getCatalog());
 
+  const [selection, setSelection] = useState(selectedChecks);
+
+  useEffect(() => {
+    setSelection(selectedChecks);
+  }, [selectedChecks]);
+
+  const saveSelection = useCallback(
+    () =>
+      dispatch(
+        clusterChecksSelected({
+          clusterID,
+          clusterName,
+          checks: selection,
+        })
+      ),
+    [clusterID, clusterName, selection]
+  );
+
   if (!cluster) {
     return <LoadingBox text="Loading..." />;
   }
 
-  const {
-    provider,
-    type,
-    selected_checks: selectedChecks,
-    name: clusterName,
-  } = cluster;
+  const { provider, type } = cluster;
 
   const refreshCatalog = () =>
     dispatch(
@@ -49,23 +76,46 @@ function ClusterSettingsPage() {
       })
     );
 
-  const saveSelection = (checks) =>
-    dispatch(
-      clusterChecksSelected({
-        clusterID,
-        clusterName,
-        checks,
-      })
-    );
+  const requestExecution = () => {
+    dispatch(executionRequested(clusterID, clusterHosts, selection, navigate));
+  };
 
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/clusters/${clusterID}`}>
         Back to Cluster Details
       </BackButton>
-      <PageHeader>
-        Cluster Settings for <span className="font-bold">{clusterName}</span>
-      </PageHeader>
+
+      <div className="flex flex-wrap">
+        <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
+          <PageHeader>
+            Cluster Settings for{' '}
+            <span className="font-bold">{clusterName}</span>
+          </PageHeader>
+        </div>
+        <div className="flex w-1/2 justify-end">
+          <div className="flex w-fit whitespace-nowrap">
+            <Button
+              type="primary"
+              className="mx-1"
+              onClick={saveSelection}
+              disabled={saving}
+            >
+              Save Checks Selection
+            </Button>
+            <Button
+              type="primary"
+              className="mx-1"
+              onClick={requestExecution}
+              disabled={!canStartExecution(selectedChecks, saving)}
+            >
+              <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+              Start Execution
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {provider === UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following catalog is valid for on-premise bare metal platforms.
@@ -81,20 +131,15 @@ function ClusterSettingsPage() {
           caution.
         </WarningBanner>
       )}
+
       <ClusterInfoBox haScenario={type} provider={provider} />
       <ChecksSelection
-        targetID={clusterID}
-        targetName={clusterName}
         catalog={catalog}
         catalogError={catalogError}
         loading={catalogLoading}
-        selected={selectedChecks}
-        onSave={saveSelection}
+        selectedChecks={selection}
         onUpdateCatalog={refreshCatalog}
-        onClear={() => {
-          // TODO
-        }}
-        saving={saving}
+        onChange={setSelection}
       />
     </div>
   );

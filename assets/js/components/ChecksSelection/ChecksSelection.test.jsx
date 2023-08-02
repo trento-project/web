@@ -8,23 +8,54 @@ import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 
-import ChecksSelection from './ChecksSelection';
+import ChecksSelection, { canStartExecution } from '.';
 
 describe('ChecksSelection component', () => {
-  it('should change individual check switches accordingly if the group switch is clicked', async () => {
+  it('should select the checks passed as props', async () => {
     const user = userEvent.setup();
 
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
+    const selectedChecks = catalog.map(({ id }) => id);
 
     const onUpdateCatalog = jest.fn();
-    const onClear = jest.fn();
 
     renderWithRouter(
       <ChecksSelection
         catalog={catalog}
+        selectedChecks={selectedChecks}
         onUpdateCatalog={onUpdateCatalog}
-        onClear={onClear}
+        onChange={() => {}}
+      />
+    );
+
+    const groupItem = await waitFor(() => screen.getByText(group));
+
+    await user.click(groupItem);
+
+    const switches = screen.getAllByRole('switch');
+
+    expect(switches[0]).toBeChecked();
+    expect(switches[1]).toBeChecked();
+    expect(switches[2]).toBeChecked();
+  });
+
+  it('should select a whole group of checks', async () => {
+    const user = userEvent.setup();
+
+    const group = faker.animal.cat();
+    const catalog = catalogCheckFactory.buildList(2, { group });
+    const selectionSet = [catalog[0].id, catalog[1].id];
+
+    const onUpdateCatalog = jest.fn();
+    const onChange = jest.fn();
+
+    renderWithRouter(
+      <ChecksSelection
+        catalog={catalog}
+        selectedChecks={[]}
+        onUpdateCatalog={onUpdateCatalog}
+        onChange={onChange}
       />
     );
 
@@ -39,38 +70,57 @@ describe('ChecksSelection component', () => {
     expect(switches[2]).not.toBeChecked();
 
     await user.click(switches[0]);
-
-    const selectedSwitches = screen.getAllByRole('switch');
-
-    expect(selectedSwitches[1]).toBeChecked();
-    expect(selectedSwitches[2]).toBeChecked();
-
-    await user.click(switches[0]);
-
-    const unselectedSwitches = screen.getAllByRole('switch');
-
-    expect(unselectedSwitches[1]).not.toBeChecked();
-    expect(unselectedSwitches[2]).not.toBeChecked();
-    expect(onUpdateCatalog).toBeCalled();
-    expect(onClear).toBeCalled();
+    expect(onChange).toHaveBeenCalledWith(selectionSet);
   });
 
-  it('should change group check switch accordingly if the children check switches are clicked', async () => {
+  it('should select a single check', async () => {
     const user = userEvent.setup();
 
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
-    const selectedChecks = [catalog[0].id, catalog[1].id];
 
     const onUpdateCatalog = jest.fn();
-    const onClear = jest.fn();
+    const onChange = jest.fn();
 
     renderWithRouter(
       <ChecksSelection
         catalog={catalog}
-        selected={selectedChecks}
+        selectedChecks={[]}
         onUpdateCatalog={onUpdateCatalog}
-        onClear={onClear}
+        onChange={onChange}
+      />
+    );
+
+    const groupItem = await waitFor(() => screen.getByText(group));
+
+    await user.click(groupItem);
+
+    const switches = screen.getAllByRole('switch');
+
+    expect(switches[0]).not.toBeChecked();
+    expect(switches[1]).not.toBeChecked();
+    expect(switches[2]).not.toBeChecked();
+
+    await user.click(switches[1]);
+    expect(onChange).toHaveBeenCalledWith([catalog[0].id]);
+  });
+
+  it('should deselect a whole group when clicking on it', async () => {
+    const user = userEvent.setup();
+
+    const group = faker.animal.cat();
+    const catalog = catalogCheckFactory.buildList(2, { group });
+    const selectedChecks = catalog.map(({ id }) => id);
+
+    const onUpdateCatalog = jest.fn();
+    const onChange = jest.fn();
+
+    renderWithRouter(
+      <ChecksSelection
+        catalog={catalog}
+        selectedChecks={selectedChecks}
+        onUpdateCatalog={onUpdateCatalog}
+        onChange={onChange}
       />
     );
 
@@ -84,69 +134,37 @@ describe('ChecksSelection component', () => {
     expect(switches[1]).toBeChecked();
     expect(switches[2]).toBeChecked();
 
-    await user.click(switches[1]);
-
-    const offSwitches = screen.getAllByRole('switch');
-
-    expect(offSwitches[0]).not.toBeChecked();
-
-    await user.click(offSwitches[2]);
-
-    expect(screen.getAllByRole('switch')[0]).not.toBeChecked();
-    expect(onUpdateCatalog).toBeCalled();
-    expect(onClear).toBeCalled();
-  });
-
-  it('should display the error message if any', () => {
-    const error = faker.lorem.word();
-    const catalog = catalogCheckFactory.buildList(10);
-    const onUpdateCatalog = jest.fn();
-    const onClear = jest.fn();
-
-    renderWithRouter(
-      <ChecksSelection
-        catalog={catalog}
-        error={error}
-        onUpdateCatalog={onUpdateCatalog}
-        onClear={onClear}
-      />
-    );
-
-    expect(screen.getByText(error)).toBeVisible();
-    expect(onUpdateCatalog).toBeCalled();
-    expect(onClear).toBeCalled();
-  });
-
-  it('should call the onSave callback when saving the modifications', async () => {
-    const onSave = jest.fn();
-    const onUpdateCatalog = jest.fn();
-    const onClear = jest.fn();
-    const user = userEvent.setup();
-    const targetID = faker.datatype.uuid();
-    const targetName = faker.lorem.word();
-
-    const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group });
-    const [{ id: checkID1 }, { id: checkID2 }] = catalog;
-
-    renderWithRouter(
-      <ChecksSelection
-        catalog={catalog}
-        targetID={targetID}
-        targetName={targetName}
-        onSave={onSave}
-        onUpdateCatalog={onUpdateCatalog}
-        onClear={onClear}
-      />
-    );
-
-    const switches = screen.getAllByRole('switch');
-
     await user.click(switches[0]);
-    await user.click(screen.getByText('Save Check Selection'));
+    expect(onChange).toHaveBeenCalledWith([]);
+  });
+});
 
-    expect(onSave).toBeCalledWith([checkID1, checkID2], targetID, targetName);
-    expect(onUpdateCatalog).toBeCalled();
-    expect(onClear).toBeCalled();
+describe('canStartExecution function', () => {
+  it('should not allow an execution if selected checks are empty and not saving', () => {
+    const selectedChecks = [];
+    const saving = false;
+
+    expect(canStartExecution(selectedChecks, saving)).toBe(false);
+  });
+
+  it('should not allow an execution if selected checks are empty and not saving', () => {
+    const selectedChecks = [];
+    const saving = true;
+
+    expect(canStartExecution(selectedChecks, saving)).toBe(false);
+  });
+
+  it('should not allow an execution if selected checks are populated and saving', () => {
+    const selectedChecks = [faker.datatype.uuid()];
+    const saving = true;
+
+    expect(canStartExecution(selectedChecks, saving)).toBe(false);
+  });
+
+  it('should allow an execution if selected checks are empty and not saving', () => {
+    const selectedChecks = [faker.datatype.uuid()];
+    const saving = false;
+
+    expect(canStartExecution(selectedChecks, saving)).toBe(true);
   });
 });
