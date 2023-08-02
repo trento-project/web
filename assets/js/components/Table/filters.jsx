@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { uniq } from '@lib/lists';
+import { uniq } from 'lodash';
 
 import Filter from './Filter';
 

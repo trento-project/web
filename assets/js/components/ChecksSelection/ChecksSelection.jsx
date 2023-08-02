@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames';
+import { without, uniq, groupBy } from 'lodash';
 
-import { remove, uniq, toggle, groupBy } from '@lib/lists';
+import { toggle } from '@lib/lists';
 
 import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
 import ChecksSelectionGroup, {
@@ -58,7 +59,7 @@ function ChecksSelection({
   const onCheckSelectionGroupChange = (checks, groupSelected) => {
     const groupChecks = checks.map((check) => check.id);
     if (allSelected(groupSelected)) {
-      onChange(remove(groupChecks, selectedChecks));
+      onChange(without(selectedChecks, ...groupChecks));
     } else {
       onChange(uniq([...selectedChecks, ...groupChecks]));
     }

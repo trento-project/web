@@ -11,11 +11,6 @@ export const hasOne = (elements, list) =>
     false
   );
 
-export const remove = (elements, list) =>
-  list.filter((value) => !elements.includes(value));
-
-export const uniq = (list) => [...new Set(list)];
-
 export const pages = (list) => {
   const hasRest = Boolean(list.length % 10);
   return hasRest ? ~~(list.length / 10) + 1 : ~~(list.length / 10);
@@ -26,10 +21,3 @@ export const page = (p, list) => {
   const end = start + 10;
   return list.slice(start, end);
 };
-
-export const groupBy = (list, key) =>
-  list.reduce((rv, x) => {
-    // eslint-disable-next-line
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
