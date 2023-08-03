@@ -35,7 +35,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
       type: :object,
       properties: %{
         id: %Schema{type: :string, description: "Host ID", format: :uuid},
-        hostname: %Schema{type: :string, description: "Host namezzzz"},
+        hostname: %Schema{type: :string, description: "Host name"},
         ip_addresses: %Schema{
           type: :array,
           description: "IP addresses",
