@@ -445,7 +445,6 @@ jobs:
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
-          headless: true
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
