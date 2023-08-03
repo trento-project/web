@@ -366,7 +366,7 @@ context('Host Details', () => {
         cy.task('stopAgentsHeartbeat');
         cy.contains(`The host ${selectedHost.hostName} heartbeat is failing.`, {
           timeout: 15000,
-        }).should('exist');
+        });
         cy.contains('button', 'Clean up', { timeout: 15000 }).should('exist');
       });
     });
