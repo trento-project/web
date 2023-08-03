@@ -35,7 +35,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
       type: :object,
       properties: %{
         id: %Schema{type: :string, description: "Host ID", format: :uuid},
-        hostname: %Schema{type: :string, description: "Host name"},
+        hostname: %Schema{type: :string, description: "Host namezzzz"},
         ip_addresses: %Schema{
           type: :array,
           description: "IP addresses",
@@ -68,7 +68,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           title: "SlesSubscriptions",
           description: "A list of the available SLES Subscriptions on a host",
           type: :array,
-          items: %Schema{type: :string},
+          items: SlesSubscription
         },
         deregistered_at: %Schema{
           title: "DeregisteredAt",
