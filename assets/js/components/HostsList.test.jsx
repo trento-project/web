@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
@@ -78,7 +78,7 @@ describe('HostsLists component', () => {
       }
     );
 
-    it('should show a warning state if the agent version is not compatible', () => {
+    it('should show a warning state if the agent version is not compatible', async () => {
       const user = userEvent.setup();
 
       const host1 = hostFactory.build({ agent_version: '1.0.0' });
@@ -111,12 +111,15 @@ describe('HostsLists component', () => {
         host2VersionCell.querySelector("[data-testid='eos-svg-component']")
       ).toBeNull();
 
-      user.hover(host2VersionCell);
-      expect(
-        screen.queryByText(
-          'Agent version 2.0.0 or greater is required for the new checks engine.'
-        )
-      ).toBeInTheDocument();
+      await act(async () => user.hover(icon1));
+
+      await waitFor(() =>
+        expect(
+          screen.queryByText(
+            'Agent version 2.0.0 or greater is required for the new checks engine.'
+          )
+        ).toBeVisible()
+      );
     });
   });
 

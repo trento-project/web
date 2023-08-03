@@ -122,27 +122,27 @@ function HanaClusterDetails({
               Show Results
             </Button>
 
-            <TriggerChecksExecutionRequest
-              cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
-              clusterId={clusterID}
-              disabled={startExecutionDisabled}
-              hosts={hosts.map(({ id }) => id)}
-              checks={selectedChecks}
-              onStartExecution={onStartExecution}
+            <Tooltip
+              isEnabled={!hasSelectedChecks}
+              content="Select some Checks first!"
+              place="bottom"
             >
-              <EOS_PLAY_CIRCLE
-                className={classNames('inline-block fill-jungle-green-500', {
-                  'fill-slate-500': startExecutionDisabled,
-                })}
-              />{' '}
-              <span>Start Execution</span>
-              {!hasSelectedChecks && (
-                <Tooltip
-                  tooltipText="Select some Checks first!"
-                  width="-translate-x-1/4"
-                />
-              )}
-            </TriggerChecksExecutionRequest>
+              <TriggerChecksExecutionRequest
+                cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
+                clusterId={clusterID}
+                disabled={startExecutionDisabled}
+                hosts={hosts.map(({ id }) => id)}
+                checks={selectedChecks}
+                onStartExecution={onStartExecution}
+              >
+                <EOS_PLAY_CIRCLE
+                  className={classNames('inline-block fill-jungle-green-500', {
+                    'fill-slate-500': startExecutionDisabled,
+                  })}
+                />{' '}
+                <span>Start Execution</span>
+              </TriggerChecksExecutionRequest>
+            </Tooltip>
           </div>
         </div>
       </div>

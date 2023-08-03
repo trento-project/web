@@ -1,26 +1,27 @@
 import React from 'react';
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import Tooltip from '.';
 
 describe('Tooltip', () => {
   it('should show a text when mouse is hovering', async () => {
+    const user = userEvent.setup();
+
     render(
       <div>
-        <Tooltip tooltipText="This is my tooltip text">This is my text</Tooltip>
-        <p>This is another paragraph</p>
+        <Tooltip content="This is my tooltip text">This is my anchor</Tooltip>
       </div>
     );
 
-    expect(screen.getByText('This is my tooltip text')).not.toBeVisible();
+    expect(screen.queryByText('This is my tooltip text')).toBeNull();
 
-    fireEvent.mouseOver(screen.getByText('This is my text'));
+    await act(async () => user.hover(screen.queryByText('This is my anchor')));
 
-    expect(screen.getByText('This is my tooltip text')).toBeVisible();
-
-    fireEvent.mouseOut(screen.getByText('This is my text'));
-    expect(screen.getByText('This is my tooltip text')).not.toBeVisible();
+    await waitFor(() =>
+      expect(screen.queryByText('This is my tooltip text')).toBeVisible()
+    );
   });
 });
