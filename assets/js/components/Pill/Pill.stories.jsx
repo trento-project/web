@@ -48,8 +48,7 @@ export function Truncated() {
 export function WithTooltip() {
   return (
     <Pill className="bg-green-100 text-green-800 relative">
-      With tooltip!
-      <Tooltip content="Oh yeah!" />
+      <Tooltip content="Oh yeah!">With tooltip!</Tooltip>
     </Pill>
   );
 }

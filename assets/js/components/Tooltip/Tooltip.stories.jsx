@@ -19,19 +19,9 @@ export default {
       options: PLACES,
       control: { type: 'radio' },
     },
-    offset: {
-      type: 'number',
-      description: 'Space between the tooltip and the anchor',
-      control: { type: 'number' },
-    },
     isEnabled: {
       type: 'boolean',
       description: 'Whether the tooltip is enabled',
-      control: { type: 'boolean' },
-    },
-    isOpen: {
-      type: 'boolean',
-      description: 'Whether the tooltip should be open',
       control: { type: 'boolean' },
     },
   },
@@ -53,16 +43,17 @@ export const Default = {
 };
 
 export const Positioning = {
-  args: {
-    ...Default.args,
-    isOpen: true,
-  },
-};
-
-export const WithOffset = {
-  args: {
-    ...Default.args,
-    isOpen: true,
-    offset: -1,
-  },
+  render: (args) => (
+    <div className="mt-20 grid grid-rows-4 grid-flow-col gap-20 justify-items-center">
+      {PLACES.map((place) => (
+        <div>
+          <Tooltip place={place} content={place} {...args}>
+            <div className="bg-sky-400 p-2 text-white font-semibold rounded">
+              Hover me
+            </div>
+          </Tooltip>
+        </div>
+      ))}
+    </div>
+  ),
 };

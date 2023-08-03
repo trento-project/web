@@ -111,7 +111,7 @@ describe('HostsLists component', () => {
         host2VersionCell.querySelector("[data-testid='eos-svg-component']")
       ).toBeNull();
 
-      await act(async () => user.hover(host1VersionCell.querySelector('span')));
+      await act(async () => user.hover(icon1));
 
       await waitFor(() =>
         expect(

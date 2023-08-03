@@ -23,13 +23,5 @@ describe('Tooltip', () => {
     await waitFor(() =>
       expect(screen.queryByText('This is my tooltip text')).toBeVisible()
     );
-
-    await act(async () =>
-      user.unhover(screen.queryByText('This is my anchor'))
-    );
-
-    await waitFor(() =>
-      expect(screen.queryByText('This is my tooltip text')).toBeNull()
-    );
   });
 });

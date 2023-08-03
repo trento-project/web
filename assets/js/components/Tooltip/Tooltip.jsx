@@ -1,21 +1,20 @@
 import React from 'react';
-import { Tooltip as ReactTooltip } from 'react-tooltip';
-
+import RcTooltip from 'rc-tooltip';
 import classNames from 'classnames';
 
 export const PLACES = [
   'top',
-  'top-start',
-  'top-end',
-  'right',
-  'right-start',
-  'right-end',
-  'bottom',
-  'bottom-start',
-  'bottom-end',
   'left',
-  'left-start',
-  'left-end',
+  'right',
+  'bottom',
+  'topLeft',
+  'topRight',
+  'bottomLeft',
+  'bottomRight',
+  'leftTop',
+  'leftBottom',
+  'rightTop',
+  'rightBottom',
 ];
 
 const getPlacement = (place) => (PLACES.includes(place) ? place : 'top');
@@ -24,35 +23,26 @@ function Tooltip({
   className,
   content,
   children,
-  offset = 10,
   place = 'top',
   isEnabled = true,
   ...rest
 }) {
-  const anchorReference = `tooltip-anchor-${Date.now()}`;
+  if (!isEnabled) {
+    return children;
+  }
+  const overlayClasses = classNames(
+    'leading-5 text-xs font-semibold bg-black text-white flex items-center px-4 py-2 rounded',
+    className
+  );
   return (
-    <span className="flex tooltip-container">
-      <span className={`flex ${anchorReference}`}>{children}</span>
-      <ReactTooltip
-        hidden={!isEnabled}
-        className={classNames(
-          'leading-5 text-xs font-semibold whitespace-no-wrap bg-black text-white px-4 py-2 rounded flex items-center transition-all duration-150',
-          className
-        )}
-        offset={offset}
-        classNameArrow="tooltip-arrow"
-        anchorSelect={`.${anchorReference}`}
-        content={content}
-        place={getPlacement(place)}
-        style={{
-          zIndex: 10,
-          visibility: 'visible',
-        }}
-        opacity={1}
-        disableStyleInjection
-        {...rest}
-      />
-    </span>
+    <RcTooltip
+      motion={{ motionName: 'rc-tooltip-fade' }}
+      overlay={<span className={overlayClasses}>{content}</span>}
+      placement={getPlacement(place)}
+      {...rest}
+    >
+      <span className="inline-flex">{children}</span>
+    </RcTooltip>
   );
 }
 

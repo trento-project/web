@@ -1,5 +1,6 @@
 /* This file is for your main application CSS */
 @import './markdown.scss';
+@import './tooltip.scss';
 
 @tailwind base;
 
@@ -60,10 +61,4 @@
 
 html {
   background-color: rgb(243 244 246);
-}
-
-.tooltip-container .tooltip-arrow {
-  width: 8px;
-  height: 8px;
-  transform: rotate(45deg);
 }
