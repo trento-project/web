@@ -68,7 +68,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           title: "SlesSubscriptions",
           description: "A list of the available SLES Subscriptions on a host",
           type: :array,
-          items: SlesSubscription
+          items: %Schema{type: :string},
         },
         deregistered_at: %Schema{
           title: "DeregisteredAt",
