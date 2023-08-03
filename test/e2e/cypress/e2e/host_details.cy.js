@@ -359,12 +359,14 @@ context('Host Details', () => {
   describe('Deregistration', () => {
     describe('"Clean up" button should be visible only for an unhealthy host', () => {
       it('should not display the "Clean up" button for healthy host', () => {
-        cy.task('startAgentHeartbeat', [selectedHost.id]);
         cy.contains('button', 'Clean up').should('not.exist');
       });
 
       it('should show the "Clean up" button once heartbeat is lost and debounce period has elapsed', () => {
         cy.task('stopAgentsHeartbeat');
+        cy.contains(`The host ${selectedHost.hostName} heartbeat is failing.`, {
+          timeout: 15000,
+        }).should('exist');
         cy.contains('button', 'Clean up', { timeout: 15000 }).should('exist');
       });
     });
