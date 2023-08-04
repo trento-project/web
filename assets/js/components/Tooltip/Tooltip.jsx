@@ -1,46 +1,48 @@
 import React from 'react';
-
+import RcTooltip from 'rc-tooltip';
 import classNames from 'classnames';
 
-function Tooltip({ children, tooltipText, width = '' }) {
-  const tipRef = React.createRef(null);
+export const PLACES = [
+  'top',
+  'left',
+  'right',
+  'bottom',
+  'topLeft',
+  'topRight',
+  'bottomLeft',
+  'bottomRight',
+  'leftTop',
+  'leftBottom',
+  'rightTop',
+  'rightBottom',
+];
 
-  const handleMouseEnter = () => {
-    tipRef.current.style.opacity = 1;
-    tipRef.current.style.marginTop = '10px';
-    tipRef.current.style['z-index'] = '10';
-  };
+const getPlacement = (place) => (PLACES.includes(place) ? place : 'top');
 
-  const handleMouseLeave = () => {
-    tipRef.current.style.opacity = 0;
-    tipRef.current.style.marginTop = '5px';
-    tipRef.current.style['z-index'] = '-10';
-  };
-
+function Tooltip({
+  className,
+  content,
+  children,
+  place = 'top',
+  isEnabled = true,
+  ...rest
+}) {
+  if (!isEnabled) {
+    return children;
+  }
+  const overlayClasses = classNames(
+    'leading-5 text-xs font-semibold bg-black text-white flex items-center px-4 py-2 rounded',
+    className
+  );
   return (
-    <>
-      <div
-        className="w-full h-full absolute inset-0 flex justify-center items-center"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {children}
-      </div>
-      <div
-        className={classNames(
-          width,
-          'absolute whitespace-no-wrap bg-black text-white px-4 py-2 rounded flex items-center transition-all duration-150'
-        )}
-        style={{ top: '100%', opacity: 0 }}
-        ref={tipRef}
-      >
-        <div
-          className="bg-black h-3 w-3 absolute"
-          style={{ top: '-6px', right: '50%', transform: 'rotate(45deg)' }}
-        />
-        {tooltipText}
-      </div>
-    </>
+    <RcTooltip
+      motion={{ motionName: 'rc-tooltip-fade' }}
+      overlay={<span className={overlayClasses}>{content}</span>}
+      placement={getPlacement(place)}
+      {...rest}
+    >
+      <span className="inline-flex">{children}</span>
+    </RcTooltip>
   );
 }
 

@@ -13,9 +13,8 @@ import Home from '@components/Home';
 import AboutPage from '@components/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
-import ClusterDetailsPage, {
-  ClusterSettings,
-} from '@components/ClusterDetails';
+import ClusterDetailsPage from '@components/ClusterDetails';
+import ClusterSettingsPage from '@components/ClusterSettingsPage';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverview from '@components/SapSystemsOverview';
 import HostDetails, { HostSettingsPage } from '@components/HostDetails';
@@ -32,6 +31,7 @@ import Guard from '@components/Guard';
 import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
+
 import { store } from './state';
 
 function App() {
@@ -81,7 +81,7 @@ function App() {
                   />
                   <Route
                     path="clusters/:clusterID/settings"
-                    element={<ClusterSettings />}
+                    element={<ClusterSettingsPage />}
                   />
                   <Route
                     path="clusters/:clusterID/executions/last"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
@@ -11,41 +11,36 @@ import {
 } from '@lib/test-utils';
 import { catalogCheckFactory, clusterFactory } from '@lib/test-utils/factories';
 
-import { Route, Routes, MemoryRouter } from 'react-router-dom';
 import { UNKNOWN_PROVIDER } from '@lib/model';
-import { ClusterSettings } from './ClusterSettings';
+
+import ClusterSettingsPage from '.';
 
 describe('ClusterDetails ClusterSettings component', () => {
   it('should render the cluster info box and the catalog container', async () => {
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
 
-    const [StatefulChecksSettings, state] = withState(<ClusterSettings />, {
-      ...defaultInitialState,
-      catalog: { loading: false, data: catalog, error: null },
-    });
+    const [StatefulClusterSettings, state] = withState(
+      <ClusterSettingsPage />,
+      {
+        ...defaultInitialState,
+        catalog: { loading: false, data: catalog, error: null },
+      }
+    );
 
     const {
       clusters: [, , , { id: clusterID }],
     } = state.getState().clustersList;
 
-    render(
-      <MemoryRouter initialEntries={[`/clusters/${clusterID}/settings`]}>
-        <Routes>
-          <Route
-            path="clusters/:clusterID/settings"
-            element={StatefulChecksSettings}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderWithRouterMatch(StatefulClusterSettings, {
+      path: 'clusters/:clusterID/settings',
+      route: `/clusters/${clusterID}/settings`,
+    });
 
     expect(screen.getByText('Provider')).toBeVisible();
     expect(screen.getByText('Azure')).toBeVisible();
     expect(screen.getByText(group)).toBeVisible();
-    expect(
-      screen.getByRole('button', { name: 'Select Checks for Execution' })
-    ).toBeVisible();
+    expect(screen.getByText('Save Checks Selection')).toBeVisible();
   });
 
   it('given VMware provider, should render the warning banner', async () => {
@@ -60,9 +55,9 @@ describe('ClusterDetails ClusterSettings component', () => {
     };
     const { id: clusterID } = clusters[0];
 
-    const [StatefulChecksSettings] = withState(<ClusterSettings />, state);
+    const [StatefulClusterSettings] = withState(<ClusterSettingsPage />, state);
 
-    renderWithRouterMatch(StatefulChecksSettings, {
+    renderWithRouterMatch(StatefulClusterSettings, {
       path: 'clusters/:clusterID/settings',
       route: `/clusters/${clusterID}/settings`,
     });
@@ -91,7 +86,7 @@ describe('ClusterDetails ClusterSettings component', () => {
     };
     const { id: clusterID } = clusters[0];
 
-    const [StatefulChecksSettings] = withState(<ClusterSettings />, state);
+    const [StatefulChecksSettings] = withState(<ClusterSettingsPage />, state);
 
     renderWithRouterMatch(StatefulChecksSettings, {
       path: 'clusters/:clusterID/settings',

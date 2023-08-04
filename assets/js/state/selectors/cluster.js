@@ -36,3 +36,14 @@ export const getClusterSapSystems = (clusterID) => (state) => {
     )
   );
 };
+
+// We desperately need reselect's memoization
+const defaultEmptyArray = [];
+
+export const getClusterSelectedChecks = (clusterID) => (state) => {
+  const cluster = getCluster(clusterID)(state);
+  if (!cluster) {
+    return defaultEmptyArray;
+  }
+  return cluster.selected_checks;
+};
