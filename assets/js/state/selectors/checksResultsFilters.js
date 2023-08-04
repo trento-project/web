@@ -1,4 +1,6 @@
+import { get } from 'lodash';
+
 export const getSelectedFilters =
   (resourceID) =>
   ({ checksResultsFilters }) =>
-    checksResultsFilters[resourceID] || [];
+    get(checksResultsFilters, resourceID, []);
