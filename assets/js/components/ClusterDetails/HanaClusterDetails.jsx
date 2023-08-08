@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { groupBy } from '@lib/lists';
+import { groupBy } from 'lodash';
 import classNames from 'classnames';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';

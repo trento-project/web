@@ -1,8 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-import { groupBy } from '@lib/lists';
+import { groupBy } from 'lodash';
 
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';

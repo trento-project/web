@@ -1,5 +1,5 @@
 import { catalogCheckFactory } from '@lib/test-utils/factories';
-import { groupBy } from '@lib/lists';
+import { groupBy } from 'lodash';
 
 context('Checks catalog', () => {
   const checksCatalogURL = `**/api/v1/checks/catalog`;
