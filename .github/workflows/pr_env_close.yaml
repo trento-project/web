@@ -107,4 +107,5 @@ jobs:
             wanda_postgres_password='wanda' \
             rabbitmq_vhost='${{ env.PR_NUMBER}}' \
             rabbitmq_password='trento' \
+            rabbitmq_username='${{ env.PR_NUMBER}}rabbitusr' \
             remove_wanda_container_image='false'"
