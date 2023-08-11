@@ -1,10 +1,15 @@
+import { createSelector } from '@reduxjs/toolkit';
+
 import { getCatalog } from '@state/selectors/catalog';
 import { getCluster, getClusterHosts } from '@state/selectors/cluster';
 
-export const getLastExecution =
-  (groupID) =>
-  ({ lastExecutions }) =>
-    lastExecutions[groupID];
+const getLastExecutions = ({ lastExecutions }) => lastExecutions;
+
+export const getLastExecution = (groupID) =>
+  createSelector(
+    [getLastExecutions],
+    (lastExecutions) => lastExecutions[groupID]
+  );
 
 const addHostnameToAgentsCheckResults = (
   executionData = {},
@@ -35,20 +40,23 @@ const addHostnameToAgentsCheckResults = (
   };
 };
 
-export const getLastExecutionData = (groupID) => (state) => {
-  const clusterHosts = getClusterHosts(groupID)(state);
-  const cluster = getCluster(groupID)(state);
-  const catalog = getCatalog()(state);
-  const lastExecution = getLastExecution(groupID)(state) || null;
+export const getLastExecutionData = createSelector(
+  [
+    (state, groupID) => getClusterHosts(groupID)(state),
+    (state, groupID) => getCluster(groupID)(state),
+    (state) => getCatalog()(state),
+    (state, groupID) => getLastExecution(groupID)(state),
+  ],
+  (clusterHosts, cluster, catalog, lastExecution) => {
+    const enrichedExecution = lastExecution
+      ? addHostnameToAgentsCheckResults(lastExecution, clusterHosts)
+      : {};
 
-  const enrichedExecution = lastExecution
-    ? addHostnameToAgentsCheckResults(lastExecution, clusterHosts)
-    : {};
-
-  return {
-    clusterHosts,
-    cluster,
-    catalog,
-    lastExecution: enrichedExecution,
-  };
-};
+    return {
+      clusterHosts,
+      cluster,
+      catalog,
+      lastExecution: enrichedExecution,
+    };
+  }
+);

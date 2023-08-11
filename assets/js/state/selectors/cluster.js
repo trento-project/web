@@ -1,18 +1,19 @@
 import { get } from 'lodash';
+import { createSelector } from '@reduxjs/toolkit';
 
 export const getCluster =
   (id) =>
   ({ clustersList }) =>
     clustersList.clusters.find((cluster) => cluster.id === id);
 
-export const getClusterHosts =
-  (clusterID) =>
-  ({ hostsList: { hosts } }) =>
-    hosts.filter(({ cluster_id }) => cluster_id === clusterID);
+export const getClusterHosts = (clusterID) =>
+  createSelector([({ hostsList: { hosts } }) => hosts], (hosts) =>
+    hosts.filter(({ cluster_id }) => cluster_id === clusterID)
+  );
 
 export const getHostID = ({ id: hostID }) => hostID;
 
-export const getClusterHostIDs = (clusterID) => (state) =>
+export const getClusterHostIDs = (state, clusterID) =>
   getClusterHosts(clusterID)(state).map(getHostID);
 
 export const getClusterName = (clusterID) => (state) => {
@@ -20,29 +21,35 @@ export const getClusterName = (clusterID) => (state) => {
   return get(cluster, 'name', '');
 };
 
-export const getClusterSapSystems = (clusterID) => (state) => {
-  const clusterHostIDs = getClusterHostIDs(clusterID)(state);
-  const {
-    sapSystemsList: { sapSystems, applicationInstances },
-    databasesList: { databases, databaseInstances },
-  } = state;
+export const getClusterSapSystems = createSelector(
+  [
+    getClusterHostIDs,
+    (state) => state.sapSystemsList.sapSystems,
+    (state) => state.sapSystemsList.applicationInstances,
+    (state) => state.databasesList.databases,
+    (state) => state.databasesList.databaseInstances,
+  ],
+  (
+    clusterHostIDs,
+    sapSystems,
+    applicationInstances,
+    databases,
+    databaseInstances
+  ) => {
+    const instances = applicationInstances.concat(databaseInstances);
 
-  const instances = applicationInstances.concat(databaseInstances);
+    return sapSystems.concat(databases).filter((sapSystem) =>
+      clusterHostIDs.some((hostID) =>
+        instances
+          .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
+          .map(({ host_id }) => host_id)
+          .includes(hostID)
+      )
+    );
+  }
+);
 
-  return sapSystems.concat(databases).filter((sapSystem) =>
-    clusterHostIDs.some((hostID) =>
-      instances
-        .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
-        .map(({ host_id }) => host_id)
-        .includes(hostID)
-    )
-  );
-};
-
-// We desperately need reselect's memoization
-const defaultEmptyArray = [];
-
-export const getClusterSelectedChecks = (clusterID) => (state) => {
-  const cluster = getCluster(clusterID)(state);
-  return get(cluster, 'selected_checks', defaultEmptyArray);
-};
+export const getClusterSelectedChecks = createSelector(
+  [(state, clusterID) => getCluster(clusterID)(state)],
+  (cluster) => get(cluster, 'selected_checks', [])
+);

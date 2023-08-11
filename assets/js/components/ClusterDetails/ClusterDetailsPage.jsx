@@ -30,7 +30,9 @@ export function ClusterDetailsPage() {
 
   const clusterHosts = useSelector(getClusterHosts(clusterID));
 
-  const clusterSapSystems = useSelector(getClusterSapSystems(clusterID));
+  const clusterSapSystems = useSelector((state) =>
+    getClusterSapSystems(state, clusterID)
+  );
 
   if (!cluster) {
     return <div>Loading...</div>;

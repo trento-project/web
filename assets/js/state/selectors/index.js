@@ -1,3 +1,5 @@
+import { createSelector } from '@reduxjs/toolkit';
+
 import { keysToCamel } from '@lib/serialization';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 import { getCluster } from '@state/selectors/cluster';
@@ -66,29 +68,33 @@ export const getDatabaseDetail = (id) => (state) => {
   };
 };
 
-export const getClusterByHost = (hostId) => (state) => {
-  const host = state.hostsList.hosts.find((h) => h.id === hostId);
+export const getClusterByHost = (state, hostID) => {
+  const host = state.hostsList.hosts.find((h) => h.id === hostID);
   return state.clustersList.clusters.find(isIdByKey('id', host?.cluster_id));
 };
 
-export const getInstancesOnHost = (hostId) => (state) => {
-  const { databaseInstances, applicationInstances } = state.sapSystemsList;
+export const getInstancesOnHost = createSelector(
+  [
+    (state) => state.sapSystemsList.databaseInstances,
+    (state) => state.sapSystemsList.applicationInstances,
+    (state) => state.databasesList.databaseInstances,
+    (_, hostID) => hostID,
+  ],
+  (databaseInstances, applicationInstances, databasesListInstances, hostID) => {
+    const availableDatabaseInstances =
+      databaseInstances.length > 0 ? databaseInstances : databasesListInstances;
 
-  const availableDatabaseInstances =
-    databaseInstances.length > 0
-      ? databaseInstances
-      : state.databasesList.databaseInstances;
+    const foundDatabaseInstances = availableDatabaseInstances
+      .filter(isIdByKey('host_id', hostID))
+      .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
 
-  const foundDatabaseInstances = availableDatabaseInstances
-    .filter(isIdByKey('host_id', hostId))
-    .map((instance) => ({ ...instance, type: DATABASE_TYPE }));
+    const foundApplicationInstances = applicationInstances
+      .filter(isIdByKey('host_id', hostID))
+      .map((instance) => ({ ...instance, type: APPLICATION_TYPE }));
 
-  const foundApplicationInstances = applicationInstances
-    .filter(isIdByKey('host_id', hostId))
-    .map((instance) => ({ ...instance, type: APPLICATION_TYPE }));
-
-  return [...foundApplicationInstances, ...foundDatabaseInstances];
-};
+    return [...foundApplicationInstances, ...foundDatabaseInstances];
+  }
+);
 
 export const getAllSAPInstances = () => (state) => {
   const { databaseInstances, applicationInstances } = state.sapSystemsList;

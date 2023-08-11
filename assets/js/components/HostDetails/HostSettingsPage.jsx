@@ -19,7 +19,9 @@ function HostSettingsPage() {
 
   const { hostID } = useParams();
   const host = useSelector(getHost(hostID));
-  const hostSelectedChecks = useSelector(getHostSelectedChecks(hostID));
+  const hostSelectedChecks = useSelector((state) =>
+    getHostSelectedChecks(state, hostID)
+  );
   const [selection, setSelection] = useState([]);
   useEffect(() => {
     if (host) {
