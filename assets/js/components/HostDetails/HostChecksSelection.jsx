@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import PageHeader from '@components/PageHeader';
@@ -16,15 +16,15 @@ function HostChecksSelection({
   provider,
   agentVersion,
   selectedChecks,
+  hostSelectedChecks,
   catalog,
   catalogError,
   catalogLoading,
   onUpdateCatalog,
   isSavingSelection,
   onSaveSelection,
+  onSelectedChecksChange,
 }) {
-  const [selection, setSelection] = useState(selectedChecks);
-
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
@@ -40,7 +40,7 @@ function HostChecksSelection({
             <Button
               type="primary"
               className="mx-1"
-              onClick={() => onSaveSelection(selection, hostID, hostName)}
+              onClick={() => onSaveSelection(selectedChecks, hostID, hostName)}
               disabled={isSavingSelection}
             >
               Save Checks Selection
@@ -49,7 +49,9 @@ function HostChecksSelection({
               type="primary"
               className="mx-1"
               onClick={() => {}}
-              disabled={!canStartExecution(selectedChecks, isSavingSelection)}
+              disabled={
+                !canStartExecution(hostSelectedChecks, isSavingSelection)
+              }
             >
               <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
               Start Execution
@@ -63,9 +65,9 @@ function HostChecksSelection({
         catalog={catalog}
         catalogError={catalogError}
         loading={catalogLoading}
-        selectedChecks={selection}
+        selectedChecks={selectedChecks}
         onUpdateCatalog={() => onUpdateCatalog()}
-        onChange={setSelection}
+        onChange={onSelectedChecksChange}
       />
     </div>
   );

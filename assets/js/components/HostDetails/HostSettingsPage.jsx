@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -9,9 +9,8 @@ import { TARGET_HOST } from '@lib/model';
 import { hostChecksSelected } from '@state/checksSelection';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
-import { getHost } from '@state/selectors';
+import { getHost, getHostSelectedChecks } from '@state/selectors';
 import { isSaving } from '@state/selectors/checksSelection';
-
 import HostChecksSelection from './HostChecksSelection';
 
 function HostSettingsPage() {
@@ -19,6 +18,13 @@ function HostSettingsPage() {
 
   const { hostID } = useParams();
   const host = useSelector(getHost(hostID));
+  const hostSelectedChecks = useSelector(getHostSelectedChecks(hostID));
+  const [selection, setSelection] = useState([]);
+  useEffect(() => {
+    if (host) {
+      setSelection(hostSelectedChecks);
+    }
+  }, [host]);
 
   const {
     data: catalog,
@@ -31,13 +37,7 @@ function HostSettingsPage() {
   if (!host) {
     return <LoadingBox text="Loading..." />;
   }
-
-  const {
-    hostname: hostName,
-    provider,
-    agent_version: agentVersion,
-    selected_checks: selectedChecks,
-  } = host;
+  const { hostname: hostName, provider, agent_version: agentVersion } = host;
 
   const refreshCatalog = () =>
     dispatch(
@@ -55,20 +55,21 @@ function HostSettingsPage() {
         checks: newSelection,
       })
     );
-
   return (
     <HostChecksSelection
       hostID={hostID}
       hostName={hostName}
       provider={provider}
       agentVersion={agentVersion}
-      selectedChecks={selectedChecks}
       catalog={catalog}
       catalogError={catalogError}
       catalogLoading={catalogLoading}
       onUpdateCatalog={refreshCatalog}
       isSavingSelection={saving}
       onSaveSelection={saveSelection}
+      selectedChecks={selection}
+      hostSelectedChecks={hostSelectedChecks}
+      onSelectedChecksChange={setSelection}
     />
   );
 }
