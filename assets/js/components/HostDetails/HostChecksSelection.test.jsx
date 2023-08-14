@@ -41,6 +41,7 @@ describe('HostChecksSelection component', () => {
         catalogError={null}
         catalogLoading={false}
         onUpdateCatalog={onUpdateCatalog}
+        hostSelectedChecks={selectedChecks}
       />
     );
 
