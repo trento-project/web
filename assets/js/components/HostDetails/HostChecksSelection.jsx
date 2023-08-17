@@ -4,9 +4,7 @@ import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
-import ChecksSelection, {
-  canStartExecution,
-} from '@components/ChecksSelection';
+import ChecksSelection from '@components/ChecksSelection';
 
 import HostInfoBox from './HostInfoBox';
 
@@ -16,7 +14,6 @@ function HostChecksSelection({
   provider,
   agentVersion,
   selectedChecks,
-  hostSelectedChecks,
   catalog,
   catalogError,
   catalogLoading,
@@ -24,6 +21,7 @@ function HostChecksSelection({
   isSavingSelection,
   onSaveSelection,
   onSelectedChecksChange,
+  enableHostChecksExecution,
 }) {
   return (
     <div className="w-full px-2 sm:px-0">
@@ -49,9 +47,7 @@ function HostChecksSelection({
               type="primary"
               className="mx-1"
               onClick={() => {}}
-              disabled={
-                !canStartExecution(hostSelectedChecks, isSavingSelection)
-              }
+              disabled={enableHostChecksExecution}
             >
               <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
               Start Execution

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import LoadingBox from '@components/LoadingBox';
+import { canStartExecution } from '@components/ChecksSelection';
 
 import { TARGET_HOST } from '@lib/model';
 
@@ -24,7 +25,7 @@ function HostSettingsPage() {
     if (host) {
       setSelection(hostSelectedChecks);
     }
-  }, [host]);
+  }, [hostSelectedChecks]);
 
   const {
     data: catalog,
@@ -33,6 +34,10 @@ function HostSettingsPage() {
   } = useSelector(getCatalog());
 
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
+  const enableHostChecksExecution = !canStartExecution(
+    hostSelectedChecks,
+    saving
+  );
 
   if (!host) {
     return <LoadingBox text="Loading..." />;
@@ -55,6 +60,7 @@ function HostSettingsPage() {
         checks: newSelection,
       })
     );
+
   return (
     <HostChecksSelection
       hostID={hostID}
@@ -68,7 +74,7 @@ function HostSettingsPage() {
       isSavingSelection={saving}
       onSaveSelection={saveSelection}
       selectedChecks={selection}
-      hostSelectedChecks={hostSelectedChecks}
+      enableHostChecksExecution={enableHostChecksExecution}
       onSelectedChecksChange={setSelection}
     />
   );
