@@ -34,7 +34,7 @@ function HostSettingsPage() {
   } = useSelector(getCatalog());
 
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
-  const enableHostChecksExecution = !canStartExecution(
+  const hostChecksExecutionEnabled = !canStartExecution(
     hostSelectedChecks,
     saving
   );
@@ -74,7 +74,7 @@ function HostSettingsPage() {
       isSavingSelection={saving}
       onSaveSelection={saveSelection}
       selectedChecks={selection}
-      enableHostChecksExecution={enableHostChecksExecution}
+      hostChecksExecutionEnabled={hostChecksExecutionEnabled}
       onSelectedChecksChange={setSelection}
     />
   );
