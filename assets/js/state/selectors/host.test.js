@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { hostFactory } from '@lib/test-utils/factories';
-import { getHostSelectedChecks } from './index';
+import { getHostSelectedChecks } from './host';
 
 describe('host selector', () => {
   it('should return selected checks for a host', () => {

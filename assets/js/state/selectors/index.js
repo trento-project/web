@@ -1,22 +1,12 @@
 import { keysToCamel } from '@lib/serialization';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 import { getCluster } from '@state/selectors/cluster';
-import { get } from 'lodash';
-
-const defaultEmptyArray = [];
+import { getHost } from '@state/selectors/host';
 
 export const isIdByKey =
   (key, id) =>
   ({ [key]: keyToLookup }) =>
     keyToLookup === id;
-
-export const getHost = (id) => (state) =>
-  state.hostsList.hosts.find((host) => host.id === id);
-
-export const getHostSelectedChecks = (hostID) => (state) => {
-  const host = getHost(hostID)(state);
-  return get(host, 'selected_checks', defaultEmptyArray);
-};
 
 const enrichInstances = (instances, sapSystemId, state) =>
   instances

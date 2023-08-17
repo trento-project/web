@@ -9,7 +9,7 @@ import { TARGET_HOST } from '@lib/model';
 import { hostChecksSelected } from '@state/checksSelection';
 import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
-import { getHost, getHostSelectedChecks } from '@state/selectors';
+import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
 import HostChecksSelection from './HostChecksSelection';
 
