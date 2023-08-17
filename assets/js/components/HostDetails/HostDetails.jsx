@@ -19,11 +19,10 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import SuseLogo from '@static/suse_logo.svg';
-import {
-  getInstancesOnHost,
-  getClusterByHost,
-  getHost,
-} from '@state/selectors';
+import { getInstancesOnHost, getClusterByHost } from '@state/selectors';
+
+import { getHost } from '@state/selectors/host';
+
 import { deregisterHost } from '@state/hosts';
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
