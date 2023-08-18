@@ -196,7 +196,7 @@ describe('HostsLists component', () => {
 
       const cleanUpModalButton = screen.getAllByRole('button', {
         name: 'Clean up',
-      })[1];
+      })[0];
 
       await user.click(cleanUpModalButton);
 
