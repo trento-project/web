@@ -17,7 +17,6 @@ import { hostExecutionRequested } from '@state/actions/lastExecutions';
 
 import HostChecksSelection from './HostChecksSelection';
 
-
 function HostSettingsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -75,7 +74,6 @@ function HostSettingsPage() {
     );
     console.log('DISPATCH OVER');
   };
-
 
   return (
     <HostChecksSelection

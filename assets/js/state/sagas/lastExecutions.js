@@ -9,7 +9,7 @@ import { notify } from '@state/actions/notifications';
 import {
   getLastExecutionByGroupID,
   triggerChecksExecution,
-  triggerHostChecksExecution
+  triggerHostChecksExecution,
 } from '@lib/api/checks';
 import {
   setLastExecutionLoading,
@@ -21,7 +21,7 @@ import {
 } from '@state/lastExecutions';
 
 import { getClusterName } from '@state/selectors/cluster';
-import {getHost} from '@state/selectors/host';
+import { getHost } from '@state/selectors/host';
 
 export function* updateLastExecution({ payload }) {
   const { groupID } = payload;
@@ -71,9 +71,11 @@ export function* requestHostExecution({ payload }) {
   console.log('requestHostExecution started and payload:', payload);
   const { hostID, navigate } = payload;
   host = yield select(getHost(hostID));
-  const {hostname: hostName} = host
+  const { hostname: hostName } = host;
   try {
+    console.log('here we fail');
     yield call(triggerHostChecksExecution, hostID);
+    console.log('triggerHostChecksExecution was executed');
     yield put(setHostChecksExecutionRequested(payload));
     yield put(
       notify({
@@ -81,7 +83,7 @@ export function* requestHostExecution({ payload }) {
         icon: '🐰',
       })
     );
-    // navigate(`/hosts/${hostID}/executions/last`);
+   // navigate(`/hosts/${hostID}/executions/last`);
   } catch (error) {
     yield put(
       notify({

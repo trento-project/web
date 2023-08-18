@@ -20,9 +20,10 @@ function HostChecksSelection({
   onSaveSelection,
   hostChecksExecutionEnabled,
   onSelectedChecksChange,
-  startExecution = () => {console.log("nothing happens mehhh")}
+  startExecution = () => {
+    console.log('nothing happens mehhh');
+  },
 }) {
-
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
@@ -46,7 +47,9 @@ function HostChecksSelection({
             <Button
               type="primary"
               className="mx-1"
-              onClick={() => {startExecution()}}
+              onClick={() => {
+                startExecution();
+              }}
               disabled={hostChecksExecutionEnabled}
             >
               <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}

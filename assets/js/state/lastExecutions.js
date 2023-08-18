@@ -92,7 +92,7 @@ export const lastExecutionsSlice = createSlice({
       const lastExecutionState = {
         ...initialExecutionState,
       };
-      console.log(state[hostID])
+      console.log(state[hostID]);
       state[hostID] = lastExecutionState;
     },
   },

@@ -8,7 +8,6 @@ export const isIdByKey =
   ({ [key]: keyToLookup }) =>
     keyToLookup === id;
 
-
 const enrichInstances = (instances, sapSystemId, state) =>
   instances
     .filter(isIdByKey('sap_system_id', sapSystemId))
