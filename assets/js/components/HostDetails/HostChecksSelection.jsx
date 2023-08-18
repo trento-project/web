@@ -1,11 +1,9 @@
 import React from 'react';
 import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
-
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
 import ChecksSelection from '@components/ChecksSelection';
-
 import HostInfoBox from './HostInfoBox';
 
 function HostChecksSelection({
@@ -20,9 +18,11 @@ function HostChecksSelection({
   onUpdateCatalog,
   isSavingSelection,
   onSaveSelection,
-  onSelectedChecksChange,
   hostChecksExecutionEnabled,
+  onSelectedChecksChange,
+  startExecution = () => {console.log("nothing happens mehhh")}
 }) {
+
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
@@ -46,7 +46,7 @@ function HostChecksSelection({
             <Button
               type="primary"
               className="mx-1"
-              onClick={() => {}}
+              onClick={() => {startExecution()}}
               disabled={hostChecksExecutionEnabled}
             >
               <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}

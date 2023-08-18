@@ -3,11 +3,13 @@ import { put, call, takeEvery, select } from 'redux-saga/effects';
 import {
   UPDATE_LAST_EXECUTION,
   EXECUTION_REQUESTED,
+  HOST_EXECUTION_REQUESTED,
 } from '@state/actions/lastExecutions';
 import { notify } from '@state/actions/notifications';
 import {
   getLastExecutionByGroupID,
   triggerChecksExecution,
+  triggerHostChecksExecution
 } from '@lib/api/checks';
 import {
   setLastExecutionLoading,
@@ -15,9 +17,11 @@ import {
   setLastExecutionEmpty,
   setLastExecutionError,
   setExecutionRequested,
+  setHostChecksExecutionRequested,
 } from '@state/lastExecutions';
 
 import { getClusterName } from '@state/selectors/cluster';
+import {getHost} from '@state/selectors/host';
 
 export function* updateLastExecution({ payload }) {
   const { groupID } = payload;
@@ -63,10 +67,40 @@ export function* requestExecution({ payload }) {
   }
 }
 
+export function* requestHostExecution({ payload }) {
+  console.log('requestHostExecution started and payload:', payload);
+  const { hostID, navigate } = payload;
+  host = yield select(getHost(hostID));
+  const {hostname: hostName} = host
+  try {
+    yield call(triggerHostChecksExecution, hostID);
+    yield put(setHostChecksExecutionRequested(payload));
+    yield put(
+      notify({
+        text: `Checks execution requested, Host: ${hostName}`,
+        icon: '🐰',
+      })
+    );
+    // navigate(`/hosts/${hostID}/executions/last`);
+  } catch (error) {
+    yield put(
+      notify({
+        text: `Unable to start execution for host: ${hostName}`,
+        icon: '❌',
+      })
+    );
+  }
+}
+
 export function* watchUpdateLastExecution() {
   yield takeEvery(UPDATE_LAST_EXECUTION, updateLastExecution);
 }
 
 export function* watchRequestExecution() {
   yield takeEvery(EXECUTION_REQUESTED, requestExecution);
+}
+
+export function* watchHostRequestExecution() {
+  console.log('watchHostRequestExecution');
+  yield takeEvery(HOST_EXECUTION_REQUESTED, requestHostExecution);
 }
