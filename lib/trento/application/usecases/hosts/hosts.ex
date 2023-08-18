@@ -7,6 +7,8 @@ defmodule Trento.Hosts do
 
   require Logger
 
+  alias TrentoWeb.OpenApi.V1.Schema.Checks
+
   alias Trento.{
     Heartbeat,
     HostReadModel,
@@ -66,6 +68,39 @@ defmodule Trento.Hosts do
       commanded().dispatch(command)
     end
   end
+
+
+  def request_checks_execution(host_id) do
+    IO.inspect("HOST request_checks_execution")
+    query =
+      from(h in HostReadModel,
+        where: is_nil(h.deregistered_at) and h.id == ^host_id
+      )
+
+    case Repo.one(query) do
+      %HostReadModel{} = host ->
+        Logger.debug("Requesting checks execution, host: #{host_id}")
+
+        maybe_request_host_checks_execution(host)
+
+      nil ->
+        Logger.error("Requested checks execution for a non-existing host: #{host_id}")
+
+        {:error, :not_found}
+    end
+  end
+
+
+  defp maybe_request_checks_execution(%{
+         id: host_id,
+         selected_checks: selected_checks
+       }) do
+    # to do
+      :ok
+  end
+
+  defp maybe_request_host_checks_execution(%{selected_checks: []}), do: :ok
+
 
   @spec deregister_host(Ecto.UUID.t(), DateService) ::
           :ok | {:error, :host_alive} | {:error, :host_not_registered}
