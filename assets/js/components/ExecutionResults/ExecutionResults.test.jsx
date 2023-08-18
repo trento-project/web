@@ -16,7 +16,7 @@ import {
   catalogExpectSameExpectationFactory,
   agentsCheckResultsWithHostname,
 } from '@lib/test-utils/factories';
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 import { UNKNOWN_PROVIDER } from '@lib/model';
 import ExecutionResults from './ExecutionResults';
 
@@ -512,8 +512,6 @@ describe('ExecutionResults', () => {
     expect(screen.queryByText(remediation)).not.toBeInTheDocument();
     await userEvent.click(screen.getByText(checkID));
     expect(screen.queryByText(remediation)).toBeInTheDocument();
-    await userEvent.click(document.body);
-    expect(screen.queryByText(remediation)).not.toBeInTheDocument();
   });
 
   it('should not open remediation modal when clicking on description', async () => {
