@@ -11,6 +11,7 @@ import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
+import { get } from 'lodash';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -102,11 +103,11 @@ function ClustersList() {
               databaseInstances,
               singleSid
             );
-
             return (
               <SapSystemLink
-                systemType={linkData ? linkData.type : null}
-                sapSystemId={linkData ? linkData.sap_system_id : null}
+                key={sid}
+                systemType={get(linkData, 'type', null)}
+                sapSystemId={get(linkData, 'sap_system_id', null)}
               >
                 {singleSid}
               </SapSystemLink>
