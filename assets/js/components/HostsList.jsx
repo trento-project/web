@@ -20,20 +20,13 @@ import Tooltip from '@components/Tooltip';
 import CleanUpButton from '@components/CleanUpButton';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
+import { getConcatenatedInstances } from '@state/selectors';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
 
-const getInstancesByHost = (applicationInstances, databaseInstances, hostId) =>
-  applicationInstances
-    .map((instance) => ({ ...instance, type: 'sap_systems' }))
-    .concat(
-      databaseInstances.map((instance) => ({
-        ...instance,
-        type: 'databases',
-      }))
-    )
-    .filter((instance) => instance.host_id === hostId);
+const getInstancesByHost = (instances, hostId) =>
+  instances.filter((instance) => instance.host_id === hostId);
 
 const addTag = (tag, hostId) => {
   post(`/hosts/${hostId}/tags`, {
@@ -48,8 +41,7 @@ const removeTag = (tag, hostId) => {
 function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const { applicationInstances } = useSelector((state) => state.sapSystemsList);
-  const { databaseInstances } = useSelector((state) => state.databasesList);
+  const concatenatedInstances = useSelector(getConcatenatedInstances());
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -212,11 +204,7 @@ function HostsList() {
 
   const data = hosts.map((host) => {
     const cluster = clusters.find((c) => c.id === host.cluster_id);
-    const sapSystemList = getInstancesByHost(
-      applicationInstances,
-      databaseInstances,
-      host.id
-    );
+    const sapSystemList = getInstancesByHost(concatenatedInstances, host.id);
 
     return {
       heartbeat: host.heartbeat,

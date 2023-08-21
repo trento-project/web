@@ -11,6 +11,8 @@ import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
+import { getConcatenatedInstances } from '@state/selectors';
+
 import { get } from 'lodash';
 
 const getClusterTypeLabel = (type) => {
@@ -26,20 +28,8 @@ const getClusterTypeLabel = (type) => {
   }
 };
 
-const getSapSystemLinkBySID = (
-  applicationInstances,
-  databaseInstances,
-  sid
-) => {
-  const foundInstance = applicationInstances
-    .map((instance) => ({ ...instance, type: 'sap_systems' }))
-    .concat(
-      databaseInstances.map((instance) => ({
-        ...instance,
-        type: 'databases',
-      }))
-    )
-    .find((instance) => instance.sid === sid);
+const getSapSystemLinkBySID = (instances, sid) => {
+  const foundInstance = instances.find((instance) => instance.sid === sid);
 
   return foundInstance;
 };
@@ -59,6 +49,7 @@ function ClustersList() {
   const { applicationInstances, databaseInstances } = useSelector(
     (state) => state.sapSystemsList
   );
+  const concatenatedInstances = useSelector(getConcatenatedInstances());
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -97,8 +88,7 @@ function ClustersList() {
         render: (_, { sid, id }) =>
           sid.map((singleSid, index) => {
             const linkData = getSapSystemLinkBySID(
-              applicationInstances,
-              databaseInstances,
+              concatenatedInstances,
               singleSid
             );
             return (

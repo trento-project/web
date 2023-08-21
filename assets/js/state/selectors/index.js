@@ -91,3 +91,16 @@ export const getInstancesOnHost = (hostId) => (state) => {
 
   return [...foundApplicationInstances, ...foundDatabaseInstances];
 };
+
+export const getConcatenatedInstances = () => (state) => {
+  const { databaseInstances, applicationInstances } = state.sapSystemsList;
+
+  return applicationInstances
+    .map((instance) => ({ ...instance, type: 'sap_systems' }))
+    .concat(
+      databaseInstances.map((instance) => ({
+        ...instance,
+        type: 'databases',
+      }))
+    );
+};
