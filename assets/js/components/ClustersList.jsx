@@ -41,9 +41,7 @@ const getSapSystemLinkBySID = (
     )
     .find((instance) => instance.sid === sid);
 
-  return foundInstance
-    ? { sap_system_id: foundInstance.sap_system_id, type: foundInstance.type }
-    : null;
+  return foundInstance;
 };
 
 const addTag = (tag, clusterId) => {
