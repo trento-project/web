@@ -102,7 +102,7 @@ function ClustersList() {
               singleSid
             );
             return (
-              <React.Fragment key={singleSid}>
+              <Fragment key={singleSid}>
                 <SapSystemLink
                   key={id + singleSid}
                   systemType={get(linkData, 'type', null)}
@@ -112,7 +112,7 @@ function ClustersList() {
                 </SapSystemLink>
 
                 {index !== sid.length - 1 && ', '}
-              </React.Fragment>
+              </Fragment>
             );
           }),
       },
