@@ -23,6 +23,8 @@ defmodule Trento.Hosts do
     SelectHostChecks
   }
 
+  alias Trento.Integration.Checks
+
   alias Trento.Repo
 
   @spec get_all_hosts :: [HostReadModel.t()]
@@ -69,9 +71,9 @@ defmodule Trento.Hosts do
     end
   end
 
-
-  def request_checks_execution(host_id) do
+  def request_host_checks_execution(host_id) do
     IO.inspect("HOST request_checks_execution")
+
     query =
       from(h in HostReadModel,
         where: is_nil(h.deregistered_at) and h.id == ^host_id
@@ -90,17 +92,24 @@ defmodule Trento.Hosts do
     end
   end
 
-
-  defp maybe_request_checks_execution(%{
-         id: host_id,
-         selected_checks: selected_checks
-       }) do
-    # to do
-      :ok
-  end
-
   defp maybe_request_host_checks_execution(%{selected_checks: []}), do: :ok
 
+  defp maybe_request_host_checks_execution(%{
+         id: host_id,
+         selected_checks: selected_checks,
+         provider: provider
+       }) do
+    IO.inspect("maybe host checks execution")
+
+    Checks.request_host_execution(
+      UUID.uuid4(),
+      host_id,
+      %Checks.HostExecutionEnv{provider: provider},
+      selected_checks
+    )
+  end
+
+  defp maybe_request_host_checks_execution(error), do: error
 
   @spec deregister_host(Ecto.UUID.t(), DateService) ::
           :ok | {:error, :host_alive} | {:error, :host_not_registered}

@@ -116,7 +116,7 @@ defmodule TrentoWeb.V1.HostController do
     tags: ["Checks"],
     description: "Trigger execution of the latest Checks Selection on the target infrastructure",
     parameters: [
-        id: [
+      id: [
         in: :path,
         required: true,
         type: %OpenApiSpex.Schema{type: :string, format: :uuid}
@@ -132,7 +132,7 @@ defmodule TrentoWeb.V1.HostController do
   def request_host_checks_execution(conn, %{id: host_id}) do
     IO.inspect("request_host_checks_execution")
 
-    with :ok <- Hosts.request_checks_execution(host_id) do
+    with :ok <- Hosts.request_host_checks_execution(host_id) do
       conn
       |> put_status(:accepted)
       |> json(%{})
