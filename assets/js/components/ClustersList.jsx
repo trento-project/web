@@ -46,9 +46,6 @@ const removeTag = (tag, clusterId) => {
 
 function ClustersList() {
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const { applicationInstances, databaseInstances } = useSelector(
-    (state) => state.sapSystemsList
-  );
   const concatenatedInstances = useSelector(getConcatenatedInstances());
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
