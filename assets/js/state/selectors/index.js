@@ -96,15 +96,18 @@ export const getInstancesOnHost = createSelector(
   }
 );
 
-export const getAllSAPInstances = () => (state) => {
-  const { databaseInstances, applicationInstances } = state.sapSystemsList;
-
-  return applicationInstances
-    .map((instance) => ({ ...instance, type: 'sap_systems' }))
-    .concat(
-      databaseInstances.map((instance) => ({
-        ...instance,
-        type: 'databases',
-      }))
-    );
-};
+export const getAllSAPInstances = createSelector(
+  [
+    (state) => state.sapSystemsList.applicationInstances,
+    (state) => state.sapSystemsList.databaseInstances,
+  ],
+  (applicationInstances, databaseInstances) =>
+    applicationInstances
+      .map((instance) => ({ ...instance, type: 'sap_systems' }))
+      .concat(
+        databaseInstances.map((instance) => ({
+          ...instance,
+          type: 'databases',
+        }))
+      )
+);
