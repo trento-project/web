@@ -36,7 +36,7 @@ describe('Cluster selector', () => {
       },
     };
 
-    expect(getClusterHostIDs('cluster1')(state)).toEqual(['id1', 'id2']);
+    expect(getClusterHostIDs(state, 'cluster1')).toEqual(['id1', 'id2']);
   });
 
   it('should return the cluster hosts', () => {
@@ -60,7 +60,7 @@ describe('Cluster selector', () => {
       },
     };
 
-    expect(getClusterHosts('cluster1')(state)).toEqual(
+    expect(getClusterHosts(state, 'cluster1')).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: 'id1',
@@ -165,7 +165,7 @@ describe('Cluster selector', () => {
         databaseInstances,
       },
     };
-    expect(getClusterSapSystems(clusterID)(state)).toEqual(
+    expect(getClusterSapSystems(state, clusterID)).toEqual(
       sapSystems.slice(1, 4).concat(databases.slice(1, 3))
     );
   });
@@ -184,7 +184,7 @@ describe('Cluster selector', () => {
       },
     };
 
-    expect(getClusterSelectedChecks(clusterID)(state)).toEqual(checks);
-    expect(getClusterSelectedChecks(faker.datatype.uuid())(state)).toEqual([]);
+    expect(getClusterSelectedChecks(state, clusterID)).toEqual(checks);
+    expect(getClusterSelectedChecks(state, faker.datatype.uuid())).toEqual([]);
   });
 });

@@ -1,11 +1,10 @@
 import { get } from 'lodash';
-
-const defaultEmptyArray = [];
+import { createSelector } from '@reduxjs/toolkit';
 
 export const getHost = (id) => (state) =>
   state.hostsList.hosts.find((host) => host.id === id);
 
-export const getHostSelectedChecks = (hostID) => (state) => {
-  const host = getHost(hostID)(state);
-  return get(host, 'selected_checks', defaultEmptyArray);
-};
+export const getHostSelectedChecks = createSelector(
+  [(state, hostID) => getHost(hostID)(state)],
+  (host) => get(host, 'selected_checks', [])
+);

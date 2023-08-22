@@ -29,7 +29,7 @@ function ExecutionResultsPage() {
       error: executionError,
       loading: executionLoading,
     },
-  } = useSelector(getLastExecutionData(clusterID));
+  } = useSelector((state) => getLastExecutionData(state, clusterID));
 
   const savedFilters = useSelector(getSelectedFilters(clusterID));
 

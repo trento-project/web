@@ -28,9 +28,13 @@ export function ClusterDetailsPage() {
     dispatch(updateLastExecution(clusterID));
   }, [dispatch]);
 
-  const clusterHosts = useSelector(getClusterHosts(clusterID));
+  const clusterHosts = useSelector((state) =>
+    getClusterHosts(state, clusterID)
+  );
 
-  const clusterSapSystems = useSelector(getClusterSapSystems(clusterID));
+  const clusterSapSystems = useSelector((state) =>
+    getClusterSapSystems(state, clusterID)
+  );
 
   if (!cluster) {
     return <div>Loading...</div>;

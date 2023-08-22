@@ -43,7 +43,7 @@ function CheckResultDetailPage() {
       error: executionError,
       loading: executionLoading,
     },
-  } = useSelector(getLastExecutionData(clusterID));
+  } = useSelector((state) => getLastExecutionData(state, clusterID));
   const clustersIDList = useSelector((state) =>
     state.clustersList.clusters.map((clusterObj) => clusterObj.id)
   );

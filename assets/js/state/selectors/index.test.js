@@ -22,6 +22,6 @@ describe('getAllSAPInstances selector', () => {
       { id: 4, name: 'DB2', type: 'databases' },
     ];
 
-    expect(getAllSAPInstances()(state)).toEqual(expectedOutput);
+    expect(getAllSAPInstances(state)).toEqual(expectedOutput);
   });
 });

@@ -27,9 +27,9 @@ describe('host selector', () => {
       },
     };
 
-    expect(getHostSelectedChecks(hostID1)(state)).not.toEqual(checks2);
-    expect(getHostSelectedChecks(hostID1)(state)).toEqual(checks1);
-    expect(getHostSelectedChecks(hostID2)(state)).not.toEqual(checks1);
-    expect(getHostSelectedChecks(hostID2)(state)).toEqual(checks2);
+    expect(getHostSelectedChecks(state, hostID1)).not.toEqual(checks2);
+    expect(getHostSelectedChecks(state, hostID1)).toEqual(checks1);
+    expect(getHostSelectedChecks(state, hostID2)).not.toEqual(checks1);
+    expect(getHostSelectedChecks(state, hostID2)).toEqual(checks2);
   });
 });

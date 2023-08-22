@@ -82,7 +82,7 @@ describe('lastExecutions selector', () => {
     };
 
     const { clusterHosts, cluster, catalog, lastExecution } =
-      getLastExecutionData(clusterID)(state);
+      getLastExecutionData(state, clusterID);
 
     expect(clusterHosts).toEqual(
       expect.arrayContaining([
@@ -125,7 +125,7 @@ describe('lastExecutions selector', () => {
       },
     };
 
-    const { lastExecution } = getLastExecutionData(clusterID)(state);
+    const { lastExecution } = getLastExecutionData(state, clusterID);
 
     expect(lastExecution.data.result).toBeNull();
     expect(lastExecution.data.check_results).toBeUndefined();

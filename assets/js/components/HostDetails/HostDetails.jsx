@@ -38,8 +38,8 @@ function HostDetails() {
   const navigate = useNavigate();
 
   const host = useSelector(getHost(hostID));
-  const cluster = useSelector(getClusterByHost(hostID));
-  const sapSystems = useSelector(getInstancesOnHost(hostID));
+  const cluster = useSelector((state) => getClusterByHost(state, hostID));
+  const sapSystems = useSelector((state) => getInstancesOnHost(state, hostID));
 
   // eslint-disable-next-line no-undef
   const { grafanaPublicUrl } = config;
