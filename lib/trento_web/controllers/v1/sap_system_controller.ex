@@ -48,7 +48,8 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   operation :delete_application_instance,
     summary: "Delete application instance",
-    description: "Delete the application instance identified by the provided data",
+    description:
+      "Delete the application instance identified by the provided data if it is absent",
     parameters: [
       id: [
         in: :path,
@@ -86,7 +87,7 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   operation :delete_database_instance,
     summary: "Delete database instance",
-    description: "Delete the database instance identified by the provided data",
+    description: "Delete the database instance identified by the provided data if it is absent",
     parameters: [
       id: [
         in: :path,

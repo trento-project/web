@@ -68,14 +68,24 @@ defmodule Trento.SapSystems do
         instance_number,
         date_service \\ DateService
       ) do
-    commanded().dispatch(
-      DeregisterApplicationInstance.new!(%{
-        sap_system_id: sap_system_id,
-        host_id: host_id,
-        instance_number: instance_number,
-        deregistered_at: date_service.utc_now()
-      })
-    )
+    case Repo.get_by(ApplicationInstanceReadModel,
+           sap_system_id: sap_system_id,
+           host_id: host_id,
+           instance_number: instance_number
+         ) do
+      %ApplicationInstanceReadModel{absent: nil} ->
+        {:error, :instance_present}
+
+      _ ->
+        commanded().dispatch(
+          DeregisterApplicationInstance.new!(%{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            deregistered_at: date_service.utc_now()
+          })
+        )
+    end
   end
 
   @spec deregister_database_instance(Ecto.UUID.t(), Ecto.UUID.t(), String.t(), DateService) ::
@@ -86,14 +96,24 @@ defmodule Trento.SapSystems do
         instance_number,
         date_service \\ DateService
       ) do
-    commanded().dispatch(
-      DeregisterDatabaseInstance.new!(%{
-        sap_system_id: sap_system_id,
-        host_id: host_id,
-        instance_number: instance_number,
-        deregistered_at: date_service.utc_now()
-      })
-    )
+    case Repo.get_by(DatabaseInstanceReadModel,
+           sap_system_id: sap_system_id,
+           host_id: host_id,
+           instance_number: instance_number
+         ) do
+      %DatabaseInstanceReadModel{absent: nil} ->
+        {:error, :instance_present}
+
+      _ ->
+        commanded().dispatch(
+          DeregisterDatabaseInstance.new!(%{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            deregistered_at: date_service.utc_now()
+          })
+        )
+    end
   end
 
   defp commanded,

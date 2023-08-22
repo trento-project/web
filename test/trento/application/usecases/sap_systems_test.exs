@@ -146,6 +146,19 @@ defmodule Trento.SapSystemsTest do
                  Trento.Support.DateService.Mock
                )
     end
+
+    test "should not delete a not absent application instance" do
+      %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
+        insert(:application_instance_without_host, absent: nil)
+
+      assert {:error, :instance_present} =
+               SapSystems.deregister_application_instance(
+                 sap_system_id,
+                 host_id,
+                 instance_number,
+                 Trento.Support.DateService.Mock
+               )
+    end
   end
 
   describe "deregister_database_instance/4" do
@@ -176,6 +189,19 @@ defmodule Trento.SapSystemsTest do
       )
 
       assert :ok =
+               SapSystems.deregister_database_instance(
+                 sap_system_id,
+                 host_id,
+                 instance_number,
+                 Trento.Support.DateService.Mock
+               )
+    end
+
+    test "should not delete a not absent database instance" do
+      %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
+        insert(:database_instance_without_host, absent: nil)
+
+      assert {:error, :instance_present} =
                SapSystems.deregister_database_instance(
                  sap_system_id,
                  host_id,
