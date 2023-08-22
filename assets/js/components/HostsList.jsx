@@ -20,7 +20,7 @@ import Tooltip from '@components/Tooltip';
 import CleanUpButton from '@components/CleanUpButton';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
-import { getAllInstances } from '@state/selectors';
+import { getAllSAPInstances } from '@state/selectors';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
@@ -41,7 +41,7 @@ const removeTag = (tag, hostId) => {
 function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const concatenatedInstances = useSelector(getAllInstances());
+  const allInstances = useSelector(getAllSAPInstances());
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -204,7 +204,7 @@ function HostsList() {
 
   const data = hosts.map((host) => {
     const cluster = clusters.find((c) => c.id === host.cluster_id);
-    const sapSystemList = getInstancesByHost(concatenatedInstances, host.id);
+    const sapSystemList = getInstancesByHost(allInstances, host.id);
 
     return {
       heartbeat: host.heartbeat,

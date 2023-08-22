@@ -92,7 +92,7 @@ export const getInstancesOnHost = (hostId) => (state) => {
   return [...foundApplicationInstances, ...foundDatabaseInstances];
 };
 
-export const getAllInstances = () => (state) => {
+export const getAllSAPInstances = () => (state) => {
   const { databaseInstances, applicationInstances } = state.sapSystemsList;
 
   return applicationInstances

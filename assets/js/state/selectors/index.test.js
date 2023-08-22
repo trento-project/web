@@ -1,6 +1,6 @@
-import { getAllInstances } from '.';
+import { getAllSAPInstances } from '.';
 
-describe('getAllInstances selector', () => {
+describe('getAllSAPInstances selector', () => {
   it('should correctly merge and format applicationInstances and databaseInstances', () => {
     const state = {
       sapSystemsList: {
@@ -22,6 +22,6 @@ describe('getAllInstances selector', () => {
       { id: 4, name: 'DB2', type: 'databases' },
     ];
 
-    expect(getAllInstances()(state)).toEqual(expectedOutput);
+    expect(getAllSAPInstances()(state)).toEqual(expectedOutput);
   });
 });
