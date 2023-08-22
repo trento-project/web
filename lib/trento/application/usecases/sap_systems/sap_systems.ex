@@ -12,6 +12,13 @@ defmodule Trento.SapSystems do
     SapSystemReadModel
   }
 
+  alias Trento.Support.DateService
+
+  alias Trento.Domain.Commands.{
+    DeregisterApplicationInstance,
+    DeregisterDatabaseInstance
+  }
+
   alias Trento.Repo
 
   @spec get_all_sap_systems :: [SapSystemReadModel.t()]
@@ -52,4 +59,43 @@ defmodule Trento.SapSystems do
     |> where([d], d.host_id == ^host_id)
     |> Repo.all()
   end
+
+  @spec deregister_application_instance(Ecto.UUID.t(), Ecto.UUID.t(), String.t(), DateService) ::
+          :ok | {:error, :instance_present} | {:error, :application_instance_not_registered}
+  def deregister_application_instance(
+        sap_system_id,
+        host_id,
+        instance_number,
+        date_service \\ DateService
+      ) do
+    commanded().dispatch(
+      DeregisterApplicationInstance.new!(%{
+        sap_system_id: sap_system_id,
+        host_id: host_id,
+        instance_number: instance_number,
+        deregistered_at: date_service.utc_now()
+      })
+    )
+  end
+
+  @spec deregister_database_instance(Ecto.UUID.t(), Ecto.UUID.t(), String.t(), DateService) ::
+          :ok | {:error, :instance_present} | {:error, :database_instance_not_registered}
+  def deregister_database_instance(
+        sap_system_id,
+        host_id,
+        instance_number,
+        date_service \\ DateService
+      ) do
+    commanded().dispatch(
+      DeregisterDatabaseInstance.new!(%{
+        sap_system_id: sap_system_id,
+        host_id: host_id,
+        instance_number: instance_number,
+        deregistered_at: date_service.utc_now()
+      })
+    )
+  end
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
