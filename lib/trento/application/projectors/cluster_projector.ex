@@ -15,7 +15,6 @@ defmodule Trento.ClusterProjector do
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
-    ClusterHostMarkedAbsent,
     ClusterRegistered,
     ClusterRestored
   }
@@ -59,23 +58,6 @@ defmodule Trento.ClusterProjector do
   )
 
   project(
-    %ClusterHostMarkedAbsent{
-      cluster_id: cluster_id,
-      absent: absent
-    },
-    fn multi ->
-      changeset =
-        ClusterReadModel
-        |> Repo.get!(cluster_id)
-        |> ClusterReadModel.changeset(%{
-          absent: absent
-        })
-
-      Ecto.Multi.update(multi, :cluster, changeset)
-    end
-  )
-
-  project(
     %ClusterDeregistered{
       cluster_id: cluster_id,
       deregistered_at: deregistered_at
@@ -101,7 +83,6 @@ defmodule Trento.ClusterProjector do
         ClusterReadModel
         |> Repo.get!(cluster_id)
         |> ClusterReadModel.changeset(%{
-          absent: nil,
           deregistered_at: nil
         })
 
@@ -207,16 +188,6 @@ defmodule Trento.ClusterProjector do
     TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_changed", %{
       cluster_id: cluster_id,
       health: health
-    })
-  end
-
-  @impl true
-  def after_update(%ClusterHostMarkedAbsent{cluster_id: cluster_id}, _, %{
-        cluster: %ClusterReadModel{name: name}
-      }) do
-    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_absent", %{
-      id: cluster_id,
-      name: name
     })
   end
 
