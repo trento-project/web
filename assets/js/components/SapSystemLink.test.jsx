@@ -6,7 +6,7 @@ import { sapSystemFactory } from '@lib/test-utils/factories';
 import SapSystemLink from '@components/SapSystemLink';
 
 describe('SapSystemLink', () => {
-  it('renders Link when sapSystemId and systemType is provided', () => {
+  it('renders Link when sapSystemId and systemType are provided', () => {
     const { id, sid } = sapSystemFactory.build();
 
     renderWithRouter(
