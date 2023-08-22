@@ -26,6 +26,7 @@ defmodule Trento.ApplicationInstanceReadModel do
     field :start_priority, :string
     field :host_id, Ecto.UUID, primary_key: true
     field :health, Ecto.Enum, values: Health.values()
+    field :absent, :utc_datetime_usec
 
     has_one :host, HostReadModel,
       references: :host_id,
