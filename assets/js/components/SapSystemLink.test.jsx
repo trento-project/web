@@ -1,9 +1,9 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
+import { screen, render, fireEvent as userEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
-import SapSystemLink from '@components/SapSystemLink';
 import { sapSystemFactory } from '@lib/test-utils/factories';
+import SapSystemLink from '@components/SapSystemLink';
 
 describe('SapSystemLink', () => {
   it('renders Link when sapSystemId and systemType is provided', () => {
@@ -21,13 +21,13 @@ describe('SapSystemLink', () => {
     expect(sapSystemLinkElement).toHaveAttribute('href', `/databases/${id}`);
   });
 
-  it('renders warning span when sapSystemId or systemType are not provided', () => {
+  it('renders tooltip when sapSystemId or systemType are not provided', () => {
     const { sid } = sapSystemFactory.build();
 
     render(<SapSystemLink>{sid}</SapSystemLink>);
 
     const sidElement = screen.getByText(sid);
-    fireEvent.mouseOver(sidElement);
+    userEvent.mouseOver(sidElement);
     expect(
       screen.getByText('SAP System currently not registered.')
     ).toBeInTheDocument();
