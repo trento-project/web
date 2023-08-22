@@ -42,7 +42,7 @@ const addHostnameToAgentsCheckResults = (
 
 export const getLastExecutionData = createSelector(
   [
-    (state, groupID) => getClusterHosts(groupID)(state),
+    getClusterHosts,
     (state, groupID) => getCluster(groupID)(state),
     (state) => getCatalog()(state),
     (state, groupID) => getLastExecution(groupID)(state),

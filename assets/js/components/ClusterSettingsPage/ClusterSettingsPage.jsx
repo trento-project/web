@@ -33,7 +33,9 @@ function ClusterSettingsPage() {
   const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
-  const clusterHosts = useSelector(getClusterHosts(clusterID));
+  const clusterHosts = useSelector((state) =>
+    getClusterHosts(state, clusterID)
+  );
   const saving = useSelector(isSaving(TARGET_CLUSTER, clusterID));
   const selectedChecks = useSelector((state) =>
     getClusterSelectedChecks(state, clusterID)

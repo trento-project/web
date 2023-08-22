@@ -60,7 +60,7 @@ describe('Cluster selector', () => {
       },
     };
 
-    expect(getClusterHosts('cluster1')(state)).toEqual(
+    expect(getClusterHosts(state, 'cluster1')).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: 'id1',

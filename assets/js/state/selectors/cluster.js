@@ -6,15 +6,18 @@ export const getCluster =
   ({ clustersList }) =>
     clustersList.clusters.find((cluster) => cluster.id === id);
 
-export const getClusterHosts = (clusterID) =>
-  createSelector([({ hostsList: { hosts } }) => hosts], (hosts) =>
+export const getClusterHosts = createSelector(
+  [({ hostsList: { hosts } }) => hosts, (_state, clusterID) => clusterID],
+  (hosts, clusterID) =>
     hosts.filter(({ cluster_id }) => cluster_id === clusterID)
-  );
+);
 
 export const getHostID = ({ id: hostID }) => hostID;
 
-export const getClusterHostIDs = (state, clusterID) =>
-  getClusterHosts(clusterID)(state).map(getHostID);
+export const getClusterHostIDs = createSelector(
+  [getClusterHosts],
+  (clusterHosts) => clusterHosts.map(getHostID)
+);
 
 export const getClusterName = (clusterID) => (state) => {
   const cluster = getCluster(clusterID)(state);
