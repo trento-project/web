@@ -79,23 +79,28 @@ function ClustersList() {
         filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
-        render: (_, { sid, id }) =>
-          sid.map((singleSid, index) => {
-            const linkData = getSapSystemBySID(allInstances, singleSid);
-            return (
-              <Fragment key={singleSid}>
-                <SapSystemLink
-                  key={id + singleSid}
-                  systemType={get(linkData, 'type', null)}
-                  sapSystemId={get(linkData, 'sap_system_id', null)}
-                >
-                  {singleSid}
-                </SapSystemLink>
+        render: (_, { sid, id }) => {
+          const sidsArray = sid.map((singleSid, index) => [
+            index > 0 && ', ',
+            <SapSystemLink
+              key={`${id}-${singleSid}`}
+              systemType={get(
+                getSapSystemBySID(allInstances, singleSid),
+                'type',
+                null
+              )}
+              sapSystemId={get(
+                getSapSystemBySID(allInstances, singleSid),
+                'sap_system_id',
+                null
+              )}
+            >
+              {singleSid}
+            </SapSystemLink>,
+          ]);
 
-                {index !== sid.length - 1 && ', '}
-              </Fragment>
-            );
-          }),
+          return sidsArray;
+        },
       },
       {
         title: 'Hosts',
