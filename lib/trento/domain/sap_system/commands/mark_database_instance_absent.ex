@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Commands.MarkDatabaseInstanceAbsent do
   @moduledoc """
-  Mark a database instance as absent from the monitoring system.
+  Mark a database instance as absent
   """
   @required_fields :all
 
@@ -10,6 +10,6 @@ defmodule Trento.Domain.Commands.MarkDatabaseInstanceAbsent do
     field :instance_number, :string
     field :host_id, Ecto.UUID
     field :sap_system_id, Ecto.UUID
-    field :absent, :utc_datetime_usec
+    field :absent_at, :utc_datetime_usec
   end
 end

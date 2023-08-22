@@ -9,6 +9,6 @@ defmodule Trento.Domain.Events.ApplicationInstanceMarkedAbsent do
     field :instance_number, :string
     field :host_id, Ecto.UUID
     field :sap_system_id, Ecto.UUID
-    field :absent, :utc_datetime_usec
+    field :absent_at, :utc_datetime_usec
   end
 end

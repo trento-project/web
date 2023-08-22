@@ -11,7 +11,6 @@ defmodule Trento.SapSystemProjector do
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
-    ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     SapSystemDeregistered,
@@ -181,29 +180,6 @@ defmodule Trento.SapSystemProjector do
   )
 
   project(
-    %ApplicationInstanceMarkedAbsent{
-      instance_number: instance_number,
-      host_id: host_id,
-      sap_system_id: sap_system_id,
-      absent: absent
-    },
-    fn multi ->
-      changeset =
-        ApplicationInstanceReadModel
-        |> Repo.get_by(
-          sap_system_id: sap_system_id,
-          instance_number: instance_number,
-          host_id: host_id
-        )
-        |> ApplicationInstanceReadModel.changeset(%{
-          absent: absent
-        })
-
-      Ecto.Multi.update(multi, :application_instance, changeset)
-    end
-  )
-
-  project(
     %ApplicationInstanceDeregistered{
       instance_number: instance_number,
       host_id: host_id,
@@ -369,32 +345,6 @@ defmodule Trento.SapSystemProjector do
       @sap_systems_topic,
       "sap_system_restored",
       SapSystemView.render("sap_system_restored.json", sap_system: enriched_sap_system)
-    )
-  end
-
-  @impl true
-  def after_update(
-        %ApplicationInstanceMarkedAbsent{
-          instance_number: instance_number,
-          host_id: host_id,
-          sap_system_id: sap_system_id,
-          absent: absent
-        },
-        _,
-        %{
-          application_instance: %ApplicationInstanceReadModel{sid: sid}
-        }
-      ) do
-    TrentoWeb.Endpoint.broadcast(
-      @sap_systems_topic,
-      "application_instance_marked_absent",
-      SapSystemView.render("instance_marked_absent.json",
-        instance_number: instance_number,
-        host_id: host_id,
-        sap_system_id: sap_system_id,
-        sid: sid,
-        absent: absent
-      )
     )
   end
 

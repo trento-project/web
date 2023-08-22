@@ -35,7 +35,6 @@ defmodule Trento.HostReadModel do
     field :last_heartbeat_timestamp, :utc_datetime_usec, virtual: true
 
     field :deregistered_at, :utc_datetime_usec
-    field :absent, :utc_datetime_usec
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

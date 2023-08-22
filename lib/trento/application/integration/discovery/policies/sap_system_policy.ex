@@ -152,7 +152,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
           host_id: instance.host_id,
           instance_number: instance.instance_number,
           sap_system_id: instance.sap_system_id,
-          absent: DateTime.utc_now()
+          absent_at: DateTime.utc_now()
         })
 
       %DatabaseInstanceReadModel{} = instance ->
@@ -160,7 +160,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
           host_id: instance.host_id,
           instance_number: instance.instance_number,
           sap_system_id: instance.sap_system_id,
-          absent: DateTime.utc_now()
+          absent_at: DateTime.utc_now()
         })
     end)
   end

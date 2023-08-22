@@ -22,12 +22,14 @@ defmodule Trento.Factory do
 
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
+    ApplicationInstanceMarkedAbsent,
     ApplicationInstanceRegistered,
     ClusterDeregistered,
     ClusterRegistered,
     ClusterTombstoned,
     DatabaseDeregistered,
     DatabaseInstanceDeregistered,
+    DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     DatabaseRestored,
@@ -260,6 +262,15 @@ defmodule Trento.Factory do
     }
   end
 
+  def database_instance_marked_absent_event_factory do
+    DatabaseInstanceMarkedAbsent.new!(%{
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      sap_system_id: Faker.UUID.v4(),
+      absent_at: DateTime.utc_now()
+    })
+  end
+
   def database_instance_deregistered_event_factory do
     DatabaseInstanceDeregistered.new!(%{
       instance_number: "00",
@@ -305,6 +316,15 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       health: Health.passing()
     }
+  end
+
+  def application_instance_marked_absent_event_factory do
+    ApplicationInstanceMarkedAbsent.new!(%{
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      sap_system_id: Faker.UUID.v4(),
+      absent_at: DateTime.utc_now()
+    })
   end
 
   def application_instance_deregistered_event_factory do
