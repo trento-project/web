@@ -120,7 +120,7 @@ jobs:
             rabbitmq_host='${{ steps.tf-outputs.outputs.trento_server_ip }}:5672' \
             api_key='api-key'"
       - name: Cypress run
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         env:
           CYPRESS_BASE_URL: http://${{ steps.tf-outputs.outputs.trento_server_public_ip }}
           CYPRESS_REAL_CLUSTER_TESTS: true
