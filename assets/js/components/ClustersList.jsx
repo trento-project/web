@@ -13,8 +13,6 @@ import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import { getAllSAPInstances } from '@state/selectors';
 
-import { get } from 'lodash';
-
 const getClusterTypeLabel = (type) => {
   switch (type) {
     case 'hana_scale_up':
