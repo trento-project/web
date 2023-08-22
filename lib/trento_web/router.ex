@@ -117,11 +117,19 @@ defmodule TrentoWeb.Router do
 
       delete "/sap_systems/:id/tags/:value", TagsController, :remove_tag, as: :sap_systems_tagging
 
+      delete "/sap_systems/:id/hosts/:host_id/instances/:instance_number",
+             SapSystemController,
+             :delete_application_instance
+
       post "/databases/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :database},
         as: :databases_tagging
 
       delete "/databases/:id/tags/:value", TagsController, :remove_tag, as: :databases_tagging
+
+      delete "/databases/:id/hosts/:host_id/instances/:instance_number",
+             SapSystemController,
+             :delete_database_instance
 
       get "/settings", SettingsController, :settings
       post "/accept_eula", SettingsController, :accept_eula

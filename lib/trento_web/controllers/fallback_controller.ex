@@ -29,7 +29,9 @@ defmodule TrentoWeb.FallbackController do
              :host_not_registered,
              :cluster_not_registered,
              :sap_system_not_registered,
-             :database_not_registered
+             :database_not_registered,
+             :application_instance_not_registered,
+             :database_instance_not_registered
            ] do
     conn
     |> put_status(:not_found)
@@ -63,6 +65,13 @@ defmodule TrentoWeb.FallbackController do
     |> put_status(:unprocessable_entity)
     |> put_view(ErrorView)
     |> render(:"422", reason: "Requested operation not allowed for live hosts.")
+  end
+
+  def call(conn, {:error, :instance_present}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Requested operation not allowed for present SAP instances.")
   end
 
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
