@@ -28,11 +28,8 @@ const getClusterTypeLabel = (type) => {
   }
 };
 
-const getSapSystemLinkBySID = (instances, sid) => {
-  const foundInstance = instances.find((instance) => instance.sid === sid);
-
-  return foundInstance;
-};
+const getSapSystemBySID = (instances, sid) =>
+  instances.find((instance) => instance.sid === sid);
 
 const addTag = (tag, clusterId) => {
   post(`/clusters/${clusterId}/tags`, {
@@ -46,7 +43,7 @@ const removeTag = (tag, clusterId) => {
 
 function ClustersList() {
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const concatenatedInstances = useSelector(getAllInstances());
+  const allInstances = useSelector(getAllInstances());
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -84,10 +81,7 @@ function ClustersList() {
           element[key].some((sid) => filter.includes(sid)),
         render: (_, { sid, id }) =>
           sid.map((singleSid, index) => {
-            const linkData = getSapSystemLinkBySID(
-              concatenatedInstances,
-              singleSid
-            );
+            const linkData = getSapSystemBySID(allInstances, singleSid);
             return (
               <Fragment key={singleSid}>
                 <SapSystemLink
