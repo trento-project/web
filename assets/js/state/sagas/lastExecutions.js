@@ -73,9 +73,7 @@ export function* requestHostExecution({ payload }) {
   host = yield select(getHost(hostID));
   const { hostname: hostName } = host;
   try {
-    console.log('here we fail');
     yield call(triggerHostChecksExecution, hostID);
-    console.log('triggerHostChecksExecution was executed');
     yield put(setHostChecksExecutionRequested(payload));
     yield put(
       notify({
@@ -83,7 +81,8 @@ export function* requestHostExecution({ payload }) {
         icon: '🐰',
       })
     );
-   // navigate(`/hosts/${hostID}/executions/last`);
+    // TO DO
+    // navigate(`/hosts/${hostID}/executions/last`);
   } catch (error) {
     yield put(
       notify({

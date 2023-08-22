@@ -18,8 +18,6 @@ defmodule Trento.Integration.Checks do
   @spec request_execution(String.t(), String.t(), ClusterExecutionEnv.t(), [map], [String.t()]) ::
           :ok | {:error, :any}
   def request_execution(execution_id, cluster_id, env, hosts, selected_checks) do
-    IO.inspect("request_execution")
-    IO.inspect(env)
 
     execution_requested = %ExecutionRequested{
       execution_id: execution_id,
@@ -43,7 +41,6 @@ defmodule Trento.Integration.Checks do
   end
 
   def request_host_execution(execution_id, host_id, env, selected_checks) do
-    IO.inspect("request_host_execution")
 
     execution_requested = %ExecutionRequested{
       execution_id: execution_id,

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 
 import LoadingBox from '@components/LoadingBox';
 import { canStartExecution } from '@components/ChecksSelection';
@@ -65,14 +64,7 @@ function HostSettingsPage() {
     );
 
   const requestHostChecksExecution = () => {
-    const resourceType = 'host';
-    console.log(
-      'requestHostChecksExecution was clicked in HostChecksSelection'
-    );
-    dispatch(
-      hostExecutionRequested(hostID, hostSelectedChecks, resourceType, navigate)
-    );
-    console.log('DISPATCH OVER');
+    dispatch(hostExecutionRequested(hostID, hostSelectedChecks, navigate));
   };
 
   return (

@@ -12,15 +12,7 @@ export const executionRequested = (clusterID, hosts, checks, navigate) => ({
   payload: { clusterID, hosts, checks, navigate },
 });
 
-export const hostExecutionRequested = (
-  hostID,
-  checks,
-  resourceType,
-  navigate
-) => {
-  console.log('hostExecutionRequested triggered');
-  return {
-    type: HOST_EXECUTION_REQUESTED,
-    payload: { hostID, checks, resourceType, navigate },
-  };
-};
+export const hostExecutionRequested = (hostID, checks, navigate) => ({
+  type: HOST_EXECUTION_REQUESTED,
+  payload: { hostID, checks, navigate },
+});

@@ -7,9 +7,9 @@ import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { networkClient } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
+import { TARGET_HOST } from '@lib/model';
 
 import Button from '@components/Button';
-import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
@@ -18,11 +18,14 @@ import ClusterLink from '@components/ClusterLink';
 import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
+import { canStartExecution } from '@components/ChecksSelection';
+
 import SuseLogo from '@static/suse_logo.svg';
 import { getInstancesOnHost, getClusterByHost } from '@state/selectors';
+import { getHost, getHostSelectedChecks } from '@state/selectors/host';
+import { isSaving } from '@state/selectors/checksSelection';
 
-import { getHost } from '@state/selectors/host';
-
+import { hostExecutionRequested } from '@state/actions/lastExecutions';
 import { deregisterHost } from '@state/hosts';
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
@@ -40,6 +43,13 @@ function HostDetails() {
   const host = useSelector(getHost(hostID));
   const cluster = useSelector(getClusterByHost(hostID));
   const sapSystems = useSelector(getInstancesOnHost(hostID));
+
+  const hostSelectedChecks = useSelector(getHostSelectedChecks(hostID));
+  const saving = useSelector(isSaving(TARGET_HOST, hostID));
+
+  const requestHostChecksExecution = () => {
+    dispatch(hostExecutionRequested(hostID, hostSelectedChecks, navigate));
+  };
 
   // eslint-disable-next-line no-undef
   const { grafanaPublicUrl } = config;
@@ -137,18 +147,17 @@ function HostDetails() {
                 <span>Show Results</span>
               </Button>
 
-              <TriggerChecksExecutionRequest
-                cssClasses="flex rounded relative ml-0.5 disabled:bg-gray-400 disabled:text-gray-200 disabled:border-gray-400"
-                disabled
+              <Button
+                type="primary"
+                className="mx-1"
+                onClick={() => {
+                  requestHostChecksExecution();
+                }}
+                disabled={!canStartExecution(hostSelectedChecks, saving)}
               >
-                <EOS_PLAY_CIRCLE
-                  className={classNames('inline-block mr-1', {
-                    'fill-jungle-green-500': false,
-                    'fill-gray-200': true,
-                  })}
-                />{' '}
-                <span>Start Execution</span>
-              </TriggerChecksExecutionRequest>
+                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                Start Execution
+              </Button>
             </div>
           </div>
           <div className="pb-3">

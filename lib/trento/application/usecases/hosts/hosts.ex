@@ -71,9 +71,10 @@ defmodule Trento.Hosts do
     end
   end
 
+  @spec request_host_checks_execution(any) :: :ok | {:error, any} | Trento.HostReadModel.t()
   def request_host_checks_execution(host_id) do
-    IO.inspect("HOST request_checks_execution")
 
+    IO.inspect("HOST request_checks_execution")
     query =
       from(h in HostReadModel,
         where: is_nil(h.deregistered_at) and h.id == ^host_id
@@ -99,7 +100,6 @@ defmodule Trento.Hosts do
          selected_checks: selected_checks,
          provider: provider
        }) do
-    IO.inspect("maybe host checks execution")
 
     Checks.request_host_execution(
       UUID.uuid4(),

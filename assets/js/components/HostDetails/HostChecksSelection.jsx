@@ -20,9 +20,7 @@ function HostChecksSelection({
   onSaveSelection,
   hostChecksExecutionEnabled,
   onSelectedChecksChange,
-  startExecution = () => {
-    console.log('nothing happens mehhh');
-  },
+  startExecution = () => {},
 }) {
   return (
     <div className="w-full px-2 sm:px-0">
