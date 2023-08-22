@@ -11,7 +11,7 @@ import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
-import { getConcatenatedInstances } from '@state/selectors';
+import { getAllInstances } from '@state/selectors';
 
 import { get } from 'lodash';
 
@@ -46,7 +46,7 @@ const removeTag = (tag, clusterId) => {
 
 function ClustersList() {
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const concatenatedInstances = useSelector(getConcatenatedInstances());
+  const concatenatedInstances = useSelector(getAllInstances());
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 

@@ -20,7 +20,7 @@ import Tooltip from '@components/Tooltip';
 import CleanUpButton from '@components/CleanUpButton';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
-import { getConcatenatedInstances } from '@state/selectors';
+import { getAllInstances } from '@state/selectors';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
@@ -41,7 +41,7 @@ const removeTag = (tag, hostId) => {
 function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
-  const concatenatedInstances = useSelector(getConcatenatedInstances());
+  const concatenatedInstances = useSelector(getAllInstances());
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
