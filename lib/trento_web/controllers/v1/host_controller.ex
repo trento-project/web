@@ -102,7 +102,6 @@ defmodule TrentoWeb.V1.HostController do
 
   def select_checks(%{body_params: body_params} = conn, %{id: host_id}) do
     %{checks: checks} = body_params
-    IO.inspect("select checks on host")
 
     with :ok <- Hosts.select_checks(host_id, checks) do
       conn
@@ -130,8 +129,6 @@ defmodule TrentoWeb.V1.HostController do
     ]
 
   def request_host_checks_execution(conn, %{id: host_id}) do
-    IO.inspect("request_host_checks_execution")
-
     with :ok <- Hosts.request_host_checks_execution(host_id) do
       conn
       |> put_status(:accepted)

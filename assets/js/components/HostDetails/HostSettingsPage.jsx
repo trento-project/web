@@ -64,7 +64,7 @@ function HostSettingsPage() {
     );
 
   const requestHostChecksExecution = () => {
-    dispatch(hostExecutionRequested(hostID, hostSelectedChecks, navigate));
+    dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
   };
 
   return (

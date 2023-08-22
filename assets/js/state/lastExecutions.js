@@ -70,7 +70,6 @@ export const lastExecutionsSlice = createSlice({
     },
     setExecutionRequested: (state, { payload }) => {
       const { clusterID: groupID, hosts, checks } = payload;
-      console.log('setExecutionRequested');
       const targets = hosts.map((host) => ({ agent_id: host, checks }));
 
       const lastExecutionState = {
@@ -84,16 +83,17 @@ export const lastExecutionsSlice = createSlice({
       state[groupID] = lastExecutionState;
     },
     setHostChecksExecutionRequested: (state, { payload }) => {
-      const { hostID, checks, resourceType } = payload;
-      console.log(payload);
-      console.log('HostExecution Slice was activated');
-      console.log(hostID, checks, resourceType);
-
+      const { checks, host } = payload;
+      const { id: groupID } = host;
+      const targets = [{ agent_id: host, checks }];
       const lastExecutionState = {
         ...initialExecutionState,
+        data: {
+          status: REQUESTED_EXECUTION_STATE,
+          targets,
+        },
       };
-      console.log(state[hostID]);
-      state[hostID] = lastExecutionState;
+      state[groupID] = lastExecutionState;
     },
   },
 });

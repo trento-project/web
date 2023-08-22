@@ -48,7 +48,7 @@ function HostDetails() {
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
 
   const requestHostChecksExecution = () => {
-    dispatch(hostExecutionRequested(hostID, hostSelectedChecks, navigate));
+    dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
   };
 
   // eslint-disable-next-line no-undef

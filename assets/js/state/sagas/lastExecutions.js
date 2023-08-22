@@ -21,7 +21,6 @@ import {
 } from '@state/lastExecutions';
 
 import { getClusterName } from '@state/selectors/cluster';
-import { getHost } from '@state/selectors/host';
 
 export function* updateLastExecution({ payload }) {
   const { groupID } = payload;
@@ -68,10 +67,9 @@ export function* requestExecution({ payload }) {
 }
 
 export function* requestHostExecution({ payload }) {
-  console.log('requestHostExecution started and payload:', payload);
-  const { hostID, navigate } = payload;
-  host = yield select(getHost(hostID));
-  const { hostname: hostName } = host;
+  const { host } = payload;
+  const { id: hostID, hostname: hostName } = host;
+
   try {
     yield call(triggerHostChecksExecution, hostID);
     yield put(setHostChecksExecutionRequested(payload));
@@ -81,8 +79,7 @@ export function* requestHostExecution({ payload }) {
         icon: '🐰',
       })
     );
-    // TO DO
-    // navigate(`/hosts/${hostID}/executions/last`);
+    // TO DO navigate(`/hosts/${hostID}/executions/last`);
   } catch (error) {
     yield put(
       notify({
@@ -102,6 +99,5 @@ export function* watchRequestExecution() {
 }
 
 export function* watchHostRequestExecution() {
-  console.log('watchHostRequestExecution');
   yield takeEvery(HOST_EXECUTION_REQUESTED, requestHostExecution);
 }

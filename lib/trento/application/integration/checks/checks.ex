@@ -18,7 +18,6 @@ defmodule Trento.Integration.Checks do
   @spec request_execution(String.t(), String.t(), ClusterExecutionEnv.t(), [map], [String.t()]) ::
           :ok | {:error, :any}
   def request_execution(execution_id, cluster_id, env, hosts, selected_checks) do
-
     execution_requested = %ExecutionRequested{
       execution_id: execution_id,
       group_id: cluster_id,
@@ -41,15 +40,12 @@ defmodule Trento.Integration.Checks do
   end
 
   def request_host_execution(execution_id, host_id, env, selected_checks) do
-
     execution_requested = %ExecutionRequested{
       execution_id: execution_id,
       group_id: host_id,
       targets: [%Target{agent_id: host_id, checks: selected_checks}],
-      env: build_host_env(env)
+      env: build_env(env)
     }
-
-    IO.inspect(execution_requested)
 
     case Messaging.publish("executions", execution_requested) do
       :ok ->
@@ -69,7 +65,7 @@ defmodule Trento.Integration.Checks do
     }
   end
 
-  defp build_host_env(%HostExecutionEnv{provider: provider}) do
+  defp build_env(%HostExecutionEnv{provider: provider}) do
     %{
       "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
     }
