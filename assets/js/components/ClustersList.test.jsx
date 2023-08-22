@@ -143,7 +143,8 @@ describe('ClustersList component', () => {
 
       renderWithRouter(StatefulClustersList);
 
-      expect(screen.getByText('HA1, HA2')).toBeVisible();
+      expect(screen.getByText('HA1')).toBeVisible();
+      expect(screen.getByText('HA2')).toBeVisible();
     });
 
     it('should put the filters values in the query string when filters are selected', () => {

@@ -5,11 +5,13 @@ import Tags from '@components/Tags';
 import PageHeader from '@components/PageHeader';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
+import SapSystemLink from '@components/SapSystemLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
 import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
+import { getAllSAPInstances } from '@state/selectors';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {
@@ -24,6 +26,9 @@ const getClusterTypeLabel = (type) => {
   }
 };
 
+const getSapSystemBySID = (instances, sid) =>
+  instances.find((instance) => instance.sid === sid);
+
 const addTag = (tag, clusterId) => {
   post(`/clusters/${clusterId}/tags`, {
     value: tag,
@@ -36,6 +41,7 @@ const removeTag = (tag, clusterId) => {
 
 function ClustersList() {
   const clusters = useSelector((state) => state.clustersList.clusters);
+  const allInstances = useSelector(getAllSAPInstances());
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -71,7 +77,24 @@ function ClustersList() {
         filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
-        render: (_, { sid }) => sid.join(', '),
+        render: (_, { sid, id }) => {
+          const sidsArray = sid.map((singleSid, index) => {
+            const sapSystemData = getSapSystemBySID(allInstances, singleSid);
+
+            return [
+              index > 0 && ', ',
+              <SapSystemLink
+                key={`${id}-${singleSid}`}
+                systemType={sapSystemData?.type}
+                sapSystemId={sapSystemData?.sap_system_id}
+              >
+                {singleSid}
+              </SapSystemLink>,
+            ];
+          });
+
+          return sidsArray;
+        },
       },
       {
         title: 'Hosts',
