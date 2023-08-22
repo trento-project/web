@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, fireEvent as userEvent } from '@testing-library/react';
+import { act, screen, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
 import { sapSystemFactory } from '@lib/test-utils/factories';
@@ -21,13 +22,16 @@ describe('SapSystemLink', () => {
     expect(sapSystemLinkElement).toHaveAttribute('href', `/databases/${id}`);
   });
 
-  it('renders tooltip when sapSystemId or systemType are not provided', () => {
+  it('renders tooltip when sapSystemId or systemType are not provided', async () => {
+    const user = userEvent.setup();
     const { sid } = sapSystemFactory.build();
 
     render(<SapSystemLink>{sid}</SapSystemLink>);
 
     const sidElement = screen.getByText(sid);
-    userEvent.mouseOver(sidElement);
+
+    await act(async () => user.hover(sidElement));
+
     expect(
       screen.getByText('SAP System currently not registered.')
     ).toBeInTheDocument();
