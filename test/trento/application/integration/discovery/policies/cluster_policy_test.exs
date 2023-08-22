@@ -10,7 +10,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
 
   alias Trento.Integration.Discovery.ClusterPolicy
 
-  alias Trento.Domain.Commands.{DeregisterClusterHost, RegisterClusterHost}
+  alias Trento.Domain.Commands.{DeregisterClusterHost, MarkClusterHostAbsent, RegisterClusterHost}
 
   alias Trento.Domain.{
     AscsErsClusterDetails,
@@ -1296,7 +1296,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
 
       {:ok,
        [
-         %DeregisterClusterHost{cluster_id: ^current_cluster_id},
+         %MarkClusterHostAbsent{cluster_id: ^current_cluster_id},
          %RegisterClusterHost{cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4"}
        ]} =
         "ha_cluster_discovery_hana_scale_up"
@@ -1304,12 +1304,12 @@ defmodule Trento.Integration.Discovery.ClusterPolicyTest do
         |> ClusterPolicy.handle(current_cluster_id)
     end
 
-    test "should deregister the host from the current cluster" do
+    test "should mark the host as absent from the current cluster" do
       current_cluster_id = UUID.uuid4()
 
       {:ok,
        [
-         %DeregisterClusterHost{cluster_id: ^current_cluster_id}
+         %MarkClusterHostAbsent{cluster_id: ^current_cluster_id}
        ]} =
         "ha_cluster_discovery_unclustered"
         |> load_discovery_event_fixture()

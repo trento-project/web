@@ -33,6 +33,7 @@ defmodule Trento.ClusterReadModel do
     field :cib_last_written, :string, virtual: true
 
     field :deregistered_at, :utc_datetime_usec
+    field :absent, :utc_datetime_usec
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

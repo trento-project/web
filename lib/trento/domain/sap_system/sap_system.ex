@@ -60,6 +60,8 @@ defmodule Trento.Domain.SapSystem do
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
+    MarkApplicationInstanceAbsent,
+    MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
     RegisterDatabaseInstance,
     RollUpSapSystem
@@ -68,12 +70,14 @@ defmodule Trento.Domain.SapSystem do
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
+    ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
+    DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
@@ -298,6 +302,46 @@ defmodule Trento.Domain.SapSystem do
         _
       ) do
     {:error, :sap_system_not_registered}
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = sap_system,
+        %MarkDatabaseInstanceAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent: absent
+        }
+      ) do
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %DatabaseInstanceMarkedAbsent{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        absent: absent
+      }
+    end)
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = sap_system,
+        %MarkApplicationInstanceAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent: absent
+        }
+      ) do
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %ApplicationInstanceMarkedAbsent{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        absent: absent
+      }
+    end)
   end
 
   # Deregister a database instance and emit a DatabaseInstanceDeregistered
@@ -618,6 +662,64 @@ defmodule Trento.Domain.SapSystem do
         snapshot: snapshot
       }) do
     snapshot
+  end
+
+  def apply(
+        %SapSystem{database: %Database{instances: instances} = database} = sap_system,
+        %DatabaseInstanceMarkedAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent: absent
+        }
+      ) do
+    instances =
+      Enum.map(
+        instances,
+        fn instance ->
+          if instance.instance_number == instance_number and instance.host_id == host_id do
+            %Instance{instance | absent: absent}
+          else
+            instance
+          end
+        end
+      )
+
+    %SapSystem{
+      sap_system
+      | database: %Database{
+          database
+          | instances: instances
+        }
+    }
+  end
+
+  def apply(
+        %SapSystem{application: %Application{instances: instances} = application} = sap_system,
+        %ApplicationInstanceMarkedAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent: absent
+        }
+      ) do
+    instances =
+      Enum.map(
+        instances,
+        fn instance ->
+          if instance.instance_number == instance_number and instance.host_id == host_id do
+            %Instance{instance | absent: absent}
+          else
+            instance
+          end
+        end
+      )
+
+    %SapSystem{
+      sap_system
+      | application: %Application{
+          application
+          | instances: instances
+        }
+    }
   end
 
   def apply(

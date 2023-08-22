@@ -17,5 +17,6 @@ defmodule Trento.Domain.SapSystem.Instance do
     field :health, Ecto.Enum, values: Health.values()
     field :system_replication, :string
     field :system_replication_status, :string
+    field :absent, :utc_datetime_usec
   end
 end

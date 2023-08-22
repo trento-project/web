@@ -70,6 +70,7 @@ defmodule Trento.Domain.Cluster do
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
+    MarkClusterHostAbsent,
     RegisterClusterHost,
     RollUpCluster,
     SelectChecks
@@ -85,6 +86,7 @@ defmodule Trento.Domain.Cluster do
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
+    ClusterHostMarkedAbsent,
     ClusterRegistered,
     ClusterRestored,
     ClusterRolledUp,
@@ -121,6 +123,7 @@ defmodule Trento.Domain.Cluster do
     field :selected_checks, {:array, :string}, default: []
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
+    field :absent, :utc_datetime_usec, default: nil
 
     field :details, PolymorphicEmbed,
       types: [
@@ -323,6 +326,25 @@ defmodule Trento.Domain.Cluster do
 
   def execute(
         %Cluster{cluster_id: cluster_id} = cluster,
+        %MarkClusterHostAbsent{
+          host_id: host_id,
+          cluster_id: cluster_id,
+          absent: absent
+        }
+      ) do
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %ClusterHostMarkedAbsent{
+        host_id: host_id,
+        cluster_id: cluster_id,
+        absent: absent
+      }
+    end)
+  end
+
+  def execute(
+        %Cluster{cluster_id: cluster_id} = cluster,
         %DeregisterClusterHost{
           host_id: host_id,
           cluster_id: cluster_id
@@ -458,6 +480,10 @@ defmodule Trento.Domain.Cluster do
     %Cluster{cluster | hosts: List.delete(hosts, host_id)}
   end
 
+  def apply(%Cluster{} = cluster, %ClusterHostMarkedAbsent{absent: absent}) do
+    %Cluster{cluster | absent: absent}
+  end
+
   # Deregistration
   def apply(%Cluster{} = cluster, %ClusterDeregistered{deregistered_at: deregistered_at}) do
     %Cluster{cluster | deregistered_at: deregistered_at}
@@ -465,7 +491,7 @@ defmodule Trento.Domain.Cluster do
 
   # Restoration
   def apply(%Cluster{} = cluster, %ClusterRestored{}) do
-    %Cluster{cluster | deregistered_at: nil}
+    %Cluster{cluster | absent: nil, deregistered_at: nil}
   end
 
   def apply(cluster, %legacy_event{}) when legacy_event in @legacy_events, do: cluster

@@ -150,6 +150,21 @@ defmodule TrentoWeb.V1.SapSystemView do
 
   def render("database_deregistered.json", %{id: id, sid: sid}), do: %{id: id, sid: sid}
 
+  def render("instance_marked_absent.json", %{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        absent: absent
+      }),
+      do: %{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        absent: absent
+      }
+
   def render("instance_deregistered.json", %{
         sap_system_id: id,
         instance_number: instance_number,

@@ -8,10 +8,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
-  alias Trento.Domain.Commands.{
-    DeregisterClusterHost,
-    RegisterClusterHost
-  }
+  alias Trento.Domain.Commands.{MarkClusterHostAbsent, RegisterClusterHost}
 
   alias Trento.Integration.Discovery.ClusterDiscoveryPayload
 
@@ -64,10 +61,10 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
 
   defp build_deregister_cluster_host_command(agent_id, cluster_id, current_cluster_id) do
     if generate_cluster_id(cluster_id) != current_cluster_id do
-      DeregisterClusterHost.new!(%{
+      MarkClusterHostAbsent.new!(%{
         host_id: agent_id,
         cluster_id: current_cluster_id,
-        deregistered_at: DateTime.utc_now()
+        absent: DateTime.utc_now()
       })
     end
   end
