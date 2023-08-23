@@ -40,10 +40,13 @@ defmodule Trento.Integration.Checks do
   end
 
   def request_host_execution(execution_id, host_id, env, selected_checks) do
+    # target_type = "host"
+
     execution_requested = %ExecutionRequested{
       execution_id: execution_id,
       group_id: host_id,
       targets: [%Target{agent_id: host_id, checks: selected_checks}],
+      # target_type: target_type,
       env: build_env(env)
     }
 

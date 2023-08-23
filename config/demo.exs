@@ -15,6 +15,9 @@ config :trento, Trento.Scheduler,
     clusters_checks_execution: [
       schedule: {:extended, "@hourly"}
     ],
+    hosts_checks_execution: [
+      schedule: {:extended, "@hourly"}
+    ],
     heartbeat_fake: [
       schedule: {:extended, "*/5"},
       task: {Trento.Heartbeats.Faker, :send_heartbeats, []},

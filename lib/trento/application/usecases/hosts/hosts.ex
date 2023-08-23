@@ -69,6 +69,29 @@ defmodule Trento.Hosts do
     end
   end
 
+
+
+  def request_hosts_checks_execution do
+    query = from(h in HostReadModel,
+        select: h.id,
+        where: is_nil(h.deregistered_at)
+      )
+    IO.inspect(query)
+    query
+    |> Repo.all()
+    |> Enum.each(fn id->
+      case request_host_checks_execution(id) do
+        :ok ->
+          :ok
+
+        {:error, reason} ->
+          Logger.error(
+            "Failed to request host checks execution, host: #{id}, reason: #{reason}"
+          )
+      end
+    end)
+  end
+
   @spec request_host_checks_execution(any) :: :ok | {:error, any} | Trento.HostReadModel.t()
   def request_host_checks_execution(host_id) do
     query =

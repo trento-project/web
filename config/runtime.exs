@@ -135,8 +135,10 @@ if config_env() in [:prod, :demo] do
   config :trento, Trento.Scheduler,
     jobs: [
       clusters_checks_execution: [
-        # Runs every five minutes by default
         schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
+      ],
+      hosts_checks_execution: [
+        schedule: "*/#{System.get_env("CHECKS_INTERVAL", "1")} * * * *"
       ]
     ]
 
