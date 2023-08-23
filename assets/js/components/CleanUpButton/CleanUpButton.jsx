@@ -5,11 +5,13 @@ import { EOS_CLEANING_SERVICES } from 'eos-icons-react';
 import Button from '@components/Button';
 import Spinner from '@components/Spinner';
 
-function CleanUpButton({ cleaning, onClick }) {
+function CleanUpButton({ cleaning, onClick, className = '' }) {
+  const baseClasses = 'inline-block mx-0.5 border-green-500 border w-fit';
+
   return (
     <Button
       type="primary-white"
-      className="inline-block mx-0.5 border-green-500 border w-fit"
+      className={`${baseClasses} ${className}`}
       size="small"
       disabled={cleaning}
       onClick={() => onClick()}
