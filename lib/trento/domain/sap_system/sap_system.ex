@@ -305,21 +305,14 @@ defmodule Trento.Domain.SapSystem do
   def execute(
         %SapSystem{sap_system_id: sap_system_id} = sap_system,
         %DeregisterDatabaseInstance{
-          instance_number: instance_number,
-          host_id: host_id,
           sap_system_id: sap_system_id,
           deregistered_at: deregistered_at
-        }
+        } = instance
       ) do
     sap_system
     |> Multi.new()
     |> Multi.execute(fn _ ->
-      %DatabaseInstanceDeregistered{
-        sap_system_id: sap_system_id,
-        host_id: host_id,
-        instance_number: instance_number,
-        deregistered_at: deregistered_at
-      }
+      maybe_emit_database_instance_deregistered_event(sap_system, instance)
     end)
     |> Multi.execute(fn sap_system ->
       maybe_emit_database_deregistered_event(sap_system, deregistered_at)
@@ -337,21 +330,14 @@ defmodule Trento.Domain.SapSystem do
           sap_system_id: sap_system_id
         } = sap_system,
         %DeregisterApplicationInstance{
-          instance_number: instance_number,
           sap_system_id: sap_system_id,
-          host_id: host_id,
           deregistered_at: deregistered_at
-        }
+        } = instance
       ) do
     sap_system
     |> Multi.new()
     |> Multi.execute(fn _ ->
-      %ApplicationInstanceDeregistered{
-        sap_system_id: sap_system_id,
-        instance_number: instance_number,
-        host_id: host_id,
-        deregistered_at: deregistered_at
-      }
+      maybe_emit_application_instance_deregistered_event(sap_system, instance)
     end)
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_deregistered_event(
@@ -1031,6 +1017,76 @@ defmodule Trento.Domain.SapSystem do
         sap_system_id: sap_system_id,
         health: new_health
       }
+    end
+  end
+
+  defp maybe_emit_database_instance_deregistered_event(
+         %SapSystem{database: nil},
+         %DeregisterDatabaseInstance{}
+       ),
+       do: {:error, :database_instance_not_registered}
+
+  defp maybe_emit_database_instance_deregistered_event(
+         %SapSystem{database: %Database{instances: []}},
+         %DeregisterDatabaseInstance{}
+       ),
+       do: {:error, :database_instance_not_registered}
+
+  defp maybe_emit_database_instance_deregistered_event(
+         %SapSystem{database: %Database{instances: instances}},
+         %DeregisterDatabaseInstance{
+           sap_system_id: sap_system_id,
+           host_id: host_id,
+           instance_number: instance_number,
+           deregistered_at: deregistered_at
+         }
+       ) do
+    case get_instance(instances, host_id, instance_number) do
+      nil ->
+        {:error, :database_instance_not_registered}
+
+      _ ->
+        %DatabaseInstanceDeregistered{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        }
+    end
+  end
+
+  defp maybe_emit_application_instance_deregistered_event(
+         %SapSystem{application: nil},
+         %DeregisterApplicationInstance{}
+       ),
+       do: {:error, :application_instance_not_registered}
+
+  defp maybe_emit_application_instance_deregistered_event(
+         %SapSystem{application: %Application{instances: []}},
+         %DeregisterApplicationInstance{}
+       ),
+       do: {:error, :application_instance_not_registered}
+
+  defp maybe_emit_application_instance_deregistered_event(
+         %SapSystem{application: %Application{instances: instances}},
+         %DeregisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           host_id: host_id,
+           instance_number: instance_number,
+           deregistered_at: deregistered_at
+         }
+       ) do
+    case get_instance(instances, host_id, instance_number) do
+      nil ->
+        {:error, :application_instance_not_registered}
+
+      _ ->
+        %ApplicationInstanceDeregistered{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        }
     end
   end
 

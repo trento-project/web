@@ -2923,8 +2923,6 @@ defmodule Trento.SapSystemTest do
       commands_to_accept = [
         build(:register_database_instance_command),
         build(:register_application_instance_command),
-        build(:deregister_database_instance_command, sap_system_id: sap_system_id),
-        build(:deregister_application_instance_command, sap_system_id: sap_system_id),
         build(:rollup_sap_system_command)
       ]
 
@@ -4032,6 +4030,174 @@ defmodule Trento.SapSystemTest do
             deregistered_at: deregistered_at
           }
         ]
+      )
+    end
+
+    test "should not deregister a not registered application instance" do
+      sap_system_id = UUID.uuid4()
+      db_sid = fake_sid()
+
+      assert_error(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid,
+            host_id: UUID.uuid4(),
+            instance_number: "00",
+            system_replication: "Primary"
+          )
+        ],
+        [
+          %DeregisterApplicationInstance{
+            sap_system_id: sap_system_id,
+            host_id: UUID.uuid4(),
+            instance_number: "01",
+            deregistered_at: DateTime.utc_now()
+          }
+        ],
+        {:error, :application_instance_not_registered}
+      )
+    end
+
+    test "should not deregister an already deregistered application instance" do
+      sap_system_id = UUID.uuid4()
+      db_sid = fake_sid()
+      application_sid = fake_sid()
+      deregistered_host_id = UUID.uuid4()
+      deregistered_instance_number = "02"
+
+      assert_error(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid,
+            host_id: UUID.uuid4(),
+            instance_number: "00",
+            system_replication: "Primary"
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "MESSAGESERVER|ENQUE",
+            sid: application_sid,
+            host_id: UUID.uuid4(),
+            instance_number: "01"
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "ABAP|GATEWAY|ICMAN|IGS",
+            sid: application_sid,
+            host_id: deregistered_host_id,
+            instance_number: deregistered_instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id,
+            sid: application_sid
+          ),
+          build(
+            :application_instance_deregistered_event,
+            sap_system_id: sap_system_id,
+            host_id: deregistered_host_id,
+            instance_number: deregistered_instance_number,
+            deregistered_at: DateTime.utc_now()
+          )
+        ],
+        [
+          %DeregisterApplicationInstance{
+            sap_system_id: sap_system_id,
+            host_id: deregistered_host_id,
+            instance_number: deregistered_instance_number,
+            deregistered_at: DateTime.utc_now()
+          }
+        ],
+        {:error, :application_instance_not_registered}
+      )
+    end
+
+    test "should not deregister a not registered database instance" do
+      sap_system_id = UUID.uuid4()
+      db_sid = fake_sid()
+
+      assert_error(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid,
+            host_id: UUID.uuid4(),
+            instance_number: "00",
+            system_replication: "Primary"
+          )
+        ],
+        [
+          %DeregisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: UUID.uuid4(),
+            instance_number: "01",
+            deregistered_at: DateTime.utc_now()
+          }
+        ],
+        {:error, :database_instance_not_registered}
+      )
+    end
+
+    test "should not deregister an already deregistered database instance" do
+      sap_system_id = UUID.uuid4()
+      db_sid = fake_sid()
+      deregistered_host_id = UUID.uuid4()
+      deregistered_instance_number = "01"
+
+      assert_error(
+        [
+          build(
+            :database_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid
+          ),
+          build(
+            :database_instance_registered_event,
+            sap_system_id: sap_system_id,
+            sid: db_sid,
+            host_id: deregistered_host_id,
+            instance_number: deregistered_instance_number,
+            system_replication: "Primary"
+          ),
+          build(
+            :database_instance_deregistered_event,
+            sap_system_id: sap_system_id,
+            host_id: deregistered_host_id,
+            instance_number: deregistered_instance_number,
+            deregistered_at: DateTime.utc_now()
+          )
+        ],
+        [
+          %DeregisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: deregistered_host_id,
+            instance_number: deregistered_instance_number,
+            deregistered_at: DateTime.utc_now()
+          }
+        ],
+        {:error, :database_instance_not_registered}
       )
     end
   end
