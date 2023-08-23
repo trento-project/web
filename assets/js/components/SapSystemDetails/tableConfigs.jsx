@@ -1,6 +1,7 @@
 import React from 'react';
 
 import HostLink from '@components/HostLink';
+import ProviderLabel from '@components/ProviderLabel';
 
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';
@@ -47,6 +48,7 @@ export const systemHostsTableConfiguration = {
     {
       title: 'Provider',
       key: 'provider',
+      render: (content) => content && <ProviderLabel provider={content} />,
     },
     {
       title: 'Cluster',
