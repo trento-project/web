@@ -1020,41 +1020,6 @@ defmodule Trento.Domain.SapSystem do
     end
   end
 
-  defp maybe_emit_application_instance_deregistered_event(
-         %SapSystem{application: nil},
-         %DeregisterApplicationInstance{}
-       ),
-       do: {:error, :application_instance_not_registered}
-
-  defp maybe_emit_application_instance_deregistered_event(
-         %SapSystem{application: %Application{instances: []}},
-         %DeregisterApplicationInstance{}
-       ),
-       do: {:error, :application_instance_not_registered}
-
-  defp maybe_emit_application_instance_deregistered_event(
-         %SapSystem{application: %Application{instances: instances}},
-         %DeregisterApplicationInstance{
-           sap_system_id: sap_system_id,
-           host_id: host_id,
-           instance_number: instance_number,
-           deregistered_at: deregistered_at
-         }
-       ) do
-    case get_instance(instances, host_id, instance_number) do
-      nil ->
-        {:error, :application_instance_not_registered}
-
-      _ ->
-        %ApplicationInstanceDeregistered{
-          sap_system_id: sap_system_id,
-          instance_number: instance_number,
-          host_id: host_id,
-          deregistered_at: deregistered_at
-        }
-    end
-  end
-
   defp maybe_emit_database_instance_deregistered_event(
          %SapSystem{database: nil},
          %DeregisterDatabaseInstance{}
@@ -1082,6 +1047,41 @@ defmodule Trento.Domain.SapSystem do
 
       _ ->
         %DatabaseInstanceDeregistered{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        }
+    end
+  end
+
+  defp maybe_emit_application_instance_deregistered_event(
+         %SapSystem{application: nil},
+         %DeregisterApplicationInstance{}
+       ),
+       do: {:error, :application_instance_not_registered}
+
+  defp maybe_emit_application_instance_deregistered_event(
+         %SapSystem{application: %Application{instances: []}},
+         %DeregisterApplicationInstance{}
+       ),
+       do: {:error, :application_instance_not_registered}
+
+  defp maybe_emit_application_instance_deregistered_event(
+         %SapSystem{application: %Application{instances: instances}},
+         %DeregisterApplicationInstance{
+           sap_system_id: sap_system_id,
+           host_id: host_id,
+           instance_number: instance_number,
+           deregistered_at: deregistered_at
+         }
+       ) do
+    case get_instance(instances, host_id, instance_number) do
+      nil ->
+        {:error, :application_instance_not_registered}
+
+      _ ->
+        %ApplicationInstanceDeregistered{
           sap_system_id: sap_system_id,
           instance_number: instance_number,
           host_id: host_id,
