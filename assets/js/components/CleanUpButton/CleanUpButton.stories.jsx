@@ -13,6 +13,13 @@ export default {
       },
     },
     onClick: { action: 'Click button' },
+    className: {
+      control: 'text',
+      description: 'CSS classes',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
   },
 };
 
@@ -24,5 +31,12 @@ export const Cleaning = {
   args: {
     ...Default.args,
     cleaning: true,
+  },
+};
+
+export const NoOutline = {
+  args: {
+    ...Default.args,
+    className: 'border-none shadow-none',
   },
 };
