@@ -73,7 +73,7 @@ defmodule Trento.SapSystems do
            host_id: host_id,
            instance_number: instance_number
          ) do
-      %ApplicationInstanceReadModel{absent: nil} ->
+      %ApplicationInstanceReadModel{absent_at: nil} ->
         {:error, :instance_present}
 
       _ ->
@@ -101,7 +101,7 @@ defmodule Trento.SapSystems do
            host_id: host_id,
            instance_number: instance_number
          ) do
-      %DatabaseInstanceReadModel{absent: nil} ->
+      %DatabaseInstanceReadModel{absent_at: nil} ->
         {:error, :instance_present}
 
       _ ->

@@ -477,7 +477,7 @@ defmodule Trento.Factory do
       system_replication: "",
       system_replication_status: "",
       health: Health.unknown(),
-      absent: nil
+      absent_at: nil
     }
   end
 
@@ -494,7 +494,7 @@ defmodule Trento.Factory do
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
       health: Health.unknown(),
-      absent: nil
+      absent_at: nil
     }
   end
 

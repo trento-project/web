@@ -149,7 +149,7 @@ defmodule Trento.SapSystemsTest do
 
     test "should not delete a not absent application instance" do
       %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
-        insert(:application_instance_without_host, absent: nil)
+        insert(:application_instance_without_host, absent_at: nil)
 
       assert {:error, :instance_present} =
                SapSystems.deregister_application_instance(
@@ -199,7 +199,7 @@ defmodule Trento.SapSystemsTest do
 
     test "should not delete a not absent database instance" do
       %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
-        insert(:database_instance_without_host, absent: nil)
+        insert(:database_instance_without_host, absent_at: nil)
 
       assert {:error, :instance_present} =
                SapSystems.deregister_database_instance(
