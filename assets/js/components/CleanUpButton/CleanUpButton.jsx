@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Button from '@components/Button';
 import Spinner from '@components/Spinner';
 
-function CleanUpButton({ cleaning, onClick, className }) {
+function CleanUpButton({ className, size = 'small', cleaning, onClick }) {
   const buttonClasses = classNames(
     'inline-block mx-0.5 border-green-500 border w-fit',
     className
@@ -16,7 +16,7 @@ function CleanUpButton({ cleaning, onClick, className }) {
     <Button
       type="primary-white"
       className={buttonClasses}
-      size="small"
+      size={size}
       disabled={cleaning}
       onClick={() => onClick()}
     >
