@@ -15,10 +15,10 @@ export const databasesListSlice = createSlice({
   name: 'databasesList',
   initialState,
   reducers: {
-    setDatabases: (state, { payload }) => {
-      state.databases = payload;
+    setDatabases: (state, { payload: databases }) => {
+      state.databases = databases;
 
-      state.databaseInstances = payload.flatMap(
+      state.databaseInstances = databases.flatMap(
         (database) => database.database_instances
       );
     },
@@ -28,8 +28,8 @@ export const databasesListSlice = createSlice({
     stopDatabasesLoading: (state) => {
       state.loading = false;
     },
-    appendDatabase: (state, action) => {
-      state.databases = [...state.databases, action.payload];
+    appendDatabase: (state, { payload: newDatabase }) => {
+      state.databases = [...state.databases, newDatabase];
     },
     removeDatabase: (state, { payload: { id } }) => {
       state.databases = state.databases.filter(
@@ -39,57 +39,58 @@ export const databasesListSlice = createSlice({
         (databaseInstance) => databaseInstance.sap_system_id !== id
       );
     },
-    updateDatabaseHealth: (state, action) => {
+    updateDatabaseHealth: (state, { payload: { id, health } }) => {
       state.databases = state.databases.map((database) => {
-        if (database.id === action.payload.id) {
-          database.health = action.payload.health;
+        if (database.id === id) {
+          database.health = health;
         }
         return database;
       });
     },
-    addTagToDatabase: (state, action) => {
+    addTagToDatabase: (state, { payload: { id, tags } }) => {
       state.databases = state.databases.map((database) => {
-        if (database.id === action.payload.id) {
-          database.tags = [...database.tags, ...action.payload.tags];
+        if (database.id === id) {
+          database.tags = [...database.tags, ...tags];
         }
         return database;
       });
     },
-    removeTagFromDatabase: (state, action) => {
+    removeTagFromDatabase: (state, { payload: { id, tags } }) => {
       state.databases = state.databases.map((database) => {
-        if (database.id === action.payload.id) {
+        if (database.id === id) {
           database.tags = database.tags.filter(
-            (tag) => tag.value !== action.payload.tags[0].value
+            (tag) => tag.value !== tags[0].value
           );
         }
         return database;
       });
     },
-    upsertDatabaseInstances: (state, action) => {
+    upsertDatabaseInstances: (state, { payload: instances }) => {
       state.databaseInstances = upsertInstances(
         state.databaseInstances,
-        action.payload
+        instances
       );
     },
-    removeDatabaseInstance: (state, { payload }) => {
+    removeDatabaseInstance: (state, { payload: instance }) => {
       state.databaseInstances = state.databaseInstances.filter(
-        (databaseInstance) => !payloadMatchesInstance(databaseInstance, payload)
+        (databaseInstance) =>
+          !payloadMatchesInstance(databaseInstance, instance)
       );
     },
-    updateDatabaseInstanceHealth: (state, { payload }) => {
+    updateDatabaseInstanceHealth: (state, { payload: instance }) => {
       state.databaseInstances = updateInstance(
         state.databaseInstances,
-        payload,
-        { health: payload.health }
+        instance,
+        { health: instance.health }
       );
     },
-    updateDatabaseInstanceSystemReplication: (state, { payload }) => {
+    updateDatabaseInstanceSystemReplication: (state, { payload: instance }) => {
       state.databaseInstances = updateInstance(
         state.databaseInstances,
-        payload,
+        instance,
         {
-          system_replication: payload.system_replication,
-          system_replication_status: payload.system_replication_status,
+          system_replication: instance.system_replication,
+          system_replication_status: instance.system_replication_status,
         }
       );
     },

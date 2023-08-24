@@ -82,13 +82,13 @@ describe('Databases reducer', () => {
       databaseInstances: [instance],
     };
 
-    const payload = {
+    const instanceToUpdate = {
       sap_system_id: instance.sap_system_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
       health: newHealth,
     };
-    const action = updateDatabaseInstanceHealth(payload);
+    const action = updateDatabaseInstanceHealth(instanceToUpdate);
 
     const expectedState = {
       databaseInstances: [{ ...instance, health: newHealth }],
@@ -106,13 +106,13 @@ describe('Databases reducer', () => {
       databaseInstances: [instance],
     };
 
-    const payload = {
+    const instanceToUpdate = {
       ...instance,
       system_replication: newSystemReplication,
       system_replication_status: newStatus,
     };
 
-    const action = updateDatabaseInstanceSystemReplication(payload);
+    const action = updateDatabaseInstanceSystemReplication(instanceToUpdate);
 
     const expectedState = {
       databaseInstances: [

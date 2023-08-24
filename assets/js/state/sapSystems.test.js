@@ -91,13 +91,13 @@ describe('SAP Systems reducer', () => {
     };
 
     const newHostId = faker.datatype.uuid();
-    const payload = {
+    const instanceToUpdate = {
       sap_system_id: instance.sap_system_id,
       instance_number: instance.instance_number,
       old_host_id: instance.host_id,
       new_host_id: newHostId,
     };
-    const action = updateApplicationInstanceHost(payload);
+    const action = updateApplicationInstanceHost(instanceToUpdate);
 
     const state = sapSystemsReducer(initialState, action);
     expect(state.applicationInstances[0].host_id).toEqual(newHostId);
@@ -111,13 +111,13 @@ describe('SAP Systems reducer', () => {
       applicationInstances: [instance],
     };
 
-    const payload = {
+    const instanceToUpdate = {
       sap_system_id: instance.sap_system_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
       health: newHealth,
     };
-    const action = updateApplicationInstanceHealth(payload);
+    const action = updateApplicationInstanceHealth(instanceToUpdate);
 
     const expectedState = {
       applicationInstances: [{ ...instance, health: newHealth }],
@@ -134,13 +134,13 @@ describe('SAP Systems reducer', () => {
       databaseInstances: [instance],
     };
 
-    const payload = {
+    const instanceToUpdate = {
       sap_system_id: instance.sap_system_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
       health: newHealth,
     };
-    const action = updateSAPSystemDatabaseInstanceHealth(payload);
+    const action = updateSAPSystemDatabaseInstanceHealth(instanceToUpdate);
 
     const expectedState = {
       databaseInstances: [{ ...instance, health: newHealth }],
@@ -158,13 +158,14 @@ describe('SAP Systems reducer', () => {
       databaseInstances: [instance],
     };
 
-    const payload = {
+    const instanceToUpdate = {
       ...instance,
       system_replication: newSystemReplication,
       system_replication_status: newStatus,
     };
 
-    const action = updateSAPSystemDatabaseInstanceSystemReplication(payload);
+    const action =
+      updateSAPSystemDatabaseInstanceSystemReplication(instanceToUpdate);
 
     const expectedState = {
       databaseInstances: [
