@@ -3,7 +3,11 @@ import sapSystemsReducer, {
   upsertDatabaseInstancesToSapSystem,
   upsertApplicationInstances,
   updateApplicationInstanceHost,
+  updateApplicationInstanceHealth,
+  updateSAPSystemDatabaseInstanceHealth,
+  updateSAPSystemDatabaseInstanceSystemReplication,
   removeApplicationInstance,
+  removeDatabaseInstanceFromSapSystem,
   updateSAPSystem,
 } from '@state/sapSystems';
 import {
@@ -52,43 +56,6 @@ describe('SAP Systems reducer', () => {
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
   });
 
-  it('should change the host of an application instance', () => {
-    const instance = sapSystemApplicationInstanceFactory.build();
-
-    const initialState = {
-      applicationInstances: [instance],
-    };
-
-    const newHostId = faker.datatype.uuid();
-    const payload = {
-      sap_system_id: instance.sap_system_id,
-      instance_number: instance.instance_number,
-      old_host_id: instance.host_id,
-      new_host_id: newHostId,
-    };
-    const action = updateApplicationInstanceHost(payload);
-
-    const state = sapSystemsReducer(initialState, action);
-    expect(state.applicationInstances[0].host_id).toEqual(newHostId);
-  });
-
-  it('should remove an application instance from state', () => {
-    const [instance1, instance2] =
-      sapSystemApplicationInstanceFactory.buildList(2);
-
-    const initialState = {
-      applicationInstances: [instance1, instance2],
-    };
-
-    const action = removeApplicationInstance(instance1);
-
-    const expectedState = {
-      applicationInstances: [instance2],
-    };
-
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
   it('should update a SAP system data', () => {
     const changedIndex = 2;
     const sapSystems = sapSystemFactory.buildList(5);
@@ -111,6 +78,135 @@ describe('SAP Systems reducer', () => {
 
     const expectedState = {
       sapSystems: expectedSapSystems,
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should change the host of an application instance', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const newHostId = faker.datatype.uuid();
+    const payload = {
+      sap_system_id: instance.sap_system_id,
+      instance_number: instance.instance_number,
+      old_host_id: instance.host_id,
+      new_host_id: newHostId,
+    };
+    const action = updateApplicationInstanceHost(payload);
+
+    const state = sapSystemsReducer(initialState, action);
+    expect(state.applicationInstances[0].host_id).toEqual(newHostId);
+  });
+
+  it('should update the health of an application instance', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+    const newHealth = 'newHealth';
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const payload = {
+      sap_system_id: instance.sap_system_id,
+      instance_number: instance.instance_number,
+      host_id: instance.host_id,
+      health: newHealth,
+    };
+    const action = updateApplicationInstanceHealth(payload);
+
+    const expectedState = {
+      applicationInstances: [{ ...instance, health: newHealth }],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the health of a database instance', () => {
+    const instance = databaseInstanceFactory.build();
+    const newHealth = 'newHealth';
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const payload = {
+      sap_system_id: instance.sap_system_id,
+      instance_number: instance.instance_number,
+      host_id: instance.host_id,
+      health: newHealth,
+    };
+    const action = updateSAPSystemDatabaseInstanceHealth(payload);
+
+    const expectedState = {
+      databaseInstances: [{ ...instance, health: newHealth }],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the system replication data of a database instance', () => {
+    const instance = databaseInstanceFactory.build();
+    const newSystemReplication = 'newSR';
+    const newStatus = 'newStatus';
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const payload = {
+      ...instance,
+      system_replication: newSystemReplication,
+      system_replication_status: newStatus,
+    };
+
+    const action = updateSAPSystemDatabaseInstanceSystemReplication(payload);
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          system_replication: newSystemReplication,
+          system_replication_status: newStatus,
+        },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should remove an application instance from state', () => {
+    const [instance1, instance2] =
+      sapSystemApplicationInstanceFactory.buildList(2);
+
+    const initialState = {
+      applicationInstances: [instance1, instance2],
+    };
+
+    const action = removeApplicationInstance(instance1);
+
+    const expectedState = {
+      applicationInstances: [instance2],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should remove an database instance from state', () => {
+    const [instance1, instance2] = databaseInstanceFactory.buildList(2);
+
+    const initialState = {
+      databaseInstances: [instance1, instance2],
+    };
+
+    const action = removeDatabaseInstanceFromSapSystem(instance1);
+
+    const expectedState = {
+      databaseInstances: [instance2],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
