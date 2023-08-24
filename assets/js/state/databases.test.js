@@ -4,6 +4,8 @@ import databaseReducer, {
   upsertDatabaseInstances,
   updateDatabaseInstanceHealth,
   updateDatabaseInstanceSystemReplication,
+  setDatabaseInstanceDeregistering,
+  setDatabaseInstanceNotDeregistering,
 } from '@state/databases';
 import {
   databaseFactory,
@@ -120,6 +122,48 @@ describe('Databases reducer', () => {
           ...instance,
           system_replication: newSystemReplication,
           system_replication_status: newStatus,
+        },
+      ],
+    };
+
+    expect(databaseReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should set database instance in deregistering state', () => {
+    const instance = databaseInstanceFactory.build();
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const action = setDatabaseInstanceDeregistering(instance);
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          deregistering: true,
+        },
+      ],
+    };
+
+    expect(databaseReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should remove deregistering state from database instance', () => {
+    const instance = databaseInstanceFactory.build();
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const action = setDatabaseInstanceNotDeregistering(instance);
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          deregistering: false,
         },
       ],
     };

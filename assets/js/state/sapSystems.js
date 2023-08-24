@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 import { instancesMatch, upsertInstances, updateInstance } from './instances';
 
 const initialState = {
@@ -149,6 +149,40 @@ export const sapSystemsListSlice = createSlice({
         }
       );
     },
+    setApplicationInstanceDeregistering: (state, { payload: instance }) => {
+      state.applicationInstances = updateInstance(
+        state.applicationInstances,
+        instance,
+        { deregistering: true }
+      );
+    },
+    setApplicationInstanceNotDeregistering: (state, { payload: instance }) => {
+      state.applicationInstances = updateInstance(
+        state.applicationInstances,
+        instance,
+        { deregistering: false }
+      );
+    },
+    setDatabaseInstanceDeregisteringToSAPSystem: (
+      state,
+      { payload: instance }
+    ) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { deregistering: true }
+      );
+    },
+    setDatabaseInstanceNotDeregisteringToSAPSystem: (
+      state,
+      { payload: instance }
+    ) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { deregistering: false }
+      );
+    },
   },
 });
 
@@ -164,6 +198,12 @@ export const APPLICATION_INSTANCE_HEALTH_CHANGED =
 export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
 export const SAP_SYSTEM_RESTORED = 'SAP_SYSTEM_RESTORED';
 export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
+export const DEREGISTER_APPLICATION_INSTANCE =
+  'DEREGISTER_APPLICATION_INSTANCE';
+
+export const deregisterApplicationInstance = createAction(
+  DEREGISTER_APPLICATION_INSTANCE
+);
 
 export const {
   startSapSystemsLoading,
@@ -183,6 +223,10 @@ export const {
   removeTagFromSAPSystem,
   removeSAPSystem,
   updateSAPSystem,
+  setApplicationInstanceDeregistering,
+  setApplicationInstanceNotDeregistering,
+  setDatabaseInstanceDeregisteringToSAPSystem,
+  setDatabaseInstanceNotDeregisteringToSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;

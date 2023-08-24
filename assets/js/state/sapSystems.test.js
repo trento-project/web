@@ -9,6 +9,10 @@ import sapSystemsReducer, {
   removeApplicationInstance,
   removeDatabaseInstanceFromSapSystem,
   updateSAPSystem,
+  setApplicationInstanceDeregistering,
+  setApplicationInstanceNotDeregistering,
+  setDatabaseInstanceDeregisteringToSAPSystem,
+  setDatabaseInstanceNotDeregisteringToSAPSystem,
 } from '@state/sapSystems';
 import {
   sapSystemFactory,
@@ -254,6 +258,90 @@ describe('SAP Systems reducer', () => {
 
     const expectedState = {
       applicationInstances: [initialInstances[1], ...newInstances],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should set application instance in deregistering state', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const action = setApplicationInstanceDeregistering(instance);
+
+    const expectedState = {
+      applicationInstances: [
+        {
+          ...instance,
+          deregistering: true,
+        },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should remove deregistering state from application instance', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const action = setApplicationInstanceNotDeregistering(instance);
+
+    const expectedState = {
+      applicationInstances: [
+        {
+          ...instance,
+          deregistering: false,
+        },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should set database instance in deregistering state', () => {
+    const instance = databaseInstanceFactory.build();
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const action = setDatabaseInstanceDeregisteringToSAPSystem(instance);
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          deregistering: true,
+        },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should remove deregistering state from database instance', () => {
+    const instance = databaseInstanceFactory.build();
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const action = setDatabaseInstanceNotDeregisteringToSAPSystem(instance);
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          deregistering: false,
+        },
+      ],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
