@@ -197,7 +197,7 @@ defmodule Trento.SapSystemsTest do
                )
     end
 
-    test "should not delete a not absent database instance" do
+    test "should not delete a present database instance" do
       %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
         insert(:database_instance_without_host, absent_at: nil)
 

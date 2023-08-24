@@ -50,7 +50,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
   end
 
   describe "delete" do
-    test "should send 204 response when successful application instance deletion", %{conn: conn} do
+    test "should send 204 response on successful application instance deletion", %{conn: conn} do
       %{id: sap_system_id} = build(:sap_system)
 
       %{host_id: host_id, instance_number: instance_number} =
@@ -75,7 +75,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       |> response(204)
     end
 
-    test "should send 422 response if the application instance is still not absent", %{
+    test "should send 422 response if the application instance is still present", %{
       conn: conn
     } do
       %{id: sap_system_id} = build(:sap_system)
@@ -135,7 +135,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
 
-    test "should send 204 response when successful database instance deletion", %{conn: conn} do
+    test "should send 204 response on successful database instance deletion", %{conn: conn} do
       %{id: sap_system_id} = build(:sap_system)
 
       %{host_id: host_id, instance_number: instance_number} =
@@ -160,7 +160,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       |> response(204)
     end
 
-    test "should send 422 response if the database instance is still not absent", %{
+    test "should send 422 response if the database instance is still present", %{
       conn: conn
     } do
       %{id: sap_system_id} = build(:sap_system)
