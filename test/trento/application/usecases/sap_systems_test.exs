@@ -3,12 +3,18 @@ defmodule Trento.SapSystemsTest do
   use Trento.DataCase
 
   import Trento.Factory
+  import Mox
 
   alias Trento.SapSystems
 
   alias Trento.{
     DatabaseReadModel,
     SapSystemReadModel
+  }
+
+  alias Trento.Domain.Commands.{
+    DeregisterApplicationInstance,
+    DeregisterDatabaseInstance
   }
 
   @moduletag :integration
@@ -102,6 +108,106 @@ defmodule Trento.SapSystemsTest do
 
       assert 10 == length(database_instances)
       assert Enum.all?(database_instances, &(&1.host_id == host_id))
+    end
+  end
+
+  describe "deregister_application_instance/4" do
+    test "should dispatch an application deregistration command" do
+      sap_system_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+
+      deregistered_at = DateTime.utc_now()
+
+      expect(
+        Trento.Support.DateService.Mock,
+        :utc_now,
+        fn -> deregistered_at end
+      )
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %DeregisterApplicationInstance{
+             sap_system_id: ^sap_system_id,
+             host_id: ^host_id,
+             instance_number: ^instance_number,
+             deregistered_at: ^deregistered_at
+           } ->
+          :ok
+        end
+      )
+
+      assert :ok =
+               SapSystems.deregister_application_instance(
+                 sap_system_id,
+                 host_id,
+                 instance_number,
+                 Trento.Support.DateService.Mock
+               )
+    end
+
+    test "should not delete a not absent application instance" do
+      %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
+        insert(:application_instance_without_host, absent_at: nil)
+
+      assert {:error, :instance_present} =
+               SapSystems.deregister_application_instance(
+                 sap_system_id,
+                 host_id,
+                 instance_number,
+                 Trento.Support.DateService.Mock
+               )
+    end
+  end
+
+  describe "deregister_database_instance/4" do
+    test "should dispatch an database deregistration command" do
+      sap_system_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+
+      deregistered_at = DateTime.utc_now()
+
+      expect(
+        Trento.Support.DateService.Mock,
+        :utc_now,
+        fn -> deregistered_at end
+      )
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        fn %DeregisterDatabaseInstance{
+             sap_system_id: ^sap_system_id,
+             host_id: ^host_id,
+             instance_number: ^instance_number,
+             deregistered_at: ^deregistered_at
+           } ->
+          :ok
+        end
+      )
+
+      assert :ok =
+               SapSystems.deregister_database_instance(
+                 sap_system_id,
+                 host_id,
+                 instance_number,
+                 Trento.Support.DateService.Mock
+               )
+    end
+
+    test "should not delete a present database instance" do
+      %{sap_system_id: sap_system_id, host_id: host_id, instance_number: instance_number} =
+        insert(:database_instance_without_host, absent_at: nil)
+
+      assert {:error, :instance_present} =
+               SapSystems.deregister_database_instance(
+                 sap_system_id,
+                 host_id,
+                 instance_number,
+                 Trento.Support.DateService.Mock
+               )
     end
   end
 end

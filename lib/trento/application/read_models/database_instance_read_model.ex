@@ -29,6 +29,7 @@ defmodule Trento.DatabaseInstanceReadModel do
     field :system_replication, :string, default: ""
     field :system_replication_status, :string, default: ""
     field :health, Ecto.Enum, values: Health.values()
+    field :absent_at, :utc_datetime_usec
 
     has_one :host, HostReadModel,
       references: :host_id,
