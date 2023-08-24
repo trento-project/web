@@ -1,9 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-  upsertInstances,
-  payloadMatchesInstance,
-  updateInstance,
-} from './instances';
+import { instancesMatch, upsertInstances, updateInstance } from './instances';
 
 const initialState = {
   loading: false,
@@ -104,14 +100,12 @@ export const sapSystemsListSlice = createSlice({
     },
     removeApplicationInstance: (state, { payload: instance }) => {
       state.applicationInstances = state.applicationInstances.filter(
-        (applicationInstance) =>
-          !payloadMatchesInstance(applicationInstance, instance)
+        (applicationInstance) => !instancesMatch(applicationInstance, instance)
       );
     },
     removeDatabaseInstanceFromSapSystem: (state, { payload: instance }) => {
       state.databaseInstances = state.databaseInstances.filter(
-        (databaseInstance) =>
-          !payloadMatchesInstance(databaseInstance, instance)
+        (databaseInstance) => !instancesMatch(databaseInstance, instance)
       );
     },
     updateApplicationInstanceHost: (

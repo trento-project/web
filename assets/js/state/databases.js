@@ -1,9 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-  upsertInstances,
-  payloadMatchesInstance,
-  updateInstance,
-} from './instances';
+import { instancesMatch, upsertInstances, updateInstance } from './instances';
 
 const initialState = {
   loading: false,
@@ -73,8 +69,7 @@ export const databasesListSlice = createSlice({
     },
     removeDatabaseInstance: (state, { payload: instance }) => {
       state.databaseInstances = state.databaseInstances.filter(
-        (databaseInstance) =>
-          !payloadMatchesInstance(databaseInstance, instance)
+        (databaseInstance) => !instancesMatch(databaseInstance, instance)
       );
     },
     updateDatabaseInstanceHealth: (state, { payload: instance }) => {

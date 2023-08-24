@@ -1,12 +1,12 @@
-export const payloadMatchesInstance = (payload, instance) =>
-  payload.sap_system_id === instance.sap_system_id &&
-  payload.host_id === instance.host_id &&
-  payload.instance_number === instance.instance_number;
+export const instancesMatch = (instance1, instance2) =>
+  instance1.sap_system_id === instance2.sap_system_id &&
+  instance1.host_id === instance2.host_id &&
+  instance1.instance_number === instance2.instance_number;
 
 const filterByInstances = (currentInstances, newInstances) =>
   currentInstances.filter((currentInstance) =>
     newInstances.every(
-      (newInstance) => !payloadMatchesInstance(newInstance, currentInstance)
+      (newInstance) => !instancesMatch(newInstance, currentInstance)
     )
   );
 
@@ -15,7 +15,7 @@ export const upsertInstances = (currentInstances, newInstances) =>
 
 export const updateInstance = (instances, instanceToUpdate, data) =>
   instances.map((instance) => {
-    if (payloadMatchesInstance(instanceToUpdate, instance)) {
+    if (instancesMatch(instanceToUpdate, instance)) {
       return { ...instance, ...data };
     }
     return instance;
