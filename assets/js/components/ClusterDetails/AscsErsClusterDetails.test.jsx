@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { renderWithRouter } from '@lib/test-utils';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+
+import { renderWithRouter } from '@lib/test-utils';
 
 import {
   buildHostsFromAscsErsClusterDetails,
@@ -196,6 +197,8 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
   });
 
   it('should not display a host link for unregistered hosts', () => {
+    const user = userEvent.setup();
+
     const {
       name,
       cib_last_written: cibLastWritten,
@@ -221,5 +224,40 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     );
 
     expect(unregisteredHostContainer).not.toHaveAttribute('href');
+  });
+
+  it('should display infos about node details',async () => {
+    const {
+      name,
+      cib_last_written: cibLastWritten,
+      provider,
+      details,
+    } = clusterFactory.build({
+      type: 'ascs_ers',
+    });
+
+    const sapSystems = buildSapSystemsFromAscsErsClusterDetails(details);
+
+    renderWithRouter(
+      <AscsErsClusterDetails
+        clusterName={name}
+        cibLastWritten={cibLastWritten}
+        provider={provider}
+        hosts={buildHostsFromAscsErsClusterDetails(details)}
+        sapSystems={sapSystems}
+        details={details}
+      />
+    );
+
+    const resources = sapSystems[0]
+
+    console.log(resources)
+    await userEvent.click(screen.getAllByText('Details')[0])
+
+    expect(screen.getByText("Node Details")).toBeInTheDocument();
+    expect(screen.getByText("Attributes")).toBeInTheDocument();
+    expect(screen.getByText("Resources")).toBeInTheDocument();
+
+    
   });
 });

@@ -4,7 +4,7 @@ import Button from '@components/Button';
 import Modal from '@components/Modal';
 import Table from '@components/Table';
 
-function SiteDetails({ attributes, resources }) {
+function AttributesDetails({ attributes, resources, title }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const attributesTableConfig = {
@@ -24,15 +24,15 @@ function SiteDetails({ attributes, resources }) {
             key,
           })),
         }
-      : { usePAdding: false, columns: [] };
+      : { usePadding: false, columns: [] };
 
   return (
-    <>
+    <Fragment>
       <Button type="primary" size="small" onClick={() => setModalOpen(true)}>
         Details
       </Button>
       <Modal
-        title="Site details"
+        title={title}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       >
@@ -48,8 +48,8 @@ function SiteDetails({ attributes, resources }) {
         <h3 className="font-medium">Resources</h3>
         <Table config={resourcesTableConfig} data={resources} />
       </Modal>
-    </>
+    </Fragment>
   );
 }
 
-export default SiteDetails;
+export default AttributesDetails;

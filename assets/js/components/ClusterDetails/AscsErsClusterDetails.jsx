@@ -13,7 +13,7 @@ import { renderEnsaVersion } from '@components/SapSystemDetails';
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
 import SBDDetails from './SBDDetails';
-import SiteDetails from './SiteDetails';
+import AttributesDetails from './AttributesDetails';
 import StoppedResources from './StoppedResources';
 import { enrichNodes } from './HanaClusterDetails';
 
@@ -51,7 +51,7 @@ const nodeDetailsConfig = {
       className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
-        return <SiteDetails attributes={attributes} resources={resources} />;
+        return <AttributesDetails title="Node Details" attributes={attributes} resources={resources} />;
       },
     },
   ],
