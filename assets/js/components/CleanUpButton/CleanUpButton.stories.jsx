@@ -13,6 +13,22 @@ export default {
       },
     },
     onClick: { action: 'Click button' },
+    className: {
+      control: 'text',
+      description: 'CSS classes',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    size: {
+      control: { type: 'radio' },
+      options: ['small', 'fit'],
+      description: 'Button size',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'small' },
+      },
+    },
   },
 };
 
@@ -24,5 +40,13 @@ export const Cleaning = {
   args: {
     ...Default.args,
     cleaning: true,
+  },
+};
+
+export const NoOutline = {
+  args: {
+    ...Default.args,
+    className: 'border-none shadow-none',
+    size: 'fit',
   },
 };

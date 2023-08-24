@@ -5,6 +5,8 @@ const getSizeClasses = (size) => {
   switch (size) {
     case 'small':
       return 'py-1 px-2 text-sm';
+    case 'fit':
+      return 'text-sm';
     default:
       return 'py-2 px-4 text-base';
   }

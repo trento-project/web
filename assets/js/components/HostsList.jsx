@@ -193,6 +193,8 @@ function HostsList() {
           content && (
             <CleanUpButton
               cleaning={item.deregistering}
+              size="fit"
+              className="border-none shadow-none"
               onClick={() => {
                 openDeregistrationModal(item);
               }}

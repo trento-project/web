@@ -5,6 +5,17 @@ import Button from '.';
 export default {
   title: 'Button',
   component: Button,
+  argTypes: {
+    size: {
+      control: { type: 'radio' },
+      options: ['small', 'fit'],
+      description: 'Button size',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'small' },
+      },
+    },
+  },
 };
 
 export function Default() {
@@ -25,6 +36,10 @@ export function Transparent() {
 
 export function Small() {
   return <Button size="small">Hello world!</Button>;
+}
+
+export function Fit() {
+  return <Button size="fit">Hello world!</Button>;
 }
 
 export function SmallSecondary() {
