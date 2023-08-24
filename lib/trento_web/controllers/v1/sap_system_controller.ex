@@ -79,9 +79,9 @@ defmodule TrentoWeb.V1.SapSystemController do
         host_id: host_id,
         instance_number: instance_number
       }) do
-    case SapSystems.deregister_application_instance(sap_system_id, host_id, instance_number) do
-      :ok -> send_resp(conn, 204, "")
-      {:error, error} -> {:error, error}
+    with :ok <-
+           SapSystems.deregister_application_instance(sap_system_id, host_id, instance_number) do
+      send_resp(conn, 204, "")
     end
   end
 
@@ -117,9 +117,8 @@ defmodule TrentoWeb.V1.SapSystemController do
         host_id: host_id,
         instance_number: instance_number
       }) do
-    case SapSystems.deregister_database_instance(sap_system_id, host_id, instance_number) do
-      :ok -> send_resp(conn, 204, "")
-      {:error, error} -> {:error, error}
+    with :ok <- SapSystems.deregister_database_instance(sap_system_id, host_id, instance_number) do
+      send_resp(conn, 204, "")
     end
   end
 end
