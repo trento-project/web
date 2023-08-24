@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { upsertInstances, maybeUpdateInstanceHealth } from './instances';
+import { instancesMatch, upsertInstances, updateInstance } from './instances';
 
 const initialState = {
   loading: false,
@@ -16,13 +16,13 @@ export const sapSystemsListSlice = createSlice({
     // Here the payload comes from /api/sap_systems API when the application loads
     // Note that each sap system item has an application_instances and
     // a database_instances properties
-    setSapSystems: (state, { payload }) => {
-      state.sapSystems = payload;
+    setSapSystems: (state, { payload: sapSystems }) => {
+      state.sapSystems = sapSystems;
 
-      state.applicationInstances = payload.flatMap(
+      state.applicationInstances = sapSystems.flatMap(
         (sapSystem) => sapSystem.application_instances
       );
-      state.databaseInstances = payload.flatMap(
+      state.databaseInstances = sapSystems.flatMap(
         (sapSystem) => sapSystem.database_instances
       );
     },
@@ -34,117 +34,8 @@ export const sapSystemsListSlice = createSlice({
     },
     // When a new SapSystemRegistered comes in, it gets appended to the list
     // Note that the item does not have any application_instances nor database_instances properties
-    appendSapsystem: (state, action) => {
-      state.sapSystems = [...state.sapSystems, action.payload];
-    },
-    // When a new ApplicationInstanceRegistered comes in,
-    // it need to be appended to the list of the application instances of the relative sap system
-    upsertApplicationInstances: (state, action) => {
-      state.applicationInstances = upsertInstances(
-        state.applicationInstances,
-        action.payload
-      );
-    },
-    removeApplicationInstance: (
-      state,
-      { payload: { sap_system_id, host_id, instance_number } }
-    ) => {
-      state.applicationInstances = state.applicationInstances.filter(
-        (applicationInstance) =>
-          !(
-            applicationInstance.sap_system_id === sap_system_id &&
-            applicationInstance.host_id === host_id &&
-            applicationInstance.instance_number === instance_number
-          )
-      );
-    },
-    // When a new DatabaseInstanceRegistered comes in,
-    // it need to be appended to the list of the database instances of the relative sap system
-    upsertDatabaseInstancesToSapSystem: (state, action) => {
-      state.databaseInstances = upsertInstances(
-        state.databaseInstances,
-        action.payload
-      );
-    },
-    removeDatabaseInstanceFromSapSystem: (
-      state,
-      { payload: { sap_system_id, host_id, instance_number } }
-    ) => {
-      state.databaseInstances = state.databaseInstances.filter(
-        (databaseInstance) =>
-          !(
-            databaseInstance.sap_system_id === sap_system_id &&
-            databaseInstance.host_id === host_id &&
-            databaseInstance.instance_number === instance_number
-          )
-      );
-    },
-    updateSapSystemHealth: (state, action) => {
-      state.sapSystems = state.sapSystems.map((sapSystem) => {
-        if (sapSystem.id === action.payload.id) {
-          sapSystem.health = action.payload.health;
-        }
-        return sapSystem;
-      });
-    },
-    updateApplicationInstanceHost: (
-      state,
-      { payload: { sap_system_id, old_host_id, new_host_id, instance_number } }
-    ) => {
-      state.applicationInstances = state.applicationInstances.map(
-        (instance) => {
-          if (
-            instance.sap_system_id === sap_system_id &&
-            instance.host_id === old_host_id &&
-            instance.instance_number === instance_number
-          ) {
-            instance.host_id = new_host_id;
-          }
-          return instance;
-        }
-      );
-    },
-    updateApplicationInstanceHealth: (state, action) => {
-      state.applicationInstances = state.applicationInstances.map((instance) =>
-        maybeUpdateInstanceHealth(action.payload, instance)
-      );
-    },
-    updateSAPSystemDatabaseInstanceHealth: (state, action) => {
-      state.databaseInstances = state.databaseInstances.map((instance) =>
-        maybeUpdateInstanceHealth(action.payload, instance)
-      );
-    },
-    updateSAPSystemDatabaseInstanceSystemReplication: (state, action) => {
-      state.databaseInstances = state.databaseInstances.map((instance) => {
-        if (
-          action.payload.sap_system_id === instance.sap_system_id &&
-          action.payload.host_id === instance.host_id &&
-          action.payload.instance_number === instance.instance_number
-        ) {
-          instance.system_replication = action.payload.system_replication;
-          instance.system_replication_status =
-            action.payload.system_replication_status;
-        }
-        return instance;
-      });
-    },
-    addTagToSAPSystem: (state, action) => {
-      state.sapSystems = state.sapSystems.map((sapSystem) => {
-        if (sapSystem.id === action.payload.id) {
-          sapSystem.tags = [...sapSystem.tags, ...action.payload.tags];
-        }
-        return sapSystem;
-      });
-    },
-    removeTagFromSAPSystem: (state, action) => {
-      state.sapSystems = state.sapSystems.map((sapSystem) => {
-        if (sapSystem.id === action.payload.id) {
-          sapSystem.tags = sapSystem.tags.filter(
-            (tag) => tag.value !== action.payload.tags[0].value
-          );
-        }
-        return sapSystem;
-      });
+    appendSapsystem: (state, { payload: newSapSystem }) => {
+      state.sapSystems = [...state.sapSystems, newSapSystem];
     },
     removeSAPSystem: (state, { payload: { id } }) => {
       state.sapSystems = state.sapSystems.filter(
@@ -157,13 +48,106 @@ export const sapSystemsListSlice = createSlice({
         (databaseInstance) => databaseInstance.sap_system_id !== id
       );
     },
-    updateSAPSystem: (state, { payload }) => {
+    updateSAPSystem: (state, { payload: sapSystemToUpdate }) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
-        if (sapSystem.id === payload.id) {
-          sapSystem = { ...sapSystem, ...payload };
+        if (sapSystem.id === sapSystemToUpdate.id) {
+          sapSystem = { ...sapSystem, ...sapSystemToUpdate };
         }
         return sapSystem;
       });
+    },
+    updateSapSystemHealth: (state, { payload: { id, health } }) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === id) {
+          sapSystem.health = health;
+        }
+        return sapSystem;
+      });
+    },
+    addTagToSAPSystem: (state, { payload: { id, tags } }) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === id) {
+          sapSystem.tags = [...sapSystem.tags, ...tags];
+        }
+        return sapSystem;
+      });
+    },
+    removeTagFromSAPSystem: (state, { payload: { id, tags } }) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === id) {
+          sapSystem.tags = sapSystem.tags.filter(
+            (tag) => tag.value !== tags[0].value
+          );
+        }
+        return sapSystem;
+      });
+    },
+    // When a new ApplicationInstanceRegistered comes in,
+    // it need to be appended to the list of the application instances of the relative sap system
+    upsertApplicationInstances: (state, { payload: instances }) => {
+      state.applicationInstances = upsertInstances(
+        state.applicationInstances,
+        instances
+      );
+    },
+    // When a new DatabaseInstanceRegistered comes in,
+    // it need to be appended to the list of the database instances of the relative sap system
+    upsertDatabaseInstancesToSapSystem: (state, { payload: instances }) => {
+      state.databaseInstances = upsertInstances(
+        state.databaseInstances,
+        instances
+      );
+    },
+    removeApplicationInstance: (state, { payload: instance }) => {
+      state.applicationInstances = state.applicationInstances.filter(
+        (applicationInstance) => !instancesMatch(applicationInstance, instance)
+      );
+    },
+    removeDatabaseInstanceFromSapSystem: (state, { payload: instance }) => {
+      state.databaseInstances = state.databaseInstances.filter(
+        (databaseInstance) => !instancesMatch(databaseInstance, instance)
+      );
+    },
+    updateApplicationInstanceHost: (
+      state,
+      { payload: { sap_system_id, old_host_id, new_host_id, instance_number } }
+    ) => {
+      state.applicationInstances = updateInstance(
+        state.applicationInstances,
+        {
+          sap_system_id,
+          host_id: old_host_id,
+          instance_number,
+        },
+        { host_id: new_host_id }
+      );
+    },
+    updateApplicationInstanceHealth: (state, { payload: instance }) => {
+      state.applicationInstances = updateInstance(
+        state.applicationInstances,
+        instance,
+        { health: instance.health }
+      );
+    },
+    updateSAPSystemDatabaseInstanceHealth: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { health: instance.health }
+      );
+    },
+    updateSAPSystemDatabaseInstanceSystemReplication: (
+      state,
+      { payload: instance }
+    ) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        {
+          system_replication: instance.system_replication,
+          system_replication_status: instance.system_replication_status,
+        }
+      );
     },
   },
 });
