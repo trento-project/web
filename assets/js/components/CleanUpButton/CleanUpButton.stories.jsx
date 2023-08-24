@@ -20,6 +20,15 @@ export default {
         type: { summary: 'string' },
       },
     },
+    size: {
+      control: { type: 'radio' },
+      options: ['small', 'fit'],
+      description: 'Button size',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'small' },
+      },
+    },
   },
 };
 
@@ -38,5 +47,6 @@ export const NoOutline = {
   args: {
     ...Default.args,
     className: 'border-none shadow-none',
+    size: 'fit',
   },
 };
