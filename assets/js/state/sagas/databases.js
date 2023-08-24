@@ -1,4 +1,6 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { del } from '@lib/network';
+
 import {
   DATABASE_REGISTERED,
   DATABASE_DEREGISTERED,
@@ -8,6 +10,7 @@ import {
   DATABASE_INSTANCE_DEREGISTERED,
   DATABASE_INSTANCE_HEALTH_CHANGED,
   DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
+  DEREGISTER_DATABASE_INSTANCE,
   appendDatabase,
   upsertDatabaseInstances,
   updateDatabaseHealth,
@@ -15,6 +18,8 @@ import {
   updateDatabaseInstanceSystemReplication,
   removeDatabase,
   removeDatabaseInstance,
+  setDatabaseInstanceDeregistering,
+  setDatabaseInstanceNotDeregistering,
 } from '@state/databases';
 
 import {
@@ -22,6 +27,8 @@ import {
   removeDatabaseInstanceFromSapSystem,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
+  setDatabaseInstanceDeregisteringToSAPSystem,
+  setDatabaseInstanceNotDeregisteringToSAPSystem,
 } from '@state/sapSystems';
 
 import { getDatabase } from '@state/selectors/sapSystem';
@@ -104,6 +111,30 @@ function* databaseInstanceSystemReplicationChanged({ payload }) {
   yield put(updateSAPSystemDatabaseInstanceSystemReplication(payload));
 }
 
+export function* deregisterDatabaseInstance({
+  payload,
+  payload: { sid, sap_system_id, host_id, instance_number },
+}) {
+  yield put(setDatabaseInstanceDeregistering(payload));
+  yield put(setDatabaseInstanceDeregisteringToSAPSystem(payload));
+  try {
+    yield call(
+      del,
+      `/databases/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+    );
+  } catch (error) {
+    yield put(
+      notify({
+        text: `Error deregistering instance ${instance_number} from ${sid}.`,
+        icon: '❌',
+      })
+    );
+  } finally {
+    yield put(setDatabaseInstanceNotDeregistering(payload));
+    yield put(setDatabaseInstanceNotDeregisteringToSAPSystem(payload));
+  }
+}
+
 export function* watchDatabase() {
   yield takeEvery(DATABASE_REGISTERED, databaseRegistered);
   yield takeEvery(DATABASE_DEREGISTERED, databaseDeregistered);
@@ -119,4 +150,5 @@ export function* watchDatabase() {
     DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
     databaseInstanceSystemReplicationChanged
   );
+  yield takeEvery(DEREGISTER_DATABASE_INSTANCE, deregisterDatabaseInstance);
 }

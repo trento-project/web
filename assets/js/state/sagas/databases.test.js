@@ -1,26 +1,46 @@
+import MockAdapter from 'axios-mock-adapter';
+
 import { recordSaga } from '@lib/test-utils';
 import {
   databaseDeregistered,
   databaseInstanceDeregistered,
   databaseRestored,
+  deregisterDatabaseInstance,
 } from '@state/sagas/databases';
 import {
   upsertDatabaseInstances,
   removeDatabase,
   removeDatabaseInstance,
   appendDatabase,
+  setDatabaseInstanceDeregistering,
+  setDatabaseInstanceNotDeregistering,
 } from '@state/databases';
 import {
   removeDatabaseInstanceFromSapSystem,
   upsertDatabaseInstancesToSapSystem,
+  setDatabaseInstanceDeregisteringToSAPSystem,
+  setDatabaseInstanceNotDeregisteringToSAPSystem,
 } from '@state/sapSystems';
 import {
   databaseFactory,
   databaseInstanceFactory,
 } from '@lib/test-utils/factories';
+import { networkClient } from '@lib/network';
 import { notify } from '@state/actions/notifications';
 
+const axiosMock = new MockAdapter(networkClient);
+
 describe('SAP Systems sagas', () => {
+  beforeEach(() => {
+    axiosMock.reset();
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
+  });
+
   it('should remove the database instance', async () => {
     const { sap_system_id, host_id, instance_number, sid } =
       databaseInstanceFactory.build();
@@ -80,6 +100,54 @@ describe('SAP Systems sagas', () => {
         text: `The database ${database.sid} has been restored.`,
         icon: 'ℹ️',
       }),
+    ]);
+  });
+
+  it('should deregister the database instance', async () => {
+    const instance = databaseInstanceFactory.build();
+    const { sap_system_id, host_id, instance_number } = instance;
+
+    axiosMock
+      .onDelete(
+        `/databases/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+      )
+      .reply(204, {});
+
+    const dispatched = await recordSaga(deregisterDatabaseInstance, {
+      payload: instance,
+    });
+
+    expect(dispatched).toEqual([
+      setDatabaseInstanceDeregistering(instance),
+      setDatabaseInstanceDeregisteringToSAPSystem(instance),
+      setDatabaseInstanceNotDeregistering(instance),
+      setDatabaseInstanceNotDeregisteringToSAPSystem(instance),
+    ]);
+  });
+
+  it('should notify error on database instance deregistration request', async () => {
+    const instance = databaseInstanceFactory.build();
+    const { sid, sap_system_id, host_id, instance_number } = instance;
+
+    axiosMock
+      .onDelete(
+        `/databases/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+      )
+      .reply(404, {});
+
+    const dispatched = await recordSaga(deregisterDatabaseInstance, {
+      payload: instance,
+    });
+
+    expect(dispatched).toEqual([
+      setDatabaseInstanceDeregistering(instance),
+      setDatabaseInstanceDeregisteringToSAPSystem(instance),
+      notify({
+        text: `Error deregistering instance ${instance_number} from ${sid}.`,
+        icon: '❌',
+      }),
+      setDatabaseInstanceNotDeregistering(instance),
+      setDatabaseInstanceNotDeregisteringToSAPSystem(instance),
     ]);
   });
 });
