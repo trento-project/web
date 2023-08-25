@@ -14,9 +14,6 @@ defmodule Trento.Integration.Checks.AMQP.ProcessorTest do
   }
 
   alias Trento.Contracts
-  alias Trento.Domain.Commands.CompleteChecksExecution
-
-  require Trento.Domain.Enums.Health, as: Health
 
   describe "process" do
     setup do
@@ -31,6 +28,7 @@ defmodule Trento.Integration.Checks.AMQP.ProcessorTest do
     test "should process ExecutionStarted and broadcast to the socket" do
       execution_id = UUID.uuid4()
       group_id = UUID.uuid4()
+      target_type = Faker.Lorem.word()
 
       targets = [
         %Target{agent_id: "agent_1", checks: ["check_1", "check_2"]},
@@ -41,7 +39,8 @@ defmodule Trento.Integration.Checks.AMQP.ProcessorTest do
         Contracts.to_event(%ExecutionStarted{
           execution_id: execution_id,
           group_id: group_id,
-          targets: targets
+          targets: targets,
+          target_type: target_type
         })
 
       message = %GenRMQ.Message{payload: execution_started, attributes: %{}, channel: nil}
@@ -55,46 +54,50 @@ defmodule Trento.Integration.Checks.AMQP.ProcessorTest do
                          targets: [
                            %{agent_id: "agent_1", checks: ["check_1", "check_2"]},
                            %{agent_id: "agent_2", checks: ["check_3", "check_2"]}
-                         ]
+                         ],
+                         target_type: ^target_type
                        },
                        1000
     end
 
-    test "should process ExecutionCompleted and dispatch command" do
-      execution_id = UUID.uuid4()
-      group_id = UUID.uuid4()
+    test "should process ExecutionCompleted and broadcast to the socket" do
+      for target_type <- ["cluster", "host"] do
+        execution_id = UUID.uuid4()
+        group_id = UUID.uuid4()
 
-      execution_completed =
-        Contracts.to_event(%ExecutionCompleted{
-          execution_id: execution_id,
-          group_id: group_id,
-          result: :PASSING
-        })
+        execution_completed =
+          Contracts.to_event(%ExecutionCompleted{
+            execution_id: execution_id,
+            group_id: group_id,
+            result: :PASSING,
+            target_type: target_type
+          })
 
-      message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
+        message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
 
-      expect(Trento.Commanded.Mock, :dispatch, fn command, opts ->
-        assert %CompleteChecksExecution{
-                 cluster_id: ^group_id,
-                 health: Health.passing()
-               } = command
+        expect(Trento.Commanded.Mock, :dispatch, fn _, opts ->
+          assert [correlation_id: ^execution_id] = opts
+          :ok
+        end)
 
-        assert [correlation_id: ^execution_id] = opts
-        :ok
-      end)
+        assert :ok = Processor.process(message)
 
-      assert :ok = Processor.process(message)
-      assert_broadcast "execution_completed", %{group_id: ^group_id}, 1000
+        assert_broadcast "execution_completed",
+                         %{group_id: ^group_id, target_type: ^target_type},
+                         1000
+      end
     end
 
     test "should return error if the event handling fails" do
       group_id = "invalid-id"
+      target_type = "cluster"
 
       execution_completed =
         Contracts.to_event(%ExecutionCompleted{
           execution_id: UUID.uuid4(),
           group_id: group_id,
-          result: :PASSING
+          result: :PASSING,
+          target_type: target_type
         })
 
       message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
@@ -103,7 +106,9 @@ defmodule Trento.Integration.Checks.AMQP.ProcessorTest do
                    "%{cluster_id: [\"is invalid\"]}",
                    fn -> Processor.process(message) end
 
-      refute_broadcast "checks_execution_completed", %{cluster_id: ^group_id}, 1000
+      refute_broadcast "checks_execution_completed",
+                       %{cluster_id: ^group_id, target_type: ^target_type},
+                       1000
     end
 
     test "should return error if the event cannot be decoded" do

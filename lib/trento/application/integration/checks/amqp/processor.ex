@@ -12,7 +12,8 @@ defmodule Trento.Integration.Checks.AMQP.Processor do
     ExecutionStarted
   }
 
-  alias Trento.Domain.Commands.CompleteChecksExecution
+  alias Trento.Integration.Checks
+  alias Trento.Integration.Checks.TargetType
 
   require Logger
   require Trento.Domain.Enums.Health, as: Health
@@ -32,32 +33,35 @@ defmodule Trento.Integration.Checks.AMQP.Processor do
   defp handle(%ExecutionStarted{
          execution_id: execution_id,
          group_id: group_id,
-         targets: targets
+         targets: targets,
+         target_type: target_type
        }) do
     Logger.debug("Targets for execution #{inspect(targets)}")
 
     TrentoWeb.Endpoint.broadcast("monitoring:executions", "execution_started", %{
       group_id: group_id,
       execution_id: execution_id,
-      targets: map_targets(targets)
+      targets: map_targets(targets),
+      target_type: target_type
     })
   end
 
   defp handle(%ExecutionCompleted{
          execution_id: execution_id,
          group_id: group_id,
-         result: result
+         result: result,
+         target_type: target_type
        }) do
     with :ok <-
-           commanded().dispatch(
-             CompleteChecksExecution.new!(%{
-               cluster_id: group_id,
-               health: map_health(result)
-             }),
-             correlation_id: execution_id
+           Checks.complete_execution(
+             execution_id,
+             group_id,
+             map_health(result),
+             TargetType.from_string(target_type)
            ) do
       TrentoWeb.Endpoint.broadcast("monitoring:executions", "execution_completed", %{
-        group_id: group_id
+        group_id: group_id,
+        target_type: target_type
       })
     end
   end
@@ -67,7 +71,4 @@ defmodule Trento.Integration.Checks.AMQP.Processor do
   defp map_health(:CRITICAL), do: Health.critical()
   defp map_health(:WARNING), do: Health.warning()
   defp map_health(:PASSING), do: Health.passing()
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
