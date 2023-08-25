@@ -1,8 +1,10 @@
 defmodule Trento.Integration.Checks do
   @moduledoc """
-  Checks runner service integration
+  Checks Engine service integration
   """
 
+  alias Trento.Domain.Commands.CompleteChecksExecution
+  alias Trento.Domain.Enums.Health
   alias Trento.Infrastructure.Messaging
 
   alias Trento.Checks.V1.{
@@ -10,21 +12,43 @@ defmodule Trento.Integration.Checks do
     Target
   }
 
-  alias Trento.Integration.Checks.ClusterExecutionEnv
+  alias Trento.Integration.Checks.{
+    ClusterExecutionEnv,
+    HostExecutionEnv
+  }
 
   require Logger
+  require Trento.Integration.Checks.TargetType, as: TargetType
 
-  @spec request_execution(String.t(), String.t(), ClusterExecutionEnv.t(), [map], [String.t()]) ::
-          :ok | {:error, :any}
-  def request_execution(execution_id, cluster_id, env, hosts, selected_checks) do
+  @type target_type :: TargetType.t()
+  @type target_env :: HostExecutionEnv.t() | ClusterExecutionEnv.t()
+  @type targets :: [%{host_id: String.t()}]
+
+  @supported_targets TargetType.values()
+
+  @spec request_execution(
+          String.t(),
+          String.t(),
+          target_env,
+          targets,
+          [String.t()],
+          target_type
+        ) ::
+          :ok | {:error, any}
+  def request_execution(execution_id, target_id, env, targets, selected_checks, target_type)
+      when target_type in @supported_targets do
     execution_requested = %ExecutionRequested{
       execution_id: execution_id,
-      group_id: cluster_id,
+      group_id: target_id,
       targets:
-        Enum.map(hosts, fn %{host_id: host_id} ->
-          %Target{agent_id: host_id, checks: selected_checks}
-        end),
-      env: build_env(env)
+        Enum.map(
+          targets,
+          fn %{host_id: host_id} ->
+            %Target{agent_id: host_id, checks: selected_checks}
+          end
+        ),
+      env: build_env(env),
+      target_type: TargetType.to_string(target_type)
     }
 
     case Messaging.publish("executions", execution_requested) do
@@ -38,10 +62,39 @@ defmodule Trento.Integration.Checks do
     end
   end
 
+  def request_execution(_, _, _, _, _, _), do: {:error, :target_not_supported}
+
+  @spec complete_execution(String.t(), String.t(), Health.t(), target_type) :: :ok | {:error, any}
+  def complete_execution(execution_id, target_id, health, :cluster) do
+    commanded().dispatch(
+      CompleteChecksExecution.new!(%{
+        cluster_id: target_id,
+        health: health
+      }),
+      correlation_id: execution_id
+    )
+  end
+
+  def complete_execution(_execution_id, _target_id, _health, :host) do
+    # TODO dispatch host execution completed command
+    :ok
+  end
+
+  def complete_execution(_, _, _, _), do: {:error, :target_not_supported}
+
   defp build_env(%ClusterExecutionEnv{cluster_type: cluster_type, provider: provider}) do
     %{
       "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
       "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
     }
   end
+
+  defp build_env(%HostExecutionEnv{provider: provider}) do
+    %{
+      "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
+    }
+  end
+
+  defp commanded,
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
