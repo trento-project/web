@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 
 import Button from '@components/Button';
 import Modal from '@components/Modal';
@@ -27,7 +27,7 @@ function AttributesDetails({ attributes, resources, title }) {
       : { usePadding: false, columns: [] };
 
   return (
-    <Fragment>
+    <>
       <Button type="primary" size="small" onClick={() => setModalOpen(true)}>
         Details
       </Button>
@@ -44,7 +44,7 @@ function AttributesDetails({ attributes, resources, title }) {
         <h3 className="font-medium">Resources</h3>
         <Table config={resourcesTableConfig} data={resources} />
       </Modal>
-    </Fragment>
+    </>
   );
 }
 
