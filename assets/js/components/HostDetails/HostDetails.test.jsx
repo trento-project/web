@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import MockAdapter from 'axios-mock-adapter';
+import { faker } from '@faker-js/faker';
 
 import {
   withState,
@@ -47,6 +48,48 @@ describe('HostDetails component', () => {
     expect(
       screen.getByRole('button', { name: 'Start Execution' })
     ).toBeVisible();
+  });
+
+  it('should disable start execution button when checks are not selected', () => {
+    const host = hostFactory.build({ selected_checks: [] });
+    const { id: hostID } = host;
+    const state = {
+      ...defaultInitialState,
+      hostsList: {
+        hosts: [host],
+      },
+    };
+    const [StatefulHostDetails] = withState(<HostDetails />, state);
+
+    renderWithRouterMatch(StatefulHostDetails, {
+      path: '/hosts/:hostID',
+      route: `/hosts/${hostID}`,
+    });
+
+    const startExecutionButton = screen.getByText('Start Execution');
+    expect(startExecutionButton).toBeDisabled();
+  });
+
+  it('should enable start execution button when checks are selected', () => {
+    const host = hostFactory.build({
+      selected_checks: [faker.animal.bear(), faker.animal.bear()],
+    });
+    const { id: hostID } = host;
+    const state = {
+      ...defaultInitialState,
+      hostsList: {
+        hosts: [host],
+      },
+    };
+    const [StatefulHostDetails] = withState(<HostDetails />, state);
+
+    renderWithRouterMatch(StatefulHostDetails, {
+      path: '/hosts/:hostID',
+      route: `/hosts/${hostID}`,
+    });
+
+    const startExecutionButton = screen.getByText('Start Execution');
+    expect(startExecutionButton).toBeEnabled();
   });
 
   describe('agent version', () => {
