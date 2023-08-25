@@ -29,6 +29,8 @@ defmodule Trento.ClustersTest do
                  "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}}
                }
 
+        assert message.target_type == "cluster"
+
         :ok
       end)
 

@@ -112,7 +112,8 @@ defmodule Trento.Factory do
       heartbeat: :unknown,
       provider: Enum.random(Provider.values()),
       provider_data: nil,
-      deregistered_at: nil
+      deregistered_at: nil,
+      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end)
     }
   end
 

@@ -152,7 +152,8 @@ defmodule Trento.Clusters do
         cluster_type: cluster_type
       },
       hosts_data,
-      selected_checks
+      selected_checks,
+      :cluster
     )
   end
 
