@@ -22,6 +22,7 @@ function HostChecksSelection({
   onSaveSelection,
   onSelectedChecksChange,
   hostChecksExecutionEnabled,
+  startExecution = () => {},
 }) {
   return (
     <div className="w-full px-2 sm:px-0">
@@ -46,7 +47,9 @@ function HostChecksSelection({
             <Button
               type="primary"
               className="mx-1"
-              onClick={() => {}}
+              onClick={() => {
+                startExecution();
+              }}
               disabled={hostChecksExecutionEnabled}
             >
               <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}

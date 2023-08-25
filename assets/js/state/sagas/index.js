@@ -85,6 +85,7 @@ import {
 import {
   watchUpdateLastExecution,
   watchRequestExecution,
+  watchHostRequestExecution,
 } from '@state/sagas/lastExecutions';
 import { watchPerformLogin } from '@state/sagas/user';
 import { watchChecksSelection } from '@state/sagas/checksSelection';
@@ -398,6 +399,7 @@ export default function* rootSaga() {
     watchCatalogUpdate(),
     watchUpdateLastExecution(),
     watchRequestExecution(),
+    watchHostRequestExecution(),
     watchAcceptEula(),
     refreshHealthSummaryOnComnponentsHealthChange(),
     watchPerformLogin(),

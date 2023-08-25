@@ -57,7 +57,7 @@ export const lastExecutionsSlice = createSlice({
       state[groupID] = lastExecutionState;
     },
     setExecutionStarted: (state, { payload }) => {
-      const { groupID: clusterID, targets } = payload;
+      const { groupID, targets } = payload;
 
       const lastExecutionState = {
         ...initialExecutionState,
@@ -66,7 +66,7 @@ export const lastExecutionsSlice = createSlice({
           targets,
         },
       };
-      state[clusterID] = lastExecutionState;
+      state[groupID] = lastExecutionState;
     },
     setExecutionRequested: (state, { payload }) => {
       const { clusterID: groupID, hosts, checks } = payload;
@@ -83,6 +83,19 @@ export const lastExecutionsSlice = createSlice({
 
       state[groupID] = lastExecutionState;
     },
+    setHostChecksExecutionRequested: (state, { payload }) => {
+      const { checks, host } = payload;
+      const { id: groupID } = host;
+      const targets = [{ agent_id: host, checks }];
+      const lastExecutionState = {
+        ...initialExecutionState,
+        data: {
+          status: REQUESTED_EXECUTION_STATE,
+          targets,
+        },
+      };
+      state[groupID] = lastExecutionState;
+    },
   },
 });
 
@@ -93,6 +106,7 @@ export const {
   setLastExecutionError,
   setExecutionRequested,
   setExecutionStarted,
+  setHostChecksExecutionRequested,
 } = lastExecutionsSlice.actions;
 
 export default lastExecutionsSlice.reducer;
