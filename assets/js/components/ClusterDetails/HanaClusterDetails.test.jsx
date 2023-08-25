@@ -1,5 +1,7 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
@@ -11,7 +13,7 @@ import {
   checksExecutionRunningFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
-import { faker } from '@faker-js/faker';
+
 import HanaClusterDetails from './HanaClusterDetails';
 
 describe('HanaClusterDetails component', () => {
@@ -224,5 +226,63 @@ describe('HanaClusterDetails component', () => {
       'href',
       `/hosts/${host.id}`
     );
+  });
+
+  it('should display infos about node details', async () => {
+    const {
+      clusterID,
+      clusterName,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sid,
+      provider,
+      details,
+    } = clusterFactory.build();
+
+    const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+    const {
+      nodes: [{ attributes, resources }],
+    } = details;
+
+    renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        clusterName={clusterName}
+        selectedChecks={[]}
+        hasSelectedChecks={false}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        sid={sid}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    await userEvent.click(screen.getAllByText('Details')[0]);
+
+    expect(screen.getByText('Site Details')).toBeInTheDocument();
+    expect(screen.getByText('Attributes')).toBeInTheDocument();
+    expect(screen.getByText('Resources')).toBeInTheDocument();
+
+    Object.keys(resources[0]).forEach((key) => {
+      expect(screen.getByText(key)).toBeInTheDocument();
+      screen.getAllByText(resources[0][key]).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+    });
+
+    Object.keys(attributes).forEach((key) => {
+      screen.getAllByText(key).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+
+      screen.getAllByText(attributes[key]).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+    });
   });
 });

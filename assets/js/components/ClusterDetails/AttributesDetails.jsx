@@ -31,11 +31,7 @@ function AttributesDetails({ attributes, resources, title }) {
       <Button type="primary" size="small" onClick={() => setModalOpen(true)}>
         Details
       </Button>
-      <Modal
-        title={title}
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-      >
+      <Modal title={title} open={modalOpen} onClose={() => setModalOpen(false)}>
         <h3 className="font-medium">Attributes</h3>
         <Table
           config={attributesTableConfig}

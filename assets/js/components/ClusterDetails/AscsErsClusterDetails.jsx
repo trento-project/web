@@ -51,7 +51,13 @@ const nodeDetailsConfig = {
       className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
-        return <AttributesDetails title="Node Details" attributes={attributes} resources={resources} />;
+        return (
+          <AttributesDetails
+            title="Node Details"
+            attributes={attributes}
+            resources={resources}
+          />
+        );
       },
     },
   ],

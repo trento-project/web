@@ -55,7 +55,13 @@ const siteDetailsConfig = {
       className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
-        return <AttributesDetails title="Site Details" attributes={attributes} resources={resources} />;
+        return (
+          <AttributesDetails
+            title="Site Details"
+            attributes={attributes}
+            resources={resources}
+          />
+        );
       },
     },
   ],

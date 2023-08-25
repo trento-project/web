@@ -197,8 +197,6 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
   });
 
   it('should not display a host link for unregistered hosts', () => {
-    const user = userEvent.setup();
-
     const {
       name,
       cib_last_written: cibLastWritten,
@@ -226,7 +224,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     expect(unregisteredHostContainer).not.toHaveAttribute('href');
   });
 
-  it('should display infos about node details',async () => {
+  it('should display infos about node details', async () => {
     const {
       name,
       cib_last_written: cibLastWritten,
@@ -234,9 +232,14 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
       details,
     } = clusterFactory.build({
       type: 'ascs_ers',
+      details: ascsErsClusterDetailsFactory.build({ sap_systems_count: 2 }),
     });
 
     const sapSystems = buildSapSystemsFromAscsErsClusterDetails(details);
+
+    const {
+      nodes: [{ attributes, resources }],
+    } = details.sap_systems[0];
 
     renderWithRouter(
       <AscsErsClusterDetails
@@ -249,15 +252,27 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
       />
     );
 
-    const resources = sapSystems[0]
+    await userEvent.click(screen.getAllByText('Details')[0]);
 
-    console.log(resources)
-    await userEvent.click(screen.getAllByText('Details')[0])
+    expect(screen.getByText('Node Details')).toBeInTheDocument();
+    expect(screen.getByText('Attributes')).toBeInTheDocument();
+    expect(screen.getByText('Resources')).toBeInTheDocument();
 
-    expect(screen.getByText("Node Details")).toBeInTheDocument();
-    expect(screen.getByText("Attributes")).toBeInTheDocument();
-    expect(screen.getByText("Resources")).toBeInTheDocument();
+    Object.keys(resources[0]).forEach((key) => {
+      expect(screen.getByText(key)).toBeInTheDocument();
+      screen.getAllByText(resources[0][key]).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+    });
 
-    
+    Object.keys(attributes).forEach((key) => {
+      screen.getAllByText(key).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+
+      screen.getAllByText(attributes[key]).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+    });
   });
 });
