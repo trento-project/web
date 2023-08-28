@@ -8,16 +8,13 @@ import {
   sapSystemFactory,
 } from '@lib/test-utils/factories';
 import { APPLICATION_TYPE } from '@lib/model';
-import { keysToCamel } from '@lib/serialization';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
 
 const system = {
-  ...keysToCamel(
-    sapSystemFactory.build({
-      instances: sapSystemApplicationInstanceFactory.buildList(2),
-    })
-  ),
+  ...sapSystemFactory.build({
+    instances: sapSystemApplicationInstanceFactory.buildList(2),
+  }),
   hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
 };
 

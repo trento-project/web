@@ -8,14 +8,11 @@ import {
   hostFactory,
 } from '@lib/test-utils/factories';
 import { DATABASE_TYPE } from '@lib/model';
-import { keysToCamel } from '@lib/serialization';
 
 import { GenericSystemDetails } from '@components/SapSystemDetails';
 
-const system = {
-  ...keysToCamel(
-    databaseFactory.build({ instances: databaseInstanceFactory.buildList(2) })
-  ),
+const database = {
+  ...databaseFactory.build({ instances: databaseInstanceFactory.buildList(2) }),
   hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
 };
 
@@ -46,6 +43,6 @@ export const Database = {
   args: {
     title: 'Database Details',
     type: DATABASE_TYPE,
-    system,
+    system: database,
   },
 };
