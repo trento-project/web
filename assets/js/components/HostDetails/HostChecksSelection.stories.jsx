@@ -91,8 +91,25 @@ export default {
       },
     },
     onUpdateCatalog: {
-      action: 'Update catalog',
-      description: 'Called on mount to load the catalog for the host.',
+      description: 'Updates the catalog',
+    },
+
+    isSavingSelection: {
+      description:
+        'Whether Save Checks Selection button is enabled or disabled',
+    },
+
+    onSaveSelection: {
+      description: 'Updates the selected checks on save',
+    },
+    onSelectedChecksChange: {
+      description: 'Updates the selected checks',
+    },
+    hostChecksExecutionEnabled: {
+      description: 'Whether start execution button is enabled or disabled',
+    },
+    startExecution: {
+      description: 'Starts the host checks execution',
     },
   },
 };
@@ -107,6 +124,7 @@ export const Default = {
     catalog,
     catalogError: null,
     catalogLoading: false,
-    onUpdateCatalog: () => {},
+    isSavingSelection: false,
+    hostChecksExecutionEnabled: false,
   },
 };
