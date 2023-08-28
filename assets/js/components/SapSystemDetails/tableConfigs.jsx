@@ -9,16 +9,16 @@ import InstanceStatus from './InstanceStatus';
 export const systemInstancesTableConfiguration = {
   usePadding: false,
   columns: [
-    { title: 'Hostname', key: 'instanceHostname' },
-    { title: 'Instance Number', key: 'instanceNumber' },
+    { title: 'Hostname', key: 'instance_hostname' },
+    { title: 'Instance Number', key: 'instance_number' },
     {
       title: 'Features',
       key: 'features',
       render: (content) => <Features features={content} />,
     },
-    { title: 'Http Port', key: 'httpPort' },
-    { title: 'Https Port', key: 'httpsPort' },
-    { title: 'Start Priority', key: 'startPriority' },
+    { title: 'Http Port', key: 'http_port' },
+    { title: 'Https Port', key: 'https_port' },
+    { title: 'Start Priority', key: 'start_priority' },
     {
       title: 'Status',
       key: 'health',
