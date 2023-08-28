@@ -11,7 +11,7 @@ import { post, del } from '@lib/network';
 import { useSearchParams } from 'react-router-dom';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
-import { getAllSAPInstances } from '@state/selectors';
+import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
 const getClusterTypeLabel = (type) => {
   switch (type) {

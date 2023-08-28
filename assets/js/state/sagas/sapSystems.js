@@ -19,7 +19,7 @@ import {
   removeSAPSystem,
   updateSAPSystem,
 } from '@state/sapSystems';
-import { getSapSystem } from '@state/selectors';
+import { getSapSystem } from '@state/selectors/sapSystem';
 import { notify } from '@state/actions/notifications';
 
 function* sapSystemRegistered({ payload }) {

@@ -19,9 +19,10 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import SuseLogo from '@static/suse_logo.svg';
-import { getInstancesOnHost, getClusterByHost } from '@state/selectors';
 
 import { getHost } from '@state/selectors/host';
+import { getClusterByHost } from '@state/selectors/cluster';
+import { getInstancesOnHost } from '@state/selectors/sapSystem';
 
 import { deregisterHost } from '@state/hosts';
 import StatusPill from './StatusPill';

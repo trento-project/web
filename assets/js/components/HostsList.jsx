@@ -20,7 +20,7 @@ import Tooltip from '@components/Tooltip';
 import CleanUpButton from '@components/CleanUpButton';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
-import { getAllSAPInstances } from '@state/selectors';
+import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';

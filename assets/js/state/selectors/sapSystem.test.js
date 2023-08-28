@@ -15,9 +15,9 @@ import {
   getEnrichedSapSystemDetails,
   getEnrichedDatabaseDetails,
   getAllSAPInstances,
-} from './sapSystems';
+} from './sapSystem';
 
-describe('sapSystems selector', () => {
+describe('sapSystem selector', () => {
   it('should enrich application instances', () => {
     const hosts = hostFactory.buildList(2);
     const applicationInstances = [
