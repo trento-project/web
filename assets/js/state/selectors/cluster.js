@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, find } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
 export const getCluster =
@@ -22,6 +22,11 @@ export const getClusterHostIDs = createSelector(
 export const getClusterName = (clusterID) => (state) => {
   const cluster = getCluster(clusterID)(state);
   return get(cluster, 'name', '');
+};
+
+export const getClusterByHost = (state, hostID) => {
+  const host = state.hostsList.hosts.find((h) => h.id === hostID);
+  return find(state.clustersList.clusters, { id: host?.cluster_id });
 };
 
 export const getClusterSapSystems = createSelector(

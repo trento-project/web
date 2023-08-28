@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { getSapSystemDetail } from '@state/selectors';
+import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
 
 import BackButton from '@components/BackButton';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
@@ -9,7 +9,9 @@ import { APPLICATION_TYPE } from '@lib/model';
 
 function SapSystemDetails() {
   const { id } = useParams();
-  const sapSystem = useSelector(getSapSystemDetail(id));
+  const sapSystem = useSelector((state) =>
+    getEnrichedSapSystemDetails(state, id)
+  );
 
   if (!sapSystem) {
     return <div>Not Found</div>;

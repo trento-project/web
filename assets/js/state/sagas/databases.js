@@ -24,7 +24,7 @@ import {
   updateSAPSystemDatabaseInstanceSystemReplication,
 } from '@state/sapSystems';
 
-import { getDatabase } from '@state/selectors';
+import { getDatabase } from '@state/selectors/sapSystem';
 import { notify } from '@state/actions/notifications';
 
 function* databaseRegistered({ payload }) {
