@@ -10,7 +10,7 @@ import { APPLICATION_TYPE } from '@lib/model';
 function SapSystemDetails() {
   const { id } = useParams();
   const sapSystem = useSelector((state) =>
-    getEnrichedSapSystemDetails(id, state)
+    getEnrichedSapSystemDetails(state, id)
   );
 
   if (!sapSystem) {

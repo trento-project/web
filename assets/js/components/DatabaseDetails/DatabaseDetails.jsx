@@ -10,7 +10,7 @@ import { DATABASE_TYPE } from '@lib/model';
 function DatabaseDetails() {
   const { id } = useParams();
   const database = useSelector((state) =>
-    getEnrichedDatabaseDetails(id, state)
+    getEnrichedDatabaseDetails(state, id)
   );
 
   if (!database) {

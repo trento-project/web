@@ -34,18 +34,22 @@ export const getEnrichedDatabaseInstances = createSelector(
   (enrichedInstances) => enrichedInstances
 );
 
-export const getSapSystem = (id) => (state) =>
-  state.sapSystemsList.sapSystems.find((sapSystem) => id === sapSystem.id);
+export const getSapSystem = (sapSystemID) => (state) =>
+  state.sapSystemsList.sapSystems.find(
+    (sapSystem) => sapSystemID === sapSystem.id
+  );
 
-export const getDatabase = (id) => (state) =>
-  state.databasesList.databases.find((database) => id === database.id);
+export const getDatabase = (databaseID) => (state) =>
+  state.databasesList.databases.find((database) => databaseID === database.id);
 
 export const getEnrichedSapSystemDetails = createSelector(
   [
-    (id, state) => getSapSystem(id)(state),
-    (id, state) =>
+    (state, sapSystemID) => getSapSystem(sapSystemID)(state),
+    (state, sapSystemID) =>
       enrichInstances(
-        filter(state.sapSystemsList.applicationInstances, { sap_system_id: id })
+        filter(state.sapSystemsList.applicationInstances, {
+          sap_system_id: sapSystemID,
+        })
       )(state),
   ],
   (system, instances) => {
@@ -61,10 +65,12 @@ export const getEnrichedSapSystemDetails = createSelector(
 
 export const getEnrichedDatabaseDetails = createSelector(
   [
-    (id, state) => getDatabase(id)(state),
-    (id, state) =>
+    (state, databaseID) => getDatabase(databaseID)(state),
+    (state, databaseID) =>
       enrichInstances(
-        filter(state.databasesList.databaseInstances, { sap_system_id: id })
+        filter(state.databasesList.databaseInstances, {
+          sap_system_id: databaseID,
+        })
       )(state),
   ],
   (database, instances) => {

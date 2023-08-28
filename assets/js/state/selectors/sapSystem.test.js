@@ -159,7 +159,7 @@ describe('sapSystem selector', () => {
       ],
     };
 
-    expect(getEnrichedSapSystemDetails(sapSystem.id, state)).toEqual(
+    expect(getEnrichedSapSystemDetails(state, sapSystem.id)).toEqual(
       expectedOutput
     );
   });
@@ -220,7 +220,7 @@ describe('sapSystem selector', () => {
       ],
     };
 
-    expect(getEnrichedDatabaseDetails(database.id, state)).toEqual(
+    expect(getEnrichedDatabaseDetails(state, database.id)).toEqual(
       expectedOutput
     );
   });
