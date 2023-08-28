@@ -32,23 +32,23 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {
-  const sapSystemID = params.sapSystemId || faker.datatype.uuid();
+  const id = params.id || faker.datatype.uuid();
   const sid = params.sid || faker.random.alphaNumeric(3, { casing: 'upper' });
 
   return {
     application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
-      sap_system_id: sapSystemID,
+      sap_system_id: id,
       sid,
     }),
     database_instances: databaseInstanceFactory.buildList(2, {
-      sap_system_id: sapSystemID,
+      sap_system_id: id,
       sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
     }),
     db_host: faker.internet.ip(),
     deregistered_at: null,
     ensa_version: ensaVersion(),
     health: healthEnum(),
-    id: sapSystemID,
+    id,
     sid,
     tags: [],
     tenant: faker.random.alphaNumeric(3, { casing: 'upper' }),
