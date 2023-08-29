@@ -1,10 +1,10 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 
 import Button from '@components/Button';
 import Modal from '@components/Modal';
 import Table from '@components/Table';
 
-function SiteDetails({ attributes, resources }) {
+function AttributesDetails({ attributes, resources, title }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const attributesTableConfig = {
@@ -24,18 +24,14 @@ function SiteDetails({ attributes, resources }) {
             key,
           })),
         }
-      : { usePAdding: false, columns: [] };
+      : { usePadding: false, columns: [] };
 
   return (
     <>
       <Button type="primary" size="small" onClick={() => setModalOpen(true)}>
         Details
       </Button>
-      <Modal
-        title="Site details"
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-      >
+      <Modal title={title} open={modalOpen} onClose={() => setModalOpen(false)}>
         <h3 className="font-medium">Attributes</h3>
         <Table
           config={attributesTableConfig}
@@ -52,4 +48,4 @@ function SiteDetails({ attributes, resources }) {
   );
 }
 
-export default SiteDetails;
+export default AttributesDetails;

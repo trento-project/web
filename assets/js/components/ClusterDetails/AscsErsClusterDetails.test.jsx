@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { renderWithRouter } from '@lib/test-utils';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+
+import { renderWithRouter } from '@lib/test-utils';
 
 import {
   buildHostsFromAscsErsClusterDetails,
@@ -221,5 +222,57 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     );
 
     expect(unregisteredHostContainer).not.toHaveAttribute('href');
+  });
+
+  it('should display infos about node details', async () => {
+    const {
+      name,
+      cib_last_written: cibLastWritten,
+      provider,
+      details,
+    } = clusterFactory.build({
+      type: 'ascs_ers',
+      details: ascsErsClusterDetailsFactory.build({ sap_systems_count: 2 }),
+    });
+
+    const sapSystems = buildSapSystemsFromAscsErsClusterDetails(details);
+
+    const {
+      nodes: [{ attributes, resources }],
+    } = details.sap_systems[0];
+
+    renderWithRouter(
+      <AscsErsClusterDetails
+        clusterName={name}
+        cibLastWritten={cibLastWritten}
+        provider={provider}
+        hosts={buildHostsFromAscsErsClusterDetails(details)}
+        sapSystems={sapSystems}
+        details={details}
+      />
+    );
+
+    await userEvent.click(screen.getAllByText('Details')[0]);
+
+    expect(screen.getByText('Node Details')).toBeInTheDocument();
+    expect(screen.getByText('Attributes')).toBeInTheDocument();
+    expect(screen.getByText('Resources')).toBeInTheDocument();
+
+    Object.keys(resources[0]).forEach((key) => {
+      expect(screen.getByText(key)).toBeInTheDocument();
+      screen.getAllByText(resources[0][key]).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+    });
+
+    Object.keys(attributes).forEach((key) => {
+      screen.getAllByText(key).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+
+      screen.getAllByText(attributes[key]).forEach((element) => {
+        expect(element).toBeInTheDocument();
+      });
+    });
   });
 });

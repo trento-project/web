@@ -17,8 +17,8 @@ import SapSystemLink from '@components/SapSystemLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
-import SiteDetails from './SiteDetails';
 import SBDDetails from './SBDDetails';
+import AttributesDetails from './AttributesDetails';
 import StoppedResources from './StoppedResources';
 
 export const enrichNodes = (clusterNodes, hosts) =>
@@ -55,7 +55,13 @@ const siteDetailsConfig = {
       className: 'table-col-xs',
       render: (_, item) => {
         const { attributes, resources } = item;
-        return <SiteDetails attributes={attributes} resources={resources} />;
+        return (
+          <AttributesDetails
+            title="Site Details"
+            attributes={attributes}
+            resources={resources}
+          />
+        );
       },
     },
   ],
