@@ -29,6 +29,15 @@ export default {
         defaultValue: { summary: 'small' },
       },
     },
+    type: {
+      control: { type: 'radio' },
+      options: ['primary-white', 'default-gray-100'],
+      description: 'Style type',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'primary-white' },
+      },
+    },
   },
 };
 
@@ -47,6 +56,13 @@ export const NoOutline = {
   args: {
     ...Default.args,
     className: 'border-none shadow-none',
+  },
+};
+
+export const AbsentInstanceRow = {
+  args: {
+    ...Default.args,
+    type: 'default-gray-100',
     size: 'fit',
   },
 };
