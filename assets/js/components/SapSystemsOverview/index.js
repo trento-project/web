@@ -1,3 +1,3 @@
-import SapSystemsOverview from './SapSystemsOverview';
+import SapSystemsOverviewPage from './SapSystemsOverviewPage';
 
-export default SapSystemsOverview;
+export default SapSystemsOverviewPage;
