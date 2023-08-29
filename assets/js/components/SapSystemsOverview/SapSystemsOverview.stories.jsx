@@ -48,6 +48,36 @@ function ContainerWrapper({ children }) {
 export default {
   title: 'SapSystemsOverview',
   components: SapSystemsOverview,
+  argTypes: {
+    sapSystems: {
+      control: { type: 'array' },
+      description: 'SAP systems',
+    },
+    applicationInstances: {
+      control: { type: 'array' },
+      description: 'Application instances',
+    },
+    databaseInstances: {
+      control: { type: 'array' },
+      description: 'Database instances',
+    },
+    loading: {
+      control: { type: 'boolean' },
+      description: 'Loading',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: false },
+      },
+    },
+    onTagAdded: {
+      action: 'Add tag',
+      description: 'Called when a new tag is added',
+    },
+    onTagRemoved: {
+      action: 'Remove tag',
+      description: 'Called when an existing tag is removed',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>

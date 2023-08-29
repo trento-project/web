@@ -49,6 +49,32 @@ function ContainerWrapper({ children }) {
 export default {
   title: 'DatabasesOverview',
   components: DatabasesOverview,
+  argTypes: {
+    databases: {
+      control: { type: 'array' },
+      description: 'Databases',
+    },
+    databaseInstances: {
+      control: { type: 'array' },
+      description: 'Database instances',
+    },
+    loading: {
+      control: { type: 'boolean' },
+      description: 'Loading',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: false },
+      },
+    },
+    onTagAdded: {
+      action: 'Add tag',
+      description: 'Called when a new tag is added',
+    },
+    onTagRemoved: {
+      action: 'Remove tag',
+      description: 'Called when an existing tag is removed',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>
