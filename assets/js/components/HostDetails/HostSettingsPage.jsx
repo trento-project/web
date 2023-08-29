@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import LoadingBox from '@components/LoadingBox';
 import { canStartExecution } from '@components/ChecksSelection';
@@ -9,6 +9,7 @@ import { TARGET_HOST } from '@lib/model';
 
 import { hostChecksSelected } from '@state/checksSelection';
 import { updateCatalog } from '@state/actions/catalog';
+import { hostExecutionRequested } from '@state/actions/lastExecutions';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
@@ -16,7 +17,7 @@ import HostChecksSelection from './HostChecksSelection';
 
 function HostSettingsPage() {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { hostID } = useParams();
   const host = useSelector(getHost(hostID));
   const hostSelectedChecks = useSelector((state) =>
@@ -63,6 +64,10 @@ function HostSettingsPage() {
       })
     );
 
+  const requestHostChecksExecution = () => {
+    dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
+  };
+
   return (
     <HostChecksSelection
       hostID={hostID}
@@ -78,6 +83,7 @@ function HostSettingsPage() {
       selectedChecks={selection}
       hostChecksExecutionEnabled={hostChecksExecutionEnabled}
       onSelectedChecksChange={setSelection}
+      onStartExecution={requestHostChecksExecution}
     />
   );
 }

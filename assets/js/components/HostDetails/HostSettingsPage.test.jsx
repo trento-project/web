@@ -70,4 +70,45 @@ describe('HostSettingsPage component', () => {
 
     expect(screen.getByText('Save Checks Selection')).toBeVisible();
   });
+
+  it('should render HostSettingsPage with a disabled start execution button, as no checks are selected', () => {
+    const hosts = hostFactory.buildList(2, {
+      provider: 'azure',
+      selected_checks: [],
+    });
+    const state = {
+      ...defaultInitialState,
+      hostsList: { hosts },
+    };
+    const { id: hostID } = hosts[1];
+
+    const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
+
+    renderWithRouterMatch(StatefulHostSettingsPage, {
+      path: 'hosts/:hostID/settings',
+      route: `/hosts/${hostID}/settings`,
+    });
+    const startExecutionButton = screen.getByText('Start Execution');
+    expect(startExecutionButton).toBeDisabled();
+  });
+
+  it('should render HostSettingsPage with an enabled start execution button, as checks are selected', () => {
+    const hosts = hostFactory.buildList(2, {
+      provider: 'azure',
+      selected_checks: [faker.animal.bear(), faker.animal.bear()],
+    });
+    const state = {
+      ...defaultInitialState,
+      hostsList: { hosts },
+    };
+    const { id: hostID } = hosts[1];
+    const [StatefulHostSettingsPage] = withState(<HostSettingsPage />, state);
+
+    renderWithRouterMatch(StatefulHostSettingsPage, {
+      path: 'hosts/:hostID/settings',
+      route: `/hosts/${hostID}/settings`,
+    });
+    const startExecutionButton = screen.getByText('Start Execution');
+    expect(startExecutionButton).toBeEnabled();
+  });
 });

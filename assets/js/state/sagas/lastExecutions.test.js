@@ -10,16 +10,26 @@ import {
   setLastExecutionEmpty,
   setLastExecutionError,
   setExecutionRequested,
+  setHostChecksExecutionRequested,
 } from '@state/lastExecutions';
 import { notify } from '@state/actions/notifications';
-import { updateLastExecution, requestExecution } from './lastExecutions';
+import { hostFactory } from '@lib/test-utils/factories';
+
+import {
+  updateLastExecution,
+  requestExecution,
+  requestHostExecution,
+} from './lastExecutions';
 
 const axiosMock = new MockAdapter(networkClient);
 const lastExecutionURL = (groupID) =>
   `/api/v1/checks/groups/${groupID}/executions/last`;
 
-const triggerChecksExecutionURL = (clusterId) =>
+const triggerClusterChecksExecutionURL = (clusterId) =>
   `/clusters/${clusterId}/checks/request_execution`;
+
+const triggerHostChecksExecutionURL = (hostID) =>
+  `/hosts/${hostID}/checks/request_execution`;
 
 describe('lastExecutions saga', () => {
   beforeEach(() => {
@@ -87,7 +97,9 @@ describe('lastExecutions saga', () => {
     const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
 
-    axiosMock.onPost(triggerChecksExecutionURL(clusterID)).reply(202, {});
+    axiosMock
+      .onPost(triggerClusterChecksExecutionURL(clusterID))
+      .reply(202, {});
 
     const payload = { clusterID, hosts, checks };
     const dispatched = await recordSaga(
@@ -117,7 +129,9 @@ describe('lastExecutions saga', () => {
     const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
 
-    axiosMock.onPost(triggerChecksExecutionURL(clusterID)).reply(400, {});
+    axiosMock
+      .onPost(triggerClusterChecksExecutionURL(clusterID))
+      .reply(400, {});
 
     const payload = { clusterID, hosts, checks };
     const dispatched = await recordSaga(
@@ -136,6 +150,48 @@ describe('lastExecutions saga', () => {
     expect(dispatched).toContainEqual(
       notify({
         text: `Unable to start execution for cluster: ${clusterName}`,
+        icon: '❌',
+      })
+    );
+  });
+
+  it('should set the last host execution to requested state', async () => {
+    const host = hostFactory.build();
+    const { id: hostID, hostname: hostName } = host;
+    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+
+    axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(202, {});
+    const payload = { checks, host };
+
+    const dispatched = await recordSaga(requestHostExecution, {
+      payload,
+    });
+    expect(dispatched).toContainEqual(setHostChecksExecutionRequested(payload));
+    expect(dispatched).toContainEqual(
+      notify({
+        text: `Checks execution requested, host: ${hostName}`,
+        icon: '🐰',
+      })
+    );
+  });
+
+  it('should not set the host last execution to requested state on failure', async () => {
+    const host = hostFactory.build();
+    const { id: hostID, hostname: hostName } = host;
+    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+
+    axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(400, {});
+
+    const payload = { checks, host };
+    const dispatched = await recordSaga(requestHostExecution, {
+      payload,
+    });
+    expect(dispatched).not.toContainEqual(
+      setHostChecksExecutionRequested(payload)
+    );
+    expect(dispatched).toContainEqual(
+      notify({
+        text: `Unable to start execution for host: ${hostName}`,
         icon: '❌',
       })
     );

@@ -1,12 +1,15 @@
 import { faker } from '@faker-js/faker';
+import { hostFactory } from '@lib/test-utils/factories';
 
 import lastExecutionsReducer, {
   setExecutionRequested,
+  setHostChecksExecutionRequested,
   setLastExecutionLoading,
   setLastExecutionEmpty,
   setLastExecutionError,
   setLastExecution,
   setExecutionStarted,
+  REQUESTED_EXECUTION_STATE,
 } from './lastExecutions';
 
 describe('lastExecutions reducer', () => {
@@ -181,6 +184,28 @@ describe('lastExecutions reducer', () => {
       },
     };
 
+    expect(lastExecutionsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should set requested state on host execution', () => {
+    const initialState = {};
+    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const host = hostFactory.build();
+    const { id: hostID } = host;
+
+    const data = { host, checks };
+    const expectedState = {
+      [hostID]: {
+        data: {
+          status: REQUESTED_EXECUTION_STATE,
+          targets: [{ agent_id: host, checks }],
+        },
+        loading: false,
+        error: null,
+      },
+    };
+
+    const action = setHostChecksExecutionRequested(data);
     expect(lastExecutionsReducer(initialState, action)).toEqual(expectedState);
   });
 });
