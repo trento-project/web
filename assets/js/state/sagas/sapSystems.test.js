@@ -1,3 +1,5 @@
+import MockAdapter from 'axios-mock-adapter';
+
 import { recordSaga } from '@lib/test-utils';
 import {
   applicationInstanceMoved,
@@ -5,6 +7,7 @@ import {
   sapSystemDeregistered,
   sapSystemRestored,
   sapSystemUpdated,
+  deregisterApplicationInstance,
 } from '@state/sagas/sapSystems';
 import {
   appendSapsystem,
@@ -14,7 +17,10 @@ import {
   upsertApplicationInstances,
   removeApplicationInstance,
   updateSAPSystem,
+  setApplicationInstanceDeregistering,
+  unsetApplicationInstanceDeregistering,
 } from '@state/sapSystems';
+import { networkClient } from '@lib/network';
 import { notify } from '@state/actions/notifications';
 import {
   sapSystemFactory,
@@ -22,7 +28,19 @@ import {
 } from '@lib/test-utils/factories';
 import { faker } from '@faker-js/faker';
 
+const axiosMock = new MockAdapter(networkClient);
+
 describe('SAP Systems sagas', () => {
+  beforeEach(() => {
+    axiosMock.reset();
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
+  });
+
   it('should remove the SAP system', async () => {
     const { id, sid } = sapSystemFactory.build();
 
@@ -91,5 +109,49 @@ describe('SAP Systems sagas', () => {
     });
 
     expect(dispatched).toContainEqual(updateSAPSystem({ id, ensa_version }));
+  });
+
+  it('should deregister the application instance', async () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+    const { sap_system_id, host_id, instance_number } = instance;
+
+    axiosMock
+      .onDelete(
+        `/sap_systems/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+      )
+      .reply(204, {});
+
+    const dispatched = await recordSaga(deregisterApplicationInstance, {
+      payload: instance,
+    });
+
+    expect(dispatched).toEqual([
+      setApplicationInstanceDeregistering(instance),
+      unsetApplicationInstanceDeregistering(instance),
+    ]);
+  });
+
+  it('should notify an error on application instance deregistration request failure', async () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+    const { sid, sap_system_id, host_id, instance_number } = instance;
+
+    axiosMock
+      .onDelete(
+        `/sap_systems/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+      )
+      .reply(404, {});
+
+    const dispatched = await recordSaga(deregisterApplicationInstance, {
+      payload: instance,
+    });
+
+    expect(dispatched).toEqual([
+      setApplicationInstanceDeregistering(instance),
+      notify({
+        text: `Error deregistering instance ${instance_number} from ${sid}.`,
+        icon: '❌',
+      }),
+      unsetApplicationInstanceDeregistering(instance),
+    ]);
   });
 });

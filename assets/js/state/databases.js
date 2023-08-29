@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 import { instancesMatch, upsertInstances, updateInstance } from './instances';
 
 const initialState = {
@@ -89,6 +89,24 @@ export const databasesListSlice = createSlice({
         }
       );
     },
+    setDatabaseInstanceDeregistering: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        {
+          deregistering: true,
+        }
+      );
+    },
+    unsetDatabaseInstanceDeregistering: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        {
+          deregistering: false,
+        }
+      );
+    },
   },
 });
 
@@ -102,6 +120,11 @@ export const DATABASE_INSTANCE_HEALTH_CHANGED =
   'DATABASE_INSTANCE_HEALTH_CHANGED';
 export const DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED =
   'DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED';
+export const DEREGISTER_DATABASE_INSTANCE = 'DEREGISTER_DATABASE_INSTANCE';
+
+export const deregisterDatabaseInstance = createAction(
+  DEREGISTER_DATABASE_INSTANCE
+);
 
 export const {
   startDatabasesLoading,
@@ -116,6 +139,8 @@ export const {
   updateDatabaseInstanceSystemReplication,
   addTagToDatabase,
   removeTagFromDatabase,
+  setDatabaseInstanceDeregistering,
+  unsetDatabaseInstanceDeregistering,
 } = databasesListSlice.actions;
 
 export default databasesListSlice.reducer;

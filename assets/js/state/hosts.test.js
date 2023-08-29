@@ -4,7 +4,7 @@ import hostsReducer, {
   setHostListDeregisterable,
   setHostNotDeregisterable,
   setHostDeregistering,
-  setHostNotDeregistering,
+  unsetHostDeregistering,
   updateSelectedChecks,
 } from '@state/hosts';
 import { hostFactory } from '@lib/test-utils/factories';
@@ -62,7 +62,7 @@ describe('Hosts reducer', () => {
       hosts: [host1, host2],
     };
 
-    const action = setHostNotDeregistering(host1);
+    const action = unsetHostDeregistering(host1);
 
     const expectedState = {
       hosts: [{ ...host1, deregistering: false }, host2],

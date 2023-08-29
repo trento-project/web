@@ -1,4 +1,6 @@
-import { put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { del } from '@lib/network';
+
 import {
   SAP_SYSTEM_REGISTERED,
   SAP_SYSTEM_HEALTH_CHANGED,
@@ -9,6 +11,7 @@ import {
   SAP_SYSTEM_DEREGISTERED,
   SAP_SYSTEM_RESTORED,
   SAP_SYSTEM_UPDATED,
+  DEREGISTER_APPLICATION_INSTANCE,
   appendSapsystem,
   updateSapSystemHealth,
   upsertDatabaseInstancesToSapSystem,
@@ -18,6 +21,8 @@ import {
   updateApplicationInstanceHealth,
   removeSAPSystem,
   updateSAPSystem,
+  setApplicationInstanceDeregistering,
+  unsetApplicationInstanceDeregistering,
 } from '@state/sapSystems';
 import { getSapSystem } from '@state/selectors/sapSystem';
 import { notify } from '@state/actions/notifications';
@@ -107,6 +112,28 @@ export function* sapSystemUpdated({ payload }) {
   yield put(updateSAPSystem(payload));
 }
 
+export function* deregisterApplicationInstance({
+  payload,
+  payload: { sid, sap_system_id, host_id, instance_number },
+}) {
+  yield put(setApplicationInstanceDeregistering(payload));
+  try {
+    yield call(
+      del,
+      `/sap_systems/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+    );
+  } catch (error) {
+    yield put(
+      notify({
+        text: `Error deregistering instance ${instance_number} from ${sid}.`,
+        icon: '❌',
+      })
+    );
+  } finally {
+    yield put(unsetApplicationInstanceDeregistering(payload));
+  }
+}
+
 export function* watchSapSystem() {
   yield takeEvery(SAP_SYSTEM_REGISTERED, sapSystemRegistered);
   yield takeEvery(SAP_SYSTEM_HEALTH_CHANGED, sapSystemHealthChanged);
@@ -126,4 +153,8 @@ export function* watchSapSystem() {
   yield takeEvery(SAP_SYSTEM_DEREGISTERED, sapSystemDeregistered);
   yield takeEvery(SAP_SYSTEM_RESTORED, sapSystemRestored);
   yield takeEvery(SAP_SYSTEM_UPDATED, sapSystemUpdated);
+  yield takeEvery(
+    DEREGISTER_APPLICATION_INSTANCE,
+    deregisterApplicationInstance
+  );
 }
