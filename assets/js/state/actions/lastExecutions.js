@@ -1,5 +1,5 @@
 export const UPDATE_LAST_EXECUTION = 'UPDATE_LAST_EXECUTION';
-export const EXECUTION_REQUESTED = 'EXECUTION_REQUESTED';
+export const CLUSTER_EXECUTION_REQUESTED = 'CLUSTER_EXECUTION_REQUESTED';
 export const HOST_EXECUTION_REQUESTED = 'HOST_EXECUTION_REQUESTED';
 
 export const updateLastExecution = (groupID) => ({
@@ -8,7 +8,7 @@ export const updateLastExecution = (groupID) => ({
 });
 
 export const executionRequested = (clusterID, hosts, checks, navigate) => ({
-  type: EXECUTION_REQUESTED,
+  type: CLUSTER_EXECUTION_REQUESTED,
   payload: { clusterID, hosts, checks, navigate },
 });
 

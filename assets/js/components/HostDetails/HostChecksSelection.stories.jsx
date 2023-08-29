@@ -93,12 +93,10 @@ export default {
     onUpdateCatalog: {
       description: 'Updates the catalog',
     },
-
     isSavingSelection: {
       description:
         'Whether Save Checks Selection button is enabled or disabled',
     },
-
     onSaveSelection: {
       description: 'Updates the selected checks on save',
     },

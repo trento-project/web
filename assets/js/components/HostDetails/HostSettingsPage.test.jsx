@@ -91,6 +91,7 @@ describe('HostSettingsPage component', () => {
     const startExecutionButton = screen.getByText('Start Execution');
     expect(startExecutionButton).toBeDisabled();
   });
+
   it('should render HostSettingsPage with an enabled start execution button, as checks are selected', () => {
     const hosts = hostFactory.buildList(2, {
       provider: 'azure',

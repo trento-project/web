@@ -2,7 +2,7 @@ import { put, call, takeEvery, select } from 'redux-saga/effects';
 
 import {
   UPDATE_LAST_EXECUTION,
-  EXECUTION_REQUESTED,
+  CLUSTER_EXECUTION_REQUESTED,
   HOST_EXECUTION_REQUESTED,
 } from '@state/actions/lastExecutions';
 import { notify } from '@state/actions/notifications';
@@ -95,7 +95,7 @@ export function* watchUpdateLastExecution() {
 }
 
 export function* watchRequestExecution() {
-  yield takeEvery(EXECUTION_REQUESTED, requestExecution);
+  yield takeEvery(CLUSTER_EXECUTION_REQUESTED, requestExecution);
 }
 
 export function* watchHostRequestExecution() {

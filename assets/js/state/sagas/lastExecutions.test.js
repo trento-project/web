@@ -25,10 +25,10 @@ const axiosMock = new MockAdapter(networkClient);
 const lastExecutionURL = (groupID) =>
   `/api/v1/checks/groups/${groupID}/executions/last`;
 
-const triggerChecksExecutionURL = (clusterId) =>
+const triggerClusterChecksExecutionURL = (clusterId) =>
   `/clusters/${clusterId}/checks/request_execution`;
 
-const hostTriggerChecksExecutionURL = (hostID) =>
+const triggerHostChecksExecutionURL = (hostID) =>
   `/hosts/${hostID}/checks/request_execution`;
 
 describe('lastExecutions saga', () => {
@@ -97,7 +97,9 @@ describe('lastExecutions saga', () => {
     const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
 
-    axiosMock.onPost(triggerChecksExecutionURL(clusterID)).reply(202, {});
+    axiosMock
+      .onPost(triggerClusterChecksExecutionURL(clusterID))
+      .reply(202, {});
 
     const payload = { clusterID, hosts, checks };
     const dispatched = await recordSaga(
@@ -127,7 +129,9 @@ describe('lastExecutions saga', () => {
     const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
 
-    axiosMock.onPost(triggerChecksExecutionURL(clusterID)).reply(400, {});
+    axiosMock
+      .onPost(triggerClusterChecksExecutionURL(clusterID))
+      .reply(400, {});
 
     const payload = { clusterID, hosts, checks };
     const dispatched = await recordSaga(
@@ -156,7 +160,7 @@ describe('lastExecutions saga', () => {
     const { id: hostID, hostname: hostName } = host;
     const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
 
-    axiosMock.onPost(hostTriggerChecksExecutionURL(hostID)).reply(202, {});
+    axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(202, {});
     const payload = { checks, host };
 
     const dispatched = await recordSaga(requestHostExecution, {
@@ -176,7 +180,7 @@ describe('lastExecutions saga', () => {
     const { id: hostID, hostname: hostName } = host;
     const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
 
-    axiosMock.onPost(hostTriggerChecksExecutionURL(hostID)).reply(400, {});
+    axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(400, {});
 
     const payload = { checks, host };
     const dispatched = await recordSaga(requestHostExecution, {
