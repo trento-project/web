@@ -101,15 +101,15 @@ defmodule Trento.Domain.SapSystem do
   use Trento.Type
 
   deftype do
-    field :sap_system_id, Ecto.UUID
-    field :sid, :string, default: nil
-    field :health, Ecto.Enum, values: Health.values()
-    field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
-    field :rolling_up, :boolean, default: false
-    field :deregistered_at, :utc_datetime_usec, default: nil
+    field(:sap_system_id, Ecto.UUID)
+    field(:sid, :string, default: nil)
+    field(:health, Ecto.Enum, values: Health.values())
+    field(:ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa())
+    field(:rolling_up, :boolean, default: false)
+    field(:deregistered_at, :utc_datetime_usec, default: nil)
 
-    embeds_one :database, Database
-    embeds_one :application, Application
+    embeds_one(:database, Database)
+    embeds_one(:application, Application)
   end
 
   # Stop everything during the rollup process
@@ -689,7 +689,7 @@ defmodule Trento.Domain.SapSystem do
           host_id: host_id
         }
       ) do
-    instances = update_instance(instances, instance_number, host_id, :absent_at, nil)
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: nil})
 
     %SapSystem{
       sap_system
@@ -707,7 +707,7 @@ defmodule Trento.Domain.SapSystem do
           host_id: host_id
         }
       ) do
-    instances = update_instance(instances, instance_number, host_id, :absent_at, nil)
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: nil})
 
     %SapSystem{
       sap_system
@@ -726,7 +726,7 @@ defmodule Trento.Domain.SapSystem do
           absent_at: absent_at
         }
       ) do
-    instances = update_instance(instances, instance_number, host_id, :absent_at, absent_at)
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: absent_at})
 
     %SapSystem{
       sap_system
@@ -745,7 +745,7 @@ defmodule Trento.Domain.SapSystem do
           absent_at: absent_at
         }
       ) do
-    instances = update_instance(instances, instance_number, host_id, :absent_at, absent_at)
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: absent_at})
 
     %SapSystem{
       sap_system
@@ -1386,15 +1386,15 @@ defmodule Trento.Domain.SapSystem do
     end)
   end
 
-  defp update_instance(instances, instance_number, host_id, key, value) do
+  defp update_instance(instances, instance_number, host_id, fields) do
     Enum.map(
       instances,
-      fn instance ->
-        if instance.instance_number == instance_number and instance.host_id == host_id do
-          Map.put(instance, key, value)
-        else
+      fn
+        %Instance{instance_number: ^instance_number, host_id: ^host_id} = instance ->
+          struct(instance, fields)
+
+        instance ->
           instance
-        end
       end
     )
   end
