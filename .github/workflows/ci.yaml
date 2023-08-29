@@ -566,7 +566,7 @@ jobs:
     name: Build the docker image for the demo environment
     runs-on: ubuntu-latest
     if: github.event.action == 'deploy-demo' || github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test]
     permissions:
       contents: read
       packages: write
@@ -607,7 +607,7 @@ jobs:
     if: (vars.DEPLOY_DEMO == 'true' || github.event.action == 'deploy-demo') && (github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch')
     env:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
-    needs: build-demo-img
+    needs: [build-demo-img, test-e2e]
     steps:
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@v3
