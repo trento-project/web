@@ -125,7 +125,7 @@ describe('SAP Systems sagas', () => {
     ]);
   });
 
-  it('should notify error on database instance deregistration request', async () => {
+  it('should notify an error on database instance deregistration request failure', async () => {
     const instance = databaseInstanceFactory.build();
     const { sid, sap_system_id, host_id, instance_number } = instance;
 

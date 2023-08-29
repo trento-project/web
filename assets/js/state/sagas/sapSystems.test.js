@@ -131,7 +131,7 @@ describe('SAP Systems sagas', () => {
     ]);
   });
 
-  it('should notify error on application instance deregistration request', async () => {
+  it('should notify an error on application instance deregistration request failure', async () => {
     const instance = sapSystemApplicationInstanceFactory.build();
     const { sid, sap_system_id, host_id, instance_number } = instance;
 
