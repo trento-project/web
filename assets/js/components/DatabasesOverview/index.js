@@ -1,3 +1,3 @@
-import DatabasesOverview from './DatabasesOverview';
+import DatabasesOverviewPage from './DatabasesOverviewPage';
 
-export default DatabasesOverview;
+export default DatabasesOverviewPage;

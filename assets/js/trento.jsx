@@ -16,9 +16,9 @@ import ClustersList from '@components/ClustersList';
 import ClusterDetailsPage from '@components/ClusterDetails';
 import ClusterSettingsPage from '@components/ClusterSettingsPage';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
-import SapSystemsOverview from '@components/SapSystemsOverview';
+import SapSystemsOverviewPage from '@components/SapSystemsOverview';
 import HostDetails, { HostSettingsPage } from '@components/HostDetails';
-import DatabasesOverview from '@components/DatabasesOverview';
+import DatabasesOverviewPage from '@components/DatabasesOverview';
 import ChecksCatalog from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
@@ -64,8 +64,11 @@ function App() {
                     element={<HostSettingsPage />}
                   />
                   <Route path="clusters" element={<ClustersList />} />
-                  <Route path="sap_systems" element={<SapSystemsOverview />} />
-                  <Route path="databases" element={<DatabasesOverview />} />
+                  <Route
+                    path="sap_systems"
+                    element={<SapSystemsOverviewPage />}
+                  />
+                  <Route path="databases" element={<DatabasesOverviewPage />} />
                   <Route path="catalog" element={<ChecksCatalog />} />
                   <Route path="settings" element={<Settings />} />
                   <Route path="about" element={<AboutPage />} />

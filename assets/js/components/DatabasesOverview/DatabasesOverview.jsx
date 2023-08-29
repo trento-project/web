@@ -1,35 +1,24 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, { Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { filter } from 'lodash';
+
 import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import Tags from '@components/Tags';
-import { addTagToDatabase, removeTagFromDatabase } from '@state/databases';
-
-import { post, del } from '@lib/network';
-import { getCounters } from '@components/HealthSummary/summarySelection';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
+import { getCounters } from '@components/HealthSummary/summarySelection';
+
 import DatabaseItemOverview from './DatabaseItemOverview';
 
-const byDatabase = (id) => (instance) => instance.sap_system_id === id;
-
-const addTag = (tag, sapSystemId) => {
-  post(`/databases/${sapSystemId}/tags`, {
-    value: tag,
-  });
-};
-
-const removeTag = (tag, sapSystemId) => {
-  del(`/databases/${sapSystemId}/tags/${tag}`);
-};
-
-function DatabasesOverview() {
-  const { databases, databaseInstances, loading } = useSelector(
-    (state) => state.databasesList
-  );
-  const dispatch = useDispatch();
+function DatabasesOverview({
+  databases,
+  databaseInstances,
+  loading,
+  onTagAdded,
+  onTagRemoved,
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const config = {
@@ -103,25 +92,15 @@ function DatabasesOverview() {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) =>
-          element[key].some((tag) => filter.includes(tag)),
+        filter: (filters, key) => (element) =>
+          element[key].some((tag) => filters.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
             resourceId={item.id}
             onChange={() => {}}
-            onAdd={(tag) => {
-              addTag(tag, item.id);
-              dispatch(
-                addTagToDatabase({ tags: [{ value: tag }], id: item.id })
-              );
-            }}
-            onRemove={(tag) => {
-              removeTag(tag, item.id);
-              dispatch(
-                removeTagFromDatabase({ tags: [{ value: tag }], id: item.id })
-              );
-            }}
+            onAdd={(tag) => onTagAdded(tag, item.id)}
+            onRemove={(tag) => onTagRemoved(tag, item.id)}
           />
         ),
       },
@@ -138,7 +117,9 @@ function DatabasesOverview() {
     attachedRdbms: database.tenant,
     tenant: database.tenant,
     dbAddress: database.db_host,
-    databaseInstances: databaseInstances.filter(byDatabase(database.id)),
+    databaseInstances: filter(databaseInstances, {
+      sap_system_id: database.id,
+    }),
     tags: (database.tags && database.tags.map((tag) => tag.value)) || [],
   }));
 

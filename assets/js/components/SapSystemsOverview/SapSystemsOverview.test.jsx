@@ -7,42 +7,26 @@ import {
   hostFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
-import { renderWithRouter, withState } from '@lib/test-utils';
+import { renderWithRouter } from '@lib/test-utils';
 import { filterTable, clearFilter } from '@components/Table/Table.test';
 
 import SapSystemsOverview from './SapSystemsOverview';
-
-const cleanInitialState = {
-  hostsList: {
-    hosts: [],
-  },
-  clustersList: {
-    clusters: [],
-  },
-  sapSystemsList: {
-    sapSystems: [],
-    applicationInstances: [],
-    databaseInstances: [],
-  },
-};
 
 describe('SapSystemsOverviews component', () => {
   describe('overview content', () => {
     it('should display the correct number of SAP systems', () => {
       const sapSystemCount = 3;
       const expectedRowCount = sapSystemCount * 2;
-      const state = {
-        ...cleanInitialState,
-        sapSystemsList: {
-          sapSystems: sapSystemFactory.buildList(sapSystemCount),
-          applicationInstances: [],
-          databaseInstances: [],
-        },
-      };
 
-      const [StatefulSapSystemList] = withState(<SapSystemsOverview />, state);
+      const sapSystems = sapSystemFactory.buildList(sapSystemCount);
 
-      renderWithRouter(StatefulSapSystemList);
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />
+      );
 
       expect(
         screen.getByRole('table').querySelectorAll('tbody > tr')
@@ -60,18 +44,13 @@ describe('SapSystemsOverviews component', () => {
         database_instances: databaseInstances,
       } = sapSystem;
 
-      const state = {
-        ...cleanInitialState,
-        sapSystemsList: {
-          sapSystems: [sapSystem],
-          applicationInstances,
-          databaseInstances,
-        },
-      };
-
-      const [StatefulSapSystemList] = withState(<SapSystemsOverview />, state);
-
-      renderWithRouter(StatefulSapSystemList);
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={[sapSystem]}
+          applicationInstances={applicationInstances}
+          databaseInstances={databaseInstances}
+        />
+      );
 
       const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
       const mainRow = rows[0];
@@ -106,32 +85,43 @@ describe('SapSystemsOverviews component', () => {
         database_instances: databaseInstances,
       } = sapSystem;
 
-      const hosts = applicationInstances
-        .concat(databaseInstances)
-        .map(({ host_id: hostID }) => hostFactory.build({ id: hostID }));
-
-      const clusters = hosts.map(({ cluster_id: clusterID }) =>
-        clusterFactory.build({ id: clusterID, type: 'hana_scale_up' })
+      const enrichedApplicationInstances = applicationInstances.map(
+        (instance) => {
+          const host = hostFactory.build({ id: instance.host_id });
+          return {
+            ...instance,
+            host: {
+              ...host,
+              cluster: clusterFactory.build({
+                id: host.cluster_id,
+                type: 'hana_scale_up',
+              }),
+            },
+          };
+        }
       );
 
-      const state = {
-        ...cleanInitialState,
-        sapSystemsList: {
-          sapSystems: [sapSystem],
-          applicationInstances,
-          databaseInstances,
-        },
-        hostsList: {
-          hosts,
-        },
-        clustersList: {
-          clusters,
-        },
-      };
+      const enrichedDatabaseInstances = databaseInstances.map((instance) => {
+        const host = hostFactory.build({ id: instance.host_id });
+        return {
+          ...instance,
+          host: {
+            ...host,
+            cluster: clusterFactory.build({
+              id: host.cluster_id,
+              type: 'hana_scale_up',
+            }),
+          },
+        };
+      });
 
-      const [StatefulSapSystemList] = withState(<SapSystemsOverview />, state);
-
-      renderWithRouter(StatefulSapSystemList);
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={[sapSystem]}
+          applicationInstances={enrichedApplicationInstances}
+          databaseInstances={enrichedDatabaseInstances}
+        />
+      );
 
       const detailsRow = screen
         .getByRole('table')
@@ -147,52 +137,44 @@ describe('SapSystemsOverviews component', () => {
         '.table-row-group > .table-row'
       );
 
-      applicationInstances.forEach((instance, index) => {
+      enrichedApplicationInstances.forEach((instance, index) => {
         expect(
           appInstanceRows[index].querySelector('.table-cell:nth-child(2)')
         ).toHaveTextContent(instance.instance_number);
         expect(
           appInstanceRows[index].querySelector('.table-cell:nth-child(4)')
-        ).toHaveTextContent(clusters[index].name);
+        ).toHaveTextContent(instance.host.cluster.name);
         expect(
           appInstanceRows[index].querySelector('.table-cell:nth-child(4) > a')
-        ).toHaveAttribute('href', `/clusters/${clusters[index].id}`);
+        ).toHaveAttribute('href', `/clusters/${instance.host.cluster.id}`);
         expect(
           appInstanceRows[index].querySelector('.table-cell:nth-child(5)')
-        ).toHaveTextContent(hosts[index].hostname);
+        ).toHaveTextContent(instance.host.hostname);
         expect(
           appInstanceRows[index].querySelector(
             '.table-cell:nth-child(5) > span > a'
           )
-        ).toHaveAttribute('href', `/hosts/${hosts[index].id}`);
+        ).toHaveAttribute('href', `/hosts/${instance.host.id}`);
       });
 
-      databaseInstances.forEach((instance, index) => {
+      enrichedDatabaseInstances.forEach((instance, index) => {
         expect(
           dbInstanceRows[index].querySelector('.table-cell:nth-child(2)')
         ).toHaveTextContent(instance.instance_number);
         expect(
           dbInstanceRows[index].querySelector('.table-cell:nth-child(5)')
-        ).toHaveTextContent(clusters[applicationInstances.length + index].name);
+        ).toHaveTextContent(instance.host.cluster.name);
         expect(
           dbInstanceRows[index].querySelector('.table-cell:nth-child(5) > a')
-        ).toHaveAttribute(
-          'href',
-          `/clusters/${clusters[applicationInstances.length + index].id}`
-        );
+        ).toHaveAttribute('href', `/clusters/${instance.host.cluster.id}`);
         expect(
           dbInstanceRows[index].querySelector('.table-cell:nth-child(6)')
-        ).toHaveTextContent(
-          hosts[applicationInstances.length + index].hostname
-        );
+        ).toHaveTextContent(instance.host.hostname);
         expect(
           dbInstanceRows[index].querySelector(
             '.table-cell:nth-child(6) > span > a'
           )
-        ).toHaveAttribute(
-          'href',
-          `/hosts/${hosts[applicationInstances.length + index].id}`
-        );
+        ).toHaveAttribute('href', `/hosts/${instance.host.id}`);
       });
     });
   });
@@ -202,66 +184,47 @@ describe('SapSystemsOverviews component', () => {
       {
         filter: 'Health',
         options: ['unknown', 'passing', 'warning', 'critical'],
-        state: {
-          ...cleanInitialState,
-          sapSystemsList: {
-            sapSystems: [].concat(
-              sapSystemFactory.buildList(2, { health: 'unknown' }),
-              sapSystemFactory.buildList(2, { health: 'passing' }),
-              sapSystemFactory.buildList(2, { health: 'warning' }),
-              sapSystemFactory.buildList(2, { health: 'critical' })
-            ),
-            applicationInstances: [],
-            databaseInstances: [],
-          },
-        },
+        sapSystems: [].concat(
+          sapSystemFactory.buildList(2, { health: 'unknown' }),
+          sapSystemFactory.buildList(2, { health: 'passing' }),
+          sapSystemFactory.buildList(2, { health: 'warning' }),
+          sapSystemFactory.buildList(2, { health: 'critical' })
+        ),
         expectedRows: 2,
       },
       {
         filter: 'SID',
         options: ['PRD', 'QAS'],
-        state: {
-          ...cleanInitialState,
-          sapSystemsList: {
-            sapSystems: [].concat(
-              sapSystemFactory.buildList(4),
-              sapSystemFactory.buildList(2, { sid: 'PRD' }),
-              sapSystemFactory.buildList(2, { sid: 'QAS' })
-            ),
-            applicationInstances: [],
-            databaseInstances: [],
-          },
-        },
+        sapSystems: [].concat(
+          sapSystemFactory.buildList(4),
+          sapSystemFactory.buildList(2, { sid: 'PRD' }),
+          sapSystemFactory.buildList(2, { sid: 'QAS' })
+        ),
+
         expectedRows: 2,
       },
       {
         filter: 'Tags',
         options: ['Tag1', 'Tag2'],
-        state: {
-          ...cleanInitialState,
-          sapSystemsList: {
-            sapSystems: [].concat(
-              sapSystemFactory.buildList(2),
-              sapSystemFactory.buildList(2, { tags: [{ value: 'Tag1' }] }),
-              sapSystemFactory.buildList(2, { tags: [{ value: 'Tag2' }] })
-            ),
-            applicationInstances: [],
-            databaseInstances: [],
-          },
-        },
+        sapSystems: [].concat(
+          sapSystemFactory.buildList(2),
+          sapSystemFactory.buildList(2, { tags: [{ value: 'Tag1' }] }),
+          sapSystemFactory.buildList(2, { tags: [{ value: 'Tag2' }] })
+        ),
         expectedRows: 2,
       },
     ];
 
     it.each(scenarios)(
       'should filter the table content by $filter filter',
-      ({ filter, options, state, expectedRows }) => {
-        const [StatefulSapSystemList] = withState(
-          <SapSystemsOverview />,
-          state
+      ({ filter, options, sapSystems, expectedRows }) => {
+        renderWithRouter(
+          <SapSystemsOverview
+            sapSystems={sapSystems}
+            applicationInstances={[]}
+            databaseInstances={[]}
+          />
         );
-
-        renderWithRouter(StatefulSapSystemList);
 
         options.forEach(async (option) => {
           filterTable(filter, option);
@@ -282,22 +245,15 @@ describe('SapSystemsOverviews component', () => {
         tags: [{ value: 'Tag1' }],
       });
 
-      const state = {
-        ...cleanInitialState,
-        sapSystemsList: {
-          sapSystems,
-          applicationInstances: [],
-          databaseInstances: [],
-        },
-      };
-
       const { health, sid, tags } = sapSystems[0];
 
-      const [StatefulSapSystemsOverview] = withState(
-        <SapSystemsOverview />,
-        state
+      renderWithRouter(
+        <SapSystemsOverview
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />
       );
-      renderWithRouter(StatefulSapSystemsOverview);
 
       [
         ['Health', health],

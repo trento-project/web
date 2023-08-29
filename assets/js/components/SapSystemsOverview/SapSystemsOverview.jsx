@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
+import { filter } from 'lodash';
 
 import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
@@ -12,26 +12,14 @@ import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import { renderEnsaVersion } from '@components/SapSystemDetails';
 
-import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
-
-import { post, del } from '@lib/network';
-
-const bySapSystem = (id) => (instance) => instance.sap_system_id === id;
-
-const addTag = (tag, sapSystemId) => {
-  post(`/sap_systems/${sapSystemId}/tags`, {
-    value: tag,
-  });
-};
-
-const removeTag = (tag, sapSystemId) => {
-  del(`/sap_systems/${sapSystemId}/tags/${tag}`);
-};
-
-function SapSystemsOverview() {
-  const { sapSystems, applicationInstances, databaseInstances, loading } =
-    useSelector((state) => state.sapSystemsList);
-  const dispatch = useDispatch();
+function SapSystemsOverview({
+  sapSystems,
+  applicationInstances,
+  databaseInstances,
+  loading,
+  onTagAdded,
+  onTagRemoved,
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const config = {
@@ -94,25 +82,15 @@ function SapSystemsOverview() {
         key: 'tags',
         className: 'w-80',
         filterFromParams: true,
-        filter: (filter, key) => (element) =>
-          element[key].some((tag) => filter.includes(tag)),
+        filter: (filters, key) => (element) =>
+          element[key].some((tag) => filters.includes(tag)),
         render: (content, item) => (
           <Tags
             tags={content}
             resourceId={item.id}
             onChange={() => {}}
-            onAdd={(tag) => {
-              addTag(tag, item.id);
-              dispatch(
-                addTagToSAPSystem({ tags: [{ value: tag }], id: item.id })
-              );
-            }}
-            onRemove={(tag) => {
-              removeTag(tag, item.id);
-              dispatch(
-                removeTagFromSAPSystem({ tags: [{ value: tag }], id: item.id })
-              );
-            }}
+            onAdd={(tag) => onTagAdded(tag, item.id)}
+            onRemove={(tag) => onTagRemoved(tag, item.id)}
           />
         ),
       },
@@ -130,10 +108,12 @@ function SapSystemsOverview() {
     tenant: sapSystem.tenant,
     dbAddress: sapSystem.db_host,
     ensaVersion: sapSystem.ensa_version || '-',
-    applicationInstances: applicationInstances.filter(
-      bySapSystem(sapSystem.id)
-    ),
-    databaseInstances: databaseInstances.filter(bySapSystem(sapSystem.id)),
+    applicationInstances: filter(applicationInstances, {
+      sap_system_id: sapSystem.id,
+    }),
+    databaseInstances: filter(databaseInstances, {
+      sap_system_id: sapSystem.id,
+    }),
     tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],
   }));
 

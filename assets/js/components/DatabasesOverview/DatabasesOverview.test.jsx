@@ -3,84 +3,53 @@ import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { databaseFactory } from '@lib/test-utils/factories';
-import { renderWithRouter, withState } from '@lib/test-utils';
+import { renderWithRouter } from '@lib/test-utils';
 import { filterTable, clearFilter } from '@components/Table/Table.test';
 
 import DatabasesOverview from './DatabasesOverview';
 
 describe('DatabasesOverview component', () => {
   describe('filtering', () => {
-    const cleanInitialState = {
-      hostsList: {
-        hosts: [],
-      },
-      clustersList: {
-        clusters: [],
-      },
-      databasesList: {
-        databases: [],
-        databaseInstances: [],
-      },
-    };
-
     const scenarios = [
       {
         filter: 'Health',
         options: ['unknown', 'passing', 'warning', 'critical'],
-        state: {
-          ...cleanInitialState,
-          databasesList: {
-            databases: [].concat(
-              databaseFactory.buildList(2, { health: 'unknown' }),
-              databaseFactory.buildList(2, { health: 'passing' }),
-              databaseFactory.buildList(2, { health: 'warning' }),
-              databaseFactory.buildList(2, { health: 'critical' })
-            ),
-            databaseInstances: [],
-          },
-        },
+        databases: [].concat(
+          databaseFactory.buildList(2, { health: 'unknown' }),
+          databaseFactory.buildList(2, { health: 'passing' }),
+          databaseFactory.buildList(2, { health: 'warning' }),
+          databaseFactory.buildList(2, { health: 'critical' })
+        ),
         expectedRows: 2,
       },
       {
         filter: 'SID',
         options: ['PRD', 'QAS'],
-        state: {
-          ...cleanInitialState,
-          databasesList: {
-            databases: [].concat(
-              databaseFactory.buildList(4),
-              databaseFactory.buildList(2, { sid: 'PRD' }),
-              databaseFactory.buildList(2, { sid: 'QAS' })
-            ),
-            databaseInstances: [],
-          },
-        },
+        databases: [].concat(
+          databaseFactory.buildList(4),
+          databaseFactory.buildList(2, { sid: 'PRD' }),
+          databaseFactory.buildList(2, { sid: 'QAS' })
+        ),
         expectedRows: 2,
       },
       {
         filter: 'Tags',
         options: ['Tag1', 'Tag2'],
-        state: {
-          ...cleanInitialState,
-          databasesList: {
-            databases: [].concat(
-              databaseFactory.buildList(2),
-              databaseFactory.buildList(2, { tags: [{ value: 'Tag1' }] }),
-              databaseFactory.buildList(2, { tags: [{ value: 'Tag2' }] })
-            ),
-            databaseInstances: [],
-          },
-        },
+        databases: [].concat(
+          databaseFactory.buildList(2),
+          databaseFactory.buildList(2, { tags: [{ value: 'Tag1' }] }),
+          databaseFactory.buildList(2, { tags: [{ value: 'Tag2' }] })
+        ),
         expectedRows: 2,
       },
     ];
 
     it.each(scenarios)(
       'should filter the table content by $filter filter',
-      ({ filter, options, state, expectedRows }) => {
-        const [StatefulDatbaseList] = withState(<DatabasesOverview />, state);
-
-        renderWithRouter(StatefulDatbaseList);
+      ({ filter, options, databases, expectedRows }) => {
+        renderWithRouter(
+          <DatabasesOverview databases={databases} databaseInstances={[]} />
+        );
 
         options.forEach(async (option) => {
           filterTable(filter, option);
@@ -101,21 +70,11 @@ describe('DatabasesOverview component', () => {
         tags: [{ value: 'Tag1' }],
       });
 
-      const state = {
-        ...cleanInitialState,
-        databasesList: {
-          databases,
-          databaseInstances: [],
-        },
-      };
-
       const { health, sid, tags } = databases[0];
 
-      const [StatefulDatabasesOverview] = withState(
-        <DatabasesOverview />,
-        state
+      renderWithRouter(
+        <DatabasesOverview databases={databases} databaseInstances={[]} />
       );
-      renderWithRouter(StatefulDatabasesOverview);
 
       [
         ['Health', health],
