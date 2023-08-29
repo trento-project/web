@@ -689,17 +689,7 @@ defmodule Trento.Domain.SapSystem do
           host_id: host_id
         }
       ) do
-    instances =
-      Enum.map(
-        instances,
-        fn instance ->
-          if instance.instance_number == instance_number and instance.host_id == host_id do
-            %Instance{instance | absent_at: nil}
-          else
-            instance
-          end
-        end
-      )
+    instances = update_instance(instances, instance_number, host_id, :absent_at, nil)
 
     %SapSystem{
       sap_system
@@ -717,17 +707,7 @@ defmodule Trento.Domain.SapSystem do
           host_id: host_id
         }
       ) do
-    instances =
-      Enum.map(
-        instances,
-        fn instance ->
-          if instance.instance_number == instance_number and instance.host_id == host_id do
-            %Instance{instance | absent_at: nil}
-          else
-            instance
-          end
-        end
-      )
+    instances = update_instance(instances, instance_number, host_id, :absent_at, nil)
 
     %SapSystem{
       sap_system
@@ -746,17 +726,7 @@ defmodule Trento.Domain.SapSystem do
           absent_at: absent_at
         }
       ) do
-    instances =
-      Enum.map(
-        instances,
-        fn instance ->
-          if instance.instance_number == instance_number and instance.host_id == host_id do
-            %Instance{instance | absent_at: absent_at}
-          else
-            instance
-          end
-        end
-      )
+    instances = update_instance(instances, instance_number, host_id, :absent_at, absent_at)
 
     %SapSystem{
       sap_system
@@ -775,17 +745,7 @@ defmodule Trento.Domain.SapSystem do
           absent_at: absent_at
         }
       ) do
-    instances =
-      Enum.map(
-        instances,
-        fn instance ->
-          if instance.instance_number == instance_number and instance.host_id == host_id do
-            %Instance{instance | absent_at: absent_at}
-          else
-            instance
-          end
-        end
-      )
+    instances = update_instance(instances, instance_number, host_id, :absent_at, absent_at)
 
     %SapSystem{
       sap_system
@@ -1424,5 +1384,18 @@ defmodule Trento.Domain.SapSystem do
       _ ->
         false
     end)
+  end
+
+  defp update_instance(instances, instance_number, host_id, key, value) do
+    Enum.map(
+      instances,
+      fn instance ->
+        if instance.instance_number == instance_number and instance.host_id == host_id do
+          Map.put(instance, key, value)
+        else
+          instance
+        end
+      end
+    )
   end
 end
