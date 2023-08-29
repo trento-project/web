@@ -21,6 +21,8 @@ defmodule Trento.Hosts do
     SelectHostChecks
   }
 
+  alias Trento.Integration.Checks
+
   alias Trento.Repo
 
   @spec get_all_hosts :: [HostReadModel.t()]
@@ -67,6 +69,26 @@ defmodule Trento.Hosts do
     end
   end
 
+  @spec request_checks_execution(String.t()) :: :ok | {:error, any}
+  def request_checks_execution(host_id) do
+    query =
+      from(h in HostReadModel,
+        where: is_nil(h.deregistered_at) and h.id == ^host_id
+      )
+
+    case Repo.one(query) do
+      %HostReadModel{} = host ->
+        Logger.debug("Requesting checks execution, host: #{host_id}")
+
+        maybe_request_checks_execution(host)
+
+      nil ->
+        Logger.error("Requested checks execution for a non-existing host: #{host_id}")
+
+        {:error, :not_found}
+    end
+  end
+
   @spec deregister_host(Ecto.UUID.t(), DateService) ::
           :ok | {:error, :host_alive} | {:error, :host_not_registered}
   def deregister_host(host_id, date_service \\ DateService) do
@@ -80,6 +102,23 @@ defmodule Trento.Hosts do
     query
     |> join(:left, [h], hb in Heartbeat, on: type(h.id, :string) == hb.agent_id)
     |> select_merge([h, hb], %{last_heartbeat_timestamp: hb.timestamp})
+  end
+
+  defp maybe_request_checks_execution(%{selected_checks: []}), do: {:error, :no_checks_selected}
+
+  defp maybe_request_checks_execution(%{
+         id: host_id,
+         selected_checks: selected_checks,
+         provider: provider
+       }) do
+    Checks.request_execution(
+      UUID.uuid4(),
+      host_id,
+      %Checks.HostExecutionEnv{provider: provider},
+      [%{host_id: host_id}],
+      selected_checks,
+      :host
+    )
   end
 
   defp commanded,

@@ -119,4 +119,57 @@ defmodule Trento.HostsTest do
       assert {:error, :some_error} = Hosts.select_checks(host_id, selected_checks)
     end
   end
+
+  describe "Checks Execution" do
+    test "should start an execution" do
+      %{id: host_id, provider: provider} = insert(:host)
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+        assert message.group_id == host_id
+        assert length(message.targets) == 1
+
+        assert message.env == %{
+                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}}
+               }
+
+        assert message.target_type == "host"
+
+        :ok
+      end)
+
+      assert :ok = Hosts.request_checks_execution(host_id)
+    end
+
+    test "should not start an execution for an unregistered host" do
+      %{id: deregistered_host} = insert(:host, deregistered_at: DateTime.utc_now())
+
+      for deregistered_host_id <- [deregistered_host, Faker.UUID.v4()] do
+        expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+          :ok
+        end)
+
+        assert {:error, :not_found} = Hosts.request_checks_execution(deregistered_host_id)
+      end
+    end
+
+    test "should not start an execution with an empty selection" do
+      %{id: host_id} = insert(:host, selected_checks: [])
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _ ->
+        :ok
+      end)
+
+      assert {:error, :no_checks_selected} = Hosts.request_checks_execution(host_id)
+    end
+
+    test "should return an error on message publishing failure" do
+      %{id: host_id} = insert(:host)
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn _, _ ->
+        {:error, :amqp_error}
+      end)
+
+      assert {:error, :amqp_error} = Hosts.request_checks_execution(host_id)
+    end
+  end
 end

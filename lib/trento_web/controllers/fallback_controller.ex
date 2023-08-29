@@ -74,6 +74,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Requested operation not allowed for present SAP instances.")
   end
 
+  def call(conn, {:error, :no_checks_selected}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "No checks were selected for the target.")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do

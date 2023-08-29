@@ -97,6 +97,10 @@ defmodule TrentoWeb.Router do
            ClusterController,
            :request_checks_execution
 
+      post "/hosts/:id/checks/request_execution",
+           HostController,
+           :request_checks_execution
+
       post "/hosts/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :host},
         as: :hosts_tagging

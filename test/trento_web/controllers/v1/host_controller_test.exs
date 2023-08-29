@@ -185,6 +185,73 @@ defmodule TrentoWeb.V1.HostControllerTest do
     end
   end
 
+  describe "Request check executions" do
+    test "should return 202 when the execution was successfully started", %{conn: conn} do
+      %{id: host_id} = insert(:host)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn _, _ ->
+          :ok
+        end
+      )
+
+      resp =
+        conn
+        |> post("/api/v1/hosts/#{host_id}/checks/request_execution")
+        |> json_response(:accepted)
+
+      assert resp == %{}
+    end
+
+    test "should return 404 when the host is not found", %{conn: conn, api_spec: api_spec} do
+      %{id: deregistered_host} = insert(:host, deregistered_at: DateTime.utc_now())
+
+      for host_id <- [deregistered_host, Faker.UUID.v4()] do
+        conn
+        |> post("/api/v1/hosts/#{host_id}/checks/request_execution")
+        |> json_response(:not_found)
+        |> assert_schema("NotFound", api_spec)
+      end
+    end
+
+    test "should return 422 when the selection is empty", %{conn: conn, api_spec: api_spec} do
+      %{id: host_id} = insert(:host, selected_checks: [])
+
+      conn
+      |> post("/api/v1/hosts/#{host_id}/checks/request_execution")
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntity", api_spec)
+    end
+
+    test "should return 500 on messaging error", %{conn: conn} do
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn _, _ ->
+          {:error, :amqp_error}
+        end
+      )
+
+      %{id: host_id} = insert(:host)
+
+      resp =
+        conn
+        |> post("/api/v1/hosts/#{host_id}/checks/request_execution")
+        |> json_response(:internal_server_error)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Something went wrong.",
+                   "title" => "Internal Server Error"
+                 }
+               ]
+             } = resp
+    end
+  end
+
   describe "delete" do
     test "should send 204 response when successful host deletion", %{conn: conn} do
       %{id: host_id} = insert(:host)

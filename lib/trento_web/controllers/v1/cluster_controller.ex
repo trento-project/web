@@ -37,7 +37,7 @@ defmodule TrentoWeb.V1.ClusterController do
       ]
     ],
     responses: [
-      accepted: "The Command has been accepted and the Requested execution is scheduled",
+      accepted: "The Command has been accepted and the Requested Cluster execution is scheduled",
       not_found: Schema.NotFound.response(),
       bad_request: Schema.BadRequest.response(),
       unprocessable_entity: OpenApiSpex.JsonErrorResponse.response()
