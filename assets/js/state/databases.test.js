@@ -5,7 +5,7 @@ import databaseReducer, {
   updateDatabaseInstanceHealth,
   updateDatabaseInstanceSystemReplication,
   setDatabaseInstanceDeregistering,
-  setDatabaseInstanceNotDeregistering,
+  unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
 import {
   databaseFactory,
@@ -157,7 +157,7 @@ describe('Databases reducer', () => {
       databaseInstances: [instance],
     };
 
-    const action = setDatabaseInstanceNotDeregistering(instance);
+    const action = unsetDatabaseInstanceDeregistering(instance);
 
     const expectedState = {
       databaseInstances: [

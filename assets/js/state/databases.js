@@ -98,7 +98,7 @@ export const databasesListSlice = createSlice({
         }
       );
     },
-    setDatabaseInstanceNotDeregistering: (state, { payload: instance }) => {
+    unsetDatabaseInstanceDeregistering: (state, { payload: instance }) => {
       state.databaseInstances = updateInstance(
         state.databaseInstances,
         instance,
@@ -140,7 +140,7 @@ export const {
   addTagToDatabase,
   removeTagFromDatabase,
   setDatabaseInstanceDeregistering,
-  setDatabaseInstanceNotDeregistering,
+  unsetDatabaseInstanceDeregistering,
 } = databasesListSlice.actions;
 
 export default databasesListSlice.reducer;

@@ -10,9 +10,9 @@ import sapSystemsReducer, {
   removeDatabaseInstanceFromSapSystem,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
-  setApplicationInstanceNotDeregistering,
+  unsetApplicationInstanceDeregistering,
   setDatabaseInstanceDeregisteringToSAPSystem,
-  setDatabaseInstanceNotDeregisteringToSAPSystem,
+  unsetDatabaseInstanceDeregisteringToSAPSystem,
 } from '@state/sapSystems';
 import {
   sapSystemFactory,
@@ -291,7 +291,7 @@ describe('SAP Systems reducer', () => {
       applicationInstances: [instance],
     };
 
-    const action = setApplicationInstanceNotDeregistering(instance);
+    const action = unsetApplicationInstanceDeregistering(instance);
 
     const expectedState = {
       applicationInstances: [
@@ -333,7 +333,7 @@ describe('SAP Systems reducer', () => {
       databaseInstances: [instance],
     };
 
-    const action = setDatabaseInstanceNotDeregisteringToSAPSystem(instance);
+    const action = unsetDatabaseInstanceDeregisteringToSAPSystem(instance);
 
     const expectedState = {
       databaseInstances: [

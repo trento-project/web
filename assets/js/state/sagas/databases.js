@@ -19,7 +19,7 @@ import {
   removeDatabase,
   removeDatabaseInstance,
   setDatabaseInstanceDeregistering,
-  setDatabaseInstanceNotDeregistering,
+  unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
 
 import {
@@ -28,7 +28,7 @@ import {
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
   setDatabaseInstanceDeregisteringToSAPSystem,
-  setDatabaseInstanceNotDeregisteringToSAPSystem,
+  unsetDatabaseInstanceDeregisteringToSAPSystem,
 } from '@state/sapSystems';
 
 import { getDatabase } from '@state/selectors/sapSystem';
@@ -130,8 +130,8 @@ export function* deregisterDatabaseInstance({
       })
     );
   } finally {
-    yield put(setDatabaseInstanceNotDeregistering(payload));
-    yield put(setDatabaseInstanceNotDeregisteringToSAPSystem(payload));
+    yield put(unsetDatabaseInstanceDeregistering(payload));
+    yield put(unsetDatabaseInstanceDeregisteringToSAPSystem(payload));
   }
 }
 

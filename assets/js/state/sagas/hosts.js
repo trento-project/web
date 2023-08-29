@@ -10,7 +10,7 @@ import {
   removeHost,
   setHostListDeregisterable,
   setHostDeregistering,
-  setHostNotDeregistering,
+  unsetHostDeregistering,
   appendHost,
 } from '@state/hosts';
 
@@ -67,7 +67,7 @@ export function* deregisterHost({
       })
     );
   } finally {
-    yield put(setHostNotDeregistering(payload));
+    yield put(unsetHostDeregistering(payload));
   }
 }
 

@@ -22,7 +22,7 @@ import {
   removeSAPSystem,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
-  setApplicationInstanceNotDeregistering,
+  unsetApplicationInstanceDeregistering,
 } from '@state/sapSystems';
 import { getSapSystem } from '@state/selectors/sapSystem';
 import { notify } from '@state/actions/notifications';
@@ -130,7 +130,7 @@ export function* deregisterApplicationInstance({
       })
     );
   } finally {
-    yield put(setApplicationInstanceNotDeregistering(payload));
+    yield put(unsetApplicationInstanceDeregistering(payload));
   }
 }
 

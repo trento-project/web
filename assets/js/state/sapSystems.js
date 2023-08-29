@@ -156,7 +156,7 @@ export const sapSystemsListSlice = createSlice({
         { deregistering: true }
       );
     },
-    setApplicationInstanceNotDeregistering: (state, { payload: instance }) => {
+    unsetApplicationInstanceDeregistering: (state, { payload: instance }) => {
       state.applicationInstances = updateInstance(
         state.applicationInstances,
         instance,
@@ -173,7 +173,7 @@ export const sapSystemsListSlice = createSlice({
         { deregistering: true }
       );
     },
-    setDatabaseInstanceNotDeregisteringToSAPSystem: (
+    unsetDatabaseInstanceDeregisteringToSAPSystem: (
       state,
       { payload: instance }
     ) => {
@@ -224,9 +224,9 @@ export const {
   removeSAPSystem,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
-  setApplicationInstanceNotDeregistering,
+  unsetApplicationInstanceDeregistering,
   setDatabaseInstanceDeregisteringToSAPSystem,
-  setDatabaseInstanceNotDeregisteringToSAPSystem,
+  unsetDatabaseInstanceDeregisteringToSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;

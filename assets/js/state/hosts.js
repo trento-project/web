@@ -95,7 +95,7 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    setHostNotDeregistering: (state, action) => {
+    unsetHostDeregistering: (state, action) => {
       state.hosts = state.hosts.map((host) => {
         if (host.id === action.payload.id) {
           return { ...host, deregistering: false };
@@ -142,7 +142,7 @@ export const {
   setHostListDeregisterable,
   setHostNotDeregisterable,
   setHostDeregistering,
-  setHostNotDeregistering,
+  unsetHostDeregistering,
   startHostsLoading,
   stopHostsLoading,
   removeHost,

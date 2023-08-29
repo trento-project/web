@@ -13,13 +13,13 @@ import {
   removeDatabaseInstance,
   appendDatabase,
   setDatabaseInstanceDeregistering,
-  setDatabaseInstanceNotDeregistering,
+  unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
 import {
   removeDatabaseInstanceFromSapSystem,
   upsertDatabaseInstancesToSapSystem,
   setDatabaseInstanceDeregisteringToSAPSystem,
-  setDatabaseInstanceNotDeregisteringToSAPSystem,
+  unsetDatabaseInstanceDeregisteringToSAPSystem,
 } from '@state/sapSystems';
 import {
   databaseFactory,
@@ -120,8 +120,8 @@ describe('SAP Systems sagas', () => {
     expect(dispatched).toEqual([
       setDatabaseInstanceDeregistering(instance),
       setDatabaseInstanceDeregisteringToSAPSystem(instance),
-      setDatabaseInstanceNotDeregistering(instance),
-      setDatabaseInstanceNotDeregisteringToSAPSystem(instance),
+      unsetDatabaseInstanceDeregistering(instance),
+      unsetDatabaseInstanceDeregisteringToSAPSystem(instance),
     ]);
   });
 
@@ -146,8 +146,8 @@ describe('SAP Systems sagas', () => {
         text: `Error deregistering instance ${instance_number} from ${sid}.`,
         icon: '❌',
       }),
-      setDatabaseInstanceNotDeregistering(instance),
-      setDatabaseInstanceNotDeregisteringToSAPSystem(instance),
+      unsetDatabaseInstanceDeregistering(instance),
+      unsetDatabaseInstanceDeregisteringToSAPSystem(instance),
     ]);
   });
 });

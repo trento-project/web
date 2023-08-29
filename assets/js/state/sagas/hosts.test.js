@@ -15,7 +15,7 @@ import {
   setHostListDeregisterable,
   removeHost,
   setHostDeregistering,
-  setHostNotDeregistering,
+  unsetHostDeregistering,
   appendHost,
 } from '@state/hosts';
 
@@ -93,7 +93,7 @@ describe('Hosts sagas', () => {
 
     expect(dispatched).toEqual([
       setHostDeregistering(payload),
-      setHostNotDeregistering(payload),
+      unsetHostDeregistering(payload),
     ]);
   });
 
@@ -111,7 +111,7 @@ describe('Hosts sagas', () => {
         text: `Error deregistering host ${hostname}.`,
         icon: '❌',
       }),
-      setHostNotDeregistering(payload),
+      unsetHostDeregistering(payload),
     ]);
   });
 

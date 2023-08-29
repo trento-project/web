@@ -18,7 +18,7 @@ import {
   removeApplicationInstance,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
-  setApplicationInstanceNotDeregistering,
+  unsetApplicationInstanceDeregistering,
 } from '@state/sapSystems';
 import { networkClient } from '@lib/network';
 import { notify } from '@state/actions/notifications';
@@ -127,7 +127,7 @@ describe('SAP Systems sagas', () => {
 
     expect(dispatched).toEqual([
       setApplicationInstanceDeregistering(instance),
-      setApplicationInstanceNotDeregistering(instance),
+      unsetApplicationInstanceDeregistering(instance),
     ]);
   });
 
@@ -151,7 +151,7 @@ describe('SAP Systems sagas', () => {
         text: `Error deregistering instance ${instance_number} from ${sid}.`,
         icon: '❌',
       }),
-      setApplicationInstanceNotDeregistering(instance),
+      unsetApplicationInstanceDeregistering(instance),
     ]);
   });
 });
