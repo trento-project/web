@@ -40,6 +40,17 @@ const systemReplicationInstances = [
   }),
 ];
 
+const databaseWithAbsentInstances = databaseFactory.build();
+const someAbsentInstances = [
+  databaseInstanceFactory.build({
+    sap_system_id: databaseWithAbsentInstances.id,
+  }),
+  databaseInstanceFactory.build({
+    sap_system_id: databaseWithAbsentInstances.id,
+    absent_at: '2021-01-01T00:00:00.000Z',
+  }),
+];
+
 function ContainerWrapper({ children }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
@@ -101,6 +112,14 @@ export const WithSystemReplication = {
   args: {
     databases: [databaseWithSR],
     databaseInstances: systemReplicationInstances,
+    loading: false,
+  },
+};
+
+export const WithAbsentInstances = {
+  args: {
+    databases: [databaseWithAbsentInstances],
+    databaseInstances: someAbsentInstances,
     loading: false,
   },
 };

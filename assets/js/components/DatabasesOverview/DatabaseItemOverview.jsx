@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { EOS_DATABASE_OUTLINED } from 'eos-icons-react';
 import React from 'react';
 import InstanceOverview from '@components/InstanceOverview';
@@ -15,22 +14,18 @@ const databaseInstanceColumns = [
   { name: 'System Replication' },
   { name: 'Cluster' },
   { name: 'Host' },
+  {},
 ];
 
 function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
   return (
-    <div
-      className={classNames('flex bg-white dark:bg-gray-800 shadow mb-2', {
-        'rounded-lg': !asDatabaseLayer,
-        'rounded-b-lg': asDatabaseLayer,
-      })}
-    >
-      <div className="flex-auto p-6">
-        <div className="w-full text-gray-800 dark:text-white flex items-center transition-colors duration-200 justify-start pb-4">
+    <div className="flex bg-white dark:bg-gray-800 shadow mb-2 rounded-lg">
+      <div className="flex-auto">
+        <div className="w-full text-gray-800 dark:text-white flex items-center transition-colors duration-200 justify-start p-4">
           <span className="text-left">
-            <EOS_DATABASE_OUTLINED size={25} className="fill-blue-500" />
+            <EOS_DATABASE_OUTLINED size={25} className="fill-black-500" />
           </span>
-          <h2 className="mx-2">
+          <h2 className="mx-2 font-bold">
             {asDatabaseLayer ? 'Database Layer' : 'Database Instances'}
           </h2>
         </div>

@@ -27,7 +27,7 @@ function CollapsibleTableRow({
       </tr>
       {collapsibleDetailRenderer && (
         <tr
-          className={`overflow-y-hidden ${
+          className={`bg-gray-100 overflow-y-hidden ${
             rowExpanded ? 'visible' : 'hidden'
           } transition-all ease-in-out duration-600`}
         >

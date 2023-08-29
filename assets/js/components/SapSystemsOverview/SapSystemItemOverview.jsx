@@ -16,20 +16,21 @@ const applicationInstanceColumns = [
   { name: 'Features' },
   { name: 'Cluster' },
   { name: 'Host' },
+  {},
 ];
 
 function SapSystemItemOverview({ sapSystem }) {
   const { applicationInstances, databaseInstances } = sapSystem;
 
   return (
-    <div className="p-2">
-      <div className="flex bg-white dark:bg-gray-800 shadow border-b border-gray-300 rounded-t-lg">
-        <div className="flex-auto p-6">
-          <div className="w-full text-gray-800 dark:text-white flex items-center transition-colors duration-200 justify-start pb-4">
+    <div className="p-4 bg-gray-100">
+      <div className="flex bg-white dark:bg-gray-800 shadow border-b border-gray-300 rounded-lg mb-4">
+        <div className="flex-auto">
+          <div className="w-full text-gray-800 dark:text-white flex items-center transition-colors duration-200 justify-start p-4">
             <span className="text-left">
-              <EOS_APPLICATION_OUTLINED size={25} className="fill-blue-500" />
+              <EOS_APPLICATION_OUTLINED size={25} className="fill-black-500" />
             </span>
-            <h2 className="mx-2">Application Layer</h2>
+            <h2 className="mx-2 font-bold">Application Layer</h2>
           </div>
           <div className="table w-full">
             <div className="table-header-group bg-grey bg-gray-100">
