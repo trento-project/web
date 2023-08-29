@@ -83,7 +83,7 @@ function HostSettingsPage() {
       selectedChecks={selection}
       hostChecksExecutionEnabled={hostChecksExecutionEnabled}
       onSelectedChecksChange={setSelection}
-      startExecution={requestHostChecksExecution}
+      onStartExecution={requestHostChecksExecution}
     />
   );
 }

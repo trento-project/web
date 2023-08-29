@@ -108,7 +108,7 @@ export default {
     hostChecksExecutionEnabled: {
       description: 'Whether start execution button is enabled or disabled',
     },
-    startExecution: {
+    onStartExecution: {
       description: 'Starts the host checks execution',
     },
   },
