@@ -20,7 +20,7 @@ export const getCatalog = (env) =>
     params: env,
   });
 
-export const triggerChecksExecution = (clusterID) =>
+export const triggerClusterChecksExecution = (clusterID) =>
   networkClient.post(`/clusters/${clusterID}/checks/request_execution`);
 
 export const triggerHostChecksExecution = (hostID) =>

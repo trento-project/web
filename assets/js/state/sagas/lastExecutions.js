@@ -8,7 +8,7 @@ import {
 import { notify } from '@state/actions/notifications';
 import {
   getLastExecutionByGroupID,
-  triggerChecksExecution,
+  triggerClusterChecksExecution,
   triggerHostChecksExecution,
 } from '@lib/api/checks';
 import {
@@ -47,7 +47,7 @@ export function* requestExecution({ payload }) {
   const clusterName = yield select(getClusterName(clusterID));
 
   try {
-    yield call(triggerChecksExecution, clusterID);
+    yield call(triggerClusterChecksExecution, clusterID);
     yield put(setExecutionRequested(payload));
     yield put(
       notify({
