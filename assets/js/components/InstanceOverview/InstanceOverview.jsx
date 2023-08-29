@@ -1,7 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { getHost } from '@state/selectors/host';
-import { getCluster } from '@state/selectors/cluster';
+
 import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails';
 import { DATABASE_TYPE } from '@lib/model';
@@ -17,13 +15,11 @@ function InstanceOverview({
     system_replication_status: systemReplicationStatus,
     instance_number: instanceNumber,
     features,
-    host_id: hostId,
+    host_id: hostID,
+    host,
   },
 }) {
   const isDatabase = DATABASE_TYPE === instanceType;
-
-  const host = useSelector(getHost(hostId));
-  const cluster = useSelector(getCluster(host?.cluster_id));
 
   return (
     <div className="table-row border-b">
@@ -41,8 +37,8 @@ function InstanceOverview({
         </div>
       )}
       <div className="table-cell p-2">
-        {cluster ? (
-          <ClusterLink cluster={cluster} />
+        {host?.cluster ? (
+          <ClusterLink cluster={host.cluster} />
         ) : (
           <p className="text-gray-500 dark:text-gray-300 text-sm">
             not available
@@ -50,7 +46,7 @@ function InstanceOverview({
         )}
       </div>
       <div className="table-cell p-2">
-        <HostLink hostId={hostId}>{host && host.hostname}</HostLink>
+        <HostLink hostId={hostID}>{host && host.hostname}</HostLink>
       </div>
     </div>
   );

@@ -18,6 +18,8 @@ export const databaseInstanceFactory = Factory.define(() => ({
   sid: faker.random.alpha({ casing: 'upper', count: 3 }),
   features: features().join('|'),
   start_priority: faker.datatype.number({ min: 1, max: 9 }).toString(),
+  system_replication: '',
+  system_replication_status: '',
 }));
 
 export const databaseFactory = Factory.define(({ params }) => {
