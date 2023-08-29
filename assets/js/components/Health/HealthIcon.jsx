@@ -6,6 +6,7 @@ import {
   EOS_ERROR_OUTLINED,
   EOS_WARNING_OUTLINED,
   EOS_LENS_FILLED,
+  EOS_INFO_OUTLINED,
 } from 'eos-icons-react';
 
 import Spinner from '@components/Spinner';
@@ -49,6 +50,16 @@ function HealthIcon({
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-red-500', centered)
+          )}
+        />
+      );
+    case 'absent':
+      return (
+        <EOS_INFO_OUTLINED
+          size={size}
+          className={classNames(
+            hoverOpacityClass,
+            computedIconCssClass('fill-black', centered)
           )}
         />
       );

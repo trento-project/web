@@ -22,6 +22,10 @@ export function Pending() {
   return <HealthIcon health="pending" />;
 }
 
+export function Absent() {
+  return <HealthIcon health="absent" />;
+}
+
 export function Default() {
   return <HealthIcon health="unknown" />;
 }
