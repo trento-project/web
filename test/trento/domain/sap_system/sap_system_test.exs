@@ -129,7 +129,8 @@ defmodule Trento.SapSystemTest do
                 instance_number: instance_number,
                 features: features,
                 host_id: host_id,
-                health: :passing
+                health: :passing,
+                absent_at: nil
               }
             ]
           }
@@ -431,7 +432,8 @@ defmodule Trento.SapSystemTest do
                          instance_number: "10",
                          features: "ABAP",
                          host_id: ^host_id,
-                         health: :passing
+                         health: :passing,
+                         absent_at: nil
                        },
                        %SapSystem.Instance{
                          features: "MESSAGESERVER"
@@ -4209,66 +4211,6 @@ defmodule Trento.SapSystemTest do
   end
 
   describe "instance marked absent/present" do
-    test "newly registered instances should be marked as present" do
-      sap_system_id = Faker.UUID.v4()
-      sid = fake_sid()
-      ensa_version = EnsaVersion.ensa1()
-      host_id = Faker.UUID.v4()
-
-      initial_events = [
-        build(
-          :database_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid
-        ),
-        build(
-          :database_instance_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid
-        ),
-        build(:application_instance_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid,
-          features: "MESSAGESERVER",
-          host_id: host_id
-        ),
-        build(
-          :sap_system_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid,
-          ensa_version: ensa_version
-        )
-      ]
-
-      assert_events_and_state(
-        initial_events,
-        [],
-        [],
-        fn state ->
-          assert %SapSystem{
-                   sid: ^sid,
-                   ensa_version: ^ensa_version,
-                   application: %SapSystem.Application{
-                     sid: ^sid,
-                     instances: [
-                       %SapSystem.Instance{
-                         absent_at: nil
-                       }
-                     ]
-                   },
-                   database: %SapSystem.Database{
-                     sid: ^sid,
-                     instances: [
-                       %SapSystem.Instance{
-                         absent_at: nil
-                       }
-                     ]
-                   }
-                 } = state
-        end
-      )
-    end
-
     test "should mark as absent a previously registered instance" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
