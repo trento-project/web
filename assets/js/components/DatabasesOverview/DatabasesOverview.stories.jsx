@@ -41,7 +41,7 @@ const systemReplicationInstances = [
 ];
 
 const databaseWithAbsentInstances = databaseFactory.build();
-const someAbsentInstances = [
+const absentInstance = [
   databaseInstanceFactory.build({
     sap_system_id: databaseWithAbsentInstances.id,
   }),
@@ -119,7 +119,7 @@ export const WithSystemReplication = {
 export const WithAbsentInstances = {
   args: {
     databases: [databaseWithAbsentInstances],
-    databaseInstances: someAbsentInstances,
+    databaseInstances: absentInstance,
     loading: false,
   },
 };
