@@ -4505,8 +4505,7 @@ defmodule Trento.SapSystemTest do
           :application_instance_marked_absent_event,
           sap_system_id: sap_system_id,
           host_id: host_id,
-          instance_number: absent_app_instance_number,
-          absent_at: DateTime.utc_now()
+          instance_number: absent_app_instance_number
         ),
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
