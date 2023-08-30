@@ -18,6 +18,8 @@ defmodule Trento.DatabaseProjectorTest do
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
+    DatabaseInstanceMarkedAbsent,
+    DatabaseInstanceMarkedPresent,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRestored
   }
@@ -293,6 +295,67 @@ defmodule Trento.DatabaseProjectorTest do
                        health: :critical
                      },
                      1000
+  end
+
+  test "should broadcast database_instance_absent_at_changed when DatabaseInstanceMarkedAbsent event is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sid: sid
+    } = insert(:database_instance_without_host)
+
+    absent_at = DateTime.utc_now()
+
+    event = %DatabaseInstanceMarkedAbsent{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      absent_at: absent_at
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    assert_broadcast(
+      "database_instance_absent_at_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        sid: ^sid,
+        absent_at: ^absent_at
+      },
+      1000
+    )
+  end
+
+  test "should broadcast database_instance_absent_at_changed when DatabaseInstanceMarkedPresent event is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sid: sid
+    } = insert(:database_instance_without_host)
+
+    event = %DatabaseInstanceMarkedPresent{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    assert_broadcast(
+      "database_instance_absent_at_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        sid: ^sid,
+        absent_at: nil
+      },
+      1000
+    )
   end
 
   test "should update the database read model after a deregistration" do

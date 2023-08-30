@@ -20,6 +20,8 @@ defmodule Trento.DatabaseProjector do
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
+    DatabaseInstanceMarkedAbsent,
+    DatabaseInstanceMarkedPresent,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
@@ -137,6 +139,51 @@ defmodule Trento.DatabaseProjector do
         |> DatabaseInstanceReadModel.changeset(%{
           system_replication: system_replication,
           system_replication_status: system_replication_status
+        })
+
+      Ecto.Multi.update(multi, :database_instance, changeset)
+    end
+  )
+
+  project(
+    %DatabaseInstanceMarkedAbsent{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      absent_at: absent_at
+    },
+    fn multi ->
+      changeset =
+        DatabaseInstanceReadModel
+        |> Repo.get_by(
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+        |> DatabaseInstanceReadModel.changeset(%{
+          absent_at: absent_at
+        })
+
+      Ecto.Multi.update(multi, :database_instance, changeset)
+    end
+  )
+
+  project(
+    %DatabaseInstanceMarkedPresent{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id
+    },
+    fn multi ->
+      changeset =
+        DatabaseInstanceReadModel
+        |> Repo.get_by(
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+        |> DatabaseInstanceReadModel.changeset(%{
+          absent_at: nil
         })
 
       Ecto.Multi.update(multi, :database_instance, changeset)
@@ -299,6 +346,53 @@ defmodule Trento.DatabaseProjector do
           system_replication: system_replication,
           system_replication_status: system_replication_status
         }
+      )
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseInstanceMarkedAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          absent_at: absent_at
+        },
+        _,
+        %{database_instance: %DatabaseInstanceReadModel{sid: sid}}
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_instance_absent_at_changed",
+      SapSystemView.render("instance_absent_at_changed.json",
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        absent_at: absent_at
+      )
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseInstanceMarkedPresent{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id
+        },
+        _,
+        %{database_instance: %DatabaseInstanceReadModel{sid: sid}}
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_instance_absent_at_changed",
+      SapSystemView.render("instance_absent_at_changed.json",
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        absent_at: nil
       )
     )
   end

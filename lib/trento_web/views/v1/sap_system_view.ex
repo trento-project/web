@@ -97,6 +97,21 @@ defmodule TrentoWeb.V1.SapSystemView do
 
   def render("application_instance_health_changed.json", %{health: health}), do: health
 
+  def render("instance_absent_at_changed.json", %{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        absent_at: absent_at
+      }),
+      do: %{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        absent_at: absent_at
+      }
+
   def render("sap_systems.json", %{sap_systems: sap_systems}) do
     render_many(sap_systems, __MODULE__, "sap_system.json")
   end
