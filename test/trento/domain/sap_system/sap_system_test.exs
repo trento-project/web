@@ -4302,7 +4302,7 @@ defmodule Trento.SapSystemTest do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id = Faker.UUID.v4()
-      absent_app_instance_number = "02"
+      absent_message_server_instance_number = "02"
       present_app_instance_number = "03"
       absent_app_absent_at = DateTime.utc_now()
 
@@ -4325,14 +4325,14 @@ defmodule Trento.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: sid,
           host_id: host_id,
-          instance_number: absent_app_instance_number,
+          instance_number: absent_message_server_instance_number,
           features: "MESSAGESERVER"
         ),
         build(
           :application_instance_marked_absent_event,
           sap_system_id: sap_system_id,
           host_id: host_id,
-          instance_number: absent_app_instance_number,
+          instance_number: absent_message_server_instance_number,
           absent_at: absent_app_absent_at
         ),
         build(:application_instance_registered_event,
@@ -4350,7 +4350,7 @@ defmodule Trento.SapSystemTest do
         initial_events,
         [
           %MarkApplicationInstanceAbsent{
-            instance_number: absent_app_instance_number,
+            instance_number: absent_message_server_instance_number,
             host_id: host_id,
             sap_system_id: sap_system_id,
             absent_at: absent_at
@@ -4380,7 +4380,7 @@ defmodule Trento.SapSystemTest do
                          absent_at: ^absent_at
                        },
                        %SapSystem.Instance{
-                         instance_number: ^absent_app_instance_number,
+                         instance_number: ^absent_message_server_instance_number,
                          absent_at: ^absent_app_absent_at
                        }
                      ]
@@ -4390,7 +4390,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "receiving a 'register instance' command for an already-registered database instance sets instance as present if absent" do
+    test "should mark as present an already registered, absent database instance" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id = Faker.UUID.v4()
@@ -4471,7 +4471,7 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "receiving a 'register instance' command for an already-registered application instance sets instance as present if absent" do
+    test "should mark as present an already registered, absent application instance" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       ensa_version = EnsaVersion.ensa1()
