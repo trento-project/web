@@ -19,28 +19,32 @@ describe('InstanceOverview', () => {
       <InstanceOverview instanceType={DATABASE_TYPE} instance={srInstance} />
     );
 
-    const replicationText = screen.getByText('HANA Secondary');
-    expect(replicationText).toBeInTheDocument();
-
-    const replicationStatus = screen.getByText('ACTIVE');
-    expect(replicationStatus).toBeInTheDocument();
+    expect(screen.getByText('HANA Secondary')).toBeInTheDocument();
+    expect(screen.getByText('ACTIVE')).toBeInTheDocument();
   });
 
-  it('should not render an absent HealthIcon for a present instance', () => {
-    const registeredDbInstance = databaseInstanceFactory.build({
-      health: 'passing',
-    });
+  it.each([
+    { health: 'passing', expectedClass: 'fill-jungle-green-500' },
+    { health: 'warning', expectedClass: 'fill-yellow-500' },
+    { health: 'critical', expectedClass: 'fill-red-500' },
+  ])(
+    'should render $expectedClass for an instance with $health health',
+    ({ health, expectedClass }) => {
+      const registeredDbInstance = databaseInstanceFactory.build({
+        health: health,
+      });
 
-    renderWithRouter(
-      <InstanceOverview
-        instanceType={APPLICATION_TYPE}
-        instance={registeredDbInstance}
-      />
-    );
-    const healthIcon = screen.getByTestId('eos-svg-component');
-    expect(healthIcon).toBeDefined();
-    expect(healthIcon).not.toHaveClass('fill-black');
-  });
+      renderWithRouter(
+        <InstanceOverview
+          instanceType={APPLICATION_TYPE}
+          instance={registeredDbInstance}
+        />
+      );
+      const healthIcon = screen.getByTestId('eos-svg-component');
+      expect(healthIcon).toBeDefined();
+      expect(healthIcon).toHaveClass(expectedClass);
+    }
+  );
 
   it('should render an absent HealthIcon and a tooltip content for absent instances', async () => {
     const user = userEvent.setup();
