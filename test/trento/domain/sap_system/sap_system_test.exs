@@ -4280,14 +4280,14 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   database: %SapSystem.Database{
+                   database: %Database{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          instance_number: ^present_db_instance_number,
                          absent_at: ^absent_at
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          instance_number: ^absent_db_instance_number,
                          absent_at: ^absent_db_absent_at
                        }
@@ -4372,14 +4372,14 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          instance_number: ^present_app_instance_number,
                          absent_at: ^absent_at
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          instance_number: ^absent_message_server_instance_number,
                          absent_at: ^absent_app_absent_at
                        }
@@ -4455,13 +4455,13 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   database: %SapSystem.Database{
+                   database: %Database{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          absent_at: nil
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          absent_at: nil
                        }
                      ]
@@ -4552,13 +4552,13 @@ defmodule Trento.SapSystemTest do
           assert %SapSystem{
                    sid: ^sid,
                    ensa_version: ^ensa_version,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          absent_at: nil
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          absent_at: nil
                        }
                      ]
