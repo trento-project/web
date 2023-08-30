@@ -1391,7 +1391,7 @@ defmodule Trento.Domain.SapSystem do
       instances,
       fn
         %Instance{instance_number: ^instance_number, host_id: ^host_id} = instance ->
-          struct(instance, fields)
+          Kernel.struct(instance, fields)
 
         instance ->
           instance
