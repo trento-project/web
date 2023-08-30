@@ -37,6 +37,8 @@ Trento.Domain.Commands.DeregisterApplicationInstance.html
 Trento.Domain.Commands.DeregisterClusterHost.html
 Trento.Domain.Commands.DeregisterDatabaseInstance.html
 Trento.Domain.Commands.DeregisterHost.html
+Trento.Domain.Commands.MarkApplicationInstanceAbsent.html
+Trento.Domain.Commands.MarkDatabaseInstanceAbsent.html
 Trento.Domain.Commands.RegisterApplicationInstance.html
 Trento.Domain.Commands.RegisterClusterHost.html
 Trento.Domain.Commands.RegisterDatabaseInstance.html
@@ -57,6 +59,8 @@ Trento.Domain.Enums.Health.html
 Trento.Domain.Enums.Provider.html
 Trento.Domain.Events.ApplicationInstanceDeregistered.html
 Trento.Domain.Events.ApplicationInstanceHealthChanged.html
+Trento.Domain.Events.ApplicationInstanceMarkedAbsent.html
+Trento.Domain.Events.ApplicationInstanceMarkedPresent.html
 Trento.Domain.Events.ApplicationInstanceMoved.html
 Trento.Domain.Events.ApplicationInstanceRegistered.html
 Trento.Domain.Events.ChecksExecutionCompleted.html
@@ -77,6 +81,8 @@ Trento.Domain.Events.DatabaseDeregistered.html
 Trento.Domain.Events.DatabaseHealthChanged.html
 Trento.Domain.Events.DatabaseInstanceDeregistered.html
 Trento.Domain.Events.DatabaseInstanceHealthChanged.html
+Trento.Domain.Events.DatabaseInstanceMarkedAbsent.html
+Trento.Domain.Events.DatabaseInstanceMarkedPresent.html
 Trento.Domain.Events.DatabaseInstanceRegistered.html
 Trento.Domain.Events.DatabaseInstanceSystemReplicationChanged.html
 Trento.Domain.Events.DatabaseRegistered.html
@@ -317,8 +323,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-2DCAD49B.js
-dist/sidebar_items-73D42FC8.js
+dist/search_items-DFA6BC59.js
+dist/sidebar_items-05C30D8B.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
