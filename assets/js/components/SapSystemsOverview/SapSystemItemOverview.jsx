@@ -16,7 +16,7 @@ const applicationInstanceColumns = [
   { key: 'features', name: 'Features' },
   { key: 'cluster', name: 'Cluster' },
   { key: 'hostname', name: 'Host' },
-  { key: 'cleanupButton', cssClass: 'w-24' },
+  { key: 'cleanupButton', cssClass: 'w-48' },
 ];
 
 function SapSystemItemOverview({ sapSystem }) {

@@ -14,7 +14,7 @@ const databaseInstanceColumns = [
   { key: 'systemReplication', name: 'System Replication' },
   { key: 'cluster', name: 'Cluster' },
   { key: 'hostname', name: 'Host' },
-  { key: 'cleanupButton', cssClass: 'w-24' },
+  { key: 'cleanupButton', cssClass: 'w-48' },
 ];
 
 function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
