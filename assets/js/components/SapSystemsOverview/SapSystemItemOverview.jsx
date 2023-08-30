@@ -11,12 +11,12 @@ function ApplicationInstance({ instance }) {
 }
 
 const applicationInstanceColumns = [
-  { name: 'Health', cssClass: 'w-20' },
-  { name: 'Instance Nr', cssClass: 'w-24' },
-  { name: 'Features' },
-  { name: 'Cluster' },
-  { name: 'Host' },
-  {},
+  { key: 'health', name: 'Health', cssClass: 'w-20' },
+  { key: 'instanceNr', name: 'Instance Nr', cssClass: 'w-24' },
+  { key: 'features', name: 'Features' },
+  { key: 'cluster', name: 'Cluster' },
+  { key: 'hostname', name: 'Host' },
+  { key: 'cleanupButton', cssClass: 'w-24' },
 ];
 
 function SapSystemItemOverview({ sapSystem }) {
@@ -35,9 +35,9 @@ function SapSystemItemOverview({ sapSystem }) {
           <div className="table w-full">
             <div className="table-header-group bg-grey bg-gray-100">
               <div className="table-row">
-                {applicationInstanceColumns.map(({ name, cssClass }) => (
+                {applicationInstanceColumns.map(({ key, name, cssClass }) => (
                   <div
-                    key={name}
+                    key={key}
                     className={`table-cell p-2 text-left text-xs font-medium text-gray-500 uppercase ${cssClass}`}
                   >
                     {name}
