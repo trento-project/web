@@ -10,8 +10,8 @@ import {
 
 import SapSystemsOverview from './SapSystemsOverview';
 
-const enrichInstances = (systems, instanceType) => {
-  return systems
+const enrichInstances = (systems, instanceType) =>
+  systems
     .map((system) => system[instanceType])
     .flat()
     .map((instance) => {
@@ -27,7 +27,6 @@ const enrichInstances = (systems, instanceType) => {
         },
       };
     });
-};
 
 const sapSystems = sapSystemFactory.buildList(3);
 const enrichedApplicationInstances = enrichInstances(

@@ -31,7 +31,7 @@ describe('InstanceOverview', () => {
     'should render $expectedClass for an instance with $health health',
     ({ health, expectedClass }) => {
       const registeredDbInstance = databaseInstanceFactory.build({
-        health: health,
+        health,
       });
 
       renderWithRouter(
