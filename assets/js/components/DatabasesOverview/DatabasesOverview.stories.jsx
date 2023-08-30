@@ -1,4 +1,5 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
 import {
@@ -47,7 +48,7 @@ const absentInstance = [
   }),
   databaseInstanceFactory.build({
     sap_system_id: databaseWithAbsentInstances.id,
-    absent_at: '2021-01-01T00:00:00.000Z',
+    absent_at: faker.date.past().toISOString(),
   }),
 ];
 

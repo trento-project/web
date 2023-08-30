@@ -1,11 +1,11 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
 import {
   clusterFactory,
   hostFactory,
   sapSystemFactory,
-  // sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
 
 import SapSystemsOverview from './SapSystemsOverview';
@@ -59,7 +59,9 @@ const enrichedAbsentApplicationInstances =
       };
     });
 
-enrichedAbsentApplicationInstances[1].absent_at = '2021-01-01T00:00:00.000Z';
+enrichedAbsentApplicationInstances[1].absent_at = faker.date
+  .past()
+  .toISOString();
 
 const enrichedAbsentDatabaseInstances =
   sapSystemsWithAbsentInstances[0].database_instances
