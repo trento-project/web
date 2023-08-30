@@ -5,6 +5,7 @@ import {
   clusterFactory,
   hostFactory,
   sapSystemFactory,
+  // sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
 
 import SapSystemsOverview from './SapSystemsOverview';
@@ -38,6 +39,44 @@ const enrichedDatabaseInstances = sapSystems[0].database_instances
       },
     };
   });
+
+const sapSystemsWithAbsentInstances = sapSystemFactory.buildList(2);
+
+const enrichedAbsentApplicationInstances =
+  sapSystemsWithAbsentInstances[0].application_instances
+    .concat(sapSystemsWithAbsentInstances[1].application_instances)
+    .map((instance) => {
+      const cluster = clusterFactory.build();
+      return {
+        ...instance,
+        host: {
+          ...hostFactory.build({
+            id: instance.host_id,
+            cluster_id: cluster.id,
+          }),
+          cluster,
+        },
+      };
+    });
+
+enrichedAbsentApplicationInstances[1].absent_at = '2021-01-01T00:00:00.000Z';
+
+const enrichedAbsentDatabaseInstances =
+  sapSystemsWithAbsentInstances[0].database_instances
+    .concat(sapSystemsWithAbsentInstances[1].database_instances)
+    .map((instance) => {
+      const cluster = clusterFactory.build();
+      return {
+        ...instance,
+        host: {
+          ...hostFactory.build({
+            id: instance.host_id,
+            cluster_id: cluster.id,
+          }),
+          cluster,
+        },
+      };
+    });
 
 function ContainerWrapper({ children }) {
   return (
@@ -97,6 +136,15 @@ export const SapSystems = {
     sapSystems,
     applicationInstances: enrichedApplicationInstances,
     databaseInstances: enrichedDatabaseInstances,
+    loading: false,
+  },
+};
+
+export const WithAbsentInstances = {
+  args: {
+    sapSystems: sapSystemsWithAbsentInstances,
+    applicationInstances: enrichedAbsentApplicationInstances,
+    databaseInstances: enrichedAbsentDatabaseInstances,
     loading: false,
   },
 };
