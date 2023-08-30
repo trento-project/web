@@ -8,6 +8,8 @@ defmodule Trento.SapSystemTest do
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
+    MarkApplicationInstanceAbsent,
+    MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
     RegisterDatabaseInstance,
     RollUpSapSystem
@@ -16,12 +18,16 @@ defmodule Trento.SapSystemTest do
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
+    ApplicationInstanceMarkedAbsent,
+    ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
+    DatabaseInstanceMarkedAbsent,
+    DatabaseInstanceMarkedPresent,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
@@ -123,7 +129,8 @@ defmodule Trento.SapSystemTest do
                 instance_number: instance_number,
                 features: features,
                 host_id: host_id,
-                health: :passing
+                health: :passing,
+                absent_at: nil
               }
             ]
           }
@@ -425,7 +432,8 @@ defmodule Trento.SapSystemTest do
                          instance_number: "10",
                          features: "ABAP",
                          host_id: ^host_id,
-                         health: :passing
+                         health: :passing,
+                         absent_at: nil
                        },
                        %SapSystem.Instance{
                          features: "MESSAGESERVER"
@@ -4198,6 +4206,364 @@ defmodule Trento.SapSystemTest do
           }
         ],
         {:error, :database_instance_not_registered}
+      )
+    end
+  end
+
+  describe "instance marked absent/present" do
+    test "should mark as absent a previously registered database instance" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      absent_db_instance_number = "01"
+      present_db_instance_number = "02"
+      absent_db_absent_at = DateTime.utc_now()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: absent_db_instance_number,
+          system_replication: nil,
+          system_replication_status: nil
+        ),
+        build(
+          :database_instance_marked_absent_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: absent_db_instance_number,
+          absent_at: absent_db_absent_at
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: present_db_instance_number,
+          system_replication: nil,
+          system_replication_status: nil
+        )
+      ]
+
+      absent_at = DateTime.utc_now()
+
+      assert_events_and_state(
+        initial_events,
+        [
+          %MarkDatabaseInstanceAbsent{
+            instance_number: absent_db_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id,
+            absent_at: absent_at
+          },
+          %MarkDatabaseInstanceAbsent{
+            instance_number: present_db_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id,
+            absent_at: absent_at
+          }
+        ],
+        [
+          %DatabaseInstanceMarkedAbsent{
+            instance_number: present_db_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id,
+            absent_at: absent_at
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   database: %Database{
+                     sid: ^sid,
+                     instances: [
+                       %Instance{
+                         instance_number: ^present_db_instance_number,
+                         absent_at: ^absent_at
+                       },
+                       %Instance{
+                         instance_number: ^absent_db_instance_number,
+                         absent_at: ^absent_db_absent_at
+                       }
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should mark as absent a previously registered application instance" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      absent_message_server_instance_number = "02"
+      present_app_instance_number = "03"
+      absent_app_absent_at = DateTime.utc_now()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: "01",
+          system_replication: nil,
+          system_replication_status: nil
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: absent_message_server_instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(
+          :application_instance_marked_absent_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: absent_message_server_instance_number,
+          absent_at: absent_app_absent_at
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: present_app_instance_number,
+          features: "ABAP"
+        )
+      ]
+
+      absent_at = DateTime.utc_now()
+
+      assert_events_and_state(
+        initial_events,
+        [
+          %MarkApplicationInstanceAbsent{
+            instance_number: absent_message_server_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id,
+            absent_at: absent_at
+          },
+          %MarkApplicationInstanceAbsent{
+            instance_number: present_app_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id,
+            absent_at: absent_at
+          }
+        ],
+        [
+          %ApplicationInstanceMarkedAbsent{
+            instance_number: present_app_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id,
+            absent_at: absent_at
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   application: %Application{
+                     sid: ^sid,
+                     instances: [
+                       %Instance{
+                         instance_number: ^present_app_instance_number,
+                         absent_at: ^absent_at
+                       },
+                       %Instance{
+                         instance_number: ^absent_message_server_instance_number,
+                         absent_at: ^absent_app_absent_at
+                       }
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should mark as present an already registered, absent database instance" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      absent_db_instance_number = "01"
+      present_db_instance_number = "02"
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: absent_db_instance_number,
+          system_replication: nil,
+          system_replication_status: nil
+        ),
+        build(
+          :database_instance_marked_absent_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: absent_db_instance_number,
+          absent_at: DateTime.utc_now()
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: present_db_instance_number,
+          system_replication: nil,
+          system_replication_status: nil
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          %RegisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: absent_db_instance_number,
+            health: :passing
+          },
+          %RegisterDatabaseInstance{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: present_db_instance_number,
+            health: :passing
+          }
+        ],
+        [
+          %DatabaseInstanceMarkedPresent{
+            instance_number: absent_db_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   database: %Database{
+                     sid: ^sid,
+                     instances: [
+                       %Instance{
+                         absent_at: nil
+                       },
+                       %Instance{
+                         absent_at: nil
+                       }
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should mark as present an already registered, absent application instance" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      ensa_version = EnsaVersion.ensa1()
+      host_id = Faker.UUID.v4()
+      absent_app_instance_number = "02"
+      present_message_server_instance_number = "03"
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: "01",
+          system_replication: nil,
+          system_replication_status: nil
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: absent_app_instance_number,
+          features: "ABAP"
+        ),
+        build(
+          :application_instance_marked_absent_event,
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: absent_app_instance_number
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: present_message_server_instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          ensa_version: ensa_version
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          %RegisterApplicationInstance{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: absent_app_instance_number,
+            health: :passing,
+            ensa_version: ensa_version
+          },
+          %RegisterApplicationInstance{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: present_message_server_instance_number,
+            health: :passing,
+            ensa_version: ensa_version
+          }
+        ],
+        [
+          %ApplicationInstanceMarkedPresent{
+            instance_number: absent_app_instance_number,
+            host_id: host_id,
+            sap_system_id: sap_system_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   sid: ^sid,
+                   ensa_version: ^ensa_version,
+                   application: %Application{
+                     sid: ^sid,
+                     instances: [
+                       %Instance{
+                         absent_at: nil
+                       },
+                       %Instance{
+                         absent_at: nil
+                       }
+                     ]
+                   }
+                 } = state
+        end
       )
     end
   end

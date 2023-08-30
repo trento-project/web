@@ -11,8 +11,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
   alias Trento.Integration.Discovery.SapSystemPolicy
 
   alias Trento.Domain.Commands.{
-    DeregisterApplicationInstance,
-    DeregisterDatabaseInstance,
+    MarkApplicationInstanceAbsent,
+    MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
     RegisterDatabaseInstance
   }
@@ -174,18 +174,18 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
 
       assert {:ok,
               [
-                %DeregisterDatabaseInstance{
+                %MarkDatabaseInstanceAbsent{
                   sap_system_id: ^database_sap_system_id,
                   instance_number: ^database_instance_number_1
                 },
-                %DeregisterDatabaseInstance{
+                %MarkDatabaseInstanceAbsent{
                   sap_system_id: ^database_sap_system_id,
                   instance_number: ^database_instance_number_2
                 },
-                %DeregisterApplicationInstance{
+                %MarkApplicationInstanceAbsent{
                   instance_number: ^application_instance_number_1
                 },
-                %DeregisterApplicationInstance{
+                %MarkApplicationInstanceAbsent{
                   instance_number: ^application_instance_number_2
                 },
                 %RegisterDatabaseInstance{
@@ -239,10 +239,10 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
 
       assert {:ok,
               [
-                %DeregisterApplicationInstance{
+                %MarkApplicationInstanceAbsent{
                   instance_number: "02"
                 },
-                %DeregisterDatabaseInstance{
+                %MarkDatabaseInstanceAbsent{
                   instance_number: "10"
                 }
               ]} =

@@ -60,6 +60,8 @@ defmodule Trento.Domain.SapSystem do
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
+    MarkApplicationInstanceAbsent,
+    MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
     RegisterDatabaseInstance,
     RollUpSapSystem
@@ -68,12 +70,16 @@ defmodule Trento.Domain.SapSystem do
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
+    ApplicationInstanceMarkedAbsent,
+    ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
     DatabaseInstanceHealthChanged,
+    DatabaseInstanceMarkedAbsent,
+    DatabaseInstanceMarkedPresent,
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
@@ -237,6 +243,9 @@ defmodule Trento.Domain.SapSystem do
     |> Multi.execute(fn _ ->
       maybe_emit_database_instance_registered_event(instance, command)
     end)
+    |> Multi.execute(fn _ ->
+      maybe_emit_database_instance_marked_present_event(instance, command)
+    end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
@@ -255,6 +264,9 @@ defmodule Trento.Domain.SapSystem do
         sap_system,
         instance
       )
+    end)
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_application_instance_marked_present_event(sap_system, instance)
     end)
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_restored_event(sap_system, instance)
@@ -281,6 +293,9 @@ defmodule Trento.Domain.SapSystem do
         instance
       )
     end)
+    |> Multi.execute(fn _ ->
+      maybe_emit_application_instance_marked_present_event(sap_system, instance)
+    end)
     |> Multi.execute(fn sap_system ->
       maybe_emit_application_instance_health_changed_event(
         sap_system,
@@ -298,6 +313,50 @@ defmodule Trento.Domain.SapSystem do
         _
       ) do
     {:error, :sap_system_not_registered}
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id, database: %Database{instances: instances}},
+        %MarkDatabaseInstanceAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent_at: absent_at
+        }
+      ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{absent_at: nil} ->
+        %DatabaseInstanceMarkedAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          absent_at: absent_at
+        }
+
+      _ ->
+        nil
+    end
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id, application: %Application{instances: instances}},
+        %MarkApplicationInstanceAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent_at: absent_at
+        }
+      ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{absent_at: nil} ->
+        %ApplicationInstanceMarkedAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          absent_at: absent_at
+        }
+
+      _ ->
+        nil
+    end
   end
 
   # Deregister a database instance and emit a DatabaseInstanceDeregistered
@@ -403,7 +462,8 @@ defmodule Trento.Domain.SapSystem do
         instance_number: instance_number,
         features: features,
         host_id: host_id,
-        health: health
+        health: health,
+        absent_at: nil
       }
       | instances
     ]
@@ -492,7 +552,8 @@ defmodule Trento.Domain.SapSystem do
           instance_number: instance_number,
           features: features,
           host_id: host_id,
-          health: health
+          health: health,
+          absent_at: nil
         }
       ]
     }
@@ -519,7 +580,8 @@ defmodule Trento.Domain.SapSystem do
         instance_number: instance_number,
         features: features,
         host_id: host_id,
-        health: health
+        health: health,
+        absent_at: nil
       }
       | instances
     ]
@@ -618,6 +680,80 @@ defmodule Trento.Domain.SapSystem do
         snapshot: snapshot
       }) do
     snapshot
+  end
+
+  def apply(
+        %SapSystem{database: %Database{instances: instances} = database} = sap_system,
+        %DatabaseInstanceMarkedPresent{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: nil})
+
+    %SapSystem{
+      sap_system
+      | database: %Database{
+          database
+          | instances: instances
+        }
+    }
+  end
+
+  def apply(
+        %SapSystem{application: %Application{instances: instances} = application} = sap_system,
+        %ApplicationInstanceMarkedPresent{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: nil})
+
+    %SapSystem{
+      sap_system
+      | application: %Application{
+          application
+          | instances: instances
+        }
+    }
+  end
+
+  def apply(
+        %SapSystem{database: %Database{instances: instances} = database} = sap_system,
+        %DatabaseInstanceMarkedAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent_at: absent_at
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: absent_at})
+
+    %SapSystem{
+      sap_system
+      | database: %Database{
+          database
+          | instances: instances
+        }
+    }
+  end
+
+  def apply(
+        %SapSystem{application: %Application{instances: instances} = application} = sap_system,
+        %ApplicationInstanceMarkedAbsent{
+          instance_number: instance_number,
+          host_id: host_id,
+          absent_at: absent_at
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{absent_at: absent_at})
+
+    %SapSystem{
+      sap_system
+      | application: %Application{
+          application
+          | instances: instances
+        }
+    }
   end
 
   def apply(
@@ -753,6 +889,28 @@ defmodule Trento.Domain.SapSystem do
   end
 
   defp maybe_emit_database_instance_registered_event(_, _), do: nil
+
+  defp maybe_emit_database_instance_marked_present_event(
+         %Instance{absent_at: nil},
+         %RegisterDatabaseInstance{}
+       ),
+       do: nil
+
+  defp maybe_emit_database_instance_marked_present_event(
+         %Instance{
+           instance_number: instance_number,
+           host_id: host_id
+         },
+         %RegisterDatabaseInstance{sap_system_id: sap_system_id}
+       ) do
+    %DatabaseInstanceMarkedPresent{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id
+    }
+  end
+
+  defp maybe_emit_database_instance_marked_present_event(_, _), do: nil
 
   defp maybe_emit_database_instance_system_replication_changed_event(
          %Instance{
@@ -895,6 +1053,34 @@ defmodule Trento.Domain.SapSystem do
         nil
     end
   end
+
+  defp maybe_emit_application_instance_marked_present_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           application: %Application{instances: instances}
+         },
+         %RegisterApplicationInstance{
+           instance_number: instance_number,
+           host_id: host_id
+         }
+       ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{absent_at: nil} ->
+        nil
+
+      %Instance{} ->
+        %ApplicationInstanceMarkedPresent{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id
+        }
+
+      _ ->
+        nil
+    end
+  end
+
+  defp maybe_emit_application_instance_marked_present_event(_, _), do: nil
 
   defp maybe_emit_application_instance_health_changed_event(
          %SapSystem{application: %Application{instances: instances}},
@@ -1198,5 +1384,18 @@ defmodule Trento.Domain.SapSystem do
       _ ->
         false
     end)
+  end
+
+  defp update_instance(instances, instance_number, host_id, fields) do
+    Enum.map(
+      instances,
+      fn
+        %Instance{instance_number: ^instance_number, host_id: ^host_id} = instance ->
+          Kernel.struct(instance, fields)
+
+        instance ->
+          instance
+      end
+    )
   end
 end

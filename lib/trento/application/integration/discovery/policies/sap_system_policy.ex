@@ -8,6 +8,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
+    MarkApplicationInstanceAbsent,
+    MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
     RegisterDatabaseInstance
   }
@@ -146,21 +148,19 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   defp build_deregister_instances_commands(current_instances) do
     Enum.map(current_instances, fn
       %ApplicationInstanceReadModel{} = instance ->
-        DeregisterApplicationInstance.new!(%{
-          sid: instance.sid,
+        MarkApplicationInstanceAbsent.new!(%{
           host_id: instance.host_id,
           instance_number: instance.instance_number,
           sap_system_id: instance.sap_system_id,
-          deregistered_at: DateTime.utc_now()
+          absent_at: DateTime.utc_now()
         })
 
       %DatabaseInstanceReadModel{} = instance ->
-        DeregisterDatabaseInstance.new!(%{
-          sid: instance.sid,
+        MarkDatabaseInstanceAbsent.new!(%{
           host_id: instance.host_id,
           instance_number: instance.instance_number,
           sap_system_id: instance.sap_system_id,
-          deregistered_at: DateTime.utc_now()
+          absent_at: DateTime.utc_now()
         })
     end)
   end
