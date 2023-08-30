@@ -4477,7 +4477,7 @@ defmodule Trento.SapSystemTest do
       ensa_version = EnsaVersion.ensa1()
       host_id = Faker.UUID.v4()
       absent_app_instance_number = "02"
-      present_app_instance_number = "03"
+      present_message_server_instance_number = "03"
 
       initial_events = [
         build(
@@ -4511,7 +4511,7 @@ defmodule Trento.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: sid,
           host_id: host_id,
-          instance_number: present_app_instance_number,
+          instance_number: present_message_server_instance_number,
           features: "MESSAGESERVER"
         ),
         build(
@@ -4535,7 +4535,7 @@ defmodule Trento.SapSystemTest do
           %RegisterApplicationInstance{
             sap_system_id: sap_system_id,
             host_id: host_id,
-            instance_number: present_app_instance_number,
+            instance_number: present_message_server_instance_number,
             health: :passing,
             ensa_version: ensa_version
           }
