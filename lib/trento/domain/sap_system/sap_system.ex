@@ -101,15 +101,15 @@ defmodule Trento.Domain.SapSystem do
   use Trento.Type
 
   deftype do
-    field(:sap_system_id, Ecto.UUID)
-    field(:sid, :string, default: nil)
-    field(:health, Ecto.Enum, values: Health.values())
-    field(:ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa())
-    field(:rolling_up, :boolean, default: false)
-    field(:deregistered_at, :utc_datetime_usec, default: nil)
+    field :sap_system_id, Ecto.UUID
+    field :sid, :string, default: nil
+    field :health, Ecto.Enum, values: Health.values()
+    field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
+    field :rolling_up, :boolean, default: false
+    field :deregistered_at, :utc_datetime_usec, default: nil
 
-    embeds_one(:database, Database)
-    embeds_one(:application, Application)
+    embeds_one :database, Database
+    embeds_one :application, Application
   end
 
   # Stop everything during the rollup process
