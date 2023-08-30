@@ -62,9 +62,7 @@ describe('InstanceOverview', () => {
     );
     await act(async () => user.hover(tooltip));
     await waitFor(() =>
-      expect(
-        screen.queryByText('Instance currently not registered.')
-      ).toBeVisible()
+      expect(screen.queryByText('Instance currently not found.')).toBeVisible()
     );
   });
 

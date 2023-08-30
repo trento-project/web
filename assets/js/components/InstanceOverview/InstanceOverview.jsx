@@ -31,7 +31,7 @@ function InstanceOverview({
     <div className={rowClasses}>
       <div className="table-cell p-2 px-5">
         {absentAt ? (
-          <Tooltip content="Instance currently not registered." place="bottom">
+          <Tooltip content="Instance currently not found." place="bottom">
             <span
               data-testid="absent-tooltip"
               className="group flex items-center relative"
