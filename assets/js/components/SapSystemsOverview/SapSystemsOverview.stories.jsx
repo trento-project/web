@@ -10,41 +10,10 @@ import {
 
 import SapSystemsOverview from './SapSystemsOverview';
 
-const sapSystems = sapSystemFactory.buildList(3);
-
-const enrichedApplicationInstances = sapSystems[0].application_instances
-  .concat(sapSystems[1].application_instances)
-  .concat(sapSystems[2].application_instances)
-  .map((instance) => {
-    const cluster = clusterFactory.build();
-    return {
-      ...instance,
-      host: {
-        ...hostFactory.build({ id: instance.host_id, cluster_id: cluster.id }),
-        cluster,
-      },
-    };
-  });
-
-const enrichedDatabaseInstances = sapSystems[0].database_instances
-  .concat(sapSystems[1].database_instances)
-  .concat(sapSystems[2].database_instances)
-  .map((instance) => {
-    const cluster = clusterFactory.build();
-    return {
-      ...instance,
-      host: {
-        ...hostFactory.build({ id: instance.host_id, cluster_id: cluster.id }),
-        cluster,
-      },
-    };
-  });
-
-const sapSystemsWithAbsentInstances = sapSystemFactory.buildList(2);
-
-const enrichedAbsentApplicationInstances =
-  sapSystemsWithAbsentInstances[0].application_instances
-    .concat(sapSystemsWithAbsentInstances[1].application_instances)
+const enrichInstances = (systems, instanceType) => {
+  return systems
+    .map((system) => system[instanceType])
+    .flat()
     .map((instance) => {
       const cluster = clusterFactory.build();
       return {
@@ -58,27 +27,31 @@ const enrichedAbsentApplicationInstances =
         },
       };
     });
+};
+
+const sapSystems = sapSystemFactory.buildList(3);
+const enrichedApplicationInstances = enrichInstances(
+  sapSystems,
+  'application_instances'
+);
+const enrichedDatabaseInstances = enrichInstances(
+  sapSystems,
+  'database_instances'
+);
+
+const sapSystemsWithAbsentInstances = sapSystemFactory.buildList(2);
+const enrichedAbsentApplicationInstances = enrichInstances(
+  sapSystemsWithAbsentInstances,
+  'application_instances'
+);
+const enrichedAbsentDatabaseInstances = enrichInstances(
+  sapSystemsWithAbsentInstances,
+  'database_instances'
+);
 
 enrichedAbsentApplicationInstances[1].absent_at = faker.date
   .past()
   .toISOString();
-
-const enrichedAbsentDatabaseInstances =
-  sapSystemsWithAbsentInstances[0].database_instances
-    .concat(sapSystemsWithAbsentInstances[1].database_instances)
-    .map((instance) => {
-      const cluster = clusterFactory.build();
-      return {
-        ...instance,
-        host: {
-          ...hostFactory.build({
-            id: instance.host_id,
-            cluster_id: cluster.id,
-          }),
-          cluster,
-        },
-      };
-    });
 
 function ContainerWrapper({ children }) {
   return (
