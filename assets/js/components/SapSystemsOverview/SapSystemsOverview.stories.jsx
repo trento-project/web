@@ -82,11 +82,11 @@ export default {
         defaultValue: { summary: false },
       },
     },
-    onTagAdded: {
+    onTagAdd: {
       action: 'Add tag',
       description: 'Called when a new tag is added',
     },
-    onTagRemoved: {
+    onTagRemove: {
       action: 'Remove tag',
       description: 'Called when an existing tag is removed',
     },

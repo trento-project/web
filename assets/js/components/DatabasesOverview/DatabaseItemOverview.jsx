@@ -3,12 +3,12 @@ import React from 'react';
 import InstanceOverview from '@components/InstanceOverview';
 import { DATABASE_TYPE } from '@lib/model';
 
-export function DatabaseInstance({ instance, onCleanUpClicked }) {
+export function DatabaseInstance({ instance, onCleanUpClick }) {
   return (
     <InstanceOverview
       instanceType={DATABASE_TYPE}
       instance={instance}
-      onCleanUpClicked={onCleanUpClicked}
+      onCleanUpClick={onCleanUpClick}
     />
   );
 }
@@ -26,7 +26,7 @@ const databaseInstanceColumns = [
 function PlainDatabaseItemOverview({
   instances,
   asDatabaseLayer = false,
-  onCleanUpClicked,
+  onCleanUpClick,
 }) {
   return (
     <div className="flex bg-white dark:bg-gray-800 shadow mb-2 rounded-lg">
@@ -58,7 +58,7 @@ function PlainDatabaseItemOverview({
                 <DatabaseInstance
                   key={instance.host_id + instance.sap_system_id}
                   instance={instance}
-                  onCleanUpClicked={onCleanUpClicked}
+                  onCleanUpClick={onCleanUpClick}
                 />
               ))}
           </div>
@@ -68,22 +68,22 @@ function PlainDatabaseItemOverview({
   );
 }
 
-function DatabaseLayer({ instances, onCleanUpClicked }) {
+function DatabaseLayer({ instances, onCleanUpClick }) {
   return (
     <PlainDatabaseItemOverview
       instances={instances}
       asDatabaseLayer
-      onCleanUpClicked={onCleanUpClicked}
+      onCleanUpClick={onCleanUpClick}
     />
   );
 }
 
-function DatabaseInstances({ instances, onCleanUpClicked }) {
+function DatabaseInstances({ instances, onCleanUpClick }) {
   return (
     <div className="p-2">
       <PlainDatabaseItemOverview
         instances={instances}
-        onCleanUpClicked={onCleanUpClicked}
+        onCleanUpClick={onCleanUpClick}
       />
     </div>
   );
@@ -92,19 +92,19 @@ function DatabaseInstances({ instances, onCleanUpClicked }) {
 function DatabaseItemOverview({
   database,
   asDatabaseLayer = false,
-  onCleanUpClicked,
+  onCleanUpClick,
 }) {
   const { databaseInstances } = database;
 
   return asDatabaseLayer ? (
     <DatabaseLayer
       instances={databaseInstances}
-      onCleanUpClicked={onCleanUpClicked}
+      onCleanUpClick={onCleanUpClick}
     />
   ) : (
     <DatabaseInstances
       instances={databaseInstances}
-      onCleanUpClicked={onCleanUpClicked}
+      onCleanUpClick={onCleanUpClick}
     />
   );
 }

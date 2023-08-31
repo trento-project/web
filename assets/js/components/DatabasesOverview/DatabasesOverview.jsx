@@ -19,8 +19,8 @@ function DatabasesOverview({
   databases,
   databaseInstances,
   loading,
-  onTagAdded,
-  onTagRemoved,
+  onTagAdd,
+  onTagRemove,
   onInstanceCleanUp,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -106,8 +106,8 @@ function DatabasesOverview({
             tags={content}
             resourceId={item.id}
             onChange={() => {}}
-            onAdd={(tag) => onTagAdded(tag, item.id)}
-            onRemove={(tag) => onTagRemoved(tag, item.id)}
+            onAdd={(tag) => onTagAdd(tag, item.id)}
+            onRemove={(tag) => onTagRemove(tag, item.id)}
           />
         ),
       },
@@ -115,7 +115,7 @@ function DatabasesOverview({
     collapsibleDetailRenderer: (database) => (
       <DatabaseItemOverview
         database={database}
-        onCleanUpClicked={(instance, _type) => {
+        onCleanUpClick={(instance, _type) => {
           setCleanUpModalOpen(true);
           setInstanceToDeregister(instance);
         }}

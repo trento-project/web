@@ -34,11 +34,11 @@ function DatabasesOverviewPage() {
       databases={databases}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}
-      onTagAdded={(tag, databaseID) => {
+      onTagAdd={(tag, databaseID) => {
         addTag(tag, databaseID);
         dispatch(addTagToDatabase({ tags: [{ value: tag }], id: databaseID }));
       }}
-      onTagRemoved={(tag, databaseID) => {
+      onTagRemove={(tag, databaseID) => {
         removeTag(tag, databaseID);
         dispatch(
           removeTagFromDatabase({ tags: [{ value: tag }], id: databaseID })

@@ -23,7 +23,7 @@ function InstanceOverview({
     absent_at: absentAt,
     deregistering,
   },
-  onCleanUpClicked,
+  onCleanUpClick,
 }) {
   const isDatabase = DATABASE_TYPE === instanceType;
   const rowClasses = classNames(
@@ -74,7 +74,7 @@ function InstanceOverview({
             type="transparent"
             className="jungle-green-500 border-none shadow-none"
             cleaning={deregistering}
-            onClick={() => onCleanUpClicked(instance, instanceType)}
+            onClick={() => onCleanUpClick(instance, instanceType)}
           />
         </div>
       )}

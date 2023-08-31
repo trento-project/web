@@ -18,8 +18,8 @@ function SapSystemsOverview({
   applicationInstances,
   databaseInstances,
   loading,
-  onTagAdded,
-  onTagRemoved,
+  onTagAdd,
+  onTagRemove,
   onInstanceCleanUp,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -95,8 +95,8 @@ function SapSystemsOverview({
             tags={content}
             resourceId={item.id}
             onChange={() => {}}
-            onAdd={(tag) => onTagAdded(tag, item.id)}
-            onRemove={(tag) => onTagRemoved(tag, item.id)}
+            onAdd={(tag) => onTagAdd(tag, item.id)}
+            onRemove={(tag) => onTagRemove(tag, item.id)}
           />
         ),
       },
@@ -104,7 +104,7 @@ function SapSystemsOverview({
     collapsibleDetailRenderer: (sapSystem) => (
       <SAPSystemItemOverview
         sapSystem={sapSystem}
-        onCleanUpClicked={(instance, type) => {
+        onCleanUpClick={(instance, type) => {
           setCleanUpModalOpen(true);
           setInstanceToDeregister(instance);
           setInstanceType(type);

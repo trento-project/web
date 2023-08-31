@@ -43,13 +43,13 @@ function SapSystemOverviewPage() {
       applicationInstances={enrichedApplicationInstances}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}
-      onTagAdded={(tag, sapSystemID) => {
+      onTagAdd={(tag, sapSystemID) => {
         addTag(tag, sapSystemID);
         dispatch(
           addTagToSAPSystem({ tags: [{ value: tag }], id: sapSystemID })
         );
       }}
-      onTagRemoved={(tag, sapSystemID) => {
+      onTagRemove={(tag, sapSystemID) => {
         removeTag(tag, sapSystemID);
         dispatch(
           removeTagFromSAPSystem({ tags: [{ value: tag }], id: sapSystemID })
