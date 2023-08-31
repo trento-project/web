@@ -179,7 +179,7 @@ defmodule Trento.SapSystemProjectorTest do
   end
 
   test "should broadcast application_instance_health_changed when ApplicationInstanceHealthChanged event is received" do
-    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+    %{id: sap_system_id} = insert(:sap_system)
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -216,21 +216,17 @@ defmodule Trento.SapSystemProjectorTest do
   end
 
   test "should update the absent_at field on ApplicationInstanceMarkedAbsent event is received" do
-    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+    %{
+      id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      sid: sid
+    } = insert(:sap_system)
+
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
-
-    %{
-      host_id: host_id,
-      instance_number: instance_number,
-      sid: sid
-    } =
-      Repo.get_by(ApplicationInstanceReadModel,
-        sap_system_id: event.sap_system_id,
-        instance_number: event.instance_number,
-        host_id: event.host_id
-      )
 
     absent_at = DateTime.utc_now()
 
@@ -257,21 +253,17 @@ defmodule Trento.SapSystemProjectorTest do
   end
 
   test "should update the absent_at field on ApplicationInstanceMarkedPresent event is received" do
-    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+    %{
+      id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      sid: sid
+    } = insert(:sap_system)
+
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
-
-    %{
-      host_id: host_id,
-      instance_number: instance_number,
-      sid: sid
-    } =
-      Repo.get_by(ApplicationInstanceReadModel,
-        sap_system_id: event.sap_system_id,
-        instance_number: event.instance_number,
-        host_id: event.host_id
-      )
 
     marked_present_event = %ApplicationInstanceMarkedPresent{
       instance_number: instance_number,
