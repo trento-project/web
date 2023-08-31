@@ -24,6 +24,7 @@ function DatabasesOverview({
   const config = {
     pagination: true,
     usePadding: false,
+    collapsedRowClassName: 'bg-gray-100',
     columns: [
       {
         title: 'Health',

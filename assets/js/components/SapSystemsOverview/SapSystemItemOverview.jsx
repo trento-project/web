@@ -34,7 +34,7 @@ function SapSystemItemOverview({ sapSystem }) {
           </div>
           <div className="table w-full">
             <div className="table-header-group bg-grey bg-gray-100">
-              <div className="table-row">
+              <div className="table-row border-b">
                 {applicationInstanceColumns.map(({ key, name, cssClass }) => (
                   <div
                     key={key}
