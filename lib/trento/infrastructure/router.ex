@@ -15,6 +15,8 @@ defmodule Trento.Router do
     DeregisterClusterHost,
     DeregisterDatabaseInstance,
     DeregisterHost,
+    MarkApplicationInstanceAbsent,
+    MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
@@ -65,6 +67,8 @@ defmodule Trento.Router do
   dispatch [
              DeregisterApplicationInstance,
              DeregisterDatabaseInstance,
+             MarkApplicationInstanceAbsent,
+             MarkDatabaseInstanceAbsent,
              RegisterApplicationInstance,
              RegisterDatabaseInstance,
              RollUpSapSystem
