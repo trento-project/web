@@ -3,7 +3,11 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getEnrichedDatabaseInstances } from '@state/selectors/sapSystem';
-import { addTagToDatabase, removeTagFromDatabase } from '@state/databases';
+import {
+  addTagToDatabase,
+  removeTagFromDatabase,
+  deregisterDatabaseInstance,
+} from '@state/databases';
 import { post, del } from '@lib/network';
 
 import DatabasesOverview from './DatabasesOverview';
@@ -39,6 +43,9 @@ function DatabasesOverviewPage() {
         dispatch(
           removeTagFromDatabase({ tags: [{ value: tag }], id: databaseID })
         );
+      }}
+      onInstanceCleanUp={(instance) => {
+        dispatch(deregisterDatabaseInstance(instance));
       }}
     />
   );

@@ -4,9 +4,13 @@ import DatabaseItemOverview from '@components/DatabasesOverview/DatabaseItemOver
 import InstanceOverview from '@components/InstanceOverview';
 import { APPLICATION_TYPE } from '@lib/model';
 
-function ApplicationInstance({ instance }) {
+function ApplicationInstance({ instance, onCleanUpClicked }) {
   return (
-    <InstanceOverview instanceType={APPLICATION_TYPE} instance={instance} />
+    <InstanceOverview
+      instanceType={APPLICATION_TYPE}
+      instance={instance}
+      onCleanUpClicked={onCleanUpClicked}
+    />
   );
 }
 
@@ -19,7 +23,7 @@ const applicationInstanceColumns = [
   { key: 'cleanupButton', cssClass: 'w-48' },
 ];
 
-function SapSystemItemOverview({ sapSystem }) {
+function SapSystemItemOverview({ sapSystem, onCleanUpClicked }) {
   const { applicationInstances, databaseInstances } = sapSystem;
 
   return (
@@ -51,13 +55,18 @@ function SapSystemItemOverview({ sapSystem }) {
                   <ApplicationInstance
                     key={instance.host_id}
                     instance={instance}
+                    onCleanUpClicked={onCleanUpClicked}
                   />
                 ))}
             </div>
           </div>
         </div>
       </div>
-      <DatabaseItemOverview database={{ databaseInstances }} asDatabaseLayer />
+      <DatabaseItemOverview
+        database={{ databaseInstances }}
+        asDatabaseLayer
+        onCleanUpClicked={onCleanUpClicked}
+      />
     </div>
   );
 }

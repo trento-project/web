@@ -6,8 +6,14 @@ import {
   getEnrichedApplicationInstances,
   getEnrichedDatabaseInstances,
 } from '@state/selectors/sapSystem';
-import { addTagToSAPSystem, removeTagFromSAPSystem } from '@state/sapSystems';
+import {
+  addTagToSAPSystem,
+  removeTagFromSAPSystem,
+  deregisterApplicationInstance,
+} from '@state/sapSystems';
+import { deregisterDatabaseInstance } from '@state/databases';
 import { post, del } from '@lib/network';
+import { APPLICATION_TYPE } from '@lib/model';
 
 import SapSystemsOverview from './SapSystemsOverview';
 
@@ -48,6 +54,11 @@ function SapSystemOverviewPage() {
         dispatch(
           removeTagFromSAPSystem({ tags: [{ value: tag }], id: sapSystemID })
         );
+      }}
+      onInstanceCleanUp={(instance, instanceType) => {
+        instanceType === APPLICATION_TYPE
+          ? dispatch(deregisterApplicationInstance(instance))
+          : dispatch(deregisterDatabaseInstance(instance));
       }}
     />
   );

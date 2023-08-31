@@ -20,6 +20,7 @@ export const databaseInstanceFactory = Factory.define(() => ({
   start_priority: faker.datatype.number({ min: 1, max: 9 }).toString(),
   system_replication: '',
   system_replication_status: '',
+  absent_at: null,
 }));
 
 export const databaseFactory = Factory.define(({ params }) => {

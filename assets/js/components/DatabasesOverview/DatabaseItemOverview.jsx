@@ -3,8 +3,14 @@ import React from 'react';
 import InstanceOverview from '@components/InstanceOverview';
 import { DATABASE_TYPE } from '@lib/model';
 
-export function DatabaseInstance({ instance }) {
-  return <InstanceOverview instanceType={DATABASE_TYPE} instance={instance} />;
+export function DatabaseInstance({ instance, onCleanUpClicked }) {
+  return (
+    <InstanceOverview
+      instanceType={DATABASE_TYPE}
+      instance={instance}
+      onCleanUpClicked={onCleanUpClicked}
+    />
+  );
 }
 
 const databaseInstanceColumns = [
@@ -17,7 +23,11 @@ const databaseInstanceColumns = [
   { key: 'cleanupButton', cssClass: 'w-48' },
 ];
 
-function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
+function PlainDatabaseItemOverview({
+  instances,
+  asDatabaseLayer = false,
+  onCleanUpClicked,
+}) {
   return (
     <div className="flex bg-white dark:bg-gray-800 shadow mb-2 rounded-lg">
       <div className="flex-auto">
@@ -48,6 +58,7 @@ function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
                 <DatabaseInstance
                   key={instance.host_id + instance.sap_system_id}
                   instance={instance}
+                  onCleanUpClicked={onCleanUpClicked}
                 />
               ))}
           </div>
@@ -57,25 +68,44 @@ function PlainDatabaseItemOverview({ instances, asDatabaseLayer = false }) {
   );
 }
 
-function DatabaseLayer({ instances }) {
-  return <PlainDatabaseItemOverview instances={instances} asDatabaseLayer />;
+function DatabaseLayer({ instances, onCleanUpClicked }) {
+  return (
+    <PlainDatabaseItemOverview
+      instances={instances}
+      asDatabaseLayer
+      onCleanUpClicked={onCleanUpClicked}
+    />
+  );
 }
 
-function DatabaseInstances({ instances }) {
+function DatabaseInstances({ instances, onCleanUpClicked }) {
   return (
     <div className="p-2">
-      <PlainDatabaseItemOverview instances={instances} />
+      <PlainDatabaseItemOverview
+        instances={instances}
+        onCleanUpClicked={onCleanUpClicked}
+      />
     </div>
   );
 }
 
-function DatabaseItemOverview({ database, asDatabaseLayer = false }) {
+function DatabaseItemOverview({
+  database,
+  asDatabaseLayer = false,
+  onCleanUpClicked,
+}) {
   const { databaseInstances } = database;
 
   return asDatabaseLayer ? (
-    <DatabaseLayer instances={databaseInstances} />
+    <DatabaseLayer
+      instances={databaseInstances}
+      onCleanUpClicked={onCleanUpClicked}
+    />
   ) : (
-    <DatabaseInstances instances={databaseInstances} />
+    <DatabaseInstances
+      instances={databaseInstances}
+      onCleanUpClicked={onCleanUpClicked}
+    />
   );
 }
 

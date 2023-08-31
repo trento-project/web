@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { filter } from 'lodash';
 
@@ -8,7 +8,10 @@ import HealthIcon from '@components/Health';
 import Table from '@components/Table';
 import Tags from '@components/Tags';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
+import DeregistrationModal from '@components/DeregistrationModal';
 import { getCounters } from '@components/HealthSummary/summarySelection';
+
+import { DATABASE_TYPE } from '@lib/model';
 
 import DatabaseItemOverview from './DatabaseItemOverview';
 
@@ -18,8 +21,11 @@ function DatabasesOverview({
   loading,
   onTagAdded,
   onTagRemoved,
+  onInstanceCleanUp,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
+  const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
 
   const config = {
     pagination: true,
@@ -107,7 +113,13 @@ function DatabasesOverview({
       },
     ],
     collapsibleDetailRenderer: (database) => (
-      <DatabaseItemOverview database={database} />
+      <DatabaseItemOverview
+        database={database}
+        onCleanUpClicked={(instance, _type) => {
+          setCleanUpModalOpen(true);
+          setInstanceToDeregister(instance);
+        }}
+      />
     ),
   };
 
@@ -131,6 +143,19 @@ function DatabasesOverview({
   ) : (
     <>
       <PageHeader className="font-bold">HANA Databases</PageHeader>
+      <DeregistrationModal
+        contentType={DATABASE_TYPE}
+        instanceNumber={instanceToDeregister?.instance_number}
+        sid={instanceToDeregister?.sid}
+        isOpen={!!cleanUpModalOpen}
+        onCleanUp={() => {
+          setCleanUpModalOpen(false);
+          onInstanceCleanUp(instanceToDeregister);
+        }}
+        onCancel={() => {
+          setCleanUpModalOpen(false);
+        }}
+      />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table

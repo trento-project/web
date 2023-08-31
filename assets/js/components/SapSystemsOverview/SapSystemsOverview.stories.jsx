@@ -90,6 +90,10 @@ export default {
       action: 'Remove tag',
       description: 'Called when an existing tag is removed',
     },
+    onInstanceCleanUp: {
+      action: 'Clean up instance',
+      description: 'Deregister and clean up an absent instance',
+    },
   },
   decorators: [
     (Story) => (
