@@ -7,6 +7,7 @@ import {
   DATABASE_RESTORED,
   DATABASE_HEALTH_CHANGED,
   DATABASE_INSTANCE_REGISTERED,
+  DATABASE_INSTANCE_ABSENT_AT_CHANGED,
   DATABASE_INSTANCE_DEREGISTERED,
   DATABASE_INSTANCE_HEALTH_CHANGED,
   DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED,
@@ -16,6 +17,7 @@ import {
   updateDatabaseHealth,
   updateDatabaseInstanceHealth,
   updateDatabaseInstanceSystemReplication,
+  updateDatabaseInstanceAbsentAt,
   removeDatabase,
   removeDatabaseInstance,
   setDatabaseInstanceDeregistering,
@@ -111,6 +113,19 @@ function* databaseInstanceSystemReplicationChanged({ payload }) {
   yield put(updateSAPSystemDatabaseInstanceSystemReplication(payload));
 }
 
+export function* databaseInstanceAbsentAtChanged({ payload }) {
+  yield put(updateDatabaseInstanceAbsentAt(payload));
+  const { sid, absent_at } = payload;
+  yield put(
+    notify({
+      text: `The database instance ${sid} is now ${
+        absent_at ? 'absent' : 'present'
+      }.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 export function* deregisterDatabaseInstance({
   payload,
   payload: { sid, sap_system_id, host_id, instance_number },
@@ -141,6 +156,10 @@ export function* watchDatabase() {
   yield takeEvery(DATABASE_RESTORED, databaseRestored);
   yield takeEvery(DATABASE_HEALTH_CHANGED, databaseHealthChanged);
   yield takeEvery(DATABASE_INSTANCE_REGISTERED, databaseInstanceRegistered);
+  yield takeEvery(
+    DATABASE_INSTANCE_ABSENT_AT_CHANGED,
+    databaseInstanceAbsentAtChanged
+  );
   yield takeEvery(DATABASE_INSTANCE_DEREGISTERED, databaseInstanceDeregistered);
   yield takeEvery(
     DATABASE_INSTANCE_HEALTH_CHANGED,

@@ -6,6 +6,7 @@ import sapSystemsReducer, {
   updateApplicationInstanceHealth,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
+  updateApplicationInstanceAbsentAt,
   removeApplicationInstance,
   removeDatabaseInstanceFromSapSystem,
   updateSAPSystem,
@@ -177,6 +178,33 @@ describe('SAP Systems reducer', () => {
           ...instance,
           system_replication: newSystemReplication,
           system_replication_status: newStatus,
+        },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the absent_at field of an application instance', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+    const absentAt = Date.now();
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const instanceToUpdate = {
+      ...instance,
+      absent_at: absentAt,
+    };
+
+    const action = updateApplicationInstanceAbsentAt(instanceToUpdate);
+
+    const expectedState = {
+      applicationInstances: [
+        {
+          ...instance,
+          absent_at: absentAt,
         },
       ],
     };

@@ -29,6 +29,7 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
   start_priority: faker.datatype.number({ min: 1, max: 9 }).toString(),
   sap_system_id: faker.datatype.uuid(),
+  absent_at: null,
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {

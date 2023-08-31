@@ -7,6 +7,7 @@ import {
   APPLICATION_INSTANCE_REGISTERED,
   APPLICATION_INSTANCE_MOVED,
   APPLICATION_INSTANCE_HEALTH_CHANGED,
+  APPLICATION_INSTANCE_ABSENT_AT_CHANGED,
   APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
   SAP_SYSTEM_RESTORED,
@@ -19,6 +20,7 @@ import {
   removeApplicationInstance,
   updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
+  updateApplicationInstanceAbsentAt,
   removeSAPSystem,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
@@ -77,6 +79,19 @@ export function* applicationInstanceDeregistered({ payload }) {
 
 function* applicationInstanceHealthChanged({ payload }) {
   yield put(updateApplicationInstanceHealth(payload));
+}
+
+export function* applicationInstanceAbsentAtChanged({ payload }) {
+  yield put(updateApplicationInstanceAbsentAt(payload));
+  const { sid, absent_at } = payload;
+  yield put(
+    notify({
+      text: `The application instance ${sid} is now ${
+        absent_at ? 'absent' : 'present'
+      }.`,
+      icon: 'ℹ️',
+    })
+  );
 }
 
 export function* sapSystemDeregistered({ payload: { id, sid } }) {
@@ -142,6 +157,10 @@ export function* watchSapSystem() {
     applicationInstanceRegistered
   );
   yield takeEvery(APPLICATION_INSTANCE_MOVED, applicationInstanceMoved);
+  yield takeEvery(
+    APPLICATION_INSTANCE_ABSENT_AT_CHANGED,
+    applicationInstanceAbsentAtChanged
+  );
   yield takeEvery(
     APPLICATION_INSTANCE_DEREGISTERED,
     applicationInstanceDeregistered
