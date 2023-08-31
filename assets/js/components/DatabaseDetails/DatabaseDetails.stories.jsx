@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-
+import { faker } from '@faker-js/faker';
 import {
   clusterFactory,
   databaseInstanceFactory,
@@ -16,6 +16,13 @@ const database = {
   hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
 };
 
+const databaseWithAbsentInstance = {
+  ...databaseFactory.build({ instances: databaseInstanceFactory.buildList(2) }),
+  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+};
+databaseWithAbsentInstance.instances[1].absent_at = faker.date
+  .past()
+  .toISOString();
 function ContainerWrapper({ children }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
@@ -44,5 +51,13 @@ export const Database = {
     title: 'Database Details',
     type: DATABASE_TYPE,
     system: database,
+  },
+};
+
+export const DatabaseWithAbsentInstance = {
+  args: {
+    title: 'Database Details',
+    type: DATABASE_TYPE,
+    system: databaseWithAbsentInstance,
   },
 };
