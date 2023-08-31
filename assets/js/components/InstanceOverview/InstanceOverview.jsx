@@ -27,29 +27,27 @@ function InstanceOverview({
     { 'bg-gray-100': absentAt },
     'table-row border-b'
   );
+
+  const textColor = classNames({ 'text-gray-500': absentAt });
   return (
     <div className={rowClasses}>
-      <div className="table-cell p-2 px-5">
-        {absentAt ? (
-          <Tooltip content="Instance currently not found." place="bottom">
-            <span
-              data-testid="absent-tooltip"
-              className="group flex items-center relative"
-            >
-              <HealthIcon health="absent" centered />
-              <span className="ml-1 truncate max-w-[100px]" />
-            </span>
-          </Tooltip>
-        ) : (
-          <HealthIcon health={health} />
-        )}
+      <div className="table-cell p-2 px-5 align-center">
+        <Tooltip
+          content="Instance currently not found."
+          place="bottom"
+          isEnabled={!!absentAt}
+        >
+          <HealthIcon health={absentAt ? 'absent' : health} />
+        </Tooltip>
       </div>
-      <div className="table-cell p-2 text-center">{instanceNumber}</div>
+      <div className={classNames(textColor, 'table-cell p-2 text-center')}>
+        {instanceNumber}
+      </div>
       <div className="table-cell p-2 text-gray-500 dark:text-gray-300 text-sm">
         <Features features={features} />
       </div>
       {isDatabase && (
-        <div className="table-cell p-2">
+        <div className={classNames(textColor, 'table-cell p-2')}>
           {systemReplication && `HANA ${systemReplication}`}{' '}
           {systemReplicationStatus && <Pill>{systemReplicationStatus}</Pill>}
         </div>
@@ -71,7 +69,7 @@ function InstanceOverview({
           <CleanUpButton
             size="fit"
             type="transparent"
-            className="jungle-green-500 border-none shadown-none"
+            className="jungle-green-500 border-none shadow-none"
           />
         </div>
       )}

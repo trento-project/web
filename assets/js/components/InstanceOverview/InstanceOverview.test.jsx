@@ -46,7 +46,7 @@ describe('InstanceOverview', () => {
     }
   );
 
-  it('should render an absent HealthIcon and a tooltip content for absent instances', async () => {
+  it('should render an absent HealthIcon, tooltip content and clean up button for absent instances', async () => {
     const user = userEvent.setup();
 
     const absentInstance = databaseInstanceFactory.build({
@@ -60,29 +60,14 @@ describe('InstanceOverview', () => {
       />
     );
 
-    const tooltip = screen.getByTestId('absent-tooltip');
-    expect(within(tooltip).getByTestId('eos-svg-component')).toHaveClass(
-      'fill-black'
-    );
-    await act(async () => user.hover(tooltip));
+    const [healthIcon, _cleanUpIcon] =
+      screen.getAllByTestId('eos-svg-component');
+    expect(healthIcon).toHaveClass('fill-black');
+    expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
+    await act(async () => user.hover(healthIcon));
     await waitFor(() =>
       expect(screen.queryByText('Instance currently not found.')).toBeVisible()
     );
-  });
-
-  it('should render a clean up button for absent instances', () => {
-    const absentInstance = databaseInstanceFactory.build({
-      absent_at: faker.date.past().toISOString(),
-    });
-
-    renderWithRouter(
-      <InstanceOverview
-        instanceType={APPLICATION_TYPE}
-        instance={absentInstance}
-      />
-    );
-
-    expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
   });
 
   it('should not render a clean up button for present instances', () => {
