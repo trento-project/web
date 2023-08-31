@@ -83,8 +83,7 @@ export const systemInstancesTableConfiguration = {
       title: '',
       key: 'absent_at',
       className: 'w-40',
-      render: (content, item) => {
-        console.log('content', content);
+      render: (content, _item) => {
         if (content) {
           return (
             <CleanUpButton
@@ -94,6 +93,7 @@ export const systemInstancesTableConfiguration = {
             />
           );
         }
+        return null;
       },
     },
   ],

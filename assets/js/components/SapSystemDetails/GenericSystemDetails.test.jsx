@@ -73,4 +73,27 @@ describe('GenericSystemDetails', () => {
 
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent('-');
   });
+
+  it('should render a cleanup button and correct health icon when absent instances exist', () => {
+    const sapSystem = keysToCamel(
+      sapSystemFactory.build({
+        instances: sapSystemApplicationInstanceFactory.buildList(5),
+      })
+    );
+    sapSystem.instances[0].absent_at = faker.date.past().toISOString();
+    sapSystem.hosts = hostFactory.buildList(5);
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.datatype.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
+    const [_sapSystemIcon, health, _cleanUpIcon] =
+      screen.getAllByTestId('eos-svg-component');
+    expect(health).toHaveClass('fill-black');
+  });
 });
