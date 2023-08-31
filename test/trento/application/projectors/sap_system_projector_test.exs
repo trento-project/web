@@ -215,7 +215,7 @@ defmodule Trento.SapSystemProjectorTest do
     )
   end
 
-  test "should update the absent_at field on ApplicationInstanceMarkedAbsent event is received" do
+  test "should update the absent_at field when ApplicationInstanceMarkedAbsent event is received" do
     %{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
@@ -247,7 +247,7 @@ defmodule Trento.SapSystemProjectorTest do
     )
   end
 
-  test "should update the absent_at field on ApplicationInstanceMarkedPresent event is received" do
+  test "should update the absent_at field when ApplicationInstanceMarkedPresent event is received" do
     %{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
