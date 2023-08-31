@@ -1,5 +1,6 @@
 import React from 'react';
 import Pill from '@components/Pill/Pill';
+import { EOS_LENS_FILLED } from 'eos-icons-react';
 
 function InstanceStatus({ health }) {
   let cssClass;
@@ -7,25 +8,26 @@ function InstanceStatus({ health }) {
 
   switch (health) {
     case 'passing':
-      cssClass = 'bg-jungle-green-500';
-      instanceStatus = 'SAPControl-GREEN';
+      cssClass = 'fill-jungle-green-500';
+      instanceStatus = 'Green';
       break;
     case 'warning':
-      cssClass = 'bg-yellow-500';
-      instanceStatus = 'SAPControl-YELLOW';
+      cssClass = 'fill-yellow-500';
+      instanceStatus = 'Yellow';
       break;
     case 'critical':
-      cssClass = 'bg-red-500';
-      instanceStatus = 'SAPControl-RED';
+      cssClass = 'fill-red-500';
+      instanceStatus = 'Red';
       break;
     default:
-      cssClass = 'bg-gray-500';
-      instanceStatus = 'SAPControl-GRAY';
+      cssClass = 'fill-gray-500';
+      instanceStatus = 'Gray';
       break;
   }
 
   return (
-    <Pill roundedMode="rounded" className={`${cssClass} text-gray-50`}>
+    <Pill className="bg-gray-200 text-gray-500 items-center">
+      SAPControl: <EOS_LENS_FILLED size="base" className={`${cssClass} mx-1`} />{' '}
       {instanceStatus}
     </Pill>
   );
