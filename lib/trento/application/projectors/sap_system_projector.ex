@@ -410,11 +410,13 @@ defmodule Trento.SapSystemProjector do
       @sap_systems_topic,
       "application_instance_absent_at_changed",
       SapSystemView.render("instance_absent_at_changed.json",
-        instance_number: instance_number,
-        host_id: host_id,
-        sap_system_id: sap_system_id,
-        sid: sid,
-        absent_at: absent_at
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          absent_at: absent_at
+        }
       )
     )
   end
@@ -433,11 +435,13 @@ defmodule Trento.SapSystemProjector do
       @sap_systems_topic,
       "application_instance_absent_at_changed",
       SapSystemView.render("instance_absent_at_changed.json",
-        instance_number: instance_number,
-        host_id: host_id,
-        sap_system_id: sap_system_id,
-        sid: sid,
-        absent_at: nil
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          absent_at: nil
+        }
       )
     )
   end
