@@ -215,7 +215,7 @@ defmodule Trento.SapSystemProjectorTest do
     )
   end
 
-  test "should broadcast application_instance_absent_at_changed when ApplicationInstanceMarkedAbsent event is received" do
+  test "should update the absent_at field on ApplicationInstanceMarkedAbsent event is received" do
     insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
@@ -256,7 +256,7 @@ defmodule Trento.SapSystemProjectorTest do
     )
   end
 
-  test "should broadcast application_instance_absent_at_changed when ApplicationInstanceMarkedPresent event is received" do
+  test "should update the absent_at field on ApplicationInstanceMarkedPresent event is received" do
     insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 

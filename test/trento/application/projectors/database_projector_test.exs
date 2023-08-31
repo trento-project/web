@@ -297,7 +297,7 @@ defmodule Trento.DatabaseProjectorTest do
                      1000
   end
 
-  test "should broadcast database_instance_absent_at_changed when DatabaseInstanceMarkedAbsent event is received" do
+  test "should update the absent_at field on DatabaseInstanceMarkedAbsent event is received" do
     %{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
@@ -329,7 +329,7 @@ defmodule Trento.DatabaseProjectorTest do
     )
   end
 
-  test "should broadcast database_instance_absent_at_changed when DatabaseInstanceMarkedPresent event is received" do
+  test "should update the absent_at field on DatabaseInstanceMarkedPresent event is received" do
     %{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
