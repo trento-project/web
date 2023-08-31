@@ -66,6 +66,7 @@ function Table({
     columns,
     collapsibleDetailRenderer = undefined,
     rowClassName = '',
+    collapsedRowClassName = '',
     pagination,
     usePadding = true,
   } = config;
@@ -189,6 +190,7 @@ function Table({
                       columns={columns}
                       colSpan={columns.length}
                       className={rowClassName}
+                      collapsedRowClassName={collapsedRowClassName}
                     />
                   ))
                 )}

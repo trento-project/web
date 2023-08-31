@@ -8,6 +8,7 @@ function CollapsibleTableRow({
   renderCells = () => {},
   colSpan = 1,
   className,
+  collapsedRowClassName,
 }) {
   const [rowExpanded, toggleRow] = useState(false);
 
@@ -27,9 +28,11 @@ function CollapsibleTableRow({
       </tr>
       {collapsibleDetailRenderer && (
         <tr
-          className={`overflow-y-hidden ${
-            rowExpanded ? 'visible' : 'hidden'
-          } transition-all ease-in-out duration-600`}
+          className={classNames(
+            collapsedRowClassName,
+            'overflow-y-hidden transition-all ease-in-out duration-600',
+            { visible: rowExpanded, hidden: !rowExpanded }
+          )}
         >
           <td colSpan={colSpan}>{collapsibleDetailRenderer(item)}</td>
         </tr>

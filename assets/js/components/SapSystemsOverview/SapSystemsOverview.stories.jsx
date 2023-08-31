@@ -1,4 +1,5 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
 import {
@@ -9,35 +10,47 @@ import {
 
 import SapSystemsOverview from './SapSystemsOverview';
 
+const enrichInstances = (systems, instanceType) =>
+  systems
+    .map((system) => system[instanceType])
+    .flat()
+    .map((instance) => {
+      const cluster = clusterFactory.build();
+      return {
+        ...instance,
+        host: {
+          ...hostFactory.build({
+            id: instance.host_id,
+            cluster_id: cluster.id,
+          }),
+          cluster,
+        },
+      };
+    });
+
 const sapSystems = sapSystemFactory.buildList(3);
+const enrichedApplicationInstances = enrichInstances(
+  sapSystems,
+  'application_instances'
+);
+const enrichedDatabaseInstances = enrichInstances(
+  sapSystems,
+  'database_instances'
+);
 
-const enrichedApplicationInstances = sapSystems[0].application_instances
-  .concat(sapSystems[1].application_instances)
-  .concat(sapSystems[2].application_instances)
-  .map((instance) => {
-    const cluster = clusterFactory.build();
-    return {
-      ...instance,
-      host: {
-        ...hostFactory.build({ id: instance.host_id, cluster_id: cluster.id }),
-        cluster,
-      },
-    };
-  });
+const sapSystemsWithAbsentInstances = sapSystemFactory.buildList(2);
+const enrichedAbsentApplicationInstances = enrichInstances(
+  sapSystemsWithAbsentInstances,
+  'application_instances'
+);
+const enrichedAbsentDatabaseInstances = enrichInstances(
+  sapSystemsWithAbsentInstances,
+  'database_instances'
+);
 
-const enrichedDatabaseInstances = sapSystems[0].database_instances
-  .concat(sapSystems[1].database_instances)
-  .concat(sapSystems[2].database_instances)
-  .map((instance) => {
-    const cluster = clusterFactory.build();
-    return {
-      ...instance,
-      host: {
-        ...hostFactory.build({ id: instance.host_id, cluster_id: cluster.id }),
-        cluster,
-      },
-    };
-  });
+enrichedAbsentApplicationInstances[1].absent_at = faker.date
+  .past()
+  .toISOString();
 
 function ContainerWrapper({ children }) {
   return (
@@ -97,6 +110,15 @@ export const SapSystems = {
     sapSystems,
     applicationInstances: enrichedApplicationInstances,
     databaseInstances: enrichedDatabaseInstances,
+    loading: false,
+  },
+};
+
+export const WithAbsentInstances = {
+  args: {
+    sapSystems: sapSystemsWithAbsentInstances,
+    applicationInstances: enrichedAbsentApplicationInstances,
+    databaseInstances: enrichedAbsentDatabaseInstances,
     loading: false,
   },
 };

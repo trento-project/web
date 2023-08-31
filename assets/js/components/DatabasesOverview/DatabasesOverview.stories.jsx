@@ -1,4 +1,5 @@
 import React from 'react';
+import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
 import {
@@ -37,6 +38,17 @@ const systemReplicationInstances = [
     sap_system_id: databaseWithSR.id,
     system_replication: 'Secondary',
     system_replication_status: 'ACTIVE',
+  }),
+];
+
+const databaseWithAbsentInstances = databaseFactory.build();
+const absentInstance = [
+  databaseInstanceFactory.build({
+    sap_system_id: databaseWithAbsentInstances.id,
+  }),
+  databaseInstanceFactory.build({
+    sap_system_id: databaseWithAbsentInstances.id,
+    absent_at: faker.date.past().toISOString(),
   }),
 ];
 
@@ -101,6 +113,14 @@ export const WithSystemReplication = {
   args: {
     databases: [databaseWithSR],
     databaseInstances: systemReplicationInstances,
+    loading: false,
+  },
+};
+
+export const WithAbsentInstances = {
+  args: {
+    databases: [databaseWithAbsentInstances],
+    databaseInstances: absentInstance,
     loading: false,
   },
 };
