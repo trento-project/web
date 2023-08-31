@@ -31,7 +31,7 @@ export default {
     },
     type: {
       control: { type: 'radio' },
-      options: ['primary-white', 'default-gray-100'],
+      options: ['primary-white', 'transparent'],
       description: 'Style type',
       table: {
         type: { summary: 'string' },
@@ -62,7 +62,8 @@ export const NoOutline = {
 export const AbsentInstanceRow = {
   args: {
     ...Default.args,
-    type: 'default-gray-100',
+    type: 'transparent',
+    className: 'jungle-green-500 border-none shadown-none',
     size: 'fit',
   },
 };

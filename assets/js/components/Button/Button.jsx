@@ -22,8 +22,6 @@ const getButtonClasses = (type) => {
       return 'bg-transparent hover:opacity-75 focus:outline-none w-full transition ease-in duration-200 font-semibold';
     case 'secondary':
       return 'bg-persimmon hover:opacity-75 focus:outline-none text-gray-800 w-full transition ease-in duration-200 text-center font-semibold rounded shadow';
-    case 'default-gray-100':
-      return 'bg-gray-100 border-none shadow-none hover:opacity-75 focus:outline-none text-jungle-green-500 w-full transition ease-in duration-200 text-center font-semibold rounded';
     case 'default-fit':
       return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-fit transition ease-in duration-200 text-center font-semibold rounded shadow';
     default:

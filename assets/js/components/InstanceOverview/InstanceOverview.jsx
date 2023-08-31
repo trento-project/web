@@ -68,7 +68,11 @@ function InstanceOverview({
       </div>
       {absentAt && (
         <div className="table-cell p-2">
-          <CleanUpButton size="fit" type="default-gray-100" />
+          <CleanUpButton
+            size="fit"
+            type="transparent"
+            className="jungle-green-500 border-none shadown-none"
+          />
         </div>
       )}
     </div>

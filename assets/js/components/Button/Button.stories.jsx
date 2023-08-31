@@ -34,10 +34,6 @@ export function Transparent() {
   return <Button type="transparent">Hello world!</Button>;
 }
 
-export function Gray100() {
-  return <Button type="default-gray-100">Hello world!</Button>;
-}
-
 export function Small() {
   return <Button size="small">Hello world!</Button>;
 }
