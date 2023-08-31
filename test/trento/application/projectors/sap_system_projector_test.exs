@@ -217,14 +217,11 @@ defmodule Trento.SapSystemProjectorTest do
 
   test "should update the absent_at field on ApplicationInstanceMarkedAbsent event is received" do
     %{
-      id: sap_system_id,
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
       sid: sid
-    } = insert(:sap_system)
-
-    %{instance_number: instance_number, host_id: host_id} =
-      event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
-
-    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+    } = insert(:application_instance_without_host)
 
     absent_at = DateTime.utc_now()
 
@@ -252,14 +249,11 @@ defmodule Trento.SapSystemProjectorTest do
 
   test "should update the absent_at field on ApplicationInstanceMarkedPresent event is received" do
     %{
-      id: sap_system_id,
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
       sid: sid
-    } = insert(:sap_system)
-
-    %{instance_number: instance_number, host_id: host_id} =
-      event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
-
-    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+    } = insert(:application_instance_without_host, absent_at: DateTime.utc_now())
 
     marked_present_event = %ApplicationInstanceMarkedPresent{
       instance_number: instance_number,
