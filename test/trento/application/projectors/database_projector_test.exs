@@ -335,7 +335,7 @@ defmodule Trento.DatabaseProjectorTest do
       instance_number: instance_number,
       host_id: host_id,
       sid: sid
-    } = insert(:database_instance_without_host)
+    } = insert(:database_instance_without_host, absent_at: DateTime.utc_now())
 
     event = %DatabaseInstanceMarkedPresent{
       instance_number: instance_number,
