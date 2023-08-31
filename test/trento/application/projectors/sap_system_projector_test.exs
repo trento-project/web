@@ -18,6 +18,8 @@ defmodule Trento.SapSystemProjectorTest do
   alias Trento.Domain.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
+    ApplicationInstanceMarkedAbsent,
+    ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     SapSystemDeregistered,
     SapSystemHealthChanged,
@@ -177,7 +179,7 @@ defmodule Trento.SapSystemProjectorTest do
   end
 
   test "should broadcast application_instance_health_changed when ApplicationInstanceHealthChanged event is received" do
-    insert(:sap_system, id: sap_system_id = Faker.UUID.v4())
+    %{id: sap_system_id} = insert(:sap_system)
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -208,6 +210,67 @@ defmodule Trento.SapSystemProjectorTest do
         host_id: ^host_id,
         instance_number: ^instance_number,
         sap_system_id: ^sap_system_id
+      },
+      1000
+    )
+  end
+
+  test "should update the absent_at field when ApplicationInstanceMarkedAbsent event is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sid: sid
+    } = insert(:application_instance_without_host)
+
+    absent_at = DateTime.utc_now()
+
+    marked_absent_event = %ApplicationInstanceMarkedAbsent{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id,
+      absent_at: absent_at
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, marked_absent_event, "sap_system_projector")
+
+    assert_broadcast(
+      "application_instance_absent_at_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        sid: ^sid,
+        absent_at: ^absent_at
+      },
+      1000
+    )
+  end
+
+  test "should update the absent_at field when ApplicationInstanceMarkedPresent event is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sid: sid
+    } = insert(:application_instance_without_host, absent_at: DateTime.utc_now())
+
+    marked_present_event = %ApplicationInstanceMarkedPresent{
+      instance_number: instance_number,
+      host_id: host_id,
+      sap_system_id: sap_system_id
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, marked_present_event, "sap_system_projector")
+
+    assert_broadcast(
+      "application_instance_absent_at_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        sid: ^sid,
+        absent_at: nil
       },
       1000
     )

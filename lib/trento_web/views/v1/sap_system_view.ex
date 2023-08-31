@@ -158,6 +158,23 @@ defmodule TrentoWeb.V1.SapSystemView do
       }),
       do: %{sap_system_id: id, instance_number: instance_number, host_id: host_id, sid: sid}
 
+  def render("instance_absent_at_changed.json", %{
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          absent_at: absent_at
+        }
+      }),
+      do: %{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        absent_at: absent_at
+      }
+
   defp add_system_replication_status_to_secondary_instance(
          %{database_instances: database_instances} = sap_system
        ) do
