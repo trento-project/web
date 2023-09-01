@@ -12,6 +12,7 @@ import {
 import CollapsibleTableRow from './CollapsibleTableRow';
 import Pagination from './Pagination';
 import EmptyState from './EmptyState';
+import { defaultRowKey } from './defaultRowKey';
 
 const defaultCellRender = (content) => (
   <p className="text-gray-900 whitespace-no-wrap">{content}</p>
@@ -61,6 +62,7 @@ function Table({
   setSearchParams,
   emptyStateText = 'No data available',
   withPadding = true,
+  rowKey = defaultRowKey,
 }) {
   const {
     columns,
@@ -181,18 +183,22 @@ function Table({
                     emptyStateText={emptyStateText}
                   />
                 ) : (
-                  renderedData.map((item, index) => (
-                    <CollapsibleTableRow
-                      item={item}
-                      key={index}
-                      collapsibleDetailRenderer={collapsibleDetailRenderer}
-                      renderCells={renderCells}
-                      columns={columns}
-                      colSpan={columns.length}
-                      className={rowClassName}
-                      collapsedRowClassName={collapsedRowClassName}
-                    />
-                  ))
+                  renderedData.map((item, index) => {
+                    const key = rowKey(item, index);
+
+                    return (
+                      <CollapsibleTableRow
+                        item={item}
+                        key={key}
+                        collapsibleDetailRenderer={collapsibleDetailRenderer}
+                        renderCells={renderCells}
+                        columns={columns}
+                        colSpan={columns.length}
+                        className={rowClassName}
+                        collapsedRowClassName={collapsedRowClassName}
+                      />
+                    );
+                  })
                 )}
               </tbody>
             </table>
