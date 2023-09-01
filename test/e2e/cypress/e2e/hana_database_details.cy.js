@@ -61,14 +61,14 @@ context('HANA database details', () => {
         cy.get('@tableCell').eq(6).should('contain', instance.Status);
         cy.get('@tableCell')
           .eq(6)
-          .find('span')
-          .should('have.class', healthMap[instance.StatusBadge]);
+          .find('svg')
+          .should('have.class', healthMap[instance.Status]);
       });
     });
 
     Object.entries(healthMap).forEach(([state, health]) => {
-      it(`should show ${state} badge in instance when SAPControl-${state} state is received`, () => {
-        cy.loadScenario(`hana-database-detail-${state}`);
+      it(`should show ${state} badge in instance when SAPControl-${state.toUpperCase()} state is received`, () => {
+        cy.loadScenario(`hana-database-detail-${state.toUpperCase()}`);
         // using row 1 as the changed instance is the 3rd in order based on instance_number
         cy.get('table.table-fixed')
           .eq(0)
@@ -76,8 +76,8 @@ context('HANA database details', () => {
           .eq(1)
           .find('td')
           .as('tableCell');
-        cy.get('@tableCell').eq(6).should('contain', `SAPControl-${state}`);
-        cy.get('@tableCell').eq(6).find('span').should('have.class', health);
+        cy.get('@tableCell').eq(6).should('contain', `${state}`);
+        cy.get('@tableCell').eq(6).find('svg').should('have.class', health);
       });
     });
     /* This test is commented because there is not any option to remove added database instances or

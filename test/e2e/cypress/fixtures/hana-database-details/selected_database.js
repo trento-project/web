@@ -10,7 +10,7 @@ export const selectedDatabase = {
       HttpPort: '51013',
       HttpsPort: '51014',
       StartPriority: '0.3',
-      Status: 'SAPControl-GREEN',
+      Status: 'Green',
       StatusBadge: 'GREEN',
     },
     {
@@ -20,7 +20,7 @@ export const selectedDatabase = {
       HttpPort: '51013',
       HttpsPort: '51014',
       StartPriority: '0.3',
-      Status: 'SAPControl-GREEN',
+      Status: 'Green',
       StatusBadge: 'GREEN',
     },
   ],
