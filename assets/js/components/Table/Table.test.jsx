@@ -138,7 +138,7 @@ describe('Table component', () => {
       });
     });
 
-    test('should return empty state message when data is empty', () => {
+    it('should return empty state message when data is empty', () => {
       const data = [];
       const emptyStateText = faker.random.words(5);
       render(
@@ -155,6 +155,32 @@ describe('Table component', () => {
       expect(tableRows.length).toBe(2);
       const tableCell = screen.getByRole('cell');
       expect(tableCell).toHaveTextContent(emptyStateText);
+    });
+  });
+
+  describe('rowKey function', () => {
+    it('is used to determine keys for rows', async () => {
+      const rowKey = jest.fn((_item, index) => index);
+      const data = tableDataFactory.buildList(5);
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          setSearchParams={() => {}}
+          rowKey={rowKey}
+        />
+      );
+
+      await waitFor(() => {
+        const table = screen.getByRole('table');
+        expect(table.querySelectorAll('tbody > tr')).toHaveLength(5);
+      });
+
+      expect(rowKey).toHaveBeenCalledTimes(5);
+      expect(rowKey).toHaveBeenCalledWith(data[0], 0);
+      expect(rowKey).toHaveBeenCalledWith(data[1], 1);
+      expect(rowKey).toHaveBeenCalledWith(data[2], 2);
     });
   });
 });
