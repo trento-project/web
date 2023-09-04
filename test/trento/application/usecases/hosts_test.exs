@@ -176,19 +176,35 @@ defmodule Trento.HostsTest do
 
     test "should request host checks execution for hosts when checks are selected" do
       checks = [Faker.UUID.v4(), Faker.UUID.v4()]
-      %{id: id} = insert(:host, id: Faker.UUID.v4(), selected_checks: checks)
+      %{id: host_id1} = insert(:host, id: Faker.UUID.v4(), selected_checks: checks)
 
-      insert(:host,
-        selected_checks: checks,
-        deregistered_at: DateTime.utc_now()
-      )
+      %{id: host_id2} =
+        insert(:host,
+          selected_checks: checks,
+          deregistered_at: DateTime.utc_now()
+        )
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn "executions",
                                                                            %ExecutionRequested{
-                                                                             group_id: ^id,
+                                                                             group_id: ^host_id1,
                                                                              targets: [
                                                                                %Target{
-                                                                                 agent_id: ^id,
+                                                                                 agent_id:
+                                                                                   ^host_id1,
+                                                                                 checks: ^checks
+                                                                               }
+                                                                             ]
+                                                                           } ->
+        :ok
+      end)
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn "executions",
+                                                                           %ExecutionRequested{
+                                                                             group_id: ^host_id2,
+                                                                             targets: [
+                                                                               %Target{
+                                                                                 agent_id:
+                                                                                   ^host_id2,
                                                                                  checks: ^checks
                                                                                }
                                                                              ]
