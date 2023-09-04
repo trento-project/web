@@ -48,4 +48,67 @@ context('Databases Overview', () => {
       });
     });
   });
+
+  describe('Instance deregistration', () => {
+    const hddDatabase = {
+      sid: 'HDD',
+      instance: {
+        instanceNumber: '10',
+        row: 1,
+      },
+    };
+
+    before(() => {
+      cy.contains(hddDatabase.sid).should('exist');
+
+      cy.get('table.table-fixed > tbody > tr').eq(0).click();
+    });
+
+    it('should mark an instance as absent and restore it as present', () => {
+      cy.loadScenario(
+        `${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
+      );
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .eq(hddDatabase.instance.row)
+        .contains('Clean up', { timeout: 15000 });
+
+      cy.loadScenario(
+        `${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
+      );
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .eq(hddDatabase.instance.row)
+        .should('not.contain', 'Clean up');
+    });
+
+    it('should deregister the database after deregistering an absent primary', () => {
+      cy.loadScenario(
+        `${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
+      );
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .eq(hddDatabase.instance.row)
+        .contains('Clean up', { timeout: 15000 })
+        .click();
+
+      cy.get('#headlessui-portal-root').as('modal');
+
+      cy.get('@modal').contains('button', 'Clean up').click();
+
+      cy.contains(hddDatabase.sid).should('not.exist');
+    });
+  });
 });
