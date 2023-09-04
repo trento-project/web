@@ -31,6 +31,7 @@ import {
   updateSAPSystemDatabaseInstanceSystemReplication,
   setDatabaseInstanceDeregisteringToSAPSystem,
   unsetDatabaseInstanceDeregisteringToSAPSystem,
+  updateDatabaseInstanceAbsentToSAPSystem,
 } from '@state/sapSystems';
 
 import { getDatabase } from '@state/selectors/sapSystem';
@@ -115,6 +116,7 @@ function* databaseInstanceSystemReplicationChanged({ payload }) {
 
 export function* databaseInstanceAbsentAtChanged({ payload }) {
   yield put(updateDatabaseInstanceAbsentAt(payload));
+  yield put(updateDatabaseInstanceAbsentToSAPSystem(payload));
   const { sid, absent_at } = payload;
   yield put(
     notify({

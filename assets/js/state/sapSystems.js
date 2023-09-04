@@ -192,6 +192,15 @@ export const sapSystemsListSlice = createSlice({
         { deregistering: false }
       );
     },
+    updateDatabaseInstanceAbsentToSAPSystem: (state, { payload: instance }) => {
+      const { absent_at } = instance;
+
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { absent_at }
+      );
+    },
   },
 });
 
@@ -239,6 +248,7 @@ export const {
   unsetApplicationInstanceDeregistering,
   setDatabaseInstanceDeregisteringToSAPSystem,
   unsetDatabaseInstanceDeregisteringToSAPSystem,
+  updateDatabaseInstanceAbsentToSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;

@@ -14,6 +14,7 @@ import sapSystemsReducer, {
   unsetApplicationInstanceDeregistering,
   setDatabaseInstanceDeregisteringToSAPSystem,
   unsetDatabaseInstanceDeregisteringToSAPSystem,
+  updateDatabaseInstanceAbsentToSAPSystem,
 } from '@state/sapSystems';
 import {
   sapSystemFactory,
@@ -372,6 +373,31 @@ describe('SAP Systems reducer', () => {
       ],
     };
 
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update absent state from database instance', () => {
+    const instance = databaseInstanceFactory.build({
+      absent_at: new Date().toISOString(),
+    });
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const action = updateDatabaseInstanceAbsentToSAPSystem({
+      ...instance,
+      absent_at: null,
+    });
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          absent_at: null,
+        },
+      ],
+    };
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
   });
 });
