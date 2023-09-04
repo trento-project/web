@@ -11,6 +11,7 @@ import Tooltip from '@components/Tooltip';
 
 function InstanceOverview({
   instanceType,
+  instance,
   instance: {
     health,
     system_replication: systemReplication,
@@ -20,7 +21,9 @@ function InstanceOverview({
     host_id: hostID,
     host,
     absent_at: absentAt,
+    deregistering,
   },
+  onCleanUpClick,
 }) {
   const isDatabase = DATABASE_TYPE === instanceType;
   const rowClasses = classNames(
@@ -70,6 +73,8 @@ function InstanceOverview({
             size="fit"
             type="transparent"
             className="jungle-green-500 border-none shadow-none"
+            cleaning={deregistering}
+            onClick={() => onCleanUpClick(instance, instanceType)}
           />
         </div>
       )}

@@ -84,4 +84,20 @@ describe('InstanceOverview', () => {
       screen.queryByRole('button', { name: 'Clean up' })
     ).not.toBeInTheDocument();
   });
+
+  it('should render a clean up button in cleaning state', () => {
+    const absentInstance = databaseInstanceFactory.build({
+      absent_at: faker.date.past().toISOString(),
+      deregistering: true,
+    });
+
+    renderWithRouter(
+      <InstanceOverview
+        instanceType={DATABASE_TYPE}
+        instance={absentInstance}
+      />
+    );
+
+    expect(screen.getByLabelText('Loading')).toBeInTheDocument();
+  });
 });

@@ -2,6 +2,9 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
+import { faker } from '@faker-js/faker';
+import userEvent from '@testing-library/user-event';
+
 import { databaseFactory } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
 import { filterTable, clearFilter } from '@components/Table/Table.test';
@@ -9,6 +12,43 @@ import { filterTable, clearFilter } from '@components/Table/Table.test';
 import DatabasesOverview from './DatabasesOverview';
 
 describe('DatabasesOverview component', () => {
+  describe('instance cleanup', () => {
+    it('should clean up database instance on request', async () => {
+      const user = userEvent.setup();
+      const mockedCleanUp = jest.fn();
+
+      const database = databaseFactory.build();
+
+      database.database_instances[0].absent_at = faker.date
+        .past()
+        .toISOString();
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={[database]}
+          databaseInstances={database.database_instances}
+          onInstanceCleanUp={mockedCleanUp}
+        />
+      );
+
+      const cleanUpButton = screen.queryByRole('button', { name: 'Clean up' });
+      await user.click(cleanUpButton);
+      expect(
+        screen.getByText('In the case of the last database instance', {
+          exact: false,
+        })
+      ).toBeInTheDocument();
+
+      const cleanUpModalButton = screen.getAllByRole('button', {
+        name: 'Clean up',
+      })[0];
+      await user.click(cleanUpModalButton);
+      expect(mockedCleanUp).toHaveBeenCalledWith(
+        database.database_instances[0]
+      );
+    });
+  });
+
   describe('filtering', () => {
     const scenarios = [
       {

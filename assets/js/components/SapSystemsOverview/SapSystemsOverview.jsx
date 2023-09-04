@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { filter } from 'lodash';
 
@@ -9,6 +9,7 @@ import Table from '@components/Table';
 import SAPSystemItemOverview from '@components/SapSystemsOverview/SapSystemItemOverview';
 import Tags from '@components/Tags';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
+import DeregistrationModal from '@components/DeregistrationModal';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import { renderEnsaVersion } from '@components/SapSystemDetails';
 
@@ -17,10 +18,14 @@ function SapSystemsOverview({
   applicationInstances,
   databaseInstances,
   loading,
-  onTagAdded,
-  onTagRemoved,
+  onTagAdd,
+  onTagRemove,
+  onInstanceCleanUp,
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
+  const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
+  const [instanceType, setInstanceType] = useState(undefined);
 
   const config = {
     pagination: true,
@@ -90,14 +95,21 @@ function SapSystemsOverview({
             tags={content}
             resourceId={item.id}
             onChange={() => {}}
-            onAdd={(tag) => onTagAdded(tag, item.id)}
-            onRemove={(tag) => onTagRemoved(tag, item.id)}
+            onAdd={(tag) => onTagAdd(tag, item.id)}
+            onRemove={(tag) => onTagRemove(tag, item.id)}
           />
         ),
       },
     ],
     collapsibleDetailRenderer: (sapSystem) => (
-      <SAPSystemItemOverview sapSystem={sapSystem} />
+      <SAPSystemItemOverview
+        sapSystem={sapSystem}
+        onCleanUpClick={(instance, type) => {
+          setCleanUpModalOpen(true);
+          setInstanceToDeregister(instance);
+          setInstanceType(type);
+        }}
+      />
     ),
   };
 
@@ -125,6 +137,19 @@ function SapSystemsOverview({
   ) : (
     <>
       <PageHeader className="font-bold">SAP Systems</PageHeader>
+      <DeregistrationModal
+        contentType={instanceType}
+        instanceNumber={instanceToDeregister?.instance_number}
+        sid={instanceToDeregister?.sid}
+        isOpen={!!cleanUpModalOpen}
+        onCleanUp={() => {
+          setCleanUpModalOpen(false);
+          onInstanceCleanUp(instanceToDeregister, instanceType);
+        }}
+        onCancel={() => {
+          setCleanUpModalOpen(false);
+        }}
+      />
       <div className="bg-white rounded-lg shadow">
         <HealthSummary {...counters} className="px-4 py-2" />
         <Table
