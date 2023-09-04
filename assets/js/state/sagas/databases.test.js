@@ -2,6 +2,7 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { recordSaga } from '@lib/test-utils';
 import {
+  databaseInstanceAbsentAtChanged,
   databaseDeregistered,
   databaseInstanceDeregistered,
   databaseRestored,
@@ -12,6 +13,7 @@ import {
   removeDatabase,
   removeDatabaseInstance,
   appendDatabase,
+  updateDatabaseInstanceAbsentAt,
   setDatabaseInstanceDeregistering,
   unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
@@ -20,6 +22,7 @@ import {
   upsertDatabaseInstancesToSapSystem,
   setDatabaseInstanceDeregisteringToSAPSystem,
   unsetDatabaseInstanceDeregisteringToSAPSystem,
+  updateDatabaseInstanceAbsentToSAPSystem,
 } from '@state/sapSystems';
 import {
   databaseFactory,
@@ -148,6 +151,66 @@ describe('SAP Systems sagas', () => {
       }),
       unsetDatabaseInstanceDeregistering(instance),
       unsetDatabaseInstanceDeregisteringToSAPSystem(instance),
+    ]);
+  });
+
+  it('should update the absent_at field when the database instance is marked present', async () => {
+    const { sap_system_id, instance_number, host_id, sid, absent_at } =
+      databaseInstanceFactory.build();
+
+    const dispatched = await recordSaga(databaseInstanceAbsentAtChanged, {
+      payload: { sap_system_id, instance_number, host_id, sid, absent_at },
+    });
+
+    expect(dispatched).toEqual([
+      updateDatabaseInstanceAbsentAt({
+        sap_system_id,
+        instance_number,
+        host_id,
+        sid,
+        absent_at,
+      }),
+      updateDatabaseInstanceAbsentToSAPSystem({
+        sap_system_id,
+        instance_number,
+        host_id,
+        sid,
+        absent_at,
+      }),
+      notify({
+        text: `The database instance ${instance_number} from ${sid} is present again`,
+        icon: 'ℹ️',
+      }),
+    ]);
+  });
+
+  it('should update the absent_at field when the database instance is marked absent', async () => {
+    const { sap_system_id, instance_number, host_id, sid, absent_at } =
+      databaseInstanceFactory.build({ absent_at: new Date().toISOString() });
+
+    const dispatched = await recordSaga(databaseInstanceAbsentAtChanged, {
+      payload: { sap_system_id, instance_number, host_id, sid, absent_at },
+    });
+
+    expect(dispatched).toEqual([
+      updateDatabaseInstanceAbsentAt({
+        sap_system_id,
+        instance_number,
+        host_id,
+        sid,
+        absent_at,
+      }),
+      updateDatabaseInstanceAbsentToSAPSystem({
+        sap_system_id,
+        instance_number,
+        host_id,
+        sid,
+        absent_at,
+      }),
+      notify({
+        text: `The database instance ${instance_number} from ${sid} is absent`,
+        icon: 'ℹ️',
+      }),
     ]);
   });
 });

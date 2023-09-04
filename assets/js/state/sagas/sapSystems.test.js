@@ -3,6 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { recordSaga } from '@lib/test-utils';
 import {
   applicationInstanceMoved,
+  applicationInstanceAbsentAtChanged,
   applicationInstanceDeregistered,
   sapSystemDeregistered,
   sapSystemRestored,
@@ -15,6 +16,7 @@ import {
   upsertDatabaseInstancesToSapSystem,
   updateApplicationInstanceHost,
   upsertApplicationInstances,
+  updateApplicationInstanceAbsentAt,
   removeApplicationInstance,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
@@ -86,6 +88,53 @@ describe('SAP Systems sagas', () => {
         new_host_id,
       })
     );
+  });
+
+  it('should update the absent_at field when the application instance is marked absent', async () => {
+    const { sap_system_id, instance_number, host_id, sid } =
+      sapSystemApplicationInstanceFactory.build();
+    const absent_at = Date.now();
+
+    const dispatched = await recordSaga(applicationInstanceAbsentAtChanged, {
+      payload: { sap_system_id, instance_number, host_id, sid, absent_at },
+    });
+
+    expect(dispatched).toEqual([
+      updateApplicationInstanceAbsentAt({
+        sap_system_id,
+        instance_number,
+        host_id,
+        sid,
+        absent_at,
+      }),
+      notify({
+        text: `The application instance ${sid} is now absent.`,
+        icon: 'ℹ️',
+      }),
+    ]);
+  });
+
+  it('should update the absent_at field when the application instance is marked present', async () => {
+    const { sap_system_id, instance_number, host_id, sid, absent_at } =
+      sapSystemApplicationInstanceFactory.build();
+
+    const dispatched = await recordSaga(applicationInstanceAbsentAtChanged, {
+      payload: { sap_system_id, instance_number, host_id, sid, absent_at },
+    });
+
+    expect(dispatched).toEqual([
+      updateApplicationInstanceAbsentAt({
+        sap_system_id,
+        instance_number,
+        host_id,
+        sid,
+        absent_at,
+      }),
+      notify({
+        text: `The application instance ${sid} is now present.`,
+        icon: 'ℹ️',
+      }),
+    ]);
   });
 
   it('should remove the application instance', async () => {

@@ -149,6 +149,20 @@ export const sapSystemsListSlice = createSlice({
         }
       );
     },
+    updateApplicationInstanceAbsentAt: (state, { payload: instance }) => {
+      state.applicationInstances = updateInstance(
+        state.applicationInstances,
+        instance,
+        { absent_at: instance.absent_at }
+      );
+    },
+    updateDatabaseInstanceAbsentToSAPSystem: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { absent_at: instance.absent_at }
+      );
+    },
     setApplicationInstanceDeregistering: (state, { payload: instance }) => {
       state.applicationInstances = updateInstance(
         state.applicationInstances,
@@ -191,6 +205,8 @@ export const SAP_SYSTEM_HEALTH_CHANGED = 'SAP_SYSTEM_HEALTH_CHANGED';
 export const APPLICATION_INSTANCE_REGISTERED =
   'APPLICATION_INSTANCE_REGISTERED';
 export const APPLICATION_INSTANCE_MOVED = 'APPLICATION_INSTANCE_MOVED';
+export const APPLICATION_INSTANCE_ABSENT_AT_CHANGED =
+  'APPLICATION_INSTANCE_ABSENT_AT_CHANGED';
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'APPLICATION_INSTANCE_DEREGISTERED';
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
@@ -223,9 +239,11 @@ export const {
   removeTagFromSAPSystem,
   removeSAPSystem,
   updateSAPSystem,
+  updateApplicationInstanceAbsentAt,
   setApplicationInstanceDeregistering,
   unsetApplicationInstanceDeregistering,
   setDatabaseInstanceDeregisteringToSAPSystem,
+  updateDatabaseInstanceAbsentToSAPSystem,
   unsetDatabaseInstanceDeregisteringToSAPSystem,
 } = sapSystemsListSlice.actions;
 

@@ -6,6 +6,7 @@ import sapSystemsReducer, {
   updateApplicationInstanceHealth,
   updateSAPSystemDatabaseInstanceHealth,
   updateSAPSystemDatabaseInstanceSystemReplication,
+  updateApplicationInstanceAbsentAt,
   removeApplicationInstance,
   removeDatabaseInstanceFromSapSystem,
   updateSAPSystem,
@@ -13,6 +14,7 @@ import sapSystemsReducer, {
   unsetApplicationInstanceDeregistering,
   setDatabaseInstanceDeregisteringToSAPSystem,
   unsetDatabaseInstanceDeregisteringToSAPSystem,
+  updateDatabaseInstanceAbsentToSAPSystem,
 } from '@state/sapSystems';
 import {
   sapSystemFactory,
@@ -184,6 +186,33 @@ describe('SAP Systems reducer', () => {
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
   });
 
+  it('should update the absent_at field of an application instance', () => {
+    const instance = sapSystemApplicationInstanceFactory.build();
+    const absentAt = Date.now();
+
+    const initialState = {
+      applicationInstances: [instance],
+    };
+
+    const instanceToUpdate = {
+      ...instance,
+      absent_at: absentAt,
+    };
+
+    const action = updateApplicationInstanceAbsentAt(instanceToUpdate);
+
+    const expectedState = {
+      applicationInstances: [
+        {
+          ...instance,
+          absent_at: absentAt,
+        },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
   it('should remove an application instance from state', () => {
     const [instance1, instance2] =
       sapSystemApplicationInstanceFactory.buildList(2);
@@ -344,6 +373,31 @@ describe('SAP Systems reducer', () => {
       ],
     };
 
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update absent state from database instance', () => {
+    const instance = databaseInstanceFactory.build({
+      absent_at: new Date().toISOString(),
+    });
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const action = updateDatabaseInstanceAbsentToSAPSystem({
+      ...instance,
+      absent_at: null,
+    });
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          absent_at: null,
+        },
+      ],
+    };
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
   });
 });
