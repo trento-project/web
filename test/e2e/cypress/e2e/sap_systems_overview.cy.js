@@ -344,4 +344,98 @@ context('SAP Systems Overview', () => {
       cy.contains(sapSystemNwd.sid).should('exist');
     });
   });
+
+  describe('Instance deregistration', () => {
+    const nwdSystem = {
+      sid: 'NWD',
+      messageserverInstance: {
+        instanceNumber: '00',
+        row: 0,
+      },
+      appInstance: {
+        instanceNumber: '01',
+        row: 1,
+      },
+    };
+
+    before(() => {
+      cy.contains(nwdSystem.sid).should('exist');
+
+      cy.get('table.table-fixed > tbody > tr').eq(0).click();
+    });
+
+    it('should mark an instance as absent and restore it as present', () => {
+      cy.loadScenario(
+        `${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
+      );
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .eq(nwdSystem.appInstance.row)
+        .contains('Clean up', { timeout: 15000 });
+
+      cy.loadScenario(
+        `${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-present`
+      );
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .eq(nwdSystem.appInstance.row)
+        .should('not.contain', 'Clean up');
+    });
+
+    it('should deregister an application instance', () => {
+      cy.loadScenario(
+        `${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
+      );
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .eq(nwdSystem.appInstance.row)
+        .contains('Clean up', { timeout: 15000 })
+        .click();
+
+      cy.get('#headlessui-portal-root').as('modal');
+
+      cy.get('@modal').contains('button', 'Clean up').click();
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .its('length')
+        .should('eq', 3);
+    });
+
+    it('should deregister the SAP system after deregistering an absent messageserver', () => {
+      cy.loadScenario(
+        `${nwdSystem.sid}-${nwdSystem.messageserverInstance.instanceNumber}-absent`
+      );
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .eq(nwdSystem.messageserverInstance.row)
+        .contains('Clean up', { timeout: 15000 })
+        .click();
+
+      cy.get('#headlessui-portal-root').as('modal');
+
+      cy.get('@modal').contains('button', 'Clean up').click();
+
+      cy.contains(nwdSystem.sid).should('not.exist');
+    });
+  });
 });
