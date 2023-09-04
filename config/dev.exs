@@ -92,6 +92,9 @@ unless IEx.started?() do
       ],
       clusters_checks_execution: [
         schedule: {:extended, "@hourly"}
+      ],
+      hosts_checks_execution: [
+        schedule: {:extended, "@hourly"}
       ]
     ]
 end

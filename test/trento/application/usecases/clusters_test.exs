@@ -7,10 +7,15 @@ defmodule Trento.ClustersTest do
 
   import Trento.Factory
 
-  alias Trento.Clusters
+  alias Trento.{ClusterEnrichmentData, ClusterReadModel, Clusters}
 
-  alias Trento.ClusterEnrichmentData
-  alias Trento.ClusterReadModel
+  alias Trento.Checks.V1.{
+    ExecutionRequested,
+    Target
+  }
+
+  require Trento.Domain.Enums.ClusterType
+  require Logger
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -63,6 +68,62 @@ defmodule Trento.ClustersTest do
       end)
 
       assert {:error, :amqp_error} = Clusters.request_checks_execution(cluster_id)
+    end
+
+    test "should request cluster checks execution when checks are selected" do
+      checks = [Faker.UUID.v4(), Faker.UUID.v4()]
+      %{id: cluster_id} = insert(:cluster, id: Faker.UUID.v4(), selected_checks: checks)
+      %{id: host_id1} = insert(:host, id: Faker.UUID.v4(), cluster_id: cluster_id)
+      %{id: host_id2} = insert(:host, id: Faker.UUID.v4(), cluster_id: cluster_id)
+
+      %{id: cluster_id2} =
+        insert(:cluster,
+          id: Faker.UUID.v4(),
+          selected_checks: checks,
+          deregistered_at: DateTime.utc_now()
+        )
+
+      %{id: host_id3} = insert(:host, id: Faker.UUID.v4(), cluster_id: cluster_id2)
+      %{id: host_id4} = insert(:host, id: Faker.UUID.v4(), cluster_id: cluster_id2)
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions",
+                                                                        %ExecutionRequested{
+                                                                          group_id: ^cluster_id,
+                                                                          targets: [
+                                                                            %Target{
+                                                                              agent_id: ^host_id1,
+                                                                              checks: ^checks
+                                                                            },
+                                                                            %Target{
+                                                                              agent_id: ^host_id2,
+                                                                              checks: ^checks
+                                                                            }
+                                                                          ]
+                                                                        } ->
+        :ok
+      end)
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn "executions",
+                                                                           %ExecutionRequested{
+                                                                             group_id:
+                                                                               ^cluster_id2,
+                                                                             targets: [
+                                                                               %Target{
+                                                                                 agent_id:
+                                                                                   ^host_id3,
+                                                                                 checks: ^checks
+                                                                               },
+                                                                               %Target{
+                                                                                 agent_id:
+                                                                                   ^host_id4,
+                                                                                 checks: ^checks
+                                                                               }
+                                                                             ]
+                                                                           } ->
+        :ok
+      end)
+
+      assert :ok = Clusters.request_clusters_checks_execution()
     end
   end
 
