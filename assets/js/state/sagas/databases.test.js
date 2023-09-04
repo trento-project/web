@@ -178,7 +178,7 @@ describe('SAP Systems sagas', () => {
         absent_at,
       }),
       notify({
-        text: `The database instance ${sid} is now present.`,
+        text: `The database instance ${instance_number} from ${sid} is present again`,
         icon: 'ℹ️',
       }),
     ]);
@@ -208,7 +208,7 @@ describe('SAP Systems sagas', () => {
         absent_at,
       }),
       notify({
-        text: `The database instance ${sid} is now absent.`,
+        text: `The database instance ${instance_number} from ${sid} is absent`,
         icon: 'ℹ️',
       }),
     ]);

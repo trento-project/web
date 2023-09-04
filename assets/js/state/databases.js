@@ -90,12 +90,10 @@ export const databasesListSlice = createSlice({
       );
     },
     updateDatabaseInstanceAbsentAt: (state, { payload: instance }) => {
-      const { absent_at } = instance;
-
       state.databaseInstances = updateInstance(
         state.databaseInstances,
         instance,
-        { absent_at }
+        { absent_at: instance.absent_at }
       );
     },
     setDatabaseInstanceDeregistering: (state, { payload: instance }) => {

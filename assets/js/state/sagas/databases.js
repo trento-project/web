@@ -117,12 +117,12 @@ function* databaseInstanceSystemReplicationChanged({ payload }) {
 export function* databaseInstanceAbsentAtChanged({ payload }) {
   yield put(updateDatabaseInstanceAbsentAt(payload));
   yield put(updateDatabaseInstanceAbsentToSAPSystem(payload));
-  const { sid, absent_at } = payload;
+  const { sid, absent_at, instance_number } = payload;
   yield put(
     notify({
-      text: `The database instance ${sid} is now ${
-        absent_at ? 'absent' : 'present'
-      }.`,
+      text: `The database instance ${instance_number} from ${sid} is ${
+        absent_at ? 'absent' : 'present again'
+      }`,
       icon: 'ℹ️',
     })
   );

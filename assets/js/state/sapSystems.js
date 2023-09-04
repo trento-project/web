@@ -150,12 +150,17 @@ export const sapSystemsListSlice = createSlice({
       );
     },
     updateApplicationInstanceAbsentAt: (state, { payload: instance }) => {
-      const { absent_at } = instance;
-
       state.applicationInstances = updateInstance(
         state.applicationInstances,
         instance,
-        { absent_at }
+        { absent_at: instance.absent_at }
+      );
+    },
+    updateDatabaseInstanceAbsentToSAPSystem: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { absent_at: instance.absent_at }
       );
     },
     setApplicationInstanceDeregistering: (state, { payload: instance }) => {
@@ -190,15 +195,6 @@ export const sapSystemsListSlice = createSlice({
         state.databaseInstances,
         instance,
         { deregistering: false }
-      );
-    },
-    updateDatabaseInstanceAbsentToSAPSystem: (state, { payload: instance }) => {
-      const { absent_at } = instance;
-
-      state.databaseInstances = updateInstance(
-        state.databaseInstances,
-        instance,
-        { absent_at }
       );
     },
   },
@@ -247,8 +243,8 @@ export const {
   setApplicationInstanceDeregistering,
   unsetApplicationInstanceDeregistering,
   setDatabaseInstanceDeregisteringToSAPSystem,
-  unsetDatabaseInstanceDeregisteringToSAPSystem,
   updateDatabaseInstanceAbsentToSAPSystem,
+  unsetDatabaseInstanceDeregisteringToSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;
