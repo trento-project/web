@@ -138,6 +138,7 @@ function DatabasesOverview({
           data={data}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
+          rowKey={(item, _index) => item.id}
         />
       </div>
     </>
