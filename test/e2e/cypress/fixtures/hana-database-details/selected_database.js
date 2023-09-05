@@ -11,7 +11,6 @@ export const selectedDatabase = {
       HttpsPort: '51014',
       StartPriority: '0.3',
       Status: 'Green',
-      StatusBadge: 'GREEN',
     },
     {
       Hostname: 'vmhdbdev01',
@@ -21,7 +20,6 @@ export const selectedDatabase = {
       HttpsPort: '51014',
       StartPriority: '0.3',
       Status: 'Green',
-      StatusBadge: 'GREEN',
     },
   ],
 };

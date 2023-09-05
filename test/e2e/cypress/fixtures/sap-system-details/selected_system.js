@@ -18,7 +18,6 @@ export const selectedSystem = {
       HttpsPort: '50014',
       StartPriority: '1',
       Status: 'Green',
-      StatusBadge: 'GREEN',
     },
     {
       Hostname: 'sapnwdpas',
@@ -28,7 +27,6 @@ export const selectedSystem = {
       HttpsPort: '50114',
       StartPriority: '3',
       Status: 'Green',
-      StatusBadge: 'GREEN',
     },
     {
       Hostname: 'sapnwdaas1',
@@ -38,7 +36,6 @@ export const selectedSystem = {
       HttpsPort: '50214',
       StartPriority: '3',
       Status: 'Green',
-      StatusBadge: 'GREEN',
     },
     {
       Hostname: 'sapnwder',
@@ -48,7 +45,6 @@ export const selectedSystem = {
       HttpsPort: '51014',
       StartPriority: '0.5',
       Status: 'Green',
-      StatusBadge: 'GREEN',
     },
   ],
 };
