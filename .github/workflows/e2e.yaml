@@ -29,7 +29,7 @@ jobs:
       TF_VAR_trento_server_image_id: "ami-094a0810ca766cdce"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -37,7 +37,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: test/e2e/package-lock.json
       - name: Checkout terraform repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: trento-project/trento-e2e
           path: terraform
@@ -69,7 +69,7 @@ jobs:
           workspace: "trentoe2e"
           # workspace: ${{ github.head_ref }}
       - name: Checkout ansible repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: trento-project/ansible
           path: ansible
