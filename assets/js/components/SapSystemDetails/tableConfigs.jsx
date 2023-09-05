@@ -22,19 +22,20 @@ export const systemInstancesTableConfiguration = {
     {
       title: 'Hostname',
       key: 'instance_hostname',
-      render: (content, item) => {
-        if (item.absent_at) {
-          return (
-            <span className="flex items-center">
-              <Tooltip content="Registered instance not found." place="bottom">
-                <HealthIcon health="absent" />
-              </Tooltip>
-              <span className="ml-1 text-gray-600">{content}</span>
-            </span>
-          );
-        }
-        return <span>{content}</span>;
-      },
+      render: (content, item) => (
+        <span className="flex items-center">
+          {item.absent_at && (
+            <Tooltip content="Registered instance not found." place="bottom">
+              <HealthIcon health="absent" />
+            </Tooltip>
+          )}
+          <span
+            className={classNames({ 'text-gray-600': item.absent_at }, 'ml-1')}
+          >
+            {content}
+          </span>
+        </span>
+      ),
     },
     {
       title: 'Instance nr',
