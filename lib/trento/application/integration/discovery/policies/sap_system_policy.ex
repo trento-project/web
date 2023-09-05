@@ -121,6 +121,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
          },
          host_id
        ) do
+    cluster_id = Trento.Clusters.get_cluster_id_by_host_id(host_id)
+
     Enum.map(instances, fn instance ->
       RegisterApplicationInstance.new(%{
         sid: sid,
@@ -134,7 +136,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
         start_priority: parse_start_priority(instance),
         host_id: host_id,
         health: parse_dispstatus(instance),
-        ensa_version: parse_ensa_version(instance)
+        ensa_version: parse_ensa_version(instance),
+        cluster_id: cluster_id
       })
     end)
   end
