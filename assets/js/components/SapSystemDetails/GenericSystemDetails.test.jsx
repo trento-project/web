@@ -3,7 +3,6 @@ import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { keysToCamel } from '@lib/serialization';
 import { APPLICATION_TYPE } from '@lib/model';
 import { renderWithRouter } from '@lib/test-utils';
 import {
@@ -17,15 +16,14 @@ import { GenericSystemDetails } from './GenericSystemDetails';
 describe('GenericSystemDetails', () => {
   it('should render correctly', () => {
     const title = faker.datatype.uuid();
-    const sapSystem = keysToCamel(
-      sapSystemFactory.build({
-        ensa_version: 'ensa1',
-        instances: sapSystemApplicationInstanceFactory.buildList(5),
-      })
-    );
+    const sapSystem = sapSystemFactory.build({
+      ensa_version: 'ensa1',
+      instances: sapSystemApplicationInstanceFactory.buildList(5),
+    });
+
     sapSystem.hosts = hostFactory.buildList(5);
 
-    const { sid, applicationInstances } = sapSystem;
+    const { sid, application_instances: applicationInstances } = sapSystem;
     const { features } = applicationInstances[0];
 
     renderWithRouter(
@@ -39,7 +37,7 @@ describe('GenericSystemDetails', () => {
     expect(screen.getByText(title)).toBeTruthy();
     expect(screen.getByText('Application server')).toBeTruthy();
     expect(screen.getByText(sid)).toBeTruthy();
-    expect('ENSA1').toBeTruthy();
+    expect(screen.getByText('ENSA1')).toBeTruthy();
     features.split('|').forEach((role) => {
       expect(screen.queryAllByText(role)).toBeTruthy();
     });
@@ -55,12 +53,11 @@ describe('GenericSystemDetails', () => {
   });
 
   it('should not render ENSA version if it is not available', () => {
-    const sapSystem = keysToCamel(
-      sapSystemFactory.build({
-        ensa_version: 'no_ensa',
-        instances: sapSystemApplicationInstanceFactory.buildList(5),
-      })
-    );
+    const sapSystem = sapSystemFactory.build({
+      ensa_version: 'no_ensa',
+      instances: sapSystemApplicationInstanceFactory.buildList(5),
+    });
+
     sapSystem.hosts = hostFactory.buildList(5);
 
     renderWithRouter(
@@ -75,11 +72,10 @@ describe('GenericSystemDetails', () => {
   });
 
   it('should render a cleanup button and correct health icon when absent instances exist', () => {
-    const sapSystem = keysToCamel(
-      sapSystemFactory.build({
-        instances: sapSystemApplicationInstanceFactory.buildList(5),
-      })
-    );
+    const sapSystem = sapSystemFactory.build({
+      instances: sapSystemApplicationInstanceFactory.buildList(5),
+    });
+
     sapSystem.instances[0].absent_at = faker.date.past().toISOString();
     sapSystem.hosts = hostFactory.buildList(5);
 
