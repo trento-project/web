@@ -1020,7 +1020,8 @@ defmodule Trento.Domain.SapSystem do
            https_port: https_port,
            start_priority: start_priority,
            host_id: host_id,
-           health: health
+           health: health,
+           cluster_id: cluster_id
          }
        ) do
     instance =
@@ -1041,7 +1042,7 @@ defmodule Trento.Domain.SapSystem do
           health: health
         }
 
-      instance.host_id != host_id ->
+      instance.host_id != host_id and cluster_id != nil ->
         %ApplicationInstanceMoved{
           sap_system_id: sap_system_id,
           instance_number: instance_number,
