@@ -10,9 +10,14 @@ import HealthIcon from '@components/Health';
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';
 
+const cellRender = (content, item) => (
+  <span className={classNames({ 'text-gray-600': !!item.absent_at })}>
+    {content}
+  </span>
+);
+
 export const systemInstancesTableConfiguration = {
   usePadding: false,
-  rowClassName: 'bg-jungle-green',
   columns: [
     {
       title: 'Hostname',
@@ -20,14 +25,12 @@ export const systemInstancesTableConfiguration = {
       render: (content, item) => {
         if (item.absent_at) {
           return (
-            <Tooltip
-              content="Registered instance not found."
-              place="bottom"
-              isEnabled={!!item.absent_at}
-            >
-              <HealthIcon health="absent" />
-              <span className="mx-1 text-gray-600">{content}</span>
-            </Tooltip>
+            <span className="flex items-center">
+              <Tooltip content="Registered instance not found." place="bottom">
+                <HealthIcon health="absent" />
+              </Tooltip>
+              <span className="ml-1 text-gray-600">{content}</span>
+            </span>
           );
         }
         return <span>{content}</span>;
@@ -36,11 +39,7 @@ export const systemInstancesTableConfiguration = {
     {
       title: 'Instance nr',
       key: 'instance_number',
-      render: (content, item) => (
-        <span className={classNames({ 'text-gray-600': !!item.absent_at })}>
-          {content}
-        </span>
-      ),
+      render: cellRender,
     },
     {
       title: 'Features',
@@ -50,29 +49,17 @@ export const systemInstancesTableConfiguration = {
     {
       title: 'Http Port',
       key: 'http_port',
-      render: (content, item) => (
-        <span className={classNames({ 'text-gray-600': !!item.absent_at })}>
-          {content}
-        </span>
-      ),
+      render: cellRender,
     },
     {
       title: 'Https Port',
       key: 'https_port',
-      render: (content, item) => (
-        <span className={classNames({ 'text-gray-600': !!item.absent_at })}>
-          {content}
-        </span>
-      ),
+      render: cellRender,
     },
     {
       title: 'Start Prio',
       key: 'start_priority',
-      render: (content, item) => (
-        <span className={classNames({ 'text-gray-600': !!item.absent_at })}>
-          {content}
-        </span>
-      ),
+      render: cellRender,
     },
     {
       title: 'Status',
@@ -83,18 +70,14 @@ export const systemInstancesTableConfiguration = {
       title: '',
       key: 'absent_at',
       className: 'w-40',
-      render: (content, _item) => {
-        if (content) {
-          return (
-            <CleanUpButton
-              size="fit"
-              type="transparent"
-              className="jungle-green-500 border-none shadow-none"
-            />
-          );
-        }
-        return null;
-      },
+      render: (content, _item) =>
+        content && (
+          <CleanUpButton
+            size="fit"
+            type="transparent"
+            className="jungle-green-500 border-none shadow-none"
+          />
+        ),
     },
   ],
 };

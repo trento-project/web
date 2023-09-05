@@ -1,6 +1,6 @@
 import React from 'react';
-import Pill from '@components/Pill/Pill';
 import { EOS_LENS_FILLED } from 'eos-icons-react';
+import Pill from '@components/Pill/Pill';
 
 function InstanceStatus({ health }) {
   let cssClass;
@@ -27,7 +27,7 @@ function InstanceStatus({ health }) {
 
   return (
     <Pill className="bg-gray-200 text-gray-500 items-center">
-      SAPControl: <EOS_LENS_FILLED size="base" className={`${cssClass} mx-1`} />{' '}
+      SAPControl: <EOS_LENS_FILLED size="base" className={`${cssClass} mx-1`} />
       {instanceStatus}
     </Pill>
   );
