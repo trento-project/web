@@ -62,8 +62,7 @@ export const SapSystem = {
 
 export const SapSystemWithAbsentInstance = {
   args: {
-    title: 'SAP System Details',
-    type: APPLICATION_TYPE,
+    ...SapSystem,
     system: systemWithAbsentInstance,
   },
 };
