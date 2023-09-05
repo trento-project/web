@@ -10,8 +10,7 @@ export const selectedDatabase = {
       HttpPort: '51013',
       HttpsPort: '51014',
       StartPriority: '0.3',
-      Status: 'SAPControl-GREEN',
-      StatusBadge: 'GREEN',
+      Status: 'Green',
     },
     {
       Hostname: 'vmhdbdev01',
@@ -20,8 +19,7 @@ export const selectedDatabase = {
       HttpPort: '51013',
       HttpsPort: '51014',
       StartPriority: '0.3',
-      Status: 'SAPControl-GREEN',
-      StatusBadge: 'GREEN',
+      Status: 'Green',
     },
   ],
 };

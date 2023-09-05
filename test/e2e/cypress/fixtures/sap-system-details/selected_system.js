@@ -1,8 +1,8 @@
 export const healthMap = {
-  GREEN: 'bg-jungle-green-500',
-  YELLOW: 'bg-yellow-500',
-  RED: 'bg-red-500',
-  GRAY: 'bg-gray-500',
+  Green: 'fill-jungle-green-500',
+  Yellow: 'fill-yellow-500',
+  Red: 'fill-red-500',
+  Gray: 'fill-gray-500',
 };
 
 export const selectedSystem = {
@@ -17,8 +17,7 @@ export const selectedSystem = {
       HttpPort: '50013',
       HttpsPort: '50014',
       StartPriority: '1',
-      Status: 'SAPControl-GREEN',
-      StatusBadge: 'GREEN',
+      Status: 'Green',
     },
     {
       Hostname: 'sapnwdpas',
@@ -27,8 +26,7 @@ export const selectedSystem = {
       HttpPort: '50113',
       HttpsPort: '50114',
       StartPriority: '3',
-      Status: 'SAPControl-GREEN',
-      StatusBadge: 'GREEN',
+      Status: 'Green',
     },
     {
       Hostname: 'sapnwdaas1',
@@ -37,8 +35,7 @@ export const selectedSystem = {
       HttpPort: '50213',
       HttpsPort: '50214',
       StartPriority: '3',
-      Status: 'SAPControl-GREEN',
-      StatusBadge: 'GREEN',
+      Status: 'Green',
     },
     {
       Hostname: 'sapnwder',
@@ -47,8 +44,7 @@ export const selectedSystem = {
       HttpPort: '51013',
       HttpsPort: '51014',
       StartPriority: '0.5',
-      Status: 'SAPControl-GREEN',
-      StatusBadge: 'GREEN',
+      Status: 'Green',
     },
   ],
 };

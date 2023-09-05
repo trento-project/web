@@ -1,5 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { faker } from '@faker-js/faker';
 
 import {
   clusterFactory,
@@ -17,6 +18,16 @@ const system = {
   }),
   hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
 };
+
+const systemWithAbsentInstance = {
+  ...sapSystemFactory.build({
+    instances: sapSystemApplicationInstanceFactory.buildList(2),
+  }),
+  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+};
+systemWithAbsentInstance.instances[1].absent_at = faker.date
+  .past()
+  .toISOString();
 
 function ContainerWrapper({ children }) {
   return (
@@ -46,5 +57,12 @@ export const SapSystem = {
     title: 'SAP System Details',
     type: APPLICATION_TYPE,
     system,
+  },
+};
+
+export const SapSystemWithAbsentInstance = {
+  args: {
+    ...SapSystem,
+    system: systemWithAbsentInstance,
   },
 };
