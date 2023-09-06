@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
-import { networkClient } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
-
-import { TARGET_HOST } from '@lib/model';
 
 import Button from '@components/Button';
 import ListView from '@components/ListView';
@@ -23,14 +18,6 @@ import { canStartExecution } from '@components/ChecksSelection';
 
 import SuseLogo from '@static/suse_logo.svg';
 
-import { getClusterByHost } from '@state/selectors/cluster';
-import { getInstancesOnHost } from '@state/selectors/sapSystem';
-
-import { getHost, getHostSelectedChecks } from '@state/selectors/host';
-import { isSaving } from '@state/selectors/checksSelection';
-import { hostExecutionRequested } from '@state/actions/lastExecutions';
-
-import { deregisterHost } from '@state/hosts';
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
 
@@ -39,51 +26,29 @@ import {
   sapInstancesTableConfiguration,
 } from './tableConfigs';
 
-function HostDetails() {
-  const { hostID } = useParams();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const host = useSelector(getHost(hostID));
-  const cluster = useSelector((state) => getClusterByHost(state, hostID));
-  const sapSystems = useSelector((state) => getInstancesOnHost(state, hostID));
-
-  const hostSelectedChecks = useSelector((state) =>
-    getHostSelectedChecks(state, hostID)
-  );
-  const saving = useSelector(isSaving(TARGET_HOST, hostID));
-
-  const requestHostChecksExecution = () => {
-    dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
-  };
-
-  // eslint-disable-next-line no-undef
-  const { grafanaPublicUrl } = config;
-
-  const [exportersStatus, setExportersStatus] = useState([]);
+function HostDetails({
+  agentVersion,
+  cluster,
+  deregisterable,
+  deregistering,
+  exportersStatus = {},
+  grafanaPublicUrl,
+  heartbeat,
+  hostID,
+  hostname,
+  provider,
+  providerData,
+  sapSystems,
+  savingChecks,
+  selectedChecks = [],
+  slesSubscriptions,
+  cleanUpHost,
+  requestHostChecksExecution,
+  navigate,
+}) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
 
-  const cleanUpHost = ({ id, hostname }) => {
-    setCleanUpModalOpen(false);
-    dispatch(deregisterHost({ id, hostname, navigate }));
-  };
-
-  const getExportersStatus = async () => {
-    const { data } = await networkClient.get(
-      `/hosts/${hostID}/exporters_status`
-    );
-    setExportersStatus(data);
-  };
-
-  useEffect(() => {
-    getExportersStatus();
-  }, []);
-
-  if (!host) {
-    return <div>Not Found</div>;
-  }
-
-  const versionWarningMessage = agentVersionWarning(host.agent_version);
+  const versionWarningMessage = agentVersionWarning(agentVersion);
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
@@ -100,10 +65,11 @@ function HostDetails() {
   return (
     <>
       <DeregistrationModal
-        hostname={host.hostname}
+        hostname={hostname}
         isOpen={!!cleanUpModalOpen}
         onCleanUp={() => {
-          cleanUpHost(host);
+          setCleanUpModalOpen(false);
+          cleanUpHost();
         }}
         onCancel={() => {
           setCleanUpModalOpen(false);
@@ -114,14 +80,14 @@ function HostDetails() {
         <div className="flex flex-wrap">
           <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
             <PageHeader>
-              Host Details: <span className="font-bold">{host.hostname}</span>
+              Host Details: <span className="font-bold">{hostname}</span>
             </PageHeader>
           </div>
           <div className="flex w-1/2 justify-end">
             <div className="flex w-fit whitespace-nowrap">
-              {host.deregisterable && (
+              {deregisterable && (
                 <CleanUpButton
-                  cleaning={host.deregistering}
+                  cleaning={deregistering}
                   onClick={() => {
                     setCleanUpModalOpen(true);
                   }}
@@ -156,10 +122,8 @@ function HostDetails() {
               <Button
                 type="primary"
                 className="mx-1"
-                onClick={() => {
-                  requestHostChecksExecution();
-                }}
-                disabled={!canStartExecution(hostSelectedChecks, saving)}
+                onClick={requestHostChecksExecution}
+                disabled={!canStartExecution(selectedChecks, savingChecks)}
               >
                 <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
                 Start Execution
@@ -167,10 +131,7 @@ function HostDetails() {
             </div>
           </div>
           <div className="pb-3">
-            <StatusPill
-              className="self-center shadow"
-              heartbeat={host.heartbeat}
-            >
+            <StatusPill className="self-center shadow" heartbeat={heartbeat}>
               Agent
             </StatusPill>
             {renderedExporters}
@@ -183,19 +144,19 @@ function HostDetails() {
           <ListView
             orientation="vertical"
             data={[
-              { title: 'Name', content: host.hostname },
+              { title: 'Name', content: hostname },
               {
                 title: 'Cluster',
                 content: <ClusterLink cluster={cluster} />,
               },
-              { title: 'Agent version', content: host.agent_version },
+              { title: 'Agent version', content: agentVersion },
             ]}
           />
         </div>
         <div className="mt-8 bg-white shadow rounded-lg py-4 px-8">
           <iframe
             title="node-exporter chart"
-            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=77&var-agentID=${host.id}`}
+            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=77&var-agentID=${hostID}`}
             width="100%"
             height="200"
             frameBorder="0"
@@ -204,7 +165,7 @@ function HostDetails() {
         <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
           <iframe
             title="node-exporter chart trento"
-            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=78&var-agentID=${host.id}`}
+            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=78&var-agentID=${hostID}`}
             width="100%"
             height="200"
             frameBorder="0"
@@ -215,10 +176,7 @@ function HostDetails() {
           <div className="mb-4">
             <h2 className="text-2xl font-bold">Provider details</h2>
           </div>
-          <ProviderDetails
-            provider={host.provider}
-            provider_data={host.provider_data}
-          />
+          <ProviderDetails provider={provider} provider_data={providerData} />
         </div>
 
         <div className="mt-8">
@@ -237,7 +195,7 @@ function HostDetails() {
           </div>
           <Table
             config={subscriptionsTableConfiguration}
-            data={host.sles_subscriptions}
+            data={slesSubscriptions}
           />
         </div>
       </div>
