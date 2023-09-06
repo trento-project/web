@@ -38,7 +38,7 @@ function HostDetails({
   hostname,
   provider,
   providerData,
-  sapSystems,
+  sapInstances,
   savingChecks,
   selectedChecks = [],
   slesSubscriptions,
@@ -183,7 +183,7 @@ function HostDetails({
           <div>
             <h2 className="text-2xl font-bold">SAP instances</h2>
           </div>
-          <Table config={sapInstancesTableConfiguration} data={sapSystems} />
+          <Table config={sapInstancesTableConfiguration} data={sapInstances} />
         </div>
 
         <div className="mt-16">
