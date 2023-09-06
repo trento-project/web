@@ -16,7 +16,7 @@ const cellRender = (content, item) => (
   </span>
 );
 
-export const systemInstancesTableConfiguration = {
+export const getSystemInstancesTableConfiguration = ({ onCleanUpClick }) => ({
   usePadding: false,
   columns: [
     {
@@ -71,17 +71,21 @@ export const systemInstancesTableConfiguration = {
       title: '',
       key: 'absent_at',
       className: 'w-40',
-      render: (content, _item) =>
+      render: (content, item) =>
         content && (
           <CleanUpButton
             size="fit"
             type="transparent"
             className="jungle-green-500 border-none shadow-none"
+            cleaning={item.deregistering}
+            onClick={() => {
+              onCleanUpClick(item);
+            }}
           />
         ),
     },
   ],
-};
+});
 
 export const systemHostsTableConfiguration = {
   usePadding: false,
