@@ -26,7 +26,9 @@ function HostDetailsPage() {
 
   const host = useSelector(getHost(hostID));
   const cluster = useSelector((state) => getClusterByHost(state, hostID));
-  const sapInstances = useSelector((state) => getInstancesOnHost(state, hostID));
+  const sapInstances = useSelector((state) =>
+    getInstancesOnHost(state, hostID)
+  );
 
   const hostSelectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)

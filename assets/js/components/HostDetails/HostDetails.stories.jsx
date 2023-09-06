@@ -8,15 +8,15 @@ import {
 } from '@lib/test-utils/factories';
 import HostDetails from './HostDetails';
 
-const host = hostFactory.build({provider: "azure", agent_version: "2.0.0"});
+const host = hostFactory.build({ provider: 'azure', agent_version: '2.0.0' });
 const cluster = clusterFactory.build({ id: host.cluster_id });
 const sapInstances = sapSystemApplicationInstanceFactory.buildList(2);
 
 function ContainerWrapper({ children }) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
-    );
-  }
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
+  );
+}
 
 export default {
   title: 'HostDetails',
@@ -163,20 +163,20 @@ export const Default = {
 export const AgentWarning = {
   args: {
     ...Default.args,
-    agentVersion: "1.0.0"
+    agentVersion: '1.0.0',
   },
 };
 
 export const Deregisterable = {
   args: {
     ...Default.args,
-    deregisterable: true
+    deregisterable: true,
   },
 };
 
 export const ChecksSelected = {
   args: {
     ...Default.args,
-    selectedChecks: ["some-check"]
+    selectedChecks: ['some-check'],
   },
 };
