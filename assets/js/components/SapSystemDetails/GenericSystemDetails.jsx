@@ -42,19 +42,17 @@ export function GenericSystemDetails({
   }
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
-  const [instanceType, setInstanceType] = useState(undefined);
 
   const onCleanUpClick = (instance) => {
     setCleanUpModalOpen(true);
     setInstanceToDeregister(instance);
-    setInstanceType(type);
   };
 
   return (
     <div>
       <PageHeader className="font-bold">{title}</PageHeader>
       <DeregistrationModal
-        contentType={instanceType}
+        contentType={type}
         instanceNumber={instanceToDeregister?.instance_number}
         sid={instanceToDeregister?.sid}
         isOpen={!!cleanUpModalOpen}
