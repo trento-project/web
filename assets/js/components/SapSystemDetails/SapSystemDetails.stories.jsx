@@ -8,7 +8,7 @@ import {
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
-import { APPLICATION_TYPE } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
 
@@ -38,6 +38,26 @@ function ContainerWrapper({ children }) {
 export default {
   title: 'SapSystemDetails',
   components: GenericSystemDetails,
+  argTypes: {
+    title: {
+      type: 'string',
+      description: 'Database Details',
+    },
+    type: {
+      control: { type: 'radio' },
+      options: [APPLICATION_TYPE, DATABASE_TYPE],
+      description: 'The content type of the deregistration modal',
+    },
+    system: {
+      control: 'object',
+      description:
+        'The object containing the details that are going to be represented in this view',
+    },
+    onInstanceCleanUp: {
+      action: 'Clean up instance',
+      description: 'Deregister and clean up an absent instance',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -57,10 +77,6 @@ export const SapSystem = {
     title: 'SAP System Details',
     type: APPLICATION_TYPE,
     system,
-    onInstanceCleanUp: {
-      action: 'Clean up instance',
-      description: 'Deregister and clean up an absent instance',
-    },
   },
 };
 

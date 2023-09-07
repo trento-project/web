@@ -7,7 +7,7 @@ import {
   databaseFactory,
   hostFactory,
 } from '@lib/test-utils/factories';
-import { DATABASE_TYPE } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 
 import { GenericSystemDetails } from '@components/SapSystemDetails';
 
@@ -34,6 +34,26 @@ function ContainerWrapper({ children }) {
 export default {
   title: 'DatabaseDetails',
   components: GenericSystemDetails,
+  argTypes: {
+    title: {
+      type: 'string',
+      description: 'Database Details',
+    },
+    type: {
+      control: { type: 'radio' },
+      options: [APPLICATION_TYPE, DATABASE_TYPE],
+      description: 'The content type of the deregistration modal',
+    },
+    system: {
+      control: 'object',
+      description:
+        'The object containing the details that are going to be represented in this view',
+    },
+    onInstanceCleanUp: {
+      action: 'Clean up instance',
+      description: 'Deregister and clean up an absent instance',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -53,10 +73,6 @@ export const Database = {
     title: 'Database Details',
     type: DATABASE_TYPE,
     system: database,
-    onInstanceCleanUp: {
-      action: 'Clean up instance',
-      description: 'Deregister and clean up an absent instance',
-    },
   },
 };
 
