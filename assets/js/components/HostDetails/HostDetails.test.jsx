@@ -31,6 +31,7 @@ describe('HostDetails component', () => {
         <HostDetails agentVersion="1.0.0" selectedChecks={[]} />
       );
 
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeDisabled();
     });
@@ -42,6 +43,7 @@ describe('HostDetails component', () => {
         <HostDetails agentVersion="1.0.0" selectedChecks={selectedChecks} />
       );
 
+      expect(screen.getByRole('tooltip')).toBeVisible();
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeEnabled();
     });

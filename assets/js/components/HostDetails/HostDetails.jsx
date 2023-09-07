@@ -15,6 +15,7 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { canStartExecution } from '@components/ChecksSelection';
+import Tooltip from '@components/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
@@ -51,6 +52,8 @@ function HostDetails({
   navigate,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
+  const [checksExecutionTooltipVisible, setChecksExecutionTooltipVisible] =
+    useState(true);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -129,15 +132,23 @@ function HostDetails({
                 <span>Show Results</span>
               </Button>
 
-              <Button
-                type="primary"
-                className="mx-1"
-                onClick={requestHostChecksExecution}
-                disabled={!canStartExecution(selectedChecks, savingChecks)}
+              <Tooltip
+                content="Click Start Execution or wait for Trento to periodically run checks."
+                visible={checksExecutionTooltipVisible && canStartExecution(selectedChecks, savingChecks)}
               >
-                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
-                Start Execution
-              </Button>
+                <Button
+                  type="primary"
+                  className="mx-1"
+                  onClick={() => {
+                    requestHostChecksExecution();
+                    setChecksExecutionTooltipVisible(false);
+                  }}
+                  disabled={!canStartExecution(selectedChecks, savingChecks)}
+                >
+                  <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                  Start Execution
+                </Button>
+              </Tooltip>
             </div>
           </div>
           <div className="pb-3">

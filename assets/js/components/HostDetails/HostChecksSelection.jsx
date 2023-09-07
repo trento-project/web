@@ -5,6 +5,7 @@ import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
 import ChecksSelection from '@components/ChecksSelection';
+import Tooltip from '@components/Tooltip';
 
 import HostInfoBox from './HostInfoBox';
 
@@ -23,6 +24,7 @@ function HostChecksSelection({
   onSelectedChecksChange,
   hostChecksExecutionEnabled,
   onStartExecution = () => {},
+  checksExecutionTooltipVisible,
 }) {
   return (
     <div className="w-full px-2 sm:px-0">
@@ -44,15 +46,20 @@ function HostChecksSelection({
             >
               Save Checks Selection
             </Button>
-            <Button
-              type="primary"
-              className="mx-1"
-              onClick={onStartExecution}
-              disabled={hostChecksExecutionEnabled}
+            <Tooltip
+              content="Click Start Execution or wait for Trento to periodically run checks."
+              visible={checksExecutionTooltipVisible}
             >
-              <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
-              Start Execution
-            </Button>
+              <Button
+                type="primary"
+                className="mx-1"
+                onClick={onStartExecution}
+                disabled={hostChecksExecutionEnabled}
+              >
+                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                Start Execution
+              </Button>
+            </Tooltip>
           </div>
         </div>
       </div>

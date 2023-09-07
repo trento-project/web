@@ -29,6 +29,8 @@ function HostSettingsPage() {
       setSelection(hostSelectedChecks);
     }
   }, [hostSelectedChecks]);
+  const [checksExecutionTooltipVisible, setChecksExecutionTooltipVisible] =
+    useState(hostSelectedChecks?.length > 0);
 
   const {
     data: catalog,
@@ -55,7 +57,7 @@ function HostSettingsPage() {
       })
     );
 
-  const saveSelection = (newSelection, targetID, targetName) =>
+  const saveSelection = (newSelection, targetID, targetName) => {
     dispatch(
       hostChecksSelected({
         hostID: targetID,
@@ -63,9 +65,12 @@ function HostSettingsPage() {
         checks: newSelection,
       })
     );
+    setChecksExecutionTooltipVisible(newSelection?.length > 0);
+  };
 
   const requestHostChecksExecution = () => {
     dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
+    setChecksExecutionTooltipVisible(false);
   };
 
   return (
@@ -84,6 +89,7 @@ function HostSettingsPage() {
       hostChecksExecutionEnabled={hostChecksExecutionEnabled}
       onSelectedChecksChange={setSelection}
       onStartExecution={requestHostChecksExecution}
+      checksExecutionTooltipVisible={checksExecutionTooltipVisible}
     />
   );
 }

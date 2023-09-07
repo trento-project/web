@@ -42,6 +42,7 @@ describe('HostChecksSelection component', () => {
         catalogLoading={false}
         onUpdateCatalog={onUpdateCatalog}
         hostSelectedChecks={selectedChecks}
+        checksExecutionTooltipVisible
       />
     );
 
@@ -58,6 +59,47 @@ describe('HostChecksSelection component', () => {
     expect(
       screen.getByRole('button', { name: 'Save Checks Selection' })
     ).toBeVisible();
+    expect(screen.getByRole('tooltip')).toBeVisible();
+    expect(onUpdateCatalog).toHaveBeenCalled();
+  });
+
+  it('should not render tooltip when render host check selection', async () => {
+    const group0 = faker.animal.cat();
+    const group1 = faker.animal.dog();
+    const group2 = faker.lorem.word();
+    const catalog = [
+      ...catalogCheckFactory.buildList(2, { group: group0 }),
+      ...catalogCheckFactory.buildList(2, { group: group1 }),
+      ...catalogCheckFactory.buildList(2, { group: group2 }),
+    ];
+
+    const onUpdateCatalog = jest.fn();
+
+    const {
+      id: hostID,
+      hostname: hostName,
+      provider,
+      agent_version: agentVersion,
+      selected_checks: selectedChecks,
+    } = hostFactory.build({ provider: 'azure' });
+
+    renderWithRouter(
+      <HostChecksSelection
+        hostID={hostID}
+        hostName={hostName}
+        provider={provider}
+        agentVersion={agentVersion}
+        selectedChecks={selectedChecks}
+        catalog={catalog}
+        catalogError={null}
+        catalogLoading={false}
+        onUpdateCatalog={onUpdateCatalog}
+        hostSelectedChecks={selectedChecks}
+        checksExecutionTooltipVisible={false}
+      />
+    );
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
     expect(onUpdateCatalog).toHaveBeenCalled();
   });
 });
