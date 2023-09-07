@@ -57,6 +57,10 @@ export const SapSystem = {
     title: 'SAP System Details',
     type: APPLICATION_TYPE,
     system,
+    onInstanceCleanUp: {
+      action: 'Clean up instance',
+      description: 'Deregister and clean up an absent instance',
+    },
   },
 };
 

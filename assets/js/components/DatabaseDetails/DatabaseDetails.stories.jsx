@@ -53,6 +53,10 @@ export const Database = {
     title: 'Database Details',
     type: DATABASE_TYPE,
     system: database,
+    onInstanceCleanUp: {
+      action: 'Clean up instance',
+      description: 'Deregister and clean up an absent instance',
+    },
   },
 };
 
