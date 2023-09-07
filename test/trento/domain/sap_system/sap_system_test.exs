@@ -604,7 +604,8 @@ defmodule Trento.SapSystemTest do
           start_priority: start_priority,
           host_id: new_host_id,
           health: :passing,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          cluster_id: nil
         }),
         [
           %ApplicationInstanceRegistered{
