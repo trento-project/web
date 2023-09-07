@@ -199,9 +199,36 @@ jobs:
       - name: Check JS Code Format
         run: cd assets && npm run format:check
 
+  test-fe:
+    name: Run FE tests
+    needs: npm-deps
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Run JS tests
+        run: cd assets && npm test
+
   test:
     name: Test (Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }})
-    needs: [elixir-deps, npm-deps, api-bc-check]
+    needs: [elixir-deps, api-bc-check]
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -245,10 +272,6 @@ jobs:
         with:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v3
         id: mix-cache
@@ -258,21 +281,12 @@ jobs:
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
-      - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v3
-        id: npm-cache
-        with:
-          path: |
-            assets/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: Run test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mix coveralls.github --warnings-as-errors --trace
-      - name: Run JS tests
-        run: cd assets && npm test
 
   chromatic:
     name: Chromatic deployment
