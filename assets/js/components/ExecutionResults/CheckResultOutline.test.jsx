@@ -98,9 +98,10 @@ describe('CheckResultOutline Component', () => {
 
     renderWithRouter(
       <CheckResultOutline
-        clusterID={clusterID}
+        targetID={clusterID}
         checkID={checkID}
-        clusterName={clusterName}
+        targetName={clusterName}
+        targetType="cluster"
         expectations={expectations}
         agentsCheckResults={agentsCheckResults}
         expectationResults={expectationResults}
@@ -157,7 +158,7 @@ describe('CheckResultOutline Component', () => {
     renderWithRouter(
       <CheckResultOutline
         checkID={checkID}
-        clusterName={clusterName}
+        targetName={clusterName}
         expectations={expectations}
         agentsCheckResults={agentsCheckResults}
         expectationResults={expectationResults}
