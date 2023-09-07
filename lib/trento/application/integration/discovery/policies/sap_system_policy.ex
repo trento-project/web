@@ -32,7 +32,11 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
   @application_type 2
   @diagnostics_type 3
 
-  @spec handle(map, [ApplicationInstanceReadModel.t() | DatabaseInstanceReadModel.t()]) ::
+  @spec handle(
+          map,
+          [ApplicationInstanceReadModel.t() | DatabaseInstanceReadModel.t()],
+          String.t()
+        ) ::
           {:ok,
            [
              DeregisterApplicationInstance.t()
@@ -47,13 +51,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
           "agent_id" => agent_id,
           "payload" => payload
         },
-        current_instances
+        current_instances,
+        cluster_id
       ) do
     with {:ok, sap_systems} <- SapSystemDiscoveryPayload.new(payload),
          {:ok, register_instance_commands} <-
            sap_systems
            |> Enum.flat_map(fn sap_system ->
-             build_register_instances_commands(sap_system, agent_id)
+             build_register_instances_commands(sap_system, agent_id, cluster_id)
            end)
            |> Enum.reduce_while(
              {:ok, []},
@@ -86,7 +91,8 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
            Databases: databases,
            Instances: instances
          },
-         host_id
+         host_id,
+         _
        ) do
     Enum.flat_map(databases, fn %{:Database => tenant} ->
       Enum.map(instances, fn instance ->
@@ -119,10 +125,9 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
              "dbs/hdb/dbname": tenant
            }
          },
-         host_id
+         host_id,
+         cluster_id
        ) do
-    cluster_id = Trento.Clusters.get_cluster_id_by_host_id(host_id)
-
     Enum.map(instances, fn instance ->
       RegisterApplicationInstance.new(%{
         sid: sid,
@@ -142,10 +147,14 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     end)
   end
 
-  defp build_register_instances_commands(%SapSystemDiscoveryPayload{Type: @diagnostics_type}, _),
-    do: []
+  defp build_register_instances_commands(
+         %SapSystemDiscoveryPayload{Type: @diagnostics_type},
+         _,
+         _
+       ),
+       do: []
 
-  defp build_register_instances_commands(%SapSystemDiscoveryPayload{Type: @unknown_type}, _),
+  defp build_register_instances_commands(%SapSystemDiscoveryPayload{Type: @unknown_type}, _, _),
     do: []
 
   defp build_deregister_instances_commands(current_instances) do
