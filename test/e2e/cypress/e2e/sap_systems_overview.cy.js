@@ -344,4 +344,42 @@ context('SAP Systems Overview', () => {
       cy.contains(sapSystemNwd.sid).should('exist');
     });
   });
+
+  describe.only("Move application instance", () => {
+    const nwdSystem = 'NWD'
+
+    before(() => {
+      cy.contains(nwdSystem).should('exist');
+
+      cy.get('table.table-fixed > tbody > tr').eq(0).click();
+    });
+
+
+    it("should move a clustered application instance", () => {
+      cy.loadScenario('sap-system-overview-moved');
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .its('length')
+        .should('eq', 4);
+
+        cy.contains('vmnwdev01').should('not.exist');
+    });
+
+    it("should register a new instance with an already existing instance number, when the application instance is not clustered", () => {
+      cy.loadScenario('sap-system-overview-not-moved')
+
+      cy.get('table.table-fixed > tbody > tr')
+      .eq(1)
+      .find('div.table-row-group')
+      .eq(0)
+      .find('div.table-row')
+      .its('length')
+      .should('eq', 5);
+
+    })
+  })
 });
