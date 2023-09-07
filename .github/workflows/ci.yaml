@@ -542,7 +542,7 @@ jobs:
     name: Build and push container images
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test, test-fe, test-e2e]
     permissions:
       contents: read
       packages: write
@@ -580,7 +580,7 @@ jobs:
     name: Build the docker image for the demo environment
     runs-on: ubuntu-latest
     if: github.event.action == 'deploy-demo' || github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test]
+    needs: [static-code-analysis, test, test-fe]
     permissions:
       contents: read
       packages: write
@@ -679,7 +679,7 @@ jobs:
     name: Commit the project on OBS
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    needs: [static-code-analysis, test, test-e2e]
+    needs: [static-code-analysis, test, test-fe, test-e2e]
     container:
       image: ghcr.io/trento-project/continuous-delivery:main
       env:
