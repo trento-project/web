@@ -11,6 +11,9 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
 
   Find the association protocol code [here](https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/protocol/enrich_register_application_instance.ex)
   as reference.
+
+  cluster_id value is used to know if the application instance is clustered or not.
+  This information is required in order to decide whether the instance was moved by the cluster in a failover scenario or not
   """
 
   @required_fields [
@@ -38,6 +41,7 @@ defmodule Trento.Domain.Commands.RegisterApplicationInstance do
     field :db_host, :string
     field :tenant, :string
     field :host_id, Ecto.UUID
+    field :cluster_id, Ecto.UUID
     field :instance_number, :string
     field :instance_hostname, :string
     field :features, :string

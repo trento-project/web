@@ -71,7 +71,7 @@ defmodule Trento.Integration.Discovery do
   end
 
   @doc """
-  Prune the discovery events log by removing the events older than the given number of days. 
+  Prune the discovery events log by removing the events older than the given number of days.
   """
   @spec prune_events(number) :: non_neg_integer()
   def prune_events(days) do
@@ -86,7 +86,7 @@ defmodule Trento.Integration.Discovery do
   end
 
   @doc """
-  Prune the discarded discovery events log by removing the events older than the given number of days. 
+  Prune the discarded discovery events log by removing the events older than the given number of days.
   """
   @spec prune_discarded_discovery_events(number) :: non_neg_integer()
   def prune_discarded_discovery_events(days) do
@@ -140,8 +140,13 @@ defmodule Trento.Integration.Discovery do
   defp do_handle(%{"discovery_type" => "sap_system_discovery", "agent_id" => agent_id} = event) do
     current_application_instances = SapSystems.get_application_instances_by_host_id(agent_id)
     current_database_instances = SapSystems.get_database_instances_by_host_id(agent_id)
+    cluster_id = Trento.Clusters.get_cluster_id_by_host_id(agent_id)
 
-    SapSystemPolicy.handle(event, current_application_instances ++ current_database_instances)
+    SapSystemPolicy.handle(
+      event,
+      current_application_instances ++ current_database_instances,
+      cluster_id
+    )
   end
 
   defp do_handle(_),

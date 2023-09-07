@@ -445,7 +445,101 @@ defmodule Trento.SapSystemTest do
       )
     end
 
-    test "should move an application instance if the host_id changed" do
+    test "should move an application instance if the host_id changed and the instance number already exists and the application is clustered" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      instance_number = "10"
+      old_host_id = Faker.UUID.v4()
+      new_host_id = Faker.UUID.v4()
+      db_host = Faker.Internet.ip_v4_address()
+      tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      ensa_version = EnsaVersion.ensa1()
+      cluster_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP",
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: old_host_id
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          ensa_version: ensa_version
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RegisterApplicationInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: "ABAP",
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: new_host_id,
+          health: :passing,
+          ensa_version: ensa_version,
+          cluster_id: cluster_id
+        }),
+        [
+          %ApplicationInstanceMoved{
+            sap_system_id: sap_system_id,
+            instance_number: instance_number,
+            old_host_id: old_host_id,
+            new_host_id: new_host_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   application: %SapSystem.Application{
+                     instances: [
+                       %SapSystem.Instance{
+                         sid: ^sid,
+                         instance_number: ^instance_number,
+                         host_id: ^new_host_id
+                       }
+                       | _
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       instance_number = "10"
@@ -510,14 +604,21 @@ defmodule Trento.SapSystemTest do
           start_priority: start_priority,
           host_id: new_host_id,
           health: :passing,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          cluster_id: nil
         }),
         [
-          %ApplicationInstanceMoved{
+          %ApplicationInstanceRegistered{
             sap_system_id: sap_system_id,
+            sid: sid,
             instance_number: instance_number,
-            old_host_id: old_host_id,
-            new_host_id: new_host_id
+            instance_hostname: instance_hostname,
+            features: "ABAP",
+            http_port: http_port,
+            https_port: https_port,
+            start_priority: start_priority,
+            host_id: new_host_id,
+            health: :passing
           }
         ],
         fn state ->
@@ -528,8 +629,93 @@ defmodule Trento.SapSystemTest do
                          sid: ^sid,
                          instance_number: ^instance_number,
                          host_id: ^new_host_id
-                       }
-                       | _
+                       },
+                       _,
+                       _
+                     ]
+                   }
+                 } = state
+        end
+      )
+    end
+
+    test "should not register or move application, if the application has an already existing instance number and the host is the same" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      instance_number = "10"
+      old_host_id = Faker.UUID.v4()
+      db_host = Faker.Internet.ip_v4_address()
+      tenant = Faker.Beer.style()
+      instance_hostname = Faker.Airports.iata()
+      http_port = 80
+      https_port = 443
+      start_priority = "0.9"
+      ensa_version = EnsaVersion.ensa1()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(
+          :database_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP",
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: old_host_id
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          ensa_version: ensa_version
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RegisterApplicationInstance.new!(%{
+          sap_system_id: sap_system_id,
+          sid: sid,
+          db_host: db_host,
+          tenant: tenant,
+          instance_number: instance_number,
+          instance_hostname: instance_hostname,
+          features: "ABAP",
+          http_port: http_port,
+          https_port: https_port,
+          start_priority: start_priority,
+          host_id: old_host_id,
+          health: :passing,
+          ensa_version: ensa_version
+        }),
+        [],
+        fn state ->
+          assert %SapSystem{
+                   application: %SapSystem.Application{
+                     instances: [
+                       %SapSystem.Instance{
+                         sid: ^sid,
+                         instance_number: ^instance_number,
+                         host_id: ^old_host_id
+                       },
+                       _
                      ]
                    }
                  } = state

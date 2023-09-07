@@ -1020,14 +1020,30 @@ defmodule Trento.Domain.SapSystem do
            https_port: https_port,
            start_priority: start_priority,
            host_id: host_id,
-           health: health
+           health: health,
+           cluster_id: cluster_id
          }
        ) do
-    instance =
-      Enum.find(instances, fn instance -> instance.instance_number == instance_number end)
+    moving_instance =
+      Enum.find(instances, fn instance ->
+        instance.instance_number == instance_number and instance.host_id != host_id
+      end)
+
+    instance_in_same_host =
+      Enum.find(instances, fn instance ->
+        instance.instance_number == instance_number and instance.host_id == host_id
+      end)
 
     cond do
-      is_nil(instance) ->
+      cluster_id != nil and moving_instance != nil ->
+        %ApplicationInstanceMoved{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          old_host_id: moving_instance.host_id,
+          new_host_id: host_id
+        }
+
+      is_nil(instance_in_same_host) ->
         %ApplicationInstanceRegistered{
           sap_system_id: sap_system_id,
           sid: sid,
@@ -1039,14 +1055,6 @@ defmodule Trento.Domain.SapSystem do
           start_priority: start_priority,
           host_id: host_id,
           health: health
-        }
-
-      instance.host_id != host_id ->
-        %ApplicationInstanceMoved{
-          sap_system_id: sap_system_id,
-          instance_number: instance_number,
-          old_host_id: instance.host_id,
-          new_host_id: host_id
         }
 
       true ->
