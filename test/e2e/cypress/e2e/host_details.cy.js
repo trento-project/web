@@ -19,18 +19,25 @@ context('Host Details', () => {
         .should('eq', 'page');
     });
 
-    it('should show the host I clicked on in the overview', () => {
-      cy.get('.grid-flow-col > :nth-child(1) > :nth-child(2) > span').should(
-        'contain',
-        selectedHost.hostName
-      );
+    it('should show the correct cluster', () => {
+      cy.get('div')
+        .contains(/Cluster$/)
+        .next()
+        .should('contain', selectedHost.clusterName);
     });
 
     it('should show the correct agent version', () => {
-      cy.get('.grid-flow-col > :nth-child(3) > :nth-child(2) > span').should(
-        'contain',
-        selectedHost.agentVersion
-      );
+      cy.get('div')
+        .contains(/Agent Version$/)
+        .next()
+        .should('contain', selectedHost.agentVersion);
+    });
+
+    it('should show the correct IP addresses', () => {
+      cy.get('div')
+        .contains(/IP addresses$/)
+        .next()
+        .should('contain', selectedHost.ipAddresses);
     });
   });
 
