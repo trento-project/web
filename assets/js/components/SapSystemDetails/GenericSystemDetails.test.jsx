@@ -1,9 +1,10 @@
 import React from 'react';
+import 'intersection-observer';
 import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { APPLICATION_TYPE } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 import { renderWithRouter } from '@lib/test-utils';
 
 import userEvent from '@testing-library/user-event';
@@ -96,11 +97,16 @@ describe('GenericSystemDetails', () => {
     expect(health).toHaveClass('fill-black');
   });
 
-  it('should clean up an instance on request', async () => {
-    window.IntersectionObserver = jest.fn().mockImplementation(() => ({
-      observe: () => null,
-      disconnect: () => null,
-    }));
+  it.each([
+    {
+      type: APPLICATION_TYPE,
+      text: 'In the case of an ASCS instance',
+    },
+    {
+      type: DATABASE_TYPE,
+      text: 'In the case of the last database instance',
+    },
+  ])('should clean up an instance on request', async ({ type, text }) => {
     const user = userEvent.setup();
     const mockedCleanUp = jest.fn();
 
@@ -115,7 +121,7 @@ describe('GenericSystemDetails', () => {
       <GenericSystemDetails
         title={faker.datatype.uuid()}
         system={sapSystem}
-        type={APPLICATION_TYPE}
+        type={type}
         onInstanceCleanUp={mockedCleanUp}
       />
     );
@@ -125,7 +131,7 @@ describe('GenericSystemDetails', () => {
     });
     await user.click(cleanUpButton);
     expect(
-      screen.getByText('In the case of an ASCS instance', {
+      screen.getByText(text, {
         exact: false,
       })
     ).toBeInTheDocument();
