@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 
 function TriggerChecksExecutionRequest({
-  clusterId,
+  targetID,
   cssClasses,
   children,
   hosts = [],
@@ -21,7 +21,7 @@ function TriggerChecksExecutionRequest({
       className={cssOverride || classNames(baseStyle, cssClasses)}
       type="button"
       onClick={() => {
-        onStartExecution(clusterId, hosts, checks, navigate);
+        onStartExecution(targetID, hosts, checks, navigate);
       }}
       {...props}
     >
