@@ -72,7 +72,7 @@
                 "httpPort": 50113,
                 "httpsPort": 50114,
                 "dispstatus": "SAPControl-GREEN",
-                "instanceNr": 0,
+                "instanceNr": 1,
                 "startPriority": "3"
               },
               {
@@ -145,7 +145,7 @@
                 "propertytype": "NodeWebmethod"
               },
               {
-                "value": "00",
+                "value": "01",
                 "property": "SAPSYSTEM",
                 "propertytype": "Attribute"
               },
@@ -293,7 +293,7 @@
       "Databases": null,
       "Instances": [
         {
-          "Host": "vmnwdev04",
+          "Host": "vmnwdev03",
           "Name": "D02",
           "Type": 2,
           "SAPControl": {
