@@ -364,9 +364,9 @@ context('SAP Systems Overview', () => {
       cy.get('table.table-fixed > tbody > tr').eq(0).click();
     });
 
-    it('should mark an instance as absent and restore it as present', () => {
+    it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {
       cy.loadScenario(
-        `${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
+        `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
       );
 
       cy.get('table.table-fixed > tbody > tr')
@@ -378,7 +378,7 @@ context('SAP Systems Overview', () => {
         .contains('Clean up', { timeout: 15000 });
 
       cy.loadScenario(
-        `${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-present`
+        `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-present`
       );
 
       cy.get('table.table-fixed > tbody > tr')
@@ -392,7 +392,7 @@ context('SAP Systems Overview', () => {
 
     it('should deregister an application instance', () => {
       cy.loadScenario(
-        `${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
+        `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.appInstance.instanceNumber}-absent`
       );
 
       cy.get('table.table-fixed > tbody > tr')
@@ -419,7 +419,7 @@ context('SAP Systems Overview', () => {
 
     it('should deregister the SAP system after deregistering an absent messageserver', () => {
       cy.loadScenario(
-        `${nwdSystem.sid}-${nwdSystem.messageserverInstance.instanceNumber}-absent`
+        `sap-systems-overview-${nwdSystem.sid}-${nwdSystem.messageserverInstance.instanceNumber}-absent`
       );
 
       cy.get('table.table-fixed > tbody > tr')

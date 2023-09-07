@@ -64,9 +64,9 @@ context('Databases Overview', () => {
       cy.get('table.table-fixed > tbody > tr').eq(0).click();
     });
 
-    it('should mark an instance as absent and restore it as present', () => {
+    it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {
       cy.loadScenario(
-        `${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
+        `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
       );
 
       cy.get('table.table-fixed > tbody > tr')
@@ -78,7 +78,7 @@ context('Databases Overview', () => {
         .contains('Clean up', { timeout: 15000 });
 
       cy.loadScenario(
-        `${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
+        `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
       );
 
       cy.get('table.table-fixed > tbody > tr')
@@ -92,7 +92,7 @@ context('Databases Overview', () => {
 
     it('should deregister the database after deregistering an absent primary', () => {
       cy.loadScenario(
-        `${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
+        `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
       );
 
       cy.get('table.table-fixed > tbody > tr')
