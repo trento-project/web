@@ -5,7 +5,7 @@ import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/actions/catalog';
 
 import LoadingBox from '@components/LoadingBox';
-import { isValidTargetType } from '@lib/model';
+import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
 import {
   updateLastExecution,
@@ -29,6 +29,43 @@ import {
   getClusterCheckResults,
 } from '../checksUtils';
 import CheckDetailHeader from './CheckDetailHeader';
+
+const isValidCheckID = (executionData, checkID) =>
+  executionData?.check_results.some(({ check_id }) => check_id === checkID);
+
+const validateResultTargetName = (
+  target,
+  targetHosts,
+  resultTargetType,
+  resultTargetName
+) => {
+  switch (resultTargetType) {
+    case TARGET_HOST:
+      return targetHosts.some(({ hostname }) => hostname === resultTargetName);
+    case TARGET_CLUSTER:
+      return resultTargetName === target.name;
+    default:
+      return false;
+  }
+};
+
+const getResultTargetID = (
+  targetID,
+  targetHosts,
+  resultTargetName,
+  resultTargetType
+) => {
+  switch (resultTargetType) {
+    case TARGET_HOST:
+      return (
+        targetHosts.find(({ hostname }) => hostname === resultTargetName) || {}
+      )?.id;
+    case TARGET_CLUSTER:
+      return targetID;
+    default:
+      return null;
+  }
+};
 
 function CheckResultDetailPage({ targetType }) {
   const { targetID, checkID, resultTargetType, resultTargetName } = useParams();
@@ -98,30 +135,19 @@ function CheckResultDetailPage({ targetType }) {
     );
   }
 
-  const isHostCheck = isTargetHost(resultTargetType);
-  const isClusterWideCheck = isTargetCluster(resultTargetType);
-
-  const validateTargetResult = () => {
-    switch (true) {
-      case isHostCheck:
-        return targetHosts.some(
-          ({ hostname }) => hostname === resultTargetName
-        );
-      case isClusterWideCheck:
-        return resultTargetName === target.name;
-      default:
-        return false;
-    }
-  };
-  const validTargetID = target.id === targetID;
-  const validTarget =
-    isValidTargetType(resultTargetType) && validateTargetResult();
-
-  const validCheckID = executionData?.check_results.some(
-    ({ check_id }) => check_id === checkID
+  const isValidTargetID = target.id === targetID;
+  const isValidResultTargetName = validateResultTargetName(
+    target,
+    targetHosts,
+    resultTargetType,
+    resultTargetName
   );
 
-  if (!validTargetID || !validTarget || !validCheckID) {
+  if (
+    !isValidTargetID ||
+    !isValidResultTargetName ||
+    !isValidCheckID(executionData, checkID)
+  ) {
     return (
       <NotFound
         buttonText="Go back to last execution"
@@ -142,20 +168,12 @@ function CheckResultDetailPage({ targetType }) {
 
   const checkDescription = getCheckDescription(catalog, checkID);
 
-  const getResultTargetID = () => {
-    switch (true) {
-      case isHostCheck:
-        return (
-          targetHosts.find(({ hostname }) => hostname === resultTargetName) ||
-          {}
-        )?.id;
-      case isClusterWideCheck:
-        return targetID;
-      default:
-        return null;
-    }
-  };
-  const resultTargetID = getResultTargetID();
+  const resultTargetID = getResultTargetID(
+    targetID,
+    targetHosts,
+    resultTargetName,
+    resultTargetType
+  );
 
   return (
     <ExecutionContainer
@@ -165,6 +183,7 @@ function CheckResultDetailPage({ targetType }) {
       executionRunning={RUNNING_STATES.includes(executionData?.status)}
     >
       <CheckDetailHeader
+        // todo generalize on target
         clusterID={targetID}
         checkID={checkID}
         checkDescription={checkDescription}
