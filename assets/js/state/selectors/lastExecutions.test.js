@@ -196,7 +196,7 @@ describe('lastExecutions selector', () => {
       },
     };
 
-    ['cluster', 'host'].forEach(({ targetType }) => {
+    ['cluster', 'host'].forEach((targetType) => {
       const { lastExecution } = getLastExecutionData(
         state,
         groupID,
