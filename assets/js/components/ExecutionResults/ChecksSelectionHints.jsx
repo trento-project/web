@@ -31,10 +31,9 @@ function ChecksSelectionHints({
         </div>
         <div className="w-full mb-10">
           <p className="ttext-gray-600 dark:text-gray-100 text-center px-5">
-            {!hasSelectedChecks &&
-              `It looks like you have not configured any checks for the current ${targetType}. Select your desired checks to be executed.`}
-            {hasSelectedChecks &&
-              `It looks like there is no recent execution for current ${targetType}. Run your Check selection now!`}
+            {hasSelectedChecks
+              ? `It looks like there is no recent execution for current ${targetType}. Run your Check selection now!`
+              : `It looks like you have not configured any checks for the current ${targetType}. Select your desired checks to be executed.`}
           </p>
         </div>
         <div className="w-full text-center">
