@@ -108,8 +108,8 @@ function ClusterWarningBanner({ cloudProvider }) {
         </WarningBanner>
       );
     default:
+      return null;
   }
-  return null;
 }
 
 export default ExecutionHeader;
