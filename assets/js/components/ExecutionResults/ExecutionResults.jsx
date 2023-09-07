@@ -75,30 +75,32 @@ const resultsTableConfig = {
     },
   ],
   collapsibleDetailRenderer: ({
-    clusterID,
+    targetID,
+    targetName,
+    targetType,
     checkID,
     expectations,
     agentsCheckResults,
     expectationResults,
-    clusterName,
   }) => (
     <CheckResultOutline
-      clusterID={clusterID}
+      targetID={targetID}
+      targetName={targetName}
+      targetType={targetType}
       checkID={checkID}
       expectations={expectations}
       agentsCheckResults={agentsCheckResults}
       expectationResults={expectationResults}
-      clusterName={clusterName}
     />
   ),
 };
 
 function ExecutionResults({
-  clusterID,
-  clusterName,
-  clusterScenario,
-  cloudProvider,
-  clusterHosts = [],
+  targetID,
+  targetName,
+  targetType,
+  target,
+  targetHosts = [],
   catalogLoading,
   catalog,
   catalogError,
@@ -107,7 +109,7 @@ function ExecutionResults({
   executionRunning,
   executionData,
   executionError,
-  clusterSelectedChecks = [],
+  targetSelectedChecks = [],
   savedFilters = defaultSavedFilters,
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
@@ -144,10 +146,11 @@ function ExecutionResults({
         expectation_results: expectationResults,
         agents_check_results: agentsCheckResults,
       }) => ({
-        clusterID,
         checkID,
+        targetID,
+        targetName,
+        targetType,
         result,
-        clusterName,
         category: getCheckGroup(catalog, checkID),
         executionState: executionData?.status,
         description: getCheckDescription(catalog, checkID),
@@ -174,10 +177,10 @@ function ExecutionResults({
       executionRunning={executionRunning}
     >
       <ExecutionHeader
-        clusterID={clusterID}
-        clusterName={clusterName}
-        cloudProvider={cloudProvider}
-        clusterScenario={clusterScenario}
+        targetID={targetID}
+        targetName={targetName}
+        targetType={targetType}
+        target={target}
         savedFilters={savedFilters}
         onFilterChange={(newPredicates) => setPredicates(newPredicates)}
         onFilterSave={onSaveFilters}
@@ -188,10 +191,11 @@ function ExecutionResults({
           catalogError ? `Failed loading catalog: ${catalogError}` : null,
           executionError ? `Failed loading execution: ${executionError}` : null,
         ]}
-        clusterID={clusterID}
+        targetID={targetID}
+        targetType={targetType}
         hasAlreadyChecksResults={!!(executionData || executionLoading)}
-        selectedChecks={clusterSelectedChecks}
-        hosts={clusterHosts.map(getHostID)}
+        selectedChecks={targetSelectedChecks}
+        hosts={targetHosts.map(getHostID)}
         onContentRefresh={onContentRefresh}
         onStartExecution={onStartExecution}
       >
