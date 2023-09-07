@@ -355,6 +355,11 @@ context('SAP Systems Overview', () => {
     });
 
 
+    after(() => {
+
+    })
+
+
     it("should move a clustered application instance", () => {
       cy.loadScenario('sap-system-overview-moved');
 
@@ -367,6 +372,8 @@ context('SAP Systems Overview', () => {
         .should('eq', 4);
 
         cy.contains('vmnwdev01').should('not.exist');
+
+        cy.loadScenario('sap-system-overview-revert-moved')
     });
 
     it("should register a new instance with an already existing instance number, when the application instance is not clustered", () => {
@@ -380,6 +387,7 @@ context('SAP Systems Overview', () => {
       .its('length')
       .should('eq', 5);
 
+      // cy.loadScenario('sap-systems-overview-YELLOW')
     })
   })
 });
