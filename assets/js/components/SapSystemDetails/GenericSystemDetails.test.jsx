@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
+import { APPLICATION_TYPE } from '@lib/model';
 import { renderWithRouter } from '@lib/test-utils';
 
 import userEvent from '@testing-library/user-event';
@@ -96,57 +96,44 @@ describe('GenericSystemDetails', () => {
     expect(health).toHaveClass('fill-black');
   });
 
-  it.each([
-    {
-      type: APPLICATION_TYPE,
-      text: 'In the case of an ASCS instance',
-    },
-    {
-      type: DATABASE_TYPE,
-      text: 'In the case of the last database instance',
-    },
-  ])(
-    'should clean up $type instance on request',
-    async ({ type, text, field }) => {
-      window.IntersectionObserver = jest.fn().mockImplementation(() => ({
-        observe: () => null,
-        disconnect: () => null,
-      }));
-      const user = userEvent.setup();
-      const mockedCleanUp = jest.fn();
+  it('should clean up an instance on request', async () => {
+    window.IntersectionObserver = jest.fn().mockImplementation(() => ({
+      observe: () => null,
+      disconnect: () => null,
+    }));
+    const user = userEvent.setup();
+    const mockedCleanUp = jest.fn();
 
-      const sapSystem = sapSystemFactory.build({
-        instances: sapSystemApplicationInstanceFactory.buildList(2),
-      });
+    const sapSystem = sapSystemFactory.build({
+      instances: sapSystemApplicationInstanceFactory.buildList(2),
+    });
 
-      sapSystem.instances[0].absent_at = faker.date.past().toISOString();
-      sapSystem.hosts = hostFactory.buildList(5);
-      console.log(sapSystem);
+    sapSystem.instances[0].absent_at = faker.date.past().toISOString();
+    sapSystem.hosts = hostFactory.buildList(5);
 
-      renderWithRouter(
-        <GenericSystemDetails
-          title={faker.datatype.uuid()}
-          system={sapSystem}
-          type={type}
-          onInstanceCleanUp={mockedCleanUp}
-        />
-      );
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.datatype.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        onInstanceCleanUp={mockedCleanUp}
+      />
+    );
 
-      const cleanUpButton = screen.queryByRole('button', {
-        name: 'Clean up',
-      });
-      await user.click(cleanUpButton);
-      expect(
-        screen.getByText(text, {
-          exact: false,
-        })
-      ).toBeInTheDocument();
+    const cleanUpButton = screen.queryByRole('button', {
+      name: 'Clean up',
+    });
+    await user.click(cleanUpButton);
+    expect(
+      screen.getByText('In the case of an ASCS instance', {
+        exact: false,
+      })
+    ).toBeInTheDocument();
 
-      const cleanUpModalButton = screen.getAllByRole('button', {
-        name: 'Clean up',
-      })[0];
-      await user.click(cleanUpModalButton);
-      expect(mockedCleanUp).toHaveBeenCalledWith(sapSystem.instances[0], type);
-    }
-  );
+    const cleanUpModalButton = screen.getAllByRole('button', {
+      name: 'Clean up',
+    })[0];
+    await user.click(cleanUpModalButton);
+    expect(mockedCleanUp).toHaveBeenCalledWith(sapSystem.instances[0]);
+  });
 });
