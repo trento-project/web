@@ -1029,8 +1029,8 @@ defmodule Trento.Domain.SapSystem do
         instance.instance_number == instance_number and instance.host_id != host_id
       end)
 
-    instance_on_the_same_host? =
-      Enum.any?(instances, fn instance ->
+    instance_in_same_host =
+      Enum.find(instances, fn instance ->
         instance.instance_number == instance_number and instance.host_id == host_id
       end)
 
@@ -1043,10 +1043,7 @@ defmodule Trento.Domain.SapSystem do
           new_host_id: host_id
         }
 
-      instance_on_the_same_host? ->
-        nil
-
-      true ->
+      is_nil(instance_in_same_host) ->
         %ApplicationInstanceRegistered{
           sap_system_id: sap_system_id,
           sid: sid,
@@ -1059,6 +1056,9 @@ defmodule Trento.Domain.SapSystem do
           host_id: host_id,
           health: health
         }
+
+      true ->
+        nil
     end
   end
 
