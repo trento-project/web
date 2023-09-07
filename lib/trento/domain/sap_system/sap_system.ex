@@ -1022,7 +1022,7 @@ defmodule Trento.Domain.SapSystem do
            host_id: host_id,
            health: health,
            cluster_id: cluster_id
-         } = ins
+         }
        ) do
     moving_instance =
       Enum.find(instances, fn instance ->
@@ -1033,9 +1033,6 @@ defmodule Trento.Domain.SapSystem do
       Enum.find(instances, fn instance ->
         instance.instance_number == instance_number and instance.host_id == host_id
       end)
-
-
-    IO.puts("Moving Instance: #{inspect(moving_instance)}, Instance in same host: #{inspect(instance_in_same_host)}, Cluster id: #{cluster_id}, Instance to register: #{inspect(ins)}")
 
     cond do
       cluster_id != nil and moving_instance != nil ->
