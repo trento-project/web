@@ -67,7 +67,7 @@ export function* requestExecution({ payload }) {
 }
 
 export function* requestHostExecution({ payload }) {
-  const { host } = payload;
+  const { host, navigate } = payload;
   const { id: hostID, hostname: hostName } = host;
 
   try {
@@ -79,7 +79,7 @@ export function* requestHostExecution({ payload }) {
         icon: '🐰',
       })
     );
-    // TO DO navigate(`/hosts/${hostID}/executions/last`);
+    navigate(`/hosts/${hostID}/executions/last`);
   } catch (error) {
     yield put(
       notify({
