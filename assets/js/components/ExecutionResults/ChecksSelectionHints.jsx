@@ -6,9 +6,11 @@ import { EOS_SETTINGS, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 
 import TrentoLogo from '@static/trento-icon.png';
+import { isTargetCluster, isTargetHost } from './checksUtils';
 
 function ChecksSelectionHints({
-  clusterId,
+  targetID,
+  targetType,
   selectedChecks = [],
   hosts = [],
   onStartExecution = () => {},
@@ -30,9 +32,9 @@ function ChecksSelectionHints({
         <div className="w-full mb-10">
           <p className="ttext-gray-600 dark:text-gray-100 text-center px-5">
             {!hasSelectedChecks &&
-              'It looks like you have not configured any checks for the current cluster. Select your desired checks to be executed.'}
+              `It looks like you have not configured any checks for the current ${targetType}. Select your desired checks to be executed.`}
             {hasSelectedChecks &&
-              'It looks like there is no recent execution for current cluster. Run your Check selection now!'}
+              `It looks like there is no recent execution for current ${targetType}. Run your Check selection now!`}
           </p>
         </div>
         <div className="w-full text-center">
@@ -41,7 +43,10 @@ function ChecksSelectionHints({
               type="button"
               className="flex justify-center items-center text-sm px-2 py-2 text-jungle-green-500 bg-white border border-green-500 hover:opacity-75 focus:outline-none transition ease-in duration-200 text-center font-semibold rounded shadow relative w-1/4 mx-auto xs:w-full"
               onClick={() => {
-                navigate(`/clusters/${clusterId}/settings`);
+                isTargetCluster(targetType) &&
+                  navigate(`/clusters/${targetID}/settings`);
+                isTargetHost(targetType) &&
+                  navigate(`/hosts/${targetID}/settings`);
               }}
             >
               <EOS_SETTINGS className="inline-block fill-jungle-green-500 mr-1" />
@@ -51,7 +56,7 @@ function ChecksSelectionHints({
           {hasSelectedChecks && (
             <TriggerChecksExecutionRequest
               cssOverride="flex justify-center items-center mx-auto bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white transition ease-in duration-200 text-center font-semibold rounded shadow rounded relative w-1/4 mx-auto px-2 py-2 xs:w-full text-base text-sm"
-              clusterId={clusterId}
+              targetID={targetID}
               hosts={hosts}
               checks={selectedChecks}
               onStartExecution={onStartExecution}
