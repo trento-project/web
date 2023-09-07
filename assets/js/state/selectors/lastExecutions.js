@@ -1,13 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 
+import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
+
 import { getCatalog } from '@state/selectors/catalog';
 import { getCluster, getClusterHosts } from '@state/selectors/cluster';
 import { getHost } from '@state/selectors/host';
 import { compact } from 'lodash';
-import {
-  isTargetCluster,
-  isTargetHost,
-} from '@components/ExecutionResults/checksUtils';
 
 const getLastExecutions = ({ lastExecutions }) => lastExecutions;
 
@@ -47,10 +45,10 @@ const addHostnameToAgentsCheckResults = (
 };
 
 const getTargetHosts = (state, groupID, targetType) => {
-  switch (true) {
-    case isTargetCluster(targetType):
+  switch (targetType) {
+    case TARGET_CLUSTER:
       return getClusterHosts(state, groupID);
-    case isTargetHost(targetType):
+    case TARGET_HOST:
       return compact([getHost(groupID)(state)]);
     default:
       return [];
@@ -58,10 +56,10 @@ const getTargetHosts = (state, groupID, targetType) => {
 };
 
 const getTarget = (state, groupID, targetType) => {
-  switch (true) {
-    case isTargetCluster(targetType):
+  switch (targetType) {
+    case TARGET_CLUSTER:
       return getCluster(groupID)(state);
-    case isTargetHost(targetType):
+    case TARGET_HOST:
       return getHost(groupID)(state);
     default:
       return null;

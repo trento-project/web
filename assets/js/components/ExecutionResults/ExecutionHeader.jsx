@@ -54,20 +54,20 @@ function ExecutionHeader({
 }
 
 function BackToTargetDetails({ targetType, targetID }) {
-  let backUrl;
-  let backText;
   switch (targetType) {
     case TARGET_CLUSTER:
-      backUrl = `/clusters/${targetID}`;
-      backText = 'Back to Cluster Details';
-      break;
+      return (
+        <BackButton url={`/clusters/${targetID}`}>
+          Back to Cluster Details
+        </BackButton>
+      );
     case TARGET_HOST:
-      backUrl = `/hosts/${targetID}`;
-      backText = 'Back to Host Details';
-      break;
+      return (
+        <BackButton url={`/hosts/${targetID}`}>Back to Host Details</BackButton>
+      );
     default:
+      return null;
   }
-  return <BackButton url={backUrl}>{backText}</BackButton>;
 }
 
 function TargetInfoBox({ targetType, target }) {
@@ -84,8 +84,8 @@ function TargetInfoBox({ targetType, target }) {
         />
       );
     default:
+      return null;
   }
-  return null;
 }
 
 function ClusterWarningBanner({ cloudProvider }) {
