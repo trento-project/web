@@ -1,6 +1,6 @@
-import HostDetails from './HostDetails';
+import HostDetailsPage from './HostDetailsPage';
 import HostSettingsPage from './HostSettingsPage';
 
 export { HostSettingsPage };
 
-export default HostDetails;
+export default HostDetailsPage;
