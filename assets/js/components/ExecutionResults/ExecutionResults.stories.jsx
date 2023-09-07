@@ -68,6 +68,7 @@ const completedExecution = {
         agents_check_results: [
           {
             agent_id: agentID[0],
+            hostname: 'carbonarahost01',
             expectation_evaluations: [
               {
                 name: checkNames[0],
@@ -92,6 +93,7 @@ const completedExecution = {
         agents_check_results: [
           {
             agent_id: agentID[1],
+            hostname: 'carbonarahost02',
             expectation_evaluations: [
               {
                 name: checkNames[1],
@@ -114,6 +116,7 @@ const completedExecution = {
         agents_check_results: [
           {
             agent_id: agentID[2],
+            hostname: 'carbonarahost03',
             expectation_evaluations: [
               {
                 name: checkNames[2],
@@ -135,6 +138,7 @@ const completedExecution = {
         agents_check_results: [
           {
             agent_id: agentID[3],
+            hostname: 'carbonarahost04',
             expectation_evaluations: [
               {
                 name: checkNames[3],
@@ -334,47 +338,44 @@ export default {
       </MemoryRouter>
     ),
   ],
+  render: (args) => (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+      <ExecutionResults {...args} />
+    </div>
+  ),
 };
 
-function ContainerWrapper({ children }) {
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
-  );
-}
+export const Running = {
+  args: {
+    targetID: groupID,
+    targetHosts: clusterHosts,
+    targetName: clusterName,
+    targetType: 'cluster',
+    target: {
+      type: clusterScenario,
+      provider: cloudProvider,
+    },
+    onLastExecutionUpdate: fetchRunning,
+    onCatalogRefresh: fetchCatalog,
+    catalog: catalogData.data.items,
+    executionRunning: true,
+  },
+};
 
-export function Running() {
-  return (
-    <ContainerWrapper>
-      <ExecutionResults
-        clusterID={groupID}
-        clusterHosts={clusterHosts}
-        clusterName={clusterName}
-        clusterScenario={clusterScenario}
-        cloudProvider={cloudProvider}
-        onExecutionFetch={fetchRunning}
-        onCatalogFetch={fetchCatalog}
-        catalog={catalogData.data.items}
-        executionRunning
-      />
-    </ContainerWrapper>
-  );
-}
-
-export function Completed() {
-  return (
-    <ContainerWrapper>
-      <ExecutionResults
-        clusterID={groupID}
-        clusterHosts={clusterHosts}
-        clusterName={clusterName}
-        clusterScenario={clusterScenario}
-        cloudProvider={cloudProvider}
-        onExecutionFetch={fetchCompleted}
-        onCatalogFetch={fetchCatalog}
-        catalog={catalogData.data.items}
-        executionRunning={false}
-        executionData={completedExecution.data}
-      />
-    </ContainerWrapper>
-  );
-}
+export const Completed = {
+  args: {
+    targetID: groupID,
+    targetHosts: clusterHosts,
+    targetName: clusterName,
+    targetType: 'cluster',
+    target: {
+      type: clusterScenario,
+      provider: cloudProvider,
+    },
+    onLastExecutionUpdate: fetchCompleted,
+    onCatalogRefresh: fetchCatalog,
+    catalog: catalogData.data.items,
+    executionRunning: false,
+    executionData: completedExecution.data,
+  },
+};
