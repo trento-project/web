@@ -38,6 +38,17 @@ function ContainerWrapper({ children }) {
 export default {
   title: 'SapSystemDetails',
   components: GenericSystemDetails,
+  argTypes: {
+    system: {
+      control: 'object',
+      description:
+        'The object containing the details that are going to be represented in this view',
+    },
+    onInstanceCleanUp: {
+      action: 'Clean up instance',
+      description: 'Deregister and clean up an absent instance',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>

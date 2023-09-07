@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
+import DeregistrationModal from '@components/DeregistrationModal';
+
 import {
   EOS_APPLICATION_OUTLINED,
   EOS_DATABASE_OUTLINED,
@@ -9,7 +12,7 @@ import {
 import { APPLICATION_TYPE } from '@lib/model';
 import {
   systemHostsTableConfiguration,
-  systemInstancesTableConfiguration,
+  getSystemInstancesTableConfiguration,
 } from './tableConfigs';
 
 export const renderEnsaVersion = (ensaVersion) =>
@@ -28,15 +31,39 @@ const getUniqueHosts = (hosts) =>
       .values()
   );
 
-export function GenericSystemDetails({ title, type, system }) {
+export function GenericSystemDetails({
+  title,
+  type,
+  system,
+  onInstanceCleanUp,
+}) {
   if (!system) {
     return <div>Not Found</div>;
   }
+  const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
+  const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
+
+  const onCleanUpClick = (instance) => {
+    setCleanUpModalOpen(true);
+    setInstanceToDeregister(instance);
+  };
 
   return (
     <div>
       <PageHeader className="font-bold">{title}</PageHeader>
-
+      <DeregistrationModal
+        contentType={type}
+        instanceNumber={instanceToDeregister?.instance_number}
+        sid={instanceToDeregister?.sid}
+        isOpen={!!cleanUpModalOpen}
+        onCleanUp={() => {
+          setCleanUpModalOpen(false);
+          onInstanceCleanUp(instanceToDeregister);
+        }}
+        onCancel={() => {
+          setCleanUpModalOpen(false);
+        }}
+      />
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
           orientation="vertical"
@@ -83,7 +110,7 @@ export function GenericSystemDetails({ title, type, system }) {
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
         <Table
-          config={systemInstancesTableConfiguration}
+          config={getSystemInstancesTableConfiguration({ onCleanUpClick })}
           data={system.instances}
         />
       </div>

@@ -1,10 +1,14 @@
 import React from 'react';
+import 'intersection-observer';
 import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { APPLICATION_TYPE } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 import { renderWithRouter } from '@lib/test-utils';
+
+import userEvent from '@testing-library/user-event';
+
 import {
   hostFactory,
   sapSystemApplicationInstanceFactory,
@@ -43,7 +47,7 @@ describe('GenericSystemDetails', () => {
     });
   });
 
-  it('renders a not found label if system is not there', () => {
+  it('should render a not found label if system is not there', () => {
     const title = faker.datatype.uuid();
     renderWithRouter(
       <GenericSystemDetails title={title} type={APPLICATION_TYPE} />
@@ -91,5 +95,51 @@ describe('GenericSystemDetails', () => {
     const [_sapSystemIcon, health, _cleanUpIcon] =
       screen.getAllByTestId('eos-svg-component');
     expect(health).toHaveClass('fill-black');
+  });
+
+  it.each([
+    {
+      type: APPLICATION_TYPE,
+      text: 'In the case of an ASCS instance',
+    },
+    {
+      type: DATABASE_TYPE,
+      text: 'In the case of the last database instance',
+    },
+  ])('should clean up an instance on request', async ({ type, text }) => {
+    const user = userEvent.setup();
+    const mockedCleanUp = jest.fn();
+
+    const sapSystem = sapSystemFactory.build({
+      instances: sapSystemApplicationInstanceFactory.buildList(2),
+    });
+
+    sapSystem.instances[0].absent_at = faker.date.past().toISOString();
+    sapSystem.hosts = hostFactory.buildList(5);
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.datatype.uuid()}
+        system={sapSystem}
+        type={type}
+        onInstanceCleanUp={mockedCleanUp}
+      />
+    );
+
+    const cleanUpButton = screen.queryByRole('button', {
+      name: 'Clean up',
+    });
+    await user.click(cleanUpButton);
+    expect(
+      screen.getByText(text, {
+        exact: false,
+      })
+    ).toBeInTheDocument();
+
+    const cleanUpModalButton = screen.getAllByRole('button', {
+      name: 'Clean up',
+    })[0];
+    await user.click(cleanUpModalButton);
+    expect(mockedCleanUp).toHaveBeenCalledWith(sapSystem.instances[0]);
   });
 });

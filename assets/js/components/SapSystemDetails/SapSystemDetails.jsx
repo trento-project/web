@@ -1,7 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
+import { deregisterApplicationInstance } from '@state/sapSystems';
 
 import BackButton from '@components/BackButton';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
@@ -12,6 +14,7 @@ function SapSystemDetails() {
   const sapSystem = useSelector((state) =>
     getEnrichedSapSystemDetails(state, id)
   );
+  const dispatch = useDispatch();
 
   if (!sapSystem) {
     return <div>Not Found</div>;
@@ -24,6 +27,9 @@ function SapSystemDetails() {
         title="SAP System Details"
         type={APPLICATION_TYPE}
         system={sapSystem}
+        onInstanceCleanUp={(instance) => {
+          dispatch(deregisterApplicationInstance(instance));
+        }}
       />
     </>
   );

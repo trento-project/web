@@ -1,7 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getEnrichedDatabaseDetails } from '@state/selectors/sapSystem';
+import { deregisterDatabaseInstance } from '@state/databases';
 
 import BackButton from '@components/BackButton';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
@@ -12,6 +13,7 @@ function DatabaseDetails() {
   const database = useSelector((state) =>
     getEnrichedDatabaseDetails(state, id)
   );
+  const dispatch = useDispatch();
 
   if (!database) {
     return <div>Not Found</div>;
@@ -24,6 +26,9 @@ function DatabaseDetails() {
         title="HANA Database Details"
         type={DATABASE_TYPE}
         system={database}
+        onInstanceCleanUp={(instance) => {
+          dispatch(deregisterDatabaseInstance(instance));
+        }}
       />
     </>
   );

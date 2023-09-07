@@ -34,6 +34,16 @@ function ContainerWrapper({ children }) {
 export default {
   title: 'DatabaseDetails',
   components: GenericSystemDetails,
+  argTypes: {
+    system: {
+      control: 'object',
+      description: 'The represented HANA database',
+    },
+    onInstanceCleanUp: {
+      action: 'Clean up instance',
+      description: 'Deregister and clean up an absent instance',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>
