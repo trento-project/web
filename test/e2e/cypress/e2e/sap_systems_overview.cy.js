@@ -292,6 +292,60 @@ context('SAP Systems Overview', () => {
     });
   });
 
+  describe('Move application instance', () => {
+    const nwdSystem = {
+      sid: 'NWD',
+      id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+      hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+      instanceNumber: '02',
+      hostname: 'vmnwdev01',
+    };
+
+    before(() => {
+      cy.contains(nwdSystem.sid).should('exist');
+
+      cy.get('table.table-fixed > tbody > tr').eq(0).click();
+    });
+
+    after(() => {
+      cy.loadScenario('sap-systems-overview-revert-not-moved');
+      cy.get('table.table-fixed ').contains('Clean up', { timeout: 15000 });
+      cy.deregisterInstance(
+        nwdSystem.id,
+        nwdSystem.hostId,
+        nwdSystem.instanceNumber
+      );
+    });
+
+    it('should move a clustered application instance', () => {
+      cy.loadScenario('sap-systems-overview-moved');
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .its('length')
+        .should('eq', 4);
+
+      cy.contains(nwdSystem.hostname).should('not.exist');
+
+      cy.loadScenario('sap-systems-overview-revert-moved');
+    });
+
+    it('should register a new instance with an already existing instance number, when the application instance is not clustered', () => {
+      cy.loadScenario('sap-systems-overview-not-moved');
+
+      cy.get('table.table-fixed > tbody > tr')
+        .eq(1)
+        .find('div.table-row-group')
+        .eq(0)
+        .find('div.table-row')
+        .its('length')
+        .should('eq', 5);
+    });
+  });
+
   describe('Deregistration', () => {
     const sapSystemNwp = {
       sid: 'NWP',
@@ -436,62 +490,6 @@ context('SAP Systems Overview', () => {
       cy.get('@modal').contains('button', 'Clean up').click();
 
       cy.contains(nwdSystem.sid).should('not.exist');
-    });
-  });
-
-  describe('Move application instance', () => {
-    const nwdSystem = {
-      sid: 'NWD',
-      id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
-      hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
-      instanceNumber: '02',
-      hostname: 'vmnwdev01',
-    };
-
-    before(() => {
-      cy.loadScenario('healthy-27-node-SAP-cluster');
-
-      cy.contains(nwdSystem.sid).should('exist');
-
-      cy.get('table.table-fixed > tbody > tr').eq(0).click();
-    });
-
-    after(() => {
-      cy.loadScenario('sap-systems-overview-revert-not-moved');
-      cy.get('table.table-fixed ').contains('Clean up', { timeout: 15000 });
-      cy.deregisterInstance(
-        nwdSystem.id,
-        nwdSystem.hostId,
-        nwdSystem.instanceNumber
-      );
-    });
-
-    it('should move a clustered application instance', () => {
-      cy.loadScenario('sap-systems-overview-moved');
-
-      cy.get('table.table-fixed > tbody > tr')
-        .eq(1)
-        .find('div.table-row-group')
-        .eq(0)
-        .find('div.table-row')
-        .its('length')
-        .should('eq', 4);
-
-      cy.contains(nwdSystem.hostname).should('not.exist');
-
-      cy.loadScenario('sap-systems-overview-revert-moved');
-    });
-
-    it('should register a new instance with an already existing instance number, when the application instance is not clustered', () => {
-      cy.loadScenario('sap-systems-overview-not-moved');
-
-      cy.get('table.table-fixed > tbody > tr')
-        .eq(1)
-        .find('div.table-row-group')
-        .eq(0)
-        .find('div.table-row')
-        .its('length')
-        .should('eq', 5);
     });
   });
 });
