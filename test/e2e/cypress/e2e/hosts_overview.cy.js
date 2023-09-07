@@ -118,7 +118,7 @@ context('Hosts Overview', () => {
           .contains('th', 'SID')
           .invoke('index')
           .then((i) => {
-            if (host.clusterId) {
+            if (host.sapSystemId) {
               cy.get('@hostRow').eq(i).should('contain', host.sapSystemSid);
               cy.get('@hostRow').eq(i).click();
               cy.location('pathname').should(
@@ -145,7 +145,7 @@ context('Hosts Overview', () => {
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
         cy.get('.tn-health-container .tn-health-passing', {
           timeout: 15000,
-        }).should('contain', 27);
+        }).should('contain', 29);
         cy.get('.tn-health-container .tn-health-warning').should('contain', 0);
         cy.get('.tn-health-container .tn-health-critical').should('contain', 0);
       });
@@ -232,7 +232,7 @@ context('Hosts Overview', () => {
       });
 
       it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
-        cy.get('svg.fill-red-500').its('length').should('eq', 10);
+        cy.get('svg.fill-red-500').its('length').should('eq', 8);
       });
     });
   });
@@ -260,7 +260,7 @@ context('Hosts Overview', () => {
       it('should show all other cleanup buttons', () => {
         cy.get('tbody tr')
           .find('button')
-          .should('have.length', 9)
+          .should('have.length', 7)
           .contains('Clean up');
       });
     });
