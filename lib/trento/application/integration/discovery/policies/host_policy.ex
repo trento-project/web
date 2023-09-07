@@ -49,6 +49,20 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   end
 
   def handle(%{
+        "discovery_type" => "saptune_discovery",
+        "agent_id" => agent_id,
+        "payload" => payload
+      }) do
+    payload
+    |> ProperCase.to_snake_case()
+    |> HostDiscoveryPayload.new()
+    |> case do
+      {:ok, decoded_payload} -> build_register_host_command(agent_id, decoded_payload)
+      error -> error
+    end
+  end
+
+  def handle(%{
         "discovery_type" => "cloud_discovery",
         "agent_id" => agent_id
       }) do

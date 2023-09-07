@@ -1,0 +1,68 @@
+%{
+    package_version: string
+    configured_version: string
+    tuning_state: string
+    services: %{
+        saptune: %{
+            enabled: string
+            active: string
+        },
+        sapconf: %{
+            enabled: null
+            active: null
+        }
+    }
+    enabled_solution: %{ (we don't really need a list, as in practice, you can only have one solution enabled per host)
+        id: string
+        notes: []
+        partial: boolean (it will always be false, but to reuse the `Solution` module
+    }
+    applied_solution: %{
+        id: string
+        notes: []
+        partial: boolean
+    }
+    enabled_notes: [
+        %{
+            id: string
+            additionally_enabled: boolean (we will use this to put an asterisk in the frontend, even though we don't have it now in the mock up)
+        }
+        ...
+    ]
+    applied_notes: [
+        %{
+            id: string
+            additionally_enabled: boolean
+        }
+        ...
+    ]
+    staging: %{
+        enabled: boolean
+        notes: []
+        solutions: []
+    }
+}
+ 
+
+
+ {
+  "discovery_type": "saptune_discovery",
+  "agent_id": "240f96b1-8d26-53b7-9e99-ffb0f2e735bf",
+  "payload": {
+    "version": "3.1.0",
+    "commands: [{
+        "$schema": "file:///usr/share/saptune/schemas/1.0/saptune_status.schema.json",
+        "publish time": "2023-04-24 12:41:56.612",
+        "argv": "saptune --format json status",
+        "pid": 24623,
+        "command": "status",
+        "exit code": 4,
+        "result": {
+            "services": {
+                "saptune": [
+                    "enabled",
+                    "inactive"
+         .....
+    }]
+   }
+} 
