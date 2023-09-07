@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
+import { isVersionSupported } from '@lib/saptune';
 
 import Button from '@components/Button';
 import ListView from '@components/ListView';
@@ -15,8 +16,10 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { canStartExecution } from '@components/ChecksSelection';
+import { SaptuneVersion, SaptuneTuningState } from '@components/SaptuneDetails';
 
 import SuseLogo from '@static/suse_logo.svg';
+import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
@@ -36,10 +39,12 @@ function HostDetails({
   heartbeat,
   hostID,
   hostname,
+  ipAddresses = [],
   provider,
   providerData,
   sapInstances,
   savingChecks,
+  saptuneStatus = {},
   selectedChecks = [],
   slesSubscriptions,
   cleanUpHost,
@@ -49,6 +54,12 @@ function HostDetails({
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
+
+  const {
+    package_version: saptuneVersion,
+    configured_version: saptuneConfigureVersion,
+    tuning_state: saptuneTuning,
+  } = saptuneStatus;
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
@@ -140,18 +151,63 @@ function HostDetails({
         {versionWarningMessage && (
           <WarningBanner>{versionWarningMessage}</WarningBanner>
         )}
-        <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
-          <ListView
-            orientation="vertical"
-            data={[
-              { title: 'Name', content: hostname },
-              {
-                title: 'Cluster',
-                content: <ClusterLink cluster={cluster} />,
-              },
-              { title: 'Agent version', content: agentVersion },
-            ]}
-          />
+        <div className="flex xl:flex-row flex-col">
+          <div className="mt-4 bg-white shadow rounded-lg py-4 px-8 xl:w-2/5 mr-4">
+            <ListView
+              className="grid-rows-3"
+              orientation="vertical"
+              data={[
+                {
+                  title: 'Cluster',
+                  content: <ClusterLink cluster={cluster} />,
+                },
+                { title: 'Agent Version', content: agentVersion },
+                { title: 'IP addresses', content: ipAddresses.join(',') },
+              ]}
+            />
+          </div>
+          <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
+            <div className="flex justify-between mb-2">
+              <h1 className="text-2xl font-bold">Saptune Summary</h1>
+              <Button
+                type="primary-white-fit"
+                className="border-green-500 border"
+                size="small"
+                disabled={!isVersionSupported(saptuneVersion)}
+              >
+                View Details
+              </Button>
+            </div>
+            <ListView
+              className="grid-rows-2"
+              orientation="vertical"
+              data={[
+                {
+                  title: 'Package',
+                  content: <SaptuneVersion version={saptuneVersion} />,
+                },
+                {
+                  title: 'Tunning',
+                  content: <SaptuneTuningState state={saptuneTuning} />,
+                },
+                {
+                  title: 'Configured Version',
+                  content: saptuneConfigureVersion || '-',
+                },
+              ]}
+            />
+          </div>
+          <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
+            <div className="flex flex-col items-center h-full">
+              <h1 className="text-center text-2xl font-bold">Check Results</h1>
+              <h6 className="opacity-60 text-xs">Coming soon for Hosts</h6>
+              <img
+                className="h-full inline-block align-middle"
+                alt="checks coming soon"
+                src={ChecksComingSoon}
+              />
+            </div>
+          </div>
         </div>
         <div className="mt-8 bg-white shadow rounded-lg py-4 px-8">
           <iframe

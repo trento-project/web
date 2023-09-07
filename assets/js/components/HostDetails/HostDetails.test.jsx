@@ -5,8 +5,9 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 
+import { SUPPORTED_VERSION } from '@lib/saptune';
 import { renderWithRouter } from '@lib/test-utils';
-import { hostFactory } from '@lib/test-utils/factories';
+import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 
 import HostDetails from './HostDetails';
 
@@ -130,6 +131,65 @@ describe('HostDetails component', () => {
       await user.click(cleanUpModalButton);
 
       expect(mockCleanUp).toHaveBeenCalled();
+    });
+  });
+
+  describe('saptune', () => {
+    it('should show the summary of saptune', () => {
+      const saptuneStatus = saptuneStatusFactory.build();
+      const {
+        package_version: packageVersion,
+        configured_version: configuredVersion,
+        tuning_state: tuningState,
+      } = saptuneStatus;
+
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />
+      );
+
+      expect(screen.getByText('Package').nextSibling).toHaveTextContent(
+        packageVersion
+      );
+
+      expect(
+        screen.getByText('Configured Version').nextSibling
+      ).toHaveTextContent(configuredVersion);
+
+      expect(screen.getByText('Tunning').nextSibling).toHaveTextContent(
+        new RegExp(tuningState, 'i')
+      );
+    });
+
+    it('should enable saptune details button', () => {
+      const saptuneStatus = saptuneStatusFactory.build({
+        package_version: SUPPORTED_VERSION,
+      });
+
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />
+      );
+
+      expect(
+        screen.getByRole('button', {
+          name: 'View Details',
+        })
+      ).toBeEnabled();
+    });
+
+    it('should disable saptune details button', () => {
+      const saptuneStatus = saptuneStatusFactory.build({
+        package_version: '3.0.0',
+      });
+
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />
+      );
+
+      expect(
+        screen.getByRole('button', {
+          name: 'View Details',
+        })
+      ).toBeDisabled();
     });
   });
 });
