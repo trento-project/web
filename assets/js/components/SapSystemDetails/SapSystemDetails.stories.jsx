@@ -8,7 +8,7 @@ import {
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
+import { APPLICATION_TYPE } from '@lib/model';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
 
@@ -39,15 +39,6 @@ export default {
   title: 'SapSystemDetails',
   components: GenericSystemDetails,
   argTypes: {
-    title: {
-      type: 'string',
-      description: 'Database Details',
-    },
-    type: {
-      control: { type: 'radio' },
-      options: [APPLICATION_TYPE, DATABASE_TYPE],
-      description: 'The content type of the deregistration modal',
-    },
     system: {
       control: 'object',
       description:
