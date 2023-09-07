@@ -56,7 +56,7 @@ function PlainDatabaseItemOverview({
             {instances &&
               instances.map((instance) => (
                 <DatabaseInstance
-                  key={instance.host_id + instance.sap_system_id}
+                  key={`${instance.host_id}_${instance.instance_number}`}
                   instance={instance}
                   onCleanUpClick={onCleanUpClick}
                 />

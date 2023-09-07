@@ -53,7 +53,7 @@ function SapSystemItemOverview({ sapSystem, onCleanUpClick }) {
               {applicationInstances &&
                 applicationInstances.map((instance) => (
                   <ApplicationInstance
-                    key={instance.host_id}
+                    key={`${instance.host_id}_${instance.instance_number}`}
                     instance={instance}
                     onCleanUpClick={onCleanUpClick}
                   />
