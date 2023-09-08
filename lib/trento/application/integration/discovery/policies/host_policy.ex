@@ -55,8 +55,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         "payload" => payload
       }) do
     payload
-    |> ProperCase.to_snake_case()
     |> Map.get("result")
+    |> format_saptune_payload_keys()
     |> format_saptune_services_list()
     |> format_saptune_solutions_list()
     |> SaptuneDiscoveryPayload.new()
@@ -244,6 +244,29 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp parse_storage_profile(%{data_disks: data_disks}), do: length(data_disks)
   defp parse_storage_profile(_), do: 0
 
+  # Saptune payload
+
+  defp format_saptune_payload_keys(map) when is_map(map) do
+    try do
+      for {key, val} <- map,
+          into: %{},
+          do: {snake_case(key), format_saptune_payload_keys(val)}
+    rescue
+      Protocol.UndefinedError -> map
+    end
+  end
+
+  defp format_saptune_payload_keys(list) when is_list(list) do
+    list
+    |> Enum.map(&format_saptune_payload_keys/1)
+  end
+
+  defp format_saptune_payload_keys(other_types), do: other_types
+
+  defp snake_case(payload) when is_binary(payload) do
+    payload |> String.replace(" ", "_") |> String.downcase
+  end
+
   defp format_saptune_services_list(%{"services" => service_map} = attrs) do
     %{
       attrs
@@ -263,27 +286,27 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   end
 
   defp extract_enabled_solution(%{
-         "solutionenabled" => [solution_enabled],
-         "notesenabledby_solution" => [%{"notelist" => note_list}]
+         "solution_enabled" => [solution_enabled],
+         "notes_enabled_by_solution" => [%{"note_list" => note_list}]
        }) do
     format_solution(%{
       "solution_id" => solution_enabled,
-      "notelist" => note_list,
-      "appliedpartially" => false
+      "note_list" => note_list,
+      "applied_partially" => false
     })
   end
 
   defp extract_applied_solution(%{
-         "solutionapplied" => [solution_applied],
-         "notesappliedby_solution" => [%{"notelist" => note_list}]
+         "solution_applied" => [solution_applied],
+         "notes_applied_by_solution" => [%{"note_list" => note_list}]
        }) do
-    format_solution(Map.put(solution_applied, "notelist", note_list))
+    format_solution(Map.put(solution_applied, "note_list", note_list))
   end
 
   defp format_solution(%{
          "solution_id" => solution_id,
-         "notelist" => note_list,
-         "appliedpartially" => partially_applied
+         "note_list" => note_list,
+         "applied_partially" => partially_applied
        }),
        do: %{id: solution_id, notes: note_list, partial: partially_applied}
 end
