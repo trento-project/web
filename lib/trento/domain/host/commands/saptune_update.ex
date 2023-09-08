@@ -8,6 +8,6 @@ defmodule Trento.Domain.Commands.SaptuneUpdated do
   use Trento.Command
 
   defcommand do
-      # TODO
+    # TODO
   end
 end
