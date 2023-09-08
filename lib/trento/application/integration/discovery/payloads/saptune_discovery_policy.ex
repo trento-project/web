@@ -1,5 +1,4 @@
 defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
-
   @required_fields :all
 
   use Trento.Type

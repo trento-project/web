@@ -17,6 +17,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     CloudDiscoveryPayload.AzureMetadata,
     CloudDiscoveryPayload.GcpMetadata,
     HostDiscoveryPayload,
+    SaptuneDiscoveryPayload,
     SlesSubscriptionDiscoveryPayload
   }
 
@@ -55,7 +56,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       }) do
     payload
     |> ProperCase.to_snake_case()
-    |> HostDiscoveryPayload.new()
+    |> SaptuneDiscoveryPayload.new()
     |> case do
       {:ok, decoded_payload} -> build_register_host_command(agent_id, decoded_payload)
       error -> error
@@ -107,6 +108,26 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            socket_count: socket_count,
            os_version: os_version,
            installation_source: installation_source
+         })
+
+  defp build_saptune_host_command(agent_id, %SaptuneDiscoveryPayload{
+         package_version: package_version,
+         configured_version: configured_version,
+         tuning_state: tuning_state,
+         services: services,
+         enabled_solution: enabled_solution,
+         applied_solution: applied_solution,
+         staging: staging
+       }),
+       do:
+         SaptuneUpdated.new(%{
+           package_version: package_version,
+           configured_version: configured_version,
+           tuning_state: tuning_state,
+           services: services,
+           enabled_solution: enabled_solution,
+           applied_solution: applied_solution,
+           staging: staging
          })
 
   defp build_update_provider_command(agent_id, %CloudDiscoveryPayload{
