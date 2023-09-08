@@ -264,4 +264,10 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end
+
+  test "should emit update saptune command when a saptune_discovery is received" do
+    "saptune_discovery"
+    |> load_discovery_event_fixture()
+    |> HostPolicy.handle()
+  end
 end
