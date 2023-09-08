@@ -59,6 +59,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     |> format_saptune_payload_keys()
     |> format_saptune_services_list()
     |> format_saptune_solutions_list()
+    |> format_saptune_staging_informations()
     |> SaptuneDiscoveryPayload.new()
   end
 
@@ -264,7 +265,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp format_saptune_payload_keys(other_types), do: other_types
 
   defp snake_case(payload) when is_binary(payload) do
-    payload |> String.replace(" ", "_") |> String.downcase
+    payload |> String.replace(" ", "_") |> String.downcase()
   end
 
   defp format_saptune_services_list(%{"services" => service_map} = attrs) do
@@ -296,6 +297,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     })
   end
 
+  defp extract_enabled_solution(_), do: []
+
   defp extract_applied_solution(%{
          "solution_applied" => [solution_applied],
          "notes_applied_by_solution" => [%{"note_list" => note_list}]
@@ -303,10 +306,30 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     format_solution(Map.put(solution_applied, "note_list", note_list))
   end
 
+  defp extract_applied_solution(_), do: []
+
   defp format_solution(%{
          "solution_id" => solution_id,
          "note_list" => note_list,
          "applied_partially" => partially_applied
        }),
-       do: %{id: solution_id, notes: note_list, partial: partially_applied}
+       do: %{"id" => solution_id, "notes" => note_list, "partial" => partially_applied}
+
+  defp format_saptune_staging_informations(
+         %{
+           "staging" => %{
+             "staging_enabled" => staging_enabled,
+             "notes_staged" => notes_staged,
+             "solutions_staged" => solutions_staged
+           }
+         } = attrs
+       ) do
+    staging_infos = %{
+      "enabled" => staging_enabled,
+      "notes" => notes_staged,
+      "solutions_ids" => solutions_staged
+    }
+
+    Map.put(attrs, "staging", staging_infos)
+  end
 end

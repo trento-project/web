@@ -270,7 +270,6 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              "saptune_discovery"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
-             |> IO.inspect
-
+             |> IO.inspect()
   end
 end

@@ -1,7 +1,8 @@
 defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
   alias Trento.Integration.Discovery.SaptuneDiscoveryPayload.{
     ServiceStatus,
-    Solution
+    Solution,
+    Staging
   }
 
   @required_fields nil
@@ -13,11 +14,10 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
     field :configured_version, :string
     field :tuning_state, :string
 
-    field :staging, :map
-
     embeds_many :services, ServiceStatus
     embeds_one :enabled_solution, Solution
     embeds_one :applied_solution, Solution
+    embeds_one :staging, Staging
 
     def changeset(payload, attrs) do
       payload
@@ -25,6 +25,7 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
       |> cast_embed(:services)
       |> cast_embed(:enabled_solution)
       |> cast_embed(:applied_solution)
+      |> cast_embed(:staging)
     end
   end
 
@@ -75,15 +76,14 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
   end
 
   defmodule Staging do
-    @required_fields [:id, :notes, :solutions]
+    @required_fields [:id]
 
     use Trento.Type
 
     deftype do
       field :enabled, :boolean
       field :notes, {:array, :string}
-
-      embeds_many :solutions, Solution
+      field :solutions_ids, {:array, :string}
     end
   end
 end
