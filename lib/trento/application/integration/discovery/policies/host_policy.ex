@@ -56,7 +56,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       }) do
     payload
     |> ProperCase.to_snake_case()
-    |> IO.inspect()
+    |> Map.get("result")
     |> SaptuneDiscoveryPayload.new()
   end
 
@@ -107,25 +107,25 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            installation_source: installation_source
          })
 
-  defp build_saptune_host_command(agent_id, %SaptuneDiscoveryPayload{
-         package_version: package_version,
-         configured_version: configured_version,
-         tuning_state: tuning_state,
-         services: services,
-         enabled_solution: enabled_solution,
-         applied_solution: applied_solution,
-         staging: staging
-       }),
-       do:
-         SaptuneUpdated.new(%{
-           package_version: package_version,
-           configured_version: configured_version,
-           tuning_state: tuning_state,
-           services: services,
-           enabled_solution: enabled_solution,
-           applied_solution: applied_solution,
-           staging: staging
-         })
+  # defp build_saptune_host_command(agent_id, %SaptuneDiscoveryPayload{
+  #        package_version: package_version,
+  #        configured_version: configured_version,
+  #        tuning_state: tuning_state,
+  #        services: services,
+  #        enabled_solution: enabled_solution,
+  #        applied_solution: applied_solution,
+  #        staging: staging
+  #      }),
+  #      do:
+  #        SaptuneUpdated.new(%{
+  #          package_version: package_version,
+  #          configured_version: configured_version,
+  #          tuning_state: tuning_state,
+  #          services: services,
+  #          enabled_solution: enabled_solution,
+  #          applied_solution: applied_solution,
+  #          staging: staging
+  #        })
 
   defp build_update_provider_command(agent_id, %CloudDiscoveryPayload{
          provider: provider,
