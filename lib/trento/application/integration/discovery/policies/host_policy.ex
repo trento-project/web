@@ -57,6 +57,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     payload
     |> ProperCase.to_snake_case()
     |> Map.get("result")
+    |> format_saptune_services_list()
+    |> format_saptune_solutions_list()
     |> SaptuneDiscoveryPayload.new()
   end
 
@@ -241,4 +243,47 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp parse_storage_profile(%{data_disks: nil}), do: 0
   defp parse_storage_profile(%{data_disks: data_disks}), do: length(data_disks)
   defp parse_storage_profile(_), do: 0
+
+  defp format_saptune_services_list(%{"services" => service_map} = attrs) do
+    %{
+      attrs
+      | "services" =>
+          Enum.map(service_map, fn {service_name, status} ->
+            %{"name" => service_name, "status" => status}
+          end)
+    }
+  end
+
+  defp format_saptune_services_list(attrs), do: attrs
+
+  def format_saptune_solutions_list(attrs) do
+    attrs
+    |> Map.put("enabled_solution", extract_enabled_solution(attrs))
+    |> Map.put("applied_solution", extract_applied_solution(attrs))
+  end
+
+  defp extract_enabled_solution(%{
+         "solutionenabled" => [solution_enabled],
+         "notesenabledby_solution" => [%{"notelist" => note_list}]
+       }) do
+    format_solution(%{
+      "solution_id" => solution_enabled,
+      "notelist" => note_list,
+      "appliedpartially" => false
+    })
+  end
+
+  defp extract_applied_solution(%{
+         "solutionapplied" => [solution_applied],
+         "notesappliedby_solution" => [%{"notelist" => note_list}]
+       }) do
+    format_solution(Map.put(solution_applied, "notelist", note_list))
+  end
+
+  defp format_solution(%{
+         "solution_id" => solution_id,
+         "notelist" => note_list,
+         "appliedpartially" => partially_applied
+       }),
+       do: %{id: solution_id, notes: note_list, partial: partially_applied}
 end
