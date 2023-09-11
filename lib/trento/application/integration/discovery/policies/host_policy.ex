@@ -60,6 +60,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     |> format_saptune_services_list()
     |> format_saptune_solutions_list()
     |> format_saptune_staging_informations()
+    |> format_saptune_applied_notes()
+    |> format_saptune_enabled_notes()
     |> SaptuneDiscoveryPayload.new()
   end
 
@@ -331,5 +333,32 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     }
 
     Map.put(attrs, "staging", staging_infos)
+  end
+
+  defp format_saptune_enabled_notes(
+         %{
+           "notes_enabled_additionally" => additional_notes,
+           "notes_enabled" => notes_enabled
+         } = attrs
+       ) do
+    Map.put(attrs, "enabled_notes", format_saptune_notes(notes_enabled, additional_notes))
+  end
+
+  defp format_saptune_applied_notes(
+         %{
+           "notes_enabled_additionally" => additional_notes,
+           "notes_applied" => notes_applied
+         } = attrs
+       ) do
+    Map.put(attrs, "applied_notes", format_saptune_notes(notes_applied, additional_notes))
+  end
+
+  defp format_saptune_notes(notes, additional_notes) do
+    Enum.map(notes, fn note ->
+      %{
+        "id" => note,
+        "additionally_enabled" => Enum.any?(additional_notes, &(&1 == note))
+      }
+    end)
   end
 end

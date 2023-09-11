@@ -2,10 +2,21 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
   alias Trento.Integration.Discovery.SaptuneDiscoveryPayload.{
     ServiceStatus,
     Solution,
-    Staging
+    Staging,
+    Note
   }
 
-  @required_fields nil
+  @required_fields [
+    :services,
+    :tuning_state,
+    :configured_version,
+    :package_version,
+    :enabled_solution,
+    :applied_solution,
+    :enabled_notes,
+    :applied_notes,
+    :staging
+  ]
 
   use Trento.Type
 
@@ -15,6 +26,8 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
     field :tuning_state, :string
 
     embeds_many :services, ServiceStatus
+    embeds_many :enabled_notes, Note
+    embeds_many :applied_notes, Note
     embeds_one :enabled_solution, Solution
     embeds_one :applied_solution, Solution
     embeds_one :staging, Staging
@@ -26,6 +39,8 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
       |> cast_embed(:enabled_solution)
       |> cast_embed(:applied_solution)
       |> cast_embed(:staging)
+      |> cast_embed(:enabled_notes)
+      |> cast_embed(:applied_notes)
     end
   end
 
@@ -64,7 +79,7 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
   end
 
   defmodule Solution do
-    @required_fields [:id, :notes, :partial]
+    @required_fields [:id]
 
     use Trento.Type
 
@@ -84,6 +99,17 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
       field :enabled, :boolean
       field :notes, {:array, :string}
       field :solutions_ids, {:array, :string}
+    end
+  end
+
+  defmodule Note do
+    @required_fields [:id, :additionally_enabled]
+
+    use Trento.Type
+
+    deftype do
+      field :id, :string
+      field :additionally_enabled, :boolean
     end
   end
 end
