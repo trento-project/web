@@ -8,57 +8,72 @@ import { updateCatalog } from '@state/actions/catalog';
 import {
   updateLastExecution,
   executionRequested,
+  hostExecutionRequested,
 } from '@state/actions/lastExecutions';
+
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
 } from '@state/lastExecutions';
 import LoadingBox from '@components/LoadingBox';
+import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import ExecutionResults from './ExecutionResults';
+import { isTargetCluster, isTargetHost } from './checksUtils';
 
-function ExecutionResultsPage() {
-  const { clusterID } = useParams();
+const getTargetName = (target, targetType) => {
+  switch (targetType) {
+    case TARGET_CLUSTER:
+      return target.name;
+    case TARGET_HOST:
+      return target.hostname;
+    default:
+      return null;
+  }
+};
+
+function ExecutionResultsPage({ targetType }) {
+  const { targetID } = useParams();
   const dispatch = useDispatch();
 
   const {
-    clusterHosts,
-    cluster,
+    targetHosts,
+    target,
     catalog: { loading: catalogLoading, data: catalog, error: catalogError },
     lastExecution: {
       data: executionData,
       error: executionError,
       loading: executionLoading,
     },
-  } = useSelector((state) => getLastExecutionData(state, clusterID));
+  } = useSelector((state) => getLastExecutionData(state, targetID, targetType));
 
-  const savedFilters = useSelector(getSelectedFilters(clusterID));
+  const savedFilters = useSelector(getSelectedFilters(targetID));
 
-  const cloudProvider = cluster?.provider;
+  const cloudProvider = target?.provider;
 
   useEffect(() => {
     if (cloudProvider) {
       dispatch(
-        updateCatalog({ provider: cloudProvider, target_type: 'cluster' })
+        updateCatalog({ provider: cloudProvider, target_type: targetType })
       );
     }
     if (!executionData) {
-      dispatch(updateLastExecution(clusterID));
+      dispatch(updateLastExecution(targetID));
     }
   }, [cloudProvider]);
 
-  if (!cluster) {
+  if (!target) {
     return <LoadingBox text="Loading ..." />;
   }
 
   return (
     <ExecutionResults
-      clusterID={clusterID}
-      clusterHosts={clusterHosts}
-      clusterName={cluster?.name}
-      clusterScenario={cluster?.type}
-      cloudProvider={cloudProvider}
+      targetID={targetID}
+      targetName={getTargetName(target, targetType)}
+      targetType={targetType}
+      target={target}
+      targetHosts={targetHosts}
       onCatalogRefresh={() => dispatch(updateCatalog())}
-      onLastExecutionUpdate={() => dispatch(updateLastExecution(clusterID))}
+      onLastExecutionUpdate={() => dispatch(updateLastExecution(targetID))}
       catalogLoading={catalogLoading}
       catalog={catalog}
       catalogError={catalogError}
@@ -67,13 +82,18 @@ function ExecutionResultsPage() {
       executionRunning={RUNNING_STATES.includes(executionData?.status)}
       executionData={executionData}
       executionError={executionError}
-      clusterSelectedChecks={cluster?.selected_checks}
+      targetSelectedChecks={target.selected_checks}
       savedFilters={savedFilters}
-      onStartExecution={(clusterId, hosts, selectedChecks, navigate) =>
-        dispatch(executionRequested(clusterId, hosts, selectedChecks, navigate))
-      }
+      onStartExecution={(targetId, hosts, selectedChecks, navigate) => {
+        isTargetHost(targetType) &&
+          dispatch(hostExecutionRequested(target, selectedChecks, navigate));
+        isTargetCluster(targetType) &&
+          dispatch(
+            executionRequested(targetId, hosts, selectedChecks, navigate)
+          );
+      }}
       onSaveFilters={(filters) =>
-        dispatch(setSelectedFilters({ resourceID: clusterID, filters }))
+        dispatch(setSelectedFilters({ resourceID: targetID, filters }))
       }
     />
   );

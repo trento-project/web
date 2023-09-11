@@ -1,36 +1,36 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import BackButton from '@components/BackButton';
-import { ClusterInfoBox } from '@components/ClusterDetails';
+import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
 
 import ChecksResultFilters from '@components/ExecutionResults/ChecksResultFilters';
-import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
 import WarningBanner from '@components/Banners/WarningBanner';
+import { isTargetCluster } from './checksUtils';
+import BackToTargetDetails from './BackToTargetDetails';
+import TargetInfoBox from './TargetInfoBox';
 
 function ExecutionHeader({
-  clusterID,
-  clusterName,
-  cloudProvider,
-  clusterScenario,
+  targetID,
+  targetName,
+  targetType,
+  target,
   savedFilters,
   onFilterChange = () => {},
   onFilterSave = () => {},
 }) {
+  const targetCluster = isTargetCluster(targetType);
   return (
     <>
-      <BackButton url={`/clusters/${clusterID}`}>
-        Back to Cluster Details
-      </BackButton>
+      <BackToTargetDetails targetType={targetType} targetID={targetID} />
       <div className="flex mb-4 justify-between">
         <h1 className="text-3xl w-3/5">
-          <span className="font-medium">Checks Results for cluster</span>{' '}
+          <span className="font-medium">Checks Results for {targetType}</span>{' '}
           <span
             className={classNames(
               'font-bold truncate w-60 inline-block align-top'
             )}
           >
-            {clusterName}
+            {targetName}
           </span>
         </h1>
         <ChecksResultFilters
@@ -39,7 +39,7 @@ function ExecutionHeader({
           onSave={onFilterSave}
         />
       </div>
-      {cloudProvider === UNKNOWN_PROVIDER && (
+      {targetCluster && target.provider === UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following results are valid for on-premise bare metal platforms.
           <br />
@@ -47,14 +47,14 @@ function ExecutionHeader({
           use results with caution
         </WarningBanner>
       )}
-      {cloudProvider === VMWARE_PROVIDER && (
+      {targetCluster && target.provider === VMWARE_PROVIDER && (
         <WarningBanner>
           Configuration checks for HANA scale-up performance optimized clusters
           on VMware are still in experimental phase. Please use results with
           caution.
         </WarningBanner>
       )}
-      <ClusterInfoBox haScenario={clusterScenario} provider={cloudProvider} />
+      <TargetInfoBox targetType={targetType} target={target} />
     </>
   );
 }

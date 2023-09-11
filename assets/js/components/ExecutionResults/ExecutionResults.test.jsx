@@ -15,6 +15,7 @@ import {
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
   agentsCheckResultsWithHostname,
+  clusterFactory,
 } from '@lib/test-utils/factories';
 import '@testing-library/jest-dom';
 import { UNKNOWN_PROVIDER } from '@lib/model';
@@ -154,13 +155,20 @@ describe('ExecutionResults', () => {
       executionError,
     } = prepareStateData('passing');
 
+    const target = clusterFactory.build({
+      id: clusterID,
+      name: clusterName,
+      type: 'hana_scale_up',
+      provider: 'azure',
+    });
+
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterName={clusterName}
-        clusterScenario="hana_scale_up"
-        cloudProvider="azure"
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetName={clusterName}
+        targetType="cluster"
+        target={target}
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -196,10 +204,16 @@ describe('ExecutionResults', () => {
       executionData,
       executionError,
     } = prepareStateData('running');
+    const target = clusterFactory.build({
+      id: clusterID,
+    });
+
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetType="cluster"
+        target={target}
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         catalogError={error}
@@ -228,8 +242,9 @@ describe('ExecutionResults', () => {
 
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetType="cluster"
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         catalogError={error}
@@ -247,13 +262,18 @@ describe('ExecutionResults', () => {
     const executionData = null;
     const executionLoading = false;
 
+    const target = clusterFactory.build({
+      type: faker.animal.cat(),
+      provider: faker.animal.cat(),
+    });
+
     renderWithRouter(
       <ExecutionResults
-        clusterID={faker.datatype.uuid()}
-        clusterName={faker.animal.cat()}
-        clusterScenario={faker.animal.cat()}
-        cloudProvider={faker.animal.cat()}
-        clusterHosts={[]}
+        targetID={faker.datatype.uuid()}
+        targetName={faker.animal.cat()}
+        targetType="cluster"
+        target={target}
+        targetHosts={[]}
         catalogLoading={false}
         catalog={[]}
         executionStarted
@@ -261,7 +281,7 @@ describe('ExecutionResults', () => {
         executionLoading={executionLoading}
         executionData={executionData}
         executionError={false}
-        clusterSelectedChecks={[]}
+        targetSelectedChecks={[]}
       />
     );
     const hintText = screen.getByText(
@@ -288,11 +308,14 @@ describe('ExecutionResults', () => {
 
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterName="test-cluster"
-        clusterScenario="hana_scale_up"
-        cloudProvider="azure"
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetName="test-cluster"
+        targetType="cluster"
+        target={{
+          provider: 'azure',
+          type: 'hana_scale_up',
+        }}
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -329,11 +352,14 @@ describe('ExecutionResults', () => {
 
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterName="test-cluster"
-        clusterScenario="hana_scale_up"
-        cloudProvider="azure"
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetName="test-cluster"
+        targetType="cluster"
+        target={{
+          provider: 'azure',
+          type: 'hana_scale_up',
+        }}
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -370,11 +396,14 @@ describe('ExecutionResults', () => {
 
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterName="test-cluster"
-        clusterScenario="hana_scale_up"
-        cloudProvider="azure"
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetName="test-cluster"
+        targetType="cluster"
+        target={{
+          provider: 'azure',
+          type: 'hana_scale_up',
+        }}
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -413,11 +442,14 @@ describe('ExecutionResults', () => {
 
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterName="test-cluster"
-        clusterScenario="hana_scale_up"
-        cloudProvider="vmware"
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetName="test-cluster"
+        targetType="cluster"
+        target={{
+          provider: 'vmware',
+          type: 'hana_scale_up',
+        }}
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -452,11 +484,14 @@ describe('ExecutionResults', () => {
 
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterName="test-cluster"
-        clusterScenario="hana_scale_up"
-        cloudProvider={UNKNOWN_PROVIDER}
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetName="test-cluster"
+        targetType="cluster"
+        target={{
+          provider: UNKNOWN_PROVIDER,
+          type: 'hana_scale_up',
+        }}
+        targetHosts={clusterHosts}
         catalogLoading={loading}
         catalog={catalog}
         executionStarted={executionStarted}
@@ -493,17 +528,23 @@ describe('ExecutionResults', () => {
       checks,
     } = prepareStateData('completed');
 
+    const target = clusterFactory.build({
+      id: clusterID,
+    });
+
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetType="cluster"
+        targetHosts={clusterHosts}
+        target={target}
         catalogLoading={loading}
         catalog={catalog}
         executionLoading={loading}
         executionStarted={executionStarted}
         executionData={executionData}
         executionError={executionError}
-        clusterSelectedChecks={checks}
+        targetSelectedChecks={checks}
       />
     );
 
@@ -526,17 +567,23 @@ describe('ExecutionResults', () => {
       checks,
     } = prepareStateData('completed');
 
+    const target = clusterFactory.build({
+      id: clusterID,
+    });
+
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetType="cluster"
+        targetHosts={clusterHosts}
+        target={target}
         catalogLoading={loading}
         catalog={catalog}
         executionLoading={loading}
         executionStarted={executionStarted}
         executionData={executionData}
         executionError={executionError}
-        clusterSelectedChecks={checks}
+        targetSelectedChecks={checks}
       />
     );
 
@@ -558,17 +605,23 @@ describe('ExecutionResults', () => {
       checks,
     } = prepareStateData('completed');
 
+    const target = clusterFactory.build({
+      id: clusterID,
+    });
+
     renderWithRouter(
       <ExecutionResults
-        clusterID={clusterID}
-        clusterHosts={clusterHosts}
+        targetID={clusterID}
+        targetType="cluster"
+        targetHosts={clusterHosts}
+        target={target}
         catalogLoading={loading}
         catalog={catalog}
         executionLoading={loading}
         executionStarted={executionStarted}
         executionData={executionData}
         executionError={executionError}
-        clusterSelectedChecks={checks}
+        targetSelectedChecks={checks}
       />
     );
 

@@ -86,17 +86,17 @@ describe('CheckResultDetailPage Component', () => {
       getValidStoreData(reduxStore);
     const falseClusterID = faker.animal.bear();
     const [StatefulCheckResultDetailPage] = withState(
-      <CheckResultDetailPage />,
+      <CheckResultDetailPage targetType="cluster" />,
       reduxStore
     );
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
-      path: 'clusters/:clusterID/executions/last/:checkID/:targetType/:targetName',
+      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${falseClusterID}/executions/last/${validCheckID}/${validTargetType}/${validTargetName}`,
     });
 
-    expect(screen.getByText('Go back to cluster overview')).toBeTruthy();
-    fireEvent.click(screen.getByText('Go back to cluster overview'));
-    expect(window.location.pathname).toEqual('/clusters/');
+    expect(screen.getByText('Go back to clusters overview')).toBeTruthy();
+    fireEvent.click(screen.getByText('Go back to clusters overview'));
+    expect(window.location.pathname).toEqual('/clusters');
   });
 
   it('should not render CheckResultDetailPage when checkID in the url is false', () => {
@@ -105,12 +105,12 @@ describe('CheckResultDetailPage Component', () => {
       getValidStoreData(reduxStore);
     const falseCheckID = faker.animal.bear();
     const [StatefulCheckResultDetailPage] = withState(
-      <CheckResultDetailPage />,
+      <CheckResultDetailPage targetType="cluster" />,
       reduxStore
     );
 
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
-      path: 'clusters/:clusterID/executions/last/:checkID/:targetType/:targetName',
+      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${falseCheckID}/${validTargetType}/${validTargetName}`,
     });
 
@@ -127,11 +127,11 @@ describe('CheckResultDetailPage Component', () => {
       getValidStoreData(reduxStore);
     const invalidTargetType = 'falseTargetType';
     const [StatefulCheckResultDetailPage] = withState(
-      <CheckResultDetailPage />,
+      <CheckResultDetailPage targetType="cluster" />,
       reduxStore
     );
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
-      path: 'clusters/:clusterID/executions/last/:checkID/:targetType/:targetName',
+      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resulTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${invalidTargetType}/${validTargetName}`,
     });
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
@@ -147,11 +147,11 @@ describe('CheckResultDetailPage Component', () => {
       getValidStoreData(reduxStore);
     const invalidTargetName = faker.random.word();
     const [StatefulCheckResultDetailPage] = withState(
-      <CheckResultDetailPage />,
+      <CheckResultDetailPage targetType="cluster" />,
       reduxStore
     );
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
-      path: 'clusters/:clusterID/executions/last/:checkID/:targetType/:targetName',
+      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${validTargetType}/${invalidTargetName}`,
     });
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
@@ -167,11 +167,11 @@ describe('CheckResultDetailPage Component', () => {
       getValidStoreData(reduxStore);
 
     const [StatefulCheckResultDetailPage] = withState(
-      <CheckResultDetailPage />,
+      <CheckResultDetailPage targetType="cluster" />,
       reduxStore
     );
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
-      path: 'clusters/:clusterID/executions/last/:checkID/:targetType/:targetName',
+      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${validTargetType}/${validTargetName}`,
     });
 

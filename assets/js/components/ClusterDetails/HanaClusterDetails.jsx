@@ -135,7 +135,7 @@ function HanaClusterDetails({
             >
               <TriggerChecksExecutionRequest
                 cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
-                clusterId={clusterID}
+                targetID={clusterID}
                 disabled={startExecutionDisabled}
                 hosts={hosts.map(({ id }) => id)}
                 checks={selectedChecks}

@@ -57,22 +57,21 @@ const extractExpectSameResults = (
   );
 
 function CheckResultOutline({
-  clusterID,
   checkID,
+  targetID,
+  targetName,
+  targetType,
   expectations,
   agentsCheckResults,
   expectationResults,
-  clusterName,
 }) {
   const navigate = useNavigate();
 
   const expectResults = extractExpectResults(expectations, agentsCheckResults);
 
-  const expectSameResults = extractExpectSameResults(
-    clusterName,
-    expectations,
-    expectationResults
-  );
+  const expectSameResults = isTargetCluster(targetType)
+    ? extractExpectSameResults(targetName, expectations, expectationResults)
+    : [];
 
   return (
     <div className="p-5 bg-gray-50">
@@ -90,21 +89,22 @@ function CheckResultOutline({
         <div className="table-row-group text-sm">
           {[...expectSameResults, ...expectResults].map(
             ({
-              targetType,
-              targetName,
+              targetType: resultTargetType,
+              targetName: resultTargetName,
               expectationName,
               expectationsSummary,
               isAgentCheckError: agentCheckError,
             }) => (
               <TargetResult
-                key={`${checkID}-${targetName}-${expectationName}`}
-                isCluster={isTargetCluster(targetType)}
-                targetName={targetName}
+                key={`${checkID}-${resultTargetName}-${expectationName}`}
+                isCluster={isTargetCluster(resultTargetType)}
+                targetName={resultTargetName}
                 expectationsSummary={expectationsSummary}
                 isAgentCheckError={agentCheckError}
                 onClick={() =>
+                  // todo navigate also to host execution results when targetType is host
                   navigate(
-                    `/clusters/${clusterID}/executions/last/${checkID}/${targetType}/${targetName}`
+                    `/clusters/${targetID}/executions/last/${checkID}/${resultTargetType}/${resultTargetName}`
                   )
                 }
               />

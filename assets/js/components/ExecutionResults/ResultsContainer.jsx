@@ -9,7 +9,8 @@ function ResultsContainer({
   error,
   errorContent,
   children,
-  clusterID,
+  targetID,
+  targetType,
   hasAlreadyChecksResults,
   selectedChecks = [],
   hosts = [],
@@ -32,7 +33,8 @@ function ResultsContainer({
   if (!hasAlreadyChecksResults) {
     return (
       <ChecksSelectionHints
-        clusterId={clusterID}
+        targetID={targetID}
+        targetType={targetType}
         selectedChecks={selectedChecks}
         hosts={hosts}
         onStartExecution={onStartExecution}

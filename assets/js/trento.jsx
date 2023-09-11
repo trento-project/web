@@ -29,6 +29,7 @@ import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';
 import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
+import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import DatabaseDetails from './components/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 
@@ -87,12 +88,20 @@ function App() {
                     element={<ClusterSettingsPage />}
                   />
                   <Route
-                    path="clusters/:clusterID/executions/last"
-                    element={<ExecutionResultsPage />}
+                    path="clusters/:targetID/executions/last"
+                    element={
+                      <ExecutionResultsPage targetType={TARGET_CLUSTER} />
+                    }
                   />
                   <Route
-                    path="clusters/:clusterID/executions/last/:checkID/:targetType/:targetName"
-                    element={<CheckResultDetailPage />}
+                    path="hosts/:targetID/executions/last"
+                    element={<ExecutionResultsPage targetType={TARGET_HOST} />}
+                  />
+                  <Route
+                    path="clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
+                    element={
+                      <CheckResultDetailPage targetType={TARGET_CLUSTER} />
+                    }
                   />
                 </Route>
               </Route>
