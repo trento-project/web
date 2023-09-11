@@ -79,7 +79,8 @@ defmodule Trento.Domain.Host do
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
 
-    field :saptune_status, :map # TODO: Update this with the final data struct and embeds_one
+    # TODO: Update this with the final data struct and embeds_one
+    field :saptune_status, :map
     embeds_many :subscriptions, SlesSubscription
 
     field :provider_data, PolymorphicEmbed,
@@ -366,11 +367,9 @@ defmodule Trento.Domain.Host do
 
   def execute(
         %Host{
-          host_id: host_id,
           saptune_status: status
         },
         %UpdateSaptuneStatus{
-          host_id: host_id,
           status: status
         }
       ) do
@@ -378,10 +377,9 @@ defmodule Trento.Domain.Host do
   end
 
   def execute(
-        %Host{
-          host_id: host_id
-        },
+        %Host{},
         %UpdateSaptuneStatus{
+          host_id: host_id,
           status: status
         }
       ) do

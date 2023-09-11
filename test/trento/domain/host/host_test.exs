@@ -581,6 +581,7 @@ defmodule Trento.HostTest do
       initial_events = [
         %{host_id: host_id} = build(:host_registered_event)
       ]
+
       saptune_status = build(:saptune_status)
 
       assert_events_and_state(
