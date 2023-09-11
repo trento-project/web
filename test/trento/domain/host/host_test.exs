@@ -11,6 +11,7 @@ defmodule Trento.HostTest do
     SelectHostChecks,
     UpdateHeartbeat,
     UpdateProvider,
+    UpdateSaptuneStatus,
     UpdateSlesSubscriptions
   }
 
@@ -27,6 +28,7 @@ defmodule Trento.HostTest do
     HostRollUpRequested,
     HostTombstoned,
     ProviderUpdated,
+    SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
 
@@ -568,6 +570,56 @@ defmodule Trento.HostTest do
                        status: "active"
                      }
                    ]
+                 } = state
+        end
+      )
+    end
+  end
+
+  describe "saptune" do
+    test "should update saptune status" do
+      initial_events = [
+        %{host_id: host_id} = build(:host_registered_event)
+      ]
+      saptune_status = build(:saptune_status)
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          status: saptune_status
+        }),
+        %SaptuneStatusUpdated{
+          host_id: host_id,
+          status: saptune_status
+        },
+        fn state ->
+          assert %Host{
+                   saptune_status: ^saptune_status
+                 } = state
+        end
+      )
+    end
+
+    test "should not update saptune status if it contains the same data" do
+      host_id = Faker.UUID.v4()
+      saptune_status = build(:saptune_status)
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        %SaptuneStatusUpdated{host_id: host_id, status: saptune_status}
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          status: saptune_status
+        }),
+        [],
+        fn state ->
+          assert %Host{
+                   saptune_status: ^saptune_status
                  } = state
         end
       )

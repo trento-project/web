@@ -196,6 +196,15 @@ defmodule Trento.Factory do
     }
   end
 
+  def saptune_status_factory do
+    # TODO: Update this with the final data struct
+    %{
+      package_version: Faker.App.semver(),
+      configured_version: Enum.random(0..3),
+      tuning_state: Enum.random(["compliant", "not compliat", "no tuning"])
+    }
+  end
+
   def host_telemetry_factory do
     %HostTelemetryReadModel{
       agent_id: Faker.UUID.v4(),
