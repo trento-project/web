@@ -36,6 +36,7 @@ defmodule Trento.Domain.Host do
     SelectHostChecks,
     UpdateHeartbeat,
     UpdateProvider,
+    UpdateSaptuneStatus,
     UpdateSlesSubscriptions
   }
 
@@ -52,6 +53,7 @@ defmodule Trento.Domain.Host do
     HostRollUpRequested,
     HostTombstoned,
     ProviderUpdated,
+    SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
 
@@ -77,6 +79,7 @@ defmodule Trento.Domain.Host do
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
 
+    field :saptune_status, :map # TODO: Update this with the final data struct and embeds_one
     embeds_many :subscriptions, SlesSubscription
 
     field :provider_data, PolymorphicEmbed,
@@ -361,6 +364,33 @@ defmodule Trento.Domain.Host do
     }
   end
 
+  def execute(
+        %Host{
+          host_id: host_id,
+          saptune_status: status
+        },
+        %UpdateSaptuneStatus{
+          host_id: host_id,
+          status: status
+        }
+      ) do
+    []
+  end
+
+  def execute(
+        %Host{
+          host_id: host_id
+        },
+        %UpdateSaptuneStatus{
+          status: status
+        }
+      ) do
+    %SaptuneStatusUpdated{
+      host_id: host_id,
+      status: status
+    }
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -477,6 +507,18 @@ defmodule Trento.Domain.Host do
     %Host{
       host
       | selected_checks: selected_checks
+    }
+  end
+
+  def apply(
+        %Host{} = host,
+        %SaptuneStatusUpdated{
+          status: status
+        }
+      ) do
+    %Host{
+      host
+      | saptune_status: status
     }
   end
 

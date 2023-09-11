@@ -29,6 +29,7 @@ defmodule Trento.Router do
     SelectHostChecks,
     UpdateHeartbeat,
     UpdateProvider,
+    UpdateSaptuneStatus,
     UpdateSlesSubscriptions
   }
 
@@ -40,6 +41,7 @@ defmodule Trento.Router do
              RegisterHost,
              UpdateHeartbeat,
              UpdateProvider,
+             UpdateSaptuneStatus,
              UpdateSlesSubscriptions,
              SelectHostChecks,
              RollUpHost,
