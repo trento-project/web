@@ -57,7 +57,7 @@ function HostDetails({
 
   const {
     package_version: saptuneVersion,
-    configured_version: saptuneConfigureVersion,
+    configured_version: saptuneConfiguredVersion,
     tuning_state: saptuneTuning,
   } = saptuneStatus;
 
@@ -192,7 +192,7 @@ function HostDetails({
                 },
                 {
                   title: 'Configured Version',
-                  content: saptuneConfigureVersion || '-',
+                  content: saptuneConfiguredVersion || '-',
                 },
               ]}
             />
