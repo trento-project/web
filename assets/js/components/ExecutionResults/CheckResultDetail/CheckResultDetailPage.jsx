@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { find, get } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
@@ -57,9 +58,7 @@ const getResultTargetID = (
 ) => {
   switch (resultTargetType) {
     case TARGET_HOST:
-      return (
-        targetHosts.find(({ hostname }) => hostname === resultTargetName) || {}
-      )?.id;
+      return get(find(targetHosts, { hostname: resultTargetName }), 'id');
     case TARGET_CLUSTER:
       return targetID;
     default:
@@ -152,15 +151,13 @@ function CheckResultDetailPage({ targetType }) {
       <NotFound
         buttonText="Go back to last execution"
         onNavigate={() => {
-          switch (true) {
-            case isClusterExecution:
-              navigate(`/clusters/${targetID}/executions/last`);
-              break;
-            case isHostExecution:
-              navigate(`/hosts/${targetID}/executions/last`);
-              break;
-            default:
+          if (isClusterExecution) {
+            return navigate(`/clusters/${targetID}/executions/last`);
           }
+          if (isHostExecution) {
+            return navigate(`/hosts/${targetID}/executions/last`);
+          }
+          return null;
         }}
       />
     );
