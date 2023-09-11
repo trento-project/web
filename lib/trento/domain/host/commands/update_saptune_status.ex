@@ -1,6 +1,6 @@
 defmodule Trento.Domain.Commands.UpdateSaptuneStatus do
   @moduledoc """
-  Update the host saptune status .
+  Update the saptune status on a specific host.
   """
   alias Trento.Domain.SaptuneStatus
 
