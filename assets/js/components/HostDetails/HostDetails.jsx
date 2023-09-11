@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
-import { isVersionSupported } from '@lib/saptune';
 
 import Button from '@components/Button';
 import ListView from '@components/ListView';
@@ -16,13 +15,13 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { canStartExecution } from '@components/ChecksSelection';
-import { SaptuneVersion, SaptuneTuningState } from '@components/SaptuneDetails';
 
 import SuseLogo from '@static/suse_logo.svg';
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
 
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
+import SaptuneSummary from './SaptuneSummary';
 
 import {
   subscriptionsTableConfiguration,
@@ -167,34 +166,10 @@ function HostDetails({
             />
           </div>
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
-            <div className="flex justify-between mb-2">
-              <h1 className="text-2xl font-bold">Saptune Summary</h1>
-              <Button
-                type="primary-white-fit"
-                className="border-green-500 border"
-                size="small"
-                disabled={!isVersionSupported(saptuneVersion)}
-              >
-                View Details
-              </Button>
-            </div>
-            <ListView
-              className="grid-rows-2"
-              orientation="vertical"
-              data={[
-                {
-                  title: 'Package',
-                  content: <SaptuneVersion version={saptuneVersion} />,
-                },
-                {
-                  title: 'Tunning',
-                  content: <SaptuneTuningState state={saptuneTuning} />,
-                },
-                {
-                  title: 'Configured Version',
-                  content: saptuneConfiguredVersion || '-',
-                },
-              ]}
+            <SaptuneSummary
+              saptuneVersion={saptuneVersion}
+              saptuneConfiguredVersion={saptuneConfiguredVersion}
+              saptuneTuning={saptuneTuning}
             />
           </div>
           <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">

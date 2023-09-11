@@ -5,7 +5,6 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 
-import { SUPPORTED_VERSION } from '@lib/saptune';
 import { renderWithRouter } from '@lib/test-utils';
 import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 
@@ -158,38 +157,6 @@ describe('HostDetails component', () => {
       expect(screen.getByText('Tunning').nextSibling).toHaveTextContent(
         new RegExp(tuningState, 'i')
       );
-    });
-
-    it('should enable saptune details button', () => {
-      const saptuneStatus = saptuneStatusFactory.build({
-        package_version: SUPPORTED_VERSION,
-      });
-
-      renderWithRouter(
-        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />
-      );
-
-      expect(
-        screen.getByRole('button', {
-          name: 'View Details',
-        })
-      ).toBeEnabled();
-    });
-
-    it('should disable saptune details button', () => {
-      const saptuneStatus = saptuneStatusFactory.build({
-        package_version: '3.0.0',
-      });
-
-      renderWithRouter(
-        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />
-      );
-
-      expect(
-        screen.getByRole('button', {
-          name: 'View Details',
-        })
-      ).toBeDisabled();
     });
   });
 });
