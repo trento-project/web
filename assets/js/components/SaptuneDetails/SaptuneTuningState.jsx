@@ -21,7 +21,7 @@ function SaptuneTuningState({ state }) {
         </div>
       );
     default:
-      return '-';
+      return <span>-</span>;
   }
 }
 

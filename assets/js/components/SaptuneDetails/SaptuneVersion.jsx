@@ -7,11 +7,11 @@ import HealthIcon from '@components/Health/HealthIcon';
 
 function SaptuneVersion({ version }) {
   if (!version) {
-    return 'Not installed';
+    return <span>Not installed</span>;
   }
 
   if (isVersionSupported(version)) {
-    return version;
+    return <span>{version}</span>;
   }
 
   return (
