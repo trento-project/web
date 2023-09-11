@@ -52,8 +52,6 @@ function HostDetails({
   navigate,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
-  const [checksExecutionTooltipVisible, setChecksExecutionTooltipVisible] =
-    useState(true);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -134,15 +132,12 @@ function HostDetails({
 
               <Tooltip
                 content="Click Start Execution or wait for Trento to periodically run checks."
-                visible={checksExecutionTooltipVisible && canStartExecution(selectedChecks, savingChecks)}
+                visible={canStartExecution(selectedChecks, savingChecks)}
               >
                 <Button
                   type="primary"
                   className="mx-1"
-                  onClick={() => {
-                    requestHostChecksExecution();
-                    setChecksExecutionTooltipVisible(false);
-                  }}
+                  onClick={requestHostChecksExecution}
                   disabled={!canStartExecution(selectedChecks, savingChecks)}
                 >
                   <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
