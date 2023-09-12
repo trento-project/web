@@ -1,25 +1,27 @@
 import React from 'react';
 
-import BackButton from '@components/BackButton';
+import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
+
 import HealthIcon from '@components/Health/HealthIcon';
 import WarningBanner from '@components/Banners/WarningBanner';
-import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
 import CheckResultInfoBox from './CheckResultInfoBox';
+import { isTargetCluster } from '../checksUtils';
+import BackToTargetExecution from './BackToTargetExecution';
 
 function CheckDetailHeader({
-  clusterID,
   checkID,
   checkDescription,
+  targetID,
   targetType,
-  targetName,
+  resultTargetType,
+  resultTargetName,
   cloudProvider,
   result,
 }) {
+  const targetCluster = isTargetCluster(targetType);
   return (
     <>
-      <BackButton url={`/clusters/${clusterID}/executions/last`}>
-        Back to Check Results
-      </BackButton>
+      <BackToTargetExecution targetID={targetID} targetType={targetType} />
       <div className="flex mb-4 justify-between">
         <h1 className="flex text-3xl">
           <span className="inline-flex self-center mr-3">
@@ -28,7 +30,7 @@ function CheckDetailHeader({
           <span className="font-medium">{checkDescription}</span>
         </h1>
       </div>
-      {cloudProvider === UNKNOWN_PROVIDER && (
+      {targetCluster && cloudProvider === UNKNOWN_PROVIDER && (
         <WarningBanner>
           The following results are valid for on-premise bare metal platforms.
           <br />
@@ -36,7 +38,7 @@ function CheckDetailHeader({
           use results with caution
         </WarningBanner>
       )}
-      {cloudProvider === VMWARE_PROVIDER && (
+      {targetCluster && cloudProvider === VMWARE_PROVIDER && (
         <WarningBanner>
           Configuration checks for HANA scale-up performance optimized clusters
           on VMware are still in experimental phase. Please use results with
@@ -45,8 +47,8 @@ function CheckDetailHeader({
       )}
       <CheckResultInfoBox
         checkID={checkID}
-        targetType={targetType}
-        targetName={targetName}
+        resultTargetType={resultTargetType}
+        resultTargetName={resultTargetName}
         provider={cloudProvider}
       />
     </>
