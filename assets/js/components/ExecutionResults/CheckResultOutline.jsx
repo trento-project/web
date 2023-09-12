@@ -56,6 +56,24 @@ const extractExpectSameResults = (
     })
   );
 
+const getTargetCheckDetailURL = (
+  targetID,
+  targetType,
+  targetName,
+  checkID,
+  resultTargetType,
+  resultTargetName
+) => {
+  switch (targetType) {
+    case TARGET_CLUSTER:
+      return `/clusters/${targetID}/executions/last/${checkID}/${resultTargetType}/${resultTargetName}`;
+    case TARGET_HOST:
+      return `/hosts/${targetID}/executions/last/${checkID}/host/${targetName}`;
+    default:
+      return null;
+  }
+};
+
 function CheckResultOutline({
   checkID,
   targetID,
@@ -101,12 +119,17 @@ function CheckResultOutline({
                 targetName={resultTargetName}
                 expectationsSummary={expectationsSummary}
                 isAgentCheckError={agentCheckError}
-                onClick={() =>
-                  // todo navigate also to host execution results when targetType is host
-                  navigate(
-                    `/clusters/${targetID}/executions/last/${checkID}/${resultTargetType}/${resultTargetName}`
-                  )
-                }
+                onClick={() => {
+                  const targetCheckDetailURL = getTargetCheckDetailURL(
+                    targetID,
+                    targetType,
+                    targetName,
+                    checkID,
+                    resultTargetType,
+                    resultTargetName
+                  );
+                  targetCheckDetailURL && navigate(targetCheckDetailURL);
+                }}
               />
             )
           )}
