@@ -11,14 +11,16 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
   alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateProvider,
-    UpdateSlesSubscriptions
+    UpdateSlesSubscriptions,
+    UpdateSaptuneStatus
   }
 
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
     GcpProvider,
-    SlesSubscription
+    SlesSubscription,
+    SaptuneStatus
   }
 
   test "should return the expected commands when a host_discovery payload is handled" do
@@ -265,11 +267,85 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
+  test "should emit update saptune command when a saptune_discovery is received with status nil" do
+    assert {
+             :ok,
+             %UpdateSaptuneStatus{
+               host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
+               saptune_installed: true,
+               package_version: "3.1.0",
+               status: nil
+             }
+           } =
+             "saptune_discovery_empty_status"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
   test "should emit update saptune command when a saptune_discovery is received" do
-    assert {:ok, payload} =
+    assert {
+             :ok,
+             %UpdateSaptuneStatus{
+               host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
+               saptune_installed: true,
+               package_version: "3.1.0",
+               status: %SaptuneStatus{
+                 package_version: "3.1.0",
+                 configured_version: "3",
+                 tuning_state: "not compliant",
+                 services: [
+                   %Trento.Domain.SaptuneServiceStatus{
+                     name: "sapconf",
+                     enabled: false,
+                     active: false
+                   },
+                   %Trento.Domain.SaptuneServiceStatus{
+                     name: "saptune",
+                     enabled: true,
+                     active: true
+                   },
+                   %Trento.Domain.SaptuneServiceStatus{
+                     name: "tuned",
+                     enabled: false,
+                     active: false
+                   }
+                 ],
+                 enabled_notes: [
+                   %Trento.Domain.SaptuneNote{id: "941735", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "1771258", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "2578899", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "2993054", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "1656250", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "900929", additionally_enabled: false}
+                 ],
+                 applied_notes: [
+                   %Trento.Domain.SaptuneNote{id: "941735", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "1771258", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "2578899", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "2993054", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "1656250", additionally_enabled: false},
+                   %Trento.Domain.SaptuneNote{id: "900929", additionally_enabled: false}
+                 ],
+                 enabled_solution: %Trento.Domain.SaptuneSolution{
+                   id: "NETWEAVER",
+                   notes: ["941735", "1771258", "2578899", "2993054", "1656250", "900929"],
+                   partial: false
+                 },
+                 applied_solution: %Trento.Domain.SaptuneSolution{
+                   id: "NETWEAVER",
+                   notes: ["941735", "1771258", "2578899", "2993054", "1656250", "900929"],
+                   partial: false
+                 },
+                 staging: %Trento.Domain.SaptuneStaging{
+                   enabled: false,
+                   notes: [],
+                   solutions_ids: []
+                 }
+               }
+             }
+           } =
              "saptune_discovery"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
-             |> IO.inspect()
   end
 end
