@@ -169,3 +169,14 @@ export const getExpectSameFacts = (expectations, agentsCheckResults) =>
         }, {}),
     },
   }));
+
+export const getTargetName = (target, targetType) => {
+  switch (targetType) {
+    case TARGET_CLUSTER:
+      return target.name;
+    case TARGET_HOST:
+      return target.hostname;
+    default:
+      return null;
+  }
+};
