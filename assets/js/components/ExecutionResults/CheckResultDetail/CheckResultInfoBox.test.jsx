@@ -8,25 +8,25 @@ describe('CheckResultInfoBox Component', () => {
   const scenarios = [
     {
       checkID: faker.datatype.uuid(),
-      targetType: 'cluster',
+      resultTargetType: 'cluster',
       expectedTargetTypeText: 'Cluster',
-      targetName: faker.lorem.word(),
+      resultTargetName: faker.lorem.word(),
       provider: 'aws',
       expectedProviderText: 'AWS',
     },
     {
       checkID: faker.datatype.uuid(),
-      targetType: 'host',
+      resultTargetType: 'host',
       expectedTargetTypeText: 'Host',
-      targetName: faker.lorem.word(),
+      resultTargetName: faker.lorem.word(),
       provider: 'azure',
       expectedProviderText: 'Azure',
     },
     {
       checkID: faker.datatype.uuid(),
-      targetType: 'foobar',
+      resultTargetType: 'foobar',
       expectedTargetTypeText: 'Unknown target type',
-      targetName: faker.lorem.word(),
+      resultTargetName: faker.lorem.word(),
       provider: 'azure',
       expectedProviderText: 'Azure',
     },
@@ -36,24 +36,24 @@ describe('CheckResultInfoBox Component', () => {
     'should display a proper check result info box for check "$checkID" on target of type "$targetType" named "$targetName"',
     ({
       checkID,
-      targetType,
+      resultTargetType,
       expectedTargetTypeText,
-      targetName,
+      resultTargetName,
       provider,
       expectedProviderText,
     }) => {
       const { getByText } = render(
         <CheckResultInfoBox
           checkID={checkID}
-          targetType={targetType}
-          targetName={targetName}
+          resultTargetType={resultTargetType}
+          resultTargetName={resultTargetName}
           provider={provider}
         />
       );
       expect(getByText(checkID)).toBeTruthy();
       expect(getByText(expectedProviderText)).toBeTruthy();
       expect(getByText(expectedTargetTypeText)).toBeTruthy();
-      expect(getByText(targetName)).toBeTruthy();
+      expect(getByText(resultTargetName)).toBeTruthy();
     }
   );
 });
