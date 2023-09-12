@@ -11,7 +11,7 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
     field :notes_enabled_by_solution, {:array, :map}
     field :notes_applied_by_solution, {:array, :map}
     field :notes_enabled_additionally, {:array, :string}
-    field :solution_enabled, {:array, :map}
+    field :solution_enabled, {:array, :string}
     field :solution_applied, {:array, :map}
     field :notes_enabled, {:array, :string}
     field :notes_applied, {:array, :string}

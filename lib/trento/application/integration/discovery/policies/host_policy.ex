@@ -77,6 +77,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         }
       }) do
     status
+    |> Map.get("result")
     |> format_saptune_payload_keys()
     |> SaptuneDiscoveryPayload.new()
     |> case do
