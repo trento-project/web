@@ -8,7 +8,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateProvider,
-    UpdateSlesSubscriptions
+    UpdateSlesSubscriptions,
+    UpdateSaptuneStatus
   }
 
   alias Trento.Integration.Discovery.{
@@ -52,17 +53,44 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   def handle(%{
         "discovery_type" => "saptune_discovery",
         "agent_id" => agent_id,
-        "payload" => payload
+        "payload" => %{
+          "status" => nil,
+          "saptune_installed" => saptune_installed,
+          "package_version" => package_version
+        }
       }) do
-    payload
-    |> Map.get("result")
+    build_update_saptune_command(
+      agent_id,
+      nil,
+      package_version,
+      saptune_installed
+    )
+  end
+
+  def handle(%{
+        "discovery_type" => "saptune_discovery",
+        "agent_id" => agent_id,
+        "payload" => %{
+          "status" => status,
+          "saptune_installed" => saptune_installed,
+          "package_version" => package_version
+        }
+      }) do
+    status
     |> format_saptune_payload_keys()
-    |> format_saptune_services_list()
-    |> format_saptune_solutions_list()
-    |> format_saptune_staging_informations()
-    |> format_saptune_applied_notes()
-    |> format_saptune_enabled_notes()
     |> SaptuneDiscoveryPayload.new()
+    |> case do
+      {:ok, decoded_payload} ->
+        build_update_saptune_command(
+          agent_id,
+          decoded_payload,
+          package_version,
+          saptune_installed
+        )
+
+      error ->
+        error
+    end
   end
 
   def handle(%{
@@ -112,25 +140,51 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            installation_source: installation_source
          })
 
-  # defp build_saptune_host_command(agent_id, %SaptuneDiscoveryPayload{
-  #        package_version: package_version,
-  #        configured_version: configured_version,
-  #        tuning_state: tuning_state,
-  #        services: services,
-  #        enabled_solution: enabled_solution,
-  #        applied_solution: applied_solution,
-  #        staging: staging
-  #      }),
-  #      do:
-  #        SaptuneUpdated.new(%{
-  #          package_version: package_version,
-  #          configured_version: configured_version,
-  #          tuning_state: tuning_state,
-  #          services: services,
-  #          enabled_solution: enabled_solution,
-  #          applied_solution: applied_solution,
-  #          staging: staging
-  #        })
+  defp build_update_saptune_command(agent_id, nil, package_version, saptune_installed),
+    do:
+      UpdateSaptuneStatus.new(%{
+        host_id: agent_id,
+        saptune_installed: saptune_installed,
+        package_version: package_version,
+        status: nil
+      })
+
+  defp build_update_saptune_command(
+         agent_id,
+         %SaptuneDiscoveryPayload{
+           package_version: package_version,
+           configured_version: configured_version,
+           tuning_state: tuning_state,
+           services: services,
+           notes_enabled_by_solution: notes_enabled_by_solution,
+           notes_applied_by_solution: notes_applied_by_solution,
+           notes_enabled_additionally: notes_enabled_additionally,
+           solution_enabled: solution_enabled,
+           solution_applied: solution_applied,
+           notes_enabled: notes_enabled,
+           notes_applied: notes_applied,
+           staging: staging
+         },
+         package_version,
+         saptune_installed
+       ) do
+    UpdateSaptuneStatus.new(%{
+      host_id: agent_id,
+      package_version: package_version,
+      saptune_installed: saptune_installed,
+      status: %{
+        package_version: package_version,
+        configured_version: configured_version,
+        tuning_state: tuning_state,
+        services: format_saptune_services_list(services),
+        enabled_notes: format_saptune_notes(notes_enabled_additionally, notes_enabled),
+        applied_notes: format_saptune_notes(notes_enabled_additionally, notes_applied),
+        enabled_solution: format_enabled_solution(solution_enabled, notes_enabled_by_solution),
+        applied_solution: format_applied_solution(solution_applied, notes_applied_by_solution),
+        staging: format_saptune_staging_informations(staging)
+      }
+    })
+  end
 
   defp build_update_provider_command(agent_id, %CloudDiscoveryPayload{
          provider: provider,
@@ -270,28 +324,15 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     payload |> String.replace(" ", "_") |> String.downcase()
   end
 
-  defp format_saptune_services_list(%{"services" => service_map} = attrs) do
-    %{
-      attrs
-      | "services" =>
-          Enum.map(service_map, fn {service_name, status} ->
-            %{"name" => service_name, "status" => status}
-          end)
-    }
+  defp format_saptune_services_list(%{}), do: []
+
+  defp format_saptune_services_list(service_map) do
+    Enum.map(service_map, fn {service_name, status} ->
+      %{"name" => service_name, "status" => status}
+    end)
   end
 
-  defp format_saptune_services_list(attrs), do: attrs
-
-  def format_saptune_solutions_list(attrs) do
-    attrs
-    |> Map.put("enabled_solution", extract_enabled_solution(attrs))
-    |> Map.put("applied_solution", extract_applied_solution(attrs))
-  end
-
-  defp extract_enabled_solution(%{
-         "solution_enabled" => [solution_enabled],
-         "notes_enabled_by_solution" => [%{"note_list" => note_list}]
-       }) do
+  defp format_enabled_solution([solution_enabled], [%{"note_list" => note_list}]) do
     format_solution(%{
       "solution_id" => solution_enabled,
       "note_list" => note_list,
@@ -299,16 +340,13 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     })
   end
 
-  defp extract_enabled_solution(_), do: []
+  defp format_enabled_solution(_, _), do: []
 
-  defp extract_applied_solution(%{
-         "solution_applied" => [solution_applied],
-         "notes_applied_by_solution" => [%{"note_list" => note_list}]
-       }) do
+  defp format_applied_solution([solution_applied], [%{"note_list" => note_list}]) do
     format_solution(Map.put(solution_applied, "note_list", note_list))
   end
 
-  defp extract_applied_solution(_), do: []
+  defp format_applied_solution(_, _), do: []
 
   defp format_solution(%{
          "solution_id" => solution_id,
@@ -317,40 +355,16 @@ defmodule Trento.Integration.Discovery.HostPolicy do
        }),
        do: %{"id" => solution_id, "notes" => note_list, "partial" => partially_applied}
 
-  defp format_saptune_staging_informations(
-         %{
-           "staging" => %{
-             "staging_enabled" => staging_enabled,
-             "notes_staged" => notes_staged,
-             "solutions_staged" => solutions_staged
-           }
-         } = attrs
-       ) do
-    staging_infos = %{
+  defp format_saptune_staging_informations(%{
+         "staging_enabled" => staging_enabled,
+         "notes_staged" => notes_staged,
+         "solutions_staged" => solutions_staged
+       }) do
+    %{
       "enabled" => staging_enabled,
       "notes" => notes_staged,
       "solutions_ids" => solutions_staged
     }
-
-    Map.put(attrs, "staging", staging_infos)
-  end
-
-  defp format_saptune_enabled_notes(
-         %{
-           "notes_enabled_additionally" => additional_notes,
-           "notes_enabled" => notes_enabled
-         } = attrs
-       ) do
-    Map.put(attrs, "enabled_notes", format_saptune_notes(notes_enabled, additional_notes))
-  end
-
-  defp format_saptune_applied_notes(
-         %{
-           "notes_enabled_additionally" => additional_notes,
-           "notes_applied" => notes_applied
-         } = attrs
-       ) do
-    Map.put(attrs, "applied_notes", format_saptune_notes(notes_applied, additional_notes))
   end
 
   defp format_saptune_notes(notes, additional_notes) do
