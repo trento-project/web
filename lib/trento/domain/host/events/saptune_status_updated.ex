@@ -7,7 +7,7 @@ defmodule Trento.Domain.Events.SaptuneStatusUpdated do
 
   defevent do
     field :host_id, Ecto.UUID
-    # TODO: Update this with the final data struct and embeds_one
     field :status, :map
+    # embeds_one :status, SaptuneStatus
   end
 end

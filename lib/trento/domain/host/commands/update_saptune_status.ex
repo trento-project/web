@@ -8,6 +8,8 @@ defmodule Trento.Domain.Commands.UpdateSaptuneStatus do
 
   use Trento.Command
 
+  # alias Trento.Domain.SaptuneStatus
+
   defcommand do
     field :host_id, Ecto.UUID
     field :package_version, :string

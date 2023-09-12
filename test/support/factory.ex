@@ -38,6 +38,7 @@ defmodule Trento.Factory do
     HostRegistered,
     HostRemovedFromCluster,
     HostTombstoned,
+    SaptuneStatusUpdated,
     SapSystemDeregistered,
     SapSystemRegistered,
     SapSystemTombstoned,
@@ -115,7 +116,8 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       provider_data: nil,
       deregistered_at: nil,
-      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end)
+      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
+      saptune_status: nil
     }
   end
 
@@ -202,6 +204,13 @@ defmodule Trento.Factory do
       package_version: Faker.App.semver(),
       configured_version: Enum.random(0..3),
       tuning_state: Enum.random(["compliant", "not compliat", "no tuning"])
+    }
+  end
+
+  def saptune_status_updated_event_factory do
+    %SaptuneStatusUpdated{
+      host_id: Faker.UUID.v4(),
+      status: build(:saptune_status)
     }
   end
 
