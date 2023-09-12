@@ -20,6 +20,9 @@ export const cloudProviderEnum = () =>
 const heartbeatEnum = () =>
   faker.helpers.arrayElement(['unknown', 'critical', 'passing']);
 
+const saptuneTuningStateEnum = () =>
+  faker.helpers.arrayElement(['compliant', 'not compliant', 'no tuning']);
+
 export const slesSubscriptionFactory = Factory.define(() => ({
   arch: 'x86_64',
   expires_at: day(faker.date.future()).format(slesSubscriptionDateFormat),
@@ -32,6 +35,14 @@ export const slesSubscriptionFactory = Factory.define(() => ({
   type: 'internal',
   updated_at: day(faker.date.recent()).format(),
   version: '15.3',
+}));
+
+export const saptuneStatusFactory = Factory.define(() => ({
+  package_version: faker.helpers.fake(
+    '{{datatype.number}}.{{datatype.number}}.{{datatype.number}}'
+  ),
+  configured_version: faker.datatype.number(),
+  tuning_state: saptuneTuningStateEnum(),
 }));
 
 export const hostFactory = Factory.define(({ params, sequence }) => {
@@ -58,5 +69,6 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     sles_subscriptions: slesSubscriptionFactory.buildList(4, { host_id: id }),
     deregisterable: false,
     selected_checks: [],
+    saptune_status: saptuneStatusFactory.build(),
   };
 });

@@ -83,6 +83,10 @@ export default {
         type: { summary: 'string' },
       },
     },
+    ipAddresses: {
+      control: { type: 'array' },
+      description: 'IP addresses',
+    },
     provider: {
       control: 'string',
       description: 'The discovered CSP where the host is running',
@@ -97,6 +101,10 @@ export default {
     sapSystems: {
       control: { type: 'array' },
       description: 'SAP systems running on the host',
+    },
+    saptuneStatus: {
+      control: 'object',
+      description: 'Saptune status data',
     },
     savingChecks: {
       control: { type: 'boolean' },
@@ -151,10 +159,16 @@ export const Default = {
     heartbeat: host.heartbeat,
     hostID: host.id,
     hostname: host.hostname,
+    ipAddresses: host.ip_addresses,
     provider: host.provider,
     providerData: host.provider_data,
     sapInstances,
     savingChecks: false,
+    saptuneStatus: {
+      package_version: '3.1.0',
+      configured_version: '3',
+      tuning_state: 'no tuning',
+    },
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
   },
@@ -178,5 +192,27 @@ export const ChecksSelected = {
   args: {
     ...Default.args,
     selectedChecks: ['some-check'],
+  },
+};
+
+export const SaptuneNotInstalled = {
+  args: {
+    ...Default.args,
+    saptuneStatus: {
+      package_version: null,
+      configured_version: null,
+      tuning_state: null,
+    },
+  },
+};
+
+export const SaptuneOldVersion = {
+  args: {
+    ...Default.args,
+    saptuneStatus: {
+      package_version: '3.0.0',
+      configured_version: null,
+      tuning_state: null,
+    },
   },
 };

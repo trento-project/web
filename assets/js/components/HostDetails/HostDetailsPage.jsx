@@ -63,9 +63,11 @@ function HostDetailsPage() {
       heartbeat={host.heartbeat}
       hostID={host.id}
       hostname={host.hostname}
+      ipAddresses={host.ip_addresses}
       provider={host.provider}
       providerData={host.provider_data}
       sapInstances={sapInstances}
+      saptuneStatus={{}}
       savingChecks={saving}
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}
