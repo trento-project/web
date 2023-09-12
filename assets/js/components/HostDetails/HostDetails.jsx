@@ -131,6 +131,7 @@ function HostDetails({
               </Button>
 
               <Tooltip
+                className="w-56"
                 content="Click Start Execution or wait for Trento to periodically run checks."
                 visible={canStartExecution(selectedChecks, savingChecks)}
               >

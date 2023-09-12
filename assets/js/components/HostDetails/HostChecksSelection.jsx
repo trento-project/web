@@ -47,6 +47,7 @@ function HostChecksSelection({
               Save Checks Selection
             </Button>
             <Tooltip
+              className="w-56"
               content="Click Start Execution or wait for Trento to periodically run checks."
               visible={checksExecutionTooltipVisible}
             >
