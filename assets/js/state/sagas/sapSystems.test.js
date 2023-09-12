@@ -108,7 +108,7 @@ describe('SAP Systems sagas', () => {
         absent_at,
       }),
       notify({
-        text: `The application instance ${sid} is now absent.`,
+        text: `The application instance ${instance_number} from ${sid} is now absent.`,
         icon: 'ℹ️',
       }),
     ]);
@@ -131,7 +131,7 @@ describe('SAP Systems sagas', () => {
         absent_at,
       }),
       notify({
-        text: `The application instance ${sid} is now present.`,
+        text: `The application instance ${instance_number} from ${sid} is now present.`,
         icon: 'ℹ️',
       }),
     ]);

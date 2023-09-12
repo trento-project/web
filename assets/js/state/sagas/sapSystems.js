@@ -83,10 +83,10 @@ function* applicationInstanceHealthChanged({ payload }) {
 
 export function* applicationInstanceAbsentAtChanged({ payload }) {
   yield put(updateApplicationInstanceAbsentAt(payload));
-  const { sid, absent_at } = payload;
+  const { sid, absent_at, instance_number } = payload;
   yield put(
     notify({
-      text: `The application instance ${sid} is now ${
+      text: `The application instance ${instance_number} from ${sid} is now ${
         absent_at ? 'absent' : 'present'
       }.`,
       icon: 'ℹ️',
