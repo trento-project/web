@@ -24,6 +24,7 @@ import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import LoadingBox from '@components/LoadingBox';
 import WarningBanner from '@components/Banners/WarningBanner';
+import Tooltip from '@components/Tooltip';
 
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
@@ -124,15 +125,21 @@ function ClusterSettingsPage() {
             >
               Save Checks Selection
             </Button>
-            <Button
-              type="primary"
-              className="mx-1"
-              onClick={requestExecution}
-              disabled={!canStartExecution(selectedChecks, saving)}
+            <Tooltip
+              className="w-56"
+              content="Click Start Execution or wait for Trento to periodically run checks."
+              visible={canStartExecution(selectedChecks, saving)}
             >
-              <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
-              Start Execution
-            </Button>
+              <Button
+                type="primary"
+                className="mx-1"
+                onClick={requestExecution}
+                disabled={!canStartExecution(selectedChecks, saving)}
+              >
+                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                Start Execution
+              </Button>
+            </Tooltip>
           </div>
         </div>
       </div>
