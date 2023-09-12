@@ -178,8 +178,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         configured_version: configured_version,
         tuning_state: tuning_state,
         services: format_saptune_services_list(services),
-        enabled_notes: format_saptune_notes(notes_enabled_additionally, notes_enabled),
-        applied_notes: format_saptune_notes(notes_enabled_additionally, notes_applied),
+        enabled_notes: format_saptune_notes(notes_enabled, notes_enabled_additionally),
+        applied_notes: format_saptune_notes(notes_applied, notes_enabled_additionally),
         enabled_solution: format_enabled_solution(solution_enabled, notes_enabled_by_solution),
         applied_solution: format_applied_solution(solution_applied, notes_applied_by_solution),
         staging: format_saptune_staging_informations(staging)
@@ -325,12 +325,24 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     payload |> String.replace(" ", "_") |> String.downcase()
   end
 
-  defp format_saptune_services_list(%{}), do: []
+  defp format_saptune_services_list(services) when map_size(services) == 0, do: []
 
   defp format_saptune_services_list(service_map) do
     Enum.map(service_map, fn {service_name, status} ->
-      %{"name" => service_name, "status" => status}
+      %{
+        "name" => service_name,
+        "enabled" => saptune_service_enabled?(status),
+        "active" => saptune_service_active?(status)
+      }
     end)
+  end
+
+  defp saptune_service_enabled?(service_status) do
+    Enum.any?(service_status, fn status -> status == "enabled" end)
+  end
+
+  defp saptune_service_active?(service_status) do
+    Enum.any?(service_status, fn status -> status == "active" end)
   end
 
   defp format_enabled_solution([solution_enabled], [%{"note_list" => note_list}]) do
