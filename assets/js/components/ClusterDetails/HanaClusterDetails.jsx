@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { groupBy } from 'lodash';
-import classNames from 'classnames';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
@@ -9,7 +8,6 @@ import Button from '@components/Button';
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
-import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
 import ProviderLabel from '@components/ProviderLabel';
@@ -133,21 +131,17 @@ function HanaClusterDetails({
               content="Select some Checks first!"
               place="bottom"
             >
-              <TriggerChecksExecutionRequest
-                cssClasses="flex rounded relative ml-0.5 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
-                targetID={clusterID}
+              <Button
+                type="primary"
+                className="mx-1"
+                onClick={() => {
+                  onStartExecution(clusterID, hosts, selectedChecks, navigate);
+                }}
                 disabled={startExecutionDisabled}
-                hosts={hosts.map(({ id }) => id)}
-                checks={selectedChecks}
-                onStartExecution={onStartExecution}
               >
-                <EOS_PLAY_CIRCLE
-                  className={classNames('inline-block fill-jungle-green-500', {
-                    'fill-slate-500': startExecutionDisabled,
-                  })}
-                />{' '}
-                <span>Start Execution</span>
-              </TriggerChecksExecutionRequest>
+                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                Start Execution
+              </Button>
             </Tooltip>
           </div>
         </div>
