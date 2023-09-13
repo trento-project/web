@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -23,14 +23,6 @@ function HostSettingsPage() {
   const hostSelectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
   );
-  const [selection, setSelection] = useState([]);
-  useEffect(() => {
-    if (host) {
-      setSelection(hostSelectedChecks);
-    }
-  }, [hostSelectedChecks]);
-  const [checksExecutionTooltipVisible, setChecksExecutionTooltipVisible] =
-    useState(hostSelectedChecks?.length > 0);
 
   const {
     data: catalog,
@@ -65,12 +57,10 @@ function HostSettingsPage() {
         checks: newSelection,
       })
     );
-    setChecksExecutionTooltipVisible(newSelection?.length > 0);
   };
 
   const requestHostChecksExecution = () => {
     dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
-    setChecksExecutionTooltipVisible(false);
   };
 
   return (
@@ -85,11 +75,9 @@ function HostSettingsPage() {
       onUpdateCatalog={refreshCatalog}
       isSavingSelection={saving}
       onSaveSelection={saveSelection}
-      selectedChecks={selection}
       hostChecksExecutionEnabled={hostChecksExecutionEnabled}
-      onSelectedChecksChange={setSelection}
       onStartExecution={requestHostChecksExecution}
-      checksExecutionTooltipVisible={checksExecutionTooltipVisible}
+      savedHostSelection={hostSelectedChecks}
     />
   );
 }

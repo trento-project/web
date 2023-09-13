@@ -37,7 +37,7 @@ describe('HostDetails component', () => {
       expect(startExecutionButton).toBeDisabled();
 
       await user.hover(startExecutionButton);
-      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      expect(screen.getByText('Select some Checks first!')).toBeInTheDocument();
     });
 
     it('should enable start execution button when checks are selected', async () => {
@@ -52,7 +52,9 @@ describe('HostDetails component', () => {
       expect(startExecutionButton).toBeEnabled();
 
       await user.hover(startExecutionButton);
-      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Select some Checks first!')
+      ).not.toBeInTheDocument();
     });
   });
 

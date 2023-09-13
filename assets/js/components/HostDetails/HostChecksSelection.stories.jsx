@@ -109,10 +109,6 @@ export default {
     onStartExecution: {
       description: 'Starts the host checks execution',
     },
-    checksExecutionTooltipVisible: {
-      description:
-        'Whether to display the tooltip above the start execution button',
-    },
   },
 };
 
@@ -128,6 +124,5 @@ export const Default = {
     catalogLoading: false,
     isSavingSelection: false,
     hostChecksExecutionEnabled: false,
-    checksExecutionTooltipVisible: false,
   },
 };

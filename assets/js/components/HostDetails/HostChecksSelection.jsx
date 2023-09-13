@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import PageHeader from '@components/PageHeader';
@@ -9,23 +9,28 @@ import Tooltip from '@components/Tooltip';
 
 import HostInfoBox from './HostInfoBox';
 
+const defaultSavedSelection = [];
+
 function HostChecksSelection({
   hostID,
   hostName,
   provider,
   agentVersion,
-  selectedChecks,
   catalog,
   catalogError,
   catalogLoading,
   onUpdateCatalog,
   isSavingSelection,
   onSaveSelection,
-  onSelectedChecksChange,
   hostChecksExecutionEnabled,
   onStartExecution = () => {},
-  checksExecutionTooltipVisible,
+  savedHostSelection = defaultSavedSelection,
 }) {
+  const [selection, setSelection] = useState([]);
+  useEffect(() => {
+    setSelection(savedHostSelection);
+  }, [savedHostSelection]);
+
   return (
     <div className="w-full px-2 sm:px-0">
       <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
@@ -41,7 +46,7 @@ function HostChecksSelection({
             <Button
               type="primary"
               className="mx-1"
-              onClick={() => onSaveSelection(selectedChecks, hostID, hostName)}
+              onClick={() => onSaveSelection(selection, hostID, hostName)}
               disabled={isSavingSelection}
             >
               Save Checks Selection
@@ -49,7 +54,7 @@ function HostChecksSelection({
             <Tooltip
               className="w-56"
               content="Click Start Execution or wait for Trento to periodically run checks."
-              visible={checksExecutionTooltipVisible}
+              visible={savedHostSelection?.length > 0}
             >
               <Button
                 type="primary"
@@ -70,9 +75,9 @@ function HostChecksSelection({
         catalog={catalog}
         catalogError={catalogError}
         loading={catalogLoading}
-        selectedChecks={selectedChecks}
+        selectedChecks={selection}
         onUpdateCatalog={() => onUpdateCatalog()}
-        onChange={onSelectedChecksChange}
+        onChange={setSelection}
       />
     </div>
   );
