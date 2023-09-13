@@ -1,4 +1,7 @@
 defmodule Trento.Domain.SaptuneNote do
+  @moduledoc """
+  Represents a SAP note.
+  """
   @required_fields [:id, :additionally_enabled]
 
   use Trento.Type

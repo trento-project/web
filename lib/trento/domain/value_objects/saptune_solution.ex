@@ -1,4 +1,7 @@
 defmodule Trento.Domain.SaptuneSolution do
+  @moduledoc """
+  Represents a Saptune solution
+  """
   @required_fields [:id]
 
   use Trento.Type

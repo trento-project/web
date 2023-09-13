@@ -10,20 +10,20 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
   alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateProvider,
-    UpdateSlesSubscriptions,
-    UpdateSaptuneStatus
+    UpdateSaptuneStatus,
+    UpdateSlesSubscriptions
   }
 
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
     GcpProvider,
-    SlesSubscription,
     SaptuneNote,
+    SaptuneServiceStatus,
     SaptuneSolution,
     SaptuneStaging,
-    SaptuneServiceStatus,
-    SaptuneStatus
+    SaptuneStatus,
+    SlesSubscription
   }
 
   test "should return the expected commands when a host_discovery payload is handled" do

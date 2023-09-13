@@ -1,4 +1,8 @@
 defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
+  @moduledoc """
+  Saptune discovery integration event payload
+  """
+
   alias Trento.Integration.Discovery.SaptuneDiscoveryPayload.SaptuneOutput
   @required_fields [:result]
 
@@ -9,6 +13,10 @@ defmodule Trento.Integration.Discovery.SaptuneDiscoveryPayload do
   end
 
   defmodule SaptuneOutput do
+    @moduledoc """
+    Saptune Output payload
+    """
+
     @required_fields nil
 
     use Trento.Type

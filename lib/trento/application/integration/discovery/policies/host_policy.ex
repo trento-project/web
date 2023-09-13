@@ -8,8 +8,8 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateProvider,
-    UpdateSlesSubscriptions,
-    UpdateSaptuneStatus
+    UpdateSaptuneStatus,
+    UpdateSlesSubscriptions
   }
 
   alias Trento.Integration.Discovery.{
@@ -306,18 +306,15 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   # Saptune payload
 
   defp format_saptune_payload_keys(map) when is_map(map) do
-    try do
-      for {key, val} <- map,
-          into: %{},
-          do: {snake_case(key), format_saptune_payload_keys(val)}
-    rescue
-      Protocol.UndefinedError -> map
-    end
+    for {key, val} <- map,
+        into: %{},
+        do: {snake_case(key), format_saptune_payload_keys(val)}
+  rescue
+    Protocol.UndefinedError -> map
   end
 
   defp format_saptune_payload_keys(list) when is_list(list) do
-    list
-    |> Enum.map(&format_saptune_payload_keys/1)
+    Enum.map(list, &format_saptune_payload_keys/1)
   end
 
   defp format_saptune_payload_keys(other_types), do: other_types

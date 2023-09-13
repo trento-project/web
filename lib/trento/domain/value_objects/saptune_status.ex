@@ -1,9 +1,12 @@
 defmodule Trento.Domain.SaptuneStatus do
+  @moduledoc """
+  Represents the status of Saptune.
+  """
   alias Trento.Domain.{
     SaptuneNote,
+    SaptuneServiceStatus,
     SaptuneSolution,
-    SaptuneStaging,
-    SaptuneServiceStatus
+    SaptuneStaging
   }
 
   @required_fields nil
