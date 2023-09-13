@@ -567,7 +567,7 @@ jobs:
         with:
           images: ${{ env.IMAGE_REPOSITORY }}
       - name: Build and push container image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
@@ -605,7 +605,7 @@ jobs:
         with:
           images: ${{ env.IMAGE_REPOSITORY }}
       - name: Build and push container image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
