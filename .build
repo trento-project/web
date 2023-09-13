@@ -51,6 +51,7 @@ Trento.Domain.Commands.SelectChecks.html
 Trento.Domain.Commands.SelectHostChecks.html
 Trento.Domain.Commands.UpdateHeartbeat.html
 Trento.Domain.Commands.UpdateProvider.html
+Trento.Domain.Commands.UpdateSaptuneStatus.html
 Trento.Domain.Commands.UpdateSlesSubscriptions.html
 Trento.Domain.Enums.AscsErsClusterRole.html
 Trento.Domain.Enums.ClusterType.html
@@ -123,6 +124,11 @@ Trento.Domain.SapSystem.Database.html
 Trento.Domain.SapSystem.Instance.html
 Trento.Domain.SapSystem.Lifespan.html
 Trento.Domain.SapSystem.html
+Trento.Domain.SaptuneNote.html
+Trento.Domain.SaptuneServiceStatus.html
+Trento.Domain.SaptuneSolution.html
+Trento.Domain.SaptuneStaging.html
+Trento.Domain.SaptuneStatus.html
 Trento.Domain.SbdDevice.html
 Trento.Domain.SlesSubscription.html
 Trento.Event.html
@@ -196,6 +202,8 @@ Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControlProperty.html
 Trento.Integration.Discovery.SapSystemDiscoveryPayload.SystemReplication.html
 Trento.Integration.Discovery.SapSystemDiscoveryPayload.html
 Trento.Integration.Discovery.SapSystemPolicy.html
+Trento.Integration.Discovery.SaptuneDiscoveryPayload.SaptuneOutput.html
+Trento.Integration.Discovery.SaptuneDiscoveryPayload.html
 Trento.Integration.Discovery.SlesSubscriptionDiscoveryPayload.html
 Trento.Integration.Discovery.html
 Trento.Integration.DiscoveryFixturesHelper.html
@@ -323,8 +331,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-DE242C7A.js
-dist/sidebar_items-1EFF0B16.js
+dist/search_items-F8BD13A5.js
+dist/sidebar_items-CED403BC.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
