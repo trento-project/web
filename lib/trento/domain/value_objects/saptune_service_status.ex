@@ -2,7 +2,7 @@ defmodule Trento.Domain.SaptuneServiceStatus do
   @moduledoc """
   Represents the status of a Saptune service.
   """
-  @required_fields [:enabled, :active, :name]
+  @required_fields [:name]
 
   use Trento.Type
 
