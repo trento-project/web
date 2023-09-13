@@ -326,8 +326,6 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     payload |> String.replace(" ", "_") |> String.downcase()
   end
 
-  defp format_saptune_services_list(services) when map_size(services) == 0, do: []
-
   defp format_saptune_services_list(service_map) do
     Enum.map(service_map, &format_saptune_service_status/1)
   end
