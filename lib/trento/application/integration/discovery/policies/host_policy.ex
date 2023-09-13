@@ -61,9 +61,9 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       }) do
     build_update_saptune_command(
       agent_id,
-      nil,
       package_version,
-      saptune_installed
+      saptune_installed,
+      nil
     )
   end
 
@@ -83,9 +83,9 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       {:ok, decoded_payload} ->
         build_update_saptune_command(
           agent_id,
-          decoded_payload,
           package_version,
-          saptune_installed
+          saptune_installed,
+          decoded_payload
         )
 
       error ->
@@ -140,7 +140,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            installation_source: installation_source
          })
 
-  defp build_update_saptune_command(agent_id, nil, package_version, saptune_installed),
+  defp build_update_saptune_command(agent_id, package_version, saptune_installed, nil),
     do:
       UpdateSaptuneStatus.new(%{
         host_id: agent_id,
@@ -151,24 +151,24 @@ defmodule Trento.Integration.Discovery.HostPolicy do
 
   defp build_update_saptune_command(
          agent_id,
-         %SaptuneDiscoveryPayload{
-           result: %{
-             package_version: package_version,
-             configured_version: configured_version,
-             tuning_state: tuning_state,
-             services: services,
-             notes_enabled_by_solution: notes_enabled_by_solution,
-             notes_applied_by_solution: notes_applied_by_solution,
-             notes_enabled_additionally: notes_enabled_additionally,
-             solution_enabled: solution_enabled,
-             solution_applied: solution_applied,
-             notes_enabled: notes_enabled,
-             notes_applied: notes_applied,
-             staging: staging
-           }
-         },
          package_version,
-         saptune_installed
+         saptune_installed,
+         %SaptuneDiscoveryPayload{
+          result: %{
+            package_version: package_version,
+            configured_version: configured_version,
+            tuning_state: tuning_state,
+            services: services,
+            notes_enabled_by_solution: notes_enabled_by_solution,
+            notes_applied_by_solution: notes_applied_by_solution,
+            notes_enabled_additionally: notes_enabled_additionally,
+            solution_enabled: solution_enabled,
+            solution_applied: solution_applied,
+            notes_enabled: notes_enabled,
+            notes_applied: notes_applied,
+            staging: staging
+          }
+        }
        ) do
     UpdateSaptuneStatus.new(%{
       host_id: agent_id,
@@ -385,7 +385,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     Enum.map(notes, fn note ->
       %{
         "id" => note,
-        "additionally_enabled" => Enum.any?(additional_notes, &(&1 == note))
+        "additionally_enabled" => Enum.member?(additional_notes, note)
       }
     end)
   end

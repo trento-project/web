@@ -1,5 +1,5 @@
 defmodule Trento.Domain.SaptuneStaging do
-  @required_fields [:id]
+  @required_fields [:enabled]
 
   use Trento.Type
 
