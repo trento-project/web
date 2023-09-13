@@ -5,9 +5,10 @@ defmodule Trento.Domain.Events.SaptuneStatusUpdated do
 
   use Trento.Event
 
+  alias Trento.Domain.SaptuneStatus
+
   defevent do
     field :host_id, Ecto.UUID
-    field :status, :map
-    # embeds_one :status, SaptuneStatus
+    embeds_one :status, SaptuneStatus
   end
 end

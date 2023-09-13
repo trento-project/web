@@ -25,7 +25,7 @@ defmodule Trento.Domain.Host do
     AwsProvider,
     AzureProvider,
     GcpProvider,
-    # SaptuneStatus,
+    SaptuneStatus,
     SlesSubscription
   }
 
@@ -80,8 +80,7 @@ defmodule Trento.Domain.Host do
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
 
-    field :saptune_status, :map
-    # embeds_one :status, SaptuneStatus
+    embeds_one :saptune_status, SaptuneStatus
     embeds_many :subscriptions, SlesSubscription
 
     field :provider_data, PolymorphicEmbed,
@@ -392,8 +391,7 @@ defmodule Trento.Domain.Host do
       ) do
     %SaptuneStatusUpdated{
       host_id: host_id,
-      # status: %SaptuneStatus{
-      status: %{
+      status: %SaptuneStatus{
         package_version: package_version
       }
     }

@@ -16,6 +16,7 @@ defmodule Trento.Factory do
     HanaClusterDetails,
     HanaClusterNode,
     SapSystem,
+    SaptuneStatus,
     SbdDevice,
     SlesSubscription
   }
@@ -38,10 +39,10 @@ defmodule Trento.Factory do
     HostRegistered,
     HostRemovedFromCluster,
     HostTombstoned,
-    SaptuneStatusUpdated,
     SapSystemDeregistered,
     SapSystemRegistered,
     SapSystemTombstoned,
+    SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
 
@@ -116,8 +117,7 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       provider_data: nil,
       deregistered_at: nil,
-      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
-      saptune_status: nil
+      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end)
     }
   end
 
@@ -199,10 +199,9 @@ defmodule Trento.Factory do
   end
 
   def saptune_status_factory do
-    # TODO: Update this with the final data struct
-    %{
+    %SaptuneStatus{
       package_version: Faker.App.semver(),
-      configured_version: Enum.random(0..3),
+      configured_version: Enum.random(["1", "2", "3"]),
       tuning_state: Enum.random(["compliant", "not compliat", "no tuning"])
     }
   end

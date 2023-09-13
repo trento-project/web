@@ -35,9 +35,8 @@ defmodule Trento.HostTest do
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
-    # ,
-    GcpProvider
-    # SaptuneStatus
+    GcpProvider,
+    SaptuneStatus
   }
 
   alias Trento.Domain.Host
@@ -626,16 +625,15 @@ defmodule Trento.HostTest do
         }),
         %SaptuneStatusUpdated{
           host_id: host_id,
-          status: %{
+          status: %SaptuneStatus{
             package_version: new_saptune_version
           }
         },
         fn %Host{
              saptune_status: saptune_status
            } ->
-          # saptunestatus: %SaptuneStatus{
           assert saptune_status ==
-                   %{
+                   %SaptuneStatus{
                      package_version: new_saptune_version
                    }
         end
@@ -658,7 +656,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: "3.2.0",
-          status: new_saptune_status
+          status: Map.from_struct(new_saptune_status)
         }),
         %SaptuneStatusUpdated{
           host_id: host_id,
@@ -687,7 +685,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: Faker.App.semver(),
-          status: saptune_status
+          status: Map.from_struct(saptune_status)
         }),
         [],
         fn state ->
