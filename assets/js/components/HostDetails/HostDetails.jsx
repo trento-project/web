@@ -58,7 +58,7 @@ function HostDetails({
     package_version: saptuneVersion,
     configured_version: saptuneConfiguredVersion,
     tuning_state: saptuneTuning,
-  } = saptuneStatus;
+  } = saptuneStatus || {};
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
