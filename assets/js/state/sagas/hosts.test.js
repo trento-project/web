@@ -134,7 +134,9 @@ describe('Hosts sagas', () => {
   it('should update saptune status of a host', async () => {
     const host = hostFactory.build();
 
-    const dispatched = await recordSaga(saptuneStatusUpdated, { payload: host });
+    const dispatched = await recordSaga(saptuneStatusUpdated, {
+      payload: host,
+    });
 
     expect(dispatched).toEqual([
       updateSaptuneStatus(host),

@@ -25,8 +25,16 @@ export const hostsListSlice = createSlice({
         a.hostname > b.hostname ? 1 : -1
       );
     },
-    updateHost: (state, {payload: host, payload: { host: { id }}}) => {
-      state.hosts = updateHostData(state.hosts, id, host)
+    updateHost: (
+      state,
+      {
+        payload: host,
+        payload: {
+          host: { id },
+        },
+      }
+    ) => {
+      state.hosts = updateHostData(state.hosts, id, host);
     },
     addTagToHost: (state, action) => {
       state.hosts = state.hosts.map((host) => {
@@ -46,14 +54,16 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    updateSelectedChecks: (state, { payload: { hostID, checks }}) => {
-      state.hosts = updateHostData(state.hosts, hostID, { selected_checks: checks })
+    updateSelectedChecks: (state, { payload: { hostID, checks } }) => {
+      state.hosts = updateHostData(state.hosts, hostID, {
+        selected_checks: checks,
+      });
     },
-    setHeartbeatPassing: (state, { payload: { id }}) => {
-      state.hosts = updateHostData(state.hosts, id, { heartbeat: 'passing'})
+    setHeartbeatPassing: (state, { payload: { id } }) => {
+      state.hosts = updateHostData(state.hosts, id, { heartbeat: 'passing' });
     },
-    setHeartbeatCritical: (state, { payload: { id }}) => {
-      state.hosts = updateHostData(state.hosts, id, { heartbeat: 'critical'})
+    setHeartbeatCritical: (state, { payload: { id } }) => {
+      state.hosts = updateHostData(state.hosts, id, { heartbeat: 'critical' });
     },
     setHostListDeregisterable: (state, { payload }) => {
       const ids = payload.map((host) => host.id);
@@ -66,17 +76,17 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    setHostNotDeregisterable: (state, { payload: { id }}) => {
-      state.hosts = updateHostData(state.hosts, id, { deregisterable: false})
+    setHostNotDeregisterable: (state, { payload: { id } }) => {
+      state.hosts = updateHostData(state.hosts, id, { deregisterable: false });
     },
-    setHostDeregistering: (state, { payload: { id }}) => {
-      state.hosts = updateHostData(state.hosts, id, { deregistering: true})
+    setHostDeregistering: (state, { payload: { id } }) => {
+      state.hosts = updateHostData(state.hosts, id, { deregistering: true });
     },
-    unsetHostDeregistering: (state, { payload: { id }}) => {
-      state.hosts = updateHostData(state.hosts, id, { deregistering: false})
+    unsetHostDeregistering: (state, { payload: { id } }) => {
+      state.hosts = updateHostData(state.hosts, id, { deregistering: false });
     },
-    updateSaptuneStatus: (state, { payload: { id, status} }) => {
-      state.hosts = updateHostData(state.hosts, id, { saptune_status: status})
+    updateSaptuneStatus: (state, { payload: { id, status } }) => {
+      state.hosts = updateHostData(state.hosts, id, { saptune_status: status });
     },
     startHostsLoading: (state) => {
       state.loading = true;

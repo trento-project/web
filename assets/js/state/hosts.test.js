@@ -115,7 +115,7 @@ describe('Hosts reducer', () => {
     const host2 = hostFactory.build();
     const initialState = { hosts: [host1, host2] };
 
-    const newSaptuneStatus = saptuneStatusFactory.build()
+    const newSaptuneStatus = saptuneStatusFactory.build();
 
     const action = updateSaptuneStatus({
       id: host1.id,
