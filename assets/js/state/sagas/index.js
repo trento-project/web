@@ -77,6 +77,7 @@ import {
   watchHostDeregisterable,
   watchDeregisterHost,
   watchHostRestored,
+  watchSaptuneStatusUpdated,
 } from '@state/sagas/hosts';
 import {
   watchClusterDeregistered,
@@ -383,6 +384,7 @@ export default function* rootSaga() {
     watchHeartbeatFailed(),
     watchHostDeregistered(),
     watchHostRestored(),
+    watchSaptuneStatusUpdated(),
     watchClusterRegistered(),
     watchClusterDetailsUpdated(),
     watchClusterCibLastWrittenUpdated(),

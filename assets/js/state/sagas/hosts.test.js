@@ -8,6 +8,7 @@ import {
   hostDeregistered,
   deregisterHost,
   hostRestored,
+  saptuneStatusUpdated,
 } from '@state/sagas/hosts';
 
 import {
@@ -17,6 +18,7 @@ import {
   setHostDeregistering,
   unsetHostDeregistering,
   appendHost,
+  updateSaptuneStatus,
 } from '@state/hosts';
 
 import { networkClient } from '@lib/network';
@@ -124,6 +126,20 @@ describe('Hosts sagas', () => {
       appendHost(host),
       notify({
         text: `Host ${host.hostname} has been restored.`,
+        icon: 'ℹ️',
+      }),
+    ]);
+  });
+
+  it('should update saptune status of a host', async () => {
+    const host = hostFactory.build();
+
+    const dispatched = await recordSaga(saptuneStatusUpdated, { payload: host });
+
+    expect(dispatched).toEqual([
+      updateSaptuneStatus(host),
+      notify({
+        text: `Saptune status updated in host ${host.hostname}.`,
         icon: 'ℹ️',
       }),
     ]);
