@@ -1,7 +1,6 @@
 defmodule Trento.Integration.Discovery.HostPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
-
   import Trento.Integration.DiscoveryFixturesHelper
 
   require Trento.Domain.Enums.Provider, as: Provider
@@ -20,6 +19,10 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
     AzureProvider,
     GcpProvider,
     SlesSubscription,
+    SaptuneNote,
+    SaptuneSolution,
+    SaptuneStaging,
+    SaptuneServiceStatus,
     SaptuneStatus
   }
 
@@ -282,6 +285,16 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
+  test "should fail the validation of the saptune payload, when the payload is received malformed" do
+    assert {
+             :error,
+             {:validation, %{result: ["can't be blank"]}}
+           } =
+             "saptune_discovery_empty_result"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
   test "should emit update saptune command when a saptune_discovery is received" do
     assert {
              :ok,
@@ -294,49 +307,49 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                  configured_version: "3",
                  tuning_state: "not compliant",
                  services: [
-                   %Trento.Domain.SaptuneServiceStatus{
+                   %SaptuneServiceStatus{
                      name: "sapconf",
                      enabled: false,
                      active: false
                    },
-                   %Trento.Domain.SaptuneServiceStatus{
+                   %SaptuneServiceStatus{
                      name: "saptune",
                      enabled: true,
                      active: true
                    },
-                   %Trento.Domain.SaptuneServiceStatus{
+                   %SaptuneServiceStatus{
                      name: "tuned",
                      enabled: false,
                      active: false
                    }
                  ],
                  enabled_notes: [
-                   %Trento.Domain.SaptuneNote{id: "941735", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "1771258", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "2578899", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "2993054", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "1656250", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "900929", additionally_enabled: false}
+                   %SaptuneNote{id: "941735", additionally_enabled: false},
+                   %SaptuneNote{id: "1771258", additionally_enabled: false},
+                   %SaptuneNote{id: "2578899", additionally_enabled: false},
+                   %SaptuneNote{id: "2993054", additionally_enabled: false},
+                   %SaptuneNote{id: "1656250", additionally_enabled: false},
+                   %SaptuneNote{id: "900929", additionally_enabled: false}
                  ],
                  applied_notes: [
-                   %Trento.Domain.SaptuneNote{id: "941735", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "1771258", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "2578899", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "2993054", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "1656250", additionally_enabled: false},
-                   %Trento.Domain.SaptuneNote{id: "900929", additionally_enabled: false}
+                   %SaptuneNote{id: "941735", additionally_enabled: false},
+                   %SaptuneNote{id: "1771258", additionally_enabled: false},
+                   %SaptuneNote{id: "2578899", additionally_enabled: false},
+                   %SaptuneNote{id: "2993054", additionally_enabled: false},
+                   %SaptuneNote{id: "1656250", additionally_enabled: false},
+                   %SaptuneNote{id: "900929", additionally_enabled: false}
                  ],
-                 enabled_solution: %Trento.Domain.SaptuneSolution{
+                 enabled_solution: %SaptuneSolution{
                    id: "NETWEAVER",
                    notes: ["941735", "1771258", "2578899", "2993054", "1656250", "900929"],
                    partial: false
                  },
-                 applied_solution: %Trento.Domain.SaptuneSolution{
+                 applied_solution: %SaptuneSolution{
                    id: "NETWEAVER",
                    notes: ["941735", "1771258", "2578899", "2993054", "1656250", "900929"],
                    partial: false
                  },
-                 staging: %Trento.Domain.SaptuneStaging{
+                 staging: %SaptuneStaging{
                    enabled: false,
                    notes: [],
                    solutions_ids: []

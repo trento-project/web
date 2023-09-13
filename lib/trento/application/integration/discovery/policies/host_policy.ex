@@ -77,7 +77,6 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         }
       }) do
     status
-    |> Map.get("result")
     |> format_saptune_payload_keys()
     |> SaptuneDiscoveryPayload.new()
     |> case do
@@ -153,18 +152,20 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp build_update_saptune_command(
          agent_id,
          %SaptuneDiscoveryPayload{
-           package_version: package_version,
-           configured_version: configured_version,
-           tuning_state: tuning_state,
-           services: services,
-           notes_enabled_by_solution: notes_enabled_by_solution,
-           notes_applied_by_solution: notes_applied_by_solution,
-           notes_enabled_additionally: notes_enabled_additionally,
-           solution_enabled: solution_enabled,
-           solution_applied: solution_applied,
-           notes_enabled: notes_enabled,
-           notes_applied: notes_applied,
-           staging: staging
+           result: %{
+             package_version: package_version,
+             configured_version: configured_version,
+             tuning_state: tuning_state,
+             services: services,
+             notes_enabled_by_solution: notes_enabled_by_solution,
+             notes_applied_by_solution: notes_applied_by_solution,
+             notes_enabled_additionally: notes_enabled_additionally,
+             solution_enabled: solution_enabled,
+             solution_applied: solution_applied,
+             notes_enabled: notes_enabled,
+             notes_applied: notes_applied,
+             staging: staging
+           }
          },
          package_version,
          saptune_installed
