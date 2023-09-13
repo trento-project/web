@@ -33,4 +33,10 @@ defmodule TrentoWeb.V1.HostView do
   def render("heartbeat_result.json", %{host: %{id: id, hostname: hostname}}) do
     %{id: id, hostname: hostname}
   end
+
+  def render("saptune_status_updated.json", %{
+        host: %{id: id, saptune_status: status, hostname: hostname}
+      }) do
+    %{id: id, status: status, hostname: hostname}
+  end
 end
