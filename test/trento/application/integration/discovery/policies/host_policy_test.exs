@@ -1,7 +1,6 @@
 defmodule Trento.Integration.Discovery.HostPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
-
   import Trento.Integration.DiscoveryFixturesHelper
 
   require Trento.Domain.Enums.Provider, as: Provider
@@ -11,6 +10,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
   alias Trento.Domain.Commands.{
     RegisterHost,
     UpdateProvider,
+    UpdateSaptuneStatus,
     UpdateSlesSubscriptions
   }
 
@@ -18,6 +18,11 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
     AwsProvider,
     AzureProvider,
     GcpProvider,
+    SaptuneNote,
+    SaptuneServiceStatus,
+    SaptuneSolution,
+    SaptuneStaging,
+    SaptuneStatus,
     SlesSubscription
   }
 
@@ -261,6 +266,98 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              }
            } =
              "subscriptions_discovery"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should emit update saptune command when a saptune_discovery is received with status nil" do
+    assert {
+             :ok,
+             %UpdateSaptuneStatus{
+               host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
+               saptune_installed: true,
+               package_version: "3.0.0",
+               status: nil
+             }
+           } =
+             "saptune_discovery_empty_status"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should fail the validation of the saptune payload, when the payload is received malformed" do
+    assert {
+             :error,
+             {:validation, %{result: ["can't be blank"]}}
+           } =
+             "saptune_discovery_empty_result"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should emit update saptune command when a saptune_discovery is received" do
+    assert {
+             :ok,
+             %UpdateSaptuneStatus{
+               host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
+               saptune_installed: true,
+               package_version: "3.1.0",
+               status: %SaptuneStatus{
+                 package_version: "3.1.0",
+                 configured_version: "3",
+                 tuning_state: "not compliant",
+                 services: [
+                   %SaptuneServiceStatus{
+                     name: "sapconf",
+                     enabled: nil,
+                     active: nil
+                   },
+                   %SaptuneServiceStatus{
+                     name: "saptune",
+                     enabled: "enabled",
+                     active: "active"
+                   },
+                   %SaptuneServiceStatus{
+                     name: "tuned",
+                     enabled: nil,
+                     active: nil
+                   }
+                 ],
+                 enabled_notes: [
+                   %SaptuneNote{id: "941735", additionally_enabled: true},
+                   %SaptuneNote{id: "1771258", additionally_enabled: true},
+                   %SaptuneNote{id: "2578899", additionally_enabled: false},
+                   %SaptuneNote{id: "2993054", additionally_enabled: false},
+                   %SaptuneNote{id: "1656250", additionally_enabled: false},
+                   %SaptuneNote{id: "900929", additionally_enabled: false}
+                 ],
+                 applied_notes: [
+                   %SaptuneNote{id: "941735", additionally_enabled: true},
+                   %SaptuneNote{id: "1771258", additionally_enabled: true},
+                   %SaptuneNote{id: "2578899", additionally_enabled: false},
+                   %SaptuneNote{id: "2993054", additionally_enabled: false},
+                   %SaptuneNote{id: "1656250", additionally_enabled: false},
+                   %SaptuneNote{id: "900929", additionally_enabled: false}
+                 ],
+                 enabled_solution: %SaptuneSolution{
+                   id: "NETWEAVER",
+                   notes: ["941735", "1771258", "2578899", "2993054", "1656250", "900929"],
+                   partial: false
+                 },
+                 applied_solution: %SaptuneSolution{
+                   id: "NETWEAVER",
+                   notes: ["941735", "1771258", "2578899", "2993054", "1656250", "900929"],
+                   partial: false
+                 },
+                 staging: %SaptuneStaging{
+                   enabled: false,
+                   notes: [],
+                   solutions_ids: []
+                 }
+               }
+             }
+           } =
+             "saptune_discovery"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end
