@@ -27,6 +27,23 @@ import WarningBanner from '@components/Banners/WarningBanner';
 
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
+const catalogWarningBanner = {
+  [UNKNOWN_PROVIDER]: (
+    <WarningBanner>
+      The following catalog is valid for on-premise bare metal platforms.
+      <br />
+      If you are running your HANA cluster on a different platform, please use
+      results with caution
+    </WarningBanner>
+  ),
+  [VMWARE_PROVIDER]: (
+    <WarningBanner>
+      Configuration checks for HANA scale-up performance optimized clusters on
+      VMware are still in experimental phase. Please use results with caution.
+    </WarningBanner>
+  ),
+};
+
 function ClusterSettingsPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -119,23 +136,7 @@ function ClusterSettingsPage() {
           </div>
         </div>
       </div>
-
-      {provider === UNKNOWN_PROVIDER && (
-        <WarningBanner>
-          The following catalog is valid for on-premise bare metal platforms.
-          <br />
-          If you are running your HANA cluster on a different platform, please
-          use results with caution
-        </WarningBanner>
-      )}
-      {provider === VMWARE_PROVIDER && (
-        <WarningBanner>
-          Configuration checks for HANA scale-up performance optimized clusters
-          on VMware are still in experimental phase. Please use results with
-          caution.
-        </WarningBanner>
-      )}
-
+      {catalogWarningBanner[provider]}
       <ClusterInfoBox haScenario={type} provider={provider} />
       <ChecksSelection
         catalog={catalog}

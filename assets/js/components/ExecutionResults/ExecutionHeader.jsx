@@ -9,6 +9,23 @@ import { isTargetCluster } from './checksUtils';
 import BackToTargetDetails from './BackToTargetDetails';
 import TargetInfoBox from './TargetInfoBox';
 
+export const clusterWarningBanner = {
+  [UNKNOWN_PROVIDER]: (
+    <WarningBanner>
+      The following results are valid for on-premise bare metal platforms.
+      <br />
+      If you are running your HANA cluster on a different platform, please use
+      results with caution
+    </WarningBanner>
+  ),
+  [VMWARE_PROVIDER]: (
+    <WarningBanner>
+      Configuration checks for HANA scale-up performance optimized clusters on
+      VMware are still in experimental phase. Please use results with caution.
+    </WarningBanner>
+  ),
+};
+
 function ExecutionHeader({
   targetID,
   targetName,
@@ -39,21 +56,7 @@ function ExecutionHeader({
           onSave={onFilterSave}
         />
       </div>
-      {targetCluster && target.provider === UNKNOWN_PROVIDER && (
-        <WarningBanner>
-          The following results are valid for on-premise bare metal platforms.
-          <br />
-          If you are running your HANA cluster on a different platform, please
-          use results with caution
-        </WarningBanner>
-      )}
-      {targetCluster && target.provider === VMWARE_PROVIDER && (
-        <WarningBanner>
-          Configuration checks for HANA scale-up performance optimized clusters
-          on VMware are still in experimental phase. Please use results with
-          caution.
-        </WarningBanner>
-      )}
+      {targetCluster && clusterWarningBanner[target.provider]}
       <TargetInfoBox targetType={targetType} target={target} />
     </>
   );

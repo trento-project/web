@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
-
 import HealthIcon from '@components/Health/HealthIcon';
-import WarningBanner from '@components/Banners/WarningBanner';
+import { clusterWarningBanner } from '@components/ExecutionResults/ExecutionHeader';
 import CheckResultInfoBox from './CheckResultInfoBox';
 import { isTargetCluster } from '../checksUtils';
 import BackToTargetExecution from './BackToTargetExecution';
@@ -30,21 +28,7 @@ function CheckDetailHeader({
           <span className="font-medium">{checkDescription}</span>
         </h1>
       </div>
-      {targetCluster && cloudProvider === UNKNOWN_PROVIDER && (
-        <WarningBanner>
-          The following results are valid for on-premise bare metal platforms.
-          <br />
-          If you are running your HANA cluster on a different platform, please
-          use results with caution
-        </WarningBanner>
-      )}
-      {targetCluster && cloudProvider === VMWARE_PROVIDER && (
-        <WarningBanner>
-          Configuration checks for HANA scale-up performance optimized clusters
-          on VMware are still in experimental phase. Please use results with
-          caution.
-        </WarningBanner>
-      )}
+      {targetCluster && clusterWarningBanner[cloudProvider]}
       <CheckResultInfoBox
         checkID={checkID}
         resultTargetType={resultTargetType}
