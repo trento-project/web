@@ -110,8 +110,9 @@ export default {
       description: 'Starts the host checks execution',
     },
     checksExecutionTooltipVisible: {
-      description: 'Whether to display the tooltip above the start execution button',
-    }
+      description:
+        'Whether to display the tooltip above the start execution button',
+    },
   },
 };
 
