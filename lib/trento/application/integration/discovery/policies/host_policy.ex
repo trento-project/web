@@ -183,7 +183,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
         applied_notes: format_saptune_notes(notes_applied, notes_enabled_additionally),
         enabled_solution: format_enabled_solution(solution_enabled, notes_enabled_by_solution),
         applied_solution: format_applied_solution(solution_applied, notes_applied_by_solution),
-        staging: format_saptune_staging_informations(staging)
+        staging: format_saptune_staging(staging)
       }
     })
   end
@@ -356,7 +356,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
        }),
        do: %{"id" => solution_id, "notes" => note_list, "partial" => partially_applied}
 
-  defp format_saptune_staging_informations(%{
+  defp format_saptune_staging(%{
          "staging_enabled" => staging_enabled,
          "notes_staged" => notes_staged,
          "solutions_staged" => solutions_staged

@@ -276,7 +276,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              %UpdateSaptuneStatus{
                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                saptune_installed: true,
-               package_version: "3.1.0",
+               package_version: "3.0.0",
                status: nil
              }
            } =

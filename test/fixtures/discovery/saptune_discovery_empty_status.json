@@ -3,7 +3,7 @@
     "discovery_type": "saptune_discovery",
     "payload": {
       "saptune_installed": true,
-      "package_version": "3.1.0",
+      "package_version": "3.0.0",
       "status": null
     }
   }
