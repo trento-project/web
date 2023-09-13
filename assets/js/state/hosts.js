@@ -5,6 +5,14 @@ const initialState = {
   hosts: [],
 };
 
+const updateHostData = (hosts, hostID, data) =>
+  hosts.map((host) => {
+    if (host.id === hostID) {
+      return { ...host, ...data };
+    }
+    return host;
+  });
+
 export const hostsListSlice = createSlice({
   name: 'hostsList',
   initialState,
@@ -17,13 +25,8 @@ export const hostsListSlice = createSlice({
         a.hostname > b.hostname ? 1 : -1
       );
     },
-    updateHost: (state, action) => {
-      state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.id) {
-          host = { ...host, ...action.payload };
-        }
-        return host;
-      });
+    updateHost: (state, {payload: host, payload: { host: { id }}}) => {
+      state.hosts = updateHostData(state.hosts, id, host)
     },
     addTagToHost: (state, action) => {
       state.hosts = state.hosts.map((host) => {
@@ -43,29 +46,14 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    updateSelectedChecks: (state, action) => {
-      state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.hostID) {
-          host.selected_checks = action.payload.checks;
-        }
-        return host;
-      });
+    updateSelectedChecks: (state, { payload: { hostID, checks }}) => {
+      state.hosts = updateHostData(state.hosts, hostID, { selected_checks: checks })
     },
-    setHeartbeatPassing: (state, action) => {
-      state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.id) {
-          host.heartbeat = 'passing';
-        }
-        return host;
-      });
+    setHeartbeatPassing: (state, { payload: { id }}) => {
+      state.hosts = updateHostData(state.hosts, id, { heartbeat: 'passing'})
     },
-    setHeartbeatCritical: (state, action) => {
-      state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.id) {
-          host.heartbeat = 'critical';
-        }
-        return host;
-      });
+    setHeartbeatCritical: (state, { payload: { id }}) => {
+      state.hosts = updateHostData(state.hosts, id, { heartbeat: 'critical'})
     },
     setHostListDeregisterable: (state, { payload }) => {
       const ids = payload.map((host) => host.id);
@@ -78,30 +66,17 @@ export const hostsListSlice = createSlice({
         return host;
       });
     },
-    setHostNotDeregisterable: (state, action) => {
-      state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.id) {
-          return { ...host, deregisterable: false };
-        }
-
-        return host;
-      });
+    setHostNotDeregisterable: (state, { payload: { id }}) => {
+      state.hosts = updateHostData(state.hosts, id, { deregisterable: false})
     },
-    setHostDeregistering: (state, action) => {
-      state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.id) {
-          return { ...host, deregistering: true };
-        }
-        return host;
-      });
+    setHostDeregistering: (state, { payload: { id }}) => {
+      state.hosts = updateHostData(state.hosts, id, { deregistering: true})
     },
-    unsetHostDeregistering: (state, action) => {
-      state.hosts = state.hosts.map((host) => {
-        if (host.id === action.payload.id) {
-          return { ...host, deregistering: false };
-        }
-        return host;
-      });
+    unsetHostDeregistering: (state, { payload: { id }}) => {
+      state.hosts = updateHostData(state.hosts, id, { deregistering: false})
+    },
+    updateSaptuneStatus: (state, { payload: { id, status} }) => {
+      state.hosts = updateHostData(state.hosts, id, { saptune_status: status})
     },
     startHostsLoading: (state) => {
       state.loading = true;
@@ -120,6 +95,7 @@ export const CANCEL_CHECK_HOST_IS_DEREGISTERABLE =
   'CANCEL_CHECK_HOST_IS_DEREGISTERABLE';
 export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
 export const HOST_RESTORED = 'HOST_RESTORED';
+export const SAPTUNE_STATUS_UPDATED = 'SAPTUNE_STATUS_UPDATED';
 export const DEREGISTER_HOST = 'DEREGISTER_HOST';
 
 export const checkHostIsDeregisterable = createAction(
@@ -143,6 +119,7 @@ export const {
   setHostNotDeregisterable,
   setHostDeregistering,
   unsetHostDeregistering,
+  updateSaptuneStatus,
   startHostsLoading,
   stopHostsLoading,
   removeHost,
