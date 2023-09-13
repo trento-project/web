@@ -309,31 +309,31 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                  services: [
                    %SaptuneServiceStatus{
                      name: "sapconf",
-                     enabled: false,
-                     active: false
+                     enabled: nil,
+                     active: nil
                    },
                    %SaptuneServiceStatus{
                      name: "saptune",
-                     enabled: true,
-                     active: true
+                     enabled: "enabled",
+                     active: "active"
                    },
                    %SaptuneServiceStatus{
                      name: "tuned",
-                     enabled: false,
-                     active: false
+                     enabled: nil,
+                     active: nil
                    }
                  ],
                  enabled_notes: [
-                   %SaptuneNote{id: "941735", additionally_enabled: false},
-                   %SaptuneNote{id: "1771258", additionally_enabled: false},
+                   %SaptuneNote{id: "941735", additionally_enabled: true},
+                   %SaptuneNote{id: "1771258", additionally_enabled: true},
                    %SaptuneNote{id: "2578899", additionally_enabled: false},
                    %SaptuneNote{id: "2993054", additionally_enabled: false},
                    %SaptuneNote{id: "1656250", additionally_enabled: false},
                    %SaptuneNote{id: "900929", additionally_enabled: false}
                  ],
                  applied_notes: [
-                   %SaptuneNote{id: "941735", additionally_enabled: false},
-                   %SaptuneNote{id: "1771258", additionally_enabled: false},
+                   %SaptuneNote{id: "941735", additionally_enabled: true},
+                   %SaptuneNote{id: "1771258", additionally_enabled: true},
                    %SaptuneNote{id: "2578899", additionally_enabled: false},
                    %SaptuneNote{id: "2993054", additionally_enabled: false},
                    %SaptuneNote{id: "1656250", additionally_enabled: false},

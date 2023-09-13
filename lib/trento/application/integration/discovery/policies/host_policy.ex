@@ -154,21 +154,21 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          package_version,
          saptune_installed,
          %SaptuneDiscoveryPayload{
-          result: %{
-            package_version: package_version,
-            configured_version: configured_version,
-            tuning_state: tuning_state,
-            services: services,
-            notes_enabled_by_solution: notes_enabled_by_solution,
-            notes_applied_by_solution: notes_applied_by_solution,
-            notes_enabled_additionally: notes_enabled_additionally,
-            solution_enabled: solution_enabled,
-            solution_applied: solution_applied,
-            notes_enabled: notes_enabled,
-            notes_applied: notes_applied,
-            staging: staging
-          }
-        }
+           result: %{
+             package_version: package_version,
+             configured_version: configured_version,
+             tuning_state: tuning_state,
+             services: services,
+             notes_enabled_by_solution: notes_enabled_by_solution,
+             notes_applied_by_solution: notes_applied_by_solution,
+             notes_enabled_additionally: notes_enabled_additionally,
+             solution_enabled: solution_enabled,
+             solution_applied: solution_applied,
+             notes_enabled: notes_enabled,
+             notes_applied: notes_applied,
+             staging: staging
+           }
+         }
        ) do
     UpdateSaptuneStatus.new(%{
       host_id: agent_id,
@@ -329,22 +329,14 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   defp format_saptune_services_list(services) when map_size(services) == 0, do: []
 
   defp format_saptune_services_list(service_map) do
-    Enum.map(service_map, fn {service_name, status} ->
-      %{
-        "name" => service_name,
-        "enabled" => saptune_service_enabled?(status),
-        "active" => saptune_service_active?(status)
-      }
-    end)
+    Enum.map(service_map, &format_saptune_service_status/1)
   end
 
-  defp saptune_service_enabled?(service_status) do
-    Enum.any?(service_status, fn status -> status == "enabled" end)
-  end
+  defp format_saptune_service_status({service_name, []}),
+    do: %{"name" => service_name, "enabled" => nil, "active" => nil}
 
-  defp saptune_service_active?(service_status) do
-    Enum.any?(service_status, fn status -> status == "active" end)
-  end
+  defp format_saptune_service_status({service_name, [enabled, active]}),
+    do: %{"name" => service_name, "enabled" => enabled, "active" => active}
 
   defp format_enabled_solution([solution_enabled], [%{"note_list" => note_list}]) do
     format_solution(%{
