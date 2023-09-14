@@ -67,7 +67,7 @@ function HostDetailsPage() {
       provider={host.provider}
       providerData={host.provider_data}
       sapInstances={sapInstances}
-      saptuneStatus={{}}
+      saptuneStatus={host.saptune_status || {}}
       savingChecks={saving}
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}

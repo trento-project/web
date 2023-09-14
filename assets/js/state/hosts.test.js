@@ -1,15 +1,36 @@
 import { faker } from '@faker-js/faker';
 import hostsReducer, {
+  updateHost,
   removeHost,
   setHostListDeregisterable,
   setHostNotDeregisterable,
   setHostDeregistering,
   unsetHostDeregistering,
   updateSelectedChecks,
+  updateSaptuneStatus,
 } from '@state/hosts';
-import { hostFactory } from '@lib/test-utils/factories';
+import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 
 describe('Hosts reducer', () => {
+  it('should update the host', () => {
+    const host1 = hostFactory.build();
+    const host2 = hostFactory.build();
+    const host3 = hostFactory.build();
+    const initialState = { hosts: [host1, host2, host3] };
+    const updatedHost = {
+      ...host2,
+      hostname: 'updated_hostname',
+    };
+
+    const action = updateHost(updatedHost);
+
+    const expectedState = {
+      hosts: [host1, updatedHost, host3],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
   it('should correctly mark hosts as deregisterable', () => {
     const host1 = hostFactory.build();
     const host2 = hostFactory.build();
@@ -104,6 +125,25 @@ describe('Hosts reducer', () => {
 
     const expectedState = {
       hosts: [{ ...host1, selected_checks: newChecksSelection }, host2],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update saptune status for a host', () => {
+    const host1 = hostFactory.build();
+    const host2 = hostFactory.build();
+    const initialState = { hosts: [host1, host2] };
+
+    const newSaptuneStatus = saptuneStatusFactory.build();
+
+    const action = updateSaptuneStatus({
+      id: host1.id,
+      status: newSaptuneStatus,
+    });
+
+    const expectedState = {
+      hosts: [{ ...host1, saptune_status: newSaptuneStatus }, host2],
     };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);
