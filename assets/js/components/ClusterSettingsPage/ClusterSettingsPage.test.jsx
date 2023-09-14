@@ -102,4 +102,47 @@ describe('ClusterDetails ClusterSettings component', () => {
       )
     ).toBeVisible();
   });
+
+  const suggestionScenarios = [
+    {
+      cluster: clusterFactory.build({
+        selected_checks: [],
+      }),
+      suggestionExpectation: (tooltipSuggestion) => {
+        tooltipSuggestion.not.toBeInTheDocument();
+      },
+    },
+    {
+      cluster: clusterFactory.build({
+        selected_checks: [faker.datatype.uuid()],
+      }),
+      suggestionExpectation: (tooltipSuggestion) => {
+        tooltipSuggestion.toBeVisible();
+      },
+    },
+  ];
+
+  it.each(suggestionScenarios)(
+    'should suggest to the user to start an execution when the selection is not empty',
+    ({ cluster, suggestionExpectation }) => {
+      const { id: clusterID } = cluster;
+      const [StatefulClusterSettings] = withState(<ClusterSettingsPage />, {
+        ...defaultInitialState,
+        clustersList: { clusters: [cluster] },
+      });
+
+      renderWithRouterMatch(StatefulClusterSettings, {
+        path: 'clusters/:clusterID/settings',
+        route: `/clusters/${clusterID}/settings`,
+      });
+
+      suggestionExpectation(
+        expect(
+          screen.queryByText(
+            'Click Start Execution or wait for Trento to periodically run checks.'
+          )
+        )
+      );
+    }
+  );
 });

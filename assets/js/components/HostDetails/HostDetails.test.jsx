@@ -26,16 +26,22 @@ describe('HostDetails component', () => {
       ).toBeVisible();
     });
 
-    it('should disable start execution button when checks are not selected', () => {
+    it('should disable start execution button when checks are not selected', async () => {
+      const user = userEvent.setup();
+
       renderWithRouter(
         <HostDetails agentVersion="1.0.0" selectedChecks={[]} />
       );
 
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeDisabled();
+
+      await user.hover(startExecutionButton);
+      expect(screen.getByText('Select some Checks first!')).toBeInTheDocument();
     });
 
-    it('should enable start execution button when checks are selected', () => {
+    it('should enable start execution button when checks are selected', async () => {
+      const user = userEvent.setup();
       const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
 
       renderWithRouter(
@@ -44,6 +50,11 @@ describe('HostDetails component', () => {
 
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeEnabled();
+
+      await user.hover(startExecutionButton);
+      expect(
+        screen.queryByText('Select some Checks first!')
+      ).not.toBeInTheDocument();
     });
   });
 

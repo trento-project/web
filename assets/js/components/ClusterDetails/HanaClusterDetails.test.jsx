@@ -100,9 +100,7 @@ describe('HanaClusterDetails component', () => {
         />
       );
 
-      expect(
-        screen.getByText(`Start Execution`).closest('button')
-      ).toBeDisabled();
+      expect(screen.getByText('Start Execution')).toBeDisabled();
     }
   );
 
@@ -285,4 +283,63 @@ describe('HanaClusterDetails component', () => {
       });
     });
   });
+
+  const suggestionScenarios = [
+    {
+      selectedChecks: [],
+      hasSelectedChecks: false,
+      suggestionExpectation: (tooltipSuggestion) => {
+        tooltipSuggestion.toBeVisible();
+      },
+    },
+    {
+      selectedChecks: [faker.datatype.uuid()],
+      hasSelectedChecks: true,
+      suggestionExpectation: (tooltipSuggestion) => {
+        tooltipSuggestion.not.toBeInTheDocument();
+      },
+    },
+  ];
+
+  it.each(suggestionScenarios)(
+    'should suggest to the user to select some checks only when the selection is empty',
+    async ({ selectedChecks, hasSelectedChecks, suggestionExpectation }) => {
+      const user = userEvent.setup();
+
+      const {
+        clusterID,
+        clusterName,
+        cib_last_written: cibLastWritten,
+        type: clusterType,
+        sid,
+        provider,
+        details,
+      } = clusterFactory.build();
+
+      const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+      renderWithRouter(
+        <HanaClusterDetails
+          clusterID={clusterID}
+          clusterName={clusterName}
+          selectedChecks={selectedChecks}
+          hasSelectedChecks={hasSelectedChecks}
+          hosts={hosts}
+          clusterType={clusterType}
+          cibLastWritten={cibLastWritten}
+          sid={sid}
+          provider={provider}
+          sapSystems={[]}
+          details={details}
+          lastExecution={null}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      await user.hover(startExecutionButton);
+      suggestionExpectation(
+        expect(screen.queryByText('Select some Checks first!'))
+      );
+    }
+  );
 });

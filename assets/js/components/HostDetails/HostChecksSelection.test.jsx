@@ -36,7 +36,6 @@ describe('HostChecksSelection component', () => {
         hostName={hostName}
         provider={provider}
         agentVersion={agentVersion}
-        selectedChecks={selectedChecks}
         catalog={catalog}
         catalogError={null}
         catalogLoading={false}
@@ -58,6 +57,11 @@ describe('HostChecksSelection component', () => {
     expect(
       screen.getByRole('button', { name: 'Save Checks Selection' })
     ).toBeVisible();
+    expect(
+      screen.queryByText(
+        'Click Start Execution or wait for Trento to periodically run checks.'
+      )
+    ).not.toBeInTheDocument();
     expect(onUpdateCatalog).toHaveBeenCalled();
   });
 });

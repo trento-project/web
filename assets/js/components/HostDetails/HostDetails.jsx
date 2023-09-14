@@ -15,6 +15,7 @@ import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { canStartExecution } from '@components/ChecksSelection';
+import Tooltip from '@components/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';
 import ChecksComingSoon from '@static/checks-coming-soon.svg';
@@ -129,15 +130,21 @@ function HostDetails({
                 <span>Show Results</span>
               </Button>
 
-              <Button
-                type="primary"
-                className="mx-1"
-                onClick={requestHostChecksExecution}
-                disabled={!canStartExecution(selectedChecks, savingChecks)}
+              <Tooltip
+                isEnabled={!canStartExecution(selectedChecks, savingChecks)}
+                content="Select some Checks first!"
+                place="bottom"
               >
-                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
-                Start Execution
-              </Button>
+                <Button
+                  type="primary"
+                  className="mx-1"
+                  onClick={requestHostChecksExecution}
+                  disabled={!canStartExecution(selectedChecks, savingChecks)}
+                >
+                  <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                  Start Execution
+                </Button>
+              </Tooltip>
             </div>
           </div>
           <div className="pb-3">
