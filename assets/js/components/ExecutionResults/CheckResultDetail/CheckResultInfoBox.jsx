@@ -9,7 +9,12 @@ const targetTypeString = {
   [TARGET_CLUSTER]: 'Cluster',
 };
 
-function CheckResultInfoBox({ checkID, targetType, targetName, provider }) {
+function CheckResultInfoBox({
+  checkID,
+  resultTargetType,
+  resultTargetName,
+  provider,
+}) {
   return (
     <div className="w-full my-4 mr-4 bg-white shadow rounded-lg px-8 py-4">
       <ListView
@@ -22,8 +27,8 @@ function CheckResultInfoBox({ checkID, targetType, targetName, provider }) {
             content: checkID,
           },
           {
-            title: targetTypeString[targetType] || 'Unknown target type',
-            content: targetName,
+            title: targetTypeString[resultTargetType] || 'Unknown target type',
+            content: resultTargetName,
           },
           {
             title: 'Provider',

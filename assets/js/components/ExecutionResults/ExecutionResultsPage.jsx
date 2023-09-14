@@ -16,20 +16,8 @@ import {
   RUNNING_STATES,
 } from '@state/lastExecutions';
 import LoadingBox from '@components/LoadingBox';
-import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import ExecutionResults from './ExecutionResults';
-import { isTargetCluster, isTargetHost } from './checksUtils';
-
-const getTargetName = (target, targetType) => {
-  switch (targetType) {
-    case TARGET_CLUSTER:
-      return target.name;
-    case TARGET_HOST:
-      return target.hostname;
-    default:
-      return null;
-  }
-};
+import { getTargetName, isTargetCluster, isTargetHost } from './checksUtils';
 
 function ExecutionResultsPage({ targetType }) {
   const { targetID } = useParams();

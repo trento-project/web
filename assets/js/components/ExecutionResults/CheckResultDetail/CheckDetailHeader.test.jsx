@@ -7,97 +7,167 @@ import { renderWithRouter } from '@lib/test-utils';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
+import { cloudProviderEnum, resultEnum } from '@lib/test-utils/factories';
 import CheckDetailHeader from './CheckDetailHeader';
 
 describe('CheckDetailHeader Component', () => {
-  it('should render a header with expected information', () => {
-    const clusterID = faker.datatype.uuid();
-    const checkID = faker.datatype.uuid();
-    const checkDescription = faker.lorem.sentence();
-    const targetType = 'host';
-    const targetName = faker.animal.bear();
-    const cloudProvider = 'azure';
+  const targetIdentifier = faker.datatype.uuid();
+  const scenarios = [
+    {
+      checkID: faker.datatype.uuid(),
+      checkDescription: faker.lorem.sentence(),
+      targetID: targetIdentifier,
+      targetType: 'cluster',
+      resultTargetType: 'host',
+      resultTargetName: faker.animal.bear(),
+      cloudProvider: 'azure',
+      result: resultEnum(),
+      expectedProviderText: 'Azure',
+      expectedResultTargetTypeText: 'Host',
+    },
+    {
+      checkID: faker.datatype.uuid(),
+      checkDescription: faker.lorem.sentence(),
+      targetID: targetIdentifier,
+      targetType: 'cluster',
+      resultTargetType: 'cluster',
+      resultTargetName: faker.animal.bear(),
+      cloudProvider: 'aws',
+      result: resultEnum(),
+      expectedProviderText: 'AWS',
+      expectedResultTargetTypeText: 'Cluster',
+    },
+    {
+      checkID: faker.datatype.uuid(),
+      checkDescription: faker.lorem.sentence(),
+      targetID: targetIdentifier,
+      targetType: 'host',
+      resultTargetType: 'host',
+      resultTargetName: faker.animal.bear(),
+      cloudProvider: 'gcp',
+      result: resultEnum(),
+      expectedProviderText: 'GCP',
+      expectedResultTargetTypeText: 'Host',
+    },
+  ];
 
-    renderWithRouter(
-      <CheckDetailHeader
-        clusterID={clusterID}
-        checkID={checkID}
-        checkDescription={checkDescription}
-        targetType={targetType}
-        targetName={targetName}
-        cloudProvider={cloudProvider}
-        result="passing"
-      />
-    );
+  it.each(scenarios)(
+    'should render a header with expected information',
+    async ({
+      checkID,
+      checkDescription,
+      targetID,
+      targetType,
+      resultTargetType,
+      resultTargetName,
+      cloudProvider,
+      result,
+      expectedProviderText,
+      expectedResultTargetTypeText,
+    }) => {
+      renderWithRouter(
+        <CheckDetailHeader
+          checkID={checkID}
+          checkDescription={checkDescription}
+          targetID={targetID}
+          targetType={targetType}
+          resultTargetType={resultTargetType}
+          resultTargetName={resultTargetName}
+          cloudProvider={cloudProvider}
+          result={result}
+        />
+      );
 
-    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(2);
-    expect(screen.getByText('Back to Check Results')).toBeTruthy();
-    expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText('Host')).toBeTruthy();
-    expect(screen.getByText(targetName)).toBeTruthy();
-    expect(screen.getByText(checkDescription)).toBeTruthy();
-  });
+      expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(2);
+      expect(screen.getByText('Back to Check Results')).toBeTruthy();
+      expect(screen.getByText(expectedProviderText)).toBeTruthy();
+      expect(screen.getByText(expectedResultTargetTypeText)).toBeTruthy();
+      expect(screen.getByText(resultTargetName)).toBeTruthy();
+      expect(screen.getByText(checkDescription)).toBeTruthy();
+    }
+  );
 
-  it('should render a header with a warning banner on an unknown provider detection', () => {
-    const clusterID = faker.datatype.uuid();
+  it('should render a header with a warning banner on an unknown provider detection, when the target is a cluster', () => {
+    const targetID = faker.datatype.uuid();
     const checkID = faker.datatype.uuid();
     const checkDescription = faker.lorem.sentence();
     const targetType = 'cluster';
-    const targetName = faker.animal.bear();
+    const resultTargetType = 'host';
+    const resultTargetName = faker.animal.bear();
     const cloudProvider = 'unknown';
 
     renderWithRouter(
       <CheckDetailHeader
-        clusterID={clusterID}
         checkID={checkID}
         checkDescription={checkDescription}
+        targetID={targetID}
         targetType={targetType}
-        targetName={targetName}
+        resultTargetType={resultTargetType}
+        resultTargetName={resultTargetName}
         cloudProvider={cloudProvider}
+        result="critical"
       />
     );
 
     expect(screen.getByText('Back to Check Results')).toBeTruthy();
     expect(screen.getByText('Provider not recognized')).toBeTruthy();
-    expect(screen.getByText('Cluster')).toBeTruthy();
+    expect(screen.getByText('Host')).toBeTruthy();
     expect(
       screen.getByText(/valid for on-premise bare metal platforms./)
     ).toBeTruthy();
     expect(screen.getByText(checkDescription)).toBeTruthy();
   });
 
-  it('should navigate back to Check Results', async () => {
-    const user = userEvent.setup();
-    const clusterID = faker.datatype.uuid();
-    const checkID = faker.datatype.uuid();
-    const checkDescription = faker.lorem.sentence();
-    const targetType = 'host';
-    const targetName = faker.animal.bear();
-    const cloudProvider = 'azure';
+  const navigationScenarios = [
+    {
+      targetID: targetIdentifier,
+      targetType: 'cluster',
+      resultTargetType: 'host',
+      expectedExecutionURL: `/clusters/${targetIdentifier}/executions/last`,
+    },
+    {
+      targetID: targetIdentifier,
+      targetType: 'cluster',
+      resultTargetType: 'cluster',
+      expectedExecutionURL: `/clusters/${targetIdentifier}/executions/last`,
+    },
+    {
+      targetID: targetIdentifier,
+      targetType: 'host',
+      resultTargetType: 'host',
+      expectedExecutionURL: `/hosts/${targetIdentifier}/executions/last`,
+    },
+  ];
 
-    renderWithRouter(
-      <CheckDetailHeader
-        clusterID={clusterID}
-        checkID={checkID}
-        checkDescription={checkDescription}
-        targetType={targetType}
-        targetName={targetName}
-        cloudProvider={cloudProvider}
-      />
-    );
+  it.each(navigationScenarios)(
+    'should navigate back to target Checks Results',
+    async ({
+      targetID,
+      targetType,
+      resultTargetType,
+      expectedExecutionURL,
+    }) => {
+      const user = userEvent.setup();
+      renderWithRouter(
+        <CheckDetailHeader
+          checkID={faker.datatype.uuid()}
+          checkDescription={faker.lorem.sentence()}
+          targetID={targetID}
+          targetType={targetType}
+          resultTargetType={resultTargetType}
+          resultTargetName={faker.animal.bear()}
+          cloudProvider={cloudProviderEnum()}
+          result={resultEnum()}
+        />
+      );
 
-    const backButton = screen.getByText('Back to Check Results');
+      const backButton = screen.getByText('Back to Check Results');
 
-    expect(backButton).toBeTruthy();
-    expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText('Host')).toBeTruthy();
-    expect(screen.getByText(targetName)).toBeTruthy();
-    expect(screen.getByText(checkDescription)).toBeTruthy();
+      expect(backButton).toBeTruthy();
 
-    await act(async () => user.click(backButton));
+      await act(async () => user.click(backButton));
 
-    expect(window.location.pathname).toEqual(
-      `/clusters/${clusterID}/executions/last`
-    );
-  });
+      expect(window.location.pathname).toEqual(expectedExecutionURL);
+    }
+  );
 });

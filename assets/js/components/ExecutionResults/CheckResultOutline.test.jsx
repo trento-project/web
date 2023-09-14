@@ -36,7 +36,7 @@ const expectSameStatementResult = (expectationName, result) =>
   });
 
 describe('CheckResultOutline Component', () => {
-  it('should render a proper outline for a successful result', async () => {
+  it('should render a proper outline for a successful cluster check result', async () => {
     const user = userEvent.setup();
 
     const clusterID = faker.datatype.uuid();
@@ -125,6 +125,57 @@ describe('CheckResultOutline Component', () => {
 
     expect(window.location.pathname).toEqual(
       `/clusters/${clusterID}/executions/last/${checkID}/cluster/${clusterName}`
+    );
+  });
+
+  it('should render a proper outline for a successful host check result', async () => {
+    const user = userEvent.setup();
+
+    const hostID = faker.datatype.uuid();
+    const hostName = faker.lorem.word();
+    const checkID = faker.datatype.uuid();
+
+    const expectationName = faker.datatype.uuid();
+
+    const expectations = [
+      catalogExpectExpectationFactory.build({
+        name: expectationName,
+      }),
+    ];
+
+    let checkResult = emptyCheckResultFactory.build({
+      checkID,
+      targets: [hostID],
+      result: 'passing',
+    });
+    checkResult = addPassingExpectExpectation(checkResult, expectationName);
+
+    const agentsCheckResults = agentsCheckResultsWithHostname(
+      checkResult.agents_check_results,
+      [{ id: hostID, hostname: hostName }]
+    );
+
+    const expectationResults = [expectStatementResult(expectationName, true)];
+
+    renderWithRouter(
+      <CheckResultOutline
+        targetID={hostID}
+        checkID={checkID}
+        targetName={hostName}
+        targetType="host"
+        expectations={expectations}
+        agentsCheckResults={agentsCheckResults}
+        expectationResults={expectationResults}
+      />
+    );
+
+    expect(screen.getAllByText(hostName)).toHaveLength(1);
+    expect(screen.getAllByText('1/1 Expectations met.')).toHaveLength(1);
+
+    await act(async () => user.click(screen.getAllByText(hostName)[0]));
+
+    expect(window.location.pathname).toEqual(
+      `/hosts/${hostID}/executions/last/${checkID}/host/${hostName}`
     );
   });
 

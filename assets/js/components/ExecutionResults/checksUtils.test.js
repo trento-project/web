@@ -11,6 +11,7 @@ import {
   expectationResultFactory,
   agentsCheckResultsWithHostname,
   hostFactory,
+  clusterFactory,
   executionExpectationEvaluationErrorFactory,
   failingExpectEvaluationFactory,
 } from '@lib/test-utils/factories';
@@ -34,6 +35,7 @@ import {
   getExpectSameStatementsResults,
   getExpectSameFacts,
   getExpectStatementsResults,
+  getTargetName,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -511,6 +513,29 @@ describe('checksUtils', () => {
       expect(isPremium(checkCatalog, checkID)).toBe(
         expectedPremiumValues[index]
       );
+    });
+  });
+
+  describe('target name detection', () => {
+    it('should detect a cluster target name', () => {
+      const targetName = faker.lorem.word();
+      const target = clusterFactory.build({ name: targetName });
+
+      expect(getTargetName(target, 'cluster')).toBe(targetName);
+    });
+
+    it('should detect a host target name', () => {
+      const targetName = faker.lorem.word();
+      const target = hostFactory.build({ hostname: targetName });
+
+      expect(getTargetName(target, 'host')).toBe(targetName);
+    });
+
+    it('should not detect target name for unknown targets', () => {
+      const targetName = faker.lorem.word();
+      const target = hostFactory.build({ hostname: targetName });
+
+      expect(getTargetName(target, 'unknown-target')).toBeNull();
     });
   });
 });

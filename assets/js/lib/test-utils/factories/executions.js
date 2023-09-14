@@ -6,7 +6,7 @@ import { hostFactory, randomObjectFactory } from '.';
 export const checksExecutionStatusEnum = () =>
   faker.helpers.arrayElement(['running', 'completed', 'requested']);
 
-const resultEnum = () =>
+export const resultEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning']);
 
 const expectationReturnTypeEnum = () =>

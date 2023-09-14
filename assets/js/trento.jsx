@@ -103,6 +103,10 @@ function App() {
                       <CheckResultDetailPage targetType={TARGET_CLUSTER} />
                     }
                   />
+                  <Route
+                    path="hosts/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName"
+                    element={<CheckResultDetailPage targetType={TARGET_HOST} />}
+                  />
                 </Route>
               </Route>
             </Route>

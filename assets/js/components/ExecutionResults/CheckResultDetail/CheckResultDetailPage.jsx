@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
-import { find, get } from 'lodash';
+import { find, get, some } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/actions/catalog';
 
 import LoadingBox from '@components/LoadingBox';
-import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
+import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
 
 import {
   updateLastExecution,
   executionRequested,
+  hostExecutionRequested,
 } from '@state/actions/lastExecutions';
 import {
   REQUESTED_EXECUTION_STATE,
@@ -32,7 +33,7 @@ import {
 import CheckDetailHeader from './CheckDetailHeader';
 
 const isValidCheckID = (executionData, checkID) =>
-  executionData?.check_results.some(({ check_id }) => check_id === checkID);
+  some(executionData?.check_results, { check_id: checkID });
 
 const validateResultTargetName = (
   target,
@@ -42,7 +43,7 @@ const validateResultTargetName = (
 ) => {
   switch (resultTargetType) {
     case TARGET_HOST:
-      return targetHosts.some(({ hostname }) => hostname === resultTargetName);
+      return some(targetHosts, { hostname: resultTargetName });
     case TARGET_CLUSTER:
       return resultTargetName === target.name;
     default:
@@ -138,12 +139,13 @@ function CheckResultDetailPage({ targetType }) {
   const isValidResultTargetName = validateResultTargetName(
     target,
     targetHosts,
-    resultTargetType,
+    isHostExecution ? TARGET_HOST : resultTargetType,
     resultTargetName
   );
 
   if (
     !isValidTargetID ||
+    !isValidTargetType(resultTargetType) ||
     !isValidResultTargetName ||
     !isValidCheckID(executionData, checkID)
   ) {
@@ -180,13 +182,13 @@ function CheckResultDetailPage({ targetType }) {
       executionRunning={RUNNING_STATES.includes(executionData?.status)}
     >
       <CheckDetailHeader
-        // todo generalize on target
-        clusterID={targetID}
         checkID={checkID}
         checkDescription={checkDescription}
-        targetType={resultTargetType}
-        targetName={resultTargetName}
-        cloudProvider={target?.provider}
+        targetID={targetID}
+        targetType={targetType}
+        resultTargetType={resultTargetType}
+        resultTargetName={resultTargetName}
+        cloudProvider={target.provider}
         result={getClusterCheckResults(executionData, checkID)?.result}
       />
       <ResultsContainer
@@ -197,7 +199,7 @@ function CheckResultDetailPage({ targetType }) {
         ]}
         targetID={targetID}
         hasAlreadyChecksResults={!!(executionData || executionLoading)}
-        selectedChecks={target?.selected_checks}
+        selectedChecks={target.selected_checks}
         hosts={targetHosts.map(getHostID)}
         onContentRefresh={() => {
           if (catalogError) {
@@ -207,11 +209,16 @@ function CheckResultDetailPage({ targetType }) {
             dispatch(updateLastExecution(targetID));
           }
         }}
-        onStartExecution={(clusterId, hosts, selectedChecks, onNavigate) =>
-          dispatch(
-            executionRequested(clusterId, hosts, selectedChecks, onNavigate)
-          )
-        }
+        onStartExecution={(targetId, hosts, selectedChecks, onNavigate) => {
+          isTargetHost(targetType) &&
+            dispatch(
+              hostExecutionRequested(target, selectedChecks, onNavigate)
+            );
+          isTargetCluster(targetType) &&
+            dispatch(
+              executionRequested(targetId, hosts, selectedChecks, onNavigate)
+            );
+        }}
       >
         <CheckResultDetail
           checkID={checkID}
