@@ -115,15 +115,12 @@ function HostDetails({
 
               <Button
                 type="primary-white"
-                className="mx-0.5 border-green-500 border disabled:bg-slate-50 disabled:text-slate-500 disabled:border-gray-400"
+                className="mx-0.5 border-green-500 border"
                 size="small"
                 onClick={() => navigate(`/hosts/${hostID}/executions/last`)}
               >
                 <EOS_CLEAR_ALL
-                  className={classNames('inline-block ', {
-                    'fill-jungle-green-500': false,
-                    'fill-slate-500': true,
-                  })}
+                  className="inline-block fill-jungle-green-500"
                 />
                 Show Results
               </Button>
