@@ -24,6 +24,7 @@ defmodule Trento.HostReadModel do
     field :selected_checks, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :provider_data, :map
+    field :saptune_status, :map
 
     has_many :tags, Trento.Tag, foreign_key: :resource_id
 

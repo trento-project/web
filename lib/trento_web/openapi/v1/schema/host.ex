@@ -4,7 +4,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.V1.Schema.{Provider, SlesSubscription, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{Provider, SaptuneStatus, SlesSubscription, Tags}
 
   defmodule IPv4 do
     @moduledoc false
@@ -70,6 +70,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           type: :array,
           items: SlesSubscription
         },
+        saptune_status: SaptuneStatus,
         deregistered_at: %Schema{
           title: "DeregisteredAt",
           description: "Timestamp of the last deregistration of the host",

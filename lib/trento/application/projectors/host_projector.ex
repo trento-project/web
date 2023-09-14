@@ -22,7 +22,8 @@ defmodule Trento.HostProjector do
     HostRegistered,
     HostRemovedFromCluster,
     HostRestored,
-    ProviderUpdated
+    ProviderUpdated,
+    SaptuneStatusUpdated
   }
 
   alias Trento.HostReadModel
@@ -201,18 +202,32 @@ defmodule Trento.HostProjector do
         |> Repo.get!(id)
         |> HostReadModel.changeset(%{
           provider: provider,
-          provider_data: handle_provider_data(provider_data)
+          provider_data: map_from_struct(provider_data)
         })
 
       Ecto.Multi.update(multi, :host, changeset)
     end
   )
 
-  def handle_provider_data(provider_data) when is_map(provider_data) do
-    Map.from_struct(provider_data)
+  project(
+    %SaptuneStatusUpdated{host_id: id, status: status},
+    fn multi ->
+      changeset =
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{
+          saptune_status: map_from_struct(status)
+        })
+
+      Ecto.Multi.update(multi, :host, changeset)
+    end
+  )
+
+  def map_from_struct(struct) when is_struct(struct) do
+    Map.from_struct(struct)
   end
 
-  def handle_provider_data(_), do: nil
+  def map_from_struct(_), do: nil
 
   @impl true
   @spec after_update(any, any, any) :: :ok | {:error, any}
@@ -361,6 +376,20 @@ defmodule Trento.HostProjector do
       )
 
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", message)
+  end
+
+  def after_update(
+        %SaptuneStatusUpdated{},
+        _,
+        %{host: %HostReadModel{} = host}
+      ) do
+    message =
+      HostView.render(
+        "saptune_status_updated.json",
+        %{host: host}
+      )
+
+    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "saptune_status_updated", message)
   end
 
   def after_update(_, _, _), do: :ok

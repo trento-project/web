@@ -117,7 +117,8 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       provider_data: nil,
       deregistered_at: nil,
-      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end)
+      selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
+      saptune_status: nil
     }
   end
 

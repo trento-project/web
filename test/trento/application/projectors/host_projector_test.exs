@@ -29,11 +29,13 @@ defmodule Trento.HostProjectorTest do
     HostDetailsUpdated,
     HostRemovedFromCluster,
     HostRestored,
-    ProviderUpdated
+    ProviderUpdated,
+    SaptuneStatusUpdated
   }
 
   alias Trento.ProjectorTestHelper
   alias Trento.Repo
+  alias Trento.Support.StructHelper
 
   @moduletag :integration
 
@@ -508,6 +510,35 @@ defmodule Trento.HostProjectorTest do
                      %{
                        id: ^host_id,
                        hostname: ^hostname
+                     },
+                     1000
+  end
+
+  test "should update the saptune_status field when SaptuneStatusUpdated is received",
+       %{
+         host_id: host_id,
+         hostname: hostname
+       } do
+    saptune_status = build(:saptune_status)
+
+    event = %SaptuneStatusUpdated{
+      host_id: host_id,
+      status: saptune_status
+    }
+
+    expected_status = StructHelper.to_map(saptune_status)
+    expected_broadcast_status = Map.from_struct(saptune_status)
+
+    ProjectorTestHelper.project(HostProjector, event, "host_projector")
+    host_projection = Repo.get!(HostReadModel, host_id)
+
+    assert expected_status == host_projection.saptune_status
+
+    assert_broadcast "saptune_status_updated",
+                     %{
+                       id: ^host_id,
+                       hostname: ^hostname,
+                       status: ^expected_broadcast_status
                      },
                      1000
   end
