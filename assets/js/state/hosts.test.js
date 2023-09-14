@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import hostsReducer, {
+  updateHost,
   removeHost,
   setHostListDeregisterable,
   setHostNotDeregisterable,
@@ -11,6 +12,25 @@ import hostsReducer, {
 import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 
 describe('Hosts reducer', () => {
+  it('should update the host', () => {
+    const host1 = hostFactory.build();
+    const host2 = hostFactory.build();
+    const host3 = hostFactory.build();
+    const initialState = { hosts: [host1, host2, host3] };
+    const updatedHost = {
+      ...host2,
+      hostname: 'updated_hostname',
+    };
+
+    const action = updateHost(updatedHost);
+
+    const expectedState = {
+      hosts: [host1, updatedHost, host3],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
   it('should correctly mark hosts as deregisterable', () => {
     const host1 = hostFactory.build();
     const host2 = hostFactory.build();

@@ -25,15 +25,7 @@ export const hostsListSlice = createSlice({
         a.hostname > b.hostname ? 1 : -1
       );
     },
-    updateHost: (
-      state,
-      {
-        payload: host,
-        payload: {
-          host: { id },
-        },
-      }
-    ) => {
+    updateHost: (state, { payload: host, payload: { id } }) => {
       state.hosts = updateHostData(state.hosts, id, host);
     },
     addTagToHost: (state, action) => {
