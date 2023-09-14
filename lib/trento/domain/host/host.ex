@@ -25,6 +25,7 @@ defmodule Trento.Domain.Host do
     AwsProvider,
     AzureProvider,
     GcpProvider,
+    SaptuneStatus,
     SlesSubscription
   }
 
@@ -36,6 +37,7 @@ defmodule Trento.Domain.Host do
     SelectHostChecks,
     UpdateHeartbeat,
     UpdateProvider,
+    UpdateSaptuneStatus,
     UpdateSlesSubscriptions
   }
 
@@ -52,6 +54,7 @@ defmodule Trento.Domain.Host do
     HostRollUpRequested,
     HostTombstoned,
     ProviderUpdated,
+    SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
 
@@ -77,6 +80,7 @@ defmodule Trento.Domain.Host do
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
 
+    embeds_one :saptune_status, SaptuneStatus
     embeds_many :subscriptions, SlesSubscription
 
     field :provider_data, PolymorphicEmbed,
@@ -361,6 +365,62 @@ defmodule Trento.Domain.Host do
     }
   end
 
+  def execute(
+        %Host{
+          saptune_status: %{
+            package_version: package_version
+          }
+        },
+        %UpdateSaptuneStatus{
+          saptune_installed: true,
+          package_version: package_version,
+          status: nil
+        }
+      ) do
+    []
+  end
+
+  def execute(
+        %Host{},
+        %UpdateSaptuneStatus{
+          host_id: host_id,
+          saptune_installed: true,
+          package_version: package_version,
+          status: nil
+        }
+      ) do
+    %SaptuneStatusUpdated{
+      host_id: host_id,
+      status: %SaptuneStatus{
+        package_version: package_version
+      }
+    }
+  end
+
+  def execute(
+        %Host{
+          saptune_status: status
+        },
+        %UpdateSaptuneStatus{
+          status: status
+        }
+      ) do
+    []
+  end
+
+  def execute(
+        %Host{},
+        %UpdateSaptuneStatus{
+          host_id: host_id,
+          status: status
+        }
+      ) do
+    %SaptuneStatusUpdated{
+      host_id: host_id,
+      status: status
+    }
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -477,6 +537,18 @@ defmodule Trento.Domain.Host do
     %Host{
       host
       | selected_checks: selected_checks
+    }
+  end
+
+  def apply(
+        %Host{} = host,
+        %SaptuneStatusUpdated{
+          status: status
+        }
+      ) do
+    %Host{
+      host
+      | saptune_status: status
     }
   end
 

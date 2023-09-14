@@ -11,6 +11,7 @@ defmodule Trento.HostTest do
     SelectHostChecks,
     UpdateHeartbeat,
     UpdateProvider,
+    UpdateSaptuneStatus,
     UpdateSlesSubscriptions
   }
 
@@ -27,13 +28,15 @@ defmodule Trento.HostTest do
     HostRollUpRequested,
     HostTombstoned,
     ProviderUpdated,
+    SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
 
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
-    GcpProvider
+    GcpProvider,
+    SaptuneStatus
   }
 
   alias Trento.Domain.Host
@@ -568,6 +571,126 @@ defmodule Trento.HostTest do
                        status: "active"
                      }
                    ]
+                 } = state
+        end
+      )
+    end
+  end
+
+  describe "saptune" do
+    test "should remove saptune status when saptune is uninstalled" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        build(:saptune_status_updated_event, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          saptune_installed: false,
+          package_version: nil,
+          status: nil
+        }),
+        %SaptuneStatusUpdated{
+          host_id: host_id,
+          status: nil
+        },
+        fn state ->
+          assert %Host{
+                   saptune_status: nil
+                 } = state
+        end
+      )
+    end
+
+    test "should update saptune version when status data is empty" do
+      host_id = Faker.UUID.v4()
+      new_saptune_version = Faker.App.semver()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        build(:saptune_status_updated_event, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          saptune_installed: true,
+          package_version: new_saptune_version,
+          status: nil
+        }),
+        %SaptuneStatusUpdated{
+          host_id: host_id,
+          status: %SaptuneStatus{
+            package_version: new_saptune_version
+          }
+        },
+        fn %Host{
+             saptune_status: saptune_status
+           } ->
+          assert saptune_status ==
+                   %SaptuneStatus{
+                     package_version: new_saptune_version
+                   }
+        end
+      )
+    end
+
+    test "should update saptune status" do
+      host_id = Faker.UUID.v4()
+      saptune_status = build(:saptune_status, package_version: "3.1.0")
+      new_saptune_status = build(:saptune_status, package_version: "3.2.0")
+
+      initial_events = [
+        build(:host_registered_event),
+        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          saptune_installed: true,
+          package_version: "3.2.0",
+          status: Map.from_struct(new_saptune_status)
+        }),
+        %SaptuneStatusUpdated{
+          host_id: host_id,
+          status: new_saptune_status
+        },
+        fn state ->
+          assert %Host{
+                   saptune_status: ^new_saptune_status
+                 } = state
+        end
+      )
+    end
+
+    test "should not update saptune status if it contains the same data" do
+      host_id = Faker.UUID.v4()
+      saptune_status = build(:saptune_status)
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          saptune_installed: true,
+          package_version: Faker.App.semver(),
+          status: Map.from_struct(saptune_status)
+        }),
+        [],
+        fn state ->
+          assert %Host{
+                   saptune_status: ^saptune_status
                  } = state
         end
       )

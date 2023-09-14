@@ -16,6 +16,7 @@ defmodule Trento.Factory do
     HanaClusterDetails,
     HanaClusterNode,
     SapSystem,
+    SaptuneStatus,
     SbdDevice,
     SlesSubscription
   }
@@ -41,6 +42,7 @@ defmodule Trento.Factory do
     SapSystemDeregistered,
     SapSystemRegistered,
     SapSystemTombstoned,
+    SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
 
@@ -193,6 +195,21 @@ defmodule Trento.Factory do
       status: "Registered",
       type: "internal",
       arch: "x86_64"
+    }
+  end
+
+  def saptune_status_factory do
+    %SaptuneStatus{
+      package_version: Faker.App.semver(),
+      configured_version: Enum.random(["1", "2", "3"]),
+      tuning_state: Enum.random(["compliant", "not compliat", "no tuning"])
+    }
+  end
+
+  def saptune_status_updated_event_factory do
+    %SaptuneStatusUpdated{
+      host_id: Faker.UUID.v4(),
+      status: build(:saptune_status)
     }
   end
 
