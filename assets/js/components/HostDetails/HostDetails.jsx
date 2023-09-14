@@ -117,9 +117,7 @@ function HostDetails({
                 size="small"
                 onClick={() => navigate(`/hosts/${hostID}/executions/last`)}
               >
-                <EOS_CLEAR_ALL
-                  className="inline-block fill-jungle-green-500"
-                />
+                <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />
                 Show Results
               </Button>
 
