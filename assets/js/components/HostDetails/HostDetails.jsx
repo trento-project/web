@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
-
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
