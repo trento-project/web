@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.1.0">
 
-    <title>Trento.Domain.Events.ApplicationInstanceMarkedAbsent — Trento Web v2.1.0</title>
+    <title>Trento.Domain.Events.SaptuneStatusUpdated — Trento Web v2.1.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
@@ -101,19 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Domain.Events.ApplicationInstanceMarkedAbsent</span> 
+  <span translate="no">Trento.Domain.Events.SaptuneStatusUpdated</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.1.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>This event is emitted when an application instance is marked as absent from the SAP system.</p>
+<p>This event is emitted when saptune status is updated in a specific host.</p>
   </section>
 
 
@@ -241,7 +241,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -253,11 +253,9 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.Events.ApplicationInstanceMarkedAbsent{
-  absent_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.Events.SaptuneStatusUpdated{
   host_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  instance_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sap_system_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  status: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
@@ -288,7 +286,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -310,7 +308,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -332,7 +330,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -355,7 +353,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -384,7 +382,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -412,7 +410,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">upcast(params, metadata)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L10" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -434,7 +432,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">upcast(params, _, int)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -456,7 +454,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/events/application_instance_marked_absent.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/host/events/saptune_status_updated.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
