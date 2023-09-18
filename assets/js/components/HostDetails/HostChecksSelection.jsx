@@ -62,7 +62,11 @@ function HostChecksSelection({
                 onClick={onStartExecution}
                 disabled={hostChecksExecutionEnabled}
               >
-                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                <EOS_PLAY_CIRCLE
+                  className={`${
+                    !hostChecksExecutionEnabled ? 'fill-white' : 'fill-gray-200'
+                  } inline-block align-sub`}
+                />{' '}
                 Start Execution
               </Button>
             </Tooltip>
