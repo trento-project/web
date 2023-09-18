@@ -33,7 +33,7 @@ function SaptuneSummary({
             content: <SaptuneVersion version={saptuneVersion} />,
           },
           {
-            title: 'Tunning',
+            title: 'Tuning',
             content: <SaptuneTuningState state={saptuneTuning} />,
           },
           {
