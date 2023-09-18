@@ -139,7 +139,7 @@ function HanaClusterDetails({
                 }}
                 disabled={startExecutionDisabled}
               >
-                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub" />{' '}
+                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub disabled:fill-gray-200" />{' '}
                 Start Execution
               </Button>
             </Tooltip>
