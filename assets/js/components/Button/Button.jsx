@@ -25,7 +25,7 @@ const getButtonClasses = (type) => {
     case 'default-fit':
       return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-fit transition ease-in duration-200 text-center font-semibold rounded shadow';
     default:
-      return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-full transition ease-in duration-200 text-center font-semibold rounded shadow';
+      return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-full transition ease-in duration-200 text-center font-semibold rounded shadow disabled:bg-gray-400';
   }
 };
 
