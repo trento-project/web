@@ -165,7 +165,7 @@ describe('HostDetails component', () => {
         screen.getByText('Configured Version').nextSibling
       ).toHaveTextContent(configuredVersion);
 
-      expect(screen.getByText('Tunning').nextSibling).toHaveTextContent(
+      expect(screen.getByText('Tuning').nextSibling).toHaveTextContent(
         new RegExp(tuningState, 'i')
       );
     });
