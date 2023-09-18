@@ -133,7 +133,13 @@ function HostDetails({
                   onClick={requestHostChecksExecution}
                   disabled={!canStartExecution(selectedChecks, savingChecks)}
                 >
-                  <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub disabled:fill-gray-200" />{' '}
+                  <EOS_PLAY_CIRCLE
+                    className={`${
+                      canStartExecution(selectedChecks, savingChecks)
+                        ? 'fill-white'
+                        : 'fill-gray-200'
+                    } inline-block align-sub`}
+                  />{' '}
                   Start Execution
                 </Button>
               </Tooltip>

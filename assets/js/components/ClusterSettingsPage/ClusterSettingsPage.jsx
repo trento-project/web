@@ -136,7 +136,13 @@ function ClusterSettingsPage() {
                 onClick={requestExecution}
                 disabled={!canStartExecution(selectedChecks, saving)}
               >
-                <EOS_PLAY_CIRCLE className="fill-white inline-block align-sub disabled:fill-gray-200" />{' '}
+                <EOS_PLAY_CIRCLE
+                  className={`${
+                    canStartExecution(selectedChecks, saving)
+                      ? 'fill-white'
+                      : 'fill-gray-200'
+                  } inline-block align-sub`}
+                />{' '}
                 Start Execution
               </Button>
             </Tooltip>
