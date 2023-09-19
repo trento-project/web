@@ -116,6 +116,7 @@ function ClusterSettingsPage() {
           </PageHeader>
         }
         isSavingSelection={saving}
+        savedSelection={selectedChecks}
         selection={selection}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}

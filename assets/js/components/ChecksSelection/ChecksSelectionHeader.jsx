@@ -13,11 +13,15 @@ function ChecksSelectionHeader({
   backTo,
   pageHeader,
   isSavingSelection,
+  savedSelection,
   selection,
   onSaveSelection = () => {},
   onStartExecution = () => {},
 }) {
-  const itCanStartExecution = canStartExecution(selection, isSavingSelection);
+  const itCanStartExecution = canStartExecution(
+    savedSelection,
+    isSavingSelection
+  );
   return (
     <div className="w-full px-2 sm:px-0">
       {backTo}

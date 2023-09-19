@@ -41,7 +41,11 @@ export default {
     },
     selection: {
       control: 'array',
-      description: 'The check selection',
+      description: 'The check selection currently displayed',
+    },
+    savedSelection: {
+      control: 'array',
+      description: 'The last saved check selection for the target',
     },
     isSavingSelection: {
       control: 'boolean',
@@ -69,6 +73,7 @@ export default {
 const targetID = faker.datatype.uuid();
 const targetName = faker.lorem.word(7);
 const selection = [faker.datatype.uuid()];
+const savedSelection = [faker.datatype.uuid()];
 
 export const Default = {
   args: {
@@ -85,6 +90,7 @@ export const Default = {
       </PageHeader>
     ),
     selection,
+    savedSelection,
     isSavingSelection: false,
   },
 };
@@ -104,6 +110,7 @@ export const ClusterChecksSelection = {
       </PageHeader>
     ),
     selection,
+    savedSelection,
     isSavingSelection: false,
   },
 };
@@ -121,6 +128,7 @@ export const HostChecksSelection = {
       </PageHeader>
     ),
     selection,
+    savedSelection,
     isSavingSelection: false,
   },
 };
@@ -138,6 +146,7 @@ export const SavedSelectionDisabled = {
       </PageHeader>
     ),
     selection,
+    savedSelection,
     isSavingSelection: true,
   },
 };
@@ -154,7 +163,8 @@ export const CannotStartExecution = {
         Check Settings for <span className="font-bold">{targetName}</span>
       </PageHeader>
     ),
-    selection: [],
+    selection,
+    savedSelection: [],
     isSavingSelection: false,
   },
 };

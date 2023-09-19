@@ -15,9 +15,8 @@ describe('ChecksSelectionHeader component', () => {
 
     const targetID = faker.datatype.uuid();
     const targetName = faker.lorem.word();
-
     const selection = [faker.datatype.uuid(), faker.datatype.uuid()];
-
+    const savedSelection = [faker.datatype.uuid()];
     const onSaveSelection = jest.fn();
     const onStartExecution = jest.fn();
 
@@ -29,6 +28,7 @@ describe('ChecksSelectionHeader component', () => {
         pageHeader={<div>Target Check Settings</div>}
         isSavingSelection={false}
         selection={selection}
+        savedSelection={savedSelection}
         onSaveSelection={onSaveSelection}
         onStartExecution={onStartExecution}
       />
@@ -70,9 +70,7 @@ describe('ChecksSelectionHeader component', () => {
 
     const targetID = faker.datatype.uuid();
     const targetName = faker.lorem.word();
-
     const selection = [faker.datatype.uuid(), faker.datatype.uuid()];
-
     const onSaveSelection = jest.fn();
 
     renderWithRouter(
@@ -83,6 +81,7 @@ describe('ChecksSelectionHeader component', () => {
         pageHeader={<div>Target Check Settings</div>}
         isSavingSelection
         selection={selection}
+        savedSelection={selection}
         onSaveSelection={onSaveSelection}
         onStartExecution={() => {}}
       />
@@ -97,27 +96,26 @@ describe('ChecksSelectionHeader component', () => {
 
   const executionDisallowedScenarios = [
     {
-      selection: [],
+      savedSelection: [],
       isSavingSelection: false,
     },
     {
-      selection: [faker.datatype.uuid()],
+      savedSelection: [faker.datatype.uuid()],
       isSavingSelection: true,
     },
     {
-      selection: [],
+      savedSelection: [],
       isSavingSelection: true,
     },
   ];
 
   it.each(executionDisallowedScenarios)(
     'should not allow starting an execution',
-    async ({ selection, isSavingSelection }) => {
+    async ({ savedSelection, isSavingSelection }) => {
       const user = userEvent.setup();
 
       const targetID = faker.datatype.uuid();
       const targetName = faker.lorem.word();
-
       const onStartExecution = jest.fn();
 
       renderWithRouter(
@@ -127,7 +125,8 @@ describe('ChecksSelectionHeader component', () => {
           backTo={<button type="button">Back to Target Details</button>}
           pageHeader={<div>Target Check Settings</div>}
           isSavingSelection={isSavingSelection}
-          selection={selection}
+          selection={savedSelection}
+          savedSelection={savedSelection}
           onSaveSelection={() => {}}
           onStartExecution={onStartExecution}
         />
