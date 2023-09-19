@@ -1,0 +1,42 @@
+{
+  "agent_id": "9cd46919-5f19-59aa-993e-cf3736c71053",
+  "discovery_type": "saptune_discovery",
+  "payload": {
+    "saptune_installed": true,
+    "package_version": "3.1.0",
+    "status": {
+      "$schema": "file:///usr/share/saptune/schemas/1.0/saptune_status.schema.json",
+      "publish time": "2023-09-18 09:42:21.905",
+      "argv": "saptune --format json status",
+      "pid": 26498,
+      "command": "status",
+      "exit code": 1,
+      "result": {
+        "services": {
+          "saptune": ["disabled", "inactive"],
+          "sapconf": [],
+          "tuned": ["disabled", "inactive"]
+        },
+        "systemd system state": "degraded",
+        "tuning state": "not tuned",
+        "virtualization": "none",
+        "configured version": "3",
+        "package version": "3.1.0",
+        "Solution enabled": [],
+        "Notes enabled by Solution": [],
+        "Solution applied": [],
+        "Notes applied by Solution": [],
+        "Notes enabled additionally": [],
+        "Notes enabled": [],
+        "Notes applied": [],
+        "staging": {
+          "staging enabled": false,
+          "Notes staged": [],
+          "Solutions staged": []
+        },
+        "remember message": "\nRemember: if you wish to automatically activate the note's and solution's tuning options after a reboot, you must enable and start saptune.service by running:\n 'saptune service enablestart'.\nYour system has not yet been tuned. Please visit `saptune note` and `saptune solution` to start tuning.\nThe systemd system state is NOT ok.\nPlease call 'saptune check' to get guidance to resolve the issues!\n\n"
+      },
+      "messages": []
+    }
+  }
+}

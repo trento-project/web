@@ -361,4 +361,49 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end
+
+  test "should emit update saptune command when a saptune_discovery without configuration is received" do
+    assert {
+             :ok,
+             %UpdateSaptuneStatus{
+               host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
+               saptune_installed: true,
+               package_version: "3.1.0",
+               status: %SaptuneStatus{
+                 package_version: "3.1.0",
+                 configured_version: "3",
+                 tuning_state: "not tuned",
+                 services: [
+                   %SaptuneServiceStatus{
+                     name: "sapconf",
+                     enabled: nil,
+                     active: nil
+                   },
+                   %SaptuneServiceStatus{
+                     name: "saptune",
+                     enabled: "disabled",
+                     active: "inactive"
+                   },
+                   %SaptuneServiceStatus{
+                     name: "tuned",
+                     enabled: "disabled",
+                     active: "inactive"
+                   }
+                 ],
+                 enabled_notes: [],
+                 applied_notes: [],
+                 enabled_solution: nil,
+                 applied_solution: nil,
+                 staging: %SaptuneStaging{
+                   enabled: false,
+                   notes: [],
+                   solutions_ids: []
+                 }
+               }
+             }
+           } =
+             "saptune_discovery_not_configured"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
 end

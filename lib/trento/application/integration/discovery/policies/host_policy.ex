@@ -341,13 +341,13 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     })
   end
 
-  defp format_enabled_solution(_, _), do: []
+  defp format_enabled_solution(_, _), do: nil
 
   defp format_applied_solution([solution_applied], [%{"note_list" => note_list}]) do
     format_solution(Map.put(solution_applied, "note_list", note_list))
   end
 
-  defp format_applied_solution(_, _), do: []
+  defp format_applied_solution(_, _), do: nil
 
   defp format_solution(%{
          "solution_id" => solution_id,
