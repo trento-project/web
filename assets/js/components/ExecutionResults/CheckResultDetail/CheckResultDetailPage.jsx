@@ -17,7 +17,9 @@ import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
 } from '@state/lastExecutions';
-import { getHostID } from '@state/selectors/cluster';
+import { getClusterIDs } from '@state/selectors/cluster';
+import { getHostID, getHostIDs } from '@state/selectors/host';
+
 import ExecutionContainer from '@components/ExecutionResults/ExecutionContainer';
 import NotFound from '@components/NotFound';
 import ResultsContainer from '@components/ExecutionResults/ResultsContainer';
@@ -82,12 +84,10 @@ function CheckResultDetailPage({ targetType }) {
       loading: executionLoading,
     },
   } = useSelector((state) => getLastExecutionData(state, targetID, targetType));
-  const clustersIDList = useSelector((state) =>
-    state.clustersList.clusters.map(({ id }) => id)
-  );
-  const hostsIDList = useSelector((state) =>
-    state.hostsList.hosts.map(({ id }) => id)
-  );
+
+  const clustersIDList = useSelector((state) => getClusterIDs(state));
+
+  const hostsIDList = useSelector((state) => getHostIDs(state));
 
   useEffect(() => {
     if (catalog.length === 0) {

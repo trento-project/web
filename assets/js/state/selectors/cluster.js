@@ -1,6 +1,8 @@
 import { get, find } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
+import { getHostID } from './host';
+
 export const getCluster =
   (id) =>
   ({ clustersList }) =>
@@ -12,11 +14,14 @@ export const getClusterHosts = createSelector(
     hosts.filter(({ cluster_id }) => cluster_id === clusterID)
 );
 
-export const getHostID = ({ id: hostID }) => hostID;
-
 export const getClusterHostIDs = createSelector(
   [getClusterHosts],
   (clusterHosts) => clusterHosts.map(getHostID)
+);
+
+export const getClusterIDs = createSelector(
+  [(state) => state.clustersList.clusters],
+  (clusters) => clusters.map(({ id }) => id)
 );
 
 export const getClusterName = (clusterID) => (state) => {
