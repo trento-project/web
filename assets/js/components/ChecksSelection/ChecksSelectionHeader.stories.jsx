@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
 import { catalogCheckFactory, hostFactory } from '@lib/test-utils/factories';
-import HostChecksSelection from './HostChecksSelection';
+import ChecksSelectionHeader from './ChecksSelectionHeader';
 
 const catalog = [
   ...catalogCheckFactory.buildList(3, { group: faker.animal.cat() }),
@@ -25,8 +25,8 @@ const host = hostFactory.build({
 });
 
 export default {
-  title: 'HostChecksSelection',
-  component: HostChecksSelection,
+  title: 'ChecksSelectionHeader',
+  component: ChecksSelectionHeader,
   decorators: [
     (Story) => (
       <MemoryRouter>
