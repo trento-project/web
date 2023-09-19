@@ -2,27 +2,9 @@ import React from 'react';
 import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
-import { catalogCheckFactory, hostFactory } from '@lib/test-utils/factories';
+import PageHeader from '@components/PageHeader';
+import BackButton from '@components/BackButton';
 import ChecksSelectionHeader from './ChecksSelectionHeader';
-
-const catalog = [
-  ...catalogCheckFactory.buildList(3, { group: faker.animal.cat() }),
-  ...catalogCheckFactory.buildList(6, { group: faker.animal.dog() }),
-  ...catalogCheckFactory.buildList(2, { group: faker.lorem.word() }),
-];
-
-const selectedChecks = [
-  catalog[0].id,
-  catalog[1].id,
-  catalog[2].id,
-  catalog[5].id,
-  catalog[6].id,
-];
-
-const host = hostFactory.build({
-  provider: 'azure',
-  selected_checks: selectedChecks,
-});
 
 export default {
   title: 'ChecksSelectionHeader',
@@ -35,94 +17,144 @@ export default {
     ),
   ],
   argTypes: {
-    hostID: {
+    targetID: {
       control: 'string',
-      description: 'The host identifier',
+      description: 'The target identifier',
       table: {
         type: { summary: 'string' },
       },
     },
-    hostName: {
+    targetName: {
       control: 'string',
-      description: 'The host name',
+      description: 'The target name',
       table: {
         type: { summary: 'string' },
       },
     },
-    provider: {
-      control: 'string',
-      description: 'The discovered CSP where the host is running',
-      table: {
-        type: { summary: 'string' },
-      },
+    backTo: {
+      description:
+        'A Component that renders the back button to the target details',
     },
-    agentVersion: {
-      control: 'string',
-      description: 'The version of the installed agent',
-      table: {
-        type: { summary: 'string' },
-      },
+    pageHeader: {
+      description:
+        'A Component that renders the page header for the specific target',
     },
-    selectedChecks: {
+    selection: {
       control: 'array',
       description: 'The check selection',
     },
-    catalog: {
-      control: 'object',
-      description: 'Catalog data',
-      table: {
-        type: { summary: 'object' },
-      },
-    },
-    catalogError: {
-      control: 'text',
-      description: 'Error occurred while loading the relevant checks catalog',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: null },
-      },
-    },
-    catalogLoading: {
-      control: { type: 'boolean' },
-      description: 'Whether the catalog is loading',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
-    },
-    onUpdateCatalog: {
-      description: 'Updates the catalog',
-    },
     isSavingSelection: {
+      control: 'boolean',
       description:
         'Whether Save Checks Selection button is enabled or disabled',
+      table: {
+        type: { summary: 'boolean' },
+      },
     },
     onSaveSelection: {
       description: 'Updates the selected checks on save',
-    },
-    onSelectedChecksChange: {
-      description: 'Updates the selected checks',
-    },
-    hostChecksExecutionEnabled: {
-      description: 'Whether start execution button is enabled or disabled',
+      table: {
+        type: { summary: 'function' },
+      },
     },
     onStartExecution: {
       description: 'Starts the host checks execution',
+      table: {
+        type: { summary: 'function' },
+      },
     },
   },
 };
 
+const targetID = faker.datatype.uuid();
+const targetName = faker.lorem.word(7);
+const selection = [faker.datatype.uuid()];
+
 export const Default = {
   args: {
-    hostID: host.id,
-    hostName: host.hostname,
-    provider: host.provider,
-    agentVersion: host.agent_version,
-    selectedChecks: host.selected_checks,
-    catalog,
-    catalogError: null,
-    catalogLoading: false,
+    targetID,
+    targetName,
+    backTo: (
+      <BackButton url={`/target/${targetID}`}>
+        Back to Target Details
+      </BackButton>
+    ),
+    pageHeader: (
+      <PageHeader>
+        Target Settings for <span className="font-bold">{targetName}</span>
+      </PageHeader>
+    ),
+    selection,
     isSavingSelection: false,
-    hostChecksExecutionEnabled: false,
+  },
+};
+
+export const ClusterChecksSelection = {
+  args: {
+    targetID,
+    targetName,
+    backTo: (
+      <BackButton url={`/clusters/${targetID}`}>
+        Back to Cluster Details
+      </BackButton>
+    ),
+    pageHeader: (
+      <PageHeader>
+        Cluster Settings for <span className="font-bold">{targetName}</span>
+      </PageHeader>
+    ),
+    selection,
+    isSavingSelection: false,
+  },
+};
+
+export const HostChecksSelection = {
+  args: {
+    targetID,
+    targetName,
+    backTo: (
+      <BackButton url={`/hosts/${targetID}`}>Back to Host Details</BackButton>
+    ),
+    pageHeader: (
+      <PageHeader>
+        Check Settings for <span className="font-bold">{targetName}</span>
+      </PageHeader>
+    ),
+    selection,
+    isSavingSelection: false,
+  },
+};
+
+export const SavedSelectionDisabled = {
+  args: {
+    targetID,
+    targetName,
+    backTo: (
+      <BackButton url={`/hosts/${targetID}`}>Back to Host Details</BackButton>
+    ),
+    pageHeader: (
+      <PageHeader>
+        Check Settings for <span className="font-bold">{targetName}</span>
+      </PageHeader>
+    ),
+    selection,
+    isSavingSelection: true,
+  },
+};
+
+export const CannotStartExecution = {
+  args: {
+    targetID,
+    targetName,
+    backTo: (
+      <BackButton url={`/hosts/${targetID}`}>Back to Host Details</BackButton>
+    ),
+    pageHeader: (
+      <PageHeader>
+        Check Settings for <span className="font-bold">{targetName}</span>
+      </PageHeader>
+    ),
+    selection: [],
+    isSavingSelection: false,
   },
 };
