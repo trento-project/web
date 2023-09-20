@@ -34,8 +34,12 @@ defmodule Trento.Factory do
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     DatabaseRestored,
+    HeartbeatFailed,
+    HeartbeatSucceded,
     HostAddedToCluster,
+    HostChecksHealthChanged,
     HostDetailsUpdated,
+    HostHealthChanged,
     HostRegistered,
     HostRemovedFromCluster,
     HostTombstoned,
@@ -683,6 +687,32 @@ defmodule Trento.Factory do
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
       installation_source: Enum.random([:community, :suse, :unknown])
+    })
+  end
+
+  def heartbeat_succeded_factory do
+    HeartbeatSucceded.new!(%{
+      host_id: Faker.UUID.v4()
+    })
+  end
+
+  def heartbeat_failed_factory do
+    HeartbeatFailed.new!(%{
+      host_id: Faker.UUID.v4()
+    })
+  end
+
+  def host_checks_health_changed_factory do
+    %HostChecksHealthChanged{
+      host_id: Faker.UUID.v4(),
+      checks_health: Health.passing()
+    }
+  end
+
+  def host_health_changed_event_factory do
+    HostHealthChanged.new!(%{
+      host_id: Faker.UUID.v4(),
+      health: Health.passing()
     })
   end
 end
