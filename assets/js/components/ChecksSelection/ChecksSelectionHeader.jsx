@@ -18,7 +18,7 @@ function ChecksSelectionHeader({
   onSaveSelection = () => {},
   onStartExecution = () => {},
 }) {
-  const itCanStartExecution = canStartExecution(
+  const isAbleToStartExecution = canStartExecution(
     savedSelection,
     isSavingSelection
   );
@@ -42,18 +42,18 @@ function ChecksSelectionHeader({
             <Tooltip
               className="w-56"
               content="Click Start Execution or wait for Trento to periodically run checks."
-              visible={itCanStartExecution}
+              visible={isAbleToStartExecution}
             >
               <Button
                 type="primary"
                 className="mx-1"
                 onClick={onStartExecution}
-                disabled={!itCanStartExecution}
+                disabled={!isAbleToStartExecution}
               >
                 <EOS_PLAY_CIRCLE
                   className={classNames('inline-block align-sub', {
-                    'fill-white': itCanStartExecution,
-                    'fill-gray-200': !itCanStartExecution,
+                    'fill-white': isAbleToStartExecution,
+                    'fill-gray-200': !isAbleToStartExecution,
                   })}
                 />{' '}
                 Start Execution
