@@ -12,12 +12,35 @@ defmodule Trento.Domain.Host do
   - Platform where the host is running (the cloud provider for instance)
   - Registered SLES4SAP subscriptions
 
-  Besides these mostly static values, the aggregate takes care of detecting the host availability
-  using a heartbeat system. If each host does not send its heartbeat within a 10 seconds period
-  (configurable), a heartbeat failed event is raised setting the host as not available.
+  Besides these mostly static values, the aggregate takes care of handling
+  heartbeats, checks execution result, saptune status
+
+  ## Host health
+
+  Holds the information about whether the host is in an expected state or not, and if not,
+  what is the roout cause helping identifying possible remediation.
+  It is composed by sub-health elements:
+
+  - Heartbeat status
+  - Checks health
+
+  The main host health is computed using these values, meaning the host health is the worst of the two.
+
+  ### Heartbeat
+
+  Each host in the targe SAP infrastructure running a Trento agent sends a heartbeat message and
+  if a heartbeat is not received within a 10 seconds period (configurable),
+  a heartbeat failure event is raised changing the health of the host as critical.
+
+  ### Checks health
+
+  The checks health is obtained from the [Checks Engine executions](https://github.com/trento-project/wanda/).
+  Every time a checks execution for a host completes the execution's result is taken into account to determine host's health.
+  Checks execution is started either by an explicit user request or periodically as per the scheduler configuration.
   """
 
   require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.Domain.Host
 
@@ -76,6 +99,8 @@ defmodule Trento.Domain.Host do
     field :provider, Ecto.Enum, values: Provider.values()
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
+    field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :rolling_up, :boolean, default: false
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
