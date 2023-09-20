@@ -13,6 +13,7 @@ import {
   getClusterName,
   getClusterSapSystems,
   getClusterSelectedChecks,
+  getClusterIDs,
 } from './cluster';
 
 describe('Cluster selector', () => {
@@ -186,5 +187,22 @@ describe('Cluster selector', () => {
 
     expect(getClusterSelectedChecks(state, clusterID)).toEqual(checks);
     expect(getClusterSelectedChecks(state, faker.datatype.uuid())).toEqual([]);
+  });
+
+  it('should return all the cluster IDs', () => {
+    const clusterID1 = faker.datatype.uuid();
+    const clusterID2 = faker.datatype.uuid();
+    const cluster1 = clusterFactory.build({
+      id: clusterID1,
+    });
+    const cluster2 = clusterFactory.build({ id: clusterID2 });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster1, cluster2],
+      },
+    };
+
+    expect(getClusterIDs(state)).toEqual([clusterID1, clusterID2]);
   });
 });
