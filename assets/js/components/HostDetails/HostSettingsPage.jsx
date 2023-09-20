@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import LoadingBox from '@components/LoadingBox';
-import { canStartExecution } from '@components/ChecksSelection';
 
 import { TARGET_HOST } from '@lib/model';
 
@@ -13,14 +12,23 @@ import { hostExecutionRequested } from '@state/actions/lastExecutions';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
-import HostChecksSelection from './HostChecksSelection';
+
+import PageHeader from '@components/PageHeader';
+import BackButton from '@components/BackButton';
+
+import ChecksSelection from '@components/ChecksSelection';
+
+import ChecksSelectionHeader from '@components/ChecksSelection/ChecksSelectionHeader';
+import HostInfoBox from './HostInfoBox';
 
 function HostSettingsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { hostID } = useParams();
+  const [selection, setSelection] = useState([]);
+
   const host = useSelector(getHost(hostID));
-  const hostSelectedChecks = useSelector((state) =>
+  const selectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
   );
 
@@ -31,10 +39,10 @@ function HostSettingsPage() {
   } = useSelector(getCatalog());
 
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
-  const hostChecksExecutionEnabled = !canStartExecution(
-    hostSelectedChecks,
-    saving
-  );
+
+  useEffect(() => {
+    setSelection(selectedChecks);
+  }, [selectedChecks]);
 
   if (!host) {
     return <LoadingBox text="Loading..." />;
@@ -59,26 +67,39 @@ function HostSettingsPage() {
     );
   };
 
-  const requestHostChecksExecution = () => {
-    dispatch(hostExecutionRequested(host, hostSelectedChecks, navigate));
+  const requestChecksExecution = () => {
+    dispatch(hostExecutionRequested(host, selectedChecks, navigate));
   };
 
   return (
-    <HostChecksSelection
-      hostID={hostID}
-      hostName={hostName}
-      provider={provider}
-      agentVersion={agentVersion}
-      catalog={catalog}
-      catalogError={catalogError}
-      catalogLoading={catalogLoading}
-      onUpdateCatalog={refreshCatalog}
-      isSavingSelection={saving}
-      onSaveSelection={saveSelection}
-      hostChecksExecutionEnabled={hostChecksExecutionEnabled}
-      onStartExecution={requestHostChecksExecution}
-      savedHostSelection={hostSelectedChecks}
-    />
+    <>
+      <ChecksSelectionHeader
+        targetID={hostID}
+        targetName={hostName}
+        backTo={
+          <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
+        }
+        pageHeader={
+          <PageHeader>
+            Check Settings for <span className="font-bold">{hostName}</span>
+          </PageHeader>
+        }
+        isSavingSelection={saving}
+        savedSelection={selectedChecks}
+        selection={selection}
+        onSaveSelection={saveSelection}
+        onStartExecution={requestChecksExecution}
+      />
+      <HostInfoBox provider={provider} agentVersion={agentVersion} />
+      <ChecksSelection
+        catalog={catalog}
+        catalogError={catalogError}
+        loading={catalogLoading}
+        selectedChecks={selection}
+        onUpdateCatalog={refreshCatalog}
+        onChange={setSelection}
+      />
+    </>
   );
 }
 
