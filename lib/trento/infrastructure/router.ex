@@ -11,6 +11,7 @@ defmodule Trento.Router do
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
+    CompleteHostChecksExecution,
     DeregisterApplicationInstance,
     DeregisterClusterHost,
     DeregisterDatabaseInstance,
@@ -46,7 +47,8 @@ defmodule Trento.Router do
              SelectHostChecks,
              RollUpHost,
              RequestHostDeregistration,
-             DeregisterHost
+             DeregisterHost,
+             CompleteHostChecksExecution
            ],
            to: Host,
            lifespan: Host.Lifespan
