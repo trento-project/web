@@ -7,7 +7,7 @@
     "@faker-js/faker": "^7.6.0",
     "@storybook/addon-actions": "^7.4.3",
     "@storybook/addon-essentials": "^7.4.2",
-    "@storybook/addon-interactions": "^7.4.2",
+    "@storybook/addon-interactions": "^7.4.3",
     "@storybook/addon-links": "^7.4.2",
     "@storybook/react": "^7.4.2",
     "@storybook/react-webpack5": "^7.4.1",
