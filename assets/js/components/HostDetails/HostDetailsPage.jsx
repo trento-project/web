@@ -8,6 +8,7 @@ import { TARGET_HOST } from '@lib/model';
 
 import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
+import { getLastExecution } from '@state/selectors/lastExecutions';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
@@ -29,6 +30,8 @@ function HostDetailsPage() {
   const sapInstances = useSelector((state) =>
     getInstancesOnHost(state, hostID)
   );
+
+  const lastExecution = useSelector(getLastExecution(hostID));
 
   const hostSelectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
@@ -71,6 +74,7 @@ function HostDetailsPage() {
       savingChecks={saving}
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}
+      lastExecution={lastExecution}
       cleanUpHost={() => {
         dispatch(
           deregisterHost({ id: hostID, hostname: host.hostname, navigate })
