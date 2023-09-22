@@ -9,7 +9,7 @@ import ListView from '@components/ListView';
 import Table from '@components/Table';
 import Tooltip from '@components/Tooltip';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
-import ChecksResultOverview from '@components/ClusterDetails/ChecksResultOverview';
+import CheckResultsOverview from '@components/CheckResultsOverview';
 import ProviderLabel from '@components/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
@@ -207,7 +207,7 @@ function HanaClusterDetails({
           />
         </div>
         <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
-          <ChecksResultOverview
+          <CheckResultsOverview
             {...lastExecution}
             onCheckClick={(health) =>
               navigate(
