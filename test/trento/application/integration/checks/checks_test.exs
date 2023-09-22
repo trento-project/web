@@ -5,7 +5,11 @@ defmodule Trento.Integration.ChecksTest do
 
   import Mox
 
-  alias Trento.Domain.Commands.CompleteChecksExecution
+  alias Trento.Domain.Commands.{
+    CompleteChecksExecution,
+    CompleteHostChecksExecution
+  }
+
   alias Trento.Integration.Checks
 
   alias Trento.Checks.V1.{
@@ -126,9 +130,13 @@ defmodule Trento.Integration.ChecksTest do
       execution_id = UUID.uuid4()
       group_id = UUID.uuid4()
 
-      expect(Trento.Commanded.Mock, :dispatch, 0, fn _command, _opts ->
-        # TODO: assert that the proper command related to host check execution is dispatched
-        nil
+      expect(Trento.Commanded.Mock, :dispatch, fn command, _ ->
+        assert %CompleteHostChecksExecution{
+                 host_id: ^group_id,
+                 health: Health.passing()
+               } = command
+
+        :ok
       end)
 
       assert :ok =
