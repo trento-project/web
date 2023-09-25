@@ -23,7 +23,9 @@ function SaptuneDetailsPage() {
 
   return (
     <SaptuneDetails
+      appliedNotes={saptuneStatus.applied_notes}
       appliedSolution={saptuneStatus.applied_solution}
+      enabledNotes={saptuneStatus.enabled_notes}
       enabledSolution={saptuneStatus.enabled_solution}
       hostname={hostname}
       packageVersion={saptuneStatus.package_version}

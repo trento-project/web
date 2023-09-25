@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { find } from 'lodash';
+import { find, map } from 'lodash';
 
 import { Link } from 'react-router-dom';
 
@@ -45,7 +45,9 @@ const renderSolution = ({ id, notes, partial }) => (
 );
 
 function SaptuneDetails({
+  appliedNotes,
   appliedSolution,
+  enabledNotes,
   enabledSolution,
   configuredVersion,
   hostname,
@@ -126,6 +128,27 @@ function SaptuneDetails({
             {
               title: 'Applied Solution',
               content: renderSolution(appliedSolution),
+            },
+          ]}
+        />
+      </div>
+
+      <div className="flex flex-direction-row mt-5">
+        <h2 className="text-2xl font-bold self-center">
+          Saptune Tuning Notes
+        </h2>
+      </div>
+      <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
+        <ListView
+          orientation="vertical"
+          data={[
+            {
+              title: 'Enabled Notes',
+              content: renderNotes(map(enabledNotes, 'id')),
+            },
+            {
+              title: 'Applied Notes',
+              content: renderNotes(map(appliedNotes, 'id')),
             },
           ]}
         />
