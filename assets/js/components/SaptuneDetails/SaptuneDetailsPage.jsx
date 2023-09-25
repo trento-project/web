@@ -26,6 +26,7 @@ function SaptuneDetailsPage() {
       hostname={hostname}
       packageVersion={saptuneStatus.package_version}
       configuredVersion={saptuneStatus.configured_version}
+      services={saptuneStatus.services}
       tuningState={saptuneStatus.tuning_state}
     />
   );
