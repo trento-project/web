@@ -31,6 +31,7 @@ function SaptuneDetailsPage() {
       packageVersion={saptuneStatus.package_version}
       configuredVersion={saptuneStatus.configured_version}
       services={saptuneStatus.services}
+      staging={saptuneStatus.staging}
       tuningState={saptuneStatus.tuning_state}
     />
   );

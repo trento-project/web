@@ -35,12 +35,16 @@ const renderNote = (noteID) => (
   </Link>
 );
 
-const renderNotes = (notes) =>
-  notes.map((noteID, index) => [index > 0 && ', ', renderNote(noteID)]);
+const renderNotes = (notes) => {
+  if (notes.length === 0) {
+    return <span>-</span>;
+  }
+  return notes.map((noteID, index) => [index > 0 && ', ', renderNote(noteID)]);
+};
 
 const renderSolution = ({ id, notes, partial }) => (
   <span>
-    {id} ({renderNotes(notes)} {partial ? ' -> Partial' : ''})
+    {id} ({renderNotes(notes)}{partial ? ' -> Partial' : ''})
   </span>
 );
 
@@ -54,6 +58,7 @@ function SaptuneDetails({
   hostID,
   packageVersion,
   services,
+  staging,
   tuningState,
 }) {
   return (
@@ -87,7 +92,7 @@ function SaptuneDetails({
         />
       </div>
 
-      <div className="flex flex-direction-row mt-5">
+      <div className="flex flex-direction-row mt-7">
         <h2 className="text-2xl font-bold self-center">
           Saptune Services Status
         </h2>
@@ -112,7 +117,7 @@ function SaptuneDetails({
         />
       </div>
 
-      <div className="flex flex-direction-row mt-5">
+      <div className="flex flex-direction-row mt-7">
         <h2 className="text-2xl font-bold self-center">
           Saptune Tuning Solutions
         </h2>
@@ -133,10 +138,8 @@ function SaptuneDetails({
         />
       </div>
 
-      <div className="flex flex-direction-row mt-5">
-        <h2 className="text-2xl font-bold self-center">
-          Saptune Tuning Notes
-        </h2>
+      <div className="flex flex-direction-row mt-7">
+        <h2 className="text-2xl font-bold self-center">Saptune Tuning Notes</h2>
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         <ListView
@@ -149,6 +152,35 @@ function SaptuneDetails({
             {
               title: 'Applied Notes',
               content: renderNotes(map(appliedNotes, 'id')),
+            },
+          ]}
+        />
+      </div>
+
+      <div className="flex flex-direction-row mt-7">
+        <h2 className="text-2xl font-bold self-center">
+          Saptune Staging Status
+        </h2>
+      </div>
+      <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
+        <ListView
+          orientation="vertical"
+          data={[
+            {
+              title: 'Staging',
+              content: staging.enabled ? (
+                <span>Enabled</span>
+              ) : (
+                <span>Disabled</span>
+              ),
+            },
+            {
+              title: 'Staged Notes',
+              content: renderNotes(staging.notes),
+            },
+            {
+              title: 'Staged Solutions',
+              content: staging.solutions_ids.join(', ') || <span>-</span>,
             },
           ]}
         />
