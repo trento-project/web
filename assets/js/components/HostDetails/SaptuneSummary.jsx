@@ -10,6 +10,7 @@ function SaptuneSummary({
   saptuneVersion,
   saptuneConfiguredVersion,
   saptuneTuning,
+  onViewDetails,
 }) {
   return (
     <>
@@ -20,6 +21,7 @@ function SaptuneSummary({
           className="border-green-500 border"
           size="small"
           disabled={!isVersionSupported(saptuneVersion)}
+          onClick={onViewDetails}
         >
           View Details
         </Button>

@@ -176,6 +176,7 @@ function HostDetails({
               saptuneVersion={saptuneVersion}
               saptuneConfiguredVersion={saptuneConfiguredVersion}
               saptuneTuning={saptuneTuning}
+              onViewDetails={() => navigate(`/hosts/${hostID}/saptune`)}
             />
           </div>
           <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
