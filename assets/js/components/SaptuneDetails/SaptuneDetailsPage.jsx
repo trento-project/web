@@ -23,6 +23,8 @@ function SaptuneDetailsPage() {
 
   return (
     <SaptuneDetails
+      appliedSolution={saptuneStatus.applied_solution}
+      enabledSolution={saptuneStatus.enabled_solution}
       hostname={hostname}
       packageVersion={saptuneStatus.package_version}
       configuredVersion={saptuneStatus.configured_version}
