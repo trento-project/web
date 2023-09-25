@@ -39,10 +39,8 @@ export const slesSubscriptionFactory = Factory.define(() => ({
 }));
 
 export const saptuneStatusFactory = Factory.define(() => ({
-  package_version: faker.helpers.fake(
-    '{{number.int}}.{{number.int}}.{{number.int}}'
-  ),
-  configured_version: faker.number.int(),
+  package_version: faker.system.semver(),
+  configured_version: faker.datatype.number({ min: 1, max: 3 }),
   tuning_state: saptuneTuningStateEnum(),
 }));
 
