@@ -4,6 +4,7 @@ defmodule Trento.HostTest do
   import Trento.Factory
 
   alias Trento.Domain.Commands.{
+    CompleteHostChecksExecution,
     DeregisterHost,
     RegisterHost,
     RequestHostDeregistration,
@@ -18,10 +19,12 @@ defmodule Trento.HostTest do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostChecksHealthChanged,
     HostChecksSelected,
     HostDeregistered,
     HostDeregistrationRequested,
     HostDetailsUpdated,
+    HostHealthChanged,
     HostRegistered,
     HostRestored,
     HostRolledUp,
@@ -41,6 +44,8 @@ defmodule Trento.HostTest do
 
   alias Trento.Domain.Host
   alias Trento.Domain.SlesSubscription
+
+  require Trento.Domain.Enums.Health, as: Health
 
   describe "host registration" do
     test "should register a host" do
@@ -165,7 +170,7 @@ defmodule Trento.HostTest do
     end
   end
 
-  describe "host checks selection" do
+  describe "checks execution" do
     test "should select desired checks for host" do
       host_id = Faker.UUID.v4()
       selected_host_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
@@ -203,10 +208,178 @@ defmodule Trento.HostTest do
         {:error, :host_not_registered}
       )
     end
+
+    test "should not emit checks health change if previous execution result is the same as current" do
+      host_id = Faker.UUID.v4()
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      for health <- [Health.passing(), Health.warning(), Health.critical()] do
+        host_checks_health_changed_event =
+          build(:host_checks_health_changed, host_id: host_id, checks_health: health)
+
+        assert_events_and_state(
+          [
+            host_registered_event,
+            host_checks_health_changed_event
+          ],
+          CompleteHostChecksExecution.new!(%{
+            host_id: host_id,
+            health: health
+          }),
+          [],
+          fn host ->
+            assert %Host{
+                     heartbeat: Health.unknown(),
+                     checks_health: ^health,
+                     health: Health.unknown()
+                   } = host
+          end
+        )
+      end
+    end
+
+    test "should emit checks health change when previous execution result differs from current" do
+      host_id = Faker.UUID.v4()
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      scenarios = [
+        %{
+          initial_checks_health: Health.passing(),
+          current_checks_health: Health.warning()
+        },
+        %{
+          initial_checks_health: Health.warning(),
+          current_checks_health: Health.critical()
+        },
+        %{
+          initial_checks_health: Health.critical(),
+          current_checks_health: Health.passing()
+        }
+      ]
+
+      for %{
+            initial_checks_health: initial_checks_health,
+            current_checks_health: current_checks_health
+          } <- scenarios do
+        host_checks_health_changed_event =
+          build(:host_checks_health_changed,
+            host_id: host_id,
+            checks_health: initial_checks_health
+          )
+
+        assert_events_and_state(
+          [
+            host_registered_event,
+            host_checks_health_changed_event
+          ],
+          CompleteHostChecksExecution.new!(%{
+            host_id: host_id,
+            health: current_checks_health
+          }),
+          [
+            %HostChecksHealthChanged{host_id: host_id, checks_health: current_checks_health}
+          ],
+          fn host ->
+            assert %Host{
+                     heartbeat: Health.unknown(),
+                     checks_health: ^current_checks_health,
+                     health: Health.unknown()
+                   } = host
+          end
+        )
+      end
+    end
+
+    test "should emit checks health change and aggregated health change according to heartbeat and checks execution result" do
+      host_id = Faker.UUID.v4()
+
+      scenarios = [
+        %{
+          initial_health: Health.critical(),
+          initial_heartbeat: {:heartbeat_succeded, :passing},
+          initial_checks_health: Health.passing(),
+          current_checks_health: Health.warning(),
+          expected_events: [
+            %HostChecksHealthChanged{host_id: host_id, checks_health: Health.warning()},
+            %HostHealthChanged{host_id: host_id, health: Health.warning()}
+          ],
+          expected_health: Health.warning()
+        },
+        %{
+          initial_health: Health.critical(),
+          initial_heartbeat: {:heartbeat_failed, :critical},
+          initial_checks_health: Health.critical(),
+          current_checks_health: Health.passing(),
+          expected_events: [
+            %HostChecksHealthChanged{host_id: host_id, checks_health: Health.passing()}
+          ],
+          expected_health: Health.critical()
+        },
+        %{
+          initial_health: Health.passing(),
+          initial_heartbeat: {:heartbeat_failed, :critical},
+          initial_checks_health: Health.warning(),
+          current_checks_health: Health.warning(),
+          expected_events: [
+            %HostHealthChanged{host_id: host_id, health: Health.critical()}
+          ],
+          expected_health: Health.critical()
+        }
+      ]
+
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+
+      for %{
+            initial_health: initial_health,
+            initial_heartbeat: {factory_reference, initial_heartbeat},
+            initial_checks_health: initial_checks_health,
+            current_checks_health: current_checks_health,
+            expected_events: expected_events,
+            expected_health: expected_health
+          } <- scenarios do
+        heartbeat_event = build(factory_reference, host_id: host_id)
+
+        host_checks_health_changed_event =
+          build(:host_checks_health_changed,
+            host_id: host_id,
+            checks_health: initial_checks_health
+          )
+
+        host_health_changed_event =
+          build(:host_health_changed_event, host_id: host_id, health: initial_health)
+
+        checks_selected_event = %HostChecksSelected{
+          host_id: host_id,
+          checks: [Faker.UUID.v4()]
+        }
+
+        assert_events_and_state(
+          [
+            host_registered_event,
+            heartbeat_event,
+            host_health_changed_event,
+            host_checks_health_changed_event,
+            checks_selected_event
+          ],
+          CompleteHostChecksExecution.new!(%{
+            host_id: host_id,
+            health: current_checks_health
+          }),
+          expected_events,
+          fn host ->
+            assert %Host{
+                     heartbeat: ^initial_heartbeat,
+                     checks_health: ^current_checks_health,
+                     health: ^expected_health
+                   } = host
+          end
+        )
+      end
+    end
   end
 
   describe "heartbeat" do
-    test "should emit a HeartbeatSucceded event if the Host never received a heartbeat already" do
+    test "should emit a successful heartbeat and health change for a Host that hasn't heartbeated yet" do
       host_id = Faker.UUID.v4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
@@ -214,20 +387,27 @@ defmodule Trento.HostTest do
         host_registered_event,
         UpdateHeartbeat.new!(%{
           host_id: host_id,
-          heartbeat: :passing
+          heartbeat: Health.passing()
         }),
-        %HeartbeatSucceded{
-          host_id: host_id
-        },
+        [
+          %HeartbeatSucceded{
+            host_id: host_id
+          },
+          %HostHealthChanged{
+            host_id: host_id,
+            health: Health.passing()
+          }
+        ],
         fn state ->
           assert %Host{
-                   heartbeat: :passing
+                   heartbeat: Health.passing(),
+                   health: Health.passing()
                  } = state
         end
       )
     end
 
-    test "should emit a HeartbeatSucceded event if the Host is in a critical status" do
+    test "should emit a successful heartbeat and health change for a Host previously in critical status" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -241,20 +421,27 @@ defmodule Trento.HostTest do
         initial_events,
         UpdateHeartbeat.new!(%{
           host_id: host_id,
-          heartbeat: :passing
+          heartbeat: Health.passing()
         }),
-        %HeartbeatSucceded{
-          host_id: host_id
-        },
+        [
+          %HeartbeatSucceded{
+            host_id: host_id
+          },
+          %HostHealthChanged{
+            host_id: host_id,
+            health: Health.passing()
+          }
+        ],
         fn state ->
           assert %Host{
-                   heartbeat: :passing
+                   heartbeat: Health.passing(),
+                   health: Health.passing()
                  } = state
         end
       )
     end
 
-    test "should not emit a HeartbeatSucceded event if the Host is in a passing status already" do
+    test "should not emit a successful heartbeat nor health change for a Host already in passing status" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -268,61 +455,74 @@ defmodule Trento.HostTest do
         initial_events,
         UpdateHeartbeat.new!(%{
           host_id: host_id,
-          heartbeat: :passing
+          heartbeat: Health.passing()
         }),
         []
       )
     end
 
-    test "should emit a HeartbeatFailed event if the Host has never received a heartbeat" do
+    test "should emit a heartbeat failure and health change for a Host that hasn't heartbeated yet" do
       host_id = Faker.UUID.v4()
 
-      initial_events = [
-        build(:host_registered_event, host_id: host_id),
-        %HeartbeatSucceded{
-          host_id: host_id
-        }
-      ]
-
       assert_events_and_state(
-        initial_events,
+        build(:host_registered_event, host_id: host_id),
         UpdateHeartbeat.new!(%{
           host_id: host_id,
-          heartbeat: :critical
+          heartbeat: Health.critical()
         }),
-        %HeartbeatFailed{
-          host_id: host_id
-        },
+        [
+          %HeartbeatFailed{
+            host_id: host_id
+          },
+          %HostHealthChanged{
+            host_id: host_id,
+            health: Health.critical()
+          }
+        ],
         fn state ->
           assert %Host{
-                   heartbeat: :critical
+                   heartbeat: Health.critical(),
+                   health: Health.critical()
                  } = state
         end
       )
     end
 
-    test "should emit a HeartbeatFailed event if the Host is in a passing status" do
+    test "should emit a heartbeat failure and health change for a Host previously in passing status" do
       host_id = Faker.UUID.v4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
 
+      host_health_changed_to_passing_event =
+        build(:host_health_changed_event, host_id: host_id, health: Health.passing())
+
       assert_events_and_state(
-        host_registered_event,
+        [
+          host_registered_event,
+          host_health_changed_to_passing_event
+        ],
         UpdateHeartbeat.new!(%{
           host_id: host_id,
-          heartbeat: :critical
+          heartbeat: Health.critical()
         }),
-        %HeartbeatFailed{
-          host_id: host_id
-        },
+        [
+          %HeartbeatFailed{
+            host_id: host_id
+          },
+          %HostHealthChanged{
+            host_id: host_id,
+            health: Health.critical()
+          }
+        ],
         fn state ->
           assert %Host{
-                   heartbeat: :critical
+                   heartbeat: Health.critical(),
+                   health: Health.critical()
                  } = state
         end
       )
     end
 
-    test "should not emit a HeartbeatFailed event if the Host is in a critical status already" do
+    test "should not emit a heartbeat failure nor health change for a Host already in critical status" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -336,7 +536,7 @@ defmodule Trento.HostTest do
         initial_events,
         UpdateHeartbeat.new!(%{
           host_id: host_id,
-          heartbeat: :critical
+          heartbeat: Health.critical()
         }),
         []
       )

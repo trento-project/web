@@ -12,12 +12,37 @@ defmodule Trento.Domain.Host do
   - Platform where the host is running (the cloud provider for instance)
   - Registered SLES4SAP subscriptions
 
-  Besides these mostly static values, the aggregate takes care of detecting the host availability
-  using a heartbeat system. If each host does not send its heartbeat within a 10 seconds period
-  (configurable), a heartbeat failed event is raised setting the host as not available.
+  Besides these mostly static values, the aggregate takes care of handling
+  heartbeats, checks execution result, saptune status
+
+  ## Host health
+
+  Holds the information about whether the host is in an expected state or not, and if not,
+  what is the roout cause helping identifying possible remediation.
+  It is composed by sub-health elements:
+
+  - Heartbeat status
+  - Checks health
+
+  The main host health is computed using these values, meaning the host health is the worst of the two.
+
+  ### Heartbeat
+
+  Each host in the targe SAP infrastructure running a Trento agent sends a heartbeat message and
+  if a heartbeat is not received within a 10 seconds period (configurable),
+  a heartbeat failure event is raised changing the health of the host as critical.
+
+  ### Checks health
+
+  The checks health is obtained from the [Checks Engine executions](https://github.com/trento-project/wanda/).
+  Every time a checks execution for a host completes the execution's result is taken into account to determine host's health.
+  Checks execution is started either by an explicit user request or periodically as per the scheduler configuration.
   """
 
   require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Domain.Enums.Health, as: Health
+
+  alias Commanded.Aggregate.Multi
 
   alias Trento.Domain.Host
 
@@ -25,11 +50,13 @@ defmodule Trento.Domain.Host do
     AwsProvider,
     AzureProvider,
     GcpProvider,
+    HealthService,
     SaptuneStatus,
     SlesSubscription
   }
 
   alias Trento.Domain.Commands.{
+    CompleteHostChecksExecution,
     DeregisterHost,
     RegisterHost,
     RequestHostDeregistration,
@@ -44,10 +71,12 @@ defmodule Trento.Domain.Host do
   alias Trento.Domain.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
+    HostChecksHealthChanged,
     HostChecksSelected,
     HostDeregistered,
     HostDeregistrationRequested,
     HostDetailsUpdated,
+    HostHealthChanged,
     HostRegistered,
     HostRestored,
     HostRolledUp,
@@ -76,6 +105,8 @@ defmodule Trento.Domain.Host do
     field :provider, Ecto.Enum, values: Provider.values()
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
+    field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :rolling_up, :boolean, default: false
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
@@ -270,19 +301,25 @@ defmodule Trento.Domain.Host do
   end
 
   def execute(
-        %Host{host_id: host_id, heartbeat: heartbeat},
+        %Host{heartbeat: heartbeat} = host,
         %UpdateHeartbeat{heartbeat: :passing}
       )
       when heartbeat != :passing do
-    %HeartbeatSucceded{host_id: host_id}
+    host
+    |> Multi.new()
+    |> Multi.execute(&%HeartbeatSucceded{host_id: &1.host_id})
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
-        %Host{host_id: host_id, heartbeat: heartbeat},
+        %Host{heartbeat: heartbeat} = host,
         %UpdateHeartbeat{heartbeat: :critical}
       )
       when heartbeat != :critical do
-    %HeartbeatFailed{host_id: host_id}
+    host
+    |> Multi.new()
+    |> Multi.execute(&%HeartbeatFailed{host_id: &1.host_id})
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
@@ -363,6 +400,21 @@ defmodule Trento.Domain.Host do
       host_id: host_id,
       checks: selected_checks
     }
+  end
+
+  def execute(
+        %Host{
+          host_id: host_id
+        } = host,
+        %CompleteHostChecksExecution{
+          host_id: host_id,
+          health: checks_health
+        }
+      ) do
+    host
+    |> Multi.new()
+    |> Multi.execute(&maybe_emit_host_checks_health_changed_event(&1, checks_health))
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
@@ -540,6 +592,14 @@ defmodule Trento.Domain.Host do
     }
   end
 
+  def apply(%Host{} = host, %HostChecksHealthChanged{
+        checks_health: checks_health
+      }),
+      do: %Host{
+        host
+        | checks_health: checks_health
+      }
+
   def apply(
         %Host{} = host,
         %SaptuneStatusUpdated{
@@ -550,6 +610,10 @@ defmodule Trento.Domain.Host do
       host
       | saptune_status: status
     }
+  end
+
+  def apply(%Host{} = host, %HostHealthChanged{health: health}) do
+    %Host{host | health: health}
   end
 
   # Deregistration
@@ -566,5 +630,41 @@ defmodule Trento.Domain.Host do
   # Restoration
   def apply(%Host{} = host, %HostRestored{}) do
     %Host{host | deregistered_at: nil}
+  end
+
+  defp maybe_emit_host_checks_health_changed_event(
+         %Host{checks_health: checks_health},
+         checks_health
+       ),
+       do: nil
+
+  defp maybe_emit_host_checks_health_changed_event(
+         %Host{host_id: host_id},
+         checks_health
+       ),
+       do: %HostChecksHealthChanged{
+         host_id: host_id,
+         checks_health: checks_health
+       }
+
+  defp maybe_add_checks_health(healths, _, []), do: healths
+  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
+
+  defp maybe_emit_host_health_changed_event(%Host{
+         host_id: host_id,
+         selected_checks: selected_checks,
+         heartbeat: heartbeat,
+         checks_health: checks_health,
+         health: current_health
+       }) do
+    new_health =
+      [heartbeat]
+      |> maybe_add_checks_health(checks_health, selected_checks)
+      |> Enum.filter(& &1)
+      |> HealthService.compute_aggregated_health()
+
+    if new_health != current_health do
+      %HostHealthChanged{host_id: host_id, health: new_health}
+    end
   end
 end

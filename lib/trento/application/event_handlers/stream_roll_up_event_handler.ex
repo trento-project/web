@@ -46,7 +46,9 @@ defmodule Trento.StreamRollUpEventHandler do
     Trento.Domain.Events.HostRegistered,
     Trento.Domain.Events.ProviderUpdated,
     Trento.Domain.Events.SlesSubscriptionsUpdated,
-    Trento.Domain.Events.HostChecksSelected
+    Trento.Domain.Events.HostChecksSelected,
+    Trento.Domain.Events.HostChecksHealthChanged,
+    Trento.Domain.Events.HostHealthChanged
   ]
 
   @sap_system_events [
