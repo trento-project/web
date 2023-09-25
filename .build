@@ -33,6 +33,7 @@ Trento.Domain.Cluster.Lifespan.html
 Trento.Domain.Cluster.html
 Trento.Domain.ClusterResource.html
 Trento.Domain.Commands.CompleteChecksExecution.html
+Trento.Domain.Commands.CompleteHostChecksExecution.html
 Trento.Domain.Commands.DeregisterApplicationInstance.html
 Trento.Domain.Commands.DeregisterClusterHost.html
 Trento.Domain.Commands.DeregisterDatabaseInstance.html
@@ -92,10 +93,12 @@ Trento.Domain.Events.HeartbeatFailed.html
 Trento.Domain.Events.HeartbeatSucceded.html
 Trento.Domain.Events.HostAddedToCluster.html
 Trento.Domain.Events.HostChecksExecutionCompleted.html
+Trento.Domain.Events.HostChecksHealthChanged.html
 Trento.Domain.Events.HostChecksSelected.html
 Trento.Domain.Events.HostDeregistered.html
 Trento.Domain.Events.HostDeregistrationRequested.html
 Trento.Domain.Events.HostDetailsUpdated.html
+Trento.Domain.Events.HostHealthChanged.html
 Trento.Domain.Events.HostRegistered.html
 Trento.Domain.Events.HostRemovedFromCluster.html
 Trento.Domain.Events.HostRestored.html
@@ -332,8 +335,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-970660AA.js
-dist/sidebar_items-16F568B9.js
+dist/search_items-14C23E85.js
+dist/sidebar_items-EC158346.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
