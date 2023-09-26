@@ -14,12 +14,12 @@ describe('Checks Selection reducer', () => {
   const scenarios = [
     {
       name: 'Host checks selection',
-      targetID: faker.datatype.uuid(),
+      targetID: faker.string.uuid(),
       targetType: 'host',
     },
     {
       name: 'Cluster checks selection',
-      targetID: faker.datatype.uuid(),
+      targetID: faker.string.uuid(),
       targetType: 'cluster',
     },
   ];
@@ -66,11 +66,11 @@ describe('Checks Selection reducer', () => {
     (targetType) => {
       const state = {
         host: {
-          [faker.datatype.uuid()]: { status: 'saving' },
-          [faker.datatype.uuid()]: { status: 'saving_failed' },
+          [faker.string.uuid()]: { status: 'saving' },
+          [faker.string.uuid()]: { status: 'saving_failed' },
         },
         cluster: {
-          [faker.datatype.uuid()]: { status: 'successfully_saved' },
+          [faker.string.uuid()]: { status: 'successfully_saved' },
         },
       };
 
@@ -79,7 +79,7 @@ describe('Checks Selection reducer', () => {
         setSavingSuccessful,
         setSavingFailed,
       ].forEach((actionFunction) => {
-        const targetID = faker.datatype.uuid();
+        const targetID = faker.string.uuid();
         const action = actionFunction({ targetID, targetType });
 
         const newState = checksSelectionReducer(state, action);

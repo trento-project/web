@@ -25,7 +25,7 @@ describe('Checks Selection saga', () => {
   describe('Host Checks Selection', () => {
     it('should successfully save check selection for a host', async () => {
       const { id: hostID, hostname: hostName } = hostFactory.build();
-      const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+      const checks = [faker.string.uuid(), faker.string.uuid()];
 
       axiosMock.onPost(`/hosts/${hostID}/checks`).reply(202, {});
 
@@ -58,7 +58,7 @@ describe('Checks Selection saga', () => {
 
     it('should not save check selection for a host on request failure', async () => {
       const { id: hostID, hostname: hostName } = hostFactory.build();
-      const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+      const checks = [faker.string.uuid(), faker.string.uuid()];
 
       axiosMock.onPost(`/hosts/${hostID}/checks`).reply(400, {});
 
@@ -89,7 +89,7 @@ describe('Checks Selection saga', () => {
   describe('Cluster Checks Selection', () => {
     it('should successfully save check selection for a cluster', async () => {
       const { id: clusterID, name: clusterName } = clusterFactory.build();
-      const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+      const checks = [faker.string.uuid(), faker.string.uuid()];
 
       axiosMock.onPost(`/clusters/${clusterID}/checks`).reply(202, {});
 
@@ -122,7 +122,7 @@ describe('Checks Selection saga', () => {
 
     it('should not save check selection for a cluster on request failure', async () => {
       const { id: clusterID, name: clusterName } = clusterFactory.build();
-      const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+      const checks = [faker.string.uuid(), faker.string.uuid()];
 
       axiosMock.onPost(`/clusters/${clusterID}/checks`).reply(400, {});
 

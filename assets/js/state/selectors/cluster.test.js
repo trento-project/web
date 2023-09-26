@@ -172,8 +172,8 @@ describe('Cluster selector', () => {
   });
 
   it('should return selected checks for a cluster', () => {
-    const clusterID = faker.datatype.uuid();
-    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const clusterID = faker.string.uuid();
+    const checks = [faker.string.uuid(), faker.string.uuid()];
     const cluster = clusterFactory.build({
       id: clusterID,
       selected_checks: checks,
@@ -186,12 +186,12 @@ describe('Cluster selector', () => {
     };
 
     expect(getClusterSelectedChecks(state, clusterID)).toEqual(checks);
-    expect(getClusterSelectedChecks(state, faker.datatype.uuid())).toEqual([]);
+    expect(getClusterSelectedChecks(state, faker.string.uuid())).toEqual([]);
   });
 
   it('should return all the cluster IDs', () => {
-    const clusterID1 = faker.datatype.uuid();
-    const clusterID2 = faker.datatype.uuid();
+    const clusterID1 = faker.string.uuid();
+    const clusterID2 = faker.string.uuid();
     const cluster1 = clusterFactory.build({
       id: clusterID1,
     });

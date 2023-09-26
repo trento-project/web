@@ -96,7 +96,7 @@ describe('SAP Systems reducer', () => {
       applicationInstances: [instance],
     };
 
-    const newHostId = faker.datatype.uuid();
+    const newHostId = faker.string.uuid();
     const instanceToUpdate = {
       sap_system_id: instance.sap_system_id,
       instance_number: instance.instance_number,

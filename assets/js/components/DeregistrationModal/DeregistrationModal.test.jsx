@@ -8,7 +8,7 @@ import DeregistrationModal from '.';
 
 describe('Deregistration Modal component', () => {
   it('should render a host deregistration modal correctly', async () => {
-    const hostname = faker.name.firstName();
+    const hostname = faker.person.firstName();
 
     render(
       <DeregistrationModal

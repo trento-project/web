@@ -4,7 +4,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.23.0",
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-react": "^7.22.15",
-    "@faker-js/faker": "^7.6.0",
+    "@faker-js/faker": "^8.1.0",
     "@storybook/addon-actions": "^7.4.5",
     "@storybook/addon-essentials": "^7.4.2",
     "@storybook/addon-interactions": "^7.4.3",

@@ -11,8 +11,8 @@ export const Default = {
   args: {
     isTargetHost: true,
     expectedValues: [
-      { name: faker.animal.bear(), value: faker.datatype.number() },
-      { name: faker.animal.bear(), value: faker.datatype.number() },
+      { name: faker.animal.bear(), value: faker.number.int() },
+      { name: faker.animal.bear(), value: faker.number.int() },
     ],
     isError: false,
   },

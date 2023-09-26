@@ -26,7 +26,7 @@ const saptuneTuningStateEnum = () =>
 export const slesSubscriptionFactory = Factory.define(() => ({
   arch: 'x86_64',
   expires_at: day(faker.date.future()).format(slesSubscriptionDateFormat),
-  host_id: faker.datatype.uuid(),
+  host_id: faker.string.uuid(),
   identifier: slesSubscriptionIdentifierEnum(),
   inserted_at: day(faker.date.recent()).format(),
   starts_at: day(faker.date.past()).format(slesSubscriptionDateFormat),
@@ -39,26 +39,26 @@ export const slesSubscriptionFactory = Factory.define(() => ({
 
 export const saptuneStatusFactory = Factory.define(() => ({
   package_version: faker.helpers.fake(
-    '{{datatype.number}}.{{datatype.number}}.{{datatype.number}}'
+    '{{number.int}}.{{number.int}}.{{number.int}}'
   ),
-  configured_version: faker.datatype.number(),
+  configured_version: faker.number.int(),
   tuning_state: saptuneTuningStateEnum(),
 }));
 
 export const hostFactory = Factory.define(({ params, sequence }) => {
-  const id = params.id || faker.datatype.uuid();
+  const id = params.id || faker.string.uuid();
 
   return {
     id,
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',
-    hostname: `${faker.name.firstName()}_${sequence}`,
-    cluster_id: faker.datatype.uuid(),
+    hostname: `${faker.person.firstName()}_${sequence}`,
+    cluster_id: faker.string.uuid(),
     ip_addresses: [faker.internet.ip()],
     provider: cloudProviderEnum(),
     heartbeat: heartbeatEnum(),
     provider_data: {
-      admin_username: faker.name.firstName().toLowerCase(),
-      data_disk_number: faker.datatype.number({ min: 1, max: 9 }),
+      admin_username: faker.person.firstName().toLowerCase(),
+      data_disk_number: faker.number.int({ min: 1, max: 9 }),
       location: faker.word.noun(),
       offer: 'sles-sap-15-sp3-byos',
       resource_group: faker.word.noun(),

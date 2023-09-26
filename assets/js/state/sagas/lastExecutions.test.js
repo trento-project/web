@@ -43,13 +43,13 @@ describe('lastExecutions saga', () => {
   });
 
   it('should update the last execution for a given groupID', async () => {
-    const groupID = faker.datatype.uuid();
+    const groupID = faker.string.uuid();
 
     const lastExecution = {
       group_id: groupID,
-      critical_count: faker.datatype.number(),
-      warning_count: faker.datatype.number(),
-      passing_count: faker.datatype.number(),
+      critical_count: faker.number.int(),
+      warning_count: faker.number.int(),
+      passing_count: faker.number.int(),
       status: 'completed',
     };
 
@@ -64,7 +64,7 @@ describe('lastExecutions saga', () => {
   });
 
   it('should update the last execution for a given groupID to an empty state', async () => {
-    const groupID = faker.datatype.uuid();
+    const groupID = faker.string.uuid();
 
     axiosMock.onGet(lastExecutionURL(groupID)).reply(404, {});
 
@@ -77,7 +77,7 @@ describe('lastExecutions saga', () => {
   });
 
   it('should update the last execution for a given groupID with an error', async () => {
-    const groupID = faker.datatype.uuid();
+    const groupID = faker.string.uuid();
 
     axiosMock.onGet(lastExecutionURL(groupID)).networkError();
 
@@ -92,9 +92,9 @@ describe('lastExecutions saga', () => {
   });
 
   it('should set the last execution to requested state', async () => {
-    const clusterID = faker.datatype.uuid();
+    const clusterID = faker.string.uuid();
     const clusterName = faker.animal.cat();
-    const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const hosts = [faker.string.uuid(), faker.string.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
     const navigate = jest.fn();
 
@@ -128,9 +128,9 @@ describe('lastExecutions saga', () => {
   });
 
   it('should not set the last execution to requested state on failure', async () => {
-    const clusterID = faker.datatype.uuid();
+    const clusterID = faker.string.uuid();
     const clusterName = faker.animal.cat();
-    const hosts = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const hosts = [faker.string.uuid(), faker.string.uuid()];
     const checks = [faker.color.human(), faker.color.human()];
     const navigate = jest.fn();
 
@@ -164,7 +164,7 @@ describe('lastExecutions saga', () => {
   it('should set the last host execution to requested state', async () => {
     const host = hostFactory.build();
     const { id: hostID, hostname: hostName } = host;
-    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const checks = [faker.string.uuid(), faker.string.uuid()];
     const navigate = jest.fn();
 
     axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(202, {});
@@ -186,7 +186,7 @@ describe('lastExecutions saga', () => {
   it('should not set the host last execution to requested state on failure', async () => {
     const host = hostFactory.build();
     const { id: hostID, hostname: hostName } = host;
-    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const checks = [faker.string.uuid(), faker.string.uuid()];
     const navigate = jest.fn();
 
     axiosMock.onPost(triggerHostChecksExecutionURL(hostID)).reply(400, {});

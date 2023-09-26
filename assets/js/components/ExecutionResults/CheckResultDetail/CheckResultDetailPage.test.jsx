@@ -145,7 +145,7 @@ describe('CheckResultDetailPage Component', () => {
     const reduxStore = initialStore();
     const { validClusterID, validCheckID, validTargetType } =
       getValidStoreData(reduxStore);
-    const invalidTargetName = faker.random.word();
+    const invalidTargetName = faker.lorem.word();
     const [StatefulCheckResultDetailPage] = withState(
       <CheckResultDetailPage targetType="cluster" />,
       reduxStore

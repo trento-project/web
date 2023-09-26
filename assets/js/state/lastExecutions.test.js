@@ -38,7 +38,11 @@ describe('lastExecutions reducer', () => {
   it('should set the last execution of a given groupID to empty', () => {
     const initialState = {
       someID: {
-        data: JSON.parse(faker.datatype.json()),
+        data: {
+          foo: 'bar',
+          bar: 'baz',
+          baz: 'qux',
+        },
         loading: false,
         error: null,
       },
@@ -60,7 +64,11 @@ describe('lastExecutions reducer', () => {
   it('should set the last execution of a given groupID to the error state', () => {
     const initialState = {
       someID: {
-        data: JSON.parse(faker.datatype.json()),
+        data: {
+          foo: 'bar',
+          bar: 'baz',
+          baz: 'qux',
+        },
         loading: true,
         error: null,
       },
@@ -85,9 +93,9 @@ describe('lastExecutions reducer', () => {
 
     const data = {
       group_id: 'someID',
-      critical_count: faker.datatype.number(),
-      warning_count: faker.datatype.number(),
-      passing_count: faker.datatype.number(),
+      critical_count: faker.number.int(),
+      warning_count: faker.number.int(),
+      passing_count: faker.number.int(),
       status: 'completed',
     };
 
@@ -189,7 +197,7 @@ describe('lastExecutions reducer', () => {
 
   it('should set requested state on host execution', () => {
     const initialState = {};
-    const checks = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const checks = [faker.string.uuid(), faker.string.uuid()];
     const host = hostFactory.build();
     const { id: hostID } = host;
 
