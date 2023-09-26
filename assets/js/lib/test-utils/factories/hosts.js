@@ -15,6 +15,15 @@ const slesSubscriptionIdentifierEnum = () =>
     'sle-ha',
   ]);
 
+const saptuneNotesIDs = [
+  faker.number.int({ min: 100000, max: 1000000 }),
+  faker.number.int({ min: 100000, max: 1000000 }),
+  faker.number.int({ min: 100000, max: 1000000 }),
+  faker.number.int({ min: 100000, max: 1000000 }),
+  faker.number.int({ min: 100000, max: 1000000 }),
+  faker.number.int({ min: 100000, max: 1000000 }),
+];
+
 export const cloudProviderEnum = () =>
   faker.helpers.arrayElement(['azure', 'aws', 'gcp', 'nutanix']);
 
@@ -38,41 +47,68 @@ export const slesSubscriptionFactory = Factory.define(() => ({
   version: '15.3',
 }));
 
-export const saptuneStatusFactory = Factory.define(() => {
-  const notes_ids = [
-    faker.datatype.number(100000),
-    faker.datatype.number(100000),
-  ];
-  return {
-    applied_notes: [
-      { additionally_enabled: faker.datatype.boolean(), id: notes_ids[0] },
-      { additionally_enabled: faker.datatype.boolean(), id: notes_ids[1] },
-    ],
-    applied_solution: {
-      id: 'NETWEAVER',
-      notes: notes_ids,
-      partial: faker.datatype.boolean(),
-    },
-    configured_version: faker.datatype.number({ min: 1, max: 3 }),
-    enabled_notes: [
-      { additionally_enabled: faker.datatype.boolean(), id: notes_ids[0] },
-      { additionally_enabled: faker.datatype.boolean(), id: notes_ids[1] },
-    ],
-    enabled_solution: {
-      id: 'NETWEAVER',
-      notes: notes_ids,
-      partial: faker.datatype.boolean(),
-    },
-    package_version: faker.system.semver(),
-    services: [
-      { active: null, enabled: null, name: 'sapconf' },
-      { active: 'active', enabled: 'enabled', name: 'saptune' },
-      { active: null, enabled: null, name: 'tuned' },
-    ],
-    staging: { enabled: false, notes: [], solutions_ids: [] },
-    tuning_state: saptuneTuningStateEnum(),
-  };
-});
+const saptuneServiceActiveEnum = () =>
+  faker.helpers.arrayElement(['enabled', 'disabled', null]);
+
+const saptuneServiceEnabledEnum = () =>
+  faker.helpers.arrayElement(['active', 'inactive', null]);
+
+const saptuneServiceNameEnum = () =>
+  faker.helpers.arrayElement(['tuned', 'sapconf', 'saptune']);
+
+const saptuneServiceFactory = Factory.define(() => ({
+  active: saptuneServiceActiveEnum(),
+  enabled: saptuneServiceEnabledEnum(),
+  name: saptuneServiceNameEnum(),
+}));
+
+const saptuneStagingFactory = Factory.define(() => ({
+  enabled: faker.datatype.boolean(),
+  notes: [],
+  solutions_ids: [],
+}));
+
+const saptuneAppliedNotesFactory = Factory.define(() => ({
+  additionally_enabled: faker.datatype.boolean(),
+  id: faker.number.int(),
+}));
+
+const saptuneAppliedSolutionFactory = Factory.define(() => ({
+  notes: saptuneNotesIDs.map((id) => id),
+  id: 'NETWEAVER',
+  partial: faker.datatype.boolean(),
+}));
+
+const saptuneEnabledNotesFactory = Factory.define(() => ({
+  additionally_enabled: faker.datatype.boolean(),
+  id: faker.number.int(),
+}));
+
+const saptuneEnabledSolutionsFactory = Factory.define(() => ({
+  id: 'NETWEAVER',
+  notes: saptuneNotesIDs.map((id) => id),
+  partial: faker.datatype.boolean(),
+}));
+
+export const saptuneStatusFactory = Factory.define(() => ({
+  applied_notes: saptuneNotesIDs.map((id) =>
+    saptuneAppliedNotesFactory.build({ id })
+  ),
+  applied_solution: saptuneAppliedSolutionFactory.build(),
+  configured_version: faker.number.int({ min: 1, max: 3 }),
+  enabled_notes: saptuneNotesIDs.map((id) =>
+    saptuneEnabledNotesFactory.build({ id })
+  ),
+  enabled_solution: saptuneEnabledSolutionsFactory.build(),
+  package_version: faker.system.semver(),
+  services: [
+    saptuneServiceFactory.build({ name: 'sapconf' }),
+    saptuneServiceFactory.build({ name: 'saptune' }),
+    saptuneServiceFactory.build({ name: 'tuned' }),
+  ],
+  staging: saptuneStagingFactory.build(),
+  tuning_state: saptuneTuningStateEnum(),
+}));
 
 export const hostFactory = Factory.define(({ params, sequence }) => {
   const id = params.id || faker.string.uuid();

@@ -20,7 +20,6 @@ function SaptuneDetailsPage() {
   if (!saptuneStatus || !isVersionSupported(saptuneStatus.package_version)) {
     return <div>Saptune Details Not Found</div>;
   }
-
   return (
     <SaptuneDetails
       appliedNotes={saptuneStatus.applied_notes}
