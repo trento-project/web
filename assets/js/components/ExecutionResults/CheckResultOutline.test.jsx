@@ -39,16 +39,16 @@ describe('CheckResultOutline Component', () => {
   it('should render a proper outline for a successful cluster check result', async () => {
     const user = userEvent.setup();
 
-    const clusterID = faker.datatype.uuid();
-    const checkID = faker.datatype.uuid();
+    const clusterID = faker.string.uuid();
+    const checkID = faker.string.uuid();
     const clusterName = faker.lorem.word();
 
     // expectation names are not required to be uuids. using uuids for their uniqueness.
-    const expectationName1 = faker.datatype.uuid();
-    const expectationName2 = faker.datatype.uuid();
-    const expectationName3 = faker.datatype.uuid();
-    const expectSameExpectationName1 = faker.datatype.uuid();
-    const expectSameExpectationName2 = faker.datatype.uuid();
+    const expectationName1 = faker.string.uuid();
+    const expectationName2 = faker.string.uuid();
+    const expectationName3 = faker.string.uuid();
+    const expectSameExpectationName1 = faker.string.uuid();
+    const expectSameExpectationName2 = faker.string.uuid();
 
     const expectations = [
       catalogExpectExpectationFactory.build({
@@ -70,7 +70,7 @@ describe('CheckResultOutline Component', () => {
 
     let checkResult = emptyCheckResultFactory.build({
       checkID,
-      targets: [faker.datatype.uuid(), faker.datatype.uuid()],
+      targets: [faker.string.uuid(), faker.string.uuid()],
       result: 'passing',
     });
     checkResult = addPassingExpectExpectation(checkResult, expectationName1);
@@ -131,11 +131,11 @@ describe('CheckResultOutline Component', () => {
   it('should render a proper outline for a successful host check result', async () => {
     const user = userEvent.setup();
 
-    const hostID = faker.datatype.uuid();
+    const hostID = faker.string.uuid();
     const hostName = faker.lorem.word();
-    const checkID = faker.datatype.uuid();
+    const checkID = faker.string.uuid();
 
-    const expectationName = faker.datatype.uuid();
+    const expectationName = faker.string.uuid();
 
     const expectations = [
       catalogExpectExpectationFactory.build({
@@ -180,7 +180,7 @@ describe('CheckResultOutline Component', () => {
   });
 
   it('should render a proper outline when a fact gathering error occurs', () => {
-    const checkID = faker.datatype.uuid();
+    const checkID = faker.string.uuid();
     const clusterName = faker.animal.bear();
 
     const expectationName1 = faker.company.name();

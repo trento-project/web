@@ -70,10 +70,10 @@ export default {
   },
 };
 
-const targetID = faker.datatype.uuid();
+const targetID = faker.string.uuid();
 const targetName = faker.lorem.word(7);
-const selection = [faker.datatype.uuid()];
-const savedSelection = [faker.datatype.uuid()];
+const selection = [faker.string.uuid()];
+const savedSelection = [faker.string.uuid()];
 
 export const Default = {
   args: {

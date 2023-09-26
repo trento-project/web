@@ -174,7 +174,7 @@ describe('lastExecutions selector', () => {
   });
 
   it('should properly handle running executions', () => {
-    const groupID = faker.datatype.uuid();
+    const groupID = faker.string.uuid();
     const runningExecution = checksExecutionRunningFactory.build({
       group_id: groupID,
     });

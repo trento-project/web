@@ -12,8 +12,8 @@ import ChecksCatalog from './ChecksCatalog';
 
 describe('ChecksCatalog ChecksCatalog component', () => {
   it('should render the checks catalog with fetched data', async () => {
-    const groupName1 = faker.datatype.uuid();
-    const groupName2 = faker.datatype.uuid();
+    const groupName1 = faker.string.uuid();
+    const groupName2 = faker.string.uuid();
     const group1 = catalogCheckFactory.buildList(5, { group: groupName1 });
     const group2 = catalogCheckFactory.buildList(5, { group: groupName2 });
 

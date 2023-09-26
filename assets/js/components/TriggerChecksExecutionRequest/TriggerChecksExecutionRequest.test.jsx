@@ -18,9 +18,9 @@ describe('TriggerChecksExecutionRequest component', () => {
       }
     );
 
-    const targetID = faker.datatype.uuid();
+    const targetID = faker.string.uuid();
     const hosts = hostFactory.buildList(2);
-    const selectedChecks = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const selectedChecks = [faker.string.uuid(), faker.string.uuid()];
 
     await act(async () =>
       renderWithRouter(

@@ -19,7 +19,7 @@ import { GenericSystemDetails } from './GenericSystemDetails';
 
 describe('GenericSystemDetails', () => {
   it('should render correctly', () => {
-    const title = faker.datatype.uuid();
+    const title = faker.string.uuid();
     const sapSystem = sapSystemFactory.build({
       ensa_version: 'ensa1',
       instances: sapSystemApplicationInstanceFactory.buildList(5),
@@ -48,7 +48,7 @@ describe('GenericSystemDetails', () => {
   });
 
   it('should render a not found label if system is not there', () => {
-    const title = faker.datatype.uuid();
+    const title = faker.string.uuid();
     renderWithRouter(
       <GenericSystemDetails title={title} type={APPLICATION_TYPE} />
     );
@@ -66,7 +66,7 @@ describe('GenericSystemDetails', () => {
 
     renderWithRouter(
       <GenericSystemDetails
-        title={faker.datatype.uuid()}
+        title={faker.string.uuid()}
         system={sapSystem}
         type={APPLICATION_TYPE}
       />
@@ -85,7 +85,7 @@ describe('GenericSystemDetails', () => {
 
     renderWithRouter(
       <GenericSystemDetails
-        title={faker.datatype.uuid()}
+        title={faker.string.uuid()}
         system={sapSystem}
         type={APPLICATION_TYPE}
       />
@@ -119,7 +119,7 @@ describe('GenericSystemDetails', () => {
 
     renderWithRouter(
       <GenericSystemDetails
-        title={faker.datatype.uuid()}
+        title={faker.string.uuid()}
         system={sapSystem}
         type={type}
         onInstanceCleanUp={mockedCleanUp}

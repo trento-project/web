@@ -22,8 +22,8 @@ import { UNKNOWN_PROVIDER } from '@lib/model';
 import ExecutionResults from './ExecutionResults';
 
 const prepareStateData = (checkExecutionStatus) => {
-  const checkID1 = faker.datatype.uuid();
-  const checkID2 = faker.datatype.uuid();
+  const checkID1 = faker.string.uuid();
+  const checkID2 = faker.string.uuid();
 
   const clusterHosts = hostFactory.buildList(2);
   const [{ id: agent1 }, { id: agent2 }] = clusterHosts;
@@ -269,7 +269,7 @@ describe('ExecutionResults', () => {
 
     renderWithRouter(
       <ExecutionResults
-        targetID={faker.datatype.uuid()}
+        targetID={faker.string.uuid()}
         targetName={faker.animal.cat()}
         targetType="cluster"
         target={target}

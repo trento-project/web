@@ -24,7 +24,7 @@ describe('HostSettingsPage component', () => {
 
     renderWithRouterMatch(StatefulHostSettingsPage, {
       path: 'hosts/:hostID/settings',
-      route: `/hosts/${faker.datatype.uuid()}/settings`,
+      route: `/hosts/${faker.string.uuid()}/settings`,
     });
 
     expect(screen.getByText('Loading...')).toBeVisible();

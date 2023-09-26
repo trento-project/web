@@ -57,11 +57,7 @@ describe('checksUtils', () => {
   });
 
   it('getCatalogCategoryList should return a sorted category list where it is matching', () => {
-    const IDs = [
-      faker.datatype.number(),
-      faker.datatype.number(),
-      faker.datatype.number(),
-    ];
+    const IDs = [faker.number.int(), faker.number.int(), faker.number.int()];
     const checksResults = [
       { check_id: IDs[0] },
       { check_id: IDs[1] },
@@ -77,7 +73,7 @@ describe('checksUtils', () => {
   });
 
   it('getCatalogCategoryList should return an empty array if checksResults is not provided', () => {
-    const IDs = [faker.datatype.number(), faker.datatype.number()];
+    const IDs = [faker.number.int(), faker.number.int()];
     const catalog = [
       { id: IDs[0], group: faker.lorem.word() },
       { id: IDs[1], group: faker.lorem.word() },
@@ -499,10 +495,10 @@ describe('checksUtils', () => {
 
   it('should return true or false if a check is premium or not', () => {
     const checkIDs = [
-      faker.datatype.uuid(),
-      faker.datatype.uuid(),
-      faker.datatype.uuid(),
-      faker.datatype.uuid(),
+      faker.string.uuid(),
+      faker.string.uuid(),
+      faker.string.uuid(),
+      faker.string.uuid(),
     ];
     const expectedPremiumValues = [true, false, undefined, faker.animal.cat()];
     const checkCatalog = checkIDs.map((id, index) =>

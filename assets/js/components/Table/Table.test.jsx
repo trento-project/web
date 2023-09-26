@@ -57,8 +57,8 @@ describe('Table component', () => {
   };
 
   const tableDataFactory = Factory.define(() => ({
-    column1: faker.name.firstName(),
-    column2: [faker.address.city()],
+    column1: faker.person.firstName(),
+    column2: [faker.location.city()],
     column3: faker.animal.dog(),
   }));
 
@@ -140,7 +140,7 @@ describe('Table component', () => {
 
     it('should return empty state message when data is empty', () => {
       const data = [];
-      const emptyStateText = faker.random.words(5);
+      const emptyStateText = faker.lorem.words(5);
       render(
         <Table
           config={tableConfig}

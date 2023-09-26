@@ -21,20 +21,20 @@ const roles = () =>
 export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   features: roles().join('|'),
   health: healthEnum(),
-  host_id: faker.datatype.uuid(),
+  host_id: faker.string.uuid(),
   http_port: faker.internet.port(),
   https_port: faker.internet.port(),
   instance_hostname: faker.hacker.noun(),
-  instance_number: faker.datatype.number({ min: 10, max: 99 }).toString(),
-  sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
-  start_priority: faker.datatype.number({ min: 1, max: 9 }).toString(),
-  sap_system_id: faker.datatype.uuid(),
+  instance_number: faker.number.int({ min: 10, max: 99 }).toString(),
+  sid: faker.string.alphanumeric(3, { casing: 'upper' }),
+  start_priority: faker.number.int({ min: 1, max: 9 }).toString(),
+  sap_system_id: faker.string.uuid(),
   absent_at: null,
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {
-  const id = params.id || faker.datatype.uuid();
-  const sid = params.sid || faker.random.alphaNumeric(3, { casing: 'upper' });
+  const id = params.id || faker.string.uuid();
+  const sid = params.sid || faker.string.alphanumeric(3, { casing: 'upper' });
 
   return {
     application_instances: sapSystemApplicationInstanceFactory.buildList(2, {
@@ -43,7 +43,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     }),
     database_instances: databaseInstanceFactory.buildList(2, {
       sap_system_id: id,
-      sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
+      sid: faker.string.alphanumeric(3, { casing: 'upper' }),
     }),
     db_host: faker.internet.ip(),
     deregistered_at: null,
@@ -52,6 +52,6 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     id,
     sid,
     tags: [],
-    tenant: faker.random.alphaNumeric(3, { casing: 'upper' }),
+    tenant: faker.string.alphanumeric(3, { casing: 'upper' }),
   };
 });

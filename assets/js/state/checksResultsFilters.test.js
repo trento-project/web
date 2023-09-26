@@ -7,7 +7,7 @@ describe('Catalog reducer', () => {
   it('should set catalog on loading state', () => {
     const initialState = {};
 
-    const resourceID = faker.datatype.uuid();
+    const resourceID = faker.string.uuid();
 
     const filters = ['warning'];
 

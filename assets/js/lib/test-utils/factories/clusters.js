@@ -23,16 +23,16 @@ export const sbdDevicesFactory = Factory.define(() => ({
 }));
 
 export const clusterResourceFactory = Factory.define(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   role: faker.animal.bear(),
   status: faker.animal.bird(),
   type: faker.animal.cat(),
-  fail_count: faker.datatype.number(),
+  fail_count: faker.number.int(),
 }));
 
 export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
   name: faker.animal.dog(),
-  site: faker.address.city(),
+  site: faker.location.city(),
   virtual_ip: faker.internet.ip(),
   hana_status: hanaStatus(),
   attributes: Array.from({ length: 5 }).reduce(
@@ -57,7 +57,7 @@ export const hanaClusterDetailsFactory = Factory.define(() => ({
 }));
 
 export const ascsErsClusterNodeFactory = Factory.define(({ sequence }) => ({
-  name: `${faker.name.firstName()}_${sequence}`,
+  name: `${faker.person.firstName()}_${sequence}`,
   roles: [ascsErsRole()],
   virtual_ips: [faker.internet.ip()],
   filesystems: [faker.system.filePath()],
@@ -72,7 +72,7 @@ export const ascsErsClusterNodeFactory = Factory.define(({ sequence }) => ({
 }));
 
 export const ascsErsSapSystemFactory = Factory.define(() => ({
-  sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
+  sid: faker.string.alphanumeric(3, { casing: 'upper' }),
   filesystem_resource_based: faker.datatype.boolean(),
   distributed: faker.datatype.boolean(),
   nodes: ascsErsClusterNodeFactory.buildList(2),
@@ -103,11 +103,11 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
   })();
 
   return {
-    id: faker.datatype.uuid(),
-    name: `${faker.name.firstName()}_${sequence}`,
-    sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
-    hosts_number: faker.datatype.number(),
-    resources_number: faker.datatype.number(),
+    id: faker.string.uuid(),
+    name: `${faker.person.firstName()}_${sequence}`,
+    sid: faker.string.alphanumeric(3, { casing: 'upper' }),
+    hosts_number: faker.number.int(),
+    resources_number: faker.number.int(),
     type: clusterTypeEnum(),
     health: healthEnum(),
     selected_checks: [],

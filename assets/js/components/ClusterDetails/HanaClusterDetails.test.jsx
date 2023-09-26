@@ -17,7 +17,7 @@ import {
 import HanaClusterDetails from './HanaClusterDetails';
 
 describe('HanaClusterDetails component', () => {
-  const executionId = faker.datatype.uuid();
+  const executionId = faker.string.uuid();
   const scenarios = [
     {
       name: 'Execution is being loaded from wanda',
@@ -293,7 +293,7 @@ describe('HanaClusterDetails component', () => {
       },
     },
     {
-      selectedChecks: [faker.datatype.uuid()],
+      selectedChecks: [faker.string.uuid()],
       hasSelectedChecks: true,
       suggestionExpectation: (tooltipSuggestion) => {
         tooltipSuggestion.not.toBeInTheDocument();

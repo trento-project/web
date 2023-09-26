@@ -11,10 +11,10 @@ import { cloudProviderEnum, resultEnum } from '@lib/test-utils/factories';
 import CheckDetailHeader from './CheckDetailHeader';
 
 describe('CheckDetailHeader Component', () => {
-  const targetIdentifier = faker.datatype.uuid();
+  const targetIdentifier = faker.string.uuid();
   const scenarios = [
     {
-      checkID: faker.datatype.uuid(),
+      checkID: faker.string.uuid(),
       checkDescription: faker.lorem.sentence(),
       targetID: targetIdentifier,
       targetType: 'cluster',
@@ -26,7 +26,7 @@ describe('CheckDetailHeader Component', () => {
       expectedResultTargetTypeText: 'Host',
     },
     {
-      checkID: faker.datatype.uuid(),
+      checkID: faker.string.uuid(),
       checkDescription: faker.lorem.sentence(),
       targetID: targetIdentifier,
       targetType: 'cluster',
@@ -38,7 +38,7 @@ describe('CheckDetailHeader Component', () => {
       expectedResultTargetTypeText: 'Cluster',
     },
     {
-      checkID: faker.datatype.uuid(),
+      checkID: faker.string.uuid(),
       checkDescription: faker.lorem.sentence(),
       targetID: targetIdentifier,
       targetType: 'host',
@@ -88,8 +88,8 @@ describe('CheckDetailHeader Component', () => {
   );
 
   it('should render a header with a warning banner on an unknown provider detection, when the target is a cluster', () => {
-    const targetID = faker.datatype.uuid();
-    const checkID = faker.datatype.uuid();
+    const targetID = faker.string.uuid();
+    const checkID = faker.string.uuid();
     const checkDescription = faker.lorem.sentence();
     const targetType = 'cluster';
     const resultTargetType = 'host';
@@ -150,7 +150,7 @@ describe('CheckDetailHeader Component', () => {
       const user = userEvent.setup();
       renderWithRouter(
         <CheckDetailHeader
-          checkID={faker.datatype.uuid()}
+          checkID={faker.string.uuid()}
           checkDescription={faker.lorem.sentence()}
           targetID={targetID}
           targetType={targetType}

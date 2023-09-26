@@ -41,9 +41,9 @@ describe('ChecksResultOverview component', () => {
   });
 
   it('should display the check results overview', () => {
-    const passing_count = faker.datatype.number();
-    const warning_count = faker.datatype.number();
-    const critical_count = faker.datatype.number();
+    const passing_count = faker.number.int();
+    const warning_count = faker.number.int();
+    const critical_count = faker.number.int();
 
     const data = {
       completed_at: faker.date.past().toISOString(),

@@ -10,11 +10,11 @@ export * from './databases';
 
 export const randomObjectFactory = Factory.define(({ transientParams }) => {
   const depth = transientParams.depth || 2;
-  const length = faker.datatype.number({ min: 3, max: 10 });
+  const length = faker.number.int({ min: 3, max: 10 });
 
   const lastElement =
     depth === 1
-      ? { key: faker.hacker.noun(), value: faker.name.firstName() }
+      ? { key: faker.hacker.noun(), value: faker.person.firstName() }
       : {
           key: faker.hacker.noun(),
           value: randomObjectFactory.build(
@@ -44,24 +44,24 @@ export const healthEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 
 export const checkFactory = Factory.define(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   description: faker.lorem.paragraph(),
   executionState: executionStateEnum,
   health: healthEnum,
 }));
 
 export const healthSummaryFactory = Factory.define(() => ({
-  applicationClusterId: faker.datatype.uuid(),
+  applicationClusterId: faker.string.uuid(),
   applicationClusterHealth: healthEnum(),
   databaseHealth: healthEnum(),
-  databaseId: faker.datatype.uuid(),
-  databaseClusterId: faker.datatype.uuid(),
+  databaseId: faker.string.uuid(),
+  databaseClusterId: faker.string.uuid(),
   databaseClusterHealth: healthEnum(),
   hostsHealth: healthEnum(),
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   sapsystemHealth: healthEnum(),
-  sid: faker.random.alphaNumeric(3, { casing: 'upper' }),
-  tenant: faker.random.alphaNumeric(3, { casing: 'upper' }),
+  sid: faker.string.alphanumeric(3, { casing: 'upper' }),
+  tenant: faker.string.alphanumeric(3, { casing: 'upper' }),
 }));
 
 export const catalogExpectExpectationFactory = Factory.define(
@@ -81,7 +81,7 @@ export const catalogExpectSameExpectationFactory = Factory.define(
 );
 
 export const catalogCheckFactory = Factory.define(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   name: faker.animal.cat(),
   group: faker.animal.cat(),
   description: faker.lorem.paragraph(),
@@ -98,16 +98,16 @@ export const catalogFactory = Factory.define(() => ({
 
 export const aboutFactory = Factory.define(() => ({
   flavor: faker.animal.cat(),
-  sles_subscriptions: faker.datatype.number(),
+  sles_subscriptions: faker.number.int(),
   version: faker.system.networkInterface(),
 }));
 
 export const objectTreeFactory = Factory.define(() => ({
-  number: faker.datatype.number(),
+  number: faker.number.int(),
   string: faker.word.adjective(),
-  array: faker.datatype.array(),
+  array: [faker.lorem.word(4), faker.lorem.word(5), faker.lorem.word(6)],
   complexObject: {
-    nestedNumber: faker.datatype.number(),
+    nestedNumber: faker.number.int(),
     nestedString: faker.word.noun(),
   },
 }));

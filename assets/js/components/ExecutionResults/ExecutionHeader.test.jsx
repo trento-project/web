@@ -11,7 +11,7 @@ import ExecutionHeader from './ExecutionHeader';
 describe('Checks results ExecutionHeader Component', () => {
   describe('With target Cluster', () => {
     it('should render a header with expected cluster information', () => {
-      const clusterID = faker.datatype.uuid();
+      const clusterID = faker.string.uuid();
       const clusterName = faker.animal.bear();
       const cloudProvider = 'azure';
       const clusterScenario = 'hana_scale_up';
@@ -40,7 +40,7 @@ describe('Checks results ExecutionHeader Component', () => {
     });
 
     it('should render a header with a warning banner on an unknown provider detection', () => {
-      const clusterID = faker.datatype.uuid();
+      const clusterID = faker.string.uuid();
       const clusterName = faker.animal.bear();
       const cloudProvider = 'unknown';
       const clusterScenario = 'hana_scale_up';
@@ -74,7 +74,7 @@ describe('Checks results ExecutionHeader Component', () => {
 
   describe('With target Host', () => {
     it('should render a header with expected host information', () => {
-      const hostID = faker.datatype.uuid();
+      const hostID = faker.string.uuid();
       const hostName = faker.animal.bear();
       const cloudProvider = 'aws';
       const agentVersion = '2.1.1';
@@ -104,7 +104,7 @@ describe('Checks results ExecutionHeader Component', () => {
     });
 
     it('should not render a warning banner within the header on an unknown provider detection', () => {
-      const hostID = faker.datatype.uuid();
+      const hostID = faker.string.uuid();
       const hostName = faker.animal.bear();
       const cloudProvider = 'unknown';
 

@@ -108,15 +108,12 @@ describe('Hosts reducer', () => {
   });
 
   it('should update the check selection for a host', () => {
-    const initialCheckSelection = [
-      faker.datatype.uuid(),
-      faker.datatype.uuid(),
-    ];
+    const initialCheckSelection = [faker.string.uuid(), faker.string.uuid()];
     const host1 = hostFactory.build({ selected_checks: initialCheckSelection });
     const host2 = hostFactory.build();
     const initialState = { hosts: [host1, host2] };
 
-    const newChecksSelection = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const newChecksSelection = [faker.string.uuid(), faker.string.uuid()];
 
     const action = updateSelectedChecks({
       hostID: host1.id,

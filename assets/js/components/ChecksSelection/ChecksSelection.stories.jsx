@@ -23,7 +23,7 @@ const selectedChecks = [
   catalog[6].id,
 ];
 
-const targetID = faker.datatype.uuid();
+const targetID = faker.string.uuid();
 
 export default {
   title: 'ChecksSelection',

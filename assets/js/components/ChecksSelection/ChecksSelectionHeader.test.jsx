@@ -13,10 +13,10 @@ describe('ChecksSelectionHeader component', () => {
   it('should render a target checks selection header', async () => {
     const user = userEvent.setup();
 
-    const targetID = faker.datatype.uuid();
+    const targetID = faker.string.uuid();
     const targetName = faker.lorem.word();
-    const selection = [faker.datatype.uuid(), faker.datatype.uuid()];
-    const savedSelection = [faker.datatype.uuid()];
+    const selection = [faker.string.uuid(), faker.string.uuid()];
+    const savedSelection = [faker.string.uuid()];
     const onSaveSelection = jest.fn();
     const onStartExecution = jest.fn();
 
@@ -68,9 +68,9 @@ describe('ChecksSelectionHeader component', () => {
   it('should not allow saving a selection', async () => {
     const user = userEvent.setup();
 
-    const targetID = faker.datatype.uuid();
+    const targetID = faker.string.uuid();
     const targetName = faker.lorem.word();
-    const selection = [faker.datatype.uuid(), faker.datatype.uuid()];
+    const selection = [faker.string.uuid(), faker.string.uuid()];
     const onSaveSelection = jest.fn();
 
     renderWithRouter(
@@ -100,7 +100,7 @@ describe('ChecksSelectionHeader component', () => {
       isSavingSelection: false,
     },
     {
-      savedSelection: [faker.datatype.uuid()],
+      savedSelection: [faker.string.uuid()],
       isSavingSelection: true,
     },
     {
@@ -114,7 +114,7 @@ describe('ChecksSelectionHeader component', () => {
     async ({ savedSelection, isSavingSelection }) => {
       const user = userEvent.setup();
 
-      const targetID = faker.datatype.uuid();
+      const targetID = faker.string.uuid();
       const targetName = faker.lorem.word();
       const onStartExecution = jest.fn();
 

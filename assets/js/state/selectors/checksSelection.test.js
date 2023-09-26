@@ -7,13 +7,13 @@ import {
 
 describe('Checks Selection selector', () => {
   it(`should detect a target's status`, () => {
-    const savingHostSelection = faker.datatype.uuid();
-    const successfullySavedHostSelection = faker.datatype.uuid();
-    const savingFailedHostSelection = faker.datatype.uuid();
+    const savingHostSelection = faker.string.uuid();
+    const successfullySavedHostSelection = faker.string.uuid();
+    const savingFailedHostSelection = faker.string.uuid();
 
-    const savingClusterSelection = faker.datatype.uuid();
-    const successfullySavedClusterSelection = faker.datatype.uuid();
-    const savingFailedClusterSelection = faker.datatype.uuid();
+    const savingClusterSelection = faker.string.uuid();
+    const successfullySavedClusterSelection = faker.string.uuid();
+    const savingFailedClusterSelection = faker.string.uuid();
 
     const state = {
       checksSelection: {
@@ -36,8 +36,8 @@ describe('Checks Selection selector', () => {
     expect(isSaving('cluster', successfullySavedClusterSelection)(state)).toBe(
       false
     );
-    expect(isSaving('host', faker.datatype.uuid())(state)).toBe(false);
-    expect(isSaving('cluster', faker.datatype.uuid())(state)).toBe(false);
+    expect(isSaving('host', faker.string.uuid())(state)).toBe(false);
+    expect(isSaving('cluster', faker.string.uuid())(state)).toBe(false);
 
     expect(
       isSuccessfullySaved('host', successfullySavedHostSelection)(state)
@@ -49,10 +49,8 @@ describe('Checks Selection selector', () => {
     expect(isSuccessfullySaved('cluster', savingClusterSelection)(state)).toBe(
       false
     );
-    expect(isSuccessfullySaved('host', faker.datatype.uuid())(state)).toBe(
-      false
-    );
-    expect(isSuccessfullySaved('cluster', faker.datatype.uuid())(state)).toBe(
+    expect(isSuccessfullySaved('host', faker.string.uuid())(state)).toBe(false);
+    expect(isSuccessfullySaved('cluster', faker.string.uuid())(state)).toBe(
       false
     );
 
@@ -64,7 +62,7 @@ describe('Checks Selection selector', () => {
     expect(isSavingFailed('cluster', savingClusterSelection)(state)).toBe(
       false
     );
-    expect(isSavingFailed('host', faker.datatype.uuid())(state)).toBe(false);
-    expect(isSavingFailed('cluster', faker.datatype.uuid())(state)).toBe(false);
+    expect(isSavingFailed('host', faker.string.uuid())(state)).toBe(false);
+    expect(isSavingFailed('cluster', faker.string.uuid())(state)).toBe(false);
   });
 });

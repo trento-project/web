@@ -13,8 +13,8 @@ const expectationReturnTypeEnum = () =>
   faker.helpers.arrayElement(['expect', 'expect_same']);
 
 export const executionValueFactory = Factory.define(() => ({
-  name: `value_${faker.datatype.uuid()}`,
-  value: faker.datatype.number(),
+  name: `value_${faker.string.uuid()}`,
+  value: faker.number.int(),
 }));
 
 export const executionExpectationEvaluationFactory = Factory.define(
@@ -27,7 +27,7 @@ export const executionExpectationEvaluationFactory = Factory.define(
 
     return {
       name,
-      return_value: faker.datatype.number(),
+      return_value: faker.number.int(),
       type: expectationReturnTypeEnum(),
       ...failure_message,
     };
@@ -82,13 +82,13 @@ export const failingExpectationResultFactory = Factory.define(({ params }) =>
 );
 
 export const executionFactFactory = Factory.define(() => ({
-  check_id: faker.datatype.uuid(),
-  name: `fact_${faker.datatype.uuid()}`,
+  check_id: faker.string.uuid(),
+  name: `fact_${faker.string.uuid()}`,
   value: randomObjectFactory.build({}, { transient: { depth: 5 } }),
 }));
 
 export const executionFactErrorFactory = Factory.define(() => ({
-  check_id: faker.datatype.uuid(),
+  check_id: faker.string.uuid(),
   name: faker.lorem.word(),
   type: faker.color.human(),
   message: faker.hacker.phrase(),
@@ -98,7 +98,7 @@ export const agentCheckResultFactory = Factory.define(() => {
   executionExpectationEvaluationFactory.rewindSequence();
 
   return {
-    agent_id: faker.datatype.uuid(),
+    agent_id: faker.string.uuid(),
     expectation_evaluations: executionExpectationEvaluationFactory.buildList(2),
     facts: executionFactFactory.buildList(2),
     values: executionValueFactory.buildList(2),
@@ -106,19 +106,19 @@ export const agentCheckResultFactory = Factory.define(() => {
 });
 
 export const agentCheckErrorFactory = Factory.define(() => ({
-  agent_id: faker.datatype.uuid(),
+  agent_id: faker.string.uuid(),
   facts: executionFactFactory.buildList(2),
   type: faker.color.human(),
   message: faker.hacker.phrase(),
 }));
 
 export const targetFactory = Factory.define(() => ({
-  agent_id: faker.datatype.uuid(),
-  checks: Array.from({ length: 5 }).map((_) => faker.datatype.uuid()),
+  agent_id: faker.string.uuid(),
+  checks: Array.from({ length: 5 }).map((_) => faker.string.uuid()),
 }));
 
 export const checkResultFactory = Factory.define(() => ({
-  check_id: faker.datatype.uuid(),
+  check_id: faker.string.uuid(),
   result: resultEnum(),
   agents_check_results: agentCheckResultFactory.buildList(2),
   expectation_results: expectationResultFactory.buildList(2),
@@ -126,8 +126,8 @@ export const checkResultFactory = Factory.define(() => ({
 
 export const checksExecutionRunningFactory = Factory.define(() => ({
   completed_at: null,
-  execution_id: faker.datatype.uuid(),
-  group_id: faker.datatype.uuid(),
+  execution_id: faker.string.uuid(),
+  group_id: faker.string.uuid(),
   result: null,
   started_at: faker.date.soon(),
   status: 'running',
@@ -159,8 +159,8 @@ const checkResultForTarget = (agentId) =>
 export const checksExecutionCompletedForTargetsFactory = Factory.define(
   ({ params }) => {
     const targets = params.targets || [
-      faker.datatype.uuid(),
-      faker.datatype.uuid(),
+      faker.string.uuid(),
+      faker.string.uuid(),
     ];
 
     const checkResults = params.check_id
@@ -262,11 +262,8 @@ export const agentsCheckResultsWithHostname = (
   }));
 
 export const emptyCheckResultFactory = Factory.define(({ params }) => {
-  const checkID = params.checkID || faker.datatype.uuid();
-  const targets = params.targets || [
-    faker.datatype.uuid(),
-    faker.datatype.uuid(),
-  ];
+  const checkID = params.checkID || faker.string.uuid();
+  const targets = params.targets || [faker.string.uuid(), faker.string.uuid()];
   const result = params.result || resultEnum();
 
   const checkResult = checkResultFactory.build({

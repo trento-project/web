@@ -7,7 +7,7 @@ import CheckResultInfoBox from './CheckResultInfoBox';
 describe('CheckResultInfoBox Component', () => {
   const scenarios = [
     {
-      checkID: faker.datatype.uuid(),
+      checkID: faker.string.uuid(),
       resultTargetType: 'cluster',
       expectedTargetTypeText: 'Cluster',
       resultTargetName: faker.lorem.word(),
@@ -15,7 +15,7 @@ describe('CheckResultInfoBox Component', () => {
       expectedProviderText: 'AWS',
     },
     {
-      checkID: faker.datatype.uuid(),
+      checkID: faker.string.uuid(),
       resultTargetType: 'host',
       expectedTargetTypeText: 'Host',
       resultTargetName: faker.lorem.word(),
@@ -23,7 +23,7 @@ describe('CheckResultInfoBox Component', () => {
       expectedProviderText: 'Azure',
     },
     {
-      checkID: faker.datatype.uuid(),
+      checkID: faker.string.uuid(),
       resultTargetType: 'foobar',
       expectedTargetTypeText: 'Unknown target type',
       resultTargetName: faker.lorem.word(),

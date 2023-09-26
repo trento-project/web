@@ -74,7 +74,7 @@ describe('SAP Systems sagas', () => {
   it('should update the application instance host', async () => {
     const { sap_system_id, instance_number, old_host_id } =
       sapSystemApplicationInstanceFactory.build();
-    const new_host_id = faker.datatype.uuid();
+    const new_host_id = faker.string.uuid();
 
     const dispatched = await recordSaga(applicationInstanceMoved, {
       payload: { sap_system_id, instance_number, old_host_id, new_host_id },

@@ -4,10 +4,10 @@ import { getHostSelectedChecks, getHostIDs } from './host';
 
 describe('host selector', () => {
   it('should return selected checks for a host', () => {
-    const hostID1 = faker.datatype.uuid();
-    const hostID2 = faker.datatype.uuid();
-    const checkID1 = faker.datatype.uuid();
-    const checkID2 = faker.datatype.uuid();
+    const hostID1 = faker.string.uuid();
+    const hostID2 = faker.string.uuid();
+    const checkID1 = faker.string.uuid();
+    const checkID2 = faker.string.uuid();
     const checks1 = [checkID1, checkID2];
     const checks2 = [];
 
@@ -34,8 +34,8 @@ describe('host selector', () => {
   });
 
   it('should return host IDs in a list', () => {
-    const hostID1 = faker.datatype.uuid();
-    const hostID2 = faker.datatype.uuid();
+    const hostID1 = faker.string.uuid();
+    const hostID2 = faker.string.uuid();
     const host1 = hostFactory.build({
       id: hostID1,
     });

@@ -114,7 +114,7 @@ describe('ClusterDetails ClusterSettings component', () => {
     },
     {
       cluster: clusterFactory.build({
-        selected_checks: [faker.datatype.uuid()],
+        selected_checks: [faker.string.uuid()],
       }),
       suggestionExpectation: (tooltipSuggestion) => {
         tooltipSuggestion.toBeVisible();

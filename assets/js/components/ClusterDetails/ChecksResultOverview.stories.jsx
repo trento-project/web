@@ -10,9 +10,9 @@ export const Default = {
   args: {
     data: {
       completed_at: faker.date.recent().toISOString(),
-      passing_count: faker.datatype.number(),
-      warning_count: faker.datatype.number(),
-      critical_count: faker.datatype.number(),
+      passing_count: faker.number.int(),
+      warning_count: faker.number.int(),
+      critical_count: faker.number.int(),
     },
     error: '',
     loading: false,
