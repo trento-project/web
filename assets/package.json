@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "@babel/core": "^7.23.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.22.11",
+    "@babel/plugin-transform-modules-commonjs": "^7.23.0",
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-react": "^7.22.15",
     "@faker-js/faker": "^7.6.0",
