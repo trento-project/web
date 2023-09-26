@@ -54,7 +54,6 @@ function HostDetailsPage() {
   if (!host) {
     return <div>Not Found</div>;
   }
-
   return (
     <HostDetails
       agentVersion={host.agent_version}

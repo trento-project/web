@@ -44,7 +44,8 @@ const renderNotes = (notes) => {
 
 const renderSolution = ({ id, notes, partial }) => (
   <span>
-    {id} ({renderNotes(notes)}{partial ? ' -> Partial' : ''})
+    {id} ({renderNotes(notes)}
+    {partial ? ' -> Partial' : ''})
   </span>
 );
 
