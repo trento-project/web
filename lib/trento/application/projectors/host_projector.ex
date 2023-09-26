@@ -19,6 +19,7 @@ defmodule Trento.HostProjector do
     HostChecksSelected,
     HostDeregistered,
     HostDetailsUpdated,
+    HostHealthChanged,
     HostRegistered,
     HostRemovedFromCluster,
     HostRestored,
@@ -223,6 +224,18 @@ defmodule Trento.HostProjector do
     end
   )
 
+  project(
+    %HostHealthChanged{host_id: id, health: health},
+    fn multi ->
+      changeset =
+        HostReadModel
+        |> Repo.get!(id)
+        |> HostReadModel.changeset(%{health: health})
+
+      Ecto.Multi.update(multi, :host, changeset)
+    end
+  )
+
   def map_from_struct(struct) when is_struct(struct) do
     Map.from_struct(struct)
   end
@@ -390,6 +403,16 @@ defmodule Trento.HostProjector do
       )
 
     TrentoWeb.Endpoint.broadcast("monitoring:hosts", "saptune_status_updated", message)
+  end
+
+  def after_update(
+        %HostHealthChanged{},
+        _,
+        %{host: %HostReadModel{} = host}
+      ) do
+    message = HostView.render("host_health_changed.json", %{host: host})
+
+    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_health_changed", message)
   end
 
   def after_update(_, _, _), do: :ok

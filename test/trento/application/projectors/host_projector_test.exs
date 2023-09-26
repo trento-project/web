@@ -542,4 +542,43 @@ defmodule Trento.HostProjectorTest do
                      },
                      1000
   end
+
+  test "should project a host's health when HostHealthChanged is emitted" do
+    health_changing_scenarios = [
+      %{
+        initial_health: :passing,
+        emitted_health: :warning
+      },
+      %{
+        initial_health: :passing,
+        emitted_health: :critical
+      },
+      %{
+        initial_health: :warning,
+        emitted_health: :critical
+      }
+    ]
+
+    for %{
+          initial_health: initial_health,
+          emitted_health: emitted_health
+        } <- health_changing_scenarios do
+      %HostReadModel{id: host_id} = insert(:host, health: initial_health)
+
+      event = build(:host_health_changed_event, host_id: host_id, health: emitted_health)
+
+      ProjectorTestHelper.project(HostProjector, event, "host_projector")
+
+      %HostReadModel{health: projected_health} = Repo.get!(HostReadModel, host_id)
+
+      assert emitted_health == projected_health
+
+      assert_broadcast "host_health_changed",
+                       %{
+                         id: ^host_id,
+                         health: ^projected_health
+                       },
+                       1000
+    end
+  end
 end

@@ -17,6 +17,7 @@ defmodule TrentoWeb.V1.HostView do
     |> Map.delete(:tags)
     |> Map.delete(:cluster_id)
     |> Map.delete(:heartbeat)
+    |> Map.delete(:health)
     |> Map.delete(:provider)
   end
 
@@ -38,5 +39,9 @@ defmodule TrentoWeb.V1.HostView do
         host: %{id: id, saptune_status: status, hostname: hostname}
       }) do
     %{id: id, status: status, hostname: hostname}
+  end
+
+  def render("host_health_changed.json", %{host: %{id: id, health: health}}) do
+    %{id: id, health: health}
   end
 end
