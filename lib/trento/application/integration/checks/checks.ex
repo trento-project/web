@@ -3,7 +3,11 @@ defmodule Trento.Integration.Checks do
   Checks Engine service integration
   """
 
-  alias Trento.Domain.Commands.CompleteChecksExecution
+  alias Trento.Domain.Commands.{
+    CompleteChecksExecution,
+    CompleteHostChecksExecution
+  }
+
   alias Trento.Domain.Enums.Health
   alias Trento.Infrastructure.Messaging
 
@@ -66,21 +70,30 @@ defmodule Trento.Integration.Checks do
 
   @spec complete_execution(String.t(), String.t(), Health.t(), target_type) :: :ok | {:error, any}
   def complete_execution(execution_id, target_id, health, :cluster) do
-    commanded().dispatch(
+    dispatch_completion_command(
+      execution_id,
       CompleteChecksExecution.new!(%{
         cluster_id: target_id,
         health: health
-      }),
-      correlation_id: execution_id
+      })
     )
   end
 
-  def complete_execution(_execution_id, _target_id, _health, :host) do
-    # TODO dispatch host execution completed command
-    :ok
+  def complete_execution(execution_id, target_id, health, :host) do
+    dispatch_completion_command(
+      execution_id,
+      CompleteHostChecksExecution.new!(%{
+        host_id: target_id,
+        health: health
+      })
+    )
   end
 
   def complete_execution(_, _, _, _), do: {:error, :target_not_supported}
+
+  defp dispatch_completion_command(execution_id, command) do
+    commanded().dispatch(command, correlation_id: execution_id)
+  end
 
   defp build_env(%ClusterExecutionEnv{cluster_type: cluster_type, provider: provider}) do
     %{
