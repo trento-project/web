@@ -7,15 +7,15 @@ import SaptuneDetails from './SaptuneDetails';
 
 const { hostname, id: hostID } = hostFactory.build();
 const {
-  package_version: packageVersion,
-  configured_version: configuredVersion,
-  tuning_state: tuningState,
   applied_notes: appliedNotes,
   applied_solution: appliedSolution,
+  configured_version: configuredVersion,
   enabled_solution: enabledSolution,
   enabled_notes: enabledNotes,
+  package_version: packageVersion,
   services,
   staging,
+  tuning_state: tuningState,
 } = saptuneStatusFactory.build();
 
 function ContainerWrapper({ children }) {

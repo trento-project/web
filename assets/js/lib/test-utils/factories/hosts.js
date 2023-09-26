@@ -56,6 +56,9 @@ const saptuneServiceEnabledEnum = () =>
 const saptuneServiceNameEnum = () =>
   faker.helpers.arrayElement(['tuned', 'sapconf', 'saptune']);
 
+const saptuneSolutionNameEnum = () =>
+  faker.helpers.arrayElement(['NETWEAVER', 'HANA', 'NETWEAVER+HANA']);
+
 const saptuneServiceFactory = Factory.define(() => ({
   active: saptuneServiceActiveEnum(),
   enabled: saptuneServiceEnabledEnum(),
@@ -64,8 +67,8 @@ const saptuneServiceFactory = Factory.define(() => ({
 
 const saptuneStagingFactory = Factory.define(() => ({
   enabled: faker.datatype.boolean(),
-  notes: [],
-  solutions_ids: [],
+  notes: saptuneNotesIDs,
+  solutions_ids: saptuneNotesIDs,
 }));
 
 const saptuneAppliedNotesFactory = Factory.define(() => ({
@@ -75,7 +78,7 @@ const saptuneAppliedNotesFactory = Factory.define(() => ({
 
 const saptuneAppliedSolutionFactory = Factory.define(() => ({
   notes: saptuneNotesIDs.map((id) => id),
-  id: 'NETWEAVER',
+  id: saptuneSolutionNameEnum(),
   partial: faker.datatype.boolean(),
 }));
 
@@ -85,7 +88,7 @@ const saptuneEnabledNotesFactory = Factory.define(() => ({
 }));
 
 const saptuneEnabledSolutionsFactory = Factory.define(() => ({
-  id: 'NETWEAVER',
+  id: saptuneSolutionNameEnum(),
   notes: saptuneNotesIDs.map((id) => id),
   partial: faker.datatype.boolean(),
 }));

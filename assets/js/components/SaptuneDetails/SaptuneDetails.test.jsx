@@ -10,8 +10,14 @@ import SaptuneDetails from './SaptuneDetails';
 describe('SaptuneDetails', () => {
   it('should render the details correctly', () => {
     const {
+      applied_notes: appliedNotes,
+      applied_solution: appliedSolution,
       configured_version: configuredVersion,
+      enabled_solution: enabledSolution,
+      enabled_notes: enabledNotes,
       package_version: packageVersion,
+      services,
+      staging,
       tuning_state: tuningState,
     } = saptuneStatusFactory.build();
 
@@ -19,10 +25,16 @@ describe('SaptuneDetails', () => {
 
     renderWithRouter(
       <SaptuneDetails
-        packageVersion={packageVersion}
+        appliedNotes={appliedNotes}
+        appliedSolution={appliedSolution}
+        configuredVersion={configuredVersion}
+        enabledNotes={enabledNotes}
+        enabledSolution={enabledSolution}
         hostname={hostname}
         hostID={hostID}
-        configuredVersion={configuredVersion}
+        packageVersion={packageVersion}
+        services={services}
+        staging={staging}
         tuningState={tuningState}
       />
     );
