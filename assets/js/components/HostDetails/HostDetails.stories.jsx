@@ -1,5 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { faker } from '@faker-js/faker';
 
 import {
   clusterFactory,
@@ -122,6 +123,10 @@ export default {
       control: { type: 'array' },
       description: 'Registered SLES subscriptions on the host',
     },
+    lastExecution: {
+      control: 'object',
+      description: 'Last execution data',
+    },
     cleanUpHost: {
       action: 'Deregister host',
       description: 'Deregister host',
@@ -131,7 +136,7 @@ export default {
       description: 'Request checks execution',
     },
     navigate: {
-      description: 'Navagate function',
+      description: 'Navigate function',
     },
   },
   decorators: [
@@ -168,6 +173,14 @@ export const Default = {
       package_version: '3.1.0',
       configured_version: '3',
       tuning_state: 'no tuning',
+    },
+    lastExecution: {
+      data: {
+        passing_count: faker.number.int(50),
+        warning_count: faker.number.int(50),
+        critical_count: faker.number.int(50),
+        completed_at: faker.date.past().toISOString(),
+      },
     },
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
@@ -214,5 +227,12 @@ export const SaptuneOldVersion = {
       configured_version: null,
       tuning_state: null,
     },
+  },
+};
+
+export const WithoutLastExecutionData = {
+  args: {
+    ...Default.args,
+    lastExecution: {},
   },
 };

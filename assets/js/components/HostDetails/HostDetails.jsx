@@ -16,7 +16,7 @@ import { canStartExecution } from '@components/ChecksSelection';
 import Tooltip from '@components/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';
-import ChecksComingSoon from '@static/checks-coming-soon.svg';
+import CheckResultsOverview from '@components/CheckResultsOverview';
 
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
@@ -45,6 +45,7 @@ function HostDetails({
   saptuneStatus = {},
   selectedChecks = [],
   slesSubscriptions,
+  lastExecution,
   cleanUpHost,
   requestHostChecksExecution,
   navigate,
@@ -178,15 +179,12 @@ function HostDetails({
             />
           </div>
           <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
-            <div className="flex flex-col items-center h-full">
-              <h1 className="text-center text-2xl font-bold">Check Results</h1>
-              <h6 className="opacity-60 text-xs">Coming soon for Hosts</h6>
-              <img
-                className="h-full inline-block align-middle"
-                alt="checks coming soon"
-                src={ChecksComingSoon}
-              />
-            </div>
+            <CheckResultsOverview
+              {...lastExecution}
+              onCheckClick={(health) =>
+                navigate(`/hosts/${hostID}/executions/last?health=${health}`)
+              }
+            />
           </div>
         </div>
         <div className="mt-8 bg-white shadow rounded-lg py-4 px-8">

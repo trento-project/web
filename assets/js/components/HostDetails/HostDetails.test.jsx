@@ -170,4 +170,35 @@ describe('HostDetails component', () => {
       );
     });
   });
+
+  describe('last execution overview', () => {
+    it('should be displayed when lastExecution has data inside', () => {
+      const passingCount = faker.number.int(100);
+      const warningCount = faker.number.int(100);
+      const criticalCount = faker.number.int(100);
+
+      const lastExecution = {
+        data: {
+          completed_at: faker.date.past().toISOString(),
+          passing_count: passingCount,
+          warning_ccount: warningCount,
+          critical_ccount: criticalCount,
+        },
+      };
+
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" lastExecution={lastExecution} />
+      );
+
+      expect(screen.getByText(passingCount)).toBeInTheDocument();
+    });
+
+    it('should display nothing if lastExecution is an empty object', () => {
+      renderWithRouter(<HostDetails agentVersion="2.0.0" />);
+
+      expect(
+        screen.getByText('No check results available.')
+      ).toBeInTheDocument();
+    });
+  });
 });

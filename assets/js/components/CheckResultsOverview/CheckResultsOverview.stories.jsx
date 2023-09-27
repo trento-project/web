@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
-import ChecksResultOverview from './ChecksResultOverview';
+import CheckResultsOverview from './CheckResultsOverview';
 
 export default {
-  title: 'ChecksResultOverview',
-  component: ChecksResultOverview,
+  title: 'CheckResultsOverview',
+  component: CheckResultsOverview,
 };
 
 export const Default = {

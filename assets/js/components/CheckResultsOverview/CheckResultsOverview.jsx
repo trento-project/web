@@ -6,11 +6,12 @@ import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_EXECUTION_STATE,
 } from '@state/lastExecutions';
+
 import CheckResultCount from './CheckResultCount';
 
 const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
-function ChecksResultOverview({
+function CheckResultsOverview({
   data,
   error = null,
   loading = false,
@@ -72,4 +73,4 @@ function ChecksResultOverview({
   );
 }
 
-export default ChecksResultOverview;
+export default CheckResultsOverview;
