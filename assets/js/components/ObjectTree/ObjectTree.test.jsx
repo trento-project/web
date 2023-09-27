@@ -9,7 +9,7 @@ import { flattenTree, treeify } from './tree';
 
 describe('ObjectTree component', () => {
   it('should render correctly', () => {
-    const data = objectTreeFactory.build();
+    const data = objectTreeFactory.build({ empty_array: [], empty_object: {} });
     const {
       number,
       string,
@@ -21,6 +21,7 @@ describe('ObjectTree component', () => {
 
     expect(screen.getByText(number)).toBeVisible();
     expect(screen.getByText(string)).toBeVisible();
+    expect(screen.getAllByText('{}')).toHaveLength(2);
     expect(screen.queryByText(nestedString)).toBeNull();
     expect(screen.queryByText(firstArrayElement)).toBeNull();
 

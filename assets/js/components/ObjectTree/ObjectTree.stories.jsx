@@ -10,5 +10,10 @@ export default {
 };
 
 export function Normal(args) {
-  return <ObjectTree data={objectTreeFactory.build()} {...args} />;
+  return (
+    <ObjectTree
+      data={objectTreeFactory.build({ empty_array: [], empty_object: {} })}
+      {...args}
+    />
+  );
 }

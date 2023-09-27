@@ -1,7 +1,21 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import { has } from 'lodash';
+
 import ObjectTreeIcon from './ObjectTreeIcon';
+
+const renderElement = (element) => {
+  if (element.value === null) {
+    return 'null';
+  }
+
+  if (!has(element, 'value') && element.children.length === 0) {
+    return '{}';
+  }
+
+  return element.value;
+};
 
 function ObjectTreeNode({
   element,
@@ -24,7 +38,7 @@ function ObjectTreeNode({
       {isBranch ? (
         <ObjectTreeIcon expanded={isExpanded} />
       ) : (
-        <span className="ml-2">{element.value}</span>
+        <span className="ml-2">{renderElement(element)}</span>
       )}
     </div>
   );
