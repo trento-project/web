@@ -10,6 +10,7 @@ defmodule Trento.Domain.HealthService do
 
   def compute_aggregated_health(healths) do
     healths
+    |> Enum.filter(& &1)
     |> Enum.map(&{&1, health_weight(&1)})
     |> Enum.max_by(fn {_, weight} -> weight end)
     |> elem(0)
