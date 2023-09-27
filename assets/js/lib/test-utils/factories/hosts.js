@@ -40,7 +40,10 @@ export const slesSubscriptionFactory = Factory.define(() => ({
 
 const sapNoteID = () => faker.number.int({ min: 100000, max: 999999 });
 
-const sapNotesList = (count = 6) => Array(count).fill(sapNoteID());
+const sapNotesList = (count = 6) =>
+  Array(count)
+    .fill(null)
+    .map(() => sapNoteID());
 
 const saptuneServiceActiveEnum = () =>
   faker.helpers.arrayElement(['enabled', 'disabled', null]);
@@ -61,9 +64,9 @@ const saptuneServiceFactory = Factory.define(() => ({
 }));
 
 const saptuneStagingFactory = Factory.define(() => ({
-  enabled: faker.datatype.boolean(),
-  notes: sapNotesList(),
-  solutions_ids: sapNotesList(),
+  enabled: true,
+  notes: sapNotesList(3),
+  solutions_ids: [saptuneSolutionNameEnum()],
 }));
 
 const saptuneNoteFactory = Factory.define(() => ({
@@ -77,22 +80,27 @@ const saptuneSolutionFactory = Factory.define(() => ({
   partial: faker.datatype.boolean(),
 }));
 
-export const saptuneStatusFactory = Factory.define(() => ({
-  applied_notes: sapNotesList().map((id) => saptuneNoteFactory.build({ id })),
-  applied_solution: saptuneSolutionFactory.build(),
-  configured_version: faker.number.int({ min: 1, max: 3 }),
-  enabled_notes: sapNotesList().map((id) => saptuneNoteFactory.build({ id })),
-  enabled_solution: saptuneSolutionFactory.build(),
-  package_version: faker.system.semver(),
-  services: [
-    saptuneServiceFactory.build({ name: 'sapconf' }),
-    saptuneServiceFactory.build({ name: 'saptune' }),
-    saptuneServiceFactory.build({ name: 'tuned' }),
-  ],
-  staging: saptuneStagingFactory.build(),
-  tuning_state: saptuneTuningStateEnum(),
-}));
+export const saptuneStatusFactory = Factory.define(() => {
+  const solution = saptuneSolutionFactory.build();
+  const { notes } = solution;
+  const allNotes = notes.map((id) => saptuneNoteFactory.build({ id }));
 
+  return {
+    applied_notes: allNotes,
+    applied_solution: solution,
+    configured_version: faker.number.int({ min: 1, max: 3 }),
+    enabled_notes: allNotes,
+    enabled_solution: solution,
+    package_version: faker.system.semver(),
+    services: [
+      saptuneServiceFactory.build({ name: 'sapconf' }),
+      saptuneServiceFactory.build({ name: 'saptune' }),
+      saptuneServiceFactory.build({ name: 'tuned' }),
+    ],
+    staging: saptuneStagingFactory.build(3),
+    tuning_state: saptuneTuningStateEnum(),
+  };
+});
 export const hostFactory = Factory.define(({ params, sequence }) => {
   const id = params.id || faker.string.uuid();
 

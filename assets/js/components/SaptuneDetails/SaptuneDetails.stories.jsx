@@ -74,7 +74,7 @@ export default {
       description: 'Services',
     },
     staging: {
-      control: 'array',
+      control: 'object',
       description: 'Staging',
     },
     tuningState: {
