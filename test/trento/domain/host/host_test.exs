@@ -376,6 +376,55 @@ defmodule Trento.HostTest do
         )
       end
     end
+
+    test "should ignore checks health when an empty checks selection is saved" do
+      host_id = Faker.UUID.v4()
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+      heartbeat_succeded_event = build(:heartbeat_succeded, host_id: host_id)
+
+      checks_selected_event = %HostChecksSelected{
+        host_id: host_id,
+        checks: [Faker.UUID.v4()]
+      }
+
+      host_checks_health_changed_event =
+        build(:host_checks_health_changed,
+          host_id: host_id,
+          checks_health: Health.warning()
+        )
+
+      host_health_changed_event =
+        build(:host_health_changed_event, host_id: host_id, health: Health.warning())
+
+      assert_events_and_state(
+        [
+          host_registered_event,
+          heartbeat_succeded_event,
+          checks_selected_event,
+          host_checks_health_changed_event,
+          host_health_changed_event
+        ],
+        SelectHostChecks.new!(%{
+          host_id: host_id,
+          checks: []
+        }),
+        [
+          %HostChecksSelected{
+            host_id: host_id,
+            checks: []
+          },
+          %HostHealthChanged{host_id: host_id, health: Health.passing()}
+        ],
+        fn host ->
+          assert %Host{
+                   heartbeat: Health.passing(),
+                   selected_checks: [],
+                   checks_health: Health.warning(),
+                   health: Health.passing()
+                 } = host
+        end
+      )
+    end
   end
 
   describe "heartbeat" do

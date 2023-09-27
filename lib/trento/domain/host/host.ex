@@ -389,17 +389,20 @@ defmodule Trento.Domain.Host do
   end
 
   def execute(
-        %Host{
-          host_id: host_id
-        },
+        %Host{} = host,
         %SelectHostChecks{
           checks: selected_checks
         }
       ) do
-    %HostChecksSelected{
-      host_id: host_id,
-      checks: selected_checks
-    }
+    host
+    |> Multi.new()
+    |> Multi.execute(
+      &%HostChecksSelected{
+        host_id: &1.host_id,
+        checks: selected_checks
+      }
+    )
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
