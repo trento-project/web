@@ -14,6 +14,7 @@ import { keysToCamel } from '@lib/serialization';
 import {
   HOST_DEREGISTERED,
   HOST_RESTORED,
+  HOST_HEALTH_CHANGED,
   setHosts,
   appendHost,
   updateHost,
@@ -24,6 +25,7 @@ import {
   stopHostsLoading,
   checkHostIsDeregisterable,
   cancelCheckHostIsDeregisterable,
+  updateHostHealth,
 } from '@state/hosts';
 
 import {
@@ -293,7 +295,15 @@ function* watchClusterHealthChanged() {
   yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
 }
 
-function* refreshHealthSummaryOnComnponentsHealthChange() {
+function* hostHealthChanged({ payload }) {
+  yield put(updateHostHealth(payload));
+}
+
+function* watchHostHealthChanged() {
+  yield takeEvery(HOST_HEALTH_CHANGED, hostHealthChanged);
+}
+
+function* refreshHealthSummaryOnComponentsHealthChange() {
   const debounceDuration = 5000;
 
   yield debounce(
@@ -353,6 +363,11 @@ function* refreshHealthSummaryOnComnponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
+    HOST_HEALTH_CHANGED,
+    loadSapSystemsHealthSummary
+  );
+  yield debounce(
+    debounceDuration,
     HOST_DEREGISTERED,
     loadSapSystemsHealthSummary
   );
@@ -382,6 +397,7 @@ export default function* rootSaga() {
     watchHostDetailsUpdated(),
     watchHeartbeatSucceded(),
     watchHeartbeatFailed(),
+    watchHostHealthChanged(),
     watchHostDeregistered(),
     watchHostRestored(),
     watchSaptuneStatusUpdated(),
@@ -403,7 +419,7 @@ export default function* rootSaga() {
     watchRequestExecution(),
     watchHostRequestExecution(),
     watchAcceptEula(),
-    refreshHealthSummaryOnComnponentsHealthChange(),
+    refreshHealthSummaryOnComponentsHealthChange(),
     watchPerformLogin(),
     watchHostDeregisterable(),
     watchDeregisterHost(),

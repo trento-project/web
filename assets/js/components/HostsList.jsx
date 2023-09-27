@@ -66,11 +66,11 @@ function HostsList() {
     columns: [
       {
         title: 'Health',
-        key: 'heartbeat',
+        key: 'health',
         filter: true,
         filterFromParams: true,
-        render: (_content, item) => (
-          <HealthIcon health={item.heartbeat} centered />
+        render: (_content, { health }) => (
+          <HealthIcon health={health} centered />
         ),
       },
       {
@@ -209,7 +209,7 @@ function HostsList() {
     const sapSystemList = getInstancesByHost(allInstances, host.id);
 
     return {
-      heartbeat: host.heartbeat,
+      health: host.health,
       hostname: host.hostname,
       ip: host.ip_addresses,
       provider: host.provider,
