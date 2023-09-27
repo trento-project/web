@@ -15,15 +15,6 @@ const slesSubscriptionIdentifierEnum = () =>
     'sle-ha',
   ]);
 
-const saptuneNotesIDs = [
-  faker.number.int({ min: 100000, max: 1000000 }),
-  faker.number.int({ min: 100000, max: 1000000 }),
-  faker.number.int({ min: 100000, max: 1000000 }),
-  faker.number.int({ min: 100000, max: 1000000 }),
-  faker.number.int({ min: 100000, max: 1000000 }),
-  faker.number.int({ min: 100000, max: 1000000 }),
-];
-
 export const cloudProviderEnum = () =>
   faker.helpers.arrayElement(['azure', 'aws', 'gcp', 'nutanix']);
 
@@ -47,6 +38,10 @@ export const slesSubscriptionFactory = Factory.define(() => ({
   version: '15.3',
 }));
 
+const sapNoteID = () => faker.number.int({ min: 100000, max: 999999 });
+
+const sapNotesList = (count = 6) => Array(count).fill(sapNoteID());
+
 const saptuneServiceActiveEnum = () =>
   faker.helpers.arrayElement(['enabled', 'disabled', null]);
 
@@ -67,42 +62,27 @@ const saptuneServiceFactory = Factory.define(() => ({
 
 const saptuneStagingFactory = Factory.define(() => ({
   enabled: faker.datatype.boolean(),
-  notes: saptuneNotesIDs,
-  solutions_ids: saptuneNotesIDs,
+  notes: sapNotesList(),
+  solutions_ids: sapNotesList(),
 }));
 
-const saptuneAppliedNotesFactory = Factory.define(() => ({
+const saptuneNoteFactory = Factory.define(() => ({
   additionally_enabled: faker.datatype.boolean(),
   id: faker.number.int(),
 }));
 
-const saptuneAppliedSolutionFactory = Factory.define(() => ({
-  notes: saptuneNotesIDs.map((id) => id),
+const saptuneSolutionFactory = Factory.define(() => ({
   id: saptuneSolutionNameEnum(),
-  partial: faker.datatype.boolean(),
-}));
-
-const saptuneEnabledNotesFactory = Factory.define(() => ({
-  additionally_enabled: faker.datatype.boolean(),
-  id: faker.number.int(),
-}));
-
-const saptuneEnabledSolutionsFactory = Factory.define(() => ({
-  id: saptuneSolutionNameEnum(),
-  notes: saptuneNotesIDs.map((id) => id),
+  notes: sapNotesList(),
   partial: faker.datatype.boolean(),
 }));
 
 export const saptuneStatusFactory = Factory.define(() => ({
-  applied_notes: saptuneNotesIDs.map((id) =>
-    saptuneAppliedNotesFactory.build({ id })
-  ),
-  applied_solution: saptuneAppliedSolutionFactory.build(),
+  applied_notes: sapNotesList().map((id) => saptuneNoteFactory.build({ id })),
+  applied_solution: saptuneSolutionFactory.build(),
   configured_version: faker.number.int({ min: 1, max: 3 }),
-  enabled_notes: saptuneNotesIDs.map((id) =>
-    saptuneEnabledNotesFactory.build({ id })
-  ),
-  enabled_solution: saptuneEnabledSolutionsFactory.build(),
+  enabled_notes: sapNotesList().map((id) => saptuneNoteFactory.build({ id })),
+  enabled_solution: saptuneSolutionFactory.build(),
   package_version: faker.system.semver(),
   services: [
     saptuneServiceFactory.build({ name: 'sapconf' }),
