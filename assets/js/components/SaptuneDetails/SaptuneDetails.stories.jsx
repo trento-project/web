@@ -112,3 +112,10 @@ export const Default = {
     tuningState,
   },
 };
+
+export const StagingDisabled = {
+  args: {
+    ...Default.args,
+    staging: { enabled: false, notes: [], solutions_ids: [] },
+  },
+};
