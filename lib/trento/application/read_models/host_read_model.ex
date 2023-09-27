@@ -7,6 +7,7 @@ defmodule Trento.HostReadModel do
 
   import Ecto.Changeset
 
+  require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.Provider, as: Provider
 
   alias Trento.SlesSubscriptionReadModel
@@ -21,6 +22,7 @@ defmodule Trento.HostReadModel do
     field :agent_version, :string
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
+    field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :selected_checks, {:array, :string}, default: []
     field :provider, Ecto.Enum, values: Provider.values()
     field :provider_data, :map

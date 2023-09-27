@@ -15,7 +15,7 @@ defmodule Trento.Domain.Events.HostRegisteredTest do
       os_version = Faker.App.version()
 
       assert %HostRegistered{
-               version: 2,
+               version: 3,
                host_id: host_id,
                hostname: hostname,
                ip_addresses: ip_addresses,
@@ -24,7 +24,9 @@ defmodule Trento.Domain.Events.HostRegisteredTest do
                total_memory_mb: total_memory_mb,
                socket_count: socket_count,
                os_version: os_version,
-               installation_source: :unknown
+               installation_source: :unknown,
+               heartbeat: :unknown,
+               health: :unknown
              } ==
                %{
                  "host_id" => host_id,
@@ -34,7 +36,8 @@ defmodule Trento.Domain.Events.HostRegisteredTest do
                  "cpu_count" => cpu_count,
                  "total_memory_mb" => total_memory_mb,
                  "socket_count" => socket_count,
-                 "os_version" => os_version
+                 "os_version" => os_version,
+                 "heartbeat" => :unknown
                }
                |> HostRegistered.upcast(%{})
                |> HostRegistered.new!()
