@@ -28,6 +28,11 @@ describe('FactValue component', () => {
       plain: true,
       stringRepresentation: 'true',
     },
+    {
+      type: 'null',
+      plain: null,
+      stringRepresentation: 'null',
+    },
   ];
 
   it.each(scalarScenarios)(
