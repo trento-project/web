@@ -42,7 +42,7 @@ describe('flattenTree and treeify', () => {
 
     const [
       {
-        children: [firstChildID, _second, _third, fourthChildID],
+        children: [firstChildID, _second, _third, fourthChildID, fifthChildID],
       },
     ] = children;
 
@@ -61,5 +61,7 @@ describe('flattenTree and treeify', () => {
 
     expect(children[firstComplexObjectChild].parent).toBe(fourthChildID);
     expect(children[secondComplexObjectChild].parent).toBe(fourthChildID);
+
+    expect(children[fifthChildID].value).toBe(null);
   });
 });

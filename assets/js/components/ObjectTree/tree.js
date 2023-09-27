@@ -46,6 +46,10 @@ export const treeify = (name, data) => ({
     const { [key]: element } = data;
     const dataType = typeof element;
 
+    if (element == null) {
+      return { name: key, value: null };
+    }
+
     if (dataType === 'object') {
       return treeify(key, element);
     }
