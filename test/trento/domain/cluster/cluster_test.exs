@@ -924,8 +924,8 @@ defmodule Trento.ClusterTest do
 
       commands_to_accept = [
         %RollUpCluster{cluster_id: cluster_id},
-        %RegisterClusterHost{cluster_id: cluster_id, designated_controller: true},
-        %RegisterClusterHost{cluster_id: cluster_id, designated_controller: false}
+        build(:register_cluster_host, cluster_id: cluster_id, designated_controller: true),
+        build(:register_cluster_host, cluster_id: cluster_id, designated_controller: false)
       ]
 
       for command <- commands_to_accept do

@@ -130,10 +130,10 @@ defmodule Trento.HealthSummaryServiceTest do
 
     test "should set as unknown the clusters health when they are not available" do
       %HostReadModel{id: db_host_id} =
-        db_host = insert(:host, cluster_id: nil, heartbeat: Health.passing())
+        db_host = insert(:host, cluster_id: nil, health: Health.passing())
 
       %HostReadModel{id: app_host_id} =
-        app_host = insert(:host, cluster_id: nil, heartbeat: Health.passing())
+        app_host = insert(:host, cluster_id: nil, health: Health.passing())
 
       %SapSystemReadModel{
         id: sap_system_id,
