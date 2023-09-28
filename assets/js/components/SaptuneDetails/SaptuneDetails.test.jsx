@@ -14,7 +14,7 @@ import {
 import SaptuneDetails from './SaptuneDetails';
 
 describe('SaptuneDetails', () => {
-  it('should render the details correctly', () => {
+  it('should render saptune details correctly', () => {
     const customSaptuneService = {
       active: 'active',
       enabled: 'enabled',
