@@ -469,9 +469,45 @@ jobs:
           name: e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
+  main-branch-deps:
+    name: Rebuild main branch dependencies
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Retrieve Cached Dependencies - main branch
+        uses: actions/cache@v3
+        id: mix-cache-main
+        with:
+          path: |
+            deps
+            _build/test
+            priv/plts
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+      - name: Install missing dependencies
+        if: steps.mix-cache-main.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv/plts
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+          mix deps.compile --warnings-as-errors
+          mix dialyzer --plt
+
   api-bc-check:
     name: API bc check
-    needs: [elixir-deps]
+    needs: [elixir-deps, main-branch-deps]
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -515,17 +551,7 @@ jobs:
             deps
             _build/test
             priv/plts
-          # key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
-          key: banana
-      - name: Install Missing Dependencies
-        if: steps.mix-cache-main.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p priv/plts
-          mix local.rebar --force
-          mix local.hex --force
-          mix deps.get
-          mix deps.compile --warnings-as-errors
-          mix dialyzer --plt
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Generate main openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/main-spec.json
