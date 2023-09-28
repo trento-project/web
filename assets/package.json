@@ -22,7 +22,7 @@
     "chromatic": "^7.2.0",
     "esbuild": "^0.19.3",
     "esbuild-plugin-path-alias": "^1.0.7",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
