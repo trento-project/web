@@ -346,13 +346,13 @@ describe('HostsLists component', () => {
         },
       };
 
-      const { heartbeat, hostname, tags } = hosts[0];
+      const { health, hostname, tags } = hosts[0];
 
       const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
 
       [
-        ['Health', heartbeat],
+        ['Health', health],
         ['Hostname', hostname],
         ['SID', sid],
         ['Tags', tags[0].value],
@@ -361,7 +361,7 @@ describe('HostsLists component', () => {
       });
 
       expect(window.location.search).toEqual(
-        `?heartbeat=${heartbeat}&hostname=${hostname}&sid=${sid}&tags=${tags[0].value}`
+        `?health=${health}&hostname=${hostname}&sid=${sid}&tags=${tags[0].value}`
       );
     });
   });

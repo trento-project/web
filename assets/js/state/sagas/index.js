@@ -25,7 +25,6 @@ import {
   stopHostsLoading,
   checkHostIsDeregisterable,
   cancelCheckHostIsDeregisterable,
-  updateHostHealth,
 } from '@state/hosts';
 
 import {
@@ -79,6 +78,7 @@ import {
   watchHostDeregisterable,
   watchDeregisterHost,
   watchHostRestored,
+  watchHostHealthChanged,
   watchSaptuneStatusUpdated,
 } from '@state/sagas/hosts';
 import {
@@ -293,14 +293,6 @@ function* clusterHealthChanged({ payload }) {
 
 function* watchClusterHealthChanged() {
   yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
-}
-
-function* hostHealthChanged({ payload }) {
-  yield put(updateHostHealth(payload));
-}
-
-function* watchHostHealthChanged() {
-  yield takeEvery(HOST_HEALTH_CHANGED, hostHealthChanged);
 }
 
 function* refreshHealthSummaryOnComponentsHealthChange() {
