@@ -2,6 +2,8 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import day from 'dayjs';
+import { times } from 'lodash';
+
 import { healthEnum } from '.';
 
 const slesSubscriptionDateFormat = 'YYYY-MM-DD HH:mm:ss UTC';
@@ -38,17 +40,15 @@ export const slesSubscriptionFactory = Factory.define(() => ({
   version: '15.3',
 }));
 
-const sapNoteID = () => faker.number.int({ min: 100000, max: 999999 });
+const sapNoteID = () =>
+  faker.number.int({ min: 100000, max: 999999 }).toString();
 
-const sapNotesList = (count = 6) =>
-  Array(count)
-    .fill(null)
-    .map(() => sapNoteID());
-
-const saptuneServiceActiveEnum = () =>
-  faker.helpers.arrayElement(['enabled', 'disabled', null]);
+const sapNotesList = (count = 6) => times(count, sapNoteID);
 
 const saptuneServiceEnabledEnum = () =>
+  faker.helpers.arrayElement(['enabled', 'disabled', null]);
+
+const saptuneServiceActiveEnum = () =>
   faker.helpers.arrayElement(['active', 'inactive', null]);
 
 const saptuneServiceNameEnum = () =>
@@ -63,18 +63,18 @@ const saptuneServiceFactory = Factory.define(() => ({
   name: saptuneServiceNameEnum(),
 }));
 
-const saptuneStagingFactory = Factory.define(() => ({
-  enabled: true,
+export const saptuneStagingFactory = Factory.define(() => ({
+  enabled: faker.datatype.boolean(),
   notes: sapNotesList(3),
   solutions_ids: [saptuneSolutionNameEnum()],
 }));
 
-const saptuneNoteFactory = Factory.define(() => ({
+export const saptuneNoteFactory = Factory.define(() => ({
   additionally_enabled: faker.datatype.boolean(),
-  id: faker.number.int(),
+  id: sapNoteID(),
 }));
 
-const saptuneSolutionFactory = Factory.define(() => ({
+export const saptuneSolutionFactory = Factory.define(() => ({
   id: saptuneSolutionNameEnum(),
   notes: sapNotesList(),
   partial: faker.datatype.boolean(),
