@@ -515,7 +515,17 @@ jobs:
             deps
             _build/test
             priv/plts
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          # key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
+          key: banana
+      - name: Install Missing Dependencies
+        if: steps.mix-cache-main.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv/plts
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+          mix deps.compile --warnings-as-errors
+          mix dialyzer --plt
       - name: Generate main openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/main-spec.json
