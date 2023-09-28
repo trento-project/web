@@ -663,6 +663,7 @@ defmodule Trento.Domain.Host do
     new_health =
       [heartbeat]
       |> maybe_add_checks_health(checks_health, selected_checks)
+      |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
 
     if new_health != current_health do
