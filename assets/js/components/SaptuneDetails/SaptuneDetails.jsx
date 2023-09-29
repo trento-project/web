@@ -1,9 +1,11 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import { find, map } from 'lodash';
 
 import BackButton from '@components/BackButton';
 import ListView from '@components/ListView';
+
 import PageHeader from '@components/PageHeader';
 
 import SaptuneTuningState from './SaptuneTuningState';
@@ -61,9 +63,13 @@ function SaptuneDetails({
   staging,
   tuningState,
 }) {
+  const { hostID: paramHostID } = useParams();
+  const resolvedHostID = hostID || paramHostID;
   return (
     <div>
-      <BackButton url={`/hosts/${hostID}`}>Back to Host Details</BackButton>
+      <BackButton url={`/hosts/${resolvedHostID}`}>
+        Back to Host Details
+      </BackButton>
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
           <PageHeader>
