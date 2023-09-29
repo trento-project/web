@@ -2,8 +2,6 @@ import React from 'react';
 
 import { find, map } from 'lodash';
 
-import { Link } from 'react-router-dom';
-
 import BackButton from '@components/BackButton';
 import ListView from '@components/ListView';
 import PageHeader from '@components/PageHeader';
@@ -26,15 +24,16 @@ const renderService = (serviceName, services) => {
 };
 
 const renderNote = (noteID) => (
-  <Link
+  <a
     key={noteID}
     className="text-jungle-green-500 hover:opacity-75"
-    to={`https://launchpad.support.sap.com/#/notes/${noteID}`}
+    href={`https://launchpad.support.sap.com/#/notes/${noteID}`}
+    target="_blank"
+    rel="noopener noreferrer"
   >
     {noteID}
-  </Link>
+  </a>
 );
-
 const renderNotes = (notes) => {
   if (notes.length === 0) {
     return <span>-</span>;
