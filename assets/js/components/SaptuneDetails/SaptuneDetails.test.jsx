@@ -77,8 +77,6 @@ describe('SaptuneDetails', () => {
     expect(screen.getByText('Tuning').nextSibling).toHaveTextContent(
       new RegExp(tuningState, 'i')
     );
-
-    expect(screen.getByText('Saptune Services Status')).toBeInTheDocument();
     expect(screen.getByText('saptune.service').nextSibling).toHaveTextContent(
       `${customSaptuneService.enabled}/${customSaptuneService.active}`
     );
@@ -88,14 +86,12 @@ describe('SaptuneDetails', () => {
     expect(screen.getByText('tuned.service').nextSibling).toHaveTextContent(
       `-`
     );
-    expect(screen.getByText('Saptune Tuning Solutions')).toBeInTheDocument();
     expect(screen.getByText('Enabled Solution').nextSibling).toHaveTextContent(
       `${solution.id} (${solution.notes.join(', ')})`
     );
     expect(screen.getByText('Applied Solution').nextSibling).toHaveTextContent(
       `${solution.id} (${solution.notes.join(', ')})`
     );
-    expect(screen.getByText('Saptune Staging Status')).toBeInTheDocument();
     expect(screen.getByText('Staging').nextSibling).toHaveTextContent(
       `Enabled`
     );

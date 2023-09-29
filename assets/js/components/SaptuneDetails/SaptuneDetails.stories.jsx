@@ -50,7 +50,7 @@ export default {
     },
     hostname: {
       control: 'text',
-      description: 'The host name',
+      description: 'The hostname',
       table: {
         type: { summary: 'string' },
       },
