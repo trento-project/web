@@ -18,14 +18,14 @@ export default {
   ],
   argTypes: {
     targetID: {
-      control: 'string',
+      control: 'text',
       description: 'The target identifier',
       table: {
         type: { summary: 'string' },
       },
     },
     targetName: {
-      control: 'string',
+      control: 'text',
       description: 'The target name',
       table: {
         type: { summary: 'string' },

@@ -24,7 +24,7 @@ export default {
   component: HostDetails,
   argTypes: {
     agentVersion: {
-      control: 'string',
+      control: 'text',
       description: 'The version of the installed agent',
       table: {
         type: { summary: 'string' },
@@ -55,7 +55,7 @@ export default {
       description: 'Status of the prometheus exporters',
     },
     grafanaPublicUrl: {
-      control: 'string',
+      control: 'text',
       description: 'Grafana dashboard public URL',
       table: {
         type: { summary: 'string' },
@@ -71,14 +71,14 @@ export default {
       },
     },
     hostID: {
-      control: 'string',
+      control: 'text',
       description: 'The host identifier',
       table: {
         type: { summary: 'string' },
       },
     },
     hostname: {
-      control: 'string',
+      control: 'text',
       description: 'The host name',
       table: {
         type: { summary: 'string' },
@@ -89,7 +89,7 @@ export default {
       description: 'IP addresses',
     },
     provider: {
-      control: 'string',
+      control: 'text',
       description: 'The discovered CSP where the host is running',
       table: {
         type: { summary: 'string' },
