@@ -29,7 +29,7 @@ const renderNote = (noteID) => (
   <a
     key={noteID}
     className="text-jungle-green-500 hover:opacity-75"
-    href={`https://launchpad.support.sap.com/#/notes/${noteID}`}
+    href={`https://me.sap.com/notes/${noteID}`}
     target="_blank"
     rel="noopener noreferrer"
   >
