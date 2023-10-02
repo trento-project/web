@@ -241,9 +241,9 @@ describe('HostsLists component', () => {
           ...cleanInitialState,
           hostsList: {
             hosts: [].concat(
-              hostFactory.buildList(2, { heartbeat: 'unknown' }),
-              hostFactory.buildList(2, { heartbeat: 'passing' }),
-              hostFactory.buildList(2, { heartbeat: 'critical' })
+              hostFactory.buildList(2, { health: 'unknown' }),
+              hostFactory.buildList(2, { health: 'passing' }),
+              hostFactory.buildList(2, { health: 'critical' })
             ),
           },
         },
