@@ -472,24 +472,27 @@ jobs:
   main-branch-deps:
     name: Rebuild main branch dependencies
     runs-on: ubuntu-20.04
-    if: github.ref_name != 'main'
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
+        if: github.ref_name != 'main'
         with:
           access_token: ${{ github.token }}
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
+        if: github.ref_name != 'main'
         with:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
       - name: Checkout main branch
         uses: actions/checkout@v4
+        if: github.ref_name != 'main'
         with:
           ref: main
       - name: Retrieve Cached Dependencies - main branch
         uses: actions/cache@v3
         id: mix-cache-main
+        if: github.ref_name != 'main'
         with:
           path: |
             deps
@@ -497,7 +500,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Install missing dependencies
-        if: steps.mix-cache-main.outputs.cache-hit != 'true'
+        if: steps.mix-cache-main.outputs.cache-hit != 'true' && github.ref_name != 'main'
         run: |
           mkdir -p priv/plts
           mix local.rebar --force
