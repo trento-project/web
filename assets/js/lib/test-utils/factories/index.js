@@ -110,4 +110,5 @@ export const objectTreeFactory = Factory.define(() => ({
     nestedNumber: faker.number.int(),
     nestedString: faker.word.noun(),
   },
+  null: null,
 }));

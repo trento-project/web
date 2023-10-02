@@ -3,11 +3,13 @@ import React from 'react';
 import ObjectTree from '@components/ObjectTree';
 
 function FactValue({ className, data }) {
-  return typeof data === 'object' ? (
-    <ObjectTree className={className} data={data} />
-  ) : (
-    <span className={className}>{`${data}`}</span>
-  );
+  if (data === null) {
+    return <span className={className}>null</span>;
+  }
+  if (typeof data === 'object') {
+    return <ObjectTree className={className} data={data} />;
+  }
+  return <span className={className}>{`${data}`}</span>;
 }
 
 export default FactValue;
