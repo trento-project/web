@@ -22,6 +22,7 @@ import DatabasesOverviewPage from '@components/DatabasesOverview';
 import ChecksCatalog from '@components/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
+import SaptuneDetailsPage from '@components/SaptuneDetails';
 import Settings from '@components/Settings';
 import Eula from '@components/Eula';
 import Login from '@components/Login';
@@ -63,6 +64,10 @@ function App() {
                   <Route
                     path="hosts/:hostID/settings"
                     element={<HostSettingsPage />}
+                  />
+                  <Route
+                    path="hosts/:hostID/saptune"
+                    element={<SaptuneDetailsPage />}
                   />
                   <Route path="clusters" element={<ClustersList />} />
                   <Route
