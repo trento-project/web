@@ -1,6 +1,7 @@
 import React from 'react';
-import { screen, act, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { faker } from '@faker-js/faker';
 import {
   renderWithRouterMatch,
   withState,
@@ -13,7 +14,7 @@ import SaptuneDetailsPage from './SaptuneDetailsPage';
 describe('SaptuneDetailsPage', () => {
   it('should render not found when the host is missing', () => {
     const hosts = hostFactory.buildList(2);
-    const hostID = 'NonExistingUUID';
+    const missingHostID = faker.string.uuid();
     const initialState = {
       ...defaultInitialState,
       hostsList: {
@@ -28,7 +29,7 @@ describe('SaptuneDetailsPage', () => {
 
     renderWithRouterMatch(StatefulSaptuneDetailsPage, {
       path: 'hosts/:hostID/saptune',
-      route: `/hosts/${hostID}/saptune`,
+      route: `/hosts/${missingHostID}/saptune`,
     });
 
     expect(screen.getByText('Not Found')).toBeTruthy();
@@ -58,7 +59,9 @@ describe('SaptuneDetailsPage', () => {
   });
 
   it('should render the SaptuneDetailsPage', async () => {
-    const host = hostFactory.build({ package_version: 3.1 });
+    const host = hostFactory.build({
+      saptune_status: { package_version: '3.1.0' },
+    });
     const { id: hostID } = host;
     const initialState = {
       ...defaultInitialState,
@@ -66,18 +69,17 @@ describe('SaptuneDetailsPage', () => {
         hosts: [host],
       },
     };
+
     const [StatefulSaptuneDetailsPage] = withState(
       <SaptuneDetailsPage />,
       initialState
     );
-    await act(async () =>
-      renderWithRouterMatch(StatefulSaptuneDetailsPage, {
-        path: 'hosts/:hostID/saptune',
-        route: `/hosts/${hostID}/saptune`,
-      })
-    );
-    await waitFor(() => {
-      expect(screen.getByText('Saptune Details:')).toBeInTheDocument();
+
+    renderWithRouterMatch(StatefulSaptuneDetailsPage, {
+      path: 'hosts/:hostID/saptune',
+      route: `/hosts/${hostID}/saptune`,
     });
+
+    expect(screen.getByText('Saptune Details:')).toBeInTheDocument();
   });
 });
