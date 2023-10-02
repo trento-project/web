@@ -7,12 +7,14 @@ import {
   HOST_DEREGISTERED,
   DEREGISTER_HOST,
   HOST_RESTORED,
+  HOST_HEALTH_CHANGED,
   SAPTUNE_STATUS_UPDATED,
   removeHost,
   setHostListDeregisterable,
   setHostDeregistering,
   unsetHostDeregistering,
   appendHost,
+  updateHostHealth,
   updateSaptuneStatus,
 } from '@state/hosts';
 
@@ -94,6 +96,16 @@ export function* saptuneStatusUpdated({ payload: host }) {
   );
 }
 
+export function* hostHealthChanged({ payload: { id, hostname, health } }) {
+  yield put(updateHostHealth({ id, health }));
+  yield put(
+    notify({
+      text: `Host ${hostname} health changed to ${health}.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
 export function* watchHostDeregisterable() {
   yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostDeregisterable);
 }
@@ -112,4 +124,8 @@ export function* watchHostRestored() {
 
 export function* watchSaptuneStatusUpdated() {
   yield takeEvery(SAPTUNE_STATUS_UPDATED, saptuneStatusUpdated);
+}
+
+export function* watchHostHealthChanged() {
+  yield takeEvery(HOST_HEALTH_CHANGED, hostHealthChanged);
 }

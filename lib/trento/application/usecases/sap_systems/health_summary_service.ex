@@ -83,7 +83,7 @@ defmodule Trento.SapSystems.HealthSummaryService do
   defp compute_hosts_health(instances) do
     instances
     |> Enum.filter(fn %{host: host} -> host end)
-    |> Enum.map(fn %{host: %{heartbeat: heartbeat}} -> heartbeat end)
+    |> Enum.map(fn %{host: %{health: health}} -> health end)
     |> Enum.filter(& &1)
     |> HealthService.compute_aggregated_health()
   end

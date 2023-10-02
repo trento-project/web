@@ -24,6 +24,7 @@ const processChannelEvents = (reduxStore, socket) => {
     'host_deregistered',
     'host_restored',
     'saptune_status_updated',
+    'host_health_changed',
   ]);
   registerEvents(reduxStore, socket, 'monitoring:clusters', [
     'cluster_registered',

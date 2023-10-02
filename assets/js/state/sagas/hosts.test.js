@@ -8,6 +8,7 @@ import {
   hostDeregistered,
   deregisterHost,
   hostRestored,
+  hostHealthChanged,
   saptuneStatusUpdated,
 } from '@state/sagas/hosts';
 
@@ -18,6 +19,7 @@ import {
   setHostDeregistering,
   unsetHostDeregistering,
   appendHost,
+  updateHostHealth,
   updateSaptuneStatus,
 } from '@state/hosts';
 
@@ -142,6 +144,22 @@ describe('Hosts sagas', () => {
       updateSaptuneStatus(host),
       notify({
         text: `Saptune status updated in host ${host.hostname}.`,
+        icon: 'ℹ️',
+      }),
+    ]);
+  });
+
+  it('should update health status of a host', async () => {
+    const { id, hostname, health } = hostFactory.build();
+
+    const dispatched = await recordSaga(hostHealthChanged, {
+      payload: { id, hostname, health },
+    });
+
+    expect(dispatched).toEqual([
+      updateHostHealth({ id, health }),
+      notify({
+        text: `Host ${hostname} health changed to ${health}.`,
         icon: 'ℹ️',
       }),
     ]);

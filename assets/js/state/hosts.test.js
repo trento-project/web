@@ -6,6 +6,7 @@ import hostsReducer, {
   setHostNotDeregisterable,
   setHostDeregistering,
   unsetHostDeregistering,
+  updateHostHealth,
   updateSelectedChecks,
   updateSaptuneStatus,
 } from '@state/hosts';
@@ -141,6 +142,25 @@ describe('Hosts reducer', () => {
 
     const expectedState = {
       hosts: [{ ...host1, saptune_status: newSaptuneStatus }, host2],
+    };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update health status for a host', () => {
+    const host1 = hostFactory.build({ health: 'unknown' });
+    const host2 = hostFactory.build();
+    const initialState = { hosts: [host1, host2] };
+
+    const newHealth = 'passing';
+
+    const action = updateHostHealth({
+      id: host1.id,
+      health: newHealth,
+    });
+
+    const expectedState = {
+      hosts: [{ ...host1, health: newHealth }, host2],
     };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);

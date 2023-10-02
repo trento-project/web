@@ -41,7 +41,7 @@ defmodule TrentoWeb.V1.HostView do
     %{id: id, status: status, hostname: hostname}
   end
 
-  def render("host_health_changed.json", %{host: %{id: id, health: health}}) do
-    %{id: id, health: health}
+  def render("host_health_changed.json", %{host: %{id: id, hostname: hostname, health: health}}) do
+    %{id: id, hostname: hostname, health: health}
   end
 end

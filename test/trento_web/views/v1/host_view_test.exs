@@ -11,9 +11,9 @@ defmodule TrentoWeb.V1.HostViewTest do
   alias Trento.HostReadModel
 
   test "should render health changed relevant information" do
-    %HostReadModel{id: id} = host = build(:host, health: :passing)
+    %HostReadModel{id: id, hostname: hostname} = host = build(:host, health: :passing)
 
-    assert %{id: id, health: :passing} ==
+    assert %{id: id, hostname: hostname, health: :passing} ==
              render(HostView, "host_health_changed.json", %{host: host})
   end
 

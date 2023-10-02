@@ -80,6 +80,9 @@ export const hostsListSlice = createSlice({
     updateSaptuneStatus: (state, { payload: { id, status } }) => {
       state.hosts = updateHostData(state.hosts, id, { saptune_status: status });
     },
+    updateHostHealth: (state, { payload: { id, health } }) => {
+      state.hosts = updateHostData(state.hosts, id, { health });
+    },
     startHostsLoading: (state) => {
       state.loading = true;
     },
@@ -98,6 +101,7 @@ export const CANCEL_CHECK_HOST_IS_DEREGISTERABLE =
 export const HOST_DEREGISTERED = 'HOST_DEREGISTERED';
 export const HOST_RESTORED = 'HOST_RESTORED';
 export const SAPTUNE_STATUS_UPDATED = 'SAPTUNE_STATUS_UPDATED';
+export const HOST_HEALTH_CHANGED = 'HOST_HEALTH_CHANGED';
 export const DEREGISTER_HOST = 'DEREGISTER_HOST';
 
 export const checkHostIsDeregisterable = createAction(
@@ -122,6 +126,7 @@ export const {
   setHostDeregistering,
   unsetHostDeregistering,
   updateSaptuneStatus,
+  updateHostHealth,
   startHostsLoading,
   stopHostsLoading,
   removeHost,

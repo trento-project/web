@@ -2,6 +2,7 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import day from 'dayjs';
+import { healthEnum } from '.';
 
 const slesSubscriptionDateFormat = 'YYYY-MM-DD HH:mm:ss UTC';
 
@@ -55,6 +56,7 @@ export const hostFactory = Factory.define(({ params, sequence }) => {
     cluster_id: faker.string.uuid(),
     ip_addresses: [faker.internet.ip()],
     provider: cloudProviderEnum(),
+    health: healthEnum(),
     heartbeat: heartbeatEnum(),
     provider_data: {
       admin_username: faker.person.firstName().toLowerCase(),
