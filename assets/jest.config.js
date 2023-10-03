@@ -94,8 +94,7 @@ module.exports = {
     '^@hooks(.*)$': '<rootDir>/js/hooks$1',
     '^@state(.*)$': '<rootDir>/js/state$1',
     phoenix: '<rootDir>/../deps/phoenix/priv/static/phoenix.cjs.js',
-    'react-markdown':
-      '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
+    'react-markdown': '<rootDir>/mocks/reactMarkdown.js',
     'remark-gfm': '<rootDir>/mocks/remarkPlugin.js',
     '\\.(jpg|ico|jpeg|png|gif|svg)$': '<rootDir>/mocks/fileMock.js',
   },
