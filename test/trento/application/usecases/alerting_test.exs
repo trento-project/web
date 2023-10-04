@@ -29,7 +29,7 @@ defmodule Trento.Application.UseCases.AlertingTest do
       Application.put_env(:trento, :alerting, enabled: false)
       host_id = Faker.UUID.v4()
 
-      Alerting.notify_heartbeat_failed(host_id)
+      Alerting.notify_critical_host_health(host_id)
 
       assert_no_email_sent()
     end
@@ -70,11 +70,11 @@ defmodule Trento.Application.UseCases.AlertingTest do
   end
 
   describe "Alerting the configured recipient about crucial facts with email notifications" do
-    test "Notify Host heartbeating failure" do
+    test "Notify Host Health going critical" do
       host_id = Faker.UUID.v4()
       host = insert(:host, id: host_id)
 
-      Alerting.notify_heartbeat_failed(host_id)
+      Alerting.notify_critical_host_health(host_id)
       assert_email_sent(subject: "Trento Alert: Host #{host.hostname} needs attention.")
     end
 

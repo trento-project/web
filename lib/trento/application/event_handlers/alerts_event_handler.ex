@@ -10,17 +10,18 @@ defmodule Trento.AlertsEventHandler do
   alias Trento.Domain.Events.{
     ClusterHealthChanged,
     DatabaseHealthChanged,
-    HeartbeatFailed,
+    HostHealthChanged,
     SapSystemHealthChanged
   }
 
   alias Trento.Application.UseCases.Alerting
 
   def handle(
-        %HeartbeatFailed{host_id: host_id},
+        %HostHealthChanged{host_id: host_id, health: health},
         _metadata
-      ) do
-    Alerting.notify_heartbeat_failed(host_id)
+      )
+      when health == :critical do
+    Alerting.notify_critical_host_health(host_id)
   end
 
   def handle(
