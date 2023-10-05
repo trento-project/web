@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-EC158346.js"></script>
+    <script src="dist/sidebar_items-9B125C6A.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -149,7 +149,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#notify_critical_sap_system_health/1" translate="no">notify_critical_sap_system_health(id)</a>
+          <a href="#notify_critical_host_health/1" translate="no">notify_critical_host_health(host_id)</a>
 
         </div>
 
@@ -157,7 +157,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#notify_heartbeat_failed/1" translate="no">notify_heartbeat_failed(host_id)</a>
+          <a href="#notify_critical_sap_system_health/1" translate="no">notify_critical_sap_system_health(id)</a>
 
         </div>
 
@@ -233,6 +233,34 @@ Functions
 
   </section>
 </section>
+<section class="detail" id="notify_critical_host_health/1">
+
+  <div class="detail-header">
+    <a href="#notify_critical_host_health/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">notify_critical_host_health(host_id)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/alerting/alerting.ex#L19" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> notify_critical_host_health(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: :ok</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="notify_critical_sap_system_health/1">
 
   <div class="detail-header">
@@ -255,34 +283,6 @@ Functions
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> notify_critical_sap_system_health(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: :ok</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="notify_heartbeat_failed/1">
-
-  <div class="detail-header">
-    <a href="#notify_heartbeat_failed/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">notify_heartbeat_failed(host_id)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/alerting/alerting.ex#L19" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> notify_heartbeat_failed(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: :ok</pre>
 
       </div>
 
