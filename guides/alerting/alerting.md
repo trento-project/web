@@ -3,7 +3,7 @@
 Alerting feature notifies the SAP Administrator about important updated in the Landscape being monitored/observed by Trento.
 
 Some of the notified events:
-- **Host heartbeat failed**
+- **Host Health detected critical**
 - **Cluster Health detected critical**
 - **Database Health detected critical**
 - **SAP System Health detected critical**

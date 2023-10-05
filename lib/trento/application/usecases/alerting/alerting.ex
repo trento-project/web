@@ -15,9 +15,9 @@ defmodule Trento.Application.UseCases.Alerting do
 
   require Logger
 
-  @spec notify_heartbeat_failed(String.t()) :: :ok
-  def notify_heartbeat_failed(host_id),
-    do: maybe_notify_heartbeat_failed(enabled?(), host_id)
+  @spec notify_critical_host_health(String.t()) :: :ok
+  def notify_critical_host_health(host_id),
+    do: maybe_notify_critical_host_health(enabled?(), host_id)
 
   @spec notify_critical_cluster_health(String.t()) :: :ok
   def notify_critical_cluster_health(cluster_id),
@@ -33,12 +33,14 @@ defmodule Trento.Application.UseCases.Alerting do
 
   defp enabled?, do: Application.fetch_env!(:trento, :alerting)[:enabled]
 
-  defp maybe_notify_heartbeat_failed(false, _), do: :ok
+  defp maybe_notify_critical_host_health(false, _), do: :ok
 
-  defp maybe_notify_heartbeat_failed(true, host_id) do
+  defp maybe_notify_critical_host_health(true, host_id) do
     %HostReadModel{hostname: hostname} = Trento.Repo.get!(HostReadModel, host_id)
 
-    deliver_notification(EmailAlert.alert("Host", "hostname", hostname, "heartbeat failed"))
+    deliver_notification(
+      EmailAlert.alert("Host", "hostname", hostname, "health is now in critical state")
+    )
   end
 
   defp maybe_notify_critical_cluster_health(false, _), do: :ok

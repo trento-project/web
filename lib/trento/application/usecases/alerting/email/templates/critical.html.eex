@@ -381,7 +381,7 @@
                         Reason: <b><%= @alerting_reason %></b>
                         </p>
                       </div>
-                      <p>Check your Trento installation for remediations suggestions.</p>
+                      <p>Check the corresponding Details View in the Trento Console for remediation suggestions.</p>
                       <p>Thanks for your attention.</p>
                     </td>
                   </tr>
