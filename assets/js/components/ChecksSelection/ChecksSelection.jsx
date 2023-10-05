@@ -70,33 +70,29 @@ function ChecksSelection({
       catalogError={catalogError}
       loading={loading}
     >
-      <div>
-        <div className="pb-4">
-          {groupedChecks?.map(({ group, checks, groupSelected }) => (
-            <ChecksSelectionGroup
-              key={group}
-              group={group}
-              selected={groupSelected}
-              onChange={() =>
-                onCheckSelectionGroupChange(checks, groupSelected)
-              }
-            >
-              {checks.map((check) => (
-                <ChecksSelectionItem
-                  key={check.id}
-                  checkID={check.id}
-                  name={check.name}
-                  description={check.description}
-                  premium={check.premium}
-                  selected={check.selected}
-                  onChange={() => {
-                    onChange(toggle(check.id, selectedChecks));
-                  }}
-                />
-              ))}
-            </ChecksSelectionGroup>
-          ))}
-        </div>
+      <div className="pb-4">
+        {groupedChecks?.map(({ group, checks, groupSelected }) => (
+          <ChecksSelectionGroup
+            key={group}
+            group={group}
+            selected={groupSelected}
+            onChange={() => onCheckSelectionGroupChange(checks, groupSelected)}
+          >
+            {checks.map((check) => (
+              <ChecksSelectionItem
+                key={check.id}
+                checkID={check.id}
+                name={check.name}
+                description={check.description}
+                premium={check.premium}
+                selected={check.selected}
+                onChange={() => {
+                  onChange(toggle(check.id, selectedChecks));
+                }}
+              />
+            ))}
+          </ChecksSelectionGroup>
+        ))}
       </div>
     </CatalogContainer>
   );
