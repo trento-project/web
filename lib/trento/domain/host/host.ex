@@ -436,7 +436,7 @@ defmodule Trento.Domain.Host do
   end
 
   def execute(
-        %Host{},
+        %Host{} = host,
         %UpdateSaptuneStatus{
           host_id: host_id,
           saptune_installed: true,
@@ -444,12 +444,17 @@ defmodule Trento.Domain.Host do
           status: nil
         }
       ) do
-    %SaptuneStatusUpdated{
-      host_id: host_id,
-      status: %SaptuneStatus{
-        package_version: package_version
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %SaptuneStatusUpdated{
+        host_id: host_id,
+        status: %SaptuneStatus{
+          package_version: package_version
+        }
       }
-    }
+    end)
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
@@ -464,16 +469,21 @@ defmodule Trento.Domain.Host do
   end
 
   def execute(
-        %Host{},
+        %Host{} = host,
         %UpdateSaptuneStatus{
           host_id: host_id,
           status: status
         }
       ) do
-    %SaptuneStatusUpdated{
-      host_id: host_id,
-      status: status
-    }
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %SaptuneStatusUpdated{
+        host_id: host_id,
+        status: status
+      }
+    end)
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def apply(
@@ -650,19 +660,18 @@ defmodule Trento.Domain.Host do
          checks_health: checks_health
        }
 
-  defp maybe_add_checks_health(healths, _, []), do: healths
-  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
-
   defp maybe_emit_host_health_changed_event(%Host{
          host_id: host_id,
          selected_checks: selected_checks,
          heartbeat: heartbeat,
          checks_health: checks_health,
-         health: current_health
+         health: current_health,
+         saptune_status: saptune_status
        }) do
     new_health =
       [heartbeat]
       |> maybe_add_checks_health(checks_health, selected_checks)
+      |> add_saptune_health(saptune_status)
       |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
 
@@ -670,4 +679,22 @@ defmodule Trento.Domain.Host do
       %HostHealthChanged{host_id: host_id, health: new_health}
     end
   end
+
+  defp maybe_add_checks_health(healths, _, []), do: healths
+  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
+
+  defp add_saptune_health(healths, nil), do: [Health.warning() | healths]
+
+  defp add_saptune_health(healths, %{package_version: package_version, tuning_state: tuning_state}) do
+    if Version.compare(package_version, "3.1.0") == :lt do
+      [Health.warning() | healths]
+    else
+      add_tuning_health(healths, tuning_state)
+    end
+  end
+
+  defp add_tuning_health(healths, "not compliant"), do: [Health.critical() | healths]
+  defp add_tuning_health(healths, "not tuned"), do: [Health.warning() | healths]
+  defp add_tuning_health(healths, "compliant"), do: [Health.passing() | healths]
+  defp add_tuning_health(healths, _), do: healths
 end
