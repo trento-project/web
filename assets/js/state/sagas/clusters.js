@@ -29,11 +29,13 @@ export function* clusterRestored({ payload }) {
   );
 }
 
-export function* clusterHealthChanged({ payload: { cluster_id, health } }) {
-  yield put(updateClusterHealth({ cluster_id, health }));
+export function* clusterHealthChanged({
+  payload: { cluster_id, name, health },
+}) {
+  yield put(updateClusterHealth({ cluster_id, name, health }));
   yield put(
     notify({
-      text: `Cluster ${cluster_id} health changed to ${health}.`,
+      text: `Cluster ${name} health changed to ${health}.`,
       icon: 'ℹ️',
     })
   );

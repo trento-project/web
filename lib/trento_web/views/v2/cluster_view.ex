@@ -25,4 +25,8 @@ defmodule TrentoWeb.V2.ClusterView do
     |> Map.delete(:cluster_id)
     |> Map.put(:id, data.cluster_id)
   end
+
+  def render("cluster_health_changed.json", %{cluster: %{id: id, name: name, health: health}}) do
+    %{cluster_id: id, name: name, health: health}
+  end
 end

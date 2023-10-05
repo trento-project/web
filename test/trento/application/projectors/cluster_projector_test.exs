@@ -241,12 +241,9 @@ defmodule Trento.ClusterProjectorTest do
   end
 
   test "should broadcast cluster_health_changed after the ClusterHealthChanged event" do
-    insert(:cluster, id: cluster_id = Faker.UUID.v4())
+    %{id: cluster_id, name: name, health: health} = insert(:cluster)
 
-    event = %ClusterHealthChanged{
-      cluster_id: cluster_id,
-      health: :passing
-    }
+    event = %ClusterHealthChanged{cluster_id: cluster_id, health: health}
 
     ProjectorTestHelper.project(
       ClusterProjector,
@@ -255,7 +252,7 @@ defmodule Trento.ClusterProjectorTest do
     )
 
     assert_broadcast "cluster_health_changed",
-                     %{cluster_id: ^cluster_id, health: :passing},
+                     %{cluster_id: ^cluster_id, name: ^name, health: ^health},
                      1000
   end
 end

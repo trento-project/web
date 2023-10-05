@@ -2,8 +2,16 @@ import { recordSaga } from '@lib/test-utils';
 
 import { clusterFactory } from '@lib/test-utils/factories';
 
-import { clusterDeregistered, clusterRestored, clusterHealthChanged } from '@state/sagas/clusters';
-import { removeCluster, appendCluster, updateClusterHealth } from '@state/clusters';
+import {
+  clusterDeregistered,
+  clusterRestored,
+  clusterHealthChanged,
+} from '@state/sagas/clusters';
+import {
+  removeCluster,
+  appendCluster,
+  updateClusterHealth,
+} from '@state/clusters';
 import { notify } from '@state/actions/notifications';
 
 describe('Clusters sagas', () => {
@@ -32,16 +40,16 @@ describe('Clusters sagas', () => {
   });
 
   it('should update health status of a cluster', async () => {
-    const { id: cluster_id, health } = clusterFactory.build();
+    const { id: cluster_id, name, health } = clusterFactory.build();
 
     const dispatched = await recordSaga(clusterHealthChanged, {
-      payload: { cluster_id, health },
+      payload: { cluster_id, name, health },
     });
 
     expect(dispatched).toEqual([
-      updateClusterHealth({ cluster_id, health }),
+      updateClusterHealth({ cluster_id, name, health }),
       notify({
-        text: `Cluster ${cluster_id} health changed to ${health}.`,
+        text: `Cluster ${name} health changed to ${health}.`,
         icon: 'ℹ️',
       }),
     ]);
