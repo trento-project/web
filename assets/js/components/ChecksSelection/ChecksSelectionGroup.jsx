@@ -32,7 +32,7 @@ function ChecksSelectionGroup({
 }) {
   return (
     <Accordion
-      className="mb-1"
+      className="mb-6"
       withTransition
       headerClassnames="hover:bg-gray-100"
       header={
