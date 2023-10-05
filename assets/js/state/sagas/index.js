@@ -30,6 +30,7 @@ import {
 import {
   CLUSTER_DEREGISTERED,
   CLUSTER_RESTORED,
+  CLUSTER_HEALTH_CHANGED,
   setClusters,
   appendCluster,
   updateCluster,
@@ -332,7 +333,7 @@ function* refreshHealthSummaryOnComponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'CLUSTER_HEALTH_CHANGED',
+    CLUSTER_HEALTH_CHANGED,
     loadSapSystemsHealthSummary
   );
   yield debounce(

@@ -4,6 +4,7 @@ import { notify } from '@state/actions/notifications';
 import {
   CLUSTER_DEREGISTERED,
   CLUSTER_RESTORED,
+  CLUSTER_HEALTH_CHANGED,
   appendCluster,
   removeCluster,
   updateClusterHealth,
@@ -42,7 +43,7 @@ export function* clusterHealthChanged({
 }
 
 export function* watchClusterHealthChanged() {
-  yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
+  yield takeEvery(CLUSTER_HEALTH_CHANGED, clusterHealthChanged);
 }
 
 export function* watchClusterDeregistered() {
