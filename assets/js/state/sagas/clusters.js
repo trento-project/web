@@ -6,6 +6,7 @@ import {
   CLUSTER_RESTORED,
   appendCluster,
   removeCluster,
+  updateClusterHealth,
 } from '@state/clusters';
 
 export function* clusterDeregistered({ payload: { name, id } }) {
@@ -26,6 +27,20 @@ export function* clusterRestored({ payload }) {
       icon: 'ℹ️',
     })
   );
+}
+
+export function* clusterHealthChanged({ payload: { cluster_id, health } }) {
+  yield put(updateClusterHealth({ cluster_id, health }));
+  yield put(
+    notify({
+      text: `Cluster ${cluster_id} health changed to ${health}.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
+export function* watchClusterHealthChanged() {
+  yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
 }
 
 export function* watchClusterDeregistered() {

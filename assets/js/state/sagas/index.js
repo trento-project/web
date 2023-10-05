@@ -35,7 +35,6 @@ import {
   updateCluster,
   updateCibLastWritten,
   updateChecksResults,
-  updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
 } from '@state/clusters';
@@ -84,6 +83,7 @@ import {
 import {
   watchClusterDeregistered,
   watchClusterRestored,
+  watchClusterHealthChanged,
 } from '@state/sagas/clusters';
 import {
   watchUpdateLastExecution,
@@ -285,14 +285,6 @@ function* checksResultsUpdated({ payload }) {
 
 function* watchChecksResultsUpdated() {
   yield takeEvery('CHECKS_RESULTS_UPDATED', checksResultsUpdated);
-}
-
-function* clusterHealthChanged({ payload }) {
-  yield put(updateClusterHealth(payload));
-}
-
-function* watchClusterHealthChanged() {
-  yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
 }
 
 function* refreshHealthSummaryOnComponentsHealthChange() {
