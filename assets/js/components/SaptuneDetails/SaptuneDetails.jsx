@@ -1,55 +1,15 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { find, map, get } from 'lodash';
+import { map } from 'lodash';
 
 import BackButton from '@components/BackButton';
-import HealthIcon from '@components/Health/HealthIcon';
 import ListView from '@components/ListView';
 import PageHeader from '@components/PageHeader';
 
 import SaptuneTuningState from './SaptuneTuningState';
 import SaptuneVersion from './SaptuneVersion';
-
-const servicesIcons = {
-  saptune: {
-    'enabled/active': <HealthIcon health="passing" />,
-    'enabled/inactive': <HealthIcon health="warning" />,
-    'disabled/active': <HealthIcon health="warning" />,
-    'disabled/inactive': <HealthIcon health="critical" />,
-  },
-  sapconf: {
-    'enabled/active': <HealthIcon health="critical" />,
-    'enabled/inactive': <HealthIcon health="warning" />,
-    'disabled/active': <HealthIcon health="critical" />,
-    'disabled/inactive': <HealthIcon health="passing" />,
-  },
-  tuned: {
-    'enabled/active': <HealthIcon health="warning" />,
-    'enabled/inactive': <HealthIcon health="warning" />,
-    'disabled/active': <HealthIcon health="warning" />,
-    'disabled/inactive': <HealthIcon health="passing" />,
-  },
-};
-
-const renderService = (serviceName, services) => {
-  const currentService = find(services, { name: serviceName });
-  const { enabled, active } = currentService;
-
-  if (!enabled) {
-    return <span>-</span>;
-  }
-
-  const text = `${enabled}/${active}`;
-  const icon = get(servicesIcons, [serviceName, text], null);
-
-  return (
-    <div className="flex">
-      {icon}
-      <span className="ml-1">{text}</span>
-    </div>
-  );
-};
+import SaptuneServiceStatus from './SaptuneServiceStatus';
 
 const renderNote = (noteID) => (
   <a
@@ -135,15 +95,27 @@ function SaptuneDetails({
           data={[
             {
               title: 'saptune.service',
-              content: renderService('saptune', services),
+              content: (
+                <SaptuneServiceStatus
+                  serviceName="saptune"
+                  services={services}
+                />
+              ),
             },
             {
               title: 'sapconf.service',
-              content: renderService('sapconf', services),
+              content: (
+                <SaptuneServiceStatus
+                  serviceName="sapconf"
+                  services={services}
+                />
+              ),
             },
             {
               title: 'tuned.service',
-              content: renderService('tuned', services),
+              content: (
+                <SaptuneServiceStatus serviceName="tuned" services={services} />
+              ),
             },
           ]}
         />

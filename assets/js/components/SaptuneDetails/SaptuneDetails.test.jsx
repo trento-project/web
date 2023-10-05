@@ -20,38 +20,37 @@ export const TUNING_VALUES = {
 };
 
 describe('SaptuneDetails', () => {
-  const customSaptuneService = {
-    active: 'active',
-    enabled: 'enabled',
-    name: 'saptune',
-  };
-
-  const customSapconfService = {
-    active: 'active',
-    enabled: 'disabled',
-    name: 'sapconf',
-  };
-
-  const customTunedService = {
-    active: null,
-    enabled: null,
-    name: 'tuned',
-  };
-
-  const services = [
-    customSaptuneService,
-    customSapconfService,
-    customTunedService,
-  ];
-
-  const solution = saptuneSolutionFactory.build({ partial: false });
-  const { notes } = solution;
-  const allNotes = notes.map((id) => saptuneNoteFactory.build({ id }));
-  const staging = saptuneStagingFactory.build({ enabled: true });
-
-  const { hostname, id: hostID } = hostFactory.build();
-
   it('should render saptune details correctly', () => {
+    const customSaptuneService = {
+      active: 'active',
+      enabled: 'enabled',
+      name: 'saptune',
+    };
+
+    const customSapconfService = {
+      active: 'active',
+      enabled: 'disabled',
+      name: 'sapconf',
+    };
+
+    const customTunedService = {
+      active: null,
+      enabled: null,
+      name: 'tuned',
+    };
+
+    const services = [
+      customSaptuneService,
+      customSapconfService,
+      customTunedService,
+    ];
+
+    const solution = saptuneSolutionFactory.build({ partial: false });
+    const { notes } = solution;
+    const allNotes = notes.map((id) => saptuneNoteFactory.build({ id }));
+    const staging = saptuneStagingFactory.build({ enabled: true });
+
+    const { hostname, id: hostID } = hostFactory.build();
     const {
       configured_version: configuredVersion,
       package_version: packageVersion,
@@ -110,36 +109,5 @@ describe('SaptuneDetails', () => {
     expect(screen.getByText('Staged Solutions').nextSibling).toHaveTextContent(
       staging.solutions_ids
     );
-  });
-
-  it('should render all the icons properly', () => {
-    const packageVersion = '3.0.0';
-    const tuningState = 'not compliant';
-    const { configured_version: configuredVersion } =
-      saptuneStatusFactory.build();
-
-    renderWithRouter(
-      <SaptuneDetails
-        appliedNotes={allNotes}
-        appliedSolution={solution}
-        enabledNotes={allNotes}
-        enabledSolution={solution}
-        configuredVersion={configuredVersion}
-        hostname={hostname}
-        hostID={hostID}
-        packageVersion={packageVersion}
-        services={services}
-        staging={staging}
-        tuningState={tuningState}
-      />
-    );
-
-    const serviceStatusIcons = screen.getAllByTestId('eos-svg-component');
-    expect(serviceStatusIcons).toHaveLength(5);
-    expect(serviceStatusIcons[0]).toHaveClass('fill-jungle-green-500');
-    expect(serviceStatusIcons[1]).toHaveClass('fill-yellow-500');
-    expect(serviceStatusIcons[2]).toHaveClass('fill-red-500');
-    expect(serviceStatusIcons[3]).toHaveClass('fill-jungle-green-500');
-    expect(serviceStatusIcons[4]).toHaveClass('fill-red-500');
   });
 });
