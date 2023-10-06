@@ -59,8 +59,8 @@ describe('HostDetails component', () => {
   });
 
   describe('agent version', () => {
-
-    const message = 'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.'
+    const message =
+      'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.';
 
     it('should not show any warning message if the agent version is correct', () => {
       renderWithRouter(<HostDetails agentVersion="2.0.0" />);
