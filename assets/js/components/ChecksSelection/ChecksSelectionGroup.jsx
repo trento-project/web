@@ -38,7 +38,7 @@ function ChecksSelectionGroup({
       headerClassnames="hover:bg-gray-100"
       header={
         <div className="flex">
-          <Switch.Group as="div" className="flex items-center pl-5">
+          <Switch.Group as="div" className="flex items-center pl-6">
             <Switch
               checked={allSelected(selected)}
               className={classNames(
