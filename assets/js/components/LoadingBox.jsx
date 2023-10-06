@@ -1,10 +1,16 @@
 import React from 'react';
+import classNames from 'classnames';
 
 import { EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
-function LoadingBox({ text }) {
+function LoadingBox({ className, text }) {
   return (
-    <div className="shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-full m-auto">
+    <div
+      className={classNames(
+        'shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 m-auto',
+        className
+      )}
+    >
       <div className="w-full h-full text-center">
         <div className="flex h-full flex-col justify-between">
           <EOS_LOADING_ANIMATED className="m-auto" color="green" size="xl" />
