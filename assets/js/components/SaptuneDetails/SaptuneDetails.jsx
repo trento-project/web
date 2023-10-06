@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { map } from 'lodash';
+import { find, map } from 'lodash';
 
 import BackButton from '@components/BackButton';
 import ListView from '@components/ListView';
@@ -10,6 +10,15 @@ import PageHeader from '@components/PageHeader';
 import SaptuneTuningState from './SaptuneTuningState';
 import SaptuneVersion from './SaptuneVersion';
 import SaptuneServiceStatus from './SaptuneServiceStatus';
+
+const renderService = (serviceName, services) => {
+  const service = find(services, { name: serviceName });
+  const { enabled, active } = service;
+
+  return (
+    <SaptuneServiceStatus service={service} enabled={enabled} active={active} />
+  );
+};
 
 const renderNote = (noteID) => (
   <a
@@ -22,6 +31,7 @@ const renderNote = (noteID) => (
     {noteID}
   </a>
 );
+
 const renderNotes = (notes) => {
   if (notes.length === 0) {
     return <span>-</span>;
@@ -51,6 +61,7 @@ function SaptuneDetails({
 }) {
   const { hostID: paramHostID } = useParams();
   const resolvedHostID = hostID || paramHostID;
+
   return (
     <div>
       <BackButton url={`/hosts/${resolvedHostID}`}>
@@ -95,27 +106,15 @@ function SaptuneDetails({
           data={[
             {
               title: 'saptune.service',
-              content: (
-                <SaptuneServiceStatus
-                  serviceName="saptune"
-                  services={services}
-                />
-              ),
+              content: renderService('saptune', services),
             },
             {
               title: 'sapconf.service',
-              content: (
-                <SaptuneServiceStatus
-                  serviceName="sapconf"
-                  services={services}
-                />
-              ),
+              content: renderService('sapconf', services),
             },
             {
               title: 'tuned.service',
-              content: (
-                <SaptuneServiceStatus serviceName="tuned" services={services} />
-              ),
+              content: renderService('tuned', services),
             },
           ]}
         />

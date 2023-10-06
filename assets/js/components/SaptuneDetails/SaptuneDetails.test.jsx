@@ -28,7 +28,7 @@ describe('SaptuneDetails', () => {
     };
 
     const customSapconfService = {
-      active: 'active',
+      active: 'inactive',
       enabled: 'disabled',
       name: 'sapconf',
     };

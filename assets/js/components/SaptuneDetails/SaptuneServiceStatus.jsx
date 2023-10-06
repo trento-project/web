@@ -1,5 +1,5 @@
 import React from 'react';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import HealthIcon from '@components/Health/HealthIcon';
 
 const servicesIcons = {
@@ -22,26 +22,20 @@ const servicesIcons = {
     'disabled/inactive': <HealthIcon health="passing" />,
   },
 };
-const renderService = (serviceName, services) => {
-  const currentService = find(services, { name: serviceName });
-  const { enabled, active } = currentService;
 
+function SaptuneServiceStatus({ service, enabled, active }) {
   if (!enabled) {
     return <span>-</span>;
   }
 
-  const text = `${enabled}/${active}`;
-  const icon = get(servicesIcons, [serviceName, text], null);
+  const status = `${enabled}/${active}`;
+  const icon = get(servicesIcons, [service.name, status], null);
 
   return (
     <div className="flex">
       {icon}
-      <span className="ml-1">{text}</span>
+      <span className="ml-1">{status}</span>
     </div>
   );
-};
-
-function SaptuneServiceStatus({ serviceName, services }) {
-  return <>{renderService(serviceName, services)}</>;
 }
 export default SaptuneServiceStatus;
