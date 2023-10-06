@@ -32,8 +32,8 @@ function ChecksSelectionHeader({
         <div className="flex w-1/2 justify-end">
           <div className="flex w-fit whitespace-nowrap">
             <Button
-              type="primary"
-              className="mx-1"
+              type="primary-white"
+              className="mx-1 border-green-500 border"
               onClick={() => onSaveSelection(selection, targetID, targetName)}
               disabled={isSavingSelection}
             >

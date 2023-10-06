@@ -5,7 +5,7 @@ import ProviderLabel from '@components/ProviderLabel';
 
 function HostInfoBox({ provider, agentVersion }) {
   return (
-    <div className="my-4 bg-white shadow rounded-lg px-8 py-4">
+    <div className="my-6 bg-white shadow rounded-lg px-8 py-4">
       <ListView
         orientation="vertical"
         data={[

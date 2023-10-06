@@ -32,12 +32,13 @@ function ChecksSelectionGroup({
 }) {
   return (
     <Accordion
-      className="mb-1"
+      className="mb-6 rounded-lg"
+      rounded={false}
       withTransition
       headerClassnames="hover:bg-gray-100"
       header={
         <div className="flex">
-          <Switch.Group as="div" className="flex items-center pl-2">
+          <Switch.Group as="div" className="flex items-center pl-6">
             <Switch
               checked={allSelected(selected)}
               className={classNames(

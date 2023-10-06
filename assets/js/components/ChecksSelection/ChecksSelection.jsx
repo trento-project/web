@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import classNames from 'classnames';
 import { without, uniq, groupBy } from 'lodash';
 
 import { toggle } from '@lib/lists';
@@ -29,7 +28,6 @@ const getGroupSelectedState = (checks, selectedChecks) => {
 const defaultSelectedChecks = [];
 
 function ChecksSelection({
-  className,
   catalog,
   selectedChecks = defaultSelectedChecks,
   loading = false,
@@ -66,43 +64,37 @@ function ChecksSelection({
   };
 
   return (
-    <div className={classNames('bg-white rounded p-3', className)}>
-      <CatalogContainer
-        onRefresh={onUpdateCatalog}
-        isCatalogEmpty={catalog.length === 0}
-        catalogError={catalogError}
-        loading={loading}
-      >
-        <div>
-          <div className="pb-4">
-            {groupedChecks?.map(({ group, checks, groupSelected }) => (
-              <ChecksSelectionGroup
-                key={group}
-                group={group}
-                selected={groupSelected}
-                onChange={() =>
-                  onCheckSelectionGroupChange(checks, groupSelected)
-                }
-              >
-                {checks.map((check) => (
-                  <ChecksSelectionItem
-                    key={check.id}
-                    checkID={check.id}
-                    name={check.name}
-                    description={check.description}
-                    premium={check.premium}
-                    selected={check.selected}
-                    onChange={() => {
-                      onChange(toggle(check.id, selectedChecks));
-                    }}
-                  />
-                ))}
-              </ChecksSelectionGroup>
+    <CatalogContainer
+      onRefresh={onUpdateCatalog}
+      isCatalogEmpty={catalog.length === 0}
+      catalogError={catalogError}
+      loading={loading}
+    >
+      <div className="pb-4">
+        {groupedChecks?.map(({ group, checks, groupSelected }) => (
+          <ChecksSelectionGroup
+            key={group}
+            group={group}
+            selected={groupSelected}
+            onChange={() => onCheckSelectionGroupChange(checks, groupSelected)}
+          >
+            {checks.map((check) => (
+              <ChecksSelectionItem
+                key={check.id}
+                checkID={check.id}
+                name={check.name}
+                description={check.description}
+                premium={check.premium}
+                selected={check.selected}
+                onChange={() => {
+                  onChange(toggle(check.id, selectedChecks));
+                }}
+              />
             ))}
-          </div>
-        </div>
-      </CatalogContainer>
-    </div>
+          </ChecksSelectionGroup>
+        ))}
+      </div>
+    </CatalogContainer>
   );
 }
 
