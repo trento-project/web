@@ -43,12 +43,20 @@ const renderNotes = (notes) => {
   return notes.map((noteID, index) => [index > 0 && ', ', renderNote(noteID)]);
 };
 
-const renderSolution = ({ id, notes, partial }) => (
-  <span>
-    {id} ({renderNotes(notes)}
-    {partial ? '-> Partial' : ''})
-  </span>
-);
+const renderSolution = (solution) => {
+  if (!solution) {
+    return <span>-</span>;
+  }
+
+  const { id, notes, partial } = solution;
+
+  return (
+    <span>
+      {id} ({renderNotes(notes)}
+      {partial ? '-> Partial' : ''})
+    </span>
+  );
+};
 
 function SaptuneDetails({
   appliedNotes,
