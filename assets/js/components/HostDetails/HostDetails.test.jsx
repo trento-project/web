@@ -71,7 +71,7 @@ describe('HostDetails component', () => {
     it('should show a warning message if the agent version is outdated', () => {
       renderWithRouter(<HostDetails agentVersion="1.0.0" />);
 
-      expect(screen.getByText(message).toBeInTheDocument();
+      expect(screen.getByText(message)).toBeInTheDocument();
     });
   });
 
