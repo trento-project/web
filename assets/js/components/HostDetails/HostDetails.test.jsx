@@ -59,24 +59,19 @@ describe('HostDetails component', () => {
   });
 
   describe('agent version', () => {
+    const message =
+      'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.';
+
     it('should not show any warning message if the agent version is correct', () => {
       renderWithRouter(<HostDetails agentVersion="2.0.0" />);
 
-      expect(
-        screen.queryByText(
-          'Agent version 2.0.0 or greater is required for the new checks engine.'
-        )
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(message)).not.toBeInTheDocument();
     });
 
-    it('should show 2.0.0 version required warning message', () => {
+    it('should show a warning message if the agent version is outdated', () => {
       renderWithRouter(<HostDetails agentVersion="1.0.0" />);
 
-      expect(
-        screen.getByText(
-          'Agent version 2.0.0 or greater is required for the new checks engine.'
-        )
-      ).toBeInTheDocument();
+      expect(screen.getByText(message)).toBeInTheDocument();
     });
   });
 

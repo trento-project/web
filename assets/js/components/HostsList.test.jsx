@@ -116,7 +116,7 @@ describe('HostsLists component', () => {
       await waitFor(() =>
         expect(
           screen.queryByText(
-            'Agent version 2.0.0 or greater is required for the new checks engine.'
+            'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.'
           )
         ).toBeVisible()
       );
