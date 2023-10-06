@@ -184,11 +184,10 @@ defmodule Trento.ClusterProjector do
     })
   end
 
-  def after_update(%ClusterHealthChanged{cluster_id: cluster_id, health: health}, _, _) do
-    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_changed", %{
-      cluster_id: cluster_id,
-      health: health
-    })
+  def after_update(%ClusterHealthChanged{}, _, %{cluster: %ClusterReadModel{} = cluster}) do
+    message = ClusterView.render("cluster_health_changed.json", %{cluster: cluster})
+
+    TrentoWeb.Endpoint.broadcast("monitoring:clusters", "cluster_health_changed", message)
   end
 
   @impl true

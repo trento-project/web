@@ -30,12 +30,12 @@ import {
 import {
   CLUSTER_DEREGISTERED,
   CLUSTER_RESTORED,
+  CLUSTER_HEALTH_CHANGED,
   setClusters,
   appendCluster,
   updateCluster,
   updateCibLastWritten,
   updateChecksResults,
-  updateClusterHealth,
   startClustersLoading,
   stopClustersLoading,
 } from '@state/clusters';
@@ -84,6 +84,7 @@ import {
 import {
   watchClusterDeregistered,
   watchClusterRestored,
+  watchClusterHealthChanged,
 } from '@state/sagas/clusters';
 import {
   watchUpdateLastExecution,
@@ -287,14 +288,6 @@ function* watchChecksResultsUpdated() {
   yield takeEvery('CHECKS_RESULTS_UPDATED', checksResultsUpdated);
 }
 
-function* clusterHealthChanged({ payload }) {
-  yield put(updateClusterHealth(payload));
-}
-
-function* watchClusterHealthChanged() {
-  yield takeEvery('CLUSTER_HEALTH_CHANGED', clusterHealthChanged);
-}
-
 function* refreshHealthSummaryOnComponentsHealthChange() {
   const debounceDuration = 5000;
 
@@ -340,7 +333,7 @@ function* refreshHealthSummaryOnComponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'CLUSTER_HEALTH_CHANGED',
+    CLUSTER_HEALTH_CHANGED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
