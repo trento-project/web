@@ -32,7 +32,8 @@ function ChecksSelectionGroup({
 }) {
   return (
     <Accordion
-      className="mb-6"
+      className="mb-6 rounded-lg"
+      rounded={false}
       withTransition
       headerClassnames="hover:bg-gray-100"
       header={
