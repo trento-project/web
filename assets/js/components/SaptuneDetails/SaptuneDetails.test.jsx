@@ -44,18 +44,18 @@ describe('SaptuneDetails', () => {
       customSapconfService,
       customTunedService,
     ];
+
     const solution = saptuneSolutionFactory.build({ partial: false });
     const { notes } = solution;
     const allNotes = notes.map((id) => saptuneNoteFactory.build({ id }));
-
     const staging = saptuneStagingFactory.build({ enabled: true });
 
+    const { hostname, id: hostID } = hostFactory.build();
     const {
       configured_version: configuredVersion,
       package_version: packageVersion,
       tuning_state: tuningState,
     } = saptuneStatusFactory.build();
-    const { hostname, id: hostID } = hostFactory.build();
 
     renderWithRouter(
       <SaptuneDetails
@@ -83,9 +83,11 @@ describe('SaptuneDetails', () => {
     expect(screen.getByText('Tuning').nextSibling).toHaveTextContent(
       TUNING_VALUES[tuningState]
     );
+
     expect(screen.getByText('saptune.service').nextSibling).toHaveTextContent(
       `${customSaptuneService.enabled}/${customSaptuneService.active}`
     );
+
     expect(screen.getByText('sapconf.service').nextSibling).toHaveTextContent(
       `${customSapconfService.enabled}/${customSapconfService.active}`
     );

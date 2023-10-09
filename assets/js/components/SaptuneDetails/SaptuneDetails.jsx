@@ -5,23 +5,22 @@ import { find, map } from 'lodash';
 
 import BackButton from '@components/BackButton';
 import ListView from '@components/ListView';
-
 import PageHeader from '@components/PageHeader';
 
 import SaptuneTuningState from './SaptuneTuningState';
 import SaptuneVersion from './SaptuneVersion';
+import SaptuneServiceStatus from './SaptuneServiceStatus';
 
 const renderService = (serviceName, services) => {
-  const currentService = find(services, { name: serviceName });
-
-  if (!currentService.enabled) {
-    return <span>-</span>;
-  }
+  const service = find(services, { name: serviceName });
+  const { enabled, active } = service;
 
   return (
-    <span>
-      {currentService.enabled}/{currentService.active}
-    </span>
+    <SaptuneServiceStatus
+      serviceName={serviceName}
+      enabled={enabled}
+      active={active}
+    />
   );
 };
 
@@ -36,6 +35,7 @@ const renderNote = (noteID) => (
     {noteID}
   </a>
 );
+
 const renderNotes = (notes) => {
   if (notes.length === 0) {
     return <span>-</span>;
@@ -65,6 +65,7 @@ function SaptuneDetails({
 }) {
   const { hostID: paramHostID } = useParams();
   const resolvedHostID = hostID || paramHostID;
+
   return (
     <div>
       <BackButton url={`/hosts/${resolvedHostID}`}>

@@ -119,3 +119,37 @@ export const StagingDisabled = {
     staging: { enabled: false, notes: [], solutions_ids: [] },
   },
 };
+export const SaptuneServiceStatusPassing = {
+  args: {
+    ...Default.args,
+
+    services: [
+      { name: 'saptune', enabled: 'enabled', active: 'active' },
+      { name: 'sapconf', enabled: 'disabled', active: 'inactive' },
+      { name: 'tuned', enabled: 'disabled', active: 'inactive' },
+    ],
+  },
+};
+export const SaptuneServiceStatusFailing = {
+  args: {
+    ...Default.args,
+
+    services: [
+      { name: 'saptune', enabled: 'disabled', active: 'inactive' },
+      { name: 'sapconf', enabled: 'disabled', active: 'active' },
+      { name: 'tuned', enabled: null, active: null },
+    ],
+  },
+};
+
+export const SaptuneServiceStatusWarning = {
+  args: {
+    ...Default.args,
+
+    services: [
+      { name: 'saptune', enabled: 'enabled', active: 'inactive' },
+      { name: 'sapconf', enabled: 'enabled', active: 'inactive' },
+      { name: 'tuned', enabled: 'enabled', active: 'active' },
+    ],
+  },
+};
