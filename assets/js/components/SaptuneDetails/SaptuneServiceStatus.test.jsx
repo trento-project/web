@@ -9,103 +9,85 @@ import SaptuneServiceStatus from './SaptuneServiceStatus';
 describe('SaptuneServiceStatus', () => {
   it.each([
     {
-      service: { name: 'saptune', enabled: 'enabled', active: 'active' },
+      serviceName: 'saptune',
+      enabled: 'enabled',
+      active: 'active',
       icon: 'fill-jungle-green-500',
     },
     {
-      service: { name: 'saptune', enabled: 'enabled', active: 'inactive' },
+      serviceName: 'saptune',
+      enabled: 'enabled',
+      active: 'inactive',
       icon: 'fill-yellow-500',
     },
     {
-      service: {
-        name: 'saptune',
-        enabled: 'disabled',
-        active: 'active',
-      },
+      serviceName: 'saptune',
+      enabled: 'disabled',
+      active: 'active',
       icon: 'fill-yellow-500',
     },
     {
-      service: {
-        name: 'saptune',
-        enabled: 'disabled',
-        active: 'inactive',
-      },
+      serviceName: 'saptune',
+      enabled: 'disabled',
+      active: 'inactive',
       icon: 'fill-red-500',
     },
     {
-      service: {
-        name: 'sapconf',
-        enabled: 'enabled',
-        active: 'active',
-      },
+      serviceName: 'sapconf',
+      enabled: 'enabled',
+      active: 'active',
       icon: 'fill-red-500',
     },
     {
-      service: {
-        name: 'sapconf',
-        enabled: 'enabled',
-        active: 'inactive',
-      },
+      serviceName: 'sapconf',
+      enabled: 'enabled',
+      active: 'inactive',
       icon: 'fill-yellow-500',
     },
     {
-      service: {
-        name: 'sapconf',
-        enabled: 'disabled',
-        active: 'active',
-      },
+      serviceName: 'sapconf',
+      enabled: 'disabled',
+      active: 'active',
       icon: 'fill-red-500',
     },
     {
-      service: {
-        name: 'sapconf',
-        enabled: 'disabled',
-        active: 'inactive',
-      },
+      serviceName: 'sapconf',
+      enabled: 'disabled',
+      active: 'inactive',
       icon: 'fill-jungle-green-500',
     },
     {
-      service: {
-        name: 'tuned',
-        enabled: 'enabled',
-        active: 'active',
-      },
+      serviceName: 'tuned',
+      enabled: 'enabled',
+      active: 'active',
       icon: 'fill-yellow-500',
     },
     {
-      service: {
-        name: 'tuned',
-        enabled: 'enabled',
-        active: 'inactive',
-      },
+      serviceName: 'tuned',
+      enabled: 'enabled',
+      active: 'inactive',
       icon: 'fill-yellow-500',
     },
     {
-      service: {
-        name: 'tuned',
-        enabled: 'disabled',
-        active: 'active',
-      },
+      serviceName: 'tuned',
+      enabled: 'disabled',
+      active: 'active',
       icon: 'fill-yellow-500',
     },
     {
-      service: {
-        name: 'tuned',
-        enabled: 'disabled',
-        active: 'inactive',
-      },
+      serviceName: 'tuned',
+      enabled: 'disabled',
+      active: 'inactive',
       icon: 'fill-jungle-green-500',
     },
   ])(
-    'should render the service and icon properly for service $service.name',
-    ({ service, icon }) => {
-      const customService = { ...service };
-
+    'should render the service and icon properly for service $service.serviceName',
+    ({ serviceName, enabled, active, icon }) => {
       renderWithRouter(
         <SaptuneServiceStatus
-          service={customService}
-          enabled={customService.enabled}
-          active={customService.active}
+          serviceName={serviceName}
+          enabled={enabled}
+          active={active}
         />
       );
 

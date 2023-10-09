@@ -16,7 +16,11 @@ const renderService = (serviceName, services) => {
   const { enabled, active } = service;
 
   return (
-    <SaptuneServiceStatus service={service} enabled={enabled} active={active} />
+    <SaptuneServiceStatus
+      serviceName={serviceName}
+      enabled={enabled}
+      active={active}
+    />
   );
 };
 

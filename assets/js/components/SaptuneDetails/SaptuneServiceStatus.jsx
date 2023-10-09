@@ -23,13 +23,13 @@ const servicesIcons = {
   },
 };
 
-function SaptuneServiceStatus({ service, enabled, active }) {
+function SaptuneServiceStatus({ serviceName, enabled, active }) {
   if (!enabled) {
     return <span>-</span>;
   }
 
   const status = `${enabled}/${active}`;
-  const icon = get(servicesIcons, [service.name, status], null);
+  const icon = get(servicesIcons, [serviceName, status], null);
 
   return (
     <div className="flex">
