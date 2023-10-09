@@ -47,7 +47,6 @@ const renderSolution = (solution) => {
   if (!solution) {
     return <span>-</span>;
   }
-
   const { id, notes, partial } = solution;
 
   return (
@@ -73,7 +72,6 @@ function SaptuneDetails({
 }) {
   const { hostID: paramHostID } = useParams();
   const resolvedHostID = hostID || paramHostID;
-
   return (
     <div>
       <BackButton url={`/hosts/${resolvedHostID}`}>
