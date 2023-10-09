@@ -110,4 +110,36 @@ describe('SaptuneDetails', () => {
       staging.solutions_ids
     );
   });
+
+  it('should display dashes for enabled and applied solutions when solution is null', () => {
+    const solution = null;
+
+    const {
+      configured_version: configuredVersion,
+      package_version: packageVersion,
+      services,
+      staging,
+      tuning_state: tuningState,
+    } = saptuneStatusFactory.build();
+    const { hostname, id: hostID } = hostFactory.build();
+    renderWithRouter(
+      <SaptuneDetails
+        appliedSolution={solution}
+        enabledSolution={solution}
+        hostname={hostname}
+        hostID={hostID}
+        configuredVersion={configuredVersion}
+        packageVersion={packageVersion}
+        services={services}
+        staging={staging}
+        tuningState={tuningState}
+      />
+    );
+    expect(screen.getByText('Enabled Solution').nextSibling).toHaveTextContent(
+      `-`
+    );
+    expect(screen.getByText('Applied Solution').nextSibling).toHaveTextContent(
+      `-`
+    );
+  });
 });
