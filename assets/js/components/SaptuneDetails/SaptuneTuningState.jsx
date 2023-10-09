@@ -5,7 +5,7 @@ import HealthIcon from '@components/Health/HealthIcon';
 function SaptuneTuningState({ state }) {
   switch (state) {
     case 'compliant':
-      return 'Compliant';
+      return <span>Compliant</span>;
     case 'not compliant':
       return (
         <div className="flex">
@@ -13,7 +13,7 @@ function SaptuneTuningState({ state }) {
           <span className="ml-1">Not compliant</span>
         </div>
       );
-    case 'no tuning':
+    case 'not tuned':
       return (
         <div className="flex">
           <HealthIcon health="warning" />

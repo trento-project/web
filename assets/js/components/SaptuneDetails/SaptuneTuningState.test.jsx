@@ -12,7 +12,7 @@ describe('SpatuneTuningState', () => {
       text: 'Not compliant',
       iconClass: 'fill-red-500',
     },
-    { state: 'no tuning', text: 'No tuning', iconClass: 'fill-yellow-500' },
+    { state: 'not tuned', text: 'No tuning', iconClass: 'fill-yellow-500' },
     { state: null, text: '-', icon: null },
   ])(
     'should render correctly the $state state',

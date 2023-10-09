@@ -79,7 +79,7 @@ export default {
     },
     tuningState: {
       control: 'select',
-      options: ['compliant', 'not compliant', 'no tuning'],
+      options: ['compliant', 'not compliant', 'not tuned'],
       description: 'The tuning state of saptune',
     },
   },

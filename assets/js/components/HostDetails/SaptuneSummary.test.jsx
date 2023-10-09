@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 
 import { SUPPORTED_VERSION } from '@lib/saptune';
 import { saptuneStatusFactory } from '@lib/test-utils/factories';
+import { TUNING_VALUES } from '@components/SaptuneDetails/SaptuneDetails.test';
 
 import SaptuneSummary from './SaptuneSummary';
 
@@ -35,7 +36,7 @@ describe('SaptuneSummary component', () => {
     ).toHaveTextContent(configuredVersion);
 
     expect(screen.getByText('Tuning').nextSibling).toHaveTextContent(
-      new RegExp(tuningState, 'i')
+      TUNING_VALUES[tuningState]
     );
   });
 

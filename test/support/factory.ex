@@ -208,7 +208,7 @@ defmodule Trento.Factory do
     %SaptuneStatus{
       package_version: Faker.App.semver(),
       configured_version: Enum.random(["1", "2", "3"]),
-      tuning_state: Enum.random(["compliant", "not compliat", "no tuning"])
+      tuning_state: Enum.random(["compliant", "not compliant", "not tuned"])
     }
   end
 
