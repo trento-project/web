@@ -81,7 +81,7 @@ describe('SaptuneServiceStatus', () => {
       icon: 'fill-jungle-green-500',
     },
   ])(
-    'should render the service and icon properly for service $service.serviceName',
+    'should render the service and icon properly for service $serviceName',
     ({ serviceName, enabled, active, icon }) => {
       renderWithRouter(
         <SaptuneServiceStatus
@@ -91,9 +91,9 @@ describe('SaptuneServiceStatus', () => {
         />
       );
 
-      const serviceStatusIcons = screen.getByTestId('eos-svg-component');
-      expect(serviceStatusIcons).toBeInTheDocument();
-      expect(serviceStatusIcons).toHaveClass(icon);
+      const serviceStatusIcon = screen.getByTestId('eos-svg-component');
+      expect(serviceStatusIcon).toBeInTheDocument();
+      expect(serviceStatusIcon).toHaveClass(icon);
     }
   );
 });
