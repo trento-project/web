@@ -24,7 +24,7 @@ const heartbeatEnum = () =>
   faker.helpers.arrayElement(['unknown', 'critical', 'passing']);
 
 const saptuneTuningStateEnum = () =>
-  faker.helpers.arrayElement(['compliant', 'not compliant', 'no tuning']);
+  faker.helpers.arrayElement(['compliant', 'not compliant', 'not tuned']);
 
 export const slesSubscriptionFactory = Factory.define(() => ({
   arch: 'x86_64',

@@ -172,7 +172,7 @@ export const Default = {
     saptuneStatus: {
       package_version: '3.1.0',
       configured_version: '3',
-      tuning_state: 'no tuning',
+      tuning_state: 'not tuned',
     },
     lastExecution: {
       data: {

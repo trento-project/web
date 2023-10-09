@@ -7,6 +7,7 @@ import { faker } from '@faker-js/faker';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
+import { TUNING_VALUES } from '@components/SaptuneDetails/SaptuneDetails.test';
 
 import HostDetails from './HostDetails';
 
@@ -161,7 +162,7 @@ describe('HostDetails component', () => {
       ).toHaveTextContent(configuredVersion);
 
       expect(screen.getByText('Tuning').nextSibling).toHaveTextContent(
-        new RegExp(tuningState, 'i')
+        TUNING_VALUES[tuningState]
       );
     });
   });

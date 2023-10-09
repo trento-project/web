@@ -13,6 +13,12 @@ import {
 
 import SaptuneDetails from './SaptuneDetails';
 
+export const TUNING_VALUES = {
+  compliant: 'Compliant',
+  'not compliant': 'Not compliant',
+  'not tuned': 'No tuning',
+};
+
 describe('SaptuneDetails', () => {
   it('should render saptune details correctly', () => {
     const customSaptuneService = {
@@ -75,7 +81,7 @@ describe('SaptuneDetails', () => {
       screen.getByText('Configured Version').nextSibling
     ).toHaveTextContent(configuredVersion);
     expect(screen.getByText('Tuning').nextSibling).toHaveTextContent(
-      new RegExp(tuningState, 'i')
+      TUNING_VALUES[tuningState]
     );
     expect(screen.getByText('saptune.service').nextSibling).toHaveTextContent(
       `${customSaptuneService.enabled}/${customSaptuneService.active}`
