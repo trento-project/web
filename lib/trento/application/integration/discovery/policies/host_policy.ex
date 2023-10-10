@@ -51,49 +51,6 @@ defmodule Trento.Integration.Discovery.HostPolicy do
   end
 
   def handle(%{
-        "discovery_type" => "saptune_discovery",
-        "agent_id" => agent_id,
-        "payload" => %{
-          "status" => nil,
-          "saptune_installed" => saptune_installed,
-          "package_version" => package_version
-        }
-      }) do
-    build_update_saptune_command(
-      agent_id,
-      package_version,
-      saptune_installed,
-      nil
-    )
-  end
-
-  def handle(%{
-        "discovery_type" => "saptune_discovery",
-        "agent_id" => agent_id,
-        "payload" => %{
-          "status" => status,
-          "saptune_installed" => saptune_installed,
-          "package_version" => package_version
-        }
-      }) do
-    status
-    |> format_saptune_payload_keys()
-    |> SaptuneDiscoveryPayload.new()
-    |> case do
-      {:ok, decoded_payload} ->
-        build_update_saptune_command(
-          agent_id,
-          package_version,
-          saptune_installed,
-          decoded_payload
-        )
-
-      error ->
-        error
-    end
-  end
-
-  def handle(%{
         "discovery_type" => "cloud_discovery",
         "agent_id" => agent_id
       }) do
@@ -114,6 +71,60 @@ defmodule Trento.Integration.Discovery.HostPolicy do
     |> case do
       {:ok, decoded_payload} -> build_update_sles_subscriptions_command(agent_id, decoded_payload)
       error -> error
+    end
+  end
+
+  @spec handle(map, boolean) ::
+          {:ok, UpdateSaptuneStatus.t()}
+          | {:error, any}
+  def handle(
+        %{
+          "discovery_type" => "saptune_discovery",
+          "agent_id" => agent_id,
+          "payload" => %{
+            "status" => nil,
+            "saptune_installed" => saptune_installed,
+            "package_version" => package_version
+          }
+        },
+        is_sap_running
+      ) do
+    build_update_saptune_command(
+      agent_id,
+      package_version,
+      saptune_installed,
+      is_sap_running,
+      nil
+    )
+  end
+
+  def handle(
+        %{
+          "discovery_type" => "saptune_discovery",
+          "agent_id" => agent_id,
+          "payload" => %{
+            "status" => status,
+            "saptune_installed" => saptune_installed,
+            "package_version" => package_version
+          }
+        },
+        is_sap_running
+      ) do
+    status
+    |> format_saptune_payload_keys()
+    |> SaptuneDiscoveryPayload.new()
+    |> case do
+      {:ok, decoded_payload} ->
+        build_update_saptune_command(
+          agent_id,
+          package_version,
+          saptune_installed,
+          is_sap_running,
+          decoded_payload
+        )
+
+      error ->
+        error
     end
   end
 
@@ -140,19 +151,27 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            installation_source: installation_source
          })
 
-  defp build_update_saptune_command(agent_id, package_version, saptune_installed, nil),
-    do:
-      UpdateSaptuneStatus.new(%{
-        host_id: agent_id,
-        saptune_installed: saptune_installed,
-        package_version: package_version,
-        status: nil
-      })
+  defp build_update_saptune_command(
+         agent_id,
+         package_version,
+         saptune_installed,
+         is_sap_running,
+         nil
+       ),
+       do:
+         UpdateSaptuneStatus.new(%{
+           host_id: agent_id,
+           saptune_installed: saptune_installed,
+           package_version: package_version,
+           is_sap_running: is_sap_running,
+           status: nil
+         })
 
   defp build_update_saptune_command(
          agent_id,
          package_version,
          saptune_installed,
+         is_sap_running,
          %SaptuneDiscoveryPayload{
            result: %{
              package_version: package_version,
@@ -174,6 +193,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       host_id: agent_id,
       package_version: package_version,
       saptune_installed: saptune_installed,
+      is_sap_running: is_sap_running,
       status: %{
         package_version: package_version,
         configured_version: configured_version,

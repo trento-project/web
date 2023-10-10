@@ -12,6 +12,7 @@ defmodule Trento.Domain.Commands.UpdateSaptuneStatus do
     field :host_id, Ecto.UUID
     field :package_version, :string
     field :saptune_installed, :boolean
+    field :is_sap_running, :boolean
     embeds_one :status, SaptuneStatus
   end
 end
