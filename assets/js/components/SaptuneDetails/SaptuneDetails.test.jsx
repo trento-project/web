@@ -142,6 +142,12 @@ describe('SaptuneDetails', () => {
     expect(screen.getByText('Applied Solution').nextSibling).toHaveTextContent(
       `-`
     );
+    expect(screen.getByText('Enabled Notes').nextSibling).toHaveTextContent(
+      `-`
+    );
+    expect(screen.getByText('Applied Notes').nextSibling).toHaveTextContent(
+      `-`
+    );
 
     expect(screen.getByText('Staging').nextSibling).toHaveTextContent(
       `Disabled`
