@@ -56,7 +56,7 @@ export const attachedHosts = [
     Addresses: ['10.100.1.21', '10.100.1.25'],
     Provider: 'Azure',
     Cluster: 'netweaver_cluster',
-    Version: '1.1.0+git.dev17.1660137228.fe5ba8a',
+    Version: '2.1.0',
   },
   {
     Name: 'vmnwdev03',
@@ -64,7 +64,7 @@ export const attachedHosts = [
     Addresses: ['10.100.1.23', '10.100.1.27'],
     Provider: 'Azure',
     Cluster: '',
-    Version: '1.1.0+git.dev17.1660137228.fe5ba8a',
+    Version: '2.1.0',
   },
   {
     Name: 'vmnwdev04',
@@ -72,7 +72,7 @@ export const attachedHosts = [
     Addresses: ['10.100.1.24', '10.100.1.28'],
     Provider: 'Azure',
     Cluster: '',
-    Version: '1.1.0+git.dev17.1660137228.fe5ba8a',
+    Version: '2.1.0',
   },
   {
     Name: 'vmnwdev02',
@@ -80,6 +80,6 @@ export const attachedHosts = [
     Addresses: ['10.100.1.22', '10.100.1.26'],
     Provider: 'Azure',
     Cluster: 'netweaver_cluster',
-    Version: '1.1.0+git.dev17.1660137228.fe5ba8a',
+    Version: '2.1.0',
   },
 ];
