@@ -110,4 +110,51 @@ describe('SaptuneDetails', () => {
       staging.solutions_ids
     );
   });
+
+  it('should display empty values when no data is coming', () => {
+    const staging = { enabled: false, notes: [], solutions_ids: [] };
+
+    const {
+      configured_version: configuredVersion,
+      package_version: packageVersion,
+      services,
+      tuning_state: tuningState,
+    } = saptuneStatusFactory.build();
+    const { hostname, id: hostID } = hostFactory.build();
+    renderWithRouter(
+      <SaptuneDetails
+        appliedNotes={[]}
+        appliedSolution={null}
+        configuredVersion={configuredVersion}
+        enabledNotes={[]}
+        enabledSolution={null}
+        hostID={hostID}
+        hostname={hostname}
+        packageVersion={packageVersion}
+        services={services}
+        staging={staging}
+        tuningState={tuningState}
+      />
+    );
+    expect(screen.getByText('Enabled Solution').nextSibling).toHaveTextContent(
+      `-`
+    );
+    expect(screen.getByText('Applied Solution').nextSibling).toHaveTextContent(
+      `-`
+    );
+    expect(screen.getByText('Enabled Notes').nextSibling).toHaveTextContent(
+      `-`
+    );
+    expect(screen.getByText('Applied Notes').nextSibling).toHaveTextContent(
+      `-`
+    );
+
+    expect(screen.getByText('Staging').nextSibling).toHaveTextContent(
+      `Disabled`
+    );
+    expect(screen.getByText('Staged Notes').nextSibling).toHaveTextContent(`-`);
+    expect(screen.getByText('Staged Solutions').nextSibling).toHaveTextContent(
+      `-`
+    );
+  });
 });
