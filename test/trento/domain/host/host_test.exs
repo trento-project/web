@@ -29,6 +29,7 @@ defmodule Trento.HostTest do
     HostRestored,
     HostRolledUp,
     HostRollUpRequested,
+    HostSaptuneHealthChanged,
     HostTombstoned,
     ProviderUpdated,
     SaptuneStatusUpdated,
@@ -845,7 +846,11 @@ defmodule Trento.HostTest do
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
-        build(:saptune_status_updated_event, host_id: host_id)
+        build(:saptune_status_updated_event, host_id: host_id),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.passing()
+        )
       ]
 
       assert_events_and_state(
@@ -854,6 +859,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: false,
           package_version: nil,
+          is_sap_running: false,
           status: nil
         }),
         %SaptuneStatusUpdated{
@@ -874,7 +880,11 @@ defmodule Trento.HostTest do
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
-        build(:saptune_status_updated_event, host_id: host_id)
+        build(:saptune_status_updated_event, host_id: host_id),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.passing()
+        )
       ]
 
       assert_events_and_state(
@@ -883,6 +893,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: new_saptune_version,
+          is_sap_running: false,
           status: nil
         }),
         %SaptuneStatusUpdated{
@@ -909,7 +920,11 @@ defmodule Trento.HostTest do
 
       initial_events = [
         build(:host_registered_event),
-        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status)
+        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.passing()
+        )
       ]
 
       assert_events_and_state(
@@ -918,6 +933,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: "3.2.0",
+          is_sap_running: false,
           status: Map.from_struct(new_saptune_status)
         }),
         %SaptuneStatusUpdated{
@@ -938,7 +954,11 @@ defmodule Trento.HostTest do
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
-        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status)
+        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.passing()
+        )
       ]
 
       assert_events_and_state(
@@ -947,6 +967,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: Faker.App.semver(),
+          is_sap_running: false,
           status: Map.from_struct(saptune_status)
         }),
         [],
@@ -958,13 +979,21 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should update host health to passing when saptune is not installed" do
+    test "should update saptune health to passing when a sap workload is removed and saptune is not installed" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
         build(:heartbeat_succeded, host_id: host_id),
-        build(:saptune_status_updated_event, host_id: host_id)
+        build(:saptune_status_updated_event, host_id: host_id),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.warning()
+        ),
+        build(:host_health_changed_event,
+          host_id: host_id,
+          health: Health.warning()
+        )
       ]
 
       assert_events_and_state(
@@ -972,13 +1001,18 @@ defmodule Trento.HostTest do
         UpdateSaptuneStatus.new!(%{
           host_id: host_id,
           saptune_installed: false,
-          package_version: Faker.App.semver(),
+          package_version: nil,
+          is_sap_running: false,
           status: nil
         }),
         [
           %SaptuneStatusUpdated{
             host_id: host_id,
             status: nil
+          },
+          %HostSaptuneHealthChanged{
+            host_id: host_id,
+            saptune_health: Health.passing()
           },
           %HostHealthChanged{
             host_id: host_id,
@@ -988,7 +1022,53 @@ defmodule Trento.HostTest do
         fn state ->
           assert %Host{
                    saptune_status: nil,
+                   saptune_health: Health.passing(),
                    health: Health.passing()
+                 } = state
+        end
+      )
+    end
+
+    test "should update saptune health to warning when a sap workload is found and saptune is not installed" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        build(:heartbeat_succeded, host_id: host_id),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.passing()
+        ),
+        build(:host_health_changed_event,
+          host_id: host_id,
+          health: Health.passing()
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          saptune_installed: false,
+          package_version: nil,
+          is_sap_running: true,
+          status: nil
+        }),
+        [
+          %HostSaptuneHealthChanged{
+            host_id: host_id,
+            saptune_health: Health.warning()
+          },
+          %HostHealthChanged{
+            host_id: host_id,
+            health: Health.warning()
+          }
+        ],
+        fn state ->
+          assert %Host{
+                   saptune_status: nil,
+                   saptune_health: Health.warning(),
+                   health: Health.warning()
                  } = state
         end
       )
@@ -1009,6 +1089,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: unsupported_version,
+          is_sap_running: true,
           status: nil
         }),
         [
@@ -1017,6 +1098,10 @@ defmodule Trento.HostTest do
             status: %SaptuneStatus{
               package_version: unsupported_version
             }
+          },
+          %HostSaptuneHealthChanged{
+            host_id: host_id,
+            saptune_health: Health.warning()
           },
           %HostHealthChanged{
             host_id: host_id,
@@ -1028,6 +1113,7 @@ defmodule Trento.HostTest do
                    saptune_status: %SaptuneStatus{
                      package_version: ^unsupported_version
                    },
+                   saptune_health: Health.warning(),
                    health: Health.warning()
                  } = state
         end
@@ -1059,12 +1145,17 @@ defmodule Trento.HostTest do
             host_id: host_id,
             saptune_installed: true,
             package_version: suppported_version,
+            is_sap_running: true,
             status: Map.from_struct(saptune_status)
           }),
           [
             %SaptuneStatusUpdated{
               host_id: host_id,
               status: saptune_status
+            },
+            %HostSaptuneHealthChanged{
+              host_id: host_id,
+              saptune_health: health
             },
             %HostHealthChanged{
               host_id: host_id,
@@ -1074,7 +1165,8 @@ defmodule Trento.HostTest do
           fn state ->
             assert %Host{
                      saptune_status: ^saptune_status,
-                     health: ^health
+                     health: ^health,
+                     saptune_health: ^health
                    } = state
           end
         )
@@ -1088,6 +1180,10 @@ defmodule Trento.HostTest do
       initial_events = [
         build(:host_registered_event, host_id: host_id),
         build(:heartbeat_succeded, host_id: host_id),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.warning()
+        ),
         build(:host_health_changed_event, host_id: host_id, health: Health.warning())
       ]
 
@@ -1097,6 +1193,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: unsupported_version,
+          is_sap_running: true,
           status: nil
         }),
         [
@@ -1112,7 +1209,8 @@ defmodule Trento.HostTest do
                    saptune_status: %SaptuneStatus{
                      package_version: ^unsupported_version
                    },
-                   health: Health.warning()
+                   health: Health.warning(),
+                   saptune_health: Health.warning()
                  } = state
         end
       )
