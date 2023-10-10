@@ -380,12 +380,7 @@ defmodule Trento.HostTest do
 
     test "should ignore checks health when an empty checks selection is saved" do
       host_id = Faker.UUID.v4()
-      saptune_status = build(:saptune_status, package_version: "3.1.0", tuning_state: "compliant")
       host_registered_event = build(:host_registered_event, host_id: host_id)
-
-      saptune_updated_event =
-        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status)
-
       heartbeat_succeded_event = build(:heartbeat_succeded, host_id: host_id)
 
       checks_selected_event = %HostChecksSelected{
@@ -405,7 +400,6 @@ defmodule Trento.HostTest do
       assert_events_and_state(
         [
           host_registered_event,
-          saptune_updated_event,
           heartbeat_succeded_event,
           checks_selected_event,
           host_checks_health_changed_event,
@@ -437,15 +431,10 @@ defmodule Trento.HostTest do
   describe "heartbeat" do
     test "should emit a successful heartbeat and health change for a Host that hasn't heartbeated yet" do
       host_id = Faker.UUID.v4()
-      saptune_status = build(:saptune_status, package_version: "3.1.0", tuning_state: "compliant")
-
-      initial_events = [
-        build(:host_registered_event, host_id: host_id),
-        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status)
-      ]
+      host_registered_event = build(:host_registered_event, host_id: host_id)
 
       assert_events_and_state(
-        initial_events,
+        host_registered_event,
         UpdateHeartbeat.new!(%{
           host_id: host_id,
           heartbeat: Health.passing()
@@ -470,11 +459,9 @@ defmodule Trento.HostTest do
 
     test "should emit a successful heartbeat and health change for a Host previously in critical status" do
       host_id = Faker.UUID.v4()
-      saptune_status = build(:saptune_status, package_version: "3.1.0", tuning_state: "compliant")
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
-        build(:saptune_status_updated_event, host_id: host_id, status: saptune_status),
         %HeartbeatFailed{
           host_id: host_id
         }
