@@ -683,7 +683,7 @@ defmodule Trento.Domain.Host do
   defp maybe_add_checks_health(healths, _, []), do: healths
   defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
 
-  defp add_saptune_health(healths, nil), do: [Health.warning() | healths]
+  defp add_saptune_health(healths, nil), do: [Health.passing() | healths]
 
   defp add_saptune_health(healths, %{package_version: package_version, tuning_state: tuning_state}) do
     if Version.compare(package_version, "3.1.0") == :lt do

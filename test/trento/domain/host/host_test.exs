@@ -958,7 +958,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should update host health to warning when saptune is not installed" do
+    test "should update host health to passing when saptune is not installed" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -982,13 +982,13 @@ defmodule Trento.HostTest do
           },
           %HostHealthChanged{
             host_id: host_id,
-            health: Health.warning()
+            health: Health.passing()
           }
         ],
         fn state ->
           assert %Host{
                    saptune_status: nil,
-                   health: Health.warning()
+                   health: Health.passing()
                  } = state
         end
       )
