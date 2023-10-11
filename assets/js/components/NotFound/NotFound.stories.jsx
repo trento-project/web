@@ -3,7 +3,7 @@ import React from 'react';
 import NotFound from '.';
 
 export default {
-  title: 'NotFound',
+  title: 'Layouts/NotFound',
   component: NotFound,
   args: { buttonText: 'Go back home', onNavigate: () => {} },
 };

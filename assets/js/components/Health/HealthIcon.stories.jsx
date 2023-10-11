@@ -2,7 +2,7 @@ import React from 'react';
 import HealthIcon from '.';
 
 export default {
-  title: 'HealthIcon',
+  title: 'Components/HealthIcon',
   component: HealthIcon,
 };
 

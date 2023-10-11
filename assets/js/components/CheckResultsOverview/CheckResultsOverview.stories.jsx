@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import CheckResultsOverview from './CheckResultsOverview';
 
 export default {
-  title: 'CheckResultsOverview',
+  title: 'Layouts/CheckResultsOverview',
   component: CheckResultsOverview,
 };
 

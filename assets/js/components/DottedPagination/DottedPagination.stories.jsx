@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DottedPagination from '.';
 
 export default {
-  title: 'DottedPagination',
+  title: 'Components/DottedPagination',
   component: DottedPagination,
   argTypes: {
     pages: {

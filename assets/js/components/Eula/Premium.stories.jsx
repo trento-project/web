@@ -4,7 +4,7 @@ import { action } from '@storybook/addon-actions';
 import Premium from './Premium';
 
 export default {
-  title: 'Eula Premium',
+  title: 'Patterns/Eula Premium',
   component: Premium,
   args: { visible: true, dispatch: action() },
 };

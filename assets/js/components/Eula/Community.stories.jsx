@@ -4,7 +4,7 @@ import { action } from '@storybook/addon-actions';
 import Community from './Community';
 
 export default {
-  title: 'Eula Community',
+  title: 'Patterns/Eula Community',
   component: Community,
   args: { visible: true, dispatch: action() },
 };

@@ -6,7 +6,7 @@ import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 import DeregistrationModal from '.';
 
 export default {
-  title: 'DeregistrationModal',
+  title: 'Patterns/DeregistrationModal',
   component: DeregistrationModal,
   argTypes: {
     contentType: {

@@ -25,7 +25,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'SaptuneDetails',
+  title: 'Layouts/SaptuneDetails',
   component: SaptuneDetails,
   argTypes: {
     appliedNotes: {

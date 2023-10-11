@@ -2,7 +2,7 @@ import React from 'react';
 import PremiumPill from '.';
 
 export default {
-  title: 'PremiumPill',
+  title: 'Components/PremiumPill',
   component: PremiumPill,
 };
 

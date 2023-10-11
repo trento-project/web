@@ -4,7 +4,7 @@ import PremiumPill from '@components/PremiumPill';
 import Accordion from '.';
 
 export default {
-  title: 'Accordion',
+  title: 'Components/Accordion',
   component: Accordion,
   argTypes: {
     header: {

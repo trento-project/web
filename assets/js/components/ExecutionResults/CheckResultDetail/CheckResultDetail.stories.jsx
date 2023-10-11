@@ -55,7 +55,7 @@ const executionDataWithoutValues = checksExecutionCompletedFactory.build({
 });
 
 export default {
-  title: 'CheckResultDetail',
+  title: 'Layouts/CheckResultDetail',
   component: CheckResultDetail,
 };
 

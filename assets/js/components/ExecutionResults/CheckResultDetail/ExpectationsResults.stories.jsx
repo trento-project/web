@@ -7,7 +7,7 @@ import {
 import ExpectationsResults from './ExpectationsResults';
 
 export default {
-  title: 'ExpectationsResults',
+  title: 'Patterns/ExpectationsResults',
   component: ExpectationsResults,
 };
 

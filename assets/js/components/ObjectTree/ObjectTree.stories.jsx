@@ -5,7 +5,7 @@ import { objectTreeFactory } from '@lib/test-utils/factories';
 import ObjectTree from '.';
 
 export default {
-  title: 'ObjectTree',
+  title: 'Components/ObjectTree',
   component: ObjectTree,
 };
 

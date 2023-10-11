@@ -7,7 +7,7 @@ import BackButton from '@components/BackButton';
 import ChecksSelectionHeader from './ChecksSelectionHeader';
 
 export default {
-  title: 'ChecksSelectionHeader',
+  title: 'Patterns/ChecksSelectionHeader',
   component: ChecksSelectionHeader,
   decorators: [
     (Story) => (

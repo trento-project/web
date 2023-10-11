@@ -59,7 +59,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'DatabasesOverview',
+  title: 'Layouts/DatabasesOverview',
   components: DatabasesOverview,
   argTypes: {
     databases: {

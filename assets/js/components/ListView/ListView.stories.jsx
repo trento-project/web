@@ -3,7 +3,7 @@ import React from 'react';
 import ListView from '.';
 
 export default {
-  title: 'ListView',
+  title: 'Components/ListView',
   component: ListView,
   argTypes: {
     orientation: {

@@ -26,7 +26,7 @@ const selectedChecks = [
 const targetID = faker.string.uuid();
 
 export default {
-  title: 'ChecksSelection',
+  title: 'Patterns/ChecksSelection',
   component: ChecksSelection,
   argTypes: {
     className: {

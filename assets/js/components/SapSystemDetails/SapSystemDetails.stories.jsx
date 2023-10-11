@@ -36,7 +36,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'SapSystemDetails',
+  title: 'Layouts/SapSystemDetails',
   components: GenericSystemDetails,
   argTypes: {
     system: {

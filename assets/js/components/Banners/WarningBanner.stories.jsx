@@ -3,7 +3,7 @@ import React from 'react';
 import WarningBanner from './WarningBanner';
 
 export default {
-  title: 'WarningBanner',
+  title: 'Components/WarningBanner',
   component: WarningBanner,
 };
 

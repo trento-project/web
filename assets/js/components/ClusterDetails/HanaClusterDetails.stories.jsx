@@ -45,7 +45,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'HanaClusterDetails',
+  title: 'Layouts/HanaClusterDetails',
   components: HanaClusterDetails,
   decorators: [
     (Story) => (

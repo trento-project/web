@@ -59,7 +59,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'SapSystemsOverview',
+  title: 'Layouts/SapSystemsOverview',
   components: SapSystemsOverview,
   argTypes: {
     sapSystems: {
