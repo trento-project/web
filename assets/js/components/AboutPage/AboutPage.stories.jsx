@@ -11,7 +11,7 @@ const fetchAboutPageData = () =>
   });
 
 export default {
-  title: 'AboutPage',
+  title: 'Layouts/AboutPage',
   component: AboutPage,
 
   args: {

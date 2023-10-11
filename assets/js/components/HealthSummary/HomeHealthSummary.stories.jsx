@@ -30,7 +30,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'HomeHealthSummary',
+  title: 'Layouts/HomeHealthSummary',
   components: HomeHealthSummary,
   decorators: [
     (Story) => (

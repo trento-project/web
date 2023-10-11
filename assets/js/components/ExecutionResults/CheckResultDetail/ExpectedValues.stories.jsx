@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import ExpectedValues from './ExpectedValues';
 
 export default {
-  title: 'ExpectedValues',
+  title: 'Patterns/ExpectedValues',
   component: ExpectedValues,
 };
 

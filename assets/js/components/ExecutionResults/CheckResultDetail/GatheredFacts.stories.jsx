@@ -14,7 +14,7 @@ const factValues = {
   ],
 };
 export default {
-  title: 'GatheredFacts',
+  title: 'Patterns/GatheredFacts',
   component: GatheredFacts,
 };
 

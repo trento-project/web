@@ -5,7 +5,7 @@ import Tooltip from '@components/Tooltip';
 import Pill from '.';
 
 export default {
-  title: 'Pill',
+  title: 'Components/Pill',
   component: Pill,
 };
 

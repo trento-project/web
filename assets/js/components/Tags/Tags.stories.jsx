@@ -3,7 +3,7 @@ import React from 'react';
 import Tags from '.';
 
 export default {
-  title: 'Tags',
+  title: 'Components/Tags',
   component: Tags,
   argTypes: { onChange: { action: 'tag changed' } },
 };

@@ -43,7 +43,7 @@ const failoverDetails = ascsErsClusterDetailsFactory.build({
 });
 
 export default {
-  title: 'AscsErsClusterDetails',
+  title: 'Layouts/AscsErsClusterDetails',
   components: AscsErsClusterDetails,
   decorators: [
     (Story) => (

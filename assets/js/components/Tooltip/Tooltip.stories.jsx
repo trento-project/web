@@ -4,7 +4,7 @@ import Tooltip from '.';
 import { PLACES } from './Tooltip';
 
 export default {
-  title: 'Tooltip',
+  title: 'Components/Tooltip',
   component: Tooltip,
   argTypes: {
     content: {

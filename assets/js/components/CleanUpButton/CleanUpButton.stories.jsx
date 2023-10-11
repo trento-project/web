@@ -1,7 +1,7 @@
 import CleanUpButton from '.';
 
 export default {
-  title: 'CleanUpButton',
+  title: 'Components/CleanUpButton',
   component: CleanUpButton,
   argTypes: {
     cleaning: {

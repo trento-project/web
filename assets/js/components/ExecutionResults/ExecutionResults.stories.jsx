@@ -329,7 +329,7 @@ const fetchCatalog = () =>
   });
 
 export default {
-  title: 'ExecutionResults',
+  title: 'Layouts/ExecutionResults',
   components: ExecutionResults,
   decorators: [
     (Story) => (

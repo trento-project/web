@@ -7,7 +7,7 @@ import ProviderSelection from './ProviderSelection';
 const providers = Object.keys(providerData);
 
 export default {
-  title: 'ProviderSelection',
+  title: 'Components/ProviderSelection',
   components: ProviderSelection,
 };
 

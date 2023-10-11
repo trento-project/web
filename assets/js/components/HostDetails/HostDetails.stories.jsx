@@ -20,7 +20,7 @@ function ContainerWrapper({ children }) {
 }
 
 export default {
-  title: 'HostDetails',
+  title: 'Layouts/HostDetails',
   component: HostDetails,
   argTypes: {
     agentVersion: {

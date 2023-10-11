@@ -2,7 +2,7 @@ import React from 'react';
 import ProviderLabel from '.';
 
 export default {
-  title: 'ProviderLabel',
+  title: 'Components/ProviderLabel',
   components: ProviderLabel,
 };
 
