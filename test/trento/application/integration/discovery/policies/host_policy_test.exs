@@ -277,7 +277,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                saptune_installed: true,
                package_version: "3.0.0",
-               is_sap_running: true,
+               sap_running: true,
                status: nil
              }
            } =
@@ -303,7 +303,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                saptune_installed: true,
                package_version: "3.1.0",
-               is_sap_running: false,
+               sap_running: false,
                status: %SaptuneStatus{
                  package_version: "3.1.0",
                  configured_version: "3",
@@ -371,7 +371,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                saptune_installed: true,
                package_version: "3.1.0",
-               is_sap_running: true,
+               sap_running: true,
                status: %SaptuneStatus{
                  package_version: "3.1.0",
                  configured_version: "3",

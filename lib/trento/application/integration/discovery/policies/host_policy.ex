@@ -87,13 +87,13 @@ defmodule Trento.Integration.Discovery.HostPolicy do
             "package_version" => package_version
           }
         },
-        is_sap_running
+        sap_running
       ) do
     build_update_saptune_command(
       agent_id,
       package_version,
       saptune_installed,
-      is_sap_running,
+      sap_running,
       nil
     )
   end
@@ -108,7 +108,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
             "package_version" => package_version
           }
         },
-        is_sap_running
+        sap_running
       ) do
     status
     |> format_saptune_payload_keys()
@@ -119,7 +119,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
           agent_id,
           package_version,
           saptune_installed,
-          is_sap_running,
+          sap_running,
           decoded_payload
         )
 
@@ -155,7 +155,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          agent_id,
          package_version,
          saptune_installed,
-         is_sap_running,
+         sap_running,
          nil
        ),
        do:
@@ -163,7 +163,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
            host_id: agent_id,
            saptune_installed: saptune_installed,
            package_version: package_version,
-           is_sap_running: is_sap_running,
+           sap_running: sap_running,
            status: nil
          })
 
@@ -171,7 +171,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
          agent_id,
          package_version,
          saptune_installed,
-         is_sap_running,
+         sap_running,
          %SaptuneDiscoveryPayload{
            result: %{
              package_version: package_version,
@@ -193,7 +193,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
       host_id: agent_id,
       package_version: package_version,
       saptune_installed: saptune_installed,
-      is_sap_running: is_sap_running,
+      sap_running: sap_running,
       status: %{
         package_version: package_version,
         configured_version: configured_version,

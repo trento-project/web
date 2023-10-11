@@ -432,13 +432,13 @@ defmodule Trento.Domain.Host do
         %UpdateSaptuneStatus{
           saptune_installed: true,
           package_version: package_version,
-          is_sap_running: is_sap_running,
+          sap_running: sap_running,
           status: nil
         }
       ) do
     host
     |> Multi.new()
-    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, is_sap_running))
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
@@ -448,7 +448,7 @@ defmodule Trento.Domain.Host do
           host_id: host_id,
           saptune_installed: true,
           package_version: package_version,
-          is_sap_running: is_sap_running,
+          sap_running: sap_running,
           status: nil
         }
       ) do
@@ -462,7 +462,7 @@ defmodule Trento.Domain.Host do
         }
       }
     end)
-    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, is_sap_running))
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
@@ -472,12 +472,12 @@ defmodule Trento.Domain.Host do
         } = host,
         %UpdateSaptuneStatus{
           status: status,
-          is_sap_running: is_sap_running
+          sap_running: sap_running
         }
       ) do
     host
     |> Multi.new()
-    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, is_sap_running))
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
@@ -485,7 +485,7 @@ defmodule Trento.Domain.Host do
         %Host{} = host,
         %UpdateSaptuneStatus{
           host_id: host_id,
-          is_sap_running: is_sap_running,
+          sap_running: sap_running,
           status: status
         }
       ) do
@@ -497,7 +497,7 @@ defmodule Trento.Domain.Host do
         status: status
       }
     end)
-    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, is_sap_running))
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 

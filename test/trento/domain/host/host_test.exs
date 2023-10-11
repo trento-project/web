@@ -846,7 +846,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: false,
           package_version: nil,
-          is_sap_running: false,
+          sap_running: false,
           status: nil
         }),
         %SaptuneStatusUpdated{
@@ -880,7 +880,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: new_saptune_version,
-          is_sap_running: false,
+          sap_running: false,
           status: nil
         }),
         %SaptuneStatusUpdated{
@@ -920,7 +920,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: "3.2.0",
-          is_sap_running: false,
+          sap_running: false,
           status: Map.from_struct(new_saptune_status)
         }),
         %SaptuneStatusUpdated{
@@ -954,7 +954,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: Faker.App.semver(),
-          is_sap_running: false,
+          sap_running: false,
           status: Map.from_struct(saptune_status)
         }),
         [],
@@ -989,7 +989,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: false,
           package_version: nil,
-          is_sap_running: false,
+          sap_running: false,
           status: nil
         }),
         [
@@ -1038,7 +1038,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: false,
           package_version: nil,
-          is_sap_running: true,
+          sap_running: true,
           status: nil
         }),
         [
@@ -1076,7 +1076,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: unsupported_version,
-          is_sap_running: true,
+          sap_running: true,
           status: nil
         }),
         [
@@ -1132,7 +1132,7 @@ defmodule Trento.HostTest do
             host_id: host_id,
             saptune_installed: true,
             package_version: suppported_version,
-            is_sap_running: true,
+            sap_running: true,
             status: Map.from_struct(saptune_status)
           }),
           [
@@ -1180,7 +1180,7 @@ defmodule Trento.HostTest do
           host_id: host_id,
           saptune_installed: true,
           package_version: unsupported_version,
-          is_sap_running: true,
+          sap_running: true,
           status: nil
         }),
         [
