@@ -391,3 +391,46 @@ files = [
 files = [
     "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f_sap_system_discovery.json"
 ]
+
+
+[host-vmdrbddev01-saptune-uninstalled]
+
+files = [
+    "./test/fixtures/scenarios/saptune-discovery/240f96b1-8d26-53b7-9e99-ffb0f2e735bf_saptune_discovery_uninstalled.json"
+]
+
+[host-vmdrbddev01-saptune-not-tuned]
+
+files = [
+    "./test/fixtures/scenarios/saptune-discovery/240f96b1-8d26-53b7-9e99-ffb0f2e735bf_saptune_discovery_not_tuned.json"
+]
+
+[host-vmhdbdev01-saptune-uninstalled]
+
+files = [
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_uninstalled.json"
+]
+
+[host-vmhdbdev01-saptune-unsupported]
+
+files = [
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_unsupported.json"
+]
+
+[host-vmhdbdev01-saptune-not-compliant]
+
+files = [
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_not_compliant.json"
+]
+
+[host-vmhdbdev01-saptune-not-tuned]
+
+files = [
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_not_tuned.json"
+]
+
+[host-vmhdbdev01-saptune-compliant]
+
+files = [
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_compliant.json"
+]
