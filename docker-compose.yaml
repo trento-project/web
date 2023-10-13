@@ -51,27 +51,60 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: trento
       RABBITMQ_DEFAULT_PASS: trento
+  wanda:
+    image: ghcr.io/trento-project/trento-wanda:rolling
+    environment:
+      DATABASE_URL: ecto://postgres:postgres@postgres/postgres
+      SECRET_KEY_BASE: dummyS3cr3t
+      AMQP_URL: amqp://trento:trento@rabbitmq
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "http://localhost:4000"
+      # CATALOG_PATH: /app/catalog
+      JWT_AUTHENTICATION_ENABLED: "false"
+    depends_on:
+      - postgres
+      - rabbitmq
+    ports:
+      - 4001:4000
+    entrypoint: /bin/sh -c "/app/bin/wanda eval \"Wanda.Release.init()\" && /app/bin/wanda start"
+    # volumes:
+    #   - ./priv/catalog/:/app/catalog:rw
   node01:
     profiles: ['agents']
     image: ghcr.io/trento-project/barbecue-hana_node01:latest
     hostname: hana_node01
-    network_mode: host
+    depends_on:
+      - rabbitmq
+    # network_mode: host
     command:
       - --api-key
       - some-random-string
       - --facts-service-url
-      - amqp://wanda:wanda@localhost:5674
+      - amqp://trento:trento@localhost:5673
       - --server-url
       - http://localhost:4000
   node02:
     profiles: ['agents']
     image: ghcr.io/trento-project/barbecue-hana_node02:latest
-    hostname: hana_node02
+    # hostname: hana_node02
+    healthcheck:
+      test: curl -f http://localhost:4000/api/readyz || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5m
+      start_interval: 3m
+    depends_on:
+      - rabbitmq
     network_mode: host
+    # extra_hosts:
+      # - localhost:host-gateway
+      # --add-host=localhost:host-gateway
+      # --hostname=hana_node02
     command:
       - --api-key
-      - some-random-string 
+      - some-random-string
       - --facts-service-url
-      - amqp://wanda:wanda@localhost:5674
+      - amqp://trento:trento@localhost:5673
       - --server-url
       - http://localhost:4000
