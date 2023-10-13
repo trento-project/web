@@ -20,7 +20,7 @@ services:
     ports:
       - 3000:3000
   rabbitmq:
-    image: rabbitmq:3.10.5-management-alpine
+    image: rabbitmq:3.12.6-management-alpine
     ports:
       - 5673:5672
       - 15673:15672
