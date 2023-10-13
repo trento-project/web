@@ -48,11 +48,15 @@ services:
     ports:
       - 5673:5672
       - 15673:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q status
+      interval: 30s
+      timeout: 30s
+      retries: 10
     environment:
       RABBITMQ_DEFAULT_USER: trento
       RABBITMQ_DEFAULT_PASS: trento
   wanda:
-    profiles: ['web-deps']
     image: ghcr.io/trento-project/trento-wanda:rolling
     environment:
       DATABASE_URL: ecto://postgres:postgres@postgres/postgres
@@ -60,7 +64,6 @@ services:
       AMQP_URL: amqp://trento:trento@rabbitmq
       CORS_ENABLED: "true"
       CORS_ORIGIN: "http://localhost:4000"
-      # CATALOG_PATH: /app/catalog
       JWT_AUTHENTICATION_ENABLED: "false"
     depends_on:
       - postgres
@@ -68,15 +71,20 @@ services:
     ports:
       - 4001:4000
     entrypoint: /bin/sh -c "/app/bin/wanda eval \"Wanda.Release.init()\" && /app/bin/wanda start"
-    # volumes:
-    #   - ./priv/catalog/:/app/catalog:rw
   node01:
-    profiles: ['agents']
     image: ghcr.io/trento-project/barbecue-hana_node01:latest
+    network_mode: host
     hostname: hana_node01
+    healthcheck:
+      test: curl -f http://localhost:4000/api/readyz || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 5m
+      start_interval: 3m
     depends_on:
-      - rabbitmq
-    # network_mode: host
+      rabbitmq:
+        condition: service_healthy
     command:
       - --api-key
       - some-random-string
@@ -85,23 +93,19 @@ services:
       - --server-url
       - http://localhost:4000
   node02:
-    profiles: ['agents']
     image: ghcr.io/trento-project/barbecue-hana_node02:latest
-    # hostname: hana_node02
+    network_mode: host
+    hostname: hana_node02
     healthcheck:
       test: curl -f http://localhost:4000/api/readyz || exit 1
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 10
       start_period: 5m
       start_interval: 3m
     depends_on:
-      - rabbitmq
-    network_mode: host
-    # extra_hosts:
-      # - localhost:host-gateway
-      # --add-host=localhost:host-gateway
-      # --hostname=hana_node02
+      rabbitmq:
+        condition: service_healthy
     command:
       - --api-key
       - some-random-string
