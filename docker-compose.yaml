@@ -75,13 +75,6 @@ services:
     image: ghcr.io/trento-project/barbecue-hana_node01:latest
     network_mode: host
     hostname: hana_node01
-    healthcheck:
-      test: curl -f http://localhost:4000/api/readyz || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 5m
-      start_interval: 3m
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -96,13 +89,6 @@ services:
     image: ghcr.io/trento-project/barbecue-hana_node02:latest
     network_mode: host
     hostname: hana_node02
-    healthcheck:
-      test: curl -f http://localhost:4000/api/readyz || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 5m
-      start_interval: 3m
     depends_on:
       rabbitmq:
         condition: service_healthy
