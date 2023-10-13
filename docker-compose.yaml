@@ -52,6 +52,7 @@ services:
       RABBITMQ_DEFAULT_USER: trento
       RABBITMQ_DEFAULT_PASS: trento
   wanda:
+    profiles: ['web-deps']
     image: ghcr.io/trento-project/trento-wanda:rolling
     environment:
       DATABASE_URL: ecto://postgres:postgres@postgres/postgres
