@@ -435,7 +435,7 @@ files = [
     "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_compliant.json"
 ]
 
-[saptune-service-status_passing]
+[host-vmhdbdev01-saptune-service-status_passing]
 files = [
     "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_saptune_serivce_status_passing.json"
     ]
