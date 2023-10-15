@@ -6,13 +6,14 @@ describe('Saptune Details page', () => {
   const notFoundContainerSelector = '.pb-24';
   const versionContainerSelector =
     '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(3)';
+  const tuningStatusIcon = ':nth-child(3) > :nth-child(2) > :nth-child(1)';
   const saptuneServiceStatusSelector =
     '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(5)';
-  const saptuneServiceStatusIconSelector =
+  const saptuneServiceStatusIcon =
     '.grid-flow-col > :nth-child(1) > :nth-child(2) > :nth-child(1) > .flex';
-  const sapconfServiceStatusSelector =
+  const sapconfServiceStatusIcon =
     '.grid-flow-col > :nth-child(2) > :nth-child(2) > :nth-child(1) > .flex';
-  const tunedServiceStatusSelector =
+  const tunedServiceStatusIcon =
     ':nth-child(3) > :nth-child(2) > :nth-child(1) > .flex';
   const saptuneTuningSolutionsSelector =
     '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(7)';
@@ -20,7 +21,7 @@ describe('Saptune Details page', () => {
     '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(9)';
   const saptuneStagingStatusSelector = ':nth-child(11)';
 
-  it('should show not found text if saptune status is null', () => {
+  it('should render default not found if saptune payload status is null', () => {
     cy.loadScenario('host-vmhdbdev01-saptune-unsupported');
     cy.get(notFoundContainerSelector).should(
       'contain',
@@ -28,7 +29,7 @@ describe('Saptune Details page', () => {
     );
   });
 
-  it('should show not found text if saptune is not installed', () => {
+  it('should render default not found if saptune payload is not installed', () => {
     cy.loadScenario('host-vmhdbdev01-saptune-uninstalled');
     cy.get(notFoundContainerSelector).should(
       'contain',
@@ -36,7 +37,7 @@ describe('Saptune Details page', () => {
     );
   });
 
-  it('should display saptune details when saptune is not tuning', () => {
+  it('should render versions list view when saptune is not tuning correctly', () => {
     cy.loadScenario('host-vmhdbdev01-saptune-not-tuned');
     cy.get(versionContainerSelector)
       .should('contain', 'Package')
@@ -45,13 +46,13 @@ describe('Saptune Details page', () => {
       .should('contain', '3')
       .should('contain', 'Tuning')
       .should('contain', 'No tuning');
-    cy.get(`${versionContainerSelector} svg`)
+    cy.get(`${tuningStatusIcon} svg`)
       .should('exist')
       .should('have.class', 'fill-yellow-500');
   });
 
-  it('should display Saptune Service Status in saptune details view passing', () => {
-    cy.loadScenario('saptune-service-status_passing');
+  it('should render each part of saptune service status with green passing icons', () => {
+    cy.loadScenario('host-vmhdbdev01-saptune-service-status_passing');
     cy.get(saptuneServiceStatusSelector)
       .should('contain', 'saptune.service')
       .should('contain', 'enabled/active')
@@ -59,18 +60,18 @@ describe('Saptune Details page', () => {
       .should('contain', 'disabled/inactive')
       .should('contain', 'tuned.service')
       .should('contain', 'disabled/inactive');
-    cy.get(`${saptuneServiceStatusIconSelector} svg`)
+    cy.get(`${saptuneServiceStatusIcon} svg`)
       .should('exist')
       .should('have.class', 'fill-jungle-green-500');
-    cy.get(`${sapconfServiceStatusSelector} svg`)
+    cy.get(`${sapconfServiceStatusIcon} svg`)
       .should('exist')
       .should('have.class', 'fill-jungle-green-500');
-    cy.get(`${tunedServiceStatusSelector} svg`)
+    cy.get(`${tunedServiceStatusIcon} svg`)
       .should('exist')
       .should('have.class', 'fill-jungle-green-500');
   });
 
-  it('should show compliant saptune details', () => {
+  it('should render correctly', () => {
     cy.loadScenario('host-vmhdbdev01-saptune-compliant');
     cy.get(versionContainerSelector)
       .should('contain', 'Tuning')
@@ -82,7 +83,7 @@ describe('Saptune Details page', () => {
       .should('contain', '-')
       .should('contain', 'tuned.service')
       .should('contain', '-');
-    cy.get(`${saptuneServiceStatusIconSelector} svg`)
+    cy.get(`${saptuneServiceStatusIcon} svg`)
       .should('exist')
       .should('have.class', 'fill-yellow-500');
     cy.get(saptuneTuningSolutionsSelector)
@@ -108,9 +109,5 @@ describe('Saptune Details page', () => {
       .should('contain', '-')
       .should('contain', 'Staged Solutions')
       .should('contain', '-');
-  });
-
-  afterEach(() => {
-    // Clean up or reset any state as needed after each test.
   });
 });
