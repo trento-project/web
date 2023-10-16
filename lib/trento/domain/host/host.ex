@@ -81,6 +81,7 @@ defmodule Trento.Domain.Host do
     HostRestored,
     HostRolledUp,
     HostRollUpRequested,
+    HostSaptuneHealthChanged,
     HostTombstoned,
     ProviderUpdated,
     SaptuneStatusUpdated,
@@ -106,6 +107,7 @@ defmodule Trento.Domain.Host do
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :saptune_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :rolling_up, :boolean, default: false
     field :selected_checks, {:array, :string}, default: []
@@ -422,58 +424,81 @@ defmodule Trento.Domain.Host do
 
   def execute(
         %Host{
-          saptune_status: %{
-            package_version: package_version
-          }
+          saptune_status:
+            %{
+              package_version: package_version
+            } = host
         },
         %UpdateSaptuneStatus{
           saptune_installed: true,
           package_version: package_version,
+          sap_running: sap_running,
           status: nil
         }
       ) do
-    []
+    host
+    |> Multi.new()
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
-        %Host{},
+        %Host{} = host,
         %UpdateSaptuneStatus{
           host_id: host_id,
           saptune_installed: true,
           package_version: package_version,
+          sap_running: sap_running,
           status: nil
         }
       ) do
-    %SaptuneStatusUpdated{
-      host_id: host_id,
-      status: %SaptuneStatus{
-        package_version: package_version
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %SaptuneStatusUpdated{
+        host_id: host_id,
+        status: %SaptuneStatus{
+          package_version: package_version
+        }
       }
-    }
+    end)
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
         %Host{
           saptune_status: status
-        },
+        } = host,
         %UpdateSaptuneStatus{
-          status: status
+          status: status,
+          sap_running: sap_running
         }
       ) do
-    []
+    host
+    |> Multi.new()
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def execute(
-        %Host{},
+        %Host{} = host,
         %UpdateSaptuneStatus{
           host_id: host_id,
+          sap_running: sap_running,
           status: status
         }
       ) do
-    %SaptuneStatusUpdated{
-      host_id: host_id,
-      status: status
-    }
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %SaptuneStatusUpdated{
+        host_id: host_id,
+        status: status
+      }
+    end)
+    |> Multi.execute(&maybe_emit_host_saptune_health_changed_event(&1, sap_running))
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
   def apply(
@@ -603,6 +628,14 @@ defmodule Trento.Domain.Host do
         | checks_health: checks_health
       }
 
+  def apply(%Host{} = host, %HostSaptuneHealthChanged{
+        saptune_health: checks_health
+      }),
+      do: %Host{
+        host
+        | saptune_health: checks_health
+      }
+
   def apply(
         %Host{} = host,
         %SaptuneStatusUpdated{
@@ -650,19 +683,63 @@ defmodule Trento.Domain.Host do
          checks_health: checks_health
        }
 
-  defp maybe_add_checks_health(healths, _, []), do: healths
-  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
+  defp maybe_emit_host_saptune_health_changed_event(
+         %Host{host_id: host_id, saptune_health: saptune_health},
+         false
+       )
+       when saptune_health != Health.passing(),
+       do: %HostSaptuneHealthChanged{
+         host_id: host_id,
+         saptune_health: Health.passing()
+       }
+
+  defp maybe_emit_host_saptune_health_changed_event(
+         _,
+         false
+       ),
+       do: nil
+
+  defp maybe_emit_host_saptune_health_changed_event(
+         %Host{host_id: host_id, saptune_status: saptune_status, saptune_health: saptune_health},
+         true
+       ) do
+    new_saptune_health = compute_saptune_health(saptune_status)
+
+    if saptune_health != new_saptune_health do
+      %HostSaptuneHealthChanged{
+        host_id: host_id,
+        saptune_health: new_saptune_health
+      }
+    end
+  end
+
+  defp compute_saptune_health(nil), do: Health.warning()
+
+  defp compute_saptune_health(%{package_version: package_version, tuning_state: tuning_state}) do
+    if Version.compare(package_version, "3.1.0") == :lt do
+      Health.warning()
+    else
+      compute_tuning_health(tuning_state)
+    end
+  end
+
+  defp compute_tuning_health("not compliant"), do: Health.critical()
+  defp compute_tuning_health("not tuned"), do: Health.warning()
+  defp compute_tuning_health("compliant"), do: Health.passing()
+  defp compute_tuning_health(_), do: Health.unknown()
 
   defp maybe_emit_host_health_changed_event(%Host{
          host_id: host_id,
          selected_checks: selected_checks,
          heartbeat: heartbeat,
          checks_health: checks_health,
+         saptune_health: saptune_health,
          health: current_health
        }) do
     new_health =
       [heartbeat]
       |> maybe_add_checks_health(checks_health, selected_checks)
+      |> maybe_add_saptune_health(saptune_health)
       |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
 
@@ -670,4 +747,10 @@ defmodule Trento.Domain.Host do
       %HostHealthChanged{host_id: host_id, health: new_health}
     end
   end
+
+  defp maybe_add_checks_health(healths, _, []), do: healths
+  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
+
+  defp maybe_add_saptune_health(healths, Health.unknown()), do: healths
+  defp maybe_add_saptune_health(healths, saptune_health), do: [saptune_health | healths]
 end

@@ -137,7 +137,13 @@ defmodule Trento.Integration.Discovery do
     ClusterPolicy.handle(event, current_cluster_id)
   end
 
-  defp do_handle(%{"discovery_type" => "saptune_discovery"} = event), do: HostPolicy.handle(event)
+  defp do_handle(%{"discovery_type" => "saptune_discovery", "agent_id" => agent_id} = event) do
+    current_application_instances = SapSystems.get_application_instances_by_host_id(agent_id)
+    current_database_instances = SapSystems.get_database_instances_by_host_id(agent_id)
+    sap_running = length(current_application_instances) + length(current_database_instances) > 0
+
+    HostPolicy.handle(event, sap_running)
+  end
 
   defp do_handle(%{"discovery_type" => "sap_system_discovery", "agent_id" => agent_id} = event) do
     current_application_instances = SapSystems.get_application_instances_by_host_id(agent_id)

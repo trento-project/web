@@ -277,12 +277,13 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                saptune_installed: true,
                package_version: "3.0.0",
+               sap_running: true,
                status: nil
              }
            } =
              "saptune_discovery_empty_status"
              |> load_discovery_event_fixture()
-             |> HostPolicy.handle()
+             |> HostPolicy.handle(true)
   end
 
   test "should fail the validation of the saptune payload, when the payload is received malformed" do
@@ -292,7 +293,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
            } =
              "saptune_discovery_empty_result"
              |> load_discovery_event_fixture()
-             |> HostPolicy.handle()
+             |> HostPolicy.handle(true)
   end
 
   test "should emit update saptune command when a saptune_discovery is received" do
@@ -302,6 +303,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                saptune_installed: true,
                package_version: "3.1.0",
+               sap_running: false,
                status: %SaptuneStatus{
                  package_version: "3.1.0",
                  configured_version: "3",
@@ -359,7 +361,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
            } =
              "saptune_discovery"
              |> load_discovery_event_fixture()
-             |> HostPolicy.handle()
+             |> HostPolicy.handle(false)
   end
 
   test "should emit update saptune command when a saptune_discovery without configuration is received" do
@@ -369,6 +371,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
                host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                saptune_installed: true,
                package_version: "3.1.0",
+               sap_running: true,
                status: %SaptuneStatus{
                  package_version: "3.1.0",
                  configured_version: "3",
@@ -404,6 +407,6 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
            } =
              "saptune_discovery_not_configured"
              |> load_discovery_event_fixture()
-             |> HostPolicy.handle()
+             |> HostPolicy.handle(true)
   end
 end

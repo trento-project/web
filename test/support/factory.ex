@@ -42,6 +42,7 @@ defmodule Trento.Factory do
     HostHealthChanged,
     HostRegistered,
     HostRemovedFromCluster,
+    HostSaptuneHealthChanged,
     HostTombstoned,
     SapSystemDeregistered,
     SapSystemRegistered,
@@ -707,6 +708,13 @@ defmodule Trento.Factory do
     %HostChecksHealthChanged{
       host_id: Faker.UUID.v4(),
       checks_health: Health.passing()
+    }
+  end
+
+  def host_saptune_health_changed_event_factory do
+    %HostSaptuneHealthChanged{
+      host_id: Faker.UUID.v4(),
+      saptune_health: Health.passing()
     }
   end
 
