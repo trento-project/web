@@ -4,6 +4,7 @@ context('Host Details', () => {
   before(() => {
     cy.task('startAgentHeartbeat', [selectedHost.agentId]);
     cy.visit('/hosts');
+
     cy.get(`#host-${selectedHost.agentId} > a`).click();
     cy.url().should('include', `/hosts/${selectedHost.agentId}`);
   });
@@ -360,6 +361,48 @@ context('Host Details', () => {
     it("should show the status as 'running'", () => {
       cy.get('span').should('contain.text', 'Node Exporter:running');
       cy.get('span').find('svg').should('exist');
+    });
+  });
+
+  describe('Saptune Summary for this host should be displayed', () => {
+    const saptuneSummarySelector = '.pt-8';
+    it('should show not installed status', () => {
+      cy.loadScenario('host-vmhdbdev01-saptune-uninstalled');
+      cy.get(saptuneSummarySelector)
+        .should('contain', 'Saptune Summary')
+        .should('contain', 'Package')
+        .should('contain', 'Not installed')
+        .should('contain', 'Configured Version')
+        .should('contain', '-')
+        .should('contain', 'Tuning')
+        .should('contain', '-');
+    });
+
+    it('should show package version, configured version and tuning status', () => {
+      cy.loadScenario('host-vmhdbdev01-saptune-compliant');
+      cy.get(saptuneSummarySelector)
+        .should('contain', 'Saptune Summary')
+        .should('contain', 'Package')
+        .should('contain', '3.1.0')
+        .should('contain', 'Configured Version')
+        .should('contain', '3')
+        .should('contain', 'Tuning')
+        .should('contain', 'Compliant');
+    });
+
+    it('should show version is not supported status', () => {
+      const versionStatusIcon =
+        '.grid-rows-2 > :nth-child(1) > :nth-child(2) > :nth-child(1)';
+      cy.loadScenario('host-vmhdbdev01-saptune-unsupported');
+      cy.get(saptuneSummarySelector)
+        .should('contain', 'Saptune Summary')
+        .should('contain', 'Package')
+        .should('contain', '3.0.0')
+        .should('contain', 'Configured Version')
+        .should('contain', '-')
+        .should('contain', 'Tuning')
+        .should('contain', '-');
+     // cy.get(versionStatusIcon).should('have.class', 'fill-yellow-500');
     });
   });
 
