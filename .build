@@ -104,6 +104,7 @@ Trento.Domain.Events.HostRemovedFromCluster.html
 Trento.Domain.Events.HostRestored.html
 Trento.Domain.Events.HostRollUpRequested.html
 Trento.Domain.Events.HostRolledUp.html
+Trento.Domain.Events.HostSaptuneHealthChanged.html
 Trento.Domain.Events.HostTombstoned.html
 Trento.Domain.Events.ProviderUpdated.html
 Trento.Domain.Events.SapSystemDeregistered.html
@@ -335,8 +336,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-B657953B.js
-dist/sidebar_items-9B125C6A.js
+dist/search_items-8B1AC0C8.js
+dist/sidebar_items-E45E6AAC.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
