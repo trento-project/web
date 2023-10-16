@@ -33,6 +33,7 @@ export const saptuneDetailsData = {
     '1656250',
     '900929',
   ],
+  configuredVersion: '3',
   enabledNotes: [
     {
       additionally_enabled: false,
@@ -64,7 +65,6 @@ export const saptuneDetailsData = {
     notes: ['941735', '1771258', '2578899', '2993054', '1656250', '900929'],
     partial: false,
   },
-  configuredVersion: '3',
   hostname: 'vmhdbdev01',
   hostID: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
   packageVersion: '3.1.0',
@@ -90,5 +90,17 @@ export const saptuneDetailsData = {
     notes: [],
     solutions_ids: [],
   },
-  tuningStatus: ' compliant',
+  tuningStatus: 'compliant',
+};
+
+export const saptuneDetailsDataUnsupportedVersion = {
+  appliedNotes: [],
+  appliedSolution: null,
+  configuredVersion: null,
+  enabledNotes: [],
+  enabledSolutions: null,
+  packageVersion: '3.0.0',
+  services: [],
+  staging: null,
+  tuningStatus: null,
 };

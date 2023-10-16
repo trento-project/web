@@ -1,4 +1,8 @@
 import { selectedHost } from '../fixtures/host-details/selected_host';
+import {
+  saptuneDetailsData,
+  saptuneDetailsDataUnsupportedVersion,
+} from '../fixtures/saptune-details/saptune_details_data';
 
 context('Host Details', () => {
   before(() => {
@@ -366,7 +370,7 @@ context('Host Details', () => {
 
   describe('Saptune Summary for this host should be displayed', () => {
     const saptuneSummarySelector = '.pt-8';
-    const hostName="vmhdbdev01"
+    const hostName = 'vmhdbdev01';
     it('should show not installed status', () => {
       cy.loadScenario(`host-${hostName}-saptune-uninstalled`);
       cy.get(saptuneSummarySelector)
@@ -379,28 +383,30 @@ context('Host Details', () => {
         .should('contain', '-');
     });
 
-    it('should show package version, configured version and tuning status', () => {
-      cy.loadScenario(`host-${hostName}-saptune-compliant`);
-      cy.get(saptuneSummarySelector)
-        .should('contain', 'Saptune Summary')
-        .should('contain', 'Package')
-        .should('contain', '3.1.0')
-        .should('contain', 'Configured Version')
-        .should('contain', '3')
-        .should('contain', 'Tuning')
-        .should('contain', 'Compliant');
-    });
-
     it('should show version is not supported status', () => {
+      const { packageVersion } = saptuneDetailsDataUnsupportedVersion;
       cy.loadScenario(`host-${hostName}-saptune-unsupported`);
       cy.get(saptuneSummarySelector)
         .should('contain', 'Saptune Summary')
         .should('contain', 'Package')
-        .should('contain', '3.0.0')
+        .should('contain', packageVersion)
         .should('contain', 'Configured Version')
         .should('contain', '-')
         .should('contain', 'Tuning')
         .should('contain', '-');
+    });
+
+    it('should show package version, configured version and tuning status', () => {
+      cy.loadScenario(`host-${hostName}-saptune-compliant`);
+      const { configuredVersion, packageVersion } = saptuneDetailsData;
+      cy.get(saptuneSummarySelector)
+        .should('contain', 'Saptune Summary')
+        .should('contain', 'Package')
+        .should('contain', packageVersion)
+        .should('contain', 'Configured Version')
+        .should('contain', configuredVersion)
+        .should('contain', 'Tuning')
+        .should('contain', 'Compliant');
     });
   });
 
