@@ -366,8 +366,9 @@ context('Host Details', () => {
 
   describe('Saptune Summary for this host should be displayed', () => {
     const saptuneSummarySelector = '.pt-8';
+    const hostName="vmhdbdev01"
     it('should show not installed status', () => {
-      cy.loadScenario('host-vmhdbdev01-saptune-uninstalled');
+      cy.loadScenario(`host-${hostName}-saptune-uninstalled`);
       cy.get(saptuneSummarySelector)
         .should('contain', 'Saptune Summary')
         .should('contain', 'Package')
@@ -379,7 +380,7 @@ context('Host Details', () => {
     });
 
     it('should show package version, configured version and tuning status', () => {
-      cy.loadScenario('host-vmhdbdev01-saptune-compliant');
+      cy.loadScenario(`host-${hostName}-saptune-compliant`);
       cy.get(saptuneSummarySelector)
         .should('contain', 'Saptune Summary')
         .should('contain', 'Package')
@@ -391,9 +392,7 @@ context('Host Details', () => {
     });
 
     it('should show version is not supported status', () => {
-      const versionStatusIcon =
-        '.grid-rows-2 > :nth-child(1) > :nth-child(2) > :nth-child(1)';
-      cy.loadScenario('host-vmhdbdev01-saptune-unsupported');
+      cy.loadScenario(`host-${hostName}-saptune-unsupported`);
       cy.get(saptuneSummarySelector)
         .should('contain', 'Saptune Summary')
         .should('contain', 'Package')
@@ -402,7 +401,6 @@ context('Host Details', () => {
         .should('contain', '-')
         .should('contain', 'Tuning')
         .should('contain', '-');
-     // cy.get(versionStatusIcon).should('have.class', 'fill-yellow-500');
     });
   });
 

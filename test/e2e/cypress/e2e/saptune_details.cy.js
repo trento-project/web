@@ -75,7 +75,7 @@ describe('Saptune Details page', () => {
       .should('have.class', 'fill-jungle-green-500');
   });
 
-  it('should render correctly', () => {
+  it('should render correctly a tuned system', () => {
     cy.loadScenario('host-vmhdbdev01-saptune-compliant');
     cy.get(versionContainerSelector)
       .should('contain', 'Tuning')
