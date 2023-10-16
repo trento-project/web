@@ -408,13 +408,15 @@ files = [
 [host-vmhdbdev01-saptune-uninstalled]
 
 files = [
-    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_uninstalled.json"
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_uninstalled.json",    
+    "./test/fixtures/scenarios/saptune-discovery/9cd46919-5f19-59aa-993e-cf3736c71053_saptune_discovery_uninstalled.json"
 ]
 
 [host-vmhdbdev01-saptune-unsupported]
 
 files = [
-    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_unsupported.json"
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_unsupported.json",
+    "./test/fixtures/scenarios/saptune-discovery/9cd46919-5f19-59aa-993e-cf3736c71053_saptune_discovery_unsupported.json"
 ]
 
 [host-vmhdbdev01-saptune-not-compliant]
@@ -432,10 +434,11 @@ files = [
 [host-vmhdbdev01-saptune-compliant]
 
 files = [
-    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_compliant.json"
+    "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_compliant.json",
+    "./test/fixtures/scenarios/saptune-discovery/9cd46919-5f19-59aa-993e-cf3736c71053_saptune_discovery_compliant.json"
 ]
 
-[host-vmhdbdev01-saptune-service-status_passing]
+[host-vmhdbdev01-saptune-service-status-passing]
 files = [
     "./test/fixtures/scenarios/saptune-discovery/13e8c25c-3180-5a9a-95c8-51ec38e50cfc_saptune_discovery_saptune_serivce_status_passing.json"
     ]
