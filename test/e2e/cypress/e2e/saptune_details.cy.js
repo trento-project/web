@@ -1,7 +1,7 @@
+import { saptuneDetailsData } from '../fixtures/saptune-details/saptune_details_data';
+
 describe('Saptune Details page', () => {
-  beforeEach(() => {
-    cy.visit('/hosts/13e8c25c-3180-5a9a-95c8-51ec38e50cfc/saptune');
-  });
+  const { hostID, packageVersion, configuredVersion } = saptuneDetailsData;
 
   const notFoundContainerSelector = '.pb-24';
   const versionContainerSelector =
@@ -21,7 +21,11 @@ describe('Saptune Details page', () => {
     '.max-w-7xl > :nth-child(1) > :nth-child(1) > :nth-child(9)';
   const saptuneStagingStatusSelector = ':nth-child(11)';
 
-  it('should render default not found if saptune payload status is null', () => {
+  before(() => {
+    cy.visit(`hosts/${hostID}/saptune`);
+  });
+
+  it('should render saptune details not found if saptune payload version is unsupported', () => {
     cy.loadScenario('host-vmhdbdev01-saptune-unsupported');
     cy.get(notFoundContainerSelector).should(
       'contain',
@@ -41,9 +45,9 @@ describe('Saptune Details page', () => {
     cy.loadScenario('host-vmhdbdev01-saptune-not-tuned');
     cy.get(versionContainerSelector)
       .should('contain', 'Package')
-      .should('contain', '3.1.0')
+      .should('contain', packageVersion)
       .should('contain', 'Configured Version')
-      .should('contain', '3')
+      .should('contain', configuredVersion)
       .should('contain', 'Tuning')
       .should('contain', 'No tuning');
     cy.get(`${tuningStatusIcon} svg`)
@@ -52,7 +56,7 @@ describe('Saptune Details page', () => {
   });
 
   it('should render each part of saptune service status with green passing icons', () => {
-    cy.loadScenario('host-vmhdbdev01-saptune-service-status_passing');
+    cy.loadScenario('host-vmhdbdev01-saptune-service-status-passing');
     cy.get(saptuneServiceStatusSelector)
       .should('contain', 'saptune.service')
       .should('contain', 'enabled/active')
