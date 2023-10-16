@@ -5,13 +5,13 @@ export const selectedHost = {
   clusterName: 'hana_cluster_3',
   clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
   ipAddresses: '10.80.1.11,10.80.1.13',
-  saptune_status: {
-    applied_notes: [],
-    applied_solution: null,
-    configured_version: '3',
-    enabled_notes: [],
-    enabled_solution: null,
-    package_version: '3.1.0',
+  saptuneStatus: {
+    appliedNotes: [],
+    appliedSolution: '-',
+    configuredVersion: '3',
+    enabledNotes: [],
+    enabledSolution: '-',
+    packageVersion: '3.1.0',
     services: [
       {
         active: null,
@@ -32,9 +32,9 @@ export const selectedHost = {
     staging: {
       enabled: false,
       notes: [],
-      solutions_ids: [],
+      solutionsIDs: [],
     },
-    tuning_state: 'not tuned',
+    tuningState: 'No tuning',
   },
   azureCloudDetails: {
     provider: 'Azure',
