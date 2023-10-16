@@ -966,7 +966,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should update saptune health to passing when a sap workload is removed and saptune is not installed" do
+    test "should update saptune health to passing when a SAP workload is removed and saptune is not installed" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
@@ -1016,7 +1016,7 @@ defmodule Trento.HostTest do
       )
     end
 
-    test "should update saptune health to warning when a sap workload is found and saptune is not installed" do
+    test "should update saptune health to warning when a SAP workload is found and saptune is not installed" do
       host_id = Faker.UUID.v4()
 
       initial_events = [
