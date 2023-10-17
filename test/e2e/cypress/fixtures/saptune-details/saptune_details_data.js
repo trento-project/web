@@ -1,81 +1,25 @@
 export const saptuneDetailsData = {
-  appliedNotes: '413721, 287906, 269776, 164211, 722560, 910701',
-  appliedSolution: [
-    '941735',
-    '1771258',
-    '2578899',
-    '2993054',
-    '1656250',
-    '900929',
-  ],
+  appliedNotes: '941735, 1771258, 2578899, 2993054, 1656250, 900929',
+  appliedSolutions:
+    'NETWEAVER (941735, 1771258, 2578899, 2993054, 1656250, 900929)',
   configuredVersion: '3',
-  enabledNotes: [
-    {
-      additionallyEnabled: false,
-      id: '941735',
-    },
-    {
-      additionallyEnabled: false,
-      id: '1771258',
-    },
-    {
-      additionallyEnabled: false,
-      id: '2578899',
-    },
-    {
-      additionallyEnabled: false,
-      id: '2993054',
-    },
-    {
-      additionallyEnabled: false,
-      id: '1656250',
-    },
-    {
-      additionallyEnabled: false,
-      id: '900929',
-    },
-  ],
-  enabledSolutions: {
-    id: 'NETWEAVER',
-    notes: ['941735', '1771258', '2578899', '2993054', '1656250', '900929'],
-    partial: false,
-  },
-  hostame: 'vmhdbdev01',
-  hostID: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+  enabledNotes: '941735, 1771258, 2578899, 2993054, 1656250, 900929',
+  enabledSolutions:
+    'NETWEAVER (941735, 1771258, 2578899, 2993054, 1656250, 900929)',
+  hostname: 'vmhdbprd01',
+  hostID: '9cd46919-5f19-59aa-993e-cf3736c71053',
   packageVersion: '3.1.0',
-  services: [
-    {
-      active: null,
-      enabled: null,
-      name: 'sapconf',
-    },
-    {
-      active: 'inactive',
-      enabled: 'enabled',
-      name: 'saptune',
-    },
-    {
-      active: null,
-      enabled: null,
-      name: 'tuned',
-    },
-  ],
-  staging: {
-    enabled: false,
-    notes: [],
-    solutions_ids: [],
-  },
+  saptuneServiceStatus: 'enabled/active',
+  sapconfServiceStatus: 'disabled/inactive',
+  tunedServiceStatus: 'disabled/inactive',
+  stagingState: 'Disabled',
+  stagingNotes: '-',
+  stagingSolution: '-',
   tuningStatus: 'Compliant',
 };
 
 export const saptuneDetailsDataUnsupportedVersion = {
-  appliedNotes: [],
-  appliedSolution: null,
   configuredVersion: '-',
-  enabledNotes: [],
-  enabledSolutions: null,
   packageVersion: '3.0.0',
-  services: [],
-  staging: null,
   tuningStatus: '-',
 };
