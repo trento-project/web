@@ -19,7 +19,7 @@ describe('Saptune Details page', () => {
     cy.visit(`hosts/${hostID}/saptune`);
   });
 
-  it('should render saptune details not found if saptune payload version is unsupported', () => {
+  it('should render saptune details not found if saptune version is unsupported', () => {
     cy.loadScenario(`host-${hostname}-saptune-unsupported`);
     cy.get(notFoundContainerSelector).should(
       'contain',
@@ -27,7 +27,7 @@ describe('Saptune Details page', () => {
     );
   });
 
-  it('should render default not found if saptune payload is not installed', () => {
+  it('should render default not found if saptune is not installed', () => {
     cy.loadScenario(`host-${hostname}-saptune-uninstalled`);
     cy.get(notFoundContainerSelector).should(
       'contain',
@@ -54,7 +54,7 @@ describe('Saptune Details page', () => {
       .should('contain', 'No tuning');
   });
 
-  it('should render each part of saptune service status with green passing icons', () => {
+  it('should render each part of saptune services status with correct content', () => {
     cy.loadScenario(`host-${hostname}-saptune-service-status-passing`);
     const { saptuneServiceStatus, sapconfServiceStatus, tunedServiceStatus } =
       saptuneDetailsData;
@@ -99,7 +99,6 @@ describe('Saptune Details page', () => {
       .contains('Applied Notes')
       .next()
       .should('contain', appliedNotes);
-
     cy.get(saptuneStagingStatusSelector)
       .contains('Staging')
       .next()

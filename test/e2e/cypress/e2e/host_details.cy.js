@@ -395,11 +395,10 @@ context('Host Details', () => {
       },
     ];
 
-    scenarios.forEach((scenario) => {
-      it(scenario.description, () => {
-        const { configuredVersion, packageVersion, tuningStatus } =
-          scenario.data;
-        cy.loadScenario(`host-${hostName}-${scenario.name}`);
+    scenarios.forEach(({ data, description, name }) => {
+      it(description, () => {
+        const { configuredVersion, packageVersion, tuningStatus } = data;
+        cy.loadScenario(`host-${hostName}-${name}`);
         cy.get(saptuneSummarySelector).should('contain', 'Saptune Summary');
 
         cy.get(saptuneSummarySelector)
