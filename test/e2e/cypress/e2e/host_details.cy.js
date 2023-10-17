@@ -371,74 +371,55 @@ context('Host Details', () => {
   describe('Saptune Summary for this host should be displayed', () => {
     const { hostName } = selectedHost;
     const saptuneSummarySelector = '.pt-8';
-    //        .next()
-    // .should('contain', selectedHost.kvmCloudDetails.provider);
-    it('should show not installed status', () => {
-      cy.loadScenario(`host-${hostName}-saptune-uninstalled`);
 
-      cy.get(saptuneSummarySelector).should('contain', 'Saptune Summary');
+    const scenarios = [
+      {
+        description: 'should show not installed status',
+        name: 'saptune-uninstalled',
+        data: {
+          packageVersion: 'Not installed',
+          configuredVersion: '-',
+          tuningStatus: '-',
+        },
+      },
+      {
+        description: 'should show version is not supported status',
+        name: 'saptune-unsupported',
+        data: saptuneDetailsDataUnsupportedVersion,
+      },
+      {
+        description:
+          'should show package version, configured version and tuning status',
+        name: 'saptune-compliant',
+        data: saptuneDetailsData,
+      },
+    ];
 
-      cy.get(saptuneSummarySelector)
-        .contains('Package')
-        .next()
-        .should('contain', 'Not installed');
+    scenarios.forEach((scenario) => {
+      it(scenario.description, () => {
+        const { configuredVersion, packageVersion, tuningStatus } =
+          scenario.data;
+        cy.loadScenario(`host-${hostName}-${scenario.name}`);
+        cy.get(saptuneSummarySelector).should('contain', 'Saptune Summary');
 
-      cy.get(saptuneSummarySelector)
-        .contains('Configured Version')
-        .next()
-        .should('contain', '-');
+        cy.get(saptuneSummarySelector)
+          .contains('Package')
+          .next()
+          .should('contain', packageVersion);
 
-      cy.get(saptuneSummarySelector)
-        .contains('Tuning')
-        .next()
-        .should('contain', '-');
-    });
+        cy.get(saptuneSummarySelector)
+          .contains('Configured Version')
+          .next()
+          .should('contain', configuredVersion);
 
-    it('should show version is not supported status', () => {
-      const { configuredVersion, packageVersion, tuningStatus } =
-        saptuneDetailsDataUnsupportedVersion;
-      cy.loadScenario(`host-${hostName}-saptune-unsupported`);
-      cy.get(saptuneSummarySelector).should('contain', 'Saptune Summary');
-
-      cy.get(saptuneSummarySelector)
-        .contains('Package')
-        .next()
-        .should('contain', packageVersion);
-
-      cy.get(saptuneSummarySelector)
-        .contains('Configured Version')
-        .next()
-        .should('contain', configuredVersion);
-
-      cy.get(saptuneSummarySelector)
-        .contains('Tuning')
-        .next()
-        .should('contain', tuningStatus);
-    });
-
-    it('should show package version, configured version and tuning status', () => {
-      cy.loadScenario(`host-${hostName}-saptune-compliant`);
-      const { configuredVersion, packageVersion, tuningStatus } =
-        saptuneDetailsData;
-      cy.get(saptuneSummarySelector).should('contain', 'Saptune Summary');
-
-      cy.get(saptuneSummarySelector)
-        .contains('Package')
-        .next()
-        .should('contain', packageVersion);
-
-      cy.get(saptuneSummarySelector)
-        .contains('Configured Version')
-        .next()
-        .should('contain', configuredVersion);
-
-      cy.get(saptuneSummarySelector)
-        .contains('Tuning')
-        .next()
-        .should('contain', tuningStatus);
+        cy.get(saptuneSummarySelector)
+          .contains('Tuning')
+          .next()
+          .should('contain', tuningStatus);
+      });
     });
   });
-  // add for each
+
   describe('Deregistration', () => {
     describe('"Clean up" button should be visible only for an unhealthy host', () => {
       it('should not display the "Clean up" button for healthy host', () => {
