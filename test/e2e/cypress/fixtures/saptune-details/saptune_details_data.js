@@ -1,27 +1,27 @@
 export const saptuneDetailsData = {
   appliedNotes: [
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '941735',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '1771258',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '2578899',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '2993054',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '1656250',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '900929',
     },
   ],
@@ -36,27 +36,27 @@ export const saptuneDetailsData = {
   configuredVersion: '3',
   enabledNotes: [
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '941735',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '1771258',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '2578899',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '2993054',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '1656250',
     },
     {
-      additionally_enabled: false,
+      additionallyEnabled: false,
       id: '900929',
     },
   ],
@@ -65,7 +65,7 @@ export const saptuneDetailsData = {
     notes: ['941735', '1771258', '2578899', '2993054', '1656250', '900929'],
     partial: false,
   },
-  hostname: 'vmhdbdev01',
+  hostame: 'vmhdbdev01',
   hostID: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
   packageVersion: '3.1.0',
   services: [
