@@ -1,7 +1,7 @@
 import { saptuneDetailsData } from '../fixtures/saptune-details/saptune_details_data';
 
 describe('Saptune Details page', () => {
-  const { hostname, hostID, packageVersion, configuredVersion, tuningStatus } =
+  const { hostname, hostID, packageVersion, configuredVersion } =
     saptuneDetailsData;
 
   const notFoundContainerSelector = '.pb-24';
