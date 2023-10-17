@@ -1,30 +1,5 @@
 export const saptuneDetailsData = {
-  appliedNotes: [
-    {
-      additionallyEnabled: false,
-      id: '941735',
-    },
-    {
-      additionallyEnabled: false,
-      id: '1771258',
-    },
-    {
-      additionallyEnabled: false,
-      id: '2578899',
-    },
-    {
-      additionallyEnabled: false,
-      id: '2993054',
-    },
-    {
-      additionallyEnabled: false,
-      id: '1656250',
-    },
-    {
-      additionallyEnabled: false,
-      id: '900929',
-    },
-  ],
+  appliedNotes: '413721, 287906, 269776, 164211, 722560, 910701',
   appliedSolution: [
     '941735',
     '1771258',
@@ -90,17 +65,17 @@ export const saptuneDetailsData = {
     notes: [],
     solutions_ids: [],
   },
-  tuningStatus: 'compliant',
+  tuningStatus: 'Compliant',
 };
 
 export const saptuneDetailsDataUnsupportedVersion = {
   appliedNotes: [],
   appliedSolution: null,
-  configuredVersion: null,
+  configuredVersion: '-',
   enabledNotes: [],
   enabledSolutions: null,
   packageVersion: '3.0.0',
   services: [],
   staging: null,
-  tuningStatus: null,
+  tuningStatus: '-',
 };
