@@ -154,6 +154,72 @@ context('Hosts Overview', () => {
         cy.get('svg.fill-jungle-green-500').its('length').should('eq', 10);
       });
     });
+    describe('Health is changed based on saptune status', () => {
+      const hostWithoutSap = 'vmdrbddev01';
+      const hostWithSap = 'vmhdbdev01';
+
+      it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
+        cy.loadScenario(`host-${hostWithoutSap}-saptune-uninstalled`);
+        cy.contains('tr', hostWithoutSap).within(() => {
+          cy.get('td:nth-child(1) svg').should(
+            'have.class',
+            'fill-jungle-green-500'
+          );
+        });
+      });
+
+      it('should not change the health if saptune is installed and a SAP workload is not running', () => {
+        cy.loadScenario(`host-${hostWithoutSap}-saptune-not-tuned`);
+        cy.contains('tr', hostWithoutSap).within(() => {
+          cy.get('td:nth-child(1) svg').should(
+            'have.class',
+            'fill-jungle-green-500'
+          );
+        });
+      });
+
+      it('should change the health to warning if saptune is not installed', () => {
+        cy.loadScenario(`host-${hostWithSap}-saptune-uninstalled`);
+        cy.contains('tr', hostWithSap).within(() => {
+          cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
+        });
+      });
+
+      it('should change the health to warning if saptune version is unsupported', () => {
+        cy.loadScenario(`host-${hostWithSap}-saptune-unsupported`);
+        cy.contains('tr', hostWithSap).within(() => {
+          cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
+        });
+      });
+
+      [
+        {
+          state: 'not compliant',
+          scenario: 'not-compliant',
+          health: 'critical',
+          icon: 'fill-red-500',
+        },
+        {
+          state: 'not tuned',
+          scenario: 'not-tuned',
+          health: 'warning',
+          icon: 'fill-yellow-500',
+        },
+        {
+          state: 'compliant',
+          scenario: 'compliant',
+          health: 'passing',
+          icon: 'fill-jungle-green-500',
+        },
+      ].forEach(({ state, scenario, health, icon }) => {
+        it(`should change the health to ${health} if saptune tuning state is ${state}`, () => {
+          cy.loadScenario(`host-${hostWithSap}-saptune-${scenario}`);
+          cy.contains('tr', hostWithSap).within(() => {
+            cy.get('td:nth-child(1) svg').should('have.class', icon);
+          });
+        });
+      });
+    });
     describe('Health is changed to critical when the heartbeat is not sent', () => {
       before(() => {
         cy.visit('/hosts');
