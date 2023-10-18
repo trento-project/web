@@ -24,7 +24,7 @@ const healthSummaryTableConfig = {
       ),
     },
     {
-      title: 'SAP Instances',
+      title: 'Application instances',
       key: 'sapsystemHealth',
       className: 'text-center w-1/6',
       render: (content, item) => (
