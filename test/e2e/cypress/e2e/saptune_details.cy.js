@@ -27,7 +27,7 @@ describe('Saptune Details page', () => {
     );
   });
 
-  it('should render default not found if saptune is not installed', () => {
+  it('should render details not found if saptune is not installed', () => {
     cy.loadScenario(`host-${hostname}-saptune-uninstalled`);
     cy.get(notFoundContainerSelector).should(
       'contain',

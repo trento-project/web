@@ -331,7 +331,7 @@ files = [
 [host-vmhdbprd01-saptune-service-status-passing]
 
 files = [
-    "./test/fixtures/scenarios/hosts-overview/9cd46919-5f19-59aa-993e-cf3736c71053_saptune_discovery_saptune_serivce_status_passing.json"
+    "./test/fixtures/scenarios/hosts-overview/9cd46919-5f19-59aa-993e-cf3736c71053_saptune_discovery_saptune_service_status_passing.json"
     ]
 
 [sapsystem-NWD-restore]
