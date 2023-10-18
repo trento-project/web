@@ -1,9 +1,14 @@
 import { selectedHost } from '../fixtures/host-details/selected_host';
+import {
+  saptuneDetailsData,
+  saptuneDetailsDataUnsupportedVersion,
+} from '../fixtures/saptune-details/saptune_details_data';
 
 context('Host Details', () => {
   before(() => {
     cy.task('startAgentHeartbeat', [selectedHost.agentId]);
     cy.visit('/hosts');
+
     cy.get(`#host-${selectedHost.agentId} > a`).click();
     cy.url().should('include', `/hosts/${selectedHost.agentId}`);
   });
@@ -360,6 +365,57 @@ context('Host Details', () => {
     it("should show the status as 'running'", () => {
       cy.get('span').should('contain.text', 'Node Exporter:running');
       cy.get('span').find('svg').should('exist');
+    });
+  });
+
+  describe('Saptune Summary for this host should be displayed', () => {
+    const { hostName } = selectedHost;
+    const saptuneSummarySelector = '.pt-8';
+
+    const scenarios = [
+      {
+        description: 'should show not installed status',
+        name: 'saptune-uninstalled',
+        data: {
+          packageVersion: 'Not installed',
+          configuredVersion: '-',
+          tuningStatus: '-',
+        },
+      },
+      {
+        description: 'should show version is not supported status',
+        name: 'saptune-unsupported',
+        data: saptuneDetailsDataUnsupportedVersion,
+      },
+      {
+        description:
+          'should show package version, configured version and tuning status',
+        name: 'saptune-compliant',
+        data: saptuneDetailsData,
+      },
+    ];
+
+    scenarios.forEach(({ data, description, name }) => {
+      it(description, () => {
+        const { configuredVersion, packageVersion, tuningStatus } = data;
+        cy.loadScenario(`host-${hostName}-${name}`);
+        cy.get(saptuneSummarySelector).should('contain', 'Saptune Summary');
+
+        cy.get(saptuneSummarySelector)
+          .contains('Package')
+          .next()
+          .should('contain', packageVersion);
+
+        cy.get(saptuneSummarySelector)
+          .contains('Configured Version')
+          .next()
+          .should('contain', configuredVersion);
+
+        cy.get(saptuneSummarySelector)
+          .contains('Tuning')
+          .next()
+          .should('contain', tuningStatus);
+      });
     });
   });
 

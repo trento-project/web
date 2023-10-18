@@ -156,7 +156,7 @@ context('Hosts Overview', () => {
     });
     describe('Health is changed based on saptune status', () => {
       const hostWithoutSap = 'vmdrbddev01';
-      const hostWithSap = 'vmhdbdev01';
+      const hostWithSap = 'vmhdbprd01';
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
         cy.loadScenario(`host-${hostWithoutSap}-saptune-uninstalled`);
