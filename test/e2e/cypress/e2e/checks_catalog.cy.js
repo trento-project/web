@@ -39,6 +39,14 @@ context('Checks catalog', () => {
     });
   });
 
+  describe('Individual checks data is expanded', () => {
+    it('should expand check data when clicked', () => {
+      cy.get('.check-panel').should('not.exist');
+      cy.get('div.check-row').contains(catalog[0].description).click();
+      cy.get(`.check-panel`).should('be.visible');
+    });
+  });
+
   describe('Provider selection', () => {
     [
       ['aws', 'AWS', 2],
@@ -62,15 +70,6 @@ context('Checks catalog', () => {
         cy.wait('@request');
         cy.get('div.check-row').should('have.length', checkCount);
       });
-    });
-  });
-
-  describe('Individual checks data is expanded', () => {
-    it('should expand check data when clicked', () => {
-      cy.get('.check-panel').should('not.exist');
-      cy.get('div.check-row').should('have.length.least', 1);
-      cy.get('div.check-row').first().click();
-      cy.get(`.check-panel`).should('be.visible');
     });
   });
 
