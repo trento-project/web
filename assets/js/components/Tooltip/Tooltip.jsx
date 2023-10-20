@@ -23,6 +23,7 @@ function Tooltip({
   className,
   content,
   children,
+  childrenClassName = 'inline-flex',
   place = 'top',
   isEnabled = true,
   ...rest
@@ -41,7 +42,7 @@ function Tooltip({
       placement={getPlacement(place)}
       {...rest}
     >
-      <span className="inline-flex">{children}</span>
+      <span className={childrenClassName}>{children}</span>
     </RcTooltip>
   );
 }

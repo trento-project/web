@@ -6,6 +6,7 @@ function ListView({
   orientation = 'horizontal',
   data,
   titleClassName,
+  contentClassName = '',
 }) {
   return (
     <div
@@ -27,7 +28,7 @@ function ListView({
           }
         >
           <div className={classNames(titleClassName, 'font-bold')}>{title}</div>
-          <div className="">{render(content)}</div>
+          <div className={contentClassName}>{render(content)}</div>
         </div>
       ))}
     </div>
