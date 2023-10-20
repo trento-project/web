@@ -4,11 +4,11 @@ import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 import { agentVersionWarning } from '@lib/agent';
 
 import Button from '@components/Button';
-import ListView from '@components/ListView';
+
 import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
-import ClusterLink from '@components/ClusterLink';
+
 import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
@@ -21,6 +21,7 @@ import CheckResultsOverview from '@components/CheckResultsOverview';
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
+import HostClusterAgentIpSummary from './HostClusterAgentIpSummary';
 
 import {
   subscriptionsTableConfiguration,
@@ -157,20 +158,11 @@ function HostDetails({
           <WarningBanner>{versionWarningMessage}</WarningBanner>
         )}
         <div className="flex xl:flex-row flex-col">
-          <div className="mt-4 bg-white shadow rounded-lg py-4 px-8 xl:w-2/5 mr-4">
-            <ListView
-              className="grid-rows-3"
-              orientation="vertical"
-              data={[
-                {
-                  title: 'Cluster',
-                  content: <ClusterLink cluster={cluster} />,
-                },
-                { title: 'Agent Version', content: agentVersion },
-                { title: 'IP addresses', content: ipAddresses.join(',') },
-              ]}
-            />
-          </div>
+          <HostClusterAgentIpSummary
+            cluster={cluster}
+            agentVersion={agentVersion}
+            ipAddresses={ipAddresses}
+          />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary
               saptuneVersion={saptuneVersion}
