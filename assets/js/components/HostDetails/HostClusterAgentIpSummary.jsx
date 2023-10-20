@@ -4,26 +4,25 @@ import HealthIcon from '@components/Health/HealthIcon';
 import Tooltip from '@components/Tooltip';
 import ClusterLink from '@components/ClusterLink';
 
-function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
+import { chunk } from 'lodash';
 
-  const renderTooltipContent = (ipList) =>
-  ipList.reduce((ipPair, ip, index) => {
-    if (index % 2 === 0) {
-      const nextIp = ipList[index + 1];
-      const key = `${index}_${ip}`;
-      ipPair.push(
+function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
+  const prepareTooltipContent = (ipList) => {
+    const formattedIpList = chunk(ipList, 2);
+    const preparedData = formattedIpList.map((ipPair, index) => {
+      const key = `ipPair_${index}`;
+      return (
         <div key={key} className="flex items-center justify-center">
-          <span>{ip}</span>
-          {nextIp && <span>, {nextIp}</span>}
+          <span>{ipPair[0]}</span>
+          {ipPair[1] && <span>, {ipPair[1]}</span>}
         </div>
       );
-    }
-    return ipPair;
-  }, []);
-
+    });
+    return preparedData;
+  };
 
   const renderIpList = (ipList) => {
-    const fullIpList= ipList.join(',')
+    const fullIpList = ipList.join(',');
     if (ipList.length < 4) {
       return fullIpList;
     }
@@ -32,13 +31,11 @@ function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
       <div className="flex flex-row">
         <Tooltip
           className="grid grid-flow-row grid-cols-1 grid-rows-1"
-          content={renderTooltipContent(ipList)}
+          content={prepareTooltipContent(ipList)}
         >
           <HealthIcon health="absent" />
         </Tooltip>
-        <span className="overflow-hidden overflow-ellipsis">
-          {fullIpList}
-        </span>
+        <span className="overflow-hidden overflow-ellipsis">{fullIpList}</span>
       </div>
     );
   };
