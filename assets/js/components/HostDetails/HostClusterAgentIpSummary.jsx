@@ -9,8 +9,8 @@ import { chunk } from 'lodash';
 function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
   const prepareTooltipContent = (ipList) => {
     const formattedIpList = chunk(ipList, 2);
-    const preparedData = formattedIpList.map((ipPair, index) => {
-      const key = `ipPair_${index}`;
+    const preparedTooltipContent = formattedIpList.map((ipPair) => {
+      const key = ipPair.length < 2 ? ipPair[0] : `${ipPair[0]}_${ipPair[1]}`;
       return (
         <div key={key} className="flex items-center justify-center">
           <span>{ipPair[0]}</span>
@@ -18,10 +18,10 @@ function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
         </div>
       );
     });
-    return preparedData;
+    return preparedTooltipContent;
   };
 
-  const renderIpList = (ipList) => {
+  const renderIpAdresses = (ipList) => {
     const fullIpList = ipList.join(',');
     if (ipList.length < 4) {
       return fullIpList;
@@ -53,7 +53,7 @@ function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
             content: <ClusterLink cluster={cluster} />,
           },
           { title: 'Agent Version', content: agentVersion },
-          { title: 'IP addresses', content: renderIpList(ipAddresses) },
+          { title: 'IP addresses', content: renderIpAdresses(ipAddresses) },
         ]}
       />
     </div>
