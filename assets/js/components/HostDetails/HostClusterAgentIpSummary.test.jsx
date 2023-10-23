@@ -21,8 +21,8 @@ describe('HostClusterAgentIpSummary', () => {
 
     renderWithRouter(
       <HostClusterAgentIpSummary
-        cluster={cluster}
         agentVersion={agentVersion}
+        cluster={cluster}
         ipAddresses={ipAddresses}
       />
     );
@@ -58,8 +58,8 @@ describe('HostClusterAgentIpSummary', () => {
 
     renderWithRouter(
       <HostClusterAgentIpSummary
-        cluster={cluster}
         agentVersion={agentVersion}
+        cluster={cluster}
         ipAddresses={ipAddresses}
       />
     );

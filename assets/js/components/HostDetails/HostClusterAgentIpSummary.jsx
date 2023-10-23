@@ -6,7 +6,7 @@ import ClusterLink from '@components/ClusterLink';
 
 import { chunk } from 'lodash';
 
-function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
+function HostClusterAgentIpSummary({ agentVersion, cluster, ipAddresses }) {
   const prepareTooltipContent = (ipList) => {
     const formattedIpList = chunk(ipList, 2);
     const preparedTooltipContent = formattedIpList.map((ipPair) => {
