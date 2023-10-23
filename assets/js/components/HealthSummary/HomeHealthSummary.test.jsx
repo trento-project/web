@@ -10,34 +10,34 @@ import HomeHealthSummary from './HomeHealthSummary';
 
 const homeHealthSummaryData = [
   healthSummaryFactory.build({
-    applicationClusterHealth: 'passing',
-    databaseClusterHealth: 'passing',
-    databaseHealth: 'passing',
-    hostsHealth: 'critical',
-    sapsystemHealth: 'passing',
+    application_cluster_health: 'passing',
+    database_cluster_health: 'passing',
+    database_health: 'passing',
+    hosts_health: 'critical',
+    sapsystem_health: 'passing',
     sid: 'NWD',
     tenant: 'HDD',
   }),
   healthSummaryFactory.build({
-    applicationClusterHealth: 'passing',
-    databaseHealth: 'passing',
-    hostsHealth: 'critical',
-    sapsystemHealth: 'passing',
+    application_cluster_health: 'passing',
+    database_health: 'passing',
+    hosts_health: 'critical',
+    sapsystem_health: 'passing',
   }),
   healthSummaryFactory.build({
-    databaseClusterHealth: 'passing',
-    databaseHealth: 'passing',
-    hostsHealth: 'critical',
-    sapsystemHealth: 'passing',
+    database_cluster_health: 'passing',
+    database_health: 'passing',
+    hosts_health: 'critical',
+    sapsystem_health: 'passing',
   }),
   healthSummaryFactory.build({
-    applicationClusterId: null,
-    databaseClusterId: null,
-    applicationClusterHealth: 'unknown',
-    databaseClusterHealth: 'unknown',
-    databaseHealth: 'passing',
-    hostsHealth: 'critical',
-    sapsystemHealth: 'passing',
+    application_cluster_id: null,
+    database_cluster_id: null,
+    application_cluster_health: 'unknown',
+    database_cluster_health: 'unknown',
+    database_health: 'passing',
+    hosts_health: 'critical',
+    sapsystem_health: 'passing',
   }),
 ];
 
@@ -65,7 +65,12 @@ describe('HomeHealthSummary component', () => {
         loading={false}
       />
     );
-    const [{ applicationClusterId, databaseClusterId }] = homeHealthSummaryData;
+    const [
+      {
+        application_cluster_id: applicationClusterId,
+        database_cluster_id: databaseClusterId,
+      },
+    ] = homeHealthSummaryData;
 
     expect(
       container

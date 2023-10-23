@@ -9,7 +9,6 @@ import {
   debounce,
   takeLatest,
 } from 'redux-saga/effects';
-import { keysToCamel } from '@lib/serialization';
 
 import {
   HOST_DEREGISTERED,
@@ -108,7 +107,7 @@ function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
   const { data: healthSummary } = yield call(get, '/sap_systems/health');
 
-  yield put(setHealthSummary(keysToCamel(healthSummary)));
+  yield put(setHealthSummary(healthSummary));
   yield put(stopHealthSummaryLoading());
 }
 

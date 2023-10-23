@@ -141,6 +141,20 @@ function HomeHealthSummary({ sapSystemsHealth, loading }) {
     setQueryValues({ health: newFilters });
   };
 
+  const normalizedSummaryData = summaryData.map((summaryDataEntry) => ({
+    applicationClusterHealth: summaryDataEntry.application_cluster_health,
+    applicationClusterId: summaryDataEntry.application_cluster_id,
+    databaseClusterHealth: summaryDataEntry.database_cluster_health,
+    databaseClusterId: summaryDataEntry.database_cluster_id,
+    databaseHealth: summaryDataEntry.database_health,
+    databaseId: summaryDataEntry.database_id,
+    hostsHealth: summaryDataEntry.hosts_health,
+    id: summaryDataEntry.id,
+    sapsystemHealth: summaryDataEntry.sapsystem_health,
+    sid: summaryDataEntry.sid,
+    tenant: summaryDataEntry.tenant,
+  }));
+
   return loading ? (
     <div>Loading...</div>
   ) : (
@@ -154,7 +168,7 @@ function HomeHealthSummary({ sapSystemsHealth, loading }) {
         onFilterChange={onFiltersChange}
         activeFilters={activeFilters}
       />
-      <Table config={healthSummaryTableConfig} data={summaryData} />
+      <Table config={healthSummaryTableConfig} data={normalizedSummaryData} />
     </div>
   );
 }
