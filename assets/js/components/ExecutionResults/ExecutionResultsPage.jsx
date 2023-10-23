@@ -36,12 +36,20 @@ function ExecutionResultsPage({ targetType }) {
 
   const savedFilters = useSelector(getSelectedFilters(targetID));
 
+  const isCluster = isTargetCluster(targetType);
+  const isHost = isTargetHost(targetType);
+
   const cloudProvider = target?.provider;
+  const clusterType = isCluster ? target?.type : null;
 
   useEffect(() => {
     if (cloudProvider) {
       dispatch(
-        updateCatalog({ provider: cloudProvider, target_type: targetType })
+        updateCatalog({
+          provider: cloudProvider,
+          target_type: targetType,
+          ...(clusterType ? { cluster_type: clusterType } : {}),
+        })
       );
     }
     if (!executionData) {
@@ -73,9 +81,9 @@ function ExecutionResultsPage({ targetType }) {
       targetSelectedChecks={target.selected_checks}
       savedFilters={savedFilters}
       onStartExecution={(targetId, hosts, selectedChecks, navigate) => {
-        isTargetHost(targetType) &&
+        isHost &&
           dispatch(hostExecutionRequested(target, selectedChecks, navigate));
-        isTargetCluster(targetType) &&
+        isCluster &&
           dispatch(
             executionRequested(targetId, hosts, selectedChecks, navigate)
           );

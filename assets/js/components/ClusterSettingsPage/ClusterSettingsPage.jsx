@@ -81,6 +81,7 @@ function ClusterSettingsPage() {
       updateCatalog({
         provider,
         target_type: TARGET_CLUSTER,
+        cluster_type: type,
       })
     );
 
