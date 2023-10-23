@@ -16,10 +16,8 @@ describe('HostClusterAgentIpSummary', () => {
       faker.internet.ipv4(),
       faker.internet.ipv4(),
       faker.internet.ipv4(),
-      faker.internet.ipv4(),
-      faker.internet.ipv4(),
     ];
-    const expextedIpAdresses = ipAddresses.join(',');
+    const expextedIpAdresses = ipAddresses.join(', ');
 
     renderWithRouter(
       <HostClusterAgentIpSummary
@@ -55,12 +53,8 @@ describe('HostClusterAgentIpSummary', () => {
     const clusterName = faker.animal.cat();
     const cluster = clusterFactory.build({ name: clusterName });
     const agentVersion = faker.system.semver();
-    const ipAddresses = [
-      faker.internet.ipv4(),
-      faker.internet.ipv4(),
-      faker.internet.ipv4(),
-    ];
-    const expextedIpAdresses = ipAddresses.join(',');
+    const ipAddresses = [faker.internet.ipv4(), faker.internet.ipv4()];
+    const expextedIpAdresses = ipAddresses.join(', ');
 
     renderWithRouter(
       <HostClusterAgentIpSummary

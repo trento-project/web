@@ -22,8 +22,8 @@ function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
   };
 
   const renderIpAdresses = (ipList) => {
-    const fullIpList = ipList.join(',');
-    if (ipList.length < 4) {
+    const fullIpList = ipList.join(', ');
+    if (ipList.length < 3) {
       return fullIpList;
     }
 
@@ -35,7 +35,9 @@ function HostClusterAgentIpSummary({ cluster, agentVersion, ipAddresses }) {
         >
           <HealthIcon health="absent" />
         </Tooltip>
-        <span className="overflow-hidden overflow-ellipsis">{fullIpList}</span>
+        <span className="truncate overflow-hidden overflow-ellipsis">
+          {fullIpList}
+        </span>
       </div>
     );
   };
