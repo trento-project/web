@@ -70,7 +70,7 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
   end
 
   defp redirect(conn, to) do
-    Controller.redirect(conn, to: to <> conn.query_string)
+    Controller.redirect(conn, to: maybe_add_query_string(to, conn.query_string))
   end
 
   defp route_exists?(router, path, verb) do
@@ -80,4 +80,7 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
       _ -> true
     end
   end
+
+  defp maybe_add_query_string(path, ""), do: path
+  defp maybe_add_query_string(path, query_string), do: "#{path}?#{query_string}"
 end

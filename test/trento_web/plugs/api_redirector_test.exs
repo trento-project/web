@@ -90,6 +90,21 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       assert ["/api/v2/test"] == location_header
     end
 
+    test "should redirect to the correctly versioned path with also a query string",
+         %{conn: conn} do
+      conn =
+        conn
+        |> Map.put(:path_info, ["api", "test"])
+        |> Map.put(:query_string, "foo=bar&bar=baz&qux=42&baz=true")
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: FoundRouter)
+
+      assert 307 == conn.status
+
+      location_header = get_resp_header(conn, "location")
+
+      assert ["/api/v2/test?foo=bar&bar=baz&qux=42&baz=true"] == location_header
+    end
+
     test "should redirect to the next available version path if the newest version is not available",
          %{conn: conn} do
       defmodule V1FoundRouter do
