@@ -21,7 +21,7 @@ import CheckResultsOverview from '@components/CheckResultsOverview';
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
-import HostClusterAgentIpSummary from './HostClusterAgentIpSummary';
+import HostSummary from './HostSummary';
 
 import {
   subscriptionsTableConfiguration,
@@ -158,7 +158,7 @@ function HostDetails({
           <WarningBanner>{versionWarningMessage}</WarningBanner>
         )}
         <div className="flex xl:flex-row flex-col">
-          <HostClusterAgentIpSummary
+          <HostSummary
             agentVersion={agentVersion}
             cluster={cluster}
             ipAddresses={ipAddresses}

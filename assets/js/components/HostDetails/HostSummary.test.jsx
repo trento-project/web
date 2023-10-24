@@ -5,22 +5,22 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import { clusterFactory } from '@lib/test-utils/factories';
-import HostClusterAgentIpSummary from './HostClusterAgentIpSummary';
+import HostSummary from './HostSummary';
 
-describe('HostClusterAgentIpSummary', () => {
-  it('should render correct cluster name, agent version, ip addresses and a tooltip', async () => {
-    const clusterName = faker.animal.cat();
-    const cluster = clusterFactory.build({ name: clusterName });
+describe('HostSummary', () => {
+  it('should render the content correctly', async () => {
+    const cluster = clusterFactory.build();
+    const { name: clusterName } = cluster;
     const agentVersion = faker.system.semver();
     const ipAddresses = [
       faker.internet.ipv4(),
       faker.internet.ipv4(),
       faker.internet.ipv4(),
     ];
-    const expextedIpAdresses = ipAddresses.join(', ');
+    const expextedIpAddresses = ipAddresses.join(', ');
 
     renderWithRouter(
-      <HostClusterAgentIpSummary
+      <HostSummary
         agentVersion={agentVersion}
         cluster={cluster}
         ipAddresses={ipAddresses}
@@ -34,7 +34,7 @@ describe('HostClusterAgentIpSummary', () => {
       agentVersion
     );
     expect(screen.getByText('IP addresses').nextSibling.textContent).toBe(
-      expextedIpAdresses
+      expextedIpAddresses
     );
 
     const tooltipIcon = screen.getByTestId('eos-svg-component');
@@ -49,15 +49,15 @@ describe('HostClusterAgentIpSummary', () => {
     );
   });
 
-  it('should render summary without a tooltip icon as there are fewer than four IPs', async () => {
-    const clusterName = faker.animal.cat();
-    const cluster = clusterFactory.build({ name: clusterName });
+  it('should render an icon if there are more than 3 ip addresses', () => {
+    const cluster = clusterFactory.build();
+    const { name: clusterName } = cluster;
     const agentVersion = faker.system.semver();
     const ipAddresses = [faker.internet.ipv4(), faker.internet.ipv4()];
-    const expextedIpAdresses = ipAddresses.join(', ');
+    const expextedIpAddresses = ipAddresses.join(', ');
 
     renderWithRouter(
-      <HostClusterAgentIpSummary
+      <HostSummary
         agentVersion={agentVersion}
         cluster={cluster}
         ipAddresses={ipAddresses}
@@ -71,7 +71,7 @@ describe('HostClusterAgentIpSummary', () => {
       agentVersion
     );
     expect(screen.getByText('IP addresses').nextSibling.textContent).toBe(
-      expextedIpAdresses
+      expextedIpAddresses
     );
 
     const tooltipIcon = screen.queryByTestId('eos-svg-component');
