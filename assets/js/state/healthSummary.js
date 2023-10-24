@@ -1,20 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// interface SapSystemHealthSummary {
-//  clusterId:       string,
-//  clustersHealth:  string,
-//  databaseHealth:  string,
-//  databaseId:      string,
-//  hostsHealth:     string,
-//  id:              string,
-//  sapsystemHealth: string,
-//  sid:             string,
-//  tenant:          string,
-// }
-
 const initialState = {
   loading: false,
-  sapSystemsHealth: [], // SapSystemHealthSummary[]
+  sapSystemsHealth: [],
   error: '',
 };
 

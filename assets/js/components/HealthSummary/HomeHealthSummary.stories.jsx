@@ -7,20 +7,20 @@ import HomeHealthSummary from './HomeHealthSummary';
 
 const randomSummary = healthSummaryFactory.buildList(3);
 const healthySummary = healthSummaryFactory.buildList(3, {
-  applicationClusterHealth: 'passing',
-  databaseClusterHealth: 'passing',
-  databaseHealth: 'passing',
-  hostsHealth: 'passing',
-  sapsystemHealth: 'passing',
+  application_cluster_health: 'passing',
+  database_cluster_health: 'passing',
+  database_health: 'passing',
+  hosts_health: 'passing',
+  sapsystem_health: 'passing',
 });
 const unClusteredSummary = healthSummaryFactory.buildList(3, {
-  applicationClusterId: null,
-  databaseClusterId: null,
-  applicationClusterHealth: 'unknown',
-  databaseClusterHealth: 'unknown',
-  databaseHealth: 'passing',
-  hostsHealth: 'passing',
-  sapsystemHealth: 'passing',
+  application_cluster_id: null,
+  database_cluster_id: null,
+  application_cluster_health: 'unknown',
+  database_cluster_health: 'unknown',
+  database_health: 'passing',
+  hosts_health: 'passing',
+  sapsystem_health: 'passing',
 });
 
 function ContainerWrapper({ children }) {

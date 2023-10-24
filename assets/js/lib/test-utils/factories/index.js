@@ -51,15 +51,15 @@ export const checkFactory = Factory.define(() => ({
 }));
 
 export const healthSummaryFactory = Factory.define(() => ({
-  applicationClusterId: faker.string.uuid(),
-  applicationClusterHealth: healthEnum(),
-  databaseHealth: healthEnum(),
-  databaseId: faker.string.uuid(),
-  databaseClusterId: faker.string.uuid(),
-  databaseClusterHealth: healthEnum(),
-  hostsHealth: healthEnum(),
+  application_cluster_id: faker.string.uuid(),
+  application_cluster_health: healthEnum(),
+  database_health: healthEnum(),
+  database_id: faker.string.uuid(),
+  database_cluster_id: faker.string.uuid(),
+  database_cluster_health: healthEnum(),
+  hosts_health: healthEnum(),
   id: faker.string.uuid(),
-  sapsystemHealth: healthEnum(),
+  sapsystem_health: healthEnum(),
   sid: faker.string.alphanumeric(3, { casing: 'upper' }),
   tenant: faker.string.alphanumeric(3, { casing: 'upper' }),
 }));
