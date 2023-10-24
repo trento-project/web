@@ -1,3 +1,3 @@
-import ChecksCatalog from './ChecksCatalog';
+import ChecksCatalogPage from './ChecksCatalogPage';
 
-export default ChecksCatalog;
+export default ChecksCatalogPage;
