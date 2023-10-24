@@ -82,7 +82,7 @@ jobs:
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install NPM dependencies
@@ -167,7 +167,7 @@ jobs:
         env:
           ImageOS: ubuntu20
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
@@ -213,7 +213,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve NPM Cached Dependencies
@@ -308,7 +308,7 @@ jobs:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Cached Dependencies
@@ -361,7 +361,7 @@ jobs:
             test/e2e/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install E2E NPM dependencies
@@ -409,7 +409,7 @@ jobs:
         env:
           ImageOS: ubuntu20
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Cached Dependencies
@@ -745,7 +745,7 @@ jobs:
           semver_only: true
           initial_version: 0.0.1
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install assets
