@@ -34,7 +34,7 @@ const renderIpAddresses = (ipAddresses) => {
       >
         <HealthIcon health="absent" />
       </Tooltip>
-      <span className="truncate">{joinedIpAddresses}</span>
+      <span className="truncate pl-1">{joinedIpAddresses}</span>
     </div>
   );
 };
