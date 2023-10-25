@@ -11,7 +11,7 @@ const groupName3 = faker.string.uuid();
 const group1 = catalogCheckFactory.buildList(5, { group: groupName1 });
 const group2 = catalogCheckFactory.buildList(5, { group: groupName2 });
 const group3 = catalogCheckFactory.buildList(5, { group: groupName3 });
-const catalogData = group1.concat(group2).concat(group3);
+const catalogData = group1.concat(group2, group3);
 
 function ContainerWrapper({ children }) {
   return (
