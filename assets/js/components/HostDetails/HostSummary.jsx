@@ -4,21 +4,16 @@ import HealthIcon from '@components/Health/HealthIcon';
 import Tooltip from '@components/Tooltip';
 import ClusterLink from '@components/ClusterLink';
 
-import { chunk } from 'lodash';
-
-const prepareTooltipContent = (ipAddresses) => {
-  const formattedIpList = chunk(ipAddresses, 2);
-  const preparedTooltipContent = formattedIpList.map((ipPair) => {
-    const key = ipPair.length < 2 ? ipPair[0] : `${ipPair[0]}_${ipPair[1]}`;
-    return (
-      <div key={key} className="flex items-center justify-center">
-        <span>{ipPair[0]}</span>
-        {ipPair[1] && <span>, {ipPair[1]}</span>}
+const prepareTooltipContent = (ipAddresses) => (
+  <div className="grid grid-cols-2 gap-1">
+    {ipAddresses.map((ip, index) => (
+      <div key={ip}>
+        {ip}
+        {index % 2 === 0 && ipAddresses.length - 1 !== index && ' '}
       </div>
-    );
-  });
-  return preparedTooltipContent;
-};
+    ))}
+  </div>
+);
 
 const renderIpAddresses = (ipAddresses) => {
   const joinedIpAddresses = ipAddresses.join(', ');
