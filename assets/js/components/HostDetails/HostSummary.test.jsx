@@ -34,7 +34,7 @@ describe('HostSummary', () => {
     );
   });
 
-  it('should render an icon if there are more than 3 ip addresses', async () => {
+  it('should render an icon if there are 3 or more ip addresses', async () => {
     const ipAddresses = [
       faker.internet.ipv4(),
       faker.internet.ipv4(),
