@@ -3,14 +3,12 @@ import ListView from '@components/ListView';
 import HealthIcon from '@components/Health/HealthIcon';
 import Tooltip from '@components/Tooltip';
 import ClusterLink from '@components/ClusterLink';
+import { chunk } from 'lodash';
 
 const prepareTooltipContent = (ipAddresses) => (
-  <div className="grid grid-cols-2 gap-1">
-    {ipAddresses.map((ip, index) => (
-      <div key={ip}>
-        {ip}
-        {index % 2 === 0 && ipAddresses.length - 1 !== index && ' '}
-      </div>
+  <div className="text-center">
+    {chunk(ipAddresses, 2).map((ipPairs) => (
+      <div key={ipPairs.join('-')}>{ipPairs.join(', ')}</div>
     ))}
   </div>
 );
@@ -23,13 +21,10 @@ const renderIpAddresses = (ipAddresses) => {
 
   return (
     <div className="flex flex-row">
-      <Tooltip
-        className="grid grid-flow-row grid-cols-1 grid-rows-1"
-        content={prepareTooltipContent(ipAddresses)}
-      >
+      <Tooltip content={prepareTooltipContent(ipAddresses)}>
         <HealthIcon health="absent" />
       </Tooltip>
-      <span className="truncate pl-1">{joinedIpAddresses}</span>
+      <span className="truncate ml-1">{joinedIpAddresses}</span>
     </div>
   );
 };

@@ -4,11 +4,9 @@ import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 import { agentVersionWarning } from '@lib/agent';
 
 import Button from '@components/Button';
-
 import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
-
 import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
