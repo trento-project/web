@@ -40,8 +40,6 @@ function HostSummary({ agentVersion, cluster, ipAddresses }) {
       <ListView
         className="grid-rows-3"
         orientation="vertical"
-        titleClassName=""
-        contentClassName="overflow-hidden overflow-ellipsis"
         data={[
           {
             title: 'Cluster',
@@ -51,6 +49,7 @@ function HostSummary({ agentVersion, cluster, ipAddresses }) {
           {
             title: 'IP addresses',
             render: renderIpAddresses,
+            className: 'overflow-hidden overflow-ellipsis',
             content: ipAddresses,
           },
         ]}

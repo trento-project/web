@@ -6,7 +6,6 @@ function ListView({
   orientation = 'horizontal',
   data,
   titleClassName,
-  contentClassName = '',
 }) {
   return (
     <div
@@ -16,21 +15,28 @@ function ListView({
           : classNames(className, 'grid grid-flow-row gap-5')
       }
     >
-      {data.map(({ title, content, render = (component) => <span>
-            {component}
-          </span> }) => (
-        <div
-          key={title}
-          className={
-            orientation === 'vertical'
-              ? 'grid grid-flow-row'
-              : 'grid grid-flow-col auto-cols-fr gap-5'
-          }
-        >
-          <div className={classNames(titleClassName, 'font-bold')}>{title}</div>
-          <div className={contentClassName}>{render(content)}</div>
-        </div>
-      ))}
+      {data.map(
+        ({
+          title,
+          content,
+          className: cellClassName = '',
+          render = (component) => <span>{component}</span>,
+        }) => (
+          <div
+            key={title}
+            className={
+              orientation === 'vertical'
+                ? 'grid grid-flow-row'
+                : 'grid grid-flow-col auto-cols-fr gap-5'
+            }
+          >
+            <div className={classNames(titleClassName, 'font-bold')}>
+              {title}
+            </div>
+            <div className={cellClassName}>{render(content)}</div>
+          </div>
+        )
+      )}
     </div>
   );
 }
