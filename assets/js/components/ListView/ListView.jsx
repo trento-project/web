@@ -19,7 +19,7 @@ function ListView({
         ({
           title,
           content,
-          className: cellClassName = '',
+          className: contentClassName = '',
           render = (component) => <span>{component}</span>,
         }) => (
           <div
@@ -33,7 +33,7 @@ function ListView({
             <div className={classNames(titleClassName, 'font-bold')}>
               {title}
             </div>
-            <div className={cellClassName}>{render(content)}</div>
+            <div className={contentClassName}>{render(content)}</div>
           </div>
         )
       )}
