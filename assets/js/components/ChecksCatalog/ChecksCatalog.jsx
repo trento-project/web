@@ -1,14 +1,7 @@
-/* eslint-disable react/no-array-index-key */
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { groupBy } from 'lodash';
 
-import { getCatalog } from '@state/selectors/catalog';
-import { updateCatalog } from '@state/actions/catalog';
-import {
-  providerData,
-  checkProviderExists,
-} from '@components/ProviderLabel/ProviderLabel';
+import { providerData } from '@components/ProviderLabel/ProviderLabel';
 import PageHeader from '@components/PageHeader';
 import Accordion from '@components/Accordion';
 import CatalogContainer from './CatalogContainer';
@@ -22,27 +15,13 @@ const updatedProvider = {
   ...providerData,
 };
 
-const buildUpdateCatalogAction = (provider) => {
-  const payload = checkProviderExists(provider)
-    ? { provider, target_type: 'cluster' }
-    : {};
-  return updateCatalog(payload);
-};
-
-// eslint-disable-next-line import/prefer-default-export
-function ChecksCatalog() {
-  const dispatch = useDispatch();
+function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
   const [selectedProvider, setProviderSelected] = useState(ALL_FILTER);
 
-  const {
-    data: catalogData,
-    error: catalogError,
-    loading,
-  } = useSelector(getCatalog());
-
   useEffect(() => {
-    dispatch(buildUpdateCatalogAction(selectedProvider));
-  }, [dispatch, selectedProvider]);
+    updateCatalog(selectedProvider);
+  }, [selectedProvider]);
+
   return (
     <>
       <div className="flex">
@@ -55,15 +34,15 @@ function ChecksCatalog() {
         />
       </div>
       <CatalogContainer
-        onRefresh={() => dispatch(buildUpdateCatalogAction(selectedProvider))}
+        onRefresh={() => updateCatalog(selectedProvider)}
         isCatalogEmpty={catalogData.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
         <div>
           {Object.entries(groupBy(catalogData, 'group')).map(
-            ([group, checks], idx) => (
-              <ul key={idx}>
+            ([group, checks]) => (
+              <ul key={group}>
                 <Accordion
                   defaultOpen
                   className="check-group mb-4"
