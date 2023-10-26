@@ -21,22 +21,28 @@ context('Checks catalog', () => {
     it('should show 3 check groups in the catalog', () => {
       cy.get('div.check-group').should('have.length', 3);
     });
-    it('should show 6 checks in the catalog', () => {
-      cy.get('div.check-row').should('have.length', 6);
+    it('should have only the first group expanded', () => {
+      cy.get('div.check-row').should('have.length', 2);
     });
   });
 
   describe('Checks grouping and identification is correct', () => {
-    Object.entries(groupBy(catalog, 'group')).forEach(([group, checks]) => {
-      it(`should include group '${group}'`, () => {
-        cy.get('.check-group > div > div > h3').should('contain', group);
-      });
-      checks.forEach(({ id }) => {
-        it(`should include check '${id}'`, () => {
-          cy.get('.check-row').should('contain', id);
+    Object.entries(groupBy(catalog, 'group')).forEach(
+      ([group, checks], index) => {
+        it(`should include group '${group}'`, () => {
+          cy.get('.check-group > div > div > h3').should('contain', group);
         });
-      });
-    });
+        it(`should expand the group '${group}' when clicked`, () => {
+          index !== 0 && cy.get('.check-group').contains(group).click();
+          cy.get('div.check-row').should('have.length', (index + 1) * 2);
+        });
+        checks.forEach(({ id }) => {
+          it(`should include check '${id}'`, () => {
+            cy.get('.check-row').should('contain', id);
+          });
+        });
+      }
+    );
   });
 
   describe('Individual checks data is expanded', () => {
@@ -49,10 +55,10 @@ context('Checks catalog', () => {
 
   describe('Provider selection', () => {
     [
-      ['aws', 'AWS', 2],
-      ['azure', 'Azure', 3],
-      ['gcp', 'GCP', 4],
-    ].forEach(([provider, label, checkCount]) => {
+      ['aws', 'AWS', 1, 1],
+      ['azure', 'Azure', 2, 3],
+      ['gcp', 'GCP', 3, 5],
+    ].forEach(([provider, label, groupCount, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
         cy.intercept(
           `${checksCatalogURL}?provider=${provider}&target_type=cluster`,
@@ -68,7 +74,7 @@ context('Checks catalog', () => {
           .click();
 
         cy.wait('@request');
-        cy.get('div.check-row').should('have.length', checkCount);
+        cy.get('.check-group').should('have.length', groupCount);
       });
     });
   });
