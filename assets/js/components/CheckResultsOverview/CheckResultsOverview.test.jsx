@@ -10,20 +10,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import CheckResultsOverview from '.';
 
 describe('CheckResultsOverview component', () => {
-  it('should render a spinner when catalog is in loading state', () => {
-    render(<CheckResultsOverview catalogLoading />);
-
-    expect(screen.getByRole('alert')).toBeVisible();
-    expect(screen.queryByText('Check Summary')).toBeInTheDocument();
-    expect(
-      screen.queryByText('Checks execution running...')
-    ).toBeInTheDocument();
-    expect(screen.queryByText('Passing')).not.toBeInTheDocument();
-    expect(screen.queryByText('Warning')).not.toBeInTheDocument();
-    expect(screen.queryByText('Critical')).not.toBeInTheDocument();
-  });
-
-  it('should render a spinner when execution is in loading state', () => {
+  it('should render a spinner when in loading state', () => {
     render(<CheckResultsOverview loading />);
 
     expect(screen.getByRole('alert')).toBeVisible();
@@ -36,17 +23,7 @@ describe('CheckResultsOverview component', () => {
     expect(screen.queryByText('Critical')).not.toBeInTheDocument();
   });
 
-  it('should render an error message when a catalog error occurred', () => {
-    const error = faker.hacker.noun();
-    render(<CheckResultsOverview catalogError={error} />);
-
-    expect(screen.getByText(error)).toBeVisible();
-    expect(screen.queryByText('Passing')).not.toBeInTheDocument();
-    expect(screen.queryByText('Warning')).not.toBeInTheDocument();
-    expect(screen.queryByText('Critical')).not.toBeInTheDocument();
-  });
-
-  it('should render an error message when an execution error occurred', () => {
+  it('should render an error message', () => {
     const error = faker.hacker.noun();
     render(<CheckResultsOverview error={error} />);
 

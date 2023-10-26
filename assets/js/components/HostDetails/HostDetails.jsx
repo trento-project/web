@@ -31,11 +31,6 @@ import {
   sapInstancesTableConfiguration,
 } from './tableConfigs';
 
-// import { getCatalog } from '@state/selectors/catalog';
-// import { useSelector } from 'react-redux';
-
-// import { getCatalog } from '@lib/api/checks';
-
 function HostDetails({
   agentVersion,
   cluster,
@@ -100,6 +95,12 @@ function HostDetails({
     loading: catalogLoading,
     error: catalogError,
   } = useSelector(getCatalog());
+
+  const {
+    data: lastExecutionData,
+    loading: lastExecutionLoading,
+    error: lastExecutionError,
+  } = lastExecution || {};
 
   return (
     <>
@@ -201,10 +202,13 @@ function HostDetails({
           </div>
           <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
             <CheckResultsOverview
-              {...lastExecution}
+              data={lastExecutionData}
               catalogData={catalogData}
-              catalogLoading={catalogLoading}
-              catalogError={catalogError}
+              loading={catalogLoading || lastExecutionLoading}
+              error={catalogError || lastExecutionError}
+              // data,
+              // error = null,
+              // loading = false,
               onCheckClick={(health) =>
                 navigate(`/hosts/${hostID}/executions/last?health=${health}`)
               }

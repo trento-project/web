@@ -14,14 +14,12 @@ const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
 function CheckResultsOverview({
   catalogData,
-  catalogLoading = false,
-  catalogError = null,
   data,
   error = null,
   loading = false,
   onCheckClick,
 }) {
-  if (catalogLoading || loading || pendingStates.includes(data?.status)) {
+  if (loading || pendingStates.includes(data?.status)) {
     return (
       <div className="flex flex-col items-center px-4">
         <h1 className="text-center text-2xl font-bold">Check Summary</h1>
@@ -33,10 +31,10 @@ function CheckResultsOverview({
     );
   }
 
-  if (error || catalogError) {
+  if (error) {
     return (
       <div className="flex flex-col items-center mt-2 px-4">
-        <div className="text-center text-xs">{error || catalogError}</div>
+        <div className="text-center text-xs">{error}</div>
       </div>
     );
   }
