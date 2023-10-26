@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
+import { updateCatalog } from '@state/actions/catalog';
+import { getCatalog } from '@state/selectors/catalog';
+
 import { agentVersionWarning } from '@lib/agent';
+import { TARGET_HOST } from '@lib/model';
 
 import Button from '@components/Button';
 import Table from '@components/Table';
@@ -25,6 +30,11 @@ import {
   subscriptionsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
+
+// import { getCatalog } from '@state/selectors/catalog';
+// import { useSelector } from 'react-redux';
+
+// import { getCatalog } from '@lib/api/checks';
 
 function HostDetails({
   agentVersion,
@@ -70,6 +80,26 @@ function HostDetails({
       </StatusPill>
     )
   );
+
+  const dispatch = useDispatch();
+
+  const refreshCatalog = () =>
+    dispatch(
+      updateCatalog({
+        provider,
+        target_type: TARGET_HOST,
+      })
+    );
+
+  useEffect(() => {
+    refreshCatalog();
+  }, []);
+
+  const {
+    data: catalogData,
+    loading: catalogLoading,
+    error: catalogError,
+  } = useSelector(getCatalog());
 
   return (
     <>
@@ -172,6 +202,9 @@ function HostDetails({
           <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
             <CheckResultsOverview
               {...lastExecution}
+              catalogData={catalogData}
+              catalogLoading={catalogLoading}
+              catalogError={catalogError}
               onCheckClick={(health) =>
                 navigate(`/hosts/${hostID}/executions/last?health=${health}`)
               }
