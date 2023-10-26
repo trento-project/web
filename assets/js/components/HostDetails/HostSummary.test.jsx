@@ -29,9 +29,12 @@ describe('HostSummary', () => {
     expect(screen.getByText('Agent Version').nextSibling.textContent).toBe(
       agentVersion
     );
-    expect(screen.getByText('IP addresses').nextSibling.textContent).toBe(
+    expect(screen.getByText('IP Addresses').nextSibling.textContent).toBe(
       expectedIpAddresses
     );
+
+    const tooltipIcon = screen.queryByTestId('eos-svg-component');
+    expect(tooltipIcon).toBeNull();
   });
 
   it('should render an icon if there are 3 or more ip addresses', async () => {
@@ -49,7 +52,7 @@ describe('HostSummary', () => {
       />
     );
 
-    expect(screen.getByText('IP addresses').nextSibling.textContent).toBe(
+    expect(screen.getByText('IP Addresses').nextSibling.textContent).toBe(
       expectedIpAddresses
     );
 

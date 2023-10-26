@@ -42,7 +42,7 @@ function HostSummary({ agentVersion, cluster, ipAddresses }) {
           },
           { title: 'Agent Version', content: agentVersion },
           {
-            title: 'IP addresses',
+            title: 'IP Addresses',
             render: renderIpAddresses,
             className: 'overflow-hidden overflow-ellipsis',
             content: ipAddresses,
