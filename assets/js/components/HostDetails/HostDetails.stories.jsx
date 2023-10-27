@@ -236,3 +236,10 @@ export const WithoutLastExecutionData = {
     lastExecution: {},
   },
 };
+
+export const HostSummaryWithTooltip = {
+  args: {
+    ...Default.args,
+    ipAddresses: Array.from({ length: 10 }, () => faker.internet.ipv4()),
+  },
+};

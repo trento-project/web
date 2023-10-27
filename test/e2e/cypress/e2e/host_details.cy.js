@@ -40,7 +40,7 @@ context('Host Details', () => {
 
     it('should show the correct IP addresses', () => {
       cy.get('div')
-        .contains(/IP addresses$/)
+        .contains(/IP Addresses$/)
         .next()
         .should('contain', selectedHost.ipAddresses);
     });
