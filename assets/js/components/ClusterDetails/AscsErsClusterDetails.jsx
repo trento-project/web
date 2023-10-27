@@ -10,7 +10,7 @@ import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';
 import { renderEnsaVersion } from '@components/SapSystemDetails';
 
-import ChecksComingSoon from '@static/checks-coming-soon.svg';
+import CheckResultsOverview from '@components/CheckResultsOverview';
 
 import SBDDetails from './SBDDetails';
 import AttributesDetails from './AttributesDetails';
@@ -70,6 +70,7 @@ function AscsErsClusterDetails({
   hosts,
   sapSystems,
   details,
+  catalog,
 }) {
   const [enrichedSapSystems, setEnrichedSapSystems] = useState([]);
   const [currentSapSystem, setCurrentSapSystem] = useState(null);
@@ -84,6 +85,12 @@ function AscsErsClusterDetails({
     setEnrichedSapSystems(systems);
     setCurrentSapSystem(systems[0]);
   }, [hosts, sapSystems, details]);
+
+  const {
+    data: catalogData,
+    loading: catalogLoading,
+    error: catalogError,
+  } = catalog || {};
 
   return (
     <div>
@@ -167,15 +174,12 @@ function AscsErsClusterDetails({
           </div>
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
-          <div className="flex flex-col items-center h-full">
-            <h1 className="text-center text-2xl font-bold">Check Results</h1>
-            <h6 className="opacity-60 text-xs">Coming soon for ASCS/ERS</h6>
-            <img
-              className="h-full inline-block align-middle"
-              alt="checks coming soon"
-              src={ChecksComingSoon}
-            />
-          </div>
+          <CheckResultsOverview
+            catalogDataEmpty={catalogData?.length === 0}
+            loading={catalogLoading}
+            error={catalogError}
+            onCheckClick={() => {}}
+          />
         </div>
       </div>
 

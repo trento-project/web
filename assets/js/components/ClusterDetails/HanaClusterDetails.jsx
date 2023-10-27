@@ -1,11 +1,6 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 
-import { updateCatalog } from '@state/actions/catalog';
-import { getCatalog } from '@state/selectors/catalog';
 import { RUNNING_STATES } from '@state/lastExecutions';
-
-import { TARGET_CLUSTER } from '@lib/model';
 
 import { groupBy } from 'lodash';
 import PageHeader from '@components/PageHeader';
@@ -83,6 +78,7 @@ function HanaClusterDetails({
   provider,
   sapSystems,
   details,
+  catalog,
   lastExecution,
   onStartExecution = () => {},
   navigate = () => {},
@@ -104,25 +100,11 @@ function HanaClusterDetails({
     !hasSelectedChecks ||
     RUNNING_STATES.includes(executionData?.status);
 
-  const dispatch = useDispatch();
-
-  const refreshCatalog = () =>
-    dispatch(
-      updateCatalog({
-        provider,
-        target_type: TARGET_CLUSTER,
-      })
-    );
-
-  useEffect(() => {
-    refreshCatalog();
-  }, []);
-
   const {
     data: catalogData,
     loading: catalogLoading,
     error: catalogError,
-  } = useSelector(getCatalog());
+  } = catalog || {};
 
   return (
     <div>

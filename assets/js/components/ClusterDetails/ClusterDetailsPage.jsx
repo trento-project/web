@@ -7,11 +7,14 @@ import {
   getClusterHosts,
   getClusterSapSystems,
 } from '@state/selectors/cluster';
+import { getCatalog } from '@state/selectors/catalog';
+import { getLastExecution } from '@state/selectors/lastExecutions';
+import { updateCatalog } from '@state/actions/catalog';
 import {
   updateLastExecution,
   executionRequested,
 } from '@state/actions/lastExecutions';
-import { getLastExecution } from '@state/selectors/lastExecutions';
+import { TARGET_CLUSTER } from '@lib/model';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from '../ClusterLink';
@@ -23,8 +26,18 @@ export function ClusterDetailsPage() {
   const cluster = useSelector(getCluster(clusterID));
 
   const dispatch = useDispatch();
+
+  const catalog = useSelector(getCatalog());
+
   const lastExecution = useSelector(getLastExecution(clusterID));
+
   useEffect(() => {
+    dispatch(
+      updateCatalog({
+        provider: cluster?.provider,
+        target_type: TARGET_CLUSTER,
+      })
+    );
     dispatch(updateLastExecution(clusterID));
   }, [dispatch]);
 
@@ -58,6 +71,7 @@ export function ClusterDetailsPage() {
           provider={cluster.provider}
           sapSystems={clusterSapSystems}
           details={cluster.details}
+          catalog={catalog}
           lastExecution={lastExecution}
           onStartExecution={(_, hostList, checks, navigateFunction) =>
             dispatch(
@@ -76,6 +90,7 @@ export function ClusterDetailsPage() {
           hosts={clusterHosts}
           sapSystems={clusterSapSystems}
           details={cluster.details}
+          catalog={catalog}
         />
       );
     default:

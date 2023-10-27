@@ -4,11 +4,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import {
-  renderWithRouter,
-  withState,
-  defaultInitialState,
-} from '@lib/test-utils';
+import { renderWithRouter } from '@lib/test-utils';
 import {
   clusterFactory,
   hostFactory,
@@ -87,7 +83,7 @@ describe('HanaClusterDetails component', () => {
 
       const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
-      const [StatefulHanaClusterDetails] = withState(
+      renderWithRouter(
         <HanaClusterDetails
           clusterID={clusterID}
           clusterName={clusterName}
@@ -101,10 +97,8 @@ describe('HanaClusterDetails component', () => {
           sapSystems={[]}
           details={details}
           lastExecution={lastExecution}
-        />,
-        defaultInitialState
+        />
       );
-      renderWithRouter(StatefulHanaClusterDetails);
 
       expect(screen.getByText('Start Execution')).toBeDisabled();
     }
@@ -125,7 +119,7 @@ describe('HanaClusterDetails component', () => {
 
     const sapSystems = sapSystemFactory.buildList(2, { sid });
 
-    const [StatefulHanaClusterDetails] = withState(
+    renderWithRouter(
       <HanaClusterDetails
         clusterID={clusterID}
         clusterName={clusterName}
@@ -139,10 +133,8 @@ describe('HanaClusterDetails component', () => {
         sapSystems={sapSystems}
         details={details}
         lastExecution={null}
-      />,
-      defaultInitialState
+      />
     );
-    renderWithRouter(StatefulHanaClusterDetails);
 
     const sidContainer = screen.getByText('SID').nextSibling;
 
@@ -166,7 +158,7 @@ describe('HanaClusterDetails component', () => {
 
     const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
-    const [StatefulHanaClusterDetails] = withState(
+    renderWithRouter(
       <HanaClusterDetails
         clusterID={clusterID}
         clusterName={clusterName}
@@ -180,10 +172,8 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
-      />,
-      defaultInitialState
+      />
     );
-    renderWithRouter(StatefulHanaClusterDetails);
 
     const sidContainer = screen.getByText('SID').nextSibling;
 
@@ -209,7 +199,7 @@ describe('HanaClusterDetails component', () => {
       cluster_id: clusterID,
     });
 
-    const [StatefulHanaClusterDetails] = withState(
+    renderWithRouter(
       <HanaClusterDetails
         clusterID={clusterID}
         clusterName={clusterName}
@@ -223,10 +213,8 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
-      />,
-      defaultInitialState
+      />
     );
-    renderWithRouter(StatefulHanaClusterDetails);
 
     const registeredHostContainer = screen.getByText(
       registeredClusterNode.name
@@ -255,7 +243,7 @@ describe('HanaClusterDetails component', () => {
       nodes: [{ attributes, resources }],
     } = details;
 
-    const [StatefulHanaClusterDetails] = withState(
+    renderWithRouter(
       <HanaClusterDetails
         clusterID={clusterID}
         clusterName={clusterName}
@@ -269,10 +257,8 @@ describe('HanaClusterDetails component', () => {
         sapSystems={[]}
         details={details}
         lastExecution={null}
-      />,
-      defaultInitialState
+      />
     );
-    renderWithRouter(StatefulHanaClusterDetails);
 
     await userEvent.click(screen.getAllByText('Details')[0]);
 
@@ -332,7 +318,7 @@ describe('HanaClusterDetails component', () => {
 
       const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
-      const [StatefulHanaClusterDetails] = withState(
+      renderWithRouter(
         <HanaClusterDetails
           clusterID={clusterID}
           clusterName={clusterName}
@@ -346,10 +332,8 @@ describe('HanaClusterDetails component', () => {
           sapSystems={[]}
           details={details}
           lastExecution={null}
-        />,
-        defaultInitialState
+        />
       );
-      renderWithRouter(StatefulHanaClusterDetails);
 
       const startExecutionButton = screen.getByText('Start Execution');
       await user.hover(startExecutionButton);
