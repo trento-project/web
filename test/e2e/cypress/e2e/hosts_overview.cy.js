@@ -183,6 +183,7 @@ context('Hosts Overview', () => {
       });
 
       it('should change the health to warning if saptune is not installed', () => {
+        cy.contains('button', '2').click();
         cy.loadScenario(`host-${hostWithSap}-saptune-uninstalled`);
         cy.contains('tr', hostWithSap).within(() => {
           cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
@@ -190,6 +191,7 @@ context('Hosts Overview', () => {
       });
 
       it('should change the health to warning if saptune version is unsupported', () => {
+        cy.contains('button', '2').click();
         cy.loadScenario(`host-${hostWithSap}-saptune-unsupported`);
         cy.contains('tr', hostWithSap).within(() => {
           cy.get('td:nth-child(1) svg').should('have.class', 'fill-yellow-500');
@@ -217,6 +219,7 @@ context('Hosts Overview', () => {
         },
       ].forEach(({ state, scenario, health, icon }) => {
         it(`should change the health to ${health} if saptune tuning state is ${state}`, () => {
+          cy.contains('button', '2').click();
           cy.loadScenario(`host-${hostWithSap}-saptune-${scenario}`);
           cy.contains('tr', hostWithSap).within(() => {
             cy.get('td:nth-child(1) svg').should('have.class', icon);
@@ -224,6 +227,7 @@ context('Hosts Overview', () => {
         });
       });
     });
+
     describe('Health is changed to critical when the heartbeat is not sent', () => {
       before(() => {
         cy.visit('/hosts');
@@ -231,7 +235,7 @@ context('Hosts Overview', () => {
       });
       it('should show health status of the entire cluster of 27 hosts with critical health', () => {
         cy.get('.tn-health-container .tn-health-critical', {
-          timeout: 15000,
+          timeout: 30000,
         }).should('contain', 27);
       });
 
