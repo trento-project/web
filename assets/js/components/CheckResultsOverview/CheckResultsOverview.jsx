@@ -14,7 +14,7 @@ const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
 function CheckResultsOverview({
   data,
-  catalogDataEmpty,
+  catalogDataEmpty = false,
   error = null,
   loading = false,
   onCheckClick,

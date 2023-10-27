@@ -206,9 +206,6 @@ function HostDetails({
               catalogDataEmpty={catalogData?.length === 0}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
-              // data,
-              // error = null,
-              // loading = false,
               onCheckClick={(health) =>
                 navigate(`/hosts/${hostID}/executions/last?health=${health}`)
               }
