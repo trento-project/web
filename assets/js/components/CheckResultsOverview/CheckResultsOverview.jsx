@@ -13,8 +13,8 @@ import CheckResultCount from './CheckResultCount';
 const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
 function CheckResultsOverview({
-  catalogData,
   data,
+  catalogDataEmpty,
   error = null,
   loading = false,
   onCheckClick,
@@ -39,7 +39,7 @@ function CheckResultsOverview({
     );
   }
 
-  if (!catalogData?.length) {
+  if (catalogDataEmpty) {
     return (
       <div className="flex flex-col items-center h-full">
         <h1 className="text-center text-2xl font-bold">Check Results</h1>

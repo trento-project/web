@@ -5,8 +5,6 @@ import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 
-import { catalogCheckFactory } from '@lib/test-utils/factories';
-
 import CheckResultsOverview from '.';
 
 describe('CheckResultsOverview component', () => {
@@ -46,7 +44,7 @@ describe('CheckResultsOverview component', () => {
       status: 'completed',
     };
 
-    render(<CheckResultsOverview data={data} catalogData={[]} />);
+    render(<CheckResultsOverview data={data} catalogDataEmpty />);
 
     expect(screen.getByText('Checks coming soon')).toBeVisible();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
@@ -55,9 +53,7 @@ describe('CheckResultsOverview component', () => {
   });
 
   it('should display a message if no last execution was found', () => {
-    render(
-      <CheckResultsOverview catalogData={[catalogCheckFactory.build()]} />
-    );
+    render(<CheckResultsOverview catalogDataEmpty={false} />);
 
     expect(screen.getByText('No check results available.')).toBeVisible();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
@@ -78,12 +74,7 @@ describe('CheckResultsOverview component', () => {
       status: 'completed',
     };
 
-    render(
-      <CheckResultsOverview
-        data={data}
-        catalogData={[catalogCheckFactory.build()]}
-      />
-    );
+    render(<CheckResultsOverview data={data} catalogDataEmpty={false} />);
 
     expect(screen.getByText('Passing')).toBeVisible();
     expect(screen.getByText(passing_count)).toBeVisible();

@@ -203,7 +203,7 @@ function HostDetails({
           <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
             <CheckResultsOverview
               data={lastExecutionData}
-              catalogData={catalogData}
+              catalogDataEmpty={catalogData?.length === 0}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
               // data,
