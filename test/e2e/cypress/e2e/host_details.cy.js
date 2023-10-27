@@ -67,35 +67,37 @@ context('Host Details', () => {
     });
 
     it(`should show Azure cloud details correctly`, () => {
-      cy.get('div')
+      cy.contains('div.rounded-lg', 'Provider').as('providerDetailsBox');
+
+      cy.get('@providerDetailsBox')
         .contains(/^Provider$/)
         .next()
         .should('contain', selectedHost.azureCloudDetails.provider);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('VM Name')
         .next()
         .should('contain', selectedHost.azureCloudDetails.vmName);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Resource group')
         .next()
         .should('contain', selectedHost.azureCloudDetails.resourceGroup);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Location')
         .next()
         .should('contain', selectedHost.azureCloudDetails.location);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('VM Size')
         .next()
         .should('contain', selectedHost.azureCloudDetails.vmSize);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Data disk number')
         .next()
         .should('contain', selectedHost.azureCloudDetails.dataDiskNumber);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Offer')
         .next()
         .should('contain', selectedHost.azureCloudDetails.offer);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('SKU')
         .next()
         .should('contain', selectedHost.azureCloudDetails.sku);
@@ -104,37 +106,42 @@ context('Host Details', () => {
     it(`should show AWS cloud details correctly`, () => {
       cy.loadScenario('host-details-aws');
 
-      cy.get('div').should('contain', selectedHost.awsCloudDetails.provider);
+      cy.contains('div.rounded-lg', 'Provider').as('providerDetailsBox');
 
-      cy.get('div')
+      cy.get('@providerDetailsBox').should(
+        'contain',
+        selectedHost.awsCloudDetails.provider
+      );
+
+      cy.get('@providerDetailsBox')
         .contains(/^Provider$/)
         .next()
         .should('contain', selectedHost.awsCloudDetails.provider);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Instance ID')
         .next()
         .should('contain', selectedHost.awsCloudDetails.instanceId);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Account ID')
         .next()
         .should('contain', selectedHost.awsCloudDetails.accountId);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Region')
         .next()
         .should('contain', selectedHost.awsCloudDetails.region);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Instance type')
         .next()
         .should('contain', selectedHost.awsCloudDetails.instanceType);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Data disk number')
         .next()
         .should('contain', selectedHost.awsCloudDetails.dataDiskNumber);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('AMI ID')
         .next()
         .should('contain', selectedHost.awsCloudDetails.amiId);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('VPC ID')
         .next()
         .should('contain', selectedHost.awsCloudDetails.vpcId);
@@ -143,37 +150,42 @@ context('Host Details', () => {
     it(`should show GCP cloud details correctly`, () => {
       cy.loadScenario('host-details-gcp');
 
-      cy.get('div').should('contain', selectedHost.gcpCloudDetails.provider);
+      cy.contains('div.rounded-lg', 'Provider').as('providerDetailsBox');
 
-      cy.get('div')
+      cy.get('@providerDetailsBox').should(
+        'contain',
+        selectedHost.gcpCloudDetails.provider
+      );
+
+      cy.get('@providerDetailsBox')
         .contains(/^Provider$/)
         .next()
         .should('contain', selectedHost.gcpCloudDetails.provider);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Instance name')
         .next()
         .should('contain', selectedHost.gcpCloudDetails.instanceName);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Project ID')
         .next()
         .should('contain', selectedHost.gcpCloudDetails.projectId);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Zone')
         .next()
         .should('contain', selectedHost.gcpCloudDetails.zone);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Machine type')
         .next()
         .should('contain', selectedHost.gcpCloudDetails.machineType);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Disk number')
         .next()
         .should('contain', selectedHost.gcpCloudDetails.diskNumber);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Image')
         .next()
         .should('contain', selectedHost.gcpCloudDetails.image);
-      cy.get('div')
+      cy.get('@providerDetailsBox')
         .contains('Network')
         .next()
         .should('contain', selectedHost.gcpCloudDetails.network);
