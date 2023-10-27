@@ -15,8 +15,8 @@ const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 function CheckResultsOverview({
   data,
   catalogDataEmpty = false,
-  error = null,
   loading = false,
+  error = null,
   onCheckClick,
 }) {
   if (loading || pendingStates.includes(data?.status)) {

@@ -25,6 +25,7 @@ describe('ClusterDetails ClusterDetailsPage component', () => {
         lastExecutions: {
           [cluster.id]: { data: null, loading: false, error: null },
         },
+        catalog: { data: null, loading: false, error: null },
       };
 
       const [statefulClusterDetailsPage, _] = withState(

@@ -1,4 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { updateCatalog } from '@state/actions/catalog';
+import { getCatalog } from '@state/selectors/catalog';
+import { RUNNING_STATES } from '@state/lastExecutions';
+
+import { TARGET_HOST } from '@lib/model';
 
 import { groupBy } from 'lodash';
 import PageHeader from '@components/PageHeader';
@@ -14,7 +21,6 @@ import ProviderLabel from '@components/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
-import { RUNNING_STATES } from '@state/lastExecutions';
 import SBDDetails from './SBDDetails';
 import AttributesDetails from './AttributesDetails';
 import StoppedResources from './StoppedResources';
@@ -87,12 +93,36 @@ function HanaClusterDetails({
     ...sapSystems.find(({ sid: currentSid }) => currentSid === sid),
   };
 
-  const { loading: executionLoading } = lastExecution || { loading: true };
+  const {
+    data: executionData,
+    loading: executionLoading,
+    error: executionError,
+  } = lastExecution || { loading: true };
 
   const startExecutionDisabled =
     executionLoading ||
     !hasSelectedChecks ||
-    RUNNING_STATES.includes(lastExecution?.data?.status);
+    RUNNING_STATES.includes(executionData?.status);
+
+  const dispatch = useDispatch();
+
+  const refreshCatalog = () =>
+    dispatch(
+      updateCatalog({
+        provider,
+        target_type: TARGET_HOST,
+      })
+    );
+
+  useEffect(() => {
+    refreshCatalog();
+  }, []);
+
+  const {
+    data: catalogData,
+    loading: catalogLoading,
+    error: catalogError,
+  } = useSelector(getCatalog());
 
   return (
     <div>
@@ -208,7 +238,10 @@ function HanaClusterDetails({
         </div>
         <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
           <CheckResultsOverview
-            {...lastExecution}
+            data={executionData}
+            catalogDataEmpty={catalogData?.length === 0}
+            loading={catalogLoading || executionLoading}
+            error={catalogError || executionError}
             onCheckClick={(health) =>
               navigate(
                 `/clusters/${clusterID}/executions/last?health=${health}`

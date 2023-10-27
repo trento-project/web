@@ -1,4 +1,7 @@
-import { checksExecutionCompletedFactory } from '@lib/test-utils/factories';
+import {
+  checksExecutionCompletedFactory,
+  catalogFactory,
+} from '@lib/test-utils/factories';
 
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
@@ -10,14 +13,18 @@ context('HANA cluster details', () => {
     warning_count: 3,
     critical_count: 1,
   });
+  const catalogURL = `**/api/v1/checks/catalog*`;
+  const catalog = catalogFactory.build();
 
   before(() => {
     cy.intercept(lastExecutionURL, {
       body: lastExecution,
     }).as('lastExecution');
+    cy.intercept(catalogURL, { body: catalog }).as('catalog');
     cy.visit(`/clusters/${availableHanaCluster.id}`);
     cy.url().should('include', `/clusters/${availableHanaCluster.id}`);
     cy.wait('@lastExecution');
+    cy.wait('@catalog');
   });
 
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
