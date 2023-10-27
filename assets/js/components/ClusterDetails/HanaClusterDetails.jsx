@@ -5,7 +5,7 @@ import { updateCatalog } from '@state/actions/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
-import { TARGET_HOST } from '@lib/model';
+import { TARGET_CLUSTER } from '@lib/model';
 
 import { groupBy } from 'lodash';
 import PageHeader from '@components/PageHeader';
@@ -110,7 +110,7 @@ function HanaClusterDetails({
     dispatch(
       updateCatalog({
         provider,
-        target_type: TARGET_HOST,
+        target_type: TARGET_CLUSTER,
       })
     );
 
