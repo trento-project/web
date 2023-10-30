@@ -55,11 +55,9 @@ function HostDetails({
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
-  const {
-    package_version: saptuneVersion,
-    configured_version: saptuneConfiguredVersion,
-    tuning_state: saptuneTuning,
-  } = saptuneStatus;
+  const saptuneVersion = get(saptuneStatus, 'package_version');
+  const saptuneConfiguredVersion = get(saptuneStatus, 'configured_version');
+  const saptuneTuning = get(saptuneStatus, 'tuning_state');
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
