@@ -73,13 +73,13 @@ function HostDetails({
     )
   );
 
-  const catalogData = get(catalog, 'data', undefined);
-  const catalogLoading = get(catalog, 'loading', undefined);
-  const catalogError = get(catalog, 'error', undefined);
+  const catalogData = get(catalog, 'data');
+  const catalogLoading = get(catalog, 'loading');
+  const catalogError = get(catalog, 'error');
 
-  const lastExecutionData = get(lastExecution, 'data', undefined);
-  const lastExecutionLoading = get(lastExecution, 'loading', undefined);
-  const lastExecutionError = get(lastExecution, 'error', undefined);
+  const lastExecutionData = get(lastExecution, 'data');
+  const lastExecutionLoading = get(lastExecution, 'loading');
+  const lastExecutionError = get(lastExecution, 'error');
 
   return (
     <>

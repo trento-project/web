@@ -100,9 +100,9 @@ function HanaClusterDetails({
     !hasSelectedChecks ||
     RUNNING_STATES.includes(executionData?.status);
 
-  const catalogData = get(catalog, 'data', undefined);
-  const catalogLoading = get(catalog, 'loading', undefined);
-  const catalogError = get(catalog, 'error', undefined);
+  const catalogData = get(catalog, 'data');
+  const catalogLoading = get(catalog, 'loading');
+  const catalogError = get(catalog, 'error');
 
   return (
     <div>

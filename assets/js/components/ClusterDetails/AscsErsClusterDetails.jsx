@@ -87,9 +87,9 @@ function AscsErsClusterDetails({
     setCurrentSapSystem(systems[0]);
   }, [hosts, sapSystems, details]);
 
-  const catalogData = get(catalog, 'data', undefined);
-  const catalogLoading = get(catalog, 'loading', undefined);
-  const catalogError = get(catalog, 'error', undefined);
+  const catalogData = get(catalog, 'data');
+  const catalogLoading = get(catalog, 'loading');
+  const catalogError = get(catalog, 'error');
 
   return (
     <div>
