@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
-import { updateCatalog } from '@state/actions/catalog';
-import { getCatalog } from '@state/selectors/catalog';
-
 import { agentVersionWarning } from '@lib/agent';
-import { TARGET_HOST } from '@lib/model';
 
 import Button from '@components/Button';
 import Table from '@components/Table';
@@ -49,6 +44,7 @@ function HostDetails({
   saptuneStatus = {},
   selectedChecks = [],
   slesSubscriptions,
+  catalog,
   lastExecution,
   cleanUpHost,
   requestHostChecksExecution,
@@ -76,25 +72,11 @@ function HostDetails({
     )
   );
 
-  const dispatch = useDispatch();
-
-  const refreshCatalog = () =>
-    dispatch(
-      updateCatalog({
-        provider,
-        target_type: TARGET_HOST,
-      })
-    );
-
-  useEffect(() => {
-    refreshCatalog();
-  }, []);
-
   const {
     data: catalogData,
     loading: catalogLoading,
     error: catalogError,
-  } = useSelector(getCatalog());
+  } = catalog || {};
 
   const {
     data: lastExecutionData,

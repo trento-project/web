@@ -131,7 +131,7 @@ describe('CheckResultDetailPage Component', () => {
       reduxStore
     );
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
-      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resulTargetName',
+      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${invalidTargetType}/${validTargetName}`,
     });
     expect(screen.getByText('Go back to last execution')).toBeTruthy();

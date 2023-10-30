@@ -8,10 +8,12 @@ import { TARGET_HOST } from '@lib/model';
 
 import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
+import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
+import { updateCatalog } from '@state/actions/catalog';
 import { hostExecutionRequested } from '@state/actions/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
@@ -32,6 +34,7 @@ function HostDetailsPage() {
   );
 
   const lastExecution = useSelector(getLastExecution(hostID));
+  const catalog = useSelector(getCatalog());
 
   const hostSelectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
@@ -47,8 +50,17 @@ function HostDetailsPage() {
     setExportersStatus(data);
   };
 
+  const refreshCatalog = () =>
+    dispatch(
+      updateCatalog({
+        provider: host?.provider,
+        target_type: TARGET_HOST,
+      })
+    );
+
   useEffect(() => {
     getExportersStatus();
+    refreshCatalog();
   }, []);
 
   if (!host) {
@@ -74,6 +86,7 @@ function HostDetailsPage() {
       savingChecks={saving}
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}
+      catalog={catalog}
       lastExecution={lastExecution}
       cleanUpHost={() => {
         dispatch(

@@ -5,16 +5,8 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 
-import {
-  renderWithRouter,
-  withState,
-  defaultInitialState,
-} from '@lib/test-utils';
-import {
-  hostFactory,
-  catalogCheckFactory,
-  saptuneStatusFactory,
-} from '@lib/test-utils/factories';
+import { renderWithRouter } from '@lib/test-utils';
+import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 import { TUNING_VALUES } from '@components/SaptuneDetails/SaptuneDetails.test';
 
 import HostDetails from './HostDetails';
@@ -22,11 +14,7 @@ import HostDetails from './HostDetails';
 describe('HostDetails component', () => {
   describe('Checks execution', () => {
     it('should show the Checks related action buttons', () => {
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="1.0.0" />,
-        defaultInitialState
-      );
-      renderWithRouter(StatefulHostsDetails);
+      renderWithRouter(<HostDetails agentVersion="1.0.0" />);
 
       expect(
         screen.getByRole('button', { name: 'Check Selection' })
@@ -42,11 +30,9 @@ describe('HostDetails component', () => {
     it('should disable start execution button when checks are not selected', async () => {
       const user = userEvent.setup();
 
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="1.0.0" selectedChecks={[]} />,
-        defaultInitialState
+      renderWithRouter(
+        <HostDetails agentVersion="1.0.0" selectedChecks={[]} />
       );
-      renderWithRouter(StatefulHostsDetails);
 
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeDisabled();
@@ -59,11 +45,9 @@ describe('HostDetails component', () => {
       const user = userEvent.setup();
       const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
 
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="1.0.0" selectedChecks={selectedChecks} />,
-        defaultInitialState
+      renderWithRouter(
+        <HostDetails agentVersion="1.0.0" selectedChecks={selectedChecks} />
       );
-      renderWithRouter(StatefulHostsDetails);
 
       const startExecutionButton = screen.getByText('Start Execution');
       expect(startExecutionButton).toBeEnabled();
@@ -80,21 +64,13 @@ describe('HostDetails component', () => {
       'The Agent version is outdated, some features might not work properly. It is advised to keep the Agents up to date with the Server.';
 
     it('should not show any warning message if the agent version is correct', () => {
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="2.0.0" />,
-        defaultInitialState
-      );
-      renderWithRouter(StatefulHostsDetails);
+      renderWithRouter(<HostDetails agentVersion="2.0.0" />);
 
       expect(screen.queryByText(message)).not.toBeInTheDocument();
     });
 
     it('should show a warning message if the agent version is outdated', () => {
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="1.0.0" />,
-        defaultInitialState
-      );
-      renderWithRouter(StatefulHostsDetails);
+      renderWithRouter(<HostDetails agentVersion="1.0.0" />);
 
       expect(screen.getByText(message)).toBeInTheDocument();
     });
@@ -102,11 +78,9 @@ describe('HostDetails component', () => {
 
   describe('deregistration', () => {
     it('should not display clean up button when host is not deregisterable', () => {
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="2.0.0" deregisterable={false} />,
-        defaultInitialState
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" deregisterable={false} />
       );
-      renderWithRouter(StatefulHostsDetails);
 
       expect(
         screen.queryByRole('button', { name: 'Clean up' })
@@ -114,11 +88,7 @@ describe('HostDetails component', () => {
     });
 
     it('should display clean up button when host is deregisterable', () => {
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="2.0.0" deregisterable />,
-        defaultInitialState
-      );
-      renderWithRouter(StatefulHostsDetails);
+      renderWithRouter(<HostDetails agentVersion="2.0.0" deregisterable />);
 
       expect(
         screen.getByRole('button', { name: 'Clean up' })
@@ -126,11 +96,9 @@ describe('HostDetails component', () => {
     });
 
     it('should show the host in deregistering state', () => {
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="2.0.0" deregisterable deregistering />,
-        defaultInitialState
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" deregisterable deregistering />
       );
-      renderWithRouter(StatefulHostsDetails);
 
       expect(
         screen.queryByRole('button', { name: 'Clean up' })
@@ -144,16 +112,15 @@ describe('HostDetails component', () => {
       const user = userEvent.setup();
       const { hostname } = hostFactory.build();
       const mockCleanUp = jest.fn();
-      const [StatefulHostsDetails] = withState(
+
+      renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
           deregisterable
           hostname={hostname}
           cleanUpHost={mockCleanUp}
-        />,
-        defaultInitialState
+        />
       );
-      renderWithRouter(StatefulHostsDetails);
 
       const cleanUpButton = screen.getByRole('button', { name: 'Clean up' });
       await user.click(cleanUpButton);
@@ -182,11 +149,9 @@ describe('HostDetails component', () => {
         tuning_state: tuningState,
       } = saptuneStatus;
 
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />,
-        defaultInitialState
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" saptuneStatus={saptuneStatus} />
       );
-      renderWithRouter(StatefulHostsDetails);
 
       expect(screen.getByText('Package').nextSibling).toHaveTextContent(
         packageVersion
@@ -217,35 +182,15 @@ describe('HostDetails component', () => {
         },
       };
 
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="2.0.0" lastExecution={lastExecution} />,
-        {
-          ...defaultInitialState,
-          catalog: {
-            loading: false,
-            error: null,
-            data: [catalogCheckFactory.build()],
-          },
-        }
+      renderWithRouter(
+        <HostDetails agentVersion="2.0.0" lastExecution={lastExecution} />
       );
-      renderWithRouter(StatefulHostsDetails);
 
       expect(screen.getByText(passingCount)).toBeInTheDocument();
     });
 
     it('should display nothing if lastExecution is an empty object', () => {
-      const [StatefulHostsDetails] = withState(
-        <HostDetails agentVersion="2.0.0" />,
-        {
-          ...defaultInitialState,
-          catalog: {
-            loading: false,
-            error: null,
-            data: [catalogCheckFactory.build()],
-          },
-        }
-      );
-      renderWithRouter(StatefulHostsDetails);
+      renderWithRouter(<HostDetails agentVersion="2.0.0" />);
 
       expect(
         screen.getByText('No check results available.')
