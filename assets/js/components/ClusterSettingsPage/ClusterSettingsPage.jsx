@@ -74,7 +74,7 @@ function ClusterSettingsPage() {
     return <LoadingBox text="Loading..." />;
   }
 
-  const { provider, type } = cluster;
+  const { provider, type } = cluster || {};
 
   const refreshCatalog = () =>
     dispatch(

@@ -31,7 +31,7 @@ export function ClusterDetailsPage() {
 
   const lastExecution = useSelector(getLastExecution(clusterID));
 
-  const { provider, type } = cluster;
+  const { provider, type } = cluster || {};
 
   useEffect(() => {
     dispatch(
