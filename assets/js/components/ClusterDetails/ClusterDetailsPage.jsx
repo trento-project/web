@@ -31,11 +31,14 @@ export function ClusterDetailsPage() {
 
   const lastExecution = useSelector(getLastExecution(clusterID));
 
+  const { provider, type } = cluster;
+
   useEffect(() => {
     dispatch(
       updateCatalog({
-        provider: cluster?.provider,
+        provider,
         target_type: TARGET_CLUSTER,
+        cluster_type: type,
       })
     );
     dispatch(updateLastExecution(clusterID));
