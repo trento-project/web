@@ -6,6 +6,7 @@ import {
   clusterFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
+  catalogFactory,
 } from '@lib/test-utils/factories';
 import HostDetails from './HostDetails';
 
@@ -123,6 +124,10 @@ export default {
       control: { type: 'array' },
       description: 'Registered SLES subscriptions on the host',
     },
+    catalog: {
+      control: 'object',
+      description: 'Catalog data',
+    },
     lastExecution: {
       control: 'object',
       description: 'Last execution data',
@@ -174,6 +179,7 @@ export const Default = {
       configured_version: '3',
       tuning_state: 'not tuned',
     },
+    catalog: catalogFactory.build(),
     lastExecution: {
       data: {
         passing_count: faker.number.int(50),
@@ -184,6 +190,13 @@ export const Default = {
     },
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
+  },
+};
+
+export const Loading = {
+  args: {
+    ...Default.args,
+    catalog: { loading: true },
   },
 };
 

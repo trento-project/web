@@ -10,6 +10,7 @@ import {
   ascsErsClusterNodeFactory,
   ascsErsSapSystemFactory,
   clusterFactory,
+  catalogFactory,
 } from '@lib/test-utils/factories';
 
 import AscsErsClusterDetails from './AscsErsClusterDetails';
@@ -38,8 +39,11 @@ const nodes = [
   }),
 ];
 
+const catalog = catalogFactory.build();
+
 const failoverDetails = ascsErsClusterDetailsFactory.build({
   sap_systems: [ascsErsSapSystemFactory.build({ nodes, distributed: false })],
+  catalog,
 });
 
 export default {
@@ -68,6 +72,18 @@ export const Single = {
     hosts: buildHostsFromAscsErsClusterDetails(details),
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
     details,
+  },
+  render: (args) => (
+    <ContainerWrapper>
+      <AscsErsClusterDetails {...args} />
+    </ContainerWrapper>
+  ),
+};
+
+export const Loading = {
+  args: {
+    ...Single.args,
+    catalog: { loading: true },
   },
   render: (args) => (
     <ContainerWrapper>
