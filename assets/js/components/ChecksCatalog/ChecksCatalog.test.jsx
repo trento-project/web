@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen, within, render } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
@@ -10,7 +10,9 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import ChecksCatalog from './ChecksCatalog';
 
 describe('ChecksCatalog ChecksCatalog component', () => {
-  it('should render the checks catalog with fetched data', () => {
+  it('should render the checks catalog with fetched data', async () => {
+    const user = userEvent.setup();
+
     const groupName1 = faker.string.uuid();
     const groupName2 = faker.string.uuid();
     const group1 = catalogCheckFactory.buildList(5, { group: groupName1 });
@@ -29,11 +31,13 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     const groups = screen.getAllByRole('list');
     expect(groups.length).toBe(2);
 
-    groups.forEach((group) => {
-      const { getAllByRole } = within(group);
-      const checks = getAllByRole('listitem');
-      expect(checks.length).toBe(5);
-    });
+    // first group checks are expanded initially
+    const checks1 = screen.getAllByRole('listitem');
+    expect(checks1.length).toBe(5);
+
+    await user.click(screen.getByText(groupName2));
+    const checks2 = screen.getAllByRole('listitem');
+    expect(checks2.length).toBe(10);
 
     expect(mockUpdateCatalog).toHaveBeenCalledWith('all');
   });

@@ -41,10 +41,10 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
       >
         <div>
           {Object.entries(groupBy(catalogData, 'group')).map(
-            ([group, checks]) => (
+            ([group, checks], index) => (
               <ul key={group}>
                 <Accordion
-                  defaultOpen
+                  defaultOpen={index === 0}
                   className="check-group mb-4"
                   header={group}
                 >
