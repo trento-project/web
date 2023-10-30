@@ -21,30 +21,32 @@ import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from '../ClusterLink';
 
 export function ClusterDetailsPage() {
-  const { clusterID } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
 
-  const dispatch = useDispatch();
+  const provider = get(cluster, 'provider');
+  const type = get(cluster, 'type');
 
   const catalog = useSelector(getCatalog());
 
   const lastExecution = useSelector(getLastExecution(clusterID));
 
-  const provider = get(cluster, 'provider');
-  const type = get(cluster, 'type');
-
   useEffect(() => {
-    dispatch(
-      updateCatalog({
-        provider,
-        target_type: TARGET_CLUSTER,
-        cluster_type: type,
-      })
-    );
+    if (cluster) {
+      dispatch(
+        updateCatalog({
+          provider,
+          target_type: TARGET_CLUSTER,
+          cluster_type: type,
+        })
+      );
+    }
     dispatch(updateLastExecution(clusterID));
-  }, [dispatch]);
+  }, [dispatch, cluster]);
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
