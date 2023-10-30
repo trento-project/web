@@ -36,17 +36,15 @@ export function ClusterDetailsPage() {
   const lastExecution = useSelector(getLastExecution(clusterID));
 
   useEffect(() => {
-    if (cluster) {
-      dispatch(
-        updateCatalog({
-          provider,
-          target_type: TARGET_CLUSTER,
-          cluster_type: type,
-        })
-      );
-    }
+    dispatch(
+      updateCatalog({
+        provider,
+        target_type: TARGET_CLUSTER,
+        cluster_type: type,
+      })
+    );
     dispatch(updateLastExecution(clusterID));
-  }, [dispatch, cluster]);
+  }, [dispatch, provider, type]);
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
