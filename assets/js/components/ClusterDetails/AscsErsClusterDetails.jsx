@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { get } from 'lodash';
 
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
@@ -86,11 +87,9 @@ function AscsErsClusterDetails({
     setCurrentSapSystem(systems[0]);
   }, [hosts, sapSystems, details]);
 
-  const {
-    data: catalogData,
-    loading: catalogLoading,
-    error: catalogError,
-  } = catalog || {};
+  const catalogData = get(catalog, 'data', undefined);
+  const catalogLoading = get(catalog, 'loading', undefined);
+  const catalogError = get(catalog, 'error', undefined);
 
   return (
     <div>

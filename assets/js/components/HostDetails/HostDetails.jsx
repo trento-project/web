@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { get } from 'lodash';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
@@ -72,17 +73,13 @@ function HostDetails({
     )
   );
 
-  const {
-    data: catalogData,
-    loading: catalogLoading,
-    error: catalogError,
-  } = catalog || {};
+  const catalogData = get(catalog, 'data', undefined);
+  const catalogLoading = get(catalog, 'loading', undefined);
+  const catalogError = get(catalog, 'error', undefined);
 
-  const {
-    data: lastExecutionData,
-    loading: lastExecutionLoading,
-    error: lastExecutionError,
-  } = lastExecution || {};
+  const lastExecutionData = get(lastExecution, 'data', undefined);
+  const lastExecutionLoading = get(lastExecution, 'loading', undefined);
+  const lastExecutionError = get(lastExecution, 'error', undefined);
 
   return (
     <>

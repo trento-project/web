@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { get } from 'lodash';
 
 import { networkClient } from '@lib/network';
 
@@ -82,7 +83,7 @@ function HostDetailsPage() {
       provider={host.provider}
       providerData={host.provider_data}
       sapInstances={sapInstances}
-      saptuneStatus={host.saptune_status || {}}
+      saptuneStatus={get(host, 'saptune_status', undefined)}
       savingChecks={saving}
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}

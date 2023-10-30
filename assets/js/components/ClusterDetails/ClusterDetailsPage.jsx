@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { get } from 'lodash';
 
 import {
   getCluster,
@@ -31,7 +32,8 @@ export function ClusterDetailsPage() {
 
   const lastExecution = useSelector(getLastExecution(clusterID));
 
-  const { provider, type } = cluster || {};
+  const provider = get(cluster, 'provider', undefined);
+  const type = get(cluster, 'type', undefined);
 
   useEffect(() => {
     dispatch(

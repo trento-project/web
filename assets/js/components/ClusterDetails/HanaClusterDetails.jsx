@@ -1,8 +1,8 @@
 import React from 'react';
+import { get, groupBy } from 'lodash';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 
-import { groupBy } from 'lodash';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
@@ -100,11 +100,9 @@ function HanaClusterDetails({
     !hasSelectedChecks ||
     RUNNING_STATES.includes(executionData?.status);
 
-  const {
-    data: catalogData,
-    loading: catalogLoading,
-    error: catalogError,
-  } = catalog || {};
+  const catalogData = get(catalog, 'data', undefined);
+  const catalogLoading = get(catalog, 'loading', undefined);
+  const catalogError = get(catalog, 'error', undefined);
 
   return (
     <div>
