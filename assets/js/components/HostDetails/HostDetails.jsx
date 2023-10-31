@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { get } from 'lodash';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
@@ -44,6 +45,7 @@ function HostDetails({
   saptuneStatus = {},
   selectedChecks = [],
   slesSubscriptions,
+  catalog,
   lastExecution,
   cleanUpHost,
   requestHostChecksExecution,
@@ -53,11 +55,9 @@ function HostDetails({
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
-  const {
-    package_version: saptuneVersion,
-    configured_version: saptuneConfiguredVersion,
-    tuning_state: saptuneTuning,
-  } = saptuneStatus;
+  const saptuneVersion = get(saptuneStatus, 'package_version');
+  const saptuneConfiguredVersion = get(saptuneStatus, 'configured_version');
+  const saptuneTuning = get(saptuneStatus, 'tuning_state');
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
@@ -70,6 +70,14 @@ function HostDetails({
       </StatusPill>
     )
   );
+
+  const catalogData = get(catalog, 'data');
+  const catalogLoading = get(catalog, 'loading');
+  const catalogError = get(catalog, 'error');
+
+  const lastExecutionData = get(lastExecution, 'data');
+  const lastExecutionLoading = get(lastExecution, 'loading');
+  const lastExecutionError = get(lastExecution, 'error');
 
   return (
     <>
@@ -171,7 +179,10 @@ function HostDetails({
           </div>
           <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
             <CheckResultsOverview
-              {...lastExecution}
+              data={lastExecutionData}
+              catalogDataEmpty={catalogData?.length === 0}
+              loading={catalogLoading || lastExecutionLoading}
+              error={catalogError || lastExecutionError}
               onCheckClick={(health) =>
                 navigate(`/hosts/${hostID}/executions/last?health=${health}`)
               }

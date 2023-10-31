@@ -31,8 +31,29 @@ describe('CheckResultsOverview component', () => {
     expect(screen.queryByText('Critical')).not.toBeInTheDocument();
   });
 
+  it('should display a message if no checks are present in the catalog', () => {
+    const passing_count = faker.number.int();
+    const warning_count = faker.number.int();
+    const critical_count = faker.number.int();
+
+    const data = {
+      completed_at: faker.date.past().toISOString(),
+      passing_count,
+      warning_count,
+      critical_count,
+      status: 'completed',
+    };
+
+    render(<CheckResultsOverview data={data} catalogDataEmpty />);
+
+    expect(screen.getByText('Checks coming soon')).toBeVisible();
+    expect(screen.queryByText('Passing')).not.toBeInTheDocument();
+    expect(screen.queryByText('Warning')).not.toBeInTheDocument();
+    expect(screen.queryByText('Critical')).not.toBeInTheDocument();
+  });
+
   it('should display a message if no last execution was found', () => {
-    render(<CheckResultsOverview />);
+    render(<CheckResultsOverview catalogDataEmpty={false} />);
 
     expect(screen.getByText('No check results available.')).toBeVisible();
     expect(screen.queryByText('Passing')).not.toBeInTheDocument();
@@ -53,7 +74,7 @@ describe('CheckResultsOverview component', () => {
       status: 'completed',
     };
 
-    render(<CheckResultsOverview data={data} />);
+    render(<CheckResultsOverview data={data} catalogDataEmpty={false} />);
 
     expect(screen.getByText('Passing')).toBeVisible();
     expect(screen.getByText(passing_count)).toBeVisible();

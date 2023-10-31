@@ -7,14 +7,16 @@ import {
   RUNNING_EXECUTION_STATE,
 } from '@state/lastExecutions';
 
+import ChecksComingSoon from '@static/checks-coming-soon.svg';
 import CheckResultCount from './CheckResultCount';
 
 const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 
 function CheckResultsOverview({
   data,
-  error = null,
+  catalogDataEmpty = false,
   loading = false,
+  error = null,
   onCheckClick,
 }) {
   if (loading || pendingStates.includes(data?.status)) {
@@ -33,6 +35,20 @@ function CheckResultsOverview({
     return (
       <div className="flex flex-col items-center mt-2 px-4">
         <div className="text-center text-xs">{error}</div>
+      </div>
+    );
+  }
+
+  if (catalogDataEmpty) {
+    return (
+      <div className="flex flex-col items-center h-full">
+        <h1 className="text-center text-2xl font-bold">Check Results</h1>
+        <h6 className="opacity-60 text-xs">Checks coming soon</h6>
+        <img
+          className="h-full inline-block align-middle"
+          alt="checks coming soon"
+          src={ChecksComingSoon}
+        />
       </div>
     );
   }

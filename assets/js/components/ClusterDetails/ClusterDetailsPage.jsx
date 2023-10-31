@@ -1,32 +1,52 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { get } from 'lodash';
 
 import {
   getCluster,
   getClusterHosts,
   getClusterSapSystems,
 } from '@state/selectors/cluster';
+import { getCatalog } from '@state/selectors/catalog';
+import { getLastExecution } from '@state/selectors/lastExecutions';
+import { updateCatalog } from '@state/actions/catalog';
 import {
   updateLastExecution,
   executionRequested,
 } from '@state/actions/lastExecutions';
-import { getLastExecution } from '@state/selectors/lastExecutions';
+import { TARGET_CLUSTER } from '@lib/model';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from '../ClusterLink';
 
 export function ClusterDetailsPage() {
-  const { clusterID } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { clusterID } = useParams();
 
   const cluster = useSelector(getCluster(clusterID));
 
-  const dispatch = useDispatch();
+  const provider = get(cluster, 'provider');
+  const type = get(cluster, 'type');
+
+  const catalog = useSelector(getCatalog());
+
   const lastExecution = useSelector(getLastExecution(clusterID));
+
   useEffect(() => {
-    dispatch(updateLastExecution(clusterID));
-  }, [dispatch]);
+    if (provider && type) {
+      dispatch(
+        updateCatalog({
+          provider,
+          target_type: TARGET_CLUSTER,
+          cluster_type: type,
+        })
+      );
+      dispatch(updateLastExecution(clusterID));
+    }
+  }, [dispatch, provider, type]);
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
@@ -58,6 +78,7 @@ export function ClusterDetailsPage() {
           provider={cluster.provider}
           sapSystems={clusterSapSystems}
           details={cluster.details}
+          catalog={catalog}
           lastExecution={lastExecution}
           onStartExecution={(_, hostList, checks, navigateFunction) =>
             dispatch(
@@ -76,6 +97,7 @@ export function ClusterDetailsPage() {
           hosts={clusterHosts}
           sapSystems={clusterSapSystems}
           details={cluster.details}
+          catalog={catalog}
         />
       );
     default:

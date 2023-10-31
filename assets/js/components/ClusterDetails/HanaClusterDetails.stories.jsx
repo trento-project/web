@@ -7,6 +7,7 @@ import {
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   sapSystemFactory,
+  catalogFactory,
 } from '@lib/test-utils/factories';
 
 import HanaClusterDetails from './HanaClusterDetails';
@@ -37,6 +38,8 @@ const hosts = [
 ];
 
 const sapSystems = sapSystemFactory.buildList(1, { sid });
+
+const catalog = catalogFactory.build();
 
 function ContainerWrapper({ children }) {
   return (
@@ -75,8 +78,16 @@ export const Hana = {
     sapSystems,
     details,
     lastExecution,
+    catalog,
     onStartExecution: () => {},
     navigate: () => {},
+  },
+};
+
+export const Loading = {
+  args: {
+    ...Hana.args,
+    catalog: { loading: true },
   },
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { get } from 'lodash';
 
 import { clusterChecksSelected } from '@state/checksSelection';
 import {
@@ -74,7 +75,8 @@ function ClusterSettingsPage() {
     return <LoadingBox text="Loading..." />;
   }
 
-  const { provider, type } = cluster;
+  const provider = get(cluster, 'provider');
+  const type = get(cluster, 'type');
 
   const refreshCatalog = () =>
     dispatch(

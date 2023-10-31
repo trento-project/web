@@ -1,6 +1,8 @@
 import React from 'react';
+import { get, groupBy } from 'lodash';
 
-import { groupBy } from 'lodash';
+import { RUNNING_STATES } from '@state/lastExecutions';
+
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Button from '@components/Button';
@@ -14,7 +16,6 @@ import ProviderLabel from '@components/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
-import { RUNNING_STATES } from '@state/lastExecutions';
 import SBDDetails from './SBDDetails';
 import AttributesDetails from './AttributesDetails';
 import StoppedResources from './StoppedResources';
@@ -77,6 +78,7 @@ function HanaClusterDetails({
   provider,
   sapSystems,
   details,
+  catalog,
   lastExecution,
   onStartExecution = () => {},
   navigate = () => {},
@@ -87,12 +89,20 @@ function HanaClusterDetails({
     ...sapSystems.find(({ sid: currentSid }) => currentSid === sid),
   };
 
-  const { loading: executionLoading } = lastExecution || { loading: true };
+  const {
+    data: executionData,
+    loading: executionLoading,
+    error: executionError,
+  } = lastExecution || { loading: true };
 
   const startExecutionDisabled =
     executionLoading ||
     !hasSelectedChecks ||
-    RUNNING_STATES.includes(lastExecution?.data?.status);
+    RUNNING_STATES.includes(executionData?.status);
+
+  const catalogData = get(catalog, 'data');
+  const catalogLoading = get(catalog, 'loading');
+  const catalogError = get(catalog, 'error');
 
   return (
     <div>
@@ -208,7 +218,10 @@ function HanaClusterDetails({
         </div>
         <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
           <CheckResultsOverview
-            {...lastExecution}
+            data={executionData}
+            catalogDataEmpty={catalogData?.length === 0}
+            loading={catalogLoading || executionLoading}
+            error={catalogError || executionError}
             onCheckClick={(health) =>
               navigate(
                 `/clusters/${clusterID}/executions/last?health=${health}`

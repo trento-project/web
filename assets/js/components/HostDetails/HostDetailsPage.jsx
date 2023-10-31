@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { get } from 'lodash';
 
 import { networkClient } from '@lib/network';
 
@@ -8,11 +9,16 @@ import { TARGET_HOST } from '@lib/model';
 
 import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
+import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
-import { hostExecutionRequested } from '@state/actions/lastExecutions';
+import { updateCatalog } from '@state/actions/catalog';
+import {
+  updateLastExecution,
+  hostExecutionRequested,
+} from '@state/actions/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
 import HostDetails from './HostDetails';
@@ -32,6 +38,7 @@ function HostDetailsPage() {
   );
 
   const lastExecution = useSelector(getLastExecution(hostID));
+  const catalog = useSelector(getCatalog());
 
   const hostSelectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
@@ -47,8 +54,18 @@ function HostDetailsPage() {
     setExportersStatus(data);
   };
 
+  const refreshCatalog = () =>
+    dispatch(
+      updateCatalog({
+        provider: host?.provider,
+        target_type: TARGET_HOST,
+      })
+    );
+
   useEffect(() => {
     getExportersStatus();
+    refreshCatalog();
+    dispatch(updateLastExecution(hostID));
   }, []);
 
   if (!host) {
@@ -70,10 +87,11 @@ function HostDetailsPage() {
       provider={host.provider}
       providerData={host.provider_data}
       sapInstances={sapInstances}
-      saptuneStatus={host.saptune_status || {}}
+      saptuneStatus={get(host, 'saptune_status')}
       savingChecks={saving}
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}
+      catalog={catalog}
       lastExecution={lastExecution}
       cleanUpHost={() => {
         dispatch(
