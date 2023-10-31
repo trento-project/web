@@ -44,8 +44,8 @@ export function ClusterDetailsPage() {
           cluster_type: type,
         })
       );
+      dispatch(updateLastExecution(clusterID));
     }
-    dispatch(updateLastExecution(clusterID));
   }, [dispatch, provider, type]);
 
   const clusterHosts = useSelector((state) =>
