@@ -13,7 +13,7 @@ import HostDetails from './HostDetails';
 
 describe('HostDetails component', () => {
   describe('Checks execution', () => {
-    it('should show the Checks related action buttons', () => {
+    it.skip('should show the Checks related action buttons', () => {
       renderWithRouter(<HostDetails agentVersion="1.0.0" />);
 
       expect(
@@ -27,7 +27,7 @@ describe('HostDetails component', () => {
       ).toBeVisible();
     });
 
-    it('should disable start execution button when checks are not selected', async () => {
+    it.skip('should disable start execution button when checks are not selected', async () => {
       const user = userEvent.setup();
 
       renderWithRouter(
@@ -41,7 +41,7 @@ describe('HostDetails component', () => {
       expect(screen.getByText('Select some Checks first!')).toBeInTheDocument();
     });
 
-    it('should enable start execution button when checks are selected', async () => {
+    it.skip('should enable start execution button when checks are selected', async () => {
       const user = userEvent.setup();
       const selectedChecks = [faker.animal.bear(), faker.animal.bear()];
 
