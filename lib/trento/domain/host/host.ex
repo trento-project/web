@@ -424,11 +424,10 @@ defmodule Trento.Domain.Host do
 
   def execute(
         %Host{
-          saptune_status:
-            %{
-              package_version: package_version
-            } = host
-        },
+          saptune_status: %{
+            package_version: package_version
+          }
+        } = host,
         %UpdateSaptuneStatus{
           saptune_installed: true,
           package_version: package_version,

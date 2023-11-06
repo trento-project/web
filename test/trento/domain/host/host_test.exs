@@ -1202,6 +1202,49 @@ defmodule Trento.HostTest do
         end
       )
     end
+
+    test "should not update saptune status or health if the coming data is the same" do
+      host_id = Faker.UUID.v4()
+      unsupported_version = "3.0.0"
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        build(:heartbeat_succeded, host_id: host_id),
+        build(:saptune_status_updated_event,
+          host_id: host_id,
+          status: %SaptuneStatus{package_version: unsupported_version}
+        ),
+        build(:host_saptune_health_changed_event,
+          host_id: host_id,
+          saptune_health: Health.warning()
+        ),
+        build(:host_health_changed_event,
+          host_id: host_id,
+          health: Health.warning()
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateSaptuneStatus.new!(%{
+          host_id: host_id,
+          saptune_installed: true,
+          package_version: unsupported_version,
+          sap_running: true,
+          status: nil
+        }),
+        [],
+        fn state ->
+          assert %Host{
+                   saptune_status: %SaptuneStatus{
+                     package_version: ^unsupported_version
+                   },
+                   saptune_health: Health.warning(),
+                   health: Health.warning()
+                 } = state
+        end
+      )
+    end
   end
 
   describe "rollup" do
