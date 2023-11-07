@@ -33,7 +33,7 @@ describe('SapSystemLink', () => {
     await act(async () => user.hover(sidElement));
 
     expect(
-      screen.getByText('SAP System currently not registered.')
+      screen.getByText('System currently not registered.')
     ).toBeInTheDocument();
   });
 });
