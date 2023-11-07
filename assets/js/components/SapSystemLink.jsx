@@ -14,7 +14,7 @@ function SapSystemLink({ systemType, sapSystemId, children }) {
       {children}
     </Link>
   ) : (
-    <Tooltip content="SAP System currently not registered." place="bottom">
+    <Tooltip content="System currently not registered." place="bottom">
       <span className="group flex items-center relative">
         <EOS_WARNING_OUTLINED
           size="base"
