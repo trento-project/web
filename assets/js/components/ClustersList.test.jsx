@@ -22,6 +22,9 @@ describe('ClustersList component', () => {
         applicationInstances: [],
         databaseInstances: [],
       },
+      databasesList: {
+        databaseInstances: [],
+      },
     };
 
     const scenarios = [

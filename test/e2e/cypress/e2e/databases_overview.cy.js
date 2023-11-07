@@ -21,6 +21,13 @@ context('Databases Overview', () => {
       ],
     };
 
+    const nwqSystem = {
+      sid: 'NWQ',
+      ascsInstance: {
+        id: '25677e37-fd33-5005-896c-9275b1284534',
+      },
+    };
+
     it(`should not display DB ${hdqDatabase.sid} after deregistering the primary instance`, () => {
       cy.deregisterHost(hdqDatabase.instances[0].id);
       cy.contains(hdqDatabase.sid).should('not.exist');
@@ -46,6 +53,15 @@ context('Databases Overview', () => {
           }
         });
       });
+    });
+
+    it('should not deregister database instances if the SAP system using the database is deregistered', () => {
+      cy.deregisterHost(nwqSystem.ascsInstance.id);
+      cy.contains(
+        'p',
+        `The SAP System ${nwqSystem.sid} has been deregistered.`
+      );
+      cy.get('.table-row-group > div.table-row').should('have.length', 6);
     });
   });
 
