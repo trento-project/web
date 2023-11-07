@@ -66,7 +66,7 @@ describe('InstanceOverview', () => {
     expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
     await act(async () => user.hover(healthIcon));
     await waitFor(() =>
-      expect(screen.queryByText('Instance currently not found.')).toBeVisible()
+      expect(screen.queryByText('Registered instance not found.')).toBeVisible()
     );
   });
 

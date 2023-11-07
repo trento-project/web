@@ -36,7 +36,7 @@ function InstanceOverview({
     <div className={rowClasses}>
       <div className="table-cell p-2 px-5 align-center">
         <Tooltip
-          content="Instance currently not found."
+          content="Registered instance not found."
           place="bottom"
           isEnabled={!!absentAt}
         >
