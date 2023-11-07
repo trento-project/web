@@ -30,7 +30,7 @@ export const getEnrichedApplicationInstances = createSelector(
 );
 
 export const getEnrichedDatabaseInstances = createSelector(
-  [(state) => enrichInstances(state.sapSystemsList.databaseInstances)(state)],
+  [(state) => enrichInstances(state.databasesList.databaseInstances)(state)],
   (enrichedInstances) => enrichedInstances
 );
 
@@ -110,7 +110,7 @@ export const getInstancesOnHost = createSelector(
 export const getAllSAPInstances = createSelector(
   [
     (state) => state.sapSystemsList.applicationInstances,
-    (state) => state.sapSystemsList.databaseInstances,
+    (state) => state.databasesList.databaseInstances,
   ],
   (applicationInstances, databaseInstances) =>
     applicationInstances

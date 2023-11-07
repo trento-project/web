@@ -73,7 +73,7 @@ describe('sapSystem selector', () => {
     ];
 
     const state = {
-      sapSystemsList: {
+      databasesList: {
         databaseInstances,
       },
       hostsList: {
@@ -232,6 +232,8 @@ describe('sapSystem selector', () => {
           { id: 1, name: 'APP1' },
           { id: 2, name: 'APP2' },
         ],
+      },
+      databasesList: {
         databaseInstances: [
           { id: 3, name: 'DB1' },
           { id: 4, name: 'DB2' },
