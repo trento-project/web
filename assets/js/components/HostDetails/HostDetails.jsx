@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
 
 import { agentVersionWarning } from '@lib/agent';
@@ -17,6 +17,8 @@ import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
 import HostSummary from './HostSummary';
+//import Logs, { buildLogFilesEntries, journalDefaultEntries } from './Logs';
+import Logs, { buildLogFilesEntries, buildJournalEntries } from './Logs';
 
 import {
   subscriptionsTableConfiguration,
@@ -45,6 +47,8 @@ function HostDetails({
   navigate,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
+  const [fileLogEntries, setFileLogEntries] = useState({});
+  const [journalUnitEntries, setJournalEntries] = useState({});
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -71,6 +75,11 @@ function HostDetails({
   const lastExecutionData = get(lastExecution, 'data');
   const lastExecutionLoading = get(lastExecution, 'loading');
   const lastExecutionError = get(lastExecution, 'error');
+
+  useEffect(() => {
+    buildLogFilesEntries(setFileLogEntries);
+    buildJournalEntries(setJournalEntries);
+  }, []);
 
   return (
     <>
@@ -185,6 +194,20 @@ function HostDetails({
             config={subscriptionsTableConfiguration}
             data={slesSubscriptions}
           />
+        </div>
+
+        <div className="mt-8">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold"> Journal Logs</h2>
+          </div>
+          <Logs hostname={hostname} entries={journalUnitEntries} />
+        </div>
+
+        <div className="mt-8">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold"> File Logs</h2>
+          </div>
+          <Logs hostname={hostname} entries={fileLogEntries} />
         </div>
       </div>
     </>

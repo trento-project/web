@@ -158,7 +158,7 @@ function Table({
             'pt-4': withPadding,
           })}
         >
-          <div className="min-w-fit shadow rounded-lg">
+          <div className="min-w-fit shadow rounded-lg max-h-96 overflow-scroll">
             <table className="min-w-full leading-normal table-fixed">
               <thead>
                 <tr>
