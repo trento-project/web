@@ -3,6 +3,7 @@
 #!BuildTag: trento/trento-web:%%VERSION%%
 #!BuildTag: trento/trento-web:%%VERSION%%-build%RELEASE%
 #!UseOBSRepositories
+#!ExclusiveArch: x86_64
 
 FROM bci/nodejs:16 AS assets-build
 ADD web.tar.gz /build/
