@@ -71,6 +71,7 @@
 
 **Merged pull requests:**
 
+- Update e2e package lock [\#1997](https://github.com/trento-project/web/pull/1997) ([nelsonkopliku](https://github.com/nelsonkopliku))
 - Restrict SUSE Dockerfile target arch to x86\_64 [\#1994](https://github.com/trento-project/web/pull/1994) ([rtorrero](https://github.com/rtorrero))
 - Bump chromatic from 8.0.0 to 9.0.0 in /assets [\#1993](https://github.com/trento-project/web/pull/1993) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump @babel/preset-env from 7.23.2 to 7.23.3 in /assets [\#1992](https://github.com/trento-project/web/pull/1992) ([dependabot[bot]](https://github.com/apps/dependabot))
