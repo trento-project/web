@@ -578,7 +578,7 @@ defmodule Trento.Factory do
 
   def tag_factory do
     %Tag{
-      value: sequence(:value, &"#{Faker.Beer.hop()}0#{&1}"),
+      value: sequence(:value, &"#{Faker.Color.name()}0#{&1}"),
       resource_id: Faker.UUID.v4(),
       resource_type: :host
     }

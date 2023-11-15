@@ -5,15 +5,16 @@ defmodule Trento.TagsTest do
 
   import Trento.Factory
 
-  alias Trento.Repo
-
-  alias Trento.Tags
+  alias Trento.{
+    Repo,
+    Tags
+  }
 
   describe "tags" do
     alias Trento.Tags.Tag
 
     test "add_tag/3 adds a tag to the desired resource" do
-      value = Faker.StarWars.planet()
+      value = Faker.Color.name()
       resource_id = Faker.UUID.v4()
       type = "host"
 
@@ -25,7 +26,7 @@ defmodule Trento.TagsTest do
     end
 
     test "add_tag/3 returns an error if the type is unknown" do
-      value = Faker.StarWars.planet()
+      value = Faker.Color.name()
       resource_id = Faker.UUID.v4()
       type = "unknown"
 
