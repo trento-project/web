@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { faker } from '@faker-js/faker';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -7,10 +8,13 @@ import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
 
 import {
+  hostFactory,
   buildHostsFromAscsErsClusterDetails,
   buildSapSystemsFromAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
   clusterFactory,
+  checksExecutionCompletedFactory,
+  checksExecutionRunningFactory,
 } from '@lib/test-utils/factories';
 
 import { providerData } from '@components/ProviderLabel/ProviderLabel';
@@ -275,4 +279,129 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
       });
     });
   });
+
+  it('should suggest to the user to select some checks if the selection is empty', async () => {
+    const user = userEvent.setup();
+
+    const {
+      clusterID,
+      clusterName,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sid,
+      provider,
+      details,
+    } = clusterFactory.build({ type: 'ascs_ers' });
+
+    const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+    renderWithRouter(
+      <AscsErsClusterDetails
+        clusterID={clusterID}
+        clusterName={clusterName}
+        selectedChecks={[]}
+        hasSelectedChecks={false}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        sid={sid}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    const startExecutionButton = screen.getByText('Start Execution');
+    await user.hover(startExecutionButton);
+    expect(screen.queryByText('Select some Checks first!')).toBeVisible();
+  });
+
+  const executionId = faker.string.uuid();
+
+  const executionScenarios = [
+    {
+      name: 'Execution is being loaded from wanda',
+      selectedChecks: ['some'],
+      hasSelectedChecks: true,
+      lastExecution: { data: null, loading: true, error: null },
+    },
+    {
+      name: 'No checks were selected',
+      selectedChecks: [],
+      hasSelectedChecks: false,
+      lastExecution: {
+        data: checksExecutionCompletedFactory.build({
+          execution_id: executionId,
+        }),
+        loading: false,
+        error: null,
+      },
+    },
+    {
+      name: 'Execution is still running',
+      selectedChecks: ['A123'],
+      hasSelectedChecks: true,
+      lastExecution: {
+        data: checksExecutionRunningFactory.build({
+          execution_id: executionId,
+        }),
+        loading: false,
+        error: null,
+      },
+    },
+    {
+      name: 'Execution has been requested',
+      selectedChecks: ['A123'],
+      hasSelectedChecks: true,
+      lastExecution: {
+        data: {
+          execution_id: executionId,
+          status: 'requested',
+        },
+        loading: false,
+        error: null,
+      },
+    },
+  ];
+
+  it.each(executionScenarios)(
+    'should disable starting a new execution when $name',
+    ({ selectedChecks, hasSelectedChecks, lastExecution }) => {
+      const hanaCluster = clusterFactory.build({
+        type: 'ascs_ers',
+      });
+
+      const {
+        clusterID,
+        clusterName,
+        cib_last_written: cibLastWritten,
+        type: clusterType,
+        sid,
+        provider,
+        details,
+      } = hanaCluster;
+
+      const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+      renderWithRouter(
+        <AscsErsClusterDetails
+          clusterID={clusterID}
+          clusterName={clusterName}
+          selectedChecks={selectedChecks}
+          hasSelectedChecks={hasSelectedChecks}
+          hosts={hosts}
+          clusterType={clusterType}
+          cibLastWritten={cibLastWritten}
+          sid={sid}
+          provider={provider}
+          sapSystems={[]}
+          details={details}
+          lastExecution={lastExecution}
+        />
+      );
+
+      expect(screen.getByText('Start Execution')).toBeDisabled();
+    }
+  );
 });
