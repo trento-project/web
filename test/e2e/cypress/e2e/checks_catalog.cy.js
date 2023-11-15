@@ -30,7 +30,7 @@ context('Checks catalog', () => {
   const group3 = catalogCheckFactory.buildList(group3Checks, {
     group: genericGroup,
   });
-  const catalog = group1.concat(group2, group3);
+  const catalog = [...group1, ...group2, ...group3];
 
   before(() => {
     cy.visit('/catalog');
@@ -50,7 +50,6 @@ context('Checks catalog', () => {
   });
 
   describe('Checks grouping and identification is correct', () => {
-    let expandedChecks = 0;
     Object.entries(groupBy(catalog, 'group')).forEach(
       ([group, checks], index) => {
         it(`should include group '${group}'`, () => {
@@ -58,8 +57,11 @@ context('Checks catalog', () => {
         });
         it(`should expand the group '${group}' when clicked`, () => {
           index !== 0 && cy.get('.check-group').contains(group).click();
-          expandedChecks = checksInGroup[group] + expandedChecks;
-          cy.get('div.check-row').should('have.length', expandedChecks);
+          cy.get('.check-group')
+            .eq(index)
+            .within(() => {
+              cy.get('.check-row').should('have.length', checksInGroup[group]);
+            });
         });
         checks.forEach(({ id }) => {
           it(`should include check '${id}'`, () => {
