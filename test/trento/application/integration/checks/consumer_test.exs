@@ -22,7 +22,7 @@ defmodule Trento.Integration.Checks.AMQP.ConsumerTest do
 
       assert :ok = Publisher.publish_message(message, "results")
 
-      assert_receive :consumed, 1_000
+      assert_receive :consumed, 5_000
     end
   end
 
@@ -51,7 +51,7 @@ defmodule Trento.Integration.Checks.AMQP.ConsumerTest do
 
       :ok = AMQP.Channel.close(chan)
 
-      assert_receive :consumed, 1_000
+      assert_receive :consumed, 5_000
     end
   end
 end
