@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import PremiumPill from '@components/PremiumPill';
 import Accordion from '@components/Accordion';
-import TargetIcon from '@components/ExecutionResults/TargetIcon';
+import TargetIcon from '@components/TargetIcon';
 
 function CheckItem({
   checkID,
@@ -16,6 +16,7 @@ function CheckItem({
   remediation,
 }) {
   const hasTargetType = !!targetType;
+
   return (
     <li>
       <Accordion

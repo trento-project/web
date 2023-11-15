@@ -12,6 +12,7 @@ function TargetIcon({ targetType }) {
   if (!targetType || !targetTypeToIcon[targetType]) {
     return null;
   }
+
   return (
     <div
       data-testid="target-icon"
