@@ -15,7 +15,7 @@ const extractTextContent = (text) =>
 
 function NotificationBox({ icon, text, buttonText, buttonOnClick }) {
   return (
-    <div className="shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-1/2 m-auto">
+    <div className="shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800">
       <div className="w-full h-full text-center">
         <div className="flex h-full flex-col justify-between">
           {icon}
@@ -23,7 +23,7 @@ function NotificationBox({ icon, text, buttonText, buttonOnClick }) {
             {extractTextContent(text)}
           </p>
           {buttonText ? (
-            <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="flex items-center justify-center gap-4 mt-4 w-1/4 m-auto">
               <Button type="primary" className="w-32" onClick={buttonOnClick}>
                 {buttonText}
               </Button>
