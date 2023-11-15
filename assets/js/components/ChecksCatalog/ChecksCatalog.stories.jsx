@@ -16,12 +16,14 @@ const hostCheck = catalogCheckFactory.build({
   group: groupName1,
   metadata: { target_type: 'host' },
 });
-const group1 = [clusterCheck, hostCheck].concat(
-  catalogCheckFactory.buildList(5, { group: groupName1 })
-);
+const group1 = [
+  clusterCheck,
+  hostCheck,
+  ...catalogCheckFactory.buildList(5, { group: groupName1 }),
+];
 const group2 = catalogCheckFactory.buildList(5, { group: groupName2 });
 const group3 = catalogCheckFactory.buildList(5, { group: groupName3 });
-const catalogData = group1.concat(group2, group3);
+const catalogData = [...group1, ...group2, ...group3];
 
 function ContainerWrapper({ children }) {
   return (
