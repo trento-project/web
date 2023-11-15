@@ -15,6 +15,8 @@ defmodule Trento.SapSystemReadModel do
     DatabaseInstanceReadModel
   }
 
+  alias Trento.Tags.Tag
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -36,7 +38,7 @@ defmodule Trento.SapSystemReadModel do
       foreign_key: :sap_system_id,
       preload_order: [asc: :instance_number, asc: :host_id]
 
-    has_many :tags, Trento.Tag, foreign_key: :resource_id
+    has_many :tags, Tag, foreign_key: :resource_id
 
     field :deregistered_at, :utc_datetime_usec
   end

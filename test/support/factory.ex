@@ -71,9 +71,10 @@ defmodule Trento.Factory do
     HostReadModel,
     HostTelemetryReadModel,
     SapSystemReadModel,
-    SlesSubscriptionReadModel,
-    Tag
+    SlesSubscriptionReadModel
   }
+
+  alias Trento.Tags.Tag
 
   alias Trento.Integration.Discovery.{
     DiscardedDiscoveryEvent,

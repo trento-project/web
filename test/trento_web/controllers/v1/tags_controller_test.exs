@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.TagsControllerTest do
 
   import Trento.Factory
   alias Faker.Color
-  alias Trento.Tag
+  alias Trento.Tags.Tag
 
   describe "Tag Validation" do
     test "should decline tag with whitespace", %{conn: conn} do

@@ -11,6 +11,7 @@ defmodule Trento.HostReadModel do
   require Trento.Domain.Enums.Provider, as: Provider
 
   alias Trento.SlesSubscriptionReadModel
+  alias Trento.Tags.Tag
 
   @type t :: %__MODULE__{}
 
@@ -28,7 +29,7 @@ defmodule Trento.HostReadModel do
     field :provider_data, :map
     field :saptune_status, :map
 
-    has_many :tags, Trento.Tag, foreign_key: :resource_id
+    has_many :tags, Tag, foreign_key: :resource_id
 
     has_many :sles_subscriptions, SlesSubscriptionReadModel,
       references: :id,
