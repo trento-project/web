@@ -67,13 +67,13 @@ defmodule Trento.Factory do
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
-    Heartbeat,
     HostReadModel,
     HostTelemetryReadModel,
     SapSystemReadModel,
     SlesSubscriptionReadModel
   }
 
+  alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 
   alias Trento.Integration.Discovery.{

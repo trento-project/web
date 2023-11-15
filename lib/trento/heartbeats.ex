@@ -5,10 +5,8 @@ defmodule Trento.Heartbeats do
 
   alias Trento.Domain.Commands.UpdateHeartbeat
 
-  alias Trento.{
-    Heartbeat,
-    HostReadModel
-  }
+  alias Trento.Heartbeats.Heartbeat
+  alias Trento.HostReadModel
 
   alias Trento.Support.DateService
 

@@ -61,7 +61,7 @@ defmodule Trento.HostsTest do
   describe "get_host_by_id/1" do
     test "should return host" do
       %Trento.HostReadModel{id: id} = insert(:host)
-      %Trento.Heartbeat{timestamp: timestamp} = insert(:heartbeat, agent_id: id)
+      %Trento.Heartbeats.Heartbeat{timestamp: timestamp} = insert(:heartbeat, agent_id: id)
 
       host = Hosts.get_host_by_id(id)
 

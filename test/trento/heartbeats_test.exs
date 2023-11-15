@@ -6,10 +6,8 @@ defmodule Trento.HeartbeatsTest do
 
   import Trento.Factory
 
-  alias Trento.{
-    Heartbeat,
-    Heartbeats
-  }
+  alias Trento.Heartbeats
+  alias Trento.Heartbeats.Heartbeat
 
   alias Trento.Domain.Commands.UpdateHeartbeat
 

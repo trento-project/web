@@ -8,11 +8,12 @@ defmodule Trento.Hosts do
   require Logger
 
   alias Trento.{
-    Heartbeat,
     HostReadModel,
     Repo,
     SlesSubscriptionReadModel
   }
+
+  alias Trento.Heartbeats.Heartbeat
 
   alias Trento.Support.DateService
 

@@ -1,4 +1,4 @@
-defmodule Trento.Heartbeat do
+defmodule Trento.Heartbeats.Heartbeat do
   @moduledoc false
 
   use Ecto.Schema
