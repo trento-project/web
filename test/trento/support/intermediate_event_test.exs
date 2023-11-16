@@ -20,7 +20,7 @@ defmodule Trento.Support.IntermediateEventTest do
              )
   end
 
-  test "upcast a superseeded event" do
+  test "upcast a superseded event" do
     value = Faker.StarWars.quote()
     term = %{"data" => value}
 
