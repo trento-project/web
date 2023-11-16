@@ -1,10 +1,10 @@
 import React from 'react';
 import { EOS_KEYBOARD_ARROW_RIGHT } from 'eos-icons-react';
 import classNames from 'classnames';
-import TargetIcon from './TargetIcon';
+import TargetIcon from '@components/TargetIcon';
 
 function TargetResult({
-  isCluster = false,
+  targetType,
   targetName,
   expectationsSummary,
   isAgentCheckError = false,
@@ -20,7 +20,7 @@ function TargetResult({
     >
       <div className="table-cell p-2">
         <div className="flex p-1">
-          <TargetIcon isCluster={isCluster} />
+          <TargetIcon targetType={targetType} />
           <span className="ml-3 inline-flex self-center">{targetName}</span>
         </div>
       </div>

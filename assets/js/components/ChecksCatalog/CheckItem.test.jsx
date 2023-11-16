@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
@@ -11,12 +11,17 @@ import CheckItem from './CheckItem';
 
 describe('ChecksCatalog CheckItem component', () => {
   it('should show check information', () => {
-    const check = catalogCheckFactory.build();
+    const check = catalogCheckFactory.build({
+      metadata: {
+        target_type: 'cluster',
+      },
+    });
 
-    renderWithRouter(
+    render(
       <CheckItem
         key={check.id}
         checkID={check.id}
+        targetType={check.metadata.target_type}
         description={check.description}
         remediation={check.remediation}
       />
@@ -24,6 +29,7 @@ describe('ChecksCatalog CheckItem component', () => {
 
     expect(screen.getByText(check.id)).toBeVisible();
     expect(screen.getByText(check.description)).toBeVisible();
+    expect(screen.getByTestId('target-icon-cluster')).toBeVisible();
   });
 
   it('should show premium badge if the check is premium', () => {

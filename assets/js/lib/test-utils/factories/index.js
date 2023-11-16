@@ -87,6 +87,7 @@ export const catalogCheckFactory = Factory.define(() => ({
   description: faker.lorem.paragraph(),
   remediation: faker.lorem.paragraph(),
   premium: faker.datatype.boolean(),
+  metadata: null,
   expectations: catalogExpectExpectationFactory.buildList(3),
 }));
 

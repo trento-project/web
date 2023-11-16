@@ -115,7 +115,7 @@ function CheckResultOutline({
             }) => (
               <TargetResult
                 key={`${checkID}-${resultTargetName}-${expectationName}`}
-                isCluster={isTargetCluster(resultTargetType)}
+                targetType={resultTargetType}
                 targetName={resultTargetName}
                 expectationsSummary={expectationsSummary}
                 isAgentCheckError={agentCheckError}

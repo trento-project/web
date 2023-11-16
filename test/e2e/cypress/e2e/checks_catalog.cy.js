@@ -4,10 +4,33 @@ import { groupBy } from 'lodash';
 context('Checks catalog', () => {
   const checksCatalogURL = `**/api/v1/checks/catalog`;
 
-  const group1 = catalogCheckFactory.buildList(2, { group: 'Group 1' });
-  const group2 = catalogCheckFactory.buildList(2, { group: 'Group 2' });
-  const group3 = catalogCheckFactory.buildList(2, { group: 'Group 3' });
-  const catalog = group1.concat(group2, group3);
+  const clusterChecksGroup = 'Group 1';
+  const group1Checks = 2;
+
+  const hostChecksGroup = 'Group 2';
+  const group2Checks = 4;
+
+  const genericGroup = 'Group 3';
+  const group3Checks = 2;
+
+  const checksInGroup = {
+    [clusterChecksGroup]: group1Checks,
+    [hostChecksGroup]: group2Checks,
+    [genericGroup]: group3Checks,
+  };
+
+  const group1 = catalogCheckFactory.buildList(group1Checks, {
+    group: clusterChecksGroup,
+    metadata: { target_type: 'cluster' },
+  });
+  const group2 = catalogCheckFactory.buildList(group2Checks, {
+    group: hostChecksGroup,
+    metadata: { target_type: 'host' },
+  });
+  const group3 = catalogCheckFactory.buildList(group3Checks, {
+    group: genericGroup,
+  });
+  const catalog = [...group1, ...group2, ...group3];
 
   before(() => {
     cy.visit('/catalog');
@@ -34,7 +57,11 @@ context('Checks catalog', () => {
         });
         it(`should expand the group '${group}' when clicked`, () => {
           index !== 0 && cy.get('.check-group').contains(group).click();
-          cy.get('div.check-row').should('have.length', (index + 1) * 2);
+          cy.get('.check-group')
+            .eq(index)
+            .within(() => {
+              cy.get('.check-row').should('have.length', checksInGroup[group]);
+            });
         });
         checks.forEach(({ id }) => {
           it(`should include check '${id}'`, () => {
@@ -43,6 +70,16 @@ context('Checks catalog', () => {
         });
       }
     );
+    it('should include the correct number of icons for each target type', () => {
+      cy.get(`[data-testid="target-icon-cluster"]`).should(
+        'have.length',
+        group1Checks
+      );
+      cy.get(`[data-testid="target-icon-host"]`).should(
+        'have.length',
+        group2Checks
+      );
+    });
   });
 
   describe('Individual checks data is expanded', () => {
@@ -56,8 +93,8 @@ context('Checks catalog', () => {
   describe('Provider selection', () => {
     [
       ['aws', 'AWS', 1, 1],
-      ['azure', 'Azure', 2, 3],
-      ['gcp', 'GCP', 3, 5],
+      ['azure', 'Azure', 2, 5],
+      ['gcp', 'GCP', 3, 7],
     ].forEach(([provider, label, groupCount, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
         cy.intercept(

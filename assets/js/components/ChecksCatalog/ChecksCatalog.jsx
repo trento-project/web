@@ -53,6 +53,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
                       key={check.id}
                       checkID={check.id}
                       premium={check.premium}
+                      targetType={check.metadata?.target_type}
                       description={check.description}
                       remediation={check.remediation}
                     />

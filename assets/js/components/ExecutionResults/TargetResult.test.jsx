@@ -13,14 +13,14 @@ describe('TargetResult Component', () => {
   it('should render a clickable Target result', async () => {
     const user = userEvent.setup();
 
-    const isCluster = false;
+    const targetType = 'cluster';
     const targetName = faker.lorem.word();
     const expectationsSummary = faker.lorem.sentence();
     const onClick = jest.fn();
 
     render(
       <TargetResult
-        isCluster={isCluster}
+        targetType={targetType}
         targetName={targetName}
         expectationsSummary={expectationsSummary}
         onClick={onClick}
