@@ -91,13 +91,23 @@ export function ClusterDetailsPage() {
     case 'ascs_ers':
       return (
         <AscsErsClusterDetails
+          clusterID={clusterID}
           clusterName={getClusterName(cluster)}
+          selectedChecks={cluster.selected_checks}
+          hasSelectedChecks={hasSelectedChecks}
           cibLastWritten={cluster.cib_last_written}
           provider={cluster.provider}
           hosts={clusterHosts}
           sapSystems={clusterSapSystems}
           details={cluster.details}
           catalog={catalog}
+          lastExecution={lastExecution}
+          onStartExecution={(_, hostList, checks, navigateFunction) =>
+            dispatch(
+              executionRequested(clusterID, hostList, checks, navigateFunction)
+            )
+          }
+          navigate={navigate}
         />
       );
     default:

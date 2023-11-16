@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
+import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
+import { RUNNING_STATES } from '@state/lastExecutions';
+
+import Button from '@components/Button';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Table from '@components/Table';
@@ -10,6 +14,7 @@ import DottedPagination from '@components/DottedPagination';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';
 import { renderEnsaVersion } from '@components/SapSystemDetails';
+import Tooltip from '@components/Tooltip';
 
 import CheckResultsOverview from '@components/CheckResultsOverview';
 
@@ -65,13 +70,19 @@ const nodeDetailsConfig = {
 };
 
 function AscsErsClusterDetails({
+  clusterID,
   clusterName,
+  selectedChecks,
+  hasSelectedChecks,
   cibLastWritten,
   provider,
   hosts,
   sapSystems,
   details,
   catalog,
+  lastExecution,
+  onStartExecution,
+  navigate,
 }) {
   const [enrichedSapSystems, setEnrichedSapSystems] = useState([]);
   const [currentSapSystem, setCurrentSapSystem] = useState(null);
@@ -91,6 +102,15 @@ function AscsErsClusterDetails({
   const catalogLoading = get(catalog, 'loading');
   const catalogError = get(catalog, 'error');
 
+  const executionData = get(lastExecution, 'data');
+  const executionLoading = get(lastExecution, 'loading', true);
+  const executionError = get(lastExecution, 'error');
+
+  const startExecutionDisabled =
+    executionLoading ||
+    !hasSelectedChecks ||
+    RUNNING_STATES.includes(executionData?.status);
+
   return (
     <div>
       <BackButton url="/clusters">Back to Clusters</BackButton>
@@ -100,6 +120,51 @@ function AscsErsClusterDetails({
             Pacemaker Cluster Details:{' '}
             <span className="font-bold">{clusterName}</span>
           </PageHeader>
+        </div>
+        <div className="flex w-1/2 justify-end">
+          <div className="flex w-fit whitespace-nowrap">
+            <Button
+              type="primary-white"
+              className="inline-block mx-0.5 border-green-500 border"
+              size="small"
+              onClick={() => navigate(`/clusters/${clusterID}/settings`)}
+            >
+              <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+              Check Selection
+            </Button>
+
+            <Button
+              type="primary-white"
+              className="mx-0.5 border-green-500 border"
+              size="small"
+              onClick={() => navigate(`/clusters/${clusterID}/executions/last`)}
+            >
+              <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />{' '}
+              Show Results
+            </Button>
+
+            <Tooltip
+              isEnabled={!hasSelectedChecks}
+              content="Select some Checks first!"
+              place="bottom"
+            >
+              <Button
+                type="primary"
+                className="mx-1"
+                onClick={() => {
+                  onStartExecution(clusterID, hosts, selectedChecks, navigate);
+                }}
+                disabled={startExecutionDisabled}
+              >
+                <EOS_PLAY_CIRCLE
+                  className={`${
+                    !startExecutionDisabled ? 'fill-white' : 'fill-gray-200'
+                  } inline-block align-sub`}
+                />{' '}
+                Start Execution
+              </Button>
+            </Tooltip>
+          </div>
         </div>
       </div>
       <div className="flex xl:flex-row flex-col">
@@ -174,10 +239,15 @@ function AscsErsClusterDetails({
         </div>
         <div className="mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4">
           <CheckResultsOverview
+            data={executionData}
             catalogDataEmpty={catalogData?.length === 0}
-            loading={catalogLoading}
-            error={catalogError}
-            onCheckClick={() => {}}
+            loading={catalogLoading || executionLoading}
+            error={catalogError || executionError}
+            onCheckClick={(health) =>
+              navigate(
+                `/clusters/${clusterID}/executions/last?health=${health}`
+              )
+            }
           />
         </div>
       </div>
