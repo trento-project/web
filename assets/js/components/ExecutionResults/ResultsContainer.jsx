@@ -19,14 +19,12 @@ function ResultsContainer({
 }) {
   if (error) {
     return (
-      <div className="bg-white rounded p-3 shadow">
-        <NotificationBox
-          icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-          text={errorContent}
-          buttonText="Try again"
-          buttonOnClick={onContentRefresh}
-        />
-      </div>
+      <NotificationBox
+        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        text={errorContent}
+        buttonText="Try again"
+        buttonOnClick={onContentRefresh}
+      />
     );
   }
 
