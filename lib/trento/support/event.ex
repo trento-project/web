@@ -8,14 +8,19 @@ defmodule Trento.Event do
   defmacro defevent(opts \\ [], do: block) do
     quote do
       @version Keyword.get(unquote(opts), :version, 1)
-      @superseded_by Keyword.get(unquote(opts), :superseded_by, __MODULE__)
+      @superseded_by Keyword.get(unquote(opts), :superseded_by, nil)
 
       deftype do
         field :version, :integer, default: @version
         unquote(block)
       end
 
-      def supersede, do: @superseded_by
+      def supersede do
+        case @superseded_by do
+          nil -> __MODULE__
+          superseded -> superseded.supersede()
+        end
+      end
 
       def upcast(params, metadata) do
         params

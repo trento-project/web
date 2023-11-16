@@ -77,7 +77,11 @@ defmodule Trento.EventTest do
 
   describe "supersede an event" do
     test "event is superseded" do
-      assert TestEvent == TestLegacyEvent.supersede()
+      assert TestEvent == TestLegacyEventV2.supersede()
+    end
+
+    test "event is not superseded multiple times" do
+      assert TestEvent == TestLegacyEventV1.supersede()
     end
 
     test "event is not superseded" do

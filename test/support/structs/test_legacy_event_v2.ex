@@ -1,4 +1,4 @@
-defmodule TestLegacyEvent do
+defmodule TestLegacyEventV2 do
   @moduledoc false
 
   use Trento.Event

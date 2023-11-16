@@ -26,7 +26,7 @@ defmodule Trento.Support.IntermediateEventTest do
 
     assert %TestEvent{data: value} ==
              Upcaster.upcast(
-               %IntermediateEvent{module: TestLegacyEvent, term: term},
+               %IntermediateEvent{module: TestLegacyEventV1, term: term},
                %{}
              )
   end
