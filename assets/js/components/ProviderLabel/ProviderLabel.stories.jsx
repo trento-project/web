@@ -2,7 +2,7 @@ import ProviderLabel from '.';
 
 export default {
   title: 'Components/ProviderLabel',
-  components: ProviderLabel,
+  component: ProviderLabel,
 };
 
 export const Azure = {
