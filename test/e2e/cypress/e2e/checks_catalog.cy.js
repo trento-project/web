@@ -104,8 +104,8 @@ context('Checks catalog', () => {
           }
         ).as('request');
 
-        cy.get('.cloud-provider-selection-dropdown').click();
-        cy.get('.cloud-provider-selection-dropdown')
+        cy.get('.providers-selection-dropdown').click();
+        cy.get('.providers-selection-dropdown')
           .get('span')
           .contains(label)
           .click();
