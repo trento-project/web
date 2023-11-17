@@ -1,4 +1,3 @@
-import React from 'react';
 import ProviderLabel from '.';
 
 export default {
@@ -6,30 +5,44 @@ export default {
   components: ProviderLabel,
 };
 
-export function Azure() {
-  return <ProviderLabel provider="azure" />;
-}
+export const Azure = {
+  args: {
+    provider: 'azure',
+  },
+};
 
-export function AWS() {
-  return <ProviderLabel provider="aws" />;
-}
+export const AWS = {
+  args: {
+    provider: 'aws',
+  },
+};
 
-export function GCP() {
-  return <ProviderLabel provider="gcp" />;
-}
+export const GCP = {
+  args: {
+    provider: 'gcp',
+  },
+};
 
-export function Nutanix() {
-  return <ProviderLabel provider="nutanix" />;
-}
+export const Nutanix = {
+  args: {
+    provider: 'nutanix',
+  },
+};
 
-export function KVM() {
-  return <ProviderLabel provider="kvm" />;
-}
+export const KVM = {
+  args: {
+    provider: 'kvm',
+  },
+};
 
-export function VMWare() {
-  return <ProviderLabel provider="vmware" />;
-}
+export const VMWare = {
+  args: {
+    provider: 'vmware',
+  },
+};
 
-export function Unknown() {
-  return <ProviderLabel provider="unknown" />;
-}
+export const Unknown = {
+  args: {
+    provider: 'unknown',
+  },
+};

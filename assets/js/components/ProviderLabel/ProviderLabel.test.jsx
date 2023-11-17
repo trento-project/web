@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ProviderLabel, { checkProviderExists } from './ProviderLabel';
+import ProviderLabel from './ProviderLabel';
 
 describe('Provider Label', () => {
   it('should display an icon and label with AWS as the provider', () => {
@@ -48,13 +48,5 @@ describe('Provider Label', () => {
     expect(container.querySelector('span')).toHaveTextContent(
       'Provider not recognized'
     );
-  });
-
-  it('should check if the provider exists', () => {
-    ['azure', 'aws', 'gcp', 'nutanix', 'kvm', 'vmware'].forEach((provider) => {
-      expect(checkProviderExists(provider)).toBeTruthy();
-    });
-
-    expect(checkProviderExists('other')).not.toBeTruthy();
   });
 });

@@ -8,36 +8,41 @@ import GcpLogo from '@static/gcp-logo.svg';
 import NutanixLogo from '@static/nutanix-logo.svg';
 import KvmLogo from '@static/suse-kvm-logo.svg';
 import VmwareLogo from '@static/vmware-logo.png';
+import {
+  AWS_PROVIDER,
+  AZURE_PROVIDER,
+  GCP_PROVIDER,
+  KVM_PROVIDER,
+  NUTANIX_PROVIDER,
+  VMWARE_PROVIDER,
+} from '@lib/model';
 
 export const providerData = {
-  aws: {
+  [AWS_PROVIDER]: {
     logo: AwsLogo,
     label: 'AWS',
   },
-  azure: {
+  [AZURE_PROVIDER]: {
     logo: AzureLogo,
     label: 'Azure',
   },
-  gcp: {
+  [GCP_PROVIDER]: {
     logo: GcpLogo,
     label: 'GCP',
   },
-  nutanix: {
+  [NUTANIX_PROVIDER]: {
     logo: NutanixLogo,
     label: 'Nutanix',
   },
-  kvm: {
+  [KVM_PROVIDER]: {
     logo: KvmLogo,
     label: 'KVM',
   },
-  vmware: {
+  [VMWARE_PROVIDER]: {
     logo: VmwareLogo,
     label: 'VMware',
   },
 };
-
-export const checkProviderExists = (provider) =>
-  providerData[provider] ? provider : null;
 
 function ProviderLabel({ provider }) {
   return (
