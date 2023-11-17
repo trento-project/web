@@ -13,7 +13,7 @@ context('HANA cluster details', () => {
     warning_count: 3,
     critical_count: 1,
   });
-  const catalogURL = `**/api/v1/checks/catalog*`;
+  const catalogURL = `**/api/v2/checks/catalog*`;
   const catalog = catalogFactory.build();
 
   before(() => {

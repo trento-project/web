@@ -15,7 +15,7 @@ export const getLastExecutionByGroupID = (groupID) =>
   );
 
 export const getCatalog = (env) =>
-  networkClient.get(`/api/v1/checks/catalog`, {
+  networkClient.get(`/api/v2/checks/catalog`, {
     ...defaultConfig,
     params: env,
   });
