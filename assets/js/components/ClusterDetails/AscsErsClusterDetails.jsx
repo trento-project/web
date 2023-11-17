@@ -81,8 +81,8 @@ function AscsErsClusterDetails({
   details,
   catalog,
   lastExecution,
-  onStartExecution,
-  navigate,
+  onStartExecution = () => {},
+  navigate = () => {},
 }) {
   const [enrichedSapSystems, setEnrichedSapSystems] = useState([]);
   const [currentSapSystem, setCurrentSapSystem] = useState(null);
