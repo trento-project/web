@@ -8,8 +8,7 @@ import ChecksCatalog from './ChecksCatalog';
 
 const buildUpdateCatalogAction = (provider) => {
   const payload = {
-    ...(isValidProvider(provider) ? { provider } : {}),
-    target_type: 'cluster',
+    ...(isValidProvider(provider) ? { provider, target_type: 'cluster' } : {}),
   };
 
   return updateCatalog(payload);

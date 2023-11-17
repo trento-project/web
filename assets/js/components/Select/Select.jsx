@@ -31,7 +31,7 @@ function Select({
       <Listbox value={selected} onChange={onChange}>
         <div className="relative mt-1">
           <Listbox.Button
-            className={`${dropdownSelector} relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg cursor-default border border-gray-300 sm:text-sm`}
+            className={`${dropdownSelector} relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm`}
           >
             {renderOption(selected, optionsName, optionRenderer)}
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
