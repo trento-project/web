@@ -55,7 +55,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       />
     );
 
-    await user.click(screen.getByText('All'));
+    await user.click(screen.getByText('All providers'));
 
     const providerFilter = screen.getByText('AWS');
 
