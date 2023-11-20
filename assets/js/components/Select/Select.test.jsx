@@ -8,7 +8,7 @@ import Select from './Select';
 describe('Select Component', () => {
   it('should render the `all options` option as selected', () => {
     const options = ['option1', 'option2', 'option3'];
-    render(<Select optionsName="foobars" options={options} selected="all" />);
+    render(<Select optionsName="foobars" options={options} value="all" />);
 
     options.forEach((option) => {
       expect(screen.queryByText(option)).not.toBeInTheDocument();
@@ -24,7 +24,7 @@ describe('Select Component', () => {
         <Select
           optionsName="foobars"
           options={someOptions}
-          selected={selectedOption}
+          value={selectedOption}
         />
       );
 
@@ -41,7 +41,7 @@ describe('Select Component', () => {
     const user = userEvent.setup();
     const options = ['option1', 'option2', 'option3'];
 
-    render(<Select optionsName="foobars" options={options} selected="all" />);
+    render(<Select optionsName="foobars" options={options} value="all" />);
 
     expect(screen.getByRole('button')).toHaveTextContent('All foobars');
 
@@ -64,7 +64,7 @@ describe('Select Component', () => {
       <Select
         optionsName="foobars"
         options={options}
-        selected="all"
+        value="all"
         optionRenderer={optionRenderer}
       />
     );
@@ -86,7 +86,7 @@ describe('Select Component', () => {
       <Select
         optionsName="foobars"
         options={options}
-        selected="all"
+        value="all"
         onChange={mockOnChange}
       />
     );

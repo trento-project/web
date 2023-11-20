@@ -29,7 +29,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
           className="ml-auto"
           options={PROVIDERS}
           optionRenderer={providerOptionRenderer}
-          selected={selectedProvider}
+          value={selectedProvider}
           onChange={setProviderSelected}
         />
       </div>

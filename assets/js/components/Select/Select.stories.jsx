@@ -23,7 +23,7 @@ export default {
         type: 'array',
       },
     },
-    selected: {
+    value: {
       type: 'string',
       description: 'The currently selected option',
       control: {
@@ -57,15 +57,15 @@ const providerOptionRenderer = (provider) => (
 );
 
 export function ProviderSelection() {
-  const [selected, setSelected] = useState('azure');
+  const [value, setValue] = useState('azure');
 
   return (
     <Select
       optionsName="providers"
       options={PROVIDERS}
-      selected={selected}
+      value={value}
       optionRenderer={providerOptionRenderer}
-      onChange={setSelected}
+      onChange={setValue}
     />
   );
 }
@@ -81,15 +81,15 @@ const emojiOptionsToLabel = {
 const itemsOptionRenderer = (item) => <span>{emojiOptionsToLabel[item]}</span>;
 
 export function EmojiSelection() {
-  const [selected, setSelected] = useState('all');
+  const [value, setValue] = useState('all');
 
   return (
     <Select
       optionsName="emojis"
       options={emojiOptions}
-      selected={selected}
+      value={value}
       optionRenderer={itemsOptionRenderer}
-      onChange={setSelected}
+      onChange={setValue}
     />
   );
 }
