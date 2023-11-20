@@ -10,7 +10,7 @@ defmodule Trento.SlesSubscriptionsProjector do
 
   import Ecto.Query
 
-  alias Trento.Domain.Events.SlesSubscriptionsUpdated
+  alias Trento.Hosts.Events.SlesSubscriptionsUpdated
 
   alias Trento.SlesSubscriptionReadModel
 

@@ -8,7 +8,7 @@ defmodule Trento.TelemetryProjector do
     repo: Trento.Repo,
     name: "telemetry_projector"
 
-  alias Trento.Domain.Events.{
+  alias Trento.Hosts.Events.{
     HostDetailsUpdated,
     HostRegistered,
     ProviderUpdated

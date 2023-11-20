@@ -1,11 +1,9 @@
 defimpl Trento.Support.Middleware.Enrichable,
-  for: Trento.Domain.Commands.RequestHostDeregistration do
-  alias Trento.Domain.Commands.RequestHostDeregistration
+  for: Trento.Hosts.Commands.RequestHostDeregistration do
+  alias Trento.Hosts.Commands.RequestHostDeregistration
 
-  alias Trento.{
-    Hosts,
-    HostReadModel
-  }
+  alias Trento.Hosts
+  alias Trento.Hosts.Projections.HostReadModel
 
   @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]
   @deregistration_debounce Application.compile_env!(

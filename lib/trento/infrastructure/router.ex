@@ -5,38 +5,42 @@ defmodule Trento.Router do
 
   alias Trento.Domain.{
     Cluster,
-    Host,
     SapSystem
   }
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
-    CompleteHostChecksExecution,
     DeregisterApplicationInstance,
     DeregisterClusterHost,
     DeregisterDatabaseInstance,
-    DeregisterHost,
     MarkApplicationInstanceAbsent,
     MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
-    RegisterHost,
-    RequestHostDeregistration,
     RollUpCluster,
-    RollUpHost,
     RollUpSapSystem,
-    SelectChecks,
-    SelectHostChecks,
+    SelectChecks
+  }
+
+  alias Trento.Hosts.Commands.{
+    CompleteHostChecksExecution,
+    DeregisterHost,
     UpdateHeartbeat,
     UpdateProvider,
     UpdateSaptuneStatus,
-    UpdateSlesSubscriptions
+    UpdateSlesSubscriptions,
+    RegisterHost,
+    RequestHostDeregistration,
+    RollUpHost,
+    SelectHostChecks
   }
+
+  alias Trento.Hosts
 
   middleware Enrich
 
-  identify Host, by: :host_id
+  identify Hosts.Host, by: :host_id
 
   dispatch [
              RegisterHost,
@@ -50,8 +54,8 @@ defmodule Trento.Router do
              DeregisterHost,
              CompleteHostChecksExecution
            ],
-           to: Host,
-           lifespan: Host.Lifespan
+           to: Hosts.Host,
+           lifespan: Hosts.Lifespan
 
   identify Cluster,
     by: :cluster_id

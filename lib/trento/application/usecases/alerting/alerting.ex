@@ -6,9 +6,10 @@ defmodule Trento.Application.UseCases.Alerting do
   alias Trento.{
     ClusterReadModel,
     DatabaseReadModel,
-    HostReadModel,
     SapSystemReadModel
   }
+
+  alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.Application.UseCases.Alerting.EmailAlert
   alias Trento.Mailer

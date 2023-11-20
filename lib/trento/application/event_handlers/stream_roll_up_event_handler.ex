@@ -15,15 +15,17 @@ defmodule Trento.StreamRollUpEventHandler do
 
   alias Trento.Domain.Commands.{
     RollUpCluster,
-    RollUpHost,
     RollUpSapSystem
   }
 
+  alias Trento.Hosts.Commands.RollUpHost
+
   alias Trento.Domain.Events.{
     ClusterTombstoned,
-    HostTombstoned,
     SapSystemTombstoned
   }
+
+  alias Trento.Hosts.Events.HostTombstoned
 
   require Logger
 
@@ -40,15 +42,15 @@ defmodule Trento.StreamRollUpEventHandler do
   ]
 
   @host_events [
-    Trento.Domain.Events.HeartbeatFailed,
-    Trento.Domain.Events.HeartbeatSucceded,
-    Trento.Domain.Events.HostDetailsUpdated,
-    Trento.Domain.Events.HostRegistered,
-    Trento.Domain.Events.ProviderUpdated,
-    Trento.Domain.Events.SlesSubscriptionsUpdated,
-    Trento.Domain.Events.HostChecksSelected,
-    Trento.Domain.Events.HostChecksHealthChanged,
-    Trento.Domain.Events.HostHealthChanged
+    Trento.Hosts.Events.HeartbeatFailed,
+    Trento.Hosts.Events.HeartbeatSucceded,
+    Trento.Hosts.Events.HostDetailsUpdated,
+    Trento.Hosts.Events.HostRegistered,
+    Trento.Hosts.Events.ProviderUpdated,
+    Trento.Hosts.Events.SlesSubscriptionsUpdated,
+    Trento.Hosts.Events.HostChecksSelected,
+    Trento.Hosts.Events.HostChecksHealthChanged,
+    Trento.Hosts.Events.HostHealthChanged
   ]
 
   @sap_system_events [

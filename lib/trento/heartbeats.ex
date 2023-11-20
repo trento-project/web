@@ -3,10 +3,10 @@ defmodule Trento.Heartbeats do
   Heartbeat related functions
   """
 
-  alias Trento.Domain.Commands.UpdateHeartbeat
+  alias Trento.Hosts.Commands.UpdateHeartbeat
 
   alias Trento.Heartbeats.Heartbeat
-  alias Trento.HostReadModel
+  alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.Support.DateService
 

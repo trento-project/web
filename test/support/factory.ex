@@ -34,19 +34,22 @@ defmodule Trento.Factory do
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     DatabaseRestored,
+    HostAddedToCluster,
+    HostRemovedFromCluster,
+    SapSystemDeregistered,
+    SapSystemRegistered,
+    SapSystemTombstoned
+  }
+
+  alias Trento.Hosts.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
-    HostAddedToCluster,
     HostChecksHealthChanged,
     HostDetailsUpdated,
     HostHealthChanged,
     HostRegistered,
-    HostRemovedFromCluster,
     HostSaptuneHealthChanged,
     HostTombstoned,
-    SapSystemDeregistered,
-    SapSystemRegistered,
-    SapSystemTombstoned,
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
@@ -57,9 +60,10 @@ defmodule Trento.Factory do
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
-    RegisterHost,
     RollUpSapSystem
   }
+
+  alias Trento.Hosts.Commands.RegisterHost
 
   alias Trento.{
     ApplicationInstanceReadModel,
@@ -67,12 +71,12 @@ defmodule Trento.Factory do
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
-    HostReadModel,
     HostTelemetryReadModel,
     SapSystemReadModel,
     SlesSubscriptionReadModel
   }
 
+  alias Trento.Hosts.Projections.HostReadModel
   alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 

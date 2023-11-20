@@ -11,7 +11,7 @@ defmodule Trento.ApplicationInstanceReadModel do
 
   @type t :: %__MODULE__{}
 
-  alias Trento.HostReadModel
+  alias Trento.Hosts.Projections.HostReadModel
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key false

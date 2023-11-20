@@ -3,7 +3,7 @@ defimpl Trento.Support.Middleware.Enrichable,
   alias Trento.Domain.Commands.RegisterApplicationInstance
 
   alias Trento.DatabaseInstanceReadModel
-  alias Trento.HostReadModel
+  alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.Repo
   import Ecto.Query

@@ -5,7 +5,7 @@ defmodule Trento.Integration.Discovery.HostPolicy do
 
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.Domain.Commands.{
+  alias Trento.Hosts.Commands.{
     RegisterHost,
     UpdateProvider,
     UpdateSaptuneStatus,
