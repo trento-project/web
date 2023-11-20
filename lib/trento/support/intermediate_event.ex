@@ -19,10 +19,12 @@ defmodule Trento.Support.IntermediateEvent do
     alias Trento.Support.IntermediateEvent
 
     def upcast(%IntermediateEvent{module: module, term: term}, metadata) do
+      superseded_module = module.supersede()
+
       event =
         term
-        |> module.upcast(metadata)
-        |> module.new!()
+        |> superseded_module.upcast(metadata)
+        |> superseded_module.new!()
 
       Logger.debug("Cast IntermediateEvent #{module}: #{inspect(term)} to: #{inspect(event)}")
 
