@@ -10,7 +10,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.SlesSubscriptionReadModel
+  alias Trento.Hosts.Projections.SlesSubscriptionReadModel
   alias Trento.Tags.Tag
 
   @type t :: %__MODULE__{}

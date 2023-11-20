@@ -3,6 +3,12 @@ defmodule Trento.ProjectorsSupervisor do
 
   use Supervisor
 
+  alias Trento.Hosts.Projections.{
+    HostProjector,
+    SlesSubscriptionsProjector,
+    TelemetryProjector
+  }
+
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
@@ -11,11 +17,11 @@ defmodule Trento.ProjectorsSupervisor do
   def init(_init_arg) do
     children = [
       Trento.ClusterProjector,
-      Trento.Hosts.Projections.HostProjector,
-      Trento.SlesSubscriptionsProjector,
       Trento.DatabaseProjector,
+      HostProjector,
       Trento.SapSystemProjector,
-      Trento.TelemetryProjector
+      SlesSubscriptionsProjector,
+      TelemetryProjector
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
