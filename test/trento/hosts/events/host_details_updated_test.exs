@@ -1,7 +1,7 @@
-defmodule Trento.Domain.Events.HostDetailsUpdatedTest do
-  use Trento.AggregateCase, aggregate: Trento.Domain.Host, async: true
+defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
+  use Trento.AggregateCase, aggregate: Trento.Hosts.Host, async: true
 
-  alias Trento.Domain.Events.HostDetailsUpdated
+  alias Trento.Hosts.Events.HostDetailsUpdated
 
   describe "HostDetailsUpdated event upcasting" do
     test "should upcast HostDetailsUpdated event properly from version 1" do

@@ -16,8 +16,11 @@ defmodule Trento.Factory do
     HanaClusterDetails,
     HanaClusterNode,
     SapSystem,
+    SbdDevice
+  }
+
+  alias Trento.Hosts.{
     SaptuneStatus,
-    SbdDevice,
     SlesSubscription
   }
 
@@ -71,12 +74,15 @@ defmodule Trento.Factory do
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
+    SapSystemReadModel
+  }
+
+  alias Trento.Hosts.Projections.{
+    HostReadModel,
     HostTelemetryReadModel,
-    SapSystemReadModel,
     SlesSubscriptionReadModel
   }
 
-  alias Trento.Hosts.Projections.HostReadModel
   alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 

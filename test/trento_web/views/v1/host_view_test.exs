@@ -8,7 +8,7 @@ defmodule TrentoWeb.V1.HostViewTest do
 
   alias TrentoWeb.V1.HostView
 
-  alias Trento.HostReadModel
+  alias Trento.Hosts.Projections.HostReadModel
 
   test "should render health changed relevant information" do
     %HostReadModel{id: id, hostname: hostname} = host = build(:host, health: :passing)

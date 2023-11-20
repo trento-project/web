@@ -9,14 +9,20 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
+  alias Trento.{
+    ClusterReadModel,
+    SapSystemReadModel
+  }
+
+  alias Trento.Hosts.Projections.HostReadModel
+
   test "should return the expected overview", %{conn: conn} do
-    %Trento.ClusterReadModel{id: cluster_id} =
+    %ClusterReadModel{id: cluster_id} =
       insert(:cluster, type: ClusterType.hana_scale_up(), health: Health.passing())
 
-    %Trento.HostReadModel{id: host_1_id} =
-      insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
+    %HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
-    %Trento.SapSystemReadModel{
+    %SapSystemReadModel{
       id: sap_system_id,
       sid: sid
     } = insert(:sap_system, health: Health.critical())

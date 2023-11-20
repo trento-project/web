@@ -1,4 +1,4 @@
-defmodule Trento.SlesSubscriptionsProjectorTest do
+defmodule Trento.Hosts.Projections.SlesSubscriptionsProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
@@ -7,7 +7,7 @@ defmodule Trento.SlesSubscriptionsProjectorTest do
 
   import Trento.Factory
 
-  alias Trento.{
+  alias Trento.Hosts.Projections.{
     SlesSubscriptionReadModel,
     SlesSubscriptionsProjector
   }

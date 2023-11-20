@@ -7,7 +7,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
 
   alias Trento.Integration.Discovery.HostPolicy
 
-  alias Trento.Domain.Commands.{
+  alias Trento.Hosts.Commands.{
     RegisterHost,
     UpdateProvider,
     UpdateSaptuneStatus,
@@ -17,7 +17,10 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
-    GcpProvider,
+    GcpProvider
+  }
+
+  alias Trento.Hosts.{
     SaptuneNote,
     SaptuneServiceStatus,
     SaptuneSolution,

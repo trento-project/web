@@ -1,9 +1,9 @@
-defmodule Trento.HostTest do
-  use Trento.AggregateCase, aggregate: Trento.Domain.Host, async: true
+defmodule Trento.Hosts.HostTest do
+  use Trento.AggregateCase, aggregate: Trento.Hosts.Host, async: true
 
   import Trento.Factory
 
-  alias Trento.Domain.Commands.{
+  alias Trento.Hosts.Commands.{
     CompleteHostChecksExecution,
     DeregisterHost,
     RegisterHost,
@@ -16,7 +16,7 @@ defmodule Trento.HostTest do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Domain.Events.{
+  alias Trento.Hosts.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
     HostChecksHealthChanged,
@@ -39,12 +39,14 @@ defmodule Trento.HostTest do
   alias Trento.Domain.{
     AwsProvider,
     AzureProvider,
-    GcpProvider,
-    SaptuneStatus
+    GcpProvider
   }
 
-  alias Trento.Domain.Host
-  alias Trento.Domain.SlesSubscription
+  alias Trento.Hosts.{
+    Host,
+    SaptuneStatus,
+    SlesSubscription
+  }
 
   require Trento.Domain.Enums.Health, as: Health
 

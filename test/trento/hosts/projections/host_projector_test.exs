@@ -1,4 +1,4 @@
-defmodule Trento.HostProjectorTest do
+defmodule Trento.Hosts.Projections.HostProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
@@ -9,7 +9,7 @@ defmodule Trento.HostProjectorTest do
 
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.{
+  alias Trento.Hosts.Projections.{
     HostProjector,
     HostReadModel
   }
@@ -21,13 +21,16 @@ defmodule Trento.HostProjectorTest do
   }
 
   alias Trento.Domain.Events.{
+    HostAddedToCluster,
+    HostRemovedFromCluster
+  }
+
+  alias Trento.Hosts.Events.{
     HeartbeatFailed,
     HeartbeatSucceded,
-    HostAddedToCluster,
     HostChecksSelected,
     HostDeregistered,
     HostDetailsUpdated,
-    HostRemovedFromCluster,
     HostRestored,
     ProviderUpdated,
     SaptuneStatusUpdated

@@ -1,15 +1,15 @@
-defmodule Trento.TelemetryProjectorTest do
+defmodule Trento.Hosts.ProjectionsTelemetryProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.{
+  alias Trento.Hosts.Projections.{
     HostTelemetryReadModel,
     TelemetryProjector
   }
 
-  alias Trento.Domain.Events.ProviderUpdated
+  alias Trento.Hosts.Events.ProviderUpdated
 
   alias Trento.ProjectorTestHelper
   alias Trento.Repo

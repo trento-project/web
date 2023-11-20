@@ -10,12 +10,15 @@ defmodule Trento.DeregistrationProcessManagerTest do
     DatabaseInstanceDeregistered,
     DatabaseInstanceRegistered,
     HostAddedToCluster,
+    HostRemovedFromCluster,
+    SapSystemRolledUp
+  }
+
+  alias Trento.Hosts.Events.{
     HostDeregistered,
     HostDeregistrationRequested,
     HostRegistered,
-    HostRemovedFromCluster,
-    HostRolledUp,
-    SapSystemRolledUp
+    HostRolledUp
   }
 
   alias Trento.DeregistrationProcessManager
@@ -30,9 +33,10 @@ defmodule Trento.DeregistrationProcessManagerTest do
   alias Trento.Domain.Commands.{
     DeregisterApplicationInstance,
     DeregisterClusterHost,
-    DeregisterDatabaseInstance,
-    DeregisterHost
+    DeregisterDatabaseInstance
   }
+
+  alias Trento.Hosts.Commands.DeregisterHost
 
   describe "events interested" do
     test "should start the process manager when HostRegistered event arrives" do

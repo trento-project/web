@@ -6,8 +6,15 @@ defmodule Trento.HostsTest do
   import Trento.Factory
   import Mox
 
-  alias Trento.Domain.Commands.SelectHostChecks
-  alias Trento.{Hosts, Repo, SlesSubscriptionReadModel}
+  alias Trento.Hosts.Commands.SelectHostChecks
+
+  alias Trento.Heartbeats.Heartbeat
+  alias Trento.{Hosts, Repo}
+
+  alias Trento.Hosts.Projections.{
+    HostReadModel,
+    SlesSubscriptionReadModel
+  }
 
   alias Trento.Checks.V1.{
     ExecutionRequested,
@@ -40,7 +47,7 @@ defmodule Trento.HostsTest do
       registered_hosts = Enum.map(0..9, fn i -> insert(:host, hostname: "hostname_#{i}") end)
 
       last_heartbeats =
-        Enum.map(registered_hosts, fn %Trento.HostReadModel{id: id} ->
+        Enum.map(registered_hosts, fn %HostReadModel{id: id} ->
           insert(:heartbeat, agent_id: id)
         end)
 
@@ -60,8 +67,8 @@ defmodule Trento.HostsTest do
 
   describe "get_host_by_id/1" do
     test "should return host" do
-      %Trento.HostReadModel{id: id} = insert(:host)
-      %Trento.Heartbeats.Heartbeat{timestamp: timestamp} = insert(:heartbeat, agent_id: id)
+      %HostReadModel{id: id} = insert(:host)
+      %Heartbeat{timestamp: timestamp} = insert(:heartbeat, agent_id: id)
 
       host = Hosts.get_host_by_id(id)
 
@@ -70,7 +77,7 @@ defmodule Trento.HostsTest do
     end
 
     test "should return nil if host is deregistered" do
-      %Trento.HostReadModel{id: id} = insert(:host, deregistered_at: DateTime.utc_now())
+      %HostReadModel{id: id} = insert(:host, deregistered_at: DateTime.utc_now())
 
       host = Hosts.get_host_by_id(id)
 

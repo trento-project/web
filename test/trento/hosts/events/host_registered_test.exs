@@ -1,7 +1,7 @@
-defmodule Trento.Domain.Events.HostRegisteredTest do
-  use Trento.AggregateCase, aggregate: Trento.Domain.Host, async: true
+defmodule Trento.Hosts.Events.HostRegisteredTest do
+  use Trento.AggregateCase, aggregate: Trento.Hosts.Host, async: true
 
-  alias Trento.Domain.Events.HostRegistered
+  alias Trento.Hosts.Events.HostRegistered
 
   describe "HostRegistered event upcasting" do
     test "should upcast HostRegistered event properly from version 1" do

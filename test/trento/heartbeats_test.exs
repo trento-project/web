@@ -9,7 +9,7 @@ defmodule Trento.HeartbeatsTest do
   alias Trento.Heartbeats
   alias Trento.Heartbeats.Heartbeat
 
-  alias Trento.Domain.Commands.UpdateHeartbeat
+  alias Trento.Hosts.Commands.UpdateHeartbeat
 
   alias Trento.Repo
 
