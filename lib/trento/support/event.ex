@@ -15,11 +15,10 @@ defmodule Trento.Event do
         unquote(block)
       end
 
-      def supersede do
-        case @superseded_by do
-          nil -> __MODULE__
-          superseded -> superseded.supersede()
-        end
+      if is_nil(@superseded_by) do
+        def supersede, do: __MODULE__
+      else
+        def supersede, do: @superseded_by.supersede()
       end
 
       def upcast(params, metadata) do
