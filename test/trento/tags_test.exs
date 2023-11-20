@@ -35,6 +35,16 @@ defmodule Trento.TagsTest do
       assert nil == Repo.get_by(Tag, resource_id: resource_id)
     end
 
+    test "add_tag/3 does nothing on conflict with resource_id and value" do
+      %Tag{value: value, resource_id: resource_id, resource_type: type} = insert(:tag)
+
+      {:ok, %Tag{id: nil, value: ^value, resource_id: ^resource_id, resource_type: :host}} =
+        Tags.add_tag(value, resource_id, type)
+
+      assert %Tag{value: ^value, resource_id: ^resource_id, resource_type: :host} =
+               Repo.get_by(Tag, resource_id: resource_id)
+    end
+
     test "delete_tag/2 deletes a tag from a given resource" do
       %Tag{value: value, resource_id: resource_id} = insert(:tag)
       :ok = Tags.delete_tag(value, resource_id)
