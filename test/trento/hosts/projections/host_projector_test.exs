@@ -27,7 +27,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
   alias Trento.Hosts.Events.{
     HeartbeatFailed,
-    HeartbeatSucceded,
+    HeartbeatSucceeded,
     HostChecksSelected,
     HostDeregistered,
     HostDetailsUpdated,
@@ -262,9 +262,9 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     end)
   end
 
-  test "should update the heartbeat field to passing status when HeartbeatSucceded is received",
+  test "should update the heartbeat field to passing status when HeartbeatSucceeded is received",
        %{host_id: host_id} do
-    event = %HeartbeatSucceded{
+    event = %HeartbeatSucceeded{
       host_id: host_id
     }
 

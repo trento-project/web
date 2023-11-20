@@ -46,7 +46,7 @@ defmodule Trento.Factory do
 
   alias Trento.Hosts.Events.{
     HeartbeatFailed,
-    HeartbeatSucceded,
+    HeartbeatSucceeded,
     HostChecksHealthChanged,
     HostDetailsUpdated,
     HostHealthChanged,
@@ -704,7 +704,7 @@ defmodule Trento.Factory do
   end
 
   def heartbeat_succeded_factory do
-    HeartbeatSucceded.new!(%{
+    HeartbeatSucceeded.new!(%{
       host_id: Faker.UUID.v4()
     })
   end

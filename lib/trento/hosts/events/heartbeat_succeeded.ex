@@ -1,4 +1,4 @@
-defmodule Trento.Hosts.Events.HeartbeatSucceded do
+defmodule Trento.Hosts.Events.HeartbeatSucceeded do
   @moduledoc """
   Heartbeat succeeded event
   """

@@ -18,7 +18,7 @@ defmodule Trento.Hosts.HostTest do
 
   alias Trento.Hosts.Events.{
     HeartbeatFailed,
-    HeartbeatSucceded,
+    HeartbeatSucceeded,
     HostChecksHealthChanged,
     HostChecksSelected,
     HostDeregistered,
@@ -442,7 +442,7 @@ defmodule Trento.Hosts.HostTest do
           heartbeat: Health.passing()
         }),
         [
-          %HeartbeatSucceded{
+          %HeartbeatSucceeded{
             host_id: host_id
           },
           %HostHealthChanged{
@@ -476,7 +476,7 @@ defmodule Trento.Hosts.HostTest do
           heartbeat: Health.passing()
         }),
         [
-          %HeartbeatSucceded{
+          %HeartbeatSucceeded{
             host_id: host_id
           },
           %HostHealthChanged{
@@ -498,7 +498,7 @@ defmodule Trento.Hosts.HostTest do
 
       initial_events = [
         build(:host_registered_event, host_id: host_id),
-        %HeartbeatSucceded{
+        %HeartbeatSucceeded{
           host_id: host_id
         }
       ]

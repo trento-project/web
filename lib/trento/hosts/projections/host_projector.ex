@@ -19,7 +19,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
 
   alias Trento.Hosts.Events.{
     HeartbeatFailed,
-    HeartbeatSucceded,
+    HeartbeatSucceeded,
     HostChecksSelected,
     HostDeregistered,
     HostDetailsUpdated,
@@ -171,7 +171,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
   )
 
   project(
-    %HeartbeatSucceded{host_id: id},
+    %HeartbeatSucceeded{host_id: id},
     fn multi ->
       changeset =
         HostReadModel
@@ -335,7 +335,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
   end
 
   def after_update(
-        %HeartbeatSucceded{host_id: id},
+        %HeartbeatSucceeded{host_id: id},
         _,
         %{host: %HostReadModel{hostname: hostname}}
       ) do

@@ -73,7 +73,7 @@ defmodule Trento.Hosts.Host do
 
   alias Trento.Hosts.Events.{
     HeartbeatFailed,
-    HeartbeatSucceded,
+    HeartbeatSucceeded,
     HostChecksHealthChanged,
     HostChecksSelected,
     HostDeregistered,
@@ -312,7 +312,7 @@ defmodule Trento.Hosts.Host do
       when heartbeat != :passing do
     host
     |> Multi.new()
-    |> Multi.execute(&%HeartbeatSucceded{host_id: &1.host_id})
+    |> Multi.execute(&%HeartbeatSucceeded{host_id: &1.host_id})
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
@@ -561,7 +561,7 @@ defmodule Trento.Hosts.Host do
 
   def apply(
         %Host{} = host,
-        %HeartbeatSucceded{host_id: host_id}
+        %HeartbeatSucceeded{host_id: host_id}
       ) do
     %Host{
       host

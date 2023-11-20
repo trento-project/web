@@ -43,7 +43,7 @@ defmodule Trento.StreamRollUpEventHandler do
 
   @host_events [
     Trento.Hosts.Events.HeartbeatFailed,
-    Trento.Hosts.Events.HeartbeatSucceded,
+    Trento.Hosts.Events.HeartbeatSucceeded,
     Trento.Hosts.Events.HostDetailsUpdated,
     Trento.Hosts.Events.HostRegistered,
     Trento.Hosts.Events.ProviderUpdated,
