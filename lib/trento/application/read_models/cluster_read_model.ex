@@ -11,6 +11,8 @@ defmodule Trento.ClusterReadModel do
   require Trento.Domain.Enums.ClusterType, as: ClusterType
   require Trento.Domain.Enums.Health, as: Health
 
+  alias Trento.Tags.Tag
+
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
@@ -27,7 +29,7 @@ defmodule Trento.ClusterReadModel do
     field :hosts_number, :integer
     field :details, :map
 
-    has_many :tags, Trento.Tag, foreign_key: :resource_id
+    has_many :tags, Tag, foreign_key: :resource_id
 
     # Virtually enriched fields
     field :cib_last_written, :string, virtual: true

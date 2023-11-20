@@ -1,4 +1,4 @@
-defmodule Trento.Tag do
+defmodule Trento.Tags.Tag do
   @moduledoc false
 
   use Ecto.Schema

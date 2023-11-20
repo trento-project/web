@@ -3,6 +3,7 @@ defmodule TrentoWeb.V1.TagsController do
   use OpenApiSpex.ControllerSpecs
 
   alias Trento.Tags
+  alias Trento.Tags.Tag
 
   alias TrentoWeb.OpenApi.V1.Schema
 
@@ -44,7 +45,7 @@ defmodule TrentoWeb.V1.TagsController do
       ) do
     %{value: value} = Map.get(conn, :body_params)
 
-    with {:ok, %Trento.Tag{value: value}} <- Tags.add_tag(value, id, resource_type) do
+    with {:ok, %Tag{value: value}} <- Tags.add_tag(value, id, resource_type) do
       conn
       |> put_status(:created)
       |> json(%{value: value})

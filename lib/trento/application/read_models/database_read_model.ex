@@ -10,6 +10,7 @@ defmodule Trento.DatabaseReadModel do
   require Trento.Domain.Enums.Health, as: Health
 
   alias Trento.DatabaseInstanceReadModel
+  alias Trento.Tags.Tag
 
   @type t :: %__MODULE__{}
 
@@ -19,7 +20,7 @@ defmodule Trento.DatabaseReadModel do
     field :sid, :string
     field :health, Ecto.Enum, values: Health.values()
 
-    has_many :tags, Trento.Tag, foreign_key: :resource_id
+    has_many :tags, Tag, foreign_key: :resource_id
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,

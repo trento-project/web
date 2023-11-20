@@ -5,7 +5,7 @@ defmodule Trento.Tags do
 
   import Ecto.Query
 
-  alias Trento.Tag
+  alias Trento.Tags.Tag
 
   alias Trento.Repo
 
