@@ -36,6 +36,13 @@ export default {
         type: { summary: '(item) => item' },
       },
     },
+    withAllOption: {
+      description:
+        'Whether the dropdown should have an "All `optionsName`" option',
+      control: {
+        type: 'boolean',
+      },
+    },
     onChange: {
       description: 'A function to be called when the selected option changes',
       table: {
@@ -50,25 +57,12 @@ export default {
       },
     },
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value);
+
+    return <Select value={value} onChange={setValue} {...args} />;
+  },
 };
-
-const providerOptionRenderer = (provider) => (
-  <ProviderLabel provider={provider} />
-);
-
-export function ProviderSelection() {
-  const [value, setValue] = useState('azure');
-
-  return (
-    <Select
-      optionsName="providers"
-      options={PROVIDERS}
-      value={value}
-      optionRenderer={providerOptionRenderer}
-      onChange={setValue}
-    />
-  );
-}
 
 const emojiOptions = ['foo', 'bar', 'baz', 'qux'];
 
@@ -80,16 +74,25 @@ const emojiOptionsToLabel = {
 };
 const itemsOptionRenderer = (item) => <span>{emojiOptionsToLabel[item]}</span>;
 
-export function EmojiSelection() {
-  const [value, setValue] = useState('all');
+export const Default = {
+  args: {
+    optionsName: 'emojis',
+    options: emojiOptions,
+    value: 'bar',
+    optionRenderer: itemsOptionRenderer,
+  },
+};
 
-  return (
-    <Select
-      optionsName="emojis"
-      options={emojiOptions}
-      value={value}
-      optionRenderer={itemsOptionRenderer}
-      onChange={setValue}
-    />
-  );
-}
+const providerOptionRenderer = (provider) => (
+  <ProviderLabel provider={provider} />
+);
+
+export const WithAllOption = {
+  args: {
+    optionsName: 'providers',
+    options: PROVIDERS,
+    value: 'all',
+    withAllOption: true,
+    optionRenderer: providerOptionRenderer,
+  },
+};

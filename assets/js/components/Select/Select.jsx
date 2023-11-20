@@ -5,13 +5,17 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 import classNames from 'classnames';
 
-export const ALL_FILTER = 'all';
+export const OPTION_ALL = 'all';
 
-const addAllOption = (items) => [ALL_FILTER, ...items];
+const addAllOption = (items) => [OPTION_ALL, ...items];
 const defaultOnChange = () => {};
 const defaultOptionRenderer = (item) => item;
-const renderOption = (item, optionsName, optionRenderer) =>
-  item === ALL_FILTER ? `All ${optionsName}` : optionRenderer(item);
+const renderOption = (item, optionsName, withAllOption, optionRenderer) => {
+  if (withAllOption && item === OPTION_ALL) {
+    return `All ${optionsName}`;
+  }
+  return optionRenderer(item);
+};
 
 function Select({
   optionsName,
@@ -19,9 +23,10 @@ function Select({
   value,
   optionRenderer = defaultOptionRenderer,
   onChange = defaultOnChange,
+  withAllOption = false,
   className,
 }) {
-  const allAptions = addAllOption(options);
+  const allAptions = withAllOption ? addAllOption(options) : options;
   const dropdownSelector = `${optionsName.replace(
     /\s+/g,
     ''
@@ -33,7 +38,7 @@ function Select({
           <Listbox.Button
             className={`${dropdownSelector} relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm`}
           >
-            {renderOption(value, optionsName, optionRenderer)}
+            {renderOption(value, optionsName, withAllOption, optionRenderer)}
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <ChevronUpDownIcon
                 className="w-5 h-5 text-gray-400"
@@ -65,7 +70,12 @@ function Select({
                           isSelected ? 'font-medium' : 'font-normal'
                         }`}
                       >
-                        {renderOption(option, optionsName, optionRenderer)}
+                        {renderOption(
+                          option,
+                          optionsName,
+                          withAllOption,
+                          optionRenderer
+                        )}
                       </span>
                       {isSelected ? (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-green-600">

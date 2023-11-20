@@ -1,5 +1,5 @@
-import Select, { ALL_FILTER } from './Select';
+import Select, { OPTION_ALL } from './Select';
 
-export { ALL_FILTER };
+export { OPTION_ALL };
 
 export default Select;

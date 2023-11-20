@@ -4,7 +4,7 @@ import { groupBy } from 'lodash';
 import { PROVIDERS } from '@lib/model';
 import PageHeader from '@components/PageHeader';
 import Accordion from '@components/Accordion';
-import Select, { ALL_FILTER } from '@components/Select';
+import Select, { OPTION_ALL } from '@components/Select';
 import ProviderLabel from '@components/ProviderLabel';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
@@ -14,7 +14,7 @@ const providerOptionRenderer = (provider) => (
 );
 
 function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
-  const [selectedProvider, setProviderSelected] = useState(ALL_FILTER);
+  const [selectedProvider, setProviderSelected] = useState(OPTION_ALL);
 
   useEffect(() => {
     updateCatalog(selectedProvider);
@@ -28,6 +28,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
           optionsName="providers"
           className="ml-auto"
           options={PROVIDERS}
+          withAllOption
           optionRenderer={providerOptionRenderer}
           value={selectedProvider}
           onChange={setProviderSelected}
