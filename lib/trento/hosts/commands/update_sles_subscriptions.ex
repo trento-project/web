@@ -7,7 +7,7 @@ defmodule Trento.Hosts.Commands.UpdateSlesSubscriptions do
 
   use Trento.Command
 
-  alias Trento.Domain.SlesSubscription
+  alias Trento.Hosts.SlesSubscription
 
   defcommand do
     field :host_id, Ecto.UUID

@@ -1,4 +1,4 @@
-defmodule Trento.Domain.SaptuneSolution do
+defmodule Trento.Hosts.SaptuneSolution do
   @moduledoc """
   Represents a Saptune solution
   """

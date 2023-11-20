@@ -1,4 +1,4 @@
-defmodule Trento.Domain.SaptuneServiceStatus do
+defmodule Trento.Hosts.SaptuneServiceStatus do
   @moduledoc """
   Represents the status of a Saptune service.
   """

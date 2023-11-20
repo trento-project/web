@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Events.SlesSubscriptionsUpdated do
   Subscriptions updated event
   """
 
-  alias Trento.Domain.SlesSubscription
+  alias Trento.Hosts.SlesSubscription
 
   use Trento.Event
 

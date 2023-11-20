@@ -1,8 +1,8 @@
-defmodule Trento.Domain.SaptuneStatus do
+defmodule Trento.Hosts.SaptuneStatus do
   @moduledoc """
   Represents the status of Saptune.
   """
-  alias Trento.Domain.{
+  alias Trento.Hosts.{
     SaptuneNote,
     SaptuneServiceStatus,
     SaptuneSolution,

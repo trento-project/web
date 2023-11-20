@@ -2,7 +2,7 @@ defmodule Trento.Hosts.Commands.UpdateSaptuneStatus do
   @moduledoc """
   Update the saptune status on a specific host.
   """
-  alias Trento.Domain.SaptuneStatus
+  alias Trento.Hosts.SaptuneStatus
 
   @required_fields [:host_id, :saptune_installed]
 

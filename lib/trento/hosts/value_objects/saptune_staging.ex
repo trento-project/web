@@ -1,4 +1,4 @@
-defmodule Trento.Domain.SaptuneStaging do
+defmodule Trento.Hosts.SaptuneStaging do
   @moduledoc """
   Represents the Staging of Saptune.
   """

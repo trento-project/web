@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.SaptuneStatusUpdated do
 
   use Trento.Event
 
-  alias Trento.Domain.SaptuneStatus
+  alias Trento.Hosts.SaptuneStatus
 
   defevent superseeded_by: Trento.Hosts.Events.SaptuneStatusUpdated do
     field :host_id, Ecto.UUID

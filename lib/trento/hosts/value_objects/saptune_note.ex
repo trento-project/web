@@ -1,4 +1,4 @@
-defmodule Trento.Domain.SaptuneNote do
+defmodule Trento.Hosts.SaptuneNote do
   @moduledoc """
   Represents a SAP note.
   """

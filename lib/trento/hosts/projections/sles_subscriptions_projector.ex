@@ -12,7 +12,7 @@ defmodule Trento.Hosts.Projections.SlesSubscriptionsProjector do
 
   alias Trento.Hosts.Events.SlesSubscriptionsUpdated
 
-  alias Trento.SlesSubscriptionReadModel
+  alias Trento.Hosts.Projections.SlesSubscriptionReadModel
 
   project(
     %SlesSubscriptionsUpdated{host_id: host_id, subscriptions: subscriptions},

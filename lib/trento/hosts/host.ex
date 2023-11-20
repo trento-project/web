@@ -50,7 +50,10 @@ defmodule Trento.Hosts.Host do
     AwsProvider,
     AzureProvider,
     GcpProvider,
-    HealthService,
+    HealthService
+  }
+
+  alias Trento.Hosts.{
     SaptuneStatus,
     SlesSubscription
   }
