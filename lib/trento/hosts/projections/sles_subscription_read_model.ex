@@ -1,4 +1,4 @@
-defmodule Trento.SlesSubscriptionReadModel do
+defmodule Trento.Hosts.Projections.SlesSubscriptionReadModel do
   @moduledoc """
   SLES subscriptions read model
   """

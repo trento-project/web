@@ -1,4 +1,4 @@
-defmodule Trento.HostTelemetryReadModel do
+defmodule Trento.Hosts.Projections.HostTelemetryReadModel do
   @moduledoc """
   HostTelemetry read model
   """

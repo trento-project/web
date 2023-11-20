@@ -1,4 +1,4 @@
-defmodule Trento.TelemetryProjector do
+defmodule Trento.Hosts.Projections.TelemetryProjector do
   @moduledoc """
   Telemetry projector
   """
@@ -14,7 +14,7 @@ defmodule Trento.TelemetryProjector do
     ProviderUpdated
   }
 
-  alias Trento.HostTelemetryReadModel
+  alias Trento.Hosts.Projections.HostTelemetryReadModel
 
   project(
     %HostRegistered{

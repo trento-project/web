@@ -1,4 +1,4 @@
-defmodule Trento.SlesSubscriptionsProjector do
+defmodule Trento.Hosts.Projections.SlesSubscriptionsProjector do
   @moduledoc """
   Check result projector
   """
