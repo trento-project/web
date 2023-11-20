@@ -26,14 +26,14 @@ defmodule Trento.Router do
   alias Trento.Hosts.Commands.{
     CompleteHostChecksExecution,
     DeregisterHost,
-    UpdateHeartbeat,
-    UpdateProvider,
-    UpdateSaptuneStatus,
-    UpdateSlesSubscriptions,
     RegisterHost,
     RequestHostDeregistration,
     RollUpHost,
-    SelectHostChecks
+    SelectHostChecks,
+    UpdateHeartbeat,
+    UpdateProvider,
+    UpdateSaptuneStatus,
+    UpdateSlesSubscriptions
   }
 
   alias Trento.Hosts
