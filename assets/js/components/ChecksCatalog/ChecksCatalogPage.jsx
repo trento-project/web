@@ -1,15 +1,16 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { isValidProvider } from '@lib/model';
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
-import { checkProviderExists } from '@components/ProviderLabel/ProviderLabel';
 import ChecksCatalog from './ChecksCatalog';
 
 const buildUpdateCatalogAction = (provider) => {
-  const payload = checkProviderExists(provider)
-    ? { provider, target_type: 'cluster' }
-    : {};
+  const payload = {
+    ...(isValidProvider(provider) ? { provider, target_type: 'cluster' } : {}),
+  };
+
   return updateCatalog(payload);
 };
 

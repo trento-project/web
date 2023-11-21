@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { groupBy } from 'lodash';
 
-import { providerData } from '@components/ProviderLabel/ProviderLabel';
+import { providers } from '@lib/model';
 import PageHeader from '@components/PageHeader';
 import Accordion from '@components/Accordion';
+import Select, { OPTION_ALL } from '@components/Select';
+import ProviderLabel from '@components/ProviderLabel';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
-import ProviderSelection from './ProviderSelection';
 
-const ALL_FILTER = 'all';
-const ALL_FILTER_TEXT = 'All';
-const updatedProvider = {
-  [ALL_FILTER]: { label: ALL_FILTER_TEXT },
-  ...providerData,
-};
+const providerOptionRenderer = (provider) => (
+  <ProviderLabel provider={provider} />
+);
 
 function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
-  const [selectedProvider, setProviderSelected] = useState(ALL_FILTER);
+  const [selectedProvider, setProviderSelected] = useState(OPTION_ALL);
 
   useEffect(() => {
     updateCatalog(selectedProvider);
@@ -26,10 +24,12 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
     <>
       <div className="flex">
         <PageHeader className="font-bold">Checks catalog</PageHeader>
-        <ProviderSelection
+        <Select
+          optionsName="providers"
           className="ml-auto"
-          providers={Object.keys(updatedProvider)}
-          selected={selectedProvider}
+          options={[OPTION_ALL, ...providers]}
+          renderOption={providerOptionRenderer}
+          value={selectedProvider}
           onChange={setProviderSelected}
         />
       </div>
