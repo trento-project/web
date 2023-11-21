@@ -8,7 +8,7 @@ defmodule Trento.Domain.Events.HostRollUpRequested do
 
   alias Trento.Hosts.Host
 
-  defevent superseeded_by: Trento.Hosts.Events.HostRollUpRequested do
+  defevent superseded_by: Trento.Hosts.Events.HostRollUpRequested do
     field :host_id, Ecto.UUID
     embeds_one :snapshot, Host
   end

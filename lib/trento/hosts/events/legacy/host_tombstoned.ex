@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.HostTombstoned do
 
   use Trento.Event
 
-  defevent superseeded_by: Trento.Hosts.Events.HostTombstoned do
+  defevent superseded_by: Trento.Hosts.Events.HostTombstoned do
     field :host_id, Ecto.UUID
   end
 end

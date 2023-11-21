@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.HostDetailsUpdated do
 
   use Trento.Event
 
-  defevent version: 2, superseeded_by: Trento.Hosts.Events.HostDetailsUpdated do
+  defevent version: 2, superseded_by: Trento.Hosts.Events.HostDetailsUpdated do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}

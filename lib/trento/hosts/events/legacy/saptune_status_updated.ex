@@ -7,7 +7,7 @@ defmodule Trento.Domain.Events.SaptuneStatusUpdated do
 
   alias Trento.Hosts.ValueObjects.SaptuneStatus
 
-  defevent superseeded_by: Trento.Hosts.Events.SaptuneStatusUpdated do
+  defevent superseded_by: Trento.Hosts.Events.SaptuneStatusUpdated do
     field :host_id, Ecto.UUID
     embeds_one :status, SaptuneStatus
   end

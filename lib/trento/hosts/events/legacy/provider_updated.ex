@@ -15,7 +15,7 @@ defmodule Trento.Domain.Events.ProviderUpdated do
     GcpProvider
   }
 
-  defevent superseeded_by: Trento.Hosts.Events.ProviderUpdated do
+  defevent superseded_by: Trento.Hosts.Events.ProviderUpdated do
     field :host_id, Ecto.UUID
     field :provider, Ecto.Enum, values: Provider.values()
 

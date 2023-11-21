@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.HostDeregistered do
 
   use Trento.Event
 
-  defevent superseeded_by: Trento.Hosts.Events.HostDeregistered do
+  defevent superseded_by: Trento.Hosts.Events.HostDeregistered do
     field :host_id, Ecto.UUID
     field :deregistered_at, :utc_datetime_usec
   end

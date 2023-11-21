@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.HeartbeatFailed do
 
   use Trento.Event
 
-  defevent superseeded_by: Trento.Hosts.Events.HeartbeatFailed do
+  defevent superseded_by: Trento.Hosts.Events.HeartbeatFailed do
     field :host_id, Ecto.UUID
   end
 end

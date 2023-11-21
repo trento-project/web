@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.HostChecksSelected do
 
   use Trento.Event
 
-  defevent superseeded_by: Trento.Hosts.Events.HostChecksSelected do
+  defevent superseded_by: Trento.Hosts.Events.HostChecksSelected do
     field :host_id, Ecto.UUID
     field :checks, {:array, :string}
   end

@@ -7,7 +7,7 @@ defmodule Trento.Domain.Events.HostChecksHealthChanged do
 
   require Trento.Domain.Enums.Health, as: Health
 
-  defevent superseeded_by: Trento.Hosts.Events.HostChecksHealthChanged do
+  defevent superseded_by: Trento.Hosts.Events.HostChecksHealthChanged do
     field :host_id, Ecto.UUID
     field :checks_health, Ecto.Enum, values: Health.values()
   end
