@@ -16,8 +16,11 @@ defmodule Trento.Factory do
     HanaClusterDetails,
     HanaClusterNode,
     SapSystem,
+    SbdDevice
+  }
+
+  alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
-    SbdDevice,
     SlesSubscription
   }
 
@@ -34,19 +37,22 @@ defmodule Trento.Factory do
     DatabaseInstanceRegistered,
     DatabaseRegistered,
     DatabaseRestored,
-    HeartbeatFailed,
-    HeartbeatSucceded,
     HostAddedToCluster,
+    HostRemovedFromCluster,
+    SapSystemDeregistered,
+    SapSystemRegistered,
+    SapSystemTombstoned
+  }
+
+  alias Trento.Hosts.Events.{
+    HeartbeatFailed,
+    HeartbeatSucceeded,
     HostChecksHealthChanged,
     HostDetailsUpdated,
     HostHealthChanged,
     HostRegistered,
-    HostRemovedFromCluster,
     HostSaptuneHealthChanged,
     HostTombstoned,
-    SapSystemDeregistered,
-    SapSystemRegistered,
-    SapSystemTombstoned,
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated
   }
@@ -57,9 +63,10 @@ defmodule Trento.Factory do
     RegisterApplicationInstance,
     RegisterClusterHost,
     RegisterDatabaseInstance,
-    RegisterHost,
     RollUpSapSystem
   }
+
+  alias Trento.Hosts.Commands.RegisterHost
 
   alias Trento.{
     ApplicationInstanceReadModel,
@@ -67,13 +74,16 @@ defmodule Trento.Factory do
     ClusterReadModel,
     DatabaseInstanceReadModel,
     DatabaseReadModel,
-    Heartbeat,
+    SapSystemReadModel
+  }
+
+  alias Trento.Hosts.Projections.{
     HostReadModel,
     HostTelemetryReadModel,
-    SapSystemReadModel,
     SlesSubscriptionReadModel
   }
 
+  alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 
   alias Trento.Integration.Discovery.{
@@ -694,7 +704,7 @@ defmodule Trento.Factory do
   end
 
   def heartbeat_succeded_factory do
-    HeartbeatSucceded.new!(%{
+    HeartbeatSucceeded.new!(%{
       host_id: Faker.UUID.v4()
     })
   end

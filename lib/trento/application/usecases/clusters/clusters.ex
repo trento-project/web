@@ -10,9 +10,10 @@ defmodule Trento.Clusters do
 
   alias Trento.{
     ClusterEnrichmentData,
-    ClusterReadModel,
-    HostReadModel
+    ClusterReadModel
   }
+
+  alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.Domain.Commands.SelectChecks
 

@@ -7,9 +7,10 @@ defmodule Trento.StreamRollUpEventHandlerTest do
 
   alias Trento.Domain.Commands.{
     RollUpCluster,
-    RollUpHost,
     RollUpSapSystem
   }
+
+  alias Trento.Hosts.Commands.RollUpHost
 
   alias Trento.StreamRollUpEventHandler
 

@@ -5,6 +5,8 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
+  alias Trento.Hosts.Commands.RequestHostDeregistration
+
   import Trento.Factory
 
   import Mox
@@ -259,7 +261,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+        fn %RequestHostDeregistration{host_id: ^host_id} ->
           :ok
         end
       )
@@ -275,7 +277,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+        fn %RequestHostDeregistration{host_id: ^host_id} ->
           {:error, :host_alive}
         end
       )
@@ -292,7 +294,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       expect(
         Trento.Commanded.Mock,
         :dispatch,
-        fn %Trento.Domain.Commands.RequestHostDeregistration{host_id: ^host_id} ->
+        fn %RequestHostDeregistration{host_id: ^host_id} ->
           {:error, :host_not_registered}
         end
       )

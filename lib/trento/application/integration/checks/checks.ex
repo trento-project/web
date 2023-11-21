@@ -3,10 +3,8 @@ defmodule Trento.Integration.Checks do
   Checks Engine service integration
   """
 
-  alias Trento.Domain.Commands.{
-    CompleteChecksExecution,
-    CompleteHostChecksExecution
-  }
+  alias Trento.Domain.Commands.CompleteChecksExecution
+  alias Trento.Hosts.Commands.CompleteHostChecksExecution
 
   alias Trento.Domain.Enums.Health
   alias Trento.Infrastructure.Messaging

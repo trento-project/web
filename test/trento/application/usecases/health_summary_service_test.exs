@@ -12,9 +12,10 @@ defmodule Trento.HealthSummaryServiceTest do
 
   alias Trento.{
     ClusterReadModel,
-    HostReadModel,
     SapSystemReadModel
   }
+
+  alias Trento.Hosts.Projections.HostReadModel
 
   describe "SAP Systems Health Summary" do
     test "should return an empty summary" do

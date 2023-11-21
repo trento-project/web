@@ -5,10 +5,8 @@ defmodule Trento.Integration.ChecksTest do
 
   import Mox
 
-  alias Trento.Domain.Commands.{
-    CompleteChecksExecution,
-    CompleteHostChecksExecution
-  }
+  alias Trento.Domain.Commands.CompleteChecksExecution
+  alias Trento.Hosts.Commands.CompleteHostChecksExecution
 
   alias Trento.Integration.Checks
 

@@ -3,7 +3,7 @@ defmodule Trento.Integration.Telemetry.Gen do
   Behaviour of a telemetry adapter.
   """
 
-  alias Trento.HostTelemetryReadModel
+  alias Trento.Hosts.Projections.HostTelemetryReadModel
 
   @type installation_id :: String.t()
   @type installation_flavor :: String.t()

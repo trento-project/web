@@ -4,7 +4,7 @@ defmodule Trento.EnrichRequestHostDeregistrationTest do
 
   import Trento.Factory
 
-  alias Trento.Domain.Commands.RequestHostDeregistration
+  alias Trento.Hosts.Commands.RequestHostDeregistration
   alias Trento.Support.Middleware.Enrichable
 
   @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]

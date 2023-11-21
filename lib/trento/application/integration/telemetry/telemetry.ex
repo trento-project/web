@@ -5,7 +5,7 @@ defmodule Trento.Integration.Telemetry do
 
   alias Trento.Repo
 
-  alias Trento.HostTelemetryReadModel
+  alias Trento.Hosts.Projections.HostTelemetryReadModel
   alias Trento.Installation
 
   require Logger

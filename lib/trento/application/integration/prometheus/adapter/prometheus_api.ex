@@ -3,7 +3,7 @@ defmodule Trento.Integration.Prometheus.PrometheusApi do
   Prometheus API adapter
   """
 
-  alias Trento.HostReadModel
+  alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.Repo
 

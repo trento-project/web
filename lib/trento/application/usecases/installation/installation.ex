@@ -7,8 +7,8 @@ defmodule Trento.Installation do
 
   alias Trento.Repo
 
+  alias Trento.Hosts.Projections.SlesSubscriptionReadModel
   alias Trento.Settings
-  alias Trento.SlesSubscriptionReadModel
 
   require Logger
 
