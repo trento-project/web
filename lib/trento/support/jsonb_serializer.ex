@@ -33,6 +33,7 @@ defmodule Trento.JsonbSerializer do
 
       type ->
         module = String.to_existing_atom(type)
+        Code.ensure_loaded?(module)
 
         if Kernel.function_exported?(module, :upcast, 2) do
           %IntermediateEvent{module: module, term: term}
