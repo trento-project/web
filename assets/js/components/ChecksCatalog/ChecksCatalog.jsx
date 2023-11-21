@@ -27,9 +27,8 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
         <Select
           optionsName="providers"
           className="ml-auto"
-          options={providers}
-          withAllOption
-          optionRenderer={providerOptionRenderer}
+          options={[OPTION_ALL, ...providers]}
+          renderOption={providerOptionRenderer}
           value={selectedProvider}
           onChange={setProviderSelected}
         />

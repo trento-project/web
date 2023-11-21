@@ -7,26 +7,23 @@ import classNames from 'classnames';
 
 export const OPTION_ALL = 'all';
 
-const addAllOption = (items) => [OPTION_ALL, ...items];
 const defaultOnChange = () => {};
-const defaultOptionRenderer = (item) => item;
-const renderOption = (item, optionsName, withAllOption, optionRenderer) => {
-  if (withAllOption && item === OPTION_ALL) {
+const defaultRenderOption = (item) => item;
+const doRenderOption = (option, optionsName, renderOption) => {
+  if (option === OPTION_ALL) {
     return `All ${optionsName}`;
   }
-  return optionRenderer(item);
+  return renderOption(option);
 };
 
 function Select({
   optionsName,
   options,
   value,
-  optionRenderer = defaultOptionRenderer,
+  renderOption = defaultRenderOption,
   onChange = defaultOnChange,
-  withAllOption = false,
   className,
 }) {
-  const allAptions = withAllOption ? addAllOption(options) : options;
   const dropdownSelector = `${optionsName.replace(
     /\s+/g,
     ''
@@ -38,7 +35,7 @@ function Select({
           <Listbox.Button
             className={`${dropdownSelector} relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm`}
           >
-            {renderOption(value, optionsName, withAllOption, optionRenderer)}
+            {doRenderOption(value, optionsName, renderOption)}
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <ChevronUpDownIcon
                 className="w-5 h-5 text-gray-400"
@@ -53,7 +50,7 @@ function Select({
             leaveTo="opacity-0"
           >
             <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[1]">
-              {allAptions.map((option) => (
+              {options.map((option) => (
                 <Listbox.Option
                   key={option}
                   className={({ active }) =>
@@ -70,12 +67,7 @@ function Select({
                           isSelected ? 'font-medium' : 'font-normal'
                         }`}
                       >
-                        {renderOption(
-                          option,
-                          optionsName,
-                          withAllOption,
-                          optionRenderer
-                        )}
+                        {doRenderOption(option, optionsName, renderOption)}
                       </span>
                       {isSelected ? (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-green-600">

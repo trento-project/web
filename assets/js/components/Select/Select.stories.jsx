@@ -30,17 +30,10 @@ export default {
         type: 'text',
       },
     },
-    optionRenderer: {
+    renderOption: {
       description: 'A function to render each option in the dropdown',
       table: {
         type: { summary: '(item) => item' },
-      },
-    },
-    withAllOption: {
-      description:
-        'Whether the dropdown should have an "All `optionsName`" option',
-      control: {
-        type: 'boolean',
       },
     },
     onChange: {
@@ -79,7 +72,7 @@ export const Default = {
     optionsName: 'emojis',
     options: emojiOptions,
     value: 'bar',
-    optionRenderer: itemsOptionRenderer,
+    renderOption: itemsOptionRenderer,
   },
 };
 
@@ -90,9 +83,8 @@ const providerOptionRenderer = (provider) => (
 export const WithAllOption = {
   args: {
     optionsName: 'providers',
-    options: providers,
+    options: ['all', ...providers],
     value: 'all',
-    withAllOption: true,
-    optionRenderer: providerOptionRenderer,
+    renderOption: providerOptionRenderer,
   },
 };
