@@ -18,7 +18,7 @@ export const KVM_PROVIDER = 'kvm';
 export const VMWARE_PROVIDER = 'vmware';
 export const UNKNOWN_PROVIDER = 'unknown';
 
-export const PROVIDERS = [
+export const providers = [
   AWS_PROVIDER,
   AZURE_PROVIDER,
   GCP_PROVIDER,
@@ -26,6 +26,6 @@ export const PROVIDERS = [
   KVM_PROVIDER,
   VMWARE_PROVIDER,
 ];
-export const isValidProvider = (provider) => PROVIDERS.includes(provider);
+export const isValidProvider = (provider) => providers.includes(provider);
 
 export const CLUSTER_TYPES = ['hana_scale_up', 'hana_scale_out', 'ascs_ers'];

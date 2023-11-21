@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { groupBy } from 'lodash';
 
-import { PROVIDERS } from '@lib/model';
+import { providers } from '@lib/model';
 import PageHeader from '@components/PageHeader';
 import Accordion from '@components/Accordion';
 import Select, { OPTION_ALL } from '@components/Select';
@@ -27,7 +27,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
         <Select
           optionsName="providers"
           className="ml-auto"
-          options={PROVIDERS}
+          options={providers}
           withAllOption
           optionRenderer={providerOptionRenderer}
           value={selectedProvider}
