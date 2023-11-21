@@ -20,7 +20,7 @@ defmodule Trento.Integration.Discovery.HostPolicyTest do
     GcpProvider
   }
 
-  alias Trento.Hosts.{
+  alias Trento.Hosts.ValueObjects.{
     SaptuneNote,
     SaptuneServiceStatus,
     SaptuneSolution,

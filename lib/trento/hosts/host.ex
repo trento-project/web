@@ -53,7 +53,7 @@ defmodule Trento.Hosts.Host do
     HealthService
   }
 
-  alias Trento.Hosts.{
+  alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
   }

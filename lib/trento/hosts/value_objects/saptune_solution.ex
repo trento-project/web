@@ -1,4 +1,4 @@
-defmodule Trento.Hosts.SaptuneSolution do
+defmodule Trento.Hosts.ValueObjects.SaptuneSolution do
   @moduledoc """
   Represents a Saptune solution
   """

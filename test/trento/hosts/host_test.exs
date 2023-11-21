@@ -42,8 +42,9 @@ defmodule Trento.Hosts.HostTest do
     GcpProvider
   }
 
-  alias Trento.Hosts.{
-    Host,
+  alias Trento.Hosts.Host
+
+  alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
   }

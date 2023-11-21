@@ -1,4 +1,4 @@
-defmodule Trento.Hosts.SlesSubscription do
+defmodule Trento.Hosts.ValueObjects.SlesSubscription do
   @moduledoc """
   SLES subscriptions value object
   """

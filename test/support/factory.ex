@@ -19,7 +19,7 @@ defmodule Trento.Factory do
     SbdDevice
   }
 
-  alias Trento.Hosts.{
+  alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
   }
