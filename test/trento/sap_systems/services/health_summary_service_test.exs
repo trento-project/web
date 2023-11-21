@@ -1,4 +1,4 @@
-defmodule Trento.HealthSummaryServiceTest do
+defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
   @moduledoc false
 
   use ExUnit.Case
@@ -6,16 +6,13 @@ defmodule Trento.HealthSummaryServiceTest do
 
   import Trento.Factory
 
-  alias Trento.SapSystems.HealthSummaryService
+  alias Trento.SapSystems.Services.HealthSummaryService
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-  alias Trento.{
-    ClusterReadModel,
-    SapSystemReadModel
-  }
-
+  alias Trento.ClusterReadModel
   alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   describe "SAP Systems Health Summary" do
     test "should return an empty summary" do

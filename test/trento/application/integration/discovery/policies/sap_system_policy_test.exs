@@ -10,7 +10,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicyTest do
 
   alias Trento.Integration.Discovery.SapSystemPolicy
 
-  alias Trento.Domain.Commands.{
+  alias Trento.SapSystems.Commands.{
     MarkApplicationInstanceAbsent,
     MarkDatabaseInstanceAbsent,
     RegisterApplicationInstance,

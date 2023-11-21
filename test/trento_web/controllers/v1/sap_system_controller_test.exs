@@ -9,7 +9,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
-  alias Trento.Domain.Commands.{
+  alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance
   }

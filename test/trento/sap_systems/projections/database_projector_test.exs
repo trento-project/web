@@ -1,4 +1,4 @@
-defmodule Trento.DatabaseProjectorTest do
+defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
@@ -7,13 +7,13 @@ defmodule Trento.DatabaseProjectorTest do
 
   import Trento.Factory
 
-  alias Trento.{
+  alias Trento.SapSystems.Projections.{
     DatabaseInstanceReadModel,
     DatabaseProjector,
     DatabaseReadModel
   }
 
-  alias Trento.Domain.Events.{
+  alias Trento.SapSystems.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,

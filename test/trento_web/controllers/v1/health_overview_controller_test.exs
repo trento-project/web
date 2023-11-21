@@ -9,12 +9,9 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-  alias Trento.{
-    ClusterReadModel,
-    SapSystemReadModel
-  }
-
+  alias Trento.ClusterReadModel
   alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   test "should return the expected overview", %{conn: conn} do
     %ClusterReadModel{id: cluster_id} =

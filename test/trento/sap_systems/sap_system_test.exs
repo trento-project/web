@@ -1,11 +1,11 @@
-defmodule Trento.SapSystemTest do
-  use Trento.AggregateCase, aggregate: Trento.Domain.SapSystem, async: true
+defmodule Trento.SapSystems.SapSystemTest do
+  use Trento.AggregateCase, aggregate: Trento.SapSystems.SapSystem, async: true
 
   import Trento.Factory
 
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
 
-  alias Trento.Domain.Commands.{
+  alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
     MarkApplicationInstanceAbsent,
@@ -15,7 +15,7 @@ defmodule Trento.SapSystemTest do
     RollUpSapSystem
   }
 
-  alias Trento.Domain.Events.{
+  alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
     ApplicationInstanceMarkedAbsent,
@@ -42,12 +42,11 @@ defmodule Trento.SapSystemTest do
     SapSystemUpdated
   }
 
-  alias Trento.Domain.SapSystem
-
-  alias Trento.Domain.SapSystem.{
+  alias Trento.SapSystems.{
     Application,
     Database,
-    Instance
+    Instance,
+    SapSystem
   }
 
   describe "SAP System registration" do
@@ -118,11 +117,11 @@ defmodule Trento.SapSystemTest do
           # The SAP System aggregate is not complete yet.
           # The sid will be set when the first application instance is registered.
           sid: nil,
-          database: %SapSystem.Database{
+          database: %Database{
             sid: sid,
             health: :passing,
             instances: [
-              %SapSystem.Instance{
+              %Instance{
                 sid: sid,
                 system_replication: nil,
                 system_replication_status: nil,
@@ -194,11 +193,11 @@ defmodule Trento.SapSystemTest do
           # The SAP System aggregate is not complete yet.
           # The sid will be set when the first application instance is registered.
           sid: nil,
-          database: %SapSystem.Database{
+          database: %Database{
             sid: sid,
             health: :passing,
             instances: [
-              %SapSystem.Instance{
+              %Instance{
                 sid: sid,
                 system_replication: "Primary",
                 system_replication_status: "ACTIVE",
@@ -260,9 +259,9 @@ defmodule Trento.SapSystemTest do
         ),
         fn state ->
           assert %SapSystem{
-                   database: %SapSystem.Database{
+                   database: %Database{
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: ^instance_number,
                          features: ^features,
@@ -424,10 +423,10 @@ defmodule Trento.SapSystemTest do
           assert %SapSystem{
                    sid: ^sid,
                    ensa_version: ^ensa_version,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: "10",
                          features: "ABAP",
@@ -435,7 +434,7 @@ defmodule Trento.SapSystemTest do
                          health: :passing,
                          absent_at: nil
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          features: "MESSAGESERVER"
                        }
                      ]
@@ -524,9 +523,9 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   application: %SapSystem.Application{
+                   application: %Application{
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: ^instance_number,
                          host_id: ^new_host_id
@@ -698,9 +697,9 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   application: %SapSystem.Application{
+                   application: %Application{
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: ^instance_number,
                          host_id: ^new_host_id
@@ -783,9 +782,9 @@ defmodule Trento.SapSystemTest do
         [],
         fn state ->
           assert %SapSystem{
-                   application: %SapSystem.Application{
+                   application: %Application{
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: ^instance_number,
                          host_id: ^old_host_id
@@ -856,7 +855,7 @@ defmodule Trento.SapSystemTest do
           assert %SapSystem{
                    sid: ^sid,
                    ensa_version: ^ensa_version,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid
                    }
                  } = state
@@ -917,7 +916,7 @@ defmodule Trento.SapSystemTest do
           assert %SapSystem{
                    sid: ^sid,
                    ensa_version: ^ensa_version,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid
                    }
                  } = state
@@ -978,7 +977,7 @@ defmodule Trento.SapSystemTest do
           assert %SapSystem{
                    sid: ^sid,
                    ensa_version: ^ensa_version,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid
                    }
                  } = state
@@ -1060,17 +1059,17 @@ defmodule Trento.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: ^sid,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: "00",
                          features: "MESSAGESERVER",
                          host_id: ^host_id,
                          health: :passing
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          features: "ABAP"
                        }
                      ]
@@ -1140,10 +1139,10 @@ defmodule Trento.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: nil,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: "00",
                          features: "ABAP",
@@ -1217,10 +1216,10 @@ defmodule Trento.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    sid: nil,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: "00",
                          features: "MESSAGESERVER",
@@ -1275,10 +1274,10 @@ defmodule Trento.SapSystemTest do
         ),
         fn state ->
           assert %SapSystem{
-                   application: %SapSystem.Application{
+                   application: %Application{
                      sid: ^sid,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          sid: ^sid,
                          instance_number: ^new_instance_number,
                          features: ^new_instance_features,
@@ -1368,13 +1367,13 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           %SapSystem{
-            database: %SapSystem.Database{
+            database: %Database{
               health: :critical,
               instances: [
-                %SapSystem.Instance{
+                %Instance{
                   health: :critical
                 },
-                %SapSystem.Instance{
+                %Instance{
                   health: :passing
                 }
               ]
@@ -1428,10 +1427,10 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   database: %SapSystem.Database{
+                   database: %Database{
                      health: :critical,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          instance_number: ^instance_number,
                          host_id: ^host_id,
                          health: :critical
@@ -1500,13 +1499,13 @@ defmodule Trento.SapSystemTest do
         ],
         fn state ->
           assert %SapSystem{
-                   database: %SapSystem.Database{
+                   database: %Database{
                      health: :warning,
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          health: :warning
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          health: :warning
                        }
                      ]
@@ -1582,12 +1581,12 @@ defmodule Trento.SapSystemTest do
           assert %SapSystem{
                    health: :critical,
                    ensa_version: ^ensa_version,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          health: :critical
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          health: :passing
                        }
                      ]
@@ -1641,9 +1640,9 @@ defmodule Trento.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    health: :critical,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          health: :critical
                        }
                      ]
@@ -1721,12 +1720,12 @@ defmodule Trento.SapSystemTest do
         fn state ->
           assert %SapSystem{
                    health: :warning,
-                   application: %SapSystem.Application{
+                   application: %Application{
                      instances: [
-                       %SapSystem.Instance{
+                       %Instance{
                          health: :warning
                        },
-                       %SapSystem.Instance{
+                       %Instance{
                          health: :warning
                        }
                      ]
@@ -1829,10 +1828,10 @@ defmodule Trento.SapSystemTest do
             sid: sid,
             health: :passing,
             ensa_version: ensa_version,
-            application: %SapSystem.Application{
+            application: %Application{
               sid: sid,
               instances: [
-                %SapSystem.Instance{
+                %Instance{
                   sid: sid,
                   instance_number: application_instance_registered_event.instance_number,
                   health: application_instance_registered_event.health,
@@ -1843,11 +1842,11 @@ defmodule Trento.SapSystemTest do
                 }
               ]
             },
-            database: %SapSystem.Database{
+            database: %Database{
               sid: sid,
               health: :passing,
               instances: [
-                %SapSystem.Instance{
+                %Instance{
                   sid: sid,
                   instance_number: database_instance_registered_event.instance_number,
                   health: database_instance_registered_event.health,

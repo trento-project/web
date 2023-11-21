@@ -1,4 +1,4 @@
-defmodule Trento.SapSystemProjectorTest do
+defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   use ExUnit.Case
   use Trento.DataCase
 
@@ -9,13 +9,13 @@ defmodule Trento.SapSystemProjectorTest do
 
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
 
-  alias Trento.{
+  alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
     SapSystemProjector,
     SapSystemReadModel
   }
 
-  alias Trento.Domain.Events.{
+  alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceHealthChanged,
     ApplicationInstanceMarkedAbsent,

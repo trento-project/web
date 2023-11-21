@@ -7,12 +7,12 @@ defmodule Trento.SapSystemsTest do
 
   alias Trento.SapSystems
 
-  alias Trento.{
+  alias Trento.SapSystems.Projections.{
     DatabaseReadModel,
     SapSystemReadModel
   }
 
-  alias Trento.Domain.Commands.{
+  alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance
   }

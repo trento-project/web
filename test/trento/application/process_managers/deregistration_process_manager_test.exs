@@ -4,14 +4,9 @@ defmodule Trento.DeregistrationProcessManagerTest do
   import Trento.Factory
 
   alias Trento.Domain.Events.{
-    ApplicationInstanceDeregistered,
-    ApplicationInstanceRegistered,
     ClusterRolledUp,
-    DatabaseInstanceDeregistered,
-    DatabaseInstanceRegistered,
     HostAddedToCluster,
-    HostRemovedFromCluster,
-    SapSystemRolledUp
+    HostRemovedFromCluster
   }
 
   alias Trento.Hosts.Events.{
@@ -21,22 +16,34 @@ defmodule Trento.DeregistrationProcessManagerTest do
     HostRolledUp
   }
 
+  alias Trento.SapSystems.Events.{
+    ApplicationInstanceDeregistered,
+    ApplicationInstanceRegistered,
+    DatabaseInstanceDeregistered,
+    DatabaseInstanceRegistered,
+    SapSystemRolledUp
+  }
+
   alias Trento.DeregistrationProcessManager
 
   alias Trento.DeregistrationProcessManager.Instance
 
-  alias Trento.Domain.{
-    Cluster,
+  alias Trento.Domain.Cluster
+  alias Trento.SapSystems.Instance, as: SapSystemInstance
+
+  alias Trento.SapSystems.{
+    Application,
+    Database,
     SapSystem
   }
 
-  alias Trento.Domain.Commands.{
+  alias Trento.Domain.Commands.DeregisterClusterHost
+  alias Trento.Hosts.Commands.DeregisterHost
+
+  alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
-    DeregisterClusterHost,
     DeregisterDatabaseInstance
   }
-
-  alias Trento.Hosts.Commands.DeregisterHost
 
   describe "events interested" do
     test "should start the process manager when HostRegistered event arrives" do
@@ -97,10 +104,10 @@ defmodule Trento.DeregistrationProcessManagerTest do
       assert {:start, [^db_host_id_1, ^db_host_id_2, ^app_host_id_1, ^app_host_id_2]} =
                DeregistrationProcessManager.interested?(%SapSystemRolledUp{
                  snapshot: %SapSystem{
-                   database: %SapSystem.Database{
+                   database: %Database{
                      instances: database_instances
                    },
-                   application: %SapSystem.Application{
+                   application: %Application{
                      instances: application_instances
                    }
                  }
@@ -273,19 +280,19 @@ defmodule Trento.DeregistrationProcessManagerTest do
         %SapSystemRolledUp{
           sap_system_id: sap_system_id,
           snapshot: %SapSystem{
-            database: %SapSystem.Database{
+            database: %Database{
               instances: [
-                %SapSystem.Instance{
+                %SapSystemInstance{
                   instance_number: database_instance_number
                 },
-                %SapSystem.Instance{
+                %SapSystemInstance{
                   instance_number: instance_number
                 }
               ]
             },
-            application: %SapSystem.Application{
+            application: %Application{
               instances: [
-                %SapSystem.Instance{
+                %SapSystemInstance{
                   instance_number: application_instance_number
                 }
               ]

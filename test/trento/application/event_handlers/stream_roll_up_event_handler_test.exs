@@ -5,12 +5,9 @@ defmodule Trento.StreamRollUpEventHandlerTest do
   import Mox
   import Trento.Factory
 
-  alias Trento.Domain.Commands.{
-    RollUpCluster,
-    RollUpSapSystem
-  }
-
+  alias Trento.Domain.Commands.RollUpCluster
   alias Trento.Hosts.Commands.RollUpHost
+  alias Trento.SapSystems.Commands.RollUpSapSystem
 
   alias Trento.StreamRollUpEventHandler
 
