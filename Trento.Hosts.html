@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-1A9D31FD.js"></script>
+    <script src="dist/sidebar_items-15DB3F85.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,7 +101,7 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -212,7 +212,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">deregister_host(host_id, date_service \\ DateService)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L114" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L116" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -241,7 +241,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_all_hosts()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L29" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L31" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -253,7 +253,7 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_all_hosts() :: [<a href="Trento.HostReadModel.html#t:t/0">Trento.HostReadModel.t</a>()]</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_all_hosts() :: [<a href="Trento.Hosts.Projections.HostReadModel.html#t:t/0">Trento.Hosts.Projections.HostReadModel.t</a>()]</pre>
 
       </div>
 
@@ -269,7 +269,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_all_sles_subscriptions()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L48" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L50" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -297,7 +297,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_host_by_id(id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L39" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L41" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -309,7 +309,8 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_host_by_id(<a href="https://hexdocs.pm/ecto/3.9.4/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>()) :: <a href="Trento.HostReadModel.html#t:t/0">Trento.HostReadModel.t</a>() | nil</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_host_by_id(<a href="https://hexdocs.pm/ecto/3.9.4/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>()) ::
+  <a href="Trento.Hosts.Projections.HostReadModel.html#t:t/0">Trento.Hosts.Projections.HostReadModel.t</a>() | nil</pre>
 
       </div>
 
@@ -325,7 +326,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">request_checks_execution(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L93" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L95" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -353,7 +354,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">request_hosts_checks_execution()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L63" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L65" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -375,7 +376,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">select_checks(host_id, checks)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/hosts/hosts.ex#L84" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts.ex#L86" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
