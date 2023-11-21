@@ -5,7 +5,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
 
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
 
-  alias Trento.Domain.Commands.{
+  alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
     MarkApplicationInstanceAbsent,
@@ -14,7 +14,7 @@ defmodule Trento.Integration.Discovery.SapSystemPolicy do
     RegisterDatabaseInstance
   }
 
-  alias Trento.{ApplicationInstanceReadModel, DatabaseInstanceReadModel}
+  alias Trento.SapSystems.Projections.{ApplicationInstanceReadModel, DatabaseInstanceReadModel}
 
   alias Trento.Integration.Discovery.SapSystemDiscoveryPayload
 

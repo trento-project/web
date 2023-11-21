@@ -1,9 +1,9 @@
 defimpl Trento.Support.Middleware.Enrichable,
-  for: Trento.Domain.Commands.RegisterApplicationInstance do
-  alias Trento.Domain.Commands.RegisterApplicationInstance
+  for: Trento.SapSystems.Commands.RegisterApplicationInstance do
+  alias Trento.SapSystems.Commands.RegisterApplicationInstance
 
-  alias Trento.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.SapSystems.Projections.DatabaseInstanceReadModel
 
   alias Trento.Repo
   import Ecto.Query

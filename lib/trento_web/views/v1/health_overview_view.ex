@@ -1,7 +1,7 @@
 defmodule TrentoWeb.V1.HealthOverviewView do
   use TrentoWeb, :view
 
-  alias Trento.{
+  alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
     DatabaseInstanceReadModel
   }

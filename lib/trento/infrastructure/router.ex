@@ -3,23 +3,13 @@ defmodule Trento.Router do
 
   alias Trento.Support.Middleware.Enrich
 
-  alias Trento.Domain.{
-    Cluster,
-    SapSystem
-  }
+  alias Trento.Domain.Cluster
 
   alias Trento.Domain.Commands.{
     CompleteChecksExecution,
-    DeregisterApplicationInstance,
     DeregisterClusterHost,
-    DeregisterDatabaseInstance,
-    MarkApplicationInstanceAbsent,
-    MarkDatabaseInstanceAbsent,
-    RegisterApplicationInstance,
     RegisterClusterHost,
-    RegisterDatabaseInstance,
     RollUpCluster,
-    RollUpSapSystem,
     SelectChecks
   }
 
@@ -36,7 +26,18 @@ defmodule Trento.Router do
     UpdateSlesSubscriptions
   }
 
+  alias Trento.SapSystems.Commands.{
+    DeregisterApplicationInstance,
+    DeregisterDatabaseInstance,
+    MarkApplicationInstanceAbsent,
+    MarkDatabaseInstanceAbsent,
+    RegisterApplicationInstance,
+    RegisterDatabaseInstance,
+    RollUpSapSystem
+  }
+
   alias Trento.Hosts
+  alias Trento.SapSystems
 
   middleware Enrich
 
@@ -70,7 +71,7 @@ defmodule Trento.Router do
            to: Cluster,
            lifespan: Cluster.Lifespan
 
-  identify SapSystem, by: :sap_system_id
+  identify SapSystems.SapSystem, by: :sap_system_id
 
   dispatch [
              DeregisterApplicationInstance,
@@ -81,6 +82,6 @@ defmodule Trento.Router do
              RegisterDatabaseInstance,
              RollUpSapSystem
            ],
-           to: SapSystem,
-           lifespan: SapSystem.Lifespan
+           to: SapSystems.SapSystem,
+           lifespan: SapSystems.Lifespan
 end

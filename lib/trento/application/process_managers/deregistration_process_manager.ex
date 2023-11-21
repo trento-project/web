@@ -38,14 +38,9 @@ defmodule Trento.DeregistrationProcessManager do
   alias Trento.DeregistrationProcessManager
 
   alias Trento.Domain.Events.{
-    ApplicationInstanceDeregistered,
-    ApplicationInstanceRegistered,
     ClusterRolledUp,
-    DatabaseInstanceDeregistered,
-    DatabaseInstanceRegistered,
     HostAddedToCluster,
-    HostRemovedFromCluster,
-    SapSystemRolledUp
+    HostRemovedFromCluster
   }
 
   alias Trento.Hosts.Events.{
@@ -55,15 +50,25 @@ defmodule Trento.DeregistrationProcessManager do
     HostRolledUp
   }
 
-  alias Trento.Domain.Commands.{
-    DeregisterApplicationInstance,
-    DeregisterClusterHost,
-    DeregisterDatabaseInstance
+  alias Trento.SapSystems.Events.{
+    ApplicationInstanceDeregistered,
+    ApplicationInstanceRegistered,
+    DatabaseInstanceDeregistered,
+    DatabaseInstanceRegistered,
+    SapSystemRolledUp
   }
+
+  alias Trento.Domain.Commands.DeregisterClusterHost
 
   alias Trento.Hosts.Commands.DeregisterHost
 
-  alias Trento.Domain.SapSystem
+  alias Trento.SapSystems.Commands.{
+    DeregisterApplicationInstance,
+    DeregisterDatabaseInstance
+  }
+
+  alias Trento.SapSystems
+  alias Trento.SapSystems.SapSystem
 
   @doc """
     The Process Manager is started by the following events (provided the instance hasn't been started already):
@@ -92,14 +97,14 @@ defmodule Trento.DeregistrationProcessManager do
 
   def interested?(%SapSystemRolledUp{
         snapshot: %SapSystem{
-          database: %SapSystem.Database{instances: db_instances},
-          application: %SapSystem.Application{instances: app_instances}
+          database: %SapSystems.Database{instances: db_instances},
+          application: %SapSystems.Application{instances: app_instances}
         }
       }),
       do:
         {:start,
          (db_instances ++ app_instances)
-         |> Enum.map(fn %SapSystem.Instance{host_id: host_id} -> host_id end)
+         |> Enum.map(fn %SapSystems.Instance{host_id: host_id} -> host_id end)
          |> Enum.uniq()}
 
   # Continue the Process Manager
@@ -231,14 +236,14 @@ defmodule Trento.DeregistrationProcessManager do
         %SapSystemRolledUp{
           sap_system_id: snapshot_sap_system_id,
           snapshot: %SapSystem{
-            database: %SapSystem.Database{instances: snapshot_database_instances},
-            application: %SapSystem.Application{instances: snapshot_application_instances}
+            database: %SapSystems.Database{instances: snapshot_database_instances},
+            application: %SapSystems.Application{instances: snapshot_application_instances}
           }
         }
       ) do
     new_database_instances =
       snapshot_database_instances
-      |> Enum.map(fn %SapSystem.Instance{
+      |> Enum.map(fn %SapSystems.Instance{
                        instance_number: instance_number
                      } ->
         %Instance{sap_system_id: snapshot_sap_system_id, instance_number: instance_number}
@@ -248,7 +253,7 @@ defmodule Trento.DeregistrationProcessManager do
 
     new_application_instances =
       snapshot_application_instances
-      |> Enum.map(fn %SapSystem.Instance{
+      |> Enum.map(fn %SapSystems.Instance{
                        instance_number: instance_number
                      } ->
         %Instance{sap_system_id: snapshot_sap_system_id, instance_number: instance_number}
