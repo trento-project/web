@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Discovery.ClusterPolicy do
+defmodule Trento.Infrastructure.Discovery.ClusterPolicy do
   @moduledoc """
   This module contains functions to transform cluster related integration events into commands.
   """
@@ -13,7 +13,7 @@ defmodule Trento.Integration.Discovery.ClusterPolicy do
     RegisterClusterHost
   }
 
-  alias Trento.Integration.Discovery.ClusterDiscoveryPayload
+  alias Trento.Infrastructure.Discovery.ClusterDiscoveryPayload
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 

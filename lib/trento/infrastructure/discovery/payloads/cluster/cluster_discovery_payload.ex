@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
+defmodule Trento.Infrastructure.Discovery.ClusterDiscoveryPayload do
   @moduledoc """
   Cluster discovery integration event payload
   """
@@ -12,7 +12,7 @@ defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload do
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-  alias Trento.Integration.Discovery.ClusterDiscoveryPayload.{
+  alias Trento.Infrastructure.Discovery.ClusterDiscoveryPayload.{
     Cib,
     Crmmon,
     Sbd

@@ -2,7 +2,7 @@ defmodule TrentoWeb.V1.DiscoveryController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.Integration.Discovery
+  alias Trento.Infrastructure.Discovery
 
   alias TrentoWeb.OpenApi.V1.Schema
 

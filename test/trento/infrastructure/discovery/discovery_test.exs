@@ -1,12 +1,12 @@
-defmodule Trento.Integration.DiscoveryTest do
+defmodule Trento.Infrastructure.DiscoveryTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Integration.Discovery
+  alias Trento.Infrastructure.Discovery
 
-  alias Trento.Integration.Discovery.{
+  alias Trento.Infrastructure.Discovery.{
     DiscardedDiscoveryEvent,
     DiscoveryEvent
   }

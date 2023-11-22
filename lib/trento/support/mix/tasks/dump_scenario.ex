@@ -5,9 +5,9 @@ defmodule Mix.Tasks.DumpScenario do
   use Mix.Task
   import Trento.Tasks.Helper
 
-  alias Trento.Integration.Discovery
+  alias Trento.Infrastructure.Discovery
 
-  alias Trento.Integration.Discovery.{
+  alias Trento.Infrastructure.Discovery.{
     DiscardedDiscoveryEvent,
     DiscoveryEvent
   }

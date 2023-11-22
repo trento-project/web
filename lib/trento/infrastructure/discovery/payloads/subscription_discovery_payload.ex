@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Discovery.SlesSubscriptionDiscoveryPayload do
+defmodule Trento.Infrastructure.Discovery.SlesSubscriptionDiscoveryPayload do
   @moduledoc """
   Subscription discovery integration event payload
   """

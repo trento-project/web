@@ -1,14 +1,14 @@
-defmodule Trento.Integration.Discovery.ClusterPolicyTest do
+defmodule Trento.Infrastructure.Discovery.ClusterPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  import Trento.Integration.DiscoveryFixturesHelper
+  import Trento.Infrastructure.DiscoveryFixturesHelper
 
   import Trento.Factory
 
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.Integration.Discovery.ClusterPolicy
+  alias Trento.Infrastructure.Discovery.ClusterPolicy
 
   alias Trento.Domain.Commands.{DeregisterClusterHost, RegisterClusterHost}
 

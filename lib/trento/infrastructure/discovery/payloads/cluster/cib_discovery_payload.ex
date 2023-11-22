@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib do
+defmodule Trento.Infrastructure.Discovery.ClusterDiscoveryPayload.Cib do
   @moduledoc """
   Cib field payload
   """

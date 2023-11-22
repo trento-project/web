@@ -1,11 +1,11 @@
-defmodule Trento.Integration.Discovery.HostPolicyTest do
+defmodule Trento.Infrastructure.Discovery.HostPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
-  import Trento.Integration.DiscoveryFixturesHelper
+  import Trento.Infrastructure.DiscoveryFixturesHelper
 
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.Integration.Discovery.HostPolicy
+  alias Trento.Infrastructure.Discovery.HostPolicy
 
   alias Trento.Hosts.Commands.{
     RegisterHost,
