@@ -1,4 +1,4 @@
-defmodule Trento.Settings do
+defmodule Trento.Infrastructure.Settings do
   @moduledoc false
 
   use Ecto.Schema

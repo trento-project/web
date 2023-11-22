@@ -24,7 +24,7 @@ defmodule TrentoWeb.V1.InstallationController do
 
   @spec get_api_key(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_api_key(conn, _) do
-    key = Trento.Installation.get_api_key()
+    key = Trento.Infrastructure.Installation.get_api_key()
 
     render(conn, "api_key.json", api_key: key)
   end

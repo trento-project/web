@@ -1,7 +1,7 @@
 defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
 
-  alias Trento.Installation
+  alias Trento.Infrastructure.Installation
 
   alias TrentoWeb.OpenApi.V1.Schema
 

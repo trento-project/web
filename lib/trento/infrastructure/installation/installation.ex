@@ -1,4 +1,4 @@
-defmodule Trento.Installation do
+defmodule Trento.Infrastructure.Installation do
   @moduledoc """
   Provides a set of functions of installation related usecases.
   """
@@ -8,7 +8,7 @@ defmodule Trento.Installation do
   alias Trento.Repo
 
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
-  alias Trento.Settings
+  alias Trento.Infrastructure.Settings
 
   require Logger
 

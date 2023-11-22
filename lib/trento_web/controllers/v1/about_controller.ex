@@ -20,7 +20,7 @@ defmodule TrentoWeb.V1.AboutController do
   def info(conn, _) do
     render(conn, "about.json",
       about_info: %{
-        flavor: Trento.Installation.flavor(),
+        flavor: Trento.Infrastructure.Installation.flavor(),
         version: @version,
         sles_subscriptions: Hosts.get_all_sles_subscriptions()
       }

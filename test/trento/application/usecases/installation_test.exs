@@ -4,7 +4,7 @@ defmodule Trento.InstallationTest do
 
   import Trento.Factory
 
-  alias Trento.Installation
+  alias Trento.Infrastructure.Installation
 
   setup do
     Application.put_env(:trento, :flavor, "Premium")
