@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.ClusterDiscoveryPayload do
+defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   @moduledoc """
   Cluster discovery integration event payload
   """
@@ -12,10 +12,10 @@ defmodule Trento.Infrastructure.Discovery.ClusterDiscoveryPayload do
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-  alias Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPayload.{
-    Cib,
-    Crmmon,
-    Sbd
+  alias Trento.Infrastructure.Discovery.Payloads.Cluster.{
+    CibDiscoveryPayload,
+    CrmmonDiscoveryPayload,
+    SbdDiscoveryPayload
   }
 
   deftype do
@@ -31,9 +31,9 @@ defmodule Trento.Infrastructure.Discovery.ClusterDiscoveryPayload do
     field :sid, :string
     field :additional_sids, {:array, :string}
 
-    embeds_one :cib, Cib
-    embeds_one :sbd, Sbd
-    embeds_one :crmmon, Crmmon
+    embeds_one :cib, CibDiscoveryPayload
+    embeds_one :sbd, SbdDiscoveryPayload
+    embeds_one :crmmon, CrmmonDiscoveryPayload
   end
 
   def changeset(cluster, attrs) do

@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.SapSystemPolicyTest do
+defmodule Trento.Infrastructure.Discovery.Policies.SapSystemPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 

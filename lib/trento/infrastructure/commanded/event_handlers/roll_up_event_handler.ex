@@ -9,7 +9,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler do
     consistency: :strong,
     start_from: :current
 
-  alias Trento.Infrastructure.Commanded.RollUp
+  alias Trento.Infrastructure.Commanded.RollUp.RollUp
 
   alias Trento.Domain.Events.{
     ClusterRolledUp,

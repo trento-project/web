@@ -13,7 +13,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicy do
     RegisterClusterHost
   }
 
-  alias Trento.Infrastructure.Discovery.ClusterDiscoveryPayload
+  alias Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPayload
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 

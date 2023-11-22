@@ -12,7 +12,7 @@ defmodule Trento.Infrastructure.Discovery.DiscoveryEvent do
   schema "discovery_events" do
     field :agent_id, Ecto.UUID
     field :discovery_type, :string
-    field :payload, Ecto.Support.Payload
+    field :payload, Trento.Support.Ecto.Payload
 
     timestamps(type: :utc_datetime_usec)
   end

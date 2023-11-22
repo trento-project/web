@@ -1,4 +1,4 @@
-defmodule Ecto.Support.Payload do
+defmodule Trento.Support.Ecto.Payload do
   @moduledoc """
   Ecto Type that represents a JSONB payload that contains an array or a map.
   """

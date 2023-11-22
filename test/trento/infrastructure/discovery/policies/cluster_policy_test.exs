@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.ClusterPolicyTest do
+defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 

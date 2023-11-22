@@ -10,7 +10,7 @@ defmodule Trento.Infrastructure.Discovery.DiscardedDiscoveryEvent do
   @type t :: %__MODULE__{}
 
   schema "discarded_discovery_events" do
-    field :payload, Ecto.Support.Payload
+    field :payload, Trento.Support.Ecto.Payload
     field :reason, :string
 
     timestamps(type: :utc_datetime_usec)

@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.HostPolicyTest do
+defmodule Trento.Infrastructure.Discovery.Policies.HostPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
   import Trento.Infrastructure.DiscoveryFixturesHelper
