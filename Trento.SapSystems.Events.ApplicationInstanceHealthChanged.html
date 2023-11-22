@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.2.0">
 
-    <title>Trento.Domain.Commands.RegisterApplicationInstance — Trento Web v2.2.0</title>
+    <title>Trento.SapSystems.Events.ApplicationInstanceHealthChanged — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-15DB3F85.js"></script>
+    <script src="dist/sidebar_items-9DDDB877.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,22 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Domain.Commands.RegisterApplicationInstance</span> 
+  <span translate="no">Trento.SapSystems.Events.ApplicationInstanceHealthChanged</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Register an application instance to the monitoring system.</p><p>In order to register an application instance a database entry associated to this application
-must be already registered.</p><p>The database/application association consists of having:</p><ul><li>the application instance <code class="inline">tenant</code> field matching with an already registered database instance <code class="inline">tenant</code></li><li>the application <code class="inline">db_host</code> field matching with one of the IP addresses of the host where this database is running</li></ul><p>Find the association protocol code <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/integration/discovery/protocol/enrich_register_application_instance.ex">here</a>
-as reference.</p><p>cluster_id value is used to know if the application instance is clustered or not.
-This information is required in order to decide whether the instance was moved by the cluster in a failover scenario or not</p>
+<p>This event is emitted when a application instance health has changed.</p>
   </section>
 
 
@@ -199,6 +196,30 @@ Accepts a map or a list of maps.</p></div>
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#supersede/0" translate="no">supersede()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#upcast/2" translate="no">upcast(params, metadata)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#upcast/3" translate="no">upcast(params, _, int)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#validate_required_fields/2" translate="no">validate_required_fields(changeset, required_fields)</a>
 
         </div>
@@ -228,7 +249,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -240,21 +261,12 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.Commands.RegisterApplicationInstance{
-  cluster_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  db_host: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  ensa_version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  features: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.SapSystems.Events.ApplicationInstanceHealthChanged{
   health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   host_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  http_port: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  https_port: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  instance_hostname: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   instance_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   sap_system_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  start_priority: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  tenant: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+  version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
       </div>
@@ -284,7 +296,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -306,7 +318,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -328,7 +340,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -351,7 +363,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -380,7 +392,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -399,6 +411,72 @@ Accepts a map or a list of maps.</p>
 <p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p>
   </section>
 </section>
+<section class="detail" id="supersede/0">
+
+  <div class="detail-header">
+    <a href="#supersede/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">supersede()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L10" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="upcast/2">
+
+  <div class="detail-header">
+    <a href="#upcast/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">upcast(params, metadata)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L10" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="upcast/3">
+
+  <div class="detail-header">
+    <a href="#upcast/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">upcast(params, _, int)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="validate_required_fields/2">
 
   <div class="detail-header">
@@ -408,7 +486,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/sap_system/commands/register_application_instance.ex#L33" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/events/application_instance_health_changed.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

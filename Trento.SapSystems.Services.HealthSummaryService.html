@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.2.0">
 
-    <title>Trento.SapSystemReadModel — Trento Web v2.2.0</title>
+    <title>Trento.SapSystems.Services.HealthSummaryService — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-15DB3F85.js"></script>
+    <script src="dist/sidebar_items-9DDDB877.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,19 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/read_models/sap_system_read_model.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/services/health_summary_service.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.SapSystemReadModel</span> 
+  <span translate="no">Trento.SapSystems.Services.HealthSummaryService</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>SAP System read model</p>
+<p>Provides a set of functions to interact with SAP systems Health Summary</p>
   </section>
 
 
@@ -126,21 +126,6 @@ Trento Web
       Summary
     </h1>
 
-  <div class="summary-types summary">
-    <h2>
-      <a href="#types">Types</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#t:t/0" translate="no">t()</a>
-
-        </div>
-
-      </div>
-
-  </div>
-
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
@@ -148,7 +133,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#changeset/2" translate="no">changeset(sap_system, attrs)</a>
+          <a href="#get_health_summary/0" translate="no">get_health_summary()</a>
 
         </div>
 
@@ -158,59 +143,6 @@ Trento Web
 
   </section>
 
-
-  <section id="types" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#types">
-        <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
-Types
-    </h1>
-    <div class="types-list">
-<section class="detail" id="t:t/0">
-
-  <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">t()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/read_models/sap_system_read_model.ex#L20" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.SapSystemReadModel{
-  __meta__: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  application_instances: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  database_instances: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  db_host: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  deregistered_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  ensa_version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  tags: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  tenant: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-
-    </div>
-  </section>
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
@@ -221,16 +153,16 @@ Types
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="changeset/2">
+<section class="detail" id="get_health_summary/0">
 
   <div class="detail-header">
-    <a href="#changeset/2" class="detail-link" title="Link to this function">
+    <a href="#get_health_summary/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">changeset(sap_system, attrs)</h1>
+    <h1 class="signature" translate="no">get_health_summary()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/read_models/sap_system_read_model.ex#L47" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/services/health_summary_service.ex#L24" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -242,7 +174,7 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> changeset(<a href="#t:t/0">t</a>() | <a href="https://hexdocs.pm/ecto/3.9.4/Ecto.Changeset.html#t:t/0">Ecto.Changeset.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/ecto/3.9.4/Ecto.Changeset.html#t:t/0">Ecto.Changeset.t</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_health_summary() :: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]</pre>
 
       </div>
 

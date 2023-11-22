@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.2.0">
 
-    <title>Trento.DatabaseInstanceReadModel — Trento Web v2.2.0</title>
+    <title>Trento.SapSystems.Projections.SapSystemReadModel — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-15DB3F85.js"></script>
+    <script src="dist/sidebar_items-9DDDB877.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,19 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/read_models/database_instance_read_model.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/sap_system_read_model.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.DatabaseInstanceReadModel</span> 
+  <span translate="no">Trento.SapSystems.Projections.SapSystemReadModel</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Database instance read model</p>
+<p>SAP System read model</p>
   </section>
 
 
@@ -148,7 +148,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#changeset/2" translate="no">changeset(database_instance, attrs)</a>
+          <a href="#changeset/2" translate="no">changeset(sap_system, attrs)</a>
 
         </div>
 
@@ -177,7 +177,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/read_models/database_instance_read_model.ex#L12" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/sap_system_read_model.ex#L20" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -189,22 +189,17 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.DatabaseInstanceReadModel{
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.SapSystems.Projections.SapSystemReadModel{
   __meta__: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  absent_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  features: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  application_instances: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  database_instances: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  db_host: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  deregistered_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  ensa_version: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  host: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  host_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  http_port: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  https_port: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  instance_hostname: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  instance_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sap_system_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  start_priority: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  system_replication: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  system_replication_status: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  tags: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   tenant: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
@@ -233,9 +228,9 @@ Functions
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">changeset(database_instance, attrs)</h1>
+    <h1 class="signature" translate="no">changeset(sap_system, attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/read_models/database_instance_read_model.ex#L41" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/sap_systems/projections/sap_system_read_model.ex#L47" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
