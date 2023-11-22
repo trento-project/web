@@ -33,4 +33,51 @@ describe('TargetIcon', () => {
       expect(screen.getByTestId(targetIcon)).toBeVisible();
     }
   );
+
+  const labaledTargetIconsScenarios = [
+    {
+      targetType: 'cluster',
+      label: 'Clusters',
+    },
+    {
+      targetType: 'host',
+      label: 'Hosts',
+    },
+  ];
+
+  it.each(labaledTargetIconsScenarios)(
+    'should render labaled target type $targetType icon',
+    ({ targetType, label }) => {
+      render(<TargetIcon targetType={targetType} withLabel />);
+
+      expect(screen.getByTestId('target-label')).toBeVisible();
+      expect(screen.getByText(label)).toBeVisible();
+    }
+  );
+
+  const customLabelTargetIconsScenarios = [
+    {
+      targetType: 'cluster',
+      labelMap: {
+        cluster: 'Foo Cluster',
+      },
+    },
+    {
+      targetType: 'host',
+      labelMap: {
+        host: 'Foo Host',
+      },
+    },
+  ];
+
+  it.each(customLabelTargetIconsScenarios)(
+    'should render custom label for target type $targetType icon',
+    ({ targetType, labelMap }) => {
+      render(
+        <TargetIcon targetType={targetType} withLabel labelMap={labelMap} />
+      );
+
+      expect(screen.getByText(labelMap[targetType])).toBeVisible();
+    }
+  );
 });

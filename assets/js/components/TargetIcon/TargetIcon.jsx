@@ -1,27 +1,41 @@
 import React from 'react';
 import { EOS_COLLOCATION, EOS_DESKTOP_WINDOWS } from 'eos-icons-react';
 
-import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
+import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
 
 const targetTypeToIcon = {
-  [TARGET_CLUSTER]: <EOS_COLLOCATION className="fill-white" />,
-  [TARGET_HOST]: <EOS_DESKTOP_WINDOWS className="fill-white" />,
+  [TARGET_CLUSTER]: EOS_COLLOCATION,
+  [TARGET_HOST]: EOS_DESKTOP_WINDOWS,
 };
 
-function TargetIcon({ targetType }) {
-  if (!targetType || !targetTypeToIcon[targetType]) {
+const targetTypeToLabel = {
+  [TARGET_CLUSTER]: 'Clusters',
+  [TARGET_HOST]: 'Hosts',
+};
+
+function TargetIcon({
+  targetType,
+  withLabel = false,
+  labelMap = targetTypeToLabel,
+  containerClassName = '',
+  iconClassName = '',
+}) {
+  if (!isValidTargetType(targetType)) {
     return null;
   }
+  const IconComponent = targetTypeToIcon[targetType];
 
   return (
-    <div
-      data-testid="target-icon"
-      className="inline-flex bg-jungle-green-500 p-1 rounded-full self-center"
-    >
-      <span data-testid={`target-icon-${targetType}`}>
-        {targetTypeToIcon[targetType]}
+    <>
+      <span data-testid="target-icon" className={containerClassName}>
+        <span data-testid={`target-icon-${targetType}`}>
+          <IconComponent className={iconClassName} />
+        </span>
       </span>
-    </div>
+      {withLabel && (
+        <span data-testid="target-label">{labelMap[targetType]}</span>
+      )}
+    </>
   );
 }
 

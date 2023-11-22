@@ -20,7 +20,11 @@ function TargetResult({
     >
       <div className="table-cell p-2">
         <div className="flex p-1">
-          <TargetIcon targetType={targetType} />
+          <TargetIcon
+            targetType={targetType}
+            containerClassName="inline-flex bg-jungle-green-500 p-1 rounded-full self-center"
+            iconClassName="fill-white"
+          />
           <span className="ml-3 inline-flex self-center">{targetName}</span>
         </div>
       </div>
