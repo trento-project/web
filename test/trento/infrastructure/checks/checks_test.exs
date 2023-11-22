@@ -1,4 +1,4 @@
-defmodule Trento.Integration.ChecksTest do
+defmodule Trento.Infrastructure.Checks.ChecksTest do
   @moduledoc false
 
   use ExUnit.Case
@@ -8,7 +8,7 @@ defmodule Trento.Integration.ChecksTest do
   alias Trento.Domain.Commands.CompleteChecksExecution
   alias Trento.Hosts.Commands.CompleteHostChecksExecution
 
-  alias Trento.Integration.Checks
+  alias Trento.Infrastructure.Checks
 
   alias Trento.Checks.V1.{
     ExecutionRequested,

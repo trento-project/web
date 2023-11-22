@@ -52,7 +52,7 @@ config :trento,
   api_key_authentication_enabled: false,
   jwt_authentication_enabled: false
 
-config :trento, Trento.Integration.Checks.AMQP.Consumer,
+config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
   processor: GenRMQ.Processor.Mock,
   queue: "trento.test.checks.results",
   exchange: "trento.test.checks",

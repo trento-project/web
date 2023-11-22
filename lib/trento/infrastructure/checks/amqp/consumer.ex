@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.AMQP.Consumer do
+defmodule Trento.Infrastructure.Checks.AMQP.Consumer do
   @moduledoc """
   AMQP consumer.
   """

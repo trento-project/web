@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.ClusterExecutionEnv do
+defmodule Trento.Infrastructure.Checks.ClusterExecutionEnv do
   @moduledoc """
   Cluster checks execution env map
   """

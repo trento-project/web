@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.HostExecutionEnv do
+defmodule Trento.Infrastructure.Checks.HostExecutionEnv do
   @moduledoc """
   Host checks execution env map
   """

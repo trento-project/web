@@ -17,7 +17,7 @@ defmodule Trento.Clusters do
 
   alias Trento.Domain.Commands.SelectChecks
 
-  alias Trento.Integration.Checks
+  alias Trento.Infrastructure.Checks
 
   alias Trento.Repo
 

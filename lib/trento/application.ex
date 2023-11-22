@@ -23,7 +23,7 @@ defmodule Trento.Application do
         Trento.ProjectorsSupervisor,
         Trento.ProcessManagersSupervisor,
         Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
-        Trento.Integration.Checks.AMQP.Consumer
+        Trento.Infrastructure.Checks.AMQP.Consumer
         # Start a worker by calling: Trento.Worker.start_link(arg)
         # {Trento.Worker, arg}
       ] ++

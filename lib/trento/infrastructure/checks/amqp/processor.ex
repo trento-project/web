@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.AMQP.Processor do
+defmodule Trento.Infrastructure.Checks.AMQP.Processor do
   @moduledoc """
   AMQP processor for the checks execution events
   """
@@ -12,8 +12,8 @@ defmodule Trento.Integration.Checks.AMQP.Processor do
     ExecutionStarted
   }
 
-  alias Trento.Integration.Checks
-  alias Trento.Integration.Checks.TargetType
+  alias Trento.Infrastructure.Checks
+  alias Trento.Infrastructure.Checks.TargetType
 
   require Logger
   require Trento.Domain.Enums.Health, as: Health

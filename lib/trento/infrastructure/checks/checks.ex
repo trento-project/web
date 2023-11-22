@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks do
+defmodule Trento.Infrastructure.Checks do
   @moduledoc """
   Checks Engine service integration
   """
@@ -14,13 +14,13 @@ defmodule Trento.Integration.Checks do
     Target
   }
 
-  alias Trento.Integration.Checks.{
+  alias Trento.Infrastructure.Checks.{
     ClusterExecutionEnv,
     HostExecutionEnv
   }
 
   require Logger
-  require Trento.Integration.Checks.TargetType, as: TargetType
+  require Trento.Infrastructure.Checks.TargetType, as: TargetType
 
   @type target_type :: TargetType.t()
   @type target_env :: HostExecutionEnv.t() | ClusterExecutionEnv.t()

@@ -1,11 +1,11 @@
-defmodule Trento.Integration.Checks.AMQP.ProcessorTest do
+defmodule Trento.Infrastructure.Checks.AMQP.ProcessorTest do
   @moduledoc false
   use ExUnit.Case, async: true
   use TrentoWeb.ChannelCase
 
   import Mox
 
-  alias Trento.Integration.Checks.AMQP.Processor
+  alias Trento.Infrastructure.Checks.AMQP.Processor
 
   alias Trento.Checks.V1.{
     ExecutionCompleted,

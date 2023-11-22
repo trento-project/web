@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Checks.TargetType do
+defmodule Trento.Infrastructure.Checks.TargetType do
   @moduledoc """
   Type that represents the possible target types for a check execution.
   """

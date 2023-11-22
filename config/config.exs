@@ -123,8 +123,8 @@ config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Teleme
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
 
-config :trento, Trento.Integration.Checks.AMQP.Consumer,
-  processor: Trento.Integration.Checks.AMQP.Processor,
+config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
+  processor: Trento.Infrastructure.Checks.AMQP.Processor,
   queue: "trento.checks.results",
   exchange: "trento.checks",
   routing_key: "results",

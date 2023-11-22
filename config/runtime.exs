@@ -75,7 +75,7 @@ if config_env() in [:prod, :demo] do
       For example: amqp://USER:PASSWORD@HOST
       """
 
-  config :trento, Trento.Integration.Checks.AMQP.Consumer, connection: amqp_url
+  config :trento, Trento.Infrastructure.Checks.AMQP.Consumer, connection: amqp_url
   config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher, connection: amqp_url
 
   config :trento, :checks_service, base_url: System.get_env("CHECKS_SERVICE_BASE_URL") || ""

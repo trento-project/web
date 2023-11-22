@@ -23,7 +23,7 @@ defmodule Trento.Hosts do
     SelectHostChecks
   }
 
-  alias Trento.Integration.Checks
+  alias Trento.Infrastructure.Checks
 
   alias Trento.Repo
 
