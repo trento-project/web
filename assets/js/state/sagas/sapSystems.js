@@ -27,7 +27,7 @@ import {
   unsetApplicationInstanceDeregistering,
 } from '@state/sapSystems';
 import { getSapSystem } from '@state/selectors/sapSystem';
-import { notify } from '@state/actions/notifications';
+import { notify } from '@state/notifications';
 
 function* sapSystemRegistered({ payload }) {
   yield put(appendSapsystem(payload));

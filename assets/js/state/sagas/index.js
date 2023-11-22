@@ -95,7 +95,7 @@ import { watchChecksSelection } from '@state/sagas/checksSelection';
 
 import { getClusterName } from '@state/selectors/cluster';
 
-import { notify } from '@state/actions/notifications';
+import { notify } from '@state/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';

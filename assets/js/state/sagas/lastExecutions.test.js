@@ -12,7 +12,7 @@ import {
   setExecutionRequested,
   setHostChecksExecutionRequested,
 } from '@state/lastExecutions';
-import { notify } from '@state/actions/notifications';
+import { notify } from '@state/notifications';
 import { hostFactory } from '@lib/test-utils/factories';
 
 import {

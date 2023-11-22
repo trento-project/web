@@ -29,7 +29,7 @@ import {
   databaseInstanceFactory,
 } from '@lib/test-utils/factories';
 import { networkClient } from '@lib/network';
-import { notify } from '@state/actions/notifications';
+import { notify } from '@state/notifications';
 
 const axiosMock = new MockAdapter(networkClient);
 
