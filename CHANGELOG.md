@@ -1642,7 +1642,7 @@
 - Close filters when clicking outside [\#260](https://github.com/trento-project/web/pull/260) ([fabriziosestito](https://github.com/fabriziosestito))
 - Add checks execution domain logic [\#256](https://github.com/trento-project/web/pull/256) ([fabriziosestito](https://github.com/fabriziosestito))
 - Cluster details with IPs and filters enabled app-wide [\#254](https://github.com/trento-project/web/pull/254) ([dottorblaster](https://github.com/dottorblaster))
-- Fix Trento.Support.Type error handling and adds tests [\#252](https://github.com/trento-project/web/pull/252) ([fabriziosestito](https://github.com/fabriziosestito))
+- Fix Trento.Type error handling and adds tests [\#252](https://github.com/trento-project/web/pull/252) ([fabriziosestito](https://github.com/fabriziosestito))
 - Flavor determination in about api [\#250](https://github.com/trento-project/web/pull/250) ([nelsonkopliku](https://github.com/nelsonkopliku))
 - Bump eslint from 8.11.0 to 8.12.0 in /assets [\#247](https://github.com/trento-project/web/pull/247) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump esbuild from 0.14.27 to 0.14.28 in /assets [\#246](https://github.com/trento-project/web/pull/246) ([dependabot[bot]](https://github.com/apps/dependabot))
