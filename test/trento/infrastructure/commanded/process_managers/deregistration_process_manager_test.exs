@@ -1,4 +1,4 @@
-defmodule Trento.DeregistrationProcessManagerTest do
+defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManagerTest do
   use ExUnit.Case
 
   import Trento.Factory
@@ -25,8 +25,9 @@ defmodule Trento.DeregistrationProcessManagerTest do
   }
 
   alias Trento.DeregistrationProcessManager
+  alias Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager
 
-  alias Trento.DeregistrationProcessManager.Instance
+  alias Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Instance
 
   alias Trento.Domain.Cluster
   alias Trento.SapSystems.Instance, as: SapSystemInstance

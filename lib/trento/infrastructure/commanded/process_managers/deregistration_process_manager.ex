@@ -1,4 +1,4 @@
-defmodule Trento.DeregistrationProcessManager do
+defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager do
   @moduledoc """
     DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible
     for the deregistration procedure for the aggregates
@@ -35,7 +35,7 @@ defmodule Trento.DeregistrationProcessManager do
     embeds_many :database_instances, Instance
   end
 
-  alias Trento.DeregistrationProcessManager
+  alias Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager
 
   alias Trento.Domain.Events.{
     ClusterRolledUp,
