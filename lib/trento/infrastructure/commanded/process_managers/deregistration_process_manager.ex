@@ -23,7 +23,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   end
 
   use Commanded.ProcessManagers.ProcessManager,
-    application: Trento.Support.Commanded,
+    application: Trento.Commanded,
     name: "deregistration_process_manager"
 
   @required_fields []

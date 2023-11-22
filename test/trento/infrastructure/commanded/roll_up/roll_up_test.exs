@@ -1,5 +1,5 @@
 defmodule Trento.Infrastructure.Commanded.RollUpTest do
-  use Trento.Support.EventStoreCase, async: false
+  use Trento.EventStoreCase, async: false
 
   alias Trento.Infrastructure.Commanded.RollUp
 
@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.Commanded.RollUpTest do
     old_event = %TestEvent{data: "data"}
 
     :ok =
-      Trento.Support.EventStore.append_to_stream(
+      Trento.EventStore.append_to_stream(
         stream_id,
         0,
         [
@@ -37,7 +37,7 @@ defmodule Trento.Infrastructure.Commanded.RollUpTest do
                 data: data,
                 stream_version: 1
               }
-            ]} = Trento.Support.EventStore.read_stream_forward(archive_stream_id)
+            ]} = Trento.EventStore.read_stream_forward(archive_stream_id)
 
     assert old_event == Upcaster.upcast(data, %{})
 
@@ -47,7 +47,7 @@ defmodule Trento.Infrastructure.Commanded.RollUpTest do
                 data: data,
                 stream_version: 1
               }
-            ]} = Trento.Support.EventStore.read_stream_forward(stream_id)
+            ]} = Trento.EventStore.read_stream_forward(stream_id)
 
     assert roll_up_event == Upcaster.upcast(data, %{})
 
@@ -58,7 +58,7 @@ defmodule Trento.Infrastructure.Commanded.RollUpTest do
                 stream_version: 1,
                 event_number: 2
               }
-            ]} = Trento.Support.EventStore.read_all_streams_forward()
+            ]} = Trento.EventStore.read_all_streams_forward()
 
     assert roll_up_event == Upcaster.upcast(data, %{})
   end

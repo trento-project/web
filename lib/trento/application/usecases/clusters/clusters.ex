@@ -121,7 +121,7 @@ defmodule Trento.Clusters do
   end
 
   defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Support.Commanded)[:adapter]
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
   @spec enrich_cluster_model_query(Ecto.Query.t()) :: Ecto.Query.t()
   defp enrich_cluster_model_query(query) do

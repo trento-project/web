@@ -182,5 +182,5 @@ defmodule Trento.Infrastructure.Discovery do
   defp dispatch(command), do: commanded().dispatch(command)
 
   defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Support.Commanded)[:adapter]
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

@@ -10,7 +10,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
   """
 
   use Commanded.Event.Handler,
-    application: Trento.Support.Commanded,
+    application: Trento.Commanded,
     name: "stream_roll_up_event_handler"
 
   alias Trento.Domain.Commands.RollUpCluster
@@ -64,7 +64,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
       })
       when event_type in @host_events and event_stream_version > @max_stream_version do
     {:ok, %EventStore.Streams.StreamInfo{stream_version: stream_version}} =
-      Trento.Support.EventStore.stream_info(host_id)
+      Trento.EventStore.stream_info(host_id)
 
     if stream_version > @max_stream_version do
       Logger.info(
@@ -85,7 +85,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
       when event_type in @cluster_events and event_stream_version > @max_stream_version do
     # This is needed to check if an event already triggered a roll-up
     {:ok, %EventStore.Streams.StreamInfo{stream_version: stream_version}} =
-      Trento.Support.EventStore.stream_info(cluster_id)
+      Trento.EventStore.stream_info(cluster_id)
 
     if stream_version > @max_stream_version do
       Logger.info(
@@ -106,7 +106,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
       when event_type in @sap_system_events and event_stream_version > @max_stream_version do
     # This is needed to check if an event already triggered a roll-up
     {:ok, %EventStore.Streams.StreamInfo{stream_version: stream_version}} =
-      Trento.Support.EventStore.stream_info(sap_system_id)
+      Trento.EventStore.stream_info(sap_system_id)
 
     if stream_version > @max_stream_version do
       Logger.info(
@@ -148,5 +148,5 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
   end
 
   defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Support.Commanded)[:adapter]
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

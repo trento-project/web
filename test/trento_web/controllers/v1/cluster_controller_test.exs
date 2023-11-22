@@ -24,7 +24,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
   describe "select_checks" do
     test "should return 202 when the checks were selected", %{conn: conn} do
-      expect(Trento.Support.Commanded.Mock, :dispatch, fn _ ->
+      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
         :ok
       end)
 

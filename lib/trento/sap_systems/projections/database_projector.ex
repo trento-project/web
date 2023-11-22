@@ -4,7 +4,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
   """
 
   use Commanded.Projections.Ecto,
-    application: Trento.Support.Commanded,
+    application: Trento.Commanded,
     repo: Trento.Repo,
     name: "database_projector"
 

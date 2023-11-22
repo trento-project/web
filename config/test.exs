@@ -14,7 +14,7 @@ config :trento, Trento.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
-config :trento, Trento.Support.EventStore,
+config :trento, Trento.EventStore,
   username: "postgres",
   password: "postgres",
   database: "trento_eventstore_test#{System.get_env("MIX_TEST_PARTITION")}",

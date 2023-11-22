@@ -5,7 +5,7 @@ defmodule Trento.Support.JsonbSerializer do
 
   Configuration example:
   ```
-  config :trento, Trento.Support.EventStore,
+  config :trento, Trento.EventStore,
     serializer: Trento.Support.JsonbSerializer,
     column_data_type: "jsonb",
     types: EventStore.PostgresTypes

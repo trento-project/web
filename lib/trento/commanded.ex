@@ -1,4 +1,4 @@
-defmodule Trento.Support.Commanded do
+defmodule Trento.Commanded do
   @moduledoc """
   Trento Commanded Application
   """

@@ -117,5 +117,5 @@ defmodule Trento.SapSystems do
   end
 
   defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Support.Commanded)[:adapter]
+    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
