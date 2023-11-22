@@ -1,4 +1,4 @@
-defmodule Trento.StreamRollUpEventHandlerTest do
+defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandlerTest do
   use ExUnit.Case
   use Trento.EventStoreCase
 
@@ -9,14 +9,14 @@ defmodule Trento.StreamRollUpEventHandlerTest do
   alias Trento.Hosts.Commands.RollUpHost
   alias Trento.SapSystems.Commands.RollUpSapSystem
 
-  alias Trento.StreamRollUpEventHandler
+  alias Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
 
   alias Commanded.EventStore.TypeProvider
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
   @max_stream_version Application.compile_env!(:trento, [
-                        Trento.StreamRollUpEventHandler,
+                        Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler,
                         :max_stream_version
                       ])
 

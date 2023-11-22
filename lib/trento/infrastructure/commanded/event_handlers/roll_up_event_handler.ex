@@ -1,4 +1,4 @@
-defmodule Trento.RollUpEventHandler do
+defmodule Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler do
   @moduledoc """
   This event handler is responsible for rolling-up aggregates when a requested event is received.
   """

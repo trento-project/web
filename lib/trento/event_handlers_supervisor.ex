@@ -10,9 +10,9 @@ defmodule Trento.EventHandlersSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      Trento.AlertsEventHandler,
-      Trento.RollUpEventHandler,
-      Trento.StreamRollUpEventHandler
+      Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler,
+      Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler,
+      Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

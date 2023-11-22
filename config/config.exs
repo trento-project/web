@@ -63,7 +63,7 @@ config :trento, Trento.Commanded,
   pubsub: :local,
   registry: :local
 
-config :trento, Trento.StreamRollUpEventHandler, max_stream_version: 10_000
+config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler, max_stream_version: 10_000
 
 config :trento, Trento.EventStore,
   serializer: Trento.JsonbSerializer,

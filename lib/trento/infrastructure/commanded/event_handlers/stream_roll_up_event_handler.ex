@@ -1,4 +1,4 @@
-defmodule Trento.StreamRollUpEventHandler do
+defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler do
   @moduledoc """
   This module is responsible for triggering the roll-up of an aggregate.
 
