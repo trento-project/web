@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
+import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
 import Button from '@components/Button';
@@ -13,7 +14,6 @@ import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';
-import { renderEnsaVersion } from '@components/SapSystemDetails';
 import Tooltip from '@components/Tooltip';
 
 import CheckResultsOverview from '@components/CheckResultsOverview';
@@ -220,7 +220,7 @@ function AscsErsClusterDetails({
               {
                 title: 'ENSA version',
                 content: currentSapSystem?.ensa_version || '-',
-                render: (content) => renderEnsaVersion(content),
+                render: (content) => getEnsaVersionLabel(content),
               },
               {
                 title: 'Filesystem resource based',

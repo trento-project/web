@@ -2,12 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
 import { deregisterApplicationInstance } from '@state/sapSystems';
 
 import BackButton from '@components/BackButton';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
-import { APPLICATION_TYPE } from '@lib/model';
 
 function SapSystemDetails() {
   const { id } = useParams();

@@ -2,6 +2,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { post, del } from '@lib/network';
+import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import {
   getEnrichedApplicationInstances,
   getEnrichedDatabaseInstances,
@@ -12,8 +14,6 @@ import {
   deregisterApplicationInstance,
 } from '@state/sapSystems';
 import { deregisterDatabaseInstance } from '@state/databases';
-import { post, del } from '@lib/network';
-import { APPLICATION_TYPE } from '@lib/model';
 
 import SapSystemsOverview from './SapSystemsOverview';
 

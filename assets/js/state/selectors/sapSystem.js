@@ -1,7 +1,7 @@
 import { filter } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { getCluster } from '@state/selectors/cluster';
 import { getHost } from '@state/selectors/host';
 
