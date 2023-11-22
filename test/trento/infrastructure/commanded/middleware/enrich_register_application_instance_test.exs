@@ -1,4 +1,4 @@
-defmodule Trento.EnrichRegisterApplicationInstanceTest do
+defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationInstanceTest do
   use ExUnit.Case
   use Trento.DataCase
 

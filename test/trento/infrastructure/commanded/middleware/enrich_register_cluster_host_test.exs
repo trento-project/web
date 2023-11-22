@@ -1,4 +1,4 @@
-defmodule Trento.EnrichRegisterClusterHostTest do
+defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTest do
   use ExUnit.Case
   use Trento.DataCase
 
