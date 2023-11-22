@@ -9,6 +9,11 @@ defmodule Trento.ProjectorsSupervisor do
     TelemetryProjector
   }
 
+  alias Trento.SapSystems.Projections.{
+    DatabaseProjector,
+    SapSystemProjector
+  }
+
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
@@ -17,9 +22,9 @@ defmodule Trento.ProjectorsSupervisor do
   def init(_init_arg) do
     children = [
       Trento.ClusterProjector,
-      Trento.DatabaseProjector,
+      DatabaseProjector,
       HostProjector,
-      Trento.SapSystemProjector,
+      SapSystemProjector,
       SlesSubscriptionsProjector,
       TelemetryProjector
     ]

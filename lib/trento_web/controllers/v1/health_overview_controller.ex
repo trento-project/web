@@ -2,7 +2,7 @@ defmodule TrentoWeb.V1.HealthOverviewController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.SapSystems.HealthSummaryService
+  alias Trento.SapSystems.Services.HealthSummaryService
 
   alias TrentoWeb.OpenApi.V1.Schema
 

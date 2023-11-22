@@ -15,7 +15,6 @@ defmodule Trento.Factory do
     ClusterResource,
     HanaClusterDetails,
     HanaClusterNode,
-    SapSystem,
     SbdDevice
   }
 
@@ -24,24 +23,14 @@ defmodule Trento.Factory do
     SlesSubscription
   }
 
+  alias Trento.SapSystems.Instance
+
   alias Trento.Domain.Events.{
-    ApplicationInstanceDeregistered,
-    ApplicationInstanceMarkedAbsent,
-    ApplicationInstanceRegistered,
     ClusterDeregistered,
     ClusterRegistered,
     ClusterTombstoned,
-    DatabaseDeregistered,
-    DatabaseInstanceDeregistered,
-    DatabaseInstanceMarkedAbsent,
-    DatabaseInstanceRegistered,
-    DatabaseRegistered,
-    DatabaseRestored,
     HostAddedToCluster,
-    HostRemovedFromCluster,
-    SapSystemDeregistered,
-    SapSystemRegistered,
-    SapSystemTombstoned
+    HostRemovedFromCluster
   }
 
   alias Trento.Hosts.Events.{
@@ -57,30 +46,49 @@ defmodule Trento.Factory do
     SlesSubscriptionsUpdated
   }
 
-  alias Trento.Domain.Commands.{
+  alias Trento.SapSystems.Events.{
+    ApplicationInstanceDeregistered,
+    ApplicationInstanceMarkedAbsent,
+    ApplicationInstanceRegistered,
+    DatabaseDeregistered,
+    DatabaseInstanceDeregistered,
+    DatabaseInstanceMarkedAbsent,
+    DatabaseInstanceRegistered,
+    DatabaseRegistered,
+    DatabaseRestored,
+    SapSystemDeregistered,
+    SapSystemRegistered,
+    SapSystemTombstoned
+  }
+
+  alias Trento.Domain.Commands.RegisterClusterHost
+
+  alias Trento.Hosts.Commands.RegisterHost
+
+  alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance,
     RegisterApplicationInstance,
-    RegisterClusterHost,
     RegisterDatabaseInstance,
     RollUpSapSystem
   }
 
-  alias Trento.Hosts.Commands.RegisterHost
-
   alias Trento.{
-    ApplicationInstanceReadModel,
     ClusterEnrichmentData,
-    ClusterReadModel,
-    DatabaseInstanceReadModel,
-    DatabaseReadModel,
-    SapSystemReadModel
+    ClusterReadModel
   }
 
   alias Trento.Hosts.Projections.{
     HostReadModel,
     HostTelemetryReadModel,
     SlesSubscriptionReadModel
+  }
+
+  alias Trento.SapSystems.Projections.{
+    ApplicationInstanceReadModel,
+    DatabaseInstanceReadModel,
+    DatabaseReadModel,
+    SapSystemReadModel
   }
 
   alias Trento.Heartbeats.Heartbeat
@@ -560,7 +568,7 @@ defmodule Trento.Factory do
   end
 
   def sap_system_instance_factory do
-    %SapSystem.Instance{
+    %Instance{
       sid: Faker.UUID.v4(),
       instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
       features: Faker.Pokemon.name(),
