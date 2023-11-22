@@ -3,7 +3,7 @@ import { post } from '@lib/network';
 
 import { TARGET_HOST, TARGET_CLUSTER } from '@lib/model';
 
-import { notify } from '@state/notifications';
+import { notify } from '@state/sagas/notifications';
 
 import {
   HOST_CHECKS_SELECTED,

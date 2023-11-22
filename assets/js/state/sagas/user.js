@@ -11,7 +11,13 @@ import {
   storeRefreshToken,
   clearCredentialsFromStore,
 } from '@lib/auth';
-import { PERFORM_LOGIN } from '@state/auth';
+
+export const PERFORM_LOGIN = 'PERFORM_LOGIN';
+
+export const performLoginAction = ({ username, password }) => ({
+  type: PERFORM_LOGIN,
+  payload: { username, password },
+});
 
 export function* performLogin({ payload: { username, password } }) {
   yield put(setAuthInProgress());

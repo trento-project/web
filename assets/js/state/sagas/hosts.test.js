@@ -24,7 +24,7 @@ import {
 } from '@state/hosts';
 
 import { networkClient } from '@lib/network';
-import { notify } from '@state/notifications';
+import { notify } from '@state/sagas/notifications';
 import { hostFactory } from '@lib/test-utils/factories';
 
 const axiosMock = new MockAdapter(networkClient);

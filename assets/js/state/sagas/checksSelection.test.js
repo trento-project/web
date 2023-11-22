@@ -15,7 +15,7 @@ import {
   setSavingFailed,
 } from '@state/checksSelection';
 
-import { notify } from '@state/notifications';
+import { notify } from '@state/sagas/notifications';
 
 import { selectHostChecks, selectClusterChecks } from './checksSelection';
 

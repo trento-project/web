@@ -66,7 +66,7 @@ import {
 
 import { setEulaVisible, setIsPremium } from '@state/settings';
 
-import { watchNotifications } from '@state/sagas/notifications';
+import { watchNotifications, notify } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { watchSapSystem } from '@state/sagas/sapSystems';
@@ -95,7 +95,6 @@ import { watchChecksSelection } from '@state/sagas/checksSelection';
 
 import { getClusterName } from '@state/selectors/cluster';
 
-import { notify } from '@state/notifications';
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
