@@ -2,10 +2,10 @@ Mox.defmock(Trento.Commanded.Mock, for: Commanded.Application)
 
 Application.put_env(:trento, Trento.Commanded, adapter: Trento.Commanded.Mock)
 
-Mox.defmock(Trento.Integration.Telemetry.Mock, for: Trento.Integration.Telemetry.Gen)
+Mox.defmock(Trento.Infrastructure.Telemetry.Mock, for: Trento.Infrastructure.Telemetry.Gen)
 
-Application.put_env(:trento, Trento.Integration.Telemetry,
-  adapter: Trento.Integration.Telemetry.Mock
+Application.put_env(:trento, Trento.Infrastructure.Telemetry,
+  adapter: Trento.Infrastructure.Telemetry.Mock
 )
 
 Mox.defmock(Trento.Infrastructure.Prometheus.Mock, for: Trento.Infrastructure.Prometheus.Gen)

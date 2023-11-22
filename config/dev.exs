@@ -99,7 +99,7 @@ unless IEx.started?() do
     ]
 end
 
-config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
+config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.ToLogger
 
 config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
   connection: "amqp://trento:trento@localhost:5673"

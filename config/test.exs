@@ -33,7 +33,7 @@ config :trento, TrentoWeb.Endpoint,
 config :trento, Trento.Mailer, adapter: Swoosh.Adapters.Test
 
 # Disable telemetry publishing during test
-config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
+config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.ToLogger
 
 # Print only warnings and errors during test
 config :logger, level: :warn

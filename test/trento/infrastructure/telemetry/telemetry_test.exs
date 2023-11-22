@@ -1,4 +1,4 @@
-defmodule Trento.Integration.TelemetryTest do
+defmodule Trento.Infrastructure.TelemetryTest do
   use ExUnit.Case
   use Trento.DataCase
 
@@ -6,7 +6,7 @@ defmodule Trento.Integration.TelemetryTest do
   import Trento.Factory
 
   alias Trento.Installation
-  alias Trento.Integration.Telemetry
+  alias Trento.Infrastructure.Telemetry
 
   setup :verify_on_exit!
 
@@ -19,7 +19,7 @@ defmodule Trento.Integration.TelemetryTest do
   test "should publish hosts telemetry with community flavor" do
     host_telemetry = insert(:host_telemetry)
 
-    expect(Trento.Integration.Telemetry.Mock, :publish_hosts_telemetry, fn hosts_telemetry,
+    expect(Trento.Infrastructure.Telemetry.Mock, :publish_hosts_telemetry, fn hosts_telemetry,
                                                                            installation_id,
                                                                            flavor ->
       assert [host_telemetry] == hosts_telemetry
@@ -35,7 +35,7 @@ defmodule Trento.Integration.TelemetryTest do
     Application.put_env(:trento, :flavor, "Premium")
     host_telemetry = insert(:host_telemetry)
 
-    expect(Trento.Integration.Telemetry.Mock, :publish_hosts_telemetry, fn hosts_telemetry,
+    expect(Trento.Infrastructure.Telemetry.Mock, :publish_hosts_telemetry, fn hosts_telemetry,
                                                                            installation_id,
                                                                            flavor ->
       assert [host_telemetry] == hosts_telemetry

@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Telemetry do
+defmodule Trento.Infrastructure.Telemetry do
   @moduledoc """
   Telmetry service integration
   """

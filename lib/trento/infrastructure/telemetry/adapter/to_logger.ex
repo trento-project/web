@@ -1,10 +1,10 @@
-defmodule Trento.Integration.Telemetry.ToLogger do
+defmodule Trento.Infrastructure.Telemetry.ToLogger do
   @moduledoc """
   Telemetry adapter that publishes telemetry data to the logs.
   Used in dev and test environments.
   """
 
-  @behaviour Trento.Integration.Telemetry.Gen
+  @behaviour Trento.Infrastructure.Telemetry.Gen
 
   require Logger
 

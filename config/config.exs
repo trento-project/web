@@ -97,7 +97,7 @@ config :trento, Trento.Scheduler,
     ],
     publish_telemetry: [
       schedule: {:extended, "@daily"},
-      task: {Trento.Integration.Telemetry, :publish, []},
+      task: {Trento.Infrastructure.Telemetry, :publish, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ],
@@ -118,7 +118,7 @@ config :trento, Trento.Scheduler,
   ],
   debug_logging: false
 
-config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
+config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.Suse
 
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP

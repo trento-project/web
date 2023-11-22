@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Telemetry.Gen do
+defmodule Trento.Infrastructure.Telemetry.Gen do
   @moduledoc """
   Behaviour of a telemetry adapter.
   """
