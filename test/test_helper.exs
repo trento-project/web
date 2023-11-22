@@ -8,10 +8,10 @@ Application.put_env(:trento, Trento.Integration.Telemetry,
   adapter: Trento.Integration.Telemetry.Mock
 )
 
-Mox.defmock(Trento.Integration.Prometheus.Mock, for: Trento.Integration.Prometheus.Gen)
+Mox.defmock(Trento.Infrastructure.Prometheus.Mock, for: Trento.Infrastructure.Prometheus.Gen)
 
-Application.put_env(:trento, Trento.Integration.Prometheus,
-  adapter: Trento.Integration.Prometheus.Mock
+Application.put_env(:trento, Trento.Infrastructure.Prometheus,
+  adapter: Trento.Infrastructure.Prometheus.Mock
 )
 
 Mox.defmock(Trento.Infrastructure.Messaging.Adapter.Mock,

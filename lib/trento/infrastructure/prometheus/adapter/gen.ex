@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Prometheus.Gen do
+defmodule Trento.Infrastructure.Prometheus.Gen do
   @moduledoc """
   Behaviour of a prometheus adapter.
   """

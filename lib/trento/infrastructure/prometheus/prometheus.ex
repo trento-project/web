@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Prometheus do
+defmodule Trento.Infrastructure.Prometheus do
   @moduledoc """
   Prometheus integration service
   """

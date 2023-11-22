@@ -3,7 +3,7 @@ defmodule TrentoWeb.V1.PrometheusController do
 
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.Integration.Prometheus
+  alias Trento.Infrastructure.Prometheus
 
   alias TrentoWeb.OpenApi.V1.Schema
 

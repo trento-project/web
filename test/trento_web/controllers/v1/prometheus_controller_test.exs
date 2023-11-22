@@ -45,7 +45,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
   end
 
   test "should return the exporters status", %{conn: conn} do
-    expect(Trento.Integration.Prometheus.Mock, :get_exporters_status, fn _ ->
+    expect(Trento.Infrastructure.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:ok, %{"Node Exporter" => :passing}}
     end)
 
@@ -58,7 +58,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
   end
 
   test "should return 404 if the host is not registered", %{conn: conn} do
-    expect(Trento.Integration.Prometheus.Mock, :get_exporters_status, fn _ ->
+    expect(Trento.Infrastructure.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:error, :not_found}
     end)
 
@@ -78,7 +78,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
   end
 
   test "should return a 500 if the exporters status cannot be fetched", %{conn: conn} do
-    expect(Trento.Integration.Prometheus.Mock, :get_exporters_status, fn _ ->
+    expect(Trento.Infrastructure.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:error, :reason}
     end)
 

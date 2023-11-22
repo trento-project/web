@@ -135,10 +135,10 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
   exchange: "trento.checks",
   connection: "amqp://guest:guest@localhost:5672"
 
-config :trento, Trento.Integration.Prometheus,
-  adapter: Trento.Integration.Prometheus.PrometheusApi
+config :trento, Trento.Infrastructure.Prometheus,
+  adapter: Trento.Infrastructure.Prometheus.PrometheusApi
 
-config :trento, Trento.Integration.Prometheus.PrometheusApi, url: "http://localhost:9090"
+config :trento, Trento.Infrastructure.Prometheus.PrometheusApi, url: "http://localhost:9090"
 
 config :trento, :grafana,
   user: "admin",

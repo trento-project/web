@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Prometheus.PrometheusApi do
+defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   @moduledoc """
   Prometheus API adapter
   """
@@ -9,7 +9,7 @@ defmodule Trento.Integration.Prometheus.PrometheusApi do
 
   require Logger
 
-  @behaviour Trento.Integration.Prometheus.Gen
+  @behaviour Trento.Infrastructure.Prometheus.Gen
 
   def get_exporters_status(host_id) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]

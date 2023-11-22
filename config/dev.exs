@@ -107,8 +107,8 @@ config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
 config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
   connection: "amqp://trento:trento@localhost:5673"
 
-config :trento, Trento.Integration.Prometheus,
-  adapter: Trento.Integration.Prometheus.MockPrometheusApi
+config :trento, Trento.Infrastructure.Prometheus,
+  adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
 
 # Do not include metadata nor timestamps in development logs
 # config :logger, :console, format: "[$level] $message\n"
