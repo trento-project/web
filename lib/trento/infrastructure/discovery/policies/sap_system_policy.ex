@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.SapSystemPolicy do
+defmodule Trento.Infrastructure.Discovery.Policies.SapSystemPolicy do
   @moduledoc """
   This module contains functions to transform SAP system related integration events into commands..
   """
@@ -16,7 +16,7 @@ defmodule Trento.Infrastructure.Discovery.SapSystemPolicy do
 
   alias Trento.SapSystems.Projections.{ApplicationInstanceReadModel, DatabaseInstanceReadModel}
 
-  alias Trento.Infrastructure.Discovery.SapSystemDiscoveryPayload
+  alias Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload
 
   alias SapSystemDiscoveryPayload.{
     Instance,

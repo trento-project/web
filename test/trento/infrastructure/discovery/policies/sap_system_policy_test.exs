@@ -8,7 +8,7 @@ defmodule Trento.Infrastructure.Discovery.SapSystemPolicyTest do
 
   import Trento.Infrastructure.DiscoveryFixturesHelper
 
-  alias Trento.Infrastructure.Discovery.SapSystemPolicy
+  alias Trento.Infrastructure.Discovery.Policies.SapSystemPolicy
 
   alias Trento.SapSystems.Commands.{
     MarkApplicationInstanceAbsent,

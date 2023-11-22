@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Commanded.RollUp.RollUpTest do
+defmodule Trento.Infrastructure.Commanded.RollUpTest do
   use Trento.EventStoreCase, async: false
 
   alias Trento.Infrastructure.Commanded.RollUp

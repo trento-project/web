@@ -10,9 +10,12 @@ defmodule Trento.Infrastructure.Discovery do
   import Ecto.Query
 
   alias Trento.Infrastructure.Discovery.{
-    ClusterPolicy,
     DiscardedDiscoveryEvent,
     DiscoveryEvent,
+  }
+
+  alias Trento.Infrastructure.Discovery.Policies.{
+    ClusterPolicy,
     HostPolicy,
     SapSystemPolicy
   }

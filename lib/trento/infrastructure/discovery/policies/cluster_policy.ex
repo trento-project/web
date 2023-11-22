@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.ClusterPolicy do
+defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicy do
   @moduledoc """
   This module contains functions to transform cluster related integration events into commands.
   """

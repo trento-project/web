@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.Discovery.HostPolicyTest do
 
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.Infrastructure.Discovery.HostPolicy
+  alias Trento.Infrastructure.Discovery.Policies.HostPolicy
 
   alias Trento.Hosts.Commands.{
     RegisterHost,

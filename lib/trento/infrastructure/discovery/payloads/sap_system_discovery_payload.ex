@@ -1,9 +1,9 @@
-defmodule Trento.Infrastructure.Discovery.SapSystemDiscoveryPayload do
+defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
   @moduledoc """
   SAP system discovery integration event payload
   """
 
-  alias Trento.Infrastructure.Discovery.SapSystemDiscoveryPayload.{
+  alias Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.{
     Database,
     Instance,
     Profile
@@ -115,7 +115,7 @@ defmodule Trento.Infrastructure.Discovery.SapSystemDiscoveryPayload do
     Instances field payload
     """
 
-    alias Trento.Infrastructure.Discovery.SapSystemDiscoveryPayload.{
+    alias Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.{
       SapControl,
       SystemReplication
     }
@@ -147,7 +147,7 @@ defmodule Trento.Infrastructure.Discovery.SapSystemDiscoveryPayload do
     SAP control field payload
     """
 
-    alias Trento.Infrastructure.Discovery.SapSystemDiscoveryPayload.{
+    alias Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.{
       SapControlInstance,
       SapControlProcess,
       SapControlProperty

@@ -8,7 +8,7 @@ defmodule Trento.Infrastructure.Discovery.ClusterPolicyTest do
 
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.Infrastructure.Discovery.ClusterPolicy
+  alias Trento.Infrastructure.Discovery.Policies.ClusterPolicy
 
   alias Trento.Domain.Commands.{DeregisterClusterHost, RegisterClusterHost}
 

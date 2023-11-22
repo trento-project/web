@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.CloudDiscoveryPayload do
+defmodule Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload do
   @moduledoc """
   Cloud discovery integration event payload
   """
