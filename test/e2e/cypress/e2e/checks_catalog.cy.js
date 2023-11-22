@@ -90,19 +90,16 @@ context('Checks catalog', () => {
     });
   });
 
-  describe('Provider selection', () => {
+  describe('Filtering', () => {
     [
       ['aws', 'AWS', 1, 1],
       ['azure', 'Azure', 2, 5],
       ['gcp', 'GCP', 3, 7],
     ].forEach(([provider, label, groupCount, checkCount]) => {
       it(`should query the correct checks data filtered by provider ${label}`, () => {
-        cy.intercept(
-          `${checksCatalogURL}?provider=${provider}&target_type=cluster`,
-          {
-            body: { items: catalog.slice(0, checkCount) },
-          }
-        ).as('request');
+        cy.intercept(`${checksCatalogURL}?provider=${provider}`, {
+          body: { items: catalog.slice(0, checkCount) },
+        }).as('request');
 
         cy.get('.providers-selection-dropdown').click();
         cy.get('.providers-selection-dropdown')
