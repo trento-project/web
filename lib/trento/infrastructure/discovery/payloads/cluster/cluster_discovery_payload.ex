@@ -12,7 +12,7 @@ defmodule Trento.Infrastructure.Discovery.ClusterDiscoveryPayload do
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
-  alias Trento.Infrastructure.Discovery.ClusterDiscoveryPayload.{
+  alias Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPayload.{
     Cib,
     Crmmon,
     Sbd
