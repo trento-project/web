@@ -2,8 +2,8 @@ defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest do
   use TrentoWeb.ConnCase, async: true
   use Plug.Test
 
-  alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
   alias TrentoWeb.Plugs.ApiAuthErrorHandler
+  alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
 
   test "Reject an Unauthorized request" do
     conn = conn(:get, "/foo", "bar=10")
