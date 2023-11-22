@@ -1,4 +1,4 @@
-defmodule Trento.RollUp do
+defmodule Trento.Infrastructure.Commanded.RollUp do
   @moduledoc """
   This module is responsible for archiving a stream and appending a roll-up event to it.
 
@@ -6,7 +6,7 @@ defmodule Trento.RollUp do
   Archived events are removed from the $all stream but they are still available in the original stream.
   """
 
-  import Trento.RollUp.Queries
+  import Trento.Infrastructure.Commanded.RollUp.Queries
 
   require Logger
 
