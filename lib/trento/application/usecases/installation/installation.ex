@@ -57,6 +57,6 @@ defmodule Trento.Installation do
 
   @spec get_api_key :: String.t()
   def get_api_key do
-    Trento.Application.Auth.ApiKey.sign(%{installation_id: get_installation_id()})
+    TrentoWeb.Auth.ApiKey.sign(%{installation_id: get_installation_id()})
   end
 end

@@ -1,7 +1,7 @@
-defmodule Trento.ApiKeyTest do
+defmodule TrentoWeb.ApiKeyTest do
   use ExUnit.Case
 
-  alias Trento.Application.Auth.ApiKey
+  alias TrentoWeb.Auth.ApiKey
 
   setup_all do
     %{

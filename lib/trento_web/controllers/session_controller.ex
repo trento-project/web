@@ -6,7 +6,7 @@ defmodule TrentoWeb.SessionController do
     User
   }
 
-  alias TrentoWeb.Auth.JWTAuthPlug
+  alias TrentoWeb.Plugs.JWTAuthPlug
 
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs

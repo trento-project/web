@@ -16,7 +16,7 @@ defmodule TrentoWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug TrentoWeb.Auth.JWTAuthPlug, otp_app: :trento
+    plug TrentoWeb.Plugs.JWTAuthPlug, otp_app: :trento
   end
 
   pipeline :api_v1 do
@@ -32,15 +32,15 @@ defmodule TrentoWeb.Router do
   pipeline :protected_api do
     plug Unplug,
       if: {Unplug.Predicates.AppConfigEquals, {:trento, :jwt_authentication_enabled, true}},
-      do: {Pow.Plug.RequireAuthenticated, error_handler: TrentoWeb.Auth.ApiAuthErrorHandler}
+      do: {Pow.Plug.RequireAuthenticated, error_handler: TrentoWeb.Plugs.ApiAuthErrorHandler}
   end
 
   pipeline :apikey_authenticated do
     plug Unplug,
       if: {Unplug.Predicates.AppConfigEquals, {:trento, :api_key_authentication_enabled, true}},
       do:
-        {Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug,
-         error_handler: TrentoWeb.Auth.ApiAuthErrorHandler}
+        {TrentoWeb.Plugs.AuthenticateAPIKeyPlug,
+         error_handler: TrentoWeb.Plugs.ApiAuthErrorHandler}
   end
 
   scope "/" do

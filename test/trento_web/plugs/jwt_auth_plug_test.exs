@@ -1,4 +1,4 @@
-defmodule TrentoWeb.JWTAuthPlugTest do
+defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: true
@@ -6,9 +6,10 @@ defmodule TrentoWeb.JWTAuthPlugTest do
 
   alias TrentoWeb.Auth.{
     AccessToken,
-    JWTAuthPlug,
     RefreshToken
   }
+
+  alias TrentoWeb.Plugs.JWTAuthPlug
 
   import Mox
 

@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug do
+defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlug do
   @moduledoc """
   A Plug that authenticates API calls via an API Key provided in `X-Trento-apiKey` HTTP header
   """
@@ -13,7 +13,7 @@ defmodule Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug do
   @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
   def call(conn, handler) do
     with [api_key] <- get_req_header(conn, "x-trento-apikey"),
-         {:ok, _data} <- Trento.Application.Auth.ApiKey.verify(api_key) do
+         {:ok, _data} <- TrentoWeb.Auth.ApiKey.verify(api_key) do
       assign(conn, :api_key_authenticated, true)
     else
       error ->

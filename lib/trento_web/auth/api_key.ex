@@ -1,4 +1,4 @@
-defmodule Trento.Application.Auth.ApiKey do
+defmodule TrentoWeb.Auth.ApiKey do
   @moduledoc """
   This Module creates and verifies API Keys.
   """

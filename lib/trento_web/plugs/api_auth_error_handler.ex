@@ -1,4 +1,4 @@
-defmodule TrentoWeb.Auth.ApiAuthErrorHandler do
+defmodule TrentoWeb.Plugs.ApiAuthErrorHandler do
   @moduledoc """
   Used to handle authentication error in APIs
 
