@@ -72,7 +72,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
 
     event = build(:host_added_to_cluster_event, cluster_id: cluster_id)
 
-    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpCluster{cluster_id: ^cluster_id}, _ ->
+    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpCluster{cluster_id: ^cluster_id},
+                                                        _ ->
       :ok
     end)
 
@@ -102,8 +103,10 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
 
     event = build(:database_instance_registered_event, sap_system_id: sap_system_id)
 
-    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpSapSystem{sap_system_id: ^sap_system_id},
-                                                _ ->
+    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpSapSystem{
+                                                          sap_system_id: ^sap_system_id
+                                                        },
+                                                        _ ->
       :ok
     end)
 
@@ -126,7 +129,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     cluster_id = UUID.uuid4()
     event = build(:cluster_tombstoned_event, cluster_id: cluster_id)
 
-    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpCluster{cluster_id: ^cluster_id}, _ ->
+    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpCluster{cluster_id: ^cluster_id},
+                                                        _ ->
       :ok
     end)
 
@@ -137,8 +141,10 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     sap_system_id = UUID.uuid4()
     event = build(:sap_system_tombstoned_event, sap_system_id: sap_system_id)
 
-    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpSapSystem{sap_system_id: ^sap_system_id},
-                                                _ ->
+    expect(Trento.Support.Commanded.Mock, :dispatch, fn %RollUpSapSystem{
+                                                          sap_system_id: ^sap_system_id
+                                                        },
+                                                        _ ->
       :ok
     end)
 

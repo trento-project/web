@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.Discovery do
 
   alias Trento.Infrastructure.Discovery.{
     DiscardedDiscoveryEvent,
-    DiscoveryEvent,
+    DiscoveryEvent
   }
 
   alias Trento.Infrastructure.Discovery.Policies.{
