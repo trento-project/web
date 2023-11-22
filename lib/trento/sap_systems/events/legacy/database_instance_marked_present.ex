@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.DatabaseInstanceMarkedPresent do
   This event is emitted when a database instance is marked as present in the SAP system.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.SapSystems.Events.DatabaseInstanceMarkedPresent do
     field :instance_number, :string

@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ApplicationInstanceRegistered do
   This event is emitted when a database application is registered to the SAP system.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

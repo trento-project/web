@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ApplicationInstanceMoved do
   This event is emitted when an application instance is moved from a host to another.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.SapSystems.Events.ApplicationInstanceMoved do
     field :sap_system_id, Ecto.UUID

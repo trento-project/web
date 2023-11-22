@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.DatabaseInstanceHealthChanged do
   This event is emitted when a database instance health has changed.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

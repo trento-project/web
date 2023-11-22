@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.DatabaseRestored do
   This event is emitted when a database is restored.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 
