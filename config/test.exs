@@ -79,7 +79,8 @@ config :trento, Trento.Scheduler,
     ]
   ]
 
-config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler, max_stream_version: 10
+config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler,
+  max_stream_version: 10
 
 config :joken,
   access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",

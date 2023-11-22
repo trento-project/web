@@ -20,8 +20,8 @@ defmodule Trento.Infrastructure.TelemetryTest do
     host_telemetry = insert(:host_telemetry)
 
     expect(Trento.Infrastructure.Telemetry.Mock, :publish_hosts_telemetry, fn hosts_telemetry,
-                                                                           installation_id,
-                                                                           flavor ->
+                                                                              installation_id,
+                                                                              flavor ->
       assert [host_telemetry] == hosts_telemetry
       assert Installation.get_installation_id() == installation_id
       assert "Community" == flavor
@@ -36,8 +36,8 @@ defmodule Trento.Infrastructure.TelemetryTest do
     host_telemetry = insert(:host_telemetry)
 
     expect(Trento.Infrastructure.Telemetry.Mock, :publish_hosts_telemetry, fn hosts_telemetry,
-                                                                           installation_id,
-                                                                           flavor ->
+                                                                              installation_id,
+                                                                              flavor ->
       assert [host_telemetry] == hosts_telemetry
       assert Installation.get_installation_id() == installation_id
       assert "Premium" == flavor
