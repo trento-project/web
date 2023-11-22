@@ -1,4 +1,4 @@
-defimpl Trento.Support.Middleware.Enrichable,
+defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   for: Trento.Hosts.Commands.RequestHostDeregistration do
   alias Trento.Hosts.Commands.RequestHostDeregistration
 

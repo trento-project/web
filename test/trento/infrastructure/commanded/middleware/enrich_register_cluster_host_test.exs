@@ -7,7 +7,7 @@ defmodule Trento.EnrichRegisterClusterHostTest do
 
   import Trento.Factory
 
-  alias Trento.Support.Middleware.Enrichable
+  alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
   alias Trento.ClusterEnrichmentData
   alias Trento.Repo

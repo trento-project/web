@@ -5,7 +5,7 @@ defmodule Trento.EnrichRegisterApplicationInstanceTest do
   import Trento.Factory
 
   alias Trento.SapSystems.Commands.RegisterApplicationInstance
-  alias Trento.Support.Middleware.Enrichable
+  alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
   test "should return an enriched command if the database was found by the ip and tenant" do
     %{

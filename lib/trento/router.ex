@@ -1,7 +1,7 @@
 defmodule Trento.Router do
   use Commanded.Commands.Router
 
-  alias Trento.Support.Middleware.Enrich
+  alias Trento.Infrastructure.Commanded.Middleware.Enrich
 
   alias Trento.Domain.Cluster
 

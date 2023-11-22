@@ -1,4 +1,4 @@
-defimpl Trento.Support.Middleware.Enrichable,
+defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   for: Trento.SapSystems.Commands.RegisterApplicationInstance do
   alias Trento.SapSystems.Commands.RegisterApplicationInstance
 

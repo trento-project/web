@@ -1,4 +1,4 @@
-defimpl Trento.Support.Middleware.Enrichable,
+defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   for: Trento.Domain.Commands.RegisterClusterHost do
   alias Trento.Domain.Commands.RegisterClusterHost
 

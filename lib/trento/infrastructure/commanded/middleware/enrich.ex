@@ -1,4 +1,4 @@
-defmodule Trento.Support.Middleware.Enrich do
+defmodule Trento.Infrastructure.Commanded.Middleware.Enrich do
   @moduledoc """
   Command enrichment middleware.
   """
@@ -8,7 +8,7 @@ defmodule Trento.Support.Middleware.Enrich do
   import Commanded.Middleware.Pipeline
 
   alias Commanded.Middleware.Pipeline
-  alias Trento.Support.Middleware.Enrichable
+  alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
   def before_dispatch(%Pipeline{command: command} = pipeline) do
     case Enrichable.impl_for(command) do
@@ -33,6 +33,6 @@ defmodule Trento.Support.Middleware.Enrich do
   def after_failure(pipeline), do: pipeline
 end
 
-defprotocol Trento.Support.Middleware.Enrichable do
+defprotocol Trento.Infrastructure.Commanded.Middleware.Enrichable do
   def enrich(command, metadata)
 end

@@ -1,11 +1,11 @@
-defmodule Trento.EnrichRequestHostDeregistrationTest do
+defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRequestHostDeregistrationTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
   alias Trento.Hosts.Commands.RequestHostDeregistration
-  alias Trento.Support.Middleware.Enrichable
+  alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
   @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]
   @deregistration_debounce Application.compile_env!(
