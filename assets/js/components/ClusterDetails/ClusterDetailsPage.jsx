@@ -10,7 +10,7 @@ import {
 } from '@state/selectors/cluster';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
-import { updateCatalog } from '@state/actions/catalog';
+import { updateCatalog } from '@state/catalog';
 import {
   updateLastExecution,
   executionRequested,

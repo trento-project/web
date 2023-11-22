@@ -3,7 +3,7 @@ import { find, get, some } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
-import { updateCatalog } from '@state/actions/catalog';
+import { updateCatalog } from '@state/catalog';
 
 import LoadingBox from '@components/LoadingBox';
 import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { setSelectedFilters } from '@state/checksResultsFilters';
 import { getSelectedFilters } from '@state/selectors/checksResultsFilters';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
-import { updateCatalog } from '@state/actions/catalog';
+import { updateCatalog } from '@state/catalog';
 import {
   updateLastExecution,
   executionRequested,

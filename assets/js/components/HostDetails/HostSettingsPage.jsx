@@ -7,7 +7,7 @@ import LoadingBox from '@components/LoadingBox';
 import { TARGET_HOST } from '@lib/model';
 
 import { hostChecksSelected } from '@state/checksSelection';
-import { updateCatalog } from '@state/actions/catalog';
+import { updateCatalog } from '@state/catalog';
 import { hostExecutionRequested } from '@state/actions/lastExecutions';
 import { getCatalog } from '@state/selectors/catalog';
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';

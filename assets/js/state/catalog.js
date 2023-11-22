@@ -1,5 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export const UPDATE_CATALOG = 'UPDATE_CATALOG';
+
+export const updateCatalog = (env = {}) => ({
+  type: UPDATE_CATALOG,
+  payload: env,
+});
+
 const initialState = {
   loading: true,
   data: [],
