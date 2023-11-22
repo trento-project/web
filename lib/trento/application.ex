@@ -19,7 +19,7 @@ defmodule Trento.Application do
         TrentoWeb.Endpoint,
         Trento.Support.Commanded,
         Trento.Scheduler,
-        Trento.Support.EventHandlersSupervisor,
+        Trento.EventHandlersSupervisor,
         Trento.ProjectorsSupervisor,
         Trento.ProcessManagersSupervisor,
         Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
