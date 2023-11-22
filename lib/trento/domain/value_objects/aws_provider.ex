@@ -5,7 +5,7 @@ defmodule Trento.Domain.AwsProvider do
 
   @required_fields nil
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :account_id, :string

@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPaylo
   alias Trento.Support.ListHelper
 
   @required_fields []
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :config, :map

@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ClusterDetailsUpdated do
   This event is emitted when cluster details are updated.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType

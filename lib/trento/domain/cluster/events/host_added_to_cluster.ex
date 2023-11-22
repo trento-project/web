@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostAddedToCluster do
   This event is emitted when a host is added to a cluster
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :cluster_id, Ecto.UUID

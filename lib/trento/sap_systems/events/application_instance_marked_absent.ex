@@ -3,7 +3,7 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent do
   This event is emitted when an application instance is marked as absent from the SAP system.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :instance_number, :string

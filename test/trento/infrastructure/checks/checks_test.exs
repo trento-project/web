@@ -67,7 +67,7 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
       execution_id = UUID.uuid4()
       group_id = UUID.uuid4()
 
-      expect(Trento.Commanded.Mock, :dispatch, fn command, _ ->
+      expect(Trento.Support.Commanded.Mock, :dispatch, fn command, _ ->
         assert %CompleteChecksExecution{
                  cluster_id: ^group_id,
                  health: Health.passing()
@@ -128,7 +128,7 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
       execution_id = UUID.uuid4()
       group_id = UUID.uuid4()
 
-      expect(Trento.Commanded.Mock, :dispatch, fn command, _ ->
+      expect(Trento.Support.Commanded.Mock, :dispatch, fn command, _ ->
         assert %CompleteHostChecksExecution{
                  host_id: ^group_id,
                  health: Health.passing()

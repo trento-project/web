@@ -4,7 +4,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler do
   """
 
   use Commanded.Event.Handler,
-    application: Trento.Commanded,
+    application: Trento.Support.Commanded,
     name: "roll_up_event_handler",
     consistency: :strong,
     start_from: :current

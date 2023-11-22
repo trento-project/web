@@ -4,7 +4,7 @@ defmodule Trento.Infrastructure.Checks.HostExecutionEnv do
   """
 
   @required_fields :all
-  use Trento.Type
+  use Trento.Support.Type
 
   require Trento.Domain.Enums.Provider, as: Provider
 

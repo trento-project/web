@@ -7,7 +7,7 @@ defmodule Trento.Infrastructure.Discovery.ClusterDiscoveryPayload do
   @required_fields_hana [:sid]
   @required_fields_ascs_ers [:additional_sids]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType

@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SlesSubscriptionDiscoveryPayl
 
   @required_fields [:arch, :identifier, :status, :version]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :arch, :string

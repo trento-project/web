@@ -9,7 +9,7 @@ defmodule Trento.Domain.AscsErsClusterNode do
 
   require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
-  use Trento.Type
+  use Trento.Support.Type
 
   alias Trento.Domain.ClusterResource
 

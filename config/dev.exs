@@ -11,7 +11,7 @@ config :trento, Trento.Repo,
   pool_size: 5,
   log: false
 
-config :trento, Trento.EventStore,
+config :trento, Trento.Support.EventStore,
   username: "postgres",
   password: "postgres",
   database: "trento_eventstore_dev",

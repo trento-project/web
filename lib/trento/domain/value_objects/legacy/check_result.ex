@@ -5,7 +5,7 @@ defmodule Trento.Domain.CheckResult do
 
   @required_fields [:check_id, :result]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :check_id, :string

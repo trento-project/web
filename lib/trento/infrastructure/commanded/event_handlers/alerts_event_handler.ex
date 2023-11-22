@@ -4,7 +4,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler do
   """
 
   use Commanded.Event.Handler,
-    application: Trento.Commanded,
+    application: Trento.Support.Commanded,
     name: "alerts_event_handler"
 
   alias Trento.Domain.Events.ClusterHealthChanged

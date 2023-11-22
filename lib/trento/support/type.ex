@@ -1,4 +1,4 @@
-defmodule Trento.Type do
+defmodule Trento.Support.Type do
   @moduledoc """
   This module defines the macro `deftype` which is used to define a new type,
   for data mapping and validation by wrapping Ecto.Schema and Ecto.Changeset.
@@ -15,7 +15,7 @@ defmodule Trento.Type do
   defmacro __using__(_opts) do
     quote do
       use Ecto.Schema
-      import Trento.Type, only: [deftype: 1]
+      import Trento.Support.Type, only: [deftype: 1]
 
       import Ecto.Changeset
 

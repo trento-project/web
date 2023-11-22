@@ -35,7 +35,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
   describe "heartbeat" do
     test "should return 404 if the host was not found", %{conn: conn} do
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn _ ->
           {:error, :host_not_registered}
@@ -57,7 +57,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   describe "Checks Selection" do
     test "should return 202 when the checks were selected", %{conn: conn} do
-      expect(Trento.Commanded.Mock, :dispatch, fn _ ->
+      expect(Trento.Support.Commanded.Mock, :dispatch, fn _ ->
         :ok
       end)
 
@@ -74,7 +74,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
     test "should return 404 if the host was not registered", %{conn: conn} do
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn _ ->
           {:error, :host_not_registered}
@@ -143,7 +143,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
             expected_response: expected_response
           } <- scenarios do
         expect(
-          Trento.Commanded.Mock,
+          Trento.Support.Commanded.Mock,
           :dispatch,
           0,
           fn _ -> nil end
@@ -161,7 +161,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
     test "should return 500 on any other error", %{conn: conn} do
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn _ ->
           {:error, :some_error}
@@ -259,7 +259,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       %{id: host_id} = insert(:host)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %RequestHostDeregistration{host_id: ^host_id} ->
           :ok
@@ -275,7 +275,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       %{id: host_id} = insert(:host)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %RequestHostDeregistration{host_id: ^host_id} ->
           {:error, :host_alive}
@@ -292,7 +292,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       %{id: host_id} = insert(:host)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %RequestHostDeregistration{host_id: ^host_id} ->
           {:error, :host_not_registered}

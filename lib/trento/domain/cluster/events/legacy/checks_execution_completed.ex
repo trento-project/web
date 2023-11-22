@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ChecksExecutionCompleted do
   Event of the checks execution completed.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

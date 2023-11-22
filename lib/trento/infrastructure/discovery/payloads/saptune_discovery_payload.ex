@@ -6,7 +6,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload do
   alias Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload.SaptuneOutput
   @required_fields [:result]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     embeds_one :result, SaptuneOutput
@@ -19,7 +19,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload do
 
     @required_fields nil
 
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :package_version, :string

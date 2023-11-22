@@ -53,12 +53,12 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :trento, Trento.Commanded, adapter: Trento.Commanded
+config :trento, Trento.Support.Commanded, adapter: Trento.Support.Commanded
 
-config :trento, Trento.Commanded,
+config :trento, Trento.Support.Commanded,
   event_store: [
     adapter: Commanded.EventStore.Adapters.EventStore,
-    event_store: Trento.EventStore
+    event_store: Trento.Support.EventStore
   ],
   pubsub: :local,
   registry: :local
@@ -66,12 +66,12 @@ config :trento, Trento.Commanded,
 config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler,
   max_stream_version: 10_000
 
-config :trento, Trento.EventStore,
-  serializer: Trento.JsonbSerializer,
+config :trento, Trento.Support.EventStore,
+  serializer: Trento.Support.JsonbSerializer,
   column_data_type: "jsonb",
   types: EventStore.PostgresTypes
 
-config :trento, event_stores: [Trento.EventStore]
+config :trento, event_stores: [Trento.Support.EventStore]
 
 config :trento, :pow,
   user: Trento.Users.User,

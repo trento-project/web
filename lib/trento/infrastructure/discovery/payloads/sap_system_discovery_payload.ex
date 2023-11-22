@@ -17,7 +17,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
   @required_fields [:Id, :SID, :Type, :Profile, :Databases, :Instances]
   @system_types [@unknown_type, @database_type, @application_type, @diagnostics_type]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :Id, :string
@@ -58,7 +58,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
     @application_type 2
     @application_required_fields [:"dbs/hdb/dbname"]
 
-    # Cannot use Trento.Type here, Jason.Encoder is breaking the schema creation
+    # Cannot use Trento.Support.Type here, Jason.Encoder is breaking the schema creation
     use Ecto.Schema
     import Ecto.Changeset
 
@@ -89,7 +89,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     @required_fields [:Database]
 
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :Host, :string
@@ -122,7 +122,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     @required_fields [:Host, :Name, :Type, :SAPControl, :SystemReplication]
 
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :Host, :string
@@ -155,7 +155,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     @required_fields [:Properties, :Instances, :Processes]
 
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       embeds_many :Properties, SapControlProperty
@@ -199,7 +199,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     @required_fields [:value, :property]
 
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :value, :string
@@ -228,7 +228,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
       :startPriority
     ]
 
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       # current_instance is a custom field to make data extraction easier
@@ -282,7 +282,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
       :description
     ]
 
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :pid, :integer
@@ -315,7 +315,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     @required_fields [:local_site_id]
 
-    # Cannot use Trento.Type here, Jason.Encoder is breaking the schema creation
+    # Cannot use Trento.Support.Type here, Jason.Encoder is breaking the schema creation
     use Ecto.Schema
     import Ecto.Changeset
 

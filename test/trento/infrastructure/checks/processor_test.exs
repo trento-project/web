@@ -75,7 +75,7 @@ defmodule Trento.Infrastructure.Checks.AMQP.ProcessorTest do
 
         message = %GenRMQ.Message{payload: execution_completed, attributes: %{}, channel: nil}
 
-        expect(Trento.Commanded.Mock, :dispatch, fn _, opts ->
+        expect(Trento.Support.Commanded.Mock, :dispatch, fn _, opts ->
           assert [correlation_id: ^execution_id] = opts
           :ok
         end)

@@ -5,7 +5,7 @@ defmodule Trento.Hosts.Commands.UpdateProvider do
 
   @required_fields [:host_id]
 
-  use Trento.Command
+  use Trento.Support.Command
 
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 

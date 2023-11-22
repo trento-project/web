@@ -10,7 +10,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPaylo
     """
 
     @required_fields [:id, :type, :class, :operations, :instance_attributes]
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :id, :string
@@ -72,7 +72,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPaylo
     """
 
     @required_fields [:primitives, :clones, :groups]
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       embeds_many :primitives, Primitive
@@ -129,7 +129,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPaylo
 
   @required_fields [:configuration]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     embeds_one :configuration, Configuration do

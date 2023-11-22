@@ -5,7 +5,7 @@ defmodule Trento.Hosts.Events.SlesSubscriptionsUpdated do
 
   alias Trento.Hosts.ValueObjects.SlesSubscription
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :host_id, Ecto.UUID

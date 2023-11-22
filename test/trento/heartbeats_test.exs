@@ -28,7 +28,7 @@ defmodule Trento.HeartbeatsTest do
     )
 
     expect(
-      Trento.Commanded.Mock,
+      Trento.Support.Commanded.Mock,
       :dispatch,
       fn command ->
         assert %UpdateHeartbeat{
@@ -66,7 +66,7 @@ defmodule Trento.HeartbeatsTest do
     )
 
     expect(
-      Trento.Commanded.Mock,
+      Trento.Support.Commanded.Mock,
       :dispatch,
       fn command ->
         assert %UpdateHeartbeat{
@@ -103,7 +103,7 @@ defmodule Trento.HeartbeatsTest do
     )
 
     expect(
-      Trento.Commanded.Mock,
+      Trento.Support.Commanded.Mock,
       :dispatch,
       fn command ->
         assert %UpdateHeartbeat{
@@ -136,7 +136,7 @@ defmodule Trento.HeartbeatsTest do
     )
 
     expect(
-      Trento.Commanded.Mock,
+      Trento.Support.Commanded.Mock,
       :dispatch,
       0,
       fn _ -> :ok end

@@ -1,4 +1,4 @@
-defmodule Trento.EventTest do
+defmodule Trento.Support.EventTest do
   use ExUnit.Case
 
   describe "upcast an event" do

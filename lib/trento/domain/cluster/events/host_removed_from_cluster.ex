@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostRemovedFromCluster do
   This event is emitted when a host is removed from a cluster.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :host_id, Ecto.UUID

@@ -1,7 +1,7 @@
 defmodule TestUpcastedEvent do
   @moduledoc false
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent version: 3 do
     field :data, :string

@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload do
 
   @required_fields []
 
-  use Trento.Type
+  use Trento.Support.Type
 
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 
@@ -43,7 +43,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload do
     @moduledoc nil
 
     @required_fields nil
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       embeds_one :compute, Compute do
@@ -94,7 +94,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload do
     @moduledoc nil
 
     @required_fields :all
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :account_id, :string
@@ -112,7 +112,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload do
     @moduledoc nil
 
     @required_fields :all
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :disk_number, :integer

@@ -4,7 +4,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
   """
 
   use Commanded.Projections.Ecto,
-    application: Trento.Commanded,
+    application: Trento.Support.Commanded,
     repo: Trento.Repo,
     name: "sap_system_projector"
 

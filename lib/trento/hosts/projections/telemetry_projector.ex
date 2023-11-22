@@ -4,7 +4,7 @@ defmodule Trento.Hosts.Projections.TelemetryProjector do
   """
 
   use Commanded.Projections.Ecto,
-    application: Trento.Commanded,
+    application: Trento.Support.Commanded,
     repo: Trento.Repo,
     name: "telemetry_projector"
 

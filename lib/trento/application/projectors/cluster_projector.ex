@@ -4,7 +4,7 @@ defmodule Trento.ClusterProjector do
   """
 
   use Commanded.Projections.Ecto,
-    application: Trento.Commanded,
+    application: Trento.Support.Commanded,
     repo: Trento.Repo,
     name: "cluster_projector"
 

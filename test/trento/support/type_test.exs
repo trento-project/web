@@ -1,4 +1,4 @@
-defmodule Trento.TypeTest do
+defmodule Trento.Support.TypeTest do
   use ExUnit.Case
 
   describe "build a struct" do

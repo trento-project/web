@@ -4,7 +4,7 @@ defmodule Trento.Hosts.Projections.SlesSubscriptionsProjector do
   """
 
   use Commanded.Projections.Ecto,
-    application: Trento.Commanded,
+    application: Trento.Support.Commanded,
     repo: Trento.Repo,
     name: "sles_subscription_projector"
 

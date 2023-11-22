@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Events.HostSaptuneHealthChanged do
   This event is emitted when a host's saptune health changes.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

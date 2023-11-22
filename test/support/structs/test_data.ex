@@ -3,7 +3,7 @@ defmodule TestData do
 
   @required_fields :all
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :id, Ecto.UUID
@@ -24,7 +24,7 @@ defmodule EmbeddedTestData do
 
   @required_fields :all
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :id, Ecto.UUID
@@ -37,7 +37,7 @@ defmodule PolymorphicAddressTestData do
 
   @required_fields :all
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :id, Ecto.UUID
@@ -50,7 +50,7 @@ defmodule PolymorphicPhoneTestData do
 
   @required_fields :all
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :id, Ecto.UUID

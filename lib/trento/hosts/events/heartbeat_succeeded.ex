@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Events.HeartbeatSucceeded do
   Heartbeat succeeded event
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :host_id, Ecto.UUID

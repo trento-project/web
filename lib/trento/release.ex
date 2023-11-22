@@ -30,7 +30,7 @@ defmodule Trento.Release do
 
     load_app()
 
-    config = Trento.EventStore.config()
+    config = Trento.Support.EventStore.config()
 
     :ok = EventStore.Tasks.Init.exec(config, [])
   end
@@ -41,7 +41,7 @@ defmodule Trento.Release do
 
     load_app()
 
-    config = Trento.EventStore.config()
+    config = Trento.Support.EventStore.config()
 
     :ok = EventStore.Tasks.Migrate.exec(config, [])
   end

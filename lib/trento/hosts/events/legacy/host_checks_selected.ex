@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostChecksSelected do
   Event of the checks selected for a host.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.Hosts.Events.HostChecksSelected do
     field :host_id, Ecto.UUID

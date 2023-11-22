@@ -4,7 +4,7 @@ defmodule Trento.Hosts.ValueObjects.SaptuneServiceStatus do
   """
   @required_fields [:name]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :name, :string

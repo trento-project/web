@@ -9,7 +9,7 @@ defmodule Trento.Domain.ClusterResource do
     :role
   ]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :id, :string

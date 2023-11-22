@@ -5,7 +5,7 @@ defmodule Trento.Domain.SbdDevice do
 
   @required_fields :all
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :device, :string

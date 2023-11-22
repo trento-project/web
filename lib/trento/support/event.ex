@@ -1,9 +1,9 @@
-defmodule Trento.Event do
+defmodule Trento.Support.Event do
   @moduledoc """
   Adds the macro `defevent` which is used to define a new event.
   """
 
-  import Trento.Type, only: [deftype: 1]
+  import Trento.Support.Type, only: [deftype: 1]
 
   defmacro defevent(opts \\ [], do: block) do
     quote do
@@ -44,8 +44,8 @@ defmodule Trento.Event do
     quote do
       @required_fields nil
 
-      use Trento.Type
-      import Trento.Event
+      use Trento.Support.Type
+      import Trento.Support.Event
 
       def upcast(params, _, 1), do: params
     end

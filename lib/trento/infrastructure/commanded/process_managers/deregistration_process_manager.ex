@@ -14,7 +14,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     An application or database instance and which SAP System it belongs to.
     """
     @required_fields :all
-    use Trento.Type
+    use Trento.Support.Type
 
     deftype do
       field :sap_system_id, Ecto.UUID
@@ -23,11 +23,11 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   end
 
   use Commanded.ProcessManagers.ProcessManager,
-    application: Trento.Commanded,
+    application: Trento.Support.Commanded,
     name: "deregistration_process_manager"
 
   @required_fields []
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :cluster_id, Ecto.UUID

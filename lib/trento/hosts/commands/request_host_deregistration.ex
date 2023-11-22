@@ -4,7 +4,7 @@ defmodule Trento.Hosts.Commands.RequestHostDeregistration do
   """
   @required_fields :all
 
-  use Trento.Command
+  use Trento.Support.Command
 
   defcommand do
     field :host_id, Ecto.UUID

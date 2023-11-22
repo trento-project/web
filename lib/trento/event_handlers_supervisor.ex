@@ -1,4 +1,4 @@
-defmodule Trento.EventHandlersSupervisor do
+defmodule Trento.Support.EventHandlersSupervisor do
   @moduledoc false
 
   use Supervisor

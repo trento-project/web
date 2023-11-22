@@ -11,10 +11,10 @@ defmodule Trento.Infrastructure.Commanded.RollUp do
   require Logger
 
   def roll_up_aggregate(stream_id, roll_up_event, stream_archive_id) do
-    {:ok, pid} = Postgrex.start_link(Trento.EventStore.config())
+    {:ok, pid} = Postgrex.start_link(Trento.Support.EventStore.config())
 
     case Postgrex.transaction(pid, fn conn ->
-           with :ok <- Trento.EventStore.delete_snapshot(stream_id, conn: conn),
+           with :ok <- Trento.Support.EventStore.delete_snapshot(stream_id, conn: conn),
                 :ok <- archive_stream(conn, stream_id, stream_archive_id) do
              append_roll_up_event(conn, roll_up_event, stream_id)
            end
@@ -51,7 +51,7 @@ defmodule Trento.Infrastructure.Commanded.RollUp do
       metadata: %{}
     }
 
-    Trento.EventStore.append_to_stream(
+    Trento.Support.EventStore.append_to_stream(
       stream_id,
       :any_version,
       [event_data],

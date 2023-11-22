@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.HostDiscoveryPayload do
 
   @required_fields :all
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :hostname, :string

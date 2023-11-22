@@ -103,7 +103,7 @@ defmodule Trento.Domain.Cluster do
     HostChecksExecutionCompleted
   ]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :cluster_id, Ecto.UUID

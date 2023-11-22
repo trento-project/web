@@ -17,9 +17,9 @@ defmodule Trento.Application do
         {Phoenix.PubSub, name: Trento.PubSub},
         # Start the Endpoint (http/https)
         TrentoWeb.Endpoint,
-        Trento.Commanded,
+        Trento.Support.Commanded,
         Trento.Scheduler,
-        Trento.EventHandlersSupervisor,
+        Trento.Support.EventHandlersSupervisor,
         Trento.ProjectorsSupervisor,
         Trento.ProcessManagersSupervisor,
         Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,

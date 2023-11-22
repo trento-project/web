@@ -3,7 +3,7 @@ defmodule Trento.SapSystems.Events.DatabaseRegistered do
   This event is emitted when a database is registered.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

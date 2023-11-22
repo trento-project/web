@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostChecksHealthChanged do
   This event is emitted when a host's checks result changes.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

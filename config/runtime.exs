@@ -27,7 +27,7 @@ if config_env() in [:prod, :demo] do
       For example: ecto://USER:PASS@HOST/DATABASE
       """
 
-  config :trento, Trento.EventStore,
+  config :trento, Trento.Support.EventStore,
     url: evenstore_url,
     pool_size: String.to_integer(System.get_env("EVENTSTORE_POOL_SIZE") || "10")
 

@@ -5,7 +5,7 @@ defmodule Trento.Domain.Commands.RollUpCluster do
 
   @required_fields nil
 
-  use Trento.Command
+  use Trento.Support.Command
 
   defcommand do
     field :cluster_id, Ecto.UUID

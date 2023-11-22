@@ -1,7 +1,7 @@
 defmodule TestEvent do
   @moduledoc false
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :data, :string

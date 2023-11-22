@@ -1,4 +1,4 @@
-defmodule Trento.EventStoreCase do
+defmodule Trento.Support.EventStoreCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting an event store.
@@ -11,7 +11,7 @@ defmodule Trento.EventStoreCase do
     :ok = Application.stop(:commanded)
     :ok = Application.stop(:eventstore)
 
-    config = Trento.EventStore.config()
+    config = Trento.Support.EventStore.config()
 
     {:ok, conn} = Postgrex.start_link(config)
     EventStore.Storage.Initializer.reset!(conn, config)

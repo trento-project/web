@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ClusterHealthChanged do
   ClusterHealthChanged event
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

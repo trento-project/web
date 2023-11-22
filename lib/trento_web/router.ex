@@ -212,7 +212,7 @@ defmodule TrentoWeb.Router do
       live_dashboard "/dashboard",
         metrics: TrentoWeb.Telemetry,
         additional_pages: [
-          eventstores: {EventStore.Dashboard, event_stores: [Trento.EventStore]}
+          eventstores: {EventStore.Dashboard, event_stores: [Trento.Support.EventStore]}
         ]
     end
   end

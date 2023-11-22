@@ -4,7 +4,7 @@ defmodule Trento.Domain.Events.ClusterRollUpRequested do
   It is used to trigger the stream archiving process and it contains the snapshot of the cluster aggregate.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent resource: "cluster" do
     field :cluster_id, Ecto.UUID

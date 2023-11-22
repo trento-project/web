@@ -98,7 +98,7 @@ defmodule Trento.SapSystems.SapSystem do
 
   @required_fields []
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :sap_system_id, Ecto.UUID

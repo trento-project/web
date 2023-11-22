@@ -57,7 +57,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         build(:application_instance, sap_system_id: sap_system_id)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterApplicationInstance{
              sap_system_id: ^sap_system_id,
@@ -84,7 +84,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         build(:application_instance, sap_system_id: sap_system_id)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterApplicationInstance{
              sap_system_id: ^sap_system_id,
@@ -114,7 +114,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         build(:application_instance, sap_system_id: sap_system_id)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterApplicationInstance{
              sap_system_id: ^sap_system_id,
@@ -142,7 +142,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         build(:database_instance, sap_system_id: sap_system_id)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
              sap_system_id: ^sap_system_id,
@@ -169,7 +169,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         build(:database_instance, sap_system_id: sap_system_id)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
              sap_system_id: ^sap_system_id,
@@ -199,7 +199,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         build(:database_instance, sap_system_id: sap_system_id)
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
              sap_system_id: ^sap_system_id,

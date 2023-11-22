@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostRestored do
   This event is emitted when a host is restored from a deregistered state
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.Hosts.Events.HostRestored do
     field :host_id, Ecto.UUID

@@ -126,7 +126,7 @@ defmodule Trento.SapSystemsTest do
       )
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterApplicationInstance{
              sap_system_id: ^sap_system_id,
@@ -176,7 +176,7 @@ defmodule Trento.SapSystemsTest do
       )
 
       expect(
-        Trento.Commanded.Mock,
+        Trento.Support.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
              sap_system_id: ^sap_system_id,

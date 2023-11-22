@@ -93,7 +93,7 @@ defmodule Trento.Hosts.Host do
 
   @required_fields []
 
-  use Trento.Type
+  use Trento.Support.Type
 
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 

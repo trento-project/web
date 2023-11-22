@@ -7,7 +7,7 @@ defmodule Trento.SapSystems.Instance do
 
   @required_fields []
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :sid, :string
