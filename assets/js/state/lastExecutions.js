@@ -4,6 +4,25 @@ export const RUNNING_EXECUTION_STATE = 'running';
 export const REQUESTED_EXECUTION_STATE = 'requested';
 export const COMPLETED_EXECUTION_STATE = 'completed';
 
+export const UPDATE_LAST_EXECUTION = 'UPDATE_LAST_EXECUTION';
+export const CLUSTER_EXECUTION_REQUESTED = 'CLUSTER_EXECUTION_REQUESTED';
+export const HOST_EXECUTION_REQUESTED = 'HOST_EXECUTION_REQUESTED';
+
+export const updateLastExecution = (groupID) => ({
+  type: UPDATE_LAST_EXECUTION,
+  payload: { groupID },
+});
+
+export const executionRequested = (clusterID, hosts, checks, navigate) => ({
+  type: CLUSTER_EXECUTION_REQUESTED,
+  payload: { clusterID, hosts, checks, navigate },
+});
+
+export const hostExecutionRequested = (host, checks, navigate) => ({
+  type: HOST_EXECUTION_REQUESTED,
+  payload: { host, checks, navigate },
+});
+
 export const RUNNING_STATES = [
   RUNNING_EXECUTION_STATE,
   REQUESTED_EXECUTION_STATE,

@@ -18,7 +18,7 @@ import { updateCatalog } from '@state/catalog';
 import {
   updateLastExecution,
   hostExecutionRequested,
-} from '@state/actions/lastExecutions';
+} from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
 import HostDetails from './HostDetails';

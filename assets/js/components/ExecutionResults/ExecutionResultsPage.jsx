@@ -5,15 +5,13 @@ import { setSelectedFilters } from '@state/checksResultsFilters';
 import { getSelectedFilters } from '@state/selectors/checksResultsFilters';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
-import {
-  updateLastExecution,
-  executionRequested,
-  hostExecutionRequested,
-} from '@state/actions/lastExecutions';
 
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
+  updateLastExecution,
+  executionRequested,
+  hostExecutionRequested,
 } from '@state/lastExecutions';
 import LoadingBox from '@components/LoadingBox';
 import ExecutionResults from './ExecutionResults';

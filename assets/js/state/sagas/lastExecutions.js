@@ -1,10 +1,5 @@
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 
-import {
-  UPDATE_LAST_EXECUTION,
-  CLUSTER_EXECUTION_REQUESTED,
-  HOST_EXECUTION_REQUESTED,
-} from '@state/actions/lastExecutions';
 import { notify } from '@state/actions/notifications';
 import {
   getLastExecutionByGroupID,
@@ -18,6 +13,9 @@ import {
   setLastExecutionError,
   setExecutionRequested,
   setHostChecksExecutionRequested,
+  UPDATE_LAST_EXECUTION,
+  CLUSTER_EXECUTION_REQUESTED,
+  HOST_EXECUTION_REQUESTED,
 } from '@state/lastExecutions';
 
 import { getClusterName } from '@state/selectors/cluster';

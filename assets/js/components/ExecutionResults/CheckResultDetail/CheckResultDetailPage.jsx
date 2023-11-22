@@ -9,13 +9,11 @@ import LoadingBox from '@components/LoadingBox';
 import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
 
 import {
+  REQUESTED_EXECUTION_STATE,
+  RUNNING_STATES,
   updateLastExecution,
   executionRequested,
   hostExecutionRequested,
-} from '@state/actions/lastExecutions';
-import {
-  REQUESTED_EXECUTION_STATE,
-  RUNNING_STATES,
 } from '@state/lastExecutions';
 import { getClusterIDs } from '@state/selectors/cluster';
 import { getHostID, getHostIDs } from '@state/selectors/host';
