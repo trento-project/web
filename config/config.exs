@@ -73,7 +73,7 @@ config :trento, Trento.EventStore,
 config :trento, event_stores: [Trento.EventStore]
 
 config :trento, :pow,
-  user: Trento.User,
+  user: Trento.Users.User,
   repo: Trento.Repo,
   web_module: TrentoWeb,
   extensions: [PowPersistentSession],

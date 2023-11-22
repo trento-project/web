@@ -1,10 +1,8 @@
 defmodule TrentoWeb.SessionController do
   alias OpenApiSpex.Schema
 
-  alias Trento.{
-    Repo,
-    User
-  }
+  alias Trento.Repo
+  alias Trento.Users.User
 
   alias TrentoWeb.Plugs.JWTAuthPlug
 

@@ -77,8 +77,8 @@ defmodule Trento.Release do
     admin_user = System.get_env("ADMIN_USER", "admin")
     admin_password = System.get_env("ADMIN_PASSWORD", "adminpassword")
 
-    %Trento.User{}
-    |> Trento.User.changeset(%{
+    %Trento.Users.User{}
+    |> Trento.Users.User.changeset(%{
       username: admin_user,
       password: admin_password,
       confirm_password: admin_password

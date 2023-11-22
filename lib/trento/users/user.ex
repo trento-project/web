@@ -1,4 +1,4 @@
-defmodule Trento.User do
+defmodule Trento.Users.User do
   @moduledoc false
 
   use Ecto.Schema
