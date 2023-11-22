@@ -1,4 +1,4 @@
-defmodule Trento.Integration.Grafana do
+defmodule Trento.Infrastructure.Grafana do
   @moduledoc """
   Grafana integration service
   """

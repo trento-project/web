@@ -7,7 +7,7 @@ defmodule Mix.Tasks.InitGrafanaDashboards do
 
   import Trento.Tasks.Helper
 
-  alias Trento.Integration.Grafana
+  alias Trento.Infrastructure.Grafana
 
   @shortdoc "Init Grafana dashboards."
   def run(_) do
