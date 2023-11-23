@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.Payloads.HostDiscoveryPayload do
+defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
   @moduledoc """
   Host discovery integration event payload
   """

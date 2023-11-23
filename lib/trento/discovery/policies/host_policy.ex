@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.Policies.HostPolicy do
+defmodule Trento.Discovery.Policies.HostPolicy do
   @moduledoc """
   This module contains functions to transform host related integration events into commands.
   """
@@ -12,7 +12,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.HostPolicy do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Infrastructure.Discovery.Payloads.{
+  alias Trento.Discovery.Payloads.{
     CloudDiscoveryPayload,
     CloudDiscoveryPayload.AwsMetadata,
     CloudDiscoveryPayload.AzureMetadata,

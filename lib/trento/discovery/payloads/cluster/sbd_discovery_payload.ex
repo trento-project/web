@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.SbdDiscoveryPayload do
+defmodule Trento.Discovery.Payloads.Cluster.SbdDiscoveryPayload do
   @moduledoc """
   SBD field payload
   """

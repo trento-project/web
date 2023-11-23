@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery do
+defmodule Trento.Discovery do
   @moduledoc """
   Discovery integration context.
   """
@@ -9,12 +9,12 @@ defmodule Trento.Infrastructure.Discovery do
 
   import Ecto.Query
 
-  alias Trento.Infrastructure.Discovery.{
+  alias Trento.Discovery.{
     DiscardedDiscoveryEvent,
     DiscoveryEvent
   }
 
-  alias Trento.Infrastructure.Discovery.Policies.{
+  alias Trento.Discovery.Policies.{
     ClusterPolicy,
     HostPolicy,
     SapSystemPolicy
