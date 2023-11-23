@@ -1,21 +1,16 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { isValidProvider, isValidTargetType } from '@lib/model';
-import { isValidClusterType } from '@lib/model/clusters';
+import { pickBy } from 'lodash';
+
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/actions/catalog';
+import { OPTION_ALL } from '@components/Select';
+
 import ChecksCatalog from './ChecksCatalog';
 
-const buildUpdateCatalogAction = (provider, targetType, clusterType) => {
-  const payload = {
-    ...(isValidProvider(provider) ? { provider } : {}),
-    ...(isValidTargetType(targetType) ? { target_type: targetType } : {}),
-    ...(isValidClusterType(clusterType) ? { cluster_type: clusterType } : {}),
-  };
-
-  return updateCatalog(payload);
-};
+const buildUpdateCatalogAction = (selectedFilters) =>
+  updateCatalog(pickBy(selectedFilters, (value) => value !== OPTION_ALL));
 
 function ChecksCatalogPage() {
   const dispatch = useDispatch();
@@ -37,11 +32,11 @@ function ChecksCatalogPage() {
         selectedClusterType,
       }) =>
         dispatch(
-          buildUpdateCatalogAction(
-            selectedProvider,
-            selectedTargetType,
-            selectedClusterType
-          )
+          buildUpdateCatalogAction({
+            provider: selectedProvider,
+            target_type: selectedTargetType,
+            cluster_type: selectedClusterType,
+          })
         )
       }
     />
