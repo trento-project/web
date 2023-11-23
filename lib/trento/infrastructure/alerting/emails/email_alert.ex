@@ -1,9 +1,9 @@
-defmodule Trento.Application.UseCases.Alerting.EmailAlert do
+defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
   @moduledoc false
 
   import Swoosh.Email
 
-  use Phoenix.Swoosh, view: Trento.Application.UseCases.Alerting.EmailView
+  use Phoenix.Swoosh, view: Trento.Infrastructure.Alerting.Emails.EmailView
 
   def alert(component, identified_by, identifier, reason) do
     new()

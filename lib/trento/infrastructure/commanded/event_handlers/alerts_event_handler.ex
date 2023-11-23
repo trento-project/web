@@ -16,7 +16,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler do
     SapSystemHealthChanged
   }
 
-  alias Trento.Application.UseCases.Alerting
+  alias Trento.Infrastructure.Alerting.Alerting
 
   def handle(
         %HostHealthChanged{host_id: host_id, health: health},
