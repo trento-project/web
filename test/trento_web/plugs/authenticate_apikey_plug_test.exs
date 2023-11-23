@@ -17,7 +17,7 @@ defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest do
   test "Accept an Authenticated request" do
     conn =
       conn(:get, "/foo")
-      |> put_req_header("x-trento-apikey", Trento.Infrastructure.Installation.get_api_key())
+      |> put_req_header("x-trento-apikey", Trento.Settings.get_api_key())
       |> AuthenticateAPIKeyPlug.call(ApiAuthErrorHandler)
 
     assert %{assigns: %{api_key_authenticated: true}} = conn

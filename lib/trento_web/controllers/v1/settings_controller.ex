@@ -1,7 +1,7 @@
 defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
 
-  alias Trento.Infrastructure.Installation
+  alias Trento.Settings
 
   alias TrentoWeb.OpenApi.V1.Schema
 
@@ -19,8 +19,8 @@ defmodule TrentoWeb.V1.SettingsController do
   def settings(conn, _) do
     render(conn, "settings.json",
       settings: %{
-        eula_accepted: Installation.eula_accepted?(),
-        premium_subscription: Installation.premium?()
+        eula_accepted: Settings.eula_accepted?(),
+        premium_subscription: Settings.premium?()
       }
     )
   end
@@ -36,7 +36,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   @spec accept_eula(Plug.Conn.t(), any) :: Plug.Conn.t()
   def accept_eula(conn, _) do
-    :ok = Installation.accept_eula()
+    :ok = Settings.accept_eula()
 
     json(conn, %{})
   end

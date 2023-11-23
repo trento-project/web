@@ -5,13 +5,13 @@ defmodule Trento.Infrastructure.TelemetryTest do
   import Mox
   import Trento.Factory
 
-  alias Trento.Infrastructure.Installation
+  alias Trento.Settings
   alias Trento.Infrastructure.Telemetry
 
   setup :verify_on_exit!
 
   setup do
-    Installation.accept_eula()
+    Settings.accept_eula()
 
     on_exit(fn -> Application.put_env(:trento, :flavor, "Community") end)
   end
@@ -23,7 +23,7 @@ defmodule Trento.Infrastructure.TelemetryTest do
                                                                               installation_id,
                                                                               flavor ->
       assert [host_telemetry] == hosts_telemetry
-      assert Installation.get_installation_id() == installation_id
+      assert Settings.get_installation_id() == installation_id
       assert "Community" == flavor
       :ok
     end)
@@ -39,7 +39,7 @@ defmodule Trento.Infrastructure.TelemetryTest do
                                                                               installation_id,
                                                                               flavor ->
       assert [host_telemetry] == hosts_telemetry
-      assert Installation.get_installation_id() == installation_id
+      assert Settings.get_installation_id() == installation_id
       assert "Premium" == flavor
       :ok
     end)

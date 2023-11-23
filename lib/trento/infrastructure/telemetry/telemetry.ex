@@ -6,14 +6,14 @@ defmodule Trento.Infrastructure.Telemetry do
   alias Trento.Repo
 
   alias Trento.Hosts.Projections.HostTelemetryReadModel
-  alias Trento.Infrastructure.Installation
+  alias Trento.Settings
 
   require Logger
 
   @spec publish :: :ok | {:error, any}
   def publish do
     if telemetry_enabled?() do
-      publish_hosts_telemetry(Installation.get_installation_id(), Installation.flavor())
+      publish_hosts_telemetry(Settings.get_installation_id(), Settings.flavor())
     else
       Logger.debug("Telemetry is not enabled... Skipping.")
     end
@@ -32,7 +32,7 @@ defmodule Trento.Infrastructure.Telemetry do
 
   @spec telemetry_enabled? :: boolean
   defp telemetry_enabled?,
-    do: Installation.eula_accepted?()
+    do: Settings.eula_accepted?()
 
   defp adapter,
     do: Application.fetch_env!(:trento, __MODULE__)[:adapter]

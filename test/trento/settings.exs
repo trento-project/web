@@ -1,10 +1,10 @@
-defmodule Trento.InstallationTest do
+defmodule Trento.SettingsTest do
   use ExUnit.Case
   use Trento.DataCase
 
   import Trento.Factory
 
-  alias Trento.Infrastructure.Installation
+  alias Trento.Settings
 
   setup do
     Application.put_env(:trento, :flavor, "Premium")
@@ -14,20 +14,20 @@ defmodule Trento.InstallationTest do
   end
 
   test "should return premium active if flavor is premium and at least one SLES_SAP subscription exist" do
-    assert Installation.premium_active?()
+    assert Settings.premium_active?()
   end
 
   test "should give the flavor for the current installation" do
     Application.put_env(:trento, :flavor, "Premium")
-    assert Installation.flavor() === "Premium"
+    assert Settings.flavor() === "Premium"
 
     Application.put_env(:trento, :flavor, "Community")
-    assert Installation.flavor() === "Community"
+    assert Settings.flavor() === "Community"
   end
 
   test "should provide the API key of the current installation" do
-    installation_id = Installation.get_installation_id()
-    api_key = Installation.get_api_key()
+    installation_id = Settings.get_installation_id()
+    api_key = Settings.get_api_key()
 
     assert {:ok, decoded_data} = TrentoWeb.Auth.ApiKey.verify(api_key)
     assert %{installation_id: ^installation_id} = decoded_data

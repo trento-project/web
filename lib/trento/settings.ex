@@ -1,6 +1,6 @@
-defmodule Trento.Infrastructure.Installation do
+defmodule Trento.Settings do
   @moduledoc """
-  Provides a set of functions of installation related usecases.
+  Provides a set of functions of settings related usecases.
   """
 
   import Ecto.Query
@@ -8,7 +8,7 @@ defmodule Trento.Infrastructure.Installation do
   alias Trento.Repo
 
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
-  alias Trento.Infrastructure.Settings
+  alias Trento.Settings.Settings
 
   require Logger
 
