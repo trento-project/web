@@ -28,6 +28,7 @@ function Filter({ options, title, value, onChange }) {
         {value.length !== 0 && (
           <button
             type="button"
+            aria-label="Clear filter"
             data-testid={`filter-${title}-clear`}
             className="block absolute z-20 right-0 h-full pr-2 flex items-center"
             onClick={() => onChange([])}
