@@ -4,7 +4,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.SapSystemPolicyTest do
 
   import Trento.Factory
 
-  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.Enums.EnsaVersion, as: EnsaVersion
 
   import Trento.Infrastructure.DiscoveryFixturesHelper
 

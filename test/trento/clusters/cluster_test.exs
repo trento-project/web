@@ -38,7 +38,7 @@ defmodule Trento.ClusterTest do
 
   alias Trento.Clusters.Cluster
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   describe "cluster registration" do
     test "should register a cluster with full details and add the node host to the cluster if the node is a DC" do

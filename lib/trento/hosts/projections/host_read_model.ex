@@ -7,8 +7,8 @@ defmodule Trento.Hosts.Projections.HostReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Domain.Enums.Health, as: Health
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Health, as: Health
+  require Trento.Enums.Provider, as: Provider
 
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
   alias Trento.Tags.Tag

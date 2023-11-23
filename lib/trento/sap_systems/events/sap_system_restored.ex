@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Events.SapSystemRestored do
 
   use Trento.Support.Event
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   defevent do
     field :sap_system_id, Ecto.UUID

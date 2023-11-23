@@ -1,9 +1,9 @@
-defmodule Trento.Domain.HealthService do
+defmodule Trento.Services.HealthService do
   @moduledoc """
   This module contains the domain logic for everything health related.
   """
 
-  alias Trento.Domain.Enums.Health
+  alias Trento.Enums.Health
 
   @spec compute_aggregated_health([Health.t()]) :: Health.t()
   def compute_aggregated_health([]), do: :unknown

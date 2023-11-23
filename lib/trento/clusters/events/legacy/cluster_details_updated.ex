@@ -5,8 +5,8 @@ defmodule Trento.Domain.Events.ClusterDetailsUpdated do
 
   use Trento.Support.Event
 
-  require Trento.Domain.Enums.Provider, as: Provider
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Enums.Provider, as: Provider
+  require Trento.Enums.ClusterType, as: ClusterType
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,

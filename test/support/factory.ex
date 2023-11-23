@@ -3,10 +3,10 @@ defmodule Trento.Factory do
   A simple Factory helper module to be used within tests to generate test data
   """
 
-  require Trento.Domain.Enums.Provider, as: Provider
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
-  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Provider, as: Provider
+  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.Enums.Health, as: Health
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,

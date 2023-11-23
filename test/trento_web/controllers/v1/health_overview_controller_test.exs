@@ -6,8 +6,8 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
-  require Trento.Domain.Enums.Health, as: Health
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Enums.Health, as: Health
+  require Trento.Enums.ClusterType, as: ClusterType
 
   alias Trento.ClusterReadModel
   alias Trento.Clusters.Projections.ClusterReadModel

@@ -7,7 +7,7 @@ defmodule Trento.Hosts.Commands.CompleteHostChecksExecution do
 
   use Trento.Support.Command
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   defcommand do
     field :host_id, Ecto.UUID

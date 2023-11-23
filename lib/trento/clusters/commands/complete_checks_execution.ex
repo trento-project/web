@@ -7,7 +7,7 @@ defmodule Trento.Clusters.Commands.CompleteChecksExecution do
 
   use Trento.Support.Command
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   defcommand do
     field :cluster_id, Ecto.UUID

@@ -7,7 +7,7 @@ defmodule Trento.Domain.Events.ProviderUpdated do
 
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   alias Trento.Hosts.ValueObjects.{
     AwsProvider,

@@ -3,10 +3,10 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicy do
   This module contains functions to transform cluster related integration events into commands.
   """
 
-  require Trento.Domain.Enums.Provider, as: Provider
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
-  require Trento.Domain.Enums.Health, as: Health
-  require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
+  require Trento.Enums.Provider, as: Provider
+  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Enums.Health, as: Health
+  require Trento.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
   alias Trento.Clusters.Commands.{
     DeregisterClusterHost,

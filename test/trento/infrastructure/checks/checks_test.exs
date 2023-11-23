@@ -15,7 +15,7 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
     Target
   }
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   describe "Cluster Checks Execution" do
     test "should publish an ExecutionRequested event for a cluster" do

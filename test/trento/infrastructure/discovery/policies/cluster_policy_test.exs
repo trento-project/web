@@ -6,7 +6,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
 
   import Trento.Factory
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   alias Trento.Infrastructure.Discovery.Policies.ClusterPolicy
 

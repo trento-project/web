@@ -5,7 +5,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
 
   import Phoenix.View
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   describe "renders overview.json" do
     test "should render all the fields" do

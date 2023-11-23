@@ -3,7 +3,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.SapSystemPolicy do
   This module contains functions to transform SAP system related integration events into commands..
   """
 
-  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.Enums.EnsaVersion, as: EnsaVersion
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,

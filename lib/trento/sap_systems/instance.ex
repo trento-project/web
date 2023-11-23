@@ -3,7 +3,7 @@ defmodule Trento.SapSystems.Instance do
   This module represents a SAP System instance.
   """
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   @required_fields []
 

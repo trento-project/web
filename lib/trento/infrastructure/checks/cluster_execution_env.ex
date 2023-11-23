@@ -6,8 +6,8 @@ defmodule Trento.Infrastructure.Checks.ClusterExecutionEnv do
   @required_fields :all
   use Trento.Support.Type
 
-  require Trento.Domain.Enums.Provider, as: Provider
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
+  require Trento.Enums.Provider, as: Provider
+  require Trento.Enums.ClusterType, as: ClusterType
 
   deftype do
     field :cluster_type, Ecto.Enum, values: ClusterType.values()

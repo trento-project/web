@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Enums.ClusterType do
+defmodule Trento.Enums.ClusterType do
   @moduledoc """
   Type that represents the supported cluster types.
   """

@@ -3,7 +3,7 @@ defmodule Trento.SapSystems.Database do
   This module represents a SAP System database.
   """
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   alias Trento.SapSystems.SapSystem.Instance
 

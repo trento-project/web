@@ -16,7 +16,7 @@ defmodule Trento.Infrastructure.Checks.AMQP.Processor do
   alias Trento.Infrastructure.Checks.TargetType
 
   require Logger
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   def process(%GenRMQ.Message{payload: payload} = message) do
     Logger.debug("Received message: #{inspect(message)}")

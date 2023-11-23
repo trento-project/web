@@ -14,9 +14,9 @@ defmodule Trento.Clusters.Commands.RegisterClusterHost do
 
   use Trento.Support.Command
 
-  require Trento.Domain.Enums.Provider, as: Provider
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Provider, as: Provider
+  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Enums.Health, as: Health
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,

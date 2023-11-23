@@ -3,7 +3,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.HostPolicyTest do
   use Trento.DataCase
   import Trento.Infrastructure.DiscoveryFixturesHelper
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   alias Trento.Infrastructure.Discovery.Policies.HostPolicy
 

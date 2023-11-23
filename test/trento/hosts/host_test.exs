@@ -49,7 +49,7 @@ defmodule Trento.Hosts.HostTest do
     SlesSubscription
   }
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   describe "host registration" do
     test "should register a host" do

@@ -2,7 +2,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
   @moduledoc false
 
   require OpenApiSpex
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   alias OpenApiSpex.Schema
 

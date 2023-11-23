@@ -5,8 +5,8 @@ defmodule Trento.Domain.Events.SapSystemRegistered do
 
   use Trento.Support.Event
 
-  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.Enums.Health, as: Health
 
   defevent superseded_by: Trento.SapSystems.Events.SapSystemRegistered do
     field :sap_system_id, Ecto.UUID
