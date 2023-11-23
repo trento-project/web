@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-9DDDB877.js"></script>
+    <script src="dist/sidebar_items-86AF9781.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -116,15 +116,6 @@ Trento Web
     <div class="summary">
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Ecto.Payload.html" translate="no">Ecto.Payload</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Ecto Type that represents a JSONB payload that contains an array or a map.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="TestCommandedApp.html" translate="no">TestCommandedApp</a>
 
   </div>
@@ -149,24 +140,6 @@ Trento Web
 
     <div class="summary-synopsis"><p>This module defines the test case to be used by aggregate tests.
 Derived from Commanded.AggregateCase</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.AlertsEventHandler.html" translate="no">Trento.AlertsEventHandler</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This event handler is responsible to forward checks execution request to the agent.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Application.Auth.ApiKey.html" translate="no">Trento.Application.Auth.ApiKey</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This Module creates and verifies API Keys.</p></div>
 
 </div>
 <div class="summary-row">
@@ -216,15 +189,6 @@ Derived from Commanded.AggregateCase</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Command.html" translate="no">Trento.Command</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Adds the macro <code class="inline">defcommand</code> which is used to define a new command.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="Trento.Commanded.html" translate="no">Trento.Commanded</a>
 
   </div>
@@ -240,25 +204,6 @@ Derived from Commanded.AggregateCase</p></div>
 
     <div class="summary-synopsis"><p>This module defines the setup for tests requiring
 access to the application's data layer.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.DeregistrationProcessManager.html" translate="no">Trento.DeregistrationProcessManager</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>  DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible
-  for the deregistration procedure for the aggregates</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.DeregistrationProcessManager.Instance.html" translate="no">Trento.DeregistrationProcessManager.Instance</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>An application or database instance and which SAP System it belongs to.</p></div>
 
 </div>
 <div class="summary-row">
@@ -1020,15 +965,6 @@ It is used to trigger the stream archiving process and it contains the snapshot 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Event.html" translate="no">Trento.Event</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Adds the macro <code class="inline">defevent</code> which is used to define a new event.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="Trento.EventStoreCase.html" translate="no">Trento.EventStoreCase</a>
 
   </div>
@@ -1447,11 +1383,610 @@ It contains the snapshot of the host aggregate that will be used to restore the 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug.html" translate="no">Trento.Infrastructure.Auth.AuthenticateAPIKeyPlug</a>
+    <a href="Trento.Infrastructure.Checks.html" translate="no">Trento.Infrastructure.Checks</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>A Plug that authenticates API calls via an API Key provided in <code class="inline">X-Trento-apiKey</code> HTTP header</p></div>
+    <div class="summary-synopsis"><p>Checks Engine service integration</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Checks.AMQP.Consumer.html" translate="no">Trento.Infrastructure.Checks.AMQP.Consumer</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>AMQP consumer.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Checks.AMQP.Processor.html" translate="no">Trento.Infrastructure.Checks.AMQP.Processor</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>AMQP processor for the checks execution events</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Checks.ClusterExecutionEnv.html" translate="no">Trento.Infrastructure.Checks.ClusterExecutionEnv</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Cluster checks execution env map</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Checks.HostExecutionEnv.html" translate="no">Trento.Infrastructure.Checks.HostExecutionEnv</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Host checks execution env map</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Checks.TargetType.html" translate="no">Trento.Infrastructure.Checks.TargetType</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Type that represents the possible target types for a check execution.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler.html" translate="no">Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event handler is responsible to forward checks execution request to the agent.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler.html" translate="no">Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event handler is responsible for rolling-up aggregates when a requested event is received.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler.html" translate="no">Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module is responsible for triggering the roll-up of an aggregate.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.Middleware.Enrich.html" translate="no">Trento.Infrastructure.Commanded.Middleware.Enrich</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Command enrichment middleware.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.Middleware.Enrichable.html" translate="no">Trento.Infrastructure.Commanded.Middleware.Enrichable</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.html" translate="no">Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>  DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible
+  for the deregistration procedure for the aggregates</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Instance.html" translate="no">Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Instance</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>An application or database instance and which SAP System it belongs to.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.RollUp.Queries.html" translate="no">Trento.Infrastructure.Commanded.RollUp.Queries</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module contains the SQL queries used to archive a stream.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Commanded.RollUp.RollUp.html" translate="no">Trento.Infrastructure.Commanded.RollUp.RollUp</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module is responsible for archiving a stream and appending a roll-up event to it.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.html" translate="no">Trento.Infrastructure.Discovery</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Discovery integration context.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.DiscardedDiscoveryEvent.html" translate="no">Trento.Infrastructure.Discovery.DiscardedDiscoveryEvent</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module contains the schema used to store an append log of the discarded discovery events,
+for debugging and auditing purposes.
+No changeset is defined here, since the schema is used to store append-only data.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.DiscoveryEvent.html" translate="no">Trento.Infrastructure.Discovery.DiscoveryEvent</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module contains the schema used to store an append log of the handled discovery events,
+for debugging and auditing purposes.
+No changeset is defined here, since the schema is used to store append-only data.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Cloud discovery integration event payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AwsMetadata.html" translate="no">Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AwsMetadata</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.html" translate="no">Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.html" translate="no">Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.OsProfile.html" translate="no">Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.OsProfile</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.StorageProfile.html" translate="no">Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.StorageProfile</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.GcpMetadata.html" translate="no">Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload.GcpMetadata</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Cib field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Resources field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Clone.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Clone</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Group.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Group</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.ClusterProperties.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.ClusterProperties</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Primitive field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.InstanceAttribute.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.InstanceAttribute</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.Operation.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.Operation</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Cluster discovery integration event payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Crmmon field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonClone.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonClone</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonGroup.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonGroup</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>CrmmonResource field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource.ResourceNode.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource.ResourceNode</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Node.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Node</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node.Attribute.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node.Attribute</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>NodeHistory field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node.HistoryDetail.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node.HistoryDetail</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Summary field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.LastChangeSummary.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.LastChangeSummary</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.NodesSummary.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.NodesSummary</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.ResourceSummary.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.ResourceSummary</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.SbdDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.SbdDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>SBD field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.Cluster.SbdDiscoveryPayload.Device.html" translate="no">Trento.Infrastructure.Discovery.Payloads.Cluster.SbdDiscoveryPayload.Device</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.HostDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.HostDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Host discovery integration event payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>SAP system discovery integration event payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.Database.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.Database</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Databases field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.Instance.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.Instance</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Instances field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.Profile.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.Profile</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Profile field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControl.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControl</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>SAP control field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlInstance.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlInstance</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>SAP control instances field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProcess.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProcess</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>SAP control process field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProperty.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProperty</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>SAP control property field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SystemReplication.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SapSystemDiscoveryPayload.SystemReplication</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>SystemReplication process field payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Saptune discovery integration event payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload.SaptuneOutput.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload.SaptuneOutput</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Saptune Output payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Payloads.SlesSubscriptionDiscoveryPayload.html" translate="no">Trento.Infrastructure.Discovery.Payloads.SlesSubscriptionDiscoveryPayload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Subscription discovery integration event payload</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Policies.ClusterPolicy.html" translate="no">Trento.Infrastructure.Discovery.Policies.ClusterPolicy</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module contains functions to transform cluster related integration events into commands.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Policies.HostPolicy.html" translate="no">Trento.Infrastructure.Discovery.Policies.HostPolicy</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module contains functions to transform host related integration events into commands.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Discovery.Policies.SapSystemPolicy.html" translate="no">Trento.Infrastructure.Discovery.Policies.SapSystemPolicy</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module contains functions to transform SAP system related integration events into commands..</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.DiscoveryFixturesHelper.html" translate="no">Trento.Infrastructure.DiscoveryFixturesHelper</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module contains helper functions for loading discovery fixtures.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Grafana.html" translate="no">Trento.Infrastructure.Grafana</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Grafana integration service</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Installation.html" translate="no">Trento.Infrastructure.Installation</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a set of functions of installation related usecases.</p></div>
 
 </div>
 <div class="summary-row">
@@ -1483,535 +2018,7 @@ It contains the snapshot of the host aggregate that will be used to restore the 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Installation.html" translate="no">Trento.Installation</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Provides a set of functions of installation related usecases.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Checks.html" translate="no">Trento.Integration.Checks</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Checks Engine service integration</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Checks.AMQP.Consumer.html" translate="no">Trento.Integration.Checks.AMQP.Consumer</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>AMQP consumer.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Checks.AMQP.Processor.html" translate="no">Trento.Integration.Checks.AMQP.Processor</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>AMQP processor for the checks execution events</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Checks.ClusterExecutionEnv.html" translate="no">Trento.Integration.Checks.ClusterExecutionEnv</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Cluster checks execution env map</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Checks.HostExecutionEnv.html" translate="no">Trento.Integration.Checks.HostExecutionEnv</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Host checks execution env map</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Checks.TargetType.html" translate="no">Trento.Integration.Checks.TargetType</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Type that represents the possible target types for a check execution.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.html" translate="no">Trento.Integration.Discovery</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Discovery integration context.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.CloudDiscoveryPayload.html" translate="no">Trento.Integration.Discovery.CloudDiscoveryPayload</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Cloud discovery integration event payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.CloudDiscoveryPayload.AwsMetadata.html" translate="no">Trento.Integration.Discovery.CloudDiscoveryPayload.AwsMetadata</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.html" translate="no">Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.Compute.html" translate="no">Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.Compute</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.Compute.OsProfile.html" translate="no">Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.Compute.OsProfile</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.Compute.StorageProfile.html" translate="no">Trento.Integration.Discovery.CloudDiscoveryPayload.AzureMetadata.Compute.StorageProfile</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.CloudDiscoveryPayload.GcpMetadata.html" translate="no">Trento.Integration.Discovery.CloudDiscoveryPayload.GcpMetadata</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Cluster discovery integration event payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Cib field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.CibResources.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.CibResources</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Resources field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.CibResources.Clone.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.CibResources.Clone</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.CibResources.Group.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.CibResources.Group</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Configuration.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Configuration</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Configuration.CrmConfig.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Configuration.CrmConfig</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Configuration.CrmConfig.ClusterProperties.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Configuration.CrmConfig.ClusterProperties</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Primitive.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Primitive</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Primitive field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Primitive.InstanceAttribute.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Primitive.InstanceAttribute</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Primitive.Operation.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Cib.Primitive.Operation</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Crmmon field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonClone.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonClone</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonGroup.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonGroup</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonResource.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonResource</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>CrmmonResource field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonResource.ResourceNode.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.CrmmonResource.ResourceNode</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Node.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Node</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeAttributes.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeAttributes</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeAttributes.Node.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeAttributes.Node</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeAttributes.Node.Attribute.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeAttributes.Node.Attribute</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeHistory.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeHistory</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>NodeHistory field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeHistory.Node.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeHistory.Node</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeHistory.Node.HistoryDetail.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.NodeHistory.Node.HistoryDetail</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Summary field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary.LastChangeSummary.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary.LastChangeSummary</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary.NodesSummary.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary.NodesSummary</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary.ResourceSummary.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Crmmon.Summary.ResourceSummary</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Sbd.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Sbd</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>SBD field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterDiscoveryPayload.Sbd.Device.html" translate="no">Trento.Integration.Discovery.ClusterDiscoveryPayload.Sbd.Device</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.ClusterPolicy.html" translate="no">Trento.Integration.Discovery.ClusterPolicy</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module contains functions to transform cluster related integration events into commands.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.DiscardedDiscoveryEvent.html" translate="no">Trento.Integration.Discovery.DiscardedDiscoveryEvent</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module contains the schema used to store an append log of the discarded discovery events,
-for debugging and auditing purposes.
-No changeset is defined here, since the schema is used to store append-only data.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.DiscoveryEvent.html" translate="no">Trento.Integration.Discovery.DiscoveryEvent</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module contains the schema used to store an append log of the handled discovery events,
-for debugging and auditing purposes.
-No changeset is defined here, since the schema is used to store append-only data.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.HostDiscoveryPayload.html" translate="no">Trento.Integration.Discovery.HostDiscoveryPayload</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Host discovery integration event payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.HostPolicy.html" translate="no">Trento.Integration.Discovery.HostPolicy</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module contains functions to transform host related integration events into commands.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>SAP system discovery integration event payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.Database.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.Database</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Databases field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.Instance.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.Instance</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Instances field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.Profile.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.Profile</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Profile field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControl.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControl</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>SAP control field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControlInstance.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControlInstance</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>SAP control instances field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControlProcess.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControlProcess</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>SAP control process field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControlProperty.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.SapControlProperty</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>SAP control property field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemDiscoveryPayload.SystemReplication.html" translate="no">Trento.Integration.Discovery.SapSystemDiscoveryPayload.SystemReplication</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>SystemReplication process field payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SapSystemPolicy.html" translate="no">Trento.Integration.Discovery.SapSystemPolicy</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module contains functions to transform SAP system related integration events into commands..</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SaptuneDiscoveryPayload.html" translate="no">Trento.Integration.Discovery.SaptuneDiscoveryPayload</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Saptune discovery integration event payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SaptuneDiscoveryPayload.SaptuneOutput.html" translate="no">Trento.Integration.Discovery.SaptuneDiscoveryPayload.SaptuneOutput</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Saptune Output payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Discovery.SlesSubscriptionDiscoveryPayload.html" translate="no">Trento.Integration.Discovery.SlesSubscriptionDiscoveryPayload</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Subscription discovery integration event payload</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.DiscoveryFixturesHelper.html" translate="no">Trento.Integration.DiscoveryFixturesHelper</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module contains helper functions for loading discovery fixtures.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Grafana.html" translate="no">Trento.Integration.Grafana</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Grafana integration service</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Integration.Prometheus.html" translate="no">Trento.Integration.Prometheus</a>
+    <a href="Trento.Infrastructure.Prometheus.html" translate="no">Trento.Infrastructure.Prometheus</a>
 
   </div>
 
@@ -2020,7 +2027,7 @@ No changeset is defined here, since the schema is used to store append-only data
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Integration.Prometheus.Gen.html" translate="no">Trento.Integration.Prometheus.Gen</a>
+    <a href="Trento.Infrastructure.Prometheus.Gen.html" translate="no">Trento.Infrastructure.Prometheus.Gen</a>
 
   </div>
 
@@ -2029,7 +2036,7 @@ No changeset is defined here, since the schema is used to store append-only data
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Integration.Prometheus.MockPrometheusApi.html" translate="no">Trento.Integration.Prometheus.MockPrometheusApi</a>
+    <a href="Trento.Infrastructure.Prometheus.MockPrometheusApi.html" translate="no">Trento.Infrastructure.Prometheus.MockPrometheusApi</a>
 
   </div>
 
@@ -2038,7 +2045,7 @@ No changeset is defined here, since the schema is used to store append-only data
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Integration.Prometheus.PrometheusApi.html" translate="no">Trento.Integration.Prometheus.PrometheusApi</a>
+    <a href="Trento.Infrastructure.Prometheus.PrometheusApi.html" translate="no">Trento.Infrastructure.Prometheus.PrometheusApi</a>
 
   </div>
 
@@ -2047,7 +2054,7 @@ No changeset is defined here, since the schema is used to store append-only data
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Integration.Telemetry.html" translate="no">Trento.Integration.Telemetry</a>
+    <a href="Trento.Infrastructure.Telemetry.html" translate="no">Trento.Infrastructure.Telemetry</a>
 
   </div>
 
@@ -2056,7 +2063,7 @@ No changeset is defined here, since the schema is used to store append-only data
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Integration.Telemetry.Gen.html" translate="no">Trento.Integration.Telemetry.Gen</a>
+    <a href="Trento.Infrastructure.Telemetry.Gen.html" translate="no">Trento.Infrastructure.Telemetry.Gen</a>
 
   </div>
 
@@ -2065,7 +2072,7 @@ No changeset is defined here, since the schema is used to store append-only data
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Integration.Telemetry.Suse.html" translate="no">Trento.Integration.Telemetry.Suse</a>
+    <a href="Trento.Infrastructure.Telemetry.Suse.html" translate="no">Trento.Infrastructure.Telemetry.Suse</a>
 
   </div>
 
@@ -2074,22 +2081,12 @@ No changeset is defined here, since the schema is used to store append-only data
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Integration.Telemetry.ToLogger.html" translate="no">Trento.Integration.Telemetry.ToLogger</a>
+    <a href="Trento.Infrastructure.Telemetry.ToLogger.html" translate="no">Trento.Infrastructure.Telemetry.ToLogger</a>
 
   </div>
 
     <div class="summary-synopsis"><p>Telemetry adapter that publishes telemetry data to the logs.
 Used in dev and test environments.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.JsonbSerializer.html" translate="no">Trento.JsonbSerializer</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Serialize to/from PostgreSQL's native <code class="inline">jsonb</code> format.
-Requires events to be defined by the <code class="inline">defevent</code> macro.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2116,33 +2113,6 @@ installed.</p></div>
     <a href="Trento.Repo.html" translate="no">Trento.Repo</a>
 
   </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.RollUp.html" translate="no">Trento.RollUp</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module is responsible for archiving a stream and appending a roll-up event to it.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.RollUp.Queries.html" translate="no">Trento.RollUp.Queries</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module contains the SQL queries used to archive a stream.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.RollUpEventHandler.html" translate="no">Trento.RollUpEventHandler</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This event handler is responsible for rolling-up aggregates when a requested event is received.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2563,11 +2533,11 @@ deployed SAP systems, which are composed by a database and application layers.
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.StreamRollUpEventHandler.html" translate="no">Trento.StreamRollUpEventHandler</a>
+    <a href="Trento.Support.Command.html" translate="no">Trento.Support.Command</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>This module is responsible for triggering the roll-up of an aggregate.</p></div>
+    <div class="summary-synopsis"><p>Adds the macro <code class="inline">defcommand</code> which is used to define a new command.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2581,12 +2551,30 @@ deployed SAP systems, which are composed by a database and application layers.
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="Trento.Support.Ecto.Payload.html" translate="no">Trento.Support.Ecto.Payload</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Ecto Type that represents a JSONB payload that contains an array or a map.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="Trento.Support.Enum.html" translate="no">Trento.Support.Enum</a>
 
   </div>
 
     <div class="summary-synopsis"><p>Enum  module with added macros to define a type,
 check supported values and validate possible values</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Support.Event.html" translate="no">Trento.Support.Event</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Adds the macro <code class="inline">defevent</code> which is used to define a new event.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2609,6 +2597,16 @@ check supported values and validate possible values</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="Trento.Support.JsonbSerializer.html" translate="no">Trento.Support.JsonbSerializer</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Serialize to/from PostgreSQL's native <code class="inline">jsonb</code> format.
+Requires events to be defined by the <code class="inline">defevent</code> macro.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="Trento.Support.ListHelper.html" translate="no">Trento.Support.ListHelper</a>
 
   </div>
@@ -2618,27 +2616,21 @@ check supported values and validate possible values</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Support.Middleware.Enrich.html" translate="no">Trento.Support.Middleware.Enrich</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Command enrichment middleware.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Support.Middleware.Enrichable.html" translate="no">Trento.Support.Middleware.Enrichable</a>
-
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="Trento.Support.StructHelper.html" translate="no">Trento.Support.StructHelper</a>
 
   </div>
 
     <div class="summary-synopsis"><p>This module provides structs utility functions</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Support.Type.html" translate="no">Trento.Support.Type</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module defines the macro <code class="inline">deftype</code> which is used to define a new type,
+for data mapping and validation by wrapping Ecto.Schema and Ecto.Changeset.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2657,16 +2649,6 @@ check supported values and validate possible values</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Helper functions for tasks.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Type.html" translate="no">Trento.Type</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>This module defines the macro <code class="inline">deftype</code> which is used to define a new type,
-for data mapping and validation by wrapping Ecto.Schema and Ecto.Changeset.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2690,21 +2672,11 @@ as controllers, views, channels and so on.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="TrentoWeb.Auth.ApiAuthErrorHandler.html" translate="no">TrentoWeb.Auth.ApiAuthErrorHandler</a>
+    <a href="TrentoWeb.Auth.ApiKey.html" translate="no">TrentoWeb.Auth.ApiKey</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Used to handle authentication error in APIs</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="TrentoWeb.Auth.JWTAuthPlug.html" translate="no">TrentoWeb.Auth.JWTAuthPlug</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>  The JWTAuthPlug is a Pow compatible authorization flow.
-  Handles the login and the credentials recovery at each request</p></div>
+    <div class="summary-synopsis"><p>This Module creates and verifies API Keys.</p></div>
 
 </div>
 <div class="summary-row">
@@ -2893,12 +2865,40 @@ tests that require setting up a connection.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="TrentoWeb.Plugs.ApiAuthErrorHandler.html" translate="no">TrentoWeb.Plugs.ApiAuthErrorHandler</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Used to handle authentication error in APIs</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="TrentoWeb.Plugs.ApiRedirector.html" translate="no">TrentoWeb.Plugs.ApiRedirector</a>
 
   </div>
 
     <div class="summary-synopsis"><p>  This Plug is responsible for redirecting api requests without a specific version
   to the latest available version, when the requested path exists</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.Plugs.AuthenticateAPIKeyPlug.html" translate="no">TrentoWeb.Plugs.AuthenticateAPIKeyPlug</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A Plug that authenticates API calls via an API Key provided in <code class="inline">X-Trento-apiKey</code> HTTP header</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.Plugs.JWTAuthPlug.html" translate="no">TrentoWeb.Plugs.JWTAuthPlug</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>  The JWTAuthPlug is a Pow compatible authorization flow.
+  Handles the login and the credentials recovery at each request</p></div>
 
 </div>
 <div class="summary-row">
