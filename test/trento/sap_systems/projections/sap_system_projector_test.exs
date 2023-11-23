@@ -7,7 +7,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
 
   import Trento.Factory
 
-  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,

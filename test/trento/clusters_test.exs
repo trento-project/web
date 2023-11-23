@@ -18,7 +18,7 @@ defmodule Trento.ClustersTest do
     Target
   }
 
-  require Trento.Enums.ClusterType
+  require Trento.Clusters.Enums.ClusterType
   require Logger
 
   setup [:set_mox_from_context, :verify_on_exit!]

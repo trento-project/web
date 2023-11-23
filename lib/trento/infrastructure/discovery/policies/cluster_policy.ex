@@ -4,9 +4,9 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicy do
   """
 
   require Trento.Enums.Provider, as: Provider
-  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Enums.Health, as: Health
-  require Trento.Enums.AscsErsClusterRole, as: AscsErsClusterRole
+  require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
   alias Trento.Clusters.Commands.{
     DeregisterClusterHost,

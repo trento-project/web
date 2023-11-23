@@ -8,7 +8,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
 
   alias Trento.SapSystems.Services.HealthSummaryService
   require Trento.Enums.Health, as: Health
-  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Hosts.Projections.HostReadModel

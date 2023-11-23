@@ -44,7 +44,7 @@ defmodule Trento.SapSystems.SapSystem do
   Find additional information about the application/database association in `Trento.SapSystems.Commands.RegisterApplicationInstance`.
   """
 
-  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
 
   alias Commanded.Aggregate.Multi

@@ -7,7 +7,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterNode do
     :name
   ]
 
-  require Trento.Enums.AscsErsClusterRole, as: AscsErsClusterRole
+  require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
   use Trento.Support.Type
 

@@ -6,7 +6,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
   use Trento.Support.Event
 
   require Trento.Enums.Provider, as: Provider
-  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Enums.Health, as: Health
 
   alias Trento.Clusters.ValueObjects.{

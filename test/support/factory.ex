@@ -4,8 +4,8 @@ defmodule Trento.Factory do
   """
 
   require Trento.Enums.Provider, as: Provider
-  require Trento.Enums.ClusterType, as: ClusterType
-  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
 
   alias Trento.Clusters.ValueObjects.{

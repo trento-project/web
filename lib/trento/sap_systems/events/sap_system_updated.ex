@@ -3,7 +3,7 @@ defmodule Trento.SapSystems.Events.SapSystemUpdated do
   This event is emitted when some of the fields in the SAP system are updated
   """
 
-  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
   use Trento.Support.Event
 

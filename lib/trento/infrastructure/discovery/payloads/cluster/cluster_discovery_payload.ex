@@ -10,7 +10,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPaylo
   use Trento.Support.Type
 
   require Trento.Enums.Provider, as: Provider
-  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   alias Trento.Infrastructure.Discovery.Payloads.Cluster.{
     CibDiscoveryPayload,

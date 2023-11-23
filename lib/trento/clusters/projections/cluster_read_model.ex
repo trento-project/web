@@ -8,7 +8,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
   import Ecto.Changeset
 
   require Trento.Enums.Provider, as: Provider
-  require Trento.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Enums.Health, as: Health
 
   alias Trento.Tags.Tag

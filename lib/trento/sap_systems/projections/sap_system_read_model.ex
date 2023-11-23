@@ -7,7 +7,7 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
 
   alias Trento.SapSystems.Projections.{

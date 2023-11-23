@@ -4,7 +4,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  require Trento.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
   alias TrentoWeb.OpenApi.V1.Schema.{Database, ResourceHealth, Tags}
 
