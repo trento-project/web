@@ -41,7 +41,6 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     expect(mockUpdateCatalog).toHaveBeenCalledWith({
       selectedClusterType: 'all',
-      selectedEnsaVersion: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
     });
@@ -69,36 +68,23 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     await user.click(screen.getByText('All cluster types'));
     await user.click(screen.getByText('ASCS/ERS'));
 
-    await user.click(screen.getByText('All ENSA versions'));
-    await user.click(screen.getByText('ENSA1'));
-
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(1, {
       selectedClusterType: 'all',
-      selectedEnsaVersion: 'all',
       selectedProvider: 'all',
       selectedTargetType: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, {
       selectedClusterType: 'all',
-      selectedEnsaVersion: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'all',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(3, {
       selectedClusterType: 'all',
-      selectedEnsaVersion: 'all',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
     });
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
       selectedClusterType: 'ascs_ers',
-      selectedEnsaVersion: 'all',
-      selectedProvider: 'aws',
-      selectedTargetType: 'cluster',
-    });
-    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(5, {
-      selectedClusterType: 'ascs_ers',
-      selectedEnsaVersion: 'ensa1',
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
     });
