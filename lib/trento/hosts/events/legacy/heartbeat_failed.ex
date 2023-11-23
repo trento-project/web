@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HeartbeatFailed do
   Heartbeat failed event
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.Hosts.Events.HeartbeatFailed do
     field :host_id, Ecto.UUID

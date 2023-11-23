@@ -4,7 +4,7 @@ defmodule Trento.InstallationTest do
 
   import Trento.Factory
 
-  alias Trento.Installation
+  alias Trento.Infrastructure.Installation
 
   setup do
     Application.put_env(:trento, :flavor, "Premium")
@@ -29,7 +29,7 @@ defmodule Trento.InstallationTest do
     installation_id = Installation.get_installation_id()
     api_key = Installation.get_api_key()
 
-    assert {:ok, decoded_data} = Trento.Application.Auth.ApiKey.verify(api_key)
+    assert {:ok, decoded_data} = TrentoWeb.Auth.ApiKey.verify(api_key)
     assert %{installation_id: ^installation_id} = decoded_data
   end
 end

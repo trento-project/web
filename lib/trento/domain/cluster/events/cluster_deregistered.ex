@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ClusterDeregistered do
   This event is emitted when a cluster is deregistered.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :cluster_id, Ecto.UUID

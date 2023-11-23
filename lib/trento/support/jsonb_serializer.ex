@@ -1,4 +1,4 @@
-defmodule Trento.JsonbSerializer do
+defmodule Trento.Support.JsonbSerializer do
   @moduledoc """
   Serialize to/from PostgreSQL's native `jsonb` format.
   Requires events to be defined by the `defevent` macro.
@@ -6,7 +6,7 @@ defmodule Trento.JsonbSerializer do
   Configuration example:
   ```
   config :trento, Trento.EventStore,
-    serializer: Trento.JsonbSerializer,
+    serializer: Trento.Support.JsonbSerializer,
     column_data_type: "jsonb",
     types: EventStore.PostgresTypes
   ```

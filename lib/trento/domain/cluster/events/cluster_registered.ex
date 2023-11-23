@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ClusterRegistered do
   This event is emitted when a cluster is registered.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType

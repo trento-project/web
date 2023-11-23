@@ -15,7 +15,7 @@ defmodule Trento.SapSystems.Commands.RegisterDatabaseInstance do
     :health
   ]
 
-  use Trento.Command
+  use Trento.Support.Command
 
   require Trento.Domain.Enums.Health, as: Health
 

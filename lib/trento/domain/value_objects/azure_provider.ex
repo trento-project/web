@@ -5,7 +5,7 @@ defmodule Trento.Domain.AzureProvider do
 
   @required_fields nil
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :vm_name, :string

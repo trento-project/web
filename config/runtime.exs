@@ -75,7 +75,7 @@ if config_env() in [:prod, :demo] do
       For example: amqp://USER:PASSWORD@HOST
       """
 
-  config :trento, Trento.Integration.Checks.AMQP.Consumer, connection: amqp_url
+  config :trento, Trento.Infrastructure.Checks.AMQP.Consumer, connection: amqp_url
   config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher, connection: amqp_url
 
   config :trento, :checks_service, base_url: System.get_env("CHECKS_SERVICE_BASE_URL") || ""
@@ -86,7 +86,7 @@ if config_env() in [:prod, :demo] do
     public_url: System.get_env("GRAFANA_PUBLIC_URL") || "http://localhost:3000",
     api_url: System.get_env("GRAFANA_API_URL") || "http://localhost:3000/api"
 
-  config :trento, Trento.Integration.Prometheus.PrometheusApi,
+  config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
     url: System.get_env("PROMETHEUS_URL") || "http://localhost:9090"
 
   # ## Using releases

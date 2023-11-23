@@ -5,7 +5,7 @@ defmodule Trento.Domain.Commands.CompleteChecksExecution do
 
   @required_fields :all
 
-  use Trento.Command
+  use Trento.Support.Command
 
   require Trento.Domain.Enums.Health, as: Health
 

@@ -5,7 +5,7 @@ defmodule Trento.Domain.Commands.SelectChecks do
 
   @required_fields :all
 
-  use Trento.Command
+  use Trento.Support.Command
 
   defcommand do
     field :cluster_id, Ecto.UUID

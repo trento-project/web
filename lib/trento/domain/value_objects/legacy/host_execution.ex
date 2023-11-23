@@ -5,7 +5,7 @@ defmodule Trento.Domain.HostExecution do
 
   @required_fields [:host_id, :reachable]
 
-  use Trento.Type
+  use Trento.Support.Type
   alias Trento.Domain.CheckResult
 
   deftype do

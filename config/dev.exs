@@ -99,16 +99,16 @@ unless IEx.started?() do
     ]
 end
 
-config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.ToLogger
+config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.ToLogger
 
-config :trento, Trento.Integration.Checks.AMQP.Consumer,
+config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
   connection: "amqp://trento:trento@localhost:5673"
 
 config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
   connection: "amqp://trento:trento@localhost:5673"
 
-config :trento, Trento.Integration.Prometheus,
-  adapter: Trento.Integration.Prometheus.MockPrometheusApi
+config :trento, Trento.Infrastructure.Prometheus,
+  adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
 
 # Do not include metadata nor timestamps in development logs
 # config :logger, :console, format: "[$level] $message\n"

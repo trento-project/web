@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostDetailsUpdated do
   This event is emitted when host details are updated.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent version: 2, superseded_by: Trento.Hosts.Events.HostDetailsUpdated do
     field :host_id, Ecto.UUID

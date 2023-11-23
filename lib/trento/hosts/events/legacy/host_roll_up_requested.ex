@@ -4,7 +4,7 @@ defmodule Trento.Domain.Events.HostRollUpRequested do
   It is used to trigger the stream archiving process and it contains the snapshot of the host aggregate.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   alias Trento.Hosts.Host
 

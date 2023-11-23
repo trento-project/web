@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Commands.RollUpSapSystem do
 
   @required_fields :all
 
-  use Trento.Command
+  use Trento.Support.Command
 
   defcommand do
     field :sap_system_id, Ecto.UUID

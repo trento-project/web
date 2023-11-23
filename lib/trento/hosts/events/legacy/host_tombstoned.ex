@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostTombstoned do
     This event is emitted after a successful host deregistration, to tombstone and stop the host aggregate
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.Hosts.Events.HostTombstoned do
     field :host_id, Ecto.UUID

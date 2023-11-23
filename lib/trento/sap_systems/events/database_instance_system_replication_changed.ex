@@ -3,7 +3,7 @@ defmodule Trento.SapSystems.Events.DatabaseInstanceSystemReplicationChanged do
   This event is emitted when a database instance system replication has changed.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :sap_system_id, Ecto.UUID

@@ -10,7 +10,7 @@ defmodule Trento.Domain.HanaClusterDetails do
     :fencing_type
   ]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   alias Trento.Domain.{
     ClusterResource,

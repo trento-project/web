@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ApplicationInstanceDeregistered do
   This event is emitted when a database application is deregistered (decommissioned) from the SAP system.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.SapSystems.Events.ApplicationInstanceDeregistered do
     field :instance_number, :string

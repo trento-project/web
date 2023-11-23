@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ClusterTombstoned do
     This event is emitted after a successful cluster deregistration, to tombstone and stop the cluster aggregate
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :cluster_id, Ecto.UUID

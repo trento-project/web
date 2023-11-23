@@ -8,7 +8,7 @@ defmodule Trento.Domain.AscsErsClusterDetails do
     :sap_systems
   ]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   alias Trento.Domain.{
     AscsErsClusterSapSystem,

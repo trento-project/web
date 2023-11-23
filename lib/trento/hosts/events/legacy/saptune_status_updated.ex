@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.SaptuneStatusUpdated do
   This event is emitted when saptune status is updated in a specific host.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   alias Trento.Hosts.ValueObjects.SaptuneStatus
 

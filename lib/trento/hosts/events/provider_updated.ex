@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Events.ProviderUpdated do
   This event is emitted when a provider data is updated in a specific host.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 

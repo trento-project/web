@@ -10,7 +10,7 @@ defmodule Trento.Domain.AscsErsClusterSapSystem do
     :nodes
   ]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   alias Trento.Domain.AscsErsClusterNode
 

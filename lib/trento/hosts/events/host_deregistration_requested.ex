@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Events.HostDeregistrationRequested do
     This event is emitted when a deregistration (decommission) of a host is requested.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :host_id, Ecto.UUID

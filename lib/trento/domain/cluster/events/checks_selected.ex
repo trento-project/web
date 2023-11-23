@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ChecksSelected do
   Event of the checks selected in a cluster.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :cluster_id, Ecto.UUID

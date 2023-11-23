@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostChecksExecutionCompleted do
   Event of the checks execution completed of a host.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   alias Trento.Domain.CheckResult
 

@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.DatabaseInstanceMarkedAbsent do
   This event is emitted when a database instance is marked as absent from the SAP system.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.SapSystems.Events.DatabaseInstanceMarkedAbsent do
     field :instance_number, :string

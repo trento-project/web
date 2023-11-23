@@ -10,8 +10,8 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-%Trento.User{}
-|> Trento.User.changeset(%{
+%Trento.Users.User{}
+|> Trento.Users.User.changeset(%{
   username: "admin",
   password: "adminpassword",
   confirm_password: "adminpassword"

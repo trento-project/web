@@ -10,7 +10,7 @@ defmodule Trento.Domain.HanaClusterNode do
     :attributes
   ]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   alias Trento.Domain.ClusterResource
 

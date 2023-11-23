@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Commands.DeregisterDatabaseInstance do
 
   @required_fields :all
 
-  use Trento.Command
+  use Trento.Support.Command
 
   defcommand do
     field :instance_number, :string

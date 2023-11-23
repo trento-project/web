@@ -12,8 +12,8 @@ defmodule TrentoWeb.SessionControllerTest do
 
   setup do
     user =
-      %Trento.User{}
-      |> Trento.User.changeset(%{
+      %Trento.Users.User{}
+      |> Trento.Users.User.changeset(%{
         username: "admin",
         password: "testpassword",
         confirm_password: "testpassword"

@@ -3,7 +3,7 @@ defmodule Trento.Hosts.Events.HostRegistered do
   This event is emitted when a host is registered.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent version: 3 do
     field :host_id, Ecto.UUID

@@ -30,7 +30,7 @@ defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
     :health
   ]
 
-  use Trento.Command
+  use Trento.Support.Command
 
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health

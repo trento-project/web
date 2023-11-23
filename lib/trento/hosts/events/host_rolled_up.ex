@@ -4,7 +4,7 @@ defmodule Trento.Hosts.Events.HostRolledUp do
   It contains the snapshot of the host aggregate that will be used to restore the aggregate state.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   alias Trento.Hosts.Host
 

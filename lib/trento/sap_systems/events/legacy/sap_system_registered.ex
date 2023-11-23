@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.SapSystemRegistered do
   This event is emitted when a sap system is registered.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health

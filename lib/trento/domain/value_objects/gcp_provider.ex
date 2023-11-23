@@ -5,7 +5,7 @@ defmodule Trento.Domain.GcpProvider do
 
   @required_fields nil
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :disk_number, :integer

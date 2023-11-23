@@ -11,7 +11,7 @@ defmodule Trento.Hosts.ValueObjects.SlesSubscription do
     :status
   ]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :host_id, :string

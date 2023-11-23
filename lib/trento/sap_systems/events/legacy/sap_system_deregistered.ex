@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.SapSystemDeregistered do
   This event is emitted when a SAP system is deregistered (decommissioned).
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.SapSystems.Events.SapSystemDeregistered do
     field :sap_system_id, Ecto.UUID

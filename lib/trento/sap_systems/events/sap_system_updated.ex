@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Events.SapSystemUpdated do
 
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent do
     field :sap_system_id, Ecto.UUID

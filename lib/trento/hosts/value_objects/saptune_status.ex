@@ -11,7 +11,7 @@ defmodule Trento.Hosts.ValueObjects.SaptuneStatus do
 
   @required_fields nil
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :package_version, :string

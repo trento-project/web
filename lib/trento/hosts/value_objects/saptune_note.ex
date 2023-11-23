@@ -4,7 +4,7 @@ defmodule Trento.Hosts.ValueObjects.SaptuneNote do
   """
   @required_fields [:id, :additionally_enabled]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :id, :string

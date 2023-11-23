@@ -172,8 +172,8 @@ defmodule Trento.MixProject do
       nest_modules_by_prefix: [
         Trento.Domain.Events,
         Trento.Domain.Commands,
-        Trento.Integration.Checks,
-        Trento.Integration.Discovery
+        Trento.Infrastructure.Checks,
+        Trento.Infrastructure.Discovery
       ]
     ]
   end

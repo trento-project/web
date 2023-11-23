@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ChecksExecutionRequested do
   Event of the request of a checks execution.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Provider, as: Provider
 

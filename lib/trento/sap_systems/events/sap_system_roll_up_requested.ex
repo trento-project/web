@@ -4,7 +4,7 @@ defmodule Trento.SapSystems.Events.SapSystemRollUpRequested do
   It is used to trigger the stream archiving process and it contains the snapshot of the sap system aggregate.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent resource: "sap_system" do
     field :sap_system_id, Ecto.UUID

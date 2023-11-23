@@ -5,7 +5,7 @@ defmodule Trento.Hosts.Commands.UpdateSlesSubscriptions do
 
   @required_fields :all
 
-  use Trento.Command
+  use Trento.Support.Command
 
   alias Trento.Hosts.ValueObjects.SlesSubscription
 

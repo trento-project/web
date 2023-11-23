@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.HostDeregistered do
     This event is emitted when a deregistration (decommission) of a host is completed.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   defevent superseded_by: Trento.Hosts.Events.HostDeregistered do
     field :host_id, Ecto.UUID

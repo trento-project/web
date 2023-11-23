@@ -12,7 +12,7 @@ defmodule Trento.Domain.Commands.RegisterClusterHost do
     :provider
   ]
 
-  use Trento.Command
+  use Trento.Support.Command
 
   require Trento.Domain.Enums.Provider, as: Provider
   require Trento.Domain.Enums.ClusterType, as: ClusterType

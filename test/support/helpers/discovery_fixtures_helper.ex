@@ -1,4 +1,4 @@
-defmodule Trento.Integration.DiscoveryFixturesHelper do
+defmodule Trento.Infrastructure.DiscoveryFixturesHelper do
   @moduledoc """
   This module contains helper functions for loading discovery fixtures.
   """

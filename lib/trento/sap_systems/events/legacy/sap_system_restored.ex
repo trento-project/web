@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.SapSystemRestored do
   This event is emitted when a sap system is restored.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

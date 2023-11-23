@@ -4,7 +4,7 @@ defmodule Trento.Hosts.ValueObjects.SaptuneStaging do
   """
   @required_fields [:enabled]
 
-  use Trento.Type
+  use Trento.Support.Type
 
   deftype do
     field :enabled, :boolean

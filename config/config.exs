@@ -63,17 +63,18 @@ config :trento, Trento.Commanded,
   pubsub: :local,
   registry: :local
 
-config :trento, Trento.StreamRollUpEventHandler, max_stream_version: 10_000
+config :trento, Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler,
+  max_stream_version: 10_000
 
 config :trento, Trento.EventStore,
-  serializer: Trento.JsonbSerializer,
+  serializer: Trento.Support.JsonbSerializer,
   column_data_type: "jsonb",
   types: EventStore.PostgresTypes
 
 config :trento, event_stores: [Trento.EventStore]
 
 config :trento, :pow,
-  user: Trento.User,
+  user: Trento.Users.User,
   repo: Trento.Repo,
   web_module: TrentoWeb,
   extensions: [PowPersistentSession],
@@ -97,7 +98,7 @@ config :trento, Trento.Scheduler,
     ],
     publish_telemetry: [
       schedule: {:extended, "@daily"},
-      task: {Trento.Integration.Telemetry, :publish, []},
+      task: {Trento.Infrastructure.Telemetry, :publish, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ],
@@ -118,13 +119,13 @@ config :trento, Trento.Scheduler,
   ],
   debug_logging: false
 
-config :trento, Trento.Integration.Telemetry, adapter: Trento.Integration.Telemetry.Suse
+config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.Suse
 
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
 
-config :trento, Trento.Integration.Checks.AMQP.Consumer,
-  processor: Trento.Integration.Checks.AMQP.Processor,
+config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
+  processor: Trento.Infrastructure.Checks.AMQP.Processor,
   queue: "trento.checks.results",
   exchange: "trento.checks",
   routing_key: "results",
@@ -135,10 +136,10 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher,
   exchange: "trento.checks",
   connection: "amqp://guest:guest@localhost:5672"
 
-config :trento, Trento.Integration.Prometheus,
-  adapter: Trento.Integration.Prometheus.PrometheusApi
+config :trento, Trento.Infrastructure.Prometheus,
+  adapter: Trento.Infrastructure.Prometheus.PrometheusApi
 
-config :trento, Trento.Integration.Prometheus.PrometheusApi, url: "http://localhost:9090"
+config :trento, Trento.Infrastructure.Prometheus.PrometheusApi, url: "http://localhost:9090"
 
 config :trento, :grafana,
   user: "admin",

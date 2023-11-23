@@ -3,7 +3,7 @@ defmodule Trento.Domain.Events.ClusterChecksHealthChanged do
   This event is emitted when the checks health of a cluster changes.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   require Trento.Domain.Enums.Health, as: Health
 

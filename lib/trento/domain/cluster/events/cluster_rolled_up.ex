@@ -4,7 +4,7 @@ defmodule Trento.Domain.Events.ClusterRolledUp do
   It contains the snapshot of the cluster aggregate that will be used to restore the aggregate state.
   """
 
-  use Trento.Event
+  use Trento.Support.Event
 
   alias Trento.Domain.Cluster
 

@@ -6,7 +6,7 @@ defmodule Trento.Hosts.Commands.UpdateSaptuneStatus do
 
   @required_fields [:host_id, :saptune_installed]
 
-  use Trento.Command
+  use Trento.Support.Command
 
   defcommand do
     field :host_id, Ecto.UUID
