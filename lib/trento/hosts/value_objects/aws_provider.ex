@@ -1,4 +1,4 @@
-defmodule Trento.Domain.AwsProvider do
+defmodule Trento.Hosts.ValueObjects.AwsProvider do
   @moduledoc """
   AWS provider value object
   """

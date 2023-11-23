@@ -36,7 +36,7 @@ defmodule Trento.Hosts.HostTest do
     SlesSubscriptionsUpdated
   }
 
-  alias Trento.Domain.{
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider

@@ -14,7 +14,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.HostPolicyTest do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Domain.{
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider

@@ -1,4 +1,4 @@
-defmodule Trento.Domain.GcpProvider do
+defmodule Trento.Hosts.ValueObjects.GcpProvider do
   @moduledoc """
   Gcp provider value object
   """

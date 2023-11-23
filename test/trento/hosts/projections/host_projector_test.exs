@@ -14,7 +14,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     HostReadModel
   }
 
-  alias Trento.Domain.{
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider

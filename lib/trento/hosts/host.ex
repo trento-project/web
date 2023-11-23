@@ -46,14 +46,12 @@ defmodule Trento.Hosts.Host do
 
   alias Trento.Hosts.Host
 
-  alias Trento.Domain.{
+  alias Trento.Domain.HealthService
+
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider,
-    HealthService
-  }
-
-  alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
   }

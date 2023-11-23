@@ -1,4 +1,4 @@
-defmodule Trento.Domain.AzureProvider do
+defmodule Trento.Hosts.ValueObjects.AzureProvider do
   @moduledoc """
   Azure provider value object
   """

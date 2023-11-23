@@ -9,7 +9,7 @@ defmodule Trento.Domain.Events.ProviderUpdated do
 
   require Trento.Domain.Enums.Provider, as: Provider
 
-  alias Trento.Domain.{
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider
