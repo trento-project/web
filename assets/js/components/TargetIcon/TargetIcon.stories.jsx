@@ -1,3 +1,4 @@
+import React from 'react';
 import TargetIcon from './TargetIcon';
 
 export default {
@@ -18,33 +19,14 @@ export const WithCustomStyles = {
     targetType: 'host',
     containerClassName:
       'inline-flex bg-jungle-green-500 p-1 rounded-full self-center',
-    iconClassName: 'fill-white',
+    className: 'fill-white',
   },
 };
 
-export const HostWithLabel = {
+export const WithLabel = {
   args: {
     targetType: 'host',
-    withLabel: true,
-    iconClassName: 'inline mr-2 h-4',
+    className: 'inline mr-2 h-4',
   },
-};
-
-export const ClusterWithLabel = {
-  args: {
-    targetType: 'cluster',
-    withLabel: true,
-    iconClassName: 'inline mr-2 h-4',
-  },
-};
-
-export const WithCustomLabel = {
-  args: {
-    targetType: 'host',
-    withLabel: true,
-    iconClassName: 'inline mr-2 h-4',
-    labelMap: {
-      host: 'Custom host label',
-    },
-  },
+  render: (args) => <TargetIcon {...args}>Hosts</TargetIcon>,
 };

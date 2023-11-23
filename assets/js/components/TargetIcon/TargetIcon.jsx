@@ -8,17 +8,11 @@ const targetTypeToIcon = {
   [TARGET_HOST]: EOS_DESKTOP_WINDOWS,
 };
 
-const targetTypeToLabel = {
-  [TARGET_CLUSTER]: 'Clusters',
-  [TARGET_HOST]: 'Hosts',
-};
-
 function TargetIcon({
   targetType,
-  withLabel = false,
-  labelMap = targetTypeToLabel,
   containerClassName = '',
-  iconClassName = '',
+  className = '',
+  children,
 }) {
   if (!isValidTargetType(targetType)) {
     return null;
@@ -26,16 +20,12 @@ function TargetIcon({
   const IconComponent = targetTypeToIcon[targetType];
 
   return (
-    <>
-      <span data-testid="target-icon" className={containerClassName}>
-        <span data-testid={`target-icon-${targetType}`}>
-          <IconComponent className={iconClassName} />
-        </span>
+    <span data-testid="target-icon" className={containerClassName}>
+      <span data-testid={`target-icon-${targetType}`}>
+        <IconComponent className={className} />
       </span>
-      {withLabel && (
-        <span data-testid="target-label">{labelMap[targetType]}</span>
-      )}
-    </>
+      <span data-testid="target-label">{children}</span>
+    </span>
   );
 }
 

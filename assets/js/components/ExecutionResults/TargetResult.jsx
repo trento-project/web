@@ -23,7 +23,7 @@ function TargetResult({
           <TargetIcon
             targetType={targetType}
             containerClassName="inline-flex bg-jungle-green-500 p-1 rounded-full self-center"
-            iconClassName="fill-white"
+            className="fill-white"
           />
           <span className="ml-3 inline-flex self-center">{targetName}</span>
         </div>

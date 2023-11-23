@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { groupBy } from 'lodash';
 
-import { providers, targetTypes } from '@lib/model';
+import {
+  providers,
+  targetTypes,
+  TARGET_HOST,
+  TARGET_CLUSTER,
+} from '@lib/model';
 import { clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
 import PageHeader from '@components/PageHeader';
 import Accordion from '@components/Accordion';
@@ -15,11 +20,10 @@ const providerOptionRenderer = (provider) => (
   <ProviderLabel provider={provider} />
 );
 const targetTypeOptionRenderer = (targetType) => (
-  <TargetIcon
-    targetType={targetType}
-    withLabel
-    iconClassName="inline mr-2 h-4"
-  />
+  <TargetIcon targetType={targetType} className="inline mr-2 h-4">
+    {targetType === TARGET_CLUSTER && 'Clusters'}
+    {targetType === TARGET_HOST && 'Hosts'}
+  </TargetIcon>
 );
 
 function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {

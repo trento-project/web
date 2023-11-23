@@ -31,7 +31,7 @@ function CheckItem({
                 <TargetIcon
                   targetType={targetType}
                   containerClassName="inline-flex bg-jungle-green-500 p-1 rounded-full self-center"
-                  iconClassName="fill-white"
+                  className="fill-white"
                 />
               </div>
             )}
