@@ -11,9 +11,9 @@ import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
-  updateLastExecution,
   executionRequested,
   hostExecutionRequested,
+  updateLastExecution,
 } from '@state/lastExecutions';
 import { getClusterIDs } from '@state/selectors/cluster';
 import { getHostID, getHostIDs } from '@state/selectors/host';

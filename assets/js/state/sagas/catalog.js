@@ -2,10 +2,10 @@ import { put, call, takeEvery } from 'redux-saga/effects';
 import { getCatalog } from '@lib/api/checks';
 
 import {
+  UPDATE_CATALOG,
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
-  UPDATE_CATALOG,
 } from '@state/catalog';
 
 export function* updateCatalog({ payload }) {

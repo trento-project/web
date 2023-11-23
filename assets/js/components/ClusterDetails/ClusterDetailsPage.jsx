@@ -11,7 +11,7 @@ import {
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
-import { updateLastExecution, executionRequested } from '@state/lastExecutions';
+import { executionRequested, updateLastExecution } from '@state/lastExecutions';
 import { TARGET_CLUSTER } from '@lib/model';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';

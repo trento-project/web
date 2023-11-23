@@ -66,7 +66,7 @@ import {
 
 import { setEulaVisible, setIsPremium } from '@state/settings';
 
-import { watchNotifications, notify } from '@state/sagas/notifications';
+import { notify, watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { watchSapSystem } from '@state/sagas/sapSystems';
