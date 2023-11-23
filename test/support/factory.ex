@@ -8,14 +8,15 @@ defmodule Trento.Factory do
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health
 
-  alias Trento.Domain.{
+  alias Trento.Clusters.ValueObjects.SbdDevice
+
+  alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
     HanaClusterDetails,
-    HanaClusterNode,
-    SbdDevice
+    HanaClusterNode
   }
 
   alias Trento.Hosts.ValueObjects.{
@@ -24,14 +25,6 @@ defmodule Trento.Factory do
   }
 
   alias Trento.SapSystems.Instance
-
-  alias Trento.Domain.Events.{
-    ClusterDeregistered,
-    ClusterRegistered,
-    ClusterTombstoned,
-    HostAddedToCluster,
-    HostRemovedFromCluster
-  }
 
   alias Trento.Hosts.Events.{
     HeartbeatFailed,
@@ -61,7 +54,13 @@ defmodule Trento.Factory do
     SapSystemTombstoned
   }
 
-  alias Trento.Domain.Commands.RegisterClusterHost
+  alias Trento.Clusters.Events.{
+    ClusterDeregistered,
+    ClusterRegistered,
+    ClusterTombstoned,
+    HostAddedToCluster,
+    HostRemovedFromCluster
+  }
 
   alias Trento.Hosts.Commands.RegisterHost
 
@@ -73,10 +72,7 @@ defmodule Trento.Factory do
     RollUpSapSystem
   }
 
-  alias Trento.{
-    ClusterEnrichmentData,
-    ClusterReadModel
-  }
+  alias Trento.Clusters.Commands.RegisterClusterHost
 
   alias Trento.Hosts.Projections.{
     HostReadModel,
@@ -91,6 +87,8 @@ defmodule Trento.Factory do
     SapSystemReadModel
   }
 
+  alias Trento.Clusters.ClusterEnrichmentData
+  alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 

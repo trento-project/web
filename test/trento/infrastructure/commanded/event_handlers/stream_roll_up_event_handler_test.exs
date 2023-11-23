@@ -5,7 +5,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
   import Mox
   import Trento.Factory
 
-  alias Trento.Domain.Commands.RollUpCluster
+  alias Trento.Clusters.Commands.RollUpCluster
   alias Trento.Hosts.Commands.RollUpHost
   alias Trento.SapSystems.Commands.RollUpSapSystem
 

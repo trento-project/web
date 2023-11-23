@@ -9,7 +9,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
   alias Trento.Infrastructure.Commanded.Middleware.Enrichable
 
-  alias Trento.ClusterEnrichmentData
+  alias Trento.Clusters.ClusterEnrichmentData
   alias Trento.Repo
 
   @endpoint TrentoWeb.Endpoint

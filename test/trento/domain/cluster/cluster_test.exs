@@ -1,11 +1,11 @@
 defmodule Trento.ClusterTest do
-  use Trento.AggregateCase, aggregate: Trento.Domain.Cluster, async: true
+  use Trento.AggregateCase, aggregate: Trento.Clusters.Cluster, async: true
 
   import Trento.Factory
 
   alias Trento.Support.StructHelper
 
-  alias Trento.Domain.Commands.{
+  alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
     RegisterClusterHost,
@@ -17,6 +17,10 @@ defmodule Trento.ClusterTest do
     ChecksExecutionCompleted,
     ChecksExecutionRequested,
     ChecksExecutionStarted,
+    HostChecksExecutionCompleted
+  }
+
+  alias Trento.Clusters.Events.{
     ChecksSelected,
     ClusterChecksHealthChanged,
     ClusterDeregistered,
@@ -29,11 +33,10 @@ defmodule Trento.ClusterTest do
     ClusterRollUpRequested,
     ClusterTombstoned,
     HostAddedToCluster,
-    HostChecksExecutionCompleted,
     HostRemovedFromCluster
   }
 
-  alias Trento.Domain.Cluster
+  alias Trento.Clusters.Cluster
 
   require Trento.Domain.Enums.Health, as: Health
 

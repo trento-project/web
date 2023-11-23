@@ -10,6 +10,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
   require Trento.Domain.Enums.ClusterType, as: ClusterType
 
   alias Trento.ClusterReadModel
+  alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.SapSystemReadModel
 

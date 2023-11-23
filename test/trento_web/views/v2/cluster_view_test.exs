@@ -6,7 +6,7 @@ defmodule TrentoWeb.V2.ClusterViewTest do
 
   alias TrentoWeb.V2.ClusterView
 
-  alias Trento.ClusterReadModel
+  alias Trento.Clusters.Projections.ClusterReadModel
 
   test "should render health changed relevant information" do
     %ClusterReadModel{id: id, name: name, health: health} = cluster = build(:cluster)

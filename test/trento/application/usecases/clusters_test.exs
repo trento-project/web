@@ -7,7 +7,11 @@ defmodule Trento.ClustersTest do
 
   import Trento.Factory
 
-  alias Trento.{ClusterEnrichmentData, ClusterReadModel, Clusters}
+  alias Trento.Clusters
+
+  alias Trento.Clusters.ClusterEnrichmentData
+
+  alias Trento.Clusters.Projections.ClusterReadModel
 
   alias Trento.Checks.V1.{
     ExecutionRequested,

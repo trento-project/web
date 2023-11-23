@@ -10,16 +10,17 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
 
   alias Trento.Infrastructure.Discovery.Policies.ClusterPolicy
 
-  alias Trento.Domain.Commands.{DeregisterClusterHost, RegisterClusterHost}
+  alias Trento.Clusters.Commands.{DeregisterClusterHost, RegisterClusterHost}
 
-  alias Trento.Domain.{
+  alias Trento.Clusters.ValueObjects.SbdDevice
+
+  alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
     HanaClusterDetails,
-    HanaClusterNode,
-    SbdDevice
+    HanaClusterNode
   }
 
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up is handled" do
@@ -818,14 +819,14 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload with aws provider" do
     assert {:ok,
             [
-              %Trento.Domain.Commands.RegisterClusterHost{
+              %RegisterClusterHost{
                 cib_last_written: "Wed Apr 27 07:42:23 2022",
                 cluster_id: "3e83b9d1-00e8-544d-9e29-7a66d9ed7c1e",
                 designated_controller: true,
-                details: %Trento.Domain.HanaClusterDetails{
+                details: %HanaClusterDetails{
                   fencing_type: "external/ec2",
                   nodes: [
-                    %Trento.Domain.HanaClusterNode{
+                    %HanaClusterNode{
                       attributes: %{
                         "hana_prd_clone_state" => "PROMOTED",
                         "hana_prd_op_mode" => "logreplay",
@@ -842,35 +843,35 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
                       hana_status: "Primary",
                       name: "vmhana01",
                       resources: [
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_aws_stonith_PRD_HDB00",
                           role: "Started",
                           status: "Active",
                           type: "stonith:external/ec2"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_ip_PRD_HDB00",
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:aws-vpc-move-ip"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_exporter_PRD_HDB00",
                           role: "Started",
                           status: "Active",
                           type: "systemd:prometheus-hanadb_exporter@PRD_HDB00"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHana_PRD_HDB00",
                           role: "Master",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHanaTopology_PRD_HDB00",
                           role: "Started",
@@ -881,7 +882,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
                       site: "Site1",
                       virtual_ip: "192.168.1.10"
                     },
-                    %Trento.Domain.HanaClusterNode{
+                    %HanaClusterNode{
                       attributes: %{
                         "hana_prd_clone_state" => "DEMOTED",
                         "hana_prd_op_mode" => "logreplay",
@@ -898,14 +899,14 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
                       hana_status: "Secondary",
                       name: "vmhana02",
                       resources: [
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHana_PRD_HDB00",
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHanaTopology_PRD_HDB00",
                           role: "Started",
@@ -943,14 +944,14 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
   test "should return the expected commands when a ha_cluster_discovery payload with gcp provider" do
     assert {:ok,
             [
-              %Trento.Domain.Commands.RegisterClusterHost{
+              %RegisterClusterHost{
                 cib_last_written: "Wed Apr 27 07:02:35 2022",
                 cluster_id: "61b4f40d-5e1e-5b58-bdc1-7b855dd7ede2",
                 designated_controller: true,
-                details: %Trento.Domain.HanaClusterDetails{
+                details: %HanaClusterDetails{
                   fencing_type: "fence_gce",
                   nodes: [
-                    %Trento.Domain.HanaClusterNode{
+                    %HanaClusterNode{
                       attributes: %{
                         "hana_prd_clone_state" => "UNDEFINED",
                         "hana_prd_op_mode" => "logreplay",
@@ -966,21 +967,21 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
                       hana_status: "Unknown",
                       name: "vmhana01",
                       resources: [
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHanaTopology_PRD_HDB00",
                           role: "Started",
                           status: "Active",
                           type: "ocf::suse:SAPHanaTopology"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_ip_PRD_HDB00",
                           role: "Started",
                           status: "Active",
                           type: "ocf::heartbeat:IPaddr2"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_socat_PRD_HDB00",
                           role: "Started",
@@ -991,7 +992,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
                       site: "Site1",
                       virtual_ip: "10.0.0.12"
                     },
-                    %Trento.Domain.HanaClusterNode{
+                    %HanaClusterNode{
                       attributes: %{
                         "hana_prd_clone_state" => "DEMOTED",
                         "hana_prd_op_mode" => "logreplay",
@@ -1007,14 +1008,14 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
                       hana_status: "Unknown",
                       name: "vmhana02",
                       resources: [
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHana_PRD_HDB00",
                           role: "Slave",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
                         },
-                        %Trento.Domain.ClusterResource{
+                        %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHanaTopology_PRD_HDB00",
                           role: "Started",
@@ -1030,28 +1031,28 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
                   secondary_sync_state: "Unknown",
                   sr_health_state: "Unknown",
                   stopped_resources: [
-                    %Trento.Domain.ClusterResource{
+                    %ClusterResource{
                       fail_count: nil,
                       id: "rsc_gcp_stonith_PRD_HDB00_vmhana01",
                       role: "Stopped",
                       status: nil,
                       type: "stonith:fence_gce"
                     },
-                    %Trento.Domain.ClusterResource{
+                    %ClusterResource{
                       fail_count: nil,
                       id: "rsc_exporter_PRD_HDB00",
                       role: "Stopped",
                       status: nil,
                       type: "systemd:prometheus-hanadb_exporter@PRD_HDB00"
                     },
-                    %Trento.Domain.ClusterResource{
+                    %ClusterResource{
                       fail_count: nil,
                       id: "rsc_gcp_stonith_PRD_HDB00_vmhana02",
                       role: "Stopped",
                       status: nil,
                       type: "stonith:fence_gce"
                     },
-                    %Trento.Domain.ClusterResource{
+                    %ClusterResource{
                       fail_count: nil,
                       id: "rsc_SAPHana_PRD_HDB00",
                       role: "Stopped",
