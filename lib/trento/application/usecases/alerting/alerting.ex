@@ -3,7 +3,7 @@ defmodule Trento.Application.UseCases.Alerting do
   Provides a set of functions of Alerting related usecases.
   """
 
-  alias Trento.ClusterReadModel
+  alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.SapSystems.Projections.{

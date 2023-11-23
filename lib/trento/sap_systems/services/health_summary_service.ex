@@ -7,13 +7,13 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
 
   require Trento.Domain.Enums.Health, as: HealthEnum
 
-  alias Trento.ClusterReadModel
-
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
     DatabaseInstanceReadModel,
     SapSystemReadModel
   }
+
+  alias Trento.Clusters.Projections.ClusterReadModel
 
   alias Trento.Domain.Enums.Health
   alias Trento.Domain.HealthService

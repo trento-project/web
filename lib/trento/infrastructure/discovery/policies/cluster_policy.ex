@@ -8,7 +8,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicy do
   require Trento.Domain.Enums.Health, as: Health
   require Trento.Domain.Enums.AscsErsClusterRole, as: AscsErsClusterRole
 
-  alias Trento.Domain.Commands.{
+  alias Trento.Clusters.Commands.{
     DeregisterClusterHost,
     RegisterClusterHost
   }

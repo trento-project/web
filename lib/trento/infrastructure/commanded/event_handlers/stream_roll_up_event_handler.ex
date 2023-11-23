@@ -13,11 +13,11 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     application: Trento.Commanded,
     name: "stream_roll_up_event_handler"
 
-  alias Trento.Domain.Commands.RollUpCluster
+  alias Trento.Clusters.Commands.RollUpCluster
   alias Trento.Hosts.Commands.RollUpHost
   alias Trento.SapSystems.Commands.RollUpSapSystem
 
-  alias Trento.Domain.Events.ClusterTombstoned
+  alias Trento.Clusters.Events.ClusterTombstoned
   alias Trento.Hosts.Events.HostTombstoned
   alias Trento.SapSystems.Events.SapSystemTombstoned
 
@@ -26,13 +26,13 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
   @max_stream_version Application.compile_env!(:trento, [__MODULE__, :max_stream_version])
 
   @cluster_events [
-    Trento.Domain.Events.ChecksSelected,
-    Trento.Domain.Events.ClusterChecksHealthChanged,
-    Trento.Domain.Events.ClusterDetailsUpdated,
-    Trento.Domain.Events.ClusterDiscoveredHealthChanged,
-    Trento.Domain.Events.ClusterHealthChanged,
-    Trento.Domain.Events.ClusterRegistered,
-    Trento.Domain.Events.HostAddedToCluster
+    Trento.Clusters.Events.ChecksSelected,
+    Trento.Clusters.Events.ClusterChecksHealthChanged,
+    Trento.Clusters.Events.ClusterDetailsUpdated,
+    Trento.Clusters.Events.ClusterDiscoveredHealthChanged,
+    Trento.Clusters.Events.ClusterHealthChanged,
+    Trento.Clusters.Events.ClusterRegistered,
+    Trento.Clusters.Events.HostAddedToCluster
   ]
 
   @host_events [

@@ -3,6 +3,8 @@ defmodule Trento.ProjectorsSupervisor do
 
   use Supervisor
 
+  alias Trento.Clusters.Projections.ClusterProjector
+
   alias Trento.Hosts.Projections.{
     HostProjector,
     SlesSubscriptionsProjector,
@@ -21,7 +23,7 @@ defmodule Trento.ProjectorsSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      Trento.ClusterProjector,
+      ClusterProjector,
       DatabaseProjector,
       HostProjector,
       SapSystemProjector,
