@@ -5,8 +5,8 @@ defmodule Trento.Infrastructure.TelemetryTest do
   import Mox
   import Trento.Factory
 
-  alias Trento.Settings
   alias Trento.Infrastructure.Telemetry
+  alias Trento.Settings
 
   setup :verify_on_exit!
 
