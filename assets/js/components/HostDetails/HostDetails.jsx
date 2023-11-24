@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { get } from 'lodash';
+import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
 
+import Button from '@components/Button';
 import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import WarningBanner from '@components/Banners/WarningBanner';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
+import { canStartExecution } from '@components/ChecksSelection';
+import Tooltip from '@components/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';
 import CheckResultsOverview from '@components/CheckResultsOverview';
@@ -37,11 +41,14 @@ function HostDetails({
   provider,
   providerData,
   sapInstances,
+  savingChecks,
   saptuneStatus = {},
+  selectedChecks = [],
   slesSubscriptions,
   catalog,
   lastExecution,
   cleanUpHost,
+  requestHostChecksExecution,
   navigate,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -103,6 +110,47 @@ function HostDetails({
                   }}
                 />
               )}
+              <Button
+                type="primary-white"
+                className="inline-block mx-0.5 border-green-500 border"
+                size="small"
+                onClick={() => navigate(`/hosts/${hostID}/settings`)}
+              >
+                <EOS_SETTINGS className="inline-block fill-jungle-green-500" />{' '}
+                Check Selection
+              </Button>
+
+              <Button
+                type="primary-white"
+                className="mx-0.5 border-green-500 border"
+                size="small"
+                onClick={() => navigate(`/hosts/${hostID}/executions/last`)}
+              >
+                <EOS_CLEAR_ALL className="inline-block fill-jungle-green-500" />
+                Show Results
+              </Button>
+
+              <Tooltip
+                isEnabled={!canStartExecution(selectedChecks, savingChecks)}
+                content="Select some Checks first!"
+                place="bottom"
+              >
+                <Button
+                  type="primary"
+                  className="mx-1"
+                  onClick={requestHostChecksExecution}
+                  disabled={!canStartExecution(selectedChecks, savingChecks)}
+                >
+                  <EOS_PLAY_CIRCLE
+                    className={`${
+                      canStartExecution(selectedChecks, savingChecks)
+                        ? 'fill-white'
+                        : 'fill-gray-200'
+                    } inline-block align-sub`}
+                  />{' '}
+                  Start Execution
+                </Button>
+              </Tooltip>
             </div>
           </div>
           <div className="pb-3">
