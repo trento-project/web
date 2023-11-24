@@ -1,11 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 
 export const UPDATE_CATALOG = 'UPDATE_CATALOG';
-
-export const updateCatalog = (env = {}) => ({
-  type: UPDATE_CATALOG,
-  payload: env,
-});
+export const updateCatalog = createAction(UPDATE_CATALOG);
 
 const initialState = {
   loading: true,
