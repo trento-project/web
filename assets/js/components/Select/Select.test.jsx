@@ -107,4 +107,19 @@ describe('Select Component', () => {
 
     expect(mockOnChange).toHaveBeenCalledWith('option2');
   });
+
+  it('should render a disabled select', async () => {
+    const user = userEvent.setup();
+
+    const options = ['option1', 'option2', 'option3'];
+
+    render(
+      <Select optionsName="foobars" options={options} value="all" disabled />
+    );
+
+    expect(screen.getByRole('button')).toBeDisabled();
+
+    await user.click(screen.getByText('All foobars'));
+    expect(screen.queryByText('option2')).not.toBeInTheDocument();
+  });
 });
