@@ -31,6 +31,38 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
   const [selectedTargetType, setSelectedTargetType] = useState(OPTION_ALL);
   const [selectedClusterType, setSelectedClusterType] = useState(OPTION_ALL);
 
+  const onTargetTypeChange = (targetType) => {
+    if (targetType !== TARGET_CLUSTER) {
+      setSelectedClusterType(OPTION_ALL);
+    }
+    setSelectedTargetType(targetType);
+  };
+
+  const filters = [
+    {
+      optionsName: 'targets',
+      options: targetTypes,
+      renderOption: targetTypeOptionRenderer,
+      value: selectedTargetType,
+      onChange: onTargetTypeChange,
+    },
+    {
+      optionsName: 'cluster types',
+      options: clusterTypes,
+      renderOption: getClusterTypeLabel,
+      value: selectedClusterType,
+      onChange: setSelectedClusterType,
+      disabled: selectedTargetType !== TARGET_CLUSTER,
+    },
+    {
+      optionsName: 'providers',
+      options: providers,
+      renderOption: providerOptionRenderer,
+      value: selectedProvider,
+      onChange: setProviderSelected,
+    },
+  ];
+
   useEffect(() => {
     updateCatalog({
       selectedProvider,
@@ -45,30 +77,14 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
         <PageHeader className="font-bold flex-1 w-64 pb-4">
           Checks catalog
         </PageHeader>
-        <Select
-          optionsName="targets"
-          className="ml-auto"
-          options={[OPTION_ALL, ...targetTypes]}
-          renderOption={targetTypeOptionRenderer}
-          value={selectedTargetType}
-          onChange={setSelectedTargetType}
-        />
-        <Select
-          optionsName="cluster types"
-          className="ml-auto"
-          options={[OPTION_ALL, ...clusterTypes]}
-          renderOption={getClusterTypeLabel}
-          value={selectedClusterType}
-          onChange={setSelectedClusterType}
-        />
-        <Select
-          optionsName="providers"
-          className="ml-auto"
-          options={[OPTION_ALL, ...providers]}
-          renderOption={providerOptionRenderer}
-          value={selectedProvider}
-          onChange={setProviderSelected}
-        />
+        {filters.map((filterProps) => (
+          <Select
+            key={filterProps.optionsName}
+            className="ml-auto"
+            {...filterProps}
+            options={[OPTION_ALL, ...filterProps.options]}
+          />
+        ))}
       </div>
       <CatalogContainer
         onRefresh={() => updateCatalog(selectedProvider)}
