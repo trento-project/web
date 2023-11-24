@@ -140,7 +140,7 @@ in those hosts in order to start the registration.</p><p>That being said, this i
 Database instances with Secondary role in a system replication scenario are discarded.
 At this point, the registration process starts and the database is registered.
 Any application instance discovery message without an associated database is ignored.</li><li>New database instances/updates coming from already registered database instances are registered/applied.</li><li>When a SAP system discovery with a new application instance is received, and the database associated to
-this application exists:<ul><li>Instances that are not MESSAGESERVER or ABAP will be added without completing a SAP system registration</li><li>To have a fully registered SAP system, a MESSAGESERVER instance and one ABAP instance are required</li></ul></li><li>New application instances/updates coming from already registered application instances are registered/applied.</li></ol><p>Find additional information about the application/database association in <code class="inline">Trento.Domain.Commands.RegisterApplicationInstance</code>.</p>
+this application exists:<ul><li>Instances that are not MESSAGESERVER or ABAP will be added without completing a SAP system registration</li><li>To have a fully registered SAP system, a MESSAGESERVER instance and one ABAP instance are required</li></ul></li><li>New application instances/updates coming from already registered application instances are registered/applied.</li></ol><p>Find additional information about the application/database association in <a href="Trento.SapSystems.Commands.RegisterApplicationInstance.html"><code class="inline">Trento.SapSystems.Commands.RegisterApplicationInstance</code></a>.</p>
   </section>
 
 
