@@ -41,7 +41,7 @@ defmodule Trento.SapSystems.SapSystem do
       - To have a fully registered SAP system, a MESSAGESERVER instance and one ABAP instance are required
   4. New application instances/updates coming from already registered application instances are registered/applied.
 
-  Find additional information about the application/database association in `Trento.Domain.Commands.RegisterApplicationInstance`.
+  Find additional information about the application/database association in `Trento.SapSystems.Commands.RegisterApplicationInstance`.
   """
 
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
