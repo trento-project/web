@@ -49,6 +49,16 @@ export default {
         type: 'text',
       },
     },
+    disabled: {
+      type: 'boolean',
+      description: 'Whether the Select is disabled or not',
+      control: {
+        type: 'boolean',
+      },
+    },
+    args: {
+      disabled: false,
+    },
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);
@@ -86,5 +96,12 @@ export const WithAllOption = {
     options: ['all', ...providers],
     value: 'all',
     renderOption: providerOptionRenderer,
+  },
+};
+
+export const Disabled = {
+  args: {
+    ...Default.args,
+    disabled: true,
   },
 };

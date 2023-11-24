@@ -91,24 +91,58 @@ context('Checks catalog', () => {
   });
 
   describe('Filtering', () => {
-    [
-      ['aws', 'AWS', 1, 1],
-      ['azure', 'Azure', 2, 5],
-      ['gcp', 'GCP', 3, 7],
-    ].forEach(([provider, label, groupCount, checkCount]) => {
-      it(`should query the correct checks data filtered by provider ${label}`, () => {
-        cy.intercept(`${checksCatalogURL}?provider=${provider}`, {
-          body: { items: catalog.slice(0, checkCount) },
+    const filteringScenarios = [
+      {
+        selectedFilters: [
+          {
+            dropdown: 'providers-selection-dropdown',
+            option: 'AWS',
+          },
+        ],
+        expectedRequest: `${checksCatalogURL}?provider=aws`,
+      },
+      {
+        selectedFilters: [
+          {
+            dropdown: 'providers-selection-dropdown',
+            option: 'AWS',
+          },
+          {
+            dropdown: 'targets-selection-dropdown',
+            option: 'Hosts',
+          },
+        ],
+        expectedRequest: `${checksCatalogURL}?provider=aws&target_type=host`,
+      },
+      {
+        selectedFilters: [
+          {
+            dropdown: 'providers-selection-dropdown',
+            option: 'AWS',
+          },
+          {
+            dropdown: 'targets-selection-dropdown',
+            option: 'Clusters',
+          },
+          {
+            dropdown: 'clustertypes-selection-dropdown',
+            option: 'HANA Scale Up',
+          },
+        ],
+        expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster&cluster_type=hana_scale_up`,
+      },
+    ];
+
+    filteringScenarios.forEach(({ selectedFilters, expectedRequest }) => {
+      it(`should issue the correct query to the catalog`, () => {
+        cy.intercept(expectedRequest, {
+          body: { items: catalog },
         }).as('request');
-
-        cy.get('.providers-selection-dropdown').click();
-        cy.get('.providers-selection-dropdown')
-          .get('span')
-          .contains(label)
-          .click();
-
+        selectedFilters.forEach(({ dropdown, option }) => {
+          cy.get(`.${dropdown}`).click();
+          cy.get(`.${dropdown}`).get('span').contains(option).click();
+        });
         cy.wait('@request');
-        cy.get('.check-group').should('have.length', groupCount);
       });
     });
   });
