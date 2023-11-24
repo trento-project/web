@@ -658,7 +658,14 @@ jobs:
   deploy-demo-env:
     name: Deploy updated images to the demo environment
     runs-on: self-hosted
-    if: (vars.DEPLOY_DEMO == 'true' || github.event.action == 'deploy-demo') || (github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch')
+    if: |
+      vars.DEPLOY_DEMO == 'true' &&
+        (
+          github.event_name == 'release' ||
+          github.event.action == 'deploy-demo' ||
+          (github.event_name == 'push' && github.ref_name == 'main') ||
+          github.event_name == 'workflow_dispatch'
+        )
     env:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
     needs: [build-demo-img, test-e2e]
@@ -693,7 +700,14 @@ jobs:
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the demo environment
     runs-on: ubuntu-20.04
-    if: vars.DEPLOY_DEMO == 'true' && (github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch')
+    if: |
+      vars.DEPLOY_DEMO == 'true' &&
+        (
+          github.event_name == 'release' ||
+          github.event.action == 'deploy-demo' ||
+          (github.event_name == 'push' && github.ref_name == 'main') ||
+          github.event_name == 'workflow_dispatch'
+        )
     needs: deploy-demo-env
     env:
       TRENTO_DEMO_IP: ${{ secrets.TRENTO_DEMO_IP }}
