@@ -7,7 +7,7 @@ import {
   databaseFactory,
   hostFactory,
 } from '@lib/test-utils/factories';
-import { DATABASE_TYPE } from '@lib/model';
+import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import { GenericSystemDetails } from '@components/SapSystemDetails';
 

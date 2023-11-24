@@ -1,30 +1,21 @@
 import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
+
+import { post, del } from '@lib/network';
+import { getClusterTypeLabel } from '@lib/model/clusters';
+
+import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
+import { getAllSAPInstances } from '@state/selectors/sapSystem';
+
 import Table from '@components/Table';
 import Tags from '@components/Tags';
 import PageHeader from '@components/PageHeader';
-import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import { ExecutionIcon } from '@components/ClusterDetails';
-import { post, del } from '@lib/network';
-import { useSearchParams } from 'react-router-dom';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
-import { getAllSAPInstances } from '@state/selectors/sapSystem';
-
-const getClusterTypeLabel = (type) => {
-  switch (type) {
-    case 'hana_scale_up':
-      return 'HANA Scale Up';
-    case 'hana_scale_out':
-      return 'HANA Scale Out';
-    case 'ascs_ers':
-      return 'ASCS/ERS';
-    default:
-      return 'Unknown';
-  }
-};
 
 const getSapSystemBySID = (instances, sid) =>
   instances.find((instance) => instance.sid === sid);

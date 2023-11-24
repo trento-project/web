@@ -39,10 +39,14 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     const checks2 = screen.getAllByRole('listitem');
     expect(checks2.length).toBe(10);
 
-    expect(mockUpdateCatalog).toHaveBeenCalledWith('all');
+    expect(mockUpdateCatalog).toHaveBeenCalledWith({
+      selectedClusterType: 'all',
+      selectedProvider: 'all',
+      selectedTargetType: 'all',
+    });
   });
 
-  it('should query the catalog with the correct provider', async () => {
+  it('should query the catalog with the correct filters', async () => {
     const user = userEvent.setup();
 
     const catalogData = catalogCheckFactory.buildList(5);
@@ -56,12 +60,33 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     );
 
     await user.click(screen.getByText('All providers'));
+    await user.click(screen.getByText('AWS'));
 
-    const providerFilter = screen.getByText('AWS');
+    await user.click(screen.getByText('All targets'));
+    await user.click(screen.getByText('Clusters'));
 
-    await user.click(providerFilter);
+    await user.click(screen.getByText('All cluster types'));
+    await user.click(screen.getByText('ASCS/ERS'));
 
-    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(1, 'all');
-    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, 'aws');
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(1, {
+      selectedClusterType: 'all',
+      selectedProvider: 'all',
+      selectedTargetType: 'all',
+    });
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(2, {
+      selectedClusterType: 'all',
+      selectedProvider: 'aws',
+      selectedTargetType: 'all',
+    });
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(3, {
+      selectedClusterType: 'all',
+      selectedProvider: 'aws',
+      selectedTargetType: 'cluster',
+    });
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
+      selectedClusterType: 'ascs_ers',
+      selectedProvider: 'aws',
+      selectedTargetType: 'cluster',
+    });
   });
 });

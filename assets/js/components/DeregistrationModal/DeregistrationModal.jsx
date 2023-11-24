@@ -2,10 +2,10 @@ import React from 'react';
 
 import { EOS_CLEANING_SERVICES } from 'eos-icons-react';
 
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+
 import Modal from '@components/Modal';
 import Button from '@components/Button';
-
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
 
 const getContentByType = (type, data) => {
   switch (type) {

@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { renderWithRouter } from '@lib/test-utils';
 
 import userEvent from '@testing-library/user-event';

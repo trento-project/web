@@ -28,7 +28,11 @@ function CheckItem({
           <div className="check-row flex">
             {hasTargetType && (
               <div className="pl-6 inline-flex">
-                <TargetIcon targetType={targetType} />
+                <TargetIcon
+                  targetType={targetType}
+                  containerClassName="inline-flex bg-jungle-green-500 p-1 rounded-full self-center"
+                  className="fill-white"
+                />
               </div>
             )}
             <div

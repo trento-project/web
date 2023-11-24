@@ -1,8 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
+
+import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails';
-import { DATABASE_TYPE } from '@lib/model';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import Pill from '@components/Pill';

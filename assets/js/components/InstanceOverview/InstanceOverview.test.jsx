@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { databaseInstanceFactory } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
-import { DATABASE_TYPE, APPLICATION_TYPE } from '@lib/model';
 import { faker } from '@faker-js/faker';
+import { DATABASE_TYPE, APPLICATION_TYPE } from '@lib/model/sapSystems';
 import InstanceOverview from './InstanceOverview';
 
 describe('InstanceOverview', () => {

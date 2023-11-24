@@ -8,7 +8,7 @@ import {
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
-import { APPLICATION_TYPE } from '@lib/model';
+import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
 

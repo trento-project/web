@@ -29,7 +29,7 @@ function Select({
     ''
   )}-selection-dropdown`;
   return (
-    <div className={classNames('w-64 pb-4', className)}>
+    <div className={classNames('flex-1 w-64 pb-4', className)}>
       <Listbox value={value} onChange={onChange}>
         <div className="relative mt-1">
           <Listbox.Button

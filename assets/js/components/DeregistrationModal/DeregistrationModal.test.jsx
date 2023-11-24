@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import DeregistrationModal from '.';
 

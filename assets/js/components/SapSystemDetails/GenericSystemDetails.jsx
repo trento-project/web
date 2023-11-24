@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 
+import {
+  EOS_APPLICATION_OUTLINED,
+  EOS_DATABASE_OUTLINED,
+} from 'eos-icons-react';
+
+import { APPLICATION_TYPE, getEnsaVersionLabel } from '@lib/model/sapSystems';
+
 import ListView from '@components/ListView';
 import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
 import DeregistrationModal from '@components/DeregistrationModal';
 
 import {
-  EOS_APPLICATION_OUTLINED,
-  EOS_DATABASE_OUTLINED,
-} from 'eos-icons-react';
-import { APPLICATION_TYPE } from '@lib/model';
-import {
   systemHostsTableConfiguration,
   getSystemInstancesTableConfiguration,
 } from './tableConfigs';
-
-export const renderEnsaVersion = (ensaVersion) =>
-  ensaVersion === 'no_ensa' ? '-' : ensaVersion.toUpperCase();
 
 const renderType = (t) =>
   t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
@@ -78,7 +77,7 @@ export function GenericSystemDetails({
                   {
                     title: 'ENSA version',
                     content: system.ensa_version || '-',
-                    render: (content) => renderEnsaVersion(content),
+                    render: (content) => getEnsaVersionLabel(content),
                   },
                 ]
               : []),

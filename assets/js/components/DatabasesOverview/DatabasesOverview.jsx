@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { filter } from 'lodash';
 
+import { DATABASE_TYPE } from '@lib/model/sapSystems';
+
 import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
 import Table from '@components/Table';
@@ -10,8 +12,6 @@ import Tags from '@components/Tags';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { getCounters } from '@components/HealthSummary/summarySelection';
-
-import { DATABASE_TYPE } from '@lib/model';
 
 import DatabaseItemOverview from './DatabaseItemOverview';
 
