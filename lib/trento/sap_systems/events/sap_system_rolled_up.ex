@@ -8,6 +8,6 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUp do
 
   defevent resource: "sap_system" do
     field :sap_system_id, Ecto.UUID
-    embeds_one :snapshot, Trento.Domain.SapSystem
+    embeds_one :snapshot, Trento.SapSystems.SapSystem
   end
 end
