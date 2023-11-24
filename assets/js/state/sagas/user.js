@@ -1,4 +1,5 @@
-import { put, call, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
+import { createAction } from '@reduxjs/toolkit';
 import {
   setAuthInProgress,
   setAuthError,
@@ -13,11 +14,10 @@ import {
 } from '@lib/auth';
 
 export const PERFORM_LOGIN = 'PERFORM_LOGIN';
-
-export const performLoginAction = ({ username, password }) => ({
-  type: PERFORM_LOGIN,
-  payload: { username, password },
-});
+export const performLoginAction = createAction(
+  PERFORM_LOGIN,
+  ({ username, password }) => ({ payload: { username, password } })
+);
 
 export function* performLogin({ payload: { username, password } }) {
   yield put(setAuthInProgress());
