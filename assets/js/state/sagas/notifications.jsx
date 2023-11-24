@@ -2,8 +2,7 @@
 import React from 'react';
 import { takeEvery } from 'redux-saga/effects';
 import { toast } from 'react-hot-toast';
-
-export const NOTIFICATION = 'NOTIFICATION';
+import { NOTIFICATION } from '@state/notifications';
 
 export const notify = ({ text, icon }) => ({
   type: NOTIFICATION,
