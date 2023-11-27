@@ -19,7 +19,7 @@ import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverviewPage from '@components/SapSystemsOverview';
 import HostDetailsPage, { HostSettingsPage } from '@components/HostDetails';
 import DatabasesOverviewPage from '@components/DatabasesOverview';
-import ChecksCatalogPage from '@components/ChecksCatalog';
+import ChecksCatalogPage from '@pages/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
 import SaptuneDetailsPage from '@components/SaptuneDetails';

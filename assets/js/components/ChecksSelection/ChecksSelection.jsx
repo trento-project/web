@@ -3,7 +3,7 @@ import { without, uniq, groupBy } from 'lodash';
 
 import { toggle } from '@lib/lists';
 
-import CatalogContainer from '@components/ChecksCatalog/CatalogContainer';
+import CatalogContainer from '@pages/ChecksCatalog/CatalogContainer';
 import ChecksSelectionGroup, {
   NONE_CHECKED,
   SOME_CHECKED,
