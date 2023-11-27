@@ -8,7 +8,7 @@ import {
 import { APPLICATION_TYPE, getEnsaVersionLabel } from '@lib/model/sapSystems';
 
 import ListView from '@common/ListView';
-import Table from '@components/Table';
+import Table from '@common/Table';
 import PageHeader from '@components/PageHeader';
 import DeregistrationModal from '@components/DeregistrationModal';
 

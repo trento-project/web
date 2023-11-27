@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';
-import Table from '@components/Table';
+import Table from '@common/Table';
 
 function AttributesDetails({ attributes, resources, title }) {
   const [modalOpen, setModalOpen] = useState(false);

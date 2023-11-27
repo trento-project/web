@@ -6,7 +6,7 @@ import Accordion from '@components/Accordion';
 import HealthIcon from '@components/Health';
 import Modal from '@common/Modal';
 import PremiumPill from '@components/PremiumPill';
-import Table from '@components/Table';
+import Table from '@common/Table';
 
 import {
   getCatalogCategoryList,

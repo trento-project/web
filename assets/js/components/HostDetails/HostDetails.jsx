@@ -5,7 +5,7 @@ import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 import { agentVersionWarning } from '@lib/agent';
 
 import Button from '@common/Button';
-import Table from '@components/Table';
+import Table from '@common/Table';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 

@@ -12,7 +12,7 @@ import {
   defaultInitialState,
 } from '@lib/test-utils';
 
-import { filterTable, clearFilter } from '@components/Table/Table.test';
+import { filterTable, clearFilter } from '@common/Table/Table.test';
 
 import HostsList from './HostsList';
 

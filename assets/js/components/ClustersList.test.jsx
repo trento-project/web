@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { clusterFactory } from '@lib/test-utils/factories';
-import { filterTable, clearFilter } from '@components/Table/Table.test';
+import { filterTable, clearFilter } from '@common/Table/Table.test';
 import { renderWithRouter, withState } from '@lib/test-utils';
 
 import ClustersList from './ClustersList';

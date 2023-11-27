@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
-import Filter from '@components/Table/Filter';
+import Filter from '@common/Table/Filter';
 
 export const RESULT_FILTER_FIELD = 'result';
 

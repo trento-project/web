@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
-import Table from '@components/Table';
+import Table from '@common/Table';
 import DeregistrationModal from '@components/DeregistrationModal';
 import HealthIcon from '@components/Health/HealthIcon';
 import Tags from '@components/Tags';

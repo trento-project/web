@@ -12,7 +12,7 @@ import {
 } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import { filterTable, clearFilter } from '@components/Table/Table.test';
+import { filterTable, clearFilter } from '@common/Table/Table.test';
 
 import SapSystemsOverview from './SapSystemsOverview';
 
