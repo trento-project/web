@@ -8,7 +8,7 @@ import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import PageHeader from '@components/PageHeader';
 import HealthIcon from '@components/Health';
 import Table from '@common/Table';
-import Tags from '@components/Tags';
+import Tags from '@common/Tags';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { getCounters } from '@components/HealthSummary/summarySelection';

@@ -9,7 +9,7 @@ import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
 import Table from '@common/Table';
-import Tags from '@components/Tags';
+import Tags from '@common/Tags';
 import PageHeader from '@components/PageHeader';
 import ClusterLink from '@components/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
