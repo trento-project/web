@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 
 import { providers } from '@lib/model';
 import ProviderLabel from '@components/ProviderLabel';
-import Select from './Select';
+
+import Select, { createOptionRenderer } from '.';
 
 export default {
   title: 'Components/Select',
@@ -86,8 +87,9 @@ export const Default = {
   },
 };
 
-const providerOptionRenderer = (provider) => (
-  <ProviderLabel provider={provider} />
+const providerOptionRenderer = createOptionRenderer(
+  'All providers',
+  (provider) => <ProviderLabel provider={provider} />
 );
 
 export const WithAllOption = {

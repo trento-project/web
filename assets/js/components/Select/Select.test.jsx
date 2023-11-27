@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import userEvent from '@testing-library/user-event';
-import Select from './Select';
+import Select, { createOptionRenderer } from '.';
 
 describe('Select Component', () => {
   const scenarios = [
@@ -18,15 +18,15 @@ describe('Select Component', () => {
       optionsName: 'bars',
       options: ['all', 'bar1', 'bar2', 'bar3'],
       value: 'all',
-      selectedValue: 'All bars',
-      allOptions: ['All bars', 'bar1', 'bar2', 'bar3'],
+      selectedValue: 'all',
+      allOptions: ['all', 'bar1', 'bar2', 'bar3'],
     },
     {
       optionsName: 'foobars',
       options: ['all', 'foobar1', 'foobar2', 'foobar3'],
       value: 'foobar1',
       selectedValue: 'foobar1',
-      allOptions: ['All foobars', 'foobar1', 'foobar2', 'foobar3'],
+      allOptions: ['all', 'foobar1', 'foobar2', 'foobar3'],
     },
   ];
 
@@ -69,7 +69,10 @@ describe('Select Component', () => {
     const user = userEvent.setup();
     const options = ['option1', 'option2', 'option3'];
 
-    const optionRenderer = (option) => `custom ${option}`;
+    const optionRenderer = createOptionRenderer(
+      'All foobars',
+      (option) => `custom ${option}`
+    );
 
     render(
       <Select
@@ -97,12 +100,12 @@ describe('Select Component', () => {
       <Select
         optionsName="foobars"
         options={options}
-        value="all"
+        value="option1"
         onChange={mockOnChange}
       />
     );
 
-    await user.click(screen.getByText('All foobars'));
+    await user.click(screen.getByText('option1'));
     await user.click(screen.getByText('option2'));
 
     expect(mockOnChange).toHaveBeenCalledWith('option2');
@@ -114,12 +117,17 @@ describe('Select Component', () => {
     const options = ['option1', 'option2', 'option3'];
 
     render(
-      <Select optionsName="foobars" options={options} value="all" disabled />
+      <Select
+        optionsName="foobars"
+        options={options}
+        value="option1"
+        disabled
+      />
     );
 
     expect(screen.getByRole('button')).toBeDisabled();
 
-    await user.click(screen.getByText('All foobars'));
+    await user.click(screen.getByText('option1'));
     expect(screen.queryByText('option2')).not.toBeInTheDocument();
   });
 });

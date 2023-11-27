@@ -9,12 +9,6 @@ export const OPTION_ALL = 'all';
 
 const defaultOnChange = () => {};
 const defaultRenderOption = (item) => item;
-const doRenderOption = (option, optionsName, renderOption) => {
-  if (option === OPTION_ALL) {
-    return `All ${optionsName}`;
-  }
-  return renderOption(option);
-};
 
 function Select({
   optionsName,
@@ -29,14 +23,18 @@ function Select({
     /\s+/g,
     ''
   )}-selection-dropdown`;
+
   return (
     <div className={classNames('flex-1 w-64 pb-4', className)}>
       <Listbox disabled={disabled} value={value} onChange={onChange}>
         <div className="relative mt-1">
           <Listbox.Button
-            className={`${dropdownSelector} relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-400`}
+            className={classNames(
+              dropdownSelector,
+              'relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg cursor-default border border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-400'
+            )}
           >
-            {doRenderOption(value, optionsName, renderOption)}
+            {renderOption(value)}
             <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
               <ChevronUpDownIcon
                 className="w-5 h-5 text-gray-400"
@@ -64,11 +62,12 @@ function Select({
                   {({ selected: isSelected }) => (
                     <>
                       <span
-                        className={`block truncate ${
-                          isSelected ? 'font-medium' : 'font-normal'
-                        }`}
+                        className={classNames('block', 'truncate', {
+                          'font-medium': isSelected,
+                          'font-normal': !isSelected,
+                        })}
                       >
-                        {doRenderOption(option, optionsName, renderOption)}
+                        {renderOption(option)}
                       </span>
                       {isSelected ? (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-green-600">

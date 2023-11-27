@@ -10,20 +10,30 @@ import {
 import { clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
 import PageHeader from '@components/PageHeader';
 import Accordion from '@components/Accordion';
-import Select, { OPTION_ALL } from '@components/Select';
+import Select, { createOptionRenderer, OPTION_ALL } from '@components/Select';
 import ProviderLabel from '@components/ProviderLabel';
 import TargetIcon from '@components/TargetIcon';
 import CatalogContainer from './CatalogContainer';
 import CheckItem from './CheckItem';
 
-const providerOptionRenderer = (provider) => (
-  <ProviderLabel provider={provider} />
+const providerOptionRenderer = createOptionRenderer(
+  'All providers',
+  (provider) => <ProviderLabel provider={provider} />
 );
-const targetTypeOptionRenderer = (targetType) => (
-  <TargetIcon targetType={targetType} className="inline mr-2 h-4">
-    {targetType === TARGET_CLUSTER && 'Clusters'}
-    {targetType === TARGET_HOST && 'Hosts'}
-  </TargetIcon>
+
+const clusterTypeRenderer = createOptionRenderer(
+  'All cluster types',
+  getClusterTypeLabel
+);
+
+const targetTypeOptionRenderer = createOptionRenderer(
+  'All targets',
+  (targetType) => (
+    <TargetIcon targetType={targetType} className="inline mr-2 h-4">
+      {targetType === TARGET_CLUSTER && 'Clusters'}
+      {targetType === TARGET_HOST && 'Hosts'}
+    </TargetIcon>
+  )
 );
 
 function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
@@ -49,7 +59,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
     {
       optionsName: 'cluster types',
       options: clusterTypes,
-      renderOption: getClusterTypeLabel,
+      renderOption: clusterTypeRenderer,
       value: selectedClusterType,
       onChange: setSelectedClusterType,
       disabled: selectedTargetType !== TARGET_CLUSTER,
