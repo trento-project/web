@@ -10,10 +10,10 @@ import {
   getClusterSelectedChecks,
   getClusterHosts,
 } from '@state/selectors/cluster';
-import { updateCatalog } from '@state/actions/catalog';
+import { updateCatalog } from '@state/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { isSaving } from '@state/selectors/checksSelection';
-import { executionRequested } from '@state/actions/lastExecutions';
+import { executionRequested } from '@state/lastExecutions';
 
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 

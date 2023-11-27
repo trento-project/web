@@ -3,19 +3,17 @@ import { find, get, some } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
-import { updateCatalog } from '@state/actions/catalog';
+import { updateCatalog } from '@state/catalog';
 
 import LoadingBox from '@components/LoadingBox';
 import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
 
 import {
-  updateLastExecution,
-  executionRequested,
-  hostExecutionRequested,
-} from '@state/actions/lastExecutions';
-import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_STATES,
+  executionRequested,
+  hostExecutionRequested,
+  updateLastExecution,
 } from '@state/lastExecutions';
 import { getClusterIDs } from '@state/selectors/cluster';
 import { getHostID, getHostIDs } from '@state/selectors/host';

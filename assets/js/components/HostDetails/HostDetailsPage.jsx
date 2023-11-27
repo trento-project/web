@@ -14,11 +14,11 @@ import { getLastExecution } from '@state/selectors/lastExecutions';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
-import { updateCatalog } from '@state/actions/catalog';
+import { updateCatalog } from '@state/catalog';
 import {
   updateLastExecution,
   hostExecutionRequested,
-} from '@state/actions/lastExecutions';
+} from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
 import HostDetails from './HostDetails';

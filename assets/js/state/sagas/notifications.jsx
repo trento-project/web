@@ -2,7 +2,7 @@
 import React from 'react';
 import { takeEvery } from 'redux-saga/effects';
 import { toast } from 'react-hot-toast';
-import { NOTIFICATION } from '@state/actions/notifications';
+import { NOTIFICATION } from '@state/notifications';
 
 export function* notification({ payload }) {
   const { text, icon } = payload;

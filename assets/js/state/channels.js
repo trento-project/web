@@ -1,7 +1,9 @@
 // TODO remove dependency from the store when the fixme is fixed
-import { updateLastExecution } from '@state/actions/lastExecutions';
 import { joinChannel } from '@lib/network/socket';
-import { setExecutionStarted } from '@state/lastExecutions';
+import {
+  setExecutionStarted,
+  updateLastExecution,
+} from '@state/lastExecutions';
 
 const registerEvents = (store, socket, channelName, events) => {
   const channel = socket.channel(channelName, {});

@@ -4,7 +4,7 @@ import TrentoLogo from '@static/trento.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { performLogin } from '@state/actions/auth';
+import { performLoginAction } from '@state/sagas/user';
 import classNames from 'classnames';
 
 export default function Login() {
@@ -34,7 +34,7 @@ export default function Login() {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    dispatch(performLogin({ username, password }));
+    dispatch(performLoginAction({ username, password }));
   };
 
   const isUnauthorized = authError && authError.code === 401;
