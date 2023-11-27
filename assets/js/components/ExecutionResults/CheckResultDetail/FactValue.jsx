@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ObjectTree from '@components/ObjectTree';
+import ObjectTree from '@common/ObjectTree';
 
 function FactValue({ className, data }) {
   if (data === null) {
