@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '@components/Button';
+import Button from '@common/Button';
 import { useNavigate } from 'react-router-dom';
 import { EOS_ARROW_BACK } from 'eos-icons-react';
 

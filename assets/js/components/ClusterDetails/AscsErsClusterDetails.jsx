@@ -5,7 +5,7 @@ import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
-import Button from '@components/Button';
+import Button from '@common/Button';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Table from '@components/Table';

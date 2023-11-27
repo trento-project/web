@@ -5,7 +5,6 @@ import { RUNNING_STATES } from '@state/lastExecutions';
 
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
-import Button from '@components/Button';
 
 import ListView from '@components/ListView';
 import Table from '@components/Table';
@@ -14,6 +13,9 @@ import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import CheckResultsOverview from '@components/CheckResultsOverview';
 import ProviderLabel from '@components/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
+
+import Button from '@common/Button';
+
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import SBDDetails from './SBDDetails';

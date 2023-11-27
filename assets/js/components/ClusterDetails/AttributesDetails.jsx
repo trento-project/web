@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import Button from '@components/Button';
+import Button from '@common/Button';
 import Modal from '@components/Modal';
 import Table from '@components/Table';
 

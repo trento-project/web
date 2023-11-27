@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import Button from '@components/Button';
+import Button from '@common/Button';
 
 import DeregistrationModal from '.';
 

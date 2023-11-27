@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '@components/Button';
+import Button from '@common/Button';
 import TrentoLogo from '@static/trento-icon.png';
 
 function NotFound({ onNavigate, buttonText = 'Go back home' }) {

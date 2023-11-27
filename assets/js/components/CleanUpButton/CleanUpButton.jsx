@@ -3,7 +3,7 @@ import React from 'react';
 import { EOS_CLEANING_SERVICES } from 'eos-icons-react';
 import classNames from 'classnames';
 
-import Button from '@components/Button';
+import Button from '@common/Button';
 import Spinner from '@components/Spinner';
 
 function CleanUpButton({

@@ -2,7 +2,7 @@ import React from 'react';
 import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import classNames from 'classnames';
 
-import Button from '@components/Button';
+import Button from '@common/Button';
 import Tooltip from '@components/Tooltip';
 
 import { canStartExecution } from '@components/ChecksSelection';

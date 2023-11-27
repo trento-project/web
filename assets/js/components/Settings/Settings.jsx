@@ -3,7 +3,7 @@ import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
 
 import PageHeader from '@components/PageHeader';
-import Button from '@components/Button';
+import Button from '@common/Button';
 import { logError } from '@lib/log';
 import { get } from '@lib/network';
 

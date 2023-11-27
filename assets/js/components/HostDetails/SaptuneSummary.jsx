@@ -2,7 +2,7 @@ import React from 'react';
 
 import { isVersionSupported } from '@lib/saptune';
 
-import Button from '@components/Button';
+import Button from '@common/Button';
 import ListView from '@components/ListView';
 import { SaptuneVersion, SaptuneTuningState } from '@components/SaptuneDetails';
 
