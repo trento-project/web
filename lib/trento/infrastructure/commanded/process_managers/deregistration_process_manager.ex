@@ -37,12 +37,6 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager
 
-  alias Trento.Domain.Events.{
-    ClusterRolledUp,
-    HostAddedToCluster,
-    HostRemovedFromCluster
-  }
-
   alias Trento.Hosts.Events.{
     HostDeregistered,
     HostDeregistrationRequested,
@@ -58,7 +52,11 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     SapSystemRolledUp
   }
 
-  alias Trento.Domain.Commands.DeregisterClusterHost
+  alias Trento.Clusters.Events.{
+    ClusterRolledUp,
+    HostAddedToCluster,
+    HostRemovedFromCluster
+  }
 
   alias Trento.Hosts.Commands.DeregisterHost
 
@@ -66,6 +64,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     DeregisterApplicationInstance,
     DeregisterDatabaseInstance
   }
+
+  alias Trento.Clusters.Commands.DeregisterClusterHost
 
   alias Trento.SapSystems
   alias Trento.SapSystems.SapSystem

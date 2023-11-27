@@ -3,9 +3,7 @@ defmodule Trento.Router do
 
   alias Trento.Infrastructure.Commanded.Middleware.Enrich
 
-  alias Trento.Domain.Cluster
-
-  alias Trento.Domain.Commands.{
+  alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
     RegisterClusterHost,
@@ -36,6 +34,7 @@ defmodule Trento.Router do
     RollUpSapSystem
   }
 
+  alias Trento.Clusters
   alias Trento.Hosts
   alias Trento.SapSystems
 
@@ -58,7 +57,7 @@ defmodule Trento.Router do
            to: Hosts.Host,
            lifespan: Hosts.Lifespan
 
-  identify Cluster,
+  identify Clusters.Cluster,
     by: :cluster_id
 
   dispatch [
@@ -68,8 +67,8 @@ defmodule Trento.Router do
              SelectChecks,
              CompleteChecksExecution
            ],
-           to: Cluster,
-           lifespan: Cluster.Lifespan
+           to: Clusters.Cluster,
+           lifespan: Clusters.Lifespan
 
   identify SapSystems.SapSystem, by: :sap_system_id
 
