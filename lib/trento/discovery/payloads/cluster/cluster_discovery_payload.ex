@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
+defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   @moduledoc """
   Cluster discovery integration event payload
   """
@@ -12,7 +12,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.ClusterDiscoveryPaylo
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
-  alias Trento.Infrastructure.Discovery.Payloads.Cluster.{
+  alias Trento.Discovery.Payloads.Cluster.{
     CibDiscoveryPayload,
     CrmmonDiscoveryPayload,
     SbdDiscoveryPayload

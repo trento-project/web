@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
+defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
   @moduledoc """
   Crmmon field payload
   """

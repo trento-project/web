@@ -173,7 +173,7 @@ defmodule Trento.MixProject do
         Trento.Domain.Events,
         Trento.Domain.Commands,
         Trento.Infrastructure.Checks,
-        Trento.Infrastructure.Discovery
+        Trento.Discovery
       ]
     ]
   end

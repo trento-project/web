@@ -4,7 +4,7 @@ defmodule Mix.Tasks.PruneEvents do
   use Mix.Task
   import Trento.Tasks.Helper
 
-  alias Trento.Infrastructure.Discovery
+  alias Trento.Discovery
 
   @switches [
     days: :integer

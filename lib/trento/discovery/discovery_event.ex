@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.DiscoveryEvent do
+defmodule Trento.Discovery.DiscoveryEvent do
   @moduledoc """
   This module contains the schema used to store an append log of the handled discovery events,
   for debugging and auditing purposes.

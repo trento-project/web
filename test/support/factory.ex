@@ -91,7 +91,7 @@ defmodule Trento.Factory do
   alias Trento.Heartbeats.Heartbeat
   alias Trento.Tags.Tag
 
-  alias Trento.Infrastructure.Discovery.{
+  alias Trento.Discovery.{
     DiscardedDiscoveryEvent,
     DiscoveryEvent
   }

@@ -1,6 +1,6 @@
-defmodule Trento.Infrastructure.Installation do
+defmodule Trento.Settings do
   @moduledoc """
-  Provides a set of functions of installation related usecases.
+  Provides a set of functions of settings related usecases.
   """
 
   import Ecto.Query
@@ -8,7 +8,7 @@ defmodule Trento.Infrastructure.Installation do
   alias Trento.Repo
 
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
-  alias Trento.Infrastructure.Settings
+  alias Trento.Settings.Settings
 
   require Logger
 
@@ -54,9 +54,4 @@ defmodule Trento.Infrastructure.Installation do
 
   @spec flavor :: String.t()
   def flavor, do: Application.get_env(:trento, :flavor)
-
-  @spec get_api_key :: String.t()
-  def get_api_key do
-    TrentoWeb.Auth.ApiKey.sign(%{installation_id: get_installation_id()})
-  end
 end

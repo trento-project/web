@@ -1,4 +1,4 @@
-defmodule Trento.Infrastructure.Discovery.Policies.SapSystemPolicyTest do
+defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
   use ExUnit.Case
   use Trento.DataCase
 
@@ -6,9 +6,9 @@ defmodule Trento.Infrastructure.Discovery.Policies.SapSystemPolicyTest do
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
-  import Trento.Infrastructure.DiscoveryFixturesHelper
+  import Trento.DiscoveryFixturesHelper
 
-  alias Trento.Infrastructure.Discovery.Policies.SapSystemPolicy
+  alias Trento.Discovery.Policies.SapSystemPolicy
 
   alias Trento.SapSystems.Commands.{
     MarkApplicationInstanceAbsent,

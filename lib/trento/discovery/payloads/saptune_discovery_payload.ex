@@ -1,9 +1,9 @@
-defmodule Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload do
+defmodule Trento.Discovery.Payloads.SaptuneDiscoveryPayload do
   @moduledoc """
   Saptune discovery integration event payload
   """
 
-  alias Trento.Infrastructure.Discovery.Payloads.SaptuneDiscoveryPayload.SaptuneOutput
+  alias Trento.Discovery.Payloads.SaptuneDiscoveryPayload.SaptuneOutput
   @required_fields [:result]
 
   use Trento.Support.Type
