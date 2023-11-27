@@ -4,7 +4,7 @@ import { chunk } from 'lodash';
 import ClusterLink from '@components/ClusterLink';
 import HealthIcon from '@components/Health/HealthIcon';
 import ListView from '@common/ListView';
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 
 const prepareTooltipContent = (ipAddresses) => (
   <div className="text-center">

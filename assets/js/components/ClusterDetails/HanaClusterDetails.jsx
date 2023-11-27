@@ -8,7 +8,7 @@ import BackButton from '@components/BackButton';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import CheckResultsOverview from '@components/CheckResultsOverview';
 import ProviderLabel from '@components/ProviderLabel';

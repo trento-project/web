@@ -8,7 +8,7 @@ import HostLink from '@components/HostLink';
 import ClusterLink from '@components/ClusterLink';
 import Pill from '@components/Pill';
 import CleanUpButton from '@components/CleanUpButton';
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 
 function InstanceOverview({
   instanceType,

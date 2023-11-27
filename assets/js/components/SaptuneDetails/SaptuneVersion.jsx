@@ -2,7 +2,7 @@ import React from 'react';
 
 import { isVersionSupported, SUPPORTED_VERSION } from '@lib/saptune';
 
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 import HealthIcon from '@components/Health/HealthIcon';
 
 function SaptuneVersion({ version }) {

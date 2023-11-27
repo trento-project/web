@@ -1,7 +1,7 @@
 import React from 'react';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 import { Link } from 'react-router-dom';
 
 function SapSystemLink({ systemType, sapSystemId, children }) {

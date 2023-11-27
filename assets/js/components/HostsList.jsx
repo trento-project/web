@@ -16,7 +16,7 @@ import Pill from '@components/Pill';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 import CleanUpButton from '@components/CleanUpButton';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';

@@ -12,7 +12,7 @@ import BackButton from '@components/BackButton';
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { canStartExecution } from '@components/ChecksSelection';
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';
 import CheckResultsOverview from '@components/CheckResultsOverview';

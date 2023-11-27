@@ -14,7 +14,7 @@ import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 
 import CheckResultsOverview from '@components/CheckResultsOverview';
 

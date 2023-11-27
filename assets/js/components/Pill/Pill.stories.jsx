@@ -1,6 +1,6 @@
 import React from 'react';
 import HealthIcon from '@components/Health/HealthIcon';
-import Tooltip from '@components/Tooltip';
+import Tooltip from '@common/Tooltip';
 
 import Pill from '.';
 
