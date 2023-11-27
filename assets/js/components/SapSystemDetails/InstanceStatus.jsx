@@ -1,6 +1,6 @@
 import React from 'react';
 import { EOS_LENS_FILLED } from 'eos-icons-react';
-import Pill from '@components/Pill/Pill';
+import Pill from '@common/Pill';
 
 function InstanceStatus({ health }) {
   let cssClass;

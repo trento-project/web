@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 
-import Pill from '@components/Pill';
+import Pill from '@common/Pill';
 
 function StatusPill({ className, children, heartbeat }) {
   switch (heartbeat) {

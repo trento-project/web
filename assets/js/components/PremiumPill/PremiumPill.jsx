@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import Pill from '@components/Pill';
+import Pill from '@common/Pill';
 
 function PremiumPill({ className }) {
   return (

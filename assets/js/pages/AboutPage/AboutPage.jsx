@@ -4,7 +4,7 @@ import { logError } from '@lib/log';
 import { getAboutData } from '@lib/api/about';
 
 import ListView from '@common/ListView';
-import Pill from '@components/Pill';
+import Pill from '@common/Pill';
 
 import AboutPageLogo from './AboutPageLogo';
 import AboutPageText from './AboutPageText';

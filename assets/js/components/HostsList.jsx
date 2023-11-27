@@ -12,7 +12,7 @@ import HostLink from '@components/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import PageHeader from '@components/PageHeader';
-import Pill from '@components/Pill';
+import Pill from '@common/Pill';
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';

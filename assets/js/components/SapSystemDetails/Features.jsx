@@ -1,5 +1,5 @@
 import React from 'react';
-import Pill from '@components/Pill/Pill';
+import Pill from '@common/Pill';
 
 function Features({ features }) {
   return (

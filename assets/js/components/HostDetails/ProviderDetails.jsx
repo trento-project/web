@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import Pill from '@components/Pill';
+import Pill from '@common/Pill';
 import ListView from '@common/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 

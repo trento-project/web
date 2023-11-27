@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Pill from '@components/Pill';
+import Pill from '@common/Pill';
 
 function StoppedResources({ resources }) {
   return (
