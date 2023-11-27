@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ListView from '@components/ListView';
+import ListView from '@common/ListView';
 
 import FactValue from './FactValue';
 

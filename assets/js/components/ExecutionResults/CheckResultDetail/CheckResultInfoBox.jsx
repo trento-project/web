@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ListView from '@components/ListView';
+import ListView from '@common/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 

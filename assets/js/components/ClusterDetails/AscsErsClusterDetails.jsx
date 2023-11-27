@@ -9,7 +9,7 @@ import Button from '@common/Button';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 import Table from '@components/Table';
-import ListView from '@components/ListView';
+import ListView from '@common/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
 import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';

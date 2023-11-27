@@ -3,7 +3,7 @@ import { chunk } from 'lodash';
 
 import ClusterLink from '@components/ClusterLink';
 import HealthIcon from '@components/Health/HealthIcon';
-import ListView from '@components/ListView';
+import ListView from '@common/ListView';
 import Tooltip from '@components/Tooltip';
 
 const prepareTooltipContent = (ipAddresses) => (

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { logError } from '@lib/log';
 import { getAboutData } from '@lib/api/about';
 
-import ListView from '@components/ListView';
+import ListView from '@common/ListView';
 import Pill from '@components/Pill';
 
 import AboutPageLogo from './AboutPageLogo';

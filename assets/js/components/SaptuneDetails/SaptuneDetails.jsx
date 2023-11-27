@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { find, map } from 'lodash';
 
 import BackButton from '@components/BackButton';
-import ListView from '@components/ListView';
+import ListView from '@common/ListView';
 import PageHeader from '@components/PageHeader';
 
 import SaptuneTuningState from './SaptuneTuningState';
