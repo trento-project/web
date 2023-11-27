@@ -160,20 +160,40 @@ defmodule Trento.MixProject do
       extras: extras(),
       groups_for_extras: groups_for_extras(),
       groups_for_modules: [
-        Domain: [~r/Trento.Domain.*/],
+        Clusters: [~r/Trento.Clusters.*/],
+        Hosts: [~r/Trento.Hosts.*/],
+        SapSystems: [~r/Trento.SapSystems.*/],
+        Discovery: [~r/Trento.Discovery.*/],
+        Enums: [~r/Trento.Enums.*/],
+        Services: [~r/Trento.Services.*/],
         "Event handlers": [~r/Trento.*EventHandler$/],
-        Integration: [~r/Trento.Integration.*/],
-        Messaging: [~r/Trento.Messaging.*/],
-        "Read models": [~r/Trento.*ReadModel$/],
-        Projectors: [~r/Trento.*Projector$/],
+        Infrastructure: [~r/Trento.Infrastructure.*/],
         Support: [~r/Trento.Support.*/],
-        Web: [~r/TrentoWeb.*/]
+        Web: [~r/TrentoWeb.*/],
+        "Legacy events": [~r/Trento.Domain.Events.*/]
       ],
       nest_modules_by_prefix: [
-        Trento.Domain.Events,
-        Trento.Domain.Commands,
+        Trento.Clusters,
+        Trento.Clusters.Commands,
+        Trento.Clusters.Enums,
+        Trento.Clusters.Events,
+        Trento.Clusters.Projections,
+        Trento.Clusters.ValueObjects,
+        Trento.Hosts,
+        Trento.Hosts.Commands,
+        Trento.Hosts.Events,
+        Trento.Hosts.Projections,
+        Trento.Hosts.ValueObjects,
+        Trento.SapSystems,
+        Trento.SapSystems.Commands,
+        Trento.SapSystems.Enums,
+        Trento.SapSystems.Events,
+        Trento.SapSystems.Projections,
+        Trento.SapSystems.Services,
         Trento.Infrastructure.Checks,
-        Trento.Discovery
+        Trento.Discovery.Payloads,
+        Trento.Discovery.Policies,
+        Trento.Domain.Events
       ]
     ]
   end
