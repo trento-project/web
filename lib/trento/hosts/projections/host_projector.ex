@@ -12,7 +12,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
 
   alias Trento.Repo
 
-  alias Trento.Domain.Events.{
+  alias Trento.Clusters.Events.{
     HostAddedToCluster,
     HostRemovedFromCluster
   }

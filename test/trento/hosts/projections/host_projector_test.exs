@@ -20,7 +20,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     GcpProvider
   }
 
-  alias Trento.Domain.Events.{
+  alias Trento.Clusters.Events.{
     HostAddedToCluster,
     HostRemovedFromCluster
   }
