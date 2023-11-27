@@ -3,6 +3,8 @@ defmodule TrentoWeb.Auth.ApiKey do
   This Module creates and verifies API Keys.
   """
 
+  alias Trento.Settings
+
   @signing_salt "trento-api-key"
 
   @spec sign(map()) :: String.t()
@@ -18,5 +20,10 @@ defmodule TrentoWeb.Auth.ApiKey do
       {:ok, data} -> {:ok, data}
       _error -> {:error, :unauthenticated}
     end
+  end
+
+  @spec get_api_key :: String.t()
+  def get_api_key do
+    sign(%{installation_id: Settings.get_installation_id()})
   end
 end

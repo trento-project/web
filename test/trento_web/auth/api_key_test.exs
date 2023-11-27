@@ -1,5 +1,8 @@
 defmodule TrentoWeb.ApiKeyTest do
   use ExUnit.Case
+  use Trento.DataCase
+
+  alias Trento.Settings
 
   alias TrentoWeb.Auth.ApiKey
 
@@ -47,6 +50,16 @@ defmodule TrentoWeb.ApiKeyTest do
                   installation_id: ^installation_id
                 }} = ApiKey.verify(api_key)
       end)
+    end
+  end
+
+  describe "Getting the API key" do
+    test "should provide the API key of the current installation" do
+      installation_id = Settings.get_installation_id()
+      api_key = ApiKey.get_api_key()
+
+      assert {:ok, decoded_data} = ApiKey.verify(api_key)
+      assert %{installation_id: ^installation_id} = decoded_data
     end
   end
 end

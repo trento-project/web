@@ -24,12 +24,4 @@ defmodule Trento.SettingsTest do
     Application.put_env(:trento, :flavor, "Community")
     assert Settings.flavor() === "Community"
   end
-
-  test "should provide the API key of the current installation" do
-    installation_id = Settings.get_installation_id()
-    api_key = Settings.get_api_key()
-
-    assert {:ok, decoded_data} = TrentoWeb.Auth.ApiKey.verify(api_key)
-    assert %{installation_id: ^installation_id} = decoded_data
-  end
 end

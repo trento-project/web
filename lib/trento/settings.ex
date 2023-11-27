@@ -54,9 +54,4 @@ defmodule Trento.Settings do
 
   @spec flavor :: String.t()
   def flavor, do: Application.get_env(:trento, :flavor)
-
-  @spec get_api_key :: String.t()
-  def get_api_key do
-    TrentoWeb.Auth.ApiKey.sign(%{installation_id: get_installation_id()})
-  end
 end
