@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import Button from '@common/Button';
-import Modal from '@components/Modal';
+import Modal from '@common/Modal';
 import Table from '@components/Table';
 
 function AttributesDetails({ attributes, resources, title }) {

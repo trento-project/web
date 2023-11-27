@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { getHostID } from '@state/selectors/host';
 import Accordion from '@components/Accordion';
 import HealthIcon from '@components/Health';
-import Modal from '@components/Modal';
+import Modal from '@common/Modal';
 import PremiumPill from '@components/PremiumPill';
 import Table from '@components/Table';
 
