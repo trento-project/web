@@ -10,7 +10,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import Layout from '@components/Layout';
 import Home from '@components/Home';
-import AboutPage from '@components/AboutPage';
+import AboutPage from '@pages/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@components/ClustersList';
 import ClusterDetailsPage from '@components/ClusterDetails';
