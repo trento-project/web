@@ -1,6 +1,6 @@
 import { put, takeEvery } from 'redux-saga/effects';
 
-import { notify } from '@state/sagas/notifications';
+import { notify } from '@state/notifications';
 import {
   CLUSTER_DEREGISTERED,
   CLUSTER_RESTORED,

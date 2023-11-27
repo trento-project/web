@@ -35,7 +35,7 @@ import {
 } from '@state/sapSystems';
 
 import { getDatabase } from '@state/selectors/sapSystem';
-import { notify } from '@state/sagas/notifications';
+import { notify } from '@state/notifications';
 
 function* databaseRegistered({ payload }) {
   yield put(appendDatabase(payload));

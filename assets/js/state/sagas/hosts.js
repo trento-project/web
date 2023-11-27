@@ -18,7 +18,7 @@ import {
   updateSaptuneStatus,
 } from '@state/hosts';
 
-import { notify } from '@state/sagas/notifications';
+import { notify } from '@state/notifications';
 
 export function* markDeregisterableHosts(hosts) {
   yield put(

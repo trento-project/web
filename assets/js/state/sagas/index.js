@@ -66,7 +66,7 @@ import {
 
 import { setEulaVisible, setIsPremium } from '@state/settings';
 
-import { notify, watchNotifications } from '@state/sagas/notifications';
+import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
 import { watchCatalogUpdate } from '@state/sagas/catalog';
 import { watchSapSystem } from '@state/sagas/sapSystems';
@@ -97,6 +97,7 @@ import { getClusterName } from '@state/selectors/cluster';
 
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
+import { notify } from '@state/notifications';
 import { store } from '@state';
 
 // eslint-disable-next-line no-undef

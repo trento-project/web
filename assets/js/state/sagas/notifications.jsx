@@ -4,11 +4,6 @@ import { takeEvery } from 'redux-saga/effects';
 import { toast } from 'react-hot-toast';
 import { NOTIFICATION } from '@state/notifications';
 
-export const notify = ({ text, icon }) => ({
-  type: NOTIFICATION,
-  payload: { text, icon },
-});
-
 export function* notification({ payload }) {
   const { text, icon } = payload;
   toast(<p className="text-sm font-medium text-gray-900">{text}</p>, {

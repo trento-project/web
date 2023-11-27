@@ -23,7 +23,7 @@ import {
   unsetApplicationInstanceDeregistering,
 } from '@state/sapSystems';
 import { networkClient } from '@lib/network';
-import { notify } from '@state/sagas/notifications';
+import { notify } from '@state/notifications';
 import {
   sapSystemFactory,
   sapSystemApplicationInstanceFactory,

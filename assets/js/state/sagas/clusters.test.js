@@ -12,7 +12,7 @@ import {
   appendCluster,
   updateClusterHealth,
 } from '@state/clusters';
-import { notify } from '@state/sagas/notifications';
+import { notify } from '@state/notifications';
 
 describe('Clusters sagas', () => {
   it('should remove the cluster', async () => {

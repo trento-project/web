@@ -1,6 +1,6 @@
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 
-import { notify } from '@state/sagas/notifications';
+import { notify } from '@state/notifications';
 import {
   getLastExecutionByGroupID,
   triggerClusterChecksExecution,
