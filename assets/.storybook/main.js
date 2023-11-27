@@ -15,7 +15,7 @@ module.exports = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@components': path.resolve(__dirname, '../js/components'),
-      '@common': path.resolve(__dirname, '../js/components'),
+      '@common': path.resolve(__dirname, '../js/common'),
       '@pages': path.resolve(__dirname, '../js/pages'),
       '@lib': path.resolve(__dirname, '../js/lib'),
       '@hooks': path.resolve(__dirname, '../js/hooks'),
