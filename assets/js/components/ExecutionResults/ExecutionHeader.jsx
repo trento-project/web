@@ -4,7 +4,9 @@ import classNames from 'classnames';
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
 
 import ChecksResultFilters from '@components/ExecutionResults/ChecksResultFilters';
-import WarningBanner from '@components/Banners/WarningBanner';
+
+import WarningBanner from '@common/Banners/WarningBanner';
+
 import { isTargetCluster } from './checksUtils';
 import BackToTargetDetails from './BackToTargetDetails';
 import TargetInfoBox from './TargetInfoBox';

@@ -22,10 +22,11 @@ import BackButton from '@components/BackButton';
 
 import { ClusterInfoBox } from '@components/ClusterDetails';
 import LoadingBox from '@components/LoadingBox';
-import WarningBanner from '@components/Banners/WarningBanner';
 import ChecksSelection from '@components/ChecksSelection';
 
 import ChecksSelectionHeader from '@components/ChecksSelection/ChecksSelectionHeader';
+
+import WarningBanner from '@common/Banners/WarningBanner';
 
 const catalogWarningBanner = {
   [UNKNOWN_PROVIDER]: (

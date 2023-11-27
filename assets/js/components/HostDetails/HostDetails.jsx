@@ -8,7 +8,7 @@ import Button from '@components/Button';
 import Table from '@components/Table';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
-import WarningBanner from '@components/Banners/WarningBanner';
+
 import CleanUpButton from '@components/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { canStartExecution } from '@components/ChecksSelection';
@@ -16,6 +16,8 @@ import Tooltip from '@components/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';
 import CheckResultsOverview from '@components/CheckResultsOverview';
+
+import WarningBanner from '@common/Banners/WarningBanner';
 
 import StatusPill from './StatusPill';
 import ProviderDetails from './ProviderDetails';
