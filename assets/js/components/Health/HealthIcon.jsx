@@ -9,7 +9,7 @@ import {
   EOS_INFO_OUTLINED,
 } from 'eos-icons-react';
 
-import Spinner from '@components/Spinner';
+import Spinner from '@common/Spinner';
 import classNames from 'classnames';
 
 function HealthIcon({

@@ -4,7 +4,7 @@ import { computedIconCssClass } from '@lib/icon';
 import { EOS_SCHEDULE } from 'eos-icons-react';
 
 import HealthIcon from '@components/Health';
-import Spinner from '@components/Spinner';
+import Spinner from '@common/Spinner';
 
 export function ExecutionIcon({ health, executionState, centered = false }) {
   switch (executionState) {

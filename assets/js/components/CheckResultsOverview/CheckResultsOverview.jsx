@@ -1,7 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 
-import Spinner from '@components/Spinner';
+import Spinner from '@common/Spinner';
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_EXECUTION_STATE,
