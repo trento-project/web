@@ -15,7 +15,7 @@ import { executionRequested, updateLastExecution } from '@state/lastExecutions';
 import { TARGET_CLUSTER } from '@lib/model';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
-import { getClusterName } from '../ClusterLink';
+import { getClusterName } from './ClusterLink';
 
 export function ClusterDetailsPage() {
   const navigate = useNavigate();

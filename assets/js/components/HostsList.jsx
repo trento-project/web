@@ -9,7 +9,7 @@ import DeregistrationModal from '@components/DeregistrationModal';
 import HealthIcon from '@components/Health/HealthIcon';
 import Tags from '@common/Tags';
 import HostLink from '@components/HostLink';
-import ClusterLink from '@components/ClusterLink';
+import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import PageHeader from '@components/PageHeader';
 import Pill from '@components/Pill';

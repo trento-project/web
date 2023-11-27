@@ -11,11 +11,14 @@ import { getAllSAPInstances } from '@state/selectors/sapSystem';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
 import PageHeader from '@components/PageHeader';
-import ClusterLink from '@components/ClusterLink';
+
 import SapSystemLink from '@components/SapSystemLink';
-import { ExecutionIcon } from '@components/ClusterDetails';
+
 import HealthSummary from '@components/HealthSummary/HealthSummary';
 import { getCounters } from '@components/HealthSummary/summarySelection';
+
+import { ExecutionIcon } from '@pages/ClusterDetails';
+import ClusterLink from './ClusterLink';
 
 const getSapSystemBySID = (instances, sid) =>
   instances.find((instance) => instance.sid === sid);

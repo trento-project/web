@@ -1,7 +1,7 @@
 import React from 'react';
 import { chunk } from 'lodash';
 
-import ClusterLink from '@components/ClusterLink';
+import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import HealthIcon from '@components/Health/HealthIcon';
 import ListView from '@common/ListView';
 import Tooltip from '@common/Tooltip';

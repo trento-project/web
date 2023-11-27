@@ -20,7 +20,7 @@ import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 import PageHeader from '@components/PageHeader';
 import BackButton from '@components/BackButton';
 
-import { ClusterInfoBox } from '@components/ClusterDetails';
+import { ClusterInfoBox } from '@pages/ClusterDetails';
 import LoadingBox from '@components/LoadingBox';
 import ChecksSelection from '@components/ChecksSelection';
 

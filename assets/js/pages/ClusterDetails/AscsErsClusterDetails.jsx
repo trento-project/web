@@ -12,7 +12,7 @@ import Table from '@common/Table';
 import ListView from '@common/ListView';
 import ProviderLabel from '@components/ProviderLabel';
 import DottedPagination from '@components/DottedPagination';
-import ClusterNodeLink from '@components/ClusterDetails/ClusterNodeLink';
+import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';
 import Tooltip from '@common/Tooltip';
 

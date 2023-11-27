@@ -5,7 +5,7 @@ import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import HealthIcon from '@components/Health';
 import { Features } from '@components/SapSystemDetails';
 import HostLink from '@components/HostLink';
-import ClusterLink from '@components/ClusterLink';
+import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import Pill from '@components/Pill';
 import CleanUpButton from '@components/CleanUpButton';
 import Tooltip from '@common/Tooltip';
