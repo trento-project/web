@@ -31,9 +31,11 @@ module.exports = {
         extensions: ['.js', '.jsx'],
         map: [
           ['@components', resolvePath('./js/components')],
+          ['@common', resolvePath('./js/common')],
           ['@state', resolvePath('./js/state')],
           ['@lib', resolvePath('./js/lib')],
           ['@hooks', resolvePath('./js/hooks')],
+          ['@pages', resolvePath('./js/pages')],
           ['@static', resolvePath('./static')],
         ],
       },

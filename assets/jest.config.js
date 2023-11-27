@@ -91,6 +91,8 @@ module.exports = {
   moduleNameMapper: {
     '^@lib(.*)$': '<rootDir>/js/lib$1',
     '^@components(.*)$': '<rootDir>/js/components$1',
+    '^@common(.*)$': '<rootDir>/js/common$1',
+    '^@pages(.*)$': '<rootDir>/js/pages$1',
     '^@hooks(.*)$': '<rootDir>/js/hooks$1',
     '^@state(.*)$': '<rootDir>/js/state$1',
     phoenix: '<rootDir>/../deps/phoenix/priv/static/phoenix.cjs.js',
