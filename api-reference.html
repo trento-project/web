@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-86AF9781.js"></script>
+    <script src="dist/sidebar_items-0B6782AD.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -153,7 +153,29 @@ Derived from Commanded.AggregateCase</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.ClusterEnrichmentData.html" translate="no">Trento.ClusterEnrichmentData</a>
+    <a href="Trento.Clusters.html" translate="no">Trento.Clusters</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a set of functions to interact with clusters.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Cluster.html" translate="no">Trento.Clusters.Cluster</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The cluster aggregate manages all the domain logic related to
+deployed HA Clusters (Pacemaker, Corosync, etc).
+The HA cluster is used to handle the high availability scenarios on the installed
+SAP infrastructure. That's why this domain is tailored to work on clusters managing
+SAP workloads.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.ClusterEnrichmentData.html" translate="no">Trento.Clusters.ClusterEnrichmentData</a>
 
   </div>
 
@@ -162,7 +184,180 @@ Derived from Commanded.AggregateCase</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.ClusterProjector.html" translate="no">Trento.ClusterProjector</a>
+    <a href="Trento.Clusters.Commands.CompleteChecksExecution.html" translate="no">Trento.Clusters.Commands.CompleteChecksExecution</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Complete the checks execution with the incoming result</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Commands.DeregisterClusterHost.html" translate="no">Trento.Clusters.Commands.DeregisterClusterHost</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Deregister a host from a cluster</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Commands.RegisterClusterHost.html" translate="no">Trento.Clusters.Commands.RegisterClusterHost</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Register a cluster node to the monitoring system.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Commands.RollUpCluster.html" translate="no">Trento.Clusters.Commands.RollUpCluster</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Start a cluster aggregate rollup.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Commands.SelectChecks.html" translate="no">Trento.Clusters.Commands.SelectChecks</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Select the checks to be executed in the cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ChecksSelected.html" translate="no">Trento.Clusters.Events.ChecksSelected</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Event of the checks selected in a cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterChecksHealthChanged.html" translate="no">Trento.Clusters.Events.ClusterChecksHealthChanged</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when the checks health of a cluster changes.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterDeregistered.html" translate="no">Trento.Clusters.Events.ClusterDeregistered</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when a cluster is deregistered.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterDetailsUpdated.html" translate="no">Trento.Clusters.Events.ClusterDetailsUpdated</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when cluster details are updated.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterDiscoveredHealthChanged.html" translate="no">Trento.Clusters.Events.ClusterDiscoveredHealthChanged</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when the discovered health of a cluster changes.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterHealthChanged.html" translate="no">Trento.Clusters.Events.ClusterHealthChanged</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>ClusterHealthChanged event</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterRegistered.html" translate="no">Trento.Clusters.Events.ClusterRegistered</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when a cluster is registered.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterRestored.html" translate="no">Trento.Clusters.Events.ClusterRestored</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted after a cluster is restored from a deregistered state</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterRollUpRequested.html" translate="no">Trento.Clusters.Events.ClusterRollUpRequested</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when a cluster roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the cluster aggregate.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterRolledUp.html" translate="no">Trento.Clusters.Events.ClusterRolledUp</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when a cluster is rolled up and its stream is archived.
+It contains the snapshot of the cluster aggregate that will be used to restore the aggregate state.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.ClusterTombstoned.html" translate="no">Trento.Clusters.Events.ClusterTombstoned</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>  This event is emitted after a successful cluster deregistration, to tombstone and stop the cluster aggregate</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.HostAddedToCluster.html" translate="no">Trento.Clusters.Events.HostAddedToCluster</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when a host is added to a cluster</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Events.HostRemovedFromCluster.html" translate="no">Trento.Clusters.Events.HostRemovedFromCluster</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This event is emitted when a host is removed from a cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Lifespan.html" translate="no">Trento.Clusters.Lifespan</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Cluster aggregate lifespan.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.Projections.ClusterProjector.html" translate="no">Trento.Clusters.Projections.ClusterProjector</a>
 
   </div>
 
@@ -171,7 +366,7 @@ Derived from Commanded.AggregateCase</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.ClusterReadModel.html" translate="no">Trento.ClusterReadModel</a>
+    <a href="Trento.Clusters.Projections.ClusterReadModel.html" translate="no">Trento.Clusters.Projections.ClusterReadModel</a>
 
   </div>
 
@@ -180,11 +375,65 @@ Derived from Commanded.AggregateCase</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Clusters.html" translate="no">Trento.Clusters</a>
+    <a href="Trento.Clusters.ValueObjects.AscsErsClusterDetails.html" translate="no">Trento.Clusters.ValueObjects.AscsErsClusterDetails</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Provides a set of functions to interact with clusters.</p></div>
+    <div class="summary-synopsis"><p>Represents the details of a ASCS/ERS cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.ValueObjects.AscsErsClusterNode.html" translate="no">Trento.Clusters.ValueObjects.AscsErsClusterNode</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the node of a ASCS/ERS cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.ValueObjects.AscsErsClusterSapSystem.html" translate="no">Trento.Clusters.ValueObjects.AscsErsClusterSapSystem</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents ASCS/ERS cluster SAP system.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.ValueObjects.ClusterResource.html" translate="no">Trento.Clusters.ValueObjects.ClusterResource</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the resource of a HANA cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.ValueObjects.HanaClusterDetails.html" translate="no">Trento.Clusters.ValueObjects.HanaClusterDetails</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the details of a HANA cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.ValueObjects.HanaClusterNode.html" translate="no">Trento.Clusters.ValueObjects.HanaClusterNode</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the node of a HANA cluster.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Clusters.ValueObjects.SbdDevice.html" translate="no">Trento.Clusters.ValueObjects.SbdDevice</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the SBDDevice of a HANA cluster.</p></div>
 
 </div>
 <div class="summary-row">
@@ -204,33 +453,6 @@ Derived from Commanded.AggregateCase</p></div>
 
     <div class="summary-synopsis"><p>This module defines the setup for tests requiring
 access to the application's data layer.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.AscsErsClusterDetails.html" translate="no">Trento.Domain.AscsErsClusterDetails</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents the details of a ASCS/ERS cluster.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.AscsErsClusterNode.html" translate="no">Trento.Domain.AscsErsClusterNode</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents the node of a ASCS/ERS cluster.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.AscsErsClusterSapSystem.html" translate="no">Trento.Domain.AscsErsClusterSapSystem</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents ASCS/ERS cluster SAP system.</p></div>
 
 </div>
 <div class="summary-row">
@@ -258,82 +480,6 @@ access to the application's data layer.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Check result value object</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Cluster.html" translate="no">Trento.Domain.Cluster</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>The cluster aggregate manages all the domain logic related to
-deployed HA Clusters (Pacemaker, Corosync, etc).
-The HA cluster is used to handle the high availability scenarios on the installed
-SAP infrastructure. That's why this domain is tailored to work on clusters managing
-SAP workloads.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Cluster.Lifespan.html" translate="no">Trento.Domain.Cluster.Lifespan</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Cluster aggregate lifespan.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.ClusterResource.html" translate="no">Trento.Domain.ClusterResource</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents the resource of a HANA cluster.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Commands.CompleteChecksExecution.html" translate="no">Trento.Domain.Commands.CompleteChecksExecution</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Complete the checks execution with the incoming result</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Commands.DeregisterClusterHost.html" translate="no">Trento.Domain.Commands.DeregisterClusterHost</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Deregister a host from a cluster</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Commands.RegisterClusterHost.html" translate="no">Trento.Domain.Commands.RegisterClusterHost</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Register a cluster node to the monitoring system.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Commands.RollUpCluster.html" translate="no">Trento.Domain.Commands.RollUpCluster</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Start a cluster aggregate rollup.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.Commands.SelectChecks.html" translate="no">Trento.Domain.Commands.SelectChecks</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Select the checks to be executed in the cluster.</p></div>
 
 </div>
 <div class="summary-row">
@@ -920,24 +1066,6 @@ It is used to trigger the stream archiving process and it contains the snapshot 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Domain.HanaClusterDetails.html" translate="no">Trento.Domain.HanaClusterDetails</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents the details of a HANA cluster.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.HanaClusterNode.html" translate="no">Trento.Domain.HanaClusterNode</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents the node of a HANA cluster.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="Trento.Domain.HealthService.html" translate="no">Trento.Domain.HealthService</a>
 
   </div>
@@ -952,15 +1080,6 @@ It is used to trigger the stream archiving process and it contains the snapshot 
   </div>
 
     <div class="summary-synopsis"><p>Host checks results value object</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Trento.Domain.SbdDevice.html" translate="no">Trento.Domain.SbdDevice</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Represents the SBDDevice of a HANA cluster.</p></div>
 
 </div>
 <div class="summary-row">

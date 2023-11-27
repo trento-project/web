@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-86AF9781.js"></script>
+    <script src="dist/sidebar_items-0B6782AD.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,7 +101,7 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -210,7 +210,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">enrich_cluster_model(cluster)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L78" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L77" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -222,7 +222,8 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> enrich_cluster_model(<a href="Trento.ClusterReadModel.html#t:t/0">Trento.ClusterReadModel.t</a>()) :: <a href="Trento.ClusterReadModel.html#t:t/0">Trento.ClusterReadModel.t</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> enrich_cluster_model(<a href="Trento.Clusters.Projections.ClusterReadModel.html#t:t/0">Trento.Clusters.Projections.ClusterReadModel.t</a>()) ::
+  <a href="Trento.Clusters.Projections.ClusterReadModel.html#t:t/0">Trento.Clusters.Projections.ClusterReadModel.t</a>()</pre>
 
       </div>
 
@@ -238,7 +239,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_all_clusters()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L55" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L54" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -250,7 +251,7 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> get_all_clusters() :: [<a href="Trento.ClusterReadModel.html#t:t/0">Trento.ClusterReadModel.t</a>()]</pre>
+          <pre translate="no"><span class="attribute">@spec</span> get_all_clusters() :: [<a href="Trento.Clusters.Projections.ClusterReadModel.html#t:t/0">Trento.Clusters.Projections.ClusterReadModel.t</a>()]</pre>
 
       </div>
 
@@ -266,7 +267,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_cluster_id_by_host_id(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L66" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L65" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -294,7 +295,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">request_checks_execution(cluster_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L35" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L34" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -322,7 +323,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">request_clusters_checks_execution()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L89" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L88" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -350,7 +351,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">select_checks(cluster_id, checks)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L25" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L24" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -378,7 +379,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">update_cib_last_written(cluster_id, cib_last_written)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/clusters.ex#L114" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters.ex#L113" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

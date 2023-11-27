@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.2.0">
 
-    <title>Trento.Domain.HanaClusterNode — Trento Web v2.2.0</title>
+    <title>Trento.Clusters.ValueObjects.ClusterResource — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-86AF9781.js"></script>
+    <script src="dist/sidebar_items-0B6782AD.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,19 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Domain.HanaClusterNode</span> 
+  <span translate="no">Trento.Clusters.ValueObjects.ClusterResource</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Represents the node of a HANA cluster.</p>
+<p>Represents the resource of a HANA cluster.</p>
   </section>
 
 
@@ -225,7 +225,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L12" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -237,13 +237,12 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.HanaClusterNode{
-  attributes: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  hana_status: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  name: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  resources: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  site: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  virtual_ip: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Clusters.ValueObjects.ClusterResource{
+  fail_count: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  role: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  status: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  type: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
       </div>
@@ -273,7 +272,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L12" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -295,7 +294,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L12" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -317,7 +316,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L12" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -340,7 +339,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L12" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -369,7 +368,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L12" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -397,7 +396,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/hana_cluster_node.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/value_objects/cluster_resource.ex#L12" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.2.0">
 
-    <title>Trento.ClusterEnrichmentData — Trento Web v2.2.0</title>
+    <title>Trento.Clusters.Projections.ClusterReadModel — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-86AF9781.js"></script>
+    <script src="dist/sidebar_items-0B6782AD.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,19 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/cluster_enrichment_data.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/projections/cluster_read_model.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.ClusterEnrichmentData</span> 
+  <span translate="no">Trento.Clusters.Projections.ClusterReadModel</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Enriched cluster data</p>
+<p>Cluster read model</p>
   </section>
 
 
@@ -177,7 +177,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/cluster_enrichment_data.ex#L10" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/projections/cluster_read_model.ex#L16" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -189,10 +189,22 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.ClusterEnrichmentData{
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Clusters.Projections.ClusterReadModel{
   __meta__: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  additional_sids: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   cib_last_written: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  cluster_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+  deregistered_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  details: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  health: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  hosts_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  name: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  provider: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  resources_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  selected_checks: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  sid: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  tags: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  type: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
       </div>
@@ -222,7 +234,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(cluster, attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/application/usecases/clusters/cluster_enrichment_data.ex#L19" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/projections/cluster_read_model.ex#L41" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
