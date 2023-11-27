@@ -12,15 +12,14 @@ defmodule Trento.Infrastructure.Discovery.Policies.ClusterPolicyTest do
 
   alias Trento.Clusters.Commands.{DeregisterClusterHost, RegisterClusterHost}
 
-  alias Trento.Clusters.ValueObjects.SbdDevice
-
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
     HanaClusterDetails,
-    HanaClusterNode
+    HanaClusterNode,
+    SbdDevice
   }
 
   test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up is handled" do

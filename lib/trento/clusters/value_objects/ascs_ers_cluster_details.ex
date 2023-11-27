@@ -10,11 +10,10 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterDetails do
 
   use Trento.Support.Type
 
-  alias Trento.Clusters.ValueObjects.SbdDevice
-
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterSapSystem,
-    ClusterResource
+    ClusterResource,
+    SbdDevice
   }
 
   deftype do

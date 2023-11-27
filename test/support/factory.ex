@@ -8,15 +8,14 @@ defmodule Trento.Factory do
   require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Domain.Enums.Health, as: Health
 
-  alias Trento.Clusters.ValueObjects.SbdDevice
-
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     AscsErsClusterNode,
     AscsErsClusterSapSystem,
     ClusterResource,
     HanaClusterDetails,
-    HanaClusterNode
+    HanaClusterNode,
+    SbdDevice
   }
 
   alias Trento.Hosts.ValueObjects.{
