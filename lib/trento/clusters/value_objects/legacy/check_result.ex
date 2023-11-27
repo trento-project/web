@@ -1,4 +1,4 @@
-defmodule Trento.Domain.CheckResult do
+defmodule Trento.Clusters.ValueObjects.CheckResult do
   @moduledoc """
   Check result value object
   """

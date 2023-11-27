@@ -54,13 +54,13 @@ defmodule Trento.Clusters.Cluster do
   [Checks Engine](https://github.com/trento-project/wanda/).
   """
 
-  require Trento.Domain.Enums.Provider, as: Provider
-  require Trento.Domain.Enums.ClusterType, as: ClusterType
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Provider, as: Provider
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Enums.Health, as: Health
 
   alias Commanded.Aggregate.Multi
 
-  alias Trento.Domain.HealthService
+  alias Trento.Services.HealthService
 
   alias Trento.Clusters.Cluster
 

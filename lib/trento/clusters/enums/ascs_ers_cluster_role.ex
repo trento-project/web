@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Enums.AscsErsClusterRole do
+defmodule Trento.Clusters.Enums.AscsErsClusterRole do
   @moduledoc """
   Type that represents the ASCS/ERS cluster roles.
   """

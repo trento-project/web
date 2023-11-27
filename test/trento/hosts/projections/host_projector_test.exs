@@ -7,14 +7,14 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
   import Trento.Factory
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   alias Trento.Hosts.Projections.{
     HostProjector,
     HostReadModel
   }
 
-  alias Trento.Domain.{
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider

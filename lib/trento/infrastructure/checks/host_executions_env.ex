@@ -6,7 +6,7 @@ defmodule Trento.Infrastructure.Checks.HostExecutionEnv do
   @required_fields :all
   use Trento.Support.Type
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   deftype do
     field :provider, Ecto.Enum, values: Provider.values()

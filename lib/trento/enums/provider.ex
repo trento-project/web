@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Enums.Provider do
+defmodule Trento.Enums.Provider do
   @moduledoc """
   Type that represents the supported provider values by our agent.
   """

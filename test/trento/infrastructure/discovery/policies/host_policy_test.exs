@@ -3,7 +3,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.HostPolicyTest do
   use Trento.DataCase
   import Trento.Infrastructure.DiscoveryFixturesHelper
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   alias Trento.Infrastructure.Discovery.Policies.HostPolicy
 
@@ -14,7 +14,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.HostPolicyTest do
     UpdateSlesSubscriptions
   }
 
-  alias Trento.Domain.{
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider

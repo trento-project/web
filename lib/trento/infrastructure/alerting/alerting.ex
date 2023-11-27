@@ -1,4 +1,4 @@
-defmodule Trento.Application.UseCases.Alerting do
+defmodule Trento.Infrastructure.Alerting.Alerting do
   @moduledoc """
   Provides a set of functions of Alerting related usecases.
   """
@@ -11,7 +11,7 @@ defmodule Trento.Application.UseCases.Alerting do
     SapSystemReadModel
   }
 
-  alias Trento.Application.UseCases.Alerting.EmailAlert
+  alias Trento.Infrastructure.Alerting.Emails.EmailAlert
   alias Trento.Mailer
 
   require Logger

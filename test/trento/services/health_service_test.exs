@@ -1,7 +1,7 @@
-defmodule Trento.Domain.HealthServiceTest do
+defmodule Trento.Services.HealthServiceTest do
   use ExUnit.Case
 
-  alias Trento.Domain.HealthService
+  alias Trento.Services.HealthService
 
   @test_cases [
     {[:passing, :warning, :critical], :critical},

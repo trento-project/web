@@ -6,7 +6,7 @@ defmodule Trento.Infrastructure.Checks do
   alias Trento.Clusters.Commands.CompleteChecksExecution
   alias Trento.Hosts.Commands.CompleteHostChecksExecution
 
-  alias Trento.Domain.Enums.Health
+  alias Trento.Enums.Health
   alias Trento.Infrastructure.Messaging
 
   alias Trento.Checks.V1.{

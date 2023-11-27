@@ -3,7 +3,7 @@ defmodule Trento.SapSystems.SapSystemTest do
 
   import Trento.Factory
 
-  require Trento.Domain.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,

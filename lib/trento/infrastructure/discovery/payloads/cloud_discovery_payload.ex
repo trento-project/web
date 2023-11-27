@@ -9,7 +9,7 @@ defmodule Trento.Infrastructure.Discovery.Payloads.CloudDiscoveryPayload do
 
   import PolymorphicEmbed, only: [cast_polymorphic_embed: 3]
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   deftype do
     field :provider, Ecto.Enum,

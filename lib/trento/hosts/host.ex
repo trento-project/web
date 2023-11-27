@@ -39,21 +39,19 @@ defmodule Trento.Hosts.Host do
   Checks execution is started either by an explicit user request or periodically as per the scheduler configuration.
   """
 
-  require Trento.Domain.Enums.Provider, as: Provider
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Provider, as: Provider
+  require Trento.Enums.Health, as: Health
 
   alias Commanded.Aggregate.Multi
 
   alias Trento.Hosts.Host
 
-  alias Trento.Domain.{
+  alias Trento.Services.HealthService
+
+  alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
     GcpProvider,
-    HealthService
-  }
-
-  alias Trento.Hosts.ValueObjects.{
     SaptuneStatus,
     SlesSubscription
   }

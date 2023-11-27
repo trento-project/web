@@ -1,4 +1,4 @@
-defmodule Trento.Domain.HostExecution do
+defmodule Trento.Clusters.ValueObjects.HostExecution do
   @moduledoc """
   Host checks results value object
   """
@@ -6,7 +6,7 @@ defmodule Trento.Domain.HostExecution do
   @required_fields [:host_id, :reachable]
 
   use Trento.Support.Type
-  alias Trento.Domain.CheckResult
+  alias Trento.Clusters.ValueObjects.CheckResult
 
   deftype do
     field :host_id, Ecto.UUID

@@ -1,4 +1,4 @@
-defmodule Trento.Application.UseCases.AlertingTest do
+defmodule Trento.Infrastructure.Alerting.AlertingTest do
   @moduledoc false
   use ExUnit.Case, async: true
   use Trento.DataCase
@@ -7,7 +7,7 @@ defmodule Trento.Application.UseCases.AlertingTest do
 
   import Trento.Factory
 
-  alias Trento.Application.UseCases.Alerting
+  alias Trento.Infrastructure.Alerting.Alerting
 
   @moduletag :integration
 

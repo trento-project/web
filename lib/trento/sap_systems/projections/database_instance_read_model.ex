@@ -7,7 +7,7 @@ defmodule Trento.SapSystems.Projections.DatabaseInstanceReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   @type t :: %__MODULE__{}
 

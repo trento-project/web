@@ -2,7 +2,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ResourceHealth do
   @moduledoc false
 
   require OpenApiSpex
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   OpenApiSpex.schema(%{
     title: "ResourceHealth",

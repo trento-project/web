@@ -3,7 +3,7 @@ defmodule Trento.Infrastructure.Discovery.Policies.HostPolicy do
   This module contains functions to transform host related integration events into commands.
   """
 
-  require Trento.Domain.Enums.Provider, as: Provider
+  require Trento.Enums.Provider, as: Provider
 
   alias Trento.Hosts.Commands.{
     RegisterHost,

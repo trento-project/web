@@ -1,4 +1,4 @@
-defmodule Trento.Domain.Enums.EnsaVersion do
+defmodule Trento.SapSystems.Enums.EnsaVersion do
   @moduledoc """
   Type that represents the supported ENSA versions.
   """

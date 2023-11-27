@@ -5,7 +5,7 @@ defmodule Trento.Domain.Events.ClusterDiscoveredHealthChanged do
 
   use Trento.Support.Event
 
-  require Trento.Domain.Enums.Health, as: Health
+  require Trento.Enums.Health, as: Health
 
   defevent superseded_by: Trento.Clusters.Events.ClusterDiscoveredHealthChanged do
     field :cluster_id, Ecto.UUID

@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
 
   import Ecto.Query
 
-  require Trento.Domain.Enums.Health, as: HealthEnum
+  require Trento.Enums.Health, as: HealthEnum
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
@@ -15,8 +15,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
 
   alias Trento.Clusters.Projections.ClusterReadModel
 
-  alias Trento.Domain.Enums.Health
-  alias Trento.Domain.HealthService
+  alias Trento.Enums.Health
+  alias Trento.Services.HealthService
 
   alias Trento.Repo
 
