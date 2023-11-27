@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.2.0">
 
-    <title>Trento.Domain.AzureProvider — Trento Web v2.2.0</title>
+    <title>Trento.Hosts.ValueObjects.GcpProvider — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-0B6782AD.js"></script>
+    <script src="dist/sidebar_items-E3A9B04B.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,19 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Domain.AzureProvider</span> 
+  <span translate="no">Trento.Hosts.ValueObjects.GcpProvider</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Azure provider value object</p>
+<p>Gcp provider value object</p>
   </section>
 
 
@@ -225,7 +225,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -237,15 +237,14 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.AzureProvider{
-  admin_username: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  data_disk_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  location: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  offer: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  resource_group: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  sku: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  vm_name: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  vm_size: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Hosts.ValueObjects.GcpProvider{
+  disk_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  image: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  instance_name: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  machine_type: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  network: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  project_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  zone: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
 }</pre>
 
       </div>
@@ -275,7 +274,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -297,7 +296,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -319,7 +318,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -342,7 +341,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -371,7 +370,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -399,7 +398,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/azure_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

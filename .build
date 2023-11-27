@@ -6,7 +6,6 @@ Mix.Tasks.Version.html
 TestCommandedApp.html
 TestEventHandlerWithFailureContext.html
 Trento.AggregateCase.html
-Trento.Application.UseCases.Alerting.html
 Trento.Clusters.Cluster.html
 Trento.Clusters.ClusterEnrichmentData.html
 Trento.Clusters.Commands.CompleteChecksExecution.html
@@ -14,6 +13,8 @@ Trento.Clusters.Commands.DeregisterClusterHost.html
 Trento.Clusters.Commands.RegisterClusterHost.html
 Trento.Clusters.Commands.RollUpCluster.html
 Trento.Clusters.Commands.SelectChecks.html
+Trento.Clusters.Enums.AscsErsClusterRole.html
+Trento.Clusters.Enums.ClusterType.html
 Trento.Clusters.Events.ChecksSelected.html
 Trento.Clusters.Events.ClusterChecksHealthChanged.html
 Trento.Clusters.Events.ClusterDeregistered.html
@@ -33,21 +34,15 @@ Trento.Clusters.Projections.ClusterReadModel.html
 Trento.Clusters.ValueObjects.AscsErsClusterDetails.html
 Trento.Clusters.ValueObjects.AscsErsClusterNode.html
 Trento.Clusters.ValueObjects.AscsErsClusterSapSystem.html
+Trento.Clusters.ValueObjects.CheckResult.html
 Trento.Clusters.ValueObjects.ClusterResource.html
 Trento.Clusters.ValueObjects.HanaClusterDetails.html
 Trento.Clusters.ValueObjects.HanaClusterNode.html
+Trento.Clusters.ValueObjects.HostExecution.html
 Trento.Clusters.ValueObjects.SbdDevice.html
 Trento.Clusters.html
 Trento.Commanded.html
 Trento.DataCase.html
-Trento.Domain.AwsProvider.html
-Trento.Domain.AzureProvider.html
-Trento.Domain.CheckResult.html
-Trento.Domain.Enums.AscsErsClusterRole.html
-Trento.Domain.Enums.ClusterType.html
-Trento.Domain.Enums.EnsaVersion.html
-Trento.Domain.Enums.Health.html
-Trento.Domain.Enums.Provider.html
 Trento.Domain.Events.ApplicationInstanceDeregistered.html
 Trento.Domain.Events.ApplicationInstanceHealthChanged.html
 Trento.Domain.Events.ApplicationInstanceMarkedAbsent.html
@@ -106,9 +101,8 @@ Trento.Domain.Events.SapSystemTombstoned.html
 Trento.Domain.Events.SapSystemUpdated.html
 Trento.Domain.Events.SaptuneStatusUpdated.html
 Trento.Domain.Events.SlesSubscriptionsUpdated.html
-Trento.Domain.GcpProvider.html
-Trento.Domain.HealthService.html
-Trento.Domain.HostExecution.html
+Trento.Enums.Health.html
+Trento.Enums.Provider.html
 Trento.EventStoreCase.html
 Trento.Factory.html
 Trento.Heartbeats.Faker.html
@@ -148,6 +142,9 @@ Trento.Hosts.Projections.HostTelemetryReadModel.html
 Trento.Hosts.Projections.SlesSubscriptionReadModel.html
 Trento.Hosts.Projections.SlesSubscriptionsProjector.html
 Trento.Hosts.Projections.TelemetryProjector.html
+Trento.Hosts.ValueObjects.AwsProvider.html
+Trento.Hosts.ValueObjects.AzureProvider.html
+Trento.Hosts.ValueObjects.GcpProvider.html
 Trento.Hosts.ValueObjects.SaptuneNote.html
 Trento.Hosts.ValueObjects.SaptuneServiceStatus.html
 Trento.Hosts.ValueObjects.SaptuneSolution.html
@@ -155,6 +152,7 @@ Trento.Hosts.ValueObjects.SaptuneStaging.html
 Trento.Hosts.ValueObjects.SaptuneStatus.html
 Trento.Hosts.ValueObjects.SlesSubscription.html
 Trento.Hosts.html
+Trento.Infrastructure.Alerting.Alerting.html
 Trento.Infrastructure.Checks.AMQP.Consumer.html
 Trento.Infrastructure.Checks.AMQP.Processor.html
 Trento.Infrastructure.Checks.ClusterExecutionEnv.html
@@ -252,6 +250,7 @@ Trento.SapSystems.Commands.RegisterApplicationInstance.html
 Trento.SapSystems.Commands.RegisterDatabaseInstance.html
 Trento.SapSystems.Commands.RollUpSapSystem.html
 Trento.SapSystems.Database.html
+Trento.SapSystems.Enums.EnsaVersion.html
 Trento.SapSystems.Events.ApplicationInstanceDeregistered.html
 Trento.SapSystems.Events.ApplicationInstanceHealthChanged.html
 Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent.html
@@ -288,6 +287,7 @@ Trento.SapSystems.SapSystem.html
 Trento.SapSystems.Services.HealthSummaryService.html
 Trento.SapSystems.html
 Trento.Scheduler.html
+Trento.Services.HealthService.html
 Trento.Support.Command.html
 Trento.Support.DateService.html
 Trento.Support.Ecto.Payload.html
@@ -390,8 +390,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-24609F7D.js
-dist/sidebar_items-0B6782AD.js
+dist/search_items-86521DFE.js
+dist/sidebar_items-E3A9B04B.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

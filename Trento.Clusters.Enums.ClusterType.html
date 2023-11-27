@@ -7,12 +7,12 @@
     <meta name="generator" content="ExDoc v0.29.0">
     <meta name="project" content="Trento Web v2.2.0">
 
-    <title>Trento.Domain.GcpProvider — Trento Web v2.2.0</title>
+    <title>Trento.Clusters.Enums.ClusterType — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-0B6782AD.js"></script>
+    <script src="dist/sidebar_items-E3A9B04B.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -101,19 +101,19 @@ Trento Web
 </button>
 
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/enums/cluster_type.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">Trento.Domain.GcpProvider</span> 
+  <span translate="no">Trento.Clusters.Enums.ClusterType</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Gcp provider value object</p>
+<p>Type that represents the supported cluster types.</p>
   </section>
 
 
@@ -148,7 +148,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#cast_and_validate_required_embed/3" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</a>
+          <a href="#ascs_ers/0" translate="no">ascs_ers()</a>
 
         </div>
 
@@ -156,7 +156,7 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#cast_and_validate_required_polymorphic_embed/3" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</a>
+          <a href="#hana_scale_out/0" translate="no">hana_scale_out()</a>
 
         </div>
 
@@ -164,39 +164,23 @@ Trento Web
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#changeset/2" translate="no">changeset(struct, params)</a>
+          <a href="#hana_scale_up/0" translate="no">hana_scale_up()</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Casts the fields by using Ecto reflection,
-validates the required ones and returns a changeset.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#new/1" translate="no">new(structs)</a>
+          <a href="#unknown/0" translate="no">unknown()</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
-Accepts a map or a list of maps.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#new!/1" translate="no">new!(params)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#validate_required_fields/2" translate="no">validate_required_fields(changeset, required_fields)</a>
+          <a href="#values/0" translate="no">values()</a>
 
         </div>
 
@@ -225,7 +209,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/enums/cluster_type.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -237,15 +221,7 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %Trento.Domain.GcpProvider{
-  disk_number: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  image: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  instance_name: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  machine_type: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  network: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  project_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  zone: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
-}</pre>
+          <pre translate="no"><span class="attribute">@type</span> t() :: :unknown | :ascs_ers | :hana_scale_out | :hana_scale_up</pre>
 
       </div>
 
@@ -265,20 +241,22 @@ Types
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="cast_and_validate_required_embed/3">
+<section class="detail" id="ascs_ers/0">
 
   <div class="detail-header">
-    <a href="#cast_and_validate_required_embed/3" class="detail-link" title="Link to this function">
+    <a href="#ascs_ers/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
+    <h1 class="signature" translate="no">ascs_ers()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/enums/cluster_type.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
@@ -287,20 +265,22 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="cast_and_validate_required_polymorphic_embed/3">
+<section class="detail" id="hana_scale_out/0">
 
   <div class="detail-header">
-    <a href="#cast_and_validate_required_polymorphic_embed/3" class="detail-link" title="Link to this function">
+    <a href="#hana_scale_out/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
+    <h1 class="signature" translate="no">hana_scale_out()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/enums/cluster_type.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
@@ -309,100 +289,70 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="changeset/2">
+<section class="detail" id="hana_scale_up/0">
 
   <div class="detail-header">
-    <a href="#changeset/2" class="detail-link" title="Link to this function">
+    <a href="#hana_scale_up/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">changeset(struct, params)</h1>
+    <h1 class="signature" translate="no">hana_scale_up()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/enums/cluster_type.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
   <section class="docstring">
 
-<p>Casts the fields by using Ecto reflection,
-validates the required ones and returns a changeset.</p>
+
   </section>
 </section>
-<section class="detail" id="new/1">
+<section class="detail" id="unknown/0">
 
   <div class="detail-header">
-    <a href="#new/1" class="detail-link" title="Link to this function">
+    <a href="#unknown/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">new(structs)</h1>
+    <h1 class="signature" translate="no">unknown()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/enums/cluster_type.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
+
+      <span class="note">(macro)</span>
 
   </div>
 
   <section class="docstring">
 
-      <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> new(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) :: {:ok, <a href="#t:t/0">t</a>() | [<a href="#t:t/0">t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-<p>Returns an ok tuple if the params are valid, otherwise returns <code class="inline">{:error, {:validation, errors}}</code>.
-Accepts a map or a list of maps.</p>
   </section>
 </section>
-<section class="detail" id="new!/1">
+<section class="detail" id="values/0">
 
   <div class="detail-header">
-    <a href="#new!/1" class="detail-link" title="Link to this function">
+    <a href="#values/0" class="detail-link" title="Link to this macro">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this macro</span>
     </a>
-    <h1 class="signature" translate="no">new!(params)</h1>
+    <h1 class="signature" translate="no">values()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/enums/cluster_type.ex#L6" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
 
 
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> new!(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) :: <a href="#t:t/0">t</a>() | [<a href="#t:t/0">t</a>()]</pre>
-
-      </div>
-
-<p>Returns new struct(s) if the params are valid, otherwise raises a <a href="https://hexdocs.pm/elixir/RuntimeError.html"><code class="inline">RuntimeError</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="validate_required_fields/2">
-
-  <div class="detail-header">
-    <a href="#validate_required_fields/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/domain/value_objects/gcp_provider.ex#L8" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
+      <span class="note">(macro)</span>
 
   </div>
 
