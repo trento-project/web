@@ -18,7 +18,7 @@ import ClusterSettingsPage from '@components/ClusterSettingsPage';
 import { ExecutionResultsPage } from '@components/ExecutionResults';
 import SapSystemsOverviewPage from '@components/SapSystemsOverview';
 import HostDetailsPage, { HostSettingsPage } from '@components/HostDetails';
-import DatabasesOverviewPage from '@components/DatabasesOverview';
+import DatabasesOverviewPage from '@pages/DatabasesOverview';
 import ChecksCatalogPage from '@pages/ChecksCatalog';
 import NotFound from '@components/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';

@@ -2,7 +2,7 @@ import { EOS_APPLICATION_OUTLINED } from 'eos-icons-react';
 import React from 'react';
 
 import { APPLICATION_TYPE } from '@lib/model/sapSystems';
-import DatabaseItemOverview from '@components/DatabasesOverview/DatabaseItemOverview';
+import DatabaseItemOverview from '@pages/DatabasesOverview/DatabaseItemOverview';
 import InstanceOverview from '@components/InstanceOverview';
 
 function ApplicationInstance({ instance, onCleanUpClick }) {
