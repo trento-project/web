@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HealthIcon from '@components/Health/HealthIcon';
+import HealthIcon from '@pages/HealthIcon';
 
 function SaptuneTuningState({ state }) {
   switch (state) {

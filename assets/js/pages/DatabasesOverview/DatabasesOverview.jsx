@@ -6,12 +6,12 @@ import { filter } from 'lodash';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import PageHeader from '@common/PageHeader';
-import HealthIcon from '@components/Health';
+import HealthIcon from '@pages/HealthIcon';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
-import HealthSummary from '@components/HealthSummary/HealthSummary';
+import HealthSummary from '@pages/HealthSummary';
 import DeregistrationModal from '@components/DeregistrationModal';
-import { getCounters } from '@components/HealthSummary/summarySelection';
+import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import DatabaseItemOverview from './DatabaseItemOverview';
 

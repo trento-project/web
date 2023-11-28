@@ -6,15 +6,15 @@ import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Table from '@common/Table';
 import DeregistrationModal from '@components/DeregistrationModal';
-import HealthIcon from '@components/Health/HealthIcon';
+import HealthIcon from '@pages/HealthIcon';
 import Tags from '@common/Tags';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import SapSystemLink from '@components/SapSystemLink';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
-import HealthSummary from '@components/HealthSummary/HealthSummary';
-import { getCounters } from '@components/HealthSummary/summarySelection';
+import HealthSummary from '@pages/HealthSummary';
+import { getCounters } from '@pages/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
 import Tooltip from '@common/Tooltip';
 import CleanUpButton from '@components/CleanUpButton';

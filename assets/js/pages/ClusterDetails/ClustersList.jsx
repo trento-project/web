@@ -14,8 +14,8 @@ import PageHeader from '@common/PageHeader';
 
 import SapSystemLink from '@components/SapSystemLink';
 
-import HealthSummary from '@components/HealthSummary/HealthSummary';
-import { getCounters } from '@components/HealthSummary/summarySelection';
+import HealthSummary from '@pages/HealthSummary';
+import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import { ExecutionIcon } from '@pages/ClusterDetails';
 import ClusterLink from './ClusterLink';

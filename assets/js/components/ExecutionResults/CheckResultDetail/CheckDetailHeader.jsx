@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HealthIcon from '@components/Health/HealthIcon';
+import HealthIcon from '@pages/HealthIcon';
 import { clusterWarningBanner } from '@components/ExecutionResults/ExecutionHeader';
 import CheckResultInfoBox from './CheckResultInfoBox';
 import { isTargetCluster } from '../checksUtils';

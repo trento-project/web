@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { getHostID } from '@state/selectors/host';
 import Accordion from '@common/Accordion';
-import HealthIcon from '@components/Health';
+import HealthIcon from '@pages/HealthIcon';
 import Modal from '@common/Modal';
 import PremiumPill from '@components/PremiumPill';
 import Table from '@common/Table';

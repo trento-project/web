@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
-import HealthIcon from '@components/Health';
+import HealthIcon from '@pages/HealthIcon';
 import { Features } from '@components/SapSystemDetails';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
