@@ -152,7 +152,7 @@ export function* deregisterDatabaseInstance({
   }
 }
 
-export function* watchDatabase() {
+export function* watchDatabaseEvents() {
   yield takeEvery(DATABASE_REGISTERED, databaseRegistered);
   yield takeEvery(DATABASE_DEREGISTERED, databaseDeregistered);
   yield takeEvery(DATABASE_RESTORED, databaseRestored);

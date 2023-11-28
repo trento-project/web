@@ -88,14 +88,8 @@ export function* requestHostExecution({ payload }) {
   }
 }
 
-export function* watchUpdateLastExecution() {
+export function* watchLastExecutionEvents() {
   yield takeEvery(UPDATE_LAST_EXECUTION, updateLastExecution);
-}
-
-export function* watchRequestExecution() {
   yield takeEvery(CLUSTER_EXECUTION_REQUESTED, requestExecution);
-}
-
-export function* watchHostRequestExecution() {
   yield takeEvery(HOST_EXECUTION_REQUESTED, requestHostExecution);
 }

@@ -18,6 +18,6 @@ export function* updateCatalog({ payload }) {
   }
 }
 
-export function* watchCatalogUpdate() {
+export function* watchCatalogEvents() {
   yield takeEvery(UPDATE_CATALOG, updateCatalog);
 }
