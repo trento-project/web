@@ -2,6 +2,11 @@ import { delay, put, race, call, take, takeEvery } from 'redux-saga/effects';
 import { del } from '@lib/network';
 
 import {
+  DEREGISTRATION_DEBOUNCE,
+  HOST_REGISTERED,
+  HOST_DETAILS_UPDATED,
+  HEARTBEAT_SUCCEDED,
+  HEARTBEAT_FAILED,
   CHECK_HOST_IS_DEREGISTERABLE,
   CANCEL_CHECK_HOST_IS_DEREGISTERABLE,
   HOST_DEREGISTERED,
@@ -14,11 +19,56 @@ import {
   setHostDeregistering,
   unsetHostDeregistering,
   appendHost,
+  updateHost,
   updateHostHealth,
   updateSaptuneStatus,
+  setHeartbeatPassing,
+  setHeartbeatCritical,
+  setHostNotDeregisterable,
+  checkHostIsDeregisterable,
+  cancelCheckHostIsDeregisterable,
 } from '@state/hosts';
 
 import { notify } from '@state/notifications';
+
+function* hostRegistered({ payload }) {
+  yield put(appendHost(payload));
+  yield put(
+    notify({
+      text: `A new host, ${payload.hostname}, has been discovered.`,
+      icon: 'ℹ️',
+    })
+  );
+}
+
+function* hostDetailsUpdated({ payload }) {
+  yield put(updateHost(payload));
+}
+
+function* heartbeatSucceded({ payload }) {
+  yield put(setHeartbeatPassing(payload));
+  yield put(setHostNotDeregisterable(payload));
+  yield put(cancelCheckHostIsDeregisterable(payload));
+  yield put(
+    notify({
+      text: `The host ${payload.hostname} heartbeat is alive.`,
+      icon: '❤️',
+    })
+  );
+}
+
+function* heartbeatFailed({ payload }) {
+  yield put(setHeartbeatCritical(payload));
+  yield put(
+    checkHostIsDeregisterable({ ...payload, debounce: DEREGISTRATION_DEBOUNCE })
+  );
+  yield put(
+    notify({
+      text: `The host ${payload.hostname} heartbeat is failing.`,
+      icon: '💔',
+    })
+  );
+}
 
 export function* markDeregisterableHosts(hosts) {
   yield put(
@@ -106,26 +156,15 @@ export function* hostHealthChanged({ payload: { id, hostname, health } }) {
   );
 }
 
-export function* watchHostDeregisterable() {
+export function* watchHostEvents() {
+  yield takeEvery(HOST_REGISTERED, hostRegistered);
+  yield takeEvery(HOST_DETAILS_UPDATED, hostDetailsUpdated);
+  yield takeEvery(HEARTBEAT_SUCCEDED, heartbeatSucceded);
+  yield takeEvery(HEARTBEAT_FAILED, heartbeatFailed);
   yield takeEvery(CHECK_HOST_IS_DEREGISTERABLE, checkHostDeregisterable);
-}
-
-export function* watchHostDeregistered() {
   yield takeEvery(HOST_DEREGISTERED, hostDeregistered);
-}
-
-export function* watchDeregisterHost() {
   yield takeEvery(DEREGISTER_HOST, deregisterHost);
-}
-
-export function* watchHostRestored() {
   yield takeEvery(HOST_RESTORED, hostRestored);
-}
-
-export function* watchSaptuneStatusUpdated() {
   yield takeEvery(SAPTUNE_STATUS_UPDATED, saptuneStatusUpdated);
-}
-
-export function* watchHostHealthChanged() {
   yield takeEvery(HOST_HEALTH_CHANGED, hostHealthChanged);
 }

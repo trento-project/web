@@ -95,6 +95,13 @@ export const hostsListSlice = createSlice({
   },
 });
 
+// eslint-disable-next-line no-undef
+export const DEREGISTRATION_DEBOUNCE = config.deregistrationDebounce ?? 0;
+
+export const HOST_REGISTERED = 'HOST_REGISTERED';
+export const HOST_DETAILS_UPDATED = 'HOST_DETAILS_UPDATED';
+export const HEARTBEAT_SUCCEDED = 'HEARTBEAT_SUCCEDED';
+export const HEARTBEAT_FAILED = 'HEARTBEAT_FAILED';
 export const CHECK_HOST_IS_DEREGISTERABLE = 'CHECK_HOST_IS_DEREGISTERABLE';
 export const CANCEL_CHECK_HOST_IS_DEREGISTERABLE =
   'CANCEL_CHECK_HOST_IS_DEREGISTERABLE';
