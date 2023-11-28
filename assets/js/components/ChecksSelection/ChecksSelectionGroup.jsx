@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { Switch } from '@headlessui/react';
 
-import Accordion from '@components/Accordion';
+import Accordion from '@common/Accordion';
 
 export const NONE_CHECKED = 'none';
 export const SOME_CHECKED = 'some';

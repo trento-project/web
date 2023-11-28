@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { getHostID } from '@state/selectors/host';
-import Accordion from '@components/Accordion';
+import Accordion from '@common/Accordion';
 import HealthIcon from '@components/Health';
 import Modal from '@common/Modal';
 import PremiumPill from '@components/PremiumPill';

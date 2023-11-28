@@ -8,15 +8,9 @@ import {
   TARGET_HOST,
   TARGET_CLUSTER,
 } from '@lib/model';
-import {
-  ASCS_ERS,
-  HANA_SCALE_OUT,
-  clusterTypes,
-  getClusterTypeLabel,
-} from '@lib/model/clusters';
-import PageHeader from '@components/PageHeader';
-import Accordion from '@components/Accordion';
-import Pill from '@components/Pill';
+import { ASCS_ERS, HANA_SCALE_OUT,clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
+import Accordion from '@common/Accordion';
+import PageHeader from '@common/PageHeader';
 import Select, { createOptionRenderer, OPTION_ALL } from '@components/Select';
 import ProviderLabel from '@components/ProviderLabel';
 import TargetIcon from '@components/TargetIcon';

@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
 
 import PremiumPill from '@components/PremiumPill';
-import Accordion from '@components/Accordion';
+import Accordion from '@common/Accordion';
 import TargetIcon from '@components/TargetIcon';
 
 function CheckItem({
