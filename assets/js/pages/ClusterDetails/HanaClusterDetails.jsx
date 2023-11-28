@@ -4,7 +4,7 @@ import { get, groupBy } from 'lodash';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
 import PageHeader from '@components/PageHeader';
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';

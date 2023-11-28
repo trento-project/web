@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { find, map } from 'lodash';
 
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 import ListView from '@common/ListView';
 import PageHeader from '@components/PageHeader';
 

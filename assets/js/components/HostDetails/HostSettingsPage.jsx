@@ -14,7 +14,7 @@ import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
 
 import PageHeader from '@components/PageHeader';
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 
 import ChecksSelection from '@components/ChecksSelection';
 

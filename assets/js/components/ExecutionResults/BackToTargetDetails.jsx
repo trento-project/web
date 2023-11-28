@@ -2,7 +2,7 @@ import React from 'react';
 
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 
 function BackToTargetDetails({ targetType, targetID }) {
   switch (targetType) {

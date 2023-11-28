@@ -6,7 +6,7 @@ import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import { getEnrichedDatabaseDetails } from '@state/selectors/sapSystem';
 import { deregisterDatabaseInstance } from '@state/databases';
 
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
 
 function DatabaseDetails() {

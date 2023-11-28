@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
 import PageHeader from '@components/PageHeader';
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 import ChecksSelectionHeader from './ChecksSelectionHeader';
 
 export default {

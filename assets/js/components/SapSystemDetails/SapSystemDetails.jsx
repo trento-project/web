@@ -6,7 +6,7 @@ import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
 import { deregisterApplicationInstance } from '@state/sapSystems';
 
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 import { GenericSystemDetails } from '@components/SapSystemDetails';
 
 function SapSystemDetails() {

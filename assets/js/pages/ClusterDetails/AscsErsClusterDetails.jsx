@@ -7,7 +7,7 @@ import { RUNNING_STATES } from '@state/lastExecutions';
 
 import Button from '@common/Button';
 import PageHeader from '@components/PageHeader';
-import BackButton from '@components/BackButton';
+import BackButton from '@common/BackButton';
 import Table from '@common/Table';
 import ListView from '@common/ListView';
 import ProviderLabel from '@components/ProviderLabel';
