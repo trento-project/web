@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
 
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
 import { logError } from '@lib/log';
 import { get } from '@lib/network';

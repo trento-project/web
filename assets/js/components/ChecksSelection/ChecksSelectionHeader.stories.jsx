@@ -2,7 +2,7 @@ import React from 'react';
 import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router-dom';
 
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 import ChecksSelectionHeader from './ChecksSelectionHeader';
 

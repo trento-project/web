@@ -5,7 +5,7 @@ import { find, map } from 'lodash';
 
 import BackButton from '@common/BackButton';
 import ListView from '@common/ListView';
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 
 import SaptuneTuningState from './SaptuneTuningState';
 import SaptuneVersion from './SaptuneVersion';

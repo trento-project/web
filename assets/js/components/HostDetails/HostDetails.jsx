@@ -6,7 +6,7 @@ import { agentVersionWarning } from '@lib/agent';
 
 import Button from '@common/Button';
 import Table from '@common/Table';
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
 import CleanUpButton from '@components/CleanUpButton';

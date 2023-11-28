@@ -10,7 +10,7 @@ import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
 import Table from '@common/Table';
 import Tags from '@common/Tags';
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 
 import SapSystemLink from '@components/SapSystemLink';
 

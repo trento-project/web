@@ -3,7 +3,7 @@ import { get, groupBy } from 'lodash';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
 import ListView from '@common/ListView';

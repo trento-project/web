@@ -6,7 +6,7 @@ import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
 import Button from '@common/Button';
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 import Table from '@common/Table';
 import ListView from '@common/ListView';

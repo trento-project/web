@@ -17,7 +17,7 @@ import { executionRequested } from '@state/lastExecutions';
 
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
-import PageHeader from '@components/PageHeader';
+import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
 import { ClusterInfoBox } from '@pages/ClusterDetails';
