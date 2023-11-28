@@ -31,7 +31,7 @@ import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';
 import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
-import DatabaseDetails from './components/DatabaseDetails';
+import DatabaseDetails from './pages/DatabaseDetails';
 import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 
 import { store } from './state';
