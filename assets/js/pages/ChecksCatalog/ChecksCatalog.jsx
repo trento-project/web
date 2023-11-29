@@ -12,7 +12,7 @@ import { ASCS_ERS, HANA_SCALE_OUT,clusterTypes, getClusterTypeLabel } from '@lib
 import { clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
-import Select, { createOptionRenderer, OPTION_ALL } from '@components/Select';
+import Select, { createOptionRenderer, OPTION_ALL } from '@common/Select';
 import ProviderLabel from '@common/ProviderLabel';
 import TargetIcon from '@common/TargetIcon';
 import CatalogContainer from './CatalogContainer';

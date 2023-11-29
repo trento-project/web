@@ -5,7 +5,7 @@ import { pickBy } from 'lodash';
 
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/catalog';
-import { OPTION_ALL } from '@components/Select';
+import { OPTION_ALL } from '@common/Select';
 import ChecksCatalog from './ChecksCatalog';
 
 const buildUpdateCatalogAction = (selectedFilters) =>
