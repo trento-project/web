@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 
 import { SUPPORTED_VERSION } from '@lib/saptune';
 import { saptuneStatusFactory } from '@lib/test-utils/factories';
-import { TUNING_VALUES } from '@components/SaptuneDetails/SaptuneDetails.test';
+import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 
 import SaptuneSummary from './SaptuneSummary';
 

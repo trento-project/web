@@ -4,7 +4,7 @@ import { isVersionSupported } from '@lib/saptune';
 
 import Button from '@common/Button';
 import ListView from '@common/ListView';
-import { SaptuneVersion, SaptuneTuningState } from '@components/SaptuneDetails';
+import { SaptuneVersion, SaptuneTuningState } from '@pages/SaptuneDetails';
 
 function SaptuneSummary({
   saptuneVersion,
