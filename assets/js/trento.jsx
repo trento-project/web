@@ -8,31 +8,32 @@ import { Provider } from 'react-redux';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
-import Layout from '@pages/Layout';
-import Home from '@pages/Home';
 import AboutPage from '@pages/AboutPage';
-import HostsList from '@components/HostsList';
-import ClustersList from '@pages/ClusterDetails/ClustersList';
+import CheckResultDetailPage from '@pages/ExecutionResults/CheckResultDetail';
+import ChecksCatalogPage from '@pages/ChecksCatalog';
 import ClusterDetailsPage from '@pages/ClusterDetails';
 import ClusterSettingsPage from '@pages/ClusterSettingsPage';
-import { ExecutionResultsPage } from '@pages/ExecutionResults';
-import CheckResultDetailPage from '@pages/ExecutionResults/CheckResultDetail';
-import SapSystemsOverviewPage from '@pages/SapSystemsOverview';
-import HostDetailsPage, { HostSettingsPage } from '@pages/HostDetails';
+import ClustersList from '@pages/ClusterDetails/ClustersList';
 import DatabasesOverviewPage from '@pages/DatabasesOverview';
-import ChecksCatalogPage from '@pages/ChecksCatalog';
+import DatabaseDetails from '@pages//DatabaseDetails';
+import Eula from '@pages/Eula';
+import { ExecutionResultsPage } from '@pages/ExecutionResults';
+import Guard from '@pages/Guard';
+import Home from '@pages/Home';
+import HostDetailsPage, { HostSettingsPage } from '@pages/HostDetails';
+import HostsList from '@pages/HostsList';
+import Layout from '@pages/Layout';
+import Login from '@pages/Login';
 import NotFound from '@pages/NotFound';
-import SomethingWentWrong from '@pages/SomethingWentWrong';
+import SapSystemDetails from '@pages//SapSystemDetails/SapSystemDetails';
+import SapSystemsOverviewPage from '@pages/SapSystemsOverview';
 import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import Settings from '@pages/Settings';
-import Eula from '@pages/Eula';
-import Login from '@pages/Login';
+import SomethingWentWrong from '@pages/SomethingWentWrong';
+
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
-import Guard from '@components/Guard';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
-import DatabaseDetails from './pages/DatabaseDetails';
-import SapSystemDetails from './pages/SapSystemDetails/SapSystemDetails';
 
 import { store } from './state';
 
