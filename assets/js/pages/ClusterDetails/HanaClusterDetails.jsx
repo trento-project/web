@@ -12,7 +12,7 @@ import Tooltip from '@common/Tooltip';
 import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 import ProviderLabel from '@common/ProviderLabel';
-import SapSystemLink from '@components/SapSystemLink';
+import SapSystemLink from '@common/SapSystemLink';
 
 import Button from '@common/Button';
 

@@ -12,7 +12,7 @@ import Table from '@common/Table';
 import Tags from '@common/Tags';
 import PageHeader from '@common/PageHeader';
 
-import SapSystemLink from '@components/SapSystemLink';
+import SapSystemLink from '@common/SapSystemLink';
 
 import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';

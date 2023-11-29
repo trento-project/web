@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
 import { sapSystemFactory } from '@lib/test-utils/factories';
-import SapSystemLink from '@components/SapSystemLink';
+import SapSystemLink from './SapSystemLink';
 
 describe('SapSystemLink', () => {
   it('renders Link when sapSystemId and systemType are provided', () => {

@@ -13,7 +13,7 @@ import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
 import DottedPagination from '@common/DottedPagination';
 import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
-import SapSystemLink from '@components/SapSystemLink';
+import SapSystemLink from '@common/SapSystemLink';
 import Tooltip from '@common/Tooltip';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';

@@ -10,7 +10,7 @@ import HealthIcon from '@pages/HealthIcon';
 import Tags from '@common/Tags';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
-import SapSystemLink from '@components/SapSystemLink';
+import SapSystemLink from '@common/SapSystemLink';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
 import HealthSummary from '@pages/HealthSummary';
