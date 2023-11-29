@@ -5,7 +5,7 @@ import { getHostID } from '@state/selectors/host';
 import Accordion from '@common/Accordion';
 import HealthIcon from '@pages/HealthIcon';
 import Modal from '@common/Modal';
-import PremiumPill from '@components/PremiumPill';
+import PremiumPill from '@common/PremiumPill';
 import Table from '@common/Table';
 
 import {

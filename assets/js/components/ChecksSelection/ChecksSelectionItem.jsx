@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-import PremiumPill from '@components/PremiumPill';
+import PremiumPill from '@common/PremiumPill';
 
 function ChecksSelectionItem({
   checkID,

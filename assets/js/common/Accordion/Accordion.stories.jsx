@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PremiumPill from '@components/PremiumPill';
+import PremiumPill from '@common/PremiumPill';
 import Accordion from '.';
 
 export default {

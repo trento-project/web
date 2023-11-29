@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
 
-import PremiumPill from '@components/PremiumPill';
+import PremiumPill from '@common/PremiumPill';
 import Accordion from '@common/Accordion';
 import TargetIcon from '@components/TargetIcon';
 
