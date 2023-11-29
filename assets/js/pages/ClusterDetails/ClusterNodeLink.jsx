@@ -2,7 +2,7 @@ import React from 'react';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Tooltip from '@common/Tooltip';
-import HostLink from '@components/HostLink';
+import HostLink from '@common/HostLink';
 
 function ClusterNodeLink({ hostId, children }) {
   if (hostId) {

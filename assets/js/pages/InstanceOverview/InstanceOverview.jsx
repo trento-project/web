@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import HealthIcon from '@pages/HealthIcon';
 import { Features } from '@pages/SapSystemDetails';
-import HostLink from '@components/HostLink';
+import HostLink from '@common/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import Pill from '@common/Pill';
 import CleanUpButton from '@common/CleanUpButton';

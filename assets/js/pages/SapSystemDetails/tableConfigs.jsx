@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import HostLink from '@components/HostLink';
+import HostLink from '@common/HostLink';
 import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';

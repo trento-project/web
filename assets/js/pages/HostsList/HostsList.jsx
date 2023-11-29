@@ -8,7 +8,7 @@ import Table from '@common/Table';
 import DeregistrationModal from '@pages/DeregistrationModal';
 import HealthIcon from '@pages/HealthIcon';
 import Tags from '@common/Tags';
-import HostLink from '@components/HostLink';
+import HostLink from '@common/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import SapSystemLink from '@common/SapSystemLink';
 import PageHeader from '@common/PageHeader';
