@@ -1,7 +1,7 @@
 import React from 'react';
 import { EOS_KEYBOARD_ARROW_RIGHT } from 'eos-icons-react';
 import classNames from 'classnames';
-import TargetIcon from '@components/TargetIcon';
+import TargetIcon from '@common/TargetIcon';
 
 function TargetResult({
   targetType,

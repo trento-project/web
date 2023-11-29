@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import HostLink from '@components/HostLink';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';
 import HealthIcon from '@pages/HealthIcon';

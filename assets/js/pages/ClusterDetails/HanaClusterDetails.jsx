@@ -11,7 +11,7 @@ import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 import CheckResultsOverview from '@components/CheckResultsOverview';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
 
 import Button from '@common/Button';

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ListView from '@common/ListView';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 
 function HostInfoBox({ provider, agentVersion }) {
   return (

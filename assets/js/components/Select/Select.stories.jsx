@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { providers } from '@lib/model';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 
 import Select, { createOptionRenderer } from '.';
 

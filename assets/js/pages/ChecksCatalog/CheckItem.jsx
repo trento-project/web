@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import PremiumPill from '@common/PremiumPill';
 import Accordion from '@common/Accordion';
-import TargetIcon from '@components/TargetIcon';
+import TargetIcon from '@common/TargetIcon';
 
 function CheckItem({
   checkID,

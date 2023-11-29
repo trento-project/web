@@ -10,7 +10,7 @@ import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 import Table from '@common/Table';
 import ListView from '@common/ListView';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 import DottedPagination from '@common/DottedPagination';
 import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';

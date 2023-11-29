@@ -17,7 +17,7 @@ import {
   checksExecutionRunningFactory,
 } from '@lib/test-utils/factories';
 
-import { providerData } from '@components/ProviderLabel/ProviderLabel';
+import { providerData } from '@common/ProviderLabel/ProviderLabel';
 
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 

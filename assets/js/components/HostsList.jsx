@@ -15,7 +15,7 @@ import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
 import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 import Tooltip from '@common/Tooltip';
 import CleanUpButton from '@common/CleanUpButton';
 

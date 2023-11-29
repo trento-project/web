@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import Pill from '@common/Pill';
 import ListView from '@common/ListView';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 
 function ProviderDetails({ provider, provider_data }) {
   const data = {

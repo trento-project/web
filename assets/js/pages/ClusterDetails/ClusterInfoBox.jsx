@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ListView from '@common/ListView';
-import ProviderLabel from '@components/ProviderLabel';
+import ProviderLabel from '@common/ProviderLabel';
 
 const haScenarioToString = {
   hana_scale_up: 'HANA scale-up',
