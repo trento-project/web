@@ -7,7 +7,7 @@ import { getEnrichedSapSystemDetails } from '@state/selectors/sapSystem';
 import { deregisterApplicationInstance } from '@state/sapSystems';
 
 import BackButton from '@common/BackButton';
-import { GenericSystemDetails } from '@components/SapSystemDetails';
+import { GenericSystemDetails } from '@pages/SapSystemDetails';
 
 function SapSystemDetails() {
   const { id } = useParams();

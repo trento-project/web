@@ -4,6 +4,6 @@ import Features from './Features';
 
 export { GenericSystemDetails } from './GenericSystemDetails';
 
-export { Features, InstanceStatus };
+export { InstanceStatus, Features };
 
 export default SapSystemDetails;

@@ -9,7 +9,7 @@ import {
 } from '@lib/test-utils/factories';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
-import { GenericSystemDetails } from '@components/SapSystemDetails';
+import { GenericSystemDetails } from '@pages/SapSystemDetails';
 
 const database = {
   ...databaseFactory.build({ instances: databaseInstanceFactory.buildList(2) }),

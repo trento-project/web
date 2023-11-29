@@ -7,7 +7,7 @@ import { getEnrichedDatabaseDetails } from '@state/selectors/sapSystem';
 import { deregisterDatabaseInstance } from '@state/databases';
 
 import BackButton from '@common/BackButton';
-import { GenericSystemDetails } from '@components/SapSystemDetails';
+import { GenericSystemDetails } from '@pages/SapSystemDetails';
 
 function DatabaseDetails() {
   const { id } = useParams();

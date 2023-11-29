@@ -1,5 +1,5 @@
 import React from 'react';
-import { Features } from '@components/SapSystemDetails';
+import { Features } from '@pages/SapSystemDetails';
 
 export const subscriptionsTableConfiguration = {
   usePadding: false,
