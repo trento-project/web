@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { EOS_SETTINGS, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
-import TriggerChecksExecutionRequest from '@components/TriggerChecksExecutionRequest';
+import TriggerChecksExecutionRequest from '@pages/TriggerChecksExecutionRequest';
 
 import TrentoLogo from '@static/trento-icon.png';
 import { isTargetCluster, isTargetHost } from './checksUtils';
