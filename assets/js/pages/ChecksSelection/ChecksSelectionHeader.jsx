@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import Button from '@common/Button';
 import Tooltip from '@common/Tooltip';
 
-import { canStartExecution } from '@components/ChecksSelection';
+import { canStartExecution } from '@pages/ChecksSelection';
 
 function ChecksSelectionHeader({
   targetID,

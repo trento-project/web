@@ -16,9 +16,9 @@ import { isSaving } from '@state/selectors/checksSelection';
 import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
-import ChecksSelection from '@components/ChecksSelection';
+import ChecksSelection from '@pages/ChecksSelection';
 
-import ChecksSelectionHeader from '@components/ChecksSelection/ChecksSelectionHeader';
+import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
 import HostInfoBox from './HostInfoBox';
 
 function HostSettingsPage() {

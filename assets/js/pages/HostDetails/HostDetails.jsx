@@ -11,7 +11,7 @@ import BackButton from '@common/BackButton';
 
 import CleanUpButton from '@common/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
-import { canStartExecution } from '@components/ChecksSelection';
+import { canStartExecution } from '@pages/ChecksSelection';
 import Tooltip from '@common/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';

@@ -22,9 +22,9 @@ import BackButton from '@common/BackButton';
 
 import { ClusterInfoBox } from '@pages/ClusterDetails';
 import LoadingBox from '@components/LoadingBox';
-import ChecksSelection from '@components/ChecksSelection';
+import ChecksSelection from '@pages/ChecksSelection';
 
-import ChecksSelectionHeader from '@components/ChecksSelection/ChecksSelectionHeader';
+import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
 
 import WarningBanner from '@common/Banners/WarningBanner';
 
