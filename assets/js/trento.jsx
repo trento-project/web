@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import Layout from '@components/Layout';
-import Home from '@components/Home';
+import Home from '@pages/Home';
 import AboutPage from '@pages/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@pages/ClusterDetails/ClustersList';
