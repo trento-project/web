@@ -28,6 +28,23 @@ describe('Select Component', () => {
       selectedValue: 'foobar1',
       allOptions: ['all', 'foobar1', 'foobar2', 'foobar3'],
     },
+    {
+      optionsName: 'structured options',
+      options: [
+        { value: 'all' },
+        { value: 'structured option 1' },
+        { value: 'structured option 2' },
+        { value: 'structured option 3' },
+      ],
+      value: 'structured option 1',
+      selectedValue: 'structured option 1',
+      allOptions: [
+        'all',
+        'structured option 1',
+        'structured option 2',
+        'structured option 3',
+      ],
+    },
   ];
 
   it.each(scenarios)(
@@ -77,7 +94,7 @@ describe('Select Component', () => {
     render(
       <Select
         optionsName="foobars"
-        options={options}
+        options={['all', ...options]}
         value="all"
         renderOption={optionRenderer}
       />
@@ -129,5 +146,27 @@ describe('Select Component', () => {
 
     await user.click(screen.getByText('option1'));
     expect(screen.queryByText('option2')).not.toBeInTheDocument();
+  });
+
+  it('should render disabled options', async () => {
+    const user = userEvent.setup();
+
+    const options = [
+      'all',
+      { value: 'option1', disabled: true },
+      'option2',
+      'option3',
+    ];
+
+    render(<Select optionsName="foobars" options={options} value="all" />);
+
+    await user.click(screen.getByText('all'));
+    expect(screen.getByText('option1').parentNode).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+    expect(screen.getByText('option3').parentNode).not.toHaveAttribute(
+      'aria-disabled'
+    );
   });
 });
