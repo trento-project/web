@@ -10,7 +10,7 @@ import ListView from '@common/ListView';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
-import CheckResultsOverview from '@components/CheckResultsOverview';
+import CheckResultsOverview from '@pages/CheckResultsOverview';
 import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@components/SapSystemLink';
 

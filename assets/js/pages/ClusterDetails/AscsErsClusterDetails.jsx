@@ -16,7 +16,7 @@ import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 import SapSystemLink from '@components/SapSystemLink';
 import Tooltip from '@common/Tooltip';
 
-import CheckResultsOverview from '@components/CheckResultsOverview';
+import CheckResultsOverview from '@pages/CheckResultsOverview';
 
 import SBDDetails from './SBDDetails';
 import AttributesDetails from './AttributesDetails';

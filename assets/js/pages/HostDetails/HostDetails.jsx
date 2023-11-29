@@ -15,7 +15,7 @@ import { canStartExecution } from '@components/ChecksSelection';
 import Tooltip from '@common/Tooltip';
 
 import SuseLogo from '@static/suse_logo.svg';
-import CheckResultsOverview from '@components/CheckResultsOverview';
+import CheckResultsOverview from '@pages/CheckResultsOverview';
 
 import WarningBanner from '@common/Banners/WarningBanner';
 
