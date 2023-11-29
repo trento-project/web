@@ -14,7 +14,7 @@ import AboutPage from '@pages/AboutPage';
 import HostsList from '@components/HostsList';
 import ClustersList from '@pages/ClusterDetails/ClustersList';
 import ClusterDetailsPage from '@pages/ClusterDetails';
-import ClusterSettingsPage from '@components/ClusterSettingsPage';
+import ClusterSettingsPage from '@pages/ClusterSettingsPage';
 import { ExecutionResultsPage } from '@pages/ExecutionResults';
 import CheckResultDetailPage from '@pages/ExecutionResults/CheckResultDetail';
 import SapSystemsOverviewPage from '@components/SapSystemsOverview';

@@ -10,7 +10,7 @@ import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
 import CleanUpButton from '@common/CleanUpButton';
-import DeregistrationModal from '@components/DeregistrationModal';
+import DeregistrationModal from '@pages/DeregistrationModal';
 import { canStartExecution } from '@pages/ChecksSelection';
 import Tooltip from '@common/Tooltip';
 

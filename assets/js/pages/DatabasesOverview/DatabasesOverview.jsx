@@ -10,7 +10,7 @@ import HealthIcon from '@pages/HealthIcon';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
 import HealthSummary from '@pages/HealthSummary';
-import DeregistrationModal from '@components/DeregistrationModal';
+import DeregistrationModal from '@pages/DeregistrationModal';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import DatabaseItemOverview from './DatabaseItemOverview';

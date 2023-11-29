@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Table from '@common/Table';
-import DeregistrationModal from '@components/DeregistrationModal';
+import DeregistrationModal from '@pages/DeregistrationModal';
 import HealthIcon from '@pages/HealthIcon';
 import Tags from '@common/Tags';
 import HostLink from '@components/HostLink';

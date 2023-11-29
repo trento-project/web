@@ -11,7 +11,7 @@ import Table from '@common/Table';
 import SAPSystemItemOverview from '@components/SapSystemsOverview/SapSystemItemOverview';
 import Tags from '@common/Tags';
 import HealthSummary from '@pages/HealthSummary';
-import DeregistrationModal from '@components/DeregistrationModal';
+import DeregistrationModal from '@pages/DeregistrationModal';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 function SapSystemsOverview({

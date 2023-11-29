@@ -10,7 +10,7 @@ import { APPLICATION_TYPE, getEnsaVersionLabel } from '@lib/model/sapSystems';
 import ListView from '@common/ListView';
 import Table from '@common/Table';
 import PageHeader from '@common/PageHeader';
-import DeregistrationModal from '@components/DeregistrationModal';
+import DeregistrationModal from '@pages/DeregistrationModal';
 
 import {
   systemHostsTableConfiguration,
