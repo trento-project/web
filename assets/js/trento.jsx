@@ -26,7 +26,7 @@ import SomethingWentWrong from '@pages/SomethingWentWrong';
 import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import Settings from '@pages/Settings';
 import Eula from '@pages/Eula';
-import Login from '@components/Login';
+import Login from '@pages/Login';
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
 import Guard from '@components/Guard';

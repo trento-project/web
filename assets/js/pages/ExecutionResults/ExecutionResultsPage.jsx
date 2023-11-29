@@ -13,7 +13,7 @@ import {
   executionRequested,
   hostExecutionRequested,
 } from '@state/lastExecutions';
-import LoadingBox from '@components/LoadingBox';
+import LoadingBox from '@common/LoadingBox';
 import ExecutionResults from './ExecutionResults';
 import { getTargetName, isTargetCluster, isTargetHost } from './checksUtils';
 

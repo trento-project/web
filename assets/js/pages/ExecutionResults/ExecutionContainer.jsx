@@ -1,6 +1,6 @@
 import React from 'react';
 
-import LoadingBox from '@components/LoadingBox';
+import LoadingBox from '@common/LoadingBox';
 
 function ExecutionContainer({
   catalogLoading = false,

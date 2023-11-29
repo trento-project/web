@@ -1,7 +1,7 @@
 import React from 'react';
 
-import NotificationBox from '@components/NotificationBox';
-import LoadingBox from '@components/LoadingBox';
+import NotificationBox from '@common/NotificationBox';
+import LoadingBox from '@common/LoadingBox';
 
 import { EOS_ERROR } from 'eos-icons-react';
 

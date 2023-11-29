@@ -1,7 +1,7 @@
 import React from 'react';
 import { EOS_ERROR } from 'eos-icons-react';
 
-import NotificationBox from '@components/NotificationBox';
+import NotificationBox from '@common/NotificationBox';
 
 import ChecksSelectionHints from './ChecksSelectionHints';
 

@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
 
-import LoadingBox from '@components/LoadingBox';
+import LoadingBox from '@common/LoadingBox';
 import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
 
 import {

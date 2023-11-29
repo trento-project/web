@@ -21,7 +21,7 @@ import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
 import { ClusterInfoBox } from '@pages/ClusterDetails';
-import LoadingBox from '@components/LoadingBox';
+import LoadingBox from '@common/LoadingBox';
 import ChecksSelection from '@pages/ChecksSelection';
 
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
