@@ -28,7 +28,6 @@ const buildConfig = {
       phoenix_live_view: resolvePath(
         '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js'
       ),
-      '@components': resolvePath('./js/components'),
       '@common': resolvePath('./js/common'),
       '@pages': resolvePath('./js/pages'),
       '@state': resolvePath('./js/state'),

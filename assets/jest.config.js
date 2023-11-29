@@ -90,7 +90,6 @@ module.exports = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     '^@lib(.*)$': '<rootDir>/js/lib$1',
-    '^@components(.*)$': '<rootDir>/js/components$1',
     '^@common(.*)$': '<rootDir>/js/common$1',
     '^@pages(.*)$': '<rootDir>/js/pages$1',
     '^@hooks(.*)$': '<rootDir>/js/hooks$1',

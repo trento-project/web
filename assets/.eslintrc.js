@@ -30,7 +30,6 @@ module.exports = {
       alias: {
         extensions: ['.js', '.jsx'],
         map: [
-          ['@components', resolvePath('./js/components')],
           ['@common', resolvePath('./js/common')],
           ['@state', resolvePath('./js/state')],
           ['@lib', resolvePath('./js/lib')],
