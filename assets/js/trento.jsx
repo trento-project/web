@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
-import Layout from '@components/Layout';
+import Layout from '@pages/Layout';
 import Home from '@pages/Home';
 import AboutPage from '@pages/AboutPage';
 import HostsList from '@components/HostsList';
@@ -21,11 +21,11 @@ import SapSystemsOverviewPage from '@components/SapSystemsOverview';
 import HostDetailsPage, { HostSettingsPage } from '@pages/HostDetails';
 import DatabasesOverviewPage from '@pages/DatabasesOverview';
 import ChecksCatalogPage from '@pages/ChecksCatalog';
-import NotFound from '@components/NotFound';
+import NotFound from '@pages/NotFound';
 import SomethingWentWrong from '@components/SomethingWentWrong';
 import SaptuneDetailsPage from '@components/SaptuneDetails';
 import Settings from '@components/Settings';
-import Eula from '@components/Eula';
+import Eula from '@pages/Eula';
 import Login from '@components/Login';
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';

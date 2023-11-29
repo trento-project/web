@@ -19,7 +19,7 @@ import { getClusterIDs } from '@state/selectors/cluster';
 import { getHostID, getHostIDs } from '@state/selectors/host';
 
 import ExecutionContainer from '@pages/ExecutionResults/ExecutionContainer';
-import NotFound from '@components/NotFound';
+import NotFound from '@pages/NotFound';
 import ResultsContainer from '@pages/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
 

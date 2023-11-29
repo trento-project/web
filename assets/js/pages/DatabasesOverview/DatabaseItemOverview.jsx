@@ -2,7 +2,7 @@ import { EOS_DATABASE_OUTLINED } from 'eos-icons-react';
 import React from 'react';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
-import InstanceOverview from '@components/InstanceOverview';
+import InstanceOverview from '@pages/InstanceOverview';
 
 export function DatabaseInstance({ instance, onCleanUpClick }) {
   return (

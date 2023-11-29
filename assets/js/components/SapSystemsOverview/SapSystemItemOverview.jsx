@@ -3,7 +3,7 @@ import React from 'react';
 
 import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import DatabaseItemOverview from '@pages/DatabasesOverview/DatabaseItemOverview';
-import InstanceOverview from '@components/InstanceOverview';
+import InstanceOverview from '@pages/InstanceOverview';
 
 function ApplicationInstance({ instance, onCleanUpClick }) {
   return (
