@@ -9,7 +9,7 @@ import Table from '@common/Table';
 import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
-import CleanUpButton from '@components/CleanUpButton';
+import CleanUpButton from '@common/CleanUpButton';
 import DeregistrationModal from '@components/DeregistrationModal';
 import { canStartExecution } from '@components/ChecksSelection';
 import Tooltip from '@common/Tooltip';

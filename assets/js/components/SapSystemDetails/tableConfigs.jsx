@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import HostLink from '@components/HostLink';
 import ProviderLabel from '@components/ProviderLabel';
-import CleanUpButton from '@components/CleanUpButton';
+import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';
 import HealthIcon from '@pages/HealthIcon';
 

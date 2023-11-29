@@ -7,7 +7,7 @@ import { Features } from '@components/SapSystemDetails';
 import HostLink from '@components/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import Pill from '@common/Pill';
-import CleanUpButton from '@components/CleanUpButton';
+import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';
 
 function InstanceOverview({

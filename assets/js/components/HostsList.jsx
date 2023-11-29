@@ -17,7 +17,7 @@ import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 import ProviderLabel from '@components/ProviderLabel';
 import Tooltip from '@common/Tooltip';
-import CleanUpButton from '@components/CleanUpButton';
+import CleanUpButton from '@common/CleanUpButton';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
