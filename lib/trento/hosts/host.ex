@@ -730,7 +730,6 @@ defmodule Trento.Hosts.Host do
 
   defp maybe_emit_host_health_changed_event(%Host{
          host_id: host_id,
-         selected_checks: selected_checks,
          heartbeat: heartbeat,
          checks_health: checks_health,
          saptune_health: saptune_health,
@@ -738,7 +737,7 @@ defmodule Trento.Hosts.Host do
        }) do
     new_health =
       [heartbeat]
-      |> maybe_add_checks_health(checks_health, selected_checks)
+      |> maybe_add_checks_health(checks_health)
       |> maybe_add_saptune_health(saptune_health)
       |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
@@ -748,8 +747,10 @@ defmodule Trento.Hosts.Host do
     end
   end
 
-  defp maybe_add_checks_health(healths, _, []), do: healths
-  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
+  defp maybe_add_checks_health(healths, checks_health) when checks_health != Health.unknown(),
+    do: [checks_health | healths]
+
+  defp maybe_add_checks_health(healths, _), do: healths
 
   defp maybe_add_saptune_health(healths, Health.unknown()), do: healths
   defp maybe_add_saptune_health(healths, saptune_health), do: [saptune_health | healths]

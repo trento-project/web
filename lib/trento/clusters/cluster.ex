@@ -605,19 +605,20 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_deregistered_event(_, _), do: nil
 
-  defp maybe_add_checks_health(healths, _, []), do: healths
-  defp maybe_add_checks_health(healths, checks_health, _), do: [checks_health | healths]
+  defp maybe_add_checks_health(healths, checks_health) when checks_health != Health.unknown(),
+    do: [checks_health | healths]
+
+  defp maybe_add_checks_health(healths, _), do: healths
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
          discovered_health: discovered_health,
          checks_health: checks_health,
-         selected_checks: selected_checks,
          health: health
        }) do
     new_health =
       [discovered_health]
-      |> maybe_add_checks_health(checks_health, selected_checks)
+      |> maybe_add_checks_health(checks_health)
       |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
 

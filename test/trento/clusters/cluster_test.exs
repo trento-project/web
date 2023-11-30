@@ -474,6 +474,82 @@ defmodule Trento.ClusterTest do
       )
     end
 
+    test "checks health should not affect health when checks health is unknown" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.passing()),
+          %ClusterChecksHealthChanged{
+            cluster_id: cluster_id,
+            checks_health: Health.unknown()
+          },
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_id,
+            discovered_health: Health.passing()
+          }
+        ],
+        SelectChecks.new!(%{
+          cluster_id: cluster_id,
+          checks: selected_checks
+        }),
+        [
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   cluster_id: ^cluster_id,
+                   health: Health.passing(),
+                   checks_health: Health.unknown()
+                 } = cluster
+        end
+      )
+    end
+
+    test "should not update health when an empty checks selection is saved" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.critical()),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          },
+          %ClusterChecksHealthChanged{
+            cluster_id: cluster_id,
+            checks_health: Health.warning()
+          },
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_id,
+            discovered_health: Health.critical()
+          }
+        ],
+        SelectChecks.new!(%{
+          cluster_id: cluster_id,
+          checks: []
+        }),
+        [
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: []
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   cluster_id: ^cluster_id,
+                   health: Health.critical(),
+                   checks_health: Health.warning()
+                 } = cluster
+        end
+      )
+    end
+
     test "should not change health if it is already critical" do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)

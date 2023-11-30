@@ -381,7 +381,44 @@ defmodule Trento.Hosts.HostTest do
       end
     end
 
-    test "should ignore checks health when an empty checks selection is saved" do
+    test "checks health should not affect health when checks health is unknown" do
+      host_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+      host_registered_event = build(:host_registered_event, host_id: host_id)
+      heartbeat_succeded_event = build(:heartbeat_succeded, host_id: host_id)
+
+      host_health_changed_event =
+        build(:host_health_changed_event, host_id: host_id, health: Health.warning())
+
+      assert_events_and_state(
+        [
+          host_registered_event,
+          heartbeat_succeded_event,
+          host_health_changed_event
+        ],
+        SelectHostChecks.new!(%{
+          host_id: host_id,
+          checks: selected_checks
+        }),
+        [
+          %HostChecksSelected{
+            host_id: host_id,
+            checks: selected_checks
+          },
+          %HostHealthChanged{host_id: host_id, health: Health.passing()}
+        ],
+        fn host ->
+          assert %Host{
+                   heartbeat: Health.passing(),
+                   selected_checks: ^selected_checks,
+                   checks_health: Health.unknown(),
+                   health: Health.passing()
+                 } = host
+        end
+      )
+    end
+
+    test "should not update health when an empty checks selection is saved" do
       host_id = Faker.UUID.v4()
       host_registered_event = build(:host_registered_event, host_id: host_id)
       heartbeat_succeded_event = build(:heartbeat_succeded, host_id: host_id)
@@ -416,15 +453,14 @@ defmodule Trento.Hosts.HostTest do
           %HostChecksSelected{
             host_id: host_id,
             checks: []
-          },
-          %HostHealthChanged{host_id: host_id, health: Health.passing()}
+          }
         ],
         fn host ->
           assert %Host{
                    heartbeat: Health.passing(),
                    selected_checks: [],
                    checks_health: Health.warning(),
-                   health: Health.passing()
+                   health: Health.warning()
                  } = host
         end
       )
