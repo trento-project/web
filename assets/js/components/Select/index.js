@@ -1,10 +1,10 @@
 import Select, { OPTION_ALL } from './Select';
 
-export const createOptionRenderer = (label, renderer) => (option) => {
-  if (option === OPTION_ALL) {
-    return label;
+export const createOptionRenderer = (optionAllLabel, renderer) => (option) => {
+  if (option.value === OPTION_ALL) {
+    return optionAllLabel;
   }
-  return renderer(option);
+  return renderer(option.value, option.disabled);
 };
 
 export { OPTION_ALL };

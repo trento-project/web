@@ -109,10 +109,10 @@ context('Checks catalog', () => {
           },
           {
             dropdown: 'targets-selection-dropdown',
-            option: 'Hosts',
+            option: 'Clusters',
           },
         ],
-        expectedRequest: `${checksCatalogURL}?provider=aws&target_type=host`,
+        expectedRequest: `${checksCatalogURL}?provider=aws&target_type=cluster`,
       },
       {
         selectedFilters: [
@@ -125,7 +125,7 @@ context('Checks catalog', () => {
             option: 'Clusters',
           },
           {
-            dropdown: 'clustertypes-selection-dropdown',
+            dropdown: 'cluster-types-selection-dropdown',
             option: 'HANA Scale Up',
           },
         ],

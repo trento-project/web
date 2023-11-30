@@ -68,21 +68,37 @@ export default {
   },
 };
 
-const emojiOptions = ['foo', 'bar', 'baz', 'qux'];
+const options = ['foo', 'bar', 'baz', 'qux'];
 
-const emojiOptionsToLabel = {
+export const Default = {
+  args: {
+    optionsName: 'optionz',
+    options,
+    value: 'bar',
+  },
+};
+
+export const WithAllOption = {
+  args: {
+    ...Default.args,
+    options: ['all', ...options],
+  },
+};
+
+const optionsToLabel = {
   foo: '😁 Foo',
   bar: '😛 Bar',
   baz: '🤪 Baz',
   qux: '🧐 Qux',
 };
-const itemsOptionRenderer = (item) => <span>{emojiOptionsToLabel[item]}</span>;
 
-export const Default = {
+const itemsOptionRenderer = createOptionRenderer('All Emojis!', (item) => (
+  <span>{optionsToLabel[item]}</span>
+));
+
+export const WithCustomOptionRenderer = {
   args: {
-    optionsName: 'emojis',
-    options: emojiOptions,
-    value: 'bar',
+    ...WithAllOption.args,
     renderOption: itemsOptionRenderer,
   },
 };
@@ -92,12 +108,28 @@ const providerOptionRenderer = createOptionRenderer(
   (provider) => <ProviderLabel provider={provider} />
 );
 
-export const WithAllOption = {
+export const ProviderSelectionSample = {
   args: {
     optionsName: 'providers',
     options: ['all', ...providers],
     value: 'all',
     renderOption: providerOptionRenderer,
+  },
+};
+
+const structuredOptions = [
+  'foo',
+  { value: 'bar', disabled: true },
+  'baz',
+  'qux',
+];
+
+export const WithDisabledOption = {
+  args: {
+    optionsName: 'structured emojis',
+    options: ['all', ...structuredOptions],
+    value: 'baz',
+    renderOption: itemsOptionRenderer,
   },
 };
 
