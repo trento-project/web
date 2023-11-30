@@ -29,10 +29,10 @@ const buildConfig = {
         '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js'
       ),
       '@common': resolvePath('./js/common'),
+      '@hooks': resolvePath('./js/hooks'),
+      '@lib': resolvePath('./js/lib'),
       '@pages': resolvePath('./js/pages'),
       '@state': resolvePath('./js/state'),
-      '@lib': resolvePath('./js/lib'),
-      '@hooks': resolvePath('./js/hooks'),
       '@static': resolvePath('./static'),
     }),
   ],
