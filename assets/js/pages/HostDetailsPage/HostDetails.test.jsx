@@ -7,7 +7,7 @@ import { faker } from '@faker-js/faker';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
-import { TUNING_VALUES } from '@pages/SaptuneDetailsPage/SaptuneDetails.test';
+import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 
 import HostDetails from './HostDetails';
 

@@ -28,7 +28,7 @@ import Login from '@pages/Login';
 import NotFound from '@pages/NotFound';
 import SapSystemDetails from '@pages//SapSystemDetails/SapSystemDetails';
 import SapSystemsOverviewPage from '@pages/SapSystemsOverviewPage';
-import SaptuneDetailsPage from '@pages/SaptuneDetailsPage';
+import SaptuneDetailsPage from '@pages/SaptuneDetails';
 import Settings from '@pages/Settings';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
 

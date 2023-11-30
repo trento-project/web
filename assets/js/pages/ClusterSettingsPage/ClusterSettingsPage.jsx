@@ -17,16 +17,14 @@ import { executionRequested } from '@state/lastExecutions';
 
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
+import LoadingBox from '@common/LoadingBox';
+import PageHeader from '@common/PageHeader';
+import WarningBanner from '@common/Banners/WarningBanner';
 
 import { ClusterInfoBox } from '@pages/ClusterDetails';
-import LoadingBox from '@common/LoadingBox';
 import ChecksSelection from '@pages/ChecksSelection';
-
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
-
-import WarningBanner from '@common/Banners/WarningBanner';
 
 const catalogWarningBanner = {
   [UNKNOWN_PROVIDER]: (
