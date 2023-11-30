@@ -3,18 +3,17 @@ import { get, groupBy } from 'lodash';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
-
+import Button from '@common/Button';
 import ListView from '@common/ListView';
-import Table from '@common/Table';
-import Tooltip from '@common/Tooltip';
-import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
-import CheckResultsOverview from '@pages/CheckResultsOverview';
+import PageHeader from '@common/PageHeader';
 import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@common/SapSystemLink';
+import Table from '@common/Table';
+import Tooltip from '@common/Tooltip';
 
-import Button from '@common/Button';
+import CheckResultsOverview from '@pages/CheckResultsOverview';
+import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 

@@ -4,26 +4,27 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
-import Table from '@common/Table';
-import DeregistrationModal from '@pages/DeregistrationModal';
+import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
-import Tags from '@common/Tags';
 import HostLink from '@common/HostLink';
-import ClusterLink from '@pages/ClusterDetails/ClusterLink';
-import SapSystemLink from '@common/SapSystemLink';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
-import HealthSummary from '@pages/HealthSummary';
-import { getCounters } from '@pages/HealthSummary/summarySelection';
 import ProviderLabel from '@common/ProviderLabel';
+import SapSystemLink from '@common/SapSystemLink';
+import Table from '@common/Table';
+import Tags from '@common/Tags';
 import Tooltip from '@common/Tooltip';
-import CleanUpButton from '@common/CleanUpButton';
-
-import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
-import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
+
+import ClusterLink from '@pages/ClusterDetails/ClusterLink';
+import DeregistrationModal from '@pages/DeregistrationModal';
+import HealthSummary from '@pages/HealthSummary';
+import { getCounters } from '@pages/HealthSummary/summarySelection';
+
+import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
+import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
 const getInstancesByHost = (instances, hostId) =>
   instances.filter((instance) => instance.host_id === hostId);

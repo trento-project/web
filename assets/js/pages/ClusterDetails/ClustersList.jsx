@@ -8,16 +8,15 @@ import { getClusterTypeLabel } from '@lib/model/clusters';
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
+import PageHeader from '@common/PageHeader';
+import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
-import PageHeader from '@common/PageHeader';
-
-import SapSystemLink from '@common/SapSystemLink';
-
-import HealthSummary from '@pages/HealthSummary';
-import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import { ExecutionIcon } from '@pages/ClusterDetails';
+import { getCounters } from '@pages/HealthSummary/summarySelection';
+import HealthSummary from '@pages/HealthSummary';
+
 import ClusterLink from './ClusterLink';
 
 const getSapSystemBySID = (instances, sid) =>

@@ -5,12 +5,13 @@ import { filter } from 'lodash';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
-import PageHeader from '@common/PageHeader';
 import HealthIcon from '@common/HealthIcon';
+import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
-import HealthSummary from '@pages/HealthSummary';
+
 import DeregistrationModal from '@pages/DeregistrationModal';
+import HealthSummary from '@pages/HealthSummary';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import DatabaseItemOverview from './DatabaseItemOverview';

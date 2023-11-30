@@ -1,11 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
-
-import ChecksResultFilters from '@pages/ExecutionResults/ChecksResultFilters';
-
 import WarningBanner from '@common/Banners/WarningBanner';
+
+import { UNKNOWN_PROVIDER, VMWARE_PROVIDER } from '@lib/model';
+import ChecksResultFilters from '@pages/ExecutionResults/ChecksResultFilters';
 
 import { isTargetCluster } from './checksUtils';
 import BackToTargetDetails from './BackToTargetDetails';

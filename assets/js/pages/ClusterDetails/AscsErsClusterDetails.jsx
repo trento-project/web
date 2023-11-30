@@ -5,21 +5,21 @@ import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
-import Button from '@common/Button';
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
-import Table from '@common/Table';
-import ListView from '@common/ListView';
-import ProviderLabel from '@common/ProviderLabel';
+import Button from '@common/Button';
 import DottedPagination from '@common/DottedPagination';
-import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
+import ListView from '@common/ListView';
+import PageHeader from '@common/PageHeader';
+import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@common/SapSystemLink';
+import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 
+import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
-import SBDDetails from './SBDDetails';
 import AttributesDetails from './AttributesDetails';
+import SBDDetails from './SBDDetails';
 import StoppedResources from './StoppedResources';
 import { enrichNodes } from './HanaClusterDetails';
 

@@ -17,8 +17,8 @@ import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
 
 import ChecksSelection from '@pages/ChecksSelection';
-
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
+
 import HostInfoBox from './HostInfoBox';
 
 function HostSettingsPage() {

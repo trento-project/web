@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { EOS_SETTINGS, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
-import TriggerChecksExecutionRequest from '@pages/TriggerChecksExecutionRequest';
-
 import TrentoLogo from '@static/trento-icon.png';
+
+import TriggerChecksExecutionRequest from '@pages/TriggerChecksExecutionRequest';
 import { isTargetCluster, isTargetHost } from './checksUtils';
 
 function ChecksSelectionHints({

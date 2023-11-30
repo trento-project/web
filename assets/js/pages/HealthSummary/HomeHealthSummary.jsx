@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
 import Table from '@common/Table';
 import HealthIcon from '@common/HealthIcon';
-import { Link } from 'react-router-dom';
 import PageHeader from '@common/PageHeader';
-import HealthSummary from '@pages/HealthSummary';
+
 import useQueryStringValues from '@hooks/useQueryStringValues';
+import HealthSummary from '@pages/HealthSummary';
+
 import { getCounters, isMostRelevantPrio } from './summarySelection';
 
 const healthSummaryTableConfig = {

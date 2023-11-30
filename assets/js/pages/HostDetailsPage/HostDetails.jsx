@@ -4,25 +4,24 @@ import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
 
-import Button from '@common/Button';
-import Table from '@common/Table';
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
-
+import Button from '@common/Button';
 import CleanUpButton from '@common/CleanUpButton';
-import DeregistrationModal from '@pages/DeregistrationModal';
-import { canStartExecution } from '@pages/ChecksSelection';
+import PageHeader from '@common/PageHeader';
+import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
-
-import SuseLogo from '@static/suse_logo.svg';
-import CheckResultsOverview from '@pages/CheckResultsOverview';
-
 import WarningBanner from '@common/Banners/WarningBanner';
 
-import StatusPill from './StatusPill';
+import SuseLogo from '@static/suse_logo.svg';
+
+import CheckResultsOverview from '@pages/CheckResultsOverview';
+import { canStartExecution } from '@pages/ChecksSelection';
+import DeregistrationModal from '@pages/DeregistrationModal';
+
+import HostSummary from './HostSummary';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
-import HostSummary from './HostSummary';
+import StatusPill from './StatusPill';
 
 import {
   subscriptionsTableConfiguration,

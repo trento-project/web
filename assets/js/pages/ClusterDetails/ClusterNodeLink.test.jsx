@@ -3,8 +3,9 @@ import { screen, render, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
-import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 import { hostFactory } from '@lib/test-utils/factories';
+
+import ClusterNodeLink from './ClusterNodeLink';
 
 describe('ClusterNodeLink', () => {
   it('renders HostLink when hostId is provided', () => {

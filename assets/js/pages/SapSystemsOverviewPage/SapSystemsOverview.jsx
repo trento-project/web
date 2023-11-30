@@ -5,13 +5,14 @@ import { filter } from 'lodash';
 
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 
-import PageHeader from '@common/PageHeader';
 import HealthIcon from '@common/HealthIcon';
-import Table from '@common/Table';
-import SAPSystemItemOverview from '@pages/SapSystemsOverviewPage/SapSystemItemOverview';
+import PageHeader from '@common/PageHeader';
 import Tags from '@common/Tags';
-import HealthSummary from '@pages/HealthSummary';
+import Table from '@common/Table';
+
 import DeregistrationModal from '@pages/DeregistrationModal';
+import HealthSummary from '@pages/HealthSummary';
+import SAPSystemItemOverview from '@pages/SapSystemsOverviewPage/SapSystemItemOverview';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 function SapSystemsOverview({

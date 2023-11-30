@@ -3,11 +3,13 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
-import { getEnrichedDatabaseDetails } from '@state/selectors/sapSystem';
-import { deregisterDatabaseInstance } from '@state/databases';
 
 import BackButton from '@common/BackButton';
+
 import { GenericSystemDetails } from '@pages/SapSystemDetails';
+
+import { getEnrichedDatabaseDetails } from '@state/selectors/sapSystem';
+import { deregisterDatabaseInstance } from '@state/databases';
 
 function DatabaseDetails() {
   const { id } = useParams();

@@ -1,10 +1,11 @@
 import React from 'react';
 import { chunk } from 'lodash';
 
-import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import HealthIcon from '@common/HealthIcon';
 import ListView from '@common/ListView';
 import Tooltip from '@common/Tooltip';
+
+import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 
 const prepareTooltipContent = (ipAddresses) => (
   <div className="text-center">
