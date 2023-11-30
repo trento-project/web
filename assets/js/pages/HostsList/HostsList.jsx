@@ -6,7 +6,7 @@ import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
 import Table from '@common/Table';
 import DeregistrationModal from '@pages/DeregistrationModal';
-import HealthIcon from '@pages/HealthIcon';
+import HealthIcon from '@common/HealthIcon';
 import Tags from '@common/Tags';
 import HostLink from '@common/HostLink';
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';

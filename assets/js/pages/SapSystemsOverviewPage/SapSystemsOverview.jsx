@@ -6,7 +6,7 @@ import { filter } from 'lodash';
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 
 import PageHeader from '@common/PageHeader';
-import HealthIcon from '@pages/HealthIcon';
+import HealthIcon from '@common/HealthIcon';
 import Table from '@common/Table';
 import SAPSystemItemOverview from '@pages/SapSystemsOverviewPage/SapSystemItemOverview';
 import Tags from '@common/Tags';

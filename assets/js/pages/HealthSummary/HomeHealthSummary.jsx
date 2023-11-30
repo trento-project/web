@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Table from '@common/Table';
-import HealthIcon from '@pages/HealthIcon';
+import HealthIcon from '@common/HealthIcon';
 import { Link } from 'react-router-dom';
 import PageHeader from '@common/PageHeader';
 import HealthSummary from '@pages/HealthSummary';

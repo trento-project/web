@@ -1,5 +1,5 @@
 import React from 'react';
-import HealthIcon from '@pages/HealthIcon';
+import HealthIcon from '@common/HealthIcon';
 import Tooltip from '@common/Tooltip';
 
 import Pill from '.';

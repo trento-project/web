@@ -6,7 +6,7 @@ import { filter } from 'lodash';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import PageHeader from '@common/PageHeader';
-import HealthIcon from '@pages/HealthIcon';
+import HealthIcon from '@common/HealthIcon';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
 import HealthSummary from '@pages/HealthSummary';

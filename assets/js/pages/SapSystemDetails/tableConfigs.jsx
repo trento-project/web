@@ -5,7 +5,7 @@ import HostLink from '@common/HostLink';
 import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';
-import HealthIcon from '@pages/HealthIcon';
+import HealthIcon from '@common/HealthIcon';
 
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';

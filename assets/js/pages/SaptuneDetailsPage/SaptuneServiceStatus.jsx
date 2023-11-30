@@ -1,6 +1,6 @@
 import React from 'react';
 import { get } from 'lodash';
-import HealthIcon from '@pages/HealthIcon';
+import HealthIcon from '@common/HealthIcon';
 
 const servicesIcons = {
   saptune: {
