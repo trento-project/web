@@ -3,7 +3,7 @@ import React from 'react';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 
 import { ClusterInfoBox } from '@pages/ClusterDetails';
-import HostInfoBox from '@pages/HostDetails/HostInfoBox';
+import HostInfoBox from '@pages/HostSettingsPage/HostInfoBox';
 
 function TargetInfoBox({ targetType, target }) {
   switch (targetType) {
