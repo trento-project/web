@@ -149,7 +149,7 @@ export function* deregisterApplicationInstance({
   }
 }
 
-export function* watchSapSystem() {
+export function* watchSapSystemEvents() {
   yield takeEvery(SAP_SYSTEM_REGISTERED, sapSystemRegistered);
   yield takeEvery(SAP_SYSTEM_HEALTH_CHANGED, sapSystemHealthChanged);
   yield takeEvery(

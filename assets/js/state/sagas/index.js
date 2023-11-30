@@ -5,36 +5,28 @@ import {
   call,
   fork,
   takeEvery,
-  select,
   debounce,
   takeLatest,
 } from 'redux-saga/effects';
 
 import {
+  HOST_REGISTERED,
+  HEARTBEAT_SUCCEDED,
+  HEARTBEAT_FAILED,
   HOST_DEREGISTERED,
   HOST_RESTORED,
   HOST_HEALTH_CHANGED,
   setHosts,
-  appendHost,
-  updateHost,
-  setHeartbeatPassing,
-  setHeartbeatCritical,
-  setHostNotDeregisterable,
   startHostsLoading,
   stopHostsLoading,
-  checkHostIsDeregisterable,
-  cancelCheckHostIsDeregisterable,
 } from '@state/hosts';
 
 import {
+  CLUSTER_REGISTERED,
   CLUSTER_DEREGISTERED,
   CLUSTER_RESTORED,
   CLUSTER_HEALTH_CHANGED,
   setClusters,
-  appendCluster,
-  updateCluster,
-  updateCibLastWritten,
-  updateChecksResults,
   startClustersLoading,
   stopClustersLoading,
 } from '@state/clusters';
@@ -64,44 +56,28 @@ import {
   stopDatabasesLoading,
 } from '@state/databases';
 
+import { SET_USER_AS_LOGGED } from '@state/user';
+
 import { setEulaVisible, setIsPremium } from '@state/settings';
 
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
-import { watchCatalogUpdate } from '@state/sagas/catalog';
-import { watchSapSystem } from '@state/sagas/sapSystems';
-import { watchDatabase } from '@state/sagas/databases';
-import {
-  markDeregisterableHosts,
-  watchHostDeregistered,
-  watchHostDeregisterable,
-  watchDeregisterHost,
-  watchHostRestored,
-  watchHostHealthChanged,
-  watchSaptuneStatusUpdated,
-} from '@state/sagas/hosts';
-import {
-  watchClusterDeregistered,
-  watchClusterRestored,
-  watchClusterHealthChanged,
-} from '@state/sagas/clusters';
-import {
-  watchUpdateLastExecution,
-  watchRequestExecution,
-  watchHostRequestExecution,
-} from '@state/sagas/lastExecutions';
-import { watchPerformLogin } from '@state/sagas/user';
-import { watchChecksSelection } from '@state/sagas/checksSelection';
 
-import { getClusterName } from '@state/selectors/cluster';
+import { watchCatalogEvents } from '@state/sagas/catalog';
+import { watchClusterEvents } from '@state/sagas/clusters';
+import { watchDatabaseEvents } from '@state/sagas/databases';
+import { markDeregisterableHosts, watchHostEvents } from '@state/sagas/hosts';
+import { watchLastExecutionEvents } from '@state/sagas/lastExecutions';
+import { watchSapSystemEvents } from '@state/sagas/sapSystems';
+
+import { watchPerformLogin } from '@state/sagas/user';
+import { watchChecksSelectionEvents } from '@state/sagas/checksSelection';
 
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
-import { notify } from '@state/notifications';
 import { store } from '@state';
 
-// eslint-disable-next-line no-undef
-const deregistrationDebounce = config.deregistrationDebounce ?? 0;
+const RESET_STATE = 'RESET_STATE';
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
@@ -157,134 +133,13 @@ function* setupSocketEvents() {
 
 function* watchUserLoggedIn() {
   yield all([
-    takeLatest('user/setUserAsLogged', initialDataFetch),
-    takeLatest('user/setUserAsLogged', setupSocketEvents),
+    takeLatest(SET_USER_AS_LOGGED, initialDataFetch),
+    takeLatest(SET_USER_AS_LOGGED, setupSocketEvents),
   ]);
 }
 
 function* watchResetState() {
-  yield takeEvery('RESET_STATE', initialDataFetch);
-}
-
-function* hostRegistered({ payload }) {
-  yield put(appendHost(payload));
-  yield put(
-    notify({
-      text: `A new host, ${payload.hostname}, has been discovered.`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
-function* watchHostRegistered() {
-  yield takeEvery('HOST_REGISTERED', hostRegistered);
-}
-
-function* hostDetailsUpdated({ payload }) {
-  yield put(updateHost(payload));
-}
-
-function* watchHostDetailsUpdated() {
-  yield takeEvery('HOST_DETAILS_UPDATED', hostDetailsUpdated);
-}
-
-function* heartbeatSucceded({ payload }) {
-  yield put(setHeartbeatPassing(payload));
-  yield put(setHostNotDeregisterable(payload));
-  yield put(cancelCheckHostIsDeregisterable(payload));
-  yield put(
-    notify({
-      text: `The host ${payload.hostname} heartbeat is alive.`,
-      icon: '❤️',
-    })
-  );
-}
-
-function* watchHeartbeatSucceded() {
-  yield takeEvery('HEARTBEAT_SUCCEDED', heartbeatSucceded);
-}
-
-function* heartbeatFailed({ payload }) {
-  yield put(setHeartbeatCritical(payload));
-  yield put(
-    checkHostIsDeregisterable({ ...payload, debounce: deregistrationDebounce })
-  );
-  yield put(
-    notify({
-      text: `The host ${payload.hostname} heartbeat is failing.`,
-      icon: '💔',
-    })
-  );
-}
-
-function* watchHeartbeatFailed() {
-  yield takeEvery('HEARTBEAT_FAILED', heartbeatFailed);
-}
-
-function* clusterRegistered({ payload }) {
-  yield put(appendCluster(payload));
-  yield put(
-    notify({
-      text: `A new cluster, ${payload.name}, has been discovered.`,
-      icon: 'ℹ️',
-    })
-  );
-}
-
-function* watchClusterRegistered() {
-  yield takeEvery('CLUSTER_REGISTERED', clusterRegistered);
-}
-
-function* cibLastWrittenUpdated({ payload }) {
-  yield put(updateCibLastWritten(payload));
-}
-
-function* watchClusterCibLastWrittenUpdated() {
-  yield takeEvery('CLUSTER_CIB_LAST_WRITTEN_UPDATED', cibLastWrittenUpdated);
-}
-
-function* clusterDetailsUpdated({ payload }) {
-  yield put(updateCluster(payload));
-}
-
-function* watchClusterDetailsUpdated() {
-  yield takeEvery('CLUSTER_DETAILS_UPDATED', clusterDetailsUpdated);
-}
-
-function* checksExecutionStarted({ payload }) {
-  const clusterName = yield select(getClusterName(payload.cluster_id));
-  yield put(
-    notify({
-      text: `Checks execution started, cluster: ${clusterName}`,
-      icon: '🐰',
-    })
-  );
-}
-
-function* watchChecksExecutionStarted() {
-  yield takeEvery('CHECKS_EXECUTION_STARTED', checksExecutionStarted);
-}
-
-function* checksExecutionCompleted({ payload }) {
-  const clusterName = yield select(getClusterName(payload.cluster_id));
-  yield put(
-    notify({
-      text: `Checks execution completed, cluster: ${clusterName}`,
-      icon: '🐇',
-    })
-  );
-}
-
-function* watchChecksExecutionCompleted() {
-  yield takeEvery('CHECKS_EXECUTION_COMPLETED', checksExecutionCompleted);
-}
-
-function* checksResultsUpdated({ payload }) {
-  yield put(updateChecksResults(payload));
-}
-
-function* watchChecksResultsUpdated() {
-  yield takeEvery('CHECKS_RESULTS_UPDATED', checksResultsUpdated);
+  yield takeEvery(RESET_STATE, initialDataFetch);
 }
 
 function* refreshHealthSummaryOnComponentsHealthChange() {
@@ -292,12 +147,12 @@ function* refreshHealthSummaryOnComponentsHealthChange() {
 
   yield debounce(
     debounceDuration,
-    'HOST_REGISTERED',
+    HOST_REGISTERED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
     debounceDuration,
-    'CLUSTER_REGISTERED',
+    CLUSTER_REGISTERED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
@@ -312,12 +167,12 @@ function* refreshHealthSummaryOnComponentsHealthChange() {
   );
   yield debounce(
     debounceDuration,
-    'HEARTBEAT_FAILED',
+    HEARTBEAT_FAILED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
     debounceDuration,
-    'HEARTBEAT_SUCCEDED',
+    HEARTBEAT_SUCCEDED,
     loadSapSystemsHealthSummary
   );
   yield debounce(
@@ -375,37 +230,18 @@ function* refreshHealthSummaryOnComponentsHealthChange() {
 
 export default function* rootSaga() {
   yield all([
-    watchUserLoggedIn(),
-    watchResetState(),
-    watchHostRegistered(),
-    watchHostDetailsUpdated(),
-    watchHeartbeatSucceded(),
-    watchHeartbeatFailed(),
-    watchHostHealthChanged(),
-    watchHostDeregistered(),
-    watchHostRestored(),
-    watchSaptuneStatusUpdated(),
-    watchClusterRegistered(),
-    watchClusterDetailsUpdated(),
-    watchClusterCibLastWrittenUpdated(),
-    watchClusterDeregistered(),
-    watchClusterRestored(),
-    watchNotifications(),
-    watchChecksSelection(),
-    watchChecksExecutionStarted(),
-    watchChecksExecutionCompleted(),
-    watchChecksResultsUpdated(),
-    watchClusterHealthChanged(),
-    watchSapSystem(),
-    watchDatabase(),
-    watchCatalogUpdate(),
-    watchUpdateLastExecution(),
-    watchRequestExecution(),
-    watchHostRequestExecution(),
-    watchAcceptEula(),
     refreshHealthSummaryOnComponentsHealthChange(),
+    watchAcceptEula(),
+    watchCatalogEvents(),
+    watchChecksSelectionEvents(),
+    watchClusterEvents(),
+    watchDatabaseEvents(),
+    watchHostEvents(),
+    watchLastExecutionEvents(),
+    watchNotifications(),
     watchPerformLogin(),
-    watchHostDeregisterable(),
-    watchDeregisterHost(),
+    watchResetState(),
+    watchSapSystemEvents(),
+    watchUserLoggedIn(),
   ]);
 }

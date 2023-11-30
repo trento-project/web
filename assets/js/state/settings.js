@@ -21,6 +21,8 @@ export const settingsSlice = createSlice({
   },
 });
 
+export const ACCEPT_EULA = 'ACCEPT_EULA';
+
 export const { setEulaVisible, setIsPremium, acceptEula } =
   settingsSlice.actions;
 

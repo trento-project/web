@@ -1,7 +1,7 @@
 import { put, call, takeEvery } from 'redux-saga/effects';
 import { post } from '@lib/network';
 
-import { acceptEula } from '@state/settings';
+import { ACCEPT_EULA, acceptEula } from '@state/settings';
 import { logError } from '@lib/log';
 
 export function* acceptEulaSaga() {
@@ -15,5 +15,5 @@ export function* acceptEulaSaga() {
 }
 
 export function* watchAcceptEula() {
-  yield takeEvery('ACCEPT_EULA', acceptEulaSaga);
+  yield takeEvery(ACCEPT_EULA, acceptEulaSaga);
 }

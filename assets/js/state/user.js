@@ -31,6 +31,8 @@ export const userSlice = createSlice({
   },
 });
 
+export const SET_USER_AS_LOGGED = 'user/setUserAsLogged';
+
 export const { setUserAsLogged, setUser, setAuthError, setAuthInProgress } =
   userSlice.actions;
 

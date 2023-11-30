@@ -102,7 +102,7 @@ export function* selectClusterChecks({
   });
 }
 
-export function* watchChecksSelection() {
+export function* watchChecksSelectionEvents() {
   yield takeEvery(HOST_CHECKS_SELECTED, selectHostChecks);
   yield takeEvery(CLUSTER_CHECKS_SELECTED, selectClusterChecks);
 }

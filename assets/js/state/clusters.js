@@ -49,27 +49,6 @@ export const clustersListSlice = createSlice({
         return cluster;
       });
     },
-    updateChecksResults: (state, action) => {
-      state.clusters = state.clusters.map((cluster) => {
-        if (cluster.id === action.payload.cluster_id) {
-          cluster.checks_results = [
-            ...cluster.checks_results.filter(
-              (check_result) => check_result.host_id !== action.payload.host_id
-            ),
-            ...action.payload.checks_results,
-          ];
-
-          cluster.hosts_executions = [
-            ...cluster.hosts_executions.filter(
-              (host_execution) =>
-                host_execution.host_id !== action.payload.host_id
-            ),
-            ...action.payload.hosts_executions,
-          ];
-        }
-        return cluster;
-      });
-    },
     updateClusterHealth: (state, action) => {
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.cluster_id) {
@@ -101,6 +80,10 @@ export const clustersListSlice = createSlice({
   },
 });
 
+export const CLUSTER_REGISTERED = 'CLUSTER_REGISTERED';
+export const CLUSTER_CIB_LAST_WRITTEN_UPDATED =
+  'CLUSTER_CIB_LAST_WRITTEN_UPDATED';
+export const CLUSTER_DETAILS_UPDATED = 'CLUSTER_DETAILS_UPDATED';
 export const CLUSTER_DEREGISTERED = 'CLUSTER_DEREGISTERED';
 export const CLUSTER_RESTORED = 'CLUSTER_RESTORED';
 export const CLUSTER_CHECKS_SELECTED = 'CLUSTER_CHECKS_SELECTED';
