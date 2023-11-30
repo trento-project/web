@@ -8,7 +8,7 @@ import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 import PageHeader from '@common/PageHeader';
 import HealthIcon from '@pages/HealthIcon';
 import Table from '@common/Table';
-import SAPSystemItemOverview from '@pages/SapSystemsOverview/SapSystemItemOverview';
+import SAPSystemItemOverview from '@pages/SapSystemsOverviewPage/SapSystemItemOverview';
 import Tags from '@common/Tags';
 import HealthSummary from '@pages/HealthSummary';
 import DeregistrationModal from '@pages/DeregistrationModal';
