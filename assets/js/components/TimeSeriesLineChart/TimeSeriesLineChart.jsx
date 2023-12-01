@@ -95,6 +95,9 @@ function TimeSeriesLineChart({
       drag: {
         enabled: true,
       },
+      pan: {
+        enabled: false,
+      },
       mode: 'x',
       onZoomComplete: onZoomChange,
     },
