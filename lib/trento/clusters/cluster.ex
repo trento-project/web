@@ -294,22 +294,15 @@ defmodule Trento.Clusters.Cluster do
   def execute(
         %Cluster{
           cluster_id: cluster_id
-        } = cluster,
+        },
         %SelectChecks{
           checks: selected_checks
         }
       ) do
-    cluster
-    |> Multi.new()
-    |> Multi.execute(fn _ ->
-      [
-        %ChecksSelected{
-          cluster_id: cluster_id,
-          checks: selected_checks
-        }
-      ]
-    end)
-    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
+    %ChecksSelected{
+      cluster_id: cluster_id,
+      checks: selected_checks
+    }
   end
 
   def execute(
