@@ -404,15 +404,14 @@ defmodule Trento.Hosts.HostTest do
           %HostChecksSelected{
             host_id: host_id,
             checks: selected_checks
-          },
-          %HostHealthChanged{host_id: host_id, health: Health.passing()}
+          }
         ],
         fn host ->
           assert %Host{
                    heartbeat: Health.passing(),
                    selected_checks: ^selected_checks,
                    checks_health: Health.unknown(),
-                   health: Health.passing()
+                   health: Health.warning()
                  } = host
         end
       )
