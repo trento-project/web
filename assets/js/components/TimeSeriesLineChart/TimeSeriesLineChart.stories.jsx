@@ -61,10 +61,38 @@ const timeFrames = eachMinuteOfInterval(
 
 const datasets = [
   {
-    name: 'CPU',
+    name: 'Busy User',
     timeFrames: timeFrames.map((t) => ({
       time: t,
       value: faker.number.float({ min: 0, max: 100 }),
+    })),
+  },
+  {
+    name: 'Busy System',
+    timeFrames: timeFrames.map((t) => ({
+      time: t,
+      value: faker.number.float({ min: 20, max: 30 }),
+    })),
+  },
+  {
+    name: 'I/O',
+    timeFrames: timeFrames.map((t) => ({
+      time: t,
+      value: faker.number.float({ min: 0, max: 50 }),
+    })),
+  },
+  {
+    name: 'Other Cpu Value',
+    timeFrames: timeFrames.map((t) => ({
+      time: t,
+      value: faker.number.float({ min: 0, max: 20 }),
+    })),
+  },
+  {
+    name: 'Another Value',
+    timeFrames: timeFrames.map((t) => ({
+      time: t,
+      value: faker.number.float({ min: 10, max: 200 }),
     })),
   },
 ];

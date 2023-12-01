@@ -12,6 +12,30 @@ import ZoomPlugin from 'chartjs-plugin-zoom';
 import 'chartjs-adapter-date-fns';
 import classNames from 'classnames';
 
+
+const AVAILABLE_COLORS = [
+  {
+    line: '#A5EED4',
+    point: '#58CF9B'
+  },
+  {
+    line: '#FEF08A',
+    point: '#FACC15'
+  },
+  {
+    line: '#FECACA',
+    point: '#F87171'
+  },
+  {
+    line: '#BFDBFE',
+    point: '#60A5FA'
+  },
+  {
+    line: '#E5E7EB',
+    point: '#9CA3AF'
+  }
+];
+
 ChartJS.register(
   LinearScale,
   PointElement,
@@ -33,14 +57,14 @@ function TimeSeriesLineChart({
   const [chartDatasets, setChartDatasets] = useState([]);
 
   useEffect(() => {
-    const newDatasets = datasets.map((d) => ({
+    const newDatasets = datasets.map((d, i) => ({
       label: d.name,
       data: d.timeFrames.map(({ time, value }) => ({
         x: time,
         y: value,
       })),
-      borderColor: '#A5EED4',
-      pointBackgroundColor: '#58CF9B',
+      borderColor: AVAILABLE_COLORS[i].line,
+      pointBackgroundColor: AVAILABLE_COLORS[i].point,
       pointBorderWidth: 0,
       pointRadius: 5,
       pointHoverRadius: 8,
@@ -110,6 +134,10 @@ function TimeSeriesLineChart({
       zoom: zoomOptions,
     },
   };
+
+  if (datasets.length > 5) {
+    throw new Error("TimeSeriesLineChart component supports a maximum of 5 datasets")
+  }
 
   return (
     <div
