@@ -120,7 +120,7 @@ defmodule Trento.Clusters.Cluster do
     field :hosts_number, :integer
     field :provider, Ecto.Enum, values: Provider.values()
     field :discovered_health, Ecto.Enum, values: Health.values()
-    field :checks_health, Ecto.Enum, values: Health.values()
+    field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []

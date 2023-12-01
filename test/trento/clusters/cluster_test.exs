@@ -481,10 +481,6 @@ defmodule Trento.ClusterTest do
       assert_events_and_state(
         [
           build(:cluster_registered_event, cluster_id: cluster_id, health: Health.passing()),
-          %ClusterChecksHealthChanged{
-            cluster_id: cluster_id,
-            checks_health: Health.unknown()
-          },
           %ClusterDiscoveredHealthChanged{
             cluster_id: cluster_id,
             discovered_health: Health.passing()
@@ -599,7 +595,7 @@ defmodule Trento.ClusterTest do
           host_added_to_cluster_event,
           %ClusterChecksHealthChanged{
             cluster_id: cluster_registered_event.cluster_id,
-            checks_health: :unknown
+            checks_health: Health.unknown()
           },
           %ChecksSelected{
             cluster_id: cluster_registered_event.cluster_id,
@@ -633,7 +629,7 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           %Cluster{
             discovered_health: :warning,
-            checks_health: :unknown,
+            checks_health: Health.unknown(),
             health: :warning
           } = cluster
         end
@@ -763,8 +759,8 @@ defmodule Trento.ClusterTest do
             health: cluster_registered_event.health,
             hosts: [],
             selected_checks: [],
-            discovered_health: :passing,
-            checks_health: nil
+            discovered_health: Health.passing(),
+            checks_health: Health.unknown()
           }
         },
         fn %Cluster{rolling_up: rolling_up} ->
@@ -794,8 +790,8 @@ defmodule Trento.ClusterTest do
               health: cluster_registered_event.health,
               hosts: [],
               selected_checks: [],
-              discovered_health: :passing,
-              checks_health: nil
+              discovered_health: Health.passing(),
+              checks_health: Health.unknown()
             }
           }
         ],
@@ -812,7 +808,7 @@ defmodule Trento.ClusterTest do
           assert cluster.health == cluster_registered_event.health
           assert cluster.hosts == []
           assert cluster.selected_checks == []
-          assert cluster.discovered_health == :passing
+          assert cluster.discovered_health == Health.passing()
         end
       )
     end
