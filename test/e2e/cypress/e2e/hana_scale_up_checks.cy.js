@@ -51,20 +51,42 @@ context('HANA scale-up checks', () => {
       cy.get('button').contains('Back to Cluster Details').click();
       cy.get('button').contains('Start Execution').click();
 
-      cy.get('table').each((_, index) => {
-        cy.get('table').eq(index).find('.tn-check-result-row').as('rows');
+      cy.get('table')
+        .each((_, index) => {
+          cy.get('table').eq(index).find('.tn-check-result-row').as('rows');
 
-        cy.get('@rows').each((elem) => {
-          const checkID = elem.find('td').get(0).innerText;
-          const result = expectedCheckResults[checkID];
+          cy.get('@rows').each((elem) => {
+            const checkID = elem.find('td').get(0).innerText;
+            const result = expectedCheckResults[checkID];
 
-          if (result) {
-            cy.get(elem)
-              .find('[data-testid="eos-svg-component"]')
-              .should('have.class', result);
-          }
+            if (result) {
+              cy.get(elem)
+                .find('[data-testid="eos-svg-component"]')
+                .should('have.class', result);
+            }
+          });
+        })
+        .then(() => {
+          cy.get('td')
+            .contains('Corosync expected_votes is set to expected value')
+            .click();
+          cy.get('span').contains('1/1 Expectations met').click();
+          cy.get('div')
+            .get('.text-sm')
+            .contains('expected_votes')
+            .siblings()
+            .should('contain', 'Passing');
+          cy.get('div')
+            .get('.text-sm')
+            .contains('expected_expected_votes')
+            .siblings()
+            .should('contain', '2');
+          cy.get('div')
+            .get('.text-sm')
+            .contains('corosync_expected_votes')
+            .siblings()
+            .should('contain', '2');
         });
-      });
     });
   });
 });
