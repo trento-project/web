@@ -381,7 +381,7 @@ defmodule Trento.Hosts.HostTest do
       end
     end
 
-    test "unknown checks health should not affect aggregated cluster's health" do
+    test "unknown checks health should not affect aggregated host's health" do
       host_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
       host_registered_event = build(:host_registered_event, host_id: host_id)
