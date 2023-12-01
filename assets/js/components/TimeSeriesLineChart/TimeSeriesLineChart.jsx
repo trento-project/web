@@ -130,6 +130,12 @@ function TimeSeriesLineChart({
     scales,
     responsive: true,
     plugins: {
+      tooltip: {
+        titleAlign: 'center',
+        bodyAlign: 'center',
+        footerAlign: 'center',
+        displayColors: 'false',
+      },
       legend: false,
       zoom: zoomOptions,
     },
