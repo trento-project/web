@@ -747,10 +747,8 @@ defmodule Trento.Hosts.Host do
     end
   end
 
-  defp maybe_add_checks_health(healths, checks_health) when checks_health != Health.unknown(),
-    do: [checks_health | healths]
-
-  defp maybe_add_checks_health(healths, _), do: healths
+  defp maybe_add_checks_health(healths, Health.unknown()), do: healths
+  defp maybe_add_checks_health(healths, checks_health), do: [checks_health | healths]
 
   defp maybe_add_saptune_health(healths, Health.unknown()), do: healths
   defp maybe_add_saptune_health(healths, saptune_health), do: [saptune_health | healths]

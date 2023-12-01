@@ -605,10 +605,8 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_deregistered_event(_, _), do: nil
 
-  defp maybe_add_checks_health(healths, checks_health) when checks_health != Health.unknown(),
-    do: [checks_health | healths]
-
-  defp maybe_add_checks_health(healths, _), do: healths
+  defp maybe_add_checks_health(healths, Health.unknown()), do: healths
+  defp maybe_add_checks_health(healths, checks_health), do: [checks_health | healths]
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
