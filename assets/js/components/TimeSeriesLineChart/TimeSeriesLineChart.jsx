@@ -41,7 +41,7 @@ function TimeSeriesLineChart({
       })),
       borderColor: '#A5EED4',
       pointBackgroundColor: '#58CF9B',
-      pointBorderColor: '#30BA78',
+      pointBorderWidth: 0,
       pointRadius: 5,
       pointHoverRadius: 8,
     }));
