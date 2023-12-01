@@ -474,6 +474,78 @@ defmodule Trento.ClusterTest do
       )
     end
 
+    test "unknown checks health should not affect aggregated cluster's health" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.passing()),
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_id,
+            discovered_health: Health.passing()
+          }
+        ],
+        SelectChecks.new!(%{
+          cluster_id: cluster_id,
+          checks: selected_checks
+        }),
+        [
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   cluster_id: ^cluster_id,
+                   health: Health.passing(),
+                   checks_health: Health.unknown()
+                 } = cluster
+        end
+      )
+    end
+
+    test "should not update health when an empty checks selection is saved" do
+      cluster_id = Faker.UUID.v4()
+      selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
+
+      assert_events_and_state(
+        [
+          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.critical()),
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: selected_checks
+          },
+          %ClusterChecksHealthChanged{
+            cluster_id: cluster_id,
+            checks_health: Health.warning()
+          },
+          %ClusterDiscoveredHealthChanged{
+            cluster_id: cluster_id,
+            discovered_health: Health.critical()
+          }
+        ],
+        SelectChecks.new!(%{
+          cluster_id: cluster_id,
+          checks: []
+        }),
+        [
+          %ChecksSelected{
+            cluster_id: cluster_id,
+            checks: []
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{
+                   cluster_id: ^cluster_id,
+                   health: Health.critical(),
+                   checks_health: Health.warning()
+                 } = cluster
+        end
+      )
+    end
+
     test "should not change health if it is already critical" do
       cluster_id = Faker.UUID.v4()
       selected_checks = Enum.map(0..4, fn _ -> Faker.Cat.name() end)
@@ -523,7 +595,7 @@ defmodule Trento.ClusterTest do
           host_added_to_cluster_event,
           %ClusterChecksHealthChanged{
             cluster_id: cluster_registered_event.cluster_id,
-            checks_health: :unknown
+            checks_health: Health.unknown()
           },
           %ChecksSelected{
             cluster_id: cluster_registered_event.cluster_id,
@@ -557,7 +629,7 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           %Cluster{
             discovered_health: :warning,
-            checks_health: :unknown,
+            checks_health: Health.unknown(),
             health: :warning
           } = cluster
         end
@@ -687,8 +759,8 @@ defmodule Trento.ClusterTest do
             health: cluster_registered_event.health,
             hosts: [],
             selected_checks: [],
-            discovered_health: :passing,
-            checks_health: nil
+            discovered_health: Health.passing(),
+            checks_health: Health.unknown()
           }
         },
         fn %Cluster{rolling_up: rolling_up} ->
@@ -718,8 +790,8 @@ defmodule Trento.ClusterTest do
               health: cluster_registered_event.health,
               hosts: [],
               selected_checks: [],
-              discovered_health: :passing,
-              checks_health: nil
+              discovered_health: Health.passing(),
+              checks_health: Health.unknown()
             }
           }
         ],
@@ -736,7 +808,7 @@ defmodule Trento.ClusterTest do
           assert cluster.health == cluster_registered_event.health
           assert cluster.hosts == []
           assert cluster.selected_checks == []
-          assert cluster.discovered_health == :passing
+          assert cluster.discovered_health == Health.passing()
         end
       )
     end
