@@ -102,8 +102,8 @@ export const Default = {
     title: 'CPU',
     start: subHours(now, 5),
     end: now,
-    // eslint-disable-next-line no-console
     onIntervalChange: (start, end) =>
+      // eslint-disable-next-line no-console
       console.log(`Interval changed, start ${start} - end ${end}`),
     datasets,
   },
