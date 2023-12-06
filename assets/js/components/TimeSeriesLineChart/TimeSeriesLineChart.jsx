@@ -52,6 +52,7 @@ function TimeSeriesLineChart({
   chartWrapperClassNames,
   className,
   onIntervalChange,
+  chartRef,
 }) {
   const [chartDatasets, setChartDatasets] = useState([]);
 
@@ -86,7 +87,6 @@ function TimeSeriesLineChart({
       enabled: true,
       mode: 'x',
       modifierKey: 'ctrl',
-      onPanComplete: onZoomChange,
     },
     zoom: {
       wheel: {
@@ -163,7 +163,11 @@ function TimeSeriesLineChart({
           chartWrapperClassNames
         )}
       >
-        <Line options={options} data={{ datasets: chartDatasets }} />
+        <Line
+          ref={chartRef}
+          options={options}
+          data={{ datasets: chartDatasets }}
+        />
       </div>
     </div>
   );

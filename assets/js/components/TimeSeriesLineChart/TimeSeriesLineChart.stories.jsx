@@ -1,5 +1,13 @@
+/* eslint-disable no-console */
+import React, { useEffect, useRef, useState } from 'react';
 import { faker } from '@faker-js/faker';
-import { eachMinuteOfInterval, subHours } from 'date-fns';
+import {
+  addMinutes,
+  addSeconds,
+  eachMinuteOfInterval,
+  subHours,
+  subMinutes,
+} from 'date-fns';
 import TimeSeriesLineChart from './TimeSeriesLineChart';
 
 const now = new Date();
@@ -54,12 +62,12 @@ export default {
   },
 };
 
-const timeFrames = eachMinuteOfInterval(
+const defaultTimeframes = eachMinuteOfInterval(
   { start: subHours(now, 5), end: now },
   { step: 2 }
 );
 
-const datasets = [
+const buildDatasets = (timeFrames) => [
   {
     name: 'Busy User',
     timeFrames: timeFrames.map((t) => ({
@@ -105,6 +113,100 @@ export const Default = {
     onIntervalChange: (start, end) =>
       // eslint-disable-next-line no-console
       console.log(`Interval changed, start ${start} - end ${end}`),
-    datasets,
+    datasets: buildDatasets(defaultTimeframes),
   },
+};
+
+function ChartUpdaterWrapper(props) {
+  const defaultStart = new Date();
+  const chartRef = useRef(null);
+
+  const initialTimeFrames = eachMinuteOfInterval({
+    start: subMinutes(defaultStart, 5),
+    end: addSeconds(now, 10),
+  });
+
+  const [datasets, setDasatets] = useState(buildDatasets(initialTimeFrames));
+  const [interval, setChartInterval] = useState({
+    start: subMinutes(defaultStart, 5),
+    end: addMinutes(defaultStart, 1),
+  });
+
+  const handleIntervalChange = (start, end) => {
+    // eslint-disable-next-line no-console
+    console.log(`Interval changed, start ${start} - end ${end}`);
+    setChartInterval({ start: new Date(start), end: new Date(end) });
+  };
+
+  useEffect(() => {
+    const chartJsInstance = chartRef.current;
+
+    setInterval(() => {
+      const timeNow = new Date();
+      const newInterval = {
+        start: subMinutes(timeNow, 5),
+        end: addMinutes(timeNow, 1),
+      };
+      const newFetchInterval = eachMinuteOfInterval({
+        start: timeNow,
+        end: addSeconds(timeNow, 10),
+      });
+
+      const newDatasets = datasets.map((d) => ({
+        ...d,
+        timeFrames: [
+          ...d.timeFrames,
+          ...newFetchInterval.map((t) => ({
+            time: t,
+            value: faker.number.float({ min: 10, max: 200 }),
+          })),
+        ],
+      }));
+
+      setDasatets(newDatasets);
+
+      setChartInterval((currentInterval) => {
+        // The selected interval is less then now, so the chart is zoomed don't update the
+        // chart interval
+        console.log('zoom level', chartJsInstance.getZoomLevel());
+        if (chartJsInstance.getZoomLevel() !== 1) {
+          console.log(
+            'Not updating interval, chart is zoomed',
+            currentInterval.end,
+            timeNow
+          );
+          return currentInterval;
+        }
+        console.log(
+          'Updating interval, chart is not zoomed',
+          currentInterval.end,
+          timeNow
+        );
+        return newInterval;
+      });
+
+      console.log('Data updated!');
+    }, 20000);
+  }, []);
+
+  return (
+    <TimeSeriesLineChart
+      {...props}
+      datasets={datasets}
+      start={interval.start}
+      end={interval.end}
+      chartRef={chartRef}
+      onIntervalChange={handleIntervalChange}
+    />
+  );
+}
+
+/**
+ * Data updates every 20s
+ */
+export const WithUpdates = {
+  args: {
+    title: 'CPU',
+  },
+  render: (args) => <ChartUpdaterWrapper {...args} />,
 };
