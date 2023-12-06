@@ -9,7 +9,7 @@
     "@storybook/addon-essentials": "^7.6.3",
     "@storybook/addon-interactions": "^7.6.3",
     "@storybook/addon-links": "^7.6.3",
-    "@storybook/react": "^7.6.0",
+    "@storybook/react": "^7.6.3",
     "@storybook/react-webpack5": "^7.6.1",
     "@storybook/testing-library": "^0.2.2",
     "@testing-library/jest-dom": "^6.1.4",
