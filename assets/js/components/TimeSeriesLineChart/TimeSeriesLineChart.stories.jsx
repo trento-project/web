@@ -108,8 +108,8 @@ const buildDatasets = (timeFrames) => [
 export const Default = {
   args: {
     title: 'CPU',
-    start: subHours(now, 5),
-    end: now,
+    start: subHours(now, 5).toISOString(),
+    end: now.toISOString(),
     onIntervalChange: (start, end) =>
       // eslint-disable-next-line no-console
       console.log(`Interval changed, start ${start} - end ${end}`),
@@ -133,9 +133,7 @@ function ChartUpdaterWrapper(props) {
   });
 
   const handleIntervalChange = (start, end) => {
-    // eslint-disable-next-line no-console
     console.log(`Interval changed, start ${start} - end ${end}`);
-    setChartInterval({ start: new Date(start), end: new Date(end) });
   };
 
   useEffect(() => {
@@ -163,29 +161,18 @@ function ChartUpdaterWrapper(props) {
         ],
       }));
 
-      setDasatets(newDatasets);
-
-      setChartInterval((currentInterval) => {
-        // The selected interval is less then now, so the chart is zoomed don't update the
-        // chart interval
-        console.log('zoom level', chartJsInstance.getZoomLevel());
-        if (chartJsInstance.getZoomLevel() !== 1) {
-          console.log(
-            'Not updating interval, chart is zoomed',
-            currentInterval.end,
-            timeNow
-          );
-          return currentInterval;
-        }
+      console.log('zoom level', chartJsInstance.getZoomLevel());
+      if (chartJsInstance.getZoomLevel() < 3.5) {
+        console.log('Updating interval, chart is not zoomed');
+        setChartInterval(newInterval);
+        setDasatets(newDatasets);
+        console.log('Data updated!');
+      } else {
         console.log(
-          'Updating interval, chart is not zoomed',
-          currentInterval.end,
-          timeNow
+          'Chart zoomed too much, skipping updating',
+          chartJsInstance.getZoomLevel()
         );
-        return newInterval;
-      });
-
-      console.log('Data updated!');
+      }
     }, 20000);
   }, []);
 
@@ -193,8 +180,8 @@ function ChartUpdaterWrapper(props) {
     <TimeSeriesLineChart
       {...props}
       datasets={datasets}
-      start={interval.start}
-      end={interval.end}
+      start={interval.start.toISOString()}
+      end={interval.end.toISOString()}
       chartRef={chartRef}
       onIntervalChange={handleIntervalChange}
     />

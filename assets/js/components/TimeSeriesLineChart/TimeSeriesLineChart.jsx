@@ -11,6 +11,7 @@ import { Line } from 'react-chartjs-2';
 import ZoomPlugin from 'chartjs-plugin-zoom';
 import 'chartjs-adapter-date-fns';
 import classNames from 'classnames';
+import { parseISO } from 'date-fns';
 
 const AVAILABLE_COLORS = [
   {
@@ -54,7 +55,31 @@ function TimeSeriesLineChart({
   onIntervalChange,
   chartRef,
 }) {
+  const onZoomChange = ({
+    chart: {
+      scales: { x },
+    },
+  }) => onIntervalChange(x.min, x.max);
+
   const [chartDatasets, setChartDatasets] = useState([]);
+  const [zoomOptions, setZoomOptions] = useState({
+    limits: {
+      x: { min: 'original', max: 'original', minRange: 60 * 1000 },
+    },
+    zoom: {
+      wheel: {
+        enabled: true,
+      },
+      drag: {
+        enabled: true,
+      },
+      pan: {
+        enabled: false,
+      },
+      mode: 'x',
+      onZoomComplete: onZoomChange,
+    },
+  });
 
   useEffect(() => {
     const newDatasets = datasets.map((d, i) => ({
@@ -73,41 +98,24 @@ function TimeSeriesLineChart({
     setChartDatasets(newDatasets);
   }, [datasets]);
 
-  const onZoomChange = ({
-    chart: {
-      scales: { x },
-    },
-  }) => onIntervalChange(x.min, x.max);
-
-  const zoomOptions = {
-    limits: {
-      x: { min: 'original', max: 'original', minRange: 60 * 1000 },
-    },
-    pan: {
-      enabled: true,
-      mode: 'x',
-      modifierKey: 'ctrl',
-    },
-    zoom: {
-      wheel: {
-        enabled: true,
+  useEffect(() => {
+    setZoomOptions((currentOptions) => ({
+      ...currentOptions,
+      limits: {
+        x: {
+          ...currentOptions.x,
+          min: parseISO(start).getTime(),
+          max: parseISO(end).getTime(),
+        },
       },
-      drag: {
-        enabled: true,
-      },
-      pan: {
-        enabled: false,
-      },
-      mode: 'x',
-      onZoomComplete: onZoomChange,
-    },
-  };
+    }));
+  }, [start, end]);
 
   const scales = {
     x: {
       position: 'bottom',
-      min: start,
-      max: end,
+      min: parseISO(start),
+      max: parseISO(end),
       type: 'time',
       ticks: {
         autoSkip: true,
@@ -128,6 +136,25 @@ function TimeSeriesLineChart({
     },
   };
 
+  // const zoomOptions = {
+  //   limits: {
+  //     x: { min: end, max: 'original', minRange: 60 * 1000 },
+  //   },
+  //   zoom: {
+  //     wheel: {
+  //       enabled: true,
+  //     },
+  //     drag: {
+  //       enabled: true,
+  //     },
+  //     pan: {
+  //       enabled: false,
+  //     },
+  //     mode: 'x',
+  //     onZoomComplete: onZoomChange,
+  //   },
+  // };
+
   const options = {
     scales,
     responsive: true,
@@ -139,7 +166,6 @@ function TimeSeriesLineChart({
         displayColors: 'false',
       },
       legend: false,
-      zoom: zoomOptions,
     },
   };
 
@@ -165,7 +191,10 @@ function TimeSeriesLineChart({
       >
         <Line
           ref={chartRef}
-          options={options}
+          options={{
+            ...options,
+            plugins: { ...options.plugins, zoom: zoomOptions },
+          }}
           data={{ datasets: chartDatasets }}
         />
       </div>
