@@ -13,13 +13,12 @@ import { getCatalog } from '@state/selectors/catalog';
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
 
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
+import HostInfoBox from '@common/HostInfoBox';
+import PageHeader from '@common/PageHeader';
 
 import ChecksSelection from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
-
-import HostInfoBox from './HostInfoBox';
 
 function HostSettingsPage() {
   const dispatch = useDispatch();
