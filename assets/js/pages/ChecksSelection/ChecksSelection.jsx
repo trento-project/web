@@ -66,7 +66,7 @@ function ChecksSelection({
   return (
     <CatalogContainer
       onRefresh={onUpdateCatalog}
-      isCatalogEmpty={catalog.length === 0}
+      empty={catalog.length === 0}
       catalogError={catalogError}
       loading={loading}
     >

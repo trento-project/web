@@ -136,7 +136,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
       </div>
       <CatalogContainer
         onRefresh={() => updateCatalog(selectedProvider)}
-        isCatalogEmpty={catalogData.length === 0}
+        empty={catalogData.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
