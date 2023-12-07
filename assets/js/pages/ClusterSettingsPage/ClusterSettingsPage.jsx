@@ -18,11 +18,11 @@ import { executionRequested } from '@state/lastExecutions';
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
 import BackButton from '@common/BackButton';
+import ClusterInfoBox from '@common/ClusterInfoBox';
 import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
 import WarningBanner from '@common/Banners/WarningBanner';
 
-import { ClusterInfoBox } from '@pages/ClusterDetails';
 import ChecksSelection from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
 

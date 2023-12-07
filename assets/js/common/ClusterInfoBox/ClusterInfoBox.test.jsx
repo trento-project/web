@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ClusterInfoBox } from './ClusterInfoBox';
+import ClusterInfoBox from './ClusterInfoBox';
 
 describe('Cluster Info Box', () => {
   [

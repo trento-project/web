@@ -9,7 +9,7 @@ const haScenarioToString = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export function ClusterInfoBox({ haScenario, provider }) {
+function ClusterInfoBox({ haScenario, provider }) {
   return (
     <div className="tn-cluster-details w-full my-6 mr-4 bg-white shadow rounded-lg px-8 py-4">
       <ListView
@@ -31,3 +31,5 @@ export function ClusterInfoBox({ haScenario, provider }) {
     </div>
   );
 }
+
+export default ClusterInfoBox;
