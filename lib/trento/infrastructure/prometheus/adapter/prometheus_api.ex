@@ -13,8 +13,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
 
   @behaviour Trento.Infrastructure.Prometheus.Gen
 
-  def get_cpu_busy_system(_host_id, from, to) do
-    query = "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\"}[5m])) * 100"
+  def get_cpu_busy_system(host_id, from, to) do
+    query =
+      "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\", agentID=\"#{host_id}\"}[5m])) * 100"
 
     with {:ok, [%{"values" => query_values}]} <-
            perform_query_range(query, from, to),
