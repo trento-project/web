@@ -8,31 +8,33 @@ import { Provider } from 'react-redux';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
-import Layout from '@components/Layout';
-import Home from '@components/Home';
-import AboutPage from '@components/AboutPage';
-import HostsList from '@components/HostsList';
-import ClustersList from '@components/ClustersList';
-import ClusterDetailsPage from '@components/ClusterDetails';
-import ClusterSettingsPage from '@components/ClusterSettingsPage';
-import { ExecutionResultsPage } from '@components/ExecutionResults';
-import SapSystemsOverviewPage from '@components/SapSystemsOverview';
-import HostDetailsPage, { HostSettingsPage } from '@components/HostDetails';
-import DatabasesOverviewPage from '@components/DatabasesOverview';
-import ChecksCatalogPage from '@components/ChecksCatalog';
-import NotFound from '@components/NotFound';
-import SomethingWentWrong from '@components/SomethingWentWrong';
-import SaptuneDetailsPage from '@components/SaptuneDetails';
-import Settings from '@components/Settings';
-import Eula from '@components/Eula';
-import Login from '@components/Login';
+import AboutPage from '@pages/AboutPage';
+import CheckResultDetailPage from '@pages/ExecutionResults/CheckResultDetail';
+import ChecksCatalogPage from '@pages/ChecksCatalog';
+import ClusterDetailsPage from '@pages/ClusterDetails';
+import ClusterSettingsPage from '@pages/ClusterSettingsPage';
+import ClustersList from '@pages/ClusterDetails/ClustersList';
+import DatabasesOverviewPage from '@pages/DatabasesOverview';
+import DatabaseDetails from '@pages//DatabaseDetails';
+import Eula from '@pages/Eula';
+import { ExecutionResultsPage } from '@pages/ExecutionResults';
+import Guard from '@pages/Guard';
+import Home from '@pages/Home';
+import HostDetailsPage from '@pages/HostDetailsPage';
+import HostSettingsPage from '@pages/HostSettingsPage';
+import HostsList from '@pages/HostsList';
+import Layout from '@pages/Layout';
+import Login from '@pages/Login';
+import NotFound from '@pages/NotFound';
+import SapSystemDetails from '@pages//SapSystemDetails/SapSystemDetails';
+import SapSystemsOverviewPage from '@pages/SapSystemsOverviewPage';
+import SaptuneDetailsPage from '@pages/SaptuneDetails';
+import Settings from '@pages/Settings';
+import SomethingWentWrong from '@pages/SomethingWentWrong';
+
 import { me } from '@lib/auth';
 import { networkClient } from '@lib/network';
-import Guard from '@components/Guard';
-import CheckResultDetailPage from '@components/ExecutionResults/CheckResultDetail';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
-import DatabaseDetails from './components/DatabaseDetails';
-import SapSystemDetails from './components/SapSystemDetails/SapSystemDetails';
 
 import { store } from './state';
 

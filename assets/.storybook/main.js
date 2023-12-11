@@ -14,9 +14,10 @@ module.exports = {
   webpackFinal: async (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@components': path.resolve(__dirname, '../js/components'),
-      '@lib': path.resolve(__dirname, '../js/lib'),
+      '@common': path.resolve(__dirname, '../js/common'),
       '@hooks': path.resolve(__dirname, '../js/hooks'),
+      '@lib': path.resolve(__dirname, '../js/lib'),
+      '@pages': path.resolve(__dirname, '../js/pages'),
       '@state': path.resolve(__dirname, '../js/state'),
       '@static': path.resolve(__dirname, '../static'),
     };

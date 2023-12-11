@@ -89,9 +89,10 @@ module.exports = {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '^@lib(.*)$': '<rootDir>/js/lib$1',
-    '^@components(.*)$': '<rootDir>/js/components$1',
+    '^@common(.*)$': '<rootDir>/js/common$1',
     '^@hooks(.*)$': '<rootDir>/js/hooks$1',
+    '^@lib(.*)$': '<rootDir>/js/lib$1',
+    '^@pages(.*)$': '<rootDir>/js/pages$1',
     '^@state(.*)$': '<rootDir>/js/state$1',
     phoenix: '<rootDir>/../deps/phoenix/priv/static/phoenix.cjs.js',
     'react-markdown': '<rootDir>/mocks/reactMarkdown.js',
