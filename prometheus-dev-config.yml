@@ -10,3 +10,5 @@ scrape_configs:
   - job_name: 'node'
     static_configs:
       - targets: ['web-node-exporter-1:9100']
+        labels:
+         agentID: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4"
