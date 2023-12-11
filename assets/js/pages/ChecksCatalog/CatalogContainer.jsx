@@ -38,7 +38,8 @@ function CatalogContainer({
             alt="Checks not found"
           />
         }
-        text="Checks catalog is empty."
+        title="No Checks Found"
+        text="Checks Catalog is empty."
         buttonText="Try again"
         buttonOnClick={onRefresh}
       />

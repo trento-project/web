@@ -24,7 +24,7 @@ describe('ChecksCatalog CatalogContainer component', () => {
   it('should render an error message if the checks catalog is empty', () => {
     renderWithRouter(<CatalogContainer empty />);
 
-    expect(screen.getByText('Checks catalog is empty.')).toBeVisible();
+    expect(screen.getByText('Checks Catalog is empty.')).toBeVisible();
     expect(screen.getByRole('button')).toHaveTextContent('Try again');
   });
 });
