@@ -1,7 +1,36 @@
 version: "3"
 volumes:
   pg_data:
+  prometheus_data:
 services:
+  node-exporter:
+    profiles:
+      - charts-dev
+    image: prom/node-exporter:v1.7.0
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+  prometheus:
+    profiles:
+      - charts-dev
+    image: prom/prometheus:v2.48.1
+    volumes:
+      - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - 9090:9090
   postgres:
     image: postgres:latest
     environment:
