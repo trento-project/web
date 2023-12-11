@@ -141,6 +141,8 @@ config :trento, Trento.Infrastructure.Prometheus,
 
 config :trento, Trento.Infrastructure.Prometheus.PrometheusApi, url: "http://localhost:9090"
 
+config :trento, Trento.Charts, host_data_fetcher: Trento.Infrastructure.Prometheus.PrometheusApi
+
 config :trento, :grafana,
   user: "admin",
   password: "admin",
