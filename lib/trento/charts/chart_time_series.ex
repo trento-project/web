@@ -13,7 +13,7 @@ defmodule Trento.Charts.ChartTimeSeries do
     use Trento.Support.Type
 
     deftype do
-      field :timestamp, :decimal
+      field :timestamp, :utc_datetime_usec
       field :value, :decimal
     end
   end
