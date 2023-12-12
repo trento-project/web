@@ -2,7 +2,7 @@ defmodule Trento.Infrastructure.Prometheus.ChartIntegrationTest do
   use ExUnit.Case
 
   alias Trento.Infrastructure.Prometheus.ChartIntegration
-  alias Trento.Charts.ChartTimeSeries.Sample
+  alias Trento.Charts.ChartTimeSeriesSample
 
   test "should return the samples when the query values are valid" do
     query_values = [
@@ -19,11 +19,11 @@ defmodule Trento.Infrastructure.Prometheus.ChartIntegrationTest do
       |> Enum.reverse()
       |> Enum.with_index()
 
-    for {%Sample{timestamp: timestamp, value: value}, index} <- assertion_samples do
+    for {%ChartTimeSeriesSample{timestamp: timestamp, value: value}, index} <- assertion_samples do
       [query_value_ts, query_value] = Enum.at(query_values, index)
 
       assert trunc(query_value_ts) == DateTime.to_unix(timestamp)
-      assert query_value == Decimal.to_string(value)
+      assert query_value == Float.to_string(value)
     end
   end
 

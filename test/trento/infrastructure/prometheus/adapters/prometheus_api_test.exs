@@ -3,7 +3,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
   use Trento.DataCase
 
   alias Trento.Infrastructure.Prometheus.PrometheusApi
-  alias Trento.Charts.ChartTimeSeries.Sample
+  alias Trento.Charts.ChartTimeSeriesSample
 
   test "should return not found is the host is not registered" do
     assert {:error, :not_found} == PrometheusApi.get_exporters_status(Faker.UUID.v4())
@@ -25,17 +25,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: Decimal.new("10.283333333333312")
+                  value: 10.283333333333312
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:11.000000Z],
-                  value: Decimal.new("10.283333333333397")
+                  value: 10.283333333333397
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:33:28.000000Z],
-                  value: Decimal.new("10.783333333333319")
+                  value: 10.783333333333319
                 }
               ]} == PrometheusApi.cpu_busy_irqs(prometheus_chart_agent_id, from, to)
     end
@@ -47,17 +47,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: Decimal.new("0")
+                  value: 0
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:11.000000Z],
-                  value: Decimal.new("0")
+                  value: 0
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:33:28.000000Z],
-                  value: Decimal.new("0")
+                  value: 0
                 }
               ]} == PrometheusApi.cpu_busy_other(prometheus_chart_agent_id, from, to)
     end
@@ -69,17 +69,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: Decimal.new("0.5666666666666487")
+                  value: 0.5666666666666487
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:11.000000Z],
-                  value: Decimal.new("0.7833333333333492")
+                  value: 0.7833333333333492
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:33:28.000000Z],
-                  value: Decimal.new("1.44999999999999")
+                  value: 1.44999999999999
                 }
               ]} == PrometheusApi.cpu_busy_iowait(prometheus_chart_agent_id, from, to)
     end
@@ -91,17 +91,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: Decimal.new("108.05000000000024")
+                  value: 108.05000000000024
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:11.000000Z],
-                  value: Decimal.new("114.18333333333293")
+                  value: 114.18333333333293
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:33:28.000000Z],
-                  value: Decimal.new("128.15000000000018")
+                  value: 128.15000000000018
                 }
               ]} == PrometheusApi.cpu_busy_user(prometheus_chart_agent_id, from, to)
     end
@@ -113,17 +113,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: Decimal.new("1040.9166666666656")
+                  value: 1040.9166666666656
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:11.000000Z],
-                  value: Decimal.new("1030.9166666666654")
+                  value: 1030.9166666666654
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:33:28.000000Z],
-                  value: Decimal.new("1007.6000000000082")
+                  value: 1007.6000000000082
                 }
               ]} == PrometheusApi.cpu_idle(prometheus_chart_agent_id, from, to)
     end
@@ -135,17 +135,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: Decimal.new("31.233333333333352")
+                  value: 31.233333333333352
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:34:11.000000Z],
-                  value: Decimal.new("35.266666666666616")
+                  value: 35.266666666666616
                 },
-                %Sample{
+                %ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:33:28.000000Z],
-                  value: Decimal.new("42.13333333333329")
+                  value: 42.13333333333329
                 }
               ]} == PrometheusApi.cpu_busy_system(prometheus_chart_agent_id, from, to)
     end

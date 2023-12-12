@@ -8,20 +8,20 @@ defmodule Trento.Charts.Hosts.HostCpuChart do
     - busy_system
     - busy_user
     - busy_other
+    - busy_irqs
   """
-
-  @required_fields :all
-
-  use Trento.Support.Type
 
   alias Trento.Charts.ChartTimeSeries
 
-  deftype do
-    embeds_one :busy_iowait, ChartTimeSeries
-    embeds_one :idle, ChartTimeSeries
-    embeds_one :busy_system, ChartTimeSeries
-    embeds_one :busy_user, ChartTimeSeries
-    embeds_one :busy_other, ChartTimeSeries
-    embeds_one :busy_irqs, ChartTimeSeries
-  end
+  @enforce_keys [:busy_iowait, :idle, :busy_system, :busy_user, :busy_other, :busy_irqs]
+  defstruct [:busy_iowait, :idle, :busy_system, :busy_user, :busy_other, :busy_irqs]
+
+  @type t :: %__MODULE__{
+          busy_iowait: [ChartTimeSeries.t()],
+          busy_irqs: [ChartTimeSeries.t()],
+          busy_other: [ChartTimeSeries.t()],
+          busy_system: [ChartTimeSeries.t()],
+          busy_user: [ChartTimeSeries.t()],
+          idle: [ChartTimeSeries.t()]
+        }
 end

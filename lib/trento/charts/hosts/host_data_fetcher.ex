@@ -3,23 +3,23 @@ defmodule Trento.Charts.HostDataFetcher do
   Behaviour of host charts data fetcher
   """
 
-  alias Trento.Charts.ChartTimeSeries.Sample
+  alias Trento.Charts.ChartTimeSeriesSample
 
   @callback cpu_busy_iowait(host_id :: String.t(), from :: integer(), to :: integer()) ::
-              {:ok, [Sample.t()]} | {:error, any}
+              {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
 
   @callback cpu_idle(host_id :: String.t(), from :: integer(), to :: integer()) ::
-              {:ok, [Sample.t()]} | {:error, any}
+              {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
 
   @callback cpu_busy_system(host_id :: String.t(), from :: integer(), to :: integer()) ::
-              {:ok, [Sample.t()]} | {:error, any}
+              {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
 
   @callback cpu_busy_user(host_id :: String.t(), from :: integer(), to :: integer()) ::
-              {:ok, [Sample.t()]} | {:error, any}
+              {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
 
   @callback cpu_busy_other(host_id :: String.t(), from :: integer(), to :: integer()) ::
-              {:ok, [Sample.t()]} | {:error, any}
+              {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
 
   @callback cpu_busy_irqs(host_id :: String.t(), from :: integer(), to :: integer()) ::
-              {:ok, [Sample.t()]} | {:error, any}
+              {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
 end

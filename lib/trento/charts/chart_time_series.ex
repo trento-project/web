@@ -3,23 +3,14 @@ defmodule Trento.Charts.ChartTimeSeries do
    Represents a time series of a chart
    The series has a label and the samples distributed through time
   """
-  @required_fields :all
 
-  use Trento.Support.Type
+  alias Trento.Charts.ChartTimeSeriesSample
 
-  defmodule Sample do
-    @required_fields :all
+  @enforce_keys [:label, :series]
+  defstruct [:label, :series]
 
-    use Trento.Support.Type
-
-    deftype do
-      field :timestamp, :utc_datetime_usec
-      field :value, :decimal
-    end
-  end
-
-  deftype do
-    field :label, :string
-    embeds_many :series, Sample
-  end
+  @type t :: %__MODULE__{
+          label: String.t(),
+          series: [ChartTimeSeriesSample.t()]
+        }
 end

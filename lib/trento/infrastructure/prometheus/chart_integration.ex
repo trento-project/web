@@ -1,12 +1,16 @@
 defmodule Trento.Infrastructure.Prometheus.ChartIntegration do
-  alias Trento.Charts.ChartTimeSeries.Sample
+  alias Trento.Infrastructure.Prometheus.PrometheusSamples
 
-  @spec query_values_to_samples([map()]) :: {:ok, [Sample.t()]} | {:error, any}
+  alias Trento.Charts.ChartTimeSeriesSample
+
+  @spec query_values_to_samples([map()]) :: {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
   def query_values_to_samples(query_values) do
     Enum.reduce_while(query_values, {:ok, []}, fn [timestamp, value], {_, acc} ->
       with {:ok, utc_timestamp} <- DateTime.from_unix(trunc(timestamp)),
-           {:ok, sample} <- Sample.new(%{timestamp: utc_timestamp, value: value}) do
-        {:cont, {:ok, [sample | acc]}}
+           {:ok, %PrometheusSamples{value: float_value, timestamp: sample_timestamp}} <-
+             PrometheusSamples.new(%{timestamp: utc_timestamp, value: value}) do
+        {:cont,
+         {:ok, [%ChartTimeSeriesSample{timestamp: sample_timestamp, value: float_value} | acc]}}
       else
         {:error, error} -> {:halt, {:error, error}}
       end
