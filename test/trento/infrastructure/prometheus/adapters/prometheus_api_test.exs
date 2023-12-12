@@ -18,6 +18,13 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       }
     end
 
+    test "should return no samples when no data is found", %{
+      from: from,
+      to: to
+    } do
+      assert {:ok, []} == PrometheusApi.cpu_busy_irqs(Faker.UUID.v4(), from, to)
+    end
+
     test "should get cpu_busy_irqs data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,

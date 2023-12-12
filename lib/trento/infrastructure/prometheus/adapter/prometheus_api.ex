@@ -113,7 +113,8 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     }
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- HTTPoison.request(request),
-         {:ok, %{"data" => %{"result" => [%{"values" => query_values}]}}} <- Jason.decode(body),
+         {:ok, result_body} <- Jason.decode(body),
+         query_values <- extract_query_values_from_result(result_body),
          {:ok, samples} <- ChartIntegration.query_values_to_samples(query_values) do
       {:ok, samples}
     else
@@ -130,4 +131,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
         error
     end
   end
+
+  defp extract_query_values_from_result(%{"data" => %{"result" => [%{"values" => query_values}]}}),
+    do: query_values
+
+  defp extract_query_values_from_result(_), do: []
 end
