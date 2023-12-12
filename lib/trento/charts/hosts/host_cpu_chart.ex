@@ -22,5 +22,6 @@ defmodule Trento.Charts.Hosts.HostCpuChart do
     embeds_one :busy_system, ChartTimeSeries
     embeds_one :busy_user, ChartTimeSeries
     embeds_one :busy_other, ChartTimeSeries
+    embeds_one :busy_irqs, ChartTimeSeries
   end
 end
