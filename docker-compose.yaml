@@ -20,15 +20,19 @@ services:
     profiles:
       - charts-dev
     image: prom/prometheus:v2.48.1
+    user: "0:0"
     volumes:
       - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml
+      - ./container_fixtures/prometheus:/container_init
       - prometheus_data:/prometheus
+    entrypoint: "/container_init/prometheus_entrypoint.sh"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
     ports:
       - 9090:9090
   postgres:
