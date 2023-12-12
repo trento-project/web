@@ -4,8 +4,6 @@ volumes:
   prometheus_data:
 services:
   node-exporter:
-    profiles:
-      - charts-dev
     image: prom/node-exporter:v1.7.0
     volumes:
       - /proc:/host/proc:ro
@@ -17,8 +15,6 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
   prometheus:
-    profiles:
-      - charts-dev
     image: prom/prometheus:v2.48.1
     user: "0:0"
     volumes:
