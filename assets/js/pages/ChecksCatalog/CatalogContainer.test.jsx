@@ -1,6 +1,8 @@
 import React from 'react';
 
+import { act } from 'react-dom/test-utils';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
@@ -21,10 +23,17 @@ describe('ChecksCatalog CatalogContainer component', () => {
     expect(screen.getByText('Loading checks catalog...')).toBeVisible();
   });
 
-  it('should render an error message if the checks catalog is empty', () => {
-    renderWithRouter(<CatalogContainer empty />);
+  it('should render an error message if the checks catalog is empty', async () => {
+    const user = userEvent.setup();
+    const onClear = jest.fn();
+
+    renderWithRouter(<CatalogContainer empty onClear={onClear} />);
 
     expect(screen.getByText('Checks Catalog is empty.')).toBeVisible();
-    expect(screen.getByRole('button')).toHaveTextContent('Try again');
+    expect(screen.getByRole('button')).toHaveTextContent('Reset filters');
+
+    const button = screen.getByText('Reset filters');
+    await act(async () => user.click(button));
+    expect(onClear).toHaveBeenCalled();
   });
 });
