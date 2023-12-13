@@ -62,6 +62,22 @@ export const getClusterSapSystems = createSelector(
   }
 );
 
+export const MIXED_VERSIONS = 'mixed_versions';
+
+export const getEnsaVersion = createSelector(
+  [getClusterSapSystems],
+  (sapSystems) => {
+    const ensaVersions = new Set();
+    sapSystems.forEach(({ ensa_version }) => ensaVersions.add(ensa_version));
+
+    const firstEnsaVersion = [...ensaVersions.values()][0];
+
+    return firstEnsaVersion && ensaVersions.size === 1
+      ? firstEnsaVersion
+      : MIXED_VERSIONS;
+  }
+);
+
 export const getClusterSelectedChecks = createSelector(
   [(state, clusterID) => getCluster(clusterID)(state)],
   (cluster) => get(cluster, 'selected_checks', [])
