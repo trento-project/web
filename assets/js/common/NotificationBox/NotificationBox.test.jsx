@@ -53,4 +53,24 @@ describe('NotificationBox Component', () => {
 
     texts.forEach((text) => expect(screen.getByText(text)).toBeTruthy());
   });
+
+  it('should display the title', () => {
+    const icon = faker.color.human();
+    const text = faker.lorem.paragraph();
+    const buttonText = faker.lorem.word();
+    const buttonOnClick = () => {};
+    const title = faker.lorem.word();
+
+    render(
+      <NotificationBox
+        icon={icon}
+        title={title}
+        text={text}
+        buttonText={buttonText}
+        buttonOnClick={buttonOnClick}
+      />
+    );
+
+    expect(screen.getByText(title)).toBeTruthy();
+  });
 });

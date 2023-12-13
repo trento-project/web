@@ -1,13 +1,14 @@
 import React from 'react';
 
+import { EOS_ERROR } from 'eos-icons-react';
+import ChecksNotFound from '@static/checks-not-found.svg';
+
 import NotificationBox from '@common/NotificationBox';
 import LoadingBox from '@common/LoadingBox';
 
-import { EOS_ERROR } from 'eos-icons-react';
-
 function CatalogContainer({
   onRefresh = () => {},
-  isCatalogEmpty = false,
+  empty = false,
   catalogError = null,
   loading = false,
   children,
@@ -27,11 +28,18 @@ function CatalogContainer({
     );
   }
 
-  if (isCatalogEmpty) {
+  if (empty) {
     return (
       <NotificationBox
-        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
-        text="Checks catalog is empty."
+        icon={
+          <img
+            src={ChecksNotFound}
+            className="m-auto w-48"
+            alt="Checks not found"
+          />
+        }
+        title="No Checks Found"
+        text="Checks Catalog is empty."
         buttonText="Try again"
         buttonOnClick={onRefresh}
       />
