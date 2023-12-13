@@ -63,7 +63,7 @@ export const getClusterSapSystems = createSelector(
 );
 
 export const getEnsaVersion = createSelector(
-  [(state, clusterID) => getClusterSapSystems(state, clusterID)],
+  [getClusterSapSystems],
   (sapSystems) => {
     const ensaVersions = new Set();
     sapSystems.forEach(({ ensa_version }) => ensaVersions.add(ensa_version));
@@ -72,7 +72,7 @@ export const getEnsaVersion = createSelector(
 
     return firstEnsaVersion && ensaVersions.size === 1
       ? firstEnsaVersion
-      : 'mixed_versions';
+      : 'MIXED_VERSIONS';
   }
 );
 

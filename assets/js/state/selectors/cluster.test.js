@@ -321,7 +321,7 @@ describe('Cluster selector', () => {
       },
     };
 
-    expect(getEnsaVersion(state, clusterID)).toEqual('mixed_versions');
+    expect(getEnsaVersion(state, clusterID)).toEqual('MIXED_VERSIONS');
   });
 
   it('should return mixed ENSA versions if SAP system does not have ENSA version info', () => {
@@ -379,6 +379,6 @@ describe('Cluster selector', () => {
       },
     };
 
-    expect(getEnsaVersion(state, clusterID)).toEqual('mixed_versions');
+    expect(getEnsaVersion(state, clusterID)).toEqual('MIXED_VERSIONS');
   });
 });
