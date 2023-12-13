@@ -7,6 +7,7 @@ import {
   getCluster,
   getClusterHosts,
   getClusterSapSystems,
+  getEnsaVersion,
 } from '@state/selectors/cluster';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
@@ -32,6 +33,8 @@ export function ClusterDetailsPage() {
 
   const lastExecution = useSelector(getLastExecution(clusterID));
 
+  const ensaVersion = useSelector((state) => getEnsaVersion(state, clusterID));
+
   useEffect(() => {
     if (provider && type) {
       dispatch(
@@ -39,11 +42,12 @@ export function ClusterDetailsPage() {
           provider,
           target_type: TARGET_CLUSTER,
           cluster_type: type,
+          ensa_version: ensaVersion,
         })
       );
       dispatch(updateLastExecution(clusterID));
     }
-  }, [dispatch, provider, type]);
+  }, [dispatch, provider, type, ensaVersion]);
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
