@@ -62,7 +62,7 @@ export const getClusterSapSystems = createSelector(
   }
 );
 
-export const MIXED_VERSIONS = 'MIXED_VERSIONS';
+export const MIXED_VERSIONS = 'mixed_versions';
 
 export const getEnsaVersion = createSelector(
   [getClusterSapSystems],
