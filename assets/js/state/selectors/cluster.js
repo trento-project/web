@@ -62,6 +62,8 @@ export const getClusterSapSystems = createSelector(
   }
 );
 
+export const MIXED_VERSIONS = 'MIXED_VERSIONS';
+
 export const getEnsaVersion = createSelector(
   [getClusterSapSystems],
   (sapSystems) => {
@@ -72,7 +74,7 @@ export const getEnsaVersion = createSelector(
 
     return firstEnsaVersion && ensaVersions.size === 1
       ? firstEnsaVersion
-      : 'MIXED_VERSIONS';
+      : MIXED_VERSIONS;
   }
 );
 
