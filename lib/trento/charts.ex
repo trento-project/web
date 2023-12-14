@@ -3,7 +3,11 @@ defmodule Trento.Charts do
   Charts module, responsible for assembling the charts
   """
 
-  alias Trento.Charts.Hosts.HostCpuChart
+  alias Trento.Charts.Hosts.{
+    HostCpuChart,
+    HostMemoryChart
+  }
+
   alias Trento.Charts.ChartTimeSeries
 
   @spec host_cpu_chart(String.t(), integer(), integer()) ::
@@ -26,6 +30,29 @@ defmodule Trento.Charts do
          busy_user: %ChartTimeSeries{label: "cpu_busy_user", series: cpu_busy_user_samples},
          busy_other: %ChartTimeSeries{label: "cpu_busy_other", series: cpu_busy_other_samples},
          busy_irqs: %ChartTimeSeries{label: "cpu_busy_irqs", series: cpu_busy_irqs_samples}
+       }}
+    end
+  end
+
+  @spec host_memory_chart(String.t(), integer(), integer()) ::
+          {:ok, HostMemoryChart.t()} | {:error, any}
+  def host_memory_chart(host_id, from, to) do
+    with {:ok, ram_total_samples} <- host_data_fetcher().ram_total(host_id, from, to),
+         {:ok, ram_used_samples} <- host_data_fetcher().ram_used(host_id, from, to),
+         {:ok, ram_cache_and_buffer_samples} <-
+           host_data_fetcher().ram_cache_and_buffer(host_id, from, to),
+         {:ok, ram_free_samples} <- host_data_fetcher().ram_free(host_id, from, to),
+         {:ok, swap_used_samples} <- host_data_fetcher().swap_used(host_id, from, to) do
+      {:ok,
+       %HostMemoryChart{
+         ram_total: %ChartTimeSeries{label: "ram_total", series: ram_total_samples},
+         ram_used: %ChartTimeSeries{label: "ram_used", series: ram_used_samples},
+         ram_cache_and_buffer: %ChartTimeSeries{
+           label: "ram_cache_and_buffer",
+           series: ram_cache_and_buffer_samples
+         },
+         ram_free: %ChartTimeSeries{label: "ram_free", series: ram_free_samples},
+         swap_used: %ChartTimeSeries{label: "swap_used", series: swap_used_samples}
        }}
     end
   end
