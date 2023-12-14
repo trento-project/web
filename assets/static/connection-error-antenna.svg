@@ -1,0 +1,40 @@
+<svg width="150" height="151" viewBox="0 0 150 151" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="75" cy="75.5" r="75" fill="#FEF9C3"/>
+<mask id="mask0_593_5222" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="150" height="151">
+<circle cx="75" cy="75.5" r="75" fill="#FEF9C3"/>
+</mask>
+<g mask="url(#mask0_593_5222)">
+<circle cx="44.0527" cy="128.947" r="17.9474" fill="#FEF08A"/>
+<circle cx="31.8158" cy="144.447" r="17.9474" fill="#FEF08A"/>
+<circle cx="17.9474" cy="127.316" r="17.9474" fill="#FEF08A"/>
+<circle cx="44.8684" cy="141.184" r="12.2368" fill="#FEF08A"/>
+<circle cx="43.2368" cy="114.263" r="12.2368" fill="#FEF08A"/>
+<circle cx="24.4737" cy="113.447" r="17.9474" fill="#FEF08A"/>
+<circle cx="98.0527" cy="141.947" r="17.9474" fill="#FEF08A"/>
+<circle cx="85.8158" cy="157.447" r="17.9474" fill="#FEF08A"/>
+<circle cx="71.9474" cy="140.316" r="17.9474" fill="#FEF08A"/>
+<circle cx="98.8684" cy="154.184" r="12.2368" fill="#FEF08A"/>
+<circle cx="97.2368" cy="127.263" r="12.2368" fill="#FEF08A"/>
+<circle cx="78.4737" cy="126.447" r="17.9474" fill="#FEF08A"/>
+<circle cx="144.053" cy="132.947" r="17.9474" fill="#FEF08A"/>
+<circle cx="131.816" cy="148.447" r="17.9474" fill="#FEF08A"/>
+<circle cx="117.947" cy="131.316" r="17.9474" fill="#FEF08A"/>
+<circle cx="144.868" cy="145.184" r="12.2368" fill="#FEF08A"/>
+<circle cx="143.237" cy="118.263" r="12.2368" fill="#FEF08A"/>
+<circle cx="124.474" cy="117.447" r="17.9474" fill="#FEF08A"/>
+<path d="M65.5 109H83.5" stroke="#6B7280" stroke-width="6"/>
+<path d="M74.5 52.5L100 207.5" stroke="#6B7280" stroke-width="6"/>
+<path d="M62 135.5H89" stroke="#6B7280" stroke-width="6"/>
+<path d="M65.5 109H76.5" stroke="#9CA3AF" stroke-width="6"/>
+<path d="M74.5 52.5V207.25" stroke="#9CA3AF" stroke-width="6"/>
+<path d="M74.5 52.5L49 207.5" stroke="#9CA3AF" stroke-width="6"/>
+<path d="M61.5 135.5H74.5" stroke="#9CA3AF" stroke-width="6"/>
+<circle cx="74.5" cy="52.5" r="8" fill="#9CA3AF"/>
+<circle cx="73.5" cy="50.5" r="2" fill="white"/>
+<path d="M55.5 32.5L47 41L55.5 49.5L47 58L57 68" stroke="#FDE047" stroke-width="4"/>
+<path d="M38.5 32.5L30 41L38.5 49.5L30 58L40 68" stroke="#FDE047" stroke-width="4"/>
+<path d="M94.5 32.5L103 41L94.5 49.5L103 58L93 68" stroke="#FDE047" stroke-width="4"/>
+<path d="M111.5 32.5L120 41L111.5 49.5L120 58L110 68" stroke="#FDE047" stroke-width="4"/>
+</g>
+<path d="M130 3.83337C120.8 3.83337 113.333 11.3 113.333 20.5C113.333 29.7 120.8 37.1667 130 37.1667C139.2 37.1667 146.667 29.7 146.667 20.5C146.667 11.3 139.2 3.83337 130 3.83337ZM131.667 28.8334H128.333V25.5H131.667V28.8334ZM131.667 22.1667H128.333V12.1667H131.667V22.1667Z" fill="#EF4444"/>
+</svg>
