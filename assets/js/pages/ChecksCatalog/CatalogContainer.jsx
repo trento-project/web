@@ -7,6 +7,7 @@ import NotificationBox from '@common/NotificationBox';
 import LoadingBox from '@common/LoadingBox';
 
 function CatalogContainer({
+  onClear = () => {},
   onRefresh = () => {},
   empty = false,
   catalogError = null,
@@ -40,8 +41,8 @@ function CatalogContainer({
         }
         title="No Checks Found"
         text="Checks Catalog is empty."
-        buttonText="Try again"
-        buttonOnClick={onRefresh}
+        buttonText="Reset filters"
+        buttonOnClick={onClear}
       />
     );
   }

@@ -119,6 +119,12 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
     });
   }, [selectedProvider, selectedTargetType, selectedClusterType]);
 
+  const clearFilters = () => {
+    setProviderSelected(OPTION_ALL);
+    setSelectedTargetType(OPTION_ALL);
+    setSelectedClusterType(OPTION_ALL);
+  };
+
   return (
     <>
       <div className="flex items-center space-x-4">
@@ -135,6 +141,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
         ))}
       </div>
       <CatalogContainer
+        onClear={clearFilters}
         onRefresh={() => updateCatalog(selectedProvider)}
         empty={catalogData.length === 0}
         catalogError={catalogError}
