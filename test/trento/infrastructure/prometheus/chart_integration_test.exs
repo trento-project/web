@@ -1,8 +1,8 @@
 defmodule Trento.Infrastructure.Prometheus.ChartIntegrationTest do
   use ExUnit.Case
 
-  alias Trento.Infrastructure.Prometheus.ChartIntegration
   alias Trento.Charts.ChartTimeSeriesSample
+  alias Trento.Infrastructure.Prometheus.ChartIntegration
 
   test "should return the samples when the query values are valid" do
     query_values = [

@@ -1,4 +1,8 @@
 defmodule Trento.Infrastructure.Prometheus.ChartIntegration do
+  @moduledoc """
+  ChartIntegration provides a mechanism for mapping prometheus query information to domain
+  Chart time series objects
+  """
   alias Trento.Infrastructure.Prometheus.PrometheusSamples
 
   alias Trento.Charts.ChartTimeSeriesSample
