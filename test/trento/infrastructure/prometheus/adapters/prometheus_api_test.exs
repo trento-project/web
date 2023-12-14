@@ -156,5 +156,106 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
                 }
               ]} == PrometheusApi.cpu_busy_system(prometheus_chart_agent_id, from, to)
     end
+
+    test "should get ram_total data", %{
+      prometheus_chart_agent_id: prometheus_chart_agent_id,
+      from: from,
+      to: to
+    } do
+      assert {:ok,
+              [
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
+                  value: 33_336_860_672.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  value: 33_336_860_672.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:33:28.000000Z],
+                  value: 33_336_860_672.0
+                }
+              ]} == PrometheusApi.ram_total(prometheus_chart_agent_id, from, to)
+    end
+
+    test "should get ram_used data", %{
+      prometheus_chart_agent_id: prometheus_chart_agent_id,
+      from: from,
+      to: to
+    } do
+      assert {:ok,
+              [
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
+                  value: 12_155_621_376.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  value: 12_179_324_928.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:33:28.000000Z],
+                  value: 12_157_894_656.0
+                }
+              ]} == PrometheusApi.ram_used(prometheus_chart_agent_id, from, to)
+    end
+
+    test "should get ram_cache_and_buffer data", %{
+      prometheus_chart_agent_id: prometheus_chart_agent_id,
+      from: from,
+      to: to
+    } do
+      assert {:ok,
+              [
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
+                  value: 12_315_525_120.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  value: 12_311_339_008.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:33:28.000000Z],
+                  value: 12_311_191_552.0
+                }
+              ]} == PrometheusApi.ram_cache_and_buffer(prometheus_chart_agent_id, from, to)
+    end
+
+    test "should get ram_free data", %{
+      prometheus_chart_agent_id: prometheus_chart_agent_id,
+      from: from,
+      to: to
+    } do
+      assert {:ok,
+              [
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
+                  value: 8_865_714_176.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  value: 8_846_196_736.0
+                },
+                %ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:33:28.000000Z],
+                  value: 8_867_774_464.0
+                }
+              ]} == PrometheusApi.ram_free(prometheus_chart_agent_id, from, to)
+    end
+
+    test "should get swap_used data", %{
+      prometheus_chart_agent_id: prometheus_chart_agent_id,
+      from: from,
+      to: to
+    } do
+      assert {:ok,
+              [
+                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:34:54.000000Z], value: 0.0},
+                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:34:11.000000Z], value: 0.0},
+                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:33:28.000000Z], value: 0.0}
+              ]} == PrometheusApi.swap_used(prometheus_chart_agent_id, from, to)
+    end
   end
 end

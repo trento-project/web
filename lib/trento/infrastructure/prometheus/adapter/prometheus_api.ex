@@ -14,6 +14,39 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   @behaviour Trento.Infrastructure.Prometheus.Gen
   @behaviour Trento.Charts.HostDataFetcher
 
+  def ram_total(host_id, from, to) do
+    query = "node_memory_MemTotal_bytes{agentID=\"#{host_id}\"}"
+
+    perform_query_range(query, from, to)
+  end
+
+  def ram_used(host_id, from, to) do
+    query =
+      "node_memory_MemTotal_bytes{agentID=\"#{host_id}\"} - node_memory_MemFree_bytes{agentID=\"#{host_id}\"} - (node_memory_Cached_bytes{agentID=\"#{host_id}\"} + node_memory_Buffers_bytes{agentID=\"#{host_id}\"})"
+
+    perform_query_range(query, from, to)
+  end
+
+  def ram_cache_and_buffer(host_id, from, to) do
+    query =
+      "node_memory_Cached_bytes{agentID=\"#{host_id}\"} + node_memory_Buffers_bytes{agentID=\"#{host_id}\"}"
+
+    perform_query_range(query, from, to)
+  end
+
+  def ram_free(host_id, from, to) do
+    query = "node_memory_MemFree_bytes{agentID=\"#{host_id}\"}"
+
+    perform_query_range(query, from, to)
+  end
+
+  def swap_used(host_id, from, to) do
+    query =
+      "(node_memory_SwapTotal_bytes{agentID=\"#{host_id}\"} - node_memory_SwapFree_bytes{agentID=\"#{host_id}\"})"
+
+    perform_query_range(query, from, to)
+  end
+
   def cpu_busy_irqs(host_id, from, to) do
     query =
       "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",agentID=\"#{host_id}\"}[5m])) * 100"
