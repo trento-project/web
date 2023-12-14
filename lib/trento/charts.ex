@@ -18,14 +18,15 @@ defmodule Trento.Charts do
          {:ok, cpu_busy_irqs_samples} <- host_data_fetcher().cpu_busy_irqs(host_id, from, to),
          {:ok, cpu_busy_other_samples} <-
            host_data_fetcher().cpu_busy_other(host_id, from, to) do
-      %HostCpuChart{
-        busy_iowait: %ChartTimeSeries{label: "cpu_busy_iowait", series: cpu_busy_iowait_samples},
-        idle: %ChartTimeSeries{label: "cpu_idle", series: cpu_idle_samples},
-        busy_system: %ChartTimeSeries{label: "cpu_busy_system", series: cpu_busy_system_samples},
-        busy_user: %ChartTimeSeries{label: "cpu_busy_user", series: cpu_busy_user_samples},
-        busy_other: %ChartTimeSeries{label: "cpu_busy_other", series: cpu_busy_other_samples},
-        busy_irqs: %ChartTimeSeries{label: "cpu_busy_irqs", series: cpu_busy_irqs_samples}
-      }
+      {:ok,
+       %HostCpuChart{
+         busy_iowait: %ChartTimeSeries{label: "cpu_busy_iowait", series: cpu_busy_iowait_samples},
+         idle: %ChartTimeSeries{label: "cpu_idle", series: cpu_idle_samples},
+         busy_system: %ChartTimeSeries{label: "cpu_busy_system", series: cpu_busy_system_samples},
+         busy_user: %ChartTimeSeries{label: "cpu_busy_user", series: cpu_busy_user_samples},
+         busy_other: %ChartTimeSeries{label: "cpu_busy_other", series: cpu_busy_other_samples},
+         busy_irqs: %ChartTimeSeries{label: "cpu_busy_irqs", series: cpu_busy_irqs_samples}
+       }}
     end
   end
 
