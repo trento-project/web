@@ -119,6 +119,15 @@ defmodule Trento.Hosts do
     )
   end
 
+  def by_host_id(host_id) do
+    case HostReadModel
+         |> where([h], h.id == ^host_id and is_nil(h.deregistered_at))
+         |> Repo.one() do
+      nil -> {:error, :not_found}
+      host -> {:ok, host}
+    end
+  end
+
   @spec enrich_host_read_model_query(Ecto.Query.t()) :: Ecto.Query.t()
   defp enrich_host_read_model_query(query) do
     query

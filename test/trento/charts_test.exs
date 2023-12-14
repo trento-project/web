@@ -1,5 +1,8 @@
 defmodule Trento.ChartsTest do
   use ExUnit.Case
+  use Trento.DataCase
+
+  import Trento.Factory
 
   alias Trento.Charts.Hosts.{
     HostCpuChart,
@@ -8,11 +11,20 @@ defmodule Trento.ChartsTest do
 
   describe "host cpu charts" do
     setup do
+      insert(:host, id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4")
+
       %{
         prometheus_chart_agent_id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4",
         from: 1_702_316_008,
         to: 1_702_316_102
       }
+    end
+
+    test "should return an error if the host does not exists", %{
+      from: from,
+      to: to
+    } do
+      assert {:error, :not_found} = Trento.Charts.host_cpu_chart(Faker.UUID.v4(), from, to)
     end
 
     test "should return results for each section of the cpu chart when data is found", %{
@@ -42,6 +54,8 @@ defmodule Trento.ChartsTest do
       from: from,
       to: to
     } do
+      %{id: host_id} = insert(:host)
+
       assert {:ok,
               %HostCpuChart{
                 busy_iowait: busy_iowait,
@@ -50,7 +64,7 @@ defmodule Trento.ChartsTest do
                 idle: idle,
                 busy_system: busy_sytem,
                 busy_user: busy_user
-              }} = Trento.Charts.host_cpu_chart(Faker.UUID.v4(), from, to)
+              }} = Trento.Charts.host_cpu_chart(host_id, from, to)
 
       assert Enum.empty?(busy_iowait.series)
       assert Enum.empty?(busy_irqs.series)
@@ -63,11 +77,20 @@ defmodule Trento.ChartsTest do
 
   describe "host_memory_charts" do
     setup do
+      insert(:host, id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4")
+
       %{
         prometheus_chart_agent_id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4",
         from: 1_702_316_008,
         to: 1_702_316_102
       }
+    end
+
+    test "should return an error if the host does not exists", %{
+      from: from,
+      to: to
+    } do
+      assert {:error, :not_found} = Trento.Charts.host_memory_chart(Faker.UUID.v4(), from, to)
     end
 
     test "should return results for each section of the memory chart when data is found", %{
@@ -95,6 +118,8 @@ defmodule Trento.ChartsTest do
       from: from,
       to: to
     } do
+      %{id: host_id} = insert(:host)
+
       assert {:ok,
               %HostMemoryChart{
                 ram_free: ram_free,
@@ -102,7 +127,7 @@ defmodule Trento.ChartsTest do
                 ram_used: ram_used,
                 ram_cache_and_buffer: ram_cache_and_buffer,
                 swap_used: swap_used
-              }} = Trento.Charts.host_memory_chart(Faker.UUID.v4(), from, to)
+              }} = Trento.Charts.host_memory_chart(host_id, from, to)
 
       assert Enum.empty?(ram_free.series)
       assert Enum.empty?(ram_total.series)

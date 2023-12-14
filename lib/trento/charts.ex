@@ -3,6 +3,8 @@ defmodule Trento.Charts do
   Charts module, responsible for assembling the charts
   """
 
+  alias Trento.Hosts
+
   alias Trento.Charts.Hosts.{
     HostCpuChart,
     HostMemoryChart
@@ -13,7 +15,8 @@ defmodule Trento.Charts do
   @spec host_cpu_chart(String.t(), integer(), integer()) ::
           {:ok, HostCpuChart.t()} | {:error, any}
   def host_cpu_chart(host_id, from, to) do
-    with {:ok, cpu_busy_iowait_samples} <-
+    with {:ok, _} <- Hosts.by_host_id(host_id),
+         {:ok, cpu_busy_iowait_samples} <-
            host_data_fetcher().cpu_busy_iowait(host_id, from, to),
          {:ok, cpu_idle_samples} <- host_data_fetcher().cpu_idle(host_id, from, to),
          {:ok, cpu_busy_system_samples} <-
@@ -37,7 +40,8 @@ defmodule Trento.Charts do
   @spec host_memory_chart(String.t(), integer(), integer()) ::
           {:ok, HostMemoryChart.t()} | {:error, any}
   def host_memory_chart(host_id, from, to) do
-    with {:ok, ram_total_samples} <- host_data_fetcher().ram_total(host_id, from, to),
+    with {:ok, _} <- Hosts.by_host_id(host_id),
+         {:ok, ram_total_samples} <- host_data_fetcher().ram_total(host_id, from, to),
          {:ok, ram_used_samples} <- host_data_fetcher().ram_used(host_id, from, to),
          {:ok, ram_cache_and_buffer_samples} <-
            host_data_fetcher().ram_cache_and_buffer(host_id, from, to),
