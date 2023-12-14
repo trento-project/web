@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { EOS_ERROR } from 'eos-icons-react';
 import ChecksNotFound from '@static/checks-not-found.svg';
+import ConnectionErrorAntenna from '@static/connection-error-antenna.svg';
 
 import NotificationBox from '@common/NotificationBox';
 import LoadingBox from '@common/LoadingBox';
@@ -21,7 +21,14 @@ function CatalogContainer({
   if (catalogError) {
     return (
       <NotificationBox
-        icon={<EOS_ERROR className="m-auto" color="red" size="xl" />}
+        icon={
+          <img
+            src={ConnectionErrorAntenna}
+            className="m-auto w-48"
+            alt="Connection error"
+          />
+        }
+        title="Connection Error"
         text={catalogError}
         buttonText="Try again"
         buttonOnClick={onRefresh}
