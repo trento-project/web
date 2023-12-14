@@ -139,6 +139,8 @@ defmodule TrentoWeb.Router do
       post "/accept_eula", SettingsController, :accept_eula
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
+
+      get "/charts/hosts/:id/cpu", ChartController, :host_cpu
     end
 
     scope "/v2", TrentoWeb.V2 do
