@@ -138,7 +138,8 @@ function HostDetails({
               >
                 <Button
                   type="primary"
-                  className="mx-1"
+                  className="mx-0.5"
+                  size="small"
                   onClick={requestHostChecksExecution}
                   disabled={!canStartExecution(selectedChecks, savingChecks)}
                 >
