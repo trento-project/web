@@ -150,7 +150,8 @@ function AscsErsClusterDetails({
             >
               <Button
                 type="primary"
-                className="mx-1"
+                className="mx-0.5"
+                size="small"
                 onClick={() => {
                   onStartExecution(clusterID, hosts, selectedChecks, navigate);
                 }}
