@@ -141,6 +141,7 @@ defmodule TrentoWeb.Router do
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
       get "/charts/hosts/:id/cpu", ChartController, :host_cpu
+      get "/charts/hosts/:id/memory", ChartController, :host_memory
     end
 
     scope "/v2", TrentoWeb.V2 do

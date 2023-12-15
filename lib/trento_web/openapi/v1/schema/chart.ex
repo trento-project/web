@@ -52,4 +52,19 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
       }
     })
   end
+
+  defmodule HostMemoryChart do
+    OpenApiSpex.schema(%{
+      title: "HostMemoryChart",
+      description: "A Time series chart with information about the memory usage of an host",
+      type: :object,
+      properties: %{
+        ram_total: ChartTimeSeries,
+        ram_cache_and_buffer: ChartTimeSeries,
+        ram_free: ChartTimeSeries,
+        ram_used: ChartTimeSeries,
+        swap_used: ChartTimeSeries
+      }
+    })
+  end
 end

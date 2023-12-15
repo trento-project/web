@@ -30,4 +30,22 @@ defmodule TrentoWeb.V1.ChartView do
       idle: render("chart_time_series.json", idle)
     }
   end
+
+  def render("host_memory_chart.json", %{
+        chart: %{
+          ram_total: ram_total,
+          ram_cache_and_buffer: ram_cache_and_buffer,
+          ram_free: ram_free,
+          ram_used: ram_used,
+          swap_used: swap_used
+        }
+      }) do
+    %{
+      ram_total: render("chart_time_series.json", ram_total),
+      ram_cache_and_buffer: render("chart_time_series.json", ram_cache_and_buffer),
+      ram_free: render("chart_time_series.json", ram_free),
+      ram_used: render("chart_time_series.json", ram_used),
+      swap_used: render("chart_time_series.json", swap_used)
+    }
+  end
 end
