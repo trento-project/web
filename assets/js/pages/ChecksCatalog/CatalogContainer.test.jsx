@@ -13,6 +13,7 @@ describe('ChecksCatalog CatalogContainer component', () => {
   it('should render the notification box', () => {
     renderWithRouter(<CatalogContainer catalogError="some error" />);
 
+    expect(screen.getByText('Connection Error')).toBeVisible();
     expect(screen.getByText('some error')).toBeVisible();
     expect(screen.getByRole('button')).toHaveTextContent('Try again');
   });
