@@ -15,8 +15,8 @@ defmodule Trento.ChartsTest do
 
       %{
         prometheus_chart_agent_id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4",
-        from: 1_702_316_008,
-        to: 1_702_316_102
+        from: DateTime.from_unix!(1_702_316_008),
+        to: DateTime.from_unix!(1_702_316_102)
       }
     end
 
@@ -81,8 +81,8 @@ defmodule Trento.ChartsTest do
 
       %{
         prometheus_chart_agent_id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4",
-        from: 1_702_316_008,
-        to: 1_702_316_102
+        from: DateTime.from_unix!(1_702_316_008),
+        to: DateTime.from_unix!(1_702_316_102)
       }
     end
 

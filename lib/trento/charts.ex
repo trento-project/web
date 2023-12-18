@@ -12,12 +12,9 @@ defmodule Trento.Charts do
 
   alias Trento.Charts.ChartTimeSeries
 
-  @spec host_cpu_chart(String.t(), integer(), integer()) ::
+  @spec host_cpu_chart(String.t(), DateTime.t(), DateTime.t()) ::
           {:ok, HostCpuChart.t()} | {:error, any}
   def host_cpu_chart(host_id, from, to) do
-    IO.inspect(from, label: "from")
-    IO.inspect(to, label: "to")
-
     with {:ok, _} <- Hosts.by_host_id(host_id),
          {:ok, cpu_busy_iowait_samples} <-
            host_data_fetcher().cpu_busy_iowait(host_id, from, to),
@@ -40,7 +37,7 @@ defmodule Trento.Charts do
     end
   end
 
-  @spec host_memory_chart(String.t(), integer(), integer()) ::
+  @spec host_memory_chart(String.t(), DateTime.t(), DateTime.t()) ::
           {:ok, HostMemoryChart.t()} | {:error, any}
   def host_memory_chart(host_id, from, to) do
     with {:ok, _} <- Hosts.by_host_id(host_id),

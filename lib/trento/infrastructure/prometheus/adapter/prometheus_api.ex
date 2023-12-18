@@ -138,11 +138,14 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   defp perform_query_range(query, from, to) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 
+    start_parameter = DateTime.to_iso8601(from)
+    end_parameter = DateTime.to_iso8601(to)
+
     request = %HTTPoison.Request{
       method: :get,
       url: "#{prometheus_url}/api/v1/query_range",
       headers: [{"Accept", "application/json"}],
-      params: %{query: query, start: from, end: to, step: "60s"}
+      params: %{query: query, start: start_parameter, end: end_parameter, step: "60s"}
     }
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- HTTPoison.request(request),
