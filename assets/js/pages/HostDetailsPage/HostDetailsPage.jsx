@@ -23,9 +23,6 @@ import {
 import { deregisterHost } from '@state/hosts';
 import HostDetails from './HostDetails';
 
-// eslint-disable-next-line no-undef
-const { grafanaPublicUrl } = config;
-
 function HostDetailsPage() {
   const { hostID } = useParams();
   const dispatch = useDispatch();
@@ -79,7 +76,6 @@ function HostDetailsPage() {
       deregisterable={host.deregisterable}
       deregistering={host.deregistering}
       exportersStatus={exportersStatus}
-      grafanaPublicUrl={grafanaPublicUrl}
       heartbeat={host.heartbeat}
       hostID={host.id}
       hostname={host.hostname}

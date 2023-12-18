@@ -36,7 +36,6 @@ function HostDetails({
   deregisterable,
   deregistering,
   exportersStatus = {},
-  grafanaPublicUrl,
   heartbeat,
   hostID,
   hostname,
