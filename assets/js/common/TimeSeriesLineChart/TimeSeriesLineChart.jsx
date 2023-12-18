@@ -10,7 +10,6 @@ import {
 import { Line } from 'react-chartjs-2';
 import ZoomPlugin from 'chartjs-plugin-zoom';
 import classNames from 'classnames';
-import { parseISO } from 'date-fns';
 import 'chartjs-adapter-date-fns';
 
 const AVAILABLE_COLORS = [
@@ -108,8 +107,8 @@ function TimeSeriesLineChart({
       limits: {
         x: {
           ...currentOptions.x,
-          min: parseISO(start).getTime(),
-          max: parseISO(end).getTime(),
+          min: start.getTime(),
+          max: end.getTime(),
         },
       },
     }));
@@ -118,8 +117,8 @@ function TimeSeriesLineChart({
   const scales = {
     x: {
       position: 'bottom',
-      min: parseISO(start),
-      max: parseISO(end),
+      min: start,
+      max: end,
       type: 'time',
       ticks: {
         autoSkip: true,

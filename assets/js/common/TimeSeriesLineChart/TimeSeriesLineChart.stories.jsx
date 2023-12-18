@@ -46,7 +46,7 @@ export default {
     },
     datasets: {
       description:
-        'Array of datasets, a series of objects containing a value and a ISO8601 timestamp',
+        'Array of datasets, a series of objects containing a value and a Date',
       control: { type: 'array' },
     },
     chartWrapperClassNames: {
@@ -180,8 +180,8 @@ function ChartUpdaterWrapper(props) {
     <TimeSeriesLineChart
       {...props}
       datasets={datasets}
-      start={interval.start.toISOString()}
-      end={interval.end.toISOString()}
+      start={interval.start}
+      end={interval.end}
       chartRef={chartRef}
       onIntervalChange={handleIntervalChange}
     />

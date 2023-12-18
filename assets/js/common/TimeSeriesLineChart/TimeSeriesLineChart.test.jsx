@@ -31,6 +31,10 @@ describe('TimeSeriesLineChart component', () => {
         name: 'Data 6',
         timeFrames: [{ time: new Date(), value: 0.0 }],
       },
+      {
+        name: 'Data 7',
+        timeFrames: [{ time: new Date(), value: 0.0 }],
+      },
     ];
 
     expect(() =>
@@ -45,7 +49,7 @@ describe('TimeSeriesLineChart component', () => {
           />
         </div>
       )
-    ).toThrow('TimeSeriesLineChart component supports a maximum of 5 datasets');
+    ).toThrow('TimeSeriesLineChart component supports a maximum of 6 datasets');
   });
 
   it('should render with the appropriate props', () => {
