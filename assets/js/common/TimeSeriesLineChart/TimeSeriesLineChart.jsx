@@ -9,9 +9,9 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import ZoomPlugin from 'chartjs-plugin-zoom';
-import 'chartjs-adapter-date-fns';
 import classNames from 'classnames';
 import { parseISO } from 'date-fns';
+import 'chartjs-adapter-date-fns';
 
 const AVAILABLE_COLORS = [
   {
@@ -33,6 +33,10 @@ const AVAILABLE_COLORS = [
   {
     line: '#E5E7EB',
     point: '#9CA3AF',
+  },
+  {
+    line: '#004DCF',
+    point: '#1273DE',
   },
 ];
 
@@ -136,28 +140,10 @@ function TimeSeriesLineChart({
     },
   };
 
-  // const zoomOptions = {
-  //   limits: {
-  //     x: { min: end, max: 'original', minRange: 60 * 1000 },
-  //   },
-  //   zoom: {
-  //     wheel: {
-  //       enabled: true,
-  //     },
-  //     drag: {
-  //       enabled: true,
-  //     },
-  //     pan: {
-  //       enabled: false,
-  //     },
-  //     mode: 'x',
-  //     onZoomComplete: onZoomChange,
-  //   },
-  // };
-
   const options = {
     scales,
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         titleAlign: 'center',
@@ -169,9 +155,9 @@ function TimeSeriesLineChart({
     },
   };
 
-  if (datasets.length > 5) {
+  if (datasets.length > 6) {
     throw new Error(
-      'TimeSeriesLineChart component supports a maximum of 5 datasets'
+      'TimeSeriesLineChart component supports a maximum of 6 datasets'
     );
   }
 
