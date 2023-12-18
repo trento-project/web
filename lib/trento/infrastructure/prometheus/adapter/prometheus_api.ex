@@ -142,7 +142,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
       method: :get,
       url: "#{prometheus_url}/api/v1/query_range",
       headers: [{"Accept", "application/json"}],
-      params: %{query: query, start: from, end: to, step: "43s"}
+      params: %{query: query, start: from, end: to, step: "60s"}
     }
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- HTTPoison.request(request),

@@ -15,6 +15,9 @@ defmodule Trento.Charts do
   @spec host_cpu_chart(String.t(), integer(), integer()) ::
           {:ok, HostCpuChart.t()} | {:error, any}
   def host_cpu_chart(host_id, from, to) do
+    IO.inspect(from, label: "from")
+    IO.inspect(to, label: "to")
+
     with {:ok, _} <- Hosts.by_host_id(host_id),
          {:ok, cpu_busy_iowait_samples} <-
            host_data_fetcher().cpu_busy_iowait(host_id, from, to),

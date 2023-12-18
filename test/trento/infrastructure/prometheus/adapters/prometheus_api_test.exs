@@ -33,11 +33,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 10.283333333333312
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 10.283333333333397
                 },
                 %ChartTimeSeriesSample{
@@ -54,18 +50,8 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 0
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
-                  value: 0
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:33:28.000000Z],
-                  value: 0
-                }
+                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:34:28.000000Z], value: 0.0},
+                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:33:28.000000Z], value: 0.0}
               ]} == PrometheusApi.cpu_busy_other(prometheus_chart_agent_id, from, to)
     end
 
@@ -77,11 +63,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 0.5666666666666487
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 0.7833333333333492
                 },
                 %ChartTimeSeriesSample{
@@ -99,11 +81,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 108.05000000000024
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 114.18333333333293
                 },
                 %ChartTimeSeriesSample{
@@ -121,11 +99,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 1040.9166666666656
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 1030.9166666666654
                 },
                 %ChartTimeSeriesSample{
@@ -142,15 +116,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 31.233333333333352
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                %Trento.Charts.ChartTimeSeriesSample{
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 35.266666666666616
                 },
-                %ChartTimeSeriesSample{
+                %Trento.Charts.ChartTimeSeriesSample{
                   timestamp: ~U[2023-12-11 17:33:28.000000Z],
                   value: 42.13333333333329
                 }
@@ -165,11 +135,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 33_336_860_672.0
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 33_336_860_672.0
                 },
                 %ChartTimeSeriesSample{
@@ -187,11 +153,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 12_155_621_376.0
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 12_179_324_928.0
                 },
                 %ChartTimeSeriesSample{
@@ -209,11 +171,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 12_315_525_120.0
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 12_311_339_008.0
                 },
                 %ChartTimeSeriesSample{
@@ -231,11 +189,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok,
               [
                 %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:54.000000Z],
-                  value: 8_865_714_176.0
-                },
-                %ChartTimeSeriesSample{
-                  timestamp: ~U[2023-12-11 17:34:11.000000Z],
+                  timestamp: ~U[2023-12-11 17:34:28.000000Z],
                   value: 8_846_196_736.0
                 },
                 %ChartTimeSeriesSample{
@@ -252,8 +206,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     } do
       assert {:ok,
               [
-                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:34:54.000000Z], value: 0.0},
-                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:34:11.000000Z], value: 0.0},
+                %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:34:28.000000Z], value: 0.0},
                 %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:33:28.000000Z], value: 0.0}
               ]} == PrometheusApi.swap_used(prometheus_chart_agent_id, from, to)
     end

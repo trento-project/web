@@ -42,12 +42,12 @@ defmodule Trento.ChartsTest do
                 busy_user: busy_user
               }} = Trento.Charts.host_cpu_chart(prometheus_chart_agent_id, from, to)
 
-      assert length(busy_iowait.series) == 3
-      assert length(busy_irqs.series) == 3
-      assert length(busy_other.series) == 3
-      assert length(idle.series) == 3
-      assert length(busy_sytem.series) == 3
-      assert length(busy_user.series) == 3
+      assert length(busy_iowait.series) == 2
+      assert length(busy_irqs.series) == 2
+      assert length(busy_other.series) == 2
+      assert length(idle.series) == 2
+      assert length(busy_sytem.series) == 2
+      assert length(busy_user.series) == 2
     end
 
     test "should return ChartTimeSeries struct with empty series when cpu data is not found", %{
@@ -107,11 +107,11 @@ defmodule Trento.ChartsTest do
                 swap_used: swap_used
               }} = Trento.Charts.host_memory_chart(prometheus_chart_agent_id, from, to)
 
-      assert length(ram_free.series) == 3
-      assert length(ram_total.series) == 3
-      assert length(ram_used.series) == 3
-      assert length(ram_cache_and_buffer.series) == 3
-      assert length(swap_used.series) == 3
+      assert length(ram_free.series) == 2
+      assert length(ram_total.series) == 2
+      assert length(ram_used.series) == 2
+      assert length(ram_cache_and_buffer.series) == 2
+      assert length(swap_used.series) == 2
     end
 
     test "should return an HostMemoryChart with empty series when no data is found", %{
