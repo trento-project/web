@@ -80,12 +80,6 @@ if config_env() in [:prod, :demo] do
 
   config :trento, :checks_service, base_url: System.get_env("CHECKS_SERVICE_BASE_URL") || ""
 
-  config :trento, :grafana,
-    user: System.get_env("GRAFANA_USER") || "admin",
-    password: System.get_env("GRAFANA_PASSWORD") || "admin",
-    public_url: System.get_env("GRAFANA_PUBLIC_URL") || "http://localhost:3000",
-    api_url: System.get_env("GRAFANA_API_URL") || "http://localhost:3000/api"
-
   config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
     url: System.get_env("PROMETHEUS_URL") || "http://localhost:9090"
 

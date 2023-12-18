@@ -143,13 +143,6 @@ config :trento, Trento.Infrastructure.Prometheus.PrometheusApi, url: "http://loc
 
 config :trento, Trento.Charts, host_data_fetcher: Trento.Infrastructure.Prometheus.PrometheusApi
 
-config :trento, :grafana,
-  user: "admin",
-  password: "admin",
-  public_url: "http://localhost:3000",
-  api_url: "http://localhost:3000/api",
-  dashboards: ["node_exporter"]
-
 config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",
   flavor: System.get_env("FLAVOR", "Community")
