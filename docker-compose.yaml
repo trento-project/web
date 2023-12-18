@@ -41,13 +41,6 @@ services:
       - 5433:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
-  grafana:
-    image: grafana/grafana:latest
-    environment:
-      GF_SECURITY_ALLOW_EMBEDDING: "true"
-      GF_AUTH_ANONYMOUS_ENABLED: "true"
-    ports:
-      - 3000:3000
   rabbitmq:
     image: rabbitmq:3.12.6-management-alpine
     ports:
