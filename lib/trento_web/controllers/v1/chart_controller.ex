@@ -14,7 +14,7 @@ defmodule TrentoWeb.V1.ChartController do
   operation :host_cpu,
     summary: "Get a CPU chart of an host",
     description:
-      "Get information about cpu usage for an host, providing a from/to interval as unix timestamp",
+      "Get information about cpu usage for an host, providing a from/to interval as ISO8601 timestamp",
     parameters: [
       id: [
         in: :path,
@@ -25,19 +25,21 @@ defmodule TrentoWeb.V1.ChartController do
       from: [
         in: :query,
         required: true,
-        description: "Start of the chart interval, as unix timestamp",
+        description: "Start of the chart interval, as ISO8601 timestamp",
         type: %OpenApiSpex.Schema{
-          type: :integer,
-          description: "Start of the chart interval, as unix timestamp"
+          type: :string,
+          format: :"date-time",
+          description: "Start of the chart interval, as ISO8601 timestamp"
         }
       ],
       to: [
         in: :query,
         required: true,
-        description: "End of the chart interval, as unix timestamp",
+        description: "End of the chart interval, as ISO8601 timestamp",
         type: %OpenApiSpex.Schema{
-          type: :integer,
-          description: "End of the chart interval, as unix timestamp"
+          type: :string,
+          format: :"date-time",
+          description: "End of the chart interval, as ISO8601 timestamp"
         }
       ]
     ],
@@ -56,7 +58,7 @@ defmodule TrentoWeb.V1.ChartController do
   operation :host_memory,
     summary: "Get a Memory chart of an host",
     description:
-      "Get information about memory usage for an host, providing a from/to interval as unix timestamp",
+      "Get information about memory usage for an host, providing a from/to interval as ISO8601 timestamp",
     parameters: [
       id: [
         in: :path,
@@ -67,19 +69,21 @@ defmodule TrentoWeb.V1.ChartController do
       from: [
         in: :query,
         required: true,
-        description: "Start of the chart interval, as unix timestamp",
+        description: "Start of the chart interval, as ISO8601 timestamp",
         type: %OpenApiSpex.Schema{
-          type: :integer,
-          description: "Start of the chart interval, as unix timestamp"
+          type: :string,
+          format: :"date-time",
+          description: "Start of the chart interval, as ISO8601 timestamp"
         }
       ],
       to: [
         in: :query,
         required: true,
-        description: "End of the chart interval, as unix timestamp",
+        description: "End of the chart interval, as ISO8601 timestamp",
         type: %OpenApiSpex.Schema{
-          type: :integer,
-          description: "End of the chart interval, as unix timestamp"
+          type: :string,
+          format: :"date-time",
+          description: "End of the chart interval, as ISO8601 timestamp"
         }
       ]
     ],

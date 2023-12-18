@@ -20,9 +20,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
             description: "A timestamp/value pair",
             properties: %{
               timestamp: %Schema{
-                type: :integer,
-                description: "Unix timestamp",
-                example: 1_702_568_367_474
+                type: :string,
+                format: "date-time",
+                description: "ISO8601 timestamp",
+                example: "2023-12-18T13:50:57.547Z"
               },
               value: %Schema{
                 type: :number,

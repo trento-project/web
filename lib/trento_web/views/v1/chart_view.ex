@@ -2,7 +2,7 @@ defmodule TrentoWeb.V1.ChartView do
   use TrentoWeb, :view
 
   def render("chart_time_series_sample.json", %{sample: %{timestamp: timestamp, value: value}}),
-    do: %{timestamp: DateTime.to_unix(timestamp), value: value}
+    do: %{timestamp: DateTime.to_iso8601(timestamp), value: value}
 
   def render("chart_time_series.json", %{label: label, series: series}) do
     rendered_series =
