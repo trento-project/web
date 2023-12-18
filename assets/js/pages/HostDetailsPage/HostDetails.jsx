@@ -23,6 +23,7 @@ import HostSummary from './HostSummary';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
 import StatusPill from './StatusPill';
+import HostChart from './HostChart';
 
 import {
   subscriptionsTableConfiguration,
@@ -197,25 +198,12 @@ function HostDetails({
             />
           </div>
         </div>
-        <div className="mt-8 bg-white shadow rounded-lg py-4 px-8">
-          <iframe
-            title="node-exporter chart"
-            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=77&var-agentID=${hostID}`}
-            width="100%"
-            height="200"
-            frameBorder="0"
-          />
+        <div>
+          <HostChart hostId={hostID} chartId="cpu" chartTitle="CPU" />
         </div>
-        <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
-          <iframe
-            title="node-exporter chart trento"
-            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=78&var-agentID=${hostID}`}
-            width="100%"
-            height="200"
-            frameBorder="0"
-          />
+        <div>
+          <HostChart hostId={hostID} chartId="memory" chartTitle="Memory" />
         </div>
-
         <div className="mt-16">
           <div className="mb-4">
             <h2 className="text-2xl font-bold">Provider details</h2>
