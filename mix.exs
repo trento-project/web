@@ -123,7 +123,7 @@ defmodule Trento.MixProject do
         "event_store.setup",
         "phx.server"
       ],
-      setup: ["deps.get", "event_store.setup", "ecto.setup", "init_grafana_dashboards"],
+      setup: ["deps.get", "event_store.setup", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "event_store.setup": ["event_store.create", "event_store.init"],
