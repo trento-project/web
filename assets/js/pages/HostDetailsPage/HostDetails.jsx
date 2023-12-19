@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { get } from 'lodash';
+import classNames from 'classnames';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
@@ -144,11 +145,16 @@ function HostDetails({
                   disabled={!canStartExecution(selectedChecks, savingChecks)}
                 >
                   <EOS_PLAY_CIRCLE
-                    className={`${
-                      canStartExecution(selectedChecks, savingChecks)
-                        ? 'fill-white'
-                        : 'fill-gray-200'
-                    } inline-block align-sub`}
+                    className={classNames('inline-block, align-sub', {
+                      'fill-white': canStartExecution(
+                        selectedChecks,
+                        savingChecks
+                      ),
+                      'fill-gray-200': !canStartExecution(
+                        selectedChecks,
+                        savingChecks
+                      ),
+                    })}
                   />{' '}
                   Start Execution
                 </Button>
