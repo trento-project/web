@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
-    "@heroicons/react": "^2.0.18",
+    "@heroicons/react": "^2.1.1",
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.6.2",
     "axios-auth-refresh": "^3.3.6",
