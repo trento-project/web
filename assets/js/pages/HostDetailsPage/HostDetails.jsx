@@ -145,7 +145,7 @@ function HostDetails({
                   disabled={!canStartExecution(selectedChecks, savingChecks)}
                 >
                   <EOS_PLAY_CIRCLE
-                    className={classNames('inline-block, align-sub', {
+                    className={classNames('inline-block align-sub', {
                       'fill-white': canStartExecution(
                         selectedChecks,
                         savingChecks
