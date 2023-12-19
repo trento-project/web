@@ -1,5 +1,6 @@
 import React from 'react';
 import { get, groupBy } from 'lodash';
+import classNames from 'classnames';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 
@@ -152,9 +153,10 @@ function HanaClusterDetails({
                 disabled={startExecutionDisabled}
               >
                 <EOS_PLAY_CIRCLE
-                  className={`${
-                    !startExecutionDisabled ? 'fill-white' : 'fill-gray-200'
-                  } inline-block align-sub`}
+                  className={classNames('inline-block align-sub', {
+                    'fill-white': !startExecutionDisabled,
+                    'fill-gray-200': startExecutionDisabled,
+                  })}
                 />{' '}
                 Start Execution
               </Button>
