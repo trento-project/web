@@ -6,6 +6,8 @@ import {
   LineElement,
   Tooltip,
   TimeScale,
+  LogarithmicScale,
+  Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import ZoomPlugin from 'chartjs-plugin-zoom';
@@ -44,6 +46,8 @@ ChartJS.register(
   PointElement,
   LineElement,
   TimeScale,
+  Legend,
+  LogarithmicScale,
   Tooltip,
   ZoomPlugin
 );
@@ -57,6 +61,9 @@ function TimeSeriesLineChart({
   className,
   onIntervalChange,
   chartRef,
+  yAxisMaxValue,
+  yAxisLabelFormatter = (value) => value,
+  yAxisScaleType = "linear"
 }) {
   const onZoomChange = ({
     chart: {
@@ -81,6 +88,8 @@ function TimeSeriesLineChart({
       },
       mode: 'x',
       onZoomComplete: onZoomChange,
+      // Prevent zoom reset on legend change, https://github.com/chartjs/chartjs-plugin-zoom/issues/256#issuecomment-1826812558
+      onZoomStart: e => e.point.x > e.chart.chartArea.left && e.point.x < e.chart.chartArea.right && e.point.y > e.chart.chartArea.top && e.point.y < e.chart.chartArea.bottom,
     },
   });
 
@@ -94,7 +103,7 @@ function TimeSeriesLineChart({
       borderColor: AVAILABLE_COLORS[i].line,
       pointBackgroundColor: AVAILABLE_COLORS[i].point,
       pointBorderWidth: 0,
-      pointRadius: 5,
+      pointRadius: 1.8,
       pointHoverRadius: 8,
     }));
 
@@ -134,8 +143,12 @@ function TimeSeriesLineChart({
       },
     },
     y: {
-      type: 'linear',
+      type: yAxisScaleType,
       position: 'left',
+      max: yAxisMaxValue,
+      ticks: {
+        callback: yAxisLabelFormatter
+      }
     },
   };
 
@@ -150,7 +163,9 @@ function TimeSeriesLineChart({
         footerAlign: 'center',
         displayColors: 'false',
       },
-      legend: false,
+      legend: {
+        position: 'bottom',
+      },
     },
   };
 
