@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
+import classNames from 'classnames';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
@@ -158,9 +159,10 @@ function AscsErsClusterDetails({
                 disabled={startExecutionDisabled}
               >
                 <EOS_PLAY_CIRCLE
-                  className={`${
-                    !startExecutionDisabled ? 'fill-white' : 'fill-gray-200'
-                  } inline-block align-sub`}
+                  className={classNames('inline-block align-sub', {
+                    'fill-white': !startExecutionDisabled,
+                    'fill-gray-200': startExecutionDisabled,
+                  })}
                 />{' '}
                 Start Execution
               </Button>
