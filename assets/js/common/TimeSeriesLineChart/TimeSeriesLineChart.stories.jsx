@@ -108,8 +108,8 @@ const buildDatasets = (timeFrames) => [
 export const Default = {
   args: {
     title: 'CPU',
-    start: subHours(now, 5).toISOString(),
-    end: now.toISOString(),
+    start: subHours(now, 5),
+    end: now,
     onIntervalChange: (start, end) =>
       // eslint-disable-next-line no-console
       console.log(`Interval changed, start ${start} - end ${end}`),
