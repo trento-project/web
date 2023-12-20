@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import day from 'dayjs';
+import { format } from 'date-fns';
 
 import {
   healthEnum,
@@ -112,7 +112,7 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     health: healthEnum(),
     selected_checks: [],
     provider: cloudProviderEnum(),
-    cib_last_written: day(faker.date.recent()).format('ddd MMM D h:mm:ss YYYY'),
+    cib_last_written: format(faker.date.recent(), 'EEE MMM d h:mm:ss yyyy'),
     details,
   };
 });
