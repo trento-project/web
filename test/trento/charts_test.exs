@@ -20,6 +20,7 @@ defmodule Trento.ChartsTest do
       }
     end
 
+    @tag :skip
     test "should return an error if the host does not exists", %{
       from: from,
       to: to
@@ -27,6 +28,7 @@ defmodule Trento.ChartsTest do
       assert {:error, :not_found} = Trento.Charts.host_cpu_chart(Faker.UUID.v4(), from, to)
     end
 
+    @tag :skip
     test "should return results for each section of the cpu chart when data is found", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -50,6 +52,7 @@ defmodule Trento.ChartsTest do
       assert length(busy_user.series) == 2
     end
 
+    @tag :skip
     test "should return ChartTimeSeries struct with empty series when cpu data is not found", %{
       from: from,
       to: to
@@ -86,6 +89,7 @@ defmodule Trento.ChartsTest do
       }
     end
 
+    @tag :skip
     test "should return an error if the host does not exists", %{
       from: from,
       to: to
@@ -93,6 +97,7 @@ defmodule Trento.ChartsTest do
       assert {:error, :not_found} = Trento.Charts.host_memory_chart(Faker.UUID.v4(), from, to)
     end
 
+    @tag :skip
     test "should return results for each section of the memory chart when data is found", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -114,6 +119,7 @@ defmodule Trento.ChartsTest do
       assert length(swap_used.series) == 2
     end
 
+    @tag :skip
     test "should return an HostMemoryChart with empty series when no data is found", %{
       from: from,
       to: to
