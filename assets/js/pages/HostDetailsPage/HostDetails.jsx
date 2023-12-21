@@ -12,6 +12,7 @@ import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import WarningBanner from '@common/Banners/WarningBanner';
+import { subHours } from 'date-fns';
 
 import SuseLogo from '@static/suse_logo.svg';
 
@@ -29,7 +30,6 @@ import {
   subscriptionsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
-import { subHours } from 'date-fns';
 
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
@@ -37,7 +37,7 @@ function formatBytes(bytes, decimals = 2) {
   const dm = decimals < 0 ? 0 : decimals;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  return `${parseFloat((bytes / k**i).toFixed(dm))} ${sizes[i]}`;
 }
 
 function HostDetails({
