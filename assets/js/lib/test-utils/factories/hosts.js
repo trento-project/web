@@ -1,12 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import day from 'dayjs';
+import { format, formatISO } from 'date-fns';
 import { times } from 'lodash';
 
 import { healthEnum } from '.';
 
-const slesSubscriptionDateFormat = 'YYYY-MM-DD HH:mm:ss UTC';
+const slesSubscriptionDateFormat = "yyyy-MMM-dd h:mm:ss 'UTC'";
 
 const slesSubscriptionIdentifierEnum = () =>
   faker.helpers.arrayElement([
@@ -28,15 +28,15 @@ const saptuneTuningStateEnum = () =>
 
 export const slesSubscriptionFactory = Factory.define(() => ({
   arch: 'x86_64',
-  expires_at: day(faker.date.future()).format(slesSubscriptionDateFormat),
+  expires_at: format(faker.date.future(), slesSubscriptionDateFormat),
   host_id: faker.string.uuid(),
   identifier: slesSubscriptionIdentifierEnum(),
-  inserted_at: day(faker.date.recent()).format(),
-  starts_at: day(faker.date.past()).format(slesSubscriptionDateFormat),
+  inserted_at: formatISO(faker.date.recent()),
+  starts_at: format(faker.date.past(), slesSubscriptionDateFormat),
   status: 'Registered',
   subscription_status: 'ACTIVE',
   type: 'internal',
-  updated_at: day(faker.date.recent()).format(),
+  updated_at: formatISO(faker.date.recent()),
   version: '15.3',
 }));
 
