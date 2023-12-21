@@ -15,12 +15,11 @@ import HostDetails from './HostDetails';
 
 const axiosMock = new MockAdapter(networkClient);
 
-
 describe('HostDetails component', () => {
   beforeEach(() => {
     axiosMock.reset();
     axiosMock.onGet(/\/api\/v1\/charts.*/gm).reply(200, {});
-  })
+  });
 
   describe('Checks execution', () => {
     it('should show the Checks related action buttons', () => {
