@@ -89,6 +89,14 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     perform_query_range(query, from, to)
   end
 
+  def num_cpus(from, to) do
+    query = "count(count(node_cpu_seconds_total{}) by (cpu))"
+
+    with {:ok, [%{value: value} | _]} <- perform_query_range(query, from, to) do
+      {:ok, trunc(value)}
+    end
+  end
+
   def get_exporters_status(host_id) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 

@@ -37,4 +37,7 @@ defmodule Trento.Charts.HostDataFetcher do
 
   @callback swap_used(host_id :: String.t(), from :: DateTime.t(), to :: DateTime.t()) ::
               {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
+
+  @callback num_cpus(from :: DateTime.t(), to :: DateTime.t()) ::
+              {:ok, integer()} | {:error, any}
 end

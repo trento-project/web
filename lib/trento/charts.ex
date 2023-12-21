@@ -16,6 +16,7 @@ defmodule Trento.Charts do
           {:ok, HostCpuChart.t()} | {:error, any}
   def host_cpu_chart(host_id, from, to) do
     with {:ok, _} <- Hosts.by_host_id(host_id),
+         {:ok, num_cpus} <- host_data_fetcher().num_cpus(from, to),
          {:ok, cpu_busy_iowait_samples} <-
            host_data_fetcher().cpu_busy_iowait(host_id, from, to),
          {:ok, cpu_idle_samples} <- host_data_fetcher().cpu_idle(host_id, from, to),
@@ -27,12 +28,30 @@ defmodule Trento.Charts do
            host_data_fetcher().cpu_busy_other(host_id, from, to) do
       {:ok,
        %HostCpuChart{
-         busy_iowait: %ChartTimeSeries{label: "cpu_busy_iowait", series: cpu_busy_iowait_samples},
-         idle: %ChartTimeSeries{label: "cpu_idle", series: cpu_idle_samples},
-         busy_system: %ChartTimeSeries{label: "cpu_busy_system", series: cpu_busy_system_samples},
-         busy_user: %ChartTimeSeries{label: "cpu_busy_user", series: cpu_busy_user_samples},
-         busy_other: %ChartTimeSeries{label: "cpu_busy_other", series: cpu_busy_other_samples},
-         busy_irqs: %ChartTimeSeries{label: "cpu_busy_irqs", series: cpu_busy_irqs_samples}
+         busy_iowait: %ChartTimeSeries{
+           label: "cpu_busy_iowait",
+           series: normalize_cpu_series_to_num_cpus(cpu_busy_iowait_samples, num_cpus)
+         },
+         idle: %ChartTimeSeries{
+           label: "cpu_idle",
+           series: normalize_cpu_series_to_num_cpus(cpu_idle_samples, num_cpus)
+         },
+         busy_system: %ChartTimeSeries{
+           label: "cpu_busy_system",
+           series: normalize_cpu_series_to_num_cpus(cpu_busy_system_samples, num_cpus)
+         },
+         busy_user: %ChartTimeSeries{
+           label: "cpu_busy_user",
+           series: normalize_cpu_series_to_num_cpus(cpu_busy_user_samples, num_cpus)
+         },
+         busy_other: %ChartTimeSeries{
+           label: "cpu_busy_other",
+           series: normalize_cpu_series_to_num_cpus(cpu_busy_other_samples, num_cpus)
+         },
+         busy_irqs: %ChartTimeSeries{
+           label: "cpu_busy_irqs",
+           series: normalize_cpu_series_to_num_cpus(cpu_busy_irqs_samples, num_cpus)
+         }
        }}
     end
   end
@@ -62,4 +81,10 @@ defmodule Trento.Charts do
   end
 
   defp host_data_fetcher, do: Application.fetch_env!(:trento, __MODULE__)[:host_data_fetcher]
+
+  defp normalize_cpu_series_to_num_cpus(cpu_series, num_cpus) do
+    Enum.map(cpu_series, fn %{timestamp: timestamp, value: value} ->
+      %{timestamp: timestamp, value: value / num_cpus}
+    end)
+  end
 end

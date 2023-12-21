@@ -20,6 +20,14 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     end
 
     @tag :skip
+    test "should get num_cpus", %{
+      from: from,
+      to: to
+    } do
+      assert {:ok, 12} == PrometheusApi.num_cpus(from, to)
+    end
+
+    @tag :skip
     test "should return no samples when no data is found", %{
       from: from,
       to: to
