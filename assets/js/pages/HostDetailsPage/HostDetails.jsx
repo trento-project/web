@@ -213,9 +213,7 @@ function HostDetails({
             chartId="cpu"
             chartTitle="CPU"
             yAxisFormatter={(value) => `${value}%`}
-            yAxisScaleType="logarithmic"
             startInterval={subHours(new Date(), 3)}
-            yAxisMaxValue={100}
           />
         </div>
         <div>
