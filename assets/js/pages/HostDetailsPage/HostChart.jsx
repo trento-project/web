@@ -53,7 +53,7 @@ function HostChart({
           start: addMinutes(startIntervalRef.current, 1),
           end: addMinutes(endIntervalRef.current, 1),
         };
-        if (chartRef.current.getZoomLevel() < 3.5) {
+        if (chartRef.current && chartRef.current.getZoomLevel() < 3.5) {
           const updatedChartData = await fetchApiData(
             fetchInterval.start,
             fetchInterval.end
