@@ -23,7 +23,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
               timestamp: %Schema{
                 type: :string,
                 format: "date-time",
-                description: "ISO8601 timestamp",
+                description: "ISO8601 timestamp"
               },
               value: %Schema{
                 type: :number,
