@@ -28,4 +28,15 @@ before(() => {
   }
   cy.acceptEula();
   cy.initiateSession();
+
+  // TODO: Remove when prometheus is on the CI
+  cy.intercept(
+    {
+      method: 'GET',
+      url: '/api/v1/charts/*',
+    },
+    {
+      body: {},
+    }
+  );
 });
