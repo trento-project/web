@@ -45,8 +45,7 @@ defmodule TrentoWeb.V1.ChartController do
     ],
     responses: [
       ok:
-        {"Information about cpu usage of the host", "application/json",
-         Schema.Chart.HostCpuChart}
+        {"Information about cpu usage of the host", "application/json", Schema.Chart.HostCpuChart}
     ]
 
   def host_cpu(conn, %{id: id, from: from, to: to}) do
