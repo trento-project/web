@@ -11,6 +11,13 @@ context('Host Details', () => {
 
     cy.get(`#host-${selectedHost.agentId} > a`).click();
     cy.url().should('include', `/hosts/${selectedHost.agentId}`);
+    // TODO: Remove when prometheus is on the CI
+    cy.intercept({
+      method: 'GET',
+      url: '/api/v1/charts/*'
+    }, {
+      body: {},
+    });
   });
 
   after(() => {
