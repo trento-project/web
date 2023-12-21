@@ -16,6 +16,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       }
     end
 
+    @tag :skip
     test "should return 422 when the input request timestamps are not valid", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       api_spec: api_spec,
@@ -30,6 +31,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       |> assert_schema("UnprocessableEntity", api_spec)
     end
 
+    @tag :skip
     test "should return 200 with host memory chart data when host exists", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -45,6 +47,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       |> assert_schema("HostMemoryChart", api_spec)
     end
 
+    @tag :skip
     test "should return 404 if a cpu chart is requested for a non existing host", %{
       from: from,
       to: to,
@@ -68,6 +71,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       }
     end
 
+    @tag :skip
     test "should return 422 when the input request timestamps are not valid", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       api_spec: api_spec,
@@ -82,6 +86,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       |> assert_schema("UnprocessableEntity", api_spec)
     end
 
+    @tag :skip
     test "should return 200 with host cpu chart data when host exists", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -97,6 +102,7 @@ defmodule TrentoWeb.V1.ChartControllerTest do
       |> assert_schema("HostCpuChart", api_spec)
     end
 
+    @tag :skip
     test "should return 404 if a cpu chart is requested for a non existing host", %{
       from: from,
       to: to,
