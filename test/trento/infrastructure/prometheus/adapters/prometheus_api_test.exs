@@ -5,7 +5,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
   alias Trento.Charts.ChartTimeSeriesSample
   alias Trento.Infrastructure.Prometheus.PrometheusApi
 
-  @tag :skip
   test "should return not found is the host is not registered" do
     assert {:error, :not_found} == PrometheusApi.get_exporters_status(Faker.UUID.v4())
   end
@@ -19,7 +18,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       }
     end
 
-    @tag :skip
     test "should get num_cpus", %{
       from: from,
       to: to
@@ -27,7 +25,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok, 12} == PrometheusApi.num_cpus(from, to)
     end
 
-    @tag :skip
     test "should return no samples when no data is found", %{
       from: from,
       to: to
@@ -35,7 +32,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       assert {:ok, []} == PrometheusApi.cpu_busy_irqs(Faker.UUID.v4(), from, to)
     end
 
-    @tag :skip
     test "should get cpu_busy_irqs data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -54,7 +50,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.cpu_busy_irqs(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get cpu_busy_other data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -67,7 +62,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.cpu_busy_other(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get cpu_busy_iowait data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -86,7 +80,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.cpu_busy_iowait(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get cpu_busy_user data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -105,7 +98,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.cpu_busy_user(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get cpu_idle data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -124,7 +116,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.cpu_idle(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get cpu_busy_system data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -143,7 +134,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.cpu_busy_system(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get ram_total data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -162,7 +152,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.ram_total(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get ram_used data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -181,7 +170,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.ram_used(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get ram_cache_and_buffer data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -200,7 +188,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.ram_cache_and_buffer(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get ram_free data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
@@ -219,7 +206,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               ]} == PrometheusApi.ram_free(prometheus_chart_agent_id, from, to)
     end
 
-    @tag :skip
     test "should get swap_used data", %{
       prometheus_chart_agent_id: prometheus_chart_agent_id,
       from: from,
