@@ -5,6 +5,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
   alias OpenApiSpex.Schema
 
   defmodule ChartTimeSeries do
+    @moduledoc false
     OpenApiSpex.schema(%{
       title: "ChartTimeSeries",
       description:
@@ -39,6 +40,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
   end
 
   defmodule HostCpuChart do
+    @moduledoc false
+
     OpenApiSpex.schema(%{
       title: "HostCpuChart",
       description: "A Time Series chart with information about the cpu usage of an host",
@@ -55,6 +58,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
   end
 
   defmodule HostMemoryChart do
+    @moduledoc false
+
     OpenApiSpex.schema(%{
       title: "HostMemoryChart",
       description: "A Time series chart with information about the memory usage of an host",

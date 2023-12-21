@@ -10,8 +10,8 @@ defmodule TrentoWeb.V1.ChartControllerTest do
     setup do
       %{
         prometheus_chart_agent_id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4",
-        from: DateTime.from_unix!(1_702_316_008) |> DateTime.to_iso8601(),
-        to: DateTime.from_unix!(1_702_316_102) |> DateTime.to_iso8601(),
+        from: DateTime.to_iso8601(DateTime.from_unix!(1_702_316_008)),
+        to: DateTime.to_iso8601(DateTime.from_unix!(1_702_316_102)),
         api_spec: ApiSpec.spec()
       }
     end
@@ -62,8 +62,8 @@ defmodule TrentoWeb.V1.ChartControllerTest do
     setup do
       %{
         prometheus_chart_agent_id: "7cd181e4-0c3e-5b70-9e47-e7ed8063b1d4",
-        from: DateTime.from_unix!(1_702_316_008) |> DateTime.to_iso8601(),
-        to: DateTime.from_unix!(1_702_316_102) |> DateTime.to_iso8601(),
+        from: DateTime.to_iso8601(DateTime.from_unix!(1_702_316_008)),
+        to: DateTime.to_iso8601(DateTime.from_unix!(1_702_316_102)),
         api_spec: ApiSpec.spec()
       }
     end
