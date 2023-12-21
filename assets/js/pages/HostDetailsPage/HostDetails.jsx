@@ -221,6 +221,7 @@ function HostDetails({
             hostId={hostID}
             chartId="memory"
             chartTitle="Memory"
+            startInterval={subHours(new Date(), 3)}
             yAxisFormatter={(value) => formatBytes(value, 3)}
           />
         </div>
