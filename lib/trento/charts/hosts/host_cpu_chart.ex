@@ -4,11 +4,11 @@ defmodule Trento.Charts.Hosts.HostCpuChart do
 
   The chart has different series
     - busy_iowait
-    - idle
+    - busy_irqs
+    - busy_other
     - busy_system
     - busy_user
-    - busy_other
-    - busy_irqs
+    - idle
   """
 
   alias Trento.Charts.ChartTimeSeries

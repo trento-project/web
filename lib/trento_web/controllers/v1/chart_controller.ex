@@ -12,7 +12,7 @@ defmodule TrentoWeb.V1.ChartController do
   tags ["Charts"]
 
   operation :host_cpu,
-    summary: "Get a CPU chart of an host",
+    summary: "Get a CPU chart of a host",
     description:
       "Get information about cpu usage for an host, providing a from/to interval as ISO8601 timestamp",
     parameters: [
@@ -45,7 +45,7 @@ defmodule TrentoWeb.V1.ChartController do
     ],
     responses: [
       ok:
-        {"Information about cpu usage of the host", "application/json", Schema.Chart.HostCpuChart}
+        {"Information about CPU usage of the host", "application/json", Schema.Chart.HostCpuChart}
     ]
 
   def host_cpu(conn, %{id: id, from: from, to: to}) do

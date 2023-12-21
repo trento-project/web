@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  TimeScale,
-  LogarithmicScale,
   Legend,
+  LinearScale,
+  LineElement,
+  LogarithmicScale,
+  PointElement,
+  TimeScale,
+  Tooltip,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
 import ZoomPlugin from 'chartjs-plugin-zoom';
 import classNames from 'classnames';
 import 'chartjs-adapter-date-fns';
+import { Line } from 'react-chartjs-2';
 
 const AVAILABLE_COLORS = [
   {
@@ -53,14 +53,14 @@ ChartJS.register(
 );
 
 function TimeSeriesLineChart({
-  title,
-  datasets,
-  start,
-  end,
+  chartRef,
   chartWrapperClassNames,
   className,
+  datasets,
+  end,
   onIntervalChange,
-  chartRef,
+  start,
+  title,
   yAxisMaxValue,
   yAxisLabelFormatter = (value) => value,
   yAxisScaleType = 'linear',
