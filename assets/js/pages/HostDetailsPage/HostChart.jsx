@@ -7,9 +7,12 @@ function HostChart({
   hostId,
   chartId,
   chartTitle,
+  yAxisFormatter,
+  yAxisScaleType,
+  yAxisMaxValue,
   startInterval = subMinutes(new Date(), 10),
   endInterval = new Date(),
-  updateFrequency = 30000,
+  updateFrequency = 30000
 }) {
   const [chartStartInterval, setChartStartInterval] = useState(startInterval);
   const [chartEndInterval, setChartEndInterval] = useState(endInterval);
@@ -40,18 +43,16 @@ function HostChart({
       })),
     }));
 
-    return updatedChartData.slice(0, 4);
+    return updatedChartData
   };
 
   useEffect(() => {
     async function startDataFetching() {
       setInterval(async () => {
-        console.log('current start interval', startIntervalRef.current);
         const fetchInterval = {
           start: addMinutes(startIntervalRef.current, 1),
           end: addMinutes(endIntervalRef.current, 1),
         };
-        console.log('after increase start interval', fetchInterval.start);
         if (chartRef.current.getZoomLevel() < 3.5) {
           const updatedChartData = await fetchApiData(
             fetchInterval.start,
@@ -59,7 +60,6 @@ function HostChart({
           );
 
           setChartData(updatedChartData);
-          // Chart window should always be last 10 minutes
           setChartStartInterval(fetchInterval.start);
           setChartEndInterval(fetchInterval.end);
         }
@@ -83,6 +83,9 @@ function HostChart({
       start={chartStartInterval}
       end={chartEndInterval}
       chartRef={chartRef}
+      yAxisScaleType={yAxisScaleType}
+      yAxisMaxValue={yAxisMaxValue}
+      yAxisLabelFormatter={yAxisFormatter}
       onIntervalChange={() => {}}
     />
   );

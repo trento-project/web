@@ -29,6 +29,16 @@ import {
   subscriptionsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
+import { subHours } from 'date-fns';
+
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
 
 function HostDetails({
   agentVersion,
@@ -198,10 +208,23 @@ function HostDetails({
           </div>
         </div>
         <div>
-          <HostChart hostId={hostID} chartId="cpu" chartTitle="CPU" />
+          <HostChart
+            hostId={hostID}
+            chartId="cpu"
+            chartTitle="CPU"
+            yAxisFormatter={(value) => `${value}%`}
+            yAxisScaleType="logarithmic"
+            startInterval={subHours(new Date(), 3)}
+            yAxisMaxValue={100}
+          />
         </div>
         <div>
-          <HostChart hostId={hostID} chartId="memory" chartTitle="Memory" />
+          <HostChart
+            hostId={hostID}
+            chartId="memory"
+            chartTitle="Memory"
+            yAxisFormatter={(value) => formatBytes(value, 3)}
+          />
         </div>
         <div className="mt-16">
           <div className="mb-4">
