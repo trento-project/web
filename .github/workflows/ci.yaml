@@ -237,27 +237,6 @@ jobs:
             otp: 25
           - elixir: 1.13.4
             otp: 22
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: trento_test
-        ports:
-          - 5433:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      rabbitmq:
-        image: rabbitmq
-        env:
-          RABBITMQ_DEFAULT_USER: trento
-          RABBITMQ_DEFAULT_PASS: trento
-        ports:
-          - 5673:5672
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.0
@@ -283,6 +262,11 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
       - name: Compile
         run: mix compile --warnings-as-errors
+      - name: "Docker compose dependencies" 
+        uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose.yaml"
+          down-flags: "--volumes"
       - name: Run test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -374,24 +358,6 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       MIX_ENV: dev
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: trento_dev
-        ports:
-          - 5433:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      grafana:
-        image: grafana/grafana:8.3.5
-        ports:
-          - 3000:3000
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.0
@@ -437,6 +403,11 @@ jobs:
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
+      - name: "Docker compose dependencies" 
+        uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose.yaml"
+          down-flags: "--volumes"
       - name: Mix setup
         run: mix setup
       - name: Run trento detached
