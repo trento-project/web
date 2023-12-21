@@ -45,7 +45,7 @@ defmodule TrentoWeb.V1.ChartController do
     ],
     responses: [
       ok:
-        {"Informations about cpu usage of the host", "application/json",
+        {"Information about cpu usage of the host", "application/json",
          Schema.Chart.HostCpuChart}
     ]
 
@@ -89,7 +89,7 @@ defmodule TrentoWeb.V1.ChartController do
     ],
     responses: [
       ok:
-        {"Informations about memory usage of the host", "application/json",
+        {"Information about memory usage of the host", "application/json",
          Schema.Chart.HostMemoryChart}
     ]
 
