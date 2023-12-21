@@ -24,7 +24,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
                 type: :string,
                 format: "date-time",
                 description: "ISO8601 timestamp",
-                example: "2023-12-18T13:50:57.547Z"
               },
               value: %Schema{
                 type: :number,
