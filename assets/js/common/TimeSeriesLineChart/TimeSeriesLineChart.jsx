@@ -63,7 +63,7 @@ function TimeSeriesLineChart({
   chartRef,
   yAxisMaxValue,
   yAxisLabelFormatter = (value) => value,
-  yAxisScaleType = "linear"
+  yAxisScaleType = 'linear',
 }) {
   const onZoomChange = ({
     chart: {
@@ -89,7 +89,11 @@ function TimeSeriesLineChart({
       mode: 'x',
       onZoomComplete: onZoomChange,
       // Prevent zoom reset on legend change, https://github.com/chartjs/chartjs-plugin-zoom/issues/256#issuecomment-1826812558
-      onZoomStart: e => e.point.x > e.chart.chartArea.left && e.point.x < e.chart.chartArea.right && e.point.y > e.chart.chartArea.top && e.point.y < e.chart.chartArea.bottom,
+      onZoomStart: (e) =>
+        e.point.x > e.chart.chartArea.left &&
+        e.point.x < e.chart.chartArea.right &&
+        e.point.y > e.chart.chartArea.top &&
+        e.point.y < e.chart.chartArea.bottom,
     },
   });
 
@@ -147,8 +151,8 @@ function TimeSeriesLineChart({
       position: 'left',
       max: yAxisMaxValue,
       ticks: {
-        callback: yAxisLabelFormatter
-      }
+        callback: yAxisLabelFormatter,
+      },
     },
   };
 

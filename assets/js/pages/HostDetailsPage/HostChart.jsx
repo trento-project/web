@@ -12,7 +12,7 @@ function HostChart({
   yAxisMaxValue,
   startInterval = subMinutes(new Date(), 10),
   endInterval = new Date(),
-  updateFrequency = 30000
+  updateFrequency = 30000,
 }) {
   const [chartStartInterval, setChartStartInterval] = useState(startInterval);
   const [chartEndInterval, setChartEndInterval] = useState(endInterval);
@@ -43,7 +43,7 @@ function HostChart({
       })),
     }));
 
-    return updatedChartData
+    return updatedChartData;
   };
 
   useEffect(() => {
