@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import {
+  ascsErsSapSystemFactory,
   clusterFactory,
   hostFactory,
   databaseInstanceFactory,
@@ -8,14 +9,21 @@ import {
   sapSystemFactory,
 } from '@lib/test-utils/factories';
 import {
+  FS_TYPE_RESOURCE_MANAGED,
+  FS_TYPE_SIMPLE_MOUNT,
+  FS_TYPE_MIXED,
+} from '@lib/model/clusters';
+
+import {
   getClusterHostIDs,
   getClusterHosts,
   getClusterName,
   getClusterSapSystems,
   getClusterSelectedChecks,
   getClusterIDs,
-  MIXED_VERSIONS,
+  getFilesystemType,
   getEnsaVersion,
+  MIXED_VERSIONS,
 } from './cluster';
 
 describe('Cluster selector', () => {
@@ -384,5 +392,133 @@ describe('Cluster selector', () => {
     };
 
     expect(getEnsaVersion(state, clusterID)).toEqual(MIXED_VERSIONS);
+  });
+
+  it('should return filesystem type', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({ id: clusterID });
+
+    const sapSystems = sapSystemFactory.buildList(2, { ensa_version: 'ensa1' });
+    const [{ id: sapSystem1 }, { id: sapSystem2 }] = sapSystems;
+
+    const hosts = hostFactory
+      .buildList(4, { cluster_id: clusterID })
+      .concat(hostFactory.buildList(2));
+    const [{ id: host1 }, { id: host2 }, { id: host3 }, { id: host4 }] = hosts;
+
+    const applicationInstances = [
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystem1,
+        host_id: host1,
+      }),
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystem2,
+        host_id: host2,
+      }),
+    ];
+
+    const databases = databaseFactory.buildList(4);
+    const [{ id: database1 }, { id: database2 }] = databases;
+
+    const databaseInstances = [
+      databaseInstanceFactory.build({
+        sap_system_id: database1,
+        host_id: host3,
+      }),
+      databaseInstanceFactory.build({
+        sap_system_id: database2,
+        host_id: host4,
+      }),
+    ];
+
+    const state = {
+      hostsList: {
+        hosts,
+      },
+      databasesList: {
+        databases,
+        databaseInstances,
+      },
+      sapSystemsList: {
+        sapSystems,
+        applicationInstances,
+        databaseInstances,
+      },
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getEnsaVersion(state, clusterID)).toEqual(MIXED_VERSIONS);
+  });
+
+  it('should return resource_managed filesystem type if every SAP system has resource based filesystem', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({
+      id: clusterID,
+      type: 'ascs_ers',
+      details: {
+        sap_systems: ascsErsSapSystemFactory.buildList(3, {
+          filesystem_resource_based: true,
+        }),
+      },
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getFilesystemType(state, clusterID)).toEqual(
+      FS_TYPE_RESOURCE_MANAGED
+    );
+  });
+
+  it('should return simple_mount filesystem type if no SAP system has resource based filesystem', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({
+      id: clusterID,
+      type: 'ascs_ers',
+      details: {
+        sap_systems: ascsErsSapSystemFactory.buildList(3, {
+          filesystem_resource_based: false,
+        }),
+      },
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getFilesystemType(state, clusterID)).toEqual(FS_TYPE_SIMPLE_MOUNT);
+  });
+
+  it('should return mixed_fs_types filesystem type if only some SAP system have resource based filesystem', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({
+      id: clusterID,
+      type: 'ascs_ers',
+      details: {
+        sap_systems: [
+          ...ascsErsSapSystemFactory.buildList(3, {
+            filesystem_resource_based: true,
+          }),
+          ...ascsErsSapSystemFactory.buildList(2, {
+            filesystem_resource_based: false,
+          }),
+        ],
+      },
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getFilesystemType(state, clusterID)).toEqual(FS_TYPE_MIXED);
   });
 });
