@@ -12,7 +12,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-0F41395B.js"></script>
+    <script src="dist/sidebar_items-4E795807.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -140,6 +140,61 @@ Trento Web
 
     <div class="summary-synopsis"><p>This module defines the test case to be used by aggregate tests.
 Derived from Commanded.AggregateCase</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Charts.html" translate="no">Trento.Charts</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Charts module, responsible for assembling the charts</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Charts.ChartTimeSeries.html" translate="no">Trento.Charts.ChartTimeSeries</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p> Represents a time series of a chart
+ The series has a label and the samples distributed through time</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Charts.ChartTimeSeriesSample.html" translate="no">Trento.Charts.ChartTimeSeriesSample</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>ChartTimeSeriesSample represent a sample in a chart timeseries according to the Trento Domain.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Charts.HostDataFetcher.html" translate="no">Trento.Charts.HostDataFetcher</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Behaviour of host charts data fetcher</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Charts.Hosts.HostCpuChart.html" translate="no">Trento.Charts.Hosts.HostCpuChart</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents CPU chart data for a single host</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Charts.Hosts.HostMemoryChart.html" translate="no">Trento.Charts.Hosts.HostMemoryChart</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents Memory chart data for a single host</p></div>
 
 </div>
 <div class="summary-row">
@@ -2074,15 +2129,6 @@ It contains the snapshot of the host aggregate that will be used to restore the 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Infrastructure.Grafana.html" translate="no">Trento.Infrastructure.Grafana</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Grafana integration service</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="Trento.Infrastructure.Messaging.html" translate="no">Trento.Infrastructure.Messaging</a>
 
   </div>
@@ -2119,6 +2165,16 @@ It contains the snapshot of the host aggregate that will be used to restore the 
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="Trento.Infrastructure.Prometheus.ChartIntegration.html" translate="no">Trento.Infrastructure.Prometheus.ChartIntegration</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>ChartIntegration provides a mechanism for mapping prometheus query information to domain
+Chart time series objects</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="Trento.Infrastructure.Prometheus.Gen.html" translate="no">Trento.Infrastructure.Prometheus.Gen</a>
 
   </div>
@@ -2142,6 +2198,15 @@ It contains the snapshot of the host aggregate that will be used to restore the 
   </div>
 
     <div class="summary-synopsis"><p>Prometheus API adapter</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Infrastructure.Prometheus.PrometheusSamples.html" translate="no">Trento.Infrastructure.Prometheus.PrometheusSamples</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>PrometheusSamples represent a prometheus sample returned from a range query, having a unix timestamp and a float value</p></div>
 
 </div>
 <div class="summary-row">
@@ -3073,6 +3138,20 @@ tests that require setting up a connection.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="TrentoWeb.V1.ChartController.html" translate="no">TrentoWeb.V1.ChartController</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.V1.ChartView.html" translate="no">TrentoWeb.V1.ChartView</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="TrentoWeb.V1.ChecksResultView.html" translate="no">TrentoWeb.V1.ChecksResultView</a>
 
   </div>
@@ -3226,15 +3305,6 @@ tests that require setting up a connection.</p></div>
 
     <div class="summary-synopsis"><p>Dump the current discovery scenario and
   discarded discovery events.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="Mix.Tasks.InitGrafanaDashboards.html" translate="no">mix init_grafana_dashboards</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Init Grafana Dashboards</p></div>
 
 </div>
 <div class="summary-row">
