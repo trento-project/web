@@ -91,6 +91,8 @@ function HostDetails({
   const lastExecutionLoading = get(lastExecution, 'loading');
   const lastExecutionError = get(lastExecution, 'error');
 
+  const timeNow = new Date();
+
   return (
     <>
       <DeregistrationModal
@@ -213,7 +215,7 @@ function HostDetails({
             chartId="cpu"
             chartTitle="CPU"
             yAxisFormatter={(value) => `${value}%`}
-            startInterval={subHours(new Date(), 3)}
+            startInterval={subHours(timeNow, 3)}
           />
         </div>
         <div>
@@ -221,7 +223,7 @@ function HostDetails({
             hostId={hostID}
             chartId="memory"
             chartTitle="Memory"
-            startInterval={subHours(new Date(), 3)}
+            startInterval={subHours(timeNow, 3)}
             yAxisFormatter={(value) => formatBytes(value, 3)}
           />
         </div>

@@ -37,13 +37,15 @@ describe('TimeSeriesLineChart component', () => {
       },
     ];
 
+    const timeNow = new Date();
+
     expect(() =>
       render(
         <div>
           <TimeSeriesLineChart
             title="test chart"
-            start={new Date()}
-            end={new Date()}
+            start={timeNow}
+            end={timeNow}
             datasets={datasets}
             onIntervalChange={() => {}}
           />
@@ -76,12 +78,14 @@ describe('TimeSeriesLineChart component', () => {
       },
     ];
 
+    const timeNow = new Date();
+
     const { container } = render(
       <div>
         <TimeSeriesLineChart
           title="test chart"
-          start={new Date()}
-          end={new Date()}
+          start={timeNow}
+          end={timeNow}
           datasets={datasets}
           onIntervalChange={() => {}}
         />

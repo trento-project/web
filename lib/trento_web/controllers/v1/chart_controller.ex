@@ -14,7 +14,7 @@ defmodule TrentoWeb.V1.ChartController do
   operation :host_cpu,
     summary: "Get a CPU chart of a host",
     description:
-      "Get information about cpu usage for an host, providing a from/to interval as ISO8601 timestamp",
+      "Get information about cpu usage for a host, providing a from/to interval as ISO8601 timestamp",
     parameters: [
       id: [
         in: :path,
@@ -55,9 +55,9 @@ defmodule TrentoWeb.V1.ChartController do
   end
 
   operation :host_memory,
-    summary: "Get a Memory chart of an host",
+    summary: "Get a Memory chart of a host",
     description:
-      "Get information about memory usage for an host, providing a from/to interval as ISO8601 timestamp",
+      "Get information about memory usage for a host, providing a from/to interval as ISO8601 timestamp",
     parameters: [
       id: [
         in: :path,

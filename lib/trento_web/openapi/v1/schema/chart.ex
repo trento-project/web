@@ -43,7 +43,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
 
     OpenApiSpex.schema(%{
       title: "HostCpuChart",
-      description: "A Time Series chart with information about the cpu usage of an host",
+      description: "A Time Series chart with information about the cpu usage of a host",
       type: :object,
       properties: %{
         busy_iowait: ChartTimeSeries,
@@ -61,7 +61,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
 
     OpenApiSpex.schema(%{
       title: "HostMemoryChart",
-      description: "A Time series chart with information about the memory usage of an host",
+      description: "A Time series chart with information about the memory usage of a host",
       type: :object,
       properties: %{
         ram_total: ChartTimeSeries,
