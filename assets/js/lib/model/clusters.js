@@ -15,3 +15,7 @@ const clusterTypeLabels = {
 
 export const getClusterTypeLabel = (type) =>
   clusterTypeLabels[type] || 'Unknown';
+
+export const FS_TYPE_RESOURCE_MANAGED = 'resource_managed';
+export const FS_TYPE_SIMPLE_MOUNT = 'simple_mount';
+export const FS_TYPE_MIXED = 'mixed_fs_types';
