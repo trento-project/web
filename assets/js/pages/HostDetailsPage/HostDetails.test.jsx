@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
+import { networkClient } from '@lib/network';
+import MockAdapter from 'axios-mock-adapter';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
@@ -11,7 +13,14 @@ import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 
 import HostDetails from './HostDetails';
 
+const axiosMock = new MockAdapter(networkClient);
+
 describe('HostDetails component', () => {
+  beforeEach(() => {
+    axiosMock.reset();
+    axiosMock.onGet(/\/api\/v1\/charts.*/gm).reply(200, {});
+  });
+
   describe('Checks execution', () => {
     it('should show the Checks related action buttons', () => {
       renderWithRouter(<HostDetails agentVersion="1.0.0" />);

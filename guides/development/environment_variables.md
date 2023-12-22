@@ -25,10 +25,7 @@ Dig into [./config](https://github.com/trento-project/web/blob/main/config/) dir
 - `RUNNER_URL`
 
 **Monitoring**
-- `GRAFANA_USER`
-- `GRAFANA_PASSWORD`
-- `GRAFANA_PUBLIC_URL`
-- `GRAFANA_API_URL`
+- `PROMETHEUS_URL`
 
 **Alerting**
 - `ENABLE_ALERTING`

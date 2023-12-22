@@ -12,7 +12,6 @@ defmodule Trento.Release do
     migrate()
     init_event_store()
     migrate_event_store()
-    init_grafana_dashboards()
     init_admin_user()
   end
 
@@ -61,12 +60,6 @@ defmodule Trento.Release do
     load_app()
 
     Mix.Tasks.PruneEvents.run(args)
-  end
-
-  def init_grafana_dashboards do
-    load_app()
-
-    Mix.Tasks.InitGrafanaDashboards.run([])
   end
 
   def init_admin_user do

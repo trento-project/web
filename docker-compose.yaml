@@ -1,7 +1,36 @@
 version: "3"
 volumes:
   pg_data:
+  prometheus_data:
 services:
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    user: "0:0"
+    volumes:
+      - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml
+      - ./container_fixtures/prometheus:/container_init
+      - prometheus_data:/prometheus
+    entrypoint: "/container_init/prometheus_entrypoint.sh"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    ports:
+      - 9090:9090
   postgres:
     image: postgres:latest
     environment:
@@ -12,13 +41,6 @@ services:
       - 5433:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
-  grafana:
-    image: grafana/grafana:latest
-    environment:
-      GF_SECURITY_ALLOW_EMBEDDING: "true"
-      GF_AUTH_ANONYMOUS_ENABLED: "true"
-    ports:
-      - 3000:3000
   rabbitmq:
     image: rabbitmq:3.12.6-management-alpine
     ports:

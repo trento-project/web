@@ -12,6 +12,7 @@ import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import WarningBanner from '@common/Banners/WarningBanner';
+import { subHours } from 'date-fns';
 
 import SuseLogo from '@static/suse_logo.svg';
 
@@ -23,11 +24,21 @@ import HostSummary from './HostSummary';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
 import StatusPill from './StatusPill';
+import HostChart from './HostChart';
 
 import {
   subscriptionsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
+
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
+}
 
 function HostDetails({
   agentVersion,
@@ -35,7 +46,6 @@ function HostDetails({
   deregisterable,
   deregistering,
   exportersStatus = {},
-  grafanaPublicUrl,
   heartbeat,
   hostID,
   hostname,
@@ -80,6 +90,8 @@ function HostDetails({
   const lastExecutionData = get(lastExecution, 'data');
   const lastExecutionLoading = get(lastExecution, 'loading');
   const lastExecutionError = get(lastExecution, 'error');
+
+  const timeNow = new Date();
 
   return (
     <>
@@ -197,25 +209,24 @@ function HostDetails({
             />
           </div>
         </div>
-        <div className="mt-8 bg-white shadow rounded-lg py-4 px-8">
-          <iframe
-            title="node-exporter chart"
-            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=77&var-agentID=${hostID}`}
-            width="100%"
-            height="200"
-            frameBorder="0"
+        <div>
+          <HostChart
+            hostId={hostID}
+            chartId="cpu"
+            chartTitle="CPU"
+            yAxisFormatter={(value) => `${value}%`}
+            startInterval={subHours(timeNow, 3)}
           />
         </div>
-        <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
-          <iframe
-            title="node-exporter chart trento"
-            src={`${grafanaPublicUrl}/d-solo/rYdddlPWj/node-exporter-full?orgId=1&refresh=1m&theme=light&panelId=78&var-agentID=${hostID}`}
-            width="100%"
-            height="200"
-            frameBorder="0"
+        <div>
+          <HostChart
+            hostId={hostID}
+            chartId="memory"
+            chartTitle="Memory"
+            startInterval={subHours(timeNow, 3)}
+            yAxisFormatter={(value) => formatBytes(value, 3)}
           />
         </div>
-
         <div className="mt-16">
           <div className="mb-4">
             <h2 className="text-2xl font-bold">Provider details</h2>

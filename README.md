@@ -57,7 +57,7 @@ Here's a non-comprehensive list of the capabilities provided by the [Trento Web]
 ## Monitoring
 
 It is important in critical business systems to have access to relevant information about _how things are going_.
-Currently, Trento provides basic integration with **Grafana** and **Prometheus**.
+Currently, Trento provides basic integration with **Prometheus**.
 
 See [related documentation](./guides/monitoring/monitoring.md) for more information.
 

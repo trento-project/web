@@ -30,7 +30,7 @@ asdf install
 
 ## Development environment
 
-The Trento project provides a docker-compose development environment that is used to start a Postgres database and a Grafana instance for storage and monitoring. To start the development environment, navigate to the root directory of the Trento project and run the following command:
+The Trento project provides a docker-compose development environment that is used to start a Postgres database and a prometheus instance for storage and monitoring. To start the development environment, navigate to the root directory of the Trento project and run the following command:
 
 ```
 docker-compose up -d

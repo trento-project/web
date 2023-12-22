@@ -55,13 +55,6 @@ export default {
       control: 'object',
       description: 'Status of the prometheus exporters',
     },
-    grafanaPublicUrl: {
-      control: 'text',
-      description: 'Grafana dashboard public URL',
-      table: {
-        type: { summary: 'string' },
-      },
-    },
     heartbeat: {
       control: { type: 'radio' },
       options: ['passing', 'critical'],
@@ -165,7 +158,6 @@ export const Default = {
     deregisterable: false,
     deregistering: false,
     exportersStatus: {},
-    grafanaPublicUrl: 'some-url',
     heartbeat: host.heartbeat,
     hostID: host.id,
     hostname: host.hostname,
