@@ -1,5 +1,11 @@
-import { get, find } from 'lodash';
+import { get, find, uniq, has } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
+
+import {
+  FS_TYPE_RESOURCE_MANAGED,
+  FS_TYPE_SIMPLE_MOUNT,
+  FS_TYPE_MIXED,
+} from '@lib/model/clusters';
 
 import { getHostID } from './host';
 
@@ -91,6 +97,27 @@ export const getEnsaVersion = createSelector(
     return firstEnsaVersion && ensaVersions.size === 1
       ? firstEnsaVersion
       : MIXED_VERSIONS;
+  }
+);
+
+export const getFilesystemType = createSelector(
+  [(state, clusterID) => getCluster(clusterID)(state)],
+  (cluster) => {
+    const sapSystems = get(cluster, ['details', 'sap_systems'], []);
+
+    const filesystems = sapSystems
+      .filter((sapSystem) => has(sapSystem, 'filesystem_resource_based'))
+      .map(
+        ({ filesystem_resource_based: filesystemResourceBased }) =>
+          filesystemResourceBased
+      );
+
+    if (uniq(filesystems).length === 1) {
+      const resourceManaged = filesystems[0];
+      return resourceManaged ? FS_TYPE_RESOURCE_MANAGED : FS_TYPE_SIMPLE_MOUNT;
+    }
+
+    return FS_TYPE_MIXED;
   }
 );
 
