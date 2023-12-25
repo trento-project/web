@@ -50,7 +50,7 @@
     "axios": "^1.6.2",
     "axios-auth-refresh": "^3.3.6",
     "canvas": "^2.11.2",
-    "chart.js": "^4.4.0",
+    "chart.js": "^4.4.1",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-zoom": "^2.0.1",
     "classnames": "^2.3.2",
