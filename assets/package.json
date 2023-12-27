@@ -55,7 +55,6 @@
     "chartjs-plugin-zoom": "^2.0.1",
     "classnames": "^2.3.2",
     "date-fns": "^2.30.0",
-    "dayjs": "^1.11.10",
     "eos-icons-react": "^2.4.0",
     "lodash": "^4.17.21",
     "postcss-import": "^15.1.0",
