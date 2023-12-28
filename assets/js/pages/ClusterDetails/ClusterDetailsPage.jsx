@@ -8,6 +8,7 @@ import {
   getClusterHosts,
   getClusterSapSystems,
   getEnsaVersion,
+  getFilesystemType,
 } from '@state/selectors/cluster';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
@@ -34,6 +35,9 @@ export function ClusterDetailsPage() {
   const lastExecution = useSelector(getLastExecution(clusterID));
 
   const ensaVersion = useSelector((state) => getEnsaVersion(state, clusterID));
+  const filesystemType = useSelector((state) =>
+    getFilesystemType(state, clusterID)
+  );
 
   useEffect(() => {
     if (provider && type) {
@@ -43,11 +47,12 @@ export function ClusterDetailsPage() {
           target_type: TARGET_CLUSTER,
           cluster_type: type,
           ensa_version: ensaVersion,
+          filesystem_type: filesystemType,
         })
       );
       dispatch(updateLastExecution(clusterID));
     }
-  }, [dispatch, provider, type, ensaVersion]);
+  }, [dispatch, provider, type, ensaVersion, filesystemType]);
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
