@@ -170,7 +170,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
         {:error, :unexpected_response}
 
       {:error, reason} = error ->
-        Logger.error("Error getting cpu busy system data from Prometheus API: #{inspect(reason)}")
+        Logger.error("Error getting time series data from Prometheus API: #{inspect(reason)}")
 
         error
     end
