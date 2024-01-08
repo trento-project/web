@@ -19,7 +19,7 @@ defmodule TrentoWeb.Plugs.ChartsDisabledPlug do
   @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
   def call(conn, _) do
     conn
-    |> put_status(501)
+    |> put_resp_content_type("application/json")
     |> resp(
       501,
       Jason.encode!(
