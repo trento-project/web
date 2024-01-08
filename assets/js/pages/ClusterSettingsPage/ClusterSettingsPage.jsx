@@ -37,7 +37,7 @@ const catalogWarningBanner = {
   ),
   [VMWARE_PROVIDER]: (
     <WarningBanner>
-      Configuration checks for HANA scale-up performance optimized clusters on
+      Configuration checks for HANA Scale Up performance optimized clusters on
       VMware are still in experimental phase. Please use results with caution.
     </WarningBanner>
   ),
