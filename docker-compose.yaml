@@ -3,7 +3,7 @@ volumes:
   pg_data:
   prometheus_data:
 services:
-  node-exporter:
+  node_exporter:
     image: prom/node-exporter:v1.7.0
     volumes:
       - /proc:/host/proc:ro
