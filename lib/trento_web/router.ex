@@ -43,6 +43,12 @@ defmodule TrentoWeb.Router do
          error_handler: TrentoWeb.Plugs.ApiAuthErrorHandler}
   end
 
+  pipeline :charts_feature do
+    plug Unplug,
+      if: TrentoWeb.Plugs.UnplugChartsEnabledPredicate,
+      do: TrentoWeb.Plugs.ChartsDisabledPlug
+  end
+
   scope "/" do
     pipe_through :browser
 
@@ -140,8 +146,12 @@ defmodule TrentoWeb.Router do
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
-      get "/charts/hosts/:id/cpu", ChartController, :host_cpu
-      get "/charts/hosts/:id/memory", ChartController, :host_memory
+      scope "/charts" do
+        pipe_through :charts_feature
+
+        get "/hosts/:id/cpu", ChartController, :host_cpu
+        get "/hosts/:id/memory", ChartController, :host_memory
+      end
     end
 
     scope "/v2", TrentoWeb.V2 do
