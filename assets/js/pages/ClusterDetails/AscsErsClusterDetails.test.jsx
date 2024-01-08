@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { faker } from '@faker-js/faker';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -108,25 +108,29 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     const table = screen.getByRole('table');
 
     nodes.forEach(
-      async (
-        { id: hostId, name: nodeName, role, virtual_ip: virtualIp, filesysten },
+      (
+        {
+          id: hostId,
+          name: nodeName,
+          roles,
+          virtual_ips: virtualIps,
+          filesystems,
+        },
         index
       ) => {
-        await waitFor(() => {
-          const row = table.querySelector(`tbody > tr:nth-child(${index}`);
-          const hostnameCell = row.querySelector('td:nth-child(0)');
-          expect(hostnameCell).toHaveTextContent(nodeName);
-          expect(hostnameCell)
-            .querySelector('a')
-            .toHaveAttributes('href', hostId);
-          expect(row.querySelector('td:nth-child(1)')).toHaveTextContent(role);
-          expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
-            virtualIp
-          );
-          expect(row.querySelector('td:nth-child(3)')).toHaveTextContent(
-            filesysten
-          );
-        });
+        const row = table.querySelector(`tbody > tr:nth-child(${index + 1})`);
+        const hostnameCell = row.querySelector('td:nth-child(1)');
+        expect(hostnameCell).toHaveTextContent(nodeName);
+        expect(hostnameCell.querySelector('a')).toHaveAttribute('href', hostId);
+        expect(row.querySelector('td:nth-child(2)')).toHaveTextContent(
+          roles[0].toUpperCase()
+        );
+        expect(row.querySelector('td:nth-child(3)')).toHaveTextContent(
+          virtualIps[0]
+        );
+        expect(row.querySelector('td:nth-child(4)')).toHaveTextContent(
+          filesystems[0]
+        );
       }
     );
   });
