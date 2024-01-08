@@ -210,7 +210,7 @@ defmodule Trento.Factory do
 
     %SlesSubscriptionReadModel{
       host_id: host.id,
-      identifier: Faker.Airports.iata(),
+      identifier: Faker.StarWars.planet(),
       version: Faker.App.semver(),
       expires_at: DateTime.to_iso8601(Faker.DateTime.forward(2)),
       starts_at: DateTime.to_iso8601(Faker.DateTime.backward(2)),
