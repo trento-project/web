@@ -1,8 +1,8 @@
 defmodule TrentoWeb.Plugs.ChartsDisabledPlug do
   @moduledoc """
-    This plug will act as a barrier for the charts endpoint return 501 for all the requests.
+    This plug will act as a barrier for the charts endpoint, will return 501 for all the requests.
 
-    The endpoints will be accessible only if the ":trento, Trento.Charts, enabled" configuration entry are properly set.
+    The endpoints will be accessible only if the ":trento, Trento.Charts, enabled" configuration entry is properly set.
 
     The plug itself is mounted only when the charts are disabled in the configuration.
   """
