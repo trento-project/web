@@ -12,6 +12,8 @@ import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import WarningBanner from '@common/Banners/WarningBanner';
+import ChartFeatureWrapper from '@common/ChartFeatureWrapper/ChartFeatureWrapper';
+
 import { subHours } from 'date-fns';
 
 import SuseLogo from '@static/suse_logo.svg';
@@ -209,24 +211,26 @@ function HostDetails({
             />
           </div>
         </div>
-        <div>
-          <HostChart
-            hostId={hostID}
-            chartId="cpu"
-            chartTitle="CPU"
-            yAxisFormatter={(value) => `${value}%`}
-            startInterval={subHours(timeNow, 3)}
-          />
-        </div>
-        <div>
-          <HostChart
-            hostId={hostID}
-            chartId="memory"
-            chartTitle="Memory"
-            startInterval={subHours(timeNow, 3)}
-            yAxisFormatter={(value) => formatBytes(value, 3)}
-          />
-        </div>
+        <ChartFeatureWrapper>
+          <div>
+            <HostChart
+              hostId={hostID}
+              chartId="cpu"
+              chartTitle="CPU"
+              yAxisFormatter={(value) => `${value}%`}
+              startInterval={subHours(timeNow, 3)}
+            />
+          </div>
+          <div>
+            <HostChart
+              hostId={hostID}
+              chartId="memory"
+              chartTitle="Memory"
+              startInterval={subHours(timeNow, 3)}
+              yAxisFormatter={(value) => formatBytes(value, 3)}
+            />
+          </div>
+        </ChartFeatureWrapper>
         <div className="mt-16">
           <div className="mb-4">
             <h2 className="text-2xl font-bold">Provider details</h2>
