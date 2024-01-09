@@ -9,6 +9,7 @@ import LoadingBox from '@common/LoadingBox';
 function CatalogContainer({
   onClear = () => {},
   onRefresh = () => {},
+  withResetFilters = false,
   empty = false,
   catalogError = null,
   loading = false,
@@ -48,7 +49,7 @@ function CatalogContainer({
         }
         title="No Checks Found"
         text="Checks Catalog is empty."
-        buttonText="Reset filters"
+        buttonText={withResetFilters ? 'Reset filters' : null}
         buttonOnClick={onClear}
       />
     );

@@ -143,6 +143,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
       <CatalogContainer
         onClear={clearFilters}
         onRefresh={() => updateCatalog(selectedProvider)}
+        withResetFilters
         empty={catalogData.length === 0}
         catalogError={catalogError}
         loading={loading}
