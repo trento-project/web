@@ -24,11 +24,13 @@ describe('ChecksCatalog CatalogContainer component', () => {
     expect(screen.getByText('Loading checks catalog...')).toBeVisible();
   });
 
-  it('should render an error message if the checks catalog is empty', async () => {
+  it('should render an error message if the checks catalog is empty and allow filter reset', async () => {
     const user = userEvent.setup();
     const onClear = jest.fn();
 
-    renderWithRouter(<CatalogContainer empty onClear={onClear} />);
+    renderWithRouter(
+      <CatalogContainer withResetFilters empty onClear={onClear} />
+    );
 
     expect(screen.getByText('Checks Catalog is empty.')).toBeVisible();
     expect(screen.getByRole('button')).toHaveTextContent('Reset filters');
@@ -36,5 +38,12 @@ describe('ChecksCatalog CatalogContainer component', () => {
     const button = screen.getByText('Reset filters');
     await act(async () => user.click(button));
     expect(onClear).toHaveBeenCalled();
+  });
+
+  it('should not render a reset filters button when not needed', () => {
+    renderWithRouter(<CatalogContainer empty />);
+
+    expect(screen.getByText('Checks Catalog is empty.')).toBeVisible();
+    expect(screen.queryByText('Reset filters')).toBeNull();
   });
 });
