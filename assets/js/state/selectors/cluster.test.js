@@ -329,7 +329,10 @@ describe('Cluster selector', () => {
     const clusterID = faker.string.uuid();
     const cluster = clusterFactory.build({ id: clusterID });
 
-    const sapSystems = sapSystemFactory.buildList(2, { ensa_version: 'ensa1' });
+    const sapSystems = [
+      sapSystemFactory.build({ ensa_version: 'ensa1' }),
+      sapSystemFactory.params({ ensa_version: false }).build(),
+    ];
     const [{ id: sapSystem1 }, { id: sapSystem2 }] = sapSystems;
 
     const hosts = hostFactory

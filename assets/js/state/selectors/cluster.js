@@ -62,13 +62,35 @@ export const getClusterSapSystems = createSelector(
   }
 );
 
+export const getClusterSapApplicationInstances = createSelector(
+  [
+    getClusterHostIDs,
+    (state) => state.sapSystemsList.sapSystems,
+    (state) => state.sapSystemsList.applicationInstances,
+  ],
+  (clusterHostIDs, sapSystems, applicationInstances) => {
+    const instances = applicationInstances;
+
+    return sapSystems.filter((sapSystem) =>
+      clusterHostIDs.some((hostID) =>
+        instances
+          .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
+          .map(({ host_id }) => host_id)
+          .includes(hostID)
+      )
+    );
+  }
+);
+
 export const MIXED_VERSIONS = 'mixed_versions';
 
 export const getEnsaVersion = createSelector(
-  [getClusterSapSystems],
+  [getClusterSapApplicationInstances],
   (sapSystems) => {
     const ensaVersions = new Set();
-    sapSystems.forEach(({ ensa_version }) => ensaVersions.add(ensa_version));
+    sapSystems.forEach(({ ensa_version }) => {
+      ensaVersions.add(ensa_version);
+    });
 
     const firstEnsaVersion = [...ensaVersions.values()][0];
 
