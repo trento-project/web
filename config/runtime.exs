@@ -83,6 +83,8 @@ if config_env() in [:prod, :demo] do
   config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
     url: System.get_env("PROMETHEUS_URL") || "http://localhost:9090"
 
+  config :trento, Trento.Charts, enabled: System.get_env("CHARTS_ENABLED", "true") == "true"
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix

@@ -141,7 +141,9 @@ config :trento, Trento.Infrastructure.Prometheus,
 
 config :trento, Trento.Infrastructure.Prometheus.PrometheusApi, url: "http://localhost:9090"
 
-config :trento, Trento.Charts, host_data_fetcher: Trento.Infrastructure.Prometheus.PrometheusApi
+config :trento, Trento.Charts,
+  enabled: true,
+  host_data_fetcher: Trento.Infrastructure.Prometheus.PrometheusApi
 
 config :trento,
   uuid_namespace: "fb92284e-aa5e-47f6-a883-bf9469e7a0dc",

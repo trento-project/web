@@ -74,6 +74,17 @@ defmodule TrentoWeb.ErrorView do
     }
   end
 
+  def render("501.json", %{reason: reason}) do
+    %{
+      errors: [
+        %{
+          title: "Not implemented",
+          detail: reason
+        }
+      ]
+    }
+  end
+
   def template_not_found(template, _assigns) do
     %{
       errors: [
