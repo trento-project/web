@@ -28,3 +28,5 @@ config :trento, Trento.Scheduler,
 
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
+
+config :trento, Trento.Charts, host_data_fetcher: Trento.Infrastructure.Prometheus.PrometheusApi
