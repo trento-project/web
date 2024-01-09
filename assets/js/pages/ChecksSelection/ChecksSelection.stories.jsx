@@ -1,5 +1,3 @@
-import { faker } from '@faker-js/faker';
-
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 
 import ChecksSelection from './ChecksSelection';
@@ -23,19 +21,10 @@ const selectedChecks = [
   catalog[6].id,
 ];
 
-const targetID = faker.string.uuid();
-
 export default {
   title: 'Patterns/ChecksSelection',
   component: ChecksSelection,
   argTypes: {
-    className: {
-      control: 'text',
-      description: 'CSS classes',
-      table: {
-        type: { summary: 'string' },
-      },
-    },
     catalog: {
       control: 'object',
       description: 'Catalog data',
@@ -43,11 +32,11 @@ export default {
         type: { summary: 'object' },
       },
     },
-    targetID: {
-      control: 'text',
-      description: 'Target ID',
+    selectedChecks: {
+      control: 'array',
+      description: 'Currently selected checks',
       table: {
-        type: { summary: 'string' },
+        type: { summary: 'array' },
       },
     },
     loading: {
@@ -58,36 +47,21 @@ export default {
         defaultValue: { summary: false },
       },
     },
-    saving: {
-      control: { type: 'boolean' },
-      description: 'Saving state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
-    },
-    error: {
+    catalogError: {
       control: { type: 'string' },
-      description: 'Saving error',
+      description: 'Error occurred while loading the catalog',
       table: {
         type: { summary: 'string' },
       },
     },
-    success: {
-      control: { type: 'boolean' },
-      description: 'Was the saving successful?',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
+    onUpdateCatalog: {
+      action: 'Update catalog',
+      description: 'Gets called to refresh the catalog.',
     },
-    onUpdateCatalog: { action: 'Update catalog' },
-    onStartExecution: { action: 'Start execution' },
-    onSave: { action: 'Save' },
-    onClear: {
-      action: 'Clear',
+    onChange: {
+      action: 'Change',
       description:
-        'Gets called on mount and when checks are selected. It can be used to clear any external state.',
+        'Gets called when the selection changes. Used to propagate the new selected checks by the user.',
     },
   },
 };
@@ -95,7 +69,6 @@ export default {
 export const Default = {
   args: {
     catalog,
-    targetID,
   },
 };
 
@@ -116,20 +89,13 @@ export const Loading = {
 export const WithSelection = {
   args: {
     ...Default.args,
-    selected: selectedChecks,
+    selectedChecks,
   },
 };
 
 export const WithError = {
   args: {
     ...WithSelection.args,
-    error: 'Error saving checks selection',
-  },
-};
-
-export const Saving = {
-  args: {
-    ...WithSelection.args,
-    saving: true,
+    catalogError: 'An error occurred while fetching the catalog.',
   },
 };
