@@ -334,6 +334,7 @@ TrentoWeb.PageView.html
 TrentoWeb.Plugs.ApiAuthErrorHandler.html
 TrentoWeb.Plugs.ApiRedirector.html
 TrentoWeb.Plugs.AuthenticateAPIKeyPlug.html
+TrentoWeb.Plugs.ChartsDisabledPlug.html
 TrentoWeb.Plugs.JWTAuthPlug.html
 TrentoWeb.Router.Helpers.html
 TrentoWeb.Router.html
@@ -398,8 +399,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-E5UFLALU.woff2
-dist/search_items-BB1A8115.js
-dist/sidebar_items-4E795807.js
+dist/search_items-31F51193.js
+dist/sidebar_items-D780B9F1.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
