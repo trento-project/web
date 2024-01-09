@@ -1,4 +1,4 @@
-defmodule TrentoWeb.Plugs.ChartsDisabledPlugTest do
+defmodule TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabledTest do
   use TrentoWeb.ConnCase, async: true
   use Plug.Test
 

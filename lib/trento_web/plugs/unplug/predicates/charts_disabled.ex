@@ -1,4 +1,4 @@
-defmodule TrentoWeb.Plugs.UnplugChartsEnabledPredicate do
+defmodule TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabled do
   @moduledoc false
 
   @behaviour Unplug.Predicate

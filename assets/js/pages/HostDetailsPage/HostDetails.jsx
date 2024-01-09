@@ -12,7 +12,7 @@ import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import WarningBanner from '@common/Banners/WarningBanner';
-import ChartFeatureWrapper from '@common/ChartFeatureWrapper/ChartFeatureWrapper';
+import ChartsFeatureWrapper from '@common/ChartsFeatureWrapper';
 
 import { subHours } from 'date-fns';
 
@@ -211,7 +211,7 @@ function HostDetails({
             />
           </div>
         </div>
-        <ChartFeatureWrapper>
+        <ChartsFeatureWrapper>
           <div>
             <HostChart
               hostId={hostID}
@@ -230,7 +230,7 @@ function HostDetails({
               yAxisFormatter={(value) => formatBytes(value, 3)}
             />
           </div>
-        </ChartFeatureWrapper>
+        </ChartsFeatureWrapper>
         <div className="mt-16">
           <div className="mb-4">
             <h2 className="text-2xl font-bold">Provider details</h2>

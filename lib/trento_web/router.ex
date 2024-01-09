@@ -45,7 +45,7 @@ defmodule TrentoWeb.Router do
 
   pipeline :charts_feature do
     plug Unplug,
-      if: TrentoWeb.Plugs.UnplugChartsEnabledPredicate,
+      if: TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabled,
       do: TrentoWeb.Plugs.ChartsDisabledPlug
   end
 

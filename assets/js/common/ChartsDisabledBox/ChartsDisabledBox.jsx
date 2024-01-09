@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ChartDisabledBox() {
+function ChartsDisabledBox() {
   return (
     <div
       className="mt-4 bg-white shadow rounded-lg py-4 px-8 mx-auto"
@@ -13,4 +13,4 @@ function ChartDisabledBox() {
   );
 }
 
-export default ChartDisabledBox;
+export default ChartsDisabledBox;

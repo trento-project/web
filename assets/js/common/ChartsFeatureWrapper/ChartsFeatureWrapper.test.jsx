@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ChartFeatureWrapper from './ChartFeatureWrapper';
+import ChartsFeatureWrapper from './ChartsFeatureWrapper';
 
 describe('ChartFeatureWrapper', () => {
   afterEach(() => {
@@ -11,7 +11,7 @@ describe('ChartFeatureWrapper', () => {
   it('should render ChartDisabledBox if the chart feature is disabled', () => {
     global.config = { chartsEnabled: false };
 
-    render(<ChartFeatureWrapper />);
+    render(<ChartsFeatureWrapper />);
     expect(screen.getByTestId('chart-disabled-box')).toHaveTextContent(
       'disabled'
     );
@@ -21,10 +21,10 @@ describe('ChartFeatureWrapper', () => {
     global.config = { chartsEnabled: true };
 
     render(
-      <ChartFeatureWrapper>
+      <ChartsFeatureWrapper>
         {' '}
         <div data-testid="child">child</div>{' '}
-      </ChartFeatureWrapper>
+      </ChartsFeatureWrapper>
     );
     expect(screen.getByTestId('child')).toHaveTextContent('child');
   });
