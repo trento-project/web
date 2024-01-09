@@ -34,6 +34,16 @@ export const getClusterByHost = (state, hostID) => {
   return find(state.clustersList.clusters, { id: host?.cluster_id });
 };
 
+const getSystemsByClusterHosts = (instances, systems, clusterHostIDs) =>
+  systems.filter((sapSystem) =>
+    clusterHostIDs.some((hostID) =>
+      instances
+        .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
+        .map(({ host_id }) => host_id)
+        .includes(hostID)
+    )
+  );
+
 export const getClusterSapSystems = createSelector(
   [
     getClusterHostIDs,
@@ -48,18 +58,12 @@ export const getClusterSapSystems = createSelector(
     applicationInstances,
     databases,
     databaseInstances
-  ) => {
-    const instances = applicationInstances.concat(databaseInstances);
-
-    return sapSystems.concat(databases).filter((sapSystem) =>
-      clusterHostIDs.some((hostID) =>
-        instances
-          .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
-          .map(({ host_id }) => host_id)
-          .includes(hostID)
-      )
-    );
-  }
+  ) =>
+    getSystemsByClusterHosts(
+      [...applicationInstances, ...databaseInstances],
+      [...sapSystems, ...databases],
+      clusterHostIDs
+    )
 );
 
 export const getClusterSapApplicationInstances = createSelector(
@@ -68,18 +72,8 @@ export const getClusterSapApplicationInstances = createSelector(
     (state) => state.sapSystemsList.sapSystems,
     (state) => state.sapSystemsList.applicationInstances,
   ],
-  (clusterHostIDs, sapSystems, applicationInstances) => {
-    const instances = applicationInstances;
-
-    return sapSystems.filter((sapSystem) =>
-      clusterHostIDs.some((hostID) =>
-        instances
-          .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
-          .map(({ host_id }) => host_id)
-          .includes(hostID)
-      )
-    );
-  }
+  (clusterHostIDs, sapSystems, applicationInstances) =>
+    getSystemsByClusterHosts(applicationInstances, sapSystems, clusterHostIDs)
 );
 
 export const MIXED_VERSIONS = 'mixed_versions';
