@@ -34,6 +34,16 @@ export const getClusterByHost = (state, hostID) => {
   return find(state.clustersList.clusters, { id: host?.cluster_id });
 };
 
+const getSystemsByClusterHosts = (instances, systems, clusterHostIDs) =>
+  systems.filter((sapSystem) =>
+    clusterHostIDs.some((hostID) =>
+      instances
+        .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
+        .map(({ host_id }) => host_id)
+        .includes(hostID)
+    )
+  );
+
 export const getClusterSapSystems = createSelector(
   [
     getClusterHostIDs,
@@ -48,27 +58,33 @@ export const getClusterSapSystems = createSelector(
     applicationInstances,
     databases,
     databaseInstances
-  ) => {
-    const instances = applicationInstances.concat(databaseInstances);
+  ) =>
+    getSystemsByClusterHosts(
+      [...applicationInstances, ...databaseInstances],
+      [...sapSystems, ...databases],
+      clusterHostIDs
+    )
+);
 
-    return sapSystems.concat(databases).filter((sapSystem) =>
-      clusterHostIDs.some((hostID) =>
-        instances
-          .filter(({ sap_system_id }) => sap_system_id === sapSystem.id)
-          .map(({ host_id }) => host_id)
-          .includes(hostID)
-      )
-    );
-  }
+export const getClusterSapApplicationInstances = createSelector(
+  [
+    getClusterHostIDs,
+    (state) => state.sapSystemsList.sapSystems,
+    (state) => state.sapSystemsList.applicationInstances,
+  ],
+  (clusterHostIDs, sapSystems, applicationInstances) =>
+    getSystemsByClusterHosts(applicationInstances, sapSystems, clusterHostIDs)
 );
 
 export const MIXED_VERSIONS = 'mixed_versions';
 
 export const getEnsaVersion = createSelector(
-  [getClusterSapSystems],
+  [getClusterSapApplicationInstances],
   (sapSystems) => {
     const ensaVersions = new Set();
-    sapSystems.forEach(({ ensa_version }) => ensaVersions.add(ensa_version));
+    sapSystems.forEach(({ ensa_version }) => {
+      ensaVersions.add(ensa_version);
+    });
 
     const firstEnsaVersion = [...ensaVersions.values()][0];
 
