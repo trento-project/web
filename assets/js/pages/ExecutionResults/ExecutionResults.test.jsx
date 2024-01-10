@@ -328,7 +328,7 @@ describe('ExecutionResults', () => {
     );
 
     expect(screen.getAllByText('test-cluster')).toHaveLength(2);
-    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('HANA Scale Up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
     expect(screen.getByText(clusterHosts[0].hostname)).toBeTruthy();
     expect(screen.getByText(clusterHosts[1].hostname)).toBeTruthy();
@@ -372,7 +372,7 @@ describe('ExecutionResults', () => {
     );
 
     expect(screen.getAllByText('test-cluster')).toHaveLength(2);
-    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('HANA Scale Up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
     expect(screen.getByText(clusterHosts[0].hostname)).toBeTruthy();
     expect(screen.getByText(clusterHosts[1].hostname)).toBeTruthy();
@@ -419,7 +419,7 @@ describe('ExecutionResults', () => {
     );
 
     expect(screen.getAllByText('test-cluster')).toHaveLength(2);
-    expect(screen.getByText('HANA scale-up')).toBeTruthy();
+    expect(screen.getByText('HANA Scale Up')).toBeTruthy();
     expect(screen.getByText('Azure')).toBeTruthy();
     expect(screen.getAllByText(clusterHosts[0].hostname)).toHaveLength(2);
     expect(screen.getAllByText(clusterHosts[1].hostname)).toHaveLength(2);
@@ -464,7 +464,7 @@ describe('ExecutionResults', () => {
     expect(screen.getByText('VMware')).toBeTruthy();
     expect(
       screen.getByText(
-        'Configuration checks for HANA scale-up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
+        'Configuration checks for HANA Scale Up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
       )
     ).toBeTruthy();
   });

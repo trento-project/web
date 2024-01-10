@@ -67,7 +67,7 @@ describe('ClusterDetails ClusterSettings component', () => {
     expect(screen.getByText(group)).toBeVisible();
     expect(
       screen.getByText(
-        'Configuration checks for HANA scale-up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
+        'Configuration checks for HANA Scale Up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
       )
     ).toBeVisible();
   });

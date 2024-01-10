@@ -195,7 +195,7 @@ function HanaClusterDetails({
               {
                 title: 'Cluster type',
                 content:
-                  clusterType === 'hana_scale_up' ? 'HANA scale-up' : 'Unknown',
+                  clusterType === 'hana_scale_up' ? 'HANA Scale Up' : 'Unknown',
               },
               {
                 title: 'SAPHanaSR health state',

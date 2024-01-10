@@ -10,7 +10,7 @@ import { ClusterDetailsPage } from './ClusterDetailsPage';
 
 describe('ClusterDetails ClusterDetailsPage component', () => {
   it.each([
-    { type: 'hana_scale_up', label: 'HANA scale-up' },
+    { type: 'hana_scale_up', label: 'HANA Scale Up' },
     { type: 'ascs_ers', label: 'ASCS/ERS' },
     { type: 'unknwon', label: 'Unknown cluster type' },
   ])(

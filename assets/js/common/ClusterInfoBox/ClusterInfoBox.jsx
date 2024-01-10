@@ -1,12 +1,9 @@
 import React from 'react';
 
+import { getClusterTypeLabel } from '@lib/model/clusters';
+
 import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
-
-const haScenarioToString = {
-  hana_scale_up: 'HANA scale-up',
-  hana_scale_out: 'HANA scale-out',
-};
 
 // eslint-disable-next-line import/prefer-default-export
 function ClusterInfoBox({ haScenario, provider }) {
@@ -19,7 +16,7 @@ function ClusterInfoBox({ haScenario, provider }) {
         data={[
           {
             title: 'HA Scenario',
-            content: haScenarioToString[haScenario] ?? 'Unknown',
+            content: getClusterTypeLabel(haScenario),
           },
           {
             title: 'Provider',

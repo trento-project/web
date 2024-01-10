@@ -34,7 +34,7 @@ describe('Checks results ExecutionHeader Component', () => {
 
       expect(screen.getByText('Back to Cluster Details')).toBeTruthy();
       expect(screen.getByText('Azure')).toBeTruthy();
-      expect(screen.getByText('HANA scale-up')).toBeTruthy();
+      expect(screen.getByText('HANA Scale Up')).toBeTruthy();
       expect(screen.getByText('Checks Results for cluster')).toBeTruthy();
       expect(screen.getByText(clusterName)).toBeTruthy();
     });
@@ -62,7 +62,7 @@ describe('Checks results ExecutionHeader Component', () => {
       );
 
       expect(screen.getByText('Provider not recognized')).toBeTruthy();
-      expect(screen.getByText('HANA scale-up')).toBeTruthy();
+      expect(screen.getByText('HANA Scale Up')).toBeTruthy();
       expect(screen.getByText('Checks Results for cluster')).toBeTruthy();
       expect(
         screen.getByText(

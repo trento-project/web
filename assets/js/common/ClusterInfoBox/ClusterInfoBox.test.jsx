@@ -7,19 +7,25 @@ describe('Cluster Info Box', () => {
   [
     {
       haScenario: 'hana_scale_up',
-      haScenarioText: 'HANA scale-up',
+      haScenarioText: 'HANA Scale Up',
       provider: 'aws',
       providerText: 'AWS',
     },
     {
       haScenario: 'hana_scale_out',
-      haScenarioText: 'HANA scale-out',
+      haScenarioText: 'HANA Scale Out',
       provider: 'aws',
       providerText: 'AWS',
     },
     {
       haScenario: 'hana_scale_up',
-      haScenarioText: 'HANA scale-up',
+      haScenarioText: 'HANA Scale Up',
+      provider: 'azure',
+      providerText: 'Azure',
+    },
+    {
+      haScenario: 'ascs_ers',
+      haScenarioText: 'ASCS/ERS',
       provider: 'azure',
       providerText: 'Azure',
     },
@@ -43,7 +49,7 @@ describe('Cluster Info Box', () => {
     },
     {
       haScenario: 'hana_scale_up',
-      haScenarioText: 'HANA scale-up',
+      haScenarioText: 'HANA Scale Up',
       provider: 'nutanix',
       providerText: 'Nutanix',
     },
