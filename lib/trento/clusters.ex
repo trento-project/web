@@ -7,6 +7,7 @@ defmodule Trento.Clusters do
 
   require Logger
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -129,6 +130,30 @@ defmodule Trento.Clusters do
     |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
   end
 
+  defp get_filesystem_type(cluster_id) do
+    query =
+      from(c in ClusterReadModel,
+        where:
+          c.id == ^cluster_id and c.type == ^ClusterType.ascs_ers() and is_nil(c.deregistered_at)
+      )
+
+    filesystems_list =
+      query
+      |> Repo.one!()
+      |> Map.get(:details, %{})
+      |> Map.get("sap_systems", [])
+      |> Enum.map(fn %{"filesystem_resource_based" => filesystem_resource_based} ->
+        filesystem_resource_based
+      end)
+      |> Enum.uniq()
+
+    case filesystems_list do
+      [true] -> FilesystemType.resource_managed()
+      [false] -> FilesystemType.simple_mount()
+      _ -> FilesystemType.mixed_fs_types()
+    end
+  end
+
   defp maybe_request_checks_execution(%{selected_checks: []}), do: :ok
 
   defp maybe_request_checks_execution(%{
@@ -144,13 +169,26 @@ defmodule Trento.Clusters do
           where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
       )
 
+    env =
+      case cluster_type do
+        :ascs_ers ->
+          %Checks.ClusterExecutionEnv{
+            provider: provider,
+            cluster_type: cluster_type,
+            filesystem_type: get_filesystem_type(cluster_id)
+          }
+
+        _ ->
+          %Checks.ClusterExecutionEnv{
+            provider: provider,
+            cluster_type: cluster_type
+          }
+      end
+
     Checks.request_execution(
       UUID.uuid4(),
       cluster_id,
-      %Checks.ClusterExecutionEnv{
-        provider: provider,
-        cluster_type: cluster_type
-      },
+      env,
       hosts_data,
       selected_checks,
       :cluster

@@ -20,6 +20,7 @@ defmodule Trento.Infrastructure.Checks do
   }
 
   require Logger
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Infrastructure.Checks.TargetType, as: TargetType
 
   @type target_type :: TargetType.t()
@@ -91,6 +92,18 @@ defmodule Trento.Infrastructure.Checks do
 
   defp dispatch_completion_command(execution_id, command) do
     commanded().dispatch(command, correlation_id: execution_id)
+  end
+
+  defp build_env(%ClusterExecutionEnv{
+         cluster_type: :ascs_ers,
+         provider: provider,
+         filesystem_type: filesystem_type
+       }) do
+    %{
+      "cluster_type" => %{kind: {:string_value, Atom.to_string(ClusterType.ascs_ers())}},
+      "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
+      "filesystem_type" => %{kind: {:string_value, Atom.to_string(filesystem_type)}}
+    }
   end
 
   defp build_env(%ClusterExecutionEnv{cluster_type: cluster_type, provider: provider}) do
