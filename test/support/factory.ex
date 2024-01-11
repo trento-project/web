@@ -207,10 +207,11 @@ defmodule Trento.Factory do
 
   def sles_subscription_factory do
     host = build(:host)
+    identifier = sequence(:identifier, &"#{Faker.StarWars.planet()}#{&1}")
 
     %SlesSubscriptionReadModel{
       host_id: host.id,
-      identifier: Faker.StarWars.planet(),
+      identifier: identifier,
       version: Faker.App.semver(),
       expires_at: DateTime.to_iso8601(Faker.DateTime.forward(2)),
       starts_at: DateTime.to_iso8601(Faker.DateTime.backward(2)),
