@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import {
+  ascsErsSapSystemFactory,
   clusterFactory,
   hostFactory,
   databaseInstanceFactory,
@@ -8,14 +9,21 @@ import {
   sapSystemFactory,
 } from '@lib/test-utils/factories';
 import {
+  FS_TYPE_RESOURCE_MANAGED,
+  FS_TYPE_SIMPLE_MOUNT,
+  FS_TYPE_MIXED,
+} from '@lib/model/clusters';
+
+import {
   getClusterHostIDs,
   getClusterHosts,
   getClusterName,
   getClusterSapSystems,
   getClusterSelectedChecks,
   getClusterIDs,
-  MIXED_VERSIONS,
+  getFilesystemType,
   getEnsaVersion,
+  MIXED_VERSIONS,
 } from './cluster';
 
 describe('Cluster selector', () => {
@@ -384,5 +392,75 @@ describe('Cluster selector', () => {
     };
 
     expect(getEnsaVersion(state, clusterID)).toEqual(MIXED_VERSIONS);
+  });
+
+  it('should return resource_managed filesystem type if every SAP system has resource based filesystem', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({
+      id: clusterID,
+      type: 'ascs_ers',
+      details: {
+        sap_systems: ascsErsSapSystemFactory.buildList(3, {
+          filesystem_resource_based: true,
+        }),
+      },
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getFilesystemType(state, clusterID)).toEqual(
+      FS_TYPE_RESOURCE_MANAGED
+    );
+  });
+
+  it('should return simple_mount filesystem type if no SAP system has resource based filesystem', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({
+      id: clusterID,
+      type: 'ascs_ers',
+      details: {
+        sap_systems: ascsErsSapSystemFactory.buildList(3, {
+          filesystem_resource_based: false,
+        }),
+      },
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getFilesystemType(state, clusterID)).toEqual(FS_TYPE_SIMPLE_MOUNT);
+  });
+
+  it('should return mixed_fs_types filesystem type if only some SAP system have resource based filesystem', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({
+      id: clusterID,
+      type: 'ascs_ers',
+      details: {
+        sap_systems: [
+          ...ascsErsSapSystemFactory.buildList(3, {
+            filesystem_resource_based: true,
+          }),
+          ...ascsErsSapSystemFactory.buildList(2, {
+            filesystem_resource_based: false,
+          }),
+        ],
+      },
+    });
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getFilesystemType(state, clusterID)).toEqual(FS_TYPE_MIXED);
   });
 });

@@ -9,6 +9,7 @@ import {
   getClusterName,
   getClusterSelectedChecks,
   getClusterHosts,
+  getFilesystemType,
 } from '@state/selectors/cluster';
 import { updateCatalog } from '@state/catalog';
 import { getCatalog } from '@state/selectors/catalog';
@@ -57,6 +58,9 @@ function ClusterSettingsPage() {
     getClusterSelectedChecks(state, clusterID)
   );
   const clusterName = useSelector(getClusterName(clusterID));
+  const filesystemType = useSelector((state) =>
+    getFilesystemType(state, clusterID)
+  );
 
   const {
     data: catalog,
@@ -83,6 +87,7 @@ function ClusterSettingsPage() {
         provider,
         target_type: TARGET_CLUSTER,
         cluster_type: type,
+        filesystem_type: filesystemType,
       })
     );
 
