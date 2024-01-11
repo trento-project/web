@@ -19,6 +19,8 @@ defmodule Trento.ClustersTest do
   }
 
   require Trento.Clusters.Enums.ClusterType
+  require Trento.Clusters.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.EnsaVersion
   require Logger
 
   setup [:set_mox_from_context, :verify_on_exit!]
@@ -212,7 +214,10 @@ defmodule Trento.ClustersTest do
         assert message.env == %{
                  "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
                  "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:resource_managed)}}
+                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:resource_managed)}},
+                 "ensa_version" => %{
+                   kind: {:string_value, Atom.to_string(EnsaVersion.mixed_versions())}
+                 }
                }
 
         assert message.target_type == "cluster"
@@ -244,7 +249,10 @@ defmodule Trento.ClustersTest do
         assert message.env == %{
                  "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
                  "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}}
+                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
+                 "ensa_version" => %{
+                   kind: {:string_value, Atom.to_string(EnsaVersion.mixed_versions())}
+                 }
                }
 
         assert message.target_type == "cluster"
@@ -278,7 +286,90 @@ defmodule Trento.ClustersTest do
         assert message.env == %{
                  "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
                  "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
-                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:mixed_fs_types)}}
+                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:mixed_fs_types)}},
+                 "ensa_version" => %{
+                   kind: {:string_value, Atom.to_string(EnsaVersion.mixed_versions())}
+                 }
+               }
+
+        assert message.target_type == "cluster"
+
+        :ok
+      end)
+
+      assert :ok = Clusters.request_checks_execution(cluster_id)
+    end
+
+    test "should start a checks execution on demand for ascs_ers clusters with ENSA 1 version" do
+      sap_systems = build_list(2, :ascs_ers_cluster_sap_system, filesystem_resource_based: false)
+      [sid1, sid2 | _] = Enum.map(sap_systems, fn s -> s.sid end)
+
+      %{id: cluster_id, provider: provider, type: cluster_type} =
+        insert(:cluster,
+          type: :ascs_ers,
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: sap_systems
+            )
+        )
+
+      insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
+      insert_list(2, :host, cluster_id: cluster_id)
+
+      insert(:sap_system, sid: sid1, ensa_version: Trento.SapSystems.Enums.EnsaVersion.ensa1())
+      insert(:sap_system, sid: sid2, ensa_version: Trento.SapSystems.Enums.EnsaVersion.ensa1())
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+        assert message.group_id == cluster_id
+        assert length(message.targets) == 2
+
+        assert message.env == %{
+                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
+                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
+                 "ensa_version" => %{
+                   kind: {:string_value, Atom.to_string(EnsaVersion.ensa1())}
+                 }
+               }
+
+        assert message.target_type == "cluster"
+
+        :ok
+      end)
+
+      assert :ok = Clusters.request_checks_execution(cluster_id)
+    end
+
+    test "should start a checks execution on demand for ascs_ers clusters with mixed ENSA versions" do
+      sap_systems = build_list(2, :ascs_ers_cluster_sap_system, filesystem_resource_based: false)
+      [sid1, sid2 | _] = Enum.map(sap_systems, fn s -> s.sid end)
+
+      %{id: cluster_id, provider: provider, type: cluster_type} =
+        insert(:cluster,
+          type: :ascs_ers,
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: sap_systems
+            )
+        )
+
+      insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
+      insert_list(2, :host, cluster_id: cluster_id)
+
+      insert(:sap_system, sid: sid1, ensa_version: Trento.SapSystems.Enums.EnsaVersion.ensa1())
+      insert(:sap_system, sid: sid2, ensa_version: Trento.SapSystems.Enums.EnsaVersion.ensa2())
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
+        assert message.group_id == cluster_id
+        assert length(message.targets) == 2
+
+        assert message.env == %{
+                 "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
+                 "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
+                 "ensa_version" => %{
+                   kind: {:string_value, Atom.to_string(EnsaVersion.mixed_versions())}
+                 }
                }
 
         assert message.target_type == "cluster"

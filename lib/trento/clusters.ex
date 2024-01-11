@@ -8,6 +8,7 @@ defmodule Trento.Clusters do
   require Logger
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
+  require Trento.Clusters.Enums.EnsaVersion, as: EnsaVersion
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -16,6 +17,8 @@ defmodule Trento.Clusters do
   alias Trento.Clusters.ClusterEnrichmentData
 
   alias Trento.Clusters.Commands.SelectChecks
+
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias Trento.Infrastructure.Checks
 
@@ -130,6 +133,30 @@ defmodule Trento.Clusters do
     |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
   end
 
+  @spec get_sids(map()) :: [String.t()]
+  defp get_sids(details) do
+    Enum.map(details["sap_systems"], fn s -> s["sid"] end)
+  end
+
+  @spec get_ensa_version([String.t()]) :: EnsaVersion.t()
+  defp get_ensa_version(sap_system_sids) do
+    query =
+      from(s in SapSystemReadModel,
+        select: s.ensa_version,
+        where: s.sid in ^sap_system_sids
+      )
+
+    ensa_versions =
+      query
+      |> Repo.all()
+      |> Enum.uniq()
+
+    case length(ensa_versions) do
+      1 -> Enum.at(ensa_versions, 0)
+      _ -> EnsaVersion.mixed_versions()
+    end
+  end
+
   defp get_filesystem_type(cluster_id) do
     query =
       from(c in ClusterReadModel,
@@ -160,6 +187,7 @@ defmodule Trento.Clusters do
          id: cluster_id,
          provider: provider,
          type: cluster_type,
+         details: details,
          selected_checks: selected_checks
        }) do
     hosts_data =
@@ -175,6 +203,7 @@ defmodule Trento.Clusters do
           %Checks.ClusterExecutionEnv{
             provider: provider,
             cluster_type: cluster_type,
+            ensa_version: details |> get_sids |> get_ensa_version,
             filesystem_type: get_filesystem_type(cluster_id)
           }
 

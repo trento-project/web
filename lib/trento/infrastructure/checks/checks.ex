@@ -96,11 +96,13 @@ defmodule Trento.Infrastructure.Checks do
 
   defp build_env(%ClusterExecutionEnv{
          cluster_type: :ascs_ers,
+         ensa_version: ensa_version,
          provider: provider,
          filesystem_type: filesystem_type
        }) do
     %{
       "cluster_type" => %{kind: {:string_value, Atom.to_string(ClusterType.ascs_ers())}},
+      "ensa_version" => %{kind: {:string_value, Atom.to_string(ensa_version)}},
       "provider" => %{kind: {:string_value, Atom.to_string(provider)}},
       "filesystem_type" => %{kind: {:string_value, Atom.to_string(filesystem_type)}}
     }
