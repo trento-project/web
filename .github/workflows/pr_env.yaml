@@ -130,7 +130,10 @@ jobs:
             web_upstream_name='${{ env.PR_NUMBER }}web' \
             wanda_upstream_name='${{ env.PR_NUMBER }}wanda' \
             grafana_upstream_name='${{ env.PR_NUMBER }}grafana' \
-            trento_server_url='http://${{ env.PR_BASE_URL }}'"
+            trento_server_url='http://${{ env.PR_BASE_URL }}' \
+            nginx_ssl_cert='${{ secrets.PR_ENV_SSL_CERT }}' \
+            nginx_ssl_cert_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}'"
+
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the pr environment
     runs-on: ubuntu-20.04
