@@ -111,7 +111,6 @@ jobs:
             --extra-vars "web_postgres_password='pass' \ 
             wanda_postgres_password='wanda' \ 
             rabbitmq_password='trento' \
-            grafana_api_url='http://localhost' \
             prometheus_url='http://localhost' \
             web_admin_password='adminpassword' \
             enable_api_key='false' \

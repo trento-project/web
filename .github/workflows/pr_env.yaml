@@ -129,7 +129,6 @@ jobs:
             force_pull_images='true' \
             web_upstream_name='${{ env.PR_NUMBER }}web' \
             wanda_upstream_name='${{ env.PR_NUMBER }}wanda' \
-            grafana_upstream_name='${{ env.PR_NUMBER }}grafana' \
             trento_server_url='http://${{ env.PR_BASE_URL }}' \
             nginx_ssl_cert='${{ secrets.PR_ENV_SSL_CERT }}' \
             nginx_ssl_cert_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}'"
