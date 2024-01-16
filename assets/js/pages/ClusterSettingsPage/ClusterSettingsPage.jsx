@@ -10,12 +10,14 @@ import {
   getClusterSelectedChecks,
   getClusterHosts,
   getFilesystemType,
+  getEnsaVersion,
 } from '@state/selectors/cluster';
 import { updateCatalog } from '@state/catalog';
 import { getCatalog } from '@state/selectors/catalog';
 import { isSaving } from '@state/selectors/checksSelection';
 import { executionRequested } from '@state/lastExecutions';
 
+import { buildEnv } from '@lib/checks';
 import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
 import BackButton from '@common/BackButton';
@@ -58,6 +60,7 @@ function ClusterSettingsPage() {
     getClusterSelectedChecks(state, clusterID)
   );
   const clusterName = useSelector(getClusterName(clusterID));
+  const ensaVersion = useSelector((state) => getEnsaVersion(state, clusterID));
   const filesystemType = useSelector((state) =>
     getFilesystemType(state, clusterID)
   );
@@ -81,15 +84,17 @@ function ClusterSettingsPage() {
   const provider = get(cluster, 'provider');
   const type = get(cluster, 'type');
 
-  const refreshCatalog = () =>
-    dispatch(
-      updateCatalog({
-        provider,
-        target_type: TARGET_CLUSTER,
-        cluster_type: type,
-        filesystem_type: filesystemType,
-      })
-    );
+  const refreshCatalog = () => {
+    const env = buildEnv({
+      provider,
+      target_type: TARGET_CLUSTER,
+      cluster_type: type,
+      ensa_version: ensaVersion,
+      filesystem_type: filesystemType,
+    });
+
+    dispatch(updateCatalog(env));
+  };
 
   const saveSelection = (newSelection, targetID, targetName) =>
     dispatch(

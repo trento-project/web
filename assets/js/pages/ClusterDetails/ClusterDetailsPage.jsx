@@ -14,7 +14,9 @@ import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
 import { executionRequested, updateLastExecution } from '@state/lastExecutions';
+import { buildEnv } from '@lib/checks';
 import { TARGET_CLUSTER } from '@lib/model';
+
 import AscsErsClusterDetails from './AscsErsClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 import { getClusterName } from './ClusterLink';
@@ -40,16 +42,16 @@ export function ClusterDetailsPage() {
   );
 
   useEffect(() => {
+    const env = buildEnv({
+      provider,
+      target_type: TARGET_CLUSTER,
+      cluster_type: type,
+      ensa_version: ensaVersion,
+      filesystem_type: filesystemType,
+    });
+
     if (provider && type) {
-      dispatch(
-        updateCatalog({
-          provider,
-          target_type: TARGET_CLUSTER,
-          cluster_type: type,
-          ensa_version: ensaVersion,
-          filesystem_type: filesystemType,
-        })
-      );
+      dispatch(updateCatalog(env));
       dispatch(updateLastExecution(clusterID));
     }
   }, [dispatch, provider, type, ensaVersion, filesystemType]);
