@@ -151,8 +151,8 @@ defmodule Trento.Clusters do
       |> Repo.all()
       |> Enum.uniq()
 
-    case length(ensa_versions) do
-      1 -> Enum.at(ensa_versions, 0)
+    case ensa_versions do
+      [ensa_version] -> ensa_version
       _ -> EnsaVersion.mixed_versions()
     end
   end
