@@ -106,9 +106,7 @@ defmodule Trento.MixProject do
       # https://stackoverflow.com/questions/76562092/hi-i-had-created-elixir-project-with-phoenix-framework-there-is-yaml-file-when
       {:ecto, "~> 3.10", override: true},
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
-      {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
-      # https://elixirforum.com/t/issue-with-using-amqp-package-after-upgrading-to-otp26/55931/7
-      {:amqp_client, "~> 3.12", override: true}
+      {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true}
     ]
   end
 
