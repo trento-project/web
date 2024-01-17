@@ -9,10 +9,12 @@ defmodule Trento.Infrastructure.Checks.ClusterExecutionEnv do
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
+  require Trento.Clusters.Enums.EnsaVersion, as: EnsaVersion
 
   deftype do
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
     field :provider, Ecto.Enum, values: Provider.values()
     field :filesystem_type, Ecto.Enum, values: FilesystemType.values()
+    field :ensa_version, Ecto.Enum, values: EnsaVersion.values()
   end
 end
