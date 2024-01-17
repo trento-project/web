@@ -56,13 +56,10 @@ defmodule Trento.MixProject do
     [
       {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.3"},
-      {:commanded_eventstore_adapter, "~> 1.2"},
-      # this is pinned since the 3.1.0 version requires OTP 23.2
-      # overrides gen_rmq dependency
-      {:credentials_obfuscation, "3.0.0", override: true},
+      {:commanded_eventstore_adapter, "~> 1.4"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ecto_sql, "~> 3.6"},
+      {:ecto_sql, "~> 3.11"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:eventstore, "~> 1.1",
        [env: :prod, git: "https://github.com/commanded/eventstore.git", override: true]},
@@ -76,6 +73,7 @@ defmodule Trento.MixProject do
       {:fun_with_flags_ui, "~> 0.8.0"},
       {:gettext, "~> 0.18"},
       {:gen_smtp, "~> 1.2.0"},
+      # project has been archived by its github maintainer
       {:gen_rmq, "~> 4.0"},
       {:httpoison, "~> 1.8"},
       {:jason, "~> 1.2"},
@@ -103,7 +101,14 @@ defmodule Trento.MixProject do
       {:unplug, "~> 1.0.0"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 2.0.0"},
-      {:joken, "~> 2.5.0"}
+      {:joken, "~> 2.5.0"},
+      # required overrides to upgrade to elixir 1.15.7 and erlang otp 26
+      # https://stackoverflow.com/questions/76562092/hi-i-had-created-elixir-project-with-phoenix-framework-there-is-yaml-file-when
+      {:ecto, "~> 3.10", override: true},
+      # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
+      {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
+      # https://elixirforum.com/t/issue-with-using-amqp-package-after-upgrading-to-otp26/55931/7
+      {:amqp_client, "~> 3.12", override: true}
     ]
   end
 
