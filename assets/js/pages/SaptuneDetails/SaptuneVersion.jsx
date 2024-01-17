@@ -7,7 +7,12 @@ import HealthIcon from '@common/HealthIcon';
 
 function SaptuneVersion({ version }) {
   if (!version) {
-    return <span>Not installed</span>;
+    return (
+      <div className="flex">
+        <HealthIcon health="warning" />
+        <span className="ml-1">Not installed</span>
+      </div>
+    );
   }
 
   if (isVersionSupported(version)) {
