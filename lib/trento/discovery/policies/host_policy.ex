@@ -136,7 +136,8 @@ defmodule Trento.Discovery.Policies.HostPolicy do
          total_memory_mb: total_memory_mb,
          socket_count: socket_count,
          os_version: os_version,
-         installation_source: installation_source
+         installation_source: installation_source,
+         fully_qualified_domain_name: fqdn
        }),
        do:
          RegisterHost.new(%{
@@ -148,7 +149,8 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            total_memory_mb: total_memory_mb,
            socket_count: socket_count,
            os_version: os_version,
-           installation_source: installation_source
+           installation_source: installation_source,
+           fully_qualified_domain_name: fqdn
          })
 
   defp build_update_saptune_command(

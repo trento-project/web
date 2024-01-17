@@ -21,6 +21,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :hostname, :string
     field :ip_addresses, {:array, :string}
     field :agent_version, :string
+    field :fully_qualified_domain_name, :string
     field :cluster_id, Ecto.UUID
     field :heartbeat, Ecto.Enum, values: [:critical, :passing, :unknown]
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()

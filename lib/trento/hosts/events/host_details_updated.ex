@@ -5,9 +5,10 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
 
   use Trento.Support.Event
 
-  defevent version: 2 do
+  defevent version: 3 do
     field :host_id, Ecto.UUID
     field :hostname, :string
+    field :fully_qualified_domain_name, :string
     field :ip_addresses, {:array, :string}
     field :agent_version, :string
     field :cpu_count, :integer
@@ -19,4 +20,5 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
   end
 
   def upcast(params, _, 2), do: Map.put(params, "installation_source", :unknown)
+  def upcast(params, _, 3), do: Map.put(params, "fully_qualified_domain_name", nil)
 end

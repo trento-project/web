@@ -76,6 +76,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
 
     assert event.host_id == host_projection.id
     assert event.hostname == host_projection.hostname
+    assert event.fully_qualified_domain_name == host_projection.fully_qualified_domain_name
     assert event.ip_addresses == host_projection.ip_addresses
     assert event.agent_version == host_projection.agent_version
     assert event.heartbeat == host_projection.heartbeat

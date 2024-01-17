@@ -98,6 +98,7 @@ defmodule Trento.Hosts.Host do
   deftype do
     field :host_id, Ecto.UUID
     field :hostname, :string
+    field :fully_qualified_domain_name, :string
     field :ip_addresses, {:array, :string}
     field :agent_version, :string
     field :cpu_count, :integer
@@ -141,6 +142,7 @@ defmodule Trento.Hosts.Host do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source
         }
       ) do
@@ -154,6 +156,7 @@ defmodule Trento.Hosts.Host do
       socket_count: socket_count,
       os_version: os_version,
       installation_source: installation_source,
+      fully_qualified_domain_name: fully_qualified_domain_name,
       heartbeat: :unknown
     }
   end
@@ -210,6 +213,7 @@ defmodule Trento.Hosts.Host do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source
         }
       )
@@ -227,6 +231,7 @@ defmodule Trento.Hosts.Host do
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
         os_version: os_version,
+        fully_qualified_domain_name: fully_qualified_domain_name,
         installation_source: installation_source
       }
     ]
@@ -507,6 +512,7 @@ defmodule Trento.Hosts.Host do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source,
           heartbeat: heartbeat
         }
@@ -521,6 +527,7 @@ defmodule Trento.Hosts.Host do
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
         os_version: os_version,
+        fully_qualified_domain_name: fully_qualified_domain_name,
         installation_source: installation_source,
         heartbeat: heartbeat
     }
@@ -536,6 +543,7 @@ defmodule Trento.Hosts.Host do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source
         }
       ) do
@@ -548,6 +556,7 @@ defmodule Trento.Hosts.Host do
         total_memory_mb: total_memory_mb,
         socket_count: socket_count,
         os_version: os_version,
+        fully_qualified_domain_name: fully_qualified_domain_name,
         installation_source: installation_source
     }
   end
