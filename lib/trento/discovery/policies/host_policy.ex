@@ -142,7 +142,7 @@ defmodule Trento.Discovery.Policies.HostPolicy do
          RegisterHost.new(%{
            host_id: agent_id,
            hostname: hostname,
-           ip_addresses: Enum.filter(ip_addresses, &is_non_loopback_ipv4?/1),
+           ip_addresses: Enum.filter(ip_addresses, &non_loopback_ipv4?/1),
            agent_version: agent_version,
            cpu_count: cpu_count,
            total_memory_mb: total_memory_mb,
@@ -229,10 +229,10 @@ defmodule Trento.Discovery.Policies.HostPolicy do
           end)
       })
 
-  @spec is_non_loopback_ipv4?(String.t()) :: boolean
-  defp is_non_loopback_ipv4?("127.0.0.1"), do: false
+  @spec non_loopback_ipv4?(String.t()) :: boolean
+  defp non_loopback_ipv4?("127.0.0.1"), do: false
 
-  defp is_non_loopback_ipv4?(ip) do
+  defp non_loopback_ipv4?(ip) do
     case :inet.parse_ipv4_address(String.to_charlist(ip)) do
       {:ok, _} ->
         true

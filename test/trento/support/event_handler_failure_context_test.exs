@@ -25,6 +25,7 @@ defmodule Trento.Support.EventHandlerFailureContextTest do
 
     # Wait until the event handler finishes
     ref = Process.monitor(handler)
+
     receive do
       {:DOWN, ^ref, _, _, _} -> :ok
     end
