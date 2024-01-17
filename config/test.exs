@@ -36,7 +36,7 @@ config :trento, Trento.Mailer, adapter: Swoosh.Adapters.Test
 config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.ToLogger
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
