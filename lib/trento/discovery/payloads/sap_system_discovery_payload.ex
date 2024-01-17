@@ -35,7 +35,9 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
 
     sap_system
     |> cast(modified_attrs, fields())
-    |> cast_embed(:Profile, with: {Profile, :changeset, [parse_system_type(attrs)]})
+    |> cast_embed(:Profile,
+      with: fn profile, attrs -> Profile.changeset(profile, attrs, parse_system_type(attrs)) end
+    )
     |> cast_embed(:Databases)
     |> cast_embed(:Instances)
     |> validate_required_fields(@required_fields)
@@ -176,7 +178,9 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> cast(attrs, fields())
       |> cast_embed(:Properties)
       |> cast_embed(:Instances,
-        with: {SapControlInstance, :changeset, [hostname, instance_number]}
+        with: fn instances, attrs ->
+          SapControlInstance.changeset(instances, attrs, hostname, instance_number)
+        end
       )
       |> cast_embed(:Processes)
       |> validate_required_fields(@required_fields)
