@@ -6,7 +6,7 @@ import SaptuneVersion from './SaptuneVersion';
 
 describe('SaptuneVersion', () => {
   it.each([
-    { version: null, text: 'Not installed', iconCss: null },
+    { version: null, text: 'Not installed', iconCss: 'fill-yellow-500' },
     { version: '3.0.0', text: '3.0.0', iconCss: 'fill-yellow-500' },
     { version: '3.1.0', text: '3.1.0', iconCss: null },
   ])(
