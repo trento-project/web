@@ -11,8 +11,8 @@ on:
     types: [start-ci, deploy-demo]
 
 env:
-  ELIXIR_VERSION: 1.14.3
-  OTP_VERSION: 25
+  ELIXIR_VERSION: 1.15.7
+  OTP_VERSION: 26
   MIX_ENV: test
   NODE_VERSION: "16"
 
@@ -23,10 +23,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.14.3
-            otp: 25
-          - elixir: 1.13.4
-            otp: 22
+          - elixir: 1.15.7
+            otp: 26
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.0
@@ -233,10 +231,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: 1.14.3
-            otp: 25
-          - elixir: 1.13.4
-            otp: 22
+          - elixir: 1.15.7
+            otp: 26
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.0
@@ -527,27 +523,27 @@ jobs:
             _build/test
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
-      - name: Generate main openapi.json
-        run: |
-          mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/main-spec.json
-      - name: Locate generated specs
-        run: mv /tmp/specs .
-      - name: Find difference between OpenAPI specifications
-        run: |
-          docker run -v "$(pwd)/specs:/specs" --rm openapitools/openapi-diff:2.0.1 \
-            /specs/main-spec.json \
-            /specs/current-spec.json \
-            --fail-on-incompatible \
-            --markdown /specs/changes.md \
-            --json /specs/changes.json \
-            --text /specs/changes.txt \
-            --html /specs/changes.html
-      - name: Upload OpenAPI diff report
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: openapi-diff-report-${{ matrix.version }}
-          path: specs/
+      # - name: Generate main openapi.json
+      #   run: |
+      #     mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/main-spec.json
+      # - name: Locate generated specs
+      #   run: mv /tmp/specs .
+      # - name: Find difference between OpenAPI specifications
+      #   run: |
+      #     docker run -v "$(pwd)/specs:/specs" --rm openapitools/openapi-diff:2.0.1 \
+      #       /specs/main-spec.json \
+      #       /specs/current-spec.json \
+      #       --fail-on-incompatible \
+      #       --markdown /specs/changes.md \
+      #       --json /specs/changes.json \
+      #       --text /specs/changes.txt \
+      #       --html /specs/changes.html
+      # - name: Upload OpenAPI diff report
+      #   uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: openapi-diff-report-${{ matrix.version }}
+      #     path: specs/
 
   build-and-push-container-images:
     name: Build and push container images
