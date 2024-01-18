@@ -14,7 +14,7 @@ RUN npm run build
 FROM bci/bci-base:15.4 AS release
 # Workaround for https://github.com/openSUSE/obs-build/issues/487
 RUN zypper --non-interactive in sles-release
-RUN zypper -n in elixir elixir-hex erlang-rebar3
+RUN zypper -n in git-core elixir elixir-hex erlang-rebar3
 COPY --from=assets-build /build /build
 WORKDIR /build/web/
 ENV LANG en_US.UTF-8
@@ -22,6 +22,8 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 ENV MIX_ENV=prod
 ENV MIX_HOME=/usr/bin
+ENV MIX_REBAR3=/usr/bin/rebar3
+ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 ENV FLAVOR="Premium"
 ENV VERSION=%%VERSION%%
 RUN mix phx.digest
