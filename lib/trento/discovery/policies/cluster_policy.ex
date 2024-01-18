@@ -428,7 +428,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     %{
       sid: sid,
       filesystem_resource_based: is_filesystem_resource_based,
-      distributed: is_distributed(payload, resources_by_sid),
+      distributed: distributed?(payload, resources_by_sid),
       nodes: parse_ascs_ers_cluster_nodes(payload, resources_by_sid)
     }
   end
@@ -463,7 +463,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   # - Failed is false
   # - The nodes are in a clean state
   # - The 2 SAPInstance resources are running in different nodes
-  defp is_distributed(%{crmmon: %{nodes: nodes, groups: groups}}, resources) do
+  defp distributed?(%{crmmon: %{nodes: nodes, groups: groups}}, resources) do
     resource_ids = Enum.map(resources, fn %{id: id} -> id end)
 
     clean_nodes =

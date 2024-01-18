@@ -53,6 +53,8 @@ defmodule TrentoWeb.ErrorViewTest do
 
     assert %{
              errors: [
+               %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
+               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"},
                %{
                  detail: "is invalid",
                  source: %{pointer: "/embedded/id"},
@@ -63,8 +65,6 @@ defmodule TrentoWeb.ErrorViewTest do
                  source: %{pointer: "/embedded/name"},
                  title: "Invalid value"
                },
-               %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
-               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"},
                %{
                  detail: "can't be blank",
                  source: %{pointer: "/polymorphic"},
@@ -79,6 +79,8 @@ defmodule TrentoWeb.ErrorViewTest do
 
     assert %{
              errors: [
+               %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
+               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"},
                %{
                  detail: "is invalid",
                  source: %{pointer: "/embedded/id"},
@@ -89,8 +91,6 @@ defmodule TrentoWeb.ErrorViewTest do
                  source: %{pointer: "/embedded/name"},
                  title: "Invalid value"
                },
-               %{detail: "can't be blank", source: %{pointer: "/id"}, title: "Invalid value"},
-               %{detail: "can't be blank", source: %{pointer: "/name"}, title: "Invalid value"},
                %{
                  detail: "can't be blank",
                  source: %{pointer: "/polymorphic"},

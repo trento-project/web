@@ -22,6 +22,13 @@ defmodule Trento.Support.EventHandlerFailureContextTest do
     assert_receive :max_retries_reached
 
     assert Process.alive?(handler)
+
+    # Wait until the event handler finishes
+    ref = Process.monitor(handler)
+
+    receive do
+      {:DOWN, ^ref, _, _, _} -> :ok
+    end
   end
 
   defp send_event(event, handler) do

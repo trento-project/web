@@ -9,7 +9,9 @@ defmodule Trento.Repo.Migrations.CreateSettings do
 
     installation_id = UUID.uuid4()
 
-    create constraint("settings", :only_one_record, check: "installation_id ='#{installation_id}'")
+    create constraint("settings", :only_one_record,
+             check: "installation_id ='#{installation_id}'"
+           )
 
     execute "INSERT INTO settings(installation_id) VALUES('#{installation_id}');"
   end
