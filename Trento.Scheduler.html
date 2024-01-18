@@ -4,19 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="generator" content="ExDoc v0.31.1">
     <meta name="project" content="Trento Web v2.2.0">
 
+
     <title>Trento.Scheduler — Trento Web v2.2.0</title>
-    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-3BB34172.js"></script>
+    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
+    <script src="dist/sidebar_items-29DEF4C1.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/html-XN2TSG4M.js"></script>
+    <script async src="dist/html-L4O5OK2K.js"></script>
 
 
   </head>
@@ -37,71 +39,99 @@
 
 <div class="main">
 
-<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
 
-<section class="sidebar">
-  <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button" aria-label="Submit Search">
-      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
-    </button>
-    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
-      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
-    </button>
-    <label class="search-label">
-      <p class="sr-only">Search</p>
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
-    </label>
-  </form>
+<div class="background-layer"></div>
 
-  <div class="autocomplete">
-    <div class="autocomplete-results">
-    </div>
-  </div>
+<nav id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
 
-      <a href="readme.html">
-        <img src="assets/logo.svg" alt="Trento Web" class="sidebar-projectImage">
-      </a>
+        <a href="readme.html" class="sidebar-projectImage">
+          <img src="assets/logo.svg" alt="Trento Web" />
+        </a>
 
-    <div class="sidebar-projectDetails">
-      <a href="readme.html" class="sidebar-projectName" translate="no">
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
 Trento Web
-      </a>
-      <strong class="sidebar-projectVersion" translate="no">
-        v2.2.0
-      </strong>
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.2.0
+        </div>
+      </div>
     </div>
-    <ul class="sidebar-listNav">
-      <li><a id="extras-list-link" href="#full-list">GUIDES</a></li>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+GUIDES
+        </button>
+      </li>
 
-        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
 
 
-        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
 
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
-</section>
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
 
-<section class="content">
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
   <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of Trento Web</span>
+              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
 
 <h1>
-<button class="settings display-settings">
-  <i class="ri-settings-3-line"></i>
-  <span class="sr-only">Settings</span>
-</button>
 
-
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento/scheduler.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento/scheduler.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -115,74 +145,74 @@ Trento Web
   <section id="moduledoc">
 <p>Defines a quantum Scheduler.</p><p>When used, the quantum scheduler expects the <code class="inline">:otp_app</code> as option.
 The <code class="inline">:otp_app</code> should point to an OTP application that has
-the quantum runner configuration. For example, the quantum scheduler:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Trento.Scheduler</span><span class="w"> </span><span class="k" data-group-id="6565954955-1">do</span><span class="w">
+the quantum runner configuration. For example, the quantum scheduler:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Trento.Scheduler</span><span class="w"> </span><span class="k" data-group-id="4937416826-1">do</span><span class="w">
   </span><span class="kn">use</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:trento</span><span class="w">
-</span><span class="k" data-group-id="6565954955-1">end</span></code></pre><p>Could be configured with:</p><pre><code class="makeup elixir" translate="no"><span class="n">config</span><span class="w"> </span><span class="ss">:trento</span><span class="p">,</span><span class="w"> </span><span class="nc">Trento.Scheduler</span><span class="p">,</span><span class="w">
-  </span><span class="ss">jobs</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8132889905-1">[</span><span class="w">
-    </span><span class="p" data-group-id="8132889905-2">{</span><span class="s">&quot;@daily&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8132889905-3">{</span><span class="nc">Backup</span><span class="p">,</span><span class="w"> </span><span class="ss">:backup</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8132889905-4">[</span><span class="p" data-group-id="8132889905-4">]</span><span class="p" data-group-id="8132889905-3">}</span><span class="p" data-group-id="8132889905-2">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="8132889905-1">]</span></code></pre><h2 id="module-configuration" class="section-heading">
-  <a href="#module-configuration" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">configuration</p>
+</span><span class="k" data-group-id="4937416826-1">end</span></code></pre><p>Could be configured with:</p><pre><code class="makeup elixir" translate="no"><span class="n">config</span><span class="w"> </span><span class="ss">:trento</span><span class="p">,</span><span class="w"> </span><span class="nc">Trento.Scheduler</span><span class="p">,</span><span class="w">
+  </span><span class="ss">jobs</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5792603892-1">[</span><span class="w">
+    </span><span class="p" data-group-id="5792603892-2">{</span><span class="s">&quot;@daily&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5792603892-3">{</span><span class="nc">Backup</span><span class="p">,</span><span class="w"> </span><span class="ss">:backup</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="5792603892-4">[</span><span class="p" data-group-id="5792603892-4">]</span><span class="p" data-group-id="5792603892-3">}</span><span class="p" data-group-id="5792603892-2">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="5792603892-1">]</span></code></pre><h2 id="module-configuration" class="section-heading">
+  <a href="#module-configuration" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
   </a>
-  Configuration:
+  <span class="text">Configuration:</span>
 </h2>
 <ul><li><p><code class="inline">:clock_broadcaster_name</code> - GenServer name of clock broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:execution_broadcaster_name</code> - GenServer name of execution broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:executor_supervisor_name</code> - GenServer name of execution supervisor <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:debug_logging</code> - Turn on debug logging</p></li><li><p><code class="inline">:jobs</code> - list of cron jobs to execute</p></li><li><p><code class="inline">:job_broadcaster_name</code> - GenServer name of job broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:name</code> - GenServer name of scheduler <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:node_selector_broadcaster_name</code> - GenServer name of node selector broadcaster <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:overlap</code> - Default overlap of new Job</p></li><li><p><code class="inline">:otp_app</code> - Application where scheduler runs</p></li><li><p><code class="inline">:run_strategy</code> - Default Run Strategy of new Job</p></li><li><p><code class="inline">:schedule</code> - Default schedule of new Job</p></li><li><p><code class="inline">:storage</code> - Storage to use for persistence</p></li><li><p><code class="inline">:storage_name</code> - GenServer name of storage <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:supervisor_module</code> - Module to supervise scheduler <br/>Can be overwritten to supervise processes differently (for example for clustering) <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:task_registry_name</code> - GenServer name of task registry <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:task_supervisor_name</code> - GenServer name of task supervisor <br/><em>(unstable, may break without major release until declared stable)</em></p></li><li><p><code class="inline">:timeout</code> - Sometimes, you may come across GenServer timeout errors
 esp. when you have too many jobs or high load. The default <a href="https://hexdocs.pm/elixir/GenServer.html#call/3"><code class="inline">GenServer.call/3</code></a>
 timeout is <code class="inline">5_000</code>.</p></li><li><p><code class="inline">:timezone</code> - Default timezone of new Job</p></li></ul><h2 id="module-telemetry" class="section-heading">
-  <a href="#module-telemetry" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">telemetry</p>
+  <a href="#module-telemetry" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
   </a>
-  Telemetry
+  <span class="text">Telemetry</span>
 </h2>
 <ul><li><p><code class="inline">[:quantum, :job, :add]</code></p><ul><li>Description: dispatched when a job is added</li><li>Measurements: <code class="inline">%{}</code></li><li>Metadata: <code class="inline">%{job: Quantum.Job.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :update]</code></p><ul><li>Description: dispatched when a job is updated</li><li>Measurements: <code class="inline">%{}</code></li><li>Metadata: <code class="inline">%{job: Quantum.Job.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :delete]</code></p><ul><li>Description: dispatched when a job is deleted</li><li>Measurements: <code class="inline">%{}</code></li><li>Metadata: <code class="inline">%{job: Quantum.Job.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :start]</code></p><ul><li>Description: dispatched on job execution start</li><li>Measurements: <code class="inline">%{system_time: integer()}</code></li><li>Metadata: <code class="inline">%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :stop]</code></p><ul><li>Description: dispatched on job execution end</li><li>Measurements: <code class="inline">%{duration: integer()}</code></li><li>Metadata: <code class="inline">%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), result: term()}</code></li></ul></li><li><p><code class="inline">[:quantum, :job, :exception]</code></p><ul><li>Description: dispatched on job execution fail</li><li>Measurements: <code class="inline">%{duration: integer()}</code></li><li><p>Metadata: <code class="inline">%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), kind: :throw | :error | :exit, reason: term(), stacktrace: list()}</code></p></li></ul></li></ul><h3 id="module-examples" class="section-heading">
-  <a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">examples</p>
+  <a href="#module-examples" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
   </a>
-  Examples
+  <span class="text">Examples</span>
 </h3>
-<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex(1)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">discover_all</span><span class="p" data-group-id="2995371962-1">(</span><span class="ss">:quantum</span><span class="p" data-group-id="2995371962-1">)</span><span class="w">
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex(1)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">discover_all</span><span class="p" data-group-id="3957982133-1">(</span><span class="ss">:quantum</span><span class="p" data-group-id="3957982133-1">)</span><span class="w">
 </span><span class="ss">:ok</span><span class="w">
-</span><span class="gp unselectable">iex(2)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">spannable_events</span><span class="p" data-group-id="2995371962-2">(</span><span class="p" data-group-id="2995371962-2">)</span><span class="w">
-</span><span class="p" data-group-id="2995371962-3">[</span><span class="p" data-group-id="2995371962-4">{</span><span class="p" data-group-id="2995371962-5">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p" data-group-id="2995371962-5">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2995371962-6">[</span><span class="ss">:start</span><span class="p">,</span><span class="w"> </span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="ss">:exception</span><span class="p" data-group-id="2995371962-6">]</span><span class="p" data-group-id="2995371962-4">}</span><span class="p" data-group-id="2995371962-3">]</span><span class="w">
+</span><span class="gp unselectable">iex(2)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">spannable_events</span><span class="p" data-group-id="3957982133-2">(</span><span class="p" data-group-id="3957982133-2">)</span><span class="w">
+</span><span class="p" data-group-id="3957982133-3">[</span><span class="p" data-group-id="3957982133-4">{</span><span class="p" data-group-id="3957982133-5">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p" data-group-id="3957982133-5">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3957982133-6">[</span><span class="ss">:start</span><span class="p">,</span><span class="w"> </span><span class="ss">:stop</span><span class="p">,</span><span class="w"> </span><span class="ss">:exception</span><span class="p" data-group-id="3957982133-6">]</span><span class="p" data-group-id="3957982133-4">}</span><span class="p" data-group-id="3957982133-3">]</span><span class="w">
 </span><span class="gp unselectable">iex(3)&gt; </span><span class="nc">:telemetry_registry</span><span class="o">.</span><span class="n">list_events</span><span class="w">
-</span><span class="p" data-group-id="2995371962-7">[</span><span class="w">
-  </span><span class="p" data-group-id="2995371962-8">{</span><span class="p" data-group-id="2995371962-9">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:add</span><span class="p" data-group-id="2995371962-9">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-10">%{</span><span class="w">
+</span><span class="p" data-group-id="3957982133-7">[</span><span class="w">
+  </span><span class="p" data-group-id="3957982133-8">{</span><span class="p" data-group-id="3957982133-9">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:add</span><span class="p" data-group-id="3957982133-9">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-10">%{</span><span class="w">
      </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched when a job is added&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{}&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{job: Quantum.Job.t(), scheduler: atom()}&quot;</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-10">}</span><span class="p" data-group-id="2995371962-8">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="2995371962-11">{</span><span class="p" data-group-id="2995371962-12">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:delete</span><span class="p" data-group-id="2995371962-12">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-13">%{</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-10">}</span><span class="p" data-group-id="3957982133-8">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3957982133-11">{</span><span class="p" data-group-id="3957982133-12">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:delete</span><span class="p" data-group-id="3957982133-12">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-13">%{</span><span class="w">
      </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched when a job is deleted&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{}&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{job: Quantum.Job.t(), scheduler: atom()}&quot;</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-13">}</span><span class="p" data-group-id="2995371962-11">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="2995371962-14">{</span><span class="p" data-group-id="2995371962-15">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:exception</span><span class="p" data-group-id="2995371962-15">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-16">%{</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-13">}</span><span class="p" data-group-id="3957982133-11">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3957982133-14">{</span><span class="p" data-group-id="3957982133-15">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:exception</span><span class="p" data-group-id="3957982133-15">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-16">%{</span><span class="w">
      </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched on job execution fail&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{duration: integer()}&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), kind: :throw | :error | :exit, reason: term(), stacktrace: list()}&quot;</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-16">}</span><span class="p" data-group-id="2995371962-14">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="2995371962-17">{</span><span class="p" data-group-id="2995371962-18">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:start</span><span class="p" data-group-id="2995371962-18">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-19">%{</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-16">}</span><span class="p" data-group-id="3957982133-14">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3957982133-17">{</span><span class="p" data-group-id="3957982133-18">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:start</span><span class="p" data-group-id="3957982133-18">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-19">%{</span><span class="w">
      </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched on job execution start&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{system_time: integer()}&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom()}&quot;</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-19">}</span><span class="p" data-group-id="2995371962-17">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="2995371962-20">{</span><span class="p" data-group-id="2995371962-21">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:stop</span><span class="p" data-group-id="2995371962-21">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-22">%{</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-19">}</span><span class="p" data-group-id="3957982133-17">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3957982133-20">{</span><span class="p" data-group-id="3957982133-21">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:stop</span><span class="p" data-group-id="3957982133-21">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-22">%{</span><span class="w">
      </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched on job execution end&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{duration: integer()}&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{telemetry_span_context: term(), job: Quantum.Job.t(), node: Node.t(), scheduler: atom(), result: term()}&quot;</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-22">}</span><span class="p" data-group-id="2995371962-20">}</span><span class="p">,</span><span class="w">
-  </span><span class="p" data-group-id="2995371962-23">{</span><span class="p" data-group-id="2995371962-24">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:update</span><span class="p" data-group-id="2995371962-24">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-25">%{</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-22">}</span><span class="p" data-group-id="3957982133-20">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3957982133-23">{</span><span class="p" data-group-id="3957982133-24">[</span><span class="ss">:quantum</span><span class="p">,</span><span class="w"> </span><span class="ss">:job</span><span class="p">,</span><span class="w"> </span><span class="ss">:update</span><span class="p" data-group-id="3957982133-24">]</span><span class="p">,</span><span class="w"> </span><span class="nc">Quantum</span><span class="p">,</span><span class="w">
+   </span><span class="p" data-group-id="3957982133-25">%{</span><span class="w">
      </span><span class="ss">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dispatched when a job is updated&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">measurements</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{}&quot;</span><span class="p">,</span><span class="w">
      </span><span class="ss">metadata</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;%{job: Quantum.Job.t(), scheduler: atom()}&quot;</span><span class="w">
-   </span><span class="p" data-group-id="2995371962-25">}</span><span class="p" data-group-id="2995371962-23">}</span><span class="w">
-</span><span class="p" data-group-id="2995371962-7">]</span></code></pre>
+   </span><span class="p" data-group-id="3957982133-25">}</span><span class="p" data-group-id="3957982133-23">}</span><span class="w">
+</span><span class="p" data-group-id="3957982133-7">]</span></code></pre>
   </section>
 
 
@@ -190,25 +220,23 @@ timeout is <code class="inline">5_000</code>.</p></li><li><p><code class="inline
     <h1 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
       </a>
-      Summary
+      <span class="text">Summary</span>
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#child_spec/1" translate="no">child_spec(opts)</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#child_spec/1" translate="no">child_spec(opts)</a>
 
       </div>
 
-  </div>
+    </div>
+
+</div>
 
   </section>
 
@@ -217,9 +245,8 @@ timeout is <code class="inline">5_000</code>.</p></li><li><p><code class="inline
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
       </a>
-Functions
+      <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
 <section class="detail" id="child_spec/1">
@@ -231,7 +258,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">child_spec(opts)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/scheduler.ex#L4" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/scheduler.ex#L4" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -255,10 +282,23 @@ Functions
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Trento Web.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
@@ -266,7 +306,7 @@ Functions
       </footer>
     </div>
   </div>
-</section>
+</main>
 </div>
 
 

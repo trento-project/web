@@ -4,19 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="generator" content="ExDoc v0.31.1">
     <meta name="project" content="Trento Web v2.2.0">
 
+
     <title>TrentoWeb.Router.Helpers — Trento Web v2.2.0</title>
-    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-3BB34172.js"></script>
+    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
+    <script src="dist/sidebar_items-29DEF4C1.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/html-XN2TSG4M.js"></script>
+    <script async src="dist/html-L4O5OK2K.js"></script>
 
 
   </head>
@@ -37,71 +39,99 @@
 
 <div class="main">
 
-<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
 
-<section class="sidebar">
-  <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button" aria-label="Submit Search">
-      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
-    </button>
-    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
-      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
-    </button>
-    <label class="search-label">
-      <p class="sr-only">Search</p>
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
-    </label>
-  </form>
+<div class="background-layer"></div>
 
-  <div class="autocomplete">
-    <div class="autocomplete-results">
-    </div>
-  </div>
+<nav id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
 
-      <a href="readme.html">
-        <img src="assets/logo.svg" alt="Trento Web" class="sidebar-projectImage">
-      </a>
+        <a href="readme.html" class="sidebar-projectImage">
+          <img src="assets/logo.svg" alt="Trento Web" />
+        </a>
 
-    <div class="sidebar-projectDetails">
-      <a href="readme.html" class="sidebar-projectName" translate="no">
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
 Trento Web
-      </a>
-      <strong class="sidebar-projectVersion" translate="no">
-        v2.2.0
-      </strong>
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.2.0
+        </div>
+      </div>
     </div>
-    <ul class="sidebar-listNav">
-      <li><a id="extras-list-link" href="#full-list">GUIDES</a></li>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+GUIDES
+        </button>
+      </li>
 
-        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
 
 
-        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
 
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
-</section>
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
 
-<section class="content">
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
   <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of Trento Web</span>
+              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
 
 <h1>
-<button class="settings display-settings">
-  <i class="ri-settings-3-line"></i>
-  <span class="sr-only">Settings</span>
-</button>
 
-
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -121,979 +151,977 @@ Trento Web
     <h1 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
       </a>
-      Summary
+      <span class="text">Summary</span>
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#about_path/2" translate="no">about_path(conn_or_endpoint, action)</a>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#about_path/2" translate="no">about_path(conn_or_endpoint, action)</a>
+      </div>
+
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#about_path/3" translate="no">about_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#about_path/3" translate="no">about_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#about_url/2" translate="no">about_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#about_url/2" translate="no">about_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#about_url/3" translate="no">about_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#about_url/3" translate="no">about_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#api_redirector_path/3" translate="no">api_redirector_path(conn_or_endpoint, action, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#api_redirector_path/3" translate="no">api_redirector_path(conn_or_endpoint, action, path)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#api_redirector_path/4" translate="no">api_redirector_path(conn_or_endpoint, action, path, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#api_redirector_path/4" translate="no">api_redirector_path(conn_or_endpoint, action, path, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#api_redirector_url/3" translate="no">api_redirector_url(conn_or_endpoint, action, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#api_redirector_url/3" translate="no">api_redirector_url(conn_or_endpoint, action, path)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#api_redirector_url/4" translate="no">api_redirector_url(conn_or_endpoint, action, path, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#api_redirector_url/4" translate="no">api_redirector_url(conn_or_endpoint, action, path, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#chart_path/3" translate="no">chart_path(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#chart_path/3" translate="no">chart_path(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#chart_path/4" translate="no">chart_path(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#chart_path/4" translate="no">chart_path(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#chart_url/3" translate="no">chart_url(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#chart_url/3" translate="no">chart_url(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#chart_url/4" translate="no">chart_url(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#chart_url/4" translate="no">chart_url(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_path/2" translate="no">cluster_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_path/2" translate="no">cluster_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_path/3" translate="no">cluster_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_path/3" translate="no">cluster_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_path/4" translate="no">cluster_path(conn_or_endpoint, action, cluster_id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_path/4" translate="no">cluster_path(conn_or_endpoint, action, cluster_id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_url/2" translate="no">cluster_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_url/2" translate="no">cluster_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_url/3" translate="no">cluster_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_url/3" translate="no">cluster_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_url/4" translate="no">cluster_url(conn_or_endpoint, action, cluster_id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_url/4" translate="no">cluster_url(conn_or_endpoint, action, cluster_id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#clusters_tagging_path/3" translate="no">clusters_tagging_path(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#clusters_tagging_path/3" translate="no">clusters_tagging_path(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#clusters_tagging_path/4" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#clusters_tagging_path/4" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#clusters_tagging_path/5" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#clusters_tagging_path/5" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#clusters_tagging_url/3" translate="no">clusters_tagging_url(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#clusters_tagging_url/3" translate="no">clusters_tagging_url(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#clusters_tagging_url/4" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#clusters_tagging_url/4" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#clusters_tagging_url/5" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#clusters_tagging_url/5" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#databases_tagging_path/3" translate="no">databases_tagging_path(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#databases_tagging_path/3" translate="no">databases_tagging_path(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#databases_tagging_path/4" translate="no">databases_tagging_path(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#databases_tagging_path/4" translate="no">databases_tagging_path(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#databases_tagging_path/5" translate="no">databases_tagging_path(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#databases_tagging_path/5" translate="no">databases_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#databases_tagging_url/3" translate="no">databases_tagging_url(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#databases_tagging_url/3" translate="no">databases_tagging_url(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#databases_tagging_url/4" translate="no">databases_tagging_url(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#databases_tagging_url/4" translate="no">databases_tagging_url(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#databases_tagging_url/5" translate="no">databases_tagging_url(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#databases_tagging_url/5" translate="no">databases_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#discovery_path/2" translate="no">discovery_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#discovery_path/2" translate="no">discovery_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#discovery_path/3" translate="no">discovery_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#discovery_path/3" translate="no">discovery_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#discovery_url/2" translate="no">discovery_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#discovery_url/2" translate="no">discovery_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#discovery_url/3" translate="no">discovery_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#discovery_url/3" translate="no">discovery_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_overview_path/2" translate="no">health_overview_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_overview_path/2" translate="no">health_overview_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_overview_path/3" translate="no">health_overview_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_overview_path/3" translate="no">health_overview_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_overview_url/2" translate="no">health_overview_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_overview_url/2" translate="no">health_overview_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_overview_url/3" translate="no">health_overview_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_overview_url/3" translate="no">health_overview_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_path/2" translate="no">health_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_path/2" translate="no">health_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_path/3" translate="no">health_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_path/3" translate="no">health_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_url/2" translate="no">health_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_url/2" translate="no">health_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#health_url/3" translate="no">health_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#health_url/3" translate="no">health_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_path/2" translate="no">host_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_path/2" translate="no">host_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_path/3" translate="no">host_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_path/3" translate="no">host_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_path/4" translate="no">host_path(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_path/4" translate="no">host_path(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_url/2" translate="no">host_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_url/2" translate="no">host_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_url/3" translate="no">host_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_url/3" translate="no">host_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_url/4" translate="no">host_url(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_url/4" translate="no">host_url(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hosts_tagging_path/3" translate="no">hosts_tagging_path(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#hosts_tagging_path/3" translate="no">hosts_tagging_path(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hosts_tagging_path/4" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#hosts_tagging_path/4" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hosts_tagging_path/5" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#hosts_tagging_path/5" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hosts_tagging_url/3" translate="no">hosts_tagging_url(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#hosts_tagging_url/3" translate="no">hosts_tagging_url(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hosts_tagging_url/4" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#hosts_tagging_url/4" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hosts_tagging_url/5" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#hosts_tagging_url/5" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#installation_path/2" translate="no">installation_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#installation_path/2" translate="no">installation_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#installation_path/3" translate="no">installation_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#installation_path/3" translate="no">installation_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#installation_url/2" translate="no">installation_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#installation_url/2" translate="no">installation_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#installation_url/3" translate="no">installation_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#installation_url/3" translate="no">installation_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_path/2" translate="no">live_dashboard_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_path/2" translate="no">live_dashboard_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_path/3" translate="no">live_dashboard_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_path/3" translate="no">live_dashboard_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_path/4" translate="no">live_dashboard_path(conn_or_endpoint, action, page, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_path/4" translate="no">live_dashboard_path(conn_or_endpoint, action, page, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_path/5" translate="no">live_dashboard_path(conn_or_endpoint, action, node, page, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_path/5" translate="no">live_dashboard_path(conn_or_endpoint, action, node, page, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_url/2" translate="no">live_dashboard_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_url/2" translate="no">live_dashboard_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_url/3" translate="no">live_dashboard_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_url/3" translate="no">live_dashboard_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_url/4" translate="no">live_dashboard_url(conn_or_endpoint, action, page, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_url/4" translate="no">live_dashboard_url(conn_or_endpoint, action, page, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#live_dashboard_url/5" translate="no">live_dashboard_url(conn_or_endpoint, action, node, page, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#live_dashboard_url/5" translate="no">live_dashboard_url(conn_or_endpoint, action, node, page, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login_path/2" translate="no">login_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#login_path/2" translate="no">login_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login_path/3" translate="no">login_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#login_path/3" translate="no">login_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login_url/2" translate="no">login_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#login_url/2" translate="no">login_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login_url/3" translate="no">login_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#login_url/3" translate="no">login_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#me_path/2" translate="no">me_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#me_path/2" translate="no">me_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#me_path/3" translate="no">me_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#me_path/3" translate="no">me_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#me_url/2" translate="no">me_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#me_url/2" translate="no">me_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#me_url/3" translate="no">me_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#me_url/3" translate="no">me_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#page_path/3" translate="no">page_path(conn_or_endpoint, action, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#page_path/3" translate="no">page_path(conn_or_endpoint, action, path)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#page_path/4" translate="no">page_path(conn_or_endpoint, action, path, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#page_path/4" translate="no">page_path(conn_or_endpoint, action, path, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#page_url/3" translate="no">page_url(conn_or_endpoint, action, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#page_url/3" translate="no">page_url(conn_or_endpoint, action, path)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#page_url/4" translate="no">page_url(conn_or_endpoint, action, path, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#page_url/4" translate="no">page_url(conn_or_endpoint, action, path, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#path/2" translate="no">path(data, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#path/2" translate="no">path(data, path)</a>
+        <div class="summary-synopsis"><p>Generates the path information including any necessary prefix.</p></div>
 
-        </div>
+    </div>
 
-          <div class="summary-synopsis"><p>Generates the path information including any necessary prefix.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prometheus_path/2" translate="no">prometheus_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#prometheus_path/2" translate="no">prometheus_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prometheus_path/3" translate="no">prometheus_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#prometheus_path/3" translate="no">prometheus_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prometheus_path/4" translate="no">prometheus_path(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#prometheus_path/4" translate="no">prometheus_path(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prometheus_url/2" translate="no">prometheus_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#prometheus_url/2" translate="no">prometheus_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prometheus_url/3" translate="no">prometheus_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#prometheus_url/3" translate="no">prometheus_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#prometheus_url/4" translate="no">prometheus_url(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#prometheus_url/4" translate="no">prometheus_url(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#refresh_path/2" translate="no">refresh_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#refresh_path/2" translate="no">refresh_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#refresh_path/3" translate="no">refresh_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#refresh_path/3" translate="no">refresh_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#refresh_url/2" translate="no">refresh_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#refresh_url/2" translate="no">refresh_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#refresh_url/3" translate="no">refresh_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#refresh_url/3" translate="no">refresh_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_spec_path/2" translate="no">render_spec_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#render_spec_path/2" translate="no">render_spec_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_spec_path/3" translate="no">render_spec_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#render_spec_path/3" translate="no">render_spec_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_spec_url/2" translate="no">render_spec_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#render_spec_url/2" translate="no">render_spec_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#render_spec_url/3" translate="no">render_spec_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#render_spec_url/3" translate="no">render_spec_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_path/2" translate="no">sap_system_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_path/2" translate="no">sap_system_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_path/3" translate="no">sap_system_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_path/3" translate="no">sap_system_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_path/5" translate="no">sap_system_path(conn_or_endpoint, action, id, host_id, instance_number)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_path/5" translate="no">sap_system_path(conn_or_endpoint, action, id, host_id, instance_number)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_path/6" translate="no">sap_system_path(conn_or_endpoint, action, id, host_id, instance_number, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_path/6" translate="no">sap_system_path(conn_or_endpoint, action, id, host_id, instance_number, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_url/2" translate="no">sap_system_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_url/2" translate="no">sap_system_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_url/3" translate="no">sap_system_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_url/3" translate="no">sap_system_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_url/5" translate="no">sap_system_url(conn_or_endpoint, action, id, host_id, instance_number)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_url/5" translate="no">sap_system_url(conn_or_endpoint, action, id, host_id, instance_number)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_url/6" translate="no">sap_system_url(conn_or_endpoint, action, id, host_id, instance_number, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_url/6" translate="no">sap_system_url(conn_or_endpoint, action, id, host_id, instance_number, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_systems_tagging_path/3" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_systems_tagging_path/3" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_systems_tagging_path/4" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_systems_tagging_path/4" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_systems_tagging_path/5" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_systems_tagging_path/5" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_systems_tagging_url/3" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_systems_tagging_url/3" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_systems_tagging_url/4" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_systems_tagging_url/4" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_systems_tagging_url/5" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, value, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_systems_tagging_url/5" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, value, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#settings_path/2" translate="no">settings_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#settings_path/2" translate="no">settings_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#settings_path/3" translate="no">settings_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#settings_path/3" translate="no">settings_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#settings_url/2" translate="no">settings_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#settings_url/2" translate="no">settings_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#settings_url/3" translate="no">settings_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#settings_url/3" translate="no">settings_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#static_integrity/2" translate="no">static_integrity(endpoint, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#static_integrity/2" translate="no">static_integrity(endpoint, path)</a>
+        <div class="summary-synopsis"><p>Generates an integrity hash to a static asset given its file path.</p></div>
 
-        </div>
+    </div>
 
-          <div class="summary-synopsis"><p>Generates an integrity hash to a static asset given its file path.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#static_path/2" translate="no">static_path(conn, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#static_path/2" translate="no">static_path(conn, path)</a>
+        <div class="summary-synopsis"><p>Generates path to a static asset given its file path.</p></div>
 
-        </div>
+    </div>
 
-          <div class="summary-synopsis"><p>Generates path to a static asset given its file path.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#static_url/2" translate="no">static_url(conn, path)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#static_url/2" translate="no">static_url(conn, path)</a>
+        <div class="summary-synopsis"><p>Generates url to a static asset given its file path.</p></div>
 
-        </div>
+    </div>
 
-          <div class="summary-synopsis"><p>Generates url to a static asset given its file path.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#swagger_ui_path/2" translate="no">swagger_ui_path(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#swagger_ui_path/2" translate="no">swagger_ui_path(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#swagger_ui_path/3" translate="no">swagger_ui_path(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#swagger_ui_path/3" translate="no">swagger_ui_path(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#swagger_ui_url/2" translate="no">swagger_ui_url(conn_or_endpoint, action)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#swagger_ui_url/2" translate="no">swagger_ui_url(conn_or_endpoint, action)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#swagger_ui_url/3" translate="no">swagger_ui_url(conn_or_endpoint, action, params)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#swagger_ui_url/3" translate="no">swagger_ui_url(conn_or_endpoint, action, params)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#url/1" translate="no">url(data)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#url/1" translate="no">url(data)</a>
+        <div class="summary-synopsis"><p>Generates the connection/endpoint base URL without any path information.</p></div>
 
-        </div>
-
-          <div class="summary-synopsis"><p>Generates the connection/endpoint base URL without any path information.</p></div>
-
-      </div>
+    </div>
 
-  </div>
+</div>
 
   </section>
 
@@ -1102,9 +1130,8 @@ Trento Web
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
       </a>
-Functions
+      <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
 <section class="detail" id="about_path/2">
@@ -1116,7 +1143,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">about_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1138,7 +1165,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">about_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1160,7 +1187,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">about_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1182,7 +1209,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">about_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1204,7 +1231,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">api_redirector_path(conn_or_endpoint, action, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1226,7 +1253,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">api_redirector_path(conn_or_endpoint, action, path, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1248,7 +1275,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">api_redirector_url(conn_or_endpoint, action, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1270,7 +1297,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">api_redirector_url(conn_or_endpoint, action, path, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1292,7 +1319,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">chart_path(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1314,7 +1341,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">chart_path(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1336,7 +1363,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">chart_url(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1358,7 +1385,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">chart_url(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1380,7 +1407,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1402,7 +1429,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1424,7 +1451,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_path(conn_or_endpoint, action, cluster_id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1446,7 +1473,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1468,7 +1495,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1490,7 +1517,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_url(conn_or_endpoint, action, cluster_id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1512,7 +1539,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">clusters_tagging_path(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1534,7 +1561,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1556,7 +1583,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">clusters_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1578,7 +1605,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">clusters_tagging_url(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1600,7 +1627,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1622,7 +1649,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">clusters_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1644,7 +1671,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">databases_tagging_path(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1666,7 +1693,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">databases_tagging_path(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1688,7 +1715,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">databases_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1710,7 +1737,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">databases_tagging_url(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1732,7 +1759,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">databases_tagging_url(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1754,7 +1781,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">databases_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1776,7 +1803,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">discovery_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1798,7 +1825,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">discovery_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1820,7 +1847,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">discovery_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1842,7 +1869,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">discovery_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1864,7 +1891,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_overview_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1886,7 +1913,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_overview_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1908,7 +1935,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_overview_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1930,7 +1957,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_overview_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1952,7 +1979,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1974,7 +2001,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1996,7 +2023,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2018,7 +2045,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">health_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2040,7 +2067,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2062,7 +2089,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2084,7 +2111,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_path(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2106,7 +2133,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2128,7 +2155,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2150,7 +2177,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_url(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2172,7 +2199,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">hosts_tagging_path(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2194,7 +2221,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2216,7 +2243,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">hosts_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2238,7 +2265,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">hosts_tagging_url(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2260,7 +2287,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2282,7 +2309,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">hosts_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2304,7 +2331,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">installation_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2326,7 +2353,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">installation_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2348,7 +2375,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">installation_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2370,7 +2397,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">installation_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2392,7 +2419,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2414,7 +2441,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2436,7 +2463,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action, page, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2458,7 +2485,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_path(conn_or_endpoint, action, node, page, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2480,7 +2507,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2502,7 +2529,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2524,7 +2551,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action, page, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2546,7 +2573,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">live_dashboard_url(conn_or_endpoint, action, node, page, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2568,7 +2595,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">login_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2590,7 +2617,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">login_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2612,7 +2639,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">login_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2634,7 +2661,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">login_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2656,7 +2683,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">me_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2678,7 +2705,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">me_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2700,7 +2727,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">me_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2722,7 +2749,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">me_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2744,7 +2771,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">page_path(conn_or_endpoint, action, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2766,7 +2793,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">page_path(conn_or_endpoint, action, path, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2788,7 +2815,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">page_url(conn_or_endpoint, action, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2810,7 +2837,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">page_url(conn_or_endpoint, action, path, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2832,7 +2859,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">path(data, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2854,7 +2881,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prometheus_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2876,7 +2903,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prometheus_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2898,7 +2925,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prometheus_path(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2920,7 +2947,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prometheus_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2942,7 +2969,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prometheus_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2964,7 +2991,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">prometheus_url(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2986,7 +3013,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">refresh_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3008,7 +3035,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">refresh_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3030,7 +3057,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">refresh_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3052,7 +3079,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">refresh_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3074,7 +3101,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">render_spec_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3096,7 +3123,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">render_spec_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3118,7 +3145,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">render_spec_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3140,7 +3167,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">render_spec_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3162,7 +3189,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3184,7 +3211,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3206,7 +3233,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_path(conn_or_endpoint, action, id, host_id, instance_number)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3228,7 +3255,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_path(conn_or_endpoint, action, id, host_id, instance_number, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3250,7 +3277,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3272,7 +3299,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3294,7 +3321,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_url(conn_or_endpoint, action, id, host_id, instance_number)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3316,7 +3343,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_url(conn_or_endpoint, action, id, host_id, instance_number, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3338,7 +3365,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3360,7 +3387,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3382,7 +3409,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_systems_tagging_path(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3404,7 +3431,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3426,7 +3453,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3448,7 +3475,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_systems_tagging_url(conn_or_endpoint, action, id, value, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3470,7 +3497,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">settings_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3492,7 +3519,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">settings_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3514,7 +3541,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">settings_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3536,7 +3563,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">settings_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3558,7 +3585,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">static_integrity(endpoint, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3580,7 +3607,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">static_path(conn, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3602,7 +3629,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">static_url(conn, path)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3624,7 +3651,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">swagger_ui_path(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3646,7 +3673,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">swagger_ui_path(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3668,7 +3695,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">swagger_ui_url(conn_or_endpoint, action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3690,7 +3717,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">swagger_ui_url(conn_or_endpoint, action, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3712,7 +3739,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">url(data)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/router.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -3730,10 +3757,23 @@ Functions
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Trento Web.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
@@ -3741,7 +3781,7 @@ Functions
       </footer>
     </div>
   </div>
-</section>
+</main>
 </div>
 
 

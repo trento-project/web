@@ -4,19 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="generator" content="ExDoc v0.31.1">
     <meta name="project" content="Trento Web v2.2.0">
 
+
     <title>Trento.Factory — Trento Web v2.2.0</title>
-    <link rel="stylesheet" href="dist/html-elixir-2YOS5DIE.css" />
+    <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
+
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
-    <script src="dist/sidebar_items-3BB34172.js"></script>
+    <script src="dist/handlebars.templates-43PMFBC7.js"></script>
+    <script src="dist/sidebar_items-29DEF4C1.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/html-XN2TSG4M.js"></script>
+    <script async src="dist/html-L4O5OK2K.js"></script>
 
 
   </head>
@@ -37,71 +39,99 @@
 
 <div class="main">
 
-<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
 
-<section class="sidebar">
-  <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button" aria-label="Submit Search">
-      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
-    </button>
-    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
-      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
-    </button>
-    <label class="search-label">
-      <p class="sr-only">Search</p>
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
-    </label>
-  </form>
+<div class="background-layer"></div>
 
-  <div class="autocomplete">
-    <div class="autocomplete-results">
-    </div>
-  </div>
+<nav id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
 
-      <a href="readme.html">
-        <img src="assets/logo.svg" alt="Trento Web" class="sidebar-projectImage">
-      </a>
+        <a href="readme.html" class="sidebar-projectImage">
+          <img src="assets/logo.svg" alt="Trento Web" />
+        </a>
 
-    <div class="sidebar-projectDetails">
-      <a href="readme.html" class="sidebar-projectName" translate="no">
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
 Trento Web
-      </a>
-      <strong class="sidebar-projectVersion" translate="no">
-        v2.2.0
-      </strong>
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v2.2.0
+        </div>
+      </div>
     </div>
-    <ul class="sidebar-listNav">
-      <li><a id="extras-list-link" href="#full-list">GUIDES</a></li>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+GUIDES
+        </button>
+      </li>
 
-        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
 
 
-        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
 
     </ul>
   </div>
 
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
-</section>
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
 
-<section class="content">
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
   <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of Trento Web</span>
+              <input name="q" type="text" class="search-input" placeholder="Search Documentation (press /)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
 
 <h1>
-<button class="settings display-settings">
-  <i class="ri-settings-3-line"></i>
-  <span class="sr-only">Settings</span>
-</button>
 
-
-    <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -121,651 +151,649 @@ Trento Web
     <h1 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
       </a>
-      Summary
+      <span class="text">Summary</span>
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#application_instance_deregistered_event_factory/0" translate="no">application_instance_deregistered_event_factory()</a>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#application_instance_deregistered_event_factory/0" translate="no">application_instance_deregistered_event_factory()</a>
-
-        </div>
-
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#application_instance_factory/0" translate="no">application_instance_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#application_instance_factory/0" translate="no">application_instance_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#application_instance_marked_absent_event_factory/0" translate="no">application_instance_marked_absent_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#application_instance_marked_absent_event_factory/0" translate="no">application_instance_marked_absent_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#application_instance_registered_event_factory/0" translate="no">application_instance_registered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#application_instance_registered_event_factory/0" translate="no">application_instance_registered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#application_instance_without_host_factory/0" translate="no">application_instance_without_host_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#application_instance_without_host_factory/0" translate="no">application_instance_without_host_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#ascs_ers_cluster_details_factory/0" translate="no">ascs_ers_cluster_details_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ascs_ers_cluster_details_factory/0" translate="no">ascs_ers_cluster_details_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#ascs_ers_cluster_node_factory/0" translate="no">ascs_ers_cluster_node_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ascs_ers_cluster_node_factory/0" translate="no">ascs_ers_cluster_node_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#ascs_ers_cluster_sap_system_factory/0" translate="no">ascs_ers_cluster_sap_system_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ascs_ers_cluster_sap_system_factory/0" translate="no">ascs_ers_cluster_sap_system_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#build/2" translate="no">build(factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#build/2" translate="no">build(factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#build_list/3" translate="no">build_list(number_of_records, factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#build_list/3" translate="no">build_list(number_of_records, factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#build_pair/2" translate="no">build_pair(factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#build_pair/2" translate="no">build_pair(factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cib_resource_factory/0" translate="no">cib_resource_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cib_resource_factory/0" translate="no">cib_resource_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_deregistered_event_factory/0" translate="no">cluster_deregistered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_deregistered_event_factory/0" translate="no">cluster_deregistered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_enrichment_data_factory/0" translate="no">cluster_enrichment_data_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_enrichment_data_factory/0" translate="no">cluster_enrichment_data_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_factory/0" translate="no">cluster_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_factory/0" translate="no">cluster_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_registered_event_factory/0" translate="no">cluster_registered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_registered_event_factory/0" translate="no">cluster_registered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_resource_factory/0" translate="no">cluster_resource_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_resource_factory/0" translate="no">cluster_resource_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#cluster_tombstoned_event_factory/0" translate="no">cluster_tombstoned_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_tombstoned_event_factory/0" translate="no">cluster_tombstoned_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#create/1" translate="no">create(_)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#create/1" translate="no">create(_)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#create/2" translate="no">create(_, _)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#create/2" translate="no">create(_, _)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#create_list/3" translate="no">create_list(_, _, _)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#create_list/3" translate="no">create_list(_, _, _)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#create_pair/2" translate="no">create_pair(_, _)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#create_pair/2" translate="no">create_pair(_, _)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#crm_resource_factory/0" translate="no">crm_resource_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#crm_resource_factory/0" translate="no">crm_resource_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_deregistered_event_factory/0" translate="no">database_deregistered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_deregistered_event_factory/0" translate="no">database_deregistered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_factory/0" translate="no">database_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_factory/0" translate="no">database_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_instance_deregistered_event_factory/0" translate="no">database_instance_deregistered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_instance_deregistered_event_factory/0" translate="no">database_instance_deregistered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_instance_factory/0" translate="no">database_instance_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_instance_factory/0" translate="no">database_instance_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_instance_marked_absent_event_factory/0" translate="no">database_instance_marked_absent_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_instance_marked_absent_event_factory/0" translate="no">database_instance_marked_absent_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_instance_registered_event_factory/0" translate="no">database_instance_registered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_instance_registered_event_factory/0" translate="no">database_instance_registered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_instance_without_host_factory/0" translate="no">database_instance_without_host_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_instance_without_host_factory/0" translate="no">database_instance_without_host_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_registered_event_factory/0" translate="no">database_registered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_registered_event_factory/0" translate="no">database_registered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#database_restored_event_factory/0" translate="no">database_restored_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#database_restored_event_factory/0" translate="no">database_restored_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#deregister_application_instance_command_factory/0" translate="no">deregister_application_instance_command_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#deregister_application_instance_command_factory/0" translate="no">deregister_application_instance_command_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#deregister_database_instance_command_factory/0" translate="no">deregister_database_instance_command_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#deregister_database_instance_command_factory/0" translate="no">deregister_database_instance_command_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#discarded_discovery_event_factory/0" translate="no">discarded_discovery_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#discarded_discovery_event_factory/0" translate="no">discarded_discovery_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#discovery_event_factory/0" translate="no">discovery_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#discovery_event_factory/0" translate="no">discovery_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#factory/1" translate="no">factory(factory_name)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#factory/1" translate="no">factory(factory_name)</a>
 
-          <div class="summary-synopsis"><p>Raises a helpful error if no factory is defined.</p></div>
-
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#hana_cluster_details_value_object/0" translate="no">hana_cluster_details_value_object()</a>
+        <div class="summary-synopsis"><p>Raises a helpful error if no factory is defined.</p></div>
 
-        </div>
+    </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hana_cluster_details_value_object/0" translate="no">hana_cluster_details_value_object()</a>
+
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#heartbeat_factory/0" translate="no">heartbeat_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#heartbeat_factory/0" translate="no">heartbeat_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#heartbeat_failed_factory/0" translate="no">heartbeat_failed_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#heartbeat_failed_factory/0" translate="no">heartbeat_failed_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#heartbeat_succeded_factory/0" translate="no">heartbeat_succeded_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#heartbeat_succeded_factory/0" translate="no">heartbeat_succeded_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_added_to_cluster_event_factory/0" translate="no">host_added_to_cluster_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_added_to_cluster_event_factory/0" translate="no">host_added_to_cluster_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_checks_health_changed_factory/0" translate="no">host_checks_health_changed_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_checks_health_changed_factory/0" translate="no">host_checks_health_changed_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_details_updated_event_factory/0" translate="no">host_details_updated_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_details_updated_event_factory/0" translate="no">host_details_updated_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_factory/0" translate="no">host_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_factory/0" translate="no">host_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_health_changed_event_factory/0" translate="no">host_health_changed_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_health_changed_event_factory/0" translate="no">host_health_changed_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_registered_event_factory/0" translate="no">host_registered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_registered_event_factory/0" translate="no">host_registered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_removed_from_cluster_event_factory/0" translate="no">host_removed_from_cluster_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_removed_from_cluster_event_factory/0" translate="no">host_removed_from_cluster_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_saptune_health_changed_event_factory/0" translate="no">host_saptune_health_changed_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_saptune_health_changed_event_factory/0" translate="no">host_saptune_health_changed_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_telemetry_factory/0" translate="no">host_telemetry_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_telemetry_factory/0" translate="no">host_telemetry_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#host_tombstoned_event_factory/0" translate="no">host_tombstoned_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#host_tombstoned_event_factory/0" translate="no">host_tombstoned_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#insert/1" translate="no">insert(already_built_record)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#insert/1" translate="no">insert(already_built_record)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#insert/2" translate="no">insert(already_built_record, function_opts)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#insert/2" translate="no">insert(already_built_record, function_opts)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#insert/3" translate="no">insert(factory_name, attrs, opts)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#insert/3" translate="no">insert(factory_name, attrs, opts)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#insert_list/3" translate="no">insert_list(number_of_records, factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#insert_list/3" translate="no">insert_list(number_of_records, factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#insert_list/4" translate="no">insert_list(number_of_records, factory_name, attrs, opts)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#insert_list/4" translate="no">insert_list(number_of_records, factory_name, attrs, opts)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#insert_pair/2" translate="no">insert_pair(factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#insert_pair/2" translate="no">insert_pair(factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#insert_pair/3" translate="no">insert_pair(factory_name, attrs, opts)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#insert_pair/3" translate="no">insert_pair(factory_name, attrs, opts)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#params_for/2" translate="no">params_for(factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#params_for/2" translate="no">params_for(factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#params_with_assocs/2" translate="no">params_with_assocs(factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#params_with_assocs/2" translate="no">params_with_assocs(factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#register_application_instance_command_factory/0" translate="no">register_application_instance_command_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#register_application_instance_command_factory/0" translate="no">register_application_instance_command_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#register_cluster_host_factory/0" translate="no">register_cluster_host_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#register_cluster_host_factory/0" translate="no">register_cluster_host_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#register_database_instance_command_factory/0" translate="no">register_database_instance_command_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#register_database_instance_command_factory/0" translate="no">register_database_instance_command_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#register_host_command_factory/0" translate="no">register_host_command_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#register_host_command_factory/0" translate="no">register_host_command_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#rollup_sap_system_command_factory/0" translate="no">rollup_sap_system_command_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#rollup_sap_system_command_factory/0" translate="no">rollup_sap_system_command_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_deregistered_event_factory/0" translate="no">sap_system_deregistered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_deregistered_event_factory/0" translate="no">sap_system_deregistered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_factory/0" translate="no">sap_system_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_factory/0" translate="no">sap_system_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_instance_factory/0" translate="no">sap_system_instance_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_instance_factory/0" translate="no">sap_system_instance_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_registered_event_factory/0" translate="no">sap_system_registered_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_registered_event_factory/0" translate="no">sap_system_registered_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sap_system_tombstoned_event_factory/0" translate="no">sap_system_tombstoned_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sap_system_tombstoned_event_factory/0" translate="no">sap_system_tombstoned_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sapcontrol_process_factory/0" translate="no">sapcontrol_process_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sapcontrol_process_factory/0" translate="no">sapcontrol_process_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#saptune_status_factory/0" translate="no">saptune_status_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#saptune_status_factory/0" translate="no">saptune_status_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#saptune_status_updated_event_factory/0" translate="no">saptune_status_updated_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#saptune_status_updated_event_factory/0" translate="no">saptune_status_updated_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sbd_device_factory/0" translate="no">sbd_device_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sbd_device_factory/0" translate="no">sbd_device_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#sles_subscription_factory/0" translate="no">sles_subscription_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#sles_subscription_factory/0" translate="no">sles_subscription_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#string_params_for/2" translate="no">string_params_for(factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#string_params_for/2" translate="no">string_params_for(factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#string_params_with_assocs/2" translate="no">string_params_with_assocs(factory_name, attrs \\ %{})</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#string_params_with_assocs/2" translate="no">string_params_with_assocs(factory_name, attrs \\ %{})</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#subscriptions_updated_event_factory/0" translate="no">subscriptions_updated_event_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscriptions_updated_event_factory/0" translate="no">subscriptions_updated_event_factory()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#tag_factory/0" translate="no">tag_factory()</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#tag_factory/0" translate="no">tag_factory()</a>
 
       </div>
+
+    </div>
 
-  </div>
+</div>
 
   </section>
 
@@ -774,9 +802,8 @@ Trento Web
     <h1 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
       </a>
-Functions
+      <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
 <section class="detail" id="application_instance_deregistered_event_factory/0">
@@ -788,7 +815,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">application_instance_deregistered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L372" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L372" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -810,7 +837,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">application_instance_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L563" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L563" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -832,7 +859,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">application_instance_marked_absent_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L363" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L363" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -854,7 +881,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">application_instance_registered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L348" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L348" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -876,7 +903,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">application_instance_without_host_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L551" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L551" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -898,7 +925,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">ascs_ers_cluster_details_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L503" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L503" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -920,7 +947,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">ascs_ers_cluster_node_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L464" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L464" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -942,7 +969,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">ascs_ers_cluster_sap_system_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L477" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L477" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -966,7 +993,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">build(factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -990,7 +1017,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">build_list(number_of_records, factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1014,7 +1041,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">build_pair(factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1036,7 +1063,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cib_resource_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L639" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L639" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1058,7 +1085,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_deregistered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L179" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L179" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1080,7 +1107,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_enrichment_data_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L265" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L265" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1102,7 +1129,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L252" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L252" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1124,7 +1151,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_registered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L186" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L186" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1146,7 +1173,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_resource_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L493" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L493" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1168,7 +1195,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">cluster_tombstoned_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L677" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L677" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1190,7 +1217,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">create(_)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1218,7 +1245,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">create(_, _)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1246,7 +1273,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">create_list(_, _, _)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1274,7 +1301,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">create_pair(_, _)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1302,7 +1329,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">crm_resource_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L651" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L651" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1324,7 +1351,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_deregistered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L341" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L341" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1346,7 +1373,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L512" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L512" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1368,7 +1395,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_instance_deregistered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L316" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L316" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1390,7 +1417,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_instance_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L546" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L546" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1412,7 +1439,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_instance_marked_absent_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L307" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L307" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1434,7 +1461,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_instance_registered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L289" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L289" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1456,7 +1483,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_instance_without_host_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L531" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L531" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1478,7 +1505,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_registered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L390" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L390" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1500,7 +1527,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">database_restored_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L325" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L325" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1522,7 +1549,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">deregister_application_instance_command_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L381" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L381" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1544,7 +1571,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">deregister_database_instance_command_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L332" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L332" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1566,7 +1593,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">discarded_discovery_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L587" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L587" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1588,7 +1615,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">discovery_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L578" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L578" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1610,7 +1637,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">factory(factory_name)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1638,7 +1665,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">hana_cluster_details_value_object()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L422" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L422" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1660,7 +1687,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">heartbeat_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L147" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L147" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1682,7 +1709,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">heartbeat_failed_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L718" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L718" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1704,7 +1731,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">heartbeat_succeded_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L712" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L712" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1726,7 +1753,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_added_to_cluster_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L201" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L201" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1748,7 +1775,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_checks_health_changed_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L724" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L724" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1770,7 +1797,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_details_updated_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L116" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L116" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1792,7 +1819,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L130" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L130" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1814,7 +1841,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_health_changed_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L738" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L738" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1836,7 +1863,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_registered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L101" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L101" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1858,7 +1885,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_removed_from_cluster_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L171" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L171" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1880,7 +1907,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_saptune_health_changed_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L731" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L731" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1902,7 +1929,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_telemetry_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L240" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L240" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1924,7 +1951,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">host_tombstoned_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L671" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L671" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1946,7 +1973,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">insert(already_built_record)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1968,7 +1995,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">insert(already_built_record, function_opts)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1990,7 +2017,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">insert(factory_name, attrs, opts)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2014,7 +2041,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">insert_list(number_of_records, factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2036,7 +2063,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">insert_list(number_of_records, factory_name, attrs, opts)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2060,7 +2087,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">insert_pair(factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2082,7 +2109,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">insert_pair(factory_name, attrs, opts)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2106,7 +2133,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">params_for(factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2130,7 +2157,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">params_with_assocs(factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2152,7 +2179,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">register_application_instance_command_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L603" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L603" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2174,7 +2201,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">register_cluster_host_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L154" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L154" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2196,7 +2223,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">register_database_instance_command_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L621" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L621" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2218,7 +2245,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">register_host_command_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L698" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L698" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2240,7 +2267,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">rollup_sap_system_command_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L416" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L416" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2262,7 +2289,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_deregistered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L409" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L409" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2284,7 +2311,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L519" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L519" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2306,7 +2333,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_instance_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L568" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L568" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2328,7 +2355,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_registered_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L398" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L398" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2350,7 +2377,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sap_system_tombstoned_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L683" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L683" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2372,7 +2399,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sapcontrol_process_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L689" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L689" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2394,7 +2421,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">saptune_status_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L225" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L225" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2416,7 +2443,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">saptune_status_updated_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L233" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L233" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2438,7 +2465,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sbd_device_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L486" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L486" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2460,7 +2487,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sles_subscription_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L208" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L208" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2484,7 +2511,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">string_params_for(factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2508,7 +2535,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">string_params_with_assocs(factory_name, attrs \\ %{})</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2530,7 +2557,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">subscriptions_updated_event_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L272" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L272" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2552,7 +2579,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">tag_factory()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L595" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/factory.ex#L595" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -2570,10 +2597,23 @@ Functions
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="Trento Web.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.1) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
@@ -2581,7 +2621,7 @@ Functions
       </footer>
     </div>
   </div>
-</section>
+</main>
 </div>
 
 
