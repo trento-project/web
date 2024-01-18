@@ -13,6 +13,9 @@ import HostDetails from './HostDetails';
 const host = hostFactory.build({ provider: 'azure', agent_version: '2.0.0' });
 const cluster = clusterFactory.build({ id: host.cluster_id });
 const sapInstances = sapSystemApplicationInstanceFactory.buildList(2);
+const mockGlobalConfig = {
+  chartsEnabled: false,
+};
 
 function ContainerWrapper({ children }) {
   return (
@@ -138,11 +141,14 @@ export default {
     },
   },
   decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
+    (Story) => {
+      global.config = mockGlobalConfig;
+      return (
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      );
+    },
   ],
   render: (args) => (
     <ContainerWrapper>
