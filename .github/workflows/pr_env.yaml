@@ -77,7 +77,6 @@ jobs:
         with:
           repository: trento-project/ansible
           path: ansible
-          ref: "temporary_fix_remove_origin_nginx_conf"
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
@@ -130,8 +129,10 @@ jobs:
             web_upstream_name='${{ env.PR_NUMBER }}web' \
             wanda_upstream_name='${{ env.PR_NUMBER }}wanda' \
             trento_server_url='http://${{ env.PR_BASE_URL }}' \
+            nginx_ssl_cert_as_base64='true' \
+            nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.PR_ENV_SSL_CERT }}' \
-            nginx_ssl_cert_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}'"
+            nginx_ssl_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}'"
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the pr environment
