@@ -44,7 +44,7 @@ jobs:
         env:
           ImageOS: ubuntu20
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
@@ -75,7 +75,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
@@ -123,7 +123,7 @@ jobs:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
@@ -171,7 +171,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
@@ -180,7 +180,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
@@ -217,7 +217,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
@@ -252,7 +252,7 @@ jobs:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
@@ -296,7 +296,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
@@ -305,7 +305,7 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
@@ -338,7 +338,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
@@ -379,7 +379,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: |
@@ -388,14 +388,14 @@ jobs:
             priv/plts
           key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
@@ -461,7 +461,7 @@ jobs:
         with:
           ref: main
       - name: Retrieve Cached Dependencies - main branch
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache-main
         if: github.ref_name != 'main'
         with:
@@ -502,7 +502,7 @@ jobs:
       - name: Checkout current branch
         uses: actions/checkout@v4
       - name: Retrieve Cached Dependencies - current branch
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache-current
         with:
           path: |
@@ -519,7 +519,7 @@ jobs:
         with:
           ref: main
       - name: Retrieve Cached Dependencies - main branch
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache-main
         with:
           path: |
