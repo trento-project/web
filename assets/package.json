@@ -5,7 +5,7 @@
     "@babel/preset-env": "^7.23.8",
     "@babel/preset-react": "^7.23.3",
     "@faker-js/faker": "^8.3.1",
-    "@storybook/addon-actions": "^7.6.9",
+    "@storybook/addon-actions": "^7.6.10",
     "@storybook/addon-essentials": "^7.6.7",
     "@storybook/addon-interactions": "^7.6.7",
     "@storybook/addon-links": "^7.6.7",
