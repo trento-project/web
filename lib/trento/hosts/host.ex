@@ -180,6 +180,7 @@ defmodule Trento.Hosts.Host do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source,
           deregistered_at: deregistered_at
         },
@@ -191,6 +192,7 @@ defmodule Trento.Hosts.Host do
           total_memory_mb: total_memory_mb,
           socket_count: socket_count,
           os_version: os_version,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source
         }
       )

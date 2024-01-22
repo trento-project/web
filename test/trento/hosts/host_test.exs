@@ -1490,6 +1490,7 @@ defmodule Trento.Hosts.HostTest do
             snapshot: %Host{
               host_id: host_registered_event.host_id,
               hostname: host_registered_event.hostname,
+              fully_qualified_domain_name: host_registered_event.fully_qualified_domain_name,
               ip_addresses: host_registered_event.ip_addresses,
               agent_version: host_registered_event.agent_version,
               cpu_count: host_registered_event.cpu_count,
@@ -1507,6 +1508,10 @@ defmodule Trento.Hosts.HostTest do
           refute host.rolling_up
           assert host.host_id == host_registered_event.host_id
           assert host.hostname == host_registered_event.hostname
+
+          assert host.fully_qualified_domain_name ==
+                   host_registered_event.fully_qualified_domain_name
+
           assert host.ip_addresses == host_registered_event.ip_addresses
           assert host.agent_version == host_registered_event.agent_version
           assert host.cpu_count == host_registered_event.cpu_count
@@ -1537,6 +1542,7 @@ defmodule Trento.Hosts.HostTest do
           :register_host_command,
           host_id: host_id,
           hostname: host_registered_event.hostname,
+          fully_qualified_domain_name: host_registered_event.fully_qualified_domain_name,
           ip_addresses: host_registered_event.ip_addresses,
           agent_version: host_registered_event.agent_version,
           cpu_count: host_registered_event.cpu_count,
