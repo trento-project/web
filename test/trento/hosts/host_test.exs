@@ -159,6 +159,60 @@ defmodule Trento.Hosts.HostTest do
       )
     end
 
+    test "should change an host' FQDN from nil to an actual one" do
+      host_id = Faker.UUID.v4()
+      hostname = Faker.StarWars.character()
+      fully_qualified_domain_name = Faker.Internet.domain_name()
+      ip_addresses = [Faker.Internet.ip_v4_address()]
+      agent_version = Faker.Internet.slug()
+      cpu_count = Enum.random(1..16)
+      total_memory_mb = Enum.random(1..128)
+      socket_count = Enum.random(1..16)
+      os_version = Faker.App.version()
+      installation_source = Enum.random([:community, :suse, :unknown])
+
+      assert_events_and_state(
+        build(:host_registered_event, host_id: host_id, fully_qualified_domain_name: nil),
+        RegisterHost.new!(%{
+          host_id: host_id,
+          hostname: hostname,
+          fully_qualified_domain_name: fully_qualified_domain_name,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source
+        }),
+        %HostDetailsUpdated{
+          host_id: host_id,
+          hostname: hostname,
+          fully_qualified_domain_name: fully_qualified_domain_name,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source
+        },
+        %Host{
+          host_id: host_id,
+          hostname: hostname,
+          fully_qualified_domain_name: fully_qualified_domain_name,
+          ip_addresses: ip_addresses,
+          agent_version: agent_version,
+          cpu_count: cpu_count,
+          total_memory_mb: total_memory_mb,
+          socket_count: socket_count,
+          os_version: os_version,
+          installation_source: installation_source,
+          heartbeat: :unknown
+        }
+      )
+    end
+
     test "should update host details if it is already registered" do
       host_id = Faker.UUID.v4()
       new_hostname = Faker.StarWars.character()
@@ -169,12 +223,14 @@ defmodule Trento.Hosts.HostTest do
       new_socket_count = Enum.random(1..16)
       new_os_version = Faker.App.version()
       new_installation_source = Enum.random([:community, :suse, :unknown])
+      new_fully_qualified_domain_name = Faker.Internet.domain_name()
 
       assert_events_and_state(
         build(:host_registered_event, host_id: host_id),
         RegisterHost.new!(%{
           host_id: host_id,
           hostname: new_hostname,
+          fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
           cpu_count: new_cpu_count,
@@ -186,6 +242,7 @@ defmodule Trento.Hosts.HostTest do
         %HostDetailsUpdated{
           host_id: host_id,
           hostname: new_hostname,
+          fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
           cpu_count: new_cpu_count,
@@ -197,6 +254,7 @@ defmodule Trento.Hosts.HostTest do
         %Host{
           host_id: host_id,
           hostname: new_hostname,
+          fully_qualified_domain_name: new_fully_qualified_domain_name,
           ip_addresses: new_ip_addresses,
           agent_version: new_agent_version,
           cpu_count: new_cpu_count,
