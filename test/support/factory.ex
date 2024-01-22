@@ -118,6 +118,7 @@ defmodule Trento.Factory do
     %HostDetailsUpdated{
       host_id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character(),
+      fully_qualified_domain_name: Faker.Internet.domain_name(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: Faker.App.semver(),
       cpu_count: Enum.random(1..16),

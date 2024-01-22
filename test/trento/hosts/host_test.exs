@@ -217,6 +217,7 @@ defmodule Trento.Hosts.HostTest do
         RegisterHost.new!(%{
           host_id: host_registered_event.host_id,
           hostname: host_registered_event.hostname,
+          fully_qualified_domain_name: host_registered_event.fully_qualified_domain_name,
           ip_addresses: host_registered_event.ip_addresses,
           agent_version: host_registered_event.agent_version,
           cpu_count: host_registered_event.cpu_count,

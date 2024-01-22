@@ -259,6 +259,7 @@ defmodule Trento.Hosts.Host do
   def execute(
         %Host{
           hostname: hostname,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
           cpu_count: cpu_count,
@@ -269,6 +270,7 @@ defmodule Trento.Hosts.Host do
         },
         %RegisterHost{
           hostname: hostname,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
           cpu_count: cpu_count,
@@ -286,6 +288,7 @@ defmodule Trento.Hosts.Host do
         %RegisterHost{
           host_id: host_id,
           hostname: hostname,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
           cpu_count: cpu_count,
@@ -298,6 +301,7 @@ defmodule Trento.Hosts.Host do
     %HostDetailsUpdated{
       host_id: host_id,
       hostname: hostname,
+      fully_qualified_domain_name: fully_qualified_domain_name,
       ip_addresses: ip_addresses,
       agent_version: agent_version,
       cpu_count: cpu_count,
