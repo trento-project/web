@@ -69,7 +69,7 @@ function HostDetails({
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
-  const isSapPresent = sapInstances.length > 0;
+  const isSapPresent = sapInstances?.length > 0;
 
   const saptuneVersion = get(saptuneStatus, 'package_version');
   const saptuneConfiguredVersion = get(saptuneStatus, 'configured_version');
