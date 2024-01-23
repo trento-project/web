@@ -3,7 +3,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   Cluster discovery integration event payload
   """
 
-  @required_fields [:dc, :provider, :id, :cluster_type, :cib, :sbd, :crmmon]
+  @required_fields [:dc, :provider, :id, :cluster_type]
   @required_fields_hana [:sid]
   @required_fields_ascs_ers [:additional_sids]
 
@@ -44,9 +44,9 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
 
     cluster
     |> cast(enriched_attributes, fields())
-    |> cast_embed(:cib)
+    |> cast_embed(:cib, required: true)
     |> cast_embed(:sbd)
-    |> cast_embed(:crmmon)
+    |> cast_embed(:crmmon, required: true)
     |> validate_required_fields(@required_fields)
     |> maybe_validate_required_fields(enriched_attributes)
   end

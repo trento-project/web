@@ -28,7 +28,7 @@ defmodule Trento.Discovery.Payloads.Cluster.SbdDiscoveryPayload do
   defp devices_changeset(devices, attrs) do
     devices
     |> cast(attrs, [:device, :status])
-    |> validate_required_fields([:device, :status])
+    |> validate_required([:device, :status])
   end
 
   defp transform_nil_lists(%{"devices" => devices} = attrs) do

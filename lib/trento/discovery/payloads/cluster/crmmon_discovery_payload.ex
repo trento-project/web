@@ -9,7 +9,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     NodeHistory field payload
     """
 
-    @required_fields [:nodes]
+    @required_fields []
     use Trento.Support.Type
 
     deftype do
@@ -27,7 +27,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     def changeset(node_history, attrs) do
       node_history
       |> cast(attrs, [])
-      |> cast_embed(:nodes, with: &nodes_changeset/2)
+      |> cast_embed(:nodes, with: &nodes_changeset/2, required: true)
       |> validate_required_fields(@required_fields)
     end
 
@@ -35,13 +35,13 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       nodes
       |> cast(attrs, [:name])
       |> cast_embed(:resource_history, with: &resource_history_changeset/2)
-      |> validate_required_fields([:name, :resource_history])
+      |> validate_required_fields([:name])
     end
 
     def resource_history_changeset(resource_history, attrs) do
       resource_history
       |> cast(attrs, [:name, :fail_count, :migration_threshold])
-      |> validate_required_fields([:name, :fail_count, :migration_threshold])
+      |> validate_required([:name, :fail_count, :migration_threshold])
     end
   end
 
@@ -60,8 +60,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       :managed,
       :orphaned,
       :failure_ignored,
-      :nodes_running_on,
-      :node
+      :nodes_running_on
     ]
     use Trento.Support.Type
 
@@ -87,14 +86,14 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     def changeset(crmmon_resource, attrs) do
       crmmon_resource
       |> cast(attrs, fields())
-      |> cast_embed(:node, with: &resource_node_changeset/2)
+      |> cast_embed(:node, with: &resource_node_changeset/2, required: true)
       |> validate_required_fields(@required_fields)
     end
 
     defp resource_node_changeset(resource_node, attrs) do
       resource_node
       |> cast(attrs, [:id, :name, :cached])
-      |> validate_required_fields([])
+      |> validate_required([])
     end
   end
 
@@ -103,7 +102,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     Summary field payload
     """
 
-    @required_fields [:nodes, :resources, :last_change]
+    @required_fields []
     use Trento.Support.Type
 
     deftype do
@@ -125,36 +124,34 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     def changeset(summary, attrs) do
       summary
       |> cast(attrs, [])
-      |> cast_embed(:nodes, with: &nodes_changeset/2)
-      |> cast_embed(:resources, with: &resources_changeset/2)
-      |> cast_embed(:last_change, with: &last_change_changeset/2)
+      |> cast_embed(:nodes, with: &nodes_changeset/2, required: true)
+      |> cast_embed(:resources, with: &resources_changeset/2, required: true)
+      |> cast_embed(:last_change, with: &last_change_changeset/2, required: true)
       |> validate_required_fields(@required_fields)
     end
 
     def nodes_changeset(nodes, attrs) do
       nodes
       |> cast(attrs, [:number])
-      |> validate_required_fields([:number])
+      |> validate_required([:number])
     end
 
     def resources_changeset(resources, attrs) do
       resources
       |> cast(attrs, [:number, :blocked, :disabled])
-      |> validate_required_fields([:number, :blocked, :disabled])
+      |> validate_required([:number, :blocked, :disabled])
     end
 
     def last_change_changeset(last_change, attrs) do
       last_change
       |> cast(attrs, [:time])
-      |> validate_required_fields([:time])
+      |> validate_required([:time])
     end
   end
 
   @required_fields [
     :version,
     :summary,
-    :resources,
-    :clones,
     :node_history,
     :node_attributes
   ]
@@ -212,12 +209,12 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     crmmon
     |> cast(transformed_attrs, [:version])
     |> cast_embed(:summary)
-    |> cast_embed(:nodes, with: &nodes_changeset/2)
+    |> cast_embed(:nodes, with: &nodes_changeset/2, required: true)
     |> cast_embed(:resources)
     |> cast_embed(:groups, with: &groups_changeset/2)
     |> cast_embed(:clones, with: &clones_changeset/2)
-    |> cast_embed(:node_history)
-    |> cast_embed(:node_attributes, with: &node_attributes_changeset/2)
+    |> cast_embed(:node_history, required: true)
+    |> cast_embed(:node_attributes, with: &node_attributes_changeset/2, required: true)
     |> validate_required_fields(@required_fields)
   end
 
@@ -232,21 +229,20 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     |> cast(attrs, [:id])
     |> cast_embed(:resources)
     |> cast_embed(:primitives)
-    |> validate_required_fields([:id, :resources, :primitives])
+    |> validate_required([:id])
   end
 
   defp clones_changeset(clones, attrs) do
     clones
     |> cast(attrs, [:id, :failed, :unique, :managed, :multi_state, :failure_ignored])
     |> cast_embed(:resources)
-    |> validate_required_fields([
+    |> validate_required([
       :id,
       :failed,
       :unique,
       :managed,
       :multi_state,
-      :failure_ignored,
-      :resources
+      :failure_ignored
     ])
   end
 
@@ -261,13 +257,13 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     nodes
     |> cast(attrs, [:name])
     |> cast_embed(:attributes, with: &attributes_changeset/2)
-    |> validate_required_fields([:name, :attributes])
+    |> validate_required([:name])
   end
 
   defp attributes_changeset(attributes, attrs) do
     attributes
     |> cast(attrs, [:name, :value])
-    |> validate_required_fields([:name, :value])
+    |> validate_required([:name, :value])
   end
 
   defp transform_nil_lists(
