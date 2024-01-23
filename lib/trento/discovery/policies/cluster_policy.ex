@@ -278,6 +278,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     end)
   end
 
+  defp parse_sbd_devices(_), do: []
+
   defp parse_node_resources(node_name, crmmon) do
     crmmon
     |> extract_cluster_resources()
