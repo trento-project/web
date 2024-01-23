@@ -702,7 +702,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
           "Id" => "rsc_sap_NWP_ASCS00",
           "Agent" => "ocf::heartbeat:SAPInstance",
           "Role" => "Started",
-          "Node" => %{"Name" => "vmnwpd01"}
+          "Node" => build(:crm_resource_node, %{"Name" => "vmnwpd01"})
         })
 
       group_2_resources =
@@ -710,7 +710,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
           "Id" => "rsc_sap_NWP_ERS10",
           "Agent" => "ocf::heartbeat:SAPInstance",
           "Role" => "Stopped",
-          "Node" => %{"Name" => "vmnwpd02"}
+          "Node" => build(:crm_resource_node, %{"Name" => "vmnwpd02"})
         })
 
       assert {:ok,
@@ -730,8 +730,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                "ha_cluster_discovery_ascs_ers"
                |> load_discovery_event_fixture()
                |> put_in(["payload", "Crmmon", "Groups"], [
-                 %{"Resources" => group_1_resources},
-                 %{"Resources" => group_2_resources}
+                 %{"Id" => UUID.uuid4(), "Resources" => group_1_resources},
+                 %{"Id" => UUID.uuid4(), "Resources" => group_2_resources}
                ])
                |> ClusterPolicy.handle(nil)
     end
@@ -741,14 +741,14 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
         build_list(1, :crm_resource, %{
           "Id" => "rsc_sap_NWP_ASCS00",
           "Agent" => "ocf::heartbeat:SAPInstance",
-          "Node" => %{"Name" => "vmnwpd01"}
+          "Node" => build(:crm_resource_node, %{"Name" => "vmnwpd01"})
         })
 
       group_2_resources =
         build_list(1, :crm_resource, %{
           "Id" => "rsc_sap_NWP_ERS10",
           "Agent" => "ocf::heartbeat:SAPInstance",
-          "Node" => %{"Name" => "vmnwpd01"}
+          "Node" => build(:crm_resource_node, %{"Name" => "vmnwpd01"})
         })
 
       assert {:ok,
@@ -768,8 +768,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                "ha_cluster_discovery_ascs_ers"
                |> load_discovery_event_fixture()
                |> put_in(["payload", "Crmmon", "Groups"], [
-                 %{"Resources" => group_1_resources},
-                 %{"Resources" => group_2_resources}
+                 %{"Id" => UUID.uuid4(), "Resources" => group_1_resources},
+                 %{"Id" => UUID.uuid4(), "Resources" => group_2_resources}
                ])
                |> ClusterPolicy.handle(nil)
     end
@@ -780,7 +780,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
           "Id" => "rsc_sap_NWP_ASCS00",
           "Agent" => "ocf::heartbeat:SAPInstance",
           "Failed" => true,
-          "Node" => %{"Name" => "vmnwpd01"}
+          "Node" => build(:crm_resource_node, %{"Name" => "vmnwpd01"})
         })
 
       group_2_resources =
@@ -788,7 +788,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
           "Id" => "rsc_sap_NWP_ERS10",
           "Agent" => "ocf::heartbeat:SAPInstance",
           "Failed" => false,
-          "Node" => %{"Name" => "vmnwpd01"}
+          "Node" => build(:crm_resource_node, %{"Name" => "vmnwpd01"})
         })
 
       assert {:ok,
@@ -808,8 +808,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                "ha_cluster_discovery_ascs_ers"
                |> load_discovery_event_fixture()
                |> put_in(["payload", "Crmmon", "Groups"], [
-                 %{"Resources" => group_1_resources},
-                 %{"Resources" => group_2_resources}
+                 %{"Id" => UUID.uuid4(), "Resources" => group_1_resources},
+                 %{"Id" => UUID.uuid4(), "Resources" => group_2_resources}
                ])
                |> ClusterPolicy.handle(nil)
     end

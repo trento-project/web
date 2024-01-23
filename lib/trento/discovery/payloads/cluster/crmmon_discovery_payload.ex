@@ -86,14 +86,14 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     def changeset(crmmon_resource, attrs) do
       crmmon_resource
       |> cast(attrs, fields())
-      |> cast_embed(:node, with: &resource_node_changeset/2, required: true)
+      |> cast_embed(:node, with: &resource_node_changeset/2)
       |> validate_required_fields(@required_fields)
     end
 
     defp resource_node_changeset(resource_node, attrs) do
       resource_node
       |> cast(attrs, [:id, :name, :cached])
-      |> validate_required([])
+      |> validate_required([:id, :name, :cached])
     end
   end
 

@@ -653,11 +653,7 @@ defmodule Trento.Factory do
   def crm_resource_factory do
     %{
       "Id" => Faker.UUID.v4(),
-      "Node" => %{
-        "Id" => "1",
-        "Name" => Faker.StarWars.planet(),
-        "Cached" => true
-      },
+      "Node" => build(:crm_resource_node),
       "Role" => "Started",
       "Agent" => Faker.Pokemon.name(),
       "Active" => true,
@@ -667,6 +663,14 @@ defmodule Trento.Factory do
       "Orphaned" => false,
       "FailureIgnored" => false,
       "NodesRunningOn" => 1
+    }
+  end
+
+  def crm_resource_node_factory do
+    %{
+      "Id" => "1",
+      "Name" => Faker.StarWars.planet(),
+      "Cached" => true
     }
   end
 

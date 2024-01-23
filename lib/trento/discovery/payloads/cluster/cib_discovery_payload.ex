@@ -56,13 +56,13 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     defp operations_changeset(operations, attrs) do
       operations
       |> cast(attrs, [:id, :name, :role, :timeout, :interval])
-      |> validate_required([:id, :name, :role])
+      |> validate_required([:id, :name])
     end
 
     defp instance_attributes_changeset(instance_attributes, attrs) do
       instance_attributes
       |> cast(attrs, [:id, :name, :value])
-      |> validate_required([:id, :name, :value])
+      |> validate_required([:id, :name])
     end
   end
 
@@ -168,6 +168,6 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
   def cluster_properties_changeset(cluster_properties, attrs) do
     cluster_properties
     |> cast(attrs, [:id, :name, :value])
-    |> validate_required([:id, :name, :value])
+    |> validate_required([:id, :name])
   end
 end
