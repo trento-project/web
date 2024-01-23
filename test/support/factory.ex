@@ -108,6 +108,7 @@ defmodule Trento.Factory do
       total_memory_mb: Enum.random(1..128),
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
+      fully_qualified_domain_name: Faker.Internet.domain_name(),
       installation_source: Enum.random([:community, :suse, :unknown]),
       heartbeat: :unknown
     }
@@ -117,6 +118,7 @@ defmodule Trento.Factory do
     %HostDetailsUpdated{
       host_id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character(),
+      fully_qualified_domain_name: Faker.Internet.domain_name(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: Faker.App.semver(),
       cpu_count: Enum.random(1..16),

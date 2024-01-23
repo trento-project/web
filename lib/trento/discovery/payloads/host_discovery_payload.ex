@@ -3,7 +3,15 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
   Host discovery integration event payload
   """
 
-  @required_fields :all
+  @required_fields [
+    :hostname,
+    :ip_addresses,
+    :agent_version,
+    :cpu_count,
+    :total_memory_mb,
+    :socket_count,
+    :os_version
+  ]
 
   use Trento.Support.Type
 
@@ -15,6 +23,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     field :total_memory_mb, :integer
     field :socket_count, :integer
     field :os_version, :string
+    field :fully_qualified_domain_name, :string
 
     field :installation_source, Ecto.Enum,
       values: [:community, :suse, :unknown],

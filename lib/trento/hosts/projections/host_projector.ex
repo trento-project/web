@@ -38,6 +38,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       hostname: hostname,
       ip_addresses: ip_addresses,
       agent_version: agent_version,
+      fully_qualified_domain_name: fully_qualified_domain_name,
       heartbeat: heartbeat
     },
     fn multi ->
@@ -46,6 +47,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           hostname: hostname,
           ip_addresses: ip_addresses,
           agent_version: agent_version,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           heartbeat: heartbeat
         })
 
@@ -137,6 +139,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       host_id: id,
       hostname: hostname,
       ip_addresses: ip_addresses,
+      fully_qualified_domain_name: fully_qualified_domain_name,
       agent_version: agent_version
     },
     fn multi ->
@@ -146,6 +149,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         |> HostReadModel.changeset(%{
           hostname: hostname,
           ip_addresses: ip_addresses,
+          fully_qualified_domain_name: fully_qualified_domain_name,
           agent_version: agent_version
         })
 

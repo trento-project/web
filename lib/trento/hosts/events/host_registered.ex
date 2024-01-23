@@ -5,7 +5,7 @@ defmodule Trento.Hosts.Events.HostRegistered do
 
   use Trento.Support.Event
 
-  defevent version: 3 do
+  defevent version: 4 do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}
@@ -14,6 +14,7 @@ defmodule Trento.Hosts.Events.HostRegistered do
     field :total_memory_mb, :integer
     field :socket_count, :integer
     field :os_version, :string
+    field :fully_qualified_domain_name, :string
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
 
@@ -23,4 +24,5 @@ defmodule Trento.Hosts.Events.HostRegistered do
 
   def upcast(params, _, 2), do: Map.put(params, "installation_source", :unknown)
   def upcast(params, _, 3), do: Map.put(params, "health", :unknown)
+  def upcast(params, _, 4), do: Map.put(params, "fully_qualified_domain_name", nil)
 end
