@@ -35,7 +35,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       nodes
       |> cast(attrs, [:name])
       |> cast_embed(:resource_history, with: &resource_history_changeset/2)
-      |> validate_required_fields([:name])
+      |> validate_required([:name])
     end
 
     def resource_history_changeset(resource_history, attrs) do
@@ -250,7 +250,6 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     node_attributes
     |> cast(attrs, [])
     |> cast_embed(:nodes, with: &node_attributes_nodes_changeset/2)
-    |> validate_required_fields([:nodes])
   end
 
   defp node_attributes_nodes_changeset(nodes, attrs) do
