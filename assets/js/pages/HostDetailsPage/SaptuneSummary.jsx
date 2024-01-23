@@ -8,10 +8,10 @@ import { SaptuneVersion, SaptuneTuningState } from '@pages/SaptuneDetails';
 
 function SaptuneSummary({
   isSapPresent,
+  onViewDetails,
   saptuneVersion,
   saptuneConfiguredVersion,
   saptuneTuning,
-  onViewDetails,
 }) {
   return (
     <>

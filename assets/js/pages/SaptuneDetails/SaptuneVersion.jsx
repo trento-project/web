@@ -5,7 +5,7 @@ import { isVersionSupported, SUPPORTED_VERSION } from '@lib/saptune';
 import Tooltip from '@common/Tooltip';
 import HealthIcon from '@common/HealthIcon';
 
-function SaptuneVersion({ version, isSapPresent = true }) {
+function SaptuneVersion({ isSapPresent = true, version }) {
   if (!version) {
     return (
       <div className="flex">
