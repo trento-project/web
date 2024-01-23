@@ -7,11 +7,13 @@ import HealthIcon from '@common/HealthIcon';
 
 function SaptuneVersion({ isSapPresent = true, version }) {
   if (!version) {
-    return (
+    return isSapPresent ? (
       <div className="flex">
-        {isSapPresent ? <HealthIcon health="warning" /> : null}
+        <HealthIcon health="warning" />
         <span className="ml-1">Not installed</span>
       </div>
+    ) : (
+      <span>Not installed</span>
     );
   }
 
