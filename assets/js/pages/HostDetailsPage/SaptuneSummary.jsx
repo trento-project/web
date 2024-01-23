@@ -7,6 +7,7 @@ import ListView from '@common/ListView';
 import { SaptuneVersion, SaptuneTuningState } from '@pages/SaptuneDetails';
 
 function SaptuneSummary({
+  isSapPresent,
   saptuneVersion,
   saptuneConfiguredVersion,
   saptuneTuning,
@@ -32,7 +33,12 @@ function SaptuneSummary({
         data={[
           {
             title: 'Package',
-            content: <SaptuneVersion version={saptuneVersion} />,
+            content: (
+              <SaptuneVersion
+                isSapPresent={isSapPresent}
+                version={saptuneVersion}
+              />
+            ),
           },
           {
             title: 'Tuning',

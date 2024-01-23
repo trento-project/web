@@ -5,11 +5,11 @@ import { isVersionSupported, SUPPORTED_VERSION } from '@lib/saptune';
 import Tooltip from '@common/Tooltip';
 import HealthIcon from '@common/HealthIcon';
 
-function SaptuneVersion({ version }) {
+function SaptuneVersion({ version, isSapPresent = true }) {
   if (!version) {
     return (
       <div className="flex">
-        <HealthIcon health="warning" />
+        {isSapPresent ? <HealthIcon health="warning" /> : null}
         <span className="ml-1">Not installed</span>
       </div>
     );
