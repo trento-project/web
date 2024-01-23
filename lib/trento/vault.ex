@@ -13,13 +13,7 @@ defmodule Trento.Vault do
           Cloak.Ciphers.AES.GCM,
           tag: "AES.GCM.V1",
           key:
-            Base.decode64!(
-              System.get_env("SECRET_KEY_BASE") ||
-                raise("""
-                environment variable SECRET_KEY_BASE is missing.
-                You can generate one by calling: mix phx.gen.secret
-                """)
-            )
+            Base.decode64!(Application.fetch_env!(:trento, TrentoWeb.Endpoint)[:secret_key_base])
         }
       )
 
