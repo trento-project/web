@@ -71,21 +71,21 @@ See [related documentation](./guides/alerting/alerting.md) for more information.
 
 **Trento** can be installed in various ways, depending on your needs and the requirements of its different components. Please refer to the specific [Agent](https://github.com/trento-project/agent) documentation for more information.
 
-## Installing Trento manually
+## Installing Trento
 
-For manual instructions on installing Trento, please refer to our [Installation of Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md) guide.
+To install Trento, refer to [Installation of Trento](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md) guide.
 
-## Installing Trento using Ansible (WIP)
+## Installing Trento using Ansible
 
-For detailed instructions on installing Trento with Ansible, please refer to our [Trento Ansible](https://github.com/trento-project/ansible) repository.
+To install Trento with Ansible, refer to [Trento Ansible](https://github.com/trento-project/ansible) repository.
 
 ## Installing Trento on a k8s Cluster
 
-For detailed instructions on installing Trento on a k8s cluster, please refer to our [helm-charts](https://github.com/trento-project/helm-charts) repository.
+To install Trento on a k8s cluster, refer to [Helm Charts](https://github.com/trento-project/helm-charts) repository.
 
 ## Installing Trento Web locally for Development
 
-To install Trento Web locally for development, please refer to our [hack on the Trento Web](./guides/development/hack_on_the_trento.md) guide for detailed instructions.
+To install Trento Web locally for development, refer to [hack on the Trento Web](./guides/development/hack_on_the_trento.md) guide.
 
 # Support
 
