@@ -41,7 +41,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     def resource_history_changeset(resource_history, attrs) do
       resource_history
       |> cast(attrs, [:name, :fail_count, :migration_threshold])
-      |> validate_required([:name, :fail_count, :migration_threshold])
+      |> validate_required([:name, :fail_count])
     end
   end
 
@@ -57,7 +57,6 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       :active,
       :failed,
       :blocked,
-      :managed,
       :orphaned,
       :failure_ignored,
       :nodes_running_on
@@ -93,7 +92,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     defp resource_node_changeset(resource_node, attrs) do
       resource_node
       |> cast(attrs, [:id, :name, :cached])
-      |> validate_required([:id, :name, :cached])
+      |> validate_required([:id, :name])
     end
   end
 
@@ -139,7 +138,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     def resources_changeset(resources, attrs) do
       resources
       |> cast(attrs, [:number, :blocked, :disabled])
-      |> validate_required([:number, :blocked, :disabled])
+      |> validate_required([:number])
     end
 
     def last_change_changeset(last_change, attrs) do
@@ -149,12 +148,8 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     end
   end
 
-  @required_fields [
-    :version,
-    :summary,
-    :node_history,
-    :node_attributes
-  ]
+  @required_fields [:version]
+
   use Trento.Support.Type
 
   deftype do
@@ -208,7 +203,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
 
     crmmon
     |> cast(transformed_attrs, [:version])
-    |> cast_embed(:summary)
+    |> cast_embed(:summary, required: true)
     |> cast_embed(:nodes, with: &nodes_changeset/2, required: true)
     |> cast_embed(:resources)
     |> cast_embed(:groups, with: &groups_changeset/2)
@@ -240,8 +235,6 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       :id,
       :failed,
       :unique,
-      :managed,
-      :multi_state,
       :failure_ignored
     ])
   end
