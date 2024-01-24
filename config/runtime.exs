@@ -43,6 +43,20 @@ if config_env() in [:prod, :demo] do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  # The encryption key base is used by the Cloak library to encrypt passwords
+  # and other secrets.
+  # A default value is used in config/dev.exs and config/test.exs but you
+  # want to use a different value for prod and you most likely don't want
+  # to check this value into version control, so we use an environment
+  # variable instead.
+  encryption_key_base =
+    System.get_env("ENCRYPTION_KEY_BASE") ||
+      raise """
+      environment variable ENCRYPTION_KEY_BASE is missing.
+      You can generate one by calling:
+          elixir --eval "32 |> :crypto.strong_rand_bytes() |> Base.encode64() |> IO.puts"
+      """
+
   config :joken,
     access_token_signer:
       System.get_env("ACCESS_TOKEN_ENC_SECRET") ||
@@ -67,6 +81,8 @@ if config_env() in [:prod, :demo] do
       port: String.to_integer(System.get_env("PORT") || "4000")
     ],
     secret_key_base: secret_key_base
+
+  config :trento, Trento.Vault, encryption_key_base: encryption_key_base
 
   amqp_url =
     System.get_env("AMQP_URL") ||

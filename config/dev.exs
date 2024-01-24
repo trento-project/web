@@ -127,6 +127,8 @@ config :joken,
   access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",
   refresh_token_signer: "L0wvcZh3ACQpibVhV/nh5jd/NaZWL4ijZxTxGJMGpacuXIBc4In3YCwXeVM98ygp"
 
+config :trento, Trento.Vault, encryption_key_base: "feoxX0Lq7Qa3LuFEwxE9mC1CKL8hOGB4RUEbFmGUmwg="
+
 config :trento, :checks_service, base_url: "http://localhost:4001"
 
 config :unplug, :init_mode, :runtime

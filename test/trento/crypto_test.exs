@@ -13,7 +13,7 @@ defmodule Trento.CryptoTest do
 
   test "Decrypt ciphertext" do
     {:ok, cipher} =
-      Base.decode64("AQpBRVMuR0NNLlYx4RLNPaaswB2btzz3MpcEzI4sMA/QF1K3/6+vmjOs+4EWcZMs0Q==")
+      Base.decode64("AQpBRVMuR0NNLlYx/uUn6PSN8B959qSQadjgtJoIJJYrAisnvi8XaXomB8z4SjZkIQ==")
 
     plaintext = Crypto.decrypt(cipher)
 

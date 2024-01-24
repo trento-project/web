@@ -17,6 +17,7 @@ Dig into [./config](https://github.com/trento-project/web/blob/main/config/) dir
 
 **Basic encryption**
 - `SECRET_KEY_BASE`
+- `ENCRYPTION_KEY_BASE`
 
 **Server**
 - `PORT`
