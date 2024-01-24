@@ -7,7 +7,7 @@ import ListView from '@common/ListView';
 import { SaptuneVersion, SaptuneTuningState } from '@pages/SaptuneDetails';
 
 function SaptuneSummary({
-  isSapPresent,
+  sapPresent,
   onViewDetails,
   saptuneVersion,
   saptuneConfiguredVersion,
@@ -35,7 +35,7 @@ function SaptuneSummary({
             title: 'Package',
             content: (
               <SaptuneVersion
-                isSapPresent={isSapPresent}
+                sapPresent={sapPresent}
                 version={saptuneVersion}
               />
             ),

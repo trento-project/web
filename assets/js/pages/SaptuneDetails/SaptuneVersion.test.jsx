@@ -10,25 +10,25 @@ describe('SaptuneVersion', () => {
       version: null,
       text: 'Not installed',
       iconCss: 'fill-yellow-500',
-      isSapPresent: true,
+      sapPresent: true,
     },
     {
       version: null,
       text: 'Not installed',
       iconCss: null,
-      isSapPresent: false,
+      sapPresent: false,
     },
     {
       version: '3.0.0',
       text: '3.0.0',
       iconCss: 'fill-yellow-500',
-      isSapPresent: true,
+      sapPresent: true,
     },
-    { version: '3.1.0', text: '3.1.0', iconCss: null, isSapPresent: true },
+    { version: '3.1.0', text: '3.1.0', iconCss: null, sapPresent: true },
   ])(
     'should render correctly the $version version',
-    ({ version, text, iconClass, isSapPresent }) => {
-      render(<SaptuneVersion isSapPresent={isSapPresent} version={version} />);
+    ({ version, text, iconClass, sapPresent }) => {
+      render(<SaptuneVersion sapPresent={sapPresent} version={version} />);
 
       expect(screen.getByText(text)).toBeTruthy();
 

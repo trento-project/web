@@ -69,7 +69,7 @@ function HostDetails({
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
-  const isSapPresent = sapInstances?.length > 0;
+  const sapPresent = sapInstances?.length > 0;
 
   const saptuneVersion = get(saptuneStatus, 'package_version');
   const saptuneConfiguredVersion = get(saptuneStatus, 'configured_version');
@@ -195,7 +195,7 @@ function HostDetails({
           />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary
-              isSapPresent={isSapPresent}
+              sapPresent={sapPresent}
               saptuneVersion={saptuneVersion}
               saptuneConfiguredVersion={saptuneConfiguredVersion}
               saptuneTuning={saptuneTuning}
