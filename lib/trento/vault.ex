@@ -13,7 +13,8 @@ defmodule Trento.Vault do
           Cloak.Ciphers.AES.GCM,
           tag: "AES.GCM.V1",
           key:
-            Base.decode64!(Application.fetch_env!(:trento, TrentoWeb.Endpoint)[:secret_key_base])
+            Base.decode64!(Application.fetch_env!(:trento, TrentoWeb.Endpoint)[:secret_key_base]),
+          iv_length: 12
         }
       )
 
