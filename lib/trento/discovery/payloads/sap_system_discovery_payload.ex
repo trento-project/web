@@ -36,10 +36,11 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     sap_system
     |> cast(modified_attrs, fields())
     |> cast_embed(:Profile,
-      with: fn profile, attrs -> Profile.changeset(profile, attrs, parse_system_type(attrs)) end
+      with: fn profile, attrs -> Profile.changeset(profile, attrs, parse_system_type(attrs)) end,
+      required: true
     )
     |> cast_embed(:Databases)
-    |> cast_embed(:Instances)
+    |> cast_embed(:Instances, required: true)
     |> validate_required_fields(@required_fields)
     |> validate_inclusion(:Type, @system_types)
   end
@@ -122,7 +123,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       SystemReplication
     }
 
-    @required_fields [:Host, :Name, :Type, :SAPControl, :SystemReplication]
+    @required_fields [:Host, :Name, :Type]
 
     use Trento.Support.Type
 
@@ -138,7 +139,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     def changeset(instance, attrs) do
       instance
       |> cast(attrs, fields())
-      |> cast_embed(:SAPControl)
+      |> cast_embed(:SAPControl, required: true)
       |> cast_embed(:SystemReplication)
       |> validate_required_fields(@required_fields)
     end
@@ -155,7 +156,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       SapControlProperty
     }
 
-    @required_fields [:Properties, :Instances, :Processes]
+    @required_fields []
 
     use Trento.Support.Type
 
@@ -176,13 +177,14 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
 
       sap_control
       |> cast(attrs, fields())
-      |> cast_embed(:Properties)
+      |> cast_embed(:Properties, required: true)
       |> cast_embed(:Instances,
         with: fn instances, attrs ->
           SapControlInstance.changeset(instances, attrs, hostname, instance_number)
-        end
+        end,
+        required: true
       )
-      |> cast_embed(:Processes)
+      |> cast_embed(:Processes, required: true)
       |> validate_required_fields(@required_fields)
     end
 

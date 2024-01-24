@@ -9,7 +9,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     Primitive field payload
     """
 
-    @required_fields [:id, :type, :class, :operations, :instance_attributes]
+    @required_fields [:id, :type, :class]
     use Trento.Support.Type
 
     deftype do
@@ -56,13 +56,13 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     defp operations_changeset(operations, attrs) do
       operations
       |> cast(attrs, [:id, :name, :role, :timeout, :interval])
-      |> validate_required_fields([:id, :name, :role])
+      |> validate_required([:id, :name])
     end
 
     defp instance_attributes_changeset(instance_attributes, attrs) do
       instance_attributes
       |> cast(attrs, [:id, :name, :value])
-      |> validate_required_fields([:id, :name, :value])
+      |> validate_required([:id, :name])
     end
   end
 
@@ -71,7 +71,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     Resources field payload
     """
 
-    @required_fields [:primitives, :clones, :groups]
+    @required_fields []
     use Trento.Support.Type
 
     deftype do
@@ -105,14 +105,14 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
       clones
       |> cast(attrs, [:id])
       |> cast_embed(:primitive)
-      |> validate_required_fields([:id])
+      |> validate_required([:id])
     end
 
     defp groups_changeset(groups, attrs) do
       groups
       |> cast(attrs, [:id])
       |> cast_embed(:primitives)
-      |> validate_required_fields([:id])
+      |> validate_required([:id])
     end
 
     defp transform_nil_lists(
@@ -127,7 +127,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     defp transform_nil_lists(attrs), do: attrs
   end
 
-  @required_fields [:configuration]
+  @required_fields []
 
   use Trento.Support.Type
 
@@ -148,28 +148,26 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
   def changeset(cib, attrs) do
     cib
     |> cast(attrs, [])
-    |> cast_embed(:configuration, with: &configuration_changeset/2)
+    |> cast_embed(:configuration, with: &configuration_changeset/2, required: true)
     |> validate_required_fields(@required_fields)
   end
 
   def configuration_changeset(configuration, attrs) do
     configuration
     |> cast(attrs, [])
-    |> cast_embed(:resources)
-    |> cast_embed(:crm_config, with: &crm_config_changeset/2)
-    |> validate_required_fields([:resources])
+    |> cast_embed(:resources, required: true)
+    |> cast_embed(:crm_config, with: &crm_config_changeset/2, required: true)
   end
 
   def crm_config_changeset(crm_config, attrs) do
     crm_config
     |> cast(attrs, [])
-    |> cast_embed(:cluster_properties, with: &cluster_properties_changeset/2)
-    |> validate_required_fields([:cluster_properties])
+    |> cast_embed(:cluster_properties, with: &cluster_properties_changeset/2, required: true)
   end
 
   def cluster_properties_changeset(cluster_properties, attrs) do
     cluster_properties
     |> cast(attrs, [:id, :name, :value])
-    |> validate_required_fields([:id, :name, :value])
+    |> validate_required([:id, :name])
   end
 end
