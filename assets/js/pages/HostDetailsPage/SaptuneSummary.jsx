@@ -7,10 +7,11 @@ import ListView from '@common/ListView';
 import { SaptuneVersion, SaptuneTuningState } from '@pages/SaptuneDetails';
 
 function SaptuneSummary({
+  sapPresent,
+  onViewDetails,
   saptuneVersion,
   saptuneConfiguredVersion,
   saptuneTuning,
-  onViewDetails,
 }) {
   return (
     <>
@@ -32,7 +33,12 @@ function SaptuneSummary({
         data={[
           {
             title: 'Package',
-            content: <SaptuneVersion version={saptuneVersion} />,
+            content: (
+              <SaptuneVersion
+                sapPresent={sapPresent}
+                version={saptuneVersion}
+              />
+            ),
           },
           {
             title: 'Tuning',
