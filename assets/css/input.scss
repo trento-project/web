@@ -1,0 +1,40 @@
+.rc-input {
+  @apply px-3 py-2 w-full text-gray-500;
+
+  &-affix-wrapper {
+    input {
+      @apply rounded-md w-full outline-none border border-gray-200;
+
+      &:focus,
+      &:focus-visible {
+        @apply border-gray-500;
+      }
+    }
+  }
+}
+
+.rc-input-disabled {
+  @apply bg-gray-50;
+}
+
+.rc-input-disabled .rc-input-suffix svg,
+.rc-input-disabled .rc-input-prefix svg {
+  @apply fill-gray-400;
+}
+
+.has-prefix input {
+  @apply pl-9;
+}
+
+.rc-input-suffix {
+  @apply absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500;
+}
+
+.rc-input-prefix {
+  @apply absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500;
+}
+
+.rc-input-prefix svg,
+.rc-input-suffix svg {
+  @apply fill-gray-500;
+}
