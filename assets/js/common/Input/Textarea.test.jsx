@@ -33,9 +33,7 @@ describe('Textarea Component', () => {
   });
 
   it('should change value', () => {
-    const { container } = render(
-      <Textarea initialValue="Initial Value" />
-    );
+    const { container } = render(<Textarea initialValue="Initial Value" />);
 
     const textArea = container.querySelector('textarea');
     expect(textArea.value).toBe('Initial Value');
