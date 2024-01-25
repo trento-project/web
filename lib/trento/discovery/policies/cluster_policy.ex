@@ -114,16 +114,43 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
        do: nodes_number
 
   defp parse_cluster_details(
-         %{crmmon: crmmon, sbd: sbd, cluster_type: cluster_type, sid: sid} = payload
-       )
-       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+         %{
+           crmmon: crmmon,
+           sbd: sbd,
+           cluster_type: ClusterType.hana_scale_up(),
+           sid: sid
+         } = payload
+       ) do
     nodes = parse_cluster_nodes(payload, sid)
 
     %{
       system_replication_mode: parse_system_replication_mode(nodes, sid),
       system_replication_operation_mode: parse_system_replication_operation_mode(nodes, sid),
-      secondary_sync_state: parse_secondary_sync_state(nodes, sid),
-      sr_health_state: parse_hana_sr_health_state(nodes, sid),
+      secondary_sync_state: parse_hana_scale_up_secondary_sync_state(nodes, sid),
+      sr_health_state: parse_hana_scale_up_sr_health_state(nodes, sid),
+      fencing_type: parse_cluster_fencing_type(crmmon),
+      stopped_resources: parse_cluster_stopped_resources(crmmon),
+      nodes: nodes,
+      sbd_devices: parse_sbd_devices(sbd)
+    }
+  end
+
+  defp parse_cluster_details(
+         %{
+           crmmon: crmmon,
+           cib: cib,
+           sbd: sbd,
+           cluster_type: ClusterType.hana_scale_out(),
+           sid: sid
+         } = payload
+       ) do
+    nodes = parse_cluster_nodes(payload, sid)
+
+    %{
+      system_replication_mode: "Unknown",
+      system_replication_operation_mode: "Unknown",
+      secondary_sync_state: parse_hana_scale_out_secondary_sync_state(cib, sid),
+      sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
       fencing_type: parse_cluster_fencing_type(crmmon),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: nodes,
@@ -154,9 +181,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_cluster_nodes(
          %{
            provider: provider,
+           cluster_type: cluster_type,
            cib: %{
              configuration: %{
-               resources: resources
+               resources: resources,
+               crm_config: %{cluster_properties: cluster_properties}
              }
            },
            crmmon:
@@ -181,16 +210,27 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         |> extract_cluster_primitives_from_cib
         |> parse_virtual_ip(node_resources, provider)
 
+      site = Map.get(attributes, "hana_#{String.downcase(sid)}_site", "")
+
       node = %{
         name: name,
         attributes: attributes,
         resources: node_resources,
-        site: Map.get(attributes, "hana_#{String.downcase(sid)}_site", ""),
+        site: site,
         hana_status: "Unknown",
         virtual_ip: virtual_ip
       }
 
-      %{node | hana_status: parse_hana_status(node, sid)}
+      hana_status =
+        case cluster_type do
+          ClusterType.hana_scale_up() ->
+            parse_hana_scale_up_status(node, sid)
+
+          ClusterType.hana_scale_out() ->
+            parse_hana_scale_out_status(cluster_properties, site, sid)
+        end
+
+      %{node | hana_status: hana_status}
     end)
   end
 
@@ -205,11 +245,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     Map.get(attributes, "hana_#{String.downcase(sid)}_op_mode", "")
   end
 
-  # parse_secondary_sync_state returns the secondary sync state of the HANA cluster
-  defp parse_secondary_sync_state(nodes, sid) do
+  # parse_hana_scale_up_secondary_sync_state returns the secondary sync state of the HANA scale up cluster
+  defp parse_hana_scale_up_secondary_sync_state(nodes, sid) do
     nodes
     |> Enum.find_value(fn %{attributes: attributes} = node ->
-      case parse_hana_status(node, sid) do
+      case parse_hana_scale_up_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
           Map.get(attributes, "hana_#{String.downcase(sid)}_sync_state")
 
@@ -223,11 +263,23 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     end
   end
 
-  # parse_hana_sr_health_state returns the secondary sync state of the HANA cluster
-  defp parse_hana_sr_health_state(nodes, sid) do
+  # parse_hana_scale_up_secondary_sync_state returns the secondary sync state of the HANA scale out cluster
+  defp parse_hana_scale_out_secondary_sync_state(
+         %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
+         sid
+       ) do
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_glob_sync_state",
+      "Unknown"
+    )
+  end
+
+  # parse_hana_scale_up_sr_health_state returns the secondary sync state of the HANA scale up cluster
+  defp parse_hana_scale_up_sr_health_state(nodes, sid) do
     nodes
     |> Enum.find_value(fn %{attributes: attributes} = node ->
-      case parse_hana_status(node, sid) do
+      case parse_hana_scale_up_status(node, sid) do
         status when status in ["Secondary", "Failed"] ->
           attributes
           |> Map.get("hana_#{String.downcase(sid)}_roles")
@@ -242,6 +294,25 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       nil -> "Unknown"
       sync_state -> sync_state
     end
+  end
+
+  # parse_hana_scale_out_sr_health_state returns the secondary sync state of the HANA scale out cluster
+  defp parse_hana_scale_out_sr_health_state(
+         %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
+         sid
+       ) do
+    secondary_site =
+      parse_crm_cluster_property(
+        cluster_properties,
+        "hana_#{String.downcase(sid)}_glob_sec",
+        "Unknown"
+      )
+
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_site_lss_#{secondary_site}",
+      "Unknown"
+    )
   end
 
   defp parse_cluster_fencing_type(%{resources: resources}) do
@@ -346,7 +417,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   # Possible values: Primary, Secondary, Failed, Unknown
   # e.g. 4:P:master1:master:worker:master returns Primary (second element)
   # e.g. PRIM
-  defp parse_hana_status(%{attributes: attributes}, sid) do
+  defp parse_hana_scale_up_status(%{attributes: attributes}, sid) do
     status =
       case Map.get(attributes, "hana_#{String.downcase(sid)}_roles") do
         nil ->
@@ -358,6 +429,34 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
     sync_state = Map.get(attributes, "hana_#{String.downcase(sid)}_sync_state")
     do_parse_hana_status(status, sync_state)
+  end
+
+  defp parse_hana_scale_out_status(cluster_properties, site, sid) do
+    status =
+      parse_crm_cluster_property(
+        cluster_properties,
+        "hana_#{String.downcase(sid)}_site_srr_#{site}",
+        "Unknown"
+      )
+
+    sync_state =
+      parse_crm_cluster_property(
+        cluster_properties,
+        "hana_#{String.downcase(sid)}_site_srHook_#{site}",
+        "Unknown"
+      )
+
+    do_parse_hana_status(status, sync_state)
+  end
+
+  defp parse_crm_cluster_property(cluster_properties, property_name, default_value) do
+    Enum.find_value(cluster_properties, default_value, fn
+      %{name: ^property_name, value: value} ->
+        value
+
+      _ ->
+        false
+    end)
   end
 
   defp extract_cluster_resources(%{
@@ -408,6 +507,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   defp do_parse_hana_status(nil, _), do: "Unknown"
   defp do_parse_hana_status(_, nil), do: "Unknown"
+  defp do_parse_hana_status(_, "Unknown"), do: "Unknown"
   # Normal primary state
   defp do_parse_hana_status("P", "PRIM"), do: "Primary"
   # This happens when there is an initial failover
