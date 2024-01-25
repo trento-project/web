@@ -301,18 +301,43 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
          sid
        ) do
-    secondary_site =
+    glob_sec =
       parse_crm_cluster_property(
         cluster_properties,
         "hana_#{String.downcase(sid)}_glob_sec",
-        "Unknown"
+        nil
       )
+
+    # _glob_sec attribute doesn't exist. Find secondary discarding primary site
+    # This scenario might happen if the SAPHanaSrMultiTarget.py hook is not present
+    secondary_site =
+      case glob_sec do
+        nil -> get_secondary_site(cluster_properties, sid)
+        site -> site
+      end
 
     parse_crm_cluster_property(
       cluster_properties,
       "hana_#{String.downcase(sid)}_site_lss_#{secondary_site}",
       "Unknown"
     )
+  end
+
+  # get_secondary_site gets the secondary site discarding the primary side name
+  defp get_secondary_site(cluster_properties, sid) do
+    primary_site =
+      parse_crm_cluster_property(
+        cluster_properties,
+        "hana_#{String.downcase(sid)}_glob_prim",
+        nil
+      )
+
+    cluster_properties
+    |> Enum.filter(fn
+      %{name: name} -> String.starts_with?(name, "hana_#{String.downcase(sid)}_site_lss_")
+    end)
+    |> Enum.map(fn %{name: name} -> name |> String.split("_") |> Enum.at(-1) end)
+    |> Enum.find("Unknown", fn site -> site != primary_site end)
   end
 
   defp parse_cluster_fencing_type(%{resources: resources}) do
@@ -439,14 +464,37 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         "Unknown"
       )
 
-    sync_state =
+    sr_hook =
       parse_crm_cluster_property(
         cluster_properties,
         "hana_#{String.downcase(sid)}_site_srHook_#{site}",
-        "Unknown"
+        nil
       )
 
+    # If SAPHanaSR.py is used, and srHook_ attributes are not present
+    sync_state =
+      case sr_hook do
+        nil -> parse_single_target_status(cluster_properties, sid, site)
+        state -> state
+      end
+
     do_parse_hana_status(status, sync_state)
+  end
+
+  def parse_single_target_status(cluster_properties, sid, site) do
+    secondary_site = get_secondary_site(cluster_properties, sid)
+
+    case site do
+      ^secondary_site ->
+        parse_crm_cluster_property(
+          cluster_properties,
+          "hana_#{String.downcase(sid)}_glob_srHook",
+          "Unknown"
+        )
+
+      _ ->
+        "PRIM"
+    end
   end
 
   defp parse_crm_cluster_property(cluster_properties, property_name, default_value) do
