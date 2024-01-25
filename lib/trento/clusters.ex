@@ -12,6 +12,8 @@ defmodule Trento.Clusters do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
+
   alias Trento.Clusters.Projections.ClusterReadModel
 
   alias Trento.Clusters.ClusterEnrichmentData
@@ -133,17 +135,12 @@ defmodule Trento.Clusters do
     |> select_merge([c, e], %{cib_last_written: e.cib_last_written})
   end
 
-  @spec get_sids(map()) :: [String.t()]
-  defp get_sids(details) do
-    Enum.map(details["sap_systems"], fn s -> s["sid"] end)
-  end
-
   @spec get_ensa_version([String.t()]) :: EnsaVersion.t()
-  defp get_ensa_version(sap_system_sids) do
+  defp get_ensa_version(sap_system_ids) do
     query =
       from(s in SapSystemReadModel,
         select: s.ensa_version,
-        where: s.sid in ^sap_system_sids
+        where: s.id in ^sap_system_ids
       )
 
     ensa_versions =
@@ -181,13 +178,13 @@ defmodule Trento.Clusters do
     end
   end
 
-  defp maybe_request_checks_execution(%{selected_checks: []}), do: :ok
+  defp maybe_request_checks_execution(%ClusterReadModel{selected_checks: []}), do: :ok
 
-  defp maybe_request_checks_execution(%{
+  defp maybe_request_checks_execution(%ClusterReadModel{
          id: cluster_id,
          provider: provider,
          type: cluster_type,
-         details: details,
+         additional_sids: cluster_sids,
          selected_checks: selected_checks
        }) do
     hosts_data =
@@ -197,13 +194,23 @@ defmodule Trento.Clusters do
           where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
       )
 
+    host_ids = Enum.map(hosts_data, fn h -> h.host_id end)
+
+    sap_system_ids =
+      Repo.all(
+        from a in ApplicationInstanceReadModel,
+          select: a.sap_system_id,
+          where: a.host_id in ^host_ids and a.sid in ^cluster_sids,
+          distinct: true
+      )
+
     env =
       case cluster_type do
         :ascs_ers ->
           %Checks.ClusterExecutionEnv{
             provider: provider,
             cluster_type: cluster_type,
-            ensa_version: details |> get_sids |> get_ensa_version,
+            ensa_version: get_ensa_version(sap_system_ids),
             filesystem_type: get_filesystem_type(cluster_id)
           }
 
