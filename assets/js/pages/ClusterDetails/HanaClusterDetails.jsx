@@ -2,6 +2,7 @@ import React from 'react';
 import { get, groupBy } from 'lodash';
 import classNames from 'classnames';
 
+import { getClusterTypeLabel } from '@lib/model/clusters';
 import { RUNNING_STATES } from '@state/lastExecutions';
 
 import BackButton from '@common/BackButton';
@@ -194,8 +195,7 @@ function HanaClusterDetails({
               },
               {
                 title: 'Cluster type',
-                content:
-                  clusterType === 'hana_scale_up' ? 'HANA Scale Up' : 'Unknown',
+                content: getClusterTypeLabel(clusterType),
               },
               {
                 title: 'SAPHanaSR health state',
