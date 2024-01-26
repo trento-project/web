@@ -188,25 +188,39 @@ defmodule Trento.Clusters do
          selected_checks: selected_checks
        }) do
     hosts_data =
-      Repo.all(
-        from h in HostReadModel,
-          select: %{host_id: h.id},
-          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
-      )
+      case cluster_type do
+        :ascs_ers ->
+          Repo.all(
+            from h in HostReadModel,
+              select: %{host_id: h.id},
+              join: a in ApplicationInstanceReadModel,
+              on: h.id == a.host_id,
+              where:
+                h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
+                  a.sid in ^cluster_sids
+          )
 
-    host_ids = Enum.map(hosts_data, fn h -> h.host_id end)
-
-    sap_system_ids =
-      Repo.all(
-        from a in ApplicationInstanceReadModel,
-          select: a.sap_system_id,
-          where: a.host_id in ^host_ids and a.sid in ^cluster_sids,
-          distinct: true
-      )
+        _ ->
+          Repo.all(
+            from h in HostReadModel,
+              select: %{host_id: h.id},
+              where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
+          )
+      end
 
     env =
       case cluster_type do
         :ascs_ers ->
+          host_ids = Enum.map(hosts_data, fn h -> h.host_id end)
+
+          sap_system_ids =
+            Repo.all(
+              from a in ApplicationInstanceReadModel,
+                select: a.sap_system_id,
+                where: a.host_id in ^host_ids,
+                distinct: true
+            )
+
           %Checks.ClusterExecutionEnv{
             provider: provider,
             cluster_type: cluster_type,

@@ -196,9 +196,13 @@ defmodule Trento.ClustersTest do
 
   describe "ASCS/ERS cluster checks execution" do
     test "should start a checks execution on demand for ascs_ers clusters with a resource managed filesystem type" do
+      %SapSystemReadModel{id: sap_system_id, sid: sid} =
+        insert(:sap_system, ensa_version: EnsaVersion.ensa1())
+
       %{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: :ascs_ers,
+          additional_sids: [sid],
           details:
             build(:ascs_ers_cluster_details,
               sap_systems:
@@ -207,7 +211,18 @@ defmodule Trento.ClustersTest do
         )
 
       insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
-      insert_list(2, :host, cluster_id: cluster_id)
+      hosts = insert_list(2, :host, cluster_id: cluster_id)
+
+      Enum.map(
+        hosts,
+        fn h ->
+          insert(:application_instance_without_host,
+            sap_system_id: sap_system_id,
+            host: h,
+            sid: sid
+          )
+        end
+      )
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
         assert message.group_id == cluster_id
@@ -218,7 +233,7 @@ defmodule Trento.ClustersTest do
                  "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
                  "filesystem_type" => %{kind: {:string_value, Atom.to_string(:resource_managed)}},
                  "ensa_version" => %{
-                   kind: {:string_value, Atom.to_string(EnsaVersion.mixed_versions())}
+                   kind: {:string_value, Atom.to_string(EnsaVersion.ensa1())}
                  }
                }
 
@@ -231,9 +246,13 @@ defmodule Trento.ClustersTest do
     end
 
     test "should start a checks execution on demand for ascs_ers clusters with a simple mount filesystem type" do
+      %SapSystemReadModel{id: sap_system_id, sid: sid} =
+        insert(:sap_system, ensa_version: EnsaVersion.ensa2())
+
       %{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: :ascs_ers,
+          additional_sids: [sid],
           details:
             build(:ascs_ers_cluster_details,
               sap_systems:
@@ -242,7 +261,18 @@ defmodule Trento.ClustersTest do
         )
 
       insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
-      insert_list(2, :host, cluster_id: cluster_id)
+      hosts = insert_list(2, :host, cluster_id: cluster_id)
+
+      Enum.map(
+        hosts,
+        fn h ->
+          insert(:application_instance_without_host,
+            sap_system_id: sap_system_id,
+            host: h,
+            sid: sid
+          )
+        end
+      )
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
         assert message.group_id == cluster_id
@@ -253,7 +283,7 @@ defmodule Trento.ClustersTest do
                  "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
                  "filesystem_type" => %{kind: {:string_value, Atom.to_string(:simple_mount)}},
                  "ensa_version" => %{
-                   kind: {:string_value, Atom.to_string(EnsaVersion.mixed_versions())}
+                   kind: {:string_value, Atom.to_string(EnsaVersion.ensa2())}
                  }
                }
 
@@ -266,9 +296,13 @@ defmodule Trento.ClustersTest do
     end
 
     test "should start a checks execution on demand for ascs_ers clusters with a mixed filesystem type" do
+      %SapSystemReadModel{id: sap_system_id, sid: sid} =
+        insert(:sap_system, ensa_version: EnsaVersion.ensa2())
+
       %{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
           type: :ascs_ers,
+          additional_sids: [sid],
           details:
             build(:ascs_ers_cluster_details,
               sap_systems: [
@@ -279,7 +313,18 @@ defmodule Trento.ClustersTest do
         )
 
       insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
-      insert_list(2, :host, cluster_id: cluster_id)
+      hosts = insert_list(2, :host, cluster_id: cluster_id)
+
+      Enum.map(
+        hosts,
+        fn h ->
+          insert(:application_instance_without_host,
+            sap_system_id: sap_system_id,
+            host: h,
+            sid: sid
+          )
+        end
+      )
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn "executions", message ->
         assert message.group_id == cluster_id
@@ -290,7 +335,7 @@ defmodule Trento.ClustersTest do
                  "cluster_type" => %{kind: {:string_value, Atom.to_string(cluster_type)}},
                  "filesystem_type" => %{kind: {:string_value, Atom.to_string(:mixed_fs_types)}},
                  "ensa_version" => %{
-                   kind: {:string_value, Atom.to_string(EnsaVersion.mixed_versions())}
+                   kind: {:string_value, Atom.to_string(EnsaVersion.ensa2())}
                  }
                }
 
@@ -322,8 +367,8 @@ defmodule Trento.ClustersTest do
           details:
             build(:ascs_ers_cluster_details,
               sap_systems: [
-                build(:ascs_ers_cluster_sap_system, sid: sid_1, filesystem_resource_based: true),
-                build(:ascs_ers_cluster_sap_system, sid: sid_2, filesystem_resource_based: true)
+                build(:ascs_ers_cluster_sap_system, sid: sid_1, filesystem_resource_based: false),
+                build(:ascs_ers_cluster_sap_system, sid: sid_2, filesystem_resource_based: false)
               ]
             )
         )
