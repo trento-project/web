@@ -34,7 +34,7 @@ describe('TargetIcon', () => {
     }
   );
 
-  const labaledTargetIconsScenarios = [
+  const labeledTargetIconsScenarios = [
     {
       targetType: 'cluster',
       label: 'Clusters',
@@ -45,7 +45,7 @@ describe('TargetIcon', () => {
     },
   ];
 
-  it.each(labaledTargetIconsScenarios)(
+  it.each(labeledTargetIconsScenarios)(
     'should render labaled target type $targetType icon',
     ({ targetType, label }) => {
       render(<TargetIcon targetType={targetType}>{label}</TargetIcon>);
