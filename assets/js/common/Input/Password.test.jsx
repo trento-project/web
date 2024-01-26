@@ -6,9 +6,7 @@ import Password from './Password';
 
 describe('Password Component', () => {
   it('should toggle the visibility of the password', () => {
-    const { container } = render(
-      <Password value="some value" allowToggleVisibility />
-    );
+    const { container } = render(<Password value="some value" />);
 
     const inputElement = container.querySelector('input');
     expect(inputElement.type).toBe('password');

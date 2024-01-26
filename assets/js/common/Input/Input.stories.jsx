@@ -211,7 +211,6 @@ export const SUMASettingsSample = {
               id="suma-password"
               name="suma-password"
               placeholder="Enter SUSE Manager password"
-              allowToggleVisibility
             />
           </div>
         </div>

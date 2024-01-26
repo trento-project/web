@@ -14,15 +14,6 @@ export default {
         type: { summary: 'string' },
       },
     },
-    allowToggleVisibility: {
-      description: 'Whether the password input should have a visibility toggle',
-      control: {
-        type: 'boolean',
-      },
-      table: {
-        type: { summary: 'boolean' },
-      },
-    },
     disabled: {
       description: 'Whether the input should be disabled or not',
       control: {
@@ -48,22 +39,9 @@ export const Disabled = {
   },
 };
 
-export const WithVisibilityToggle = {
-  args: {
-    allowToggleVisibility: true,
-  },
-};
-
-export const WithVisibilityToggleAndValue = {
+export const WithDisabled = {
   args: {
     ...WithValue.args,
-    ...WithVisibilityToggle.args,
-  },
-};
-
-export const WithVisibilityToggleDisabled = {
-  args: {
-    ...WithVisibilityToggle.args,
     ...Disabled.args,
   },
 };

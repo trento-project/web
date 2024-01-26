@@ -13,7 +13,6 @@ function Password({
   name,
   value,
   placeholder = 'Password',
-  allowToggleVisibility = false,
   disabled = false,
   onChange = () => {},
 }) {
@@ -28,21 +27,19 @@ function Password({
       type={inputType}
       disabled={disabled}
       suffix={
-        allowToggleVisibility && (
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() =>
-              setInputType(inputType === 'password' ? 'text' : 'password')
-            }
-          >
-            {inputType === 'password' ? (
-              <EOS_VISIBILITY_OUTLINED className="inline" size="l" />
-            ) : (
-              <EOS_VISIBILITY_OFF_OUTLINED className="inline" size="l" />
-            )}
-          </button>
-        )
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() =>
+            setInputType(inputType === 'password' ? 'text' : 'password')
+          }
+        >
+          {inputType === 'password' ? (
+            <EOS_VISIBILITY_OUTLINED className="inline" size="l" />
+          ) : (
+            <EOS_VISIBILITY_OFF_OUTLINED className="inline" size="l" />
+          )}
+        </button>
       }
       onChange={onChange}
     />
