@@ -179,15 +179,16 @@ defmodule Trento.Clusters do
           select: %{host_id: h.id, sap_system_id: a.sap_system_id}
       )
 
-    sap_system_ids =
+    aggregated_ensa_version =
       hosts_data
       |> Enum.map(fn %{sap_system_id: sap_system_id} -> sap_system_id end)
       |> Enum.uniq()
+      |> get_aggregated_ensa_version()
 
     env = %Checks.ClusterExecutionEnv{
       provider: provider,
       cluster_type: ClusterType.ascs_ers(),
-      ensa_version: get_ensa_version(sap_system_ids),
+      ensa_version: aggregated_ensa_version,
       filesystem_type: get_filesystem_type(cluster_id)
     }
 
@@ -231,18 +232,16 @@ defmodule Trento.Clusters do
 
   defp maybe_request_checks_execution(error), do: error
 
-  @spec get_ensa_version([String.t()]) :: EnsaVersion.t()
-  defp get_ensa_version(sap_system_ids) do
-    query =
-      from(s in SapSystemReadModel,
-        select: s.ensa_version,
-        where: s.id in ^sap_system_ids
-      )
-
+  @spec get_aggregated_ensa_version([String.t()]) :: EnsaVersion.t()
+  defp get_aggregated_ensa_version(sap_system_ids) do
     ensa_versions =
-      query
-      |> Repo.all()
-      |> Enum.uniq()
+      Repo.all(
+        from(s in SapSystemReadModel,
+          select: s.ensa_version,
+          where: s.id in ^sap_system_ids and is_nil(s.deregistered_at),
+          distinct: true
+        )
+      )
 
     case ensa_versions do
       [ensa_version] -> ensa_version
