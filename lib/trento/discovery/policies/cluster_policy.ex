@@ -17,6 +17,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
+  # If hana_<sid>_glob_srmode or hana_<sid>_glob_op_mode attributes are not present
+  # for scale out clusters the default value is being used by the resource agent
+  @default_hana_scale_out_replication_mode "sync"
+  @default_hana_scale_out_operation_mode "logreplay"
+
   def handle(
         %{
           "discovery_type" => "ha_cluster_discovery",
@@ -124,8 +129,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     nodes = parse_cluster_nodes(payload, sid)
 
     %{
-      system_replication_mode: parse_system_replication_mode(nodes, sid),
-      system_replication_operation_mode: parse_system_replication_operation_mode(nodes, sid),
+      system_replication_mode: parse_hana_scale_up_system_replication_mode(nodes, sid),
+      system_replication_operation_mode:
+        parse_hana_scale_up_system_replication_operation_mode(nodes, sid),
       secondary_sync_state: parse_hana_scale_up_secondary_sync_state(nodes, sid),
       sr_health_state: parse_hana_scale_up_sr_health_state(nodes, sid),
       fencing_type: parse_cluster_fencing_type(crmmon),
@@ -147,8 +153,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     nodes = parse_cluster_nodes(payload, sid)
 
     %{
-      system_replication_mode: "Unknown",
-      system_replication_operation_mode: "Unknown",
+      system_replication_mode: parse_hana_scale_out_system_replication_mode(cib, sid),
+      system_replication_operation_mode:
+        parse_hana_scale_out_system_replication_operation_mode(cib, sid),
       secondary_sync_state: parse_hana_scale_out_secondary_sync_state(cib, sid),
       sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
       fencing_type: parse_cluster_fencing_type(crmmon),
@@ -234,15 +241,37 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     end)
   end
 
-  defp parse_system_replication_mode([%{attributes: attributes} | _], sid) do
+  defp parse_hana_scale_up_system_replication_mode([%{attributes: attributes} | _], sid) do
     Map.get(attributes, "hana_#{String.downcase(sid)}_srmode", "")
   end
 
-  defp parse_system_replication_operation_mode(
+  defp parse_hana_scale_up_system_replication_operation_mode(
          [%{attributes: attributes} | _],
          sid
        ) do
     Map.get(attributes, "hana_#{String.downcase(sid)}_op_mode", "")
+  end
+
+  defp parse_hana_scale_out_system_replication_mode(
+         %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
+         sid
+       ) do
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_glob_srmode",
+      @default_hana_scale_out_replication_mode
+    )
+  end
+
+  defp parse_hana_scale_out_system_replication_operation_mode(
+         %{configuration: %{crm_config: %{cluster_properties: cluster_properties}}},
+         sid
+       ) do
+    parse_crm_cluster_property(
+      cluster_properties,
+      "hana_#{String.downcase(sid)}_glob_op_mode",
+      @default_hana_scale_out_operation_mode
+    )
   end
 
   # parse_hana_scale_up_secondary_sync_state returns the secondary sync state of the HANA scale up cluster
@@ -323,7 +352,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     )
   end
 
-  # get_secondary_site gets the secondary site discarding the primary side name
+  # get_secondary_site gets the secondary site discarding the primary site name
   defp get_secondary_site(cluster_properties, sid) do
     primary_site =
       parse_crm_cluster_property(

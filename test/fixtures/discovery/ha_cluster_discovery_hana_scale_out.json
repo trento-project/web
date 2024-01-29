@@ -109,6 +109,16 @@
               "Id": "SAPHanaSR-hana_prd_site_lpt_Site2",
               "Name": "hana_prd_site_lpt_Site2",
               "Value": "30"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_glob_srmode",
+              "Name": "hana_prd_glob_srmode",
+              "Value": "syncmem"
+            },
+            {
+              "Id": "SAPHanaSR-hana_prd_glob_op_mode",
+              "Name": "hana_prd_glob_op_mode",
+              "Value": "delta_datashipping"
             }
           ]
         },

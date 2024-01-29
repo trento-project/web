@@ -1308,8 +1308,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Thu Feb 23 15:59:56 2023",
                   details: %HanaClusterDetails{
-                    system_replication_mode: "Unknown",
-                    system_replication_operation_mode: "Unknown",
+                    system_replication_mode: "syncmem",
+                    system_replication_operation_mode: "delta_datashipping",
                     secondary_sync_state: "SOK",
                     sr_health_state: "4",
                     fencing_type: "external/sbd",
@@ -1542,8 +1542,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   discovered_health: :passing,
                   cib_last_written: "Tue Jan 23 12:49:07 2024",
                   details: %HanaClusterDetails{
-                    system_replication_mode: "Unknown",
-                    system_replication_operation_mode: "Unknown",
+                    system_replication_mode: "sync",
+                    system_replication_operation_mode: "logreplay",
                     secondary_sync_state: "SOK",
                     sr_health_state: "4",
                     fencing_type: "external/sbd",
