@@ -8,7 +8,7 @@ defmodule Trento.Clusters do
   require Logger
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
-  require Trento.Clusters.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
 
   alias Trento.Hosts.Projections.HostReadModel
 
@@ -183,7 +183,7 @@ defmodule Trento.Clusters do
       hosts_data
       |> Enum.map(fn %{sap_system_id: sap_system_id} -> sap_system_id end)
       |> Enum.uniq()
-      |> get_aggregated_ensa_version()
+      |> get_cluster_ensa_version()
 
     env = %Checks.ClusterExecutionEnv{
       provider: provider,
@@ -232,8 +232,8 @@ defmodule Trento.Clusters do
 
   defp maybe_request_checks_execution(error), do: error
 
-  @spec get_aggregated_ensa_version([String.t()]) :: EnsaVersion.t()
-  defp get_aggregated_ensa_version(sap_system_ids) do
+  @spec get_cluster_ensa_version([String.t()]) :: ClusterEnsaVersion.t()
+  defp get_cluster_ensa_version(sap_system_ids) do
     ensa_versions =
       Repo.all(
         from(s in SapSystemReadModel,
@@ -245,7 +245,7 @@ defmodule Trento.Clusters do
 
     case ensa_versions do
       [ensa_version] -> ensa_version
-      _ -> EnsaVersion.mixed_versions()
+      _ -> ClusterEnsaVersion.mixed_versions()
     end
   end
 end
