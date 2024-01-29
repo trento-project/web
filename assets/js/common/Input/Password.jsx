@@ -1,0 +1,49 @@
+import React, { useState } from 'react';
+
+import {
+  EOS_VISIBILITY_OFF_OUTLINED,
+  EOS_VISIBILITY_OUTLINED,
+} from 'eos-icons-react';
+import classNames from 'classnames';
+import Input from './Input';
+
+function Password({
+  className,
+  id,
+  name,
+  value,
+  placeholder = 'Password',
+  disabled = false,
+  onChange = () => {},
+}) {
+  const [inputType, setInputType] = useState('password');
+  return (
+    <Input
+      className={classNames(className)}
+      id={id}
+      name={name}
+      initialValue={value}
+      placeholder={placeholder}
+      type={inputType}
+      disabled={disabled}
+      suffix={
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() =>
+            setInputType(inputType === 'password' ? 'text' : 'password')
+          }
+        >
+          {inputType === 'password' ? (
+            <EOS_VISIBILITY_OUTLINED className="inline" size="l" />
+          ) : (
+            <EOS_VISIBILITY_OFF_OUTLINED className="inline" size="l" />
+          )}
+        </button>
+      }
+      onChange={onChange}
+    />
+  );
+}
+
+export default Password;

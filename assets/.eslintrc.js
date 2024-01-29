@@ -69,5 +69,13 @@ module.exports = {
         ],
       },
     ],
+    // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/main/docs/rules/label-has-associated-control.md#case-my-label-and-input-components-are-custom-components
+    'jsx-a11y/label-has-associated-control': [
+      2,
+      {
+        controlComponents: ['Input', 'Password', 'TextArea'],
+        depth: 3,
+      },
+    ],
   },
 };
