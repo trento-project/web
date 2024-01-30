@@ -26,6 +26,10 @@ export function Secondary() {
   return <Button type="secondary">Hello world!</Button>;
 }
 
+export function Danger() {
+  return <Button type="danger">Hello world!</Button>;
+}
+
 export function PrimaryWhite() {
   return <Button type="primary-white">Hello world!</Button>;
 }
