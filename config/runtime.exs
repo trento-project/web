@@ -141,4 +141,14 @@ if config_env() in [:prod, :demo] do
 
   config :trento,
     api_key_authentication_enabled: System.get_env("ENABLE_API_KEY", "true") == "true"
+
+  config :trento, Trento.Vault,
+    ciphers: [
+      default: {
+        Cloak.Ciphers.AES.GCM,
+        tag: "AES.GCM.V1",
+        key: secret_key_base |> Base.decode64!() |> :binary.part({0, 32}),
+        iv_length: 12
+      }
+    ]
 end
