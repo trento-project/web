@@ -309,6 +309,7 @@ Trento.Support.StructHelper.html
 Trento.Support.Type.html
 Trento.Tags.html
 Trento.Tasks.Helper.html
+Trento.Vault.html
 TrentoWeb.Auth.AccessToken.html
 TrentoWeb.Auth.ApiKey.html
 TrentoWeb.Auth.RefreshToken.html
@@ -403,8 +404,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-4F54F800.js
-dist/sidebar_items-9C304D71.js
+dist/search_data-46651DF8.js
+dist/sidebar_items-D2E75DEB.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
