@@ -350,17 +350,20 @@ defmodule Trento.ClustersTest do
     end
 
     test "should start a checks execution on demand for ascs_ers clusters with ENSA 1 version" do
-      %SapSystemReadModel{id: sap_system_id_1, sid: sid_1} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa1())
+      sid_1 = Faker.UUID.v4()
+      sid_2 = Faker.UUID.v4()
+      other_sid = Faker.UUID.v4()
 
-      %SapSystemReadModel{id: sap_system_id_2, sid: sid_2} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa1())
+      %SapSystemReadModel{id: sap_system_id_1} =
+        insert(:sap_system, sid: sid_1, ensa_version: EnsaVersion.ensa1())
+
+      %SapSystemReadModel{id: sap_system_id_2} =
+        insert(:sap_system, sid: sid_2, ensa_version: EnsaVersion.ensa1())
 
       %SapSystemReadModel{id: other_cluster_sap_system_id} =
         insert(:sap_system, sid: sid_1, ensa_version: EnsaVersion.ensa2())
 
-      %SapSystemReadModel{sid: other_sid} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa2())
+      insert(:sap_system, sid: other_sid, ensa_version: EnsaVersion.ensa2())
 
       %ClusterReadModel{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
@@ -428,17 +431,20 @@ defmodule Trento.ClustersTest do
     end
 
     test "should start a checks execution on demand for ascs_ers clusters with ENSA 2 version" do
-      %SapSystemReadModel{id: sap_system_id_1, sid: sid_1} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa2())
+      sid_1 = Faker.UUID.v4()
+      sid_2 = Faker.UUID.v4()
+      other_sid = Faker.UUID.v4()
 
-      %SapSystemReadModel{id: sap_system_id_2, sid: sid_2} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa2())
+      %SapSystemReadModel{id: sap_system_id_1} =
+        insert(:sap_system, sid: sid_1, ensa_version: EnsaVersion.ensa2())
+
+      %SapSystemReadModel{id: sap_system_id_2} =
+        insert(:sap_system, sid: sid_2, ensa_version: EnsaVersion.ensa2())
 
       %SapSystemReadModel{id: other_cluster_sap_system_id} =
         insert(:sap_system, sid: sid_1, ensa_version: EnsaVersion.ensa1())
 
-      %SapSystemReadModel{sid: other_sid} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa1())
+      insert(:sap_system, sid: other_sid, ensa_version: EnsaVersion.ensa1())
 
       %ClusterReadModel{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
@@ -506,17 +512,20 @@ defmodule Trento.ClustersTest do
     end
 
     test "should start a checks execution on demand for ascs_ers clusters with mixed ENSA versions" do
-      %SapSystemReadModel{id: sap_system_id_1, sid: sid_1} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa1())
+      sid_1 = Faker.UUID.v4()
+      sid_2 = Faker.UUID.v4()
+      other_sid = Faker.UUID.v4()
 
-      %SapSystemReadModel{id: sap_system_id_2, sid: sid_2} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa2())
+      %SapSystemReadModel{id: sap_system_id_1} =
+        insert(:sap_system, sid: sid_1, ensa_version: EnsaVersion.ensa1())
+
+      %SapSystemReadModel{id: sap_system_id_2} =
+        insert(:sap_system, sid: sid_2, ensa_version: EnsaVersion.ensa2())
 
       %SapSystemReadModel{id: other_cluster_sap_system_id} =
         insert(:sap_system, sid: sid_1, ensa_version: EnsaVersion.ensa1())
 
-      %SapSystemReadModel{sid: other_sid} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa1())
+      insert(:sap_system, sid: other_sid, ensa_version: EnsaVersion.ensa1())
 
       %ClusterReadModel{id: cluster_id, provider: provider, type: cluster_type} =
         insert(:cluster,
