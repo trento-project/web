@@ -19,8 +19,8 @@ Trento.Clusters.Commands.RegisterClusterHost.html
 Trento.Clusters.Commands.RollUpCluster.html
 Trento.Clusters.Commands.SelectChecks.html
 Trento.Clusters.Enums.AscsErsClusterRole.html
+Trento.Clusters.Enums.ClusterEnsaVersion.html
 Trento.Clusters.Enums.ClusterType.html
-Trento.Clusters.Enums.EnsaVersion.html
 Trento.Clusters.Enums.FilesystemType.html
 Trento.Clusters.Events.ChecksSelected.html
 Trento.Clusters.Events.ClusterChecksHealthChanged.html
@@ -403,8 +403,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-9F1A64C6.js
-dist/sidebar_items-A107A4DD.js
+dist/search_data-4F54F800.js
+dist/sidebar_items-9C304D71.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
