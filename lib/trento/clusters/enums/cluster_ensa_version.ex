@@ -1,4 +1,4 @@
-defmodule Trento.Clusters.Enums.EnsaVersion do
+defmodule Trento.Clusters.Enums.ClusterEnsaVersion do
   @moduledoc """
   Type that represents the ENSA version info for a cluster.
   """
