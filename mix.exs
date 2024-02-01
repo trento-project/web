@@ -58,6 +58,7 @@ defmodule Trento.MixProject do
       {:commanded_ecto_projections, "~> 1.3"},
       {:commanded_eventstore_adapter, "~> 1.4"},
       {:cloak, "~> 1.1.2"},
+      {:cloak_ecto, "~> 1.2.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.11"},
