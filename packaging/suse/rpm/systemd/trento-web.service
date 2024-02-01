@@ -1,0 +1,14 @@
+[Unit]
+Description=Trento web service
+
+[Service]
+ExecStart=/usr/lib/trento/bin/trento start
+ExecStartPre=/usr/lib/trento/bin/trento eval 'Trento.Release.init()'
+EnvironmentFile=/etc/trento/env_trento_web
+Type=simple
+User=root
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
