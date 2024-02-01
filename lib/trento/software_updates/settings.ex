@@ -15,7 +15,7 @@ defmodule Trento.SoftwareUpdates.Settings do
     field :username, :string
     field :password, Trento.Support.Ecto.EncryptedBinary
     field :ca_cert, Trento.Support.Ecto.EncryptedBinary
-    field :ca_updloaded_at, :utc_datetime_usec
+    field :ca_uploaded_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime_usec)
   end
