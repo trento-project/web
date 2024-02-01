@@ -9,7 +9,7 @@ defmodule Trento.SoftwareUpdates.Settings do
 
   @type t :: %__MODULE__{}
 
-  @primary_key {:name, :string, autogenerate: false}
+  @primary_key {:id, :binary_id, autogenerate: false}
   schema "software_update_settings" do
     field :url, :string
     field :username, :string
@@ -23,6 +23,6 @@ defmodule Trento.SoftwareUpdates.Settings do
     software_update_settings
     |> cast(attrs, __MODULE__.__schema__(:fields))
     |> validate_required([:url, :username, :password])
-    |> unique_constraint(:name, name: :software_update_settings_pkey)
+    |> unique_constraint(:id, name: :software_update_settings_pkey)
   end
 end

@@ -2,10 +2,10 @@ defmodule Trento.Repo.Migrations.CreateSoftwareUpdateSettings do
   use Ecto.Migration
 
   def change do
-    settings_name = "software_update_settings"
-
     create table(:software_update_settings, primary_key: false) do
-      add :name, :string, primary_key: true, default: settings_name
+      settings_identifier = UUID.uuid4()
+
+      add :id, :uuid, primary_key: true, default: settings_identifier
       add :url, :string, default: nil
       add :username, :string, default: nil
       add :password, :binary, default: nil
@@ -14,10 +14,10 @@ defmodule Trento.Repo.Migrations.CreateSoftwareUpdateSettings do
     end
 
     create constraint("software_update_settings", :only_one_record,
-             check: "name ='#{settings_name}'"
+             check: "id ='#{settings_identifier}'"
            )
 
-    execute "INSERT INTO software_update_settings(name) VALUES('#{settings_name}');"
+    execute "INSERT INTO software_update_settings(id) VALUES('#{settings_identifier}');"
   end
 
   def down do
