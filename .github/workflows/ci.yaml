@@ -258,7 +258,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
       - name: Compile
         run: mix compile --warnings-as-errors
-      - name: "Docker compose dependencies" 
+      - name: "Docker compose dependencies"
         uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.yaml"
@@ -399,7 +399,7 @@ jobs:
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
-      - name: "Docker compose dependencies" 
+      - name: "Docker compose dependencies"
         uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.yaml"
@@ -697,21 +697,31 @@ jobs:
         run: photofinish run healthy-27-node-SAP-cluster -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
 
   obs-commit:
-    name: Commit the project on OBS
+    name: Commit to OBS to generate container image and RPM
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe, test-e2e]
+    strategy:
+      matrix:
+        include:
+          - NAME: trento-web-image
+            FOLDER: packaging/suse
+            BUILD_STEPS_FILE: packaging/suse/Dockerfile
+          - NAME: trento-web
+            FOLDER: packaging/suse/rpm
+            BUILD_STEPS_FILE: packaging/suse/rpm/trento-web.spec
     container:
       image: ghcr.io/trento-project/continuous-delivery:main
       env:
         GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DEST_FOLDER: "/tmp/osc_project"
-        NAME: trento-web-image
+        NAME: ${{ matrix.NAME }}
         OBS_USER: ${{ secrets.OBS_USER }}
         OBS_PASS: ${{ secrets.OBS_PASS }}
         OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
-        FOLDER: packaging/suse
+        FOLDER: ${{ matrix.FOLDER }}
         REPOSITORY: ${{ github.repository }}
+        BUILD_STEPS_FILE: ${{ matrix.BUILD_STEPS_FILE }}
       options: -u 0:0
     steps:
       - name: Cancel Previous Runs
@@ -756,12 +766,12 @@ jobs:
           VERSION=$(./hack/get_version_from_git.sh)
           # "+" character is not allowed in OBS dockerfile version strings
           VERSION=${VERSION//[+]/-}
-          sed -i 's~%%VERSION%%~'"${VERSION}"'~' packaging/suse/Dockerfile
+          sed -i 's~%%VERSION%%~'"${VERSION}"'~' $BUILD_STEPS_FILE
       - name: Commit on OBS
         run: |
           OBS_PACKAGE=$OBS_PROJECT/$NAME
           osc checkout $OBS_PACKAGE -o $DEST_FOLDER
-          cp -r packaging/suse/* $DEST_FOLDER
+          cp -r $FOLDER/* $DEST_FOLDER
           tar --transform 's,^./,/web/,' -zcvf $DEST_FOLDER/web.tar.gz --exclude=./.git ./*
           cd $DEST_FOLDER
           osc ar
