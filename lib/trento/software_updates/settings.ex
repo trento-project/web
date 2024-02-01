@@ -16,6 +16,8 @@ defmodule Trento.SoftwareUpdates.Settings do
     field :password, Trento.Support.Ecto.EncryptedBinary
     field :ca_cert, Trento.Support.Ecto.EncryptedBinary
     field :ca_updloaded_at, :utc_datetime_usec
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
