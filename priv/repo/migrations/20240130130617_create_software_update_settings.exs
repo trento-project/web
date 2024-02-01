@@ -10,7 +10,7 @@ defmodule Trento.Repo.Migrations.CreateSoftwareUpdateSettings do
       add :username, :string, default: nil
       add :password, :binary, default: nil
       add :ca_cert, :binary, default: nil
-      add :ca_updloaded_at, :utc_datetime_usec, default: nil
+      add :ca_uploaded_at, :utc_datetime_usec, default: nil
 
       timestamps()
     end
