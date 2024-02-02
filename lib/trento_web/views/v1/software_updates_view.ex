@@ -1,7 +1,7 @@
 defmodule TrentoWeb.V1.SoftwareUpdatesView do
   use TrentoWeb, :view
 
-  def render("user_settings.json", %{
+  def render("software_updates_settings.json", %{
         settings: %{
           url: url,
           username: username,

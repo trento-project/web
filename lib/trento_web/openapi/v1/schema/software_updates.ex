@@ -4,11 +4,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SoftwareUpdates do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  defmodule UserSettings do
+  defmodule Settings do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "UserSettings",
+      title: "Settings",
       description: "User settings for SUSE Manager",
       type: :object,
       properties: %{

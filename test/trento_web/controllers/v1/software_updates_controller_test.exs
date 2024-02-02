@@ -28,7 +28,7 @@ defmodule TrentoWeb.V1.SoftwareUpdatesControllerTest do
       conn
       |> get("/api/v1/software_updates/settings")
       |> json_response(:ok)
-      |> assert_schema("UserSettings", api_spec)
+      |> assert_schema("Settings", api_spec)
     end
 
     test "should return 404 if no user settings have been saved", %{conn: conn} do
