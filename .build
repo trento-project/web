@@ -297,6 +297,7 @@ Trento.Scheduler.html
 Trento.Services.HealthService.html
 Trento.Settings.html
 Trento.SoftwareUpdates.Settings.html
+Trento.SoftwareUpdates.html
 Trento.Support.Command.html
 Trento.Support.DateService.html
 Trento.Support.Ecto.EncryptedBinary.html
@@ -406,8 +407,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-0957B5A8.js
-dist/sidebar_items-33E6AD5A.js
+dist/search_data-ED5F91AE.js
+dist/sidebar_items-F85C391B.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
