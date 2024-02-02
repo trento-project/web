@@ -23,7 +23,7 @@ defmodule TrentoWeb.V1.SoftwareUpdatesController do
     with {:ok, settings} <- SoftwareUpdates.get_settings() do
       conn
       |> put_status(:ok)
-      |> render("user_settings.json", settings)
+      |> render("user_settings.json", %{settings: settings})
     end
   end
 end

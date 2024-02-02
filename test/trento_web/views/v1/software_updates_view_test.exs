@@ -10,14 +10,10 @@ defmodule TrentoWeb.V1.UserSettingsViewTest do
   describe "renders user_settings.json" do
     test "should render relevant fields" do
       %Settings{url: url, username: username, ca_uploaded_at: ca_uploaded_at} =
-        build(:software_updates_settings)
+        settings = build(:software_updates_settings)
 
       assert %{url: url, username: username, ca_uploaded_at: ca_uploaded_at} ==
-               render(SoftwareUpdatesView, "user_settings.json", %{
-                 url: url,
-                 username: username,
-                 ca_uploaded_at: ca_uploaded_at
-               })
+               render(SoftwareUpdatesView, "user_settings.json", %{settings: settings})
     end
   end
 end
