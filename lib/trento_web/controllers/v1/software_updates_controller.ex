@@ -14,7 +14,9 @@ defmodule TrentoWeb.V1.SoftwareUpdatesController do
     tags: ["Platform"],
     description: "Gets the saved user settings for SUSE Manager",
     responses: [
-      ok: {"The software updates user settings", "application/json", Schema.SoftwareUpdates.Settings},
+      ok:
+        {"The software updates user settings", "application/json",
+         Schema.SoftwareUpdates.Settings},
       not_found: Schema.NotFound.response()
     ]
 
