@@ -96,6 +96,8 @@ defmodule Trento.Factory do
     DiscoveryEvent
   }
 
+  alias Trento.SoftwareUpdates.Settings
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -746,5 +748,23 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       health: Health.passing()
     })
+  end
+
+  def software_updates_settings_factory(attrs) do
+    url = Map.get(attrs, :url, Faker.Internet.url())
+    username = Map.get(attrs, :username, Faker.Internet.user_name())
+    password = Map.get(attrs, :password, Faker.Lorem.word())
+    ca_cert = Map.get(attrs, :ca_cert, Faker.Lorem.sentence())
+    ca_uploaded_at = Map.get(attrs, :ca_uploaded_at, DateTime.utc_now())
+
+    %Settings{}
+    |> Settings.changeset(%{
+      url: url,
+      username: username,
+      password: password,
+      ca_cert: ca_cert,
+      ca_uploaded_at: ca_uploaded_at
+    })
+    |> Ecto.Changeset.apply_changes()
   end
 end
