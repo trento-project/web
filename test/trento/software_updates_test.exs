@@ -25,12 +25,12 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
     assert {:ok,
             %{
-              url: ^url,
-              username: ^username,
-              password: ^password,
+              url: url,
+              username: username,
+              password: password,
               ca_cert: nil,
               ca_uploaded_at: nil
-            }} = SoftwareUpdates.get_settings()
+            }} == SoftwareUpdates.get_settings()
   end
 
   test "should return settings with ca certificate" do
@@ -50,12 +50,12 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
     assert {:ok,
             %{
-              url: ^url,
-              username: ^username,
-              password: ^password,
-              ca_cert: ^ca_cert,
-              ca_uploaded_at: ^ca_uploaded_at
-            }} = SoftwareUpdates.get_settings()
+              url: url,
+              username: username,
+              password: password,
+              ca_cert: ca_cert,
+              ca_uploaded_at: ca_uploaded_at
+            }} == SoftwareUpdates.get_settings()
   end
 
   test "should not save invalid software updates settings" do
@@ -122,12 +122,12 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     Enum.each([settings_with_nil_ca_cert, settings_without_ca_cert], fn settings ->
       assert {:ok,
               %{
-                url: ^url,
-                username: ^username,
-                password: ^password,
+                url: url,
+                username: username,
+                password: password,
                 ca_cert: nil,
                 ca_uploaded_at: nil
-              }} = SoftwareUpdates.save_settings(settings)
+              }} == SoftwareUpdates.save_settings(settings)
     end)
   end
 
@@ -149,11 +149,11 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
     assert {:ok,
             %{
-              url: ^url,
-              username: ^username,
-              password: ^password,
-              ca_cert: ^ca_cert,
-              ca_uploaded_at: ^now
-            }} = SoftwareUpdates.save_settings(settings, Trento.Support.DateService.Mock)
+              url: url,
+              username: username,
+              password: password,
+              ca_cert: ca_cert,
+              ca_uploaded_at: now
+            }} == SoftwareUpdates.save_settings(settings, Trento.Support.DateService.Mock)
   end
 end
