@@ -1,14 +1,11 @@
 defmodule TrentoWeb.V1.SoftwareUpdatesControllerTest do
   use TrentoWeb.ConnCase, async: true
 
-  import Mox
   import OpenApiSpex.TestAssertions
 
   import Trento.Factory
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
-
-  setup [:set_mox_from_context, :verify_on_exit!]
 
   setup do
     %{api_spec: ApiSpec.spec()}
