@@ -21,10 +21,9 @@ defmodule Trento.SoftwareUpdates.Settings do
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
-  def changeset(software_update_settings, attrs) do
-    software_update_settings
+  def changeset(software_updates_settings, attrs) do
+    software_updates_settings
     |> cast(attrs, __MODULE__.__schema__(:fields))
-    |> validate_required([:url, :username, :password])
     |> unique_constraint(:id, name: :software_update_settings_pkey)
   end
 end
