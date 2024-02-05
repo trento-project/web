@@ -2,6 +2,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Mox
+
   import Trento.Factory
 
   alias Trento.SoftwareUpdates
@@ -54,5 +56,104 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
               ca_cert: ^ca_cert,
               ca_uploaded_at: ^ca_uploaded_at
             }} = SoftwareUpdates.get_settings()
+  end
+
+  test "should not save invalid software updates settings" do
+    submission = %{
+      url: "https://valid.com",
+      username: Faker.Internet.user_name(),
+      password: Faker.Lorem.word(),
+      ca_cert: nil
+    }
+
+    saving_scenarios = [
+      %{
+        submission: [
+          Map.put(submission, :url, nil),
+          Map.delete(submission, :url),
+          Map.put(submission, :url, ""),
+          Map.put(submission, :url, "   ")
+        ],
+        errors: [url: {"can't be blank", [validation: :required]}]
+      },
+      %{
+        submission: Map.put(submission, :url, "http://not-secure.com"),
+        errors: [url: {"can only be an https url", [validation: :https_url_only]}]
+      },
+      %{
+        submission: [
+          Map.put(submission, :username, nil),
+          Map.delete(submission, :username),
+          Map.put(submission, :username, ""),
+          Map.put(submission, :username, "   ")
+        ],
+        errors: [username: {"can't be blank", [validation: :required]}]
+      },
+      %{
+        submission: [
+          Map.put(submission, :password, nil),
+          Map.delete(submission, :password),
+          Map.put(submission, :password, ""),
+          Map.put(submission, :password, "   ")
+        ],
+        errors: [password: {"can't be blank", [validation: :required]}]
+      }
+    ]
+
+    for %{submission: submission, errors: errors} <- saving_scenarios do
+      submission
+      |> List.wrap()
+      |> Enum.each(fn submission ->
+        assert {:error, %{errors: ^errors}} = SoftwareUpdates.save_settings(submission)
+      end)
+    end
+  end
+
+  test "should save software updates settings without ca cert" do
+    settings_with_nil_ca_cert = %{
+      url: url = "https://valid.com",
+      username: username = Faker.Internet.user_name(),
+      password: password = Faker.Lorem.word(),
+      ca_cert: nil
+    }
+
+    settings_without_ca_cert = Map.delete(settings_with_nil_ca_cert, :ca_cert)
+
+    Enum.each([settings_with_nil_ca_cert, settings_without_ca_cert], fn settings ->
+      assert {:ok,
+              %{
+                url: ^url,
+                username: ^username,
+                password: ^password,
+                ca_cert: nil,
+                ca_uploaded_at: nil
+              }} = SoftwareUpdates.save_settings(settings)
+    end)
+  end
+
+  test "should save software updates settings with ca cert" do
+    now = DateTime.utc_now()
+
+    expect(
+      Trento.Support.DateService.Mock,
+      :utc_now,
+      fn -> now end
+    )
+
+    settings = %{
+      url: url = "https://valid.com",
+      username: username = Faker.Internet.user_name(),
+      password: password = Faker.Lorem.word(),
+      ca_cert: ca_cert = Faker.Lorem.sentence()
+    }
+
+    assert {:ok,
+            %{
+              url: ^url,
+              username: ^username,
+              password: ^password,
+              ca_cert: ^ca_cert,
+              ca_uploaded_at: ^now
+            }} = SoftwareUpdates.save_settings(settings, Trento.Support.DateService.Mock)
   end
 end
