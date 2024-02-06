@@ -146,6 +146,8 @@ defmodule TrentoWeb.Router do
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
+      get "/software_updates/settings", SoftwareUpdatesController, :get_software_updates_settings
+
       scope "/charts" do
         pipe_through :charts_feature
 

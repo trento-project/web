@@ -31,7 +31,8 @@ defmodule TrentoWeb.FallbackController do
              :sap_system_not_registered,
              :database_not_registered,
              :application_instance_not_registered,
-             :database_instance_not_registered
+             :database_instance_not_registered,
+             :settings_not_configured
            ] do
     conn
     |> put_status(:not_found)
