@@ -48,6 +48,54 @@ services:
     ports:
       - 5673:5672
       - 15673:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q status
+      interval: 30s
+      timeout: 30s
+      retries: 10
     environment:
       RABBITMQ_DEFAULT_USER: trento
       RABBITMQ_DEFAULT_PASS: trento
+  wanda:
+    image: ghcr.io/trento-project/trento-wanda:rolling
+    environment:
+      DATABASE_URL: ecto://postgres:postgres@postgres/postgres
+      SECRET_KEY_BASE: dummyS3cr3t
+      AMQP_URL: amqp://trento:trento@rabbitmq
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "http://localhost:4000"
+      JWT_AUTHENTICATION_ENABLED: "false"
+    depends_on:
+      - postgres
+      - rabbitmq
+    ports:
+      - 4001:4000
+    entrypoint: /bin/sh -c "/app/bin/wanda eval \"Wanda.Release.init()\" && /app/bin/wanda start"
+  node01:
+    image: ghcr.io/trento-project/barbecue-hana_node01:latest
+    network_mode: host
+    hostname: hana_node01
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command:
+      - --api-key
+      - some-random-string
+      - --facts-service-url
+      - amqp://trento:trento@localhost:5673
+      - --server-url
+      - http://localhost:4000
+  node02:
+    image: ghcr.io/trento-project/barbecue-hana_node02:latest
+    network_mode: host
+    hostname: hana_node02
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command:
+      - --api-key
+      - some-random-string
+      - --facts-service-url
+      - amqp://trento:trento@localhost:5673
+      - --server-url
+      - http://localhost:4000

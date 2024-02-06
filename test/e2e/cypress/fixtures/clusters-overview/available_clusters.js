@@ -18,6 +18,12 @@ export const availableClusters = [
     type: 'Unknown',
   },
   {
+    id: 'fa0d74a3-9240-5d9e-99fa-61c4137acf81',
+    name: 'hana_cluster',
+    sid: 'PRD',
+    type: 'HANA Scale Up',
+  },
+  {
     id: '7965f822-0254-5858-abca-f6e8b4c27714',
     name: 'hana_cluster_1',
     sid: 'HDD',
