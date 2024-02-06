@@ -110,25 +110,38 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   end
 
   test "should save software updates settings without ca cert" do
-    settings_with_nil_ca_cert = %{
+    settings = %{
+      url: url = "https://valid.com",
+      username: username = Faker.Internet.user_name(),
+      password: password = Faker.Lorem.word()
+    }
+
+    assert {:ok,
+            %{
+              url: url,
+              username: username,
+              password: password,
+              ca_cert: nil,
+              ca_uploaded_at: nil
+            }} == SoftwareUpdates.save_settings(settings)
+  end
+
+  test "should save software updates settings with a nil ca cert" do
+    settings = %{
       url: url = "https://valid.com",
       username: username = Faker.Internet.user_name(),
       password: password = Faker.Lorem.word(),
       ca_cert: nil
     }
 
-    settings_without_ca_cert = Map.delete(settings_with_nil_ca_cert, :ca_cert)
-
-    Enum.each([settings_with_nil_ca_cert, settings_without_ca_cert], fn settings ->
-      assert {:ok,
-              %{
-                url: url,
-                username: username,
-                password: password,
-                ca_cert: nil,
-                ca_uploaded_at: nil
-              }} == SoftwareUpdates.save_settings(settings)
-    end)
+    assert {:ok,
+            %{
+              url: url,
+              username: username,
+              password: password,
+              ca_cert: nil,
+              ca_uploaded_at: nil
+            }} == SoftwareUpdates.save_settings(settings)
   end
 
   test "should save software updates settings with ca cert" do
@@ -155,5 +168,18 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
               ca_cert: ca_cert,
               ca_uploaded_at: now
             }} == SoftwareUpdates.save_settings(settings, Trento.Support.DateService.Mock)
+  end
+
+  test "should not save software updates settings if already saved" do
+    settings = %{
+      url: "https://valid.com",
+      username: Faker.Internet.user_name(),
+      password: Faker.Lorem.word(),
+      ca_cert: nil
+    }
+
+    assert {:ok, _} = SoftwareUpdates.save_settings(settings)
+
+    assert {:error, :settings_already_configured} = SoftwareUpdates.save_settings(settings)
   end
 end

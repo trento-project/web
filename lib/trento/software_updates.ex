@@ -38,19 +38,20 @@ defmodule Trento.SoftwareUpdates do
   end
 
   @spec save_settings(software_update_settings_submission, module()) ::
-          {:ok, software_update_settings} | {:error, any()}
+          {:ok, software_update_settings}
+          | {:error, :settings_already_configured}
+          | {:error, any()}
   def save_settings(settings_submission, date_service \\ DateService) do
-    changeset =
-      Settings
-      |> Repo.one!()
-      |> Settings.changeset(settings_submission)
-      |> Changeset.validate_required([:url, :username, :password])
-      |> Changeset.validate_change(:url, &validate_url/2)
-      |> Changeset.prepare_changes(maybe_add_cert_upload_date(date_service))
-
-    case Repo.update(changeset) do
-      {:ok, saved_settings} ->
-        {:ok, map_to_settings_result(saved_settings)}
+    with settings <- Repo.one!(Settings),
+         false <- has_valid_settings?(settings),
+         {:ok, saved_settings} <-
+           settings
+           |> apply_saving_changeset(settings_submission, date_service)
+           |> Repo.update() do
+      {:ok, map_to_settings_result(saved_settings)}
+    else
+      true ->
+        {:error, :settings_already_configured}
 
       {:error, reason} = error ->
         Logger.error("Error while saving software updates settings: #{inspect(reason)}")
@@ -64,6 +65,14 @@ defmodule Trento.SoftwareUpdates do
 
   defp map_to_settings_result(%Settings{} = settings),
     do: Map.take(settings, [:url, :username, :password, :ca_cert, :ca_uploaded_at])
+
+  defp apply_saving_changeset(settings, settings_submission, date_service) do
+    settings
+    |> Settings.changeset(settings_submission)
+    |> Changeset.validate_required([:url, :username, :password])
+    |> Changeset.validate_change(:url, &validate_url/2)
+    |> Changeset.prepare_changes(maybe_add_cert_upload_date(date_service))
+  end
 
   defp validate_url(_url_atom, url) do
     %URI{scheme: scheme} = URI.parse(url)
