@@ -4,6 +4,31 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule SUMACredentialsRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "SUMACredentialsRequest",
+      description: "Request body for saving SUMA credentials",
+      type: :object,
+      properties: %{
+        url: %Schema{
+          type: :string
+        },
+        username: %Schema{
+          type: :string
+        },
+        password: %Schema{
+          type: :string
+        },
+        ca_cert: %Schema{
+          type: :string
+        }
+      },
+      required: [:url, :username, :password]
+    })
+  end
+
   defmodule Settings do
     @moduledoc false
 
