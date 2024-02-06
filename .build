@@ -367,6 +367,8 @@ TrentoWeb.V1.SapSystemController.html
 TrentoWeb.V1.SapSystemView.html
 TrentoWeb.V1.SettingsController.html
 TrentoWeb.V1.SettingsView.html
+TrentoWeb.V1.SoftwareUpdatesController.html
+TrentoWeb.V1.SoftwareUpdatesView.html
 TrentoWeb.V1.TagsController.html
 TrentoWeb.V2.ClusterController.html
 TrentoWeb.V2.ClusterView.html
@@ -407,8 +409,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-ED5F91AE.js
-dist/sidebar_items-F85C391B.js
+dist/search_data-A1BF9D3B.js
+dist/sidebar_items-940C9769.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
