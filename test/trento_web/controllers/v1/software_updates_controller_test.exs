@@ -23,7 +23,7 @@ defmodule TrentoWeb.V1.SoftwareUpdatesControllerTest do
       api_spec = ApiSpec.spec()
 
       conn
-      |> get("/api/v1/software_updates/settings")
+      |> get("/api/v1/settings/suma_credentials")
       |> json_response(:ok)
       |> assert_schema("Settings", api_spec)
     end
@@ -32,7 +32,7 @@ defmodule TrentoWeb.V1.SoftwareUpdatesControllerTest do
       api_spec = ApiSpec.spec()
 
       conn
-      |> get("/api/v1/software_updates/settings")
+      |> get("/api/v1/settings/suma_credentials")
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
     end

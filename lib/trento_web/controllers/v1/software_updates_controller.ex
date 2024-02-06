@@ -9,7 +9,7 @@ defmodule TrentoWeb.V1.SoftwareUpdatesController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  operation :get_software_updates_settings,
+  operation :index,
     summary: "Gets the user settings",
     tags: ["Platform"],
     description: "Gets the saved user settings for SUSE Manager",
@@ -20,12 +20,10 @@ defmodule TrentoWeb.V1.SoftwareUpdatesController do
       not_found: Schema.NotFound.response()
     ]
 
-  @spec get_software_updates_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def get_software_updates_settings(conn, _) do
+  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def index(conn, _) do
     with {:ok, settings} <- SoftwareUpdates.get_settings() do
-      conn
-      |> put_status(:ok)
-      |> render("software_updates_settings.json", %{settings: settings})
+      render(conn, "software_updates_settings.json", %{settings: settings})
     end
   end
 end
