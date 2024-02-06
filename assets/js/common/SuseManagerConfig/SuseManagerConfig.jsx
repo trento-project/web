@@ -3,7 +3,7 @@ import { defaultTo, noop } from 'lodash';
 
 import Button from '@common/Button';
 
-import CertificateUploadDate from './CertifiedUploadDate';
+import CertificateUploadDate from './CertificateUploadDate';
 
 const renderPassword = (username, certUploadDate) =>
   username && certUploadDate ? '•••••' : '.....';
@@ -25,7 +25,8 @@ function SuseManagerConfig({
         </span>
       </div>
       <p className="mt-3 mb-3 text-gray-500">
-        SUSE Manager lets you discover software vulnerabilities on nodes
+        SUSE Manager integration will unlock additional features throughout the
+        Trento application
       </p>
 
       <div className="grid grid-cols-6 mt-5 items-center">

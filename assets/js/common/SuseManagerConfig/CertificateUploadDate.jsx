@@ -13,7 +13,7 @@ function CertificateUploadDate({ date }) {
 
       <div>
         <div>Certificate Uploaded</div>
-        <div className="text-xs">{format(date, 'iii MMM dd, y')}</div>
+        <div className="text-xs">{format(date, "'Uploaded:' dd MMM y")}</div>
       </div>
     </div>
   );
