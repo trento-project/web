@@ -2,44 +2,51 @@ defmodule Trento.SoftwareUpdates do
   @moduledoc """
   Entry point for the software updates feature.
   """
+  require Logger
+
+  alias Trento.Support.DateService
 
   alias Trento.Repo
   alias Trento.SoftwareUpdates.Settings
 
-  @type software_update_settings :: %{
+  @type software_update_settings_submission :: %{
           url: String.t(),
           username: String.t(),
           password: String.t(),
-          ca_cert: String.t() | nil,
-          ca_uploaded_at: DateTime.t() | nil
+          ca_cert: String.t() | nil
         }
 
-  @spec get_settings :: {:ok, software_update_settings} | {:error, :settings_not_configured}
+  @spec get_settings :: {:ok, Settings.t()} | {:error, :settings_not_configured}
   def get_settings do
-    %Settings{
-      url: url,
-      username: username,
-      password: password,
-      ca_cert: ca_cert,
-      ca_uploaded_at: ca_uploaded_at
-    } = settings = Repo.one!(Settings)
+    case Repo.one(Settings) do
+      nil ->
+        {:error, :settings_not_configured}
 
-    if has_valid_settings?(settings) do
-      {
-        :ok,
-        %{
-          url: url,
-          username: username,
-          password: password,
-          ca_cert: ca_cert,
-          ca_uploaded_at: ca_uploaded_at
-        }
-      }
-    else
-      {:error, :settings_not_configured}
+      settings ->
+        {:ok, settings}
     end
   end
 
-  defp has_valid_settings?(%Settings{url: url, username: username, password: password}),
-    do: url != nil and username != nil and password != nil
+  @spec save_settings(software_update_settings_submission, module()) ::
+          {:ok, Settings.t()}
+          | {:error, :settings_already_configured}
+          | {:error, any()}
+  def save_settings(settings_submission, date_service \\ DateService) do
+    if Repo.one(Settings) do
+      {:error, :settings_already_configured}
+    else
+      result =
+        %Settings{} |> Settings.changeset(settings_submission, date_service) |> Repo.insert()
+
+      case result do
+        {:ok, saved_settings} ->
+          {:ok, saved_settings}
+
+        {:error, reason} = error ->
+          Logger.error("Error while saving software updates settings: #{inspect(reason)}")
+
+          error
+      end
+    end
+  end
 end
