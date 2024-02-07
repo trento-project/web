@@ -40,7 +40,7 @@
     "postcss": "^8.4.34",
     "prettier-eslint-cli": "^8.0.1",
     "redux-mock-store": "^1.5.4",
-    "storybook": "^7.6.12",
+    "storybook": "^7.6.13",
     "tailwindcss": "^3.4.1"
   },
   "dependencies": {
