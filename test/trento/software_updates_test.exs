@@ -7,6 +7,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   import Trento.Factory
 
   alias Trento.SoftwareUpdates
+  alias Trento.SoftwareUpdates.Settings
 
   test "should return an error when settings are not available" do
     assert {:error, :settings_not_configured} == SoftwareUpdates.get_settings()
@@ -24,13 +25,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       )
 
     assert {:ok,
-            %{
-              url: url,
-              username: username,
-              password: password,
+            %Settings{
+              url: ^url,
+              username: ^username,
+              password: ^password,
               ca_cert: nil,
               ca_uploaded_at: nil
-            }} == SoftwareUpdates.get_settings()
+            }} = SoftwareUpdates.get_settings()
   end
 
   test "should return settings with ca certificate" do
@@ -49,13 +50,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       )
 
     assert {:ok,
-            %{
-              url: url,
-              username: username,
-              password: password,
-              ca_cert: ca_cert,
-              ca_uploaded_at: ca_uploaded_at
-            }} == SoftwareUpdates.get_settings()
+            %Settings{
+              url: ^url,
+              username: ^username,
+              password: ^password,
+              ca_cert: ^ca_cert,
+              ca_uploaded_at: ^ca_uploaded_at
+            }} = SoftwareUpdates.get_settings()
   end
 
   test "should not save invalid software updates settings" do
@@ -117,13 +118,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     }
 
     assert {:ok,
-            %{
-              url: url,
-              username: username,
-              password: password,
+            %Settings{
+              url: ^url,
+              username: ^username,
+              password: ^password,
               ca_cert: nil,
               ca_uploaded_at: nil
-            }} == SoftwareUpdates.save_settings(settings)
+            }} = SoftwareUpdates.save_settings(settings)
   end
 
   test "should save software updates settings with a nil ca cert" do
@@ -135,13 +136,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     }
 
     assert {:ok,
-            %{
-              url: url,
-              username: username,
-              password: password,
+            %Settings{
+              url: ^url,
+              username: ^username,
+              password: ^password,
               ca_cert: nil,
               ca_uploaded_at: nil
-            }} == SoftwareUpdates.save_settings(settings)
+            }} = SoftwareUpdates.save_settings(settings)
   end
 
   test "should save software updates settings with ca cert" do
@@ -161,13 +162,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     }
 
     assert {:ok,
-            %{
-              url: url,
-              username: username,
-              password: password,
-              ca_cert: ca_cert,
-              ca_uploaded_at: now
-            }} == SoftwareUpdates.save_settings(settings, Trento.Support.DateService.Mock)
+            %Settings{
+              url: ^url,
+              username: ^username,
+              password: ^password,
+              ca_cert: ^ca_cert,
+              ca_uploaded_at: ^now
+            }} = SoftwareUpdates.save_settings(settings, Trento.Support.DateService.Mock)
   end
 
   test "should not save software updates settings if already saved" do
