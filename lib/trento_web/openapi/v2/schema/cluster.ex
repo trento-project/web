@@ -9,6 +9,86 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
   alias TrentoWeb.OpenApi.V1.Schema.{Cluster, Provider, ResourceHealth, Tags}
 
+  defmodule HanaClusterNode do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "HanaClusterNode",
+      description: "A HANA Cluster Node",
+      type: :object,
+      properties: %{
+        name: %Schema{type: :string},
+        site: %Schema{type: :string},
+        hana_status: %Schema{type: :string, deprecated: true},
+        attributes: %Schema{
+          type: :object,
+          description: "Node attributes",
+          additionalProperties: %Schema{type: :string}
+        },
+        virtual_ip: %Schema{type: :string},
+        resources: %Schema{
+          description: "A list of Cluster resources",
+          type: :array,
+          items: Cluster.ClusterResource
+        }
+      }
+    })
+  end
+
+  defmodule HanaClusterSite do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "HanaClusterSite",
+      description: "A HANA Cluster Site",
+      type: :object,
+      properties: %{
+        name: %Schema{type: :string, description: "Site name"},
+        state: %Schema{type: :string, description: "Site state"},
+        sr_health_state: %Schema{type: :string, description: "Site SR Health state"}
+      }
+    })
+  end
+
+  defmodule HanaClusterDetails do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "HanaClusterDetails",
+      description: "Details of a HANA Pacemaker Cluster",
+      type: :object,
+      properties: %{
+        system_replication_mode: %Schema{type: :string, description: "System Replication Mode"},
+        system_replication_operation_mode: %Schema{
+          type: :string,
+          description: "System Replication Operation Mode"
+        },
+        secondary_sync_state: %Schema{type: :string, description: "Secondary Sync State"},
+        sr_health_state: %Schema{type: :string, description: "SR health state", deprecated: true},
+        fencing_type: %Schema{type: :string, description: "Fencing Type"},
+        stopped_resources: %Schema{
+          description: "A list of the stopped resources on this HANA Cluster",
+          type: :array,
+          items: Cluster.ClusterResource
+        },
+        nodes: %Schema{
+          type: :array,
+          items: HanaClusterNode
+        },
+        sites: %Schema{
+          description: "A list of HANA sites",
+          type: :array,
+          items: HanaClusterSite
+        },
+        sbd_devices: %Schema{
+          type: :array,
+          items: Cluster.SbdDevice
+        }
+      },
+      required: [:nodes]
+    })
+  end
+
   defmodule AscsErsClusterNode do
     @moduledoc false
 
@@ -117,7 +197,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
       nullable: true,
       oneOf: [
         AscsErsClusterDetails,
-        Cluster.HanaClusterDetails
+        HanaClusterDetails
       ]
     })
   end

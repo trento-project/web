@@ -23,8 +23,16 @@ defmodule TrentoWeb.V1.ClusterView do
     |> Map.put(:id, data.cluster_id)
   end
 
-  defp adapt_v1(%{type: type} = cluster) when type in [:hana_scale_up, :hana_scale_out, :unknown],
-    do: cluster
+  defp adapt_v1(%{type: type, details: nil} = cluster)
+       when type in [:hana_scale_up, :hana_scale_out, :unknown] do
+    cluster
+  end
+
+  defp adapt_v1(%{type: type} = cluster) when type in [:hana_scale_up, :hana_scale_out] do
+    cluster
+    |> pop_in([:details, "sites"])
+    |> elem(1)
+  end
 
   defp adapt_v1(cluster) do
     cluster
