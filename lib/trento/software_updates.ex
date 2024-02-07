@@ -32,23 +32,21 @@ defmodule Trento.SoftwareUpdates do
           | {:error, :settings_already_configured}
           | {:error, any()}
   def save_settings(settings_submission, date_service \\ DateService) do
-    case Repo.one(Settings) do
-      nil ->
-        result =
-          %Settings{} |> Settings.changeset(settings_submission, date_service) |> Repo.insert()
+    if Repo.one(Settings) do
+      {:error, :settings_already_configured}
+    else
+      result =
+        %Settings{} |> Settings.changeset(settings_submission, date_service) |> Repo.insert()
 
-        case result do
-          {:ok, saved_settings} ->
-            {:ok, saved_settings}
+      case result do
+        {:ok, saved_settings} ->
+          {:ok, saved_settings}
 
-          {:error, reason} = error ->
-            Logger.error("Error while saving software updates settings: #{inspect(reason)}")
+        {:error, reason} = error ->
+          Logger.error("Error while saving software updates settings: #{inspect(reason)}")
 
-            error
-        end
-
-      _ ->
-        {:error, :settings_already_configured}
+          error
+      end
     end
   end
 end
