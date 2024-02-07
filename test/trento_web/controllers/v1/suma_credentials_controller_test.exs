@@ -25,7 +25,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       conn
       |> get("/api/v1/settings/suma_credentials")
       |> json_response(:ok)
-      |> assert_schema("Settings", api_spec)
+      |> assert_schema("SUMACredentials", api_spec)
     end
 
     test "should return 404 if no user settings have been saved", %{conn: conn} do
