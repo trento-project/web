@@ -8,7 +8,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "Settings",
+      title: "SUMA Credentials",
       description: "User settings for SUSE Manager",
       type: :object,
       properties: %{
