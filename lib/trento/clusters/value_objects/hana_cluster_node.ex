@@ -5,7 +5,6 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
 
   @required_fields [
     :name,
-    :site,
     :hana_status,
     :attributes
   ]
@@ -17,6 +16,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
   deftype do
     field :name, :string
     field :site, :string
+    # this attribute is deprecated, moved to the sites entry
     field :hana_status, :string
     field :attributes, {:map, :string}
     field :virtual_ip, :string
