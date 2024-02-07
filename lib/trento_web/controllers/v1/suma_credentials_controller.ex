@@ -1,4 +1,4 @@
-defmodule TrentoWeb.V1.SoftwareUpdatesController do
+defmodule TrentoWeb.V1.SUMACredentialsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
@@ -9,23 +9,19 @@ defmodule TrentoWeb.V1.SoftwareUpdatesController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  operation :get_software_updates_settings,
+  operation :show,
     summary: "Gets the user settings",
     tags: ["Platform"],
     description: "Gets the saved user settings for SUSE Manager",
     responses: [
-      ok:
-        {"The software updates user settings", "application/json",
-         Schema.SoftwareUpdates.Settings},
+      ok: {"The SUSE Manager user settings", "application/json", Schema.SUMACredentials.Settings},
       not_found: Schema.NotFound.response()
     ]
 
-  @spec get_software_updates_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def get_software_updates_settings(conn, _) do
+  @spec show(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def show(conn, _) do
     with {:ok, settings} <- SoftwareUpdates.get_settings() do
-      conn
-      |> put_status(:ok)
-      |> render("software_updates_settings.json", %{settings: settings})
+      render(conn, "suma_credentials.json", %{settings: settings})
     end
   end
 end

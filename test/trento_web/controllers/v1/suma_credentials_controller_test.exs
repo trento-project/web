@@ -1,4 +1,4 @@
-defmodule TrentoWeb.V1.SoftwareUpdatesControllerTest do
+defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
   use TrentoWeb.ConnCase, async: true
 
   import OpenApiSpex.TestAssertions
@@ -23,16 +23,16 @@ defmodule TrentoWeb.V1.SoftwareUpdatesControllerTest do
       api_spec = ApiSpec.spec()
 
       conn
-      |> get("/api/v1/software_updates/settings")
+      |> get("/api/v1/settings/suma_credentials")
       |> json_response(:ok)
-      |> assert_schema("Settings", api_spec)
+      |> assert_schema("SUMACredentials", api_spec)
     end
 
     test "should return 404 if no user settings have been saved", %{conn: conn} do
       api_spec = ApiSpec.spec()
 
       conn
-      |> get("/api/v1/software_updates/settings")
+      |> get("/api/v1/settings/suma_credentials")
       |> json_response(:not_found)
       |> assert_schema("NotFound", api_spec)
     end

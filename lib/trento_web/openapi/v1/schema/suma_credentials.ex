@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.V1.Schema.SoftwareUpdates do
+defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
   @moduledoc false
 
   require OpenApiSpex
@@ -8,7 +8,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SoftwareUpdates do
     @moduledoc false
 
     OpenApiSpex.schema(%{
-      title: "Settings",
+      title: "SUMACredentials",
       description: "User settings for SUSE Manager",
       type: :object,
       properties: %{

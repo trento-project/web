@@ -1,7 +1,7 @@
-defmodule TrentoWeb.V1.SoftwareUpdatesView do
+defmodule TrentoWeb.V1.SUMACredentialsView do
   use TrentoWeb, :view
 
-  def render("software_updates_settings.json", %{
+  def render("suma_credentials.json", %{
         settings: %{
           url: url,
           username: username,
