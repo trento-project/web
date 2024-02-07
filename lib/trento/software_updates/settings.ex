@@ -26,4 +26,33 @@ defmodule Trento.SoftwareUpdates.Settings do
     |> cast(attrs, __MODULE__.__schema__(:fields))
     |> unique_constraint(:id, name: :software_update_settings_pkey)
   end
+
+  @spec apply_saving_changeset(t() | Ecto.Changeset.t(), map, module()) :: Ecto.Changeset.t()
+  def apply_saving_changeset(settings, settings_submission, date_service \\ DateService) do
+    settings
+    |> changeset(settings_submission)
+    |> validate_required([:url, :username, :password])
+    |> validate_change(:url, &validate_url/2)
+    |> maybe_add_cert_upload_date(date_service)
+  end
+
+  defp validate_url(_url_atom, url) do
+    %URI{scheme: scheme} = URI.parse(url)
+
+    case scheme do
+      "https" ->
+        []
+
+      _ ->
+        [url: {"can only be an https url", validation: :https_url_only}]
+    end
+  end
+
+  defp maybe_add_cert_upload_date(changeset, date_service) do
+    if get_change(changeset, :ca_cert) do
+      put_change(changeset, :ca_uploaded_at, date_service.utc_now())
+    else
+      changeset
+    end
+  end
 end
