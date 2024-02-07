@@ -37,4 +37,20 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
   end
+
+  describe "Clear user settings" do
+    test "should return 204 if no user settings have previously been saved", %{conn: conn} do
+      conn = delete(conn, "/api/v1/settings/suma_credentials")
+
+      assert response(conn, 204) == ""
+    end
+
+    test "should return 204 when user settings have previously been saved", %{conn: conn} do
+      insert(:software_updates_settings)
+
+      conn = delete(conn, "/api/v1/settings/suma_credentials")
+
+      assert response(conn, 204) == ""
+    end
+  end
 end
