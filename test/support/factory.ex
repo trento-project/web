@@ -15,6 +15,7 @@ defmodule Trento.Factory do
     ClusterResource,
     HanaClusterDetails,
     HanaClusterNode,
+    HanaClusterSite,
     SbdDevice
   }
 
@@ -165,7 +166,7 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
-      details: hana_cluster_details_value_object(),
+      details: build(:hana_cluster_details),
       type: ClusterType.hana_scale_up(),
       discovered_health: Health.passing(),
       designated_controller: true
@@ -196,7 +197,7 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
-      details: hana_cluster_details_value_object(),
+      details: build(:hana_cluster_details),
       health: Health.passing(),
       type: ClusterType.hana_scale_up()
     }
@@ -423,7 +424,7 @@ defmodule Trento.Factory do
     })
   end
 
-  def hana_cluster_details_value_object do
+  def hana_cluster_details_factory do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
       nodes: [
@@ -441,6 +442,13 @@ defmodule Trento.Factory do
             }
           ],
           site: Faker.StarWars.planet()
+        }
+      ],
+      sites: [
+        %HanaClusterSite{
+          name: Faker.Beer.name(),
+          state: "Primary",
+          sr_health_state: "4"
         }
       ],
       sbd_devices: [
