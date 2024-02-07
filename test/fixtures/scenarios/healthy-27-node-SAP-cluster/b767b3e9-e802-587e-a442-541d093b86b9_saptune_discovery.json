@@ -26,37 +26,45 @@
         "configured version": "3",
         "package version": "3.1.0",
         "Solution enabled": [
-          "NETWEAVER"
+          "HANA"
         ],
         "Notes enabled by Solution": [
           {
-            "Solution ID": "NETWEAVER",
+            "Solution ID": "HANA",
             "Note list": [
               "941735",
               "1771258",
+              "1868829",
+              "1980196",
               "2578899",
+              "2684254",
+              "2382421",
+              "2534844",
               "2993054",
-              "1656250",
-              "900929"
+              "1656250"
             ]
           }
         ],
         "Solution applied": [
           {
-            "Solution ID": "NETWEAVER",
+            "Solution ID": "HANA",
             "applied partially": false
           }
         ],
         "Notes applied by Solution": [
           {
-            "Solution ID": "NETWEAVER",
+            "Solution ID": "HANA",
             "Note list": [
               "941735",
               "1771258",
+              "1868829",
+              "1980196",
               "2578899",
+              "2684254",
+              "2382421",
+              "2534844",
               "2993054",
-              "1656250",
-              "900929"
+              "1656250"
             ]
           }
         ],
@@ -64,18 +72,26 @@
         "Notes enabled": [
           "941735",
           "1771258",
+          "1868829",
+          "1980196",
           "2578899",
+          "2684254",
+          "2382421",
+          "2534844",
           "2993054",
-          "1656250",
-          "900929"
+          "1656250"
         ],
         "Notes applied": [
           "941735",
           "1771258",
+          "1868829",
+          "1980196",
           "2578899",
+          "2684254",
+          "2382421",
+          "2534844",
           "2993054",
-          "1656250",
-          "900929"
+          "1656250"
         ],
         "staging": {
           "staging enabled": false,
