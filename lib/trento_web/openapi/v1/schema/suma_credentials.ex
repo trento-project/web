@@ -1,4 +1,4 @@
-defmodule TrentoWeb.OpenApi.V1.Schema.SoftwareUpdates do
+defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
   @moduledoc false
 
   require OpenApiSpex

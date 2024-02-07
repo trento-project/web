@@ -14,9 +14,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     tags: ["Platform"],
     description: "Gets the saved user settings for SUSE Manager",
     responses: [
-      ok:
-        {"The software updates user settings", "application/json",
-         Schema.SoftwareUpdates.Settings},
+      ok: {"The SUSE Manager user settings", "application/json", Schema.SUMACredentials.Settings},
       not_found: Schema.NotFound.response()
     ]
 
