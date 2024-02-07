@@ -1,4 +1,4 @@
-defmodule TrentoWeb.V1.SoftwareUpdatesController do
+defmodule TrentoWeb.V1.SUMACredentialsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
@@ -23,7 +23,7 @@ defmodule TrentoWeb.V1.SoftwareUpdatesController do
   @spec show(Plug.Conn.t(), any) :: Plug.Conn.t()
   def show(conn, _) do
     with {:ok, settings} <- SoftwareUpdates.get_settings() do
-      render(conn, "software_updates_settings.json", %{settings: settings})
+      render(conn, "suma_credentials.json", %{settings: settings})
     end
   end
 end
