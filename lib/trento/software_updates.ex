@@ -49,4 +49,11 @@ defmodule Trento.SoftwareUpdates do
       end
     end
   end
+
+  @spec clear_settings :: :ok
+  def clear_settings do
+    Repo.delete_all(Settings)
+
+    :ok
+  end
 end

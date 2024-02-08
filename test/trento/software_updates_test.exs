@@ -183,4 +183,22 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
     assert {:error, :settings_already_configured} = SoftwareUpdates.save_settings(settings)
   end
+
+  describe "clearing software update settings" do
+    test "should support idempotent sequential clear settings" do
+      insert(
+        :software_updates_settings,
+        [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+        conflict_target: :id,
+        on_conflict: :replace_all
+      )
+
+      assert {:ok, _} = SoftwareUpdates.get_settings()
+
+      Enum.each(1..3, fn _ ->
+        assert :ok == SoftwareUpdates.clear_settings()
+        assert {:error, :settings_not_configured} == SoftwareUpdates.get_settings()
+      end)
+    end
+  end
 end
