@@ -13,6 +13,8 @@ export const availableHanaCluster = {
   sites: [
     {
       name: 'NBG',
+      state: 'Primary',
+      srHealthState: 'fill-jungle-green-500',
       hosts: [
         {
           hostname: 'vmhdbprd01',
@@ -107,6 +109,8 @@ export const availableHanaCluster = {
     },
     {
       name: 'WDF',
+      state: 'Secondary',
+      srHealthState: 'fill-jungle-green-500',
       hosts: [
         {
           hostname: 'vmhdbprd02',

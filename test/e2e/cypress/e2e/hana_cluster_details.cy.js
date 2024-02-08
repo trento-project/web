@@ -152,6 +152,14 @@ context('HANA cluster details', () => {
       it(`should have ${site.name}`, () => {
         cy.get(`.tn-site-details-${site.name}`).contains(site.name);
       });
+      it(`should have ${site.state} state in site ${site.name}`, () => {
+        cy.get(`.tn-site-details-${site.name}`).contains(site.state);
+      });
+      it(`should have correct SR health state in site ${site.name}`, () => {
+        cy.get(`.tn-site-details-${site.name}`)
+          .find('svg')
+          .should('have.class', site.srHealthState);
+      });
 
       site.hosts.forEach((host) => {
         it(`${host.hostname} should have the expected IP addresses`, () => {
