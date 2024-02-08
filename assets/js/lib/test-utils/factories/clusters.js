@@ -30,6 +30,12 @@ export const clusterResourceFactory = Factory.define(() => ({
   fail_count: faker.number.int(),
 }));
 
+export const hanaClusterSiteFactory = Factory.define(({ sequence }) => ({
+  name: `site_${sequence}`,
+  state: hanaStatus(),
+  sr_health_state: '4',
+}));
+
 export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
   name: faker.animal.dog(),
   site: faker.location.city(),
@@ -45,16 +51,25 @@ export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
   resources: clusterResourceFactory.buildList(5),
 }));
 
-export const hanaClusterDetailsFactory = Factory.define(() => ({
-  fencing_type: 'external/sbd',
-  nodes: hanaClusterDetailsNodesFactory.buildList(2),
-  sbd_devices: sbdDevicesFactory.buildList(3),
-  secondary_sync_state: 'SOK',
-  sr_health_state: '4',
-  stopped_resources: clusterResourceFactory.buildList(2),
-  system_replication_mode: 'sync',
-  system_replication_operation_mode: 'logreplay',
-}));
+export const hanaClusterDetailsFactory = Factory.define(() => {
+  const sites = hanaClusterSiteFactory.buildList(2);
+  const nodes = [
+    hanaClusterDetailsNodesFactory.build({ site: sites[0].name }),
+    hanaClusterDetailsNodesFactory.build({ site: sites[1].name }),
+  ];
+
+  return {
+    fencing_type: 'external/sbd',
+    nodes,
+    sites,
+    sbd_devices: sbdDevicesFactory.buildList(3),
+    secondary_sync_state: 'SOK',
+    sr_health_state: '4',
+    stopped_resources: clusterResourceFactory.buildList(2),
+    system_replication_mode: 'sync',
+    system_replication_operation_mode: 'logreplay',
+  };
+});
 
 export const ascsErsClusterNodeFactory = Factory.define(({ sequence }) => ({
   name: `${faker.person.firstName()}_${sequence}`,
