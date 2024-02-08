@@ -20,10 +20,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         username: username,
         password: password
       } =
-        insert(:software_updates_settings, [ca_cert: nil, ca_uploaded_at: nil],
-          conflict_target: :id,
-          on_conflict: :replace_all
-        )
+        insert(:software_updates_settings, ca_cert: nil, ca_uploaded_at: nil)
 
       assert {:ok,
               %Settings{
@@ -45,9 +42,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       } =
         insert(
           :software_updates_settings,
-          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
-          conflict_target: :id,
-          on_conflict: :replace_all
+          ca_cert: Faker.Lorem.sentence(),
+          ca_uploaded_at: DateTime.utc_now()
         )
 
       assert {:ok,
@@ -357,9 +353,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     test "should support idempotent sequential clear settings" do
       insert(
         :software_updates_settings,
-        [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
-        conflict_target: :id,
-        on_conflict: :replace_all
+        ca_cert: Faker.Lorem.sentence(),
+        ca_uploaded_at: DateTime.utc_now()
       )
 
       assert {:ok, _} = SoftwareUpdates.get_settings()
