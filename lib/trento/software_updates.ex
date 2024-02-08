@@ -9,10 +9,17 @@ defmodule Trento.SoftwareUpdates do
   alias Trento.Repo
   alias Trento.SoftwareUpdates.Settings
 
-  @type software_update_settings_submission :: %{
+  @type software_update_settings_save_submission :: %{
           url: String.t(),
           username: String.t(),
           password: String.t(),
+          ca_cert: String.t() | nil
+        }
+
+  @type software_update_settings_change_submission :: %{
+          url: String.t() | nil,
+          username: String.t() | nil,
+          password: String.t() | nil,
           ca_cert: String.t() | nil
         }
 
@@ -27,7 +34,7 @@ defmodule Trento.SoftwareUpdates do
     end
   end
 
-  @spec save_settings(software_update_settings_submission, module()) ::
+  @spec save_settings(software_update_settings_save_submission, module()) ::
           {:ok, Settings.t()}
           | {:error, :settings_already_configured}
           | {:error, any()}
@@ -47,6 +54,25 @@ defmodule Trento.SoftwareUpdates do
 
           error
       end
+    end
+  end
+
+  @spec change_settings(software_update_settings_change_submission, module()) ::
+          {:ok, Settings.t()}
+          | {:error, :settings_not_configured}
+          | {:error, any()}
+  def change_settings(settings_submission, date_service \\ DateService) do
+    with {:ok, settings} <- get_settings(),
+         {:ok, updated_settings} <-
+           settings
+           |> Settings.changeset(settings_submission, date_service)
+           |> Repo.update() do
+      {:ok, updated_settings}
+    else
+      _ = error ->
+        Logger.error("Error while updating software updates settings: #{inspect(error)}")
+
+        error
     end
   end
 
