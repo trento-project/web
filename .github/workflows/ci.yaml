@@ -258,7 +258,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
       - name: Compile
         run: mix compile --warnings-as-errors
-      - name: "Docker compose dependencies" 
+      - name: "Docker compose dependencies"
         uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.yaml"
@@ -399,7 +399,7 @@ jobs:
           key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
-      - name: "Docker compose dependencies" 
+      - name: "Docker compose dependencies"
         uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose.yaml"
@@ -696,8 +696,8 @@ jobs:
       - name: Push data
         run: photofinish run healthy-27-node-SAP-cluster -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
 
-  obs-commit:
-    name: Commit the project on OBS
+  obs-commit-image:
+    name: Commit to OBS to generate container image
     runs-on: ubuntu-20.04
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     needs: [static-code-analysis, test, test-fe, test-e2e]
@@ -710,7 +710,7 @@ jobs:
         OBS_USER: ${{ secrets.OBS_USER }}
         OBS_PASS: ${{ secrets.OBS_PASS }}
         OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
-        FOLDER: packaging/suse
+        FOLDER: packaging/suse/container
         REPOSITORY: ${{ github.repository }}
       options: -u 0:0
     steps:
@@ -756,13 +756,79 @@ jobs:
           VERSION=$(./hack/get_version_from_git.sh)
           # "+" character is not allowed in OBS dockerfile version strings
           VERSION=${VERSION//[+]/-}
-          sed -i 's~%%VERSION%%~'"${VERSION}"'~' packaging/suse/Dockerfile
+          sed -i 's~%%VERSION%%~'"${VERSION}"'~' $FOLDER/Dockerfile
       - name: Commit on OBS
         run: |
           OBS_PACKAGE=$OBS_PROJECT/$NAME
           osc checkout $OBS_PACKAGE -o $DEST_FOLDER
-          cp -r packaging/suse/* $DEST_FOLDER
+          cp -r $FOLDER/* $DEST_FOLDER
           tar --transform 's,^./,/web/,' -zcvf $DEST_FOLDER/web.tar.gz --exclude=./.git ./*
           cd $DEST_FOLDER
           osc ar
           osc commit -m "New development version of $NAME released"
+
+  obs-commit-rpm:
+    needs: [static-code-analysis, test, test-fe, test-e2e]
+    runs-on: ubuntu-20.04
+    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    container:
+      image: ghcr.io/trento-project/continuous-delivery:main
+      env:
+        OBS_USER: ${{ secrets.OBS_USER }}
+        OBS_PASS: ${{ secrets.OBS_PASS }}
+        OBS_PROJECT: ${{ secrets.OBS_PROJECT }}
+        OSC_CHECKOUT_DIR: /tmp/trento-web-package
+        REPOSITORY: ${{ github.repository }}
+        FOLDER: packaging/suse/rpm
+      options: -u 0:0
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}    
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Configure OSC
+        run: |
+          mkdir -p $HOME/.config/osc
+          cp /home/osc/.config/osc/oscrc $HOME/.config/osc
+          /scripts/init_osc_creds.sh
+      - name: Prepare _service file
+        run: |
+          git config --global --add safe.directory /__w/web/web
+          VERSION=$(./hack/get_version_from_git.sh)
+          sed -i 's~%%REVISION%%~${{ github.sha }}~' $FOLDER/_service && \
+          sed -i 's~%%REPOSITORY%%~'"${REPOSITORY}"'~' $FOLDER/_service && \
+          sed -i 's~%%VERSION%%~'"${VERSION}"'~' $FOLDER/_service
+      - name: Get mix deps & prepare tarball
+        run: |
+         mix local.hex --force && mix deps.clean --all && mix deps.get
+         tar --sort=name --owner=root:0 --group=root:0 --mtime='UTC 1970-01-01' -c deps | gzip -n > deps.tar.gz
+      - name: Checkout and prepare OBS package
+        run: |
+          osc checkout $OBS_PROJECT trento-web -o $OSC_CHECKOUT_DIR
+          cp $FOLDER/_service $OSC_CHECKOUT_DIR
+          cp $FOLDER/trento-web.spec $OSC_CHECKOUT_DIR
+          rm -v $OSC_CHECKOUT_DIR/*.tar.gz
+          pushd $OSC_CHECKOUT_DIR 
+          osc service manualrun
+          cp  /__w/web/web/deps.tar.gz .
+      - name: Prepare trento-web.changes file
+        # The .changes file is updated only in release creation. This current task should be improved
+        # in order to add the current rolling release notes
+        if: github.event_name == 'release'
+        run: |
+          git config --global --add safe.directory /__w/web/web
+          VERSION=$(./hack/get_version_from_git.sh)
+          TAG=$(echo $VERSION | cut -f1 -d+)
+          hack/gh_release_to_obs_changeset.py $REPOSITORY -a shap-staff@suse.de -t $TAG -f $OSC_CHECKOUT_DIR/trento-web.changes
+      - name: Commit changes into OBS
+        run: |
+          pushd $OSC_CHECKOUT_DIR
+          osc ar
+          osc commit -m "GitHub Actions automated update to reference ${{ github.sha }}"

@@ -1,0 +1,11 @@
+AMQP_URL=amqp://trento_user:trento_user_password@rabbitmq-host/vhost
+DATABASE_URL=ecto://trento_user:web_password@postgres-host/trento
+EVENTSTORE_URL=ecto://trento_user:web_password@postgres-host/trento_event_store
+ENABLE_ALERTING=false
+PROMETHEUS_URL=http://prometheus-host:9090
+SECRET_KEY_BASE=<secret-key-base>
+ACCESS_TOKEN_ENC_SECRET=<access-token-enc-secret>
+REFRESH_TOKEN_ENC_SECRET=<refresh-token-enc-secret>
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=sample-password
+ENABLE_API_KEY=true
