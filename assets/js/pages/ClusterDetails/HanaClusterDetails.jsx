@@ -1,5 +1,5 @@
 import React from 'react';
-import { get, groupBy } from 'lodash';
+import { get, sortBy } from 'lodash';
 import classNames from 'classnames';
 
 import { getClusterTypeLabel } from '@lib/model/clusters';
@@ -11,16 +11,14 @@ import ListView from '@common/ListView';
 import PageHeader from '@common/PageHeader';
 import ProviderLabel from '@common/ProviderLabel';
 import SapSystemLink from '@common/SapSystemLink';
-import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';
-import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
 
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
+import HanaClusterSite from './HanaClusterSite';
 import SBDDetails from './SBDDetails';
-import AttributesDetails from './AttributesDetails';
 import StoppedResources from './StoppedResources';
 
 export const enrichNodes = (clusterNodes, hosts) =>
@@ -28,46 +26,6 @@ export const enrichNodes = (clusterNodes, hosts) =>
     ...node,
     ...hosts.find(({ hostname }) => hostname === node.name),
   }));
-
-const siteDetailsConfig = {
-  usePadding: false,
-  columns: [
-    {
-      title: 'Hostname',
-      key: '',
-      render: (_, hostData) => (
-        <ClusterNodeLink hostId={hostData.id}>{hostData.name}</ClusterNodeLink>
-      ),
-    },
-    { title: 'Role', key: 'hana_status' },
-    {
-      title: 'IP',
-      key: 'ip_addresses',
-      className: 'table-col-m',
-      render: (content) => content?.join(', '),
-    },
-    {
-      title: 'Virtual IP',
-      key: 'virtual_ip',
-      className: 'table-col-m',
-    },
-    {
-      title: '',
-      key: '',
-      className: 'table-col-xs',
-      render: (_, item) => {
-        const { attributes, resources } = item;
-        return (
-          <AttributesDetails
-            title="Site Details"
-            attributes={attributes}
-            resources={resources}
-          />
-        );
-      },
-    },
-  ],
-};
 
 function HanaClusterDetails({
   clusterID,
@@ -239,24 +197,21 @@ function HanaClusterDetails({
         <StoppedResources resources={details.stopped_resources} />
       )}
 
-      <div className="mt-8">
-        <div>
-          <h2 className="text-2xl font-bold">Pacemaker Site details</h2>
-        </div>
+      <h2 className="mt-8 text-2xl font-bold">Site details</h2>
+      <div className="mt-2 tn-site-details">
+        {sortBy(details.sites, 'name').map(
+          ({ name: siteName, state, sr_health_state: srHealthState }) => (
+            <HanaClusterSite
+              key={siteName}
+              name={siteName}
+              nodes={enrichedNodes.filter(({ site }) => site === siteName)}
+              state={state}
+              srHealthState={srHealthState}
+            />
+          )
+        )}
       </div>
 
-      <div className="mt-2 tn-site-details">
-        {Object.entries(groupBy(details.nodes, 'site')).map(([siteName]) => (
-          <div key={siteName} className={`tn-site-details-${siteName} mt-4`}>
-            <h3 className="text-l font-bold tn-site-name">{siteName}</h3>
-            <Table
-              className="tn-site-table"
-              config={siteDetailsConfig}
-              data={enrichedNodes.filter(({ site }) => site === siteName)}
-            />
-          </div>
-        ))}
-      </div>
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
   );
