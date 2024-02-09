@@ -28,7 +28,8 @@ defmodule Trento.SoftwareUpdates.Settings do
     |> cast(attrs, __MODULE__.__schema__(:fields))
     |> validate_required([:url, :username, :password])
     |> validate_change(:url, &validate_url/2)
-    |> maybe_add_cert_upload_date(date_service)
+    |> maybe_change_cert_upload_date(attrs, date_service)
+    |> unique_constraint(:id, name: :software_update_settings_pkey)
   end
 
   defp validate_url(_url_atom, url) do
@@ -41,9 +42,23 @@ defmodule Trento.SoftwareUpdates.Settings do
     end
   end
 
+  defp maybe_change_cert_upload_date(changeset, settings_submission, date_service) do
+    changeset
+    |> maybe_add_cert_upload_date(date_service)
+    |> maybe_remove_cert_upload_date(settings_submission)
+  end
+
   defp maybe_add_cert_upload_date(changeset, date_service) do
     if get_change(changeset, :ca_cert) do
       put_change(changeset, :ca_uploaded_at, date_service.utc_now())
+    else
+      changeset
+    end
+  end
+
+  defp maybe_remove_cert_upload_date(changeset, settings_submission) do
+    if Map.has_key?(settings_submission, :ca_cert) && nil == get_change(changeset, :ca_cert) do
+      put_change(changeset, :ca_uploaded_at, nil)
     else
       changeset
     end
