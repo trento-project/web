@@ -56,7 +56,60 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         |> json_response(:created)
 
       assert %{"url" => ^url, "username" => ^username} = resp
-      assert ca_uploaded_at != nil
+      refute ca_uploaded_at == nil
+    end
+
+    test "should not save settings if HTTP protocol provided in URL", %{conn: conn} do
+      settings = %{
+        url: "http://insecureurl.com",
+        username: Faker.Internet.user_name(),
+        password: Faker.Lorem.word(),
+        ca_cert: Faker.Lorem.sentence()
+      }
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/settings/suma_credentials", settings)
+        |> json_response(:unprocessable_entity)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "can only be an https url",
+                   "source" => %{"pointer" => "/url"},
+                   "title" => "Invalid value"
+                 }
+               ]
+             } == resp
+    end
+
+    test "should return 422 status if no body is provided in request", %{conn: conn} do
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/settings/suma_credentials", nil)
+        |> json_response(:unprocessable_entity)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Missing field: url",
+                   "source" => %{"pointer" => "/url"},
+                   "title" => "Invalid value"
+                 },
+                 %{
+                   "detail" => "Missing field: username",
+                   "source" => %{"pointer" => "/username"},
+                   "title" => "Invalid value"
+                 },
+                 %{
+                   "detail" => "Missing field: password",
+                   "source" => %{"pointer" => "/password"},
+                   "title" => "Invalid value"
+                 }
+               ]
+             } == resp
     end
 
     test "should not save valid settings when previously settings have been saved", %{conn: conn} do
