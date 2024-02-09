@@ -40,8 +40,9 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
 
   @spec create(Plug.Conn.t(), any) :: Plug.Conn.t()
   def create(%{body_params: body_params} = conn, _) do
-    with {:ok, saved_settings} <-
-           body_params |> decode_body() |> SoftwareUpdates.save_settings() do
+    attrs = decode_body(body_params)
+
+    with {:ok, saved_settings} <- SoftwareUpdates.save_settings(attrs) do
       conn
       |> put_status(:created)
       |> render("suma_credentials.json", %{settings: saved_settings})
