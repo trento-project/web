@@ -15,9 +15,8 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     test "should return user settings", %{conn: conn} do
       insert(
         :software_updates_settings,
-        [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
-        conflict_target: :id,
-        on_conflict: :replace_all
+        ca_cert: Faker.Lorem.sentence(),
+        ca_uploaded_at: DateTime.utc_now()
       )
 
       api_spec = ApiSpec.spec()
@@ -113,10 +112,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
 
     test "should not save valid settings when previously settings have been saved", %{conn: conn} do
-      insert(:software_updates_settings, [ca_cert: nil, ca_uploaded_at: nil],
-        conflict_target: :id,
-        on_conflict: :replace_all
-      )
+      insert(:software_updates_settings, ca_cert: nil, ca_uploaded_at: nil)
 
       new_settings = %{
         url: Faker.Internet.image_url(),
