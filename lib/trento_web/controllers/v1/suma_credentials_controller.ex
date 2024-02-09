@@ -12,11 +12,11 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
   action_fallback TrentoWeb.FallbackController
 
   operation :show,
-    summary: "Gets the user settings",
+    summary: "Gets the SUMA credentials",
     tags: ["Platform"],
-    description: "Gets the saved user settings for SUSE Manager",
+    description: "Gets the saved credentials for SUSE Manager",
     responses: [
-      ok: {"The SUSE Manager user settings", "application/json", SUMACredentials.Settings},
+      ok: {"The SUSE Manager credentials", "application/json", SUMACredentials.Settings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -28,9 +28,9 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
   end
 
   operation :create,
-    summary: "Saves the user settings",
+    summary: "Saves the SUMA credentials",
     tags: ["Platform"],
-    description: "Saves user settings for SUSE Manager",
+    description: "Saves credentials for SUSE Manager",
     request_body:
       {"SUMACredentialsRequest", "application/json", SUMACredentials.SUMACredentialsRequest},
     responses: [
