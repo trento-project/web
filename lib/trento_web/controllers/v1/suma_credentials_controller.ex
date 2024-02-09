@@ -35,8 +35,7 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
 
   @spec delete(Plug.Conn.t(), any) :: Plug.Conn.t()
   def delete(conn, _) do
-    with :ok <- SoftwareUpdates.clear_settings() do
-      send_resp(conn, :no_content, "")
-    end
+    :ok = SoftwareUpdates.clear_settings()
+    send_resp(conn, :no_content, "")
   end
 end
