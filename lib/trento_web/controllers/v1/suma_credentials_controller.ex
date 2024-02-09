@@ -24,4 +24,18 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
       render(conn, "suma_credentials.json", %{settings: settings})
     end
   end
+
+  operation :delete,
+    summary: "Clears the SUMA credentials",
+    tags: ["Platform"],
+    description: "Clears the saved credentials for SUSE Manager",
+    responses: [
+      no_content: "Settings cleared successfully"
+    ]
+
+  @spec delete(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def delete(conn, _) do
+    :ok = SoftwareUpdates.clear_settings()
+    send_resp(conn, :no_content, "")
+  end
 end
