@@ -4,7 +4,7 @@ Description=Trento Web service
 [Service]
 ExecStart=/usr/lib/trento/bin/trento start
 ExecStartPre=/usr/lib/trento/bin/trento eval 'Trento.Release.init()'
-EnvironmentFile=/etc/trento/trento_web
+EnvironmentFile=/etc/trento/trento-web
 Type=simple
 User=root
 Restart=on-failure
