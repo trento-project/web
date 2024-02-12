@@ -23,7 +23,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
     field :system_replication_mode, :string
     field :system_replication_operation_mode, :string
     field :secondary_sync_state, :string
-    # this attribute is deprecated, moved to the sites entry
+    # sr_health_state attribute is deprecated, moved to the sites entry
     field :sr_health_state, :string
     field :fencing_type, :string
 
