@@ -145,7 +145,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install photofinish
-        uses: jaxxstorm/action-install-gh-release@v1.10.0
+        uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: trento-project/photofinish
           tag: v1.2.2
