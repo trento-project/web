@@ -768,6 +768,7 @@ jobs:
           osc commit -m "New development version of $NAME released"
 
   obs-commit-rpm:
+    name: Commit to OBS to generate RPM package
     needs: [static-code-analysis, test, test-fe, test-e2e]
     runs-on: ubuntu-20.04
     if: github.ref == 'refs/heads/main' || github.event_name == 'release'
