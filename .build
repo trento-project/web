@@ -45,6 +45,7 @@ Trento.Clusters.ValueObjects.CheckResult.html
 Trento.Clusters.ValueObjects.ClusterResource.html
 Trento.Clusters.ValueObjects.HanaClusterDetails.html
 Trento.Clusters.ValueObjects.HanaClusterNode.html
+Trento.Clusters.ValueObjects.HanaClusterSite.html
 Trento.Clusters.ValueObjects.HostExecution.html
 Trento.Clusters.ValueObjects.SbdDevice.html
 Trento.Clusters.html
@@ -409,8 +410,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-8433557B.js
-dist/sidebar_items-0EA3A2FD.js
+dist/search_data-571C0F77.js
+dist/sidebar_items-D77BDE89.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
