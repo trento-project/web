@@ -1,0 +1,95 @@
+{
+  "agent_id": "33ec3a15-103b-453b-b6b2-f3f971582dc5",
+  "discovery_type": "cloud_discovery",
+  "payload": {
+    "Metadata": {
+      "compute": {
+        "azEnvironment": "AzurePublicCloud",
+        "isHostCompatibilityLayerVm": "true",
+        "location": "westeurope",
+        "name": "vms4prdhdb02",
+        "offer": "sles-sap-15-sp5",
+        "osProfile": {
+          "adminUsername": "azureuser",
+          "computerName": "vms4prdhdb02",
+          "disablePasswordAuthentication": "true"
+        },
+        "osType": "Linux",
+        "plan": {},
+        "platformFaultDomain": "0",
+        "platformUpdateDomain": "0",
+        "provider": "Microsoft.Compute",
+        
+        "publisher": "suse",
+        "resourceGroupName": "SCALEOUT",
+        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/SCALEOUT/providers/Microsoft.Compute/virtualMachines/vms4prdhdb02",
+        "securityProfile": {
+          "secureBootEnabled": "true",
+          "virtualTpmEnabled": "true"
+        },
+        "sku": "gen2",
+        "storageProfile": {
+          "imageReference": {
+            "offer": "sles-sap-15-sp5",
+            "publisher": "suse",
+            "sku": "gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "diffDiskSettings": {
+              "option": ""
+            },
+            "diskSizeGB": "30",
+            "encryptionSettings": {
+              "enabled": "false"
+            },
+            "image": {
+              "uri": ""
+            },
+            "managedDisk": {
+              "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/SCALEOUT/providers/Microsoft.Compute/disks/vms4prdhdb02_OsDisk_1",
+              "storageAccountType": "Premium_LRS"
+            },
+            "name": "vms4prdhdb02_OsDisk_1",
+            "osType": "Linux",
+            "vhd": {
+              "uri": ""
+            },
+            "writeAcceleratorEnabled": "false"
+          }
+        },
+        "subscriptionId": "00000000-0000-0000-0000-000000000000",
+        "tags": "",
+
+        "version": "2023.12.14",
+        "vmId": "84772fa1-ba4e-4da8-adf7-8ec34d4c2130",
+        "vmSize": "Standard_E4ads_v5",
+        "zone": "1"
+      },
+      "network": {
+        "interface": [
+          {
+            "ipv4": {
+              "ipAddress": [
+                {
+                  "privateIpAddress": "10.0.0.5"
+                }
+              ],
+              "subnet": [
+                {
+                  "address": "10.0.0.0",
+                  "prefix": "24"
+                }
+              ]
+            },
+            "ipv6": {},
+            "macAddress": "116CBA824C06"
+          }
+        ]
+      }
+    },
+    "Provider": "azure"
+  }
+}
