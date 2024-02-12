@@ -19,6 +19,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     ClusterResource,
     HanaClusterDetails,
     HanaClusterNode,
+    HanaClusterSite,
     SbdDevice
   }
 
@@ -178,6 +179,18 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       ],
                       site: "SECONDARY_SITE_NAME",
                       virtual_ip: nil
+                    }
+                  ],
+                  sites: [
+                    %HanaClusterSite{
+                      name: "PRIMARY_SITE_NAME",
+                      state: "Primary",
+                      sr_health_state: "4"
+                    },
+                    %HanaClusterSite{
+                      name: "SECONDARY_SITE_NAME",
+                      state: "Secondary",
+                      sr_health_state: "4"
                     }
                   ],
                   sbd_devices: [
@@ -917,6 +930,10 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       virtual_ip: nil
                     }
                   ],
+                  sites: [
+                    %HanaClusterSite{name: "Site1", state: "Primary", sr_health_state: "4"},
+                    %HanaClusterSite{name: "Site2", state: "Secondary", sr_health_state: "4"}
+                  ],
                   sbd_devices: [],
                   secondary_sync_state: "SOK",
                   sr_health_state: "4",
@@ -958,12 +975,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "hana_prd_roles" => "1:P:master1::worker:",
                         "hana_prd_site" => "Site1",
                         "hana_prd_srmode" => "sync",
+                        "hana_prd_sync_state" => "SFAIL",
                         "hana_prd_version" => "2.00.057.00.1629894416",
                         "hana_prd_vhost" => "vmhana01",
                         "lpa_prd_lpt" => "1650871168",
                         "master-rsc_SAPHana_PRD_HDB00" => "-9000"
                       },
-                      hana_status: "Unknown",
+                      hana_status: "Failed",
                       name: "vmhana01",
                       resources: [
                         %ClusterResource{
@@ -996,15 +1014,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "hana_prd_clone_state" => "DEMOTED",
                         "hana_prd_op_mode" => "logreplay",
                         "hana_prd_remoteHost" => "vmhana01",
-                        "hana_prd_roles" => "4:S:master1:master:worker:master",
+                        "hana_prd_roles" => "4:P:master1:master:worker:master",
                         "hana_prd_site" => "Site2",
                         "hana_prd_srmode" => "sync",
+                        "hana_prd_sync_state" => "PRIM",
                         "hana_prd_version" => "2.00.057.00.1629894416",
                         "hana_prd_vhost" => "vmhana02",
                         "lpa_prd_lpt" => "30",
                         "master-rsc_SAPHana_PRD_HDB00" => "-INFINITY"
                       },
-                      hana_status: "Unknown",
+                      hana_status: "Primary",
                       name: "vmhana02",
                       resources: [
                         %ClusterResource{
@@ -1026,9 +1045,21 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       virtual_ip: nil
                     }
                   ],
+                  sites: [
+                    %HanaClusterSite{
+                      name: "Site1",
+                      state: "Failed",
+                      sr_health_state: "1"
+                    },
+                    %HanaClusterSite{
+                      name: "Site2",
+                      state: "Primary",
+                      sr_health_state: "4"
+                    }
+                  ],
                   sbd_devices: [],
-                  secondary_sync_state: "Unknown",
-                  sr_health_state: "Unknown",
+                  secondary_sync_state: "SFAIL",
+                  sr_health_state: "1",
                   stopped_resources: [
                     %ClusterResource{
                       fail_count: nil,
@@ -1234,6 +1265,18 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       ],
                       site: "SECONDARY_SITE_NAME",
                       virtual_ip: nil
+                    }
+                  ],
+                  sites: [
+                    %HanaClusterSite{
+                      name: "PRIMARY_SITE_NAME",
+                      state: "Primary",
+                      sr_health_state: "4"
+                    },
+                    %HanaClusterSite{
+                      name: "SECONDARY_SITE_NAME",
+                      state: "Secondary",
+                      sr_health_state: "4"
                     }
                   ],
                   sbd_devices: [
@@ -1511,6 +1554,10 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         ]
                       }
                     ],
+                    sites: [
+                      %HanaClusterSite{name: "Site1", state: "Primary", sr_health_state: "4"},
+                      %HanaClusterSite{name: "Site2", state: "Secondary", sr_health_state: "4"}
+                    ],
                     sbd_devices: [
                       %SbdDevice{
                         device: "/dev/vdb",
@@ -1698,6 +1745,10 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           }
                         ]
                       }
+                    ],
+                    sites: [
+                      %HanaClusterSite{name: "Site2", state: "Primary", sr_health_state: "4"},
+                      %HanaClusterSite{name: "Site1", state: "Secondary", sr_health_state: "4"}
                     ],
                     sbd_devices: [
                       %SbdDevice{

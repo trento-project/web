@@ -547,6 +547,10 @@
                 "Value": "sync"
               },
               {
+                "Name": "hana_prd_sync_state",
+                "Value": "SFAIL"
+              },
+              {
                 "Name": "hana_prd_version",
                 "Value": "2.00.057.00.1629894416"
               },
@@ -581,7 +585,7 @@
               },
               {
                 "Name": "hana_prd_roles",
-                "Value": "4:S:master1:master:worker:master"
+                "Value": "4:P:master1:master:worker:master"
               },
               {
                 "Name": "hana_prd_site",
@@ -590,6 +594,10 @@
               {
                 "Name": "hana_prd_srmode",
                 "Value": "sync"
+              },
+              {
+                "Name": "hana_prd_sync_state",
+                "Value": "PRIM"
               },
               {
                 "Name": "hana_prd_version",

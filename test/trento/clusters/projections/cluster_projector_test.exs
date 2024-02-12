@@ -129,7 +129,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       type: :hana_scale_up,
       resources_number: 8,
       hosts_number: 2,
-      details: hana_cluster_details_value_object()
+      details: build(:hana_cluster_details)
     }
 
     ProjectorTestHelper.project(

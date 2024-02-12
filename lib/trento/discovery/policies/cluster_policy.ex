@@ -137,7 +137,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       fencing_type: parse_cluster_fencing_type(crmmon),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: nodes,
-      sbd_devices: parse_sbd_devices(sbd)
+      sbd_devices: parse_sbd_devices(sbd),
+      sites: parse_hana_scale_up_sites(nodes, sid)
     }
   end
 
@@ -150,8 +151,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            sid: sid
          } = payload
        ) do
-    nodes = parse_cluster_nodes(payload, sid)
-
     %{
       system_replication_mode: parse_hana_scale_out_system_replication_mode(cib, sid),
       system_replication_operation_mode:
@@ -160,8 +159,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
       fencing_type: parse_cluster_fencing_type(crmmon),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
-      nodes: nodes,
-      sbd_devices: parse_sbd_devices(sbd)
+      nodes: parse_cluster_nodes(payload, sid),
+      sbd_devices: parse_sbd_devices(sbd),
+      sites: parse_hana_scale_out_sites(cib, sid)
     }
   end
 
@@ -302,6 +302,61 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       "hana_#{String.downcase(sid)}_glob_sync_state",
       "Unknown"
     )
+  end
+
+  defp parse_hana_scale_up_sites(nodes, sid) do
+    nodes
+    |> Enum.filter(fn %{site: site} -> site != "" end)
+    |> Enum.map(fn %{site: site, hana_status: hana_status, attributes: attributes} ->
+      %{
+        name: site,
+        state: hana_status,
+        sr_health_state:
+          attributes
+          |> Map.get("hana_#{String.downcase(sid)}_roles")
+          |> String.split(":")
+          |> Enum.at(0)
+      }
+    end)
+  end
+
+  defp parse_hana_scale_out_sites(
+         %{
+           configuration: %{crm_config: %{cluster_properties: cluster_properties}}
+         },
+         sid
+       ) do
+    primary_site =
+      parse_crm_cluster_property(
+        cluster_properties,
+        "hana_#{String.downcase(sid)}_glob_prim",
+        "Unknown"
+      )
+
+    secondary_site = get_secondary_site(cluster_properties, sid)
+
+    [
+      %{
+        name: primary_site,
+        state: parse_hana_scale_out_status(cluster_properties, primary_site, sid),
+        sr_health_state:
+          parse_crm_cluster_property(
+            cluster_properties,
+            "hana_#{String.downcase(sid)}_site_lss_#{primary_site}",
+            "Unknown"
+          )
+      },
+      %{
+        name: secondary_site,
+        state: parse_hana_scale_out_status(cluster_properties, secondary_site, sid),
+        sr_health_state:
+          parse_crm_cluster_property(
+            cluster_properties,
+            "hana_#{String.downcase(sid)}_site_lss_#{secondary_site}",
+            "Unknown"
+          )
+      }
+    ]
   end
 
   # parse_hana_scale_up_sr_health_state returns the secondary sync state of the HANA scale up cluster

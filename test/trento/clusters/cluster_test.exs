@@ -234,7 +234,7 @@ defmodule Trento.ClusterTest do
         }
       ]
 
-      details = hana_cluster_details_value_object()
+      details = build(:hana_cluster_details)
 
       assert_events_and_state(
         initial_events,
