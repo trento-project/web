@@ -32,7 +32,8 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     tags: ["Platform"],
     description: "Saves credentials for SUSE Manager",
     request_body:
-      {"SUMACredentialsRequest", "application/json", SUMACredentials.SUMACredentialsRequest},
+      {"SaveSUMACredentialsRequest", "application/json",
+       SUMACredentials.SaveSUMACredentialsRequest},
     responses: [
       created: {"Settings saved successfully", "application/json", SUMACredentials.Settings},
       unprocessable_entity: UnprocessableEntity.response()
@@ -45,6 +46,29 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     with {:ok, saved_settings} <- SoftwareUpdates.save_settings(attrs) do
       conn
       |> put_status(:created)
+      |> render("suma_credentials.json", %{settings: saved_settings})
+    end
+  end
+
+  operation :update,
+    summary: "Updates the SUMA credentials",
+    tags: ["Platform"],
+    description: "Updates credentials for SUSE Manager",
+    request_body:
+      {"UpdateSUMACredentialsRequest", "application/json",
+       SUMACredentials.UpdateSUMACredentialsRequest},
+    responses: [
+      ok: {"Settings saved successfully", "application/json", SUMACredentials.Settings},
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  @spec update(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def update(%{body_params: body_params} = conn, _) do
+    attrs = decode_body(body_params)
+
+    with {:ok, saved_settings} <- SoftwareUpdates.change_settings(attrs) do
+      conn
+      |> put_status(:ok)
       |> render("suma_credentials.json", %{settings: saved_settings})
     end
   end
