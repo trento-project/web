@@ -97,6 +97,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
             Map.put(submission, :password, "   ")
           ],
           errors: [password: {"can't be blank", [validation: :required]}]
+        },
+        %{
+          submission: [
+            Map.put(submission, :ca_cert, ""),
+            Map.put(submission, :ca_cert, "   ")
+          ],
+          errors: [ca_cert: {"can't be blank", [validation: :required]}]
         }
       ]
 
@@ -240,6 +247,13 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
             {:username, {"can't be blank", [validation: :required]}},
             {:password, {"can't be blank", [validation: :required]}}
           ]
+        },
+        %{
+          change_submissions: [
+            %{ca_cert: ""},
+            %{ca_cert: "   "}
+          ],
+          errors: [ca_cert: {"can't be blank", [validation: :required]}]
         }
       ]
 

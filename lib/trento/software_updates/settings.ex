@@ -28,6 +28,7 @@ defmodule Trento.SoftwareUpdates.Settings do
     |> cast(attrs, __MODULE__.__schema__(:fields))
     |> validate_required([:url, :username, :password])
     |> validate_change(:url, &validate_url/2)
+    |> maybe_validate_ca_cert(attrs)
     |> maybe_change_cert_upload_date(attrs, date_service)
     |> unique_constraint(:id, name: :software_update_settings_pkey)
   end
@@ -39,6 +40,14 @@ defmodule Trento.SoftwareUpdates.Settings do
 
       _ ->
         [url: {"can only be an https url", validation: :https_url_only}]
+    end
+  end
+
+  defp maybe_validate_ca_cert(changeset, settings_submission) do
+    if nil != Map.get(settings_submission, :ca_cert) do
+      validate_required(changeset, :ca_cert)
+    else
+      changeset
     end
   end
 
