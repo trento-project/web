@@ -145,13 +145,14 @@ context('Hosts Overview', () => {
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
         cy.get('.tn-health-container .tn-health-passing', {
           timeout: 15000,
-        }).should('contain', 27);
-        cy.get('.tn-health-container .tn-health-warning').should('contain', 0);
-        cy.get('.tn-health-container .tn-health-critical').should('contain', 0);
+        }).should('contain', 11);
+        cy.get('.tn-health-container .tn-health-warning').should('contain', 12);
+        cy.get('.tn-health-container .tn-health-critical').should('contain', 4);
       });
 
-      it('should show a passing health on the hosts when the agents are sending the heartbeat', () => {
-        cy.get('svg.fill-jungle-green-500').its('length').should('eq', 10);
+      it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
+        cy.get('svg.fill-jungle-green-500').its('length').should('eq', 8);
+        cy.get('svg.fill-yellow-500').its('length').should('eq', 2);
       });
     });
     describe('Health is changed based on saptune status', () => {
