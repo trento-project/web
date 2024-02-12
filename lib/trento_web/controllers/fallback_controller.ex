@@ -75,6 +75,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Requested operation not allowed for present SAP instances.")
   end
 
+  def call(conn, {:error, :settings_already_configured}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Credentials have already been set.")
+  end
+
   def call(conn, {:error, :no_checks_selected}) do
     conn
     |> put_status(:unprocessable_entity)
