@@ -67,6 +67,7 @@ export const hanaClusterDetailsFactory = Factory.define(() => {
     stopped_resources: clusterResourceFactory.buildList(2),
     system_replication_mode: 'sync',
     system_replication_operation_mode: 'logreplay',
+    maintenance_mode: false,
   };
 });
 
