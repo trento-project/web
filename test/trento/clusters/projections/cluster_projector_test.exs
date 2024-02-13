@@ -84,7 +84,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
                 }
               ],
               site: _,
-              virtual_ip: nil
+              virtual_ip: _
             }
           ],
           sbd_devices: [
@@ -94,10 +94,10 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
           sr_health_state: "4",
           stopped_resources: [
             %ClusterResource{
-              fail_count: nil,
+              fail_count: _,
               id: _,
               role: "Stopped",
-              status: nil,
+              status: _,
               type: "ocf::heartbeat:Dummy"
             }
           ],
@@ -170,7 +170,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
                 }
               ],
               site: _,
-              virtual_ip: nil
+              virtual_ip: _
             }
           ],
           sbd_devices: [
@@ -180,10 +180,10 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
           sr_health_state: "4",
           stopped_resources: [
             %ClusterResource{
-              fail_count: nil,
+              fail_count: _,
               id: _,
               role: "Stopped",
-              status: nil,
+              status: _,
               type: "ocf::heartbeat:Dummy"
             }
           ],

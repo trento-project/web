@@ -432,6 +432,7 @@ defmodule Trento.Factory do
         %HanaClusterNode{
           attributes: %{"attribute" => Faker.Beer.name()},
           hana_status: "Secondary",
+          virtual_ip: Faker.Internet.ip_v4_address(),
           name: Faker.StarWars.character(),
           resources: [
             %ClusterResource{
@@ -462,10 +463,10 @@ defmodule Trento.Factory do
       sr_health_state: "4",
       stopped_resources: [
         %ClusterResource{
-          fail_count: nil,
+          fail_count: 0,
           id: Faker.Pokemon.name(),
           role: "Stopped",
-          status: nil,
+          status: Faker.Pokemon.name(),
           type: "ocf::heartbeat:Dummy"
         }
       ],
