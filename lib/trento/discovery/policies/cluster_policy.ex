@@ -197,16 +197,22 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            },
            crmmon:
              %{
+               nodes: nodes,
                node_attributes: %{
-                 nodes: nodes
+                 nodes: nodes_with_attributes
                }
              } = crmmon
          },
          sid
        ) do
-    Enum.map(nodes, fn %{name: name, attributes: attributes} ->
+    Enum.map(nodes, fn %{name: name} ->
       attributes =
-        Enum.into(attributes, %{}, fn %{name: name, value: value} ->
+        nodes_with_attributes
+        |> Enum.find_value([], fn
+          %{name: ^name, attributes: attributes} -> attributes
+          _ -> nil
+        end)
+        |> Enum.into(%{}, fn %{name: name, value: value} ->
           {name, value}
         end)
 
