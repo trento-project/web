@@ -47,17 +47,13 @@ const lastExecution = {
   }),
 };
 
-const hosts = [
-  hostFactory.build({ hostname: details.nodes[0].name }),
-  hostFactory.build({ hostname: details.nodes[1].name }),
-];
+const hosts = details.nodes.map(({ name }) =>
+  hostFactory.build({ hostname: name })
+);
 
-const scaleOutHosts = [
-  hostFactory.build({ hostname: scaleOutDetails.nodes[0].name }),
-  hostFactory.build({ hostname: scaleOutDetails.nodes[1].name }),
-  hostFactory.build({ hostname: scaleOutDetails.nodes[2].name }),
-  hostFactory.build({ hostname: scaleOutDetails.nodes[3].name }),
-];
+const scaleOutHosts = scaleOutDetails.nodes.map(({ name }) =>
+  hostFactory.build({ hostname: name })
+);
 
 const sapSystems = sapSystemFactory.buildList(1, { sid });
 

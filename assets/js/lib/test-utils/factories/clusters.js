@@ -53,10 +53,9 @@ export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
 
 export const hanaClusterDetailsFactory = Factory.define(() => {
   const sites = hanaClusterSiteFactory.buildList(2);
-  const nodes = [
-    hanaClusterDetailsNodesFactory.build({ site: sites[0].name }),
-    hanaClusterDetailsNodesFactory.build({ site: sites[1].name }),
-  ];
+  const nodes = sites.map(({ name: siteName }) =>
+    hanaClusterDetailsNodesFactory.build({ site: siteName })
+  );
 
   return {
     fencing_type: 'external/sbd',
