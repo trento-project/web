@@ -26,6 +26,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterDetails do
     # sr_health_state attribute is deprecated, moved to the sites entry
     field :sr_health_state, :string
     field :fencing_type, :string
+    field :maintenance_mode, :boolean
 
     embeds_many :stopped_resources, ClusterResource
     embeds_many :nodes, HanaClusterNode

@@ -119,6 +119,11 @@
               "Id": "SAPHanaSR-hana_prd_glob_op_mode",
               "Name": "hana_prd_glob_op_mode",
               "Value": "delta_datashipping"
+            },
+            {
+              "Id": "cib-bootstrap-options-maintenance-mode",
+              "Name": "maintenance-mode",
+              "Value": "false"
             }
           ]
         },

@@ -32,6 +32,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 designated_controller: true,
                 details: %HanaClusterDetails{
                   fencing_type: "external/sbd",
+                  maintenance_mode: false,
                   nodes: [
                     %HanaClusterNode{
                       attributes: %{
@@ -247,6 +248,231 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should return the expected commands when a ha_cluster_discovery payload of type hana_scale_up with maintenance mode is handled" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                cib_last_written: "Fri Oct 18 11:48:22 2019",
+                cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
+                designated_controller: true,
+                details: %HanaClusterDetails{
+                  fencing_type: "external/sbd",
+                  maintenance_mode: true,
+                  nodes: [
+                    %HanaClusterNode{
+                      attributes: %{
+                        "hana_prd_clone_state" => "PROMOTED",
+                        "hana_prd_op_mode" => "logreplay",
+                        "hana_prd_remoteHost" => "node02",
+                        "hana_prd_roles" => "4:P:master1:master:worker:master",
+                        "hana_prd_site" => "PRIMARY_SITE_NAME",
+                        "hana_prd_srmode" => "sync",
+                        "hana_prd_sync_state" => "PRIM",
+                        "hana_prd_version" => "2.00.040.00.1553674765",
+                        "hana_prd_vhost" => "node01",
+                        "lpa_prd_lpt" => "1571392102",
+                        "master-rsc_SAPHana_PRD_HDB00" => "150"
+                      },
+                      hana_status: "Primary",
+                      name: "node01",
+                      resources: [
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "stonith-sbd",
+                          role: "Started",
+                          status: "Active",
+                          type: "stonith:external/sbd"
+                        },
+                        %ClusterResource{
+                          fail_count: 2,
+                          id: "rsc_ip_PRD_HDB00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:IPaddr2"
+                        },
+                        %ClusterResource{
+                          fail_count: 1_000_000,
+                          id: "rsc_SAPHana_PRD_HDB00",
+                          role: "Master",
+                          status: "Active",
+                          type: "ocf::suse:SAPHana"
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHanaTopology_PRD_HDB00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::suse:SAPHanaTopology"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "clusterfs",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:Filesystem"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "rsc_ip_HA1_ASCS00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:IPaddr2"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "rsc_fs_HA1_ASCS00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:Filesystem"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "rsc_sap_HA1_ASCS00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:SAPInstance"
+                        }
+                      ],
+                      site: "PRIMARY_SITE_NAME",
+                      virtual_ip: "192.168.123.200"
+                    },
+                    %HanaClusterNode{
+                      attributes: %{
+                        "hana_prd_clone_state" => "DEMOTED",
+                        "hana_prd_op_mode" => "logreplay",
+                        "hana_prd_remoteHost" => "node01",
+                        "hana_prd_roles" => "4:S:master1:master:worker:master",
+                        "hana_prd_site" => "SECONDARY_SITE_NAME",
+                        "hana_prd_srmode" => "sync",
+                        "hana_prd_sync_state" => "SOK",
+                        "hana_prd_version" => "2.00.040.00.1553674765",
+                        "hana_prd_vhost" => "node02",
+                        "lpa_prd_lpt" => "30",
+                        "master-rsc_SAPHana_PRD_HDB00" => "100"
+                      },
+                      hana_status: "Secondary",
+                      name: "node02",
+                      resources: [
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "test",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:Dummy"
+                        },
+                        %ClusterResource{
+                          fail_count: 300,
+                          id: "rsc_SAPHana_PRD_HDB00",
+                          role: "Slave",
+                          status: "Active",
+                          type: "ocf::suse:SAPHana"
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHanaTopology_PRD_HDB00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::suse:SAPHanaTopology"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "clusterfs",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:Filesystem"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "rsc_ip_HA1_ERS10",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:IPaddr2"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "rsc_fs_HA1_ERS10",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:Filesystem"
+                        },
+                        %ClusterResource{
+                          fail_count: nil,
+                          id: "rsc_sap_HA1_ERS10",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:SAPInstance"
+                        }
+                      ],
+                      site: "SECONDARY_SITE_NAME",
+                      virtual_ip: nil
+                    }
+                  ],
+                  sites: [
+                    %HanaClusterSite{
+                      name: "PRIMARY_SITE_NAME",
+                      state: "Primary",
+                      sr_health_state: "4"
+                    },
+                    %HanaClusterSite{
+                      name: "SECONDARY_SITE_NAME",
+                      state: "Secondary",
+                      sr_health_state: "4"
+                    }
+                  ],
+                  sbd_devices: [
+                    %SbdDevice{
+                      device: "/dev/vdc",
+                      status: "healthy"
+                    },
+                    %SbdDevice{
+                      device: "/dev/vdb",
+                      status: "healthy"
+                    }
+                  ],
+                  secondary_sync_state: "SOK",
+                  sr_health_state: "4",
+                  stopped_resources: [
+                    %ClusterResource{
+                      fail_count: nil,
+                      id: "test-stop",
+                      role: "Stopped",
+                      status: nil,
+                      type: "ocf::heartbeat:Dummy"
+                    },
+                    %ClusterResource{
+                      fail_count: nil,
+                      id: "clusterfs",
+                      role: "Stopped",
+                      status: nil,
+                      type: "ocf::heartbeat:Filesystem"
+                    },
+                    %ClusterResource{
+                      fail_count: nil,
+                      id: "clusterfs",
+                      role: "Stopped",
+                      status: nil,
+                      type: "ocf::heartbeat:Filesystem"
+                    }
+                  ],
+                  system_replication_mode: "sync",
+                  system_replication_operation_mode: "logreplay"
+                },
+                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                name: "hana_cluster",
+                sid: "PRD",
+                additional_sids: [],
+                type: :hana_scale_up,
+                hosts_number: 2,
+                resources_number: 8,
+                discovered_health: :passing,
+                provider: Provider.azure()
+              }
+            ]} ==
+             "ha_cluster_discovery_hana_scale_up_maintenance"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers is handled" do
     assert {:ok,
             [
@@ -256,6 +482,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 designated_controller: false,
                 details: %AscsErsClusterDetails{
                   fencing_type: "external/sbd",
+                  maintenance_mode: false,
                   sap_systems: [
                     %AscsErsClusterSapSystem{
                       sid: "NWP",
@@ -364,11 +591,130 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with maintenance enabled is handled" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                cib_last_written: "Tue Jan 11 13:43:06 2022",
+                cluster_id: "0eac831a-aa66-5f45-89a4-007fbd2c5714",
+                designated_controller: false,
+                details: %AscsErsClusterDetails{
+                  fencing_type: "external/sbd",
+                  maintenance_mode: true,
+                  sap_systems: [
+                    %AscsErsClusterSapSystem{
+                      sid: "NWP",
+                      filesystem_resource_based: true,
+                      distributed: true,
+                      nodes: [
+                        %AscsErsClusterNode{
+                          name: "vmnwprd01",
+                          roles: [:ascs],
+                          virtual_ips: ["10.80.1.25"],
+                          filesystems: ["/usr/sap/NWP/ASCS00"],
+                          attributes: %{},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWP_ASCS00",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWP_ASCS00",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWP_ASCS00",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWP_ASCS00",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        },
+                        %AscsErsClusterNode{
+                          name: "vmnwprd02",
+                          roles: [:ers],
+                          virtual_ips: ["10.80.1.26"],
+                          filesystems: ["/usr/sap/NWP/ERS10"],
+                          attributes: %{"runs_ers_NWP" => "1"},
+                          resources: [
+                            %ClusterResource{
+                              id: "rsc_ip_NWP_ERS10",
+                              type: "ocf::heartbeat:IPaddr2",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_fs_NWP_ERS10",
+                              type: "ocf::heartbeat:Filesystem",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_sap_NWP_ERS10",
+                              type: "ocf::heartbeat:SAPInstance",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            },
+                            %ClusterResource{
+                              id: "rsc_socat_NWP_ERS10",
+                              type: "ocf::heartbeat:azure-lb",
+                              role: "Started",
+                              status: "Active",
+                              fail_count: 0
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  stopped_resources: [],
+                  sbd_devices: [
+                    %SbdDevice{
+                      device:
+                        "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
+                      status: "healthy"
+                    }
+                  ]
+                },
+                host_id: "4b30a6af-4b52-5bda-bccb-f2248a12c992",
+                name: "netweaver_cluster",
+                sid: nil,
+                additional_sids: ["NWP"],
+                type: :ascs_ers,
+                hosts_number: 2,
+                resources_number: 9,
+                discovered_health: :passing,
+                provider: Provider.azure()
+              }
+            ]} ==
+             "ha_cluster_discovery_ascs_ers_maintenance"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
   test "should return the expected commands when a ha_cluster_discovery payload of type ascs_ers with resources running in the same node is handled" do
     assert {:ok,
             [
               %RegisterClusterHost{
                 details: %AscsErsClusterDetails{
+                  maintenance_mode: false,
                   sap_systems: [
                     %AscsErsClusterSapSystem{
                       sid: "NWP",
@@ -445,6 +791,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 designated_controller: false,
                 details: %AscsErsClusterDetails{
                   fencing_type: "external/sbd",
+                  maintenance_mode: false,
                   sap_systems: [
                     %AscsErsClusterSapSystem{
                       sid: "NWP",
@@ -665,6 +1012,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
             [
               %RegisterClusterHost{
                 details: %AscsErsClusterDetails{
+                  maintenance_mode: false,
                   sap_systems: [
                     %AscsErsClusterSapSystem{
                       sid: "NWP",
@@ -836,6 +1184,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 cluster_id: "3e83b9d1-00e8-544d-9e29-7a66d9ed7c1e",
                 designated_controller: true,
                 details: %HanaClusterDetails{
+                  maintenance_mode: false,
                   fencing_type: "external/ec2",
                   nodes: [
                     %HanaClusterNode{
@@ -966,6 +1315,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 designated_controller: true,
                 details: %HanaClusterDetails{
                   fencing_type: "fence_gce",
+                  maintenance_mode: false,
                   nodes: [
                     %HanaClusterNode{
                       attributes: %{
@@ -1117,6 +1467,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                 designated_controller: true,
                 details: %HanaClusterDetails{
+                  maintenance_mode: false,
                   fencing_type: "external/sbd",
                   nodes: [
                     %HanaClusterNode{
@@ -1356,6 +1707,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     secondary_sync_state: "SOK",
                     sr_health_state: "4",
                     fencing_type: "external/sbd",
+                    maintenance_mode: false,
                     stopped_resources: [],
                     nodes: [
                       %HanaClusterNode{
@@ -1594,6 +1946,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     secondary_sync_state: "SOK",
                     sr_health_state: "4",
                     fencing_type: "external/sbd",
+                    maintenance_mode: false,
                     stopped_resources: [
                       %ClusterResource{
                         id: "rsc_SAPHanaTop_PRD_HDB00",
@@ -1761,6 +2114,245 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 }
               ]} ==
                "ha_cluster_discovery_hana_scale_out_multitarget"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "should return the expected commands when a ha_cluster_discovery payload with hana scale out with maintenance mode enabled is handled" do
+      assert {:ok,
+              [
+                %RegisterClusterHost{
+                  cluster_id: "751fb16d-62e3-5411-aa33-0100012453c7",
+                  host_id: "286808a7-01bf-420d-af50-10846a7d7868",
+                  name: "hana_cluster",
+                  type: :hana_scale_out,
+                  sid: "PRD",
+                  additional_sids: [],
+                  provider: :kvm,
+                  designated_controller: true,
+                  resources_number: 15,
+                  hosts_number: 6,
+                  discovered_health: :passing,
+                  cib_last_written: "Thu Feb 23 15:59:56 2023",
+                  details: %HanaClusterDetails{
+                    system_replication_mode: "syncmem",
+                    system_replication_operation_mode: "delta_datashipping",
+                    secondary_sync_state: "SOK",
+                    sr_health_state: "4",
+                    fencing_type: "external/sbd",
+                    maintenance_mode: true,
+                    stopped_resources: [],
+                    nodes: [
+                      %HanaClusterNode{
+                        name: "vmhana01",
+                        site: "Site1",
+                        hana_status: "Primary",
+                        attributes: %{
+                          "hana_prd_clone_state" => "PROMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master1:master:worker:master",
+                          "hana_prd_site" => "Site1",
+                          "master-rsc_SAPHanaController_PRD_HDB00" => "150"
+                        },
+                        virtual_ip: "192.168.152.16",
+                        resources: [
+                          %ClusterResource{
+                            id: "stonith-sbd",
+                            type: "stonith:external/sbd",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_ip_PRD_HDB00",
+                            type: "ocf::heartbeat:IPaddr2",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_exporter_PRD_HDB00",
+                            type: "systemd:prometheus-hanadb_exporter@PRD_HDB00",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHanaController_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Master",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHanaTopology_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaTopology",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          }
+                        ]
+                      },
+                      %HanaClusterNode{
+                        name: "vmhana02",
+                        site: "Site2",
+                        hana_status: "Secondary",
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master1:master:worker:master",
+                          "hana_prd_site" => "Site2",
+                          "master-rsc_SAPHanaController_PRD_HDB00" => "100"
+                        },
+                        virtual_ip: nil,
+                        resources: [
+                          %ClusterResource{
+                            id: "rsc_SAPHanaController_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHanaTopology_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaTopology",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          }
+                        ]
+                      },
+                      %HanaClusterNode{
+                        name: "vmhana03",
+                        site: "Site1",
+                        hana_status: "Primary",
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master3:slave:standby:standby",
+                          "hana_prd_site" => "Site1",
+                          "master-rsc_SAPHanaController_PRD_HDB00" => "140"
+                        },
+                        virtual_ip: nil,
+                        resources: [
+                          %ClusterResource{
+                            id: "rsc_SAPHanaController_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHanaTopology_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaTopology",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          }
+                        ]
+                      },
+                      %HanaClusterNode{
+                        name: "vmhana04",
+                        site: "Site2",
+                        hana_status: "Secondary",
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master2:slave:standby:standby",
+                          "hana_prd_site" => "Site2",
+                          "master-rsc_SAPHanaController_PRD_HDB00" => "80"
+                        },
+                        virtual_ip: nil,
+                        resources: [
+                          %ClusterResource{
+                            id: "rsc_SAPHanaController_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHanaTopology_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaTopology",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          }
+                        ]
+                      },
+                      %HanaClusterNode{
+                        name: "vmhana05",
+                        site: "Site1",
+                        hana_status: "Primary",
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master2:slave:worker:slave",
+                          "hana_prd_site" => "Site1",
+                          "master-rsc_SAPHanaController_PRD_HDB00" => "140"
+                        },
+                        virtual_ip: nil,
+                        resources: [
+                          %ClusterResource{
+                            id: "rsc_SAPHanaController_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHanaTopology_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaTopology",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          }
+                        ]
+                      },
+                      %HanaClusterNode{
+                        name: "vmhana06",
+                        site: "Site2",
+                        hana_status: "Secondary",
+                        attributes: %{
+                          "hana_prd_clone_state" => "DEMOTED",
+                          "hana_prd_gra" => "2.0",
+                          "hana_prd_roles" => "master3:slave:worker:slave",
+                          "hana_prd_site" => "Site2",
+                          "master-rsc_SAPHanaController_PRD_HDB00" => "80"
+                        },
+                        virtual_ip: nil,
+                        resources: [
+                          %ClusterResource{
+                            id: "rsc_SAPHanaController_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaController",
+                            role: "Slave",
+                            status: "Active",
+                            fail_count: 0
+                          },
+                          %ClusterResource{
+                            id: "rsc_SAPHanaTopology_PRD_HDB00",
+                            type: "ocf::suse:SAPHanaTopology",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          }
+                        ]
+                      }
+                    ],
+                    sites: [
+                      %HanaClusterSite{name: "Site1", state: "Primary", sr_health_state: "4"},
+                      %HanaClusterSite{name: "Site2", state: "Secondary", sr_health_state: "4"}
+                    ],
+                    sbd_devices: [
+                      %SbdDevice{
+                        device: "/dev/vdb",
+                        status: "healthy"
+                      }
+                    ]
+                  }
+                }
+              ]} ==
+               "ha_cluster_discovery_hana_scale_out_maintenance"
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(nil)
     end
