@@ -1,0 +1,78 @@
+{
+  "agent_id": "16bd3ed1-923d-46ff-b6d0-9bfed42e387b",
+  "discovery_type": "subscription_discovery",
+  "payload": [
+    {
+      "arch": "x86_64",
+      "identifier": "SLES_SAP",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-ha",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-basesystem",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-containers",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-desktop-applications",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-development-tools",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-live-patching",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-public-cloud",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-python3",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-sap-applications",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-server-applications",
+      "status": "Registered",
+      "version": "15.5"
+    },
+    {
+      "arch": "x86_64",
+      "identifier": "sle-module-web-scripting",
+      "status": "Registered",
+      "version": "15.5"
+    }
+  ]
+}

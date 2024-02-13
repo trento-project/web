@@ -6,6 +6,10 @@ directories = ["./test/fixtures/scenarios/healthy-27-node-SAP-cluster"]
 
 directories = ["./test/fixtures/scenarios/single-hana-single-app"]
 
+[hana-scale-out]
+
+directories = ["./test/fixtures/scenarios/hana-scale-out"]
+
 [aws-landscape]
 
 directories = ["./test/fixtures/scenarios/aws-landscape"]

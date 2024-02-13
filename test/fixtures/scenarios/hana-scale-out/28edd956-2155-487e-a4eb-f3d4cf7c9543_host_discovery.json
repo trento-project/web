@@ -1,0 +1,19 @@
+{
+  "agent_id": "28edd956-2155-487e-a4eb-f3d4cf7c9543",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "agent_version": "2.2.0",
+    "cpu_count": 2,
+    "hostname": "vms4prdmm",
+    "installation_source": "Suse",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.0.0.8",
+      "ba:32:8e:e8:91:83"
+    ],
+    "os_version": "15-SP5",
+    "socket_count": 1,
+    "total_memory_mb": 3862
+  }
+}
