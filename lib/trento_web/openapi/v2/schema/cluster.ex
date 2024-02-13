@@ -66,6 +66,10 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         secondary_sync_state: %Schema{type: :string, description: "Secondary Sync State"},
         sr_health_state: %Schema{type: :string, description: "SR health state", deprecated: true},
         fencing_type: %Schema{type: :string, description: "Fencing Type"},
+        maintenance_mode: %Schema{
+          type: :boolean,
+          description: "Maintenance mode enabled"
+        },
         stopped_resources: %Schema{
           description: "A list of the stopped resources on this HANA Cluster",
           type: :array,
@@ -167,6 +171,10 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         fencing_type: %Schema{
           type: :string,
           description: "Fencing type"
+        },
+        maintenance_mode: %Schema{
+          type: :boolean,
+          description: "Maintenance mode enabled"
         },
         sap_systems: %Schema{
           type: :array,

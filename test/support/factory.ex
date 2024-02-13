@@ -427,6 +427,7 @@ defmodule Trento.Factory do
   def hana_cluster_details_factory do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
+      maintenance_mode: false,
       nodes: [
         %HanaClusterNode{
           attributes: %{"attribute" => Faker.Beer.name()},
@@ -515,6 +516,7 @@ defmodule Trento.Factory do
   def ascs_ers_cluster_details_factory do
     %AscsErsClusterDetails{
       fencing_type: Faker.Beer.hop(),
+      maintenance_mode: false,
       sap_systems: build_list(2, :ascs_ers_cluster_sap_system),
       sbd_devices: build_list(2, :sbd_device),
       stopped_resources: build_list(2, :cluster_resource)
