@@ -182,9 +182,14 @@ function AscsErsClusterDetails({
                 content: provider || 'Not defined',
                 render: (content) => <ProviderLabel provider={content} />,
               },
+
               {
                 title: 'Fencing type',
                 content: details && details.fencing_type,
+              },
+              {
+                title: 'Cluster maintenance',
+                content: capitalize(get(details, 'maintenance_mode', 'false')),
               },
               {
                 title: 'Cluster type',
@@ -194,10 +199,6 @@ function AscsErsClusterDetails({
               {
                 title: 'CIB last written',
                 content: cibLastWritten || '-',
-              },
-              {
-                title: 'Cluster Maintenance',
-                content: capitalize(get(details, 'maintenance_mode', 'false')),
               },
             ]}
           />

@@ -368,17 +368,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_maintenance_mode(%{
          configuration: %{crm_config: %{cluster_properties: cluster_properties}}
        }) do
-    maintenance_mode_enabled?(
-      parse_crm_cluster_property(
-        cluster_properties,
-        "maintenance-mode",
-        @default_maintenance_mode
-      )
+    cluster_properties
+    |> parse_crm_cluster_property(
+      "maintenance-mode",
+      @default_maintenance_mode
     )
+    |> maintenance_mode_enabled?()
   end
 
-  defp maintenance_mode_enabled?(@default_maintenance_mode), do: false
-  defp maintenance_mode_enabled?(_), do: true
+  defp maintenance_mode_enabled?("true"), do: true
+  defp maintenance_mode_enabled?(_), do: false
 
   # parse_hana_scale_up_sr_health_state returns the secondary sync state of the HANA scale up cluster
   defp parse_hana_scale_up_sr_health_state(nodes, sid) do

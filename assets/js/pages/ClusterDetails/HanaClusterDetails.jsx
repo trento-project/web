@@ -156,7 +156,7 @@ function HanaClusterDetails({
                 content: getClusterTypeLabel(clusterType),
               },
               {
-                title: 'Cluster Maintenance',
+                title: 'Cluster maintenance',
                 content: capitalize(get(details, 'maintenance_mode', 'false')),
               },
               {

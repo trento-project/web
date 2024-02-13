@@ -63,9 +63,9 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     expect(screen.getByText('CIB last written').nextSibling).toHaveTextContent(
       cibLastWritten
     );
-    expect(screen.getByText('Cluster Maintenance').nextSibling).toHaveTextContent(
-      'False'
-    );
+    expect(
+      screen.getByText('Cluster maintenance').nextSibling
+    ).toHaveTextContent('False');
 
     const sidContainer = screen.getByText('SID').nextSibling;
 

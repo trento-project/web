@@ -74,9 +74,9 @@ context('HANA cluster details', () => {
         .contains(availableHanaCluster.hanaSecondarySyncState);
     });
 
-    it(`should have maintenance state ${availableHanaCluster.maintenanceState}`, () => {
+    it(`should have maintenance mode ${availableHanaCluster.maintenanceMode}`, () => {
       cy.get('.tn-cluster-details')
-        .contains('Cluster Maintenance')
+        .contains('Cluster maintenance')
         .next()
         .contains('False');
     });

@@ -235,7 +235,7 @@ describe('HanaClusterDetails component', () => {
       sid,
       provider,
       details,
-    } = clusterFactory.build();
+    } = clusterFactory.build({ details: { maintenance_mode: true } });
 
     const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
@@ -256,10 +256,10 @@ describe('HanaClusterDetails component', () => {
       />
     );
 
-    expect(screen.getByText('Cluster Maintenance')).toBeInTheDocument();
+    expect(screen.getByText('Cluster maintenance')).toBeInTheDocument();
     expect(
-      screen.getByText('Cluster Maintenance').nextSibling
-    ).toHaveTextContent('False');
+      screen.getByText('Cluster maintenance').nextSibling
+    ).toHaveTextContent('True');
   });
 
   it('should display the HANA cluster sites', () => {
