@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import classNames from 'classnames';
 
 function Textarea({
   id,
   name,
+  className,
   value,
   initialValue,
   placeholder,
@@ -13,7 +15,10 @@ function Textarea({
   const defaultOnChange = (e) => setValue(e.target.value);
   return (
     <textarea
-      className="rc-input outline-none bg-white border border-gray-200 focus:border-gray-500 focus-visible:border-gray-500 px-3 py-2 rounded-md placeholder-gray-400 w-full block disabled:bg-gray-50"
+      className={classNames(
+        'rc-input outline-none bg-white border border-gray-200 focus:border-gray-500 focus-visible:border-gray-500 px-3 py-2 rounded-md placeholder-gray-400 w-full block disabled:bg-gray-50',
+        className
+      )}
       rows={5}
       id={id}
       name={name}
