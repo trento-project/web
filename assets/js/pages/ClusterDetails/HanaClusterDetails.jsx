@@ -49,6 +49,7 @@ function HanaClusterDetails({
     sid,
     ...sapSystems.find(({ sid: currentSid }) => currentSid === sid),
   };
+  const unsitedNodes = enrichedNodes.filter(({ site }) => site === null);
 
   const {
     data: executionData,
@@ -211,6 +212,10 @@ function HanaClusterDetails({
           )
         )}
       </div>
+
+      {unsitedNodes.length > 0 && (
+        <HanaClusterSite name="Other" nodes={unsitedNodes} />
+      )}
 
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>

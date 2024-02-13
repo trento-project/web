@@ -7,6 +7,7 @@ import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
 import {
   clusterFactory,
+  hanaClusterDetailsNodesFactory,
   hostFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
@@ -262,6 +263,50 @@ describe('HanaClusterDetails component', () => {
 
     expect(screen.getByText(siteName1)).toBeInTheDocument();
     expect(screen.getByText(siteName2)).toBeInTheDocument();
+    expect(screen.queryByText('Other')).not.toBeInTheDocument();
+  });
+
+  it('should display not sited nodes in the Other table', () => {
+    const {
+      clusterID,
+      clusterName,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sid,
+      provider,
+      details,
+    } = clusterFactory.build();
+
+    const hosts = hostFactory.buildList(3, { cluster_id: clusterID });
+
+    const updatedNodes = details.nodes.concat(
+      hanaClusterDetailsNodesFactory.build({ site: null })
+    );
+
+    const updatedDetails = { ...details, ...{ nodes: updatedNodes } };
+
+    renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        clusterName={clusterName}
+        selectedChecks={[]}
+        hasSelectedChecks={false}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        sid={sid}
+        provider={provider}
+        sapSystems={[]}
+        details={updatedDetails}
+        lastExecution={null}
+      />
+    );
+
+    expect(screen.queryByText('Other')).toBeInTheDocument();
+    const tables = screen.getAllByRole('table');
+    expect(tables.length).toBe(3);
+
+    expect(tables[2].querySelectorAll('tbody > tr')).toHaveLength(1);
   });
 
   it('should display infos about node details', async () => {

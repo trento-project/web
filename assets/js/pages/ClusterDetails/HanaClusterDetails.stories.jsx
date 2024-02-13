@@ -35,6 +35,7 @@ const scaleOutDetails = hanaClusterDetailsFactory.build({
     hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[1].name }),
     hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[0].name }),
     hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[1].name }),
+    hanaClusterDetailsNodesFactory.build({ site: null, hana_status: '' }),
   ],
 });
 
