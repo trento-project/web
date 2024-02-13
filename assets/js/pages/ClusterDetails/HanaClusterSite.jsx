@@ -1,0 +1,86 @@
+import React from 'react';
+
+import HealthIcon from '@common/HealthIcon';
+import Table from '@common/Table';
+
+import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
+
+import AttributesDetails from './AttributesDetails';
+import ReplicationStatusPill from './ReplicationStatusPill';
+
+const getSiteHealth = (srHealthStatus) => {
+  switch (srHealthStatus) {
+    case '4':
+      return 'passing';
+    case '1':
+      return 'critical';
+    default:
+      return 'unknown';
+  }
+};
+
+const siteDetailsConfig = {
+  usePadding: false,
+  columns: [
+    {
+      title: 'Hostname',
+      key: '',
+      render: (_, hostData) => (
+        <ClusterNodeLink hostId={hostData.id}>{hostData.name}</ClusterNodeLink>
+      ),
+    },
+    { title: 'Role', key: 'hana_status' },
+    {
+      title: 'IP',
+      key: 'ip_addresses',
+      className: 'table-col-m',
+      render: (content) => content?.join(', '),
+    },
+    {
+      title: 'Virtual IP',
+      key: 'virtual_ip',
+      className: 'table-col-m',
+    },
+    {
+      title: '',
+      key: '',
+      className: 'table-col-xs',
+      render: (_, item) => {
+        const { attributes, resources } = item;
+        return (
+          <AttributesDetails
+            title="Site Details"
+            attributes={attributes}
+            resources={resources}
+          />
+        );
+      },
+    },
+  ],
+};
+
+function HanaClusterSite({ name, nodes, state = null, srHealthState = null }) {
+  return (
+    <div
+      key={name}
+      className={`tn-site-details-${name} mt-4 bg-white rounded-lg`}
+    >
+      <div className="flex space-x-2 px-4 pt-4">
+        {state && (
+          <span className="text-left">
+            <HealthIcon health={getSiteHealth(srHealthState)} centered />
+          </span>
+        )}
+        <h3 className="text-l font-bold tn-site-name">{name}</h3>
+        {srHealthState && <ReplicationStatusPill status={state} />}
+      </div>
+      <Table
+        className="tn-site-table"
+        config={siteDetailsConfig}
+        data={nodes}
+      />
+    </div>
+  );
+}
+
+export default HanaClusterSite;

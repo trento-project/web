@@ -3,6 +3,9 @@ import { MemoryRouter } from 'react-router-dom';
 
 import {
   clusterFactory,
+  hanaClusterDetailsFactory,
+  hanaClusterDetailsNodesFactory,
+  hanaClusterSiteFactory,
   hostFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
@@ -23,6 +26,18 @@ const {
   details,
 } = clusterFactory.build({ type: 'hana_scale_up' });
 
+const scaleOutSites = hanaClusterSiteFactory.buildList(2);
+
+const scaleOutDetails = hanaClusterDetailsFactory.build({
+  sites: scaleOutSites,
+  nodes: [
+    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[0].name }),
+    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[1].name }),
+    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[0].name }),
+    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[1].name }),
+  ],
+});
+
 const lastExecution = {
   data: checksExecutionCompletedFactory.build({
     result: 'passing',
@@ -32,10 +47,13 @@ const lastExecution = {
   }),
 };
 
-const hosts = [
-  hostFactory.build({ hostname: details.nodes[0].name }),
-  hostFactory.build({ hostname: details.nodes[1].name }),
-];
+const hosts = details.nodes.map(({ name }) =>
+  hostFactory.build({ hostname: name })
+);
+
+const scaleOutHosts = scaleOutDetails.nodes.map(({ name }) =>
+  hostFactory.build({ hostname: name })
+);
 
 const sapSystems = sapSystemFactory.buildList(1, { sid });
 
@@ -81,6 +99,14 @@ export const Hana = {
     catalog,
     onStartExecution: () => {},
     navigate: () => {},
+  },
+};
+
+export const HanaScaleOut = {
+  args: {
+    ...Hana.args,
+    hosts: scaleOutHosts,
+    details: scaleOutDetails,
   },
 };
 
