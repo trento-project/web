@@ -817,7 +817,8 @@ jobs:
           osc checkout $OBS_PROJECT trento-web -o $OSC_CHECKOUT_DIR
           cp $FOLDER/_service $OSC_CHECKOUT_DIR
           cp $FOLDER/trento-web.spec $OSC_CHECKOUT_DIR
-          rm -v $OSC_CHECKOUT_DIR/*.tar.gz
+          rm -vf $OSC_CHECKOUT_DIR/*.tar.gz
+          rm -vf $OSC_CHECKOUT_DIR/*.tgz
           pushd $OSC_CHECKOUT_DIR 
           osc service manualrun
           cp  /__w/web/web/deps.tar.gz .
