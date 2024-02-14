@@ -1,4 +1,5 @@
 import React from 'react';
+import { capitalize } from 'lodash';
 
 import HealthIcon from '@common/HealthIcon';
 import Table from '@common/Table';
@@ -25,11 +26,23 @@ const siteDetailsConfig = {
     {
       title: 'Hostname',
       key: '',
+      className: 'table-col-m',
       render: (_, hostData) => (
         <ClusterNodeLink hostId={hostData.id}>{hostData.name}</ClusterNodeLink>
       ),
     },
-    { title: 'Role', key: 'hana_status' },
+    {
+      title: 'Nameserver',
+      key: 'nameserver_actual_role',
+      className: 'table-col-m',
+      render: (content) => capitalize(content),
+    },
+    {
+      title: 'Indexserver',
+      key: 'indexserver_actual_role',
+      className: 'table-col-m',
+      render: (content) => capitalize(content),
+    },
     {
       title: 'IP',
       key: 'ip_addresses',

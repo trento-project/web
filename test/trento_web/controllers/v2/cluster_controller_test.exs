@@ -25,11 +25,7 @@ defmodule TrentoWeb.V2.ClusterControllerTest do
       insert(:cluster,
         details:
           build(:hana_cluster_details,
-            nodes:
-              build_list(1, :hana_cluster_node, %{
-                indexserver_actual_role: "master",
-                nameserver_actual_role: "slave"
-              })
+            nodes: build_list(1, :hana_cluster_node)
           )
       )
 

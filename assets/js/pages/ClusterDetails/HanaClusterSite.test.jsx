@@ -66,4 +66,37 @@ describe('HanaClusterSite', () => {
       screen.getByRole('table').querySelectorAll('tbody > tr')
     ).toHaveLength(3);
   });
+
+  it('should show nameserver and indexserver roles', () => {
+    const {
+      name,
+      state,
+      sr_healt_state: srHealthState,
+    } = hanaClusterSiteFactory.build();
+    const nodes = hanaClusterDetailsNodesFactory.buildList(1);
+    render(
+      <HanaClusterSite
+        name={name}
+        nodes={nodes}
+        state={state}
+        srHealthState={srHealthState}
+      />
+    );
+
+    expect(
+      screen.getByRole('table').querySelectorAll('thead > tr > th').item(1)
+    ).toHaveTextContent('Nameserver');
+
+    expect(
+      screen.getByRole('table').querySelectorAll('thead > tr > th').item(2)
+    ).toHaveTextContent('Indexserver');
+
+    expect(
+      screen.getByRole('table').querySelectorAll('tbody > tr > td').item(1)
+    ).toHaveTextContent('Slave');
+
+    expect(
+      screen.getByRole('table').querySelectorAll('tbody > tr > td').item(2)
+    ).toHaveTextContent('Master');
+  });
 });

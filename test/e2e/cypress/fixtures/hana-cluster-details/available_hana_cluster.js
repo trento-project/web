@@ -22,6 +22,8 @@ export const availableHanaCluster = {
           ips: ['10.80.1.11', '10.80.1.13'],
           virtualIps: ['10.80.1.13'],
           role: 'Primary',
+          indexserver_actual_role: 'master',
+          nameserver_actual_role: 'master',
           attributes: [
             {
               attribute: 'hana_hdp_clone_state',
@@ -118,6 +120,8 @@ export const availableHanaCluster = {
           ips: ['10.80.1.12'],
           virtualIps: [],
           role: 'Secondary',
+          indexserver_actual_role: 'master',
+          nameserver_actual_role: 'master',
           attributes: [
             {
               attribute: 'hana_hdp_clone_state',

@@ -233,16 +233,14 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
       site = Map.get(attributes, "hana_#{String.downcase(sid)}_site", "")
 
-      hana_roles =
-        attributes
-        |> Map.get("hana_#{String.downcase(sid)}_roles", "")
-        |> String.split(":")
-
       %{
         indexserver_actual_role: indexserver_actual_role,
         nameserver_actual_role: nameserver_actual_role
       } =
-        parse_nodes_actual_roles(hana_roles, cluster_type)
+        attributes
+        |> Map.get("hana_#{String.downcase(sid)}_roles", "")
+        |> String.split(":")
+        |> parse_nodes_actual_roles(cluster_type)
 
       node = %{
         name: name,

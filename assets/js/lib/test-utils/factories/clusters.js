@@ -40,6 +40,8 @@ export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
   name: faker.animal.dog(),
   site: faker.location.city(),
   virtual_ip: faker.internet.ip(),
+  indexserver_actual_role: 'master',
+  nameserver_actual_role: 'slave',
   hana_status: hanaStatus(),
   attributes: Array.from({ length: 5 }).reduce(
     (acc, _) => ({

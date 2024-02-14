@@ -464,8 +464,8 @@ defmodule Trento.Factory do
       hana_status: "Secondary",
       virtual_ip: Faker.Internet.ip_v4_address(),
       name: Faker.StarWars.character(),
-      indexserver_actual_role: nil,
-      nameserver_actual_role: nil,
+      indexserver_actual_role: "master",
+      nameserver_actual_role: "master",
       resources: [
         %ClusterResource{
           fail_count: Enum.random(0..100),

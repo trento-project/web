@@ -31,11 +31,31 @@ const scaleOutSites = hanaClusterSiteFactory.buildList(2);
 const scaleOutDetails = hanaClusterDetailsFactory.build({
   sites: scaleOutSites,
   nodes: [
-    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[0].name }),
-    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[1].name }),
-    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[0].name }),
-    hanaClusterDetailsNodesFactory.build({ site: scaleOutSites[1].name }),
-    hanaClusterDetailsNodesFactory.build({ site: null, hana_status: '' }),
+    hanaClusterDetailsNodesFactory.build({
+      site: scaleOutSites[0].name,
+      nameserver_actual_role: 'master',
+      indexserver_actual_role: 'master',
+    }),
+    hanaClusterDetailsNodesFactory.build({
+      site: scaleOutSites[1].name,
+      nameserver_actual_role: 'slave',
+      indexserver_actual_role: 'slave',
+    }),
+    hanaClusterDetailsNodesFactory.build({
+      site: scaleOutSites[0].name,
+      nameserver_actual_role: 'master',
+      indexserver_actual_role: 'master',
+    }),
+    hanaClusterDetailsNodesFactory.build({
+      site: scaleOutSites[1].name,
+      nameserver_actual_role: 'slave',
+      indexserver_actual_role: 'slave',
+    }),
+    hanaClusterDetailsNodesFactory.build({
+      site: null,
+      nameserver_actual_role: '',
+      indexserver_actual_role: '',
+    }),
   ],
 });
 

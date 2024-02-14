@@ -2,7 +2,7 @@ import {
   checksExecutionCompletedFactory,
   catalogFactory,
 } from '@lib/test-utils/factories';
-
+import { capitalize } from 'lodash';
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 context('HANA cluster details', () => {
@@ -174,8 +174,16 @@ context('HANA cluster details', () => {
           });
         });
 
-        it(`${host.hostname} should have the expected role`, () => {
-          cy.get(`.tn-site-details-${site.name}`).contains(host.role);
+        it(`${host.hostname} should have the expected indexserver role`, () => {
+          cy.get(`.tn-site-details-${site.name}`).contains(
+            capitalize(host.indexserver_actual_role)
+          );
+        });
+
+        it(`${host.hostname} should have the expected nameserver role`, () => {
+          cy.get(`.tn-site-details-${site.name}`).contains(
+            capitalize(host.nameserver_actual_role)
+          );
         });
       });
     });
