@@ -18,6 +18,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterDetails do
 
   deftype do
     field :fencing_type, :string
+    field :maintenance_mode, :boolean
 
     embeds_many :sap_systems, AscsErsClusterSapSystem
     embeds_many :stopped_resources, ClusterResource

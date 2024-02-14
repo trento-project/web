@@ -6,6 +6,7 @@ export const availableHanaCluster = {
   provider: 'Azure',
   hanaSystemReplicationMode: 'sync',
   fencingType: 'external/sbd',
+  maintenanceMode: false,
   hanaSecondarySyncState: 'SOK',
   sapHanaSRHealthState: 4,
   cibLastWritten: 'Tue Jan 25 15:36:59 2022',

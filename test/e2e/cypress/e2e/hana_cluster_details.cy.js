@@ -74,11 +74,11 @@ context('HANA cluster details', () => {
         .contains(availableHanaCluster.hanaSecondarySyncState);
     });
 
-    it(`should have sap hana sr health state ${availableHanaCluster.sapHanaSRHealthState}`, () => {
+    it(`should have maintenance mode ${availableHanaCluster.maintenanceMode}`, () => {
       cy.get('.tn-cluster-details')
-        .contains('SAPHanaSR health state')
+        .contains('Cluster maintenance')
         .next()
-        .contains(availableHanaCluster.sapHanaSRHealthState);
+        .contains('False');
     });
 
     it(`should have hana log operation mode ${availableHanaCluster.hanaSystemReplicationOperationMode}`, () => {

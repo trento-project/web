@@ -35,6 +35,11 @@
               "Id": "cib-bootstrap-options-placement-strategy",
               "Name": "placement-strategy",
               "Value": "balanced"
+            },
+            {
+              "Id": "cib-bootstrap-options-maintenance-mode",
+              "Name": "maintenance-mode",
+              "Value": "false"
             }
           ]
         },

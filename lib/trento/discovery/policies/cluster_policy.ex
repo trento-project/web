@@ -21,6 +21,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   # for scale out clusters the default value is being used by the resource agent
   @default_hana_scale_out_replication_mode "sync"
   @default_hana_scale_out_operation_mode "logreplay"
+  @default_maintenance_mode "false"
 
   def handle(
         %{
@@ -123,7 +124,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            crmmon: crmmon,
            sbd: sbd,
            cluster_type: ClusterType.hana_scale_up(),
-           sid: sid
+           sid: sid,
+           cib: cib
          } = payload
        ) do
     nodes = parse_cluster_nodes(payload, sid)
@@ -135,6 +137,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       secondary_sync_state: parse_hana_scale_up_secondary_sync_state(nodes, sid),
       sr_health_state: parse_hana_scale_up_sr_health_state(nodes, sid),
       fencing_type: parse_cluster_fencing_type(crmmon),
+      maintenance_mode: parse_maintenance_mode(cib),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: nodes,
       sbd_devices: parse_sbd_devices(sbd),
@@ -158,6 +161,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       secondary_sync_state: parse_hana_scale_out_secondary_sync_state(cib, sid),
       sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
       fencing_type: parse_cluster_fencing_type(crmmon),
+      maintenance_mode: parse_maintenance_mode(cib),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, sid),
       sbd_devices: parse_sbd_devices(sbd),
@@ -170,14 +174,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            crmmon: crmmon,
            sbd: sbd,
            cluster_type: ClusterType.ascs_ers(),
-           additional_sids: additional_sids
+           additional_sids: additional_sids,
+           cib: cib
          } = payload
        ) do
     %{
       sap_systems: Enum.map(additional_sids, &parse_ascs_ers_cluster_sap_system(payload, &1)),
       fencing_type: parse_cluster_fencing_type(crmmon),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
-      sbd_devices: parse_sbd_devices(sbd)
+      sbd_devices: parse_sbd_devices(sbd),
+      maintenance_mode: parse_maintenance_mode(cib)
     }
   end
 
@@ -358,6 +364,20 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       }
     ]
   end
+
+  defp parse_maintenance_mode(%{
+         configuration: %{crm_config: %{cluster_properties: cluster_properties}}
+       }) do
+    cluster_properties
+    |> parse_crm_cluster_property(
+      "maintenance-mode",
+      @default_maintenance_mode
+    )
+    |> maintenance_mode_enabled?()
+  end
+
+  defp maintenance_mode_enabled?("true"), do: true
+  defp maintenance_mode_enabled?(_), do: false
 
   # parse_hana_scale_up_sr_health_state returns the secondary sync state of the HANA scale up cluster
   defp parse_hana_scale_up_sr_health_state(nodes, sid) do

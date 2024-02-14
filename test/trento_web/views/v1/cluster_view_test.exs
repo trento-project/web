@@ -25,6 +25,7 @@ defmodule TrentoWeb.V1.ClusterViewTest do
       %{details: details} = render(ClusterView, "cluster.json", %{cluster: cluster})
 
       refute Access.get(details, "sites")
+      refute Access.get(details, "maintenance_mode")
     end
   end
 end

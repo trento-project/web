@@ -20,5 +20,16 @@ defmodule TrentoWeb.V2.ClusterControllerTest do
       |> json_response(200)
       |> assert_schema("PacemakerClustersCollection", api_spec)
     end
+
+    test "should be compliant with Hana Cluster details schema", %{conn: conn} do
+      insert(:cluster, details: build(:hana_cluster_details))
+
+      api_spec = ApiSpec.spec()
+
+      conn
+      |> get("/api/v2/clusters")
+      |> json_response(200)
+      |> assert_schema("PacemakerClustersCollection", api_spec)
+    end
   end
 end

@@ -226,6 +226,42 @@ describe('HanaClusterDetails component', () => {
     );
   });
 
+  it('should display the cluster maintenance mode', async () => {
+    const {
+      clusterID,
+      clusterName,
+      cib_last_written: cibLastWritten,
+      type: clusterType,
+      sid,
+      provider,
+      details,
+    } = clusterFactory.build({ details: { maintenance_mode: true } });
+
+    const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
+
+    renderWithRouter(
+      <HanaClusterDetails
+        clusterID={clusterID}
+        clusterName={clusterName}
+        selectedChecks={[]}
+        hasSelectedChecks={false}
+        hosts={hosts}
+        clusterType={clusterType}
+        cibLastWritten={cibLastWritten}
+        sid={sid}
+        provider={provider}
+        sapSystems={[]}
+        details={details}
+        lastExecution={null}
+      />
+    );
+
+    expect(screen.getByText('Cluster maintenance')).toBeInTheDocument();
+    expect(
+      screen.getByText('Cluster maintenance').nextSibling
+    ).toHaveTextContent('True');
+  });
+
   it('should display the HANA cluster sites', () => {
     const {
       clusterID,

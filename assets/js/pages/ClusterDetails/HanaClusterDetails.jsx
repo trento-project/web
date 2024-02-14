@@ -1,5 +1,5 @@
 import React from 'react';
-import { get, sortBy } from 'lodash';
+import { get, capitalize, sortBy } from 'lodash';
 import classNames from 'classnames';
 
 import { getClusterTypeLabel } from '@lib/model/clusters';
@@ -156,8 +156,8 @@ function HanaClusterDetails({
                 content: getClusterTypeLabel(clusterType),
               },
               {
-                title: 'SAPHanaSR health state',
-                content: details && details.sr_health_state,
+                title: 'Cluster maintenance',
+                content: capitalize(get(details, 'maintenance_mode', 'false')),
               },
               {
                 title: 'CIB last written',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { get } from 'lodash';
+import { capitalize, get } from 'lodash';
 import classNames from 'classnames';
 import { EOS_SETTINGS, EOS_CLEAR_ALL, EOS_PLAY_CIRCLE } from 'eos-icons-react';
 
@@ -173,7 +173,7 @@ function AscsErsClusterDetails({
       <div className="flex xl:flex-row flex-col">
         <div className="mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-2/5 mr-4">
           <ListView
-            className="grid-rows-2"
+            className="grid-rows-3"
             titleClassName="text-lg"
             orientation="vertical"
             data={[
@@ -182,9 +182,14 @@ function AscsErsClusterDetails({
                 content: provider || 'Not defined',
                 render: (content) => <ProviderLabel provider={content} />,
               },
+
               {
                 title: 'Fencing type',
                 content: details && details.fencing_type,
+              },
+              {
+                title: 'Cluster maintenance',
+                content: capitalize(get(details, 'maintenance_mode', 'false')),
               },
               {
                 title: 'Cluster type',

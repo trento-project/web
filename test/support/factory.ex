@@ -427,10 +427,12 @@ defmodule Trento.Factory do
   def hana_cluster_details_factory do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
+      maintenance_mode: false,
       nodes: [
         %HanaClusterNode{
           attributes: %{"attribute" => Faker.Beer.name()},
           hana_status: "Secondary",
+          virtual_ip: Faker.Internet.ip_v4_address(),
           name: Faker.StarWars.character(),
           resources: [
             %ClusterResource{
@@ -461,10 +463,10 @@ defmodule Trento.Factory do
       sr_health_state: "4",
       stopped_resources: [
         %ClusterResource{
-          fail_count: nil,
+          fail_count: 0,
           id: Faker.Pokemon.name(),
           role: "Stopped",
-          status: nil,
+          status: Faker.Pokemon.name(),
           type: "ocf::heartbeat:Dummy"
         }
       ],
@@ -515,6 +517,7 @@ defmodule Trento.Factory do
   def ascs_ers_cluster_details_factory do
     %AscsErsClusterDetails{
       fencing_type: Faker.Beer.hop(),
+      maintenance_mode: false,
       sap_systems: build_list(2, :ascs_ers_cluster_sap_system),
       sbd_devices: build_list(2, :sbd_device),
       stopped_resources: build_list(2, :cluster_resource)

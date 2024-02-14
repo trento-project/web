@@ -67,6 +67,7 @@ export const hanaClusterDetailsFactory = Factory.define(() => {
     stopped_resources: clusterResourceFactory.buildList(2),
     system_replication_mode: 'sync',
     system_replication_operation_mode: 'logreplay',
+    maintenance_mode: false,
   };
 });
 
@@ -99,6 +100,7 @@ export const ascsErsClusterDetailsFactory = Factory.define(({ params }) => {
     sap_systems: ascsErsSapSystemFactory.buildList(sap_systems_count),
     sbd_devices: sbdDevicesFactory.buildList(3),
     stopped_resources: clusterResourceFactory.buildList(2),
+    maintenance_mode: false,
   };
 });
 
