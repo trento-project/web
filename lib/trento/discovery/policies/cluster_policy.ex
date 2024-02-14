@@ -461,24 +461,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       _ ->
         false
     end)
-    |> do_fencing_type(sbd)
+    |> extract_fencing_type(sbd)
   end
 
-  defp do_fencing_type(nil, sbd) do
-    if diskless_sbd?(sbd) do
-      @diskless_sbd_fencing_type
-    else
-      @unknown_fencing_type
-    end
-  end
+  defp extract_fencing_type(nil, %{config: %{"sbd_device" => _}}), do: @unknown_fencing_type
 
-  defp do_fencing_type(fencing_type, _), do: fencing_type
+  defp extract_fencing_type(nil, %{config: %{"sbd_watchdog_dev" => _}, devices: []}),
+    do: @diskless_sbd_fencing_type
 
-  defp diskless_sbd?(%{config: %{"sbd_watchdog_dev" => _} = config, devices: []}) do
-    not Map.has_key?(config, "sbd_device")
-  end
-
-  defp diskless_sbd?(_), do: false
+  defp extract_fencing_type(fencing_type, _), do: fencing_type
 
   defp parse_cluster_stopped_resources(crmmon) do
     crmmon
