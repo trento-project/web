@@ -34,7 +34,7 @@ defmodule Trento.SoftwareUpdates.Settings do
   end
 
   defp validate_url(_url_atom, url) do
-    case url |> String.trim() |> URI.parse() do
+    case URI.parse(url) do
       %URI{scheme: "https"} ->
         []
 
