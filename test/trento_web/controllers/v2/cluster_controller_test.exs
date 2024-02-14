@@ -22,7 +22,16 @@ defmodule TrentoWeb.V2.ClusterControllerTest do
     end
 
     test "should be compliant with Hana Cluster details schema", %{conn: conn} do
-      insert(:cluster, details: build(:hana_cluster_details))
+      insert(:cluster,
+        details:
+          build(:hana_cluster_details,
+            nodes:
+              build_list(1, :hana_cluster_node, %{
+                indexserver_actual_role: "master",
+                nameserver_actual_role: "slave"
+              })
+          )
+      )
 
       api_spec = ApiSpec.spec()
 

@@ -19,6 +19,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
       properties: %{
         name: %Schema{type: :string},
         site: %Schema{type: :string},
+        indexserver_actual_role: %Schema{type: :string, nullable: true},
+        nameserver_actual_role: %Schema{type: :string, nullable: true},
         hana_status: %Schema{type: :string, deprecated: true},
         attributes: %Schema{
           type: :object,
