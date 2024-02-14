@@ -2097,6 +2097,22 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             fail_count: 0
                           }
                         ]
+                      },
+                      %HanaClusterNode{
+                        name: "vmhanamm",
+                        site: nil,
+                        hana_status: "Unknown",
+                        attributes: %{},
+                        virtual_ip: nil,
+                        resources: [
+                          %ClusterResource{
+                            id: "stonith-sbd",
+                            type: "stonith:external/sbd",
+                            role: "Started",
+                            status: "Active",
+                            fail_count: 0
+                          }
+                        ]
                       }
                     ],
                     sites: [
