@@ -15,7 +15,7 @@ export default {
       },
     },
     error: {
-      description: 'Wether the field has an error',
+      description: 'Whether the field has an error',
       control: {
         type: 'boolean',
       },
