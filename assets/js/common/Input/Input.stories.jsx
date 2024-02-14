@@ -56,6 +56,12 @@ export default {
         type: 'boolean',
       },
     },
+    error: {
+      description: 'Wether the field has an error',
+      control: {
+        type: 'boolean',
+      },
+    },
     disabled: {
       description: 'Whether the input should be disabled or not',
       control: {
@@ -104,6 +110,13 @@ export const ClearableDisabled = {
   args: {
     ...Clearable.args,
     disabled: true,
+  },
+};
+
+export const WithError = {
+  args: {
+    ...WithInitialValue.args,
+    error: true,
   },
 };
 

@@ -8,15 +8,23 @@ function Textarea({
   value,
   initialValue,
   placeholder,
+  error = false,
   disabled = false,
   onChange,
 }) {
   const [initialInputValue, setValue] = useState(initialValue);
   const defaultOnChange = (e) => setValue(e.target.value);
+
   return (
     <textarea
       className={classNames(
-        'rc-input outline-none bg-white border border-gray-200 focus:border-gray-500 focus-visible:border-gray-500 px-3 py-2 rounded-md placeholder-gray-400 w-full block disabled:bg-gray-50',
+        'rc-input outline-none bg-white border border-gray-200 px-3 py-2 rounded-md placeholder-gray-400 w-full block disabled:bg-gray-50',
+        {
+          'border-gray-200': !error,
+          'border-red-500': error,
+          'focus:border-gray-500': !error,
+          'focus-visible:border-red-500': !error,
+        },
         className
       )}
       rows={5}

@@ -30,6 +30,12 @@ export default {
         type: 'text',
       },
     },
+    error: {
+      description: 'Wether the field has an error',
+      control: {
+        type: 'boolean',
+      },
+    },
     disabled: {
       description: 'Whether the textarea should be disabled or not',
       control: {
@@ -73,6 +79,13 @@ export const WithControlledValue = {
     return (
       <Textarea value={value} onChange={(e) => setValue(e.target.value)} />
     );
+  },
+};
+
+export const WithError = {
+  args: {
+    value: 'This is a wrong value',
+    error: true,
   },
 };
 

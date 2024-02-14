@@ -13,6 +13,7 @@ function Password({
   name,
   value,
   placeholder = 'Password',
+  error = false,
   disabled = false,
   onChange = () => {},
 }) {
@@ -25,6 +26,7 @@ function Password({
       initialValue={value}
       placeholder={placeholder}
       type={inputType}
+      error={error}
       disabled={disabled}
       suffix={
         <button
