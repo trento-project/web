@@ -1,0 +1,21 @@
+{
+  "agent_id": "0f6e6491-21f2-495e-9f2d-bc50b872efaf",
+  "discovery_type": "host_discovery",
+  "payload": {
+    "agent_version": "2.0.0",
+    "cpu_count": 56,
+    "hostname": "vmh3shdb01",
+    "installation_source": "Suse",
+    "ip_addresses": [
+      "127.0.0.1",
+      "::1",
+      "10.110.1.11",
+      "10.110.1.13",
+      "10.110.1.14",
+      "55:4d:24:96:f3:08"
+    ],
+    "os_version": "15-SP4",
+    "socket_count": 2,
+    "total_memory_mb": 1547378
+  }
+}
