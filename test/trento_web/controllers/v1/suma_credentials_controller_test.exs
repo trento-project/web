@@ -161,6 +161,271 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
   end
 
+  describe "changing software updates settings" do
+    test "should not be able to change software updates settings if none previously saved", %{
+      conn: conn
+    } do
+      submission = %{
+        url: "https://validurl.com",
+        username: Faker.Internet.user_name(),
+        password: Faker.Lorem.word(),
+        ca_cert: nil
+      }
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/settings/suma_credentials", submission)
+        |> json_response(:not_found)
+
+      assert %{
+               "errors" => [
+                 %{"detail" => "The requested resource cannot be found.", "title" => "Not Found"}
+               ]
+             } == resp
+    end
+
+    test "should not process empty request body", %{
+      conn: conn
+    } do
+      insert(:software_updates_settings)
+
+      submission = %{}
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/settings/suma_credentials", submission)
+        |> json_response(:unprocessable_entity)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Object property count 0 is less than minProperties: 1",
+                   "title" => "Invalid value",
+                   "source" => %{"pointer" => "/"}
+                 }
+               ]
+             } == resp
+    end
+
+    test "should validate partial changes to software updates settings", %{conn: conn} do
+      insert(:software_updates_settings)
+
+      change_settings_scenarios = [
+        %{
+          change_submissions: %{url: nil},
+          errors: [
+            %{
+              "detail" => "null value where string expected",
+              "source" => %{"pointer" => "/url"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: [%{url: ""}, %{url: "   "}],
+          errors: [
+            %{
+              "detail" => "can't be blank",
+              "source" => %{"pointer" => "/url"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: %{url: "http://not-secure.com"},
+          errors: [
+            %{
+              "detail" => "can only be an https url",
+              "source" => %{"pointer" => "/url"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: %{username: nil},
+          errors: [
+            %{
+              "detail" => "null value where string expected",
+              "source" => %{"pointer" => "/username"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: [%{username: ""}, %{username: "   "}],
+          errors: [
+            %{
+              "detail" => "can't be blank",
+              "source" => %{"pointer" => "/username"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: %{password: nil},
+          errors: [
+            %{
+              "detail" => "null value where string expected",
+              "source" => %{"pointer" => "/password"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: [
+            %{password: ""},
+            %{password: "   "}
+          ],
+          errors: [
+            %{
+              "detail" => "can't be blank",
+              "source" => %{"pointer" => "/password"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: [
+            %{ca_cert: ""},
+            %{ca_cert: "   "}
+          ],
+          errors: [
+            %{
+              "detail" => "can't be blank",
+              "source" => %{"pointer" => "/ca_cert"},
+              "title" => "Invalid value"
+            }
+          ]
+        },
+        %{
+          change_submissions: %{
+            url: nil,
+            username: "",
+            password: "   ",
+            ca_cert: nil
+          },
+          errors: [
+            %{
+              "detail" => "null value where string expected",
+              "source" => %{"pointer" => "/url"},
+              "title" => "Invalid value"
+            }
+          ]
+        }
+      ]
+
+      for %{change_submissions: change_submissions, errors: errors} <- change_settings_scenarios do
+        change_submissions
+        |> List.wrap()
+        |> Enum.each(fn change_submission ->
+          resp =
+            conn
+            |> put_req_header("content-type", "application/json")
+            |> patch("/api/v1/settings/suma_credentials", change_submission)
+            |> json_response(:unprocessable_entity)
+
+          assert %{"errors" => errors} == resp
+        end)
+      end
+    end
+
+    test "should support partial change of software updates settings", %{conn: conn} do
+      %{
+        url: initial_url,
+        username: _initial_username,
+        password: _initial_password,
+        ca_cert: _initial_ca_cert,
+        ca_uploaded_at: initial_ca_uploaded_at
+      } =
+        insert(
+          :software_updates_settings,
+          ca_cert: Faker.Lorem.sentence(),
+          ca_uploaded_at: DateTime.utc_now()
+        )
+
+      change_submission = %{
+        username: new_username = "new_username",
+        password: "new_password"
+      }
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/settings/suma_credentials", change_submission)
+        |> json_response(:ok)
+
+      assert %{
+               "url" => initial_url,
+               "username" => new_username,
+               "ca_uploaded_at" => DateTime.to_iso8601(initial_ca_uploaded_at)
+             } == resp
+    end
+
+    test "should properly update ca_cert and its upload date when a new cert is provided", %{
+      conn: conn
+    } do
+      %{
+        url: _initial_url,
+        username: initial_username,
+        password: _initial_password,
+        ca_cert: _initial_ca_cert,
+        ca_uploaded_at: initial_ca_uploaded_at
+      } =
+        insert(
+          :software_updates_settings,
+          ca_cert: Faker.Lorem.sentence(),
+          ca_uploaded_at: DateTime.utc_now()
+        )
+
+      change_submission = %{url: new_url = "https://new.com", ca_cert: "new_ca_cert"}
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/settings/suma_credentials", change_submission)
+        |> json_response(:ok)
+
+      assert %{"url" => ^new_url, "username" => ^initial_username} = resp
+
+      %{"ca_uploaded_at" => new_upload_time} = resp
+
+      refute new_upload_time == initial_ca_uploaded_at
+    end
+
+    test "should properly remove ca_cert and its upload date", %{conn: conn} do
+      %{
+        url: initial_url,
+        username: initial_username,
+        password: _initial_password,
+        ca_cert: _initial_ca_cert,
+        ca_uploaded_at: _initial_ca_uploaded_at
+      } =
+        insert(
+          :software_updates_settings,
+          ca_cert: Faker.Lorem.sentence(),
+          ca_uploaded_at: DateTime.utc_now()
+        )
+
+      change_submission = %{
+        ca_cert: nil
+      }
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/settings/suma_credentials", change_submission)
+        |> json_response(:ok)
+
+      assert %{
+               "url" => initial_url,
+               "username" => initial_username,
+               "ca_uploaded_at" => nil
+             } == resp
+    end
+  end
+
   describe "Clear user settings" do
     test "should return 204 if no user settings have previously been saved", %{conn: conn} do
       conn = delete(conn, "/api/v1/settings/suma_credentials")
