@@ -185,6 +185,30 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
              } == resp
     end
 
+    test "should not process empty request body", %{
+      conn: conn
+    } do
+      insert(:software_updates_settings)
+
+      submission = %{}
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/settings/suma_credentials", submission)
+        |> json_response(:unprocessable_entity)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Object property count 0 is less than minProperties: 1",
+                   "title" => "Invalid value",
+                   "source" => %{"pointer" => "/"}
+                 }
+               ]
+             } == resp
+    end
+
     test "should validate partial changes to software updates settings", %{conn: conn} do
       insert(:software_updates_settings)
 

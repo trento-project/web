@@ -38,6 +38,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
         description:
           "Request body for updating SUMA credentials.\nOnly provide fields to be updated",
         type: :object,
+        minProperties: 1,
         properties: %{
           url: %Schema{
             type: :string
