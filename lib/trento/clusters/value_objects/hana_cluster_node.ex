@@ -20,6 +20,8 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
     field :hana_status, :string
     field :attributes, {:map, :string}
     field :virtual_ip, :string
+    field :nameserver_actual_role, :string
+    field :indexserver_actual_role, :string
 
     embeds_many :resources, ClusterResource
   end
