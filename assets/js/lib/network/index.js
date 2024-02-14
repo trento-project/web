@@ -86,6 +86,15 @@ export const del = function del(url, config = null) {
     });
 };
 
+export const patch = function patch(url, data, config = null) {
+  return networkClient
+    .patch(url, data, config)
+    .then(handleResponseStatus)
+    .catch((error) => {
+      handleError(error);
+    });
+};
+
 export const put = function put(url, data, config = null) {
   return networkClient
     .put(url, data, config)
