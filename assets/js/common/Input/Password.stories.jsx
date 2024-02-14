@@ -14,6 +14,12 @@ export default {
         type: { summary: 'string' },
       },
     },
+    error: {
+      description: 'Whether the field has an error',
+      control: {
+        type: 'boolean',
+      },
+    },
     disabled: {
       description: 'Whether the input should be disabled or not',
       control: {
@@ -30,6 +36,13 @@ export const Default = {};
 export const WithValue = {
   args: {
     value: 'somepassword',
+  },
+};
+
+export const WithError = {
+  args: {
+    value: 'someotherpassword',
+    error: true,
   },
 };
 

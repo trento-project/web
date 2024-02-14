@@ -15,6 +15,7 @@ function Input({
   prefix,
   suffix,
   placeholder,
+  error = false,
   allowClear = false,
   disabled = false,
   onChange = () => {},
@@ -25,8 +26,14 @@ function Input({
   return (
     <RcInput
       className={classNames(
-        'rounded-md w-full block relative placeholder-gray-400 outline-none bg-white border border-gray-200 focus:border-gray-500 focus-visible:border-gray-500 disabled:bg-gray-50',
-        { 'has-prefix': hasPrefix },
+        'rounded-md w-full block relative placeholder-gray-400 outline-none bg-white border disabled:bg-gray-50',
+        {
+          'has-prefix': hasPrefix,
+          'border-gray-200': !error,
+          'focus:border-gray-500': !error,
+          'focus-visible:border-red-500': !error,
+          'border-red-500': error,
+        },
         className
       )}
       id={id}
