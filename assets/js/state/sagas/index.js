@@ -59,6 +59,7 @@ import {
 import { SET_USER_AS_LOGGED } from '@state/user';
 
 import { setEulaVisible, setIsPremium } from '@state/settings';
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
@@ -72,6 +73,7 @@ import { watchSapSystemEvents } from '@state/sagas/sapSystems';
 
 import { watchPerformLogin } from '@state/sagas/user';
 import { watchChecksSelectionEvents } from '@state/sagas/checksSelection';
+import { watchSoftwareUpdateSettings } from '@state/sagas/softwareUpdatesSettings';
 
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
@@ -124,6 +126,8 @@ function* initialDataFetch() {
   const { data: databases } = yield call(get, '/databases');
   yield put(setDatabases(databases));
   yield put(stopDatabasesLoading());
+
+  yield put(fetchSoftwareUpdatesSettings());
 }
 
 function* setupSocketEvents() {
@@ -243,5 +247,6 @@ export default function* rootSaga() {
     watchResetState(),
     watchSapSystemEvents(),
     watchUserLoggedIn(),
+    watchSoftwareUpdateSettings(),
   ]);
 }
