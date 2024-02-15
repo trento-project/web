@@ -1345,8 +1345,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Failed",
                       name: "vmhana01",
-                      indexserver_actual_role: nil,
-                      nameserver_actual_role: nil,
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
