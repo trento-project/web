@@ -17,7 +17,7 @@ function SaptuneTuningState({ state }) {
     case 'not compliant':
       return (
         <div className="flex">
-          <Tooltip place="bottom" content={<TooltipContent />}>
+          <Tooltip content={<TooltipContent />}>
             <HealthIcon health="critical" />
           </Tooltip>
           <span className="ml-1">Not compliant</span>
