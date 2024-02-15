@@ -38,13 +38,13 @@ const scaleOutDetails = hanaClusterDetailsFactory.build({
     }),
     hanaClusterDetailsNodesFactory.build({
       site: scaleOutSites[1].name,
-      nameserver_actual_role: 'slave',
-      indexserver_actual_role: 'slave',
+      nameserver_actual_role: 'master',
+      indexserver_actual_role: 'master',
     }),
     hanaClusterDetailsNodesFactory.build({
       site: scaleOutSites[0].name,
-      nameserver_actual_role: 'master',
-      indexserver_actual_role: 'master',
+      nameserver_actual_role: 'slave',
+      indexserver_actual_role: 'slave',
     }),
     hanaClusterDetailsNodesFactory.build({
       site: scaleOutSites[1].name,
@@ -58,7 +58,6 @@ const scaleOutDetails = hanaClusterDetailsFactory.build({
     }),
   ],
 });
-
 const lastExecution = {
   data: checksExecutionCompletedFactory.build({
     result: 'passing',
