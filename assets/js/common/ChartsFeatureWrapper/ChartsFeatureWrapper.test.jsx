@@ -4,24 +4,16 @@ import '@testing-library/jest-dom';
 import ChartsFeatureWrapper from './ChartsFeatureWrapper';
 
 describe('ChartFeatureWrapper', () => {
-  afterEach(() => {
-    global.config = { chartsEnabled: false };
-  });
-
   it('should render ChartDisabledBox if the chart feature is disabled', () => {
-    global.config = { chartsEnabled: false };
-
-    render(<ChartsFeatureWrapper />);
+    render(<ChartsFeatureWrapper chartsEnabled={false} />);
     expect(screen.getByTestId('chart-disabled-box')).toHaveTextContent(
       'disabled'
     );
   });
 
   it('should render children if the chart feature is enabled', () => {
-    global.config = { chartsEnabled: true };
-
     render(
-      <ChartsFeatureWrapper>
+      <ChartsFeatureWrapper chartsEnabled>
         {' '}
         <div data-testid="child">child</div>{' '}
       </ChartsFeatureWrapper>

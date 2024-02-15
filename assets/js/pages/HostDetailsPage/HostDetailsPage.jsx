@@ -23,6 +23,9 @@ import {
 import { deregisterHost } from '@state/hosts';
 import HostDetails from './HostDetails';
 
+// eslint-disable-next-line no-undef
+const { chartsEnabled } = config;
+
 function HostDetailsPage() {
   const { hostID } = useParams();
   const dispatch = useDispatch();
@@ -72,6 +75,7 @@ function HostDetailsPage() {
   return (
     <HostDetails
       agentVersion={host.agent_version}
+      chartsEnabled={chartsEnabled}
       cluster={cluster}
       deregisterable={host.deregisterable}
       deregistering={host.deregistering}
