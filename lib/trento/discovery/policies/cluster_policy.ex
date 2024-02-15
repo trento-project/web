@@ -233,13 +233,24 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
       site = Map.get(attributes, "hana_#{String.downcase(sid)}_site", "")
 
+      %{
+        indexserver_actual_role: indexserver_actual_role,
+        nameserver_actual_role: nameserver_actual_role
+      } =
+        attributes
+        |> Map.get("hana_#{String.downcase(sid)}_roles", "")
+        |> String.split(":")
+        |> parse_nodes_actual_roles(cluster_type)
+
       node = %{
         name: name,
         attributes: attributes,
         resources: node_resources,
         site: site,
         hana_status: "Unknown",
-        virtual_ip: virtual_ip
+        virtual_ip: virtual_ip,
+        nameserver_actual_role: nameserver_actual_role,
+        indexserver_actual_role: indexserver_actual_role
       }
 
       hana_status =
@@ -253,6 +264,30 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
       %{node | hana_status: hana_status}
     end)
+  end
+
+  defp parse_nodes_actual_roles(
+         [_, _, _, nameserver_actual_role, _, indexserver_actual_role],
+         ClusterType.hana_scale_up()
+       ) do
+    %{
+      indexserver_actual_role: indexserver_actual_role,
+      nameserver_actual_role: nameserver_actual_role
+    }
+  end
+
+  defp parse_nodes_actual_roles(
+         [_, nameserver_actual_role, _, indexserver_actual_role],
+         ClusterType.hana_scale_out()
+       ) do
+    %{
+      indexserver_actual_role: indexserver_actual_role,
+      nameserver_actual_role: nameserver_actual_role
+    }
+  end
+
+  defp parse_nodes_actual_roles(_, _) do
+    %{indexserver_actual_role: "", nameserver_actual_role: ""}
   end
 
   defp parse_hana_scale_up_system_replication_mode([%{attributes: attributes} | _], sid) do

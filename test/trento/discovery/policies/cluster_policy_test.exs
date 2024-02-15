@@ -50,6 +50,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Primary",
                       name: "node01",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -127,6 +129,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Secondary",
                       name: "node02",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -275,6 +279,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Primary",
                       name: "node01",
+                      nameserver_actual_role: "master",
+                      indexserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -352,6 +358,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Secondary",
                       name: "node02",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -1203,6 +1211,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Primary",
                       name: "vmhana01",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -1259,6 +1269,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Secondary",
                       name: "vmhana02",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -1333,6 +1345,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Failed",
                       name: "vmhana01",
+                      indexserver_actual_role: nil,
+                      nameserver_actual_role: nil,
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -1375,6 +1389,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       },
                       hana_status: "Primary",
                       name: "vmhana02",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 0,
@@ -1485,6 +1501,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       name: "node01",
                       resources: [
                         %ClusterResource{
@@ -1561,6 +1579,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "lpa_prd_lpt" => "30",
                         "master-rsc_SAPHana_PRD_HDB00" => "100"
                       },
+                      indexserver_actual_role: "master",
+                      nameserver_actual_role: "master",
                       hana_status: "Secondary",
                       name: "node02",
                       resources: [
@@ -1710,7 +1730,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      indexserver_actual_role: "master",
                       name: "node01",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 2,
@@ -1752,7 +1774,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "100"
                       },
                       hana_status: "Secondary",
+                      indexserver_actual_role: "master",
                       name: "node02",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 300,
@@ -1845,6 +1869,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site1",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "150"
                         },
+                        indexserver_actual_role: "master",
+                        nameserver_actual_role: "master",
                         virtual_ip: "192.168.152.16",
                         resources: [
                           %ClusterResource{
@@ -1895,6 +1921,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "100"
                         },
+                        indexserver_actual_role: "master",
+                        nameserver_actual_role: "master",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -1924,6 +1952,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site1",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "140"
                         },
+                        indexserver_actual_role: "standby",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -1953,6 +1983,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "80"
                         },
+                        indexserver_actual_role: "standby",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -1982,6 +2014,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site1",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "140"
                         },
+                        indexserver_actual_role: "slave",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2011,6 +2045,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "80"
                         },
+                        indexserver_actual_role: "slave",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2100,6 +2136,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site1",
                           "master-rsc_SAPHanaCon_PRD_HDB00" => "100"
                         },
+                        indexserver_actual_role: "master",
+                        nameserver_actual_role: "master",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2131,6 +2169,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "master-rsc_SAPHanaCon_PRD_HDB00" => "-12200"
                         },
                         virtual_ip: nil,
+                        indexserver_actual_role: "slave",
+                        nameserver_actual_role: "slave",
                         resources: [
                           %ClusterResource{
                             id: "rsc_SAPHanaTop_PRD_HDB00",
@@ -2160,6 +2200,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaCon_PRD_HDB00" => "150"
                         },
+                        indexserver_actual_role: "master",
+                        nameserver_actual_role: "master",
                         virtual_ip: "10.0.0.10",
                         resources: [
                           %ClusterResource{
@@ -2204,6 +2246,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaCon_PRD_HDB00" => "-10000"
                         },
+                        indexserver_actual_role: "slave",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2294,6 +2338,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site1",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "150"
                         },
+                        indexserver_actual_role: "master",
+                        nameserver_actual_role: "master",
                         virtual_ip: "192.168.152.16",
                         resources: [
                           %ClusterResource{
@@ -2344,6 +2390,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "100"
                         },
+                        indexserver_actual_role: "master",
+                        nameserver_actual_role: "master",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2373,6 +2421,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site1",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "140"
                         },
+                        indexserver_actual_role: "standby",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2402,6 +2452,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "80"
                         },
+                        indexserver_actual_role: "standby",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2431,6 +2483,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site1",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "140"
                         },
+                        indexserver_actual_role: "slave",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{
@@ -2460,6 +2514,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           "hana_prd_site" => "Site2",
                           "master-rsc_SAPHanaController_PRD_HDB00" => "80"
                         },
+                        indexserver_actual_role: "slave",
+                        nameserver_actual_role: "slave",
                         virtual_ip: nil,
                         resources: [
                           %ClusterResource{

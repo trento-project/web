@@ -428,24 +428,7 @@ defmodule Trento.Factory do
     %HanaClusterDetails{
       fencing_type: "external/sbd",
       maintenance_mode: false,
-      nodes: [
-        %HanaClusterNode{
-          attributes: %{"attribute" => Faker.Beer.name()},
-          hana_status: "Secondary",
-          virtual_ip: Faker.Internet.ip_v4_address(),
-          name: Faker.StarWars.character(),
-          resources: [
-            %ClusterResource{
-              fail_count: Enum.random(0..100),
-              id: Faker.Pokemon.name(),
-              role: "Started",
-              status: "Active",
-              type: "ocf::heartbeat:Dummy"
-            }
-          ],
-          site: Faker.StarWars.planet()
-        }
-      ],
+      nodes: build_list(1, :hana_cluster_node),
       sites: [
         %HanaClusterSite{
           name: Faker.Beer.name(),
@@ -472,6 +455,27 @@ defmodule Trento.Factory do
       ],
       system_replication_mode: "sync",
       system_replication_operation_mode: "logreplay"
+    }
+  end
+
+  def hana_cluster_node_factory do
+    %HanaClusterNode{
+      attributes: %{"attribute" => Faker.Beer.name()},
+      hana_status: "Secondary",
+      virtual_ip: Faker.Internet.ip_v4_address(),
+      name: Faker.StarWars.character(),
+      indexserver_actual_role: "master",
+      nameserver_actual_role: "master",
+      resources: [
+        %ClusterResource{
+          fail_count: Enum.random(0..100),
+          id: Faker.Pokemon.name(),
+          role: "Started",
+          status: "Active",
+          type: "ocf::heartbeat:Dummy"
+        }
+      ],
+      site: Faker.StarWars.planet()
     }
   end
 
