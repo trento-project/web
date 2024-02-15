@@ -154,6 +154,7 @@ export default {
 export const Default = {
   args: {
     agentVersion: host.agent_version,
+    chartsEnabled: false,
     cluster,
     deregisterable: false,
     deregistering: false,

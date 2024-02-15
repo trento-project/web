@@ -44,6 +44,7 @@ function formatBytes(bytes, decimals = 2) {
 
 function HostDetails({
   agentVersion,
+  chartsEnabled,
   cluster,
   deregisterable,
   deregistering,
@@ -214,7 +215,7 @@ function HostDetails({
             />
           </div>
         </div>
-        <ChartsFeatureWrapper>
+        <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>
           <div>
             <HostChart
               hostId={hostID}
