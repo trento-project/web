@@ -12,6 +12,7 @@ import catalogReducer from './catalog';
 import lastExecutionsReducer from './lastExecutions';
 import settingsReducer from './settings';
 import userReducer from './user';
+import softwareUpdatesSettingsReducer from './softwareUpdatesSettings';
 import rootSaga from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -29,6 +30,7 @@ export const store = configureStore({
     lastExecutions: lastExecutionsReducer,
     settings: settingsReducer,
     user: userReducer,
+    softwareUpdatesSettings: softwareUpdatesSettingsReducer,
   },
   middleware: [sagaMiddleware],
 });
