@@ -31,7 +31,7 @@ function Input({
           'has-prefix': hasPrefix,
           'border-gray-200': !error,
           'focus:border-gray-500': !error,
-          'focus-visible:border-red-500': !error,
+          'focus-visible:border-red-500': error,
           'border-red-500': error,
         },
         className
