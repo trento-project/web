@@ -1684,6 +1684,130 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should return the expected commands when a ha_cluster_discovery with diskless SBD is received" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                cib_last_written: "Fri Oct 18 11:48:22 2019",
+                cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
+                designated_controller: true,
+                details: %HanaClusterDetails{
+                  fencing_type: "Diskless SBD",
+                  maintenance_mode: false,
+                  nodes: [
+                    %HanaClusterNode{
+                      attributes: %{
+                        "hana_prd_clone_state" => "PROMOTED",
+                        "hana_prd_op_mode" => "logreplay",
+                        "hana_prd_remoteHost" => "node02",
+                        "hana_prd_roles" => "4:P:master1:master:worker:master",
+                        "hana_prd_site" => "PRIMARY_SITE_NAME",
+                        "hana_prd_srmode" => "sync",
+                        "hana_prd_sync_state" => "PRIM",
+                        "hana_prd_version" => "2.00.040.00.1553674765",
+                        "hana_prd_vhost" => "node01",
+                        "lpa_prd_lpt" => "1571392102",
+                        "master-rsc_SAPHana_PRD_HDB00" => "150"
+                      },
+                      hana_status: "Primary",
+                      name: "node01",
+                      resources: [
+                        %ClusterResource{
+                          fail_count: 2,
+                          id: "rsc_ip_PRD_HDB00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::heartbeat:IPaddr2"
+                        },
+                        %ClusterResource{
+                          fail_count: 1_000_000,
+                          id: "rsc_SAPHana_PRD_HDB00",
+                          role: "Master",
+                          status: "Active",
+                          type: "ocf::suse:SAPHana"
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHanaTopology_PRD_HDB00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::suse:SAPHanaTopology"
+                        }
+                      ],
+                      site: "PRIMARY_SITE_NAME",
+                      virtual_ip: "192.168.123.200"
+                    },
+                    %HanaClusterNode{
+                      attributes: %{
+                        "hana_prd_clone_state" => "DEMOTED",
+                        "hana_prd_op_mode" => "logreplay",
+                        "hana_prd_remoteHost" => "node01",
+                        "hana_prd_roles" => "4:S:master1:master:worker:master",
+                        "hana_prd_site" => "SECONDARY_SITE_NAME",
+                        "hana_prd_srmode" => "sync",
+                        "hana_prd_sync_state" => "SOK",
+                        "hana_prd_version" => "2.00.040.00.1553674765",
+                        "hana_prd_vhost" => "node02",
+                        "lpa_prd_lpt" => "30",
+                        "master-rsc_SAPHana_PRD_HDB00" => "100"
+                      },
+                      hana_status: "Secondary",
+                      name: "node02",
+                      resources: [
+                        %ClusterResource{
+                          fail_count: 300,
+                          id: "rsc_SAPHana_PRD_HDB00",
+                          role: "Slave",
+                          status: "Active",
+                          type: "ocf::suse:SAPHana"
+                        },
+                        %ClusterResource{
+                          fail_count: 0,
+                          id: "rsc_SAPHanaTopology_PRD_HDB00",
+                          role: "Started",
+                          status: "Active",
+                          type: "ocf::suse:SAPHanaTopology"
+                        }
+                      ],
+                      site: "SECONDARY_SITE_NAME",
+                      virtual_ip: nil
+                    }
+                  ],
+                  sites: [
+                    %HanaClusterSite{
+                      name: "PRIMARY_SITE_NAME",
+                      state: "Primary",
+                      sr_health_state: "4"
+                    },
+                    %HanaClusterSite{
+                      name: "SECONDARY_SITE_NAME",
+                      state: "Secondary",
+                      sr_health_state: "4"
+                    }
+                  ],
+                  sbd_devices: [],
+                  secondary_sync_state: "SOK",
+                  sr_health_state: "4",
+                  stopped_resources: [],
+                  system_replication_mode: "sync",
+                  system_replication_operation_mode: "logreplay"
+                },
+                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                name: "hana_cluster",
+                sid: "PRD",
+                additional_sids: [],
+                type: :hana_scale_up,
+                hosts_number: 2,
+                resources_number: 8,
+                discovered_health: :passing,
+                provider: Provider.azure()
+              }
+            ]} ==
+             "ha_cluster_discovery_hana_scale_up_diskless_sbd"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
   describe "HANA scale out" do
     test "should return the expected commands when a ha_cluster_discovery payload with hana scale out is handled" do
       assert {:ok,

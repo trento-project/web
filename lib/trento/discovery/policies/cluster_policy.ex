@@ -22,6 +22,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   @default_hana_scale_out_replication_mode "sync"
   @default_hana_scale_out_operation_mode "logreplay"
   @default_maintenance_mode "false"
+  @unknown_fencing_type "Unknown"
+  @diskless_sbd_fencing_type "Diskless SBD"
 
   def handle(
         %{
@@ -136,7 +138,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         parse_hana_scale_up_system_replication_operation_mode(nodes, sid),
       secondary_sync_state: parse_hana_scale_up_secondary_sync_state(nodes, sid),
       sr_health_state: parse_hana_scale_up_sr_health_state(nodes, sid),
-      fencing_type: parse_cluster_fencing_type(crmmon),
+      fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       maintenance_mode: parse_maintenance_mode(cib),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: nodes,
@@ -160,7 +162,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         parse_hana_scale_out_system_replication_operation_mode(cib, sid),
       secondary_sync_state: parse_hana_scale_out_secondary_sync_state(cib, sid),
       sr_health_state: parse_hana_scale_out_sr_health_state(cib, sid),
-      fencing_type: parse_cluster_fencing_type(crmmon),
+      fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       maintenance_mode: parse_maintenance_mode(cib),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       nodes: parse_cluster_nodes(payload, sid),
@@ -180,7 +182,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
        ) do
     %{
       sap_systems: Enum.map(additional_sids, &parse_ascs_ers_cluster_sap_system(payload, &1)),
-      fencing_type: parse_cluster_fencing_type(crmmon),
+      fencing_type: parse_cluster_fencing_type(crmmon, sbd),
       stopped_resources: parse_cluster_stopped_resources(crmmon),
       sbd_devices: parse_sbd_devices(sbd),
       maintenance_mode: parse_maintenance_mode(cib)
@@ -450,15 +452,24 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     |> Enum.find("Unknown", fn site -> site != primary_site end)
   end
 
-  defp parse_cluster_fencing_type(%{resources: resources}) do
-    Enum.find_value(resources, "", fn
+  defp parse_cluster_fencing_type(%{resources: resources}, sbd) do
+    resources
+    |> Enum.find_value(nil, fn
       %{agent: "stonith:" <> fencing_type} ->
         fencing_type
 
       _ ->
         false
     end)
+    |> extract_fencing_type(sbd)
   end
+
+  defp extract_fencing_type(nil, %{config: %{"sbd_device" => _}}), do: @unknown_fencing_type
+
+  defp extract_fencing_type(nil, %{config: %{"sbd_watchdog_dev" => _}, devices: []}),
+    do: @diskless_sbd_fencing_type
+
+  defp extract_fencing_type(fencing_type, _), do: fencing_type
 
   defp parse_cluster_stopped_resources(crmmon) do
     crmmon
