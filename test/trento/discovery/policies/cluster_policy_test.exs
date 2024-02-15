@@ -1730,7 +1730,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      indexserver_actual_role: "master",
                       name: "node01",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 2,
@@ -1772,7 +1774,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "100"
                       },
                       hana_status: "Secondary",
+                      indexserver_actual_role: "master",
                       name: "node02",
+                      nameserver_actual_role: "master",
                       resources: [
                         %ClusterResource{
                           fail_count: 300,
