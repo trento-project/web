@@ -41,6 +41,8 @@ defmodule Trento.SoftwareUpdates do
   def save_settings(settings_submission, date_service \\ DateService) do
     {:ok, settings} =
       Repo.transaction(fn ->
+        Repo.query!("set transaction isolation level serializable;")
+
         with :ok <- ensure_no_settings_configured() do
           save_new_settings(settings_submission, date_service)
         end
