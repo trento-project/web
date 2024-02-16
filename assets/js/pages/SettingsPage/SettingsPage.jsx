@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
 
-import PageHeader from '@common/PageHeader';
-import Button from '@common/Button';
 import { logError } from '@lib/log';
 import { get } from '@lib/network';
 
-function Settings() {
+import PageHeader from '@common/PageHeader';
+import Button from '@common/Button';
+
+function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState(null);
   const [showApiKey, setShowApiKey] = useState(false);
@@ -153,4 +154,4 @@ function Settings() {
   );
 }
 
-export default Settings;
+export default SettingsPage;
