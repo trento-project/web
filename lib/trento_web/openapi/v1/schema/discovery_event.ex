@@ -9,6 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.DiscoveryEvent do
     title: "DiscoveryEvent",
     description: "A discovery event",
     type: :object,
+    additionalProperties: false,
     properties: %{
       agent_id: %Schema{type: :string, format: :uuid},
       discovery_type: %Schema{type: :string},

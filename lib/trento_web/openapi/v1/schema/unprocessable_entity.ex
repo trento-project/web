@@ -9,6 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity do
 
   OpenApiSpex.schema(%{
     type: :object,
+    additionalProperties: false,
     properties: %{
       errors: %Schema{
         type: :array,

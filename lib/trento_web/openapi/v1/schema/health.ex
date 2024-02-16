@@ -13,6 +13,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Health do
     example: %{
       database: "pass"
     },
+    additionalProperties: false,
     properties: %{
       database: %Schema{
         description: "The status of the database connection",

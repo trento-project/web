@@ -16,6 +16,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HttpStd do
           "labelname" => "mylabel"
         }
       },
+      additionalProperties: false,
       properties: %{
         labels: %Schema{
           type: :object,

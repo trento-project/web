@@ -10,6 +10,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.NotFound do
   OpenApiSpex.schema(%{
     title: "NotFound",
     type: :object,
+    additionalProperties: false,
     properties: %{
       errors: %Schema{
         type: :array,

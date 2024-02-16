@@ -13,6 +13,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
       title: "Check",
       description: "An available check to be executed on the target infrastructure",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :string, description: "Check ID", format: :uuid},
         name: %Schema{type: :string, description: "Check Name"},
@@ -50,6 +51,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(%{
       title: "ChecksGroup",
       description: "A Group of related Checks (Corosync, Pacemaker ...)",
+      additionalProperties: false,
       type: :object,
       properties: %{
         group: %Schema{type: :string, description: "Group Name"},
@@ -64,6 +66,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(%{
       title: "ProviderCatalog",
       description: "A Provider specific Catalog, and respective values",
+      additionalProperties: false,
       type: :object,
       properties: %{
         provider: %Schema{
@@ -164,6 +167,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(%{
       title: "CatalogNotfound",
       description: "No Catalog was found for the provided query",
+      additionalProperties: false,
       type: :object,
       properties: %{
         error: %Schema{
@@ -181,6 +185,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksCatalog do
     OpenApiSpex.schema(%{
       title: "UnableToLoadCatalog",
       description: "Something wrong happened while loading the catalog. ie: it is not ready yet",
+      additionalProperties: false,
       type: :object,
       properties: %{
         error: %Schema{type: :string, description: "The error message"}

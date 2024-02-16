@@ -8,6 +8,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SlesSubscription do
     title: "SlesSubscription",
     description: "A discovered SLES Subscription on a host",
     type: :object,
+    additionalProperties: false,
     properties: %{
       host_id: %Schema{type: :string, format: :uuid},
       identifier: %Schema{type: :string},

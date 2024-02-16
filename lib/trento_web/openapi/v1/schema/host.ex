@@ -33,6 +33,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
       title: "Host",
       description: "A discovered host on the target infrastructure",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :string, description: "Host ID", format: :uuid},
         hostname: %Schema{type: :string, description: "Host name"},

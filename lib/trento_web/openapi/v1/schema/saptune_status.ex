@@ -12,6 +12,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
       title: "Saptune service",
       description: "Saptune service",
       type: :object,
+      additionalProperties: false,
       properties: %{
         name: %Schema{
           type: :string,
@@ -36,6 +37,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
       title: "Saptune note",
       description: "Saptune note",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{
           type: :string,
@@ -56,6 +58,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
       title: "Saptune solution",
       description: "Saptune solution",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{
           type: :boolean,
@@ -81,6 +84,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
       title: "Saptune staging",
       description: "Saptune staging data",
       type: :object,
+      additionalProperties: false,
       properties: %{
         enabled: %Schema{
           type: :boolean,
@@ -105,6 +109,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SaptuneStatus do
     description: "Saptune status output on the host",
     type: :object,
     nullable: true,
+    additionalProperties: false,
     properties: %{
       package_version: %Schema{type: :string, description: "Saptune package version"},
       configured_version: %Schema{type: :string, description: "Saptune configure version"},
