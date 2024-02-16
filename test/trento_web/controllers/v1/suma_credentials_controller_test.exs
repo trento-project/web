@@ -163,6 +163,34 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
                ]
              } == resp
     end
+
+    test "should handle concurrent concurrent saving", %{conn: conn} do
+      settings = %{
+        url: Faker.Internet.image_url(),
+        username: Faker.Internet.user_name(),
+        password: Faker.Lorem.word(),
+        ca_cert: Faker.Lorem.sentence()
+      }
+
+      responses =
+        1..100
+        |> Enum.map(fn _ ->
+          Task.async(fn ->
+            conn
+            |> put_req_header("content-type", "application/json")
+            |> post("/api/v1/settings/suma_credentials", settings)
+          end)
+        end)
+        |> Task.await_many()
+
+      assert responses
+             |> Enum.filter(fn %{status: status} -> status === 201 end)
+             |> length() == 1
+
+      assert responses
+             |> Enum.filter(fn %{status: status} -> status === 422 end)
+             |> length() == 99
+    end
   end
 
   describe "changing software updates settings" do

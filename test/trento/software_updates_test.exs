@@ -193,6 +193,58 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       assert {:error, :settings_already_configured} = SoftwareUpdates.save_settings(settings)
     end
+
+    test "should accept only one saving operation in a concurrent scenario" do
+      results =
+        1..100
+        |> Enum.map(fn _ ->
+          Task.async(fn ->
+            settings = %{
+              url: "https://valid.com",
+              username: Faker.Internet.user_name(),
+              password: Faker.Lorem.word(),
+              ca_cert: nil
+            }
+
+            SoftwareUpdates.save_settings(settings)
+          end)
+        end)
+        |> Task.await_many()
+
+      successful_results =
+        Enum.filter(results, fn
+          {:ok, %Settings{}} -> true
+          _ -> false
+        end)
+
+      failed_results =
+        Enum.filter(results, fn
+          {:error, :settings_already_configured} -> true
+          _ -> false
+        end)
+
+      assert length(successful_results) == 1
+
+      assert length(failed_results) == 99
+
+      assert length(Repo.all(Settings)) == 1
+
+      {:ok,
+       %Settings{
+         url: url,
+         username: username,
+         password: passwowd,
+         ca_cert: ca_cert
+       }} = List.first(successful_results)
+
+      assert {:ok,
+              %Settings{
+                url: ^url,
+                username: ^username,
+                password: ^passwowd,
+                ca_cert: ^ca_cert
+              }} = SoftwareUpdates.get_settings()
+    end
   end
 
   describe "changing software updates settings" do
