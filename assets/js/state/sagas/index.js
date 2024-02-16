@@ -59,7 +59,6 @@ import {
 import { SET_USER_AS_LOGGED } from '@state/user';
 
 import { setEulaVisible, setIsPremium } from '@state/settings';
-import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
 
 import { watchNotifications } from '@state/sagas/notifications';
 import { watchAcceptEula } from '@state/sagas/eula';
@@ -126,8 +125,6 @@ function* initialDataFetch() {
   const { data: databases } = yield call(get, '/databases');
   yield put(setDatabases(databases));
   yield put(stopDatabasesLoading());
-
-  yield put(fetchSoftwareUpdatesSettings());
 }
 
 function* setupSocketEvents() {
