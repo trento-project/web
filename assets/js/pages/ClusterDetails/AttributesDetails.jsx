@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import Button from '@common/Button';
 import Modal from '@common/Modal';
 import Table from '@common/Table';
 
@@ -34,7 +33,7 @@ function AttributesDetails({ attributes, resources, title }) {
       </a>
       </span>
       <Modal title={title} open={modalOpen} onClose={() => setModalOpen(false)}>
-        <h3 className="font-medium">Attributes</h3>
+        <h3 className="font-medium mt-6">Attributes</h3>
         <Table
           config={attributesTableConfig}
           data={Object.keys(attributes).map((key) => ({
@@ -43,7 +42,7 @@ function AttributesDetails({ attributes, resources, title }) {
           }))}
         />
 
-        <h3 className="font-medium">Resources</h3>
+        <h3 className="font-medium mt-6">Resources</h3>
         <Table config={resourcesTableConfig} data={resources} />
       </Modal>
     </>
