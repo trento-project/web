@@ -28,9 +28,11 @@ function AttributesDetails({ attributes, resources, title }) {
 
   return (
     <>
-      <Button type="primary" size="small" onClick={() => setModalOpen(true)}>
+    <span className="text-jungle-green-500 hover:opacity-75">
+      <a href="#" onClick={() => setModalOpen(true)}>
         Details
-      </Button>
+      </a>
+      </span>
       <Modal title={title} open={modalOpen} onClose={() => setModalOpen(false)}>
         <h3 className="font-medium">Attributes</h3>
         <Table
