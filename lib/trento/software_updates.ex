@@ -25,12 +25,12 @@ defmodule Trento.SoftwareUpdates do
 
   @spec get_settings :: {:ok, Settings.t()} | {:error, :settings_not_configured}
   def get_settings do
-    case Repo.one(Settings) do
-      nil ->
-        {:error, :settings_not_configured}
-
-      settings ->
+    case has_settings?(settings = Repo.one!(Settings)) do
+      true ->
         {:ok, settings}
+
+      false ->
+        {:error, :settings_not_configured}
     end
   end
 
@@ -39,8 +39,8 @@ defmodule Trento.SoftwareUpdates do
           | {:error, :settings_already_configured}
           | {:error, any()}
   def save_settings(settings_submission, date_service \\ DateService) do
-    with :ok <- ensure_no_settings_configured() do
-      save_new_settings(settings_submission, date_service)
+    with {:ok, :settings_not_configured, settings} <- ensure_no_settings_configured() do
+      save_new_settings(settings, settings_submission, date_service)
     end
   end
 
@@ -56,28 +56,39 @@ defmodule Trento.SoftwareUpdates do
 
   @spec clear_settings :: :ok
   def clear_settings do
-    Repo.delete_all(Settings)
+    Repo.update_all(Settings,
+      set: [
+        url: nil,
+        username: nil,
+        password: nil,
+        ca_cert: nil,
+        ca_uploaded_at: nil,
+        updated_at: DateTime.utc_now()
+      ]
+    )
 
     :ok
   end
 
+  defp has_settings?(%Settings{url: url, username: username, password: password}),
+    do: url != nil and username != nil and password != nil
+
   defp ensure_no_settings_configured do
-    case get_settings() do
-      {:error, :settings_not_configured} ->
-        :ok
+    case has_settings?(settings = Repo.one!(Settings)) do
+      false ->
+        {:ok, :settings_not_configured, settings}
 
-      {:ok, %Settings{} = _} ->
+      true ->
         Logger.error("Error: software updates settings already configured")
-
         {:error, :settings_already_configured}
     end
   end
 
-  defp save_new_settings(settings_submission, date_service) do
+  defp save_new_settings(%Settings{} = settings, settings_submission, date_service) do
     saving_result =
-      %Settings{}
+      settings
       |> Settings.changeset(settings_submission, date_service)
-      |> Repo.insert()
+      |> Repo.update()
 
     case saving_result do
       {:ok, _} = success ->

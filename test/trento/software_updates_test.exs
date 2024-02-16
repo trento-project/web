@@ -20,7 +20,10 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
         username: username,
         password: password
       } =
-        insert(:software_updates_settings, ca_cert: nil, ca_uploaded_at: nil)
+        insert(:software_updates_settings, [ca_cert: nil, ca_uploaded_at: nil],
+          conflict_target: :id,
+          on_conflict: :replace_all
+        )
 
       assert {:ok,
               %Settings{
@@ -42,8 +45,9 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       } =
         insert(
           :software_updates_settings,
-          ca_cert: Faker.Lorem.sentence(),
-          ca_uploaded_at: DateTime.utc_now()
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
         )
 
       assert {:ok,
@@ -204,7 +208,10 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     end
 
     test "should validate partial changes to software updates settings" do
-      insert(:software_updates_settings)
+      insert(:software_updates_settings, [],
+        conflict_target: :id,
+        on_conflict: :replace_all
+      )
 
       change_settings_scenarios = [
         %{
@@ -277,8 +284,9 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       } =
         insert(
           :software_updates_settings,
-          ca_cert: Faker.Lorem.sentence(),
-          ca_uploaded_at: DateTime.utc_now()
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
         )
 
       change_submission = %{
@@ -314,8 +322,9 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       } =
         insert(
           :software_updates_settings,
-          ca_cert: Faker.Lorem.sentence(),
-          ca_uploaded_at: DateTime.utc_now()
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
         )
 
       change_submission = %{
@@ -344,8 +353,9 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       } =
         insert(
           :software_updates_settings,
-          ca_cert: Faker.Lorem.sentence(),
-          ca_uploaded_at: DateTime.utc_now()
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
         )
 
       change_submission = %{
@@ -367,8 +377,9 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
     test "should support idempotent sequential clear settings" do
       insert(
         :software_updates_settings,
-        ca_cert: Faker.Lorem.sentence(),
-        ca_uploaded_at: DateTime.utc_now()
+        [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+        conflict_target: :id,
+        on_conflict: :replace_all
       )
 
       assert {:ok, _} = SoftwareUpdates.get_settings()

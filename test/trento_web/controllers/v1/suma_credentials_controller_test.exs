@@ -15,8 +15,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     test "should return user settings", %{conn: conn} do
       insert(
         :software_updates_settings,
-        ca_cert: Faker.Lorem.sentence(),
-        ca_uploaded_at: DateTime.utc_now()
+        [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+        conflict_target: :id,
+        on_conflict: :replace_all
       )
 
       api_spec = ApiSpec.spec()
@@ -112,7 +113,10 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
 
     test "should not save valid settings when previously settings have been saved", %{conn: conn} do
-      insert(:software_updates_settings, ca_cert: nil, ca_uploaded_at: nil)
+      insert(:software_updates_settings, [ca_cert: nil, ca_uploaded_at: nil],
+        conflict_target: :id,
+        on_conflict: :replace_all
+      )
 
       new_settings = %{
         url: Faker.Internet.image_url(),
@@ -188,7 +192,10 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     test "should not process empty request body", %{
       conn: conn
     } do
-      insert(:software_updates_settings)
+      insert(:software_updates_settings, [],
+        conflict_target: :id,
+        on_conflict: :replace_all
+      )
 
       submission = %{}
 
@@ -210,7 +217,10 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
 
     test "should validate partial changes to software updates settings", %{conn: conn} do
-      insert(:software_updates_settings)
+      insert(:software_updates_settings, [],
+        conflict_target: :id,
+        on_conflict: :replace_all
+      )
 
       change_settings_scenarios = [
         %{
@@ -341,8 +351,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       } =
         insert(
           :software_updates_settings,
-          ca_cert: Faker.Lorem.sentence(),
-          ca_uploaded_at: DateTime.utc_now()
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
         )
 
       change_submission = %{
@@ -375,8 +386,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       } =
         insert(
           :software_updates_settings,
-          ca_cert: Faker.Lorem.sentence(),
-          ca_uploaded_at: DateTime.utc_now()
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
         )
 
       change_submission = %{url: new_url = "https://new.com", ca_cert: "new_ca_cert"}
@@ -404,8 +416,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
       } =
         insert(
           :software_updates_settings,
-          ca_cert: Faker.Lorem.sentence(),
-          ca_uploaded_at: DateTime.utc_now()
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
         )
 
       change_submission = %{
@@ -434,7 +447,10 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
 
     test "should return 204 when user settings have previously been saved", %{conn: conn} do
-      insert(:software_updates_settings)
+      insert(:software_updates_settings, [],
+        conflict_target: :id,
+        on_conflict: :replace_all
+      )
 
       conn = delete(conn, "/api/v1/settings/suma_credentials")
 

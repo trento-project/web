@@ -11,7 +11,7 @@ defmodule Trento.SoftwareUpdates.Settings do
 
   @type t :: %__MODULE__{}
 
-  @primary_key {:id, :binary_id, autogenerate: true}
+  @primary_key {:id, :binary_id, autogenerate: false}
   schema "software_update_settings" do
     field :url, :string
     field :username, :string
