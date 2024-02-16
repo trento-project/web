@@ -260,13 +260,11 @@ function AscsErsClusterDetails({
         </div>
       </div>
 
-      {details && details.stopped_resources.length > 0 && (
-        <StoppedResources resources={details.stopped_resources} />
-      )}
-
       <div className="mt-2">
         <Table config={nodeDetailsConfig} data={currentSapSystem?.nodes} />
       </div>
+
+      <StoppedResources resources={details.stopped_resources} />
 
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
