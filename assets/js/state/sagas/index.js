@@ -72,6 +72,7 @@ import { watchSapSystemEvents } from '@state/sagas/sapSystems';
 
 import { watchPerformLogin } from '@state/sagas/user';
 import { watchChecksSelectionEvents } from '@state/sagas/checksSelection';
+import { watchSoftwareUpdateSettings } from '@state/sagas/softwareUpdatesSettings';
 
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
@@ -243,5 +244,6 @@ export default function* rootSaga() {
     watchResetState(),
     watchSapSystemEvents(),
     watchUserLoggedIn(),
+    watchSoftwareUpdateSettings(),
   ]);
 }
