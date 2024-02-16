@@ -62,7 +62,7 @@ const siteDetailsConfig = {
         const { attributes, resources } = item;
         return (
           <AttributesDetails
-            title="Site Details"
+            title="Node Details"
             attributes={attributes}
             resources={resources}
           />
