@@ -189,6 +189,26 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       assert {:error, :settings_already_configured} = SoftwareUpdates.save_settings(settings)
     end
+
+    test "should not save software updates settings when concurrent calls are issued" do
+      settings = %{
+        url: "https://valid.com",
+        username: Faker.Internet.user_name(),
+        password: Faker.Lorem.word(),
+        ca_cert: nil
+      }
+
+      1..100
+      |> Enum.map(fn _ ->
+        Task.async(fn ->
+          SoftwareUpdates.save_settings(settings)
+        end)
+      end)
+      |> Task.await_many()
+
+      found_settings = Repo.all(Settings)
+      assert length(found_settings) == 1
+    end
   end
 
   describe "changing software updates settings" do

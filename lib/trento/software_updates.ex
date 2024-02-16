@@ -39,9 +39,14 @@ defmodule Trento.SoftwareUpdates do
           | {:error, :settings_already_configured}
           | {:error, any()}
   def save_settings(settings_submission, date_service \\ DateService) do
-    with :ok <- ensure_no_settings_configured() do
-      save_new_settings(settings_submission, date_service)
-    end
+    {:ok, settings} =
+      Repo.transaction(fn ->
+        with :ok <- ensure_no_settings_configured() do
+          save_new_settings(settings_submission, date_service)
+        end
+      end)
+
+    settings
   end
 
   @spec change_settings(software_update_settings_change_submission, module()) ::
