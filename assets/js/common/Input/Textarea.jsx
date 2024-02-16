@@ -23,7 +23,7 @@ function Textarea({
           'border-gray-200': !error,
           'border-red-500': error,
           'focus:border-gray-500': !error,
-          'focus-visible:border-red-500': !error,
+          'focus-visible:border-red-500': error,
         },
         className
       )}
