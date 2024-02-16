@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import Button from '@common/Button';
 import Modal from '@common/Modal';
 import Table from '@common/Table';
 
@@ -27,11 +28,14 @@ function AttributesDetails({ attributes, resources, title }) {
 
   return (
     <>
-    <span className="text-jungle-green-500 hover:opacity-75">
-      <a href="#" onClick={() => setModalOpen(true)}>
+      <Button
+        type="transparent"
+        className="text-jungle-green-500"
+        size="fit"
+        onClick={() => setModalOpen(true)}
+      >
         Details
-      </a>
-      </span>
+      </Button>
       <Modal title={title} open={modalOpen} onClose={() => setModalOpen(false)}>
         <h3 className="font-medium mt-6">Attributes</h3>
         <Table
