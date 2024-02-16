@@ -1,6 +1,7 @@
 import React from 'react';
 
 import HealthIcon from '@common/HealthIcon';
+import Tooltip from '@common/Tooltip';
 
 function SaptuneTuningState({ state }) {
   switch (state) {
@@ -9,7 +10,15 @@ function SaptuneTuningState({ state }) {
     case 'not compliant':
       return (
         <div className="flex">
-          <HealthIcon health="critical" />
+          <Tooltip
+            content={
+              <div>
+                Run `saptune note verify` in <br /> the host for further details
+              </div>
+            }
+          >
+            <HealthIcon health="critical" />
+          </Tooltip>
           <span className="ml-1">Not compliant</span>
         </div>
       );
