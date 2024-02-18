@@ -29,7 +29,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: undefined,
         ca_uploaded_at: undefined,
       },
-      error: null,
+      networkError: null,
     };
 
     const settings = {
@@ -45,7 +45,7 @@ describe('SoftwareUpdateSettings reducer', () => {
     expect(actual).toEqual({
       loading: false,
       settings,
-      error: null,
+      networkError: null,
     });
   });
 
@@ -57,7 +57,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      error: null,
+      networkError: null,
     };
 
     const action = setEmptySoftwareUpdatesSettings();
@@ -71,7 +71,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: undefined,
         ca_uploaded_at: undefined,
       },
-      error: null,
+      networkError: null,
     });
   });
 });
