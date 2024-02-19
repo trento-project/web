@@ -819,9 +819,9 @@ jobs:
           cp $FOLDER/_service $OSC_CHECKOUT_DIR
           cp $FOLDER/trento-web.spec $OSC_CHECKOUT_DIR
           rm -vf $OSC_CHECKOUT_DIR/*.tar.gz
-          rm -vf $OSC_CHECKOUT_DIR/*.tgz
           pushd $OSC_CHECKOUT_DIR 
           osc service manualrun
+          rm -vf $OSC_CHECKOUT_DIR/*.tgz
           cp  /__w/web/web/deps.tar.gz .
       - name: Prepare trento-web.changes file
         # The .changes file is updated only in release creation. This current task should be improved
