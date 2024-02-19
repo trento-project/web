@@ -38,7 +38,7 @@ describe('SoftwareUpdateSettings reducer', () => {
       ca_uploaded_at: '2021-01-01T00:00:00Z',
     };
 
-    const action = setSoftwareUpdatesSettings({ settings });
+    const action = setSoftwareUpdatesSettings(settings);
 
     const actual = softwareUpdatesSettingsReducer(initialState, action);
 

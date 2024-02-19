@@ -29,7 +29,7 @@ import NotFound from '@pages/NotFound';
 import SapSystemDetails from '@pages//SapSystemDetails/SapSystemDetails';
 import SapSystemsOverviewPage from '@pages/SapSystemsOverviewPage';
 import SaptuneDetailsPage from '@pages/SaptuneDetails';
-import Settings from '@pages/Settings';
+import SettingsPage from '@pages/SettingsPage';
 import SomethingWentWrong from '@pages/SomethingWentWrong';
 
 import { me } from '@lib/auth';
@@ -78,7 +78,7 @@ function App() {
                   />
                   <Route path="databases" element={<DatabasesOverviewPage />} />
                   <Route path="catalog" element={<ChecksCatalogPage />} />
-                  <Route path="settings" element={<Settings />} />
+                  <Route path="settings" element={<SettingsPage />} />
                   <Route path="about" element={<AboutPage />} />
                   <Route path="hosts/:hostID" element={<HostDetailsPage />} />
                   <Route
