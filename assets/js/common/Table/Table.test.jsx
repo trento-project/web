@@ -80,6 +80,22 @@ describe('Table component', () => {
       .forEach((tableRow) => expect(tableRow).toHaveClass(customRowClassName));
   });
 
+  it('should display the header', () => {
+    const data = tableDataFactory.buildList(10);
+    const headerText = faker.person.firstName();
+
+    render(
+      <Table
+        config={tableConfig}
+        data={data}
+        setSearchParams={() => {}}
+        header={<p>{headerText}</p>}
+      />
+    );
+
+    expect(screen.queryByText(headerText)).toBeInTheDocument();
+  });
+
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
       const data = tableDataFactory.buildList(10);
