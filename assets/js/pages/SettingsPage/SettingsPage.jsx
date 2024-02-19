@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import classNames from 'classnames';
 
 import { logError } from '@lib/log';
 import { get } from '@lib/network';
 
+import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
 
+import { fetchSoftwareUpdatesSettings } from '@state/softwareUpdatesSettings';
+import { getSoftwareUpdatesSettings } from '@state/selectors/softwareUpdatesSettings';
+
+import SuseManagerConfig from '@common/SuseManagerConfig';
+
 function SettingsPage() {
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState(null);
   const [showApiKey, setShowApiKey] = useState(false);
@@ -24,7 +33,12 @@ function SettingsPage() {
         logError(error);
         setLoading(false);
       });
+    dispatch(fetchSoftwareUpdatesSettings());
   }, []);
+
+  const { settings, loading: softwareUpdatesSettingsLoading } = useSelector(
+    getSoftwareUpdatesSettings()
+  );
 
   const hasApiKey = Boolean(apiKey);
 
@@ -149,6 +163,20 @@ function SettingsPage() {
             </ul>
           </div>
         </div>
+      </div>
+      <div className="py-4">
+        {softwareUpdatesSettingsLoading ? (
+          <LoadingBox
+            className="shadow-none rounded-lg"
+            text="Loading Settings..."
+          />
+        ) : (
+          <SuseManagerConfig
+            url={settings.url}
+            username={settings.username}
+            certUploadDate={settings.ca_uploaded_at}
+          />
+        )}
       </div>
     </section>
   );
