@@ -22,7 +22,7 @@ export const softwareUpdatesSettingsSlice = createSlice({
     startLoadingSoftwareUpdatesSettings: (state) => {
       state.loading = true;
     },
-    setSoftwareUpdatesSettings: (state, { payload: { settings } }) => {
+    setSoftwareUpdatesSettings: (state, { payload: settings }) => {
       state.loading = false;
       state.error = null;
       state.settings = settings;
