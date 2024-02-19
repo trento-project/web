@@ -107,6 +107,17 @@ export function WithFilters(args) {
   return <Table config={filteredConfig} data={data} {...args} />;
 }
 
+export function WithHeader(args) {
+  return (
+    <Table
+      config={config}
+      data={data}
+      header={<h3 className="bg-white px-4 py-4">Header</h3>}
+      {...args}
+    />
+  );
+}
+
 export function Empty() {
   return <Table config={config} data={[]} />;
 }

@@ -62,6 +62,7 @@ function Table({
   setSearchParams,
   emptyStateText = 'No data available',
   withPadding = true,
+  header = null,
   rowKey = defaultRowKey,
 }) {
   const {
@@ -81,6 +82,8 @@ function Table({
   const columnFiltersBoundToParams = columns.filter(
     (c) => c.filter && c.filterFromParams
   );
+
+  const hasFilters = columns.filter(({ filter }) => Boolean(filter)).length > 0;
 
   useEffect(() => {
     if (!searchParamsEnabled) return;
@@ -158,7 +161,13 @@ function Table({
             'pt-4': withPadding,
           })}
         >
-          <div className="min-w-fit shadow rounded-lg">
+          <div
+            className={classNames(
+              'min-w-fit shadow rounded-b-lg overflow-hidden',
+              { 'rounded-t-lg': !hasFilters }
+            )}
+          >
+            {header}
             <table className="min-w-full leading-normal table-fixed">
               <thead>
                 <tr>
