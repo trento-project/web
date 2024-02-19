@@ -132,7 +132,7 @@ function SuseManagerSettingsModal({
             const payload = {
               url,
               username,
-              ...(editingCertificate && { certificate }),
+              ...(editingCertificate && { ca_cert: certificate }),
               ...(editingPassword && { password }),
             };
             onSave(payload);

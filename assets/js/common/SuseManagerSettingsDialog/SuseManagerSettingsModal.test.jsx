@@ -85,7 +85,7 @@ describe('SuseManagerSettingsModal component', () => {
       username,
       url,
       password,
-      certificate,
+      ca_cert: certificate,
     });
   });
 
