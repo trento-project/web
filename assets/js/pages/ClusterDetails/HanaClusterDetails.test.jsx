@@ -381,7 +381,7 @@ describe('HanaClusterDetails component', () => {
 
     await userEvent.click(screen.getAllByText('Details')[0]);
 
-    expect(screen.getByText('Site Details')).toBeInTheDocument();
+    expect(screen.getByText('Node Details')).toBeInTheDocument();
     expect(screen.getByText('Attributes')).toBeInTheDocument();
     expect(screen.getByText('Resources')).toBeInTheDocument();
 

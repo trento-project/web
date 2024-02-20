@@ -28,11 +28,16 @@ function AttributesDetails({ attributes, resources, title }) {
 
   return (
     <>
-      <Button type="primary" size="small" onClick={() => setModalOpen(true)}>
+      <Button
+        type="transparent"
+        className="text-jungle-green-500"
+        size="fit"
+        onClick={() => setModalOpen(true)}
+      >
         Details
       </Button>
       <Modal title={title} open={modalOpen} onClose={() => setModalOpen(false)}>
-        <h3 className="font-medium">Attributes</h3>
+        <h3 className="font-medium mt-6">Attributes</h3>
         <Table
           config={attributesTableConfig}
           data={Object.keys(attributes).map((key) => ({
@@ -41,7 +46,7 @@ function AttributesDetails({ attributes, resources, title }) {
           }))}
         />
 
-        <h3 className="font-medium">Resources</h3>
+        <h3 className="font-medium mt-6">Resources</h3>
         <Table config={resourcesTableConfig} data={resources} />
       </Modal>
     </>

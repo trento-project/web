@@ -62,7 +62,7 @@ const siteDetailsConfig = {
         const { attributes, resources } = item;
         return (
           <AttributesDetails
-            title="Site Details"
+            title="Node Details"
             attributes={attributes}
             resources={resources}
           />
@@ -78,19 +78,22 @@ function HanaClusterSite({ name, nodes, state = null, srHealthState = null }) {
       key={name}
       className={`tn-site-details-${name} mt-4 bg-white rounded-lg`}
     >
-      <div className="flex space-x-2 px-4 pt-4">
-        {state && (
-          <span className="text-left">
-            <HealthIcon health={getSiteHealth(srHealthState)} centered />
-          </span>
-        )}
-        <h3 className="text-l font-bold tn-site-name">{name}</h3>
-        {srHealthState && <ReplicationStatusPill status={state} />}
-      </div>
       <Table
         className="tn-site-table"
         config={siteDetailsConfig}
         data={nodes}
+        withPadding={false}
+        header={
+          <div className="flex space-x-2 p-4">
+            {state && (
+              <span className="text-left">
+                <HealthIcon health={getSiteHealth(srHealthState)} centered />
+              </span>
+            )}
+            <h3 className="text-l font-bold tn-site-name">{name}</h3>
+            {srHealthState && <ReplicationStatusPill status={state} />}
+          </div>
+        }
       />
     </div>
   );

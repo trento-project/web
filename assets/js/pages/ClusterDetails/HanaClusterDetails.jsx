@@ -194,10 +194,6 @@ function HanaClusterDetails({
         </div>
       </div>
 
-      {details && details.stopped_resources.length > 0 && (
-        <StoppedResources resources={details.stopped_resources} />
-      )}
-
       <h2 className="mt-8 text-2xl font-bold">Site details</h2>
       <div className="mt-2 tn-site-details">
         {sortBy(details.sites, 'name').map(
@@ -216,6 +212,8 @@ function HanaClusterDetails({
       {unsitedNodes.length > 0 && (
         <HanaClusterSite name="Other" nodes={unsitedNodes} />
       )}
+
+      <StoppedResources resources={details.stopped_resources} />
 
       <SBDDetails sbdDevices={details.sbd_devices} />
     </div>
