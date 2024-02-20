@@ -4,7 +4,7 @@ import { capitalize } from 'lodash';
 import HealthIcon from '@common/HealthIcon';
 import Table from '@common/Table';
 
-import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
+import ClusterNodeName from '@pages/ClusterDetails/ClusterNodeName';
 
 import AttributesDetails from './AttributesDetails';
 import ReplicationStatusPill from './ReplicationStatusPill';
@@ -27,8 +27,10 @@ const siteDetailsConfig = {
       title: 'Hostname',
       key: '',
       className: 'table-col-m',
-      render: (_, hostData) => (
-        <ClusterNodeLink hostId={hostData.id}>{hostData.name}</ClusterNodeLink>
+      render: (_, { id, name, status }) => (
+        <ClusterNodeName hostId={id} status={status}>
+          {name}
+        </ClusterNodeName>
       ),
     },
     {

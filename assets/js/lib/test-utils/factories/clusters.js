@@ -43,6 +43,7 @@ export const hanaClusterDetailsNodesFactory = Factory.define(() => ({
   indexserver_actual_role: 'master',
   nameserver_actual_role: 'slave',
   hana_status: hanaStatus(),
+  status: 'Online',
   attributes: Array.from({ length: 5 }).reduce(
     (acc, _) => ({
       ...acc,
@@ -75,6 +76,7 @@ export const hanaClusterDetailsFactory = Factory.define(() => {
 
 export const ascsErsClusterNodeFactory = Factory.define(({ sequence }) => ({
   name: `${faker.person.firstName()}_${sequence}`,
+  status: 'Online',
   roles: [ascsErsRole()],
   virtual_ips: [faker.internet.ip()],
   filesystems: [faker.system.filePath()],

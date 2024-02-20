@@ -58,6 +58,18 @@ const scaleOutDetails = hanaClusterDetailsFactory.build({
     }),
   ],
 });
+
+const scaleOutDetailsNodeStatus = {
+  ...scaleOutDetails,
+  nodes: [
+    { ...scaleOutDetails.nodes[0], status: 'Online' },
+    { ...scaleOutDetails.nodes[1], status: 'Offline' },
+    { ...scaleOutDetails.nodes[2], status: 'Standby' },
+    { ...scaleOutDetails.nodes[3], status: 'Maintenance' },
+    { ...scaleOutDetails.nodes[4], status: 'Other' },
+  ],
+};
+
 const lastExecution = {
   data: checksExecutionCompletedFactory.build({
     result: 'passing',
@@ -127,6 +139,13 @@ export const HanaScaleOut = {
     ...Hana.args,
     hosts: scaleOutHosts,
     details: scaleOutDetails,
+  },
+};
+
+export const HanaScaleOutWithNodeStatuses = {
+  args: {
+    ...HanaScaleOut.args,
+    details: scaleOutDetailsNodeStatus,
   },
 };
 
