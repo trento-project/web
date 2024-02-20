@@ -115,7 +115,7 @@ describe('Software Updates Settings saga', () => {
   });
 
   describe('Updating Software Updates settings', () => {
-    it('should successfully save software updates settings', async () => {
+    it('should successfully change software updates settings', async () => {
       const axiosMock = new MockAdapter(networkClient);
       const payload = {
         url: faker.internet.url(),
@@ -145,7 +145,7 @@ describe('Software Updates Settings saga', () => {
       ]);
     });
 
-    it('should have errors on failed saving', async () => {
+    it('should have errors on failed update', async () => {
       const axiosMock = new MockAdapter(networkClient);
       const payload = {
         url: '',
@@ -157,6 +157,11 @@ describe('Software Updates Settings saga', () => {
         {
           detail: "can't be blank",
           source: { pointer: '/url' },
+          title: 'Invalid value',
+        },
+        {
+          detail: "can't be blank",
+          source: { pointer: '/username' },
           title: 'Invalid value',
         },
         {
