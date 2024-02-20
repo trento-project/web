@@ -17,6 +17,7 @@ import {
   fetchSoftwareUpdatesSettings,
   saveSoftwareUpdatesSettings,
   updateSoftwareUpdatesSettings,
+  clearSoftwareUpdatesSettings,
 } from './softwareUpdatesSettings';
 
 describe('Software Updates Settings saga', () => {
@@ -183,6 +184,21 @@ describe('Software Updates Settings saga', () => {
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdatesSettings(),
         setSoftwareUpdatesSettingsErrors(errors),
+      ]);
+    });
+  });
+
+  describe('Clearing Software Updates settings', () => {
+    it('should successfully clear software updates settings', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+
+      axiosMock.onDelete('/settings/suma_credentials').reply(204);
+
+      const dispatched = await recordSaga(clearSoftwareUpdatesSettings);
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdatesSettings(),
+        setEmptySoftwareUpdatesSettings(),
       ]);
     });
   });

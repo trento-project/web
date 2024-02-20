@@ -4,12 +4,14 @@ import {
   getSettings,
   saveSettings,
   updateSettings,
+  clearSettings,
 } from '@lib/api/softwareUpdatesSettings';
 
 import {
   FETCH_SOFTWARE_UPDATES_SETTINGS,
   SAVE_SOFTWARE_UPDATES_SETTINGS,
   UPDATE_SOFTWARE_UPDATES_SETTINGS,
+  CLEAR_SOFTWARE_UPDATES_SETTINGS,
   startLoadingSoftwareUpdatesSettings,
   setSoftwareUpdatesSettings,
   setEmptySoftwareUpdatesSettings,
@@ -61,6 +63,19 @@ export function* updateSoftwareUpdatesSettings(payload) {
   }
 }
 
+export function* clearSoftwareUpdatesSettings() {
+  yield put(startLoadingSoftwareUpdatesSettings());
+
+  try {
+    yield call(clearSettings);
+
+    yield put(setEmptySoftwareUpdatesSettings());
+  } catch (error) {
+    const errors = get(error, ['response', 'data', 'errors'], []);
+    yield put(setSoftwareUpdatesSettingsErrors(errors));
+  }
+}
+
 export function* watchSoftwareUpdateSettings() {
   yield takeEvery(
     FETCH_SOFTWARE_UPDATES_SETTINGS,
@@ -70,5 +85,9 @@ export function* watchSoftwareUpdateSettings() {
   yield takeEvery(
     UPDATE_SOFTWARE_UPDATES_SETTINGS,
     updateSoftwareUpdatesSettings
+  );
+  yield takeEvery(
+    CLEAR_SOFTWARE_UPDATES_SETTINGS,
+    clearSoftwareUpdatesSettings
   );
 }

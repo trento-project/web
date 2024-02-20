@@ -46,6 +46,8 @@ export const FETCH_SOFTWARE_UPDATES_SETTINGS =
 export const SAVE_SOFTWARE_UPDATES_SETTINGS = 'SAVE_SOFTWARE_UPDATES_SETTINGS';
 export const UPDATE_SOFTWARE_UPDATES_SETTINGS =
   'UPDATE_SOFTWARE_UPDATES_SETTINGS';
+export const CLEAR_SOFTWARE_UPDATES_SETTINGS =
+  'CLEAR_SOFTWARE_UPDATES_SETTINGS';
 
 export const fetchSoftwareUpdatesSettings = createAction(
   FETCH_SOFTWARE_UPDATES_SETTINGS
@@ -55,6 +57,9 @@ export const saveSoftwareUpdatesSettings = createAction(
 );
 export const updateSoftwareUpdatesSettings = createAction(
   UPDATE_SOFTWARE_UPDATES_SETTINGS
+);
+export const clearSoftwareUpdatesSettings = createAction(
+  CLEAR_SOFTWARE_UPDATES_SETTINGS
 );
 
 export const {
