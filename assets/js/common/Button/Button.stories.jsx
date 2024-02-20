@@ -30,6 +30,10 @@ export function Danger() {
   return <Button type="danger">Hello world!</Button>;
 }
 
+export function DangerBold() {
+  return <Button type="danger-bold">Danger!</Button>;
+}
+
 export function PrimaryWhite() {
   return <Button type="primary-white">Hello world!</Button>;
 }
