@@ -19,7 +19,8 @@ defmodule TrentoWeb.V1.ClusterViewTest do
         Enum.map(
           build_list(1, :hana_cluster_node, %{
             nameserver_actual_role: "master",
-            indexserver_actual_role: "master"
+            indexserver_actual_role: "master",
+            status: "Online"
           }),
           &Map.from_struct(&1)
         )
@@ -38,6 +39,7 @@ defmodule TrentoWeb.V1.ClusterViewTest do
       refute Access.get(details, :maintenance_mode)
       refute Access.get(node, :nameserver_actual_role)
       refute Access.get(node, :indexserver_actual_role)
+      refute Access.get(node, :status)
     end
   end
 end

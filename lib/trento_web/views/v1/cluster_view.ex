@@ -32,7 +32,7 @@ defmodule TrentoWeb.V1.ClusterView do
   defp adapt_v1(%{type: type, details: %{nodes: nodes} = details} = cluster)
        when type in [:hana_scale_up, :hana_scale_out] do
     adapted_nodes =
-      Enum.map(nodes, &Map.drop(&1, [:indexserver_actual_role, :nameserver_actual_role]))
+      Enum.map(nodes, &Map.drop(&1, [:indexserver_actual_role, :nameserver_actual_role, :status]))
 
     adapted_details =
       details

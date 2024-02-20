@@ -461,6 +461,7 @@ defmodule Trento.Factory do
   def hana_cluster_node_factory do
     %HanaClusterNode{
       attributes: %{"attribute" => Faker.Beer.name()},
+      status: "Online",
       hana_status: "Secondary",
       virtual_ip: Faker.Internet.ip_v4_address(),
       name: Faker.StarWars.character(),
@@ -485,6 +486,7 @@ defmodule Trento.Factory do
       roles: [Enum.random(["ascs", "ers"])],
       virtual_ips: [Faker.Internet.ip_v4_address()],
       filesystems: [Faker.File.file_name()],
+      status: "Online",
       attributes: %{
         Faker.Pokemon.name() => Faker.Pokemon.name()
       },
