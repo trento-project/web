@@ -77,7 +77,7 @@ defmodule Trento.MixProject do
       {:gen_smtp, "~> 1.2.0"},
       # project has been archived by its github maintainer
       {:gen_rmq, "~> 4.0"},
-      {:httpoison, "~> 1.8"},
+      {:httpoison, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:mox, "~> 1.0", only: :test},
       {:open_api_spex, "~> 3.11"},
