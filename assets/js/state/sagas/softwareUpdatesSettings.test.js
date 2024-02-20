@@ -6,6 +6,7 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
+import { notify } from '@state/notifications';
 import {
   startLoadingSoftwareUpdatesSettings,
   setSoftwareUpdatesSettings,
@@ -217,7 +218,7 @@ describe('Software Updates Settings saga', () => {
 
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdatesSettings(),
-        setSoftwareUpdatesSettingsErrors(errors),
+        notify({ text: `Unable to clear settings`, icon: '❌' }),
       ]);
     });
   });

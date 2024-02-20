@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import { put, call, takeEvery } from 'redux-saga/effects';
+import { notify } from '@state/notifications';
 import {
   getSettings,
   saveSettings,
@@ -71,8 +72,7 @@ export function* clearSoftwareUpdatesSettings() {
 
     yield put(setEmptySoftwareUpdatesSettings());
   } catch (error) {
-    const errors = get(error, ['response', 'data', 'errors'], []);
-    yield put(setSoftwareUpdatesSettingsErrors(errors));
+    yield put(notify({ text: `Unable to clear settings`, icon: '❌' }));
   }
 }
 
