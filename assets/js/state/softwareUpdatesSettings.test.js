@@ -2,6 +2,7 @@ import softwareUpdatesSettingsReducer, {
   startLoadingSoftwareUpdatesSettings,
   setSoftwareUpdatesSettings,
   setEmptySoftwareUpdatesSettings,
+  setSoftwareUpdatesSettingsErrors,
 } from './softwareUpdatesSettings';
 
 describe('SoftwareUpdateSettings reducer', () => {
@@ -30,6 +31,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         ca_uploaded_at: undefined,
       },
       networkError: null,
+      errors: [],
     };
 
     const settings = {
@@ -46,6 +48,7 @@ describe('SoftwareUpdateSettings reducer', () => {
       loading: false,
       settings,
       networkError: null,
+      errors: [],
     });
   });
 
@@ -58,6 +61,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
       networkError: null,
+      errors: [],
     };
 
     const action = setEmptySoftwareUpdatesSettings();
@@ -72,6 +76,49 @@ describe('SoftwareUpdateSettings reducer', () => {
         ca_uploaded_at: undefined,
       },
       networkError: null,
+      errors: [],
+    });
+  });
+
+  it('should set errors upon validation failed', () => {
+    const initialState = {
+      loading: false,
+      settings: {
+        url: 'https://valid.url',
+        username: 'username',
+        ca_uploaded_at: '2021-01-01T00:00:00Z',
+      },
+      networkError: null,
+      errors: [],
+    };
+
+    const errors = [
+      {
+        detail: "can't be blank",
+        source: { pointer: '/url' },
+        title: 'Invalid value',
+      },
+      {
+        detail: "can't be blank",
+        source: { pointer: '/ca_cert' },
+        title: 'Invalid value',
+      },
+    ];
+
+    const action = setSoftwareUpdatesSettingsErrors(errors);
+
+    const actual = softwareUpdatesSettingsReducer(initialState, action);
+
+    expect(actual).toEqual({
+      loading: false,
+
+      settings: {
+        url: 'https://valid.url',
+        username: 'username',
+        ca_uploaded_at: '2021-01-01T00:00:00Z',
+      },
+      networkError: null,
+      errors,
     });
   });
 });
