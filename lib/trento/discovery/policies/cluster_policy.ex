@@ -213,7 +213,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          },
          sid
        ) do
-    Enum.map(nodes, fn %{name: name} ->
+    Enum.map(nodes, fn %{name: name} = node ->
       attributes =
         nodes_with_attributes
         |> Enum.find_value([], fn
@@ -250,7 +250,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         hana_status: "Unknown",
         virtual_ip: virtual_ip,
         nameserver_actual_role: nameserver_actual_role,
-        indexserver_actual_role: indexserver_actual_role
+        indexserver_actual_role: indexserver_actual_role,
+        status: parse_node_status(node)
       }
 
       hana_status =
@@ -289,6 +290,16 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_nodes_actual_roles(_, _) do
     %{indexserver_actual_role: "", nameserver_actual_role: ""}
   end
+
+  defp parse_node_status(%{online: false}), do: "Offline"
+  defp parse_node_status(%{unclean: true}), do: "Unclean"
+  defp parse_node_status(%{standby: true}), do: "Standby"
+  defp parse_node_status(%{maintenance: true}), do: "Maintenance"
+  defp parse_node_status(%{shutdown: true}), do: "Shutdown"
+  defp parse_node_status(%{pending: true}), do: "Pending"
+  defp parse_node_status(%{standby_on_fail: true}), do: "Standby on fail"
+  defp parse_node_status(%{online: true}), do: "Online"
+  defp parse_node_status(_), do: "Unknown"
 
   defp parse_hana_scale_up_system_replication_mode([%{attributes: attributes} | _], sid) do
     Map.get(attributes, "hana_#{String.downcase(sid)}_srmode", "")
@@ -812,7 +823,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          },
          cib_resources_by_sid
        ) do
-    Enum.map(nodes, fn %{name: node_name} ->
+    Enum.map(nodes, fn %{name: node_name} = node ->
       cib_resource_ids = Enum.map(cib_resources_by_sid, fn %{id: id} -> id end)
 
       crm_node_resources =
@@ -851,7 +862,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         virtual_ips: parse_resource_by_type(cib_node_resources, virtual_ip_type, "ip"),
         filesystems: parse_resource_by_type(cib_node_resources, "Filesystem", "directory"),
         attributes: attributes,
-        resources: crm_node_resources
+        resources: crm_node_resources,
+        status: parse_node_status(node)
       }
     end)
   end

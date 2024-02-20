@@ -49,6 +49,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      status: "Online",
                       name: "node01",
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
@@ -128,6 +129,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "100"
                       },
                       hana_status: "Secondary",
+                      status: "Online",
                       name: "node02",
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
@@ -278,6 +280,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      status: "Online",
                       name: "node01",
                       nameserver_actual_role: "master",
                       indexserver_actual_role: "master",
@@ -357,6 +360,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "100"
                       },
                       hana_status: "Secondary",
+                      status: "Online",
                       name: "node02",
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
@@ -502,6 +506,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ascs],
                           virtual_ips: ["10.80.1.25"],
                           filesystems: ["/usr/sap/NWP/ASCS00"],
+                          status: "Online",
                           attributes: %{},
                           resources: [
                             %ClusterResource{
@@ -539,6 +544,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ers],
                           virtual_ips: ["10.80.1.26"],
                           filesystems: ["/usr/sap/NWP/ERS10"],
+                          status: "Online",
                           attributes: %{"runs_ers_NWP" => "1"},
                           resources: [
                             %ClusterResource{
@@ -620,6 +626,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ascs],
                           virtual_ips: ["10.80.1.25"],
                           filesystems: ["/usr/sap/NWP/ASCS00"],
+                          status: "Online",
                           attributes: %{},
                           resources: [
                             %ClusterResource{
@@ -657,6 +664,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ers],
                           virtual_ips: ["10.80.1.26"],
                           filesystems: ["/usr/sap/NWP/ERS10"],
+                          status: "Online",
                           attributes: %{"runs_ers_NWP" => "1"},
                           resources: [
                             %ClusterResource{
@@ -733,13 +741,15 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           name: "vmnwprd01",
                           roles: [:ascs, :ers],
                           virtual_ips: ["10.80.1.25", "10.80.1.26"],
-                          filesystems: ["/usr/sap/NWP/ASCS00", "/usr/sap/NWP/ERS10"]
+                          filesystems: ["/usr/sap/NWP/ASCS00", "/usr/sap/NWP/ERS10"],
+                          status: "Online"
                         },
                         %AscsErsClusterNode{
                           name: "vmnwprd02",
                           roles: [],
                           virtual_ips: [],
-                          filesystems: []
+                          filesystems: [],
+                          status: "Online"
                         }
                       ]
                     }
@@ -811,6 +821,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ascs],
                           virtual_ips: ["10.80.1.25"],
                           filesystems: ["/usr/sap/NWP/ASCS00"],
+                          status: "Online",
                           attributes: %{},
                           resources: [
                             %ClusterResource{
@@ -848,6 +859,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ers],
                           virtual_ips: ["10.80.1.26"],
                           filesystems: ["/usr/sap/NWP/ERS10"],
+                          status: "Online",
                           attributes: %{"runs_ers_NWD" => "1", "runs_ers_NWP" => "1"},
                           resources: [
                             %ClusterResource{
@@ -892,6 +904,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ascs],
                           virtual_ips: ["10.80.2.25"],
                           filesystems: ["/usr/sap/NWD/ASCS01"],
+                          status: "Online",
                           attributes: %{},
                           resources: [
                             %ClusterResource{
@@ -929,6 +942,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           roles: [:ers],
                           virtual_ips: ["10.80.2.26"],
                           filesystems: ["/usr/sap/NWD/ERS11"],
+                          status: "Online",
                           attributes: %{"runs_ers_NWD" => "1", "runs_ers_NWP" => "1"},
                           resources: [
                             %ClusterResource{
@@ -1210,6 +1224,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      status: "Online",
                       name: "vmhana01",
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
@@ -1268,6 +1283,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "100"
                       },
                       hana_status: "Secondary",
+                      status: "Online",
                       name: "vmhana02",
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
@@ -1344,6 +1360,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "-9000"
                       },
                       hana_status: "Failed",
+                      status: "Online",
                       name: "vmhana01",
                       indexserver_actual_role: nil,
                       nameserver_actual_role: nil,
@@ -1388,6 +1405,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "-INFINITY"
                       },
                       hana_status: "Primary",
+                      status: "Online",
                       name: "vmhana02",
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
@@ -1501,6 +1519,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      status: "Online",
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
                       name: "node01",
@@ -1582,6 +1601,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       indexserver_actual_role: "master",
                       nameserver_actual_role: "master",
                       hana_status: "Secondary",
+                      status: "Online",
                       name: "node02",
                       resources: [
                         %ClusterResource{
@@ -1730,6 +1750,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "150"
                       },
                       hana_status: "Primary",
+                      status: "Online",
                       indexserver_actual_role: "master",
                       name: "node01",
                       nameserver_actual_role: "master",
@@ -1774,6 +1795,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         "master-rsc_SAPHana_PRD_HDB00" => "100"
                       },
                       hana_status: "Secondary",
+                      status: "Online",
                       indexserver_actual_role: "master",
                       name: "node02",
                       nameserver_actual_role: "master",
@@ -1832,6 +1854,29 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should return the expected commands when a ha_cluster_discovery with different node statuses is received" do
+    assert {:ok,
+            [
+              %RegisterClusterHost{
+                details: %HanaClusterDetails{
+                  nodes: [
+                    %{status: "Offline"},
+                    %{status: "Unclean"},
+                    %{status: "Standby"},
+                    %{status: "Maintenance"},
+                    %{status: "Shutdown"},
+                    %{status: "Pending"},
+                    %{status: "Standby on fail"},
+                    %{status: "Online"}
+                  ]
+                }
+              }
+            ]} =
+             "ha_cluster_discovery_hana_scale_up_node_status"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+  end
+
   describe "HANA scale out" do
     test "should return the expected commands when a ha_cluster_discovery payload with hana scale out is handled" do
       assert {:ok,
@@ -1862,6 +1907,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana01",
                         site: "Site1",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "PROMOTED",
                           "hana_prd_gra" => "2.0",
@@ -1914,6 +1960,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana02",
                         site: "Site2",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -1945,6 +1992,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana03",
                         site: "Site1",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -1976,6 +2024,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana04",
                         site: "Site2",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2007,6 +2056,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana05",
                         site: "Site1",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2038,6 +2088,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana06",
                         site: "Site2",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2128,6 +2179,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana11",
                         site: "Site1",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2160,6 +2212,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana12",
                         site: "Site1",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2192,6 +2245,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana21",
                         site: "Site2",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "PROMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2238,6 +2292,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana22",
                         site: "Site2",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2270,6 +2325,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhanamm",
                         site: nil,
                         hana_status: "Unknown",
+                        status: "Online",
                         attributes: %{},
                         virtual_ip: nil,
                         resources: [
@@ -2331,6 +2387,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana01",
                         site: "Site1",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "PROMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2383,6 +2440,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana02",
                         site: "Site2",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2414,6 +2472,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana03",
                         site: "Site1",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2445,6 +2504,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana04",
                         site: "Site2",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2476,6 +2536,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana05",
                         site: "Site1",
                         hana_status: "Primary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",
@@ -2507,6 +2568,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         name: "vmhana06",
                         site: "Site2",
                         hana_status: "Secondary",
+                        status: "Online",
                         attributes: %{
                           "hana_prd_clone_state" => "DEMOTED",
                           "hana_prd_gra" => "2.0",

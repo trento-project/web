@@ -162,6 +162,11 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       field :name, :string
       field :online, :boolean
       field :unclean, :boolean
+      field :standby, :boolean
+      field :standby_on_fail, :boolean
+      field :maintenance, :boolean
+      field :pending, :boolean
+      field :shutdown, :boolean
     end
 
     embeds_many :resources, CrmmonResource
@@ -215,7 +220,17 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
 
   defp nodes_changeset(nodes, attrs) do
     nodes
-    |> cast(attrs, [:id, :name, :online, :unclean])
+    |> cast(attrs, [
+      :id,
+      :name,
+      :online,
+      :unclean,
+      :standby,
+      :standby_on_fail,
+      :maintenance,
+      :pending,
+      :shutdown
+    ])
     |> validate_required([:id, :name])
   end
 

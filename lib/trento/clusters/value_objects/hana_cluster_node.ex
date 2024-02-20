@@ -6,7 +6,8 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
   @required_fields [
     :name,
     :hana_status,
-    :attributes
+    :attributes,
+    :status
   ]
 
   use Trento.Support.Type
@@ -22,6 +23,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
     field :virtual_ip, :string
     field :nameserver_actual_role, :string
     field :indexserver_actual_role, :string
+    field :status, :string
 
     embeds_many :resources, ClusterResource
   end
