@@ -6,6 +6,7 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
+import { notify } from '@state/notifications';
 import {
   startLoadingSoftwareUpdatesSettings,
   setSoftwareUpdatesSettings,
@@ -17,6 +18,7 @@ import {
   fetchSoftwareUpdatesSettings,
   saveSoftwareUpdatesSettings,
   updateSoftwareUpdatesSettings,
+  clearSoftwareUpdatesSettings,
 } from './softwareUpdatesSettings';
 
 describe('Software Updates Settings saga', () => {
@@ -183,6 +185,40 @@ describe('Software Updates Settings saga', () => {
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdatesSettings(),
         setSoftwareUpdatesSettingsErrors(errors),
+      ]);
+    });
+  });
+
+  describe('Clearing Software Updates settings', () => {
+    it('should successfully clear software updates settings', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+
+      axiosMock.onDelete('/settings/suma_credentials').reply(204);
+
+      const dispatched = await recordSaga(clearSoftwareUpdatesSettings);
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdatesSettings(),
+        setEmptySoftwareUpdatesSettings(),
+      ]);
+    });
+
+    it('should have errors on failed clearing', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+
+      const errors = [
+        { detail: 'Something went wrong.', title: 'Internal Server Error' },
+      ];
+
+      axiosMock.onDelete('/settings/suma_credentials').reply(500, {
+        errors,
+      });
+
+      const dispatched = await recordSaga(clearSoftwareUpdatesSettings);
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdatesSettings(),
+        notify({ text: `Unable to clear settings`, icon: '❌' }),
       ]);
     });
   });
