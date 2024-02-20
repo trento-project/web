@@ -12,7 +12,7 @@ function SuseManagerClearSettingsModal({
   return (
     <Modal title="Clear SUSE Manager Settings" open={open} onClose={onCancel}>
       <div className="py-4">
-        <p>
+        <p className="text-gray-500">
           By clearing SUSE Manager Settings you will no longer be able to view
           information relating to software packages and updates for hosts.
         </p>
