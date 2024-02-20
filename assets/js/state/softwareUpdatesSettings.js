@@ -12,7 +12,8 @@ const emptySettings = {
 const initialState = {
   loading: false,
   settings: emptySettings,
-  error: null,
+  networkError: null,
+  errors: [],
 };
 
 export const softwareUpdatesSettingsSlice = createSlice({
@@ -24,27 +25,43 @@ export const softwareUpdatesSettingsSlice = createSlice({
     },
     setSoftwareUpdatesSettings: (state, { payload: settings }) => {
       state.loading = false;
-      state.error = null;
+      state.networkError = null;
       state.settings = settings;
     },
     setEmptySoftwareUpdatesSettings: (state) => {
       state.loading = false;
-      state.error = null;
+      state.networkError = null;
       state.settings = emptySettings;
+    },
+    setSoftwareUpdatesSettingsErrors: (state, { payload: errors }) => {
+      state.loading = false;
+      state.networkError = null;
+      state.errors = errors;
     },
   },
 });
 
 export const FETCH_SOFTWARE_UPDATES_SETTINGS =
   'FETCH_SOFTWARE_UPDATES_SETTINGS';
+export const SAVE_SOFTWARE_UPDATES_SETTINGS = 'SAVE_SOFTWARE_UPDATES_SETTINGS';
+export const UPDATE_SOFTWARE_UPDATES_SETTINGS =
+  'UPDATE_SOFTWARE_UPDATES_SETTINGS';
+
 export const fetchSoftwareUpdatesSettings = createAction(
   FETCH_SOFTWARE_UPDATES_SETTINGS
+);
+export const saveSoftwareUpdatesSettings = createAction(
+  SAVE_SOFTWARE_UPDATES_SETTINGS
+);
+export const updateSoftwareUpdatesSettings = createAction(
+  UPDATE_SOFTWARE_UPDATES_SETTINGS
 );
 
 export const {
   startLoadingSoftwareUpdatesSettings,
   setSoftwareUpdatesSettings,
   setEmptySoftwareUpdatesSettings,
+  setSoftwareUpdatesSettingsErrors,
 } = softwareUpdatesSettingsSlice.actions;
 
 export default softwareUpdatesSettingsSlice.reducer;
