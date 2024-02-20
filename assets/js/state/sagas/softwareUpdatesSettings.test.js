@@ -201,5 +201,24 @@ describe('Software Updates Settings saga', () => {
         setEmptySoftwareUpdatesSettings(),
       ]);
     });
+
+    it('should have errors on failed clearing', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+
+      const errors = [
+        { detail: 'Something went wrong.', title: 'Internal Server Error' },
+      ];
+
+      axiosMock.onDelete('/settings/suma_credentials').reply(500, {
+        errors,
+      });
+
+      const dispatched = await recordSaga(clearSoftwareUpdatesSettings);
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdatesSettings(),
+        setSoftwareUpdatesSettingsErrors(errors),
+      ]);
+    });
   });
 });
