@@ -535,7 +535,6 @@ jobs:
             /specs/current-spec.json \
             --fail-on-incompatible \
             --markdown /specs/changes.md \
-            --json /specs/changes.json \
             --text /specs/changes.txt \
             --html /specs/changes.html
       - name: Upload OpenAPI diff report
