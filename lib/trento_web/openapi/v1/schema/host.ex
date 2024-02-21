@@ -6,10 +6,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
 
   alias TrentoWeb.OpenApi.V1.Schema.{
     Provider,
+    ResourceHealth,
     SaptuneStatus,
     SlesSubscription,
-    Tags,
-    ResourceHealth
+    Tags
   }
 
   defmodule IPv4 do
