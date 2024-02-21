@@ -19,7 +19,7 @@ describe('Provider Details', () => {
     },
     {
       provider: 'kvm',
-      providerText: 'KVM',
+      providerText: 'on-premise / KVM',
     },
     {
       provider: 'vmware',

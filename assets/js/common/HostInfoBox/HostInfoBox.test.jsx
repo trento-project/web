@@ -28,7 +28,7 @@ describe('Host Info Box', () => {
     {
       agentVersion: '1.2.0',
       provider: 'kvm',
-      providerText: 'KVM',
+      providerText: 'on-premise / KVM',
     },
     {
       agentVersion: '2.0.0',
