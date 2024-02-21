@@ -39,7 +39,6 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
       assert [
                %{
                  cluster_id: db_cluster_id,
-                 clusters_health: Health.warning(),
                  application_cluster_id: app_cluster_id,
                  database_cluster_id: db_cluster_id,
                  application_cluster_health: Health.critical(),
@@ -93,7 +92,6 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
       assert [
                %{
                  cluster_id: nil,
-                 clusters_health: Health.unknown(),
                  application_cluster_id: nil,
                  database_cluster_id: nil,
                  application_cluster_health: Health.unknown(),
