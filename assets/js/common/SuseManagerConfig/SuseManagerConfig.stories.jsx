@@ -28,6 +28,31 @@ export default {
         type: 'function',
       },
     },
+    onClearClick: {
+      description: "Callback used to open 'Clear Settings' dialog",
+      control: {
+        type: 'function',
+      },
+    },
+    clearSettingsDialogOpen: {
+      description: "Whether the 'Clear Settings' dialog is open or not",
+      control: {
+        type: 'boolean',
+      },
+    },
+    onClearSettings: {
+      description: 'Callback used to clear settings',
+      control: {
+        type: 'function',
+      },
+    },
+    onCancel: {
+      description:
+        "Callback used to close the 'Edit Settings' and 'Clear Settings' dialogs",
+      control: {
+        type: 'function',
+      },
+    },
   },
 };
 
