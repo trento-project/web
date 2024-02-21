@@ -4,7 +4,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
-  alias TrentoWeb.OpenApi.V1.Schema.{Provider, SaptuneStatus, SlesSubscription, Tags}
+  alias TrentoWeb.OpenApi.V1.Schema.{
+    Provider,
+    SaptuneStatus,
+    SlesSubscription,
+    Tags,
+    ResourceHealth
+  }
 
   defmodule IPv4 do
     @moduledoc false
@@ -52,6 +58,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           type: :string,
           description: "Version of the agent installed on the host"
         },
+        health: ResourceHealth,
         cluster_id: %Schema{
           type: :string,
           description: "Identifier of the cluster this host is part of",

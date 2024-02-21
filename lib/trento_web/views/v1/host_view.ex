@@ -15,7 +15,6 @@ defmodule TrentoWeb.V1.HostView do
     |> Map.from_struct()
     |> Map.put(:sles_subscriptions, sles_subscriptions)
     |> Map.delete(:fully_qualified_domain_name)
-    |> Map.delete(:health)
     |> Map.delete(:selected_checks)
     |> Map.delete(:inserted_at)
     |> Map.delete(:__meta__)
