@@ -14,8 +14,8 @@ function SuseManagerConfig({
   username,
   certUploadDate,
   onEditClick = noop,
-  onClearClick = noop,
   clearSettingsDialogOpen = false,
+  onClearClick = noop,
   onClearSettings = noop,
   onCancel = noop,
 }) {
