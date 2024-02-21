@@ -17,11 +17,38 @@ defmodule TrentoWeb.V1.SapSystemView do
     database
     |> Map.from_struct()
     |> Map.delete(:__meta__)
+    |> Map.delete(:deregistered_at)
     |> Map.put(:database_instances, rendered_database_instances)
     |> add_system_replication_status_to_secondary_instance
   end
 
   def render("database_instance.json", %{instance: instance}) do
+    instance
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.delete(:absent_at)
+    |> Map.delete(:host)
+  end
+
+  def render("broadcast_database.json", %{
+        database:
+          %{
+            database_instances: database_instances
+          } = database
+      }) do
+    rendered_database_instances =
+      render_many(database_instances, __MODULE__, "broadcast_database_instance.json",
+        as: :instance
+      )
+
+    database
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> Map.put(:database_instances, rendered_database_instances)
+    |> add_system_replication_status_to_secondary_instance
+  end
+
+  def render("broadcast_database_instance.json", %{instance: instance}) do
     instance
     |> Map.from_struct()
     |> Map.delete(:__meta__)
@@ -32,7 +59,7 @@ defmodule TrentoWeb.V1.SapSystemView do
         instance: instance,
         database_instances: database_instances
       }) do
-    "database_instance.json"
+    "broadcast_database_instance.json"
     |> render(%{instance: instance})
     |> add_system_replication_status(database_instances)
   end
@@ -46,7 +73,7 @@ defmodule TrentoWeb.V1.SapSystemView do
   end
 
   def render("database_restored.json", %{database: database}) do
-    render("database.json", database: database)
+    render("broadcast_database.json", database: database)
   end
 
   def render("database_health_changed.json", %{health: health}), do: health
@@ -89,6 +116,14 @@ defmodule TrentoWeb.V1.SapSystemView do
     instance
     |> Map.from_struct()
     |> Map.delete(:__meta__)
+    |> Map.delete(:absent_at)
+    |> Map.delete(:host)
+  end
+
+  def render("broadcast_application_instance.json", %{instance: instance}) do
+    instance
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
     |> Map.delete(:host)
   end
 
@@ -117,6 +152,38 @@ defmodule TrentoWeb.V1.SapSystemView do
     sap_system
     |> Map.from_struct()
     |> Map.delete(:__meta__)
+    |> Map.delete(:deregistered_at)
+    |> Map.put(
+      :database_instances,
+      rendered_database_instances
+    )
+    |> Map.put(
+      :application_instances,
+      rendered_application_instances
+    )
+    |> add_system_replication_status_to_secondary_instance
+  end
+
+  def render("broadcast_sap_system.json", %{
+        sap_system:
+          %{
+            application_instances: application_instances,
+            database_instances: database_instances
+          } = sap_system
+      }) do
+    rendered_application_instances =
+      render_many(application_instances, __MODULE__, "broadcast_application_instance.json",
+        as: :instance
+      )
+
+    rendered_database_instances =
+      render_many(database_instances, __MODULE__, "broadcast_database_instance.json",
+        as: :instance
+      )
+
+    sap_system
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
     |> Map.put(
       :database_instances,
       rendered_database_instances
@@ -138,7 +205,7 @@ defmodule TrentoWeb.V1.SapSystemView do
   end
 
   def render("sap_system_restored.json", %{sap_system: sap_system}) do
-    render("sap_system.json", sap_system: sap_system)
+    render("broadcast_sap_system.json", sap_system: sap_system)
   end
 
   def render("sap_system_updated.json", %{id: id, ensa_version: ensa_version}),
