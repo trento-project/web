@@ -4,8 +4,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterNode do
   """
 
   @required_fields [
-    :name,
-    :status
+    :name
   ]
 
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole

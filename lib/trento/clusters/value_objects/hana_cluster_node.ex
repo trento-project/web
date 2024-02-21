@@ -6,8 +6,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
   @required_fields [
     :name,
     :hana_status,
-    :attributes,
-    :status
+    :attributes
   ]
 
   use Trento.Support.Type
