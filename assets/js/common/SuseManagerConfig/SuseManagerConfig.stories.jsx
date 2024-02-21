@@ -28,16 +28,16 @@ export default {
         type: 'function',
       },
     },
-    onClearClick: {
-      description: "Callback used to open 'Clear Settings' dialog",
-      control: {
-        type: 'function',
-      },
-    },
     clearSettingsDialogOpen: {
       description: "Whether the 'Clear Settings' dialog is open or not",
       control: {
         type: 'boolean',
+      },
+    },
+    onClearClick: {
+      description: "Callback used to open 'Clear Settings' dialog",
+      control: {
+        type: 'function',
       },
     },
     onClearSettings: {
