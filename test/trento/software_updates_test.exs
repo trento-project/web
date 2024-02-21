@@ -343,6 +343,55 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
                SoftwareUpdates.change_settings(change_submission, Trento.Support.DateService.Mock)
     end
 
+    test "should support idempotent sequential settings updates" do
+      %{
+        url: _initial_url,
+        username: initial_username,
+        password: initial_password,
+        ca_cert: _initial_ca_cert,
+        ca_uploaded_at: _initial_ca_uploaded_at
+      } =
+        insert(
+          :software_updates_settings,
+          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
+          conflict_target: :id,
+          on_conflict: :replace_all
+        )
+
+      now = DateTime.utc_now()
+
+      expect(
+        Trento.Support.DateService.Mock,
+        :utc_now,
+        fn -> now end
+      )
+
+      change_submission = %{
+        url: new_url = "https://new.com",
+        ca_cert: new_ca_cert = "new_ca_cert"
+      }
+
+      Enum.each(1..3, fn run_iteration ->
+        change_result =
+          case run_iteration do
+            1 ->
+              SoftwareUpdates.change_settings(change_submission, Trento.Support.DateService.Mock)
+
+            _ ->
+              SoftwareUpdates.change_settings(change_submission)
+          end
+
+        assert {:ok,
+                %{
+                  url: ^new_url,
+                  username: ^initial_username,
+                  password: ^initial_password,
+                  ca_cert: ^new_ca_cert,
+                  ca_uploaded_at: ^now
+                }} = change_result
+      end)
+    end
+
     test "should properly remove ca_cert and its upload date" do
       %{
         url: initial_url,

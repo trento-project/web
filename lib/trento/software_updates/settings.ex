@@ -66,10 +66,13 @@ defmodule Trento.SoftwareUpdates.Settings do
   end
 
   defp maybe_remove_cert_upload_date(changeset, settings_submission) do
-    if Map.has_key?(settings_submission, :ca_cert) && nil == get_change(changeset, :ca_cert) do
+    with true <- Map.has_key?(settings_submission, :ca_cert),
+         true <- changed?(changeset, :ca_cert),
+         nil <- get_change(changeset, :ca_cert) do
       put_change(changeset, :ca_uploaded_at, nil)
     else
-      changeset
+      _ ->
+        changeset
     end
   end
 end
