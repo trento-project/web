@@ -17,6 +17,7 @@ import {
   setSoftwareUpdatesSettings,
   setEmptySoftwareUpdatesSettings,
   setSoftwareUpdatesSettingsErrors,
+  setEditingSoftwareUpdatesSettings,
 } from '@state/softwareUpdatesSettings';
 
 export function* fetchSoftwareUpdatesSettings() {
@@ -31,10 +32,7 @@ export function* fetchSoftwareUpdatesSettings() {
 }
 
 export function* saveSoftwareUpdatesSettings({
-  url,
-  username,
-  password,
-  ca_cert,
+  payload: { url, username, password, ca_cert },
 }) {
   yield put(startLoadingSoftwareUpdatesSettings());
 
@@ -46,18 +44,22 @@ export function* saveSoftwareUpdatesSettings({
       ca_cert,
     });
     yield put(setSoftwareUpdatesSettings(response.data));
+    yield put(setEditingSoftwareUpdatesSettings(false));
+    yield put(setSoftwareUpdatesSettingsErrors([]));
   } catch (error) {
     const errors = get(error, ['response', 'data', 'errors'], []);
     yield put(setSoftwareUpdatesSettingsErrors(errors));
   }
 }
 
-export function* updateSoftwareUpdatesSettings(payload) {
+export function* updateSoftwareUpdatesSettings({ payload }) {
   yield put(startLoadingSoftwareUpdatesSettings());
 
   try {
     const response = yield call(updateSettings, payload);
     yield put(setSoftwareUpdatesSettings(response.data));
+    yield put(setEditingSoftwareUpdatesSettings(false));
+    yield put(setSoftwareUpdatesSettingsErrors([]));
   } catch (error) {
     const errors = get(error, ['response', 'data', 'errors'], []);
     yield put(setSoftwareUpdatesSettingsErrors(errors));

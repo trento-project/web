@@ -3,6 +3,7 @@ import softwareUpdatesSettingsReducer, {
   setSoftwareUpdatesSettings,
   setEmptySoftwareUpdatesSettings,
   setSoftwareUpdatesSettingsErrors,
+  setEditingSoftwareUpdatesSettings,
 } from './softwareUpdatesSettings';
 
 describe('SoftwareUpdateSettings reducer', () => {
@@ -111,7 +112,6 @@ describe('SoftwareUpdateSettings reducer', () => {
 
     expect(actual).toEqual({
       loading: false,
-
       settings: {
         url: 'https://valid.url',
         username: 'username',
@@ -119,6 +119,29 @@ describe('SoftwareUpdateSettings reducer', () => {
       },
       networkError: null,
       errors,
+    });
+  });
+
+  it('should set the editing field to true', () => {
+    const initialState = {
+      loading: false,
+      settings: {
+        url: 'https://valid.url',
+        username: 'username',
+        ca_uploaded_at: '2021-01-01T00:00:00Z',
+      },
+      networkError: null,
+      errors: [],
+      editing: false,
+    };
+
+    const action = setEditingSoftwareUpdatesSettings(true);
+
+    const actual = softwareUpdatesSettingsReducer(initialState, action);
+
+    expect(actual).toEqual({
+      ...initialState,
+      editing: true,
     });
   });
 });

@@ -13,6 +13,7 @@ const initialState = {
   loading: false,
   settings: emptySettings,
   networkError: null,
+  editing: false,
   errors: [],
 };
 
@@ -37,6 +38,9 @@ export const softwareUpdatesSettingsSlice = createSlice({
       state.loading = false;
       state.networkError = null;
       state.errors = errors;
+    },
+    setEditingSoftwareUpdatesSettings: (state, { payload }) => {
+      state.editing = payload;
     },
   },
 });
@@ -67,6 +71,7 @@ export const {
   setSoftwareUpdatesSettings,
   setEmptySoftwareUpdatesSettings,
   setSoftwareUpdatesSettingsErrors,
+  setEditingSoftwareUpdatesSettings,
 } = softwareUpdatesSettingsSlice.actions;
 
 export default softwareUpdatesSettingsSlice.reducer;
