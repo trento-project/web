@@ -28,6 +28,8 @@ defmodule TrentoWeb.V1.HealthOverviewView do
       sid: sid,
       sapsystem_health: sapsystem_health,
       database_health: database_health,
+      # deprecated field
+      clusters_health: database_cluster_health,
       application_cluster_health: application_cluster_health,
       database_cluster_health: database_cluster_health,
       hosts_health: hosts_health,
