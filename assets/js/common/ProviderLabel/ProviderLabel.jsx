@@ -36,7 +36,7 @@ export const providerData = {
   },
   [KVM_PROVIDER]: {
     logo: KvmLogo,
-    label: 'on-premise / KVM',
+    label: 'On-premise / KVM',
   },
   [VMWARE_PROVIDER]: {
     logo: VmwareLogo,
