@@ -13,6 +13,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Ready do
     example: %{
       ready: true
     },
+    additionalProperties: false,
     properties: %{
       ready: %Schema{
         description: "Trento Web platform ready",

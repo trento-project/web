@@ -11,6 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
       title: "SaveSUMACredentialsRequest",
       description: "Request body for saving SUMA credentials",
       type: :object,
+      additionalProperties: false,
       properties: %{
         url: %Schema{
           type: :string
@@ -39,6 +40,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
           "Request body for updating SUMA credentials.\nOnly provide fields to be updated",
         type: :object,
         minProperties: 1,
+        additionalProperties: false,
         properties: %{
           url: %Schema{
             type: :string
@@ -66,6 +68,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SUMACredentials do
       title: "SUMACredentials",
       description: "User settings for SUSE Manager",
       type: :object,
+      additionalProperties: false,
       properties: %{
         url: %Schema{
           type: :string,

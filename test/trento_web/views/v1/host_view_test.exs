@@ -17,6 +17,15 @@ defmodule TrentoWeb.V1.HostViewTest do
              render(HostView, "host_health_changed.json", %{host: host})
   end
 
+  test "should render single host information" do
+    host = build(:host, sles_subscriptions: build_list(1, :sles_subscription))
+
+    rendered_host = render(HostView, "host.json", %{host: host})
+
+    refute Access.get(rendered_host, :fully_qualified_domain_name)
+    refute Access.get(rendered_host, :inserted_at)
+  end
+
   test "should render host details relevant information" do
     host = build(:host)
 

@@ -35,6 +35,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       title: "AzureProviderData",
       description: "Azure detected metadata",
       type: :object,
+      additionalProperties: false,
       properties: %{
         resource_group: %Schema{type: :string},
         location: %Schema{type: :string},
@@ -54,6 +55,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       title: "AwsProviderData",
       description: "AWS detected metadata",
       type: :object,
+      additionalProperties: false,
       properties: %{
         account_id: %Schema{type: :string},
         ami_id: %Schema{type: :string},
@@ -74,6 +76,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
       title: "GcpProviderData",
       description: "GCP detected metadata",
       type: :object,
+      additionalProperties: false,
       properties: %{
         disk_number: %Schema{type: :integer},
         image: %Schema{type: :string},

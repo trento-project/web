@@ -11,6 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       title: "PlatformSettings",
       description: "Settings values for the current installation",
       type: :object,
+      additionalProperties: false,
       properties: %{
         eula_accepted: %Schema{
           type: :boolean,
@@ -31,6 +32,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       title: "GeneralInformation",
       description: "General information about the current installation",
       type: :object,
+      additionalProperties: false,
       properties: %{
         flavor: %Schema{
           type: :string,

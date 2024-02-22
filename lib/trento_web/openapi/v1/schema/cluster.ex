@@ -14,6 +14,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
       title: "ClusterResource",
       description: "A Cluster Resource",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :string},
         type: %Schema{type: :string},
@@ -30,6 +31,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(%{
       title: "HanaClusterNode",
       description: "A HANA Cluster Node",
+      additionalProperties: false,
       type: :object,
       properties: %{
         name: %Schema{type: :string},
@@ -56,6 +58,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
     OpenApiSpex.schema(%{
       title: "SbdDevice",
       description: "SBD Device",
+      additionalProperties: false,
       type: :object,
       properties: %{
         device: %Schema{type: :string},
@@ -71,6 +74,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
       title: "HanaClusterDetails",
       description: "Details of a HANA Pacemaker Cluster",
       type: :object,
+      additionalProperties: false,
       properties: %{
         system_replication_mode: %Schema{type: :string, description: "System Replication Mode"},
         system_replication_operation_mode: %Schema{
@@ -118,6 +122,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
       title: "PacemakerCluster",
       description: "A discovered Pacemaker Cluster on the target infrastructure",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :string, description: "Cluster ID", format: :uuid},
         name: %Schema{type: :string, description: "Cluster name"},

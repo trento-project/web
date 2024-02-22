@@ -13,6 +13,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
       title: "Tag",
       description: "A tag attached to a resource",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :integer},
         resource_id: %Schema{type: :string, format: :uuid},

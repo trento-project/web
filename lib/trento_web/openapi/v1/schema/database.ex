@@ -13,6 +13,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
       title: "DatabaseInstance",
       description: "A discovered HANA Database Instance on the target infrastructure",
       type: :object,
+      additionalProperties: false,
       properties: %{
         sap_system_id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
@@ -21,6 +22,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
         instance_hostname: %Schema{
           type: :string,
           description: "Instance Hostname",
+          nullable: true
+        },
+        absent_at: %Schema{
+          type: :string,
+          description: "Absent instance timestamp",
+          format: :datetime,
           nullable: true
         },
         features: %Schema{type: :string, description: "Instance Features"},
@@ -65,6 +72,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
       title: "Database",
       description: "A discovered HANA Database on the target infrastructure",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :string, description: "Database ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},

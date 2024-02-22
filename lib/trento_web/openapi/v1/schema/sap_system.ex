@@ -15,6 +15,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
       title: "ApplicationInstance",
       description: "A discovered Application Instance on the target infrastructure",
       type: :object,
+      additionalProperties: false,
       properties: %{
         sap_system_id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
@@ -22,6 +23,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
         instance_hostname: %Schema{
           type: :string,
           description: "Instance Hostname",
+          nullable: true
+        },
+        absent_at: %Schema{
+          type: :string,
+          description: "Absent instance timestamp",
+          format: :datetime,
           nullable: true
         },
         features: %Schema{type: :string, description: "Instance Features"},
@@ -49,6 +56,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
       title: "SAPSystem",
       description: "A discovered SAP System on the target infrastructure",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
@@ -90,6 +98,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
       title: "SAPSystemHealthOverview",
       description: "An overview of the health of a discovered SAP System and its components",
       type: :object,
+      additionalProperties: false,
       properties: %{
         id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
@@ -113,7 +122,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
         sapsystem_health: ResourceHealth,
         database_health: ResourceHealth,
         hosts_health: ResourceHealth,
-        clusters_heatlh: %Schema{
+        clusters_health: %Schema{
           allOf: [
             ResourceHealth,
             %Schema{deprecated: true}

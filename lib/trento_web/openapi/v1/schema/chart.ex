@@ -11,6 +11,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
       description:
         "A Time Series for a chart, has a series of float values distributed through time",
       type: :object,
+      additionalProperties: false,
       properties: %{
         label: %Schema{type: :string, description: "The name of series"},
         series: %Schema{
@@ -43,6 +44,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
 
     OpenApiSpex.schema(%{
       title: "HostCpuChart",
+      additionalProperties: false,
       description: "A Time Series chart with information about the cpu usage of a host",
       type: :object,
       properties: %{
@@ -63,6 +65,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
       title: "HostMemoryChart",
       description: "A Time series chart with information about the memory usage of a host",
       type: :object,
+      additionalProperties: false,
       properties: %{
         ram_total: ChartTimeSeries,
         ram_cache_and_buffer: ChartTimeSeries,

@@ -17,6 +17,7 @@ defmodule TrentoWeb.V1.SapSystemView do
     database
     |> Map.from_struct()
     |> Map.delete(:__meta__)
+    |> Map.delete(:deregistered_at)
     |> Map.put(:database_instances, rendered_database_instances)
     |> add_system_replication_status_to_secondary_instance
   end
@@ -117,6 +118,7 @@ defmodule TrentoWeb.V1.SapSystemView do
     sap_system
     |> Map.from_struct()
     |> Map.delete(:__meta__)
+    |> Map.delete(:deregistered_at)
     |> Map.put(
       :database_instances,
       rendered_database_instances

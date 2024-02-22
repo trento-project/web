@@ -8,6 +8,7 @@ defmodule TrentoWeb.V2.ClusterView do
   def render("cluster.json", %{cluster: cluster}) do
     cluster
     |> Map.from_struct()
+    |> Map.delete(:deregistered_at)
     |> Map.delete(:__meta__)
   end
 
