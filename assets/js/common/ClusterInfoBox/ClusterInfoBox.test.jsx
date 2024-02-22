@@ -39,7 +39,7 @@ describe('Cluster Info Box', () => {
       haScenario: 'unknown',
       haScenarioText: 'Unknown',
       provider: 'kvm',
-      providerText: 'On-premise / KVM',
+      providerText: 'On-premises / KVM',
     },
     {
       haScenario: 'unknown',
