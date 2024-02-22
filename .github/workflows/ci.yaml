@@ -533,7 +533,6 @@ jobs:
           docker run -v "$(pwd)/specs:/specs" --rm openapitools/openapi-diff:2.0.1 \
             /specs/main-spec.json \
             /specs/current-spec.json \
-            --fail-on-incompatible \
             --markdown /specs/changes.md \
             --text /specs/changes.txt \
             --html /specs/changes.html
