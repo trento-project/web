@@ -78,6 +78,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           type: :array,
           items: SlesSubscription
         },
+        selected_checks: %Schema{
+          title: "SelectedChecks",
+          description: "A list of check ids selected for an execution on this host",
+          type: :array,
+          items: %Schema{type: :string}
+        },
         saptune_status: SaptuneStatus,
         deregistered_at: %Schema{
           title: "DeregisteredAt",

@@ -148,7 +148,9 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
       description: "SAP system managed by a ASCS/ERS cluster",
       type: :object,
       additionalProperties: false,
+      required: [:sid],
       properties: %{
+        sid: %Schema{type: :string, description: "SID"},
         distributed: %Schema{
           type: :boolean,
           description: "ASCS and ERS instances are distributed and running in different nodes"

@@ -6,24 +6,10 @@ defmodule TrentoWeb.V2.ClusterView do
   end
 
   def render("cluster.json", %{cluster: cluster}) do
-    cluster_details = render("cluster_details.json", %{details: cluster.details})
-
     cluster
     |> Map.from_struct()
-    |> Map.put(:details, cluster_details)
     |> Map.delete(:deregistered_at)
     |> Map.delete(:__meta__)
-  end
-
-  def render("cluster_details.json", %{details: %{"sap_systems" => sap_systems} = details}) do
-    sap_systems =
-      Enum.map(sap_systems, &Map.take(&1, [:distributed, :filesystem_resource_based, :nodes]))
-
-    Map.put(details, :sap_systems, sap_systems)
-  end
-
-  def render("cluster_details.json", %{details: details}) do
-    details
   end
 
   def render("cluster_registered.json", %{cluster: cluster}) do

@@ -24,6 +24,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           description: "Instance Hostname",
           nullable: true
         },
+        absent_at: %Schema{
+          type: :string,
+          description: "Absent instance timestamp",
+          format: :datetime,
+          nullable: true
+        },
         features: %Schema{type: :string, description: "Instance Features"},
         http_port: %Schema{type: :integer, description: "Instance HTTP Port", nullable: true},
         https_port: %Schema{type: :integer, description: "Instance HTTPS Port", nullable: true},

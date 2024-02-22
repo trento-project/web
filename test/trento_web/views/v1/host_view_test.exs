@@ -22,10 +22,8 @@ defmodule TrentoWeb.V1.HostViewTest do
 
     rendered_host = render(HostView, "host.json", %{host: host})
 
-    refute Access.get(rendered_host, "fully_qualified_domain_name")
-    refute Access.get(rendered_host, "health")
-    refute Access.get(rendered_host, "selected_checks")
-    refute Access.get(rendered_host, "inserted_at")
+    refute Access.get(rendered_host, :fully_qualified_domain_name)
+    refute Access.get(rendered_host, :inserted_at)
   end
 
   test "should render host details relevant information" do
