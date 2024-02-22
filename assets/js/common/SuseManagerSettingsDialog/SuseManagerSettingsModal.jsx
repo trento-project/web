@@ -12,6 +12,23 @@ import { hasError } from './errors';
 
 const defaultErrors = [];
 
+const getCertificatePayload = (
+  certUploadDate,
+  editingCertificate,
+  certificate
+) => {
+  if (certUploadDate && editingCertificate && certificate === '') {
+    return { ca_cert: null };
+  } else if (!certUploadDate && editingCertificate && certificate === '') {
+    return {};
+  } else if (certUploadDate && !editingCertificate) {
+    return {};
+  }
+  return {
+    ca_cert: certificate,
+  };
+};
+
 function SuseManagerSettingsModal({
   open = false,
   loading = false,
@@ -23,13 +40,14 @@ function SuseManagerSettingsModal({
   onCancel = noop,
   onClearErrors = noop,
 }) {
-  const settingsExist = Boolean(certUploadDate);
+  const settingsExist =
+    Boolean(certUploadDate) || Boolean(initialUsername) || Boolean(initialUrl);
 
   const [url, setUrl] = useState(initialUrl);
   const [username, setUsername] = useState(initialUsername);
   const [password, setPassword] = useState('');
   const [certificate, setCertificate] = useState('');
-  const [editingCertificate, setEditingCertificate] = useState(!settingsExist);
+  const [editingCertificate, setEditingCertificate] = useState(!certUploadDate);
   const [editingPassword, setEditingPassword] = useState(!settingsExist);
 
   return (
@@ -132,7 +150,11 @@ function SuseManagerSettingsModal({
             const payload = {
               url,
               username,
-              ...(editingCertificate && { ca_cert: certificate }),
+              ...getCertificatePayload(
+                certUploadDate,
+                editingCertificate,
+                certificate
+              ),
               ...(editingPassword && { password }),
             };
             onSave(payload);

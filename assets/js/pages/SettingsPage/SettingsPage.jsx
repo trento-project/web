@@ -52,7 +52,7 @@ function SettingsPage() {
     settings,
     loading: softwareUpdatesSettingsLoading,
     editing: editingSoftwareUpdatesSettings,
-  } = useSelector(getSoftwareUpdatesSettings());
+  } = useSelector(getSoftwareUpdatesSettings);
 
   const suseManagerValidationErrors = useSelector(
     getSoftwareUpdatesSettingsErrors
@@ -206,7 +206,7 @@ function SettingsPage() {
           />
         )}
         <SuseManagerSettingsModal
-          key={`${settings.url}-${settings.username}-${settings.ca_uploaded_at}`}
+          key={`${settings.url}-${settings.username}-${settings.ca_uploaded_at}-${editingSoftwareUpdatesSettings}`}
           open={editingSoftwareUpdatesSettings}
           errors={suseManagerValidationErrors}
           loading={softwareUpdatesSettingsLoading}

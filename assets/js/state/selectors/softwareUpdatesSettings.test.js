@@ -9,7 +9,8 @@ describe('Software Updates Settings selector', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      error: null,
+      errors: null,
+      editing: false,
     },
     {
       loading: true,
@@ -18,14 +19,15 @@ describe('Software Updates Settings selector', () => {
         username: undefined,
         ca_uploaded_at: undefined,
       },
-      error: null,
+      errors: null,
+      editing: false,
     },
   ];
 
   it.each(stateScenarios)(
     'should return the correct catalog state',
     (softwareUpdatesSettings) => {
-      expect(getSoftwareUpdatesSettings()({ softwareUpdatesSettings })).toEqual(
+      expect(getSoftwareUpdatesSettings({ softwareUpdatesSettings })).toEqual(
         softwareUpdatesSettings
       );
     }
