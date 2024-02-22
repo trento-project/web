@@ -23,6 +23,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         indexserver_actual_role: %Schema{type: :string, nullable: true},
         nameserver_actual_role: %Schema{type: :string, nullable: true},
         hana_status: %Schema{type: :string, deprecated: true},
+        status: %Schema{type: :string},
         attributes: %Schema{
           type: :object,
           description: "Node attributes",
@@ -120,6 +121,10 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         name: %Schema{
           type: :string,
           description: "Node name"
+        },
+        status: %Schema{
+          type: :string,
+          description: "Node status"
         },
         resources: %Schema{
           type: :array,

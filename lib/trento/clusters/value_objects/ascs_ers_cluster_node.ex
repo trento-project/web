@@ -19,6 +19,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterNode do
     field :virtual_ips, {:array, :string}
     field :filesystems, {:array, :string}
     field :attributes, {:map, :string}
+    field :status, :string
 
     embeds_many :resources, ClusterResource
   end
