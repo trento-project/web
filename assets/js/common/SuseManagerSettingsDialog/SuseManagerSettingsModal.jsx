@@ -19,9 +19,11 @@ const getCertificatePayload = (
 ) => {
   if (certUploadDate && editingCertificate && certificate === '') {
     return { ca_cert: null };
-  } else if (!certUploadDate && editingCertificate && certificate === '') {
+  }
+  if (!certUploadDate && editingCertificate && certificate === '') {
     return {};
-  } else if (certUploadDate && !editingCertificate) {
+  }
+  if (certUploadDate && !editingCertificate) {
     return {};
   }
   return {
