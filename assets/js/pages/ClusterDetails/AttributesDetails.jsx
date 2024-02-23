@@ -26,12 +26,19 @@ function AttributesDetails({ attributes, resources, title }) {
         }
       : { usePadding: false, columns: [] };
 
-  const resourcesTableData = (resources) =>
-    resources.map((resource) =>
+  const formatValue = (key, value) => {
+    if (key === 'managed') {
+      return value ? 'True' : 'False';
+    }
+    return String(value);
+  };
+
+  const resourcesTableData = (resourceData) =>
+    resourceData.map((resource) =>
       Object.entries(resource).reduce(
         (updatedResource, [key, value]) => ({
           ...updatedResource,
-          [key]: key === 'managed' ? (value ? 'True' : 'False') : String(value),
+          [key]: formatValue(key, value),
         }),
         {}
       )
