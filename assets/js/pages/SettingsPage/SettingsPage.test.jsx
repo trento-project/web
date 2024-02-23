@@ -19,6 +19,11 @@ describe('Settings Page', () => {
       ...defaultInitialState,
       softwareUpdatesSettings: {
         loading: true,
+        settings: {
+          url: undefined,
+          username: undefined,
+          ca_uploaded_at: undefined,
+        },
       },
     });
 

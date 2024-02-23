@@ -12,6 +12,7 @@ import {
   setSoftwareUpdatesSettings,
   setSoftwareUpdatesSettingsErrors,
   setEmptySoftwareUpdatesSettings,
+  setEditingSoftwareUpdatesSettings,
 } from '@state/softwareUpdatesSettings';
 
 import {
@@ -74,11 +75,15 @@ describe('Software Updates Settings saga', () => {
         .onPost('/settings/suma_credentials')
         .reply(201, successfulResponse);
 
-      const dispatched = await recordSaga(saveSoftwareUpdatesSettings, payload);
+      const dispatched = await recordSaga(saveSoftwareUpdatesSettings, {
+        payload,
+      });
 
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdatesSettings(),
         setSoftwareUpdatesSettings(successfulResponse),
+        setEditingSoftwareUpdatesSettings(false),
+        setSoftwareUpdatesSettingsErrors([]),
       ]);
     });
 
@@ -107,7 +112,9 @@ describe('Software Updates Settings saga', () => {
         errors,
       });
 
-      const dispatched = await recordSaga(saveSoftwareUpdatesSettings, payload);
+      const dispatched = await recordSaga(saveSoftwareUpdatesSettings, {
+        payload,
+      });
 
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdatesSettings(),
@@ -144,6 +151,8 @@ describe('Software Updates Settings saga', () => {
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdatesSettings(),
         setSoftwareUpdatesSettings(successfulResponse),
+        setEditingSoftwareUpdatesSettings(false),
+        setSoftwareUpdatesSettingsErrors([]),
       ]);
     });
 
@@ -177,10 +186,9 @@ describe('Software Updates Settings saga', () => {
         errors,
       });
 
-      const dispatched = await recordSaga(
-        updateSoftwareUpdatesSettings,
-        payload
-      );
+      const dispatched = await recordSaga(updateSoftwareUpdatesSettings, {
+        payload,
+      });
 
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdatesSettings(),
