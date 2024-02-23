@@ -50,7 +50,8 @@ config :trento, deregistration_debounce: :timer.seconds(5)
 
 config :trento,
   api_key_authentication_enabled: false,
-  jwt_authentication_enabled: false
+  jwt_authentication_enabled: false,
+  suse_manager_enabled: true
 
 config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
   processor: GenRMQ.Processor.Mock,

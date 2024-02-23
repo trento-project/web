@@ -121,7 +121,8 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :trento,
-  api_key_authentication_enabled: false
+  api_key_authentication_enabled: false,
+  suse_manager_enabled: true
 
 config :joken,
   access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",

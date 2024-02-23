@@ -7,5 +7,7 @@ config :trento, TrentoWeb.Endpoint,
 
 config :swoosh, local: false
 
+config :trento, suse_manager_enabled: false
+
 # Do not print debug messages in production
 # config :logger, level: :info
