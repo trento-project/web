@@ -26,6 +26,17 @@ function AttributesDetails({ attributes, resources, title }) {
         }
       : { usePadding: false, columns: [] };
 
+  const resourcesTableData = (resources) =>
+    resources.map((resource) =>
+      Object.entries(resource).reduce(
+        (updatedResource, [key, value]) => ({
+          ...updatedResource,
+          [key]: key === 'managed' ? (value ? 'True' : 'False') : String(value),
+        }),
+        {}
+      )
+    );
+
   return (
     <>
       <Button
@@ -47,7 +58,10 @@ function AttributesDetails({ attributes, resources, title }) {
         />
 
         <h3 className="font-medium mt-6">Resources</h3>
-        <Table config={resourcesTableConfig} data={resources} />
+        <Table
+          config={resourcesTableConfig}
+          data={resourcesTableData(resources)}
+        />
       </Modal>
     </>
   );
