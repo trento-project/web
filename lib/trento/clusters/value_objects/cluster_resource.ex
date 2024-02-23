@@ -17,5 +17,6 @@ defmodule Trento.Clusters.ValueObjects.ClusterResource do
     field :role, :string
     field :status, :string
     field :fail_count, :integer
+    field :managed, :boolean
   end
 end
