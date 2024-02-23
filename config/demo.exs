@@ -31,3 +31,5 @@ config :trento, Trento.Infrastructure.Prometheus,
 
 config :trento, Trento.Charts,
   host_data_fetcher: Trento.Infrastructure.Prometheus.MockPrometheusApi
+
+config :trento, suse_manager_enabled: true

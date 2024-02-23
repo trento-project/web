@@ -66,6 +66,8 @@ module.exports = {
   globals: {
     config: {
       checksServiceBaseUrl: '',
+      suseManagerEnabled: true,
+      aTestVariable: 123,
     },
   },
 

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { logError } from '@lib/log';
 import { get } from '@lib/network';
+import { getFromConfig } from '@lib/config';
 
 import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
@@ -182,47 +183,53 @@ function SettingsPage() {
           </div>
         </div>
       </div>
-      <div className="py-4">
-        {softwareUpdatesSettingsLoading ? (
-          <LoadingBox
-            className="shadow-none rounded-lg"
-            text="Loading Settings..."
-          />
-        ) : (
-          <SuseManagerConfig
-            url={settings.url}
-            username={settings.username}
+      {getFromConfig('suseManagerEnabled') && (
+        <div className="py-4">
+          {softwareUpdatesSettingsLoading ? (
+            <LoadingBox
+              className="shadow-none rounded-lg"
+              text="Loading Settings..."
+            />
+          ) : (
+            <SuseManagerConfig
+              url={settings.url}
+              username={settings.username}
+              certUploadDate={settings.ca_uploaded_at}
+              onEditClick={() =>
+                dispatch(setEditingSoftwareUpdatesSettings(true))
+              }
+              clearSettingsDialogOpen={clearingSoftwareUpdatesSettings}
+              onClearClick={() => setClearingSoftwareUpdatesSettings(true)}
+              onClearSettings={() => {
+                setClearingSoftwareUpdatesSettings(false);
+                dispatch(clearSoftwareUpdatesSettings());
+              }}
+              onCancel={() => setClearingSoftwareUpdatesSettings(false)}
+            />
+          )}
+          <SuseManagerSettingsModal
+            key={`${settings.url}-${settings.username}-${settings.ca_uploaded_at}-${editingSoftwareUpdatesSettings}`}
+            open={editingSoftwareUpdatesSettings}
+            errors={suseManagerValidationErrors}
+            loading={softwareUpdatesSettingsLoading}
+            initialUsername={settings.username}
+            initialUrl={settings.url}
             certUploadDate={settings.ca_uploaded_at}
-            onEditClick={() =>
-              dispatch(setEditingSoftwareUpdatesSettings(true))
-            }
-            clearSettingsDialogOpen={clearingSoftwareUpdatesSettings}
-            onClearClick={() => setClearingSoftwareUpdatesSettings(true)}
-            onClearSettings={() => {
-              setClearingSoftwareUpdatesSettings(false);
-              dispatch(clearSoftwareUpdatesSettings());
+            onSave={(payload) => {
+              if (
+                settings.username ||
+                settings.url ||
+                settings.ca_uploaded_at
+              ) {
+                dispatch(updateSoftwareUpdatesSettings(payload));
+              } else {
+                dispatch(saveSoftwareUpdatesSettings(payload));
+              }
             }}
-            onCancel={() => setClearingSoftwareUpdatesSettings(false)}
+            onCancel={() => dispatch(setEditingSoftwareUpdatesSettings(false))}
           />
-        )}
-        <SuseManagerSettingsModal
-          key={`${settings.url}-${settings.username}-${settings.ca_uploaded_at}-${editingSoftwareUpdatesSettings}`}
-          open={editingSoftwareUpdatesSettings}
-          errors={suseManagerValidationErrors}
-          loading={softwareUpdatesSettingsLoading}
-          initialUsername={settings.username}
-          initialUrl={settings.url}
-          certUploadDate={settings.ca_uploaded_at}
-          onSave={(payload) => {
-            if (settings.username || settings.url || settings.ca_uploaded_at) {
-              dispatch(updateSoftwareUpdatesSettings(payload));
-            } else {
-              dispatch(saveSoftwareUpdatesSettings(payload));
-            }
-          }}
-          onCancel={() => dispatch(setEditingSoftwareUpdatesSettings(false))}
-        />
-      </div>
+        </div>
+      )}
     </section>
   );
 }
