@@ -41,6 +41,8 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
     has_many :tags, Tag, foreign_key: :resource_id
 
     field :deregistered_at, :utc_datetime_usec
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

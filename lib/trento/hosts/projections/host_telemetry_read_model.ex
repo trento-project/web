@@ -27,7 +27,7 @@ defmodule Trento.Hosts.Projections.HostTelemetryReadModel do
 
     field :provider, Ecto.Enum, values: Provider.values()
 
-    timestamps()
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

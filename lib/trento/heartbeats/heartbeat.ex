@@ -10,6 +10,8 @@ defmodule Trento.Heartbeats.Heartbeat do
   @primary_key {:agent_id, :string, autogenerate: false}
   schema "heartbeats" do
     field :timestamp, :utc_datetime_usec
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

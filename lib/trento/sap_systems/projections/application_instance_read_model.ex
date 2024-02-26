@@ -32,6 +32,8 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
       references: :host_id,
       foreign_key: :id,
       where: [deregistered_at: nil]
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

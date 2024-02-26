@@ -40,6 +40,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :last_heartbeat_timestamp, :utc_datetime_usec, virtual: true
 
     field :deregistered_at, :utc_datetime_usec
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
