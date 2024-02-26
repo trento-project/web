@@ -162,6 +162,7 @@ config :fun_with_flags, :cache_bust_notifications,
 config :trento, :jwt_authentication,
   issuer: "https://github.com/trento-project/web",
   app_audience: "trento_app",
+  api_token_audience: "trento_api_token",
   # Seconds, 10 minutes
   access_token_expiration: 600,
   # Seconds, 6 hours
