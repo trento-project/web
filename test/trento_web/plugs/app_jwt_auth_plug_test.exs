@@ -70,10 +70,19 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
       conn: conn
     } do
       expired_refresh =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY2MzQxNCwiaWF0IjoxNjcxNjQxODE0LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwaTNzMGZzNmZqcHE5dnVrMDAwNWUxIiwibmJmIjoxNjcxNjQxODE0LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.FdPblWJ23PDBv5V2EhVNsaW4_-gZP0M9wnwYAlGOa1E"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXBwIiwiZXhwIjoxNjcxNjYzNDE0LCJpYXQiOjE2NzE2NDE4MTQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIyc3BpM3MwZnM2ZmpwcTl2dWswMDA1ZTEiLCJuYmYiOjE2NzE2NDE4MTQsInN1YiI6MSwidHlwIjoiUmVmcmVzaCJ9.73ajWvgUml4F4Ml5rACyUeAlipknOUdQFy6t8tYZf5Y"
 
       {:error, [message: "Invalid token", claim: "exp", claim_val: 1_671_663_414]} =
         AppJWTAuthPlug.renew(conn, expired_refresh)
+    end
+
+    test "should return an error if the refresh token is signed but the audience is different then trento_app",
+         %{conn: conn} do
+      refresh_different_aud =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXVkbmV3IiwiZXhwIjoxNjcxNjYzNDE0LCJpYXQiOjE2NzE2NDE4MTQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIyc3BpM3MwZnM2ZmpwcTl2dWswMDA1ZTEiLCJuYmYiOjE2NzE2NDE4MTQsInN1YiI6MSwidHlwIjoiUmVmcmVzaCJ9.V65Ip_Rs3gpIk6AV33Tib38EyaTPq6IH9vkldk9Mcz8"
+
+      {:error, [message: "Invalid token", claim: "aud", claim_val: "trento_audnew"]} =
+        AppJWTAuthPlug.renew(conn, refresh_different_aud)
     end
   end
 
@@ -134,6 +143,16 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MjQxNCwiaWF0IjoxNjcxNjQxODE0LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwaTFvbmxxbml1ZnE5dnVrMDAwMG9hIiwibmJmIjoxNjcxNjQxODE0LCJzdWIiOjEsInR5cCI6IkJlYXJlciJ9.oub6_NsHcVIyd0de14Lzk3SuCMMgr8O-sSWLr7Gxcp8"
 
       conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> expired_jwt)
+
+      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
+    end
+
+    test "should not fetch the user when the jwt signature is valid but the audience is not valid",
+         %{conn: conn} do
+      bad_aud_jwt =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXBwbmV3IiwiZXhwIjoxNzA4OTY1MzM0LCJpYXQiOjE3MDg5NjQ3MzQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIydXJuY25vMmpvNTNtNG1yYmcwMDIxNTIiLCJuYmYiOjE3MDg5NjQ3MzQsInN1YiI6MSwidHlwIjoiQmVhcmVyIn0.nRoRuP4DqijsTn0KmxWgfhX9KAjsPubXuzTmEYnSpao"
+
+      conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> bad_aud_jwt)
 
       assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
     end

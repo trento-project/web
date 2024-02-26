@@ -7,7 +7,7 @@ defmodule TrentoWeb.Auth.RefreshToken do
   use Joken.Config, default_signer: :refresh_token_signer
 
   @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
-  @aud Application.compile_env!(:trento, :jwt_authentication)[:audience]
+  @aud Application.compile_env!(:trento, :jwt_authentication)[:app_audience]
   @exp Application.compile_env!(:trento, :jwt_authentication)[:refresh_token_expiration]
 
   @impl true
