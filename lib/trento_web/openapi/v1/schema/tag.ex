@@ -18,7 +18,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Tags do
         id: %Schema{type: :integer},
         resource_id: %Schema{type: :string, format: :uuid},
         resource_type: %Schema{type: :string, enum: [:host, :cluster, :sap_system, :database]},
-        value: %Schema{type: :string}
+        value: %Schema{type: :string},
+        inserted_at: %Schema{type: :string, format: :datetime},
+        updated_at: %Schema{type: :string, format: :datetime, nullable: true}
       }
     })
   end

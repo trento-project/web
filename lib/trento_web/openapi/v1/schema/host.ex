@@ -98,7 +98,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           type: :string,
           nullable: true,
           format: :"date-time"
-        }
+        },
+        inserted_at: %Schema{type: :string, format: :datetime},
+        updated_at: %Schema{type: :string, format: :datetime, nullable: true}
       }
     })
   end
