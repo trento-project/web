@@ -456,7 +456,8 @@ defmodule Trento.Factory do
           id: Faker.Pokemon.name(),
           role: "Stopped",
           status: Faker.Pokemon.name(),
-          type: "ocf::heartbeat:Dummy"
+          type: "ocf::heartbeat:Dummy",
+          managed: Enum.random([false, true])
         }
       ],
       system_replication_mode: "sync",
@@ -479,7 +480,8 @@ defmodule Trento.Factory do
           id: Faker.Pokemon.name(),
           role: "Started",
           status: "Active",
-          type: "ocf::heartbeat:Dummy"
+          type: "ocf::heartbeat:Dummy",
+          managed: true
         }
       ],
       site: Faker.StarWars.planet()
@@ -522,7 +524,8 @@ defmodule Trento.Factory do
       type: Faker.StarWars.planet(),
       role: Faker.Beer.hop(),
       status: Faker.Pokemon.name(),
-      fail_count: Enum.random(0..100)
+      fail_count: Enum.random(0..100),
+      managed: Enum.random([false, true])
     }
   end
 
