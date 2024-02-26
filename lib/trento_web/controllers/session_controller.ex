@@ -4,7 +4,7 @@ defmodule TrentoWeb.SessionController do
   alias Trento.Repo
   alias Trento.Users.User
 
-  alias TrentoWeb.Plugs.JWTAuthPlug
+  alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
@@ -149,7 +149,7 @@ defmodule TrentoWeb.SessionController do
     ]
 
   def refresh(conn, %{"refresh_token" => refresh_token}) do
-    case JWTAuthPlug.renew(conn, refresh_token) do
+    case AppJWTAuthPlug.renew(conn, refresh_token) do
       {:ok, conn} ->
         render(conn, "refreshed.json",
           token: conn.private[:api_access_token],

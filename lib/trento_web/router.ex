@@ -16,7 +16,7 @@ defmodule TrentoWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug TrentoWeb.Plugs.JWTAuthPlug, otp_app: :trento
+    plug TrentoWeb.Plugs.AppJWTAuthPlug, otp_app: :trento
   end
 
   pipeline :api_v1 do
