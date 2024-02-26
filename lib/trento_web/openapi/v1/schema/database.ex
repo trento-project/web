@@ -48,7 +48,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           type: :string,
           description: "System Replication Status"
         },
-        health: ResourceHealth
+        health: ResourceHealth,
+        inserted_at: %Schema{type: :string, format: :datetime},
+        updated_at: %Schema{type: :string, format: :datetime, nullable: true}
       }
     })
   end
@@ -78,7 +80,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
         sid: %Schema{type: :string, description: "SID"},
         health: ResourceHealth,
         database_instances: DatabaseInstances,
-        tags: Tags
+        tags: Tags,
+        inserted_at: %Schema{type: :string, format: :datetime},
+        updated_at: %Schema{type: :string, format: :datetime, nullable: true}
       }
     })
   end

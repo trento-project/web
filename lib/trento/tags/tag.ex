@@ -14,6 +14,8 @@ defmodule Trento.Tags.Tag do
     field :value, :string
     field :resource_id, Ecto.UUID
     field :resource_type, Ecto.Enum, values: [:host, :cluster, :sap_system, :database]
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

@@ -28,6 +28,8 @@ defmodule Trento.SapSystems.Projections.DatabaseReadModel do
       preload_order: [asc: :instance_number, asc: :host_id]
 
     field :deregistered_at, :utc_datetime_usec
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

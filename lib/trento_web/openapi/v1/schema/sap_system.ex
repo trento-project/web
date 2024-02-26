@@ -44,7 +44,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           description: "Identifier of the host where current instance is running",
           format: :uuid
         },
-        health: ResourceHealth
+        health: ResourceHealth,
+        inserted_at: %Schema{type: :string, format: :datetime},
+        updated_at: %Schema{type: :string, format: :datetime, nullable: true}
       }
     })
   end
@@ -75,7 +77,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           items: ApplicationInstance
         },
         database_instances: Database.DatabaseInstances,
-        tags: Tags
+        tags: Tags,
+        inserted_at: %Schema{type: :string, format: :datetime},
+        updated_at: %Schema{type: :string, format: :datetime, nullable: true}
       }
     })
   end

@@ -263,7 +263,9 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           nullable: true
         },
         details: Details,
-        tags: Tags
+        tags: Tags,
+        inserted_at: %Schema{type: :string, format: :datetime},
+        updated_at: %Schema{type: :string, format: :datetime, nullable: true}
       }
     })
   end

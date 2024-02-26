@@ -11,6 +11,8 @@ defmodule Trento.Settings.Settings do
   @primary_key {:installation_id, :binary_id, autogenerate: false}
   schema "settings" do
     field :eula_accepted, :boolean
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

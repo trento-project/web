@@ -22,7 +22,7 @@ defmodule Trento.Hosts.Projections.SlesSubscriptionReadModel do
     field :starts_at, :string
     field :expires_at, :string
 
-    timestamps()
+    timestamps(type: :utc_datetime_usec)
   end
 
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()

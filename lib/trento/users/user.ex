@@ -12,7 +12,7 @@ defmodule Trento.Users.User do
   schema "users" do
     pow_user_fields()
 
-    timestamps()
+    timestamps(type: :utc_datetime_usec)
   end
 
   def changeset(user, attrs) do
