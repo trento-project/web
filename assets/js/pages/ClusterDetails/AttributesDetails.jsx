@@ -15,34 +15,45 @@ function AttributesDetails({ attributes, resources, title }) {
     ],
   };
 
+  const resourceKeys =
+    resources && resources.length > 0 ? Object.keys(resources[0]) : [];
+
   const resourcesTableConfig =
     resources.length > 0
       ? {
           usePadding: false,
-          columns: Object.keys(resources[0]).map((key) => ({
-            title: key,
-            key,
-          })),
+          columns: [
+            {
+              title: 'Fail Count',
+              key: resourceKeys[0],
+            },
+            {
+              title: 'ID',
+              key: resourceKeys[1],
+            },
+            {
+              title: 'Managed',
+              key: resourceKeys[2],
+              render: (content) => (content ? 'True' : 'False'),
+            },
+            {
+              title: 'Role',
+              key: resourceKeys[3],
+            },
+            {
+              title: 'Status',
+              key: resourceKeys[4],
+            },
+            {
+              title: 'Type',
+              key: resourceKeys[5],
+            },
+          ],
         }
-      : { usePadding: false, columns: [] };
-
-  const formatValue = (key, value) => {
-    if (key === 'managed') {
-      return value ? 'True' : 'False';
-    }
-    return String(value);
-  };
-
-  const resourcesTableData = (resourceData) =>
-    resourceData.map((resource) =>
-      Object.entries(resource).reduce(
-        (updatedResource, [key, value]) => ({
-          ...updatedResource,
-          [key]: formatValue(key, value),
-        }),
-        {}
-      )
-    );
+      : {
+          usePadding: false,
+          columns: [],
+        };
 
   return (
     <>
@@ -65,10 +76,7 @@ function AttributesDetails({ attributes, resources, title }) {
         />
 
         <h3 className="font-medium mt-6">Resources</h3>
-        <Table
-          config={resourcesTableConfig}
-          data={resourcesTableData(resources)}
-        />
+        <Table config={resourcesTableConfig} data={resources} />
       </Modal>
     </>
   );
