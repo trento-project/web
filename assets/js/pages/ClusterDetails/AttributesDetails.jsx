@@ -41,7 +41,6 @@ function AttributesDetails({ attributes, resources, title }) {
             {
               title: 'Managed',
               key: 'managed',
-
               render: (content) => capitalize(`${content}`),
             },
             {

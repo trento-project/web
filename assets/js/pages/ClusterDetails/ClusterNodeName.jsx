@@ -6,30 +6,39 @@ import {
   EOS_POWER_OFF_OUTLINED,
 } from 'eos-icons-react';
 
-import { filter } from 'lodash';
+import { countBy } from 'lodash';
 
 import Tooltip from '@common/Tooltip';
 import ClusterNodeLink from './ClusterNodeLink';
 
-const statusIcons = {
-  Online: <EOS_BOLT_FILLED className="tn-online" />,
-  Offline: <EOS_POWER_OFF_OUTLINED className="tn-offline" />,
-  Maintenance: <EOS_BUILD_OUTLINED className="tn-maintenance" />,
-  Default: <EOS_WARNING_OUTLINED className="tn-unknown" />,
+const getNodeStatusIcon = (status) => {
+  switch (status) {
+    case 'Online': {
+      return <EOS_BOLT_FILLED className="tn-online" />;
+    }
+    case 'Offline': {
+      return <EOS_POWER_OFF_OUTLINED className="tn-offline" />;
+    }
+    case 'Maintenance': {
+      return <EOS_BUILD_OUTLINED className="tn-maintenance" />;
+    }
+    default: {
+      return <EOS_WARNING_OUTLINED className="tn-unknown" />;
+    }
+  }
 };
 
-const getNodeStatusIconAndMessage = (status, resources) => {
-  const unmanagedResources = filter(resources, { managed: false }).length;
-  const message =
-    unmanagedResources > 0
-      ? `${unmanagedResources} resources unmanaged`
-      : status;
-  const icon = statusIcons[status] || statusIcons.Default;
+const getNodeMessageAndIcon = (status, resources) => {
+  const { unmanaged } = countBy(resources, (resource) =>
+    resource.managed ? 'managed' : 'unmanaged'
+  );
+  const message = unmanaged > 0 ? `${unmanaged} resources unmanaged` : status;
+  const icon = getNodeStatusIcon(status);
 
   return { icon, message };
 };
 function ClusterNodeName({ status, hostId, children, resources = [] }) {
-  const { icon, message } = getNodeStatusIconAndMessage(status, resources);
+  const { icon, message } = getNodeMessageAndIcon(status, resources);
   return (
     <span className="group flex items-center relative space-x-2">
       <Tooltip content={message} place="bottom">
