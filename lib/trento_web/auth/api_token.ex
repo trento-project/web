@@ -15,14 +15,13 @@ defmodule TrentoWeb.Auth.ApiToken do
   end
 
   @doc """
-    Generates and sign a valid access token with the default claims
-    for the token type
+    Generates and sign a valid api token with given claims and expiration.
 
     Raise an error
   """
-  # @spec generate_api_token!(map, String.t()) :: binary
+  @spec generate_api_token!(map, DateTime.t()) :: String.t()
   def generate_api_token!(claims, expiration) do
-    claims = Map.merge(claims, %{"typ" => "Bearer", "exp" => expiration})
+    claims = Map.merge(claims, %{"typ" => "Bearer", "exp" => DateTime.to_unix(expiration)})
     generate_and_sign!(claims)
   end
 end
