@@ -6,50 +6,34 @@ import {
   EOS_POWER_OFF_OUTLINED,
 } from 'eos-icons-react';
 
+import { filter } from 'lodash';
+
 import Tooltip from '@common/Tooltip';
 import ClusterNodeLink from './ClusterNodeLink';
 
-const getNodeStatusIcon = (status) => {
-  switch (status) {
-    case 'Online': {
-      return <EOS_BOLT_FILLED className="tn-online" />;
-    }
-    case 'Offline': {
-      return <EOS_POWER_OFF_OUTLINED className="tn-offline" />;
-    }
-    case 'Maintenance': {
-      return <EOS_BUILD_OUTLINED className="tn-maintenance" />;
-    }
-    default: {
-      return <EOS_WARNING_OUTLINED className="tn-unknown" />;
-    }
-  }
+const statusIcons = {
+  Online: <EOS_BOLT_FILLED className="tn-online" />,
+  Offline: <EOS_POWER_OFF_OUTLINED className="tn-offline" />,
+  Maintenance: <EOS_BUILD_OUTLINED className="tn-maintenance" />,
+  Default: <EOS_WARNING_OUTLINED className="tn-unknown" />,
 };
 
-const countUnmanagedResources = (resources) => {
-  const unmanagedResourcesNumber = resources.reduce(
-    (counts, { managed }) => ({
-      ...counts,
-      unmanaged: managed ? counts.unmanaged : counts.unmanaged + 1,
-    }),
-    { unmanaged: 0 }
-  );
-  return unmanagedResourcesNumber;
-};
+const getNodeStatusIconAndMessage = (status, resources) => {
+  const unmanagedResources = filter(resources, { managed: false }).length;
+  const message =
+    unmanagedResources > 0
+      ? `${unmanagedResources} resources unmanaged`
+      : status;
+  const icon = statusIcons[status] || statusIcons.Default;
 
-const getTooltipContent = (status = '', resources = []) => {
-  const { unmanaged } = countUnmanagedResources(resources);
-  if (unmanaged > 0 && status === 'Maintenance') {
-    return `${unmanaged} resources unmanaged`;
-  }
-  return status;
+  return { icon, message };
 };
-
 function ClusterNodeName({ status, hostId, children, resources = [] }) {
+  const { icon, message } = getNodeStatusIconAndMessage(status, resources);
   return (
     <span className="group flex items-center relative space-x-2">
-      <Tooltip content={getTooltipContent(status, resources)} place="bottom">
-        {getNodeStatusIcon(status)}
+      <Tooltip content={message} place="bottom">
+        {icon}
       </Tooltip>
       <ClusterNodeLink hostId={hostId}>{children}</ClusterNodeLink>
     </span>
