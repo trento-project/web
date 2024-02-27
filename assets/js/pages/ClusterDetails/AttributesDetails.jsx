@@ -15,9 +15,6 @@ function AttributesDetails({ attributes, resources, title }) {
     ],
   };
 
-  const resourceKeys =
-    resources && resources.length > 0 ? Object.keys(resources[0]) : [];
-
   const resourcesTableConfig =
     resources.length > 0
       ? {
@@ -25,28 +22,28 @@ function AttributesDetails({ attributes, resources, title }) {
           columns: [
             {
               title: 'Fail Count',
-              key: resourceKeys[0],
+              key: 'fail_count',
             },
             {
               title: 'ID',
-              key: resourceKeys[1],
-            },
-            {
-              title: 'Managed',
-              key: resourceKeys[2],
-              render: (content) => (content ? 'True' : 'False'),
+              key: 'id',
             },
             {
               title: 'Role',
-              key: resourceKeys[3],
+              key: 'role',
             },
             {
               title: 'Status',
-              key: resourceKeys[4],
+              key: 'status',
+            },
+            {
+              title: 'Managed',
+              key: 'managed',
+              render: (content) => (content ? 'True' : 'False'),
             },
             {
               title: 'Type',
-              key: resourceKeys[5],
+              key: 'type',
             },
           ],
         }
