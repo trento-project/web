@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { capitalize } from 'lodash';
+
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import Table from '@common/Table';
@@ -39,7 +41,8 @@ function AttributesDetails({ attributes, resources, title }) {
             {
               title: 'Managed',
               key: 'managed',
-              render: (content) => (content ? 'True' : 'False'),
+
+              render: (content) => capitalize(`${content}`),
             },
             {
               title: 'Type',
