@@ -24,6 +24,7 @@ export const availableHanaCluster = {
           role: 'Primary',
           indexserver_actual_role: 'master',
           nameserver_actual_role: 'master',
+          status: 'tn-online',
           attributes: [
             {
               attribute: 'hana_hdp_clone_state',
@@ -122,6 +123,7 @@ export const availableHanaCluster = {
           role: 'Secondary',
           indexserver_actual_role: 'master',
           nameserver_actual_role: 'master',
+          status: 'tn-online',
           attributes: [
             {
               attribute: 'hana_hdp_clone_state',

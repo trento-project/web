@@ -16,7 +16,7 @@ import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 
-import ClusterNodeLink from '@pages/ClusterDetails/ClusterNodeLink';
+import ClusterNodeName from '@pages/ClusterDetails/ClusterNodeName';
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
 import AttributesDetails from './AttributesDetails';
@@ -30,8 +30,10 @@ const nodeDetailsConfig = {
     {
       title: 'Hostname',
       key: '',
-      render: (_, { id, name }) => (
-        <ClusterNodeLink hostId={id}>{name}</ClusterNodeLink>
+      render: (_, { id, name, status }) => (
+        <ClusterNodeName hostId={id} status={status}>
+          {name}
+        </ClusterNodeName>
       ),
     },
     {

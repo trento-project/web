@@ -158,6 +158,7 @@ context('HANA cluster details', () => {
       it(`should have correct SR health state in site ${site.name}`, () => {
         cy.get(`.tn-site-details-${site.name}`)
           .find('svg')
+          .eq(0)
           .should('have.class', site.srHealthState);
       });
 
@@ -184,6 +185,13 @@ context('HANA cluster details', () => {
           cy.get(`.tn-site-details-${site.name}`).contains(
             capitalize(host.nameserver_actual_role)
           );
+        });
+
+        it(`${host.hostname} should have the expected status`, () => {
+          cy.get(`.tn-site-details-${site.name}`)
+            .find('svg')
+            .eq(1)
+            .should('have.class', host.status);
         });
       });
     });
