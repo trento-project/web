@@ -27,27 +27,28 @@ const getNodeStatusIcon = (status) => {
 };
 
 const countUnmanagedResources = (resources) => {
-  const unmanagedResourceNumber = resources.reduce(
+  const unmanagedResourcesNumber = resources.reduce(
     (counts, { managed }) => ({
       ...counts,
       unmanaged: managed ? counts.unmanaged : counts.unmanaged + 1,
     }),
     { unmanaged: 0 }
   );
-  return unmanagedResourceNumber;
+  return unmanagedResourcesNumber;
+};
+
+const getTooltipContent = (status = '', resources = []) => {
+  const { unmanaged } = countUnmanagedResources(resources);
+  if (unmanaged > 0 && status === 'Maintenance') {
+    return `${unmanaged} resources unmanaged`;
+  }
+  return status;
 };
 
 function ClusterNodeName({ status, hostId, children, resources = [] }) {
-  const unmanagdResourcesNumber = countUnmanagedResources(resources);
-  const unmanagedResourcesText = `${unmanagdResourcesNumber} resources unmanaged`;
-  const toolTipText =
-    unmanagdResourcesNumber > 0 && status === 'Maintenance'
-      ? unmanagedResourcesText
-      : status;
-
   return (
     <span className="group flex items-center relative space-x-2">
-      <Tooltip content={toolTipText} place="bottom">
+      <Tooltip content={getTooltipContent(status, resources)} place="bottom">
         {getNodeStatusIcon(status)}
       </Tooltip>
       <ClusterNodeLink hostId={hostId}>{children}</ClusterNodeLink>

@@ -27,8 +27,8 @@ const siteDetailsConfig = {
       title: 'Hostname',
       key: '',
       className: 'table-col-m',
-      render: (_, { id, name, status }) => (
-        <ClusterNodeName hostId={id} status={status}>
+      render: (_, { id, name, status, resources }) => (
+        <ClusterNodeName hostId={id} status={status} resources={resources}>
           {name}
         </ClusterNodeName>
       ),
