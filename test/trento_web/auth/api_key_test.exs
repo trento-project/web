@@ -15,7 +15,7 @@ defmodule TrentoWeb.ApiKeyTest do
     expect(
       Joken.CurrentTime.Mock,
       :current_time,
-      2,
+      0,
       fn ->
         @test_timestamp
       end
@@ -27,36 +27,43 @@ defmodule TrentoWeb.ApiKeyTest do
   describe "generate_api_key!/2" do
     test "should generate and sign a jwt token with the default claims and expiration correctly set" do
       expected_expiry = @test_timestamp + 400
+      expected_creation = @test_timestamp + 100
 
       expiry_datetime = DateTime.from_unix!(expected_expiry)
+      creation_datetime = DateTime.from_unix!(expected_creation)
 
-      token = ApiKey.generate_api_key!(%{}, expiry_datetime)
+      token = ApiKey.generate_api_key!(%{}, expiry_datetime, creation_datetime)
       {:ok, claims} = Joken.peek_claims(token)
 
       assert %{
                "iss" => "https://github.com/trento-project/web",
                "aud" => "trento_api_key",
                "exp" => ^expected_expiry,
-               "iat" => @test_timestamp,
+               "iat" => ^expected_creation,
                "jti" => _,
-               "nbf" => @test_timestamp,
+               "nbf" => ^expected_creation,
                "typ" => "Bearer"
              } = claims
     end
 
     test "should merge the custom claims with the default after signing" do
+      jti = UUID.uuid4()
+
       token =
         ApiKey.generate_api_key!(
           %{
-            "sub" => 1
+            "sub" => 1,
+            "jti" => jti
           },
+          DateTime.from_unix!(@test_timestamp),
           DateTime.from_unix!(@test_timestamp)
         )
 
       {:ok, claims} = Joken.peek_claims(token)
 
       assert %{
-               "sub" => 1
+               "sub" => 1,
+               "jti" => ^jti
              } = claims
     end
   end

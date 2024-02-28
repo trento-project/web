@@ -19,9 +19,16 @@ defmodule TrentoWeb.Auth.ApiKey do
 
     Raise an error
   """
-  @spec generate_api_key!(map, DateTime.t()) :: String.t()
-  def generate_api_key!(claims, expiration) do
-    claims = Map.merge(claims, %{"typ" => "Bearer", "exp" => DateTime.to_unix(expiration)})
+  @spec generate_api_key!(map, DateTime.t(), DateTime.t()) :: String.t()
+  def generate_api_key!(claims, expires_at, created_at) do
+    claims =
+      Map.merge(claims, %{
+        "typ" => "Bearer",
+        "exp" => DateTime.to_unix(expires_at),
+        "iat" => DateTime.to_unix(created_at),
+        "nbf" => DateTime.to_unix(created_at)
+      })
+
     generate_and_sign!(claims)
   end
 end
