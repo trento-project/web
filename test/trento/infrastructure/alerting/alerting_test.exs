@@ -3,6 +3,8 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
   use ExUnit.Case, async: true
   use Trento.DataCase
 
+  import ExUnit.CaptureLog
+
   import Swoosh.TestAssertions
 
   import Trento.Factory
@@ -100,6 +102,41 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
       Alerting.notify_critical_sap_system_health(sap_system_id)
       assert_email_sent(subject: "Trento Alert: Sap System #{sap_system.sid} needs attention.")
+    end
+  end
+
+  describe "Alerting errors" do
+    setup do
+      on_exit(fn ->
+        Application.put_env(:trento, :alerting,
+          enabled: true,
+          sender: @some_sender,
+          recipient: @some_recipient
+        )
+
+        Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.Test)
+      end)
+    end
+
+    test "should be caught if SMTP server is wrongly set up" do
+      relay_ip_address = Faker.Internet.ip_v4_address()
+
+      Application.put_env(:trento, Trento.Mailer,
+        adapter: Swoosh.Adapters.SMTP,
+        relay: "smtp://#{relay_ip_address}"
+      )
+
+      Application.put_env(:trento, :alerting,
+        enabled: true,
+        sender: @some_sender,
+        recipient: @some_recipient
+      )
+
+      host_id = Faker.UUID.v4()
+      insert(:host, id: host_id)
+
+      assert capture_log(fn -> Alerting.notify_critical_host_health(host_id) end) =~
+               "Failed to lookup smtp://#{relay_ip_address}"
     end
   end
 end
