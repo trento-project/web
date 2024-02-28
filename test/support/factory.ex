@@ -474,16 +474,13 @@ defmodule Trento.Factory do
       name: Faker.StarWars.character(),
       indexserver_actual_role: "master",
       nameserver_actual_role: "master",
-      resources: [
-        %ClusterResource{
-          fail_count: Enum.random(0..100),
-          id: Faker.Pokemon.name(),
+      resources:
+        build_list(1, :cluster_resource,
           role: "Started",
           status: "Active",
           type: "ocf::heartbeat:Dummy",
           managed: true
-        }
-      ],
+        ),
       site: Faker.StarWars.planet()
     }
   end
