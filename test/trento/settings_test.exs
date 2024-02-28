@@ -53,8 +53,11 @@ defmodule Trento.SettingsTest do
                 api_key_created_at: ^creation_date,
                 api_key_expire_at: ^expiration_date
               }} =
-               %{jti: jti, api_key_created_at: creation_date, api_key_expire_at: expiration_date}
-               |> Settings.create_api_key_settings()
+               Settings.create_api_key_settings(%{
+                 jti: jti,
+                 api_key_created_at: creation_date,
+                 api_key_expire_at: expiration_date
+               })
     end
 
     test "should not create another ApiKeySettings if one is already present" do

@@ -49,7 +49,7 @@ defmodule TrentoWeb.ApiKeyTest do
     test "should fallback to a default 'infinite' expiration date, if no expiration is provided" do
       expected_creation = @test_timestamp + 100
 
-      expiry_datetime = DateTime.from_unix!(expected_creation) |> DateTime.add(100 * 360, :day)
+      expiry_datetime = DateTime.add(DateTime.from_unix!(expected_creation), 100 * 360, :day)
       expected_expiry = DateTime.to_unix(expiry_datetime)
       creation_datetime = DateTime.from_unix!(expected_creation)
 

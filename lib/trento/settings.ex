@@ -50,12 +50,11 @@ defmodule Trento.Settings do
 
   @spec has_premium_subscription? :: boolean
   def has_premium_subscription? do
-    query =
+    Repo.exists?(
       from(s in SlesSubscriptionReadModel,
         where: s.identifier == @sles_identifier
       )
-
-    Repo.exists?(query)
+    )
   end
 
   @spec flavor :: String.t()
@@ -69,7 +68,7 @@ defmodule Trento.Settings do
   end
 
   @spec get_api_key_settings() :: {:ok, ApiKeySettings.t()} | {:error, any}
-  def get_api_key_settings() do
+  def get_api_key_settings do
     case Repo.one(ApiKeySettings.base_query()) do
       nil -> {:error, :api_key_settings_missing}
       api_key_settings -> {:ok, api_key_settings}

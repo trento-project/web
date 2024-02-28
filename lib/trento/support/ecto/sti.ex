@@ -3,7 +3,7 @@ defmodule Trento.Support.Ecto.STI do
     Helpers module for Single Table Inheritance in ecto schemas
   """
 
-  defmacro sti_fields() do
+  defmacro sti_fields do
     quote do
       field :type, Ecto.Enum, values: [@sti_identifier]
     end
@@ -23,7 +23,7 @@ defmodule Trento.Support.Ecto.STI do
 
       @sti_identifier unquote(sti_type_identifier)
 
-      def base_query(),
+      def base_query,
         do: from(s in __MODULE__, where: s.type == unquote(sti_type_identifier))
 
       def sti_column_value, do: unquote(sti_type_identifier)
