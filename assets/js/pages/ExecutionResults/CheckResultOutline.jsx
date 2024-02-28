@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import TargetResult from './TargetResult';
 import {
-  getExpectStatements,
+  getHostExpectationStatements,
   isAgentCheckError,
-  getExpectStatementsMet,
+  getHostExpectationStatementsMet,
   isTargetCluster,
   getExpectSameStatementsResults,
 } from './checksUtils';
 
 const extractExpectResults = (expectations, agentsCheckResults) => {
-  const expectStatementsCount = getExpectStatements(expectations).length;
+  const expectStatementsCount =
+    getHostExpectationStatements(expectations).length;
 
   if (expectStatementsCount === 0) {
     return [];
@@ -24,7 +25,9 @@ const extractExpectResults = (expectations, agentsCheckResults) => {
       message,
     } = agentCheckResult;
     const isCheckError = isAgentCheckError(agentCheckResult);
-    const metExpectations = getExpectStatementsMet(expectation_evaluations);
+    const metExpectations = getHostExpectationStatementsMet(
+      expectation_evaluations
+    );
     const expectationsSummary = isCheckError
       ? message
       : `${metExpectations}/${expectStatementsCount} Expectations met.`;

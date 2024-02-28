@@ -6,6 +6,15 @@ import { act } from 'react-dom/test-utils';
 import { faker } from '@faker-js/faker';
 
 import {
+  EXPECT,
+  EXPECT_SAME,
+  EXPECT_ENUM,
+  PASSING,
+  CRITICAL,
+} from '@lib/model';
+
+import {
+  addExpectationWithResult,
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
   emptyCheckResultFactory,
@@ -14,6 +23,7 @@ import {
   expectationResultFactory,
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
+  catalogExpectEnumExpectationFactory,
 } from '@lib/test-utils/factories';
 
 import { renderWithRouter } from '@lib/test-utils';
@@ -24,14 +34,21 @@ import CheckResultOutline from './CheckResultOutline';
 const expectStatementResult = (expectationName, result) =>
   expectationResultFactory.build({
     name: expectationName,
-    type: 'expect',
+    type: EXPECT,
     result,
   });
 
 const expectSameStatementResult = (expectationName, result) =>
   expectationResultFactory.build({
     name: expectationName,
-    type: 'expect_same',
+    type: EXPECT_SAME,
+    result,
+  });
+
+const expectEnumStatementResult = (expectationName, result) =>
+  expectationResultFactory.build({
+    name: expectationName,
+    type: EXPECT_ENUM,
     result,
   });
 
@@ -135,27 +152,48 @@ describe('CheckResultOutline Component', () => {
     const hostName = faker.lorem.word();
     const checkID = faker.string.uuid();
 
-    const expectationName = faker.string.uuid();
-
     const expectations = [
-      catalogExpectExpectationFactory.build({
-        name: expectationName,
-      }),
+      catalogExpectExpectationFactory.build(),
+      catalogExpectEnumExpectationFactory.build(),
+      catalogExpectEnumExpectationFactory.build(),
     ];
+
+    const [
+      { name: expectationName1 },
+      { name: expectationName2 },
+      { name: expectationName3 },
+    ] = expectations;
 
     let checkResult = emptyCheckResultFactory.build({
       checkID,
       targets: [hostID],
       result: 'passing',
     });
-    checkResult = addPassingExpectExpectation(checkResult, expectationName);
+
+    checkResult = addPassingExpectExpectation(checkResult, expectationName1);
+    checkResult = addExpectationWithResult(
+      checkResult,
+      EXPECT_ENUM,
+      expectationName2,
+      PASSING
+    );
+    checkResult = addExpectationWithResult(
+      checkResult,
+      EXPECT_ENUM,
+      expectationName3,
+      CRITICAL
+    );
 
     const agentsCheckResults = agentsCheckResultsWithHostname(
       checkResult.agents_check_results,
       [{ id: hostID, hostname: hostName }]
     );
 
-    const expectationResults = [expectStatementResult(expectationName, true)];
+    const expectationResults = [
+      expectStatementResult(expectationName1, true),
+      expectEnumStatementResult(expectationName2, PASSING),
+      expectEnumStatementResult(expectationName3, CRITICAL),
+    ];
 
     renderWithRouter(
       <CheckResultOutline
@@ -170,7 +208,7 @@ describe('CheckResultOutline Component', () => {
     );
 
     expect(screen.getAllByText(hostName)).toHaveLength(1);
-    expect(screen.getAllByText('1/1 Expectations met.')).toHaveLength(1);
+    expect(screen.getAllByText('2/3 Expectations met.')).toHaveLength(1);
 
     await act(async () => user.click(screen.getAllByText(hostName)[0]));
 

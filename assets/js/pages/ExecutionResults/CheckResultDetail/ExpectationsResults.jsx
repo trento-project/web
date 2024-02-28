@@ -1,10 +1,15 @@
 import React from 'react';
-
-import ListView from '@common/ListView';
+import { capitalize } from 'lodash';
 import classNames from 'classnames';
+
+import { WARNING, CRITICAL } from '@lib/model';
+import ListView from '@common/ListView';
+
+import { normalizeExpectationResult } from '../checksUtils';
 
 function ExpectationsResults({
   isTargetHost = true,
+  severity,
   results,
   isError = false,
   errorMessage = 'An error occurred',
@@ -12,28 +17,29 @@ function ExpectationsResults({
   const renderedResults = isTargetHost
     ? results.map(({ name, return_value, failure_message, message }) => ({
         name,
-        passing: !!return_value,
+        result: normalizeExpectationResult(return_value, severity),
         failureMessage: failure_message,
         evaluationErrorMessage: message,
       }))
     : results.map(({ name, result, failure_message, message }) => ({
         name,
-        passing: !!result,
+        result: normalizeExpectationResult(result, severity),
         failureMessage: failure_message,
         evaluationErrorMessage: message,
       }));
 
   const expectationsEvaluations = renderedResults.map(
-    ({ name, passing, failureMessage, evaluationErrorMessage }) => ({
+    ({ name, result, failureMessage, evaluationErrorMessage }) => ({
       title: name,
-      content: passing,
-      render: (isPassing) => (
+      content: result || CRITICAL,
+      render: (content) => (
         <div
           className={classNames({
-            'text-red-500': !isPassing,
+            'text-red-500': content === CRITICAL,
+            'text-yellow-500': content === WARNING,
           })}
         >
-          <span>{isPassing ? 'Passing' : 'Failing'}</span>
+          <span>{capitalize(content)}</span>
           {failureMessage && <span className="block">{failureMessage}</span>}
           {evaluationErrorMessage && (
             <span className="block">{evaluationErrorMessage}</span>

@@ -155,7 +155,7 @@ describe('checksUtils', () => {
       expectationResultFactory.buildList(2, {
         type: EXPECT,
       }),
-      expectationResultFactory.buildList(1, {
+      expectationResultFactory.build({
         type: EXPECT_SAME,
       }),
       expectationResultFactory.buildList(3, {
@@ -173,8 +173,8 @@ describe('checksUtils', () => {
   it('should get host expectation statements results', () => {
     const expectations = [].concat(
       catalogExpectExpectationFactory.buildList(3),
-      catalogExpectSameExpectationFactory.buildList(1),
-      catalogExpectEnumExpectationFactory.buildList(1)
+      catalogExpectSameExpectationFactory.build(),
+      catalogExpectEnumExpectationFactory.build()
     );
 
     const [
@@ -509,7 +509,7 @@ describe('checksUtils', () => {
 
   it('should count the host expectations statements met', () => {
     const expectationEvaluations = [].concat(
-      executionExpectationEvaluationFactory.buildList(1, {
+      executionExpectationEvaluationFactory.build({
         type: EXPECT_SAME,
       }),
       executionExpectationEvaluationFactory.buildList(2, {
@@ -520,11 +520,11 @@ describe('checksUtils', () => {
         return_value: true,
         type: EXPECT,
       }),
-      executionExpectationEvaluationFactory.buildList(1, {
+      executionExpectationEvaluationFactory.build({
         return_value: PASSING,
         type: EXPECT_ENUM,
       }),
-      executionExpectationEvaluationFactory.buildList(1, {
+      executionExpectationEvaluationFactory.build({
         return_value: CRITICAL,
         type: EXPECT_ENUM,
       })

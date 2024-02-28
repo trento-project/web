@@ -216,15 +216,20 @@ const addExpectation = (checkResult, name, expectation, result) => {
   };
 };
 
-export const addPassingExpectation = (checkResult, type, expectationName) => {
+export const addExpectationWithResult = (
+  checkResult,
+  type,
+  expectationName,
+  result
+) => {
   const name = expectationName || faker.company.name();
   const expectation = executionExpectationEvaluationFactory.build({
     name,
     type,
-    return_value: true,
+    return_value: result,
   });
 
-  return addExpectation(checkResult, name, expectation, true);
+  return addExpectation(checkResult, name, expectation, result);
 };
 
 export const addExpectationWithError = (checkResult, expectationName) => {
@@ -237,7 +242,7 @@ export const addExpectationWithError = (checkResult, expectationName) => {
 };
 
 export const addPassingExpectExpectation = (checkResult, expectationName) =>
-  addPassingExpectation(checkResult, 'expect', expectationName);
+  addExpectationWithResult(checkResult, 'expect', expectationName, true);
 
 export const addCriticalExpectExpectation = (checkResult, expectationName) => {
   const name = expectationName || faker.company.name();
@@ -248,7 +253,7 @@ export const addCriticalExpectExpectation = (checkResult, expectationName) => {
   return addExpectation(checkResult, name, expectation, false);
 };
 export const addPassingExpectSameExpectation = (checkResult, expectationName) =>
-  addPassingExpectation(checkResult, 'expect_same', expectationName);
+  addExpectationWithResult(checkResult, 'expect_same', expectationName, true);
 
 export const agentsCheckResultsWithHostname = (
   agentsCheckResults,

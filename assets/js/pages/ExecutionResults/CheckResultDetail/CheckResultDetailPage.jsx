@@ -24,8 +24,7 @@ import ResultsContainer from '@pages/ExecutionResults/ResultsContainer';
 import CheckResultDetail from './CheckResultDetail';
 
 import {
-  getCheckDescription,
-  getCheckExpectations,
+  findCheck,
   isTargetHost,
   isTargetCluster,
   getClusterCheckResults,
@@ -163,7 +162,7 @@ function CheckResultDetailPage({ targetType }) {
     );
   }
 
-  const checkDescription = getCheckDescription(catalog, checkID);
+  const { description, severity, expectations } = findCheck(catalog, checkID);
 
   const resultTargetID = getResultTargetID(
     targetID,
@@ -181,7 +180,7 @@ function CheckResultDetailPage({ targetType }) {
     >
       <CheckDetailHeader
         checkID={checkID}
-        checkDescription={checkDescription}
+        checkDescription={description}
         targetID={targetID}
         targetType={targetType}
         resultTargetType={resultTargetType}
@@ -220,7 +219,8 @@ function CheckResultDetailPage({ targetType }) {
       >
         <CheckResultDetail
           checkID={checkID}
-          expectations={getCheckExpectations(catalog, checkID)}
+          severity={severity}
+          expectations={expectations}
           targetID={resultTargetID}
           targetType={resultTargetType}
           executionData={executionData}

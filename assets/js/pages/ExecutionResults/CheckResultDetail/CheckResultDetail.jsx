@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
   getAgentCheckResultByAgentID,
-  getExpectStatementsResults,
+  getHostExpectationStatementsResults,
   getExpectSameStatementsResults,
   getClusterCheckResults,
   isAgentCheckError,
@@ -18,6 +18,7 @@ function CheckResultDetail({
   expectations = [],
   targetID,
   targetType,
+  severity,
   executionData,
 }) {
   const targetHost = isTargetHost(targetType);
@@ -38,7 +39,7 @@ function CheckResultDetail({
   const isError = isAgentCheckError(targetResult);
 
   const targetExpectationsResults = targetHost
-    ? getExpectStatementsResults(expectations, expectation_evaluations)
+    ? getHostExpectationStatementsResults(expectations, expectation_evaluations)
     : getExpectSameStatementsResults(expectations, expectation_results);
 
   const gatheredFacts = targetHost
@@ -49,6 +50,7 @@ function CheckResultDetail({
     <>
       <ExpectationsResults
         isTargetHost={targetHost}
+        severity={severity}
         results={targetExpectationsResults}
         isError={isError}
         errorMessage={message}
