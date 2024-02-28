@@ -42,6 +42,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> GenServer.call({:get_system_id, fully_qualified_domain_name})
 
   @impl true
+  def get_relevant_patches(system_id) do
+  end
+
+  @impl true
   def handle_call(:setup, _from, %State{} = state) do
     case setup_auth(state) do
       {:ok, new_state} ->
