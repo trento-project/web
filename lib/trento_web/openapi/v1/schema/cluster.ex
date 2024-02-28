@@ -20,8 +20,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         type: %Schema{type: :string},
         role: %Schema{type: :string},
         status: %Schema{type: :string},
-        fail_count: %Schema{type: :integer},
-        managed: %Schema{type: :boolean}
+        fail_count: %Schema{type: :integer}
       }
     })
   end

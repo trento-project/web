@@ -9,6 +9,25 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
   alias TrentoWeb.OpenApi.V1.Schema.{Cluster, Provider, ResourceHealth, Tags}
 
+  defmodule ClusterResource do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "ClusterResource",
+      description: "A Cluster Resource",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        id: %Schema{type: :string},
+        type: %Schema{type: :string},
+        role: %Schema{type: :string},
+        status: %Schema{type: :string},
+        fail_count: %Schema{type: :integer},
+        managed: %Schema{type: :boolean}
+      }
+    })
+  end
+
   defmodule HanaClusterNode do
     @moduledoc false
 
@@ -33,7 +52,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         resources: %Schema{
           description: "A list of Cluster resources",
           type: :array,
-          items: Cluster.ClusterResource
+          items: ClusterResource
         }
       }
     })
@@ -79,7 +98,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         stopped_resources: %Schema{
           description: "A list of the stopped resources on this HANA Cluster",
           type: :array,
-          items: Cluster.ClusterResource
+          items: ClusterResource
         },
         nodes: %Schema{
           type: :array,
@@ -128,7 +147,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         },
         resources: %Schema{
           type: :array,
-          items: Cluster.ClusterResource,
+          items: ClusterResource,
           description: "A list of Cluster resources"
         },
         roles: %Schema{
@@ -203,7 +222,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         },
         stopped_resources: %Schema{
           type: :array,
-          items: Cluster.ClusterResource,
+          items: ClusterResource,
           description: "List of the stopped resources on this HANA Cluster"
         }
       },
