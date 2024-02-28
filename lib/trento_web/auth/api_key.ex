@@ -1,29 +1,27 @@
 defmodule TrentoWeb.Auth.ApiKey do
   @moduledoc """
-  This Module creates and verifies API Keys.
+    ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.
+    The token uses the same signer as app access token
+    Uses Joken as jwt base library
   """
+  use Joken.Config, default_signer: :access_token_signer
 
-  alias Trento.Settings
+  @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
+  @aud Application.compile_env!(:trento, :jwt_authentication)[:api_key_audience]
 
-  @signing_salt "trento-api-key"
-
-  @spec sign(map()) :: String.t()
-  def sign(data) do
-    # TODO: signed_at: 0 is a ugly hack to get a fixed api key.
-    # Use a proper authentication
-    Phoenix.Token.sign(TrentoWeb.Endpoint, @signing_salt, data, signed_at: 0, max_age: :infinity)
+  @impl true
+  def token_config do
+    default_claims(iss: @iss, aud: @aud)
   end
 
-  @spec verify(String.t()) :: {:ok, any()} | {:error, :unauthenticated}
-  def verify(api_key) do
-    case Phoenix.Token.verify(TrentoWeb.Endpoint, @signing_salt, api_key) do
-      {:ok, data} -> {:ok, data}
-      _error -> {:error, :unauthenticated}
-    end
-  end
+  @doc """
+    Generates and sign a valid api key with given claims and expiration.
 
-  @spec get_api_key :: String.t()
-  def get_api_key do
-    sign(%{installation_id: Settings.get_installation_id()})
+    Raise an error
+  """
+  @spec generate_api_key!(map, DateTime.t()) :: String.t()
+  def generate_api_key!(claims, expiration) do
+    claims = Map.merge(claims, %{"typ" => "Bearer", "exp" => DateTime.to_unix(expiration)})
+    generate_and_sign!(claims)
   end
 end
