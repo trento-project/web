@@ -119,6 +119,64 @@ defmodule Trento.Hosts do
     )
   end
 
+  def register_host(host_id \\ nil) do
+    host_id = host_id || UUID.uuid4()
+
+    register_command =
+      Trento.Hosts.Commands.RegisterHost.new!(%{
+        host_id: host_id,
+        hostname: "hostname-#{host_id}",
+        ip_addresses: ["10.100.1.11", "10.100.1.13"],
+        agent_version: "2.1.0",
+        cpu_count: 4,
+        total_memory_mb: 4096,
+        socket_count: 3,
+        os_version: "15-SP6",
+        fully_qualified_domain_name: "fqdn2",
+        installation_source: "suse"
+      })
+
+    commanded().dispatch(register_command, include_execution_result: true)
+  end
+
+  def update_host_details(host_id) do
+    register_command =
+      Trento.Hosts.Commands.RegisterHost.new!(%{
+        host_id: host_id,
+        hostname: "hostname-#{host_id}",
+        ip_addresses: ["10.100.1.11", "10.100.1.13"],
+        agent_version: "2.1.0",
+        # changed
+        cpu_count: 5,
+        total_memory_mb: 4096,
+        socket_count: 3,
+        os_version: "15-SP6",
+        fully_qualified_domain_name: "fqdn2",
+        installation_source: "suse"
+      })
+
+    commanded().dispatch(register_command, include_execution_result: true)
+  end
+
+  def update_host_details_fqdn(host_id) do
+    register_command =
+      Trento.Hosts.Commands.RegisterHost.new!(%{
+        host_id: host_id,
+        hostname: "hostname-#{host_id}",
+        ip_addresses: ["10.100.1.11", "10.100.1.13"],
+        agent_version: "2.1.0",
+        cpu_count: 4,
+        total_memory_mb: 4096,
+        socket_count: 3,
+        os_version: "15-SP6",
+        # changed
+        fully_qualified_domain_name: "fqdn3",
+        installation_source: "suse"
+      })
+
+    commanded().dispatch(register_command, include_execution_result: true)
+  end
+
   def by_host_id(host_id) do
     case HostReadModel
          |> where([h], h.id == ^host_id and is_nil(h.deregistered_at))

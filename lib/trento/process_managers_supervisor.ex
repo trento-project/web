@@ -10,7 +10,8 @@ defmodule Trento.ProcessManagersSupervisor do
   @impl true
   def init(_init_arg) do
     children = [
-      Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager
+      Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager,
+      Trento.Infrastructure.Commanded.ProcessManagers.SoftwareUpdatesDiscoveryProcessManager
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

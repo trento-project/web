@@ -143,6 +143,17 @@ defmodule Trento.Hosts.Host do
         gcp: [module: GcpProvider, identify_by_fields: [:project_id]]
       ],
       on_replace: :update
+
+    field :relevant_patches, :integer
+    field :upgradable_packages, :integer
+
+    embeds_one :patches_details, PatchesDetails do
+      field :security_advisories, :integer, default: 0
+      field :bug_fixes, :integer, default: 0
+      field :software_enhancements, :integer, default: 0
+    end
+
+    field :software_updates_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
   end
 
   # Stop everything during the rollup process

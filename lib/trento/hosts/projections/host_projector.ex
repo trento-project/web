@@ -51,6 +51,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
           heartbeat: heartbeat
         })
 
+      IO.puts("projecting HostRegistered")
+
       Ecto.Multi.insert(multi, :host, changeset,
         on_conflict: {:replace_all_except, [:cluster_id]},
         conflict_target: [:id],
@@ -72,6 +74,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           deregistered_at: deregistered_at
         })
 
+      IO.puts("projecting HostDeregistered")
       Ecto.Multi.update(multi, :host, changeset)
     end
   )
@@ -88,6 +91,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           deregistered_at: nil
         })
 
+      IO.puts("projecting HostRestored")
       Ecto.Multi.update(multi, :host, changeset)
     end
   )
@@ -153,6 +157,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           agent_version: agent_version
         })
 
+      IO.puts("projecting HostDetailsUpdated")
       Ecto.Multi.update(multi, :host, changeset)
     end
   )
