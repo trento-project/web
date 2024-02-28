@@ -8,7 +8,7 @@ defmodule Trento.Settings do
   alias Trento.Repo
 
   alias Trento.Hosts.Projections.SlesSubscriptionReadModel
-  alias Trento.Settings.Settings
+  alias Trento.Settings.InstallationSettings
 
   require Logger
 
@@ -16,20 +16,20 @@ defmodule Trento.Settings do
 
   @spec get_installation_id :: String.t()
   def get_installation_id do
-    %Settings{installation_id: installation_id} = Repo.one!(Settings)
+    %InstallationSettings{installation_id: installation_id} = Repo.one!(InstallationSettings.base_query())
 
     installation_id
   end
 
   @spec eula_accepted? :: boolean
   def eula_accepted? do
-    %Settings{eula_accepted: eula_accepted} = Repo.one!(Settings)
+    %InstallationSettings{eula_accepted: eula_accepted} = Repo.one!(InstallationSettings.base_query())
 
     eula_accepted
   end
 
   def accept_eula do
-    {1, _} = Repo.update_all(Settings, set: [eula_accepted: true])
+    {1, _} = Repo.update_all(InstallationSettings.base_query(), set: [eula_accepted: true])
     :ok
   end
 
