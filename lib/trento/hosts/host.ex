@@ -37,6 +37,14 @@ defmodule Trento.Hosts.Host do
   The checks health is obtained from the [Checks Engine executions](https://github.com/trento-project/wanda/).
   Every time a checks execution for a host completes the execution's result is taken into account to determine host's health.
   Checks execution is started either by an explicit user request or periodically as per the scheduler configuration.
+
+  ### Software Updates Discovery health
+
+  The Software Updates Discovery health is obtained from the integration with an external service, SUMA,
+  that provides information about relevant patches and upgradable packages for the host.
+  Presence of relevant patches concurs to the host's aggregated health as follows:
+  - critical if there is at least one security advisory
+  - warning if there are only buxfixes/software enhancements
   """
 
   require Trento.Enums.Provider, as: Provider
@@ -52,12 +60,14 @@ defmodule Trento.Hosts.Host do
     AwsProvider,
     AzureProvider,
     GcpProvider,
+    RelevantPatches,
     SaptuneStatus,
     SlesSubscription
   }
 
   alias Trento.Hosts.Commands.{
     CompleteHostChecksExecution,
+    CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
     RegisterHost,
     RequestHostDeregistration,
@@ -86,7 +96,8 @@ defmodule Trento.Hosts.Host do
     HostTombstoned,
     ProviderUpdated,
     SaptuneStatusUpdated,
-    SlesSubscriptionsUpdated
+    SlesSubscriptionsUpdated,
+    SoftwareUpdatesDiscoveryCompleted
   }
 
   @required_fields []
@@ -110,12 +121,18 @@ defmodule Trento.Hosts.Host do
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :saptune_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+
+    field :software_updates_discovery_health, Ecto.Enum,
+      values: Health.values(),
+      default: Health.unknown()
+
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :rolling_up, :boolean, default: false
     field :selected_checks, {:array, :string}, default: []
     field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_one :saptune_status, SaptuneStatus
+    embeds_one :relevant_patches, RelevantPatches
     embeds_many :subscriptions, SlesSubscription
 
     field :provider_data, PolymorphicEmbed,
@@ -507,6 +524,39 @@ defmodule Trento.Hosts.Host do
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
+  def execute(
+        %Host{host_id: host_id},
+        %CompleteSoftwareUpdatesDiscovery{
+          host_id: host_id,
+          relevant_patches: %RelevantPatches{
+            total: total,
+            security_advisories: security_advisories,
+            bug_fixes: bug_fixes,
+            software_enhancements: software_enhancements
+          }
+        }
+      )
+      when security_advisories + bug_fixes + software_enhancements != total,
+      do: {:error, :inconsistent_software_updates_discovery}
+
+  def execute(
+        %Host{host_id: host_id} = host,
+        %CompleteSoftwareUpdatesDiscovery{
+          host_id: host_id,
+          relevant_patches: relevant_patches
+        }
+      ) do
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %SoftwareUpdatesDiscoveryCompleted{
+        host_id: host_id,
+        relevant_patches: relevant_patches
+      }
+    end)
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -658,6 +708,20 @@ defmodule Trento.Hosts.Host do
     }
   end
 
+  def apply(
+        %Host{} = host,
+        %SoftwareUpdatesDiscoveryCompleted{
+          relevant_patches: relevant_patches
+        }
+      ) do
+    %Host{
+      host
+      | relevant_patches: relevant_patches,
+        software_updates_discovery_health:
+          compute_software_updates_discovery_health(relevant_patches)
+    }
+  end
+
   def apply(%Host{} = host, %HostHealthChanged{health: health}) do
     %Host{host | health: health}
   end
@@ -738,17 +802,30 @@ defmodule Trento.Hosts.Host do
   defp compute_tuning_health("compliant"), do: Health.passing()
   defp compute_tuning_health(_), do: Health.unknown()
 
+  defp compute_software_updates_discovery_health(%RelevantPatches{total: 0}),
+    do: Health.passing()
+
+  defp compute_software_updates_discovery_health(%RelevantPatches{
+         security_advisories: security_advisories
+       })
+       when security_advisories > 0,
+       do: Health.critical()
+
+  defp compute_software_updates_discovery_health(_), do: Health.warning()
+
   defp maybe_emit_host_health_changed_event(%Host{
          host_id: host_id,
          heartbeat: heartbeat,
          checks_health: checks_health,
          saptune_health: saptune_health,
+         software_updates_discovery_health: software_updates_discovery_health,
          health: current_health
        }) do
     new_health =
       [heartbeat]
       |> maybe_add_checks_health(checks_health)
       |> maybe_add_saptune_health(saptune_health)
+      |> maybe_add_software_updates_discovery_health(software_updates_discovery_health)
       |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
 
@@ -762,4 +839,9 @@ defmodule Trento.Hosts.Host do
 
   defp maybe_add_saptune_health(healths, Health.unknown()), do: healths
   defp maybe_add_saptune_health(healths, saptune_health), do: [saptune_health | healths]
+
+  defp maybe_add_software_updates_discovery_health(healths, Health.unknown()), do: healths
+
+  defp maybe_add_software_updates_discovery_health(healths, software_updates_discovery_health),
+    do: [software_updates_discovery_health | healths]
 end

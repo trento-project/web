@@ -5,6 +5,7 @@ defmodule Trento.Hosts.HostTest do
 
   alias Trento.Hosts.Commands.{
     CompleteHostChecksExecution,
+    CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
     RegisterHost,
     RequestHostDeregistration,
@@ -33,13 +34,15 @@ defmodule Trento.Hosts.HostTest do
     HostTombstoned,
     ProviderUpdated,
     SaptuneStatusUpdated,
-    SlesSubscriptionsUpdated
+    SlesSubscriptionsUpdated,
+    SoftwareUpdatesDiscoveryCompleted
   }
 
   alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
-    GcpProvider
+    GcpProvider,
+    RelevantPatches
   }
 
   alias Trento.Hosts.Host
@@ -1400,6 +1403,221 @@ defmodule Trento.Hosts.HostTest do
     end
   end
 
+  describe "software updates discovery" do
+    test "should not accept software updates discovery if a host is not registered yet" do
+      assert_error(
+        %CompleteSoftwareUpdatesDiscovery{host_id: Faker.UUID.v4()},
+        {:error, :host_not_registered}
+      )
+    end
+
+    test "should not accept inconsistent software updates discovery" do
+      host_id = Faker.UUID.v4()
+
+      inconsistent_scenarios = [
+        %{
+          total: 5,
+          security_advisories: 5,
+          bug_fixes: 2,
+          software_enhancements: 0
+        },
+        %{
+          total: 0,
+          security_advisories: 5,
+          bug_fixes: 2,
+          software_enhancements: 0
+        }
+      ]
+
+      for inconsistent_patches <- inconsistent_scenarios do
+        assert_error(
+          build(:host_registered_event, host_id: host_id),
+          CompleteSoftwareUpdatesDiscovery.new!(%{
+            host_id: host_id,
+            relevant_patches: inconsistent_patches
+          }),
+          {:error, :inconsistent_software_updates_discovery}
+        )
+      end
+    end
+
+    test "should handle host's health change based on software updates discovery" do
+      host_id = Faker.UUID.v4()
+
+      scenarios = [
+        %{
+          initial_host_health: Health.passing(),
+          relevant_patches: %{
+            total: 5,
+            security_advisories: 5,
+            bug_fixes: 0,
+            software_enhancements: 0
+          },
+          expected_software_updates_discovery_health: Health.critical(),
+          expected_host_health: Health.critical()
+        },
+        %{
+          initial_host_health: Health.passing(),
+          relevant_patches: %{
+            total: 7,
+            security_advisories: 0,
+            bug_fixes: 4,
+            software_enhancements: 3
+          },
+          expected_software_updates_discovery_health: Health.warning(),
+          expected_host_health: Health.warning()
+        },
+        %{
+          initial_host_health: Health.passing(),
+          relevant_patches: %{
+            total: 0,
+            security_advisories: 0,
+            bug_fixes: 0,
+            software_enhancements: 0
+          },
+          expect_host_health_changed: false,
+          expected_software_updates_discovery_health: Health.passing(),
+          expected_host_health: Health.passing()
+        },
+        %{
+          initial_host_health: Health.warning(),
+          relevant_patches: %{
+            total: 50,
+            security_advisories: 5,
+            bug_fixes: 3,
+            software_enhancements: 42
+          },
+          expected_software_updates_discovery_health: Health.critical(),
+          expected_host_health: Health.critical()
+        },
+        %{
+          initial_host_health: Health.warning(),
+          relevant_patches: %{
+            total: 0,
+            security_advisories: 0,
+            bug_fixes: 0,
+            software_enhancements: 0
+          },
+          expected_software_updates_discovery_health: Health.passing(),
+          expected_host_health: Health.passing()
+        },
+        %{
+          initial_host_health: Health.warning(),
+          relevant_patches: %{
+            total: 45,
+            security_advisories: 0,
+            bug_fixes: 3,
+            software_enhancements: 42
+          },
+          expect_host_health_changed: false,
+          expected_software_updates_discovery_health: Health.warning(),
+          expected_host_health: Health.warning()
+        },
+        %{
+          initial_host_health: Health.critical(),
+          initial_heartbeat: :heartbeat_failed,
+          relevant_patches: %{
+            total: 5,
+            security_advisories: 0,
+            bug_fixes: 0,
+            software_enhancements: 5
+          },
+          expect_host_health_changed: false,
+          expected_software_updates_discovery_health: Health.warning(),
+          expected_host_health: Health.critical()
+        },
+        %{
+          initial_host_health: Health.critical(),
+          relevant_patches: %{
+            total: 5,
+            security_advisories: 5,
+            bug_fixes: 0,
+            software_enhancements: 0
+          },
+          expect_host_health_changed: false,
+          expected_software_updates_discovery_health: Health.critical(),
+          expected_host_health: Health.critical()
+        },
+        %{
+          initial_host_health: Health.critical(),
+          relevant_patches: %{
+            total: 5,
+            security_advisories: 0,
+            bug_fixes: 5,
+            software_enhancements: 0
+          },
+          expected_software_updates_discovery_health: Health.warning(),
+          expected_host_health: Health.warning()
+        },
+        %{
+          initial_host_health: Health.critical(),
+          relevant_patches: %{
+            total: 0,
+            security_advisories: 0,
+            bug_fixes: 0,
+            software_enhancements: 0
+          },
+          expected_software_updates_discovery_health: Health.passing(),
+          expected_host_health: Health.passing()
+        }
+      ]
+
+      for %{
+            initial_host_health: initial_host_health,
+            relevant_patches: relevant_patches_map,
+            expected_software_updates_discovery_health:
+              expected_software_updates_discovery_health,
+            expected_host_health: expected_host_health
+          } = scenario <- scenarios do
+        heartbeat_factory_reference = Map.get(scenario, :initial_heartbeat, :heartbeat_succeded)
+
+        initial_events = [
+          build(:host_registered_event, host_id: host_id),
+          build(heartbeat_factory_reference, host_id: host_id),
+          build(:host_health_changed_event, host_id: host_id, health: initial_host_health)
+        ]
+
+        relevant_patches = RelevantPatches.new!(relevant_patches_map)
+
+        expected_host_health_changed =
+          case Map.get(scenario, :expect_host_health_changed, true) do
+            true ->
+              [
+                %HostHealthChanged{
+                  host_id: host_id,
+                  health: expected_host_health
+                }
+              ]
+
+            false ->
+              []
+          end
+
+        assert_events_and_state(
+          initial_events,
+          CompleteSoftwareUpdatesDiscovery.new!(%{
+            host_id: host_id,
+            relevant_patches: relevant_patches_map
+          }),
+          [
+            %SoftwareUpdatesDiscoveryCompleted{
+              host_id: host_id,
+              relevant_patches: relevant_patches
+            }
+          ] ++ expected_host_health_changed,
+          fn host ->
+            assert %Host{
+                     health: ^expected_host_health,
+                     software_updates_discovery_health:
+                       ^expected_software_updates_discovery_health,
+                     relevant_patches: ^relevant_patches
+                   } = host
+          end
+        )
+      end
+    end
+  end
+
   describe "rollup" do
     test "should not accept a rollup command if a host was not registered yet" do
       assert_error(
@@ -1621,7 +1839,9 @@ defmodule Trento.Hosts.HostTest do
         %RequestHostDeregistration{host_id: host_id},
         %UpdateHeartbeat{host_id: host_id},
         %UpdateProvider{host_id: host_id},
-        %UpdateSlesSubscriptions{host_id: host_id}
+        %UpdateSlesSubscriptions{host_id: host_id},
+        %CompleteSoftwareUpdatesDiscovery{host_id: host_id},
+        %SelectHostChecks{host_id: host_id}
       ]
 
       for command <- commands_to_reject do
