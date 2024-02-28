@@ -241,6 +241,11 @@ Trento.Infrastructure.Prometheus.MockPrometheusApi.html
 Trento.Infrastructure.Prometheus.PrometheusApi.html
 Trento.Infrastructure.Prometheus.PrometheusSamples.html
 Trento.Infrastructure.Prometheus.html
+Trento.Infrastructure.SoftwareUpdates.MockSuma.html
+Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.html
+Trento.Infrastructure.SoftwareUpdates.Suma.State.html
+Trento.Infrastructure.SoftwareUpdates.Suma.html
+Trento.Infrastructure.SoftwareUpdates.SumaApi.html
 Trento.Infrastructure.Telemetry.Gen.html
 Trento.Infrastructure.Telemetry.Suse.html
 Trento.Infrastructure.Telemetry.ToLogger.html
@@ -297,6 +302,8 @@ Trento.SapSystems.html
 Trento.Scheduler.html
 Trento.Services.HealthService.html
 Trento.Settings.html
+Trento.SoftwareUpdates.Discovery.Gen.html
+Trento.SoftwareUpdates.Discovery.html
 Trento.SoftwareUpdates.Settings.html
 Trento.SoftwareUpdates.html
 Trento.Support.Command.html
@@ -410,8 +417,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-7A7358D6.js
-dist/sidebar_items-D92BFDC3.js
+dist/search_data-7BDCFA04.js
+dist/sidebar_items-5DC4A3FA.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
