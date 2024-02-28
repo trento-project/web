@@ -99,6 +99,11 @@ defmodule Trento.Factory do
 
   alias Trento.SoftwareUpdates.Settings
 
+  alias Trento.Settings.{
+    ApiKeySettings,
+    InstallationSettings
+  }
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -783,5 +788,22 @@ defmodule Trento.Factory do
       ca_uploaded_at: ca_uploaded_at
     })
     |> Ecto.Changeset.apply_changes()
+  end
+
+  def api_key_settings_factory do
+    %ApiKeySettings{
+      type: :api_key_settings,
+      jti: Faker.UUID.v4(),
+      api_key_expire_at: DateTime.utc_now(),
+      api_key_created_at: DateTime.utc_now()
+    }
+  end
+
+  def installation_settings_factory do
+    %InstallationSettings{
+      type: :installation_settings,
+      installation_id: Faker.UUID.v4(),
+      eula_accepted: true
+    }
   end
 end

@@ -1,7 +1,7 @@
 defmodule Trento.Settings.InstallationSettings do
   @moduledoc """
-    InstallationSettings is the STI projection containing installation related settings
-    """
+  InstallationSettings is the STI projection containing installation related settings
+  """
 
   use Ecto.Schema
   use Trento.Support.Ecto.STI, sti_identifier: :installation_settings
@@ -11,7 +11,7 @@ defmodule Trento.Settings.InstallationSettings do
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
-  @primary_key {:id, :binary_id, autogenerate: false}
+  @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
     field :eula_accepted, :boolean
     field :installation_id, :binary_id

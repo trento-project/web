@@ -1,8 +1,7 @@
 defmodule Trento.Settings.ApiKeySettings do
   @moduledoc """
-    ApiKeySettings is the STI projection of api key related settings
-    """
-alias Trento.Settings.ApiKeySettings
+  ApiKeySettings is the STI projection of api key related settings
+  """
 
   use Ecto.Schema
   use Trento.Support.Ecto.STI, sti_identifier: :api_key_settings
@@ -12,7 +11,7 @@ alias Trento.Settings.ApiKeySettings
   @type t :: %__MODULE__{}
 
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
-  @primary_key {:id, :binary_id, autogenerate: false}
+  @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
     field :jti, :string
     field :api_key_created_at, :utc_datetime_usec
