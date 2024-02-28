@@ -32,7 +32,28 @@ defmodule TrentoWeb.ApiKeyTest do
       expiry_datetime = DateTime.from_unix!(expected_expiry)
       creation_datetime = DateTime.from_unix!(expected_creation)
 
-      token = ApiKey.generate_api_key!(%{}, expiry_datetime, creation_datetime)
+      token = ApiKey.generate_api_key!(%{}, creation_datetime, expiry_datetime)
+      {:ok, claims} = Joken.peek_claims(token)
+
+      assert %{
+               "iss" => "https://github.com/trento-project/web",
+               "aud" => "trento_api_key",
+               "exp" => ^expected_expiry,
+               "iat" => ^expected_creation,
+               "jti" => _,
+               "nbf" => ^expected_creation,
+               "typ" => "Bearer"
+             } = claims
+    end
+
+    test "should fallback to a default 'infinite' expiration date, if no expiration is provided" do
+      expected_creation = @test_timestamp + 100
+
+      expiry_datetime = DateTime.from_unix!(expected_creation) |> DateTime.add(100 * 360, :day)
+      expected_expiry = DateTime.to_unix(expiry_datetime)
+      creation_datetime = DateTime.from_unix!(expected_creation)
+
+      token = ApiKey.generate_api_key!(%{}, creation_datetime, nil)
       {:ok, claims} = Joken.peek_claims(token)
 
       assert %{

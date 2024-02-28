@@ -6,6 +6,8 @@ defmodule TrentoWeb.Auth.ApiKey do
   """
   use Joken.Config, default_signer: :access_token_signer
 
+  @reasonable_infinite_years 100
+
   @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
   @aud Application.compile_env!(:trento, :jwt_authentication)[:api_key_audience]
 
@@ -16,11 +18,24 @@ defmodule TrentoWeb.Auth.ApiKey do
 
   @doc """
     Generates and sign a valid api key with given claims and expiration.
-
+     
+    Expiration set to infinite when nil
     Raise an error
   """
+
+  @spec generate_api_key!(map, DateTime.t(), nil) :: String.t()
+  def generate_api_key!(claims, created_at, nil) do
+    expires_at = DateTime.add(created_at, @reasonable_infinite_years * 360, :day)
+
+    generate_jwt!(claims, created_at, expires_at)
+  end
+
   @spec generate_api_key!(map, DateTime.t(), DateTime.t()) :: String.t()
-  def generate_api_key!(claims, expires_at, created_at) do
+  def generate_api_key!(claims, created_at, expires_at) do
+    generate_jwt!(claims, created_at, expires_at)
+  end
+
+  defp generate_jwt!(claims, created_at, expires_at) do
     claims =
       Map.merge(claims, %{
         "typ" => "Bearer",
