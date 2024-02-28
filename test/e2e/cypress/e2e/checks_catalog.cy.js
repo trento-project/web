@@ -2,7 +2,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { groupBy } from 'lodash';
 
 context('Checks catalog', () => {
-  const checksCatalogURL = `**/api/v2/checks/catalog`;
+  const checksCatalogURL = `**/api/v3/checks/catalog`;
 
   const clusterChecksGroup = 'Group 1';
   const group1Checks = 2;
