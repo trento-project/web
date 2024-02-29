@@ -13,6 +13,7 @@ defmodule Trento.Release do
     init_event_store()
     migrate_event_store()
     init_admin_user()
+    init_default_api_key()
   end
 
   def migrate do
@@ -80,6 +81,23 @@ defmodule Trento.Release do
       on_conflict: [set: [password_hash: Password.pbkdf2_hash(admin_password)]],
       conflict_target: :username
     )
+  end
+
+  def init_default_api_key do
+    load_app()
+    Enum.each([:postgrex, :ecto], &Application.ensure_all_started/1)
+    Trento.Repo.start_link()
+
+    api_key_settings = Trento.Repo.one(Trento.Settings.ApiKeySettings.base_query())
+
+    unless api_key_settings do
+      %Trento.Settings.ApiKeySettings{}
+      |> Trento.Settings.ApiKeySettings.changeset(%{
+        jti: UUID.uuid4(),
+        api_key_created_at: DateTime.utc_now()
+      })
+      |> Trento.Repo.insert!()
+    end
   end
 
   defp repos do
