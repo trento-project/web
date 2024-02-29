@@ -7,7 +7,7 @@ import AzureLogo from '@static/azure-logo.svg';
 import GcpLogo from '@static/gcp-logo.svg';
 import NutanixLogo from '@static/nutanix-logo.svg';
 import KvmLogo from '@static/suse-kvm-logo.svg';
-import VmwareLogo from '@static/vmware-logo.png';
+import VmwareLogo from '@static/vmware-logo.svg';
 import {
   AWS_PROVIDER,
   AZURE_PROVIDER,
@@ -46,15 +46,15 @@ export const providerData = {
 
 function ProviderLabel({ provider }) {
   return (
-    <span>
+    <span className="flex items-center">
       {providerData[provider] ? (
         <img
           src={providerData[provider].logo}
-          className="inline mr-2 h-4"
+          className="mr-2 h-4"
           alt={provider}
         />
       ) : (
-        <EOS_HELP className="inline mr-2" />
+        <EOS_HELP className="mr-2" />
       )}
       {providerData[provider]
         ? providerData[provider].label
