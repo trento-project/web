@@ -61,7 +61,8 @@ defmodule TrentoWeb.V1.ClusterView do
   defp adapt_node(node) do
     adapted_resources = adapt_resources(node[:resources] || [])
 
-    Map.drop(node, [:indexserver_actual_role, :nameserver_actual_role, :status])
+    node
+    |> Map.drop([:indexserver_actual_role, :nameserver_actual_role, :status])
     |> Map.put(:resources, adapted_resources)
   end
 
