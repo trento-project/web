@@ -4,6 +4,8 @@ import {
   failingExpectEvaluationFactory,
 } from '@lib/test-utils/factories';
 
+import { WARNING } from '@lib/model';
+
 import ExpectationsResults from './ExpectationsResults';
 
 export default {
@@ -27,6 +29,13 @@ export const WithFailureMessage = {
   args: {
     ...Default.args,
     results: [failingExpectEvaluationFactory.build()],
+  },
+};
+
+export const WithWarning = {
+  args: {
+    ...WithFailureMessage.args,
+    severity: WARNING,
   },
 };
 
