@@ -82,6 +82,11 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
       {:ok, _} ->
         :ok
 
+      {:error, {:retries_exceeded, {:network_failure, chars, {:error, :nxdomain}}}} ->
+        Logger.error("Failed to lookup #{chars} address.")
+
+        :ok
+
       {:error, reason} ->
         Logger.error("Failed to send alert notification with subject \"#{subject}\": #{reason}",
           error: reason
