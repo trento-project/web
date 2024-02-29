@@ -7,7 +7,7 @@ import AzureLogo from '@static/azure-logo.svg';
 import GcpLogo from '@static/gcp-logo.svg';
 import NutanixLogo from '@static/nutanix-logo.svg';
 import KvmLogo from '@static/suse-kvm-logo.svg';
-import VmwareLogo from '@static/vmware-logo.png';
+import VmwareLogo from '@static/vmware-logo.svg';
 import {
   AWS_PROVIDER,
   AZURE_PROVIDER,
