@@ -33,6 +33,20 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     end
   end
 
+  def get_relevant_patches(url, auth, system_id) do
+    response = http_executor().get_relevant_patches(url, auth, system_id)
+
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- response,
+         {:ok, %{success: true, result: result}} <- Jason.decode(body, keys: :atoms) do
+      {:ok, result}
+    else
+      error ->
+        Logger.error("Failed to get errata for system ID #{system_id}. Error: #{inspect(error)}")
+
+        {:error, :error_getting_patches}
+    end
+  end
+
   defp get_suma_api_url(base_url),
     do: String.trim_trailing(base_url, "/") <> "/rhn/manager/api"
 

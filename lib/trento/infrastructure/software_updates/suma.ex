@@ -42,7 +42,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> GenServer.call({:get_system_id, fully_qualified_domain_name})
 
   @impl true
-  def get_relevant_patches(system_id) do
+  def get_relevant_patches(system_id, server_name \\ @default_name) do
+    server_name
+    |> process_identifier
+    |> GenServer.call({:get_relevant_patches, system_id})
   end
 
   @impl true
@@ -73,6 +76,18 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   end
 
   @impl true
+  def handle_call(
+        {:get_relevant_patches, system_id},
+        _from,
+        %{
+          url: url,
+          auth: auth_cookie
+        } = state
+      ) do
+    {:reply, SumaApi.get_relevant_patches(url, auth_cookie, system_id), state}
+  end
+
+  @impl true
   def handle_continue({:setup, from, previous_message}, %State{} = state) do
     case setup_auth(state) do
       {:ok, new_state} ->
@@ -93,6 +108,19 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
         } = state
       ) do
     GenServer.reply(from, SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name))
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(
+        {{:get_relevant_patches, system_id}, reply_to: from},
+        %State{
+          url: url,
+          auth: auth_cookie
+        } = state
+      ) do
+    GenServer.reply(from, SumaApi.get_relevant_patches(url, auth_cookie, system_id))
 
     {:noreply, state}
   end

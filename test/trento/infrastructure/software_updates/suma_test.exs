@@ -207,6 +207,82 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       assert {:ok, 1_000_010_001} = Suma.get_system_id(fqdn, @test_integration_name)
     end
+
+    test "should return an error when relevant errata was not found for a given system ID" do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      system_id = 1_000_010_001
+
+      expect(SumaApiMock, :login, 1, fn _, _, _ -> successful_login_response() end)
+
+      error_causes = [
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 200,
+           body: ~s({"success":false,"message":"No such system - sid = 1000010001"})
+         }},
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 400,
+           body: "Complex types are not allowed in query string"
+         }},
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 404,
+           body: "No method exists with the matching parameters"
+         }},
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 500,
+           body: ~s({"message":"java.lang.NullPointerException"})
+         }}
+      ]
+
+      for error_cause <- error_causes do
+        expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id -> error_cause end)
+
+        assert {:error, :error_getting_patches} =
+                 Suma.get_relevant_patches(system_id, @test_integration_name)
+      end
+    end
+
+    test "should get errata for a given system ID" do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      system_id = 1_000_010_001
+
+      patches = [
+        %{
+          date: "2024-02-27",
+          advisory_name: "SUSE-15-SP4-2024-630",
+          advisory_type: "Bug Fix Advisory",
+          advisory_status: "stable",
+          id: 4182,
+          advisory_synopsis: "Recommended update for cloud-netconfig",
+          update_date: "2024-02-27"
+        },
+        %{
+          date: "2024-02-26",
+          advisory_name: "SUSE-15-SP4-2024-619",
+          advisory_type: "Security Advisory",
+          advisory_status: "stable",
+          id: 4174,
+          advisory_synopsis: "important: Security update for java-1_8_0-ibm",
+          update_date: "2024-02-26"
+        }
+      ]
+
+      suma_response_body = %{success: true, result: patches}
+
+      expect(SumaApiMock, :login, 1, fn _, _, _ -> successful_login_response() end)
+
+      expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      assert {:ok, ^patches} =
+               Suma.get_relevant_patches(system_id, @test_integration_name)
+    end
   end
 
   defp successful_login_response(
