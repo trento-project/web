@@ -41,9 +41,11 @@ defmodule TrentoWeb.V1.ClusterViewTest do
       refute Access.get(node, :nameserver_actual_role)
       refute Access.get(node, :indexserver_actual_role)
       refute Access.get(node, :status)
+
       Enum.each(details.stopped_resources, fn stopped_resource ->
         refute Map.has_key?(stopped_resource, :managed)
       end)
+
       Enum.each(node.resources, fn resource ->
         refute Map.has_key?(resource, :managed)
       end)
