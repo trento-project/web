@@ -21,6 +21,6 @@
 %Trento.Settings.ApiKeySettings{}
 |> Trento.Settings.ApiKeySettings.changeset(%{
   jti: UUID.uuid4(),
-  created_at: DateTime.utc_now(),
+  created_at: DateTime.utc_now()
 })
 |> Trento.Repo.insert!(on_conflict: :nothing)
