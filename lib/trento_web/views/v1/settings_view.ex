@@ -15,15 +15,15 @@ defmodule TrentoWeb.V1.SettingsView do
 
   def render("api_key_settings.json", %{
         settings: %{
-          api_key_created_at: api_key_created_at,
-          api_key_expire_at: api_key_expire_at,
+          created_at: created_at,
+          expire_at: expire_at,
           generated_api_key: generated_api_key
         }
       }) do
     %{
-      api_key_created_at: api_key_created_at,
+      created_at: created_at,
       generated_api_key: generated_api_key,
-      api_key_expire_at: api_key_expire_at
+      expire_at: expire_at
     }
   end
 end

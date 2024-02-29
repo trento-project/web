@@ -33,7 +33,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       type: :object,
       additionalProperties: false,
       properties: %{
-        api_key_created_at: %Schema{
+        created_at: %Schema{
           type: :string,
           format: :"date-time",
           description: "The creation date of api key"
@@ -42,14 +42,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           type: :string,
           description: "The generated api key from api key settings"
         },
-        api_key_expire_at: %Schema{
+        expire_at: %Schema{
           type: :string,
           format: :"date-time",
           description: "The expire date of api key",
           nullable: true
         }
       },
-      required: [:generated_api_key, :api_key_expire_at, :api_key_created_at]
+      required: [:generated_api_key, :expire_at, :created_at]
     })
   end
 
@@ -62,14 +62,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
       type: :object,
       additionalProperties: false,
       properties: %{
-        api_key_expire_at: %Schema{
+        expire_at: %Schema{
           type: :string,
           format: :"date-time",
           description: "The expire date of api key",
           nullable: true
         }
       },
-      required: [:api_key_expire_at]
+      required: [:expire_at]
     })
   end
 

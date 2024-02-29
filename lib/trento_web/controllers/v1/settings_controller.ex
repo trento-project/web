@@ -76,9 +76,9 @@ defmodule TrentoWeb.V1.SettingsController do
     ]
 
   def update_api_key_settings(%{body_params: body_params} = conn, _) do
-    %{api_key_expire_at: api_key_expire_at} = body_params
+    %{expire_at: expire_at} = body_params
 
-    with {:ok, updated_settings} <- Settings.update_api_key_settings(api_key_expire_at) do
+    with {:ok, updated_settings} <- Settings.update_api_key_settings(expire_at) do
       settings_with_key =
         Map.put(updated_settings, :generated_api_key, generate_api_key!(updated_settings))
 
@@ -90,9 +90,9 @@ defmodule TrentoWeb.V1.SettingsController do
 
   defp generate_api_key!(%ApiKeySettings{
          jti: jti,
-         api_key_expire_at: api_key_expire_at,
-         api_key_created_at: api_key_created_at
+         expire_at: expire_at,
+         created_at: created_at
        }) do
-    ApiKey.generate_api_key!(%{"jti" => jti}, api_key_created_at, api_key_expire_at)
+    ApiKey.generate_api_key!(%{"jti" => jti}, created_at, expire_at)
   end
 end

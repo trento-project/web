@@ -13,9 +13,9 @@ defmodule Trento.Settings.ApiKeySettings do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
-    field :jti, :string
-    field :api_key_created_at, :utc_datetime_usec
-    field :api_key_expire_at, :utc_datetime_usec
+    field :jti, :binary_id, source: :api_key_settings_jti
+    field :created_at, :utc_datetime_usec, source: :api_key_settings_created_at
+    field :expire_at, :utc_datetime_usec, source: :api_key_settings_expire_at
 
     timestamps(type: :utc_datetime_usec)
     sti_fields()
@@ -24,8 +24,8 @@ defmodule Trento.Settings.ApiKeySettings do
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(system_settings, attrs) do
     system_settings
-    |> cast(attrs, [:jti, :api_key_created_at, :api_key_expire_at])
-    |> validate_required([:jti, :api_key_created_at])
+    |> cast(attrs, [:jti, :created_at, :expire_at])
+    |> validate_required([:jti, :created_at])
     |> sti_changes()
     |> unique_constraint(:type)
   end

@@ -48,7 +48,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/settings/api_key", %{
-        api_key_expire_at: DateTime.to_iso8601(DateTime.utc_now())
+        expire_at: DateTime.to_iso8601(DateTime.utc_now())
       })
       |> json_response(404)
       |> assert_schema("NotFound", api_spec)
@@ -61,7 +61,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/settings/api_key", %{
-        api_key_expire_at: DateTime.to_iso8601(DateTime.utc_now())
+        expire_at: DateTime.to_iso8601(DateTime.utc_now())
       })
       |> json_response(200)
       |> assert_schema("ApiKeySettings", api_spec)
@@ -92,7 +92,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> patch("/api/v1/settings/api_key", %{
-          api_key_expire_at: nil
+          expire_at: nil
         })
         |> json_response(200)
 

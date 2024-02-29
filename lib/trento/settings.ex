@@ -81,8 +81,8 @@ defmodule Trento.Settings do
       {:ok, settings} ->
         settings
         |> ApiKeySettings.changeset(%{
-          api_key_created_at: DateTime.utc_now(),
-          api_key_expire_at: expiration,
+          created_at: DateTime.utc_now(),
+          expire_at: expiration,
           jti: UUID.uuid4()
         })
         |> Repo.update()

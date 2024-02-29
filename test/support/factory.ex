@@ -794,8 +794,8 @@ defmodule Trento.Factory do
     %ApiKeySettings{
       type: :api_key_settings,
       jti: Faker.UUID.v4(),
-      api_key_expire_at: DateTime.utc_now(),
-      api_key_created_at: DateTime.utc_now()
+      expire_at: DateTime.utc_now(),
+      created_at: DateTime.utc_now()
     }
   end
 

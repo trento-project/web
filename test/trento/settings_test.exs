@@ -50,13 +50,13 @@ defmodule Trento.SettingsTest do
       assert {:ok,
               %ApiKeySettings{
                 jti: ^jti,
-                api_key_created_at: ^creation_date,
-                api_key_expire_at: ^expiration_date
+                created_at: ^creation_date,
+                expire_at: ^expiration_date
               }} =
                Settings.create_api_key_settings(%{
                  jti: jti,
-                 api_key_created_at: creation_date,
-                 api_key_expire_at: expiration_date
+                 created_at: creation_date,
+                 expire_at: expiration_date
                })
     end
 
@@ -66,19 +66,19 @@ defmodule Trento.SettingsTest do
       assert {:error, errors} =
                Settings.create_api_key_settings(%{
                  jti: UUID.uuid4(),
-                 api_key_expire_at: DateTime.utc_now(),
-                 api_key_created_at: DateTime.utc_now()
+                 expire_at: DateTime.utc_now(),
+                 created_at: DateTime.utc_now()
                })
 
       assert errors_on(errors) == %{type: ["has already been taken"]}
     end
 
-    test "should not create ApiKeySettings if jti and api_key_created_at fields are missing" do
+    test "should not create ApiKeySettings if jti and created_at fields are missing" do
       assert {:error, errors} = Settings.create_api_key_settings(%{})
 
       assert errors_on(errors) == %{
                jti: ["can't be blank"],
-               api_key_created_at: ["can't be blank"]
+               created_at: ["can't be blank"]
              }
     end
 
@@ -100,8 +100,8 @@ defmodule Trento.SettingsTest do
     test "should update ApiKeySettings when they are present, with a new expiration and generated creation and jti" do
       %ApiKeySettings{
         jti: old_jti,
-        api_key_created_at: old_api_key_created_at,
-        api_key_expire_at: old_api_key_expire_at
+        created_at: old_created_at,
+        expire_at: old_expire_at
       } = insert(:api_key_settings)
 
       new_expiration = DateTime.utc_now()
@@ -109,14 +109,14 @@ defmodule Trento.SettingsTest do
       {:ok,
        %ApiKeySettings{
          jti: new_jti,
-         api_key_created_at: new_api_key_created_at,
-         api_key_expire_at: new_api_key_expire_at
+         created_at: new_created_at,
+         expire_at: new_expire_at
        }} = Settings.update_api_key_settings(new_expiration)
 
       refute new_jti == old_jti
-      refute new_api_key_expire_at == old_api_key_expire_at
-      refute new_api_key_created_at == old_api_key_created_at
-      assert new_api_key_expire_at == new_expiration
+      refute new_expire_at == old_expire_at
+      refute new_created_at == old_created_at
+      assert new_expire_at == new_expiration
     end
   end
 end

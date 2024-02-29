@@ -94,7 +94,7 @@ defmodule Trento.Release do
       %Trento.Settings.ApiKeySettings{}
       |> Trento.Settings.ApiKeySettings.changeset(%{
         jti: UUID.uuid4(),
-        api_key_created_at: DateTime.utc_now()
+        created_at: DateTime.utc_now()
       })
       |> Trento.Repo.insert!()
     end

@@ -42,7 +42,7 @@ defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest do
     )
 
     token_creation_date = DateTime.add(DateTime.from_unix!(@test_timestamp), -1, :hour)
-    %{jti: jti} = insert(:api_key_settings, api_key_created_at: token_creation_date)
+    %{jti: jti} = insert(:api_key_settings, created_at: token_creation_date)
 
     api_key =
       ApiKey.generate_api_key!(
@@ -72,7 +72,7 @@ defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest do
     )
 
     token_creation_date = DateTime.add(DateTime.from_unix!(@test_timestamp), -1, :hour)
-    insert(:api_key_settings, api_key_created_at: token_creation_date)
+    insert(:api_key_settings, created_at: token_creation_date)
 
     api_key =
       ApiKey.generate_api_key!(
@@ -103,7 +103,7 @@ defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest do
     )
 
     token_creation_date = DateTime.add(DateTime.from_unix!(@test_timestamp), -1, :hour)
-    insert(:api_key_settings, api_key_created_at: token_creation_date)
+    insert(:api_key_settings, created_at: token_creation_date)
     # Let's create a user token
 
     api_key = AccessToken.generate_access_token!(%{})
