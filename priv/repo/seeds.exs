@@ -17,3 +17,10 @@
   confirm_password: "adminpassword"
 })
 |> Trento.Repo.insert!(on_conflict: :nothing)
+
+%Trento.Settings.ApiKeySettings{}
+|> Trento.Settings.ApiKeySettings.changeset(%{
+  jti: UUID.uuid4(),
+  api_key_created_at: DateTime.utc_now(),
+})
+|> Trento.Repo.insert!(on_conflict: :nothing)
