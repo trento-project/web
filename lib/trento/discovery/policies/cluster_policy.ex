@@ -716,8 +716,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     end)
   end
 
-  defp parse_managed(%{managed: true}), do: true
-  defp parse_managed(_), do: false
+  defp parse_managed(%{managed: managed}), do: managed
 
   defp get_virtual_ip_type_suffix_by_provider(Provider.azure()), do: "IPaddr2"
   defp get_virtual_ip_type_suffix_by_provider(Provider.aws()), do: "aws-vpc-move-ip"
