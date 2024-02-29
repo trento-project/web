@@ -15,6 +15,7 @@ import {
 } from '@lib/test-utils/factories';
 
 import HanaClusterDetails from './HanaClusterDetails';
+import { resourceTableConfig } from './AttributesDetails';
 
 describe('HanaClusterDetails component', () => {
   const executionId = faker.string.uuid();
@@ -362,6 +363,8 @@ describe('HanaClusterDetails component', () => {
       nodes: [{ attributes, resources }],
     } = details;
 
+    const tableColumns = resourceTableConfig.columns;
+
     renderWithRouter(
       <HanaClusterDetails
         clusterID={clusterID}
@@ -385,10 +388,20 @@ describe('HanaClusterDetails component', () => {
     expect(screen.getByText('Attributes')).toBeInTheDocument();
     expect(screen.getByText('Resources')).toBeInTheDocument();
 
-    Object.keys(resources[0]).forEach((key) => {
-      expect(screen.getByText(key)).toBeInTheDocument();
-      screen.getAllByText(resources[0][key]).forEach((element) => {
-        expect(element).toBeInTheDocument();
+    tableColumns.forEach(({ key, title }) => {
+      expect(screen.getByText(title)).toBeInTheDocument();
+      resources.forEach((resource) => {
+        let value;
+        if (key === 'managed') {
+          value = resource[key] ? 'True' : 'False';
+        } else {
+          value = resource[key];
+        }
+        const elements = screen.queryAllByText(value);
+        expect(elements.length).toBeGreaterThan(0);
+        elements.forEach((element) => {
+          expect(element).toBeInTheDocument();
+        });
       });
     });
 
