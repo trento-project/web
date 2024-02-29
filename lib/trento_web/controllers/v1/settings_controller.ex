@@ -3,9 +3,8 @@ defmodule TrentoWeb.V1.SettingsController do
   use OpenApiSpex.ControllerSpecs
 
   alias Trento.Settings
-  alias Trento.Settings.ApiKeySettings
-  alias TrentoWeb.Auth.ApiKey
   alias TrentoWeb.OpenApi.V1.Schema
+  alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
@@ -55,7 +54,11 @@ defmodule TrentoWeb.V1.SettingsController do
   def get_api_key_settings(conn, _) do
     with {:ok, api_key_settings} <- Settings.get_api_key_settings() do
       settings_with_key =
-        Map.put(api_key_settings, :generated_api_key, generate_api_key!(api_key_settings))
+        Map.put(
+          api_key_settings,
+          :generated_api_key,
+          AuthenticateAPIKeyPlug.generate_api_key!(api_key_settings)
+        )
 
       render(conn, "api_key_settings.json", %{
         settings: settings_with_key
@@ -79,20 +82,16 @@ defmodule TrentoWeb.V1.SettingsController do
     %{expire_at: expire_at} = body_params
 
     with {:ok, updated_settings} <- Settings.update_api_key_settings(expire_at) do
-      settings_with_key =
-        Map.put(updated_settings, :generated_api_key, generate_api_key!(updated_settings))
+      api_key =
+        Map.put(
+          updated_settings,
+          :generated_api_key,
+          AuthenticateAPIKeyPlug.generate_api_key!(updated_settings)
+        )
 
       render(conn, "api_key_settings.json", %{
-        settings: settings_with_key
+        settings: api_key
       })
     end
-  end
-
-  defp generate_api_key!(%ApiKeySettings{
-         jti: jti,
-         expire_at: expire_at,
-         created_at: created_at
-       }) do
-    ApiKey.generate_api_key!(%{"jti" => jti}, created_at, expire_at)
   end
 end

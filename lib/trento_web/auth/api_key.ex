@@ -1,12 +1,12 @@
 defmodule TrentoWeb.Auth.ApiKey do
   @moduledoc """
-    ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.
-    The token uses the same signer as app access token
-    Uses Joken as jwt base library
+  ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.
+  The token uses the same signer as app access token
+  Uses Joken as jwt base library
   """
   use Joken.Config, default_signer: :access_token_signer
 
-  @reasonable_infinite_years 100
+  @reasonable_infinite 365 * 100
 
   @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
   @aud Application.compile_env!(:trento, :jwt_authentication)[:api_key_audience]
@@ -25,7 +25,7 @@ defmodule TrentoWeb.Auth.ApiKey do
 
   @spec generate_api_key!(map, DateTime.t(), nil) :: String.t()
   def generate_api_key!(claims, created_at, nil) do
-    expires_at = DateTime.add(created_at, @reasonable_infinite_years * 360, :day)
+    expires_at = DateTime.add(created_at, @reasonable_infinite, :day)
 
     generate_jwt!(claims, created_at, expires_at)
   end

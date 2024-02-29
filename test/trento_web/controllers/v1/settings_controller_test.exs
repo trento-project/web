@@ -31,7 +31,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
 
-    test "should return the api key settings if they are configured", %{
+    test "should return the api key settings are configured", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -43,7 +43,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("ApiKeySettings", api_spec)
     end
 
-    test "should not update the api key settings if they are not configured and return not found",
+    test "should not update the api key settings if it is not configured returning not found",
          %{conn: conn, api_spec: api_spec} do
       conn
       |> put_req_header("content-type", "application/json")
@@ -54,7 +54,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("NotFound", api_spec)
     end
 
-    test "should update the api key settings if they are configured and return the updated settings",
+    test "should update the api key settings if it is configured returning the updated settings",
          %{conn: conn, api_spec: api_spec} do
       insert(:api_key_settings)
 
@@ -103,7 +103,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       {expected_infinite_year, _} =
         DateTime.utc_now()
-        |> DateTime.add(100 * 360, :day)
+        |> DateTime.add(100 * 365, :day)
         |> DateTime.to_date()
         |> Date.year_of_era()
 

@@ -5,6 +5,7 @@ defmodule Trento.Release do
   """
 
   alias Pow.Ecto.Schema.Password
+  alias Trento.Settings.ApiKeySettings
 
   @app :trento
 
@@ -88,11 +89,11 @@ defmodule Trento.Release do
     Enum.each([:postgrex, :ecto], &Application.ensure_all_started/1)
     Trento.Repo.start_link()
 
-    api_key_settings = Trento.Repo.one(Trento.Settings.ApiKeySettings.base_query())
+    api_key_settings = Trento.Repo.one(ApiKeySettings.base_query())
 
     unless api_key_settings do
-      %Trento.Settings.ApiKeySettings{}
-      |> Trento.Settings.ApiKeySettings.changeset(%{
+      %ApiKeySettings{}
+      |> ApiKeySettings.changeset(%{
         jti: UUID.uuid4(),
         created_at: DateTime.utc_now()
       })

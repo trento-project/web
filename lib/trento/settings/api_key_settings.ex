@@ -13,7 +13,7 @@ defmodule Trento.Settings.ApiKeySettings do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
-    field :jti, :binary_id, source: :api_key_settings_jti
+    field :jti, Ecto.UUID, source: :api_key_settings_jti
     field :created_at, :utc_datetime_usec, source: :api_key_settings_created_at
     field :expire_at, :utc_datetime_usec, source: :api_key_settings_expire_at
 

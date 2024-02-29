@@ -30,6 +30,14 @@ defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlug do
     end
   end
 
+  def generate_api_key!(%ApiKeySettings{
+        jti: jti,
+        expire_at: expire_at,
+        created_at: created_at
+      }) do
+    ApiKey.generate_api_key!(%{"jti" => jti}, created_at, expire_at)
+  end
+
   defp read_api_key(conn) do
     case get_req_header(conn, "x-trento-apikey") do
       [api_key | _rest] -> {:ok, api_key}

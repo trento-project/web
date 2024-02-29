@@ -92,12 +92,12 @@ defmodule Trento.SettingsTest do
       assert {:error, :api_key_settings_missing} == Settings.get_api_key_settings()
     end
 
-    test "should not update ApiKeySettings when they are not present" do
+    test "should not update ApiKeySettings when some fields are not present" do
       assert {:error, :api_key_settings_missing} ==
                Settings.update_api_key_settings(DateTime.utc_now())
     end
 
-    test "should update ApiKeySettings when they are present, with a new expiration and generated creation and jti" do
+    test "should update ApiKeySettings when some fields are present, with a new expiration and generated creation and jti" do
       %ApiKeySettings{
         jti: old_jti,
         created_at: old_created_at,

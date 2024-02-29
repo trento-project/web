@@ -4,7 +4,7 @@ defmodule TrentoWeb.V1.InstallationController do
 
   alias OpenApiSpex.Schema
   alias Trento.Settings
-  alias TrentoWeb.Auth.ApiKey
+  alias TrentoWeb.Plugs.AuthenticateAPIKeyPlug
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
@@ -31,16 +31,8 @@ defmodule TrentoWeb.V1.InstallationController do
   def get_api_key(conn, _) do
     with {:ok, api_key_settings} <- Settings.get_api_key_settings() do
       render(conn, "api_key.json", %{
-        api_key: generate_api_key!(api_key_settings)
+        api_key: AuthenticateAPIKeyPlug.generate_api_key!(api_key_settings)
       })
     end
-  end
-
-  defp generate_api_key!(%{
-         jti: jti,
-         expire_at: expire_at,
-         created_at: created_at
-       }) do
-    ApiKey.generate_api_key!(%{"jti" => jti}, created_at, expire_at)
   end
 end
