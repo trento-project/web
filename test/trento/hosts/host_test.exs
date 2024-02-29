@@ -1411,36 +1411,6 @@ defmodule Trento.Hosts.HostTest do
       )
     end
 
-    test "should not accept inconsistent software updates discovery" do
-      host_id = Faker.UUID.v4()
-
-      inconsistent_scenarios = [
-        %{
-          total: 5,
-          security_advisories: 5,
-          bug_fixes: 2,
-          software_enhancements: 0
-        },
-        %{
-          total: 0,
-          security_advisories: 5,
-          bug_fixes: 2,
-          software_enhancements: 0
-        }
-      ]
-
-      for inconsistent_patches <- inconsistent_scenarios do
-        assert_error(
-          build(:host_registered_event, host_id: host_id),
-          CompleteSoftwareUpdatesDiscovery.new!(%{
-            host_id: host_id,
-            relevant_patches: inconsistent_patches
-          }),
-          {:error, :inconsistent_software_updates_discovery}
-        )
-      end
-    end
-
     test "should handle host's health change based on software updates discovery" do
       host_id = Faker.UUID.v4()
 
@@ -1448,7 +1418,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.passing(),
           relevant_patches: %{
-            total: 5,
             security_advisories: 5,
             bug_fixes: 0,
             software_enhancements: 0
@@ -1459,7 +1428,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.passing(),
           relevant_patches: %{
-            total: 7,
             security_advisories: 0,
             bug_fixes: 4,
             software_enhancements: 3
@@ -1470,7 +1438,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.passing(),
           relevant_patches: %{
-            total: 0,
             security_advisories: 0,
             bug_fixes: 0,
             software_enhancements: 0
@@ -1482,7 +1449,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.warning(),
           relevant_patches: %{
-            total: 50,
             security_advisories: 5,
             bug_fixes: 3,
             software_enhancements: 42
@@ -1493,7 +1459,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.warning(),
           relevant_patches: %{
-            total: 0,
             security_advisories: 0,
             bug_fixes: 0,
             software_enhancements: 0
@@ -1504,7 +1469,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.warning(),
           relevant_patches: %{
-            total: 45,
             security_advisories: 0,
             bug_fixes: 3,
             software_enhancements: 42
@@ -1517,7 +1481,6 @@ defmodule Trento.Hosts.HostTest do
           initial_host_health: Health.critical(),
           initial_heartbeat: :heartbeat_failed,
           relevant_patches: %{
-            total: 5,
             security_advisories: 0,
             bug_fixes: 0,
             software_enhancements: 5
@@ -1529,7 +1492,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.critical(),
           relevant_patches: %{
-            total: 5,
             security_advisories: 5,
             bug_fixes: 0,
             software_enhancements: 0
@@ -1541,7 +1503,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.critical(),
           relevant_patches: %{
-            total: 5,
             security_advisories: 0,
             bug_fixes: 5,
             software_enhancements: 0
@@ -1552,7 +1513,6 @@ defmodule Trento.Hosts.HostTest do
         %{
           initial_host_health: Health.critical(),
           relevant_patches: %{
-            total: 0,
             security_advisories: 0,
             bug_fixes: 0,
             software_enhancements: 0
@@ -1609,8 +1569,7 @@ defmodule Trento.Hosts.HostTest do
             assert %Host{
                      health: ^expected_host_health,
                      software_updates_discovery_health:
-                       ^expected_software_updates_discovery_health,
-                     relevant_patches: ^relevant_patches
+                       ^expected_software_updates_discovery_health
                    } = host
           end
         )

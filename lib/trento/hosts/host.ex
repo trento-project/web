@@ -132,7 +132,6 @@ defmodule Trento.Hosts.Host do
     field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_one :saptune_status, SaptuneStatus
-    embeds_one :relevant_patches, RelevantPatches
     embeds_many :subscriptions, SlesSubscription
 
     field :provider_data, PolymorphicEmbed,
@@ -525,21 +524,6 @@ defmodule Trento.Hosts.Host do
   end
 
   def execute(
-        %Host{host_id: host_id},
-        %CompleteSoftwareUpdatesDiscovery{
-          host_id: host_id,
-          relevant_patches: %RelevantPatches{
-            total: total,
-            security_advisories: security_advisories,
-            bug_fixes: bug_fixes,
-            software_enhancements: software_enhancements
-          }
-        }
-      )
-      when security_advisories + bug_fixes + software_enhancements != total,
-      do: {:error, :inconsistent_software_updates_discovery}
-
-  def execute(
         %Host{host_id: host_id} = host,
         %CompleteSoftwareUpdatesDiscovery{
           host_id: host_id,
@@ -716,8 +700,7 @@ defmodule Trento.Hosts.Host do
       ) do
     %Host{
       host
-      | relevant_patches: relevant_patches,
-        software_updates_discovery_health:
+      | software_updates_discovery_health:
           compute_software_updates_discovery_health(relevant_patches)
     }
   end
@@ -802,8 +785,12 @@ defmodule Trento.Hosts.Host do
   defp compute_tuning_health("compliant"), do: Health.passing()
   defp compute_tuning_health(_), do: Health.unknown()
 
-  defp compute_software_updates_discovery_health(%RelevantPatches{total: 0}),
-    do: Health.passing()
+  defp compute_software_updates_discovery_health(%RelevantPatches{
+         security_advisories: 0,
+         bug_fixes: 0,
+         software_enhancements: 0
+       }),
+       do: Health.passing()
 
   defp compute_software_updates_discovery_health(%RelevantPatches{
          security_advisories: security_advisories
