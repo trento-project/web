@@ -46,7 +46,7 @@ export const providerData = {
 
 function ProviderLabel({ provider }) {
   return (
-    <span className='flex items-center'>
+    <span className="flex items-center">
       {providerData[provider] ? (
         <img
           src={providerData[provider].logo}
