@@ -46,15 +46,15 @@ export const providerData = {
 
 function ProviderLabel({ provider }) {
   return (
-    <span>
+    <span className='flex items-center'>
       {providerData[provider] ? (
         <img
           src={providerData[provider].logo}
-          className="inline mr-2 h-4"
+          className="mr-2 h-4"
           alt={provider}
         />
       ) : (
-        <EOS_HELP className="inline mr-2" />
+        <EOS_HELP className="mr-2" />
       )}
       {providerData[provider]
         ? providerData[provider].label
