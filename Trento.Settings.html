@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-EA4B6569.js"></script>
+    <script src="dist/sidebar_items-77772FD0.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -169,6 +169,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#create_api_key_settings/1" translate="no">create_api_key_settings(settings)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#eula_accepted?/0" translate="no">eula_accepted?()</a>
 
       </div>
@@ -178,6 +186,14 @@ GUIDES
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#flavor/0" translate="no">flavor()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get_api_key_settings/0" translate="no">get_api_key_settings()</a>
 
       </div>
 
@@ -215,6 +231,14 @@ GUIDES
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#update_api_key_settings/1" translate="no">update_api_key_settings(expiration)</a>
+
+      </div>
+
+    </div>
+
 </div>
 
   </section>
@@ -237,7 +261,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">accept_eula()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L31" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L37" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -246,6 +270,35 @@ GUIDES
   </div>
 
   <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="create_api_key_settings/1">
+
+  <div class="detail-header">
+    <a href="#create_api_key_settings/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">create_api_key_settings(settings)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L64" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> create_api_key_settings(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) ::
+  {:ok, <a href="Trento.Settings.ApiKeySettings.html#t:t/0">Trento.Settings.ApiKeySettings.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
 
 
   </section>
@@ -259,7 +312,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">eula_accepted?()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L25" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L30" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -287,7 +340,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">flavor()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L56" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L61" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -306,6 +359,35 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="get_api_key_settings/0">
+
+  <div class="detail-header">
+    <a href="#get_api_key_settings/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_api_key_settings()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L71" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_api_key_settings() ::
+  {:ok, <a href="Trento.Settings.ApiKeySettings.html#t:t/0">Trento.Settings.ApiKeySettings.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="get_installation_id/0">
 
   <div class="detail-header">
@@ -315,7 +397,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_installation_id()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L18" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L22" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -343,7 +425,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">has_premium_subscription?()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L46" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -371,7 +453,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">premium?()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L36" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L42" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -393,7 +475,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">premium_active?()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L41" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L47" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -406,6 +488,35 @@ GUIDES
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@spec</span> premium_active?() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="update_api_key_settings/1">
+
+  <div class="detail-header">
+    <a href="#update_api_key_settings/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">update_api_key_settings(expiration)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L79" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> update_api_key_settings(<a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, <a href="Trento.Settings.ApiKeySettings.html#t:t/0">Trento.Settings.ApiKeySettings.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 

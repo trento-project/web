@@ -304,6 +304,8 @@ Trento.SapSystems.Services.HealthSummaryService.html
 Trento.SapSystems.html
 Trento.Scheduler.html
 Trento.Services.HealthService.html
+Trento.Settings.ApiKeySettings.html
+Trento.Settings.InstallationSettings.html
 Trento.Settings.html
 Trento.SoftwareUpdates.Discovery.Gen.html
 Trento.SoftwareUpdates.Discovery.html
@@ -313,6 +315,7 @@ Trento.Support.Command.html
 Trento.Support.DateService.html
 Trento.Support.Ecto.EncryptedBinary.html
 Trento.Support.Ecto.Payload.html
+Trento.Support.Ecto.STI.html
 Trento.Support.Enum.html
 Trento.Support.Event.html
 Trento.Support.EventHandlerFailureContext.html
@@ -350,9 +353,9 @@ TrentoWeb.PageController.html
 TrentoWeb.PageView.html
 TrentoWeb.Plugs.ApiAuthErrorHandler.html
 TrentoWeb.Plugs.ApiRedirector.html
+TrentoWeb.Plugs.AppJWTAuthPlug.html
 TrentoWeb.Plugs.AuthenticateAPIKeyPlug.html
 TrentoWeb.Plugs.ChartsDisabledPlug.html
-TrentoWeb.Plugs.JWTAuthPlug.html
 TrentoWeb.Router.Helpers.html
 TrentoWeb.Router.html
 TrentoWeb.SessionController.html
@@ -420,8 +423,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-291E42AA.js
-dist/sidebar_items-EA4B6569.js
+dist/search_data-5DCC0816.js
+dist/sidebar_items-77772FD0.js
 environment_variables.html
 hack_on_the_trento.html
 index.html

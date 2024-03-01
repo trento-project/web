@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-EA4B6569.js"></script>
+    <script src="dist/sidebar_items-77772FD0.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -2852,6 +2852,24 @@ deployed SAP systems, which are composed by a database and application layers.
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="Trento.Settings.ApiKeySettings.html" translate="no">Trento.Settings.ApiKeySettings</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>ApiKeySettings is the STI projection of api key related settings</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Settings.InstallationSettings.html" translate="no">Trento.Settings.InstallationSettings</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>InstallationSettings is the STI projection containing installation related settings</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="Trento.SoftwareUpdates.html" translate="no">Trento.SoftwareUpdates</a>
 
   </div>
@@ -2920,6 +2938,15 @@ deployed SAP systems, which are composed by a database and application layers.
   </div>
 
     <div class="summary-synopsis"><p>Ecto Type that represents a JSONB payload that contains an array or a map.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Support.Ecto.STI.html" translate="no">Trento.Support.Ecto.STI</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Helpers module for Single Table Inheritance in ecto schemas</p></div>
 
 </div>
 <div class="summary-row">
@@ -3049,7 +3076,9 @@ as controllers, views, channels and so on.</p></div>
 
   </div>
 
-    <div class="summary-synopsis"><p>This Module creates and verifies API Keys.</p></div>
+    <div class="summary-synopsis"><p>ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.
+The token uses the same signer as app access token
+Uses Joken as jwt base library</p></div>
 
 </div>
 <div class="summary-row">
@@ -3257,6 +3286,16 @@ tests that require setting up a connection.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="TrentoWeb.Plugs.AppJWTAuthPlug.html" translate="no">TrentoWeb.Plugs.AppJWTAuthPlug</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>  The AppJWTAuthPlug is a Pow compatible authorization flow.
+  Handles the login and the credentials recovery at each request</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="TrentoWeb.Plugs.AuthenticateAPIKeyPlug.html" translate="no">TrentoWeb.Plugs.AuthenticateAPIKeyPlug</a>
 
   </div>
@@ -3271,16 +3310,6 @@ tests that require setting up a connection.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>  This plug acts as a barrier for the charts endpoint, return 501 for all the requests.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="TrentoWeb.Plugs.JWTAuthPlug.html" translate="no">TrentoWeb.Plugs.JWTAuthPlug</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>  The JWTAuthPlug is a Pow compatible authorization flow.
-  Handles the login and the credentials recovery at each request</p></div>
 
 </div>
 <div class="summary-row">

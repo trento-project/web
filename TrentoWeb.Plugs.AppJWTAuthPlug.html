@@ -8,13 +8,13 @@
     <meta name="project" content="Trento Web v2.2.0">
 
 
-    <title>TrentoWeb.Plugs.JWTAuthPlug — Trento Web v2.2.0</title>
+    <title>TrentoWeb.Plugs.AppJWTAuthPlug — Trento Web v2.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-FM2CSD74.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-EA4B6569.js"></script>
+    <script src="dist/sidebar_items-77772FD0.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -131,19 +131,19 @@ GUIDES
 
 <h1>
 
-    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">TrentoWeb.Plugs.JWTAuthPlug</span> 
+  <span translate="no">TrentoWeb.Plugs.AppJWTAuthPlug</span> 
   <small class="app-vsn" translate="no">(Trento Web v2.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>  The JWTAuthPlug is a Pow compatible authorization flow.
+<p>  The AppJWTAuthPlug is a Pow compatible authorization flow.
   Handles the login and the credentials recovery at each request</p><p>  Uses Joken for jwt management</p><p>  See the pow documentation for further details.
   <a href="https://hexdocs.pm/pow/Pow.Plug.Base.html">https://hexdocs.pm/pow/Pow.Plug.Base.html</a></p>
   </section>
@@ -264,7 +264,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">call(conn, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -291,7 +291,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">create(conn, user, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L42" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L42" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -314,7 +314,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">delete(conn, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L86" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L86" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -336,7 +336,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">do_create(conn, user, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -358,7 +358,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">do_delete(conn, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -381,7 +381,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">do_fetch(conn, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -403,7 +403,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">fetch(conn, config)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L23" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L23" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -425,7 +425,7 @@ will be called.</p>
     </a>
     <h1 class="signature" translate="no">renew(conn, refresh_token)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/jwt_auth_plug.ex#L63" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/plugs/app_jwt_auth_plug.ex#L63" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
