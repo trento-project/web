@@ -34,7 +34,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   end
 
   def get_relevant_patches(url, auth, system_id) do
-    response = http_executor().get_relevant_patches(url, auth, system_id)
+    response =
+      url
+      |> get_suma_api_url()
+      |> http_executor().get_relevant_patches(auth, system_id)
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- response,
          {:ok, %{success: true, result: result}} <- Jason.decode(body, keys: :atoms) do
