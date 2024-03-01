@@ -76,6 +76,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'stonith:external/sbd',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -83,6 +84,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::suse:SAPHanaTopology',
+              managed: true,
             },
           ],
           site: 'NBG',
@@ -111,6 +113,7 @@ export default [
               role: 'Master',
               status: 'Active',
               type: 'ocf::suse:SAPHana',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -118,6 +121,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::suse:SAPHanaTopology',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -125,6 +129,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::heartbeat:IPaddr2',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -132,6 +137,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::heartbeat:azure-lb',
+              managed: true,
             },
           ],
           site: 'WDF',
@@ -200,6 +206,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'stonith:external/sbd',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -207,6 +214,7 @@ export default [
               role: 'Master',
               status: 'Active',
               type: 'ocf::suse:SAPHana',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -214,6 +222,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::suse:SAPHanaTopology',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -221,6 +230,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::heartbeat:IPaddr2',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -228,6 +238,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::heartbeat:azure-lb',
+              managed: true,
             },
           ],
           site: 'NBG',
@@ -256,6 +267,7 @@ export default [
               role: 'Slave',
               status: 'Active',
               type: 'ocf::suse:SAPHana',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -263,6 +275,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::suse:SAPHanaTopology',
+              managed: true,
             },
           ],
           site: 'WDF',
@@ -322,6 +335,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'stonith:external/sbd',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -329,6 +343,7 @@ export default [
               role: 'Master',
               status: 'Active',
               type: 'ocf::suse:SAPHana',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -336,6 +351,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::suse:SAPHanaTopology',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -343,6 +359,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::heartbeat:IPaddr2',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -350,6 +367,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::heartbeat:azure-lb',
+              managed: true,
             },
           ],
           site: 'NBG',
@@ -378,6 +396,7 @@ export default [
               role: 'Slave',
               status: 'Active',
               type: 'ocf::suse:SAPHana',
+              managed: true,
             },
             {
               fail_count: 0,
@@ -385,6 +404,7 @@ export default [
               role: 'Started',
               status: 'Active',
               type: 'ocf::suse:SAPHanaTopology',
+              managed: true,
             },
           ],
           site: 'WDF',
