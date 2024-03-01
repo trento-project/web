@@ -13,6 +13,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
             ) ::
               {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
 
+  @callback get_relevant_patches(
+              base_url :: String.t(),
+              auth :: String.t(),
+              system_id :: pos_integer()
+            ) ::
+              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+
   @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
   @impl true
@@ -35,6 +42,16 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   def get_system_id(base_url, auth, fully_qualified_domain_name) do
     HTTPoison.get(
       "#{base_url}/system/getId?name=#{fully_qualified_domain_name}",
+      [{"Content-type", "application/json"}],
+      hackney: [cookie: [auth]],
+      ssl: [verify: :verify_none]
+    )
+  end
+
+  @impl true
+  def get_relevant_patches(base_url, auth, system_id) do
+    HTTPoison.get(
+      "#{base_url}/system/getRelevantErrata?sid=#{system_id}",
       [{"Content-type", "application/json"}],
       hackney: [cookie: [auth]],
       ssl: [verify: :verify_none]
