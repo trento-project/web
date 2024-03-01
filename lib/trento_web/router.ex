@@ -16,7 +16,7 @@ defmodule TrentoWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug TrentoWeb.Plugs.JWTAuthPlug, otp_app: :trento
+    plug TrentoWeb.Plugs.AppJWTAuthPlug, otp_app: :trento
   end
 
   pipeline :api_v1 do
@@ -115,6 +115,8 @@ defmodule TrentoWeb.Router do
 
       delete "/hosts/:id/tags/:value", TagsController, :remove_tag, as: :hosts_tagging
 
+      get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
+
       post "/clusters/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :cluster},
         as: :clusters_tagging
@@ -141,10 +143,15 @@ defmodule TrentoWeb.Router do
              SapSystemController,
              :delete_database_instance
 
-      get "/settings", SettingsController, :settings
-      post "/accept_eula", SettingsController, :accept_eula
+      scope "/settings" do
+        get "/", SettingsController, :settings
+        post "/accept_eula", SettingsController, :accept_eula
+        get "/api_key", SettingsController, :get_api_key_settings
+        patch "/api_key", SettingsController, :update_api_key_settings
+      end
 
-      get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
+      # Deprecated
+      post "/accept_eula", SettingsController, :accept_eula
 
       if Application.compile_env!(:trento, :suse_manager_enabled) do
         resources "/settings/suma_credentials", SUMACredentialsController,

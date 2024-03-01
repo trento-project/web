@@ -8,7 +8,7 @@ defmodule TrentoWeb.Auth.AccessToken do
 
   @expires_in Application.compile_env!(:trento, :jwt_authentication)[:access_token_expiration]
   @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
-  @aud Application.compile_env!(:trento, :jwt_authentication)[:audience]
+  @aud Application.compile_env!(:trento, :jwt_authentication)[:app_audience]
 
   @impl true
   def token_config do

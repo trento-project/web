@@ -25,6 +25,54 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     })
   end
 
+  defmodule ApiKeySettings do
+    @moduledoc false
+    OpenApiSpex.schema(%{
+      title: "ApiKeySettings",
+      description: "Settings for Api Key generation",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        created_at: %Schema{
+          type: :string,
+          format: :"date-time",
+          description: "The creation date of api key"
+        },
+        generated_api_key: %Schema{
+          type: :string,
+          description: "The generated api key from api key settings"
+        },
+        expire_at: %Schema{
+          type: :string,
+          format: :"date-time",
+          description: "The expire date of api key",
+          nullable: true
+        }
+      },
+      required: [:generated_api_key, :expire_at, :created_at]
+    })
+  end
+
+  defmodule ApiKeySettingsUpdateRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(%{
+      title: "ApiKeySettingsUpdateRequest",
+      description: "Request body for api key settings update",
+      type: :object,
+      additionalProperties: false,
+      properties: %{
+        expire_at: %Schema{
+          type: :string,
+          format: :"date-time",
+          description: "The expire date of api key",
+          nullable: true
+        }
+      },
+      required: [:expire_at]
+    })
+  end
+
   defmodule GeneralInformation do
     @moduledoc false
 

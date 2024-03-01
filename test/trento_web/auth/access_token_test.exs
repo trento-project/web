@@ -33,7 +33,7 @@ defmodule TrentoWeb.AccessTokenTest do
 
       assert %{
                "iss" => "https://github.com/trento-project/web",
-               "aud" => "trento-project",
+               "aud" => "trento_app",
                "exp" => ^expected_expiry,
                "iat" => @test_timestamp,
                "jti" => _,

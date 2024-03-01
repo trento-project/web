@@ -1,4 +1,4 @@
-defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
+defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: true
@@ -9,7 +9,7 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
     RefreshToken
   }
 
-  alias TrentoWeb.Plugs.JWTAuthPlug
+  alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   import Mox
 
@@ -31,7 +31,7 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
 
   describe "delete/2" do
     test "should no-op and return the passed conn", %{conn: conn} do
-      res_conn = JWTAuthPlug.delete(conn, @pow_config)
+      res_conn = AppJWTAuthPlug.delete(conn, @pow_config)
 
       assert conn == res_conn
     end
@@ -43,7 +43,7 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
     } do
       valid_refresh = RefreshToken.generate_refresh_token!(%{"sub" => 1})
 
-      {:ok, res_conn} = JWTAuthPlug.renew(conn, valid_refresh)
+      {:ok, res_conn} = AppJWTAuthPlug.renew(conn, valid_refresh)
 
       assert %{
                private: %{
@@ -56,24 +56,33 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
     end
 
     test "should return an error if the refresh token is malformed", %{conn: conn} do
-      {:error, _reason} = JWTAuthPlug.renew(conn, "invalid")
+      {:error, _reason} = AppJWTAuthPlug.renew(conn, "invalid")
     end
 
     test "should return an error if the refresh token signature is invalid", %{conn: conn} do
       bad_refresh =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTU1NjY5MiwiaWF0IjoxNjcxNTQ5NDkyLCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwOGlxMmkxNnRlbHNycWE4MDAwMWM4IiwibmJmIjoxNjcxNTQ5NDkyLCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.Ctg1bAbWgk2Fr69v7bwT7oxR9XUa1-iNtoZTYbzHOIk"
 
-      {:error, :signature_error} = JWTAuthPlug.renew(conn, bad_refresh)
+      {:error, :signature_error} = AppJWTAuthPlug.renew(conn, bad_refresh)
     end
 
     test "should return an error is the refresh token signature is valid but it's expired", %{
       conn: conn
     } do
       expired_refresh =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY2MzQxNCwiaWF0IjoxNjcxNjQxODE0LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwaTNzMGZzNmZqcHE5dnVrMDAwNWUxIiwibmJmIjoxNjcxNjQxODE0LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.FdPblWJ23PDBv5V2EhVNsaW4_-gZP0M9wnwYAlGOa1E"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXBwIiwiZXhwIjoxNjcxNjYzNDE0LCJpYXQiOjE2NzE2NDE4MTQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIyc3BpM3MwZnM2ZmpwcTl2dWswMDA1ZTEiLCJuYmYiOjE2NzE2NDE4MTQsInN1YiI6MSwidHlwIjoiUmVmcmVzaCJ9.73ajWvgUml4F4Ml5rACyUeAlipknOUdQFy6t8tYZf5Y"
 
       {:error, [message: "Invalid token", claim: "exp", claim_val: 1_671_663_414]} =
-        JWTAuthPlug.renew(conn, expired_refresh)
+        AppJWTAuthPlug.renew(conn, expired_refresh)
+    end
+
+    test "should return an error if the refresh token is signed but the audience is different then trento_app",
+         %{conn: conn} do
+      refresh_different_aud =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXVkbmV3IiwiZXhwIjoxNjcxNjYzNDE0LCJpYXQiOjE2NzE2NDE4MTQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIyc3BpM3MwZnM2ZmpwcTl2dWswMDA1ZTEiLCJuYmYiOjE2NzE2NDE4MTQsInN1YiI6MSwidHlwIjoiUmVmcmVzaCJ9.V65Ip_Rs3gpIk6AV33Tib38EyaTPq6IH9vkldk9Mcz8"
+
+      {:error, [message: "Invalid token", claim: "aud", claim_val: "trento_audnew"]} =
+        AppJWTAuthPlug.renew(conn, refresh_different_aud)
     end
   end
 
@@ -81,7 +90,7 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
     test "should add to the conn the access/refresh token pair and the expiration", %{conn: conn} do
       user = %{id: 1}
 
-      assert {res_conn, ^user} = JWTAuthPlug.create(conn, user, @pow_config)
+      assert {res_conn, ^user} = AppJWTAuthPlug.create(conn, user, @pow_config)
 
       assert %{
                private: %{
@@ -103,7 +112,7 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
               %{
                 "access_token" => ^jwt,
                 "user_id" => 1
-              }} = JWTAuthPlug.fetch(conn, @pow_config)
+              }} = AppJWTAuthPlug.fetch(conn, @pow_config)
 
       assert %{private: %{api_access_token: ^jwt, user_id: 1}} = res_conn
     end
@@ -114,11 +123,11 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
 
       conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> bad_jwt)
 
-      assert {_res_conn, nil} = JWTAuthPlug.fetch(conn, @pow_config)
+      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
     end
 
     test "should not fetch user when the header is missing", %{conn: conn} do
-      assert {_res_conn, nil} = JWTAuthPlug.fetch(conn, @pow_config)
+      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
     end
 
     test "should not fetch user when the jwt is malformed", %{conn: conn} do
@@ -126,7 +135,7 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
 
       conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> bad_jwt)
 
-      assert {_res_conn, nil} = JWTAuthPlug.fetch(conn, @pow_config)
+      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
     end
 
     test "should not fetch user when the jwt signature is valid but it's expired", %{conn: conn} do
@@ -135,7 +144,17 @@ defmodule TrentoWeb.Plugs.JWTAuthPlugTest do
 
       conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> expired_jwt)
 
-      assert {_res_conn, nil} = JWTAuthPlug.fetch(conn, @pow_config)
+      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
+    end
+
+    test "should not fetch the user when the jwt signature is valid but the audience is not valid",
+         %{conn: conn} do
+      bad_aud_jwt =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG9fYXBwbmV3IiwiZXhwIjoxNzA4OTY1MzM0LCJpYXQiOjE3MDg5NjQ3MzQsImlzcyI6Imh0dHBzOi8vZ2l0aHViLmNvbS90cmVudG8tcHJvamVjdC93ZWIiLCJqdGkiOiIydXJuY25vMmpvNTNtNG1yYmcwMDIxNTIiLCJuYmYiOjE3MDg5NjQ3MzQsInN1YiI6MSwidHlwIjoiQmVhcmVyIn0.nRoRuP4DqijsTn0KmxWgfhX9KAjsPubXuzTmEYnSpao"
+
+      conn = Plug.Conn.put_req_header(conn, "authorization", "Bearer " <> bad_aud_jwt)
+
+      assert {_res_conn, nil} = AppJWTAuthPlug.fetch(conn, @pow_config)
     end
   end
 end
