@@ -11,6 +11,7 @@ import {
   checksExecutionRunningFactory,
   sapSystemFactory,
   catalogFactory,
+  clusterResourceFactory,
 } from '@lib/test-utils/factories';
 
 import HanaClusterDetails from './HanaClusterDetails';
@@ -67,6 +68,20 @@ const scaleOutDetailsNodeStatus = {
     { ...scaleOutDetails.nodes[2], status: 'Standby' },
     { ...scaleOutDetails.nodes[3], status: 'Maintenance' },
     { ...scaleOutDetails.nodes[4], status: 'Other' },
+  ],
+};
+
+const unmanagedNodeResources = {
+  ...scaleOutDetails,
+  nodes: [
+    hanaClusterDetailsNodesFactory.build({
+      site: scaleOutSites[0].name,
+      resources: clusterResourceFactory.buildList(2, { managed: false }),
+    }),
+    hanaClusterDetailsNodesFactory.build({
+      site: scaleOutSites[1].name,
+      resources: clusterResourceFactory.buildList(2, { managed: false }),
+    }),
   ],
 };
 
@@ -175,5 +190,12 @@ export const WithRunningExecution = {
   args: {
     ...Hana.args,
     lastExecution: { data: checksExecutionRunningFactory.build() },
+  },
+};
+
+export const WithUnmanagedResources = {
+  args: {
+    ...HanaScaleOut.args,
+    details: unmanagedNodeResources,
   },
 };
