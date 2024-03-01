@@ -2,6 +2,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.State do
   @moduledoc """
   State for the SUMA Software Updates discovery adapter
   """
+  alias __MODULE__
 
   defstruct [
     :url,
@@ -18,4 +19,19 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.State do
           ca_cert: String.t() | nil,
           auth: String.t() | nil
         }
+
+  defimpl Inspect, for: State do
+    def inspect(%State{url: url, username: username}, opts) do
+      Inspect.Map.inspect(
+        %{
+          url: url,
+          username: username,
+          password: "<REDACTED>",
+          auth: "<REDACTED>",
+          ca_cert: "<REDACTED>"
+        },
+        opts
+      )
+    end
+  end
 end
