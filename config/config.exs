@@ -115,6 +115,13 @@ config :trento, Trento.Scheduler,
       task: {Trento.Hosts, :request_hosts_checks_execution, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
+    ],
+    discover_software_updates: [
+      # Runs every 12 hours. At 00:00 and 12:00
+      schedule: "0 */12 * * *",
+      task: {Trento.SoftwareUpdates, :run_discovery, []},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
     ]
   ],
   debug_logging: false

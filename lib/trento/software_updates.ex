@@ -7,6 +7,7 @@ defmodule Trento.SoftwareUpdates do
   alias Trento.Support.DateService
 
   alias Trento.Repo
+  alias Trento.SoftwareUpdates.Discovery
   alias Trento.SoftwareUpdates.Settings
 
   @type software_update_settings_save_submission :: %{
@@ -68,6 +69,20 @@ defmodule Trento.SoftwareUpdates do
     )
 
     :ok
+  end
+
+  @spec run_discovery :: :ok | {:error, :settings_not_configured}
+  def run_discovery do
+    case get_settings() do
+      {:ok, _} ->
+        Discovery.discover_software_updates()
+        :ok
+
+      error ->
+        Logger.error("Software updates settings not configured. Skipping discovery.")
+
+        error
+    end
   end
 
   defp has_settings?(%Settings{url: url, username: username, password: password}),

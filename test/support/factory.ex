@@ -807,4 +807,13 @@ defmodule Trento.Factory do
       eula_accepted: true
     }
   end
+
+  def insert_software_updates_settings(attrs \\ []) do
+    insert(
+      :software_updates_settings,
+      attrs,
+      conflict_target: :id,
+      on_conflict: :replace_all
+    )
+  end
 end
