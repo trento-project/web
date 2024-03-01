@@ -77,32 +77,29 @@ defmodule Trento.SoftwareUpdates.Discovery do
           )
       })
 
-  defp track_relevant_patches(%{advisory_type: advisory_type}, %{
-         security_advisories: security_advisories,
-         bug_fixes: bug_fixes,
-         software_enhancements: software_enhancements
-       }) do
-    advisory_type = AdvisoryType.from_string(advisory_type)
+  defp track_relevant_patches(
+         %{advisory_type: AdvisoryType.security_advisory()},
+         %{
+           security_advisories: security_advisories
+         } = patches
+       ),
+       do: %{patches | security_advisories: security_advisories + 1}
 
-    %{
-      security_advisories: increment_security_advisories(advisory_type, security_advisories),
-      bug_fixes: increment_bug_fixes(advisory_type, bug_fixes),
-      software_enhancements: increment_enhancements(advisory_type, software_enhancements)
-    }
-  end
+  defp track_relevant_patches(
+         %{advisory_type: AdvisoryType.bugfix()},
+         %{
+           bug_fixes: bug_fixes
+         } = patches
+       ),
+       do: %{patches | bug_fixes: bug_fixes + 1}
 
-  defp increment_security_advisories(AdvisoryType.security_advisory(), security_advisories),
-    do: security_advisories + 1
-
-  defp increment_security_advisories(_, security_advisories), do: security_advisories
-
-  defp increment_bug_fixes(AdvisoryType.bugfix(), bug_fixes), do: bug_fixes + 1
-  defp increment_bug_fixes(_, bug_fixes), do: bug_fixes
-
-  defp increment_enhancements(AdvisoryType.enhancement(), enhancements),
-    do: enhancements + 1
-
-  defp increment_enhancements(_, enhancements), do: enhancements
+  defp track_relevant_patches(
+         %{advisory_type: AdvisoryType.enhancement()},
+         %{
+           software_enhancements: software_enhancements
+         } = patches
+       ),
+       do: %{patches | software_enhancements: software_enhancements + 1}
 
   defp adapter, do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
 

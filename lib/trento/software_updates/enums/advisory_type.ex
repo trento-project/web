@@ -12,8 +12,4 @@ defmodule Trento.SoftwareUpdates.Enums.AdvisoryType do
   def from_string(@security_advisory), do: security_advisory()
   def from_string(@bugfix), do: bugfix()
   def from_string(@enhancement), do: enhancement()
-
-  def security_advisory_string, do: @security_advisory
-  def bugfix_string, do: @bugfix
-  def enhancement_string, do: @enhancement
 end

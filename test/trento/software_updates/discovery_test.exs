@@ -103,7 +103,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       expect(
         SoftwareUpdatesDiscoveryMock,
         :get_relevant_patches,
-        fn ^system_id -> {:ok, [%{advisory_type: AdvisoryType.security_advisory_string()}]} end
+        fn ^system_id -> {:ok, [%{advisory_type: AdvisoryType.security_advisory()}]} end
       )
 
       dispatching_error = {:error, :error_while_dispatching_completion_command}
@@ -165,10 +165,10 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       )
 
       discovered_relevant_patches = [
-        %{advisory_type: AdvisoryType.security_advisory_string()},
-        %{advisory_type: AdvisoryType.security_advisory_string()},
-        %{advisory_type: AdvisoryType.bugfix_string()},
-        %{advisory_type: AdvisoryType.enhancement_string()}
+        %{advisory_type: AdvisoryType.security_advisory()},
+        %{advisory_type: AdvisoryType.security_advisory()},
+        %{advisory_type: AdvisoryType.bugfix()},
+        %{advisory_type: AdvisoryType.enhancement()}
       ]
 
       {:ok, _} = Agent.start_link(fn -> 0 end, name: :get_relevant_patches_iteration)

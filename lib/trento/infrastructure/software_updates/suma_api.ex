@@ -3,6 +3,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   SUMA API client supporting software updates discovery.
   """
 
+  require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Logger
 
   @login_retries 5
@@ -41,7 +42,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- response,
          {:ok, %{success: true, result: result}} <- Jason.decode(body, keys: :atoms) do
-      {:ok, result}
+      {:ok,
+       Enum.map(result, fn %{advisory_type: advisory_type} = advisory ->
+         %{advisory | advisory_type: AdvisoryType.from_string(advisory_type)}
+       end)}
     else
       error ->
         Logger.error("Failed to get errata for system ID #{system_id}. Error: #{inspect(error)}")
