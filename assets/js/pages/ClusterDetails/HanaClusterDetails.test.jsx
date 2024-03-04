@@ -15,7 +15,6 @@ import {
 } from '@lib/test-utils/factories';
 
 import HanaClusterDetails from './HanaClusterDetails';
-import { resourceTableConfig } from './AttributesDetails';
 
 describe('HanaClusterDetails component', () => {
   const executionId = faker.string.uuid();
@@ -363,7 +362,32 @@ describe('HanaClusterDetails component', () => {
       nodes: [{ attributes, resources }],
     } = details;
 
-    const tableColumns = resourceTableConfig.columns;
+    const tableColumns = [
+      {
+        title: 'fail count',
+        key: 'fail_count',
+      },
+      {
+        title: 'id',
+        key: 'id',
+      },
+      {
+        title: 'role',
+        key: 'role',
+      },
+      {
+        title: 'status',
+        key: 'status',
+      },
+      {
+        title: 'managed',
+        key: 'managed',
+      },
+      {
+        title: 'type',
+        key: 'type',
+      },
+    ];
 
     renderWithRouter(
       <HanaClusterDetails
