@@ -141,6 +141,7 @@ defmodule Trento.Factory do
     %HostReadModel{
       id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character(),
+      fully_qualified_domain_name: Faker.Internet.domain_name(),
       ip_addresses: [Faker.Internet.ip_v4_address()],
       agent_version: Faker.StarWars.planet(),
       cluster_id: Faker.UUID.v4(),
@@ -805,5 +806,14 @@ defmodule Trento.Factory do
       installation_id: Faker.UUID.v4(),
       eula_accepted: true
     }
+  end
+
+  def insert_software_updates_settings(attrs \\ []) do
+    insert(
+      :software_updates_settings,
+      attrs,
+      conflict_target: :id,
+      on_conflict: :replace_all
+    )
   end
 end

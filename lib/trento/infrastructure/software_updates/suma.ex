@@ -94,8 +94,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
         Process.send(self(), {previous_message, reply_to: from}, [:nosuspend, :noconnect])
         {:noreply, new_state}
 
-      {:error, reason} ->
-        {:stop, reason}
+      {:error, _} = error ->
+        GenServer.reply(from, error)
+        {:noreply, state}
     end
   end
 

@@ -22,6 +22,12 @@ Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock
 )
 
+Mox.defmock(Trento.SoftwareUpdates.Discovery.Mock, for: Trento.SoftwareUpdates.Discovery.Gen)
+
+Application.put_env(:trento, Trento.SoftwareUpdates.Discovery,
+  adapter: Trento.SoftwareUpdates.Discovery.Mock
+)
+
 Mox.defmock(Trento.Infrastructure.Messaging.Adapter.Mock,
   for: Trento.Infrastructure.Messaging.Adapter.Gen
 )
