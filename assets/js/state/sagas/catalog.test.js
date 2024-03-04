@@ -7,7 +7,7 @@ import { updateCatalog } from './catalog';
 
 import { setCatalogLoading, setCatalogData, setCatalogError } from '../catalog';
 
-const getCatalogUrl = '/api/v2/checks/catalog';
+const getCatalogUrl = '/api/v3/checks/catalog';
 const axiosMock = new MockAdapter(networkClient);
 
 describe('Catalog saga', () => {

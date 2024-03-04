@@ -23,7 +23,7 @@ import {
 
 const axiosMock = new MockAdapter(networkClient);
 const lastExecutionURL = (groupID) =>
-  `/api/v1/checks/groups/${groupID}/executions/last`;
+  `/api/v2/checks/groups/${groupID}/executions/last`;
 
 const triggerClusterChecksExecutionURL = (clusterId) =>
   `/clusters/${clusterId}/checks/request_execution`;

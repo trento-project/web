@@ -79,7 +79,7 @@ describe('CheckResultDetail Component', () => {
     );
 
     expect(screen.getAllByText('Passing')).toHaveLength(2);
-    expect(screen.getAllByText('Failing')).toHaveLength(3);
+    expect(screen.getAllByText('Critical')).toHaveLength(3);
 
     values.forEach(({ name, value }) => {
       expect(screen.getByText(name)).toBeVisible();
@@ -175,7 +175,7 @@ describe('CheckResultDetail Component', () => {
     );
 
     expect(screen.getAllByText('Passing')).toHaveLength(2);
-    expect(screen.queryAllByText('Failing')).toHaveLength(0);
+    expect(screen.queryAllByText('Critical')).toHaveLength(0);
     expect(screen.queryByText('Values')).toBeNull();
     expect(screen.getAllByLabelText('property tree')).toHaveLength(2);
   });
@@ -221,7 +221,7 @@ describe('CheckResultDetail Component', () => {
       );
 
       expect(screen.queryAllByText('Passing')).toHaveLength(0);
-      expect(screen.queryAllByText('Failing')).toHaveLength(0);
+      expect(screen.queryAllByText('Critical')).toHaveLength(0);
       expect(screen.getByText(factGatheringErrorMessage)).toBeVisible();
 
       expect(screen.getByText('Expected Values unavailable')).toBeVisible();
@@ -273,7 +273,7 @@ describe('CheckResultDetail Component', () => {
       );
 
       expect(screen.queryAllByText('Passing')).toHaveLength(0);
-      expect(screen.queryAllByText('Failing')).toHaveLength(0);
+      expect(screen.queryAllByText('Critical')).toHaveLength(0);
       expect(screen.getByText(timeoutMessage)).toBeVisible();
 
       expect(values).toBeUndefined();

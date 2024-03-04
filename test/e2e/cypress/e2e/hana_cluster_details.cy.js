@@ -6,14 +6,14 @@ import { capitalize } from 'lodash';
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster';
 
 context('HANA cluster details', () => {
-  const lastExecutionURL = `**/api/v1/checks/groups/**/executions/last`;
+  const lastExecutionURL = `**/api/v2/checks/groups/**/executions/last`;
   const lastExecution = checksExecutionCompletedFactory.build({
     group_id: availableHanaCluster.id,
     passing_count: 5,
     warning_count: 3,
     critical_count: 1,
   });
-  const catalogURL = `**/api/v2/checks/catalog*`;
+  const catalogURL = `**/api/v3/checks/catalog*`;
   const catalog = catalogFactory.build();
 
   before(() => {

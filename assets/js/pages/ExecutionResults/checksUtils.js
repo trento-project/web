@@ -1,9 +1,14 @@
-import { EXPECT, EXPECT_SAME, TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
+import {
+  EXPECT_SAME,
+  TARGET_CLUSTER,
+  TARGET_HOST,
+  PASSING,
+  isHostExpectation,
+} from '@lib/model';
 
 export const isTargetHost = (targetType) => targetType === TARGET_HOST;
 export const isTargetCluster = (targetType) => targetType === TARGET_CLUSTER;
 
-export const isExpect = ({ type }) => type === EXPECT;
 export const isExpectSame = ({ type }) => type === EXPECT_SAME;
 
 export const isAgentCheckError = ({ type }) => !!type;
@@ -84,8 +89,8 @@ export const getCheckExpectations = (catalog, checkID) => {
   return [];
 };
 
-export const getExpectStatements = (expectationList) =>
-  expectationList.filter(isExpect);
+export const getHostExpectationStatements = (expectationList) =>
+  expectationList.filter(isHostExpectation);
 
 export const getExpectSameStatements = (expectationList) =>
   expectationList.filter(isExpectSame);
@@ -95,11 +100,11 @@ const expectationByName =
   ({ name }) =>
     name === expectationName;
 
-export const getExpectStatementsResults = (
+export const getHostExpectationStatementsResults = (
   expectations,
   expectationEvaluations
 ) =>
-  getExpectStatements(expectations).map(
+  getHostExpectationStatements(expectations).map(
     ({ name }) => expectationEvaluations.find(expectationByName(name)) || {}
   );
 
@@ -148,9 +153,9 @@ export const getAgentCheckResultByAgentID = (
   );
 };
 
-export const getExpectStatementsMet = (expectationEvaluations) =>
-  getExpectStatements(expectationEvaluations).filter(
-    ({ return_value }) => return_value
+export const getHostExpectationStatementsMet = (expectationEvaluations) =>
+  getHostExpectationStatements(expectationEvaluations).filter(
+    ({ return_value }) => return_value === true || return_value === PASSING
   ).length;
 
 export const getExpectSameFacts = (expectations, agentsCheckResults) =>
@@ -178,5 +183,16 @@ export const getTargetName = (target, targetType) => {
       return target.hostname;
     default:
       return null;
+  }
+};
+
+export const normalizeExpectationResult = (result, severity) => {
+  switch (result) {
+    case true:
+      return PASSING;
+    case false:
+      return severity;
+    default:
+      return result;
   }
 };

@@ -2,6 +2,8 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 
+import { EXPECT, EXPECT_ENUM, EXPECT_SAME } from '@lib/model';
+
 export * from './executions';
 export * from './hosts';
 export * from './sapSystems';
@@ -67,7 +69,7 @@ export const healthSummaryFactory = Factory.define(() => ({
 export const catalogExpectExpectationFactory = Factory.define(
   ({ sequence }) => ({
     name: `${faker.lorem.word()}_${sequence}`,
-    type: 'expect',
+    type: EXPECT,
     expression: faker.lorem.sentence(),
   })
 );
@@ -75,7 +77,15 @@ export const catalogExpectExpectationFactory = Factory.define(
 export const catalogExpectSameExpectationFactory = Factory.define(
   ({ sequence }) => ({
     name: `${faker.lorem.word()}_${sequence}`,
-    type: 'expect_same',
+    type: EXPECT_SAME,
+    expression: faker.lorem.sentence(),
+  })
+);
+
+export const catalogExpectEnumExpectationFactory = Factory.define(
+  ({ sequence }) => ({
+    name: `${faker.lorem.word()}_${sequence}`,
+    type: EXPECT_ENUM,
     expression: faker.lorem.sentence(),
   })
 );

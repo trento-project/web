@@ -5,6 +5,7 @@ import {
   catalogCheckFactory,
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
+  catalogExpectEnumExpectationFactory,
   checksExecutionCompletedFactory,
   checksExecutionRunningFactory,
   executionExpectationEvaluationFactory,
@@ -15,7 +16,15 @@ import {
   executionExpectationEvaluationErrorFactory,
   failingExpectEvaluationFactory,
 } from '@lib/test-utils/factories';
-import { EXPECT, EXPECT_SAME } from '@lib/model';
+
+import {
+  EXPECT,
+  EXPECT_ENUM,
+  EXPECT_SAME,
+  PASSING,
+  WARNING,
+  CRITICAL,
+} from '@lib/model';
 
 import {
   getCatalogCategoryList,
@@ -25,17 +34,18 @@ import {
   getCheckResults,
   getCheckExpectations,
   isAgentCheckError,
-  getExpectStatements,
+  getHostExpectationStatements,
+  getHostExpectationStatementsResults,
+  getHostExpectationStatementsMet,
   getExpectSameStatements,
   getExpectSameStatementResult,
   getAgentCheckResultByAgentID,
-  getExpectStatementsMet,
   isPremium,
   getClusterCheckResults,
   getExpectSameStatementsResults,
   getExpectSameFacts,
-  getExpectStatementsResults,
   getTargetName,
+  normalizeExpectationResult,
 } from './checksUtils';
 
 describe('checksUtils', () => {
@@ -129,41 +139,50 @@ describe('checksUtils', () => {
   });
 
   it('should get expectation statements from a list', () => {
-    const evaluationList = [
-      ...executionExpectationEvaluationFactory.buildList(3, {
+    const evaluationList = [].concat(
+      executionExpectationEvaluationFactory.buildList(3, {
         type: EXPECT,
       }),
-      ...executionExpectationEvaluationFactory.buildList(4, {
+      executionExpectationEvaluationFactory.buildList(4, {
         type: EXPECT_SAME,
       }),
-    ];
-    const resultList = [
-      ...expectationResultFactory.buildList(2, {
+      executionExpectationEvaluationFactory.buildList(2, {
+        type: EXPECT_ENUM,
+      })
+    );
+
+    const resultList = [].concat(
+      expectationResultFactory.buildList(2, {
         type: EXPECT,
       }),
       expectationResultFactory.build({
         type: EXPECT_SAME,
       }),
-    ];
+      expectationResultFactory.buildList(3, {
+        type: EXPECT_ENUM,
+      })
+    );
 
-    expect(getExpectStatements(evaluationList)).toHaveLength(3);
+    expect(getHostExpectationStatements(evaluationList)).toHaveLength(5);
     expect(getExpectSameStatements(evaluationList)).toHaveLength(4);
 
-    expect(getExpectStatements(resultList)).toHaveLength(2);
+    expect(getHostExpectationStatements(resultList)).toHaveLength(5);
     expect(getExpectSameStatements(resultList)).toHaveLength(1);
   });
 
-  it('should get expect statements results', () => {
-    const expectations = [
-      ...catalogExpectExpectationFactory.buildList(3),
+  it('should get host expectation statements results', () => {
+    const expectations = [].concat(
+      catalogExpectExpectationFactory.buildList(3),
       catalogExpectSameExpectationFactory.build(),
-    ];
+      catalogExpectEnumExpectationFactory.build()
+    );
 
     const [
       { name: expectation1 },
       { name: expectation2 },
       { name: expectation3 },
       { name: expectation4 },
+      { name: expectation5 },
     ] = expectations;
 
     const evaluationsList = [
@@ -181,15 +200,23 @@ describe('checksUtils', () => {
         name: expectation4,
         type: EXPECT_SAME,
       }),
+      executionExpectationEvaluationFactory.build({
+        name: expectation5,
+        type: EXPECT_ENUM,
+      }),
     ];
 
     const [
       { return_value: returnValue1 },
       { message, type },
       { failure_message, return_value: returnValue3 },
+      _,
+      { return_value: returnValue5 },
     ] = evaluationsList;
 
-    expect(getExpectStatementsResults(expectations, evaluationsList)).toEqual([
+    expect(
+      getHostExpectationStatementsResults(expectations, evaluationsList)
+    ).toEqual([
       {
         name: expectation1,
         return_value: returnValue1,
@@ -205,6 +232,11 @@ describe('checksUtils', () => {
         type: 'expect',
         failure_message,
         return_value: returnValue3,
+      },
+      {
+        name: expectation5,
+        type: 'expect_enum',
+        return_value: returnValue5,
       },
     ]);
   });
@@ -475,22 +507,30 @@ describe('checksUtils', () => {
     ).toEqual({});
   });
 
-  it('should count the expect statements met', () => {
-    const expectationEvaluations = [
+  it('should count the host expectations statements met', () => {
+    const expectationEvaluations = [].concat(
       executionExpectationEvaluationFactory.build({
         type: EXPECT_SAME,
       }),
-      ...executionExpectationEvaluationFactory.buildList(2, {
+      executionExpectationEvaluationFactory.buildList(2, {
         return_value: false,
         type: EXPECT,
       }),
-      ...executionExpectationEvaluationFactory.buildList(3, {
+      executionExpectationEvaluationFactory.buildList(3, {
         return_value: true,
         type: EXPECT,
       }),
-    ];
+      executionExpectationEvaluationFactory.build({
+        return_value: PASSING,
+        type: EXPECT_ENUM,
+      }),
+      executionExpectationEvaluationFactory.build({
+        return_value: CRITICAL,
+        type: EXPECT_ENUM,
+      })
+    );
 
-    expect(getExpectStatementsMet(expectationEvaluations)).toBe(3);
+    expect(getHostExpectationStatementsMet(expectationEvaluations)).toBe(4);
   });
 
   it('should return true or false if a check is premium or not', () => {
@@ -511,6 +551,20 @@ describe('checksUtils', () => {
       );
     });
   });
+
+  it.each([
+    { result: true, severity: CRITICAL, normalizedResult: PASSING },
+    { result: false, severity: CRITICAL, normalizedResult: CRITICAL },
+    { result: false, severity: WARNING, normalizedResult: WARNING },
+    { result: PASSING, severity: CRITICAL, normalizedResult: PASSING },
+  ])(
+    'should normalize the expectation result',
+    ({ result, severity, normalizedResult }) => {
+      expect(normalizeExpectationResult(result, severity)).toBe(
+        normalizedResult
+      );
+    }
+  );
 
   describe('target name detection', () => {
     it('should detect a cluster target name', () => {

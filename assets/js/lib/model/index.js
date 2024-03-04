@@ -1,5 +1,9 @@
 export const EXPECT = 'expect';
+export const EXPECT_ENUM = 'expect_enum';
 export const EXPECT_SAME = 'expect_same';
+
+const hostExepectations = [EXPECT, EXPECT_ENUM];
+export const isHostExpectation = ({ type }) => hostExepectations.includes(type);
 
 export const TARGET_HOST = 'host';
 export const TARGET_CLUSTER = 'cluster';
@@ -7,6 +11,10 @@ export const TARGET_CLUSTER = 'cluster';
 export const targetTypes = [TARGET_HOST, TARGET_CLUSTER];
 export const isValidTargetType = (targetType) =>
   targetTypes.includes(targetType);
+
+export const PASSING = 'passing';
+export const WARNING = 'warning';
+export const CRITICAL = 'critical';
 
 export const AWS_PROVIDER = 'aws';
 export const AZURE_PROVIDER = 'azure';

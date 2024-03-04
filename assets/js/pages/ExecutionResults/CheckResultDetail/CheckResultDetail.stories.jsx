@@ -1,6 +1,7 @@
 import {
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
+  addExpectationWithResult,
   emptyCheckResultFactory,
   hostFactory,
   checksExecutionCompletedFactory,
@@ -9,7 +10,10 @@ import {
   withOverriddenValues,
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
+  catalogExpectEnumExpectationFactory,
 } from '@lib/test-utils/factories';
+
+import { EXPECT_ENUM, WARNING } from '@lib/model';
 
 import CheckResultDetail from './CheckResultDetail';
 
@@ -20,6 +24,7 @@ const targetType = 'host';
 const catalogExpectations = [
   ...catalogExpectExpectationFactory.buildList(5),
   catalogExpectSameExpectationFactory.build(),
+  catalogExpectEnumExpectationFactory.build(),
 ];
 
 const [
@@ -29,6 +34,7 @@ const [
   { name: expectationName4 },
   { name: expectationName5 },
   { name: expectationName6 },
+  { name: expectationName7 },
 ] = catalogExpectations;
 
 let checkResult = emptyCheckResultFactory.build({
@@ -43,6 +49,12 @@ checkResult = addCriticalExpectExpectation(checkResult, expectationName3);
 checkResult = addCriticalExpectExpectation(checkResult, expectationName4);
 checkResult = addCriticalExpectExpectation(checkResult, expectationName5);
 checkResult = addPassingExpectSameExpectation(checkResult, expectationName6);
+checkResult = addExpectationWithResult(
+  checkResult,
+  EXPECT_ENUM,
+  expectationName7,
+  WARNING
+);
 
 const checkResultWithoutValues = withOverriddenValues(checkResult, target1, []);
 
