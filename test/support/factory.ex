@@ -450,16 +450,12 @@ defmodule Trento.Factory do
       ],
       secondary_sync_state: "SOK",
       sr_health_state: "4",
-      stopped_resources: [
-        %ClusterResource{
+      stopped_resources:
+        build_list(1, :cluster_resource,
           fail_count: 0,
-          id: Faker.Pokemon.name(),
           role: "Stopped",
-          status: Faker.Pokemon.name(),
-          type: "ocf::heartbeat:Dummy",
-          managed: Enum.random([false, true])
-        }
-      ],
+          type: "ocf::heartbeat:Dummy"
+        ),
       system_replication_mode: "sync",
       system_replication_operation_mode: "logreplay"
     }
