@@ -53,6 +53,50 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       assert :sys.get_state(Suma.identify()) == expected_state
       assert :sys.get_state(Suma.identify(@test_integration_name)) == expected_state
     end
+
+    test "should redact sensitive data in SUMA state", %{
+      settings: %Settings{url: url, username: username, password: password}
+    } do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      base_api_url = "#{url}/rhn/manager/api"
+      ignored_cookie = "pxt-session-cookie=1234"
+      auth_cookie = "pxt-session-cookie=4321"
+
+      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password ->
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 200,
+           headers: [
+             {"Set-Cookie",
+              "JSESSIONID=FOOBAR; Path=/; Secure; HttpOnly; HttpOnly;HttpOnly;Secure"},
+             {"Set-Cookie",
+              "#{ignored_cookie}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:10 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"},
+             {"Set-Cookie",
+              "#{auth_cookie}; Max-Age=3600; Expires=Mon, 4 Mar 2024 10:53:57 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"}
+           ]
+         }}
+      end)
+
+      assert :ok = Suma.setup(@test_integration_name)
+
+      expected = %{
+        url: url,
+        username: username,
+        password: "<REDACTED>",
+        ca_cert: "<REDACTED>",
+        auth: "<REDACTED>"
+      }
+
+      {output, _} =
+        @test_integration_name
+        |> Suma.identify()
+        |> :sys.get_state()
+        |> inspect
+        |> Code.eval_string()
+
+      assert expected == output
+    end
   end
 
   describe "Setting up SUMA integration service" do
