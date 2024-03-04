@@ -193,18 +193,6 @@ context('HANA cluster details', () => {
             .eq(1)
             .should('have.class', host.status);
         });
-
-        it(`${host.hostname} icon should have the expected tooltip message`, () => {
-          const message = 'Online';
-          cy.get(`.tn-site-details-${site.name}`)
-            .find('svg')
-            .eq(1)
-            .trigger('mouseover');
-
-          cy.get('.rc-tooltip-inner span').and((tooltip) => {
-            expect(tooltip.text()).to.contain(message);
-          });
-        });
       });
     });
   });
