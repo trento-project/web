@@ -28,7 +28,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
        Hosts.get_all_hosts()
        |> Enum.map(&discover_host_software_updates/1)
        |> Enum.split_with(fn
-         {:ok, _, :discovered, _, _} -> true
+         {:ok, _, _, _} -> true
          _ -> false
        end)}
 
@@ -50,7 +50,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
            host_id
            |> build_discovery_completion_command(relevant_patches)
            |> commanded().dispatch() do
-      {:ok, host_id, :discovered, system_id, relevant_patches}
+      {:ok, host_id, system_id, relevant_patches}
     else
       error ->
         Logger.error(

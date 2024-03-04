@@ -236,8 +236,8 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       assert length(errored_discoveries) == 2
 
       assert [
-               {:ok, host_id1, :discovered, system_id1, discovered_relevant_patches},
-               {:ok, host_id3, :discovered, system_id3, discovered_relevant_patches}
+               {:ok, host_id1, system_id1, discovered_relevant_patches},
+               {:ok, host_id3, system_id3, discovered_relevant_patches}
              ] ==
                successful_discoveries
 
