@@ -60,71 +60,30 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   end
 
   @impl true
-  def handle_call(request, from, %State{auth: nil} = state),
-    do: {:noreply, state, {:continue, {:setup, from, request}}}
-
-  @impl true
-  def handle_call(
-        {:get_system_id, fully_qualified_domain_name},
-        _from,
-        %{
-          url: url,
-          auth: auth_cookie
-        } = state
-      ) do
-    {:reply, SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name), state}
-  end
-
-  @impl true
-  def handle_call(
-        {:get_relevant_patches, system_id},
-        _from,
-        %{
-          url: url,
-          auth: auth_cookie
-        } = state
-      ) do
-    {:reply, SumaApi.get_relevant_patches(url, auth_cookie, system_id), state}
-  end
-
-  @impl true
-  def handle_continue({:setup, from, previous_message}, %State{} = state) do
+  def handle_call(request, _, %State{auth: nil} = state) do
     case setup_auth(state) do
       {:ok, new_state} ->
-        Process.send(self(), {previous_message, reply_to: from}, [:nosuspend, :noconnect])
-        {:noreply, new_state}
+        {:reply, do_handle(request, new_state), new_state}
 
       {:error, _} = error ->
-        GenServer.reply(from, error)
-        {:noreply, state}
+        {:reply, error, state}
     end
   end
 
   @impl true
-  def handle_info(
-        {{:get_system_id, fully_qualified_domain_name}, reply_to: from},
-        %State{
-          url: url,
-          auth: auth_cookie
-        } = state
-      ) do
-    GenServer.reply(from, SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name))
+  def handle_call(request, _, %State{} = state), do: {:reply, do_handle(request, state), state}
 
-    {:noreply, state}
-  end
+  defp do_handle({:get_system_id, fully_qualified_domain_name}, %State{
+         url: url,
+         auth: auth_cookie
+       }),
+       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name)
 
-  @impl true
-  def handle_info(
-        {{:get_relevant_patches, system_id}, reply_to: from},
-        %State{
-          url: url,
-          auth: auth_cookie
-        } = state
-      ) do
-    GenServer.reply(from, SumaApi.get_relevant_patches(url, auth_cookie, system_id))
-
-    {:noreply, state}
-  end
+  defp do_handle({:get_relevant_patches, system_id}, %State{
+         url: url,
+         auth: auth_cookie
+       }),
+       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id)
 
   defp process_identifier(server_name), do: {:global, identificaton_tuple(server_name)}
 
