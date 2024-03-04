@@ -69,6 +69,7 @@ export function ClusterDetailsPage() {
   }
 
   const hasSelectedChecks = cluster.selected_checks.length > 0;
+
   switch (cluster.type) {
     case 'hana_scale_up':
     case 'hana_scale_out':

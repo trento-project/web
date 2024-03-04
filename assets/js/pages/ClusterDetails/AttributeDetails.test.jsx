@@ -100,10 +100,36 @@ describe('AttributesDetails', () => {
     },
   ];
 
+  const assertAttributesDisplayed = (attributes) => {
+    Object.entries(attributes).forEach(([key, value]) => {
+      expect(screen.getByText(key)).toBeInTheDocument();
+      expect(screen.getByText(value)).toBeInTheDocument();
+    });
+  };
+
+  const assertResourcesDisplayed = (resources, expectedResource) => {
+    expectedResource.forEach(({ key, title }) => {
+      expect(screen.getByText(title)).toBeInTheDocument();
+      resources.forEach((resource) => {
+        let value;
+        if (key === 'managed') {
+          value = resource[key] ? 'True' : 'False';
+        } else {
+          value = resource[key];
+        }
+        const elements = screen.queryAllByText(value);
+        expect(elements.length).toBeGreaterThan(0);
+        elements.forEach((element) => {
+          expect(element).toBeInTheDocument();
+        });
+      });
+    });
+  };
+
   it.each(scenarios)(
     '$description',
     async ({ attributes, resources, pageTitle }) => {
-      const { htmlObject } = render(
+      render(
         <AttributesDetails
           attributes={attributes}
           resources={resources}
@@ -118,40 +144,23 @@ describe('AttributesDetails', () => {
       expect(screen.getByText('Attributes')).toBeInTheDocument();
       expect(screen.getByText('Resources')).toBeInTheDocument();
 
-      screen.debug(htmlObject, 10000000000000000);
-      const noData = screen.queryAllByText('No data available');
+      const isAttributesEmpty = Object.keys(attributes).length === 0;
+      const isResourcesEmpty = resources.length === 0;
+      const noDataElements = screen.queryAllByText('No data available');
 
-      if (Object.keys(attributes).length === 0) {
-        expect(noData.length).toBeGreaterThanOrEqual(1);
-        expect(noData[0].textContent).toBe('No data available');
+      if (isAttributesEmpty && isResourcesEmpty) {
+        expect(noDataElements).toHaveLength(2);
+      } else if (!isAttributesEmpty && isResourcesEmpty) {
+        expect(noDataElements).toHaveLength(1);
+        assertAttributesDisplayed(attributes);
+      } else if (isAttributesEmpty && !isResourcesEmpty) {
+        expect(noDataElements).toHaveLength(1);
+        assertResourcesDisplayed(resources, expectedResourceTableHeaders);
       } else {
-        Object.entries(attributes).forEach(([key, value]) => {
-          expect(screen.getByText(key)).toBeInTheDocument();
-          expect(screen.getByText(value)).toBeInTheDocument();
-        });
-      }
-      if (resources.length === 0) {
-        const expectedNoDataCount =
-          Object.keys(attributes).length === 0 ? 2 : 1;
-        expect(noData.length).toBeGreaterThanOrEqual(expectedNoDataCount);
-        expect(noData[noData.length - 1].textContent).toBe('No data available');
-      } else {
-        expectedResourceTableHeaders.forEach(({ key, title }) => {
-          expect(screen.getByText(title)).toBeInTheDocument();
-          resources.forEach((resource) => {
-            let value;
-            if (key === 'managed') {
-              value = resource[key] ? 'True' : 'False';
-            } else {
-              value = resource[key];
-            }
-            const elements = screen.queryAllByText(value);
-            expect(elements.length).toBeGreaterThan(0);
-            elements.forEach((element) => {
-              expect(element).toBeInTheDocument();
-            });
-          });
-        });
+        expect(noDataElements).toHaveLength(0);
+
+        assertAttributesDisplayed(attributes);
+        assertResourcesDisplayed(resources, expectedResourceTableHeaders);
       }
     }
   );

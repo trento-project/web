@@ -113,7 +113,7 @@ function AscsErsClusterDetails({
     executionLoading ||
     !hasSelectedChecks ||
     RUNNING_STATES.includes(executionData?.status);
-  console.log('currentSapSystem?.nodes', currentSapSystem.nodes);
+
   return (
     <div>
       <BackButton url="/clusters">Back to Clusters</BackButton>

@@ -359,35 +359,8 @@ describe('HanaClusterDetails component', () => {
     const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
     const {
-      nodes: [{ attributes, resources }],
+      nodes: [{ attributes }],
     } = details;
-
-    const tableColumns = [
-      {
-        title: 'fail count',
-        key: 'fail_count',
-      },
-      {
-        title: 'id',
-        key: 'id',
-      },
-      {
-        title: 'role',
-        key: 'role',
-      },
-      {
-        title: 'status',
-        key: 'status',
-      },
-      {
-        title: 'managed',
-        key: 'managed',
-      },
-      {
-        title: 'type',
-        key: 'type',
-      },
-    ];
 
     renderWithRouter(
       <HanaClusterDetails
@@ -411,23 +384,6 @@ describe('HanaClusterDetails component', () => {
     expect(screen.getByText('Node Details')).toBeInTheDocument();
     expect(screen.getByText('Attributes')).toBeInTheDocument();
     expect(screen.getByText('Resources')).toBeInTheDocument();
-
-    tableColumns.forEach(({ key, title }) => {
-      expect(screen.getByText(title)).toBeInTheDocument();
-      resources.forEach((resource) => {
-        let value;
-        if (key === 'managed') {
-          value = resource[key] ? 'True' : 'False';
-        } else {
-          value = resource[key];
-        }
-        const elements = screen.queryAllByText(value);
-        expect(elements.length).toBeGreaterThan(0);
-        elements.forEach((element) => {
-          expect(element).toBeInTheDocument();
-        });
-      });
-    });
 
     Object.keys(attributes).forEach((key) => {
       screen.getAllByText(key).forEach((element) => {
