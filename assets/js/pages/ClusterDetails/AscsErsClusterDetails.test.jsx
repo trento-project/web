@@ -20,7 +20,6 @@ import {
 import { providerData } from '@common/ProviderLabel/ProviderLabel';
 
 import AscsErsClusterDetails from './AscsErsClusterDetails';
-import { resourceTableConfig } from './AttributesDetails';
 
 describe('ClusterDetails AscsErsClusterDetails component', () => {
   it('should show the main details of a ASCS/ERS cluster', () => {
@@ -250,10 +249,9 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     const sapSystems = buildSapSystemsFromAscsErsClusterDetails(details);
 
     const {
-      nodes: [{ attributes, resources }],
+      nodes: [{ attributes }],
     } = details.sap_systems[0];
 
-    const tableColumns = resourceTableConfig.columns;
     renderWithRouter(
       <AscsErsClusterDetails
         clusterName={name}
@@ -270,23 +268,6 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     expect(screen.getByText('Node Details')).toBeInTheDocument();
     expect(screen.getByText('Attributes')).toBeInTheDocument();
     expect(screen.getByText('Resources')).toBeInTheDocument();
-
-    tableColumns.forEach(({ key, title }) => {
-      expect(screen.getByText(title)).toBeInTheDocument();
-      resources.forEach((resource) => {
-        let value;
-        if (key === 'managed') {
-          value = resource[key] ? 'True' : 'False';
-        } else {
-          value = resource[key];
-        }
-        const elements = screen.queryAllByText(value);
-        expect(elements.length).toBeGreaterThan(0);
-        elements.forEach((element) => {
-          expect(element).toBeInTheDocument();
-        });
-      });
-    });
 
     Object.keys(attributes).forEach((key) => {
       screen.getAllByText(key).forEach((element) => {

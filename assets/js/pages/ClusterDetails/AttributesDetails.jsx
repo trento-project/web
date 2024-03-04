@@ -6,40 +6,8 @@ import Button from '@common/Button';
 import Modal from '@common/Modal';
 import Table from '@common/Table';
 
-export const resourceTableConfig = {
-  usePadding: false,
-  columns: [
-    {
-      title: 'fail count',
-      key: 'fail_count',
-    },
-    {
-      title: 'id',
-      key: 'id',
-    },
-    {
-      title: 'role',
-      key: 'role',
-    },
-    {
-      title: 'status',
-      key: 'status',
-    },
-    {
-      title: 'managed',
-      key: 'managed',
-      render: (content) => capitalize(`${content}`),
-    },
-    {
-      title: 'type',
-      key: 'type',
-    },
-  ],
-};
-
 function AttributesDetails({ attributes, resources, title }) {
   const [modalOpen, setModalOpen] = useState(false);
-
   const attributesTableConfig = {
     usePadding: false,
     columns: [
@@ -50,7 +18,36 @@ function AttributesDetails({ attributes, resources, title }) {
 
   const resourcesTableConfig =
     resources.length > 0
-      ? resourceTableConfig
+      ? {
+          usePadding: false,
+          columns: [
+            {
+              title: 'fail count',
+              key: 'fail_count',
+            },
+            {
+              title: 'id',
+              key: 'id',
+            },
+            {
+              title: 'role',
+              key: 'role',
+            },
+            {
+              title: 'status',
+              key: 'status',
+            },
+            {
+              title: 'managed',
+              key: 'managed',
+              render: (content) => capitalize(`${content}`),
+            },
+            {
+              title: 'type',
+              key: 'type',
+            },
+          ],
+        }
       : {
           usePadding: false,
           columns: [],

@@ -3,7 +3,7 @@ import { screen, act, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { renderWithRouter } from '@lib/test-utils';
-import { hostFactory } from '@lib/test-utils/factories';
+import { hostFactory, clusterResourceFactory } from '@lib/test-utils/factories';
 
 import ClusterNodeName from './ClusterNodeName';
 
@@ -17,7 +17,10 @@ describe('ClusterNodeName', () => {
     },
     {
       status: 'Online',
-      resources: [{ managed: true }, { managed: false }],
+      resources: [
+        clusterResourceFactory.build({ managed: true }),
+        clusterResourceFactory.build({ managed: false }),
+      ],
       testID: 'tn-online',
       expectedMessage: '1 unmanaged resources',
     },
