@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
+import { capitalize } from 'lodash';
+
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import Table from '@common/Table';
 
 function AttributesDetails({ attributes, resources, title }) {
   const [modalOpen, setModalOpen] = useState(false);
-
   const attributesTableConfig = {
     usePadding: false,
     columns: [
@@ -19,12 +20,38 @@ function AttributesDetails({ attributes, resources, title }) {
     resources.length > 0
       ? {
           usePadding: false,
-          columns: Object.keys(resources[0]).map((key) => ({
-            title: key,
-            key,
-          })),
+          columns: [
+            {
+              title: 'fail count',
+              key: 'fail_count',
+            },
+            {
+              title: 'id',
+              key: 'id',
+            },
+            {
+              title: 'role',
+              key: 'role',
+            },
+            {
+              title: 'status',
+              key: 'status',
+            },
+            {
+              title: 'managed',
+              key: 'managed',
+              render: (content) => capitalize(`${content}`),
+            },
+            {
+              title: 'type',
+              key: 'type',
+            },
+          ],
         }
-      : { usePadding: false, columns: [] };
+      : {
+          usePadding: false,
+          columns: [],
+        };
 
   return (
     <>

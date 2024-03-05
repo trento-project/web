@@ -24,9 +24,10 @@ export const sbdDevicesFactory = Factory.define(() => ({
 
 export const clusterResourceFactory = Factory.define(() => ({
   id: faker.string.uuid(),
-  role: faker.animal.bear(),
-  status: faker.animal.bird(),
-  type: faker.animal.cat(),
+  role: faker.location.country(),
+  status: faker.vehicle.bicycle(),
+  type: faker.color.human(),
+  managed: faker.datatype.boolean(),
   fail_count: faker.number.int(),
 }));
 

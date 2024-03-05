@@ -77,6 +77,7 @@ export const availableHanaCluster = {
               type: 'stonith:external/sbd',
               role: 'Started',
               status: 'Active',
+              managed: true,
               failCount: '0',
             },
             {
@@ -84,6 +85,7 @@ export const availableHanaCluster = {
               type: 'ocf::heartbeat:IPaddr2',
               role: 'Started',
               status: 'Active',
+              managed: true,
               failCount: '0',
             },
             {
@@ -91,6 +93,7 @@ export const availableHanaCluster = {
               type: 'ocf::heartbeat:azure-lb',
               role: 'Started',
               status: 'Active',
+              managed: true,
               failCount: '0',
             },
             {
@@ -98,6 +101,7 @@ export const availableHanaCluster = {
               type: 'ocf::suse:SAPHana',
               role: 'Master',
               status: 'Active',
+              managed: true,
               failCount: '0',
             },
             {
@@ -105,6 +109,7 @@ export const availableHanaCluster = {
               type: 'ocf::suse:SAPHanaTopology',
               role: 'Started',
               status: 'Active',
+              managed: true,
               failCount: '0',
             },
           ],
@@ -176,6 +181,7 @@ export const availableHanaCluster = {
               type: 'ocf::suse:SAPHana',
               role: 'Slave',
               status: 'Active',
+              managed: true,
               failCount: '0',
             },
             {
@@ -183,6 +189,7 @@ export const availableHanaCluster = {
               type: 'ocf::suse:SAPHanaTopology',
               role: 'Started',
               status: 'Active',
+              managed: true,
               failCount: '0',
             },
           ],

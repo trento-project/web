@@ -59,7 +59,8 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       :blocked,
       :orphaned,
       :failure_ignored,
-      :nodes_running_on
+      :nodes_running_on,
+      :managed
     ]
     use Trento.Support.Type
 

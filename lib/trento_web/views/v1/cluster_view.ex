@@ -29,15 +29,19 @@ defmodule TrentoWeb.V1.ClusterView do
     cluster
   end
 
-  defp adapt_v1(%{type: type, details: %{nodes: nodes} = details} = cluster)
+  defp adapt_v1(
+         %{type: type, details: %{nodes: nodes, stopped_resources: stopped_resources} = details} =
+           cluster
+       )
        when type in [:hana_scale_up, :hana_scale_out] do
-    adapted_nodes =
-      Enum.map(nodes, &Map.drop(&1, [:indexserver_actual_role, :nameserver_actual_role, :status]))
+    adapted_nodes = Enum.map(nodes, &adapt_node/1)
+    adapted_stopped_resources = adapt_resources(stopped_resources)
 
     adapted_details =
       details
       |> Map.drop([:sites, :maintenance_mode])
       |> Map.put(:nodes, adapted_nodes)
+      |> Map.put(:stopped_resources, adapted_stopped_resources)
 
     %{cluster | details: adapted_details}
   end
@@ -46,5 +50,17 @@ defmodule TrentoWeb.V1.ClusterView do
     cluster
     |> Map.replace(:type, :unknown)
     |> Map.replace(:details, nil)
+  end
+
+  defp adapt_node(%{resources: resources} = node) do
+    adapted_resources = adapt_resources(resources)
+
+    node
+    |> Map.drop([:indexserver_actual_role, :nameserver_actual_role, :status])
+    |> Map.put(:resources, adapted_resources)
+  end
+
+  defp adapt_resources(resources) do
+    Enum.map(resources, &Map.drop(&1, [:managed]))
   end
 end

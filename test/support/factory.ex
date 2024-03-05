@@ -450,15 +450,12 @@ defmodule Trento.Factory do
       ],
       secondary_sync_state: "SOK",
       sr_health_state: "4",
-      stopped_resources: [
-        %ClusterResource{
+      stopped_resources:
+        build_list(1, :cluster_resource,
           fail_count: 0,
-          id: Faker.Pokemon.name(),
           role: "Stopped",
-          status: Faker.Pokemon.name(),
           type: "ocf::heartbeat:Dummy"
-        }
-      ],
+        ),
       system_replication_mode: "sync",
       system_replication_operation_mode: "logreplay"
     }
@@ -473,15 +470,13 @@ defmodule Trento.Factory do
       name: Faker.StarWars.character(),
       indexserver_actual_role: "master",
       nameserver_actual_role: "master",
-      resources: [
-        %ClusterResource{
-          fail_count: Enum.random(0..100),
-          id: Faker.Pokemon.name(),
+      resources:
+        build_list(1, :cluster_resource,
           role: "Started",
           status: "Active",
-          type: "ocf::heartbeat:Dummy"
-        }
-      ],
+          type: "ocf::heartbeat:Dummy",
+          managed: true
+        ),
       site: Faker.StarWars.planet()
     }
   end
@@ -522,7 +517,8 @@ defmodule Trento.Factory do
       type: Faker.StarWars.planet(),
       role: Faker.Beer.hop(),
       status: Faker.Pokemon.name(),
-      fail_count: Enum.random(0..100)
+      fail_count: Enum.random(0..100),
+      managed: Enum.random([false, true])
     }
   end
 

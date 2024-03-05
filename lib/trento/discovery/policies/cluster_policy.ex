@@ -559,7 +559,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         type: type,
         role: role,
         status: parse_resource_status(resource),
-        fail_count: parse_fail_count(node_name, id, crmmon)
+        fail_count: parse_fail_count(node_name, id, crmmon),
+        managed: parse_managed(resource)
       }
     end)
   end
@@ -714,6 +715,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         false
     end)
   end
+
+  defp parse_managed(%{managed: managed}), do: managed
 
   defp get_virtual_ip_type_suffix_by_provider(Provider.azure()), do: "IPaddr2"
   defp get_virtual_ip_type_suffix_by_provider(Provider.aws()), do: "aws-vpc-move-ip"

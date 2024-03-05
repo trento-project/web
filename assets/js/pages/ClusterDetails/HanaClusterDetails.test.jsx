@@ -359,7 +359,7 @@ describe('HanaClusterDetails component', () => {
     const hosts = hostFactory.buildList(2, { cluster_id: clusterID });
 
     const {
-      nodes: [{ attributes, resources }],
+      nodes: [{ attributes }],
     } = details;
 
     renderWithRouter(
@@ -384,13 +384,6 @@ describe('HanaClusterDetails component', () => {
     expect(screen.getByText('Node Details')).toBeInTheDocument();
     expect(screen.getByText('Attributes')).toBeInTheDocument();
     expect(screen.getByText('Resources')).toBeInTheDocument();
-
-    Object.keys(resources[0]).forEach((key) => {
-      expect(screen.getByText(key)).toBeInTheDocument();
-      screen.getAllByText(resources[0][key]).forEach((element) => {
-        expect(element).toBeInTheDocument();
-      });
-    });
 
     Object.keys(attributes).forEach((key) => {
       screen.getAllByText(key).forEach((element) => {

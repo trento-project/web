@@ -20,7 +20,8 @@ defmodule TrentoWeb.V1.ClusterViewTest do
           build_list(1, :hana_cluster_node, %{
             nameserver_actual_role: "master",
             indexserver_actual_role: "master",
-            status: "Online"
+            status: "Online",
+            resources: build_list(1, :cluster_resource)
           }),
           &Map.from_struct(&1)
         )
@@ -40,6 +41,14 @@ defmodule TrentoWeb.V1.ClusterViewTest do
       refute Access.get(node, :nameserver_actual_role)
       refute Access.get(node, :indexserver_actual_role)
       refute Access.get(node, :status)
+
+      Enum.each(details.stopped_resources, fn stopped_resource ->
+        refute Map.has_key?(stopped_resource, :managed)
+      end)
+
+      Enum.each(node.resources, fn resource ->
+        refute Map.has_key?(resource, :managed)
+      end)
     end
   end
 end

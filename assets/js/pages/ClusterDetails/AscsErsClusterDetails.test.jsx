@@ -249,7 +249,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     const sapSystems = buildSapSystemsFromAscsErsClusterDetails(details);
 
     const {
-      nodes: [{ attributes, resources }],
+      nodes: [{ attributes }],
     } = details.sap_systems[0];
 
     renderWithRouter(
@@ -268,13 +268,6 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
     expect(screen.getByText('Node Details')).toBeInTheDocument();
     expect(screen.getByText('Attributes')).toBeInTheDocument();
     expect(screen.getByText('Resources')).toBeInTheDocument();
-
-    Object.keys(resources[0]).forEach((key) => {
-      expect(screen.getByText(key)).toBeInTheDocument();
-      screen.getAllByText(resources[0][key]).forEach((element) => {
-        expect(element).toBeInTheDocument();
-      });
-    });
 
     Object.keys(attributes).forEach((key) => {
       screen.getAllByText(key).forEach((element) => {
