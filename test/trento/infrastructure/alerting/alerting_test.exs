@@ -72,6 +72,30 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
   end
 
   describe "Alerting the configured recipient about crucial facts with email notifications" do
+    test "Notify api key will be expired soon" do
+      insert(:api_key_settings, expire_at: DateTime.add(DateTime.utc_now(), 28, :day))
+
+      Alerting.notify_api_key_expiration()
+
+      assert_email_sent(subject: "Trento Alert: Api key will expire in 28 days")
+    end
+
+    test "Notify api key is expired" do
+      insert(:api_key_settings, expire_at: DateTime.add(DateTime.utc_now(), -1, :day))
+
+      Alerting.notify_api_key_expiration()
+
+      assert_email_sent(subject: "Trento Alert: Api key expired")
+    end
+
+    test "Should not notify if the api key expiration is infinite" do
+      insert(:api_key_settings, expire_at: nil)
+
+      Alerting.notify_api_key_expiration()
+
+      assert_no_email_sent()
+    end
+
     test "Notify Host Health going critical" do
       host_id = Faker.UUID.v4()
       host = insert(:host, id: host_id)

@@ -122,6 +122,12 @@ config :trento, Trento.Scheduler,
       task: {Trento.SoftwareUpdates, :run_discovery, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
+    ],
+    api_key_expiration_alert: [
+      schedule: "@daily",
+      task: {Trento.Infrastructure.Alerting.Alerting, :notify_api_key_expiration, []},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
     ]
   ],
   debug_logging: false
