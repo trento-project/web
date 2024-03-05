@@ -13,6 +13,8 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
 
   alias Trento.Infrastructure.Alerting.Emails.EmailAlert
   alias Trento.Mailer
+  alias Trento.Settings
+  alias Trento.Settings.ApiKeySettings
 
   require Logger
 
@@ -31,6 +33,9 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
   @spec notify_critical_sap_system_health(String.t()) :: :ok
   def notify_critical_sap_system_health(id),
     do: maybe_notify_critical_sap_system_health(enabled?(), id)
+
+  @spec notify_api_key_expiration() :: :ok
+  def notify_api_key_expiration, do: maybe_notify_api_key_expiration(enabled?())
 
   defp enabled?, do: Application.fetch_env!(:trento, :alerting)[:enabled]
 
@@ -73,6 +78,38 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
       EmailAlert.alert("Sap System", "SID", sid, "health is now in critical state")
     )
   end
+
+  defp maybe_notify_api_key_expiration(false), do: :ok
+
+  defp maybe_notify_api_key_expiration(true) do
+    case Settings.get_api_key_settings() do
+      {:ok, %ApiKeySettings{expire_at: nil}} ->
+        :ok
+
+      {:ok, %ApiKeySettings{} = api_key_settings} ->
+        api_key_settings
+        |> api_key_expiration_days()
+        |> maybe_send_api_key_notification()
+
+      error ->
+        error
+    end
+  end
+
+  defp api_key_expiration_days(%ApiKeySettings{expire_at: expire_at}),
+    do: DateTime.diff(expire_at, DateTime.utc_now(), :day)
+
+  defp maybe_send_api_key_notification(days) when days < 0 do
+    deliver_notification(EmailAlert.api_key_expired())
+  end
+
+  defp maybe_send_api_key_notification(days) when days < 30 do
+    days
+    |> EmailAlert.api_key_will_expire()
+    |> deliver_notification()
+  end
+
+  defp maybe_send_api_key_notification(_), do: :ok
 
   @spec deliver_notification(Swoosh.Email.t()) :: :ok
   defp deliver_notification(%Swoosh.Email{subject: subject} = notification) do
