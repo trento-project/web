@@ -15,14 +15,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
   @test_integration_name "test_integration"
 
   setup do
-    %Settings{} =
-      software_updates_settings =
-      insert(:software_updates_settings, [],
-        conflict_target: :id,
-        on_conflict: :replace_all
-      )
-
-    {:ok, %{settings: software_updates_settings}}
+    {:ok, %{settings: insert_software_updates_settings()}}
   end
 
   describe "Process start up and identification" do
@@ -60,22 +53,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       {:ok, _} = start_supervised({Suma, @test_integration_name})
 
       base_api_url = "#{url}/rhn/manager/api"
-      ignored_cookie = "pxt-session-cookie=1234"
-      auth_cookie = "pxt-session-cookie=4321"
 
       expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password ->
-        {:ok,
-         %HTTPoison.Response{
-           status_code: 200,
-           headers: [
-             {"Set-Cookie",
-              "JSESSIONID=FOOBAR; Path=/; Secure; HttpOnly; HttpOnly;HttpOnly;Secure"},
-             {"Set-Cookie",
-              "#{ignored_cookie}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:10 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"},
-             {"Set-Cookie",
-              "#{auth_cookie}; Max-Age=3600; Expires=Mon, 4 Mar 2024 10:53:57 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"}
-           ]
-         }}
+        successful_login_response()
       end)
 
       assert :ok = Suma.setup(@test_integration_name)
@@ -106,22 +86,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       {:ok, _} = start_supervised({Suma, @test_integration_name})
 
       base_api_url = "#{url}/rhn/manager/api"
-      ignored_cookie = "pxt-session-cookie=1234"
       auth_cookie = "pxt-session-cookie=4321"
 
       expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password ->
-        {:ok,
-         %HTTPoison.Response{
-           status_code: 200,
-           headers: [
-             {"Set-Cookie",
-              "JSESSIONID=FOOBAR; Path=/; Secure; HttpOnly; HttpOnly;HttpOnly;Secure"},
-             {"Set-Cookie",
-              "#{ignored_cookie}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:10 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"},
-             {"Set-Cookie",
-              "#{auth_cookie}; Max-Age=3600; Expires=Mon, 26 Feb 2024 10:53:57 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"}
-           ]
-         }}
+        successful_login_response()
       end)
 
       assert :ok = Suma.setup(@test_integration_name)
@@ -170,24 +138,12 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
     test "should successfully login after retrying" do
       {:ok, _} = start_supervised({Suma, @test_integration_name})
 
-      ignored_cookie = "pxt-session-cookie=1234"
       auth_cookie = "pxt-session-cookie=4321"
 
       responses = [
         {:ok, %HTTPoison.Response{status_code: 401}},
         {:error, %HTTPoison.Error{reason: "kaboom"}},
-        {:ok,
-         %HTTPoison.Response{
-           status_code: 200,
-           headers: [
-             {"Set-Cookie",
-              "JSESSIONID=FOOBAR; Path=/; Secure; HttpOnly; HttpOnly;HttpOnly;Secure"},
-             {"Set-Cookie",
-              "#{ignored_cookie}; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:10 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"},
-             {"Set-Cookie",
-              "#{auth_cookie}; Max-Age=3600; Expires=Mon, 26 Feb 2024 10:53:57 GMT; Path=/; Secure; HttpOnly;HttpOnly;Secure"}
-           ]
-         }}
+        successful_login_response()
       ]
 
       {:ok, _} = Agent.start_link(fn -> 0 end, name: :login_call_iteration)
@@ -346,6 +302,57 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
                 }
               ]} =
                Suma.get_relevant_patches(system_id, @test_integration_name)
+    end
+
+    test "should handle expired authentication" do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      scenarios = [
+        %{
+          final_response: %HTTPoison.Response{
+            status_code: 200,
+            body: ~s({"success": true,"result": [{"id":1000010001}]})
+          },
+          expected_result: {:ok, 1_000_010_001}
+        },
+        %{
+          final_response: %HTTPoison.Response{
+            status_code: 422
+          },
+          expected_result: {:error, :system_id_not_found}
+        }
+      ]
+
+      for %{final_response: final_response, expected_result: expected_result} <- scenarios do
+        initial_auth_cookie = "pxt-session-cookie=INITIAL-COOKIE"
+
+        expect(SumaApiMock, :login, fn _, _, _ ->
+          successful_login_response(initial_auth_cookie)
+        end)
+
+        :ok = Suma.setup(@test_integration_name)
+
+        assert %State{auth: ^initial_auth_cookie} =
+                 @test_integration_name
+                 |> Suma.identify()
+                 |> :sys.get_state()
+
+        new_auth_cookie = "pxt-session-cookie=NEW-COOKIE"
+
+        SumaApiMock
+        |> expect(:get_system_id, fn _, ^initial_auth_cookie, _ ->
+          {:ok, %HTTPoison.Response{status_code: 401}}
+        end)
+        |> expect(:login, fn _, _, _ -> successful_login_response(new_auth_cookie) end)
+        |> expect(:get_system_id, fn _, ^new_auth_cookie, _ -> {:ok, final_response} end)
+
+        assert ^expected_result = Suma.get_system_id("fqdn", @test_integration_name)
+
+        assert %State{auth: ^new_auth_cookie} =
+                 @test_integration_name
+                 |> Suma.identify()
+                 |> :sys.get_state()
+      end
     end
   end
 

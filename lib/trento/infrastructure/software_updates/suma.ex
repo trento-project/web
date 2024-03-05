@@ -42,11 +42,11 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> GenServer.call({:get_system_id, fully_qualified_domain_name})
 
   @impl true
-  def get_relevant_patches(system_id, server_name \\ @default_name) do
-    server_name
-    |> process_identifier
-    |> GenServer.call({:get_relevant_patches, system_id})
-  end
+  def get_relevant_patches(system_id, server_name \\ @default_name),
+    do:
+      server_name
+      |> process_identifier
+      |> GenServer.call({:get_relevant_patches, system_id})
 
   @impl true
   def handle_call(:setup, _from, %State{} = state) do
@@ -60,7 +60,21 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   end
 
   @impl true
-  def handle_call(request, _, %State{auth: nil} = state) do
+  def handle_call(request, _, %State{auth: nil} = state),
+    do: authenticate_and_handle(request, state)
+
+  @impl true
+  def handle_call(request, _, %State{} = state) do
+    case handle_result = do_handle(request, state) do
+      {:error, :authentication_error} ->
+        authenticate_and_handle(request, state)
+
+      _ ->
+        {:reply, handle_result, state}
+    end
+  end
+
+  defp authenticate_and_handle(request, state) do
     case setup_auth(state) do
       {:ok, new_state} ->
         {:reply, do_handle(request, new_state), new_state}
@@ -69,9 +83,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
         {:reply, error, state}
     end
   end
-
-  @impl true
-  def handle_call(request, _, %State{} = state), do: {:reply, do_handle(request, state), state}
 
   defp do_handle({:get_system_id, fully_qualified_domain_name}, %State{
          url: url,
