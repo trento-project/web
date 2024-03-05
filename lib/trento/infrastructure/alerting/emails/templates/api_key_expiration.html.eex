@@ -377,13 +377,13 @@
                       <p></p>
                       <div>
                         <%= if @api_key_expired do %>
-                          <b> Your api key is expired </b>
+                          <b> Your api key is expired. </b>
                         <% else %>
                           <b> Your api key is going to expire in <%= @expire_days %> days.
                         <% end %>
                        </p>
                       </div>
-                      <p>Use the Settings page in the Trento Console to generate a new api key</p>
+                      <p>Use the Settings page in the Trento Console to generate a new api key.</p>
                       <p>Thanks for your attention.</p>
                     </td>
                   </tr>

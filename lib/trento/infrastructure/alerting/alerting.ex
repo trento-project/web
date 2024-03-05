@@ -87,25 +87,29 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
         :ok
 
       {:ok, %ApiKeySettings{} = api_key_settings} ->
-        maybe_send_api_key_notification(api_key_expiration_days(api_key_settings))
+        api_key_settings
+        |> api_key_expiration_days()
+        |> maybe_send_api_key_notification()
 
       error ->
         error
     end
   end
 
+  defp api_key_expiration_days(%ApiKeySettings{expire_at: expire_at}),
+    do: DateTime.diff(expire_at, DateTime.utc_now(), :day)
+
   defp maybe_send_api_key_notification(days) when days < 0 do
     deliver_notification(EmailAlert.api_key_expired())
   end
 
   defp maybe_send_api_key_notification(days) when days < 30 do
-    deliver_notification(EmailAlert.api_key_will_expire(days))
+    days
+    |> EmailAlert.api_key_will_expire()
+    |> deliver_notification()
   end
 
   defp maybe_send_api_key_notification(_), do: :ok
-
-  defp api_key_expiration_days(%ApiKeySettings{expire_at: expire_at}),
-    do: DateTime.diff(expire_at, DateTime.utc_now(), :day)
 
   @spec deliver_notification(Swoosh.Email.t()) :: :ok
   defp deliver_notification(%Swoosh.Email{subject: subject} = notification) do
