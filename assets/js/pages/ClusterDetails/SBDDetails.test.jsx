@@ -1,14 +1,15 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { faker } from '@faker-js/faker';
+
+import { sbdDevicesFactory } from '@lib/test-utils/factories';
 
 import { capitalize } from 'lodash';
 
 import SBDDetails from './SBDDetails';
 
 describe('SBDDetails', () => {
-  it('should show empty  message', () => {
+  it('should render empty state message when sbd devices are empty', () => {
     const expectedEmptyStateMsg = 'No additional fencing details to display.';
     const sbdDevices = [];
 
@@ -16,39 +17,49 @@ describe('SBDDetails', () => {
     expect(screen.getByText(expectedEmptyStateMsg)).toBeInTheDocument();
   });
 
-  it('should show healthy sbd device', () => {
-    const expectedDeviceName = faker.system.filePath();
-    const expectedHealthStatus = 'healthy';
-    const formattedHealthStatus = capitalize(expectedHealthStatus);
-
-    const sbdDevices = [
-      { device: expectedDeviceName, status: expectedHealthStatus },
-    ];
-    const { device, status: healthStatus } = sbdDevices[0];
-
-    render(<SBDDetails sbdDevices={sbdDevices} />);
-
-    expect(screen.getByText(device)).toHaveTextContent(expectedDeviceName);
-    expect(screen.getByText(formattedHealthStatus)).toHaveTextContent(
-      capitalize(healthStatus)
+  it('should render healthy sbd device', () => {
+    const expectedSBD = sbdDevicesFactory.buildList(1, { status: 'healthy' });
+    const [{ device: expectedDeviceName, status: expectedHealthStatus }] =
+      expectedSBD;
+    const capitalizedHealthStatus = capitalize(expectedHealthStatus);
+    render(<SBDDetails sbdDevices={expectedSBD} />);
+    expect(screen.getByText(expectedDeviceName)).toHaveTextContent(
+      expectedDeviceName
+    );
+    expect(screen.getByText(capitalizedHealthStatus)).toHaveTextContent(
+      capitalize(expectedHealthStatus)
     );
   });
 
-  it('should show unhealthy sbd device', () => {
-    const expectedDeviceName = faker.system.filePath();
-    const expectedHealthStatus = 'unhealthy';
-    const formattedHealthStatus = capitalize(expectedHealthStatus);
+  it('should render unhealthy sbd device', () => {
+    const expectedSBD = sbdDevicesFactory.buildList(1, { status: 'unhealthy' });
+    const [{ device: expectedDeviceName, status: expectedHealthStatus }] =
+      expectedSBD;
+    const capitalizedHealthStatus = capitalize(expectedHealthStatus);
 
-    const sbdDevices = [
-      { device: expectedDeviceName, status: expectedHealthStatus },
-    ];
-    const { device, status: healthStatus } = sbdDevices[0];
+    render(<SBDDetails sbdDevices={expectedSBD} />);
 
-    render(<SBDDetails sbdDevices={sbdDevices} />);
-
-    expect(screen.getByText(device)).toHaveTextContent(expectedDeviceName);
-    expect(screen.getByText(formattedHealthStatus)).toHaveTextContent(
-      capitalize(healthStatus)
+    expect(screen.getByText(expectedDeviceName)).toHaveTextContent(
+      expectedDeviceName
     );
+    expect(screen.getByText(capitalizedHealthStatus)).toHaveTextContent(
+      capitalize(expectedHealthStatus)
+    );
+  });
+
+  it('should render multiple devices and their status', () => {
+    const expectedSBD = [
+      sbdDevicesFactory.build({ status: 'unhealthy' }),
+      sbdDevicesFactory.build({ status: 'healthy' }),
+    ];
+
+    render(<SBDDetails sbdDevices={expectedSBD} />);
+
+    expectedSBD.forEach(({ device, status }) => {
+      expect(screen.getByText(device)).toBeInTheDocument();
+      expect(
+        screen.getByText(status === 'healthy' ? 'Healthy' : 'Unhealthy')
+      ).toBeInTheDocument();
+    });
   });
 });
