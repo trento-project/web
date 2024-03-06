@@ -75,6 +75,21 @@ Cypress.Commands.add('acceptEula', () => {
   });
 });
 
+Cypress.Commands.add('updateApiKeyExpiration', (apiKeyExpiration) => {
+  apiLogin().then(({ accessToken }) => {
+    cy.request({
+      url: '/api/v1/settings/api_key',
+      method: 'PATCH',
+      auth: {
+        bearer: accessToken,
+      },
+      body: {
+        expire_at: apiKeyExpiration,
+      },
+    });
+  });
+});
+
 Cypress.Commands.add('loadScenario', (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
     Cypress.env('project_root'),
