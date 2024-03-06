@@ -8,6 +8,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   use GenServer, restart: :transient
 
   alias Trento.Infrastructure.SoftwareUpdates.{Suma.State, SumaApi}
+  alias Trento.Infrastructure.SoftwareUpdates.SumaApi
   alias Trento.SoftwareUpdates
 
   require Logger
@@ -25,7 +26,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   def identify(server_name \\ @default_name),
     do:
       server_name
-      |> identificaton_tuple
+      |> identification_tuple
       |> :global.whereis_name()
 
   def setup(server_name \\ @default_name),
@@ -95,24 +96,27 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
 
   defp do_handle({:get_system_id, fully_qualified_domain_name}, %State{
          url: url,
-         auth: auth_cookie
+         auth: auth_cookie,
+         ca_cert: ca_cert
        }),
-       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name)
+       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name, ca_cert)
 
   defp do_handle({:get_relevant_patches, system_id}, %State{
          url: url,
-         auth: auth_cookie
+         auth: auth_cookie,
+         ca_cert: ca_cert
        }),
-       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id)
+       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id, ca_cert)
 
-  defp process_identifier(server_name), do: {:global, identificaton_tuple(server_name)}
+  defp process_identifier(server_name), do: {:global, identification_tuple(server_name)}
 
-  defp identificaton_tuple(server_name), do: {__MODULE__, server_name}
+  defp identification_tuple(server_name), do: {__MODULE__, server_name}
 
   defp setup_auth(%State{} = state) do
     with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
            SoftwareUpdates.get_settings(),
-         {:ok, auth_cookie} <- SumaApi.login(url, username, password) do
+         :ok <- maybe_write_ca_cert_file(ca_cert),
+         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert) do
       {:ok,
        %State{
          state
@@ -123,5 +127,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
            auth: auth_cookie
        }}
     end
+  end
+
+  defp maybe_write_ca_cert_file(nil), do: File.rm(SumaApi.ca_cert_path())
+
+  defp maybe_write_ca_cert_file(ca_cert) do
+    SumaApi.ca_cert_path()
+    |> Path.dirname()
+    |> File.mkdir_p!()
+
+    File.write(SumaApi.ca_cert_path(), ca_cert)
   end
 end

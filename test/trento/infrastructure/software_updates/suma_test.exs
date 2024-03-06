@@ -47,6 +47,42 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       assert :sys.get_state(Suma.identify(@test_integration_name)) == expected_state
     end
 
+    test "should save existing CA certificate to local file", %{
+      settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
+    } do
+      assert {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      base_api_url = "#{url}/rhn/manager/api"
+
+      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, true ->
+        successful_login_response()
+      end)
+
+      assert :ok = Suma.setup(@test_integration_name)
+
+      cert_file_path = "/tmp/suma_ca_cert.crt"
+
+      assert File.exists?(cert_file_path)
+      ^ca_cert = File.read!(cert_file_path)
+    end
+
+    test "should not save CA certificate file if no cert is provided" do
+      %Settings{url: url, username: username, password: password} =
+        insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
+
+      assert {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      base_api_url = "#{url}/rhn/manager/api"
+
+      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, false ->
+        successful_login_response()
+      end)
+
+      assert :ok = Suma.setup(@test_integration_name)
+
+      refute File.exists?("/tmp/suma_ca_cert.crt")
+    end
+
     test "should redact sensitive data in SUMA state", %{
       settings: %Settings{url: url, username: username, password: password}
     } do
@@ -54,7 +90,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       base_api_url = "#{url}/rhn/manager/api"
 
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password ->
+      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, true ->
         successful_login_response()
       end)
 
@@ -88,7 +124,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       base_api_url = "#{url}/rhn/manager/api"
       auth_cookie = "pxt-session-cookie=4321"
 
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password ->
+      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, true ->
         successful_login_response()
       end)
 
@@ -117,7 +153,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       ]
 
       for error_cause <- error_causes do
-        expect(SumaApiMock, :login, 5, fn _, _, _ -> error_cause end)
+        expect(SumaApiMock, :login, 5, fn _, _, _, _ -> error_cause end)
 
         assert {:error, :max_login_retries_reached} = Suma.setup(@test_integration_name)
 
@@ -148,7 +184,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       {:ok, _} = Agent.start_link(fn -> 0 end, name: :login_call_iteration)
 
-      expect(SumaApiMock, :login, 3, fn _, _, _ ->
+      expect(SumaApiMock, :login, 3, fn _, _, _, _ ->
         iteration = Agent.get(:login_call_iteration, & &1)
 
         iteration_response = Enum.at(responses, iteration)
@@ -226,7 +262,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       fqdn = "machine.fqdn.internal"
 
-      expect(SumaApiMock, :login, 1, fn _, _, _ -> successful_login_response() end)
+      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
 
       error_causes = [
         {:ok, %HTTPoison.Response{status_code: 200, body: ~s({"success":true,"result":[]})}},
@@ -236,7 +272,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       ]
 
       for error_cause <- error_causes do
-        expect(SumaApiMock, :get_system_id, 1, fn _, _, ^fqdn -> error_cause end)
+        expect(SumaApiMock, :get_system_id, 1, fn _, _, ^fqdn, _ -> error_cause end)
 
         assert {:error, :system_id_not_found} = Suma.get_system_id(fqdn, @test_integration_name)
       end
@@ -247,9 +283,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       fqdn = "machine.fqdn.internal"
 
-      expect(SumaApiMock, :login, 1, fn _, _, _ -> successful_login_response() end)
+      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
 
-      expect(SumaApiMock, :get_system_id, 1, fn _, _, ^fqdn ->
+      expect(SumaApiMock, :get_system_id, 1, fn _, _, ^fqdn, _ ->
         {:ok,
          %HTTPoison.Response{
            status_code: 200,
@@ -265,7 +301,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       system_id = 1_000_010_001
 
-      expect(SumaApiMock, :login, 1, fn _, _, _ -> successful_login_response() end)
+      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
 
       error_causes = [
         {:ok,
@@ -291,7 +327,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       ]
 
       for error_cause <- error_causes do
-        expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id -> error_cause end)
+        expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id, _ -> error_cause end)
 
         assert {:error, :error_getting_patches} =
                  Suma.get_relevant_patches(system_id, @test_integration_name)
@@ -326,9 +362,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       suma_response_body = %{success: true, result: patches}
 
-      expect(SumaApiMock, :login, 1, fn _, _, _ -> successful_login_response() end)
+      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
 
-      expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id ->
+      expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id, _ ->
         {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
       end)
 
@@ -378,7 +414,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       for %{final_response: final_response, expected_result: expected_result} <- scenarios do
         initial_auth_cookie = "pxt-session-cookie=INITIAL-COOKIE"
 
-        expect(SumaApiMock, :login, fn _, _, _ ->
+        expect(SumaApiMock, :login, fn _, _, _, _ ->
           successful_login_response(initial_auth_cookie)
         end)
 
@@ -392,11 +428,11 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         new_auth_cookie = "pxt-session-cookie=NEW-COOKIE"
 
         SumaApiMock
-        |> expect(:get_system_id, fn _, ^initial_auth_cookie, _ ->
+        |> expect(:get_system_id, fn _, ^initial_auth_cookie, _, _ ->
           {:ok, %HTTPoison.Response{status_code: 401}}
         end)
-        |> expect(:login, fn _, _, _ -> successful_login_response(new_auth_cookie) end)
-        |> expect(:get_system_id, fn _, ^new_auth_cookie, _ -> {:ok, final_response} end)
+        |> expect(:login, fn _, _, _, _ -> successful_login_response(new_auth_cookie) end)
+        |> expect(:get_system_id, fn _, ^new_auth_cookie, _, _ -> {:ok, final_response} end)
 
         assert ^expected_result = Suma.get_system_id("fqdn", @test_integration_name)
 
