@@ -9,6 +9,7 @@ context('Settings page', () => {
   after(() => {
     cy.updateApiKeyExpiration(null);
   });
+
   describe('Api key expiration notifications', () => {
     it('should show api key expired notification when first loading the page, when the api key is expired', () => {
       cy.updateApiKeyExpiration(subDays(new Date(), 1));

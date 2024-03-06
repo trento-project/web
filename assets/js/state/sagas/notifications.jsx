@@ -9,29 +9,31 @@ import {
 } from '@state/notifications';
 import DismissableToast from '@common/DismissableToast';
 
+const DEFAULT_DURATION = 4000;
+
 export function* notification({ payload }) {
-  const { text, icon, id, duration } = payload;
+  const { id, text, icon, duration } = payload;
   toast(<p className="text-sm font-medium text-gray-900">{text}</p>, {
     position: 'top-right',
     icon,
     id,
-    duration: duration || 4000,
+    duration: duration || DEFAULT_DURATION,
   });
 }
 
 export function* dismissableNotification({ payload }) {
-  const { text, icon, id, duration } = payload;
-  toast((t) => <DismissableToast text={text} toastInstance={t} />, {
+  const { id, text, icon, duration } = payload;
+  toast((t) => <DismissableToast text={text} toastID={t.id} />, {
     position: 'top-right',
     icon,
     id,
-    duration: duration || 4000,
+    duration: duration || DEFAULT_DURATION,
   });
 }
 
 export function* dismissNotification({ payload }) {
-  const { notificationID } = payload;
-  toast.dismiss(notificationID);
+  const { id } = payload;
+  toast.dismiss(id);
 }
 
 export function* watchNotifications() {

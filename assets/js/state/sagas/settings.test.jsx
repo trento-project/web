@@ -46,7 +46,7 @@ describe('Settings sagas', () => {
       expect(dispatched).toEqual([expectedAction]);
     });
 
-    it('should dispatch an expires in dismissable notification if the api key expiration days are less then 30', async () => {
+    it('should dispatch a dismissable notification if the api key is to expire in less than 30 days', async () => {
       axiosMock.onGet('/api/v1/settings/api_key').reply(
         200,
         apiKeySettingsFactory.build({
@@ -63,6 +63,7 @@ describe('Settings sagas', () => {
       });
       expect(dispatched).toEqual([expectedAction]);
     });
+
     it('should not dispatch any action if the api key expiration days are more then 30', async () => {
       axiosMock.onGet('/api/v1/settings/api_key').reply(
         200,
