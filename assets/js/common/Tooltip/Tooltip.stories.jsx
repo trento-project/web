@@ -24,6 +24,10 @@ export default {
       description: 'Whether the tooltip is enabled',
       control: { type: 'boolean' },
     },
+    wrap: {
+      type: 'boolean',
+      description: 'Whether to wrap children in a span or not.',
+    },
   },
   render: (args) => (
     <div className="p-12 flex items-center justify-center">

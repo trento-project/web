@@ -25,6 +25,7 @@ function Tooltip({
   children,
   place = 'top',
   isEnabled = true,
+  wrap = true,
   ...rest
 }) {
   if (!isEnabled) {
@@ -41,7 +42,7 @@ function Tooltip({
       placement={getPlacement(place)}
       {...rest}
     >
-      <span className="inline-flex">{children}</span>
+      {wrap ? <span>{children}</span> : children}
     </RcTooltip>
   );
 }
