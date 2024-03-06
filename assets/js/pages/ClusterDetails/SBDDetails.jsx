@@ -2,6 +2,9 @@ import React from 'react';
 
 import Pill from '@common/Pill';
 
+const sbdDetailsHeader = 'SBD/Fencing';
+const emptySBDListText = 'No additional fencing details to display.';
+
 const getStatusPill = (status) =>
   status === 'healthy' ? (
     <Pill className="bg-green-200 text-green-800 mr-2">Healthy</Pill>
@@ -10,8 +13,6 @@ const getStatusPill = (status) =>
   );
 
 function SBDDetails({ sbdDevices }) {
-  const sbdDetailsHeader = 'SBD/Fencing';
-  const emptySBDListText = 'No additional fencing details to display.';
   return (
     <>
       <div className="mt-8">
