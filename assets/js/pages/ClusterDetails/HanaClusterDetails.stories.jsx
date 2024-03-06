@@ -199,3 +199,14 @@ export const WithUnmanagedResources = {
     details: unmanagedNodeResources,
   },
 };
+
+export const WithNoSBDDevices = {
+  args: {
+    ...HanaScaleOut.args,
+    details: {
+      ...HanaScaleOut.args.details,
+      fencing_type: 'Diskless SBD',
+      sbd_devices: [],
+    },
+  },
+};
