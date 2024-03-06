@@ -202,7 +202,7 @@ export const WithUnmanagedResources = {
 
 export const WithNoSBDDevices = {
   args: {
-    ...HanaScaleOut.args,
+    ...Hana.args,
     details: {
       ...HanaScaleOut.args.details,
       fencing_type: 'Diskless SBD',
