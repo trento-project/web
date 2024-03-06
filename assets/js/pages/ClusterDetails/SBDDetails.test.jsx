@@ -14,38 +14,22 @@ describe('SBDDetails', () => {
     const sbdDevices = [];
 
     render(<SBDDetails sbdDevices={sbdDevices} />);
+
     expect(screen.getByText(expectedEmptyStateMsg)).toBeInTheDocument();
   });
 
-  it('should render healthy sbd device', () => {
-    const expectedSBD = sbdDevicesFactory.buildList(1, { status: 'healthy' });
-    const [{ device: expectedDeviceName, status: expectedHealthStatus }] =
-      expectedSBD;
-    const capitalizedHealthStatus = capitalize(expectedHealthStatus);
-    render(<SBDDetails sbdDevices={expectedSBD} />);
-    expect(screen.getByText(expectedDeviceName)).toHaveTextContent(
-      expectedDeviceName
-    );
-    expect(screen.getByText(capitalizedHealthStatus)).toHaveTextContent(
-      capitalize(expectedHealthStatus)
-    );
-  });
+  it.each([{ health: 'unhealthy' }, { health: 'healthy' }])(
+    'should render sbd device with specified $health health',
+    ({ health }) => {
+      const sbdDevices = sbdDevicesFactory.buildList(1, { status: health });
+      const { device: expectedDeviceName } = sbdDevices[0];
 
-  it('should render unhealthy sbd device', () => {
-    const expectedSBD = sbdDevicesFactory.buildList(1, { status: 'unhealthy' });
-    const [{ device: expectedDeviceName, status: expectedHealthStatus }] =
-      expectedSBD;
-    const capitalizedHealthStatus = capitalize(expectedHealthStatus);
+      render(<SBDDetails sbdDevices={sbdDevices} />);
 
-    render(<SBDDetails sbdDevices={expectedSBD} />);
-
-    expect(screen.getByText(expectedDeviceName)).toHaveTextContent(
-      expectedDeviceName
-    );
-    expect(screen.getByText(capitalizedHealthStatus)).toHaveTextContent(
-      capitalize(expectedHealthStatus)
-    );
-  });
+      expect(screen.getByText(expectedDeviceName)).toBeTruthy();
+      expect(screen.getByText(capitalize(health))).toBeTruthy();
+    }
+  );
 
   it('should render multiple devices and their status', () => {
     const expectedSBD = [
@@ -57,9 +41,7 @@ describe('SBDDetails', () => {
 
     expectedSBD.forEach(({ device, status }) => {
       expect(screen.getByText(device)).toBeInTheDocument();
-      expect(
-        screen.getByText(status === 'healthy' ? 'Healthy' : 'Unhealthy')
-      ).toBeInTheDocument();
+      expect(screen.getByText(capitalize(status))).toBeInTheDocument();
     });
   });
 });
