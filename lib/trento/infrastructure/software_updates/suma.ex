@@ -34,6 +34,12 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> process_identifier
       |> GenServer.call(:setup)
 
+  def clear(server_name \\ @default_name),
+    do:
+      server_name
+      |> process_identifier
+      |> GenServer.call(:clear)
+
   @impl true
   def get_system_id(fully_qualified_domain_name, server_name \\ @default_name),
     do:
@@ -58,6 +64,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
         {:reply, error, state}
     end
   end
+
+  @impl true
+  def handle_call(:clear, _, _), do: {:reply, :ok, %State{}}
 
   @impl true
   def handle_call(request, _, %State{auth: nil} = state),

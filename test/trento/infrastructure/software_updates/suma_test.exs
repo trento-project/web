@@ -168,6 +168,58 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
     end
   end
 
+  describe "clearing up integration service" do
+    test "should clear service state", %{
+      settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
+    } do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      expect(SumaApiMock, :login, fn _, _, _ -> successful_login_response() end)
+
+      assert :ok = Suma.setup(@test_integration_name)
+
+      expected_state = %State{
+        url: url,
+        username: username,
+        password: password,
+        ca_cert: ca_cert,
+        auth: "pxt-session-cookie=4321"
+      }
+
+      assert @test_integration_name
+             |> Suma.identify()
+             |> :sys.get_state() == expected_state
+
+      assert :ok = Suma.clear(@test_integration_name)
+
+      assert @test_integration_name
+             |> Suma.identify()
+             |> :sys.get_state() == %State{}
+    end
+
+    test "should support clearing an already empty service state" do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      empty_state = %State{
+        url: nil,
+        username: nil,
+        password: nil,
+        ca_cert: nil,
+        auth: nil
+      }
+
+      assert @test_integration_name
+             |> Suma.identify()
+             |> :sys.get_state() == empty_state
+
+      assert :ok = Suma.clear(@test_integration_name)
+
+      assert @test_integration_name
+             |> Suma.identify()
+             |> :sys.get_state() == empty_state
+    end
+  end
+
   describe "Integration service" do
     test "should return an error when a system id was not found for a given fqdn" do
       {:ok, _} = start_supervised({Suma, @test_integration_name})
