@@ -11,7 +11,7 @@ const getStatusPill = (status) =>
 
 function SBDDetails({ sbdDevices }) {
   const sbdDetailsHeader = 'SBD/Fencing';
-  const emptyStateMsg = 'No additional fencing details to display.';
+  const emptySBDListText = 'No additional fencing details to display.';
   return (
     <>
       <div className="mt-8">
@@ -26,7 +26,7 @@ function SBDDetails({ sbdDevices }) {
           ))}
         </div>
       ) : (
-        <> {emptyStateMsg}</>
+        <div className="mt-4">{emptySBDListText}</div>
       )}
     </>
   );
