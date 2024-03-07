@@ -1,20 +1,13 @@
 import sapSystemsReducer, {
   removeSAPSystem,
-  upsertDatabaseInstancesToSapSystem,
   upsertApplicationInstances,
   updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
-  updateSAPSystemDatabaseInstanceHealth,
-  updateSAPSystemDatabaseInstanceSystemReplication,
   updateApplicationInstanceAbsentAt,
   removeApplicationInstance,
-  removeDatabaseInstanceFromSapSystem,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
   unsetApplicationInstanceDeregistering,
-  setDatabaseInstanceDeregisteringToSAPSystem,
-  unsetDatabaseInstanceDeregisteringToSAPSystem,
-  updateDatabaseInstanceAbsentToSAPSystem,
 } from '@state/sapSystems';
 import {
   sapSystemFactory,
@@ -132,60 +125,6 @@ describe('SAP Systems reducer', () => {
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
   });
 
-  it('should update the health of a database instance', () => {
-    const instance = databaseInstanceFactory.build();
-    const newHealth = 'newHealth';
-
-    const initialState = {
-      databaseInstances: [instance],
-    };
-
-    const instanceToUpdate = {
-      sap_system_id: instance.sap_system_id,
-      instance_number: instance.instance_number,
-      host_id: instance.host_id,
-      health: newHealth,
-    };
-    const action = updateSAPSystemDatabaseInstanceHealth(instanceToUpdate);
-
-    const expectedState = {
-      databaseInstances: [{ ...instance, health: newHealth }],
-    };
-
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
-  it('should update the system replication data of a database instance', () => {
-    const instance = databaseInstanceFactory.build();
-    const newSystemReplication = 'newSR';
-    const newStatus = 'newStatus';
-
-    const initialState = {
-      databaseInstances: [instance],
-    };
-
-    const instanceToUpdate = {
-      ...instance,
-      system_replication: newSystemReplication,
-      system_replication_status: newStatus,
-    };
-
-    const action =
-      updateSAPSystemDatabaseInstanceSystemReplication(instanceToUpdate);
-
-    const expectedState = {
-      databaseInstances: [
-        {
-          ...instance,
-          system_replication: newSystemReplication,
-          system_replication_status: newStatus,
-        },
-      ],
-    };
-
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
   it('should update the absent_at field of an application instance', () => {
     const instance = sapSystemApplicationInstanceFactory.build();
     const absentAt = Date.now();
@@ -225,45 +164,6 @@ describe('SAP Systems reducer', () => {
 
     const expectedState = {
       applicationInstances: [instance2],
-    };
-
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
-  it('should remove an database instance from state', () => {
-    const [instance1, instance2] = databaseInstanceFactory.buildList(2);
-
-    const initialState = {
-      databaseInstances: [instance1, instance2],
-    };
-
-    const action = removeDatabaseInstanceFromSapSystem(instance1);
-
-    const expectedState = {
-      databaseInstances: [instance2],
-    };
-
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
-  it('should upsert database instances', () => {
-    const initialInstances = databaseInstanceFactory.buildList(2);
-
-    const initialState = {
-      databaseInstances: initialInstances,
-    };
-
-    const updatedInstance = {
-      ...initialState.databaseInstances[0],
-      instance_hostname: 'my_name_has_changed',
-    };
-    const newInstance = databaseInstanceFactory.build();
-    const newInstances = [updatedInstance, newInstance];
-
-    const action = upsertDatabaseInstancesToSapSystem(newInstances);
-
-    const expectedState = {
-      databaseInstances: [initialInstances[1], ...newInstances],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
@@ -331,73 +231,6 @@ describe('SAP Systems reducer', () => {
       ],
     };
 
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
-  it('should set database instance in deregistering state', () => {
-    const instance = databaseInstanceFactory.build();
-
-    const initialState = {
-      databaseInstances: [instance],
-    };
-
-    const action = setDatabaseInstanceDeregisteringToSAPSystem(instance);
-
-    const expectedState = {
-      databaseInstances: [
-        {
-          ...instance,
-          deregistering: true,
-        },
-      ],
-    };
-
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
-  it('should remove deregistering state from database instance', () => {
-    const instance = databaseInstanceFactory.build();
-
-    const initialState = {
-      databaseInstances: [instance],
-    };
-
-    const action = unsetDatabaseInstanceDeregisteringToSAPSystem(instance);
-
-    const expectedState = {
-      databaseInstances: [
-        {
-          ...instance,
-          deregistering: false,
-        },
-      ],
-    };
-
-    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
-  });
-
-  it('should update absent state from database instance', () => {
-    const instance = databaseInstanceFactory.build({
-      absent_at: new Date().toISOString(),
-    });
-
-    const initialState = {
-      databaseInstances: [instance],
-    };
-
-    const action = updateDatabaseInstanceAbsentToSAPSystem({
-      ...instance,
-      absent_at: null,
-    });
-
-    const expectedState = {
-      databaseInstances: [
-        {
-          ...instance,
-          absent_at: null,
-        },
-      ],
-    };
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
   });
 });

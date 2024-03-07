@@ -18,13 +18,6 @@ import {
   unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
 import {
-  removeDatabaseInstanceFromSapSystem,
-  upsertDatabaseInstancesToSapSystem,
-  setDatabaseInstanceDeregisteringToSAPSystem,
-  unsetDatabaseInstanceDeregisteringToSAPSystem,
-  updateDatabaseInstanceAbsentToSAPSystem,
-} from '@state/sapSystems';
-import {
   databaseFactory,
   databaseInstanceFactory,
 } from '@lib/test-utils/factories';
@@ -52,14 +45,6 @@ describe('SAP Systems sagas', () => {
       payload: { sap_system_id, host_id, instance_number, sid },
     });
 
-    expect(dispatched).toContainEqual(
-      removeDatabaseInstanceFromSapSystem({
-        sap_system_id,
-        host_id,
-        instance_number,
-        sid,
-      })
-    );
     expect(dispatched).toContainEqual(
       removeDatabaseInstance({ sap_system_id, host_id, instance_number, sid })
     );
@@ -98,7 +83,6 @@ describe('SAP Systems sagas', () => {
     expect(dispatched).toEqual([
       appendDatabase(database),
       upsertDatabaseInstances(database.database_instances),
-      upsertDatabaseInstancesToSapSystem(database.database_instances),
       notify({
         text: `The database ${database.sid} has been restored.`,
         icon: 'ℹ️',
@@ -122,9 +106,7 @@ describe('SAP Systems sagas', () => {
 
     expect(dispatched).toEqual([
       setDatabaseInstanceDeregistering(instance),
-      setDatabaseInstanceDeregisteringToSAPSystem(instance),
       unsetDatabaseInstanceDeregistering(instance),
-      unsetDatabaseInstanceDeregisteringToSAPSystem(instance),
     ]);
   });
 
@@ -144,13 +126,11 @@ describe('SAP Systems sagas', () => {
 
     expect(dispatched).toEqual([
       setDatabaseInstanceDeregistering(instance),
-      setDatabaseInstanceDeregisteringToSAPSystem(instance),
       notify({
         text: `Error deregistering instance ${instance_number} from ${sid}.`,
         icon: '❌',
       }),
       unsetDatabaseInstanceDeregistering(instance),
-      unsetDatabaseInstanceDeregisteringToSAPSystem(instance),
     ]);
   });
 
@@ -164,13 +144,6 @@ describe('SAP Systems sagas', () => {
 
     expect(dispatched).toEqual([
       updateDatabaseInstanceAbsentAt({
-        sap_system_id,
-        instance_number,
-        host_id,
-        sid,
-        absent_at,
-      }),
-      updateDatabaseInstanceAbsentToSAPSystem({
         sap_system_id,
         instance_number,
         host_id,
@@ -194,13 +167,6 @@ describe('SAP Systems sagas', () => {
 
     expect(dispatched).toEqual([
       updateDatabaseInstanceAbsentAt({
-        sap_system_id,
-        instance_number,
-        host_id,
-        sid,
-        absent_at,
-      }),
-      updateDatabaseInstanceAbsentToSAPSystem({
         sap_system_id,
         instance_number,
         host_id,

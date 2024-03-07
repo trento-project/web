@@ -86,16 +86,12 @@ export const getEnrichedDatabaseDetails = createSelector(
 
 export const getInstancesOnHost = createSelector(
   [
-    (state) => state.sapSystemsList.databaseInstances,
     (state) => state.sapSystemsList.applicationInstances,
     (state) => state.databasesList.databaseInstances,
     (_, hostID) => hostID,
   ],
-  (databaseInstances, applicationInstances, databasesListInstances, hostID) => {
-    const availableDatabaseInstances =
-      databaseInstances.length > 0 ? databaseInstances : databasesListInstances;
-
-    const foundDatabaseInstances = filter(availableDatabaseInstances, {
+  (applicationInstances, databaseInstances, hostID) => {
+    const foundDatabaseInstances = filter(databaseInstances, {
       host_id: hostID,
     }).map((instance) => ({ ...instance, type: DATABASE_TYPE }));
 

@@ -5,8 +5,7 @@ const initialState = {
   loading: false,
   sapSystems: [],
   // eslint-disable-next-line
-  applicationInstances: [], // TODO: is this separation needed? Can it be just encapsulated into previous sapSystems?
-  databaseInstances: [],
+  applicationInstances: [],
 };
 
 export const sapSystemsListSlice = createSlice({
@@ -14,16 +13,12 @@ export const sapSystemsListSlice = createSlice({
   initialState,
   reducers: {
     // Here the payload comes from /api/sap_systems API when the application loads
-    // Note that each sap system item has an application_instances and
-    // a database_instances properties
+    // Note that each sap system item has an application_instances
     setSapSystems: (state, { payload: sapSystems }) => {
       state.sapSystems = sapSystems;
 
       state.applicationInstances = sapSystems.flatMap(
         (sapSystem) => sapSystem.application_instances
-      );
-      state.databaseInstances = sapSystems.flatMap(
-        (sapSystem) => sapSystem.database_instances
       );
     },
     startSapSystemsLoading: (state) => {
@@ -33,7 +28,7 @@ export const sapSystemsListSlice = createSlice({
       state.loading = false;
     },
     // When a new SapSystemRegistered comes in, it gets appended to the list
-    // Note that the item does not have any application_instances nor database_instances properties
+    // Note that the item does not have any application_instances properties
     appendSapsystem: (state, { payload: newSapSystem }) => {
       state.sapSystems = [...state.sapSystems, newSapSystem];
     },
@@ -43,9 +38,6 @@ export const sapSystemsListSlice = createSlice({
       );
       state.applicationInstances = state.applicationInstances.filter(
         (applicationInstance) => applicationInstance.sap_system_id !== id
-      );
-      state.databaseInstances = state.databaseInstances.filter(
-        (databaseInstance) => databaseInstance.sap_system_id !== id
       );
     },
     updateSAPSystem: (state, { payload: sapSystemToUpdate }) => {
@@ -90,22 +82,9 @@ export const sapSystemsListSlice = createSlice({
         instances
       );
     },
-    // When a new DatabaseInstanceRegistered comes in,
-    // it need to be appended to the list of the database instances of the relative sap system
-    upsertDatabaseInstancesToSapSystem: (state, { payload: instances }) => {
-      state.databaseInstances = upsertInstances(
-        state.databaseInstances,
-        instances
-      );
-    },
     removeApplicationInstance: (state, { payload: instance }) => {
       state.applicationInstances = state.applicationInstances.filter(
         (applicationInstance) => !instancesMatch(applicationInstance, instance)
-      );
-    },
-    removeDatabaseInstanceFromSapSystem: (state, { payload: instance }) => {
-      state.databaseInstances = state.databaseInstances.filter(
-        (databaseInstance) => !instancesMatch(databaseInstance, instance)
       );
     },
     updateApplicationInstanceHost: (
@@ -129,36 +108,9 @@ export const sapSystemsListSlice = createSlice({
         { health: instance.health }
       );
     },
-    updateSAPSystemDatabaseInstanceHealth: (state, { payload: instance }) => {
-      state.databaseInstances = updateInstance(
-        state.databaseInstances,
-        instance,
-        { health: instance.health }
-      );
-    },
-    updateSAPSystemDatabaseInstanceSystemReplication: (
-      state,
-      { payload: instance }
-    ) => {
-      state.databaseInstances = updateInstance(
-        state.databaseInstances,
-        instance,
-        {
-          system_replication: instance.system_replication,
-          system_replication_status: instance.system_replication_status,
-        }
-      );
-    },
     updateApplicationInstanceAbsentAt: (state, { payload: instance }) => {
       state.applicationInstances = updateInstance(
         state.applicationInstances,
-        instance,
-        { absent_at: instance.absent_at }
-      );
-    },
-    updateDatabaseInstanceAbsentToSAPSystem: (state, { payload: instance }) => {
-      state.databaseInstances = updateInstance(
-        state.databaseInstances,
         instance,
         { absent_at: instance.absent_at }
       );
@@ -173,26 +125,6 @@ export const sapSystemsListSlice = createSlice({
     unsetApplicationInstanceDeregistering: (state, { payload: instance }) => {
       state.applicationInstances = updateInstance(
         state.applicationInstances,
-        instance,
-        { deregistering: false }
-      );
-    },
-    setDatabaseInstanceDeregisteringToSAPSystem: (
-      state,
-      { payload: instance }
-    ) => {
-      state.databaseInstances = updateInstance(
-        state.databaseInstances,
-        instance,
-        { deregistering: true }
-      );
-    },
-    unsetDatabaseInstanceDeregisteringToSAPSystem: (
-      state,
-      { payload: instance }
-    ) => {
-      state.databaseInstances = updateInstance(
-        state.databaseInstances,
         instance,
         { deregistering: false }
       );
@@ -228,13 +160,9 @@ export const {
   appendSapsystem,
   upsertApplicationInstances,
   removeApplicationInstance,
-  upsertDatabaseInstancesToSapSystem,
-  removeDatabaseInstanceFromSapSystem,
   updateSapSystemHealth,
   updateApplicationInstanceHost,
   updateApplicationInstanceHealth,
-  updateSAPSystemDatabaseInstanceHealth,
-  updateSAPSystemDatabaseInstanceSystemReplication,
   addTagToSAPSystem,
   removeTagFromSAPSystem,
   removeSAPSystem,
@@ -242,9 +170,6 @@ export const {
   updateApplicationInstanceAbsentAt,
   setApplicationInstanceDeregistering,
   unsetApplicationInstanceDeregistering,
-  setDatabaseInstanceDeregisteringToSAPSystem,
-  updateDatabaseInstanceAbsentToSAPSystem,
-  unsetDatabaseInstanceDeregisteringToSAPSystem,
 } = sapSystemsListSlice.actions;
 
 export default sapSystemsListSlice.reducer;
