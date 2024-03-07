@@ -44,7 +44,7 @@ function Modal({ children, open, onClose, title, className }) {
           >
             <div
               className={classNames(
-                'inline-block w-full max-w-7xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-lg rounded-lg',
+                'inline-block w-full max-w-7xl p-6 my-8 text-left align-middle transition-all transform bg-white shadow-lg rounded-lg',
                 className
               )}
             >
