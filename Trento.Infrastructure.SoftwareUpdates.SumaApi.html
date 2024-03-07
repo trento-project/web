@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-571429CD.js"></script>
+    <script src="dist/sidebar_items-3FD8F376.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -161,7 +161,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_relevant_patches/3" translate="no">get_relevant_patches(url, auth, system_id)</a>
+        <a href="#ca_cert_path/0" translate="no">ca_cert_path()</a>
 
       </div>
 
@@ -169,7 +169,7 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_system_id/3" translate="no">get_system_id(url, auth, fully_qualified_domain_name)</a>
+        <a href="#get_relevant_patches/4" translate="no">get_relevant_patches(url, auth, system_id, use_ca_cert)</a>
 
       </div>
 
@@ -177,7 +177,15 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#login/3" translate="no">login(url, username, password)</a>
+        <a href="#get_system_id/4" translate="no">get_system_id(url, auth, fully_qualified_domain_name, use_ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#login/4" translate="no">login(url, username, password, use_ca_cert)</a>
 
       </div>
 
@@ -196,16 +204,38 @@ GUIDES
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="get_relevant_patches/3">
+<section class="detail" id="ca_cert_path/0">
 
   <div class="detail-header">
-    <a href="#get_relevant_patches/3" class="detail-link" title="Link to this function">
+    <a href="#ca_cert_path/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_relevant_patches(url, auth, system_id)</h1>
+    <h1 class="signature" translate="no">ca_cert_path()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L47" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L13" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="get_relevant_patches/4">
+
+  <div class="detail-header">
+    <a href="#get_relevant_patches/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_relevant_patches(url, auth, system_id, use_ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L66" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -220,25 +250,25 @@ GUIDES
           <pre translate="no"><span class="attribute">@spec</span> get_relevant_patches(
   url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
-  system_id :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()
-) ::
-  {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_patches | :authentication_error}</pre>
+  system_id :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  use_ca_cert :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
+) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_patches | :authentication_error}</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="get_system_id/3">
+<section class="detail" id="get_system_id/4">
 
   <div class="detail-header">
-    <a href="#get_system_id/3" class="detail-link" title="Link to this function">
+    <a href="#get_system_id/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_system_id(url, auth, fully_qualified_domain_name)</h1>
+    <h1 class="signature" translate="no">get_system_id(url, auth, fully_qualified_domain_name, use_ca_cert)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L21" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L35" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -253,7 +283,8 @@ GUIDES
           <pre translate="no"><span class="attribute">@spec</span> get_system_id(
   url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
   auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
-  fully_qualified_domain_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+  fully_qualified_domain_name :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  use_ca_cert :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
 ) ::
   {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()} | {:error, :system_id_not_found | :authentication_error}</pre>
 
@@ -262,16 +293,16 @@ GUIDES
 
   </section>
 </section>
-<section class="detail" id="login/3">
+<section class="detail" id="login/4">
 
   <div class="detail-header">
-    <a href="#login/3" class="detail-link" title="Link to this function">
+    <a href="#login/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">login(url, username, password)</h1>
+    <h1 class="signature" translate="no">login(url, username, password, use_ca_cert)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L13" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L22" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -283,8 +314,12 @@ GUIDES
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> login(url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), username :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), password :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
-  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:error, :max_login_retries_reached | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> login(
+  url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  username :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  password :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  use_ca_cert :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
+) :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | {:error, :max_login_retries_reached | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
