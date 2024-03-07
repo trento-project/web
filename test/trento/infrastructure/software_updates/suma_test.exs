@@ -40,6 +40,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         username: nil,
         password: nil,
         ca_cert: nil,
+        use_ca_cert: false,
         auth: nil
       }
 
@@ -92,6 +93,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         username: username,
         password: "<REDACTED>",
         ca_cert: "<REDACTED>",
+        use_ca_cert: true,
         auth: "<REDACTED>"
       }
 
@@ -126,6 +128,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         username: username,
         password: password,
         ca_cert: ca_cert,
+        use_ca_cert: true,
         auth: auth_cookie
       }
 
@@ -153,6 +156,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
           username: nil,
           password: nil,
           ca_cert: nil,
+          use_ca_cert: false,
           auth: nil
         }
 
@@ -210,6 +214,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         username: username,
         password: password,
         ca_cert: ca_cert,
+        use_ca_cert: true,
         auth: "pxt-session-cookie=4321"
       }
 
@@ -232,6 +237,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
         username: nil,
         password: nil,
         ca_cert: nil,
+        use_ca_cert: false,
         auth: nil
       }
 
