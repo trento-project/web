@@ -77,6 +77,7 @@ import { watchSoftwareUpdateSettings } from '@state/sagas/softwareUpdatesSetting
 import { initSocketConnection } from '@lib/network/socket';
 import processChannelEvents from '@state/channels';
 import { store } from '@state';
+import { checkApiKeyExpiration } from '@state/sagas/settings';
 
 const RESET_STATE = 'RESET_STATE';
 
@@ -90,6 +91,8 @@ function* loadSapSystemsHealthSummary() {
 
 function* initialDataFetch() {
   yield loadSapSystemsHealthSummary();
+
+  yield fork(checkApiKeyExpiration);
 
   const {
     data: { eula_accepted, premium_subscription },
