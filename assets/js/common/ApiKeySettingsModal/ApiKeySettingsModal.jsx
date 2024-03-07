@@ -40,7 +40,12 @@ function ApiKeySettingsModal({
   const [timeFormEnabled, setTimeFormEnabled] = useState(true);
 
   return (
-    <Modal title="API Key Settings" open={open} onClose={onClose}>
+    <Modal
+      title="API Key Settings"
+      className="!w-2/4"
+      open={open}
+      onClose={onClose}
+    >
       <div className="flex items-center my-5 space-x-2">
         <div className="w-1/3">
           <Label>Key Expiration</Label>
