@@ -99,14 +99,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name, ca_cert)
+       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name, ca_cert != nil)
 
   defp do_handle({:get_relevant_patches, system_id}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id, ca_cert)
+       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id, ca_cert != nil)
 
   defp process_identifier(server_name), do: {:global, identification_tuple(server_name)}
 
@@ -116,7 +116,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
     with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
            SoftwareUpdates.get_settings(),
          :ok <- maybe_write_ca_cert_file(ca_cert),
-         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert) do
+         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert != nil) do
       {:ok,
        %State{
          state

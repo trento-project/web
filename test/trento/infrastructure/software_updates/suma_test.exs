@@ -48,11 +48,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
     end
 
     test "should save existing CA certificate to local file", %{
-      settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
+      settings: %Settings{ca_cert: ca_cert}
     } do
       assert {:ok, _} = start_supervised({Suma, @test_integration_name})
-
-      base_api_url = "#{url}/rhn/manager/api"
 
       expect(SumaApiMock, :login, fn _, _, _, true -> successful_login_response() end)
 
@@ -65,14 +63,11 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
     end
 
     test "should not save CA certificate file if no cert is provided" do
-      %Settings{url: url, username: username, password: password} =
-        insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
+      insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
 
       assert {:ok, _} = start_supervised({Suma, @test_integration_name})
 
-      base_api_url = "#{url}/rhn/manager/api"
-
-      expect(SumaApiMock, :login, fn ^_, _, _, false -> successful_login_response() end)
+      expect(SumaApiMock, :login, fn _, _, _, false -> successful_login_response() end)
 
       assert :ok = Suma.setup(@test_integration_name)
 
