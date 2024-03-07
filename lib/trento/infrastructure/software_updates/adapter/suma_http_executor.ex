@@ -43,7 +43,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
       "#{base_url}/auth/login",
       payload,
       [{"Content-type", "application/json"}],
-      maybe_provide_ssl_options(use_ca_cert)
+      ssl_options(use_ca_cert)
     )
   end
 
@@ -52,7 +52,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.get(
       "#{base_url}/system/getId?name=#{fully_qualified_domain_name}",
       [{"Content-type", "application/json"}],
-      hackney: [cookie: [auth]] ++ maybe_provide_ssl_options(use_ca_cert)
+      hackney: [cookie: [auth]] ++ ssl_options(use_ca_cert)
     )
   end
 
@@ -61,12 +61,12 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.get(
       "#{base_url}/system/getRelevantErrata?sid=#{system_id}",
       [{"Content-type", "application/json"}],
-      hackney: [cookie: [auth]] ++ maybe_provide_ssl_options(use_ca_cert)
+      hackney: [cookie: [auth]] ++ ssl_options(use_ca_cert)
     )
   end
 
-  defp maybe_provide_ssl_options(true),
+  defp ssl_options(true),
     do: [ssl: [verify: :verify_peer, certfile: SumaApi.ca_cert_path()]]
 
-  defp maybe_provide_ssl_options(_), do: []
+  defp ssl_options(_), do: []
 end
