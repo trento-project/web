@@ -4,6 +4,7 @@ defmodule Trento.Hosts.HostTest do
   import Trento.Factory
 
   alias Trento.Hosts.Commands.{
+    ClearSoftwareUpdatesDiscovery,
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
@@ -35,6 +36,7 @@ defmodule Trento.Hosts.HostTest do
     ProviderUpdated,
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
+    SoftwareUpdatesDiscoveryCleared,
     SoftwareUpdatesDiscoveryCompleted
   }
 
@@ -1404,11 +1406,28 @@ defmodule Trento.Hosts.HostTest do
   end
 
   describe "software updates discovery" do
-    test "should not accept software updates discovery if a host is not registered yet" do
-      assert_error(
+    test "should not accept software updates discovery commands if a host is not registered yet" do
+      commands = [
         %CompleteSoftwareUpdatesDiscovery{host_id: Faker.UUID.v4()},
-        {:error, :host_not_registered}
-      )
+        %ClearSoftwareUpdatesDiscovery{host_id: Faker.UUID.v4()}
+      ]
+
+      for command <- commands do
+        assert_error(command, {:error, :host_not_registered})
+      end
+    end
+
+    defp get_host_health_changed_event(host_id, scenario) do
+      case Map.get(scenario, :expect_host_health_changed, true) do
+        true ->
+          build_list(1, :host_health_changed_event,
+            host_id: host_id,
+            health: Map.get(scenario, :expected_host_health)
+          )
+
+        false ->
+          []
+      end
     end
 
     test "should handle host's health change based on software updates discovery" do
@@ -1537,22 +1556,6 @@ defmodule Trento.Hosts.HostTest do
           build(:host_health_changed_event, host_id: host_id, health: initial_host_health)
         ]
 
-        relevant_patches = RelevantPatches.new!(relevant_patches_map)
-
-        expected_host_health_changed =
-          case Map.get(scenario, :expect_host_health_changed, true) do
-            true ->
-              [
-                %HostHealthChanged{
-                  host_id: host_id,
-                  health: expected_host_health
-                }
-              ]
-
-            false ->
-              []
-          end
-
         assert_events_and_state(
           initial_events,
           CompleteSoftwareUpdatesDiscovery.new!(%{
@@ -1562,14 +1565,97 @@ defmodule Trento.Hosts.HostTest do
           [
             %SoftwareUpdatesDiscoveryCompleted{
               host_id: host_id,
-              relevant_patches: relevant_patches
+              relevant_patches: RelevantPatches.new!(relevant_patches_map)
             }
-          ] ++ expected_host_health_changed,
+          ] ++ get_host_health_changed_event(host_id, scenario),
           fn host ->
             assert %Host{
                      health: ^expected_host_health,
                      software_updates_discovery_health:
                        ^expected_software_updates_discovery_health
+                   } = host
+          end
+        )
+      end
+    end
+
+    test "should ignore clearing software updates discovery when there is nothing to clear up" do
+      host_id = Faker.UUID.v4()
+
+      initial_events = [
+        build(:host_registered_event, host_id: host_id),
+        build(:heartbeat_succeded, host_id: host_id),
+        build(:host_health_changed_event, host_id: host_id, health: Health.passing())
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        ClearSoftwareUpdatesDiscovery.new!(%{host_id: host_id}),
+        [],
+        fn host ->
+          assert %Host{
+                   health: Health.passing(),
+                   software_updates_discovery_health: Health.unknown()
+                 } = host
+        end
+      )
+    end
+
+    defp relevant_patches_from_health(Health.passing()), do: %{}
+    defp relevant_patches_from_health(Health.warning()), do: %{bug_fixes: 2}
+    defp relevant_patches_from_health(Health.critical()), do: %{security_advisories: 2}
+
+    test "should clear software updates discovery result" do
+      host_id = Faker.UUID.v4()
+
+      scenarios = [
+        %{
+          initial_host_health: Health.critical(),
+          initial_software_updates_discovery_health: Health.critical(),
+          expected_host_health: Health.passing()
+        },
+        %{
+          initial_host_health: Health.critical(),
+          initial_heartbeat: :heartbeat_failed,
+          initial_software_updates_discovery_health: Health.warning(),
+          expect_host_health_changed: false,
+          expected_host_health: Health.critical()
+        },
+        %{
+          initial_host_health: Health.warning(),
+          initial_software_updates_discovery_health: Health.warning(),
+          expected_host_health: Health.passing()
+        }
+      ]
+
+      for %{
+            initial_host_health: initial_host_health,
+            initial_software_updates_discovery_health: initial_software_updates_discovery_health,
+            expected_host_health: expected_host_health
+          } = scenario <- scenarios do
+        heartbeat_factory_reference = Map.get(scenario, :initial_heartbeat, :heartbeat_succeded)
+
+        initial_events = [
+          build(:host_registered_event, host_id: host_id),
+          build(heartbeat_factory_reference, host_id: host_id),
+          build(:software_updates_discovery_completed_event,
+            host_id: host_id,
+            relevant_patches:
+              relevant_patches_from_health(initial_software_updates_discovery_health)
+          ),
+          build(:host_health_changed_event, host_id: host_id, health: initial_host_health)
+        ]
+
+        assert_events_and_state(
+          initial_events,
+          ClearSoftwareUpdatesDiscovery.new!(%{host_id: host_id}),
+          [
+            %SoftwareUpdatesDiscoveryCleared{host_id: host_id}
+          ] ++ get_host_health_changed_event(host_id, scenario),
+          fn host ->
+            assert %Host{
+                     health: ^expected_host_health,
+                     software_updates_discovery_health: Health.unknown()
                    } = host
           end
         )
@@ -1800,6 +1886,7 @@ defmodule Trento.Hosts.HostTest do
         %UpdateProvider{host_id: host_id},
         %UpdateSlesSubscriptions{host_id: host_id},
         %CompleteSoftwareUpdatesDiscovery{host_id: host_id},
+        %ClearSoftwareUpdatesDiscovery{host_id: host_id},
         %SelectHostChecks{host_id: host_id}
       ]
 

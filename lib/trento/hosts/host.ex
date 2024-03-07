@@ -66,6 +66,7 @@ defmodule Trento.Hosts.Host do
   }
 
   alias Trento.Hosts.Commands.{
+    ClearSoftwareUpdatesDiscovery,
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
@@ -97,6 +98,7 @@ defmodule Trento.Hosts.Host do
     ProviderUpdated,
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
+    SoftwareUpdatesDiscoveryCleared,
     SoftwareUpdatesDiscoveryCompleted
   }
 
@@ -541,6 +543,23 @@ defmodule Trento.Hosts.Host do
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
+  def execute(
+        %Host{host_id: host_id, software_updates_discovery_health: Health.unknown()},
+        %ClearSoftwareUpdatesDiscovery{host_id: host_id}
+      ) do
+    []
+  end
+
+  def execute(
+        %Host{host_id: host_id} = host,
+        %ClearSoftwareUpdatesDiscovery{host_id: host_id}
+      ) do
+    host
+    |> Multi.new()
+    |> Multi.execute(fn _ -> %SoftwareUpdatesDiscoveryCleared{host_id: host_id} end)
+    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
+  end
+
   def apply(
         %Host{} = host,
         %HostRegistered{
@@ -702,6 +721,16 @@ defmodule Trento.Hosts.Host do
       host
       | software_updates_discovery_health:
           compute_software_updates_discovery_health(relevant_patches)
+    }
+  end
+
+  def apply(
+        %Host{} = host,
+        %SoftwareUpdatesDiscoveryCleared{}
+      ) do
+    %Host{
+      host
+      | software_updates_discovery_health: Health.unknown()
     }
   end
 

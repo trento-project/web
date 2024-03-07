@@ -12,6 +12,7 @@ defmodule Trento.Router do
   }
 
   alias Trento.Hosts.Commands.{
+    ClearSoftwareUpdatesDiscovery,
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
@@ -54,7 +55,8 @@ defmodule Trento.Router do
              RequestHostDeregistration,
              DeregisterHost,
              CompleteHostChecksExecution,
-             CompleteSoftwareUpdatesDiscovery
+             CompleteSoftwareUpdatesDiscovery,
+             ClearSoftwareUpdatesDiscovery
            ],
            to: Hosts.Host,
            lifespan: Hosts.Lifespan
