@@ -54,9 +54,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       base_api_url = "#{url}/rhn/manager/api"
 
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, true ->
-        successful_login_response()
-      end)
+      expect(SumaApiMock, :login, fn _, _, _, true -> successful_login_response() end)
 
       assert :ok = Suma.setup(@test_integration_name)
 
@@ -74,9 +72,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       base_api_url = "#{url}/rhn/manager/api"
 
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, false ->
-        successful_login_response()
-      end)
+      expect(SumaApiMock, :login, fn ^_, _, _, false -> successful_login_response() end)
 
       assert :ok = Suma.setup(@test_integration_name)
 
@@ -90,7 +86,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
       base_api_url = "#{url}/rhn/manager/api"
 
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, true ->
+      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, _ ->
         successful_login_response()
       end)
 
@@ -124,7 +120,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       base_api_url = "#{url}/rhn/manager/api"
       auth_cookie = "pxt-session-cookie=4321"
 
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, true ->
+      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, _ ->
         successful_login_response()
       end)
 
