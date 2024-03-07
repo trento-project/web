@@ -10,7 +10,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.State do
     :password,
     :ca_cert,
     :auth,
-    use_ca_cert: false,
+    use_ca_cert: false
   ]
 
   @type t :: %{
