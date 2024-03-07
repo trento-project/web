@@ -36,7 +36,8 @@ defmodule Trento.Factory do
     HostSaptuneHealthChanged,
     HostTombstoned,
     SaptuneStatusUpdated,
-    SlesSubscriptionsUpdated
+    SlesSubscriptionsUpdated,
+    SoftwareUpdatesDiscoveryCompleted
   }
 
   alias Trento.SapSystems.Events.{
@@ -760,6 +761,13 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       saptune_health: Health.passing()
     }
+  end
+
+  def software_updates_discovery_completed_event_factory do
+    SoftwareUpdatesDiscoveryCompleted.new!(%{
+      host_id: Faker.UUID.v4(),
+      relevant_patches: %{}
+    })
   end
 
   def host_health_changed_event_factory do
