@@ -129,7 +129,12 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
     end
   end
 
-  defp write_ca_cert_file(nil), do: File.rm(SumaApi.ca_cert_path())
+  defp write_ca_cert_file(nil) do
+    case File.rm_rf(SumaApi.ca_cert_path()) do
+      {:ok, _} -> :ok
+      _ -> :error
+    end
+  end
 
   defp write_ca_cert_file(ca_cert) do
     SumaApi.ca_cert_path()
