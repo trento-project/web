@@ -201,7 +201,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
     } do
       {:ok, _} = start_supervised({Suma, @test_integration_name})
 
-      expect(SumaApiMock, :login, fn _, _, _ -> successful_login_response() end)
+      expect(SumaApiMock, :login, fn _, _, _, _ -> successful_login_response() end)
 
       assert :ok = Suma.setup(@test_integration_name)
 
