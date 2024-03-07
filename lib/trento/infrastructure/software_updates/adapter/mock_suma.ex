@@ -37,4 +37,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
            update_date: "2024-02-26"
          }
        ]}
+
+  def clear, do: :ok
 end
