@@ -56,6 +56,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> process_identifier
       |> GenServer.call({:get_relevant_patches, system_id})
 
+  @impl Trento.SoftwareUpdates.Discovery.Gen
+  def get_upgradable_packages(system_id, server_name \\ @default_name),
+    do:
+      server_name
+      |> process_identifier
+      |> GenServer.call({:get_upgradable_packages, system_id})
+
   @impl GenServer
   def handle_call(:setup, _from, %State{} = state) do
     case setup_auth(state) do
@@ -108,6 +115,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
          use_ca_cert: use_ca_cert
        }),
        do: SumaApi.get_relevant_patches(url, auth_cookie, system_id, use_ca_cert)
+
+  defp do_handle({:get_upgradable_packages, system_id}, %State{
+         url: url,
+         auth: auth_cookie,
+         use_ca_cert: use_ca_cert
+       }),
+       do: SumaApi.get_upgradable_packages(url, auth_cookie, system_id, use_ca_cert)
 
   defp process_identifier(server_name), do: {:global, identification_tuple(server_name)}
 

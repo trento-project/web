@@ -362,7 +362,11 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
       expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
 
       expect(SumaApiMock, :get_relevant_patches, 1, fn _, _, ^system_id, _ ->
-        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 200,
+           body: Jason.encode!(suma_response_body)
+         }}
       end)
 
       assert {:ok,
@@ -387,6 +391,39 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
                 }
               ]} =
                Suma.get_relevant_patches(system_id, @test_integration_name)
+    end
+
+    test "should get upgradable packages for a given system ID" do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      system_id = 1_000_010_001
+
+      %{result: upgradable_packages} =
+        suma_response_body = %{success: true, result: build_list(10, :upgradable_package)}
+
+      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
+
+      expect(SumaApiMock, :get_upgradable_packages, 1, fn _, _, ^system_id, _ ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(suma_response_body)}}
+      end)
+
+      assert {:ok, ^upgradable_packages} =
+               Suma.get_upgradable_packages(system_id, @test_integration_name)
+    end
+
+    test "should return a proper error when getting upgradable packages fails" do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      system_id = 1_000_010_001
+
+      expect(SumaApiMock, :login, 1, fn _, _, _, _ -> successful_login_response() end)
+
+      expect(SumaApiMock, :get_upgradable_packages, 1, fn _, _, ^system_id, _ ->
+        {:error, %HTTPoison.Response{status_code: 500, body: Jason.encode!(%{})}}
+      end)
+
+      assert {:error, :error_getting_packages} =
+               Suma.get_upgradable_packages(system_id, @test_integration_name)
     end
 
     test "should handle expired authentication" do

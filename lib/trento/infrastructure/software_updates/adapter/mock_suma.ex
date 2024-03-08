@@ -39,5 +39,34 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
        ]}
 
   @impl true
+  def get_upgradable_packages(_system_id),
+    do:
+      {:ok,
+       [
+         %{
+           name: "elixir",
+           arch: "x86_64",
+           from_version: "1.15.7",
+           from_release: "3",
+           from_epoch: "0",
+           to_version: "1.16.2",
+           to_release: "1",
+           to_epoch: "0",
+           to_package_id: "92348112636"
+         },
+         %{
+           name: "systemd",
+           arch: "x86_64",
+           from_version: "254",
+           from_release: "1",
+           from_epoch: "",
+           to_version: "255",
+           to_release: "1",
+           to_epoch: "0",
+           to_package_id: "8912349843"
+         }
+       ]}
+
+  @impl true
   def clear, do: :ok
 end

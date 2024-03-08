@@ -8,6 +8,8 @@ defmodule Trento.Factory do
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
 
+  alias Faker.Random.Elixir, as: RandomElixir
+
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     AscsErsClusterNode,
@@ -819,5 +821,34 @@ defmodule Trento.Factory do
       conflict_target: :id,
       on_conflict: :replace_all
     )
+  end
+
+  def relevant_patch_factory do
+    %{
+      date: Faker.Date.backward(30),
+      advisory_name: String.downcase(Faker.Pokemon.name()),
+      advisory_type:
+        Faker.Util.pick(["Bug Fix Advisory", "Security Advisory", "Product Enhancement"]),
+      advisory_status: "stable",
+      id: RandomElixir.random_between(2000, 5000),
+      advisory_synopsis: Faker.Lorem.words(30),
+      update_date: Faker.Date.backward(30)
+    }
+  end
+
+  def upgradable_package_factory do
+    package_name = Faker.Pokemon.name()
+
+    %{
+      name: String.downcase(package_name),
+      arch: Faker.Util.pick(["x86_64", "i586", "aarch64"]),
+      from_version: Faker.App.version(),
+      from_release: "#{RandomElixir.random_between(0, 100)}",
+      from_epoch: "#{RandomElixir.random_between(0, 50)}",
+      to_version: Faker.App.version(),
+      to_release: "#{RandomElixir.random_between(0, 100)}",
+      to_epoch: "#{RandomElixir.random_between(0, 50)}",
+      to_package_id: "#{RandomElixir.random_between(0, 1000)}"
+    }
   end
 end

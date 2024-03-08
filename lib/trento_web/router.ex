@@ -117,6 +117,10 @@ defmodule TrentoWeb.Router do
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
 
+      if Application.compile_env!(:trento, :suse_manager_enabled) do
+        get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
+      end
+
       post "/clusters/:id/tags", TagsController, :add_tag,
         assigns: %{resource_type: :cluster},
         as: :clusters_tagging
@@ -148,16 +152,16 @@ defmodule TrentoWeb.Router do
         post "/accept_eula", SettingsController, :accept_eula
         get "/api_key", SettingsController, :get_api_key_settings
         patch "/api_key", SettingsController, :update_api_key_settings
+
+        if Application.compile_env!(:trento, :suse_manager_enabled) do
+          resources "/suma_credentials", SUMACredentialsController,
+            only: [:show, :create, :update, :delete],
+            singleton: true
+        end
       end
 
       # Deprecated
       post "/accept_eula", SettingsController, :accept_eula
-
-      if Application.compile_env!(:trento, :suse_manager_enabled) do
-        resources "/settings/suma_credentials", SUMACredentialsController,
-          only: [:show, :create, :update, :delete],
-          singleton: true
-      end
 
       scope "/charts" do
         pipe_through :charts_feature
