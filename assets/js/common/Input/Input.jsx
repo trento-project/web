@@ -19,6 +19,7 @@ function Input({
   allowClear = false,
   disabled = false,
   onChange = () => {},
+  ...props
 }) {
   const hasPrefix = !!prefix;
   const clearIcon = <EOS_CANCEL_OUTLINED className="inline" size="l" />;
@@ -53,6 +54,7 @@ function Input({
           : false
       }
       onChange={onChange}
+      {...props}
     />
   );
 }
