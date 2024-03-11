@@ -134,14 +134,17 @@ function SettingsPage() {
                     )}
                   </code>
                 </div>
-                {apiKeyExpiration && (
+                {apiKey && (
                   <div className="flex space-x-2 my-4">
                     <EOS_INFO_OUTLINED size="20" className="mt-2" />
 
                     <div className="mt-2 text-gray-600 text-sm">
-                      {' '}
-                      Key Will Expire{' '}
-                      {format(parseISO(apiKeyExpiration), 'd LLL yyyy')}
+                      {apiKeyExpiration
+                        ? `Key Will Expire ${format(
+                            parseISO(apiKeyExpiration),
+                            'd LLL yyyy'
+                          )}`
+                        : 'Key will never expire'}
                     </div>
                     <div className="!ml-auto">
                       <Button

@@ -105,6 +105,7 @@ function ApiKeySettingsModal({
               className="h-3/4"
               type="number"
               disabled={!timeFormEnabled}
+              min="0"
               error={quantityError}
               onChange={({ target: { value } }) => {
                 setTimeQuantity(parseInt(value, 10));
