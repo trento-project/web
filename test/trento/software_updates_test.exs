@@ -1,6 +1,8 @@
 defmodule Trento.SoftwareUpdates.SettingsTest do
   use ExUnit.Case
+  use Trento.CommandedCase
   use Trento.DataCase
+  use Trento.SoftwareUpdates.DiscoveryCase
 
   import Mox
 
@@ -432,6 +434,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
     test "should start discovery if settings are configured" do
       insert_software_updates_settings()
+      insert_list(4, :host)
 
       assert :ok == SoftwareUpdates.run_discovery()
     end
