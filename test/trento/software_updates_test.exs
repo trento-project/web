@@ -11,6 +11,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
   alias Trento.SoftwareUpdates
   alias Trento.SoftwareUpdates.Settings
 
+  setup :verify_on_exit!
+
   describe "retrieving software updates settings" do
     test "should return an error when settings are not available" do
       assert {:error, :settings_not_configured} == SoftwareUpdates.get_settings()
@@ -437,6 +439,17 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       insert_list(4, :host)
 
       assert :ok == SoftwareUpdates.run_discovery()
+    end
+
+    test "should trigger clearing of software updates discoveries when clearing settings" do
+      insert_software_updates_settings()
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 3, fn -> :ok end)
+
+      Enum.each(1..3, fn _ ->
+        assert :ok == SoftwareUpdates.clear_settings()
+        assert {:error, :settings_not_configured} == SoftwareUpdates.get_settings()
+      end)
     end
   end
 end
