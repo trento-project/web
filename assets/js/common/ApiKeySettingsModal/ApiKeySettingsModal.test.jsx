@@ -9,8 +9,6 @@ import {
   getDay,
   addYears,
   addDays,
-  parseISO,
-  format,
 } from 'date-fns';
 import { truncate } from 'lodash';
 import ApiKeySettingsModal from './ApiKeySettingsModal';

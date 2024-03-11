@@ -5,6 +5,8 @@ import { call, put } from 'redux-saga/effects';
 import HealthIcon from '@common/HealthIcon';
 import { notify, dismissableNotify } from '@state/notifications';
 
+export const API_KEY_EXPIRATION_NOTIFICATION_ID = 'api-key-expiration-toast';
+
 export function* checkApiKeyExpiration() {
   const {
     data: { expire_at },
@@ -25,7 +27,7 @@ export function* checkApiKeyExpiration() {
         text: 'API Key has expired. Go to Settings to issue a new key',
         icon: <HealthIcon health="critical" />,
         duration: Infinity,
-        id: 'api-key-expiration-toast',
+        id: API_KEY_EXPIRATION_NOTIFICATION_ID,
       })
     );
   } else {
@@ -34,7 +36,7 @@ export function* checkApiKeyExpiration() {
         text: `API Key expires in ${expirationDays} days`,
         icon: <HealthIcon health="warning" />,
         duration: Infinity,
-        id: 'api-key-expiration-toast',
+        id: API_KEY_EXPIRATION_NOTIFICATION_ID,
       })
     );
   }

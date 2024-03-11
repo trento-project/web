@@ -10,10 +10,25 @@ import {
   renderWithRouter,
 } from '@lib/test-utils';
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
+import { networkClient } from '@lib/network';
+import MockAdapter from 'axios-mock-adapter';
 
 import SettingsPage from './SettingsPage';
 
+const axiosMock = new MockAdapter(networkClient);
+
 describe('Settings Page', () => {
+  afterEach(() => {
+    axiosMock.reset();
+  });
+
+  beforeEach(() => {
+    axiosMock.onGet('/api/v1/settings/api_key').reply(200, {
+      expire_at: new Date().toISOString,
+      generated_api_key: 'api_key',
+    });
+  });
+
   it('should render a loading box while fetching settings', async () => {
     const [StatefulSettings] = withState(<SettingsPage />, {
       ...defaultInitialState,
