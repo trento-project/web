@@ -443,6 +443,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
     test "should trigger clearing of software updates discoveries when clearing settings" do
       insert_software_updates_settings()
+      insert_list(4, :host)
 
       expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 3, fn -> :ok end)
 

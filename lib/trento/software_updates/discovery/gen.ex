@@ -9,5 +9,5 @@ defmodule Trento.SoftwareUpdates.Discovery.Gen do
   @callback get_relevant_patches(system_id :: pos_integer()) ::
               {:ok, [map]} | {:error, any}
 
-  @callback clear() :: :ok | {:error, any}
+  @callback clear() :: :ok
 end
