@@ -144,7 +144,7 @@ function ApiKeySettingsModal({
               </div>
               <button
                 type="button"
-                aria-label="generate api key"
+                aria-label="copy api key"
                 onClick={() => {
                   window.navigator.clipboard.writeText(generatedApiKey);
                 }}
