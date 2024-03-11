@@ -4,7 +4,12 @@ defmodule Trento.SoftwareUpdates.Discovery do
   """
 
   alias Trento.Hosts
-  alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
+
+  alias Trento.Hosts.Commands.{
+    ClearSoftwareUpdatesDiscovery,
+    CompleteSoftwareUpdatesDiscovery
+  }
+
   alias Trento.Hosts.Projections.HostReadModel
 
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
@@ -21,6 +26,9 @@ defmodule Trento.SoftwareUpdates.Discovery do
   def get_relevant_patches(system_id),
     do: adapter().get_relevant_patches(system_id)
 
+  @impl true
+  def clear, do: adapter().clear()
+
   @spec discover_software_updates :: {:ok, {list(), list()}}
   def discover_software_updates,
     do:
@@ -31,6 +39,23 @@ defmodule Trento.SoftwareUpdates.Discovery do
          {:ok, _, _, _} -> true
          _ -> false
        end)}
+
+  @spec clear_software_updates_discoveries :: :ok | {:error, any()}
+  def clear_software_updates_discoveries do
+    hosts = Hosts.get_all_hosts()
+
+    if !Enum.empty?(hosts) do
+      Enum.each(hosts, fn %HostReadModel{id: host_id} ->
+        %{host_id: host_id}
+        |> ClearSoftwareUpdatesDiscovery.new!()
+        |> commanded().dispatch()
+      end)
+
+      clear()
+    end
+
+    :ok
+  end
 
   defp discover_host_software_updates(%HostReadModel{
          id: host_id,
