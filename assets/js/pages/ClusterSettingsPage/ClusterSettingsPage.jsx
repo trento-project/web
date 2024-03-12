@@ -31,7 +31,7 @@ import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader'
 
 const catalogBanner = {
   [UNKNOWN_PROVIDER]: (
-    <Banner>
+    <Banner type="warning">
       The following catalog is valid for on-premise bare metal platforms.
       <br />
       If you are running your HANA cluster on a different platform, please use

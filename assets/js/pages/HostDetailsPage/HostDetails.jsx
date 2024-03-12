@@ -186,7 +186,7 @@ function HostDetails({
           </div>
         </div>
         {versionWarningMessage && (
-          <Banner>{versionWarningMessage}</Banner>
+          <Banner type="warning">{versionWarningMessage}</Banner>
         )}
         <div className="flex xl:flex-row flex-col">
           <HostSummary

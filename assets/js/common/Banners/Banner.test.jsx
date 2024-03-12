@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import Banner from './Banner';
 
 describe('Banner', () => {
-  it('should display a warning banner with its text and icon', () => {
+  it('should display a banner with its text and icon', () => {
     render(
       <Banner>
         Warning!
@@ -14,8 +14,8 @@ describe('Banner', () => {
       </Banner>
     );
 
-    expect(screen.getByTestId('warning-banner')).toHaveTextContent(
-      'Warning!You should have a look on this!'
+    expect(screen.getByTestId('banner')).toHaveTextContent(
+      'You should have a look on this!'
     );
   });
 });

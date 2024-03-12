@@ -12,7 +12,7 @@ import TargetInfoBox from './TargetInfoBox';
 
 export const clusterBanner = {
   [UNKNOWN_PROVIDER]: (
-    <Banner>
+    <Banner type="warning">
       The following results are valid for on-premise bare metal platforms.
       <br />
       If you are running your HANA cluster on a different platform, please use
