@@ -57,16 +57,19 @@ defmodule Trento.SoftwareUpdates do
 
   @spec clear_settings :: :ok
   def clear_settings do
-    Repo.update_all(Settings,
-      set: [
-        url: nil,
-        username: nil,
-        password: nil,
-        ca_cert: nil,
-        ca_uploaded_at: nil,
-        updated_at: DateTime.utc_now()
-      ]
-    )
+    {1, _} =
+      Repo.update_all(Settings,
+        set: [
+          url: nil,
+          username: nil,
+          password: nil,
+          ca_cert: nil,
+          ca_uploaded_at: nil,
+          updated_at: DateTime.utc_now()
+        ]
+      )
+
+    Discovery.clear_software_updates_discoveries()
 
     :ok
   end

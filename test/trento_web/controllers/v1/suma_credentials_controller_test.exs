@@ -1,5 +1,6 @@
 defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
   use TrentoWeb.ConnCase, async: true
+  use Trento.SoftwareUpdates.DiscoveryCase
 
   import OpenApiSpex.TestAssertions
 

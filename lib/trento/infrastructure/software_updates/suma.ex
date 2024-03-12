@@ -35,27 +35,28 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> process_identifier
       |> GenServer.call(:setup)
 
+  @impl Trento.SoftwareUpdates.Discovery.Gen
   def clear(server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
       |> GenServer.call(:clear)
 
-  @impl true
+  @impl Trento.SoftwareUpdates.Discovery.Gen
   def get_system_id(fully_qualified_domain_name, server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
       |> GenServer.call({:get_system_id, fully_qualified_domain_name})
 
-  @impl true
+  @impl Trento.SoftwareUpdates.Discovery.Gen
   def get_relevant_patches(system_id, server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
       |> GenServer.call({:get_relevant_patches, system_id})
 
-  @impl true
+  @impl GenServer
   def handle_call(:setup, _from, %State{} = state) do
     case setup_auth(state) do
       {:ok, new_state} ->
@@ -66,14 +67,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
     end
   end
 
-  @impl true
+  @impl GenServer
   def handle_call(:clear, _, _), do: {:reply, :ok, %State{}}
 
-  @impl true
+  @impl GenServer
   def handle_call(request, _, %State{auth: nil} = state),
     do: authenticate_and_handle(request, state)
 
-  @impl true
+  @impl GenServer
   def handle_call(request, _, %State{} = state) do
     case handle_result = do_handle(request, state) do
       {:error, :authentication_error} ->

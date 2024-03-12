@@ -21,7 +21,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
          %{
            date: "2024-02-27",
            advisory_name: "SUSE-15-SP4-2024-630",
-           advisory_type: "Bug Fix Advisory",
+           advisory_type: :bugfix,
            advisory_status: "stable",
            id: 4182,
            advisory_synopsis: "Recommended update for cloud-netconfig",
@@ -30,7 +30,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
          %{
            date: "2024-02-26",
            advisory_name: "SUSE-15-SP4-2024-619",
-           advisory_type: "Security Advisory",
+           advisory_type: :security_advisory,
            advisory_status: "stable",
            id: 4174,
            advisory_synopsis: "important: Security update for java-1_8_0-ibm",
@@ -38,5 +38,6 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
          }
        ]}
 
+  @impl true
   def clear, do: :ok
 end

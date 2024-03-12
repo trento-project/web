@@ -6,12 +6,18 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
   import Trento.Factory
 
-  alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
+  alias Trento.Hosts.Commands.{
+    ClearSoftwareUpdatesDiscovery,
+    CompleteSoftwareUpdatesDiscovery
+  }
+
   alias Trento.Hosts.ValueObjects.RelevantPatches
   alias Trento.SoftwareUpdates.Discovery
   alias Trento.SoftwareUpdates.Discovery.Mock, as: SoftwareUpdatesDiscoveryMock
 
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
+
+  setup :verify_on_exit!
 
   describe "Discovering software updates" do
     test "should handle empty hosts list" do
@@ -243,6 +249,38 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
 
       assert {:error, host_id2, {:error, :some_error}} in errored_discoveries
       assert {:error, host_id4, :host_without_fqdn} in errored_discoveries
+    end
+  end
+
+  describe "Clearing up software updates discoveries" do
+    test "should pass through an empty hosts list" do
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 0, fn -> :ok end)
+
+      assert :ok = Discovery.clear_software_updates_discoveries()
+    end
+
+    test "should clear software updates for all registered hosts in a best effort fashion" do
+      %{id: host_id1} = insert(:host)
+      %{id: host_id2} = insert(:host)
+      %{id: host_id3} = insert(:host, fully_qualified_domain_name: nil)
+
+      expect(
+        Trento.Commanded.Mock,
+        :dispatch,
+        3,
+        fn %ClearSoftwareUpdatesDiscovery{host_id: host_id} ->
+          assert host_id in [host_id1, host_id2, host_id3]
+
+          case host_id do
+            ^host_id2 -> {:error, :some_error}
+            _ -> :ok
+          end
+        end
+      )
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
+
+      assert :ok = Discovery.clear_software_updates_discoveries()
     end
   end
 end
