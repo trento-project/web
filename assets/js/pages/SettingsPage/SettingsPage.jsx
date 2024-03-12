@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
+import { format, parseISO } from 'date-fns';
 import classNames from 'classnames';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { logError } from '@lib/log';
@@ -29,7 +30,6 @@ import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
 
 import SuseManagerConfig from '@common/SuseManagerConfig';
-import { format, parseISO } from 'date-fns';
 
 function SettingsPage() {
   const dispatch = useDispatch();
@@ -47,25 +47,28 @@ function SettingsPage() {
         ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
           setApiKey(newApiKey);
           setApiKeyExpiration(expireAt);
-          setLoading(false);
         }
       )
       .catch((error) => {
         logError(error);
+      })
+      .finally(() => {
         setLoading(false);
       });
 
   const saveApiKeySettings = (expiration) => {
     setLoading(true);
-    patch('/settings/api_key', { expire_at: expiration }).then(
-      ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
-        setApiKey(newApiKey);
-        setApiKeyExpiration(expireAt);
+    patch('/settings/api_key', { expire_at: expiration })
+      .then(
+        ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
+          setApiKey(newApiKey);
+          setApiKeyExpiration(expireAt);
+          dispatch(dismissNotification(API_KEY_EXPIRATION_NOTIFICATION_ID));
+        }
+      )
+      .finally(() => {
         setLoading(false);
-        setApiKeySettingsModalOpen(false);
-        dispatch(dismissNotification(API_KEY_EXPIRATION_NOTIFICATION_ID));
-      }
-    );
+      });
   };
 
   useEffect(() => {
@@ -234,7 +237,7 @@ function SettingsPage() {
         open={apiKeySettingModalOpen}
         loading={loading}
         onClose={() => setApiKeySettingsModalOpen(false)}
-        onSave={({ apiKeyExpiration: generatedApiKeyExpiration }) =>
+        onGenerate={({ apiKeyExpiration: generatedApiKeyExpiration }) =>
           saveApiKeySettings(generatedApiKeyExpiration)
         }
       />

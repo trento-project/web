@@ -83,12 +83,12 @@ describe('ApiKeySettingsModal', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should return on onSave the correct expiration date when months are selected with a valid quantity', async () => {
+    it('should return on onGenerate the correct expiration date when months are selected with a valid quantity', async () => {
       const user = userEvent.setup();
-      const onSave = jest.fn();
+      const onGenerate = jest.fn();
 
       await act(async () => {
-        render(<ApiKeySettingsModal open onSave={onSave} />);
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '20');
@@ -98,7 +98,7 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
       const [{ apiKeyExpiration: generatedApiKeyExpiration }] =
-        onSave.mock.lastCall;
+        onGenerate.mock.lastCall;
 
       const expectedExpirationDate = addMonths(new Date(), 20);
       expect(getMonth(generatedApiKeyExpiration)).toEqual(
@@ -114,12 +114,12 @@ describe('ApiKeySettingsModal', () => {
       );
     });
 
-    it('should return on onSave the correct expiration date when years are selected with a valid quantity', async () => {
+    it('should return on onGenerate the correct expiration date when years are selected with a valid quantity', async () => {
       const user = userEvent.setup();
-      const onSave = jest.fn();
+      const onGenerate = jest.fn();
 
       await act(async () => {
-        render(<ApiKeySettingsModal open onSave={onSave} />);
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '2');
@@ -132,7 +132,7 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
       const [{ apiKeyExpiration: generatedApiKeyExpiration }] =
-        onSave.mock.lastCall;
+        onGenerate.mock.lastCall;
 
       const expectedExpirationDate = addYears(new Date(), 2);
       expect(getMonth(generatedApiKeyExpiration)).toEqual(
@@ -148,12 +148,12 @@ describe('ApiKeySettingsModal', () => {
       );
     });
 
-    it('should return on onSave the correct expiration date when days are selected with a valid quantity', async () => {
+    it('should return on onGenerate the correct expiration date when days are selected with a valid quantity', async () => {
       const user = userEvent.setup();
-      const onSave = jest.fn();
+      const onGenerate = jest.fn();
 
       await act(async () => {
-        render(<ApiKeySettingsModal open onSave={onSave} />);
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.type(screen.getByRole('spinbutton'), '20');
@@ -166,7 +166,7 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
       const [{ apiKeyExpiration: generatedApiKeyExpiration }] =
-        onSave.mock.lastCall;
+        onGenerate.mock.lastCall;
 
       const expectedExpirationDate = addDays(new Date(), 20);
       expect(getMonth(generatedApiKeyExpiration)).toEqual(
@@ -203,19 +203,19 @@ describe('ApiKeySettingsModal', () => {
       expect(screen.getByRole('button', { name: 'months' })).toBeDisabled();
     });
 
-    it('should return on onSave null expiration date when the generation form is disabled by the user', async () => {
+    it('should return on onGenerate null expiration date when the generation form is disabled by the user', async () => {
       const user = userEvent.setup();
-      const onSave = jest.fn();
+      const onGenerate = jest.fn();
 
       await act(async () => {
-        render(<ApiKeySettingsModal open onSave={onSave} />);
+        render(<ApiKeySettingsModal open onGenerate={onGenerate} />);
       });
 
       await user.click(screen.getByRole('switch'));
 
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
-      expect(onSave).toBeCalledWith({ apiKeyExpiration: null });
+      expect(onGenerate).toBeCalledWith({ apiKeyExpiration: null });
     });
   });
   describe('Generated api key display', () => {

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   addDays,
   addMonths,
@@ -7,7 +8,6 @@ import {
   setHours,
   setMinutes,
 } from 'date-fns';
-import React, { useState } from 'react';
 import { noop, truncate } from 'lodash';
 import { EOS_CONTENT_COPY, EOS_INFO_OUTLINED } from 'eos-icons-react';
 import Button from '@common/Button';
@@ -38,7 +38,7 @@ const availableTimeOptions = [
 function ApiKeySettingsModal({
   open = false,
   loading = false,
-  onSave = noop,
+  onGenerate = noop,
   onClose = noop,
   generatedApiKey,
   generatedApiKeyExpiration,
@@ -48,11 +48,11 @@ function ApiKeySettingsModal({
   const [timeQuantityType, setTimeQuantityType] = useState(timeOptions[0]);
 
   const [quantityError, setQuantityError] = useState(false);
-  const [timeFormEnabled, setTimeFormEnabled] = useState(true);
+  const [apiKeyNeverExpires, setapiKeyNeverExpires] = useState(false);
 
-  const saveFormState = () => {
-    if (!timeFormEnabled) {
-      onSave({ apiKeyExpiration: null });
+  const generateApiKeyExpiration = () => {
+    if (apiKeyNeverExpires) {
+      onGenerate({ apiKeyExpiration: null });
       return;
     }
     if (timeQuantity === 0 || !timeQuantity) {
@@ -64,7 +64,7 @@ function ApiKeySettingsModal({
     );
     const apiKeyExpiration = timeQuantitySettings.timeGenerator(timeQuantity);
 
-    onSave({ apiKeyExpiration: normalizeExpiration(apiKeyExpiration) });
+    onGenerate({ apiKeyExpiration: normalizeExpiration(apiKeyExpiration) });
   };
 
   return (
@@ -87,9 +87,9 @@ function ApiKeySettingsModal({
           </div>
 
           <Switch
-            selected={!timeFormEnabled}
+            selected={apiKeyNeverExpires}
             onChange={() => {
-              setTimeFormEnabled((enabled) => !enabled);
+              setapiKeyNeverExpires((enabled) => !enabled);
               setQuantityError(false);
             }}
           />
@@ -105,7 +105,7 @@ function ApiKeySettingsModal({
               className="!h-8"
               type="number"
               min="0"
-              disabled={!timeFormEnabled}
+              disabled={apiKeyNeverExpires}
               error={quantityError}
               onChange={(value) => {
                 setTimeQuantity(parseInt(value, 10));
@@ -117,14 +117,14 @@ function ApiKeySettingsModal({
             <Select
               optionsName=""
               options={timeOptions}
-              disabled={!timeFormEnabled}
+              disabled={apiKeyNeverExpires}
               value={timeQuantityType}
               onChange={(value) => setTimeQuantityType(value)}
             />
           </div>
           <div className="w-1/6 h-4/5">
             <Button
-              onClick={() => saveFormState()}
+              onClick={() => generateApiKeyExpiration()}
               disabled={quantityError || loading}
             >
               Generate
@@ -158,7 +158,7 @@ function ApiKeySettingsModal({
 
               <div className="mt-2 text-gray-600 text-sm">
                 {' '}
-                Key Will Expire{' '}
+                Key will expire{' '}
                 {format(parseISO(generatedApiKeyExpiration), 'd LLL yyyy')}
               </div>
             </div>
