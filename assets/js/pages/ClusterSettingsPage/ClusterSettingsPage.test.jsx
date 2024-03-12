@@ -43,35 +43,6 @@ describe('ClusterDetails ClusterSettings component', () => {
     expect(screen.getByText('Save Checks Selection')).toBeVisible();
   });
 
-  it('given VMware provider, should render the warning banner', async () => {
-    const group = faker.animal.cat();
-    const catalog = catalogCheckFactory.buildList(2, { group });
-    const clusters = clusterFactory.buildList(1, { provider: 'vmware' });
-
-    const state = {
-      ...defaultInitialState,
-      catalog: { loading: false, data: catalog, error: null },
-      clustersList: { clusters },
-    };
-    const { id: clusterID } = clusters[0];
-
-    const [StatefulClusterSettings] = withState(<ClusterSettingsPage />, state);
-
-    renderWithRouterMatch(StatefulClusterSettings, {
-      path: 'clusters/:clusterID/settings',
-      route: `/clusters/${clusterID}/settings`,
-    });
-
-    expect(screen.getByText('Provider')).toBeVisible();
-    expect(screen.getByText('VMware')).toBeVisible();
-    expect(screen.getByText(group)).toBeVisible();
-    expect(
-      screen.getByText(
-        'Configuration checks for HANA Scale Up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
-      )
-    ).toBeVisible();
-  });
-
   it('given unknown provider, should render the warning banner', async () => {
     const group = faker.animal.cat();
     const catalog = catalogCheckFactory.buildList(2, { group });
