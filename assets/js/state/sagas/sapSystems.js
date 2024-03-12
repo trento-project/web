@@ -15,7 +15,6 @@ import {
   DEREGISTER_APPLICATION_INSTANCE,
   appendSapsystem,
   updateSapSystemHealth,
-  upsertDatabaseInstancesToSapSystem,
   upsertApplicationInstances,
   removeApplicationInstance,
   updateApplicationInstanceHost,
@@ -107,12 +106,8 @@ export function* sapSystemDeregistered({ payload: { id, sid } }) {
 export function* sapSystemRestored({ payload }) {
   yield put(appendSapsystem(payload));
 
-  const {
-    database_instances: databaseInstances,
-    application_instances: applicationInstances,
-  } = payload;
+  const { application_instances: applicationInstances } = payload;
 
-  yield put(upsertDatabaseInstancesToSapSystem(databaseInstances));
   yield put(upsertApplicationInstances(applicationInstances));
 
   yield put(

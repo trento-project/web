@@ -24,16 +24,6 @@ import {
   unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
 
-import {
-  upsertDatabaseInstancesToSapSystem,
-  removeDatabaseInstanceFromSapSystem,
-  updateSAPSystemDatabaseInstanceHealth,
-  updateSAPSystemDatabaseInstanceSystemReplication,
-  setDatabaseInstanceDeregisteringToSAPSystem,
-  unsetDatabaseInstanceDeregisteringToSAPSystem,
-  updateDatabaseInstanceAbsentToSAPSystem,
-} from '@state/sapSystems';
-
 import { getDatabase } from '@state/selectors/sapSystem';
 import { notify } from '@state/notifications';
 
@@ -62,7 +52,6 @@ function* databaseHealthChanged({ payload }) {
 
 function* databaseInstanceRegistered({ payload }) {
   yield put(upsertDatabaseInstances([payload]));
-  yield put(upsertDatabaseInstancesToSapSystem([payload]));
   yield put(
     notify({
       text: `A new Database instance, ${payload.sid}, has been discovered.`,
@@ -84,7 +73,6 @@ export function* databaseDeregistered({ payload }) {
 export function* databaseRestored({ payload }) {
   yield put(appendDatabase(payload));
   yield put(upsertDatabaseInstances(payload.database_instances));
-  yield put(upsertDatabaseInstancesToSapSystem(payload.database_instances));
   yield put(
     notify({
       text: `The database ${payload.sid} has been restored.`,
@@ -95,7 +83,6 @@ export function* databaseRestored({ payload }) {
 
 export function* databaseInstanceDeregistered({ payload }) {
   yield put(removeDatabaseInstance(payload));
-  yield put(removeDatabaseInstanceFromSapSystem(payload));
   yield put(
     notify({
       text: `The database instance ${payload.instance_number} has been deregistered from ${payload.sid}.`,
@@ -106,17 +93,14 @@ export function* databaseInstanceDeregistered({ payload }) {
 
 function* databaseInstanceHealthChanged({ payload }) {
   yield put(updateDatabaseInstanceHealth(payload));
-  yield put(updateSAPSystemDatabaseInstanceHealth(payload));
 }
 
 function* databaseInstanceSystemReplicationChanged({ payload }) {
   yield put(updateDatabaseInstanceSystemReplication(payload));
-  yield put(updateSAPSystemDatabaseInstanceSystemReplication(payload));
 }
 
 export function* databaseInstanceAbsentAtChanged({ payload }) {
   yield put(updateDatabaseInstanceAbsentAt(payload));
-  yield put(updateDatabaseInstanceAbsentToSAPSystem(payload));
   const { sid, absent_at, instance_number } = payload;
   yield put(
     notify({
@@ -133,7 +117,6 @@ export function* deregisterDatabaseInstance({
   payload: { sid, sap_system_id, host_id, instance_number },
 }) {
   yield put(setDatabaseInstanceDeregistering(payload));
-  yield put(setDatabaseInstanceDeregisteringToSAPSystem(payload));
   try {
     yield call(
       del,
@@ -148,7 +131,6 @@ export function* deregisterDatabaseInstance({
     );
   } finally {
     yield put(unsetDatabaseInstanceDeregistering(payload));
-    yield put(unsetDatabaseInstanceDeregisteringToSAPSystem(payload));
   }
 }
 
