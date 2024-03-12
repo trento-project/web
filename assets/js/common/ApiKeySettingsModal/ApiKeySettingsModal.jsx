@@ -12,7 +12,7 @@ import { noop, truncate } from 'lodash';
 import { EOS_CONTENT_COPY, EOS_INFO_OUTLINED } from 'eos-icons-react';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
-import Input from '@common/Input';
+import { InputNumber } from '@common/Input';
 import Label from '@common/Label';
 import Select from '@common/Select';
 import Switch from '@common/Switch';
@@ -99,14 +99,15 @@ function ApiKeySettingsModal({
             <Label>Key Expiration</Label>
           </div>
 
-          <div className="w-2/4">
-            <Input
+          <div className="w-2/4 pt-1">
+            <InputNumber
               value={timeQuantity}
-              className="h-3/4"
+              className="!h-8"
               type="number"
+              min="0"
               disabled={!timeFormEnabled}
               error={quantityError}
-              onChange={({ target: { value } }) => {
+              onChange={(value) => {
                 setTimeQuantity(parseInt(value, 10));
                 setQuantityError(false);
               }}
