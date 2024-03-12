@@ -234,6 +234,9 @@ describe('ApiKeySettingsModal', () => {
         );
       });
 
+      await user.click(screen.getByRole('switch'));
+      await user.click(screen.getByRole('button', { name: 'Generate' }));
+
       await user.click(screen.getByRole('button', { name: 'copy api key' }));
 
       expect(screen.getByText(truncate(apiKey, { length: 65 }))).toBeVisible();

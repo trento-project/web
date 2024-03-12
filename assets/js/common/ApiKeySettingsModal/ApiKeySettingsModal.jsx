@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   addDays,
   addMonths,
@@ -46,6 +46,7 @@ function ApiKeySettingsModal({
   const timeOptions = availableTimeOptions.map((o) => o.type);
   const [timeQuantity, setTimeQuantity] = useState(0);
   const [timeQuantityType, setTimeQuantityType] = useState(timeOptions[0]);
+  const [keyGenerated, setKeyGenerated] = useState(false);
 
   const [quantityError, setQuantityError] = useState(false);
   const [apiKeyNeverExpires, setapiKeyNeverExpires] = useState(false);
@@ -53,6 +54,7 @@ function ApiKeySettingsModal({
   const generateApiKeyExpiration = () => {
     if (apiKeyNeverExpires) {
       onGenerate({ apiKeyExpiration: null });
+      setKeyGenerated(true);
       return;
     }
     if (timeQuantity === 0 || !timeQuantity) {
@@ -65,7 +67,16 @@ function ApiKeySettingsModal({
     const apiKeyExpiration = timeQuantitySettings.timeGenerator(timeQuantity);
 
     onGenerate({ apiKeyExpiration: normalizeExpiration(apiKeyExpiration) });
+    setKeyGenerated(true);
   };
+
+  useEffect(() => {
+    setapiKeyNeverExpires(false);
+    setQuantityError(false);
+    setTimeQuantityType(timeOptions[0]);
+    setTimeQuantity(0);
+    setKeyGenerated(false);
+  }, [open]);
 
   return (
     <Modal
@@ -137,7 +148,7 @@ function ApiKeySettingsModal({
             Key expiration value needs to be greater than 0{' '}
           </span>
         )}
-        {generatedApiKey && (
+        {generatedApiKey && keyGenerated && !loading && (
           <div className="flex flex-col my-1 mb-4">
             <div className="flex space-x-2">
               <div className="w-full break-words p-2 pr-2 rounded-lg bg-white border-gray-300 border">
@@ -157,9 +168,12 @@ function ApiKeySettingsModal({
               <EOS_INFO_OUTLINED size="20" className="mt-2" />
 
               <div className="mt-2 text-gray-600 text-sm">
-                {' '}
-                Key will expire{' '}
-                {format(parseISO(generatedApiKeyExpiration), 'd LLL yyyy')}
+                {generatedApiKeyExpiration
+                  ? `Key Will Expire ${format(
+                      parseISO(generatedApiKeyExpiration),
+                      'd LLL yyyy'
+                    )}`
+                  : 'Key will never expire'}
               </div>
             </div>
           </div>

@@ -236,6 +236,8 @@ function SettingsPage() {
       <ApiKeySettingsModal
         open={apiKeySettingModalOpen}
         loading={loading}
+        generatedApiKey={apiKey}
+        generatedApiKeyExpiration={apiKeyExpiration}
         onClose={() => setApiKeySettingsModalOpen(false)}
         onGenerate={({ apiKeyExpiration: generatedApiKeyExpiration }) =>
           saveApiKeySettings(generatedApiKeyExpiration)
