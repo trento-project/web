@@ -57,7 +57,7 @@ defmodule Trento.SoftwareUpdates do
 
   @spec clear_settings :: :ok
   def clear_settings do
-    clear_result =
+    {1, _} =
       Repo.update_all(Settings,
         set: [
           url: nil,
@@ -69,11 +69,9 @@ defmodule Trento.SoftwareUpdates do
         ]
       )
 
-    with {1, _} <- clear_result do
-      Discovery.clear_software_updates_discoveries()
+    Discovery.clear_software_updates_discoveries()
 
-      :ok
-    end
+    :ok
   end
 
   @spec run_discovery :: :ok | {:error, :settings_not_configured}

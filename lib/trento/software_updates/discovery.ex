@@ -44,13 +44,15 @@ defmodule Trento.SoftwareUpdates.Discovery do
   def clear_software_updates_discoveries do
     hosts = Hosts.get_all_hosts()
 
-    if !Enum.empty?(hosts) do
-      Enum.each(hosts, fn %HostReadModel{id: host_id} ->
-        %{host_id: host_id}
-        |> ClearSoftwareUpdatesDiscovery.new!()
-        |> commanded().dispatch()
-      end)
+    hosts
+    |> Enum.map(fn %HostReadModel{id: host_id} -> %{host_id: host_id} end)
+    |> Enum.each(fn command_payload ->
+      command_payload
+      |> ClearSoftwareUpdatesDiscovery.new!()
+      |> commanded().dispatch()
+    end)
 
+    if !Enum.empty?(hosts) do
       clear()
     end
 
