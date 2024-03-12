@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import WarningBanner from '@common/Banners/WarningBanner';
+import Banner from '@common/Banners/Banner';
 
 import { UNKNOWN_PROVIDER } from '@lib/model';
 import ChecksResultFilters from '@pages/ExecutionResults/ChecksResultFilters';
@@ -10,14 +10,14 @@ import { isTargetCluster } from './checksUtils';
 import BackToTargetDetails from './BackToTargetDetails';
 import TargetInfoBox from './TargetInfoBox';
 
-export const clusterWarningBanner = {
+export const clusterBanner = {
   [UNKNOWN_PROVIDER]: (
-    <WarningBanner>
+    <Banner>
       The following results are valid for on-premise bare metal platforms.
       <br />
       If you are running your HANA cluster on a different platform, please use
       results with caution
-    </WarningBanner>
+    </Banner>
   ),
 };
 
@@ -51,7 +51,7 @@ function ExecutionHeader({
           onSave={onFilterSave}
         />
       </div>
-      {targetCluster && clusterWarningBanner[target.provider]}
+      {targetCluster && clusterBanner[target.provider]}
       <TargetInfoBox targetType={targetType} target={target} />
     </>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 
-function WarningBanner({ children }) {
+function Banner({ children }) {
   return (
     <div className="bg-yellow-50 rounded-lg mt-2 mb-2 p-3 border-2 border-yellow-500">
       <div className="flex flex-wrap items-center justify-between">
@@ -22,4 +22,4 @@ function WarningBanner({ children }) {
   );
 }
 
-export default WarningBanner;
+export default Banner;

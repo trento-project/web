@@ -11,7 +11,7 @@ import CleanUpButton from '@common/CleanUpButton';
 import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
-import WarningBanner from '@common/Banners/WarningBanner';
+import Banner from '@common/Banners/Banner';
 import ChartsFeatureWrapper from '@common/ChartsFeatureWrapper';
 
 import { subHours } from 'date-fns';
@@ -186,7 +186,7 @@ function HostDetails({
           </div>
         </div>
         {versionWarningMessage && (
-          <WarningBanner>{versionWarningMessage}</WarningBanner>
+          <Banner>{versionWarningMessage}</Banner>
         )}
         <div className="flex xl:flex-row flex-col">
           <HostSummary

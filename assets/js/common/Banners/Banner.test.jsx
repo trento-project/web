@@ -2,16 +2,16 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import WarningBanner from './WarningBanner';
+import Banner from './Banner';
 
-describe('WarningBanner', () => {
+describe('Banner', () => {
   it('should display a warning banner with its text and icon', () => {
     render(
-      <WarningBanner>
+      <Banner>
         Warning!
         <br />
         You should have a look on this!
-      </WarningBanner>
+      </Banner>
     );
 
     expect(screen.getByTestId('warning-banner')).toHaveTextContent(
