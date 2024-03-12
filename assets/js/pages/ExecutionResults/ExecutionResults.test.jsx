@@ -427,48 +427,6 @@ describe('ExecutionResults', () => {
     expect(screen.getAllByText(checkID2)).toHaveLength(1);
   });
 
-  it('given provider is VMware, should render ExecutionResults with warning banner', async () => {
-    const {
-      clusterID,
-      clusterHosts,
-      loading,
-      catalog,
-      error,
-      executionLoading,
-      executionData,
-      executionError,
-      executionStarted,
-    } = prepareStateData('passing');
-
-    renderWithRouter(
-      <ExecutionResults
-        targetID={clusterID}
-        targetName="test-cluster"
-        targetType="cluster"
-        target={{
-          provider: 'vmware',
-          type: 'hana_scale_up',
-        }}
-        targetHosts={clusterHosts}
-        catalogLoading={loading}
-        catalog={catalog}
-        executionStarted={executionStarted}
-        catalogError={error}
-        executionLoading={executionLoading}
-        executionData={executionData}
-        executionError={executionError}
-      />,
-      { route: `/clusters/${clusterID}/executions/last?health=passing` }
-    );
-
-    expect(screen.getByText('VMware')).toBeTruthy();
-    expect(
-      screen.getByText(
-        'Configuration checks for HANA Scale Up performance optimized clusters on VMware are still in experimental phase. Please use results with caution.'
-      )
-    ).toBeTruthy();
-  });
-
   it('given provider is unknown, should render ExecutionResults with warning banner', async () => {
     const {
       clusterID,

@@ -18,7 +18,7 @@ import { isSaving } from '@state/selectors/checksSelection';
 import { executionRequested } from '@state/lastExecutions';
 
 import { buildEnv } from '@lib/checks';
-import { UNKNOWN_PROVIDER, VMWARE_PROVIDER, TARGET_CLUSTER } from '@lib/model';
+import { UNKNOWN_PROVIDER, TARGET_CLUSTER } from '@lib/model';
 
 import BackButton from '@common/BackButton';
 import ClusterInfoBox from '@common/ClusterInfoBox';
@@ -36,12 +36,6 @@ const catalogWarningBanner = {
       <br />
       If you are running your HANA cluster on a different platform, please use
       results with caution
-    </WarningBanner>
-  ),
-  [VMWARE_PROVIDER]: (
-    <WarningBanner>
-      Configuration checks for HANA Scale Up performance optimized clusters on
-      VMware are still in experimental phase. Please use results with caution.
     </WarningBanner>
   ),
 };
