@@ -29,10 +29,10 @@ export const softwareUpdatesSlice = createSlice({
     },
     setEmptySoftwareUpdates: (state, { payload: { hostId } }) => {
       state.loading = false;
-      state.softwareUpdates = Object.fromEntries(
-        Object.entries(state.softwareUpdates).filter(
-          ([hostIdKey]) => hostIdKey !== hostId
-        )
+      state.softwareUpdates = Object.entries(state.softwareUpdates).reduce(
+        (newState, [id, updates]) =>
+          id !== hostId ? { ...newState, [id]: updates } : newState,
+        {}
       );
     },
     setSoftwareUpdatesErrors: (state, { payload: errors }) => {
