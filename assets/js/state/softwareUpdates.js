@@ -27,9 +27,13 @@ export const softwareUpdatesSlice = createSlice({
         },
       };
     },
-    setEmptySoftwareUpdates: (state) => {
+    setEmptySoftwareUpdates: (state, { payload: { hostId } }) => {
       state.loading = false;
-      state.softwareUpdates = {};
+      state.softwareUpdates = Object.fromEntries(
+        Object.entries(state.softwareUpdates).filter(
+          ([hostIdKey]) => hostIdKey !== hostId
+        )
+      );
     },
     setSoftwareUpdatesErrors: (state, { payload: errors }) => {
       state.loading = false;

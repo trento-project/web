@@ -83,7 +83,7 @@ describe('Software Updates saga', () => {
 
         expect(dispatched).toEqual([
           startLoadingSoftwareUpdates(),
-          setEmptySoftwareUpdates(),
+          setEmptySoftwareUpdates({ hostId }),
           setSoftwareUpdatesErrors(body),
         ]);
       }

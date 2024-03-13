@@ -137,13 +137,15 @@ describe('SoftwareUpdates reducer', () => {
       errors: [],
     };
 
-    const action = setEmptySoftwareUpdates();
+    const action = setEmptySoftwareUpdates({ hostId: 'host2' });
 
     const actual = softwareUpdatesReducer(initialState, action);
 
     expect(actual).toEqual({
       loading: false,
-      softwareUpdates: {},
+      softwareUpdates: {
+        host1: { relevant_patches: [], software_updates: [] },
+      },
       errors: [],
     });
   });
