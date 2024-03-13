@@ -24,19 +24,19 @@ import BackButton from '@common/BackButton';
 import ClusterInfoBox from '@common/ClusterInfoBox';
 import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
-import WarningBanner from '@common/Banners/WarningBanner';
+import Banner from '@common/Banners/Banner';
 
 import ChecksSelection from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
 
-const catalogWarningBanner = {
+const catalogBanner = {
   [UNKNOWN_PROVIDER]: (
-    <WarningBanner>
+    <Banner type="warning">
       The following catalog is valid for on-premise bare metal platforms.
       <br />
       If you are running your HANA cluster on a different platform, please use
       results with caution
-    </WarningBanner>
+    </Banner>
   ),
 };
 
@@ -127,7 +127,7 @@ function ClusterSettingsPage() {
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />
-      {catalogWarningBanner[provider]}
+      {catalogBanner[provider]}
       <ClusterInfoBox haScenario={type} provider={provider} />
       <ChecksSelection
         catalog={catalog}

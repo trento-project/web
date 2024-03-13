@@ -1,7 +1,7 @@
 import React from 'react';
 
 import HealthIcon from '@common/HealthIcon';
-import { clusterWarningBanner } from '@pages/ExecutionResults/ExecutionHeader';
+import { clusterBanner } from '@pages/ExecutionResults/ExecutionHeader';
 import CheckResultInfoBox from './CheckResultInfoBox';
 import { isTargetCluster } from '../checksUtils';
 import BackToTargetExecution from './BackToTargetExecution';
@@ -28,7 +28,7 @@ function CheckDetailHeader({
           <span className="font-medium">{checkDescription}</span>
         </h1>
       </div>
-      {targetCluster && clusterWarningBanner[cloudProvider]}
+      {targetCluster && clusterBanner[cloudProvider]}
       <CheckResultInfoBox
         checkID={checkID}
         resultTargetType={resultTargetType}
