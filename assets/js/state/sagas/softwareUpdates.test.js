@@ -62,17 +62,15 @@ describe('Software Updates saga', () => {
       ]);
     });
 
-    it('should empty software updates settings on failed fetching', async () => {
-      const axiosMock = new MockAdapter(networkClient);
-      const hostId = faker.string.uuid();
-      const responses = [
-        { status: 404, body: { message: '404 Not found' } },
-        { status: 500, body: { message: 'java.lang.NullPointerException' } },
-      ];
+    it.each([
+      { status: 404, body: { message: '404 Not found' } },
+      { status: 500, body: { message: 'java.lang.NullPointerException' } },
+    ])(
+      'should empty software updates settings on failed fetching',
+      async ({ status, body }) => {
+        const axiosMock = new MockAdapter(networkClient);
+        const hostId = faker.string.uuid();
 
-      /* eslint-disable no-await-in-loop */
-      /* eslint-disable no-restricted-syntax */
-      for (const { status, body } of responses) {
         axiosMock
           .onGet(`/api/v1/hosts/${hostId}/software_updates`)
           .reply(status, body);
@@ -87,6 +85,6 @@ describe('Software Updates saga', () => {
           setSoftwareUpdatesErrors(body),
         ]);
       }
-    });
+    );
   });
 });
