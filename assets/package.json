@@ -54,7 +54,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-zoom": "^2.0.1",
     "classnames": "^2.5.1",
-    "date-fns": "^3.3.1",
+    "date-fns": "^3.4.0",
     "eos-icons-react": "^2.4.0",
     "lodash": "^4.17.21",
     "postcss-import": "^16.0.1",
