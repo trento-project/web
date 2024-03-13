@@ -2,7 +2,7 @@ import { createAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loading: false,
-  softwareUpdates: [],
+  softwareUpdates: {},
   errors: [],
 };
 
@@ -13,15 +13,23 @@ export const softwareUpdatesSlice = createSlice({
     startLoadingSoftwareUpdates: (state) => {
       state.loading = true;
     },
-    setSoftwareUpdates: (state, { payload: { hostId, softwareUpdates } }) => {
+    setSoftwareUpdates: (
+      state,
+      { payload: { hostId, relevant_patches, software_updates } }
+    ) => {
       state.loading = false;
-      state.softwareUpdates = state.softwareUpdates
-        .filter((su) => su.hostId !== hostId)
-        .concat({ hostId, softwareUpdates });
+
+      state.softwareUpdates = {
+        ...state.softwareUpdates,
+        [hostId]: {
+          relevant_patches,
+          software_updates,
+        },
+      };
     },
     setEmptySoftwareUpdates: (state) => {
       state.loading = false;
-      state.softwareUpdates = [];
+      state.softwareUpdates = {};
     },
     setSoftwareUpdatesErrors: (state, { payload: errors }) => {
       state.loading = false;

@@ -15,7 +15,7 @@ export function* fetchSoftwareUpdates({ payload: { hostId } }) {
 
   try {
     const response = yield call(getSoftwareUpdates, hostId);
-    yield put(setSoftwareUpdates({ hostId, softwareUpdates: response.data }));
+    yield put(setSoftwareUpdates({ hostId, ...response.data }));
   } catch (error) {
     yield put(setEmptySoftwareUpdates());
     const errors = get(error, ['response', 'data'], []);

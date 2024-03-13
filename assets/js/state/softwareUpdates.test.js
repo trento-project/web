@@ -23,11 +23,13 @@ describe('SoftwareUpdates reducer', () => {
   it('should set software updates', () => {
     const initialState = {
       loading: true,
-      softwareUpdates: [
-        { hostId: 'host1', softwareUpdates: [] },
-        {
-          hostId: 'host2',
-          softwareUpdates: [
+      softwareUpdates: {
+        host1: {
+          relevant_patches: [],
+          software_updates: [],
+        },
+        host2: {
+          relevant_patches: [
             {
               date: '2024-03-11',
               advisory_name: 'SUSE-15-SP4-2024-833',
@@ -37,6 +39,8 @@ describe('SoftwareUpdates reducer', () => {
               advisory_synopsis: 'moderate: Security update for openssl-1_1',
               update_date: '2024-03-11',
             },
+          ],
+          software_updates: [
             {
               from_epoch: ' ',
               to_release: '150100.8.33.1',
@@ -52,9 +56,21 @@ describe('SoftwareUpdates reducer', () => {
             },
           ],
         },
-      ],
+      },
       errors: [],
     };
+
+    const newRelevantPatches = [
+      {
+        date: '2023-05-30',
+        advisory_name: 'SUSE-15-SP4-2023-2317',
+        advisory_type: 'Bug Fix Advisory',
+        advisory_status: 'stable',
+        id: 2226,
+        advisory_synopsis: 'Recommended update for util-linux',
+        update_date: '2023-05-30',
+      },
+    ];
 
     const newSoftwareUpdates = [
       {
@@ -70,30 +86,30 @@ describe('SoftwareUpdates reducer', () => {
         from_arch: 'x86_64',
         to_arch: 'x86_64',
       },
-      {
-        date: '2023-05-30',
-        advisory_name: 'SUSE-15-SP4-2023-2317',
-        advisory_type: 'Bug Fix Advisory',
-        advisory_status: 'stable',
-        id: 2226,
-        advisory_synopsis: 'Recommended update for util-linux',
-        update_date: '2023-05-30',
-      },
     ];
+
+    const newSoftwareUpdatesState = {
+      relevant_patches: newRelevantPatches,
+      software_updates: newSoftwareUpdates,
+    };
 
     const action = setSoftwareUpdates({
       hostId: 'host2',
-      softwareUpdates: newSoftwareUpdates,
+      relevant_patches: newRelevantPatches,
+      software_updates: newSoftwareUpdates,
     });
 
     const actual = softwareUpdatesReducer(initialState, action);
 
     expect(actual).toEqual({
       loading: false,
-      softwareUpdates: [
-        { hostId: 'host1', softwareUpdates: [] },
-        { hostId: 'host2', softwareUpdates: newSoftwareUpdates },
-      ],
+      softwareUpdates: {
+        host1: {
+          relevant_patches: [],
+          software_updates: [],
+        },
+        host2: newSoftwareUpdatesState,
+      },
       errors: [],
     });
   });
@@ -101,10 +117,23 @@ describe('SoftwareUpdates reducer', () => {
   it('should empty software updates', () => {
     const initialState = {
       loading: true,
-      softwareUpdates: [
-        { hostId: 'host1', softwareUpdates: [] },
-        { hostId: 'host2', softwareUpdates: [] },
-      ],
+      softwareUpdates: {
+        host1: { relevant_patches: [], software_updates: [] },
+        host2: {
+          relevant_patches: [
+            {
+              date: '2023-03-22',
+              advisory_name: 'SUSE-15-SP4-2023-868',
+              advisory_type: 'Security Advisory',
+              advisory_status: 'stable',
+              id: 2136,
+              advisory_synopsis: 'important: Security update for python3',
+              update_date: '2023-03-22',
+            },
+          ],
+          software_updates: [],
+        },
+      },
       errors: [],
     };
 
@@ -114,7 +143,7 @@ describe('SoftwareUpdates reducer', () => {
 
     expect(actual).toEqual({
       loading: false,
-      softwareUpdates: [],
+      softwareUpdates: {},
       errors: [],
     });
   });
@@ -122,10 +151,9 @@ describe('SoftwareUpdates reducer', () => {
   it('should set errors upon if error occurred', () => {
     const initialState = {
       loading: true,
-      softwareUpdates: [
-        {
-          hostId: 'host1',
-          softwareUpdates: [
+      softwareUpdates: {
+        host1: {
+          relevant_patches: [
             {
               date: '2024-03-11',
               advisory_name: 'SUSE-15-SP4-2024-833',
@@ -135,6 +163,8 @@ describe('SoftwareUpdates reducer', () => {
               advisory_synopsis: 'moderate: Security update for openssl-1_1',
               update_date: '2024-03-11',
             },
+          ],
+          software_updates: [
             {
               from_epoch: ' ',
               to_release: '150100.8.33.1',
@@ -150,7 +180,7 @@ describe('SoftwareUpdates reducer', () => {
             },
           ],
         },
-      ],
+      },
       errors: [],
     };
 
@@ -161,7 +191,7 @@ describe('SoftwareUpdates reducer', () => {
       },
       {
         detail: 'another error has also occurred',
-        title: 'Another error occured',
+        title: 'Another error occurred',
       },
     ];
 
