@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
+import MockAdapter from 'axios-mock-adapter';
 
 import { recordSaga } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
 
 import {
   startLoadingSoftwareUpdates,

@@ -1,3 +1,5 @@
+import { faker } from '@faker-js/faker';
+
 import softwareUpdatesReducer, {
   startLoadingSoftwareUpdates,
   setSoftwareUpdates,
@@ -21,14 +23,17 @@ describe('SoftwareUpdates reducer', () => {
   });
 
   it('should set software updates', () => {
+    const host1 = faker.string.uuid();
+    const host2 = faker.string.uuid();
+
     const initialState = {
       loading: true,
       softwareUpdates: {
-        host1: {
+        [host1]: {
           relevant_patches: [],
           software_updates: [],
         },
-        host2: {
+        [host2]: {
           relevant_patches: [
             {
               date: '2024-03-11',
@@ -94,7 +99,7 @@ describe('SoftwareUpdates reducer', () => {
     };
 
     const action = setSoftwareUpdates({
-      hostId: 'host2',
+      hostId: host2,
       relevant_patches: newRelevantPatches,
       software_updates: newSoftwareUpdates,
     });
@@ -104,22 +109,25 @@ describe('SoftwareUpdates reducer', () => {
     expect(actual).toEqual({
       loading: false,
       softwareUpdates: {
-        host1: {
+        [host1]: {
           relevant_patches: [],
           software_updates: [],
         },
-        host2: newSoftwareUpdatesState,
+        [host2]: newSoftwareUpdatesState,
       },
       errors: [],
     });
   });
 
   it('should empty software updates', () => {
+    const host1 = faker.string.uuid();
+    const host2 = faker.string.uuid();
+
     const initialState = {
       loading: true,
       softwareUpdates: {
-        host1: { relevant_patches: [], software_updates: [] },
-        host2: {
+        [host1]: { relevant_patches: [], software_updates: [] },
+        [host2]: {
           relevant_patches: [
             {
               date: '2023-03-22',
@@ -137,24 +145,26 @@ describe('SoftwareUpdates reducer', () => {
       errors: [],
     };
 
-    const action = setEmptySoftwareUpdates({ hostId: 'host2' });
+    const action = setEmptySoftwareUpdates({ hostId: host2 });
 
     const actual = softwareUpdatesReducer(initialState, action);
 
     expect(actual).toEqual({
       loading: false,
       softwareUpdates: {
-        host1: { relevant_patches: [], software_updates: [] },
+        [host1]: { relevant_patches: [], software_updates: [] },
       },
       errors: [],
     });
   });
 
   it('should set errors upon if error occurred', () => {
+    const host1 = faker.string.uuid();
+
     const initialState = {
       loading: true,
       softwareUpdates: {
-        host1: {
+        [host1]: {
           relevant_patches: [
             {
               date: '2024-03-11',
