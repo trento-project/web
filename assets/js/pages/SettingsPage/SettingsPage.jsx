@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
+import { format, parseISO } from 'date-fns';
 import classNames from 'classnames';
-
+import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { logError } from '@lib/log';
-import { get } from '@lib/network';
+import { get, patch } from '@lib/network';
 import { getFromConfig } from '@lib/config';
 
 import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
 import SuseManagerSettingsModal from '@common/SuseManagerSettingsDialog';
+import ApiKeySettingsModal from '@common/ApiKeySettingsModal';
 
 import {
   fetchSoftwareUpdatesSettings,
@@ -24,6 +26,9 @@ import {
   getSoftwareUpdatesSettingsErrors,
 } from '@state/selectors/softwareUpdatesSettings';
 
+import { dismissNotification } from '@state/notifications';
+import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
+
 import SuseManagerConfig from '@common/SuseManagerConfig';
 
 function SettingsPage() {
@@ -31,21 +36,44 @@ function SettingsPage() {
 
   const [loading, setLoading] = useState(false);
   const [apiKey, setApiKey] = useState(null);
-  const [showApiKey, setShowApiKey] = useState(false);
+  const [apiKeyExpiration, setApiKeyExpiration] = useState(null);
+  const [apiKeySettingModalOpen, setApiKeySettingsModalOpen] = useState(false);
   const [clearingSoftwareUpdatesSettings, setClearingSoftwareUpdatesSettings] =
     useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    get('/installation/api-key')
-      .then(({ data: { api_key: newApiKey } }) => {
-        apiKey !== undefined && setApiKey(newApiKey);
-        setLoading(false);
-      })
+  const fetchApiKeySettings = () =>
+    get('/settings/api_key')
+      .then(
+        ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
+          setApiKey(newApiKey);
+          setApiKeyExpiration(expireAt);
+        }
+      )
       .catch((error) => {
         logError(error);
+      })
+      .finally(() => {
         setLoading(false);
       });
+
+  const saveApiKeySettings = (expiration) => {
+    setLoading(true);
+    patch('/settings/api_key', { expire_at: expiration })
+      .then(
+        ({ data: { generated_api_key: newApiKey, expire_at: expireAt } }) => {
+          setApiKey(newApiKey);
+          setApiKeyExpiration(expireAt);
+          dispatch(dismissNotification(API_KEY_EXPIRATION_NOTIFICATION_ID));
+        }
+      )
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchApiKeySettings();
     dispatch(fetchSoftwareUpdatesSettings());
   }, []);
 
@@ -79,18 +107,8 @@ function SettingsPage() {
                 Get your key here 👇 and use it to register your first agents,
                 or to add new ones.
               </p>
-              <div className="w-full md:w-1/3 mb-8">
-                <Button
-                  type="primary"
-                  size="big"
-                  disabled={loading}
-                  onClick={() => setShowApiKey(true)}
-                >
-                  Get your key now!
-                </Button>
-              </div>
               <Transition
-                show={showApiKey}
+                show={Boolean(apiKey)}
                 enter="transition duration-100 ease-out"
                 enterFrom="transform opacity-0"
                 enterTo="transform opacity-100"
@@ -119,10 +137,42 @@ function SettingsPage() {
                     )}
                   </code>
                 </div>
+                {apiKey && (
+                  <div className="flex space-x-2 my-4">
+                    <EOS_INFO_OUTLINED size="20" className="mt-2" />
+
+                    <div className="mt-2 text-gray-600 text-sm">
+                      {apiKeyExpiration
+                        ? `Key will expire ${format(
+                            parseISO(apiKeyExpiration),
+                            'd LLL yyyy'
+                          )}`
+                        : 'Key will never expire'}
+                    </div>
+                    <div className="!ml-auto">
+                      <Button
+                        onClick={() => {
+                          window.navigator.clipboard.writeText(apiKey);
+                        }}
+                        type="primary-white"
+                      >
+                        Copy Key
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </Transition>
             </div>
           </div>
           <div className="w-full lg:w-1/2 px-8">
+            <div className="!ml-auto w-1/4">
+              <Button
+                onClick={() => setApiKeySettingsModalOpen(true)}
+                type="primary-white"
+              >
+                Generate Key
+              </Button>
+            </div>
             <ul className="space-y-12">
               <li className="flex -mx-4">
                 <div className="px-4">
@@ -183,6 +233,16 @@ function SettingsPage() {
           </div>
         </div>
       </div>
+      <ApiKeySettingsModal
+        open={apiKeySettingModalOpen}
+        loading={loading}
+        generatedApiKey={apiKey}
+        generatedApiKeyExpiration={apiKeyExpiration}
+        onClose={() => setApiKeySettingsModalOpen(false)}
+        onGenerate={({ apiKeyExpiration: generatedApiKeyExpiration }) =>
+          saveApiKeySettings(generatedApiKeyExpiration)
+        }
+      />
       {getFromConfig('suseManagerEnabled') && (
         <div className="py-4">
           {softwareUpdatesSettingsLoading ? (

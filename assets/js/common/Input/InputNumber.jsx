@@ -1,35 +1,25 @@
 import React from 'react';
+import RcInputNumber from 'rc-input-number';
 
-import RcInput from 'rc-input';
-
-import { EOS_CANCEL_OUTLINED } from 'eos-icons-react';
 import classNames from 'classnames';
 
-function Input({
+function InputNumber({
   className,
   id,
   name,
-  type = 'text',
   value,
   initialValue,
-  prefix,
-  suffix,
   placeholder,
   error = false,
-  allowClear = false,
   disabled = false,
   onChange = () => {},
   ...props
 }) {
-  const hasPrefix = !!prefix;
-  const clearIcon = <EOS_CANCEL_OUTLINED className="inline" size="l" />;
-
   return (
-    <RcInput
+    <RcInputNumber
       className={classNames(
         'rounded-md w-full block relative placeholder-gray-400 outline-none bg-white border disabled:bg-gray-50',
         {
-          'has-prefix': hasPrefix,
           'border-gray-200': !error,
           'focus:border-gray-500': !error,
           'focus-visible:border-red-500': error,
@@ -39,24 +29,14 @@ function Input({
       )}
       id={id}
       name={name}
-      type={type}
       value={value}
       defaultValue={initialValue}
       placeholder={placeholder}
       disabled={disabled}
-      suffix={disabled && allowClear ? clearIcon : suffix}
-      prefix={prefix}
-      allowClear={
-        allowClear && !disabled
-          ? {
-              clearIcon,
-            }
-          : false
-      }
       onChange={onChange}
       {...props}
     />
   );
 }
 
-export default Input;
+export default InputNumber;

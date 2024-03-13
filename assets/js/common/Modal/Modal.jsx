@@ -1,7 +1,8 @@
 import React, { Fragment, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import classNames from 'classnames';
 
-function Modal({ children, open, onClose, title }) {
+function Modal({ children, open, onClose, title, className }) {
   const refContent = useRef(null);
 
   return (
@@ -41,7 +42,12 @@ function Modal({ children, open, onClose, title }) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="inline-block w-full max-w-7xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-lg rounded-lg">
+            <div
+              className={classNames(
+                'inline-block w-full max-w-7xl p-6 my-8 text-left align-middle transition-all transform bg-white shadow-lg rounded-lg',
+                className
+              )}
+            >
               <Dialog.Title
                 as="h3"
                 className="text-xl font-semibold leading-6 text-gray-900"
