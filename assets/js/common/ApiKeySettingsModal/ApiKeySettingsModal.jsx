@@ -49,7 +49,7 @@ function ApiKeySettingsModal({
   const [keyGenerated, setKeyGenerated] = useState(false);
 
   const [quantityError, setQuantityError] = useState(false);
-  const [apiKeyNeverExpires, setapiKeyNeverExpires] = useState(false);
+  const [apiKeyNeverExpires, setApiKeyNeverExpires] = useState(false);
 
   const generateApiKeyExpiration = () => {
     if (apiKeyNeverExpires) {
@@ -71,7 +71,7 @@ function ApiKeySettingsModal({
   };
 
   useEffect(() => {
-    setapiKeyNeverExpires(false);
+    setApiKeyNeverExpires(false);
     setQuantityError(false);
     setTimeQuantityType(timeOptions[0]);
     setTimeQuantity(0);
@@ -85,8 +85,8 @@ function ApiKeySettingsModal({
       open={open}
       onClose={onClose}
     >
-      <div className="flex flex-col my-5">
-        <span className="my-2 mb-4 text-gray-500">
+      <div className="flex flex-col my-2">
+        <span className="my-1 mb-4 text-gray-500">
           {' '}
           By generating a new key, you will need to replace the API key on all
           hosts.{' '}
@@ -100,12 +100,12 @@ function ApiKeySettingsModal({
           <Switch
             selected={apiKeyNeverExpires}
             onChange={() => {
-              setapiKeyNeverExpires((enabled) => !enabled);
+              setApiKeyNeverExpires((enabled) => !enabled);
               setQuantityError(false);
             }}
           />
         </div>
-        <div className="flex items-center my-2 space-x-2">
+        <div className="flex items-center my-1 space-x-2">
           <div className="w-1/3">
             <Label>Key Expiration</Label>
           </div>
@@ -152,7 +152,7 @@ function ApiKeySettingsModal({
           <div className="flex flex-col my-1 mb-4">
             <div className="flex space-x-2">
               <div className="w-full break-words p-2 pr-2 rounded-lg bg-white border-gray-300 border">
-                <code> {truncate(generatedApiKey, { length: 65 })} </code>
+                <code>{truncate(generatedApiKey, { length: 65 })}</code>
               </div>
               <button
                 type="button"
@@ -169,7 +169,7 @@ function ApiKeySettingsModal({
 
               <div className="mt-2 text-gray-600 text-sm">
                 {generatedApiKeyExpiration
-                  ? `Key Will Expire ${format(
+                  ? `Key will expire ${format(
                       parseISO(generatedApiKeyExpiration),
                       'd LLL yyyy'
                     )}`

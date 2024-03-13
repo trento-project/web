@@ -39,7 +39,7 @@ context('Settings page', () => {
 
       cy.get('.flex-col > :nth-child(2) > .text-gray-600').as('expirationDate');
 
-      cy.get('@expirationDate').should('contain', 'Key Will Expire');
+      cy.get('@expirationDate').should('contain', 'Key will expire');
       cy.get('button').contains('Close').click();
     });
   });

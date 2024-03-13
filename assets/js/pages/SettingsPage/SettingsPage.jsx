@@ -143,7 +143,7 @@ function SettingsPage() {
 
                     <div className="mt-2 text-gray-600 text-sm">
                       {apiKeyExpiration
-                        ? `Key Will Expire ${format(
+                        ? `Key will expire ${format(
                             parseISO(apiKeyExpiration),
                             'd LLL yyyy'
                           )}`
