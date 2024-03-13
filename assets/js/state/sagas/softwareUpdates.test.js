@@ -24,7 +24,7 @@ describe('Software Updates saga', () => {
           {
             date: '2023-05-18',
             advisory_name: 'SUSE-15-SP4-2023-2245',
-            advisory_type: 'Bug Fix Advisory',
+            advisory_type: 'bugfix',
             advisory_status: 'stable',
             id: 2192,
             advisory_synopsis: 'Recommended update for libzypp, zypper',

@@ -33,7 +33,7 @@ describe('SoftwareUpdates reducer', () => {
             {
               date: '2024-03-11',
               advisory_name: 'SUSE-15-SP4-2024-833',
-              advisory_type: 'Security Advisory',
+              advisory_type: 'security_advisory',
               advisory_status: 'stable',
               id: 4244,
               advisory_synopsis: 'moderate: Security update for openssl-1_1',
@@ -64,7 +64,7 @@ describe('SoftwareUpdates reducer', () => {
       {
         date: '2023-05-30',
         advisory_name: 'SUSE-15-SP4-2023-2317',
-        advisory_type: 'Bug Fix Advisory',
+        advisory_type: 'bugfix',
         advisory_status: 'stable',
         id: 2226,
         advisory_synopsis: 'Recommended update for util-linux',
@@ -124,7 +124,7 @@ describe('SoftwareUpdates reducer', () => {
             {
               date: '2023-03-22',
               advisory_name: 'SUSE-15-SP4-2023-868',
-              advisory_type: 'Security Advisory',
+              advisory_type: 'security_advisory',
               advisory_status: 'stable',
               id: 2136,
               advisory_synopsis: 'important: Security update for python3',
@@ -159,7 +159,7 @@ describe('SoftwareUpdates reducer', () => {
             {
               date: '2024-03-11',
               advisory_name: 'SUSE-15-SP4-2024-833',
-              advisory_type: 'Security Advisory',
+              advisory_type: 'security_advisory',
               advisory_status: 'stable',
               id: 4244,
               advisory_synopsis: 'moderate: Security update for openssl-1_1',
