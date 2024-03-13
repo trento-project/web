@@ -677,6 +677,8 @@ jobs:
     needs: deploy-demo-env
     env:
       TRENTO_DEMO_IP: ${{ secrets.TRENTO_DEMO_IP }}
+      # please note that api key authentication is disabled in the demo environment https://github.com/trento-project/web/pull/2417
+      # keeping the secret usage for reference
       TRENTO_API_KEY: ${{ secrets.TRENTO_API_KEY }}
     steps:
       - uses: actions/checkout@v4
