@@ -7,7 +7,7 @@ function DismissableToast({ text, toastID }) {
       <p className="text-sm font-medium text-gray-900">{text}</p>
       <button
         type="button"
-        className="text-jungle-green-500"
+        className="text-jungle-green-500 text-sm"
         onClick={() => toast.dismiss(toastID)}
       >
         Close
