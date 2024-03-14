@@ -9,15 +9,11 @@ import softwareUpdatesReducer, {
 
 describe('SoftwareUpdates reducer', () => {
   it('should mark retrieval of software updates in loading state', () => {
-    const initialState = {
-      loading: false,
-    };
+    const initialState = { loading: false };
 
     const action = startLoadingSoftwareUpdates();
 
-    const expectedState = {
-      loading: true,
-    };
+    const expectedState = { loading: true };
 
     expect(softwareUpdatesReducer(initialState, action)).toEqual(expectedState);
   });
@@ -29,10 +25,7 @@ describe('SoftwareUpdates reducer', () => {
     const initialState = {
       loading: true,
       softwareUpdates: {
-        [host1]: {
-          relevant_patches: [],
-          software_updates: [],
-        },
+        [host1]: { relevant_patches: [], upgradable_packages: [] },
         [host2]: {
           relevant_patches: [
             {
@@ -45,7 +38,7 @@ describe('SoftwareUpdates reducer', () => {
               update_date: '2024-03-11',
             },
           ],
-          software_updates: [
+          upgradable_packages: [
             {
               from_epoch: ' ',
               to_release: '150100.8.33.1',
@@ -77,7 +70,7 @@ describe('SoftwareUpdates reducer', () => {
       },
     ];
 
-    const newSoftwareUpdates = [
+    const newUpgradablePackages = [
       {
         from_epoch: ' ',
         to_release: '150300.3.30.1',
@@ -93,15 +86,15 @@ describe('SoftwareUpdates reducer', () => {
       },
     ];
 
-    const newSoftwareUpdatesState = {
+    const newSoftwareUpdates = {
       relevant_patches: newRelevantPatches,
-      software_updates: newSoftwareUpdates,
+      upgradable_packages: newUpgradablePackages,
     };
 
     const action = setSoftwareUpdates({
       hostId: host2,
       relevant_patches: newRelevantPatches,
-      software_updates: newSoftwareUpdates,
+      upgradable_packages: newUpgradablePackages,
     });
 
     const actual = softwareUpdatesReducer(initialState, action);
@@ -109,11 +102,8 @@ describe('SoftwareUpdates reducer', () => {
     expect(actual).toEqual({
       loading: false,
       softwareUpdates: {
-        [host1]: {
-          relevant_patches: [],
-          software_updates: [],
-        },
-        [host2]: newSoftwareUpdatesState,
+        [host1]: { relevant_patches: [], upgradable_packages: [] },
+        [host2]: newSoftwareUpdates,
       },
       errors: [],
     });
@@ -126,7 +116,7 @@ describe('SoftwareUpdates reducer', () => {
     const initialState = {
       loading: true,
       softwareUpdates: {
-        [host1]: { relevant_patches: [], software_updates: [] },
+        [host1]: { relevant_patches: [], upgradable_packages: [] },
         [host2]: {
           relevant_patches: [
             {
@@ -139,7 +129,7 @@ describe('SoftwareUpdates reducer', () => {
               update_date: '2023-03-22',
             },
           ],
-          software_updates: [],
+          upgradable_packages: [],
         },
       },
       errors: [],
@@ -152,7 +142,7 @@ describe('SoftwareUpdates reducer', () => {
     expect(actual).toEqual({
       loading: false,
       softwareUpdates: {
-        [host1]: { relevant_patches: [], software_updates: [] },
+        [host1]: { relevant_patches: [], upgradable_packages: [] },
       },
       errors: [],
     });
@@ -176,7 +166,7 @@ describe('SoftwareUpdates reducer', () => {
               update_date: '2024-03-11',
             },
           ],
-          software_updates: [
+          upgradable_packages: [
             {
               from_epoch: ' ',
               to_release: '150100.8.33.1',

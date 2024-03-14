@@ -19,7 +19,7 @@ describe('Software Updates saga', () => {
     it('should successfully fetch software updates', async () => {
       const axiosMock = new MockAdapter(networkClient);
       const hostId = faker.string.uuid();
-      const successfulResponse = {
+      const response = {
         relevant_patches: [
           {
             date: '2023-05-18',
@@ -31,7 +31,7 @@ describe('Software Updates saga', () => {
             update_date: '2023-05-18',
           },
         ],
-        software_updates: [
+        upgradable_packages: [
           {
             from_epoch: ' ',
             to_release: '150400.7.60.2',
@@ -50,15 +50,15 @@ describe('Software Updates saga', () => {
 
       axiosMock
         .onGet(`/api/v1/hosts/${hostId}/software_updates`)
-        .reply(200, successfulResponse);
+        .reply(200, response);
 
       const dispatched = await recordSaga(fetchSoftwareUpdates, {
-        payload: { hostId, ...successfulResponse },
+        payload: { hostId, ...response },
       });
 
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdates(),
-        setSoftwareUpdates({ hostId, ...successfulResponse }),
+        setSoftwareUpdates({ hostId, ...response }),
       ]);
     });
 
