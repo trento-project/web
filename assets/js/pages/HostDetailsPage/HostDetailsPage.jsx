@@ -11,6 +11,10 @@ import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
+import {
+  getSoftwareUpdates,
+  getSoftwareUpdatesStats,
+} from '@state/selectors/softwareUpdates';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
@@ -46,6 +50,13 @@ function HostDetailsPage() {
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
 
   const [exportersStatus, setExportersStatus] = useState([]);
+
+  const { loading: softwareUpdatesLoading } = useSelector((state) =>
+    getSoftwareUpdates(state)
+  );
+  const { numRelevantPatches, numUpgradablePackages } = useSelector((state) =>
+    getSoftwareUpdatesStats(state, hostID)
+  );
 
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
@@ -92,6 +103,9 @@ function HostDetailsPage() {
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}
       catalog={catalog}
+      relevantPatches={numRelevantPatches}
+      upgradablePackages={numUpgradablePackages}
+      softwareUpdatesLoading={softwareUpdatesLoading}
       lastExecution={lastExecution}
       cleanUpHost={() => {
         dispatch(
