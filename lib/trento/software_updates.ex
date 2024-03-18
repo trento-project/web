@@ -94,8 +94,7 @@ defmodule Trento.SoftwareUpdates do
   @spec get_software_updates(Ecto.UUID.t()) ::
           {:ok, map()}
           | {:error,
-             :authentication_error
-             | :system_id_not_found
+             :system_id_not_found
              | :not_found
              | :fqdn_not_found
              | :error_getting_patches
