@@ -132,7 +132,8 @@ jobs:
             nginx_ssl_cert_as_base64='true' \
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.PR_ENV_SSL_CERT }}' \
-            nginx_ssl_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}'"
+            nginx_ssl_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}' \
+            install_method='docker'"
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the pr environment
