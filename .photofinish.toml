@@ -82,10 +82,16 @@ files = [
     "./test/fixtures/scenarios/hana-database-details/0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4_sap_system_discovery_new.json",
 ]
 
+[sap-systems-overview-GREEN]
+
+files = [
+    "./test/fixtures/scenarios//healthy-27-node-SAP-cluster/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery.json",
+]
+
 [sap-systems-overview-GRAY]
 
 files = [
-    "./test/fixtures/scenarios/sap-systems-overview/7269ee51-5007-5849-aaa7-7c4a98b0c9ce_sap_system_discovery_GRAY.json",
+    "./test/fixtures/scenarios/sap-systems-overview/fb2c6b8a-9915-5969-a6b7-8b5a42de1971_sap_system_discovery_GRAY.json",
 ]
 
 [sap-systems-overview-YELLOW]

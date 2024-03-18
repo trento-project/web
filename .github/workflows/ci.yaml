@@ -412,7 +412,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: trento-project/photofinish
-          tag: v1.2.2
+          tag: v1.3.0
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -686,7 +686,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@v1.11.0
         with:
           repo: trento-project/photofinish
-          tag: v1.2.2
+          tag: v1.3.0
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
