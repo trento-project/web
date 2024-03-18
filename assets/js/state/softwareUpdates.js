@@ -29,11 +29,7 @@ export const softwareUpdatesSlice = createSlice({
     },
     setEmptySoftwareUpdates: (state, { payload: { hostId } }) => {
       state.loading = false;
-      state.softwareUpdates = Object.entries(state.softwareUpdates).reduce(
-        (newState, [id, updates]) =>
-          id !== hostId ? { ...newState, [id]: updates } : newState,
-        {}
-      );
+      state.softwareUpdates = { ...state.softwareUpdates, [hostId]: {} };
     },
     setSoftwareUpdatesErrors: (state, { payload: errors }) => {
       state.loading = false;

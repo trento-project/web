@@ -4,6 +4,7 @@ import { getSoftwareUpdatesStats } from './softwareUpdates';
 describe('Software Updates selector', () => {
   const hostId = faker.string.uuid();
   const state = {
+    loading: false,
     softwareUpdates: {
       [hostId]: {
         relevant_patches: [
@@ -87,6 +88,7 @@ describe('Software Updates selector', () => {
         ],
       },
     },
+    errors: [],
   };
 
   it('should return the correct software updates statistics', () => {
