@@ -1,5 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
+export const getSoftwareUpdates = (state) => state?.softwareUpdates;
+
 export const getSoftwareUpdatesForHost = (id) => (state) =>
   state?.softwareUpdates.softwareUpdates[id];
 
