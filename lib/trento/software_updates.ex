@@ -4,6 +4,9 @@ defmodule Trento.SoftwareUpdates do
   """
   require Logger
 
+  alias Trento.Hosts
+  alias Trento.Hosts.Projections.HostReadModel
+
   alias Trento.Support.DateService
 
   alias Trento.Repo
@@ -85,6 +88,33 @@ defmodule Trento.SoftwareUpdates do
         Logger.error("Software updates settings not configured. Skipping discovery.")
 
         error
+    end
+  end
+
+  @spec get_software_updates(Ecto.UUID.t()) ::
+          {:ok, map()}
+          | {:error,
+             :authentication_error
+             | :system_id_not_found
+             | :not_found
+             | :fqdn_not_found
+             | :error_getting_patches
+             | :error_getting_packages}
+  def get_software_updates(host_id) do
+    with {:ok, fqdn} <- get_host_fqdn(host_id),
+         {:ok, system_id} <- Discovery.get_system_id(fqdn),
+         {:ok, relevant_patches} <- Discovery.get_relevant_patches(system_id),
+         {:ok, upgradable_packages} <-
+           Discovery.get_upgradable_packages(system_id) do
+      {:ok, %{relevant_patches: relevant_patches, upgradable_packages: upgradable_packages}}
+    end
+  end
+
+  defp get_host_fqdn(host_id) do
+    case Hosts.get_host_by_id(host_id) do
+      nil -> {:error, :not_found}
+      %HostReadModel{fully_qualified_domain_name: nil} -> {:error, :fqdn_not_found}
+      %HostReadModel{fully_qualified_domain_name: fqdn} -> {:ok, fqdn}
     end
   end
 
