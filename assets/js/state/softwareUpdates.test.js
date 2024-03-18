@@ -143,7 +143,7 @@ describe('SoftwareUpdates reducer', () => {
       loading: false,
       softwareUpdates: {
         [host1]: { relevant_patches: [], upgradable_packages: [] },
-        [host2]: { relevant_patches: [], upgradable_packages: [] },
+        [host2]: {},
       },
       errors: [],
     });
