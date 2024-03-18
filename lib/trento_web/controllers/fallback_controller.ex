@@ -104,6 +104,20 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "No system ID was found on SUSE Manager for this host.")
   end
 
+  def call(conn, {:error, :error_getting_patches}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Unable to retrieve relevant patches for this host.")
+  end
+
+  def call(conn, {:error, :error_getting_packages}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Unable to retrieve upgradable packages for this host.")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do
