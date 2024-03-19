@@ -10,14 +10,14 @@ import {
   setSoftwareUpdatesErrors,
 } from '@state/softwareUpdates';
 
-export function* fetchSoftwareUpdates({ payload: { hostId } }) {
+export function* fetchSoftwareUpdates({ payload: { hostID } }) {
   yield put(startLoadingSoftwareUpdates());
 
   try {
-    const response = yield call(getSoftwareUpdates, hostId);
-    yield put(setSoftwareUpdates({ hostId, ...response.data }));
+    const response = yield call(getSoftwareUpdates, hostID);
+    yield put(setSoftwareUpdates({ hostID, ...response.data }));
   } catch (error) {
-    yield put(setEmptySoftwareUpdates({ hostId }));
+    yield put(setEmptySoftwareUpdates({ hostID }));
     const errors = get(error, ['response', 'data'], []);
     yield put(setSoftwareUpdatesErrors(errors));
   }

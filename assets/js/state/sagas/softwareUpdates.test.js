@@ -18,7 +18,7 @@ describe('Software Updates saga', () => {
   describe('Fetching Software Updates', () => {
     it('should successfully fetch software updates', async () => {
       const axiosMock = new MockAdapter(networkClient);
-      const hostId = faker.string.uuid();
+      const hostID = faker.string.uuid();
       const response = {
         relevant_patches: [
           {
@@ -49,16 +49,16 @@ describe('Software Updates saga', () => {
       };
 
       axiosMock
-        .onGet(`/api/v1/hosts/${hostId}/software_updates`)
+        .onGet(`/api/v1/hosts/${hostID}/software_updates`)
         .reply(200, response);
 
       const dispatched = await recordSaga(fetchSoftwareUpdates, {
-        payload: { hostId, ...response },
+        payload: { hostID, ...response },
       });
 
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdates(),
-        setSoftwareUpdates({ hostId, ...response }),
+        setSoftwareUpdates({ hostID, ...response }),
       ]);
     });
 
@@ -69,19 +69,19 @@ describe('Software Updates saga', () => {
       'should empty software updates settings on failed fetching',
       async ({ status, body }) => {
         const axiosMock = new MockAdapter(networkClient);
-        const hostId = faker.string.uuid();
+        const hostID = faker.string.uuid();
 
         axiosMock
-          .onGet(`/api/v1/hosts/${hostId}/software_updates`)
+          .onGet(`/api/v1/hosts/${hostID}/software_updates`)
           .reply(status, body);
 
         const dispatched = await recordSaga(fetchSoftwareUpdates, {
-          payload: { hostId },
+          payload: { hostID },
         });
 
         expect(dispatched).toEqual([
           startLoadingSoftwareUpdates(),
-          setEmptySoftwareUpdates({ hostId }),
+          setEmptySoftwareUpdates({ hostID }),
           setSoftwareUpdatesErrors(body),
         ]);
       }
