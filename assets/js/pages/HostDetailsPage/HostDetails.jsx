@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
+import { getFromConfig } from '@lib/config';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -220,13 +221,16 @@ function HostDetails({
             />
           </div>
         </div>
-        <AvailableSoftwareUpdates
-          className="mx-0 my-4"
-          relevantPatches={relevantPatches}
-          upgradablePackages={upgradablePackages}
-          tooltip={softwareUpdatesTooltip}
-          loading={softwareUpdatesLoading}
-        />
+
+        {getFromConfig('suseManagerEnabled') && (
+          <AvailableSoftwareUpdates
+            className="mx-0 my-4"
+            relevantPatches={relevantPatches}
+            upgradablePackages={upgradablePackages}
+            tooltip={softwareUpdatesTooltip}
+            loading={softwareUpdatesLoading}
+          />
+        )}
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>
           <div>
             <HostChart
