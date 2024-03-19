@@ -25,7 +25,7 @@ import {
 } from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
-import { fetchSoftwareUpdates } from '@state/sagas/softwareUpdates';
+import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostDetails from './HostDetails';
 
 // eslint-disable-next-line no-undef
