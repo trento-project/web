@@ -86,6 +86,48 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     end
   end
 
+  @spec get_upgradable_packages(
+          url :: String.t(),
+          auth :: any(),
+          system_id :: pos_integer(),
+          use_ca_cert :: boolean()
+        ) ::
+          {:ok, [map()]}
+          | {:error, :error_getting_packages | :authentication_error}
+  def get_upgradable_packages(url, auth, system_id, use_ca_cert) do
+    url
+    |> get_suma_api_url()
+    |> http_executor().get_upgradable_packages(auth, system_id, use_ca_cert)
+    |> handle_auth_error()
+    |> decode_response(
+      error_atom: :error_getting_packages,
+      error_log: "Failed to get upgradable packages for system ID #{system_id}."
+    )
+    |> extract_upgradable_packages()
+  end
+
+  defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 200, body: body}}),
+    do: {:ok, body}
+
+  defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 401}}),
+    do: {:error, :authentication_error}
+
+  defp handle_auth_error(error), do: error
+
+  defp decode_response({:ok, body}, _), do: Jason.decode(body, keys: :atoms)
+
+  defp decode_response({:error, _} = error, error_atom: error_atom, error_log: error_log) do
+    Logger.error("#{error_log} Error: #{inspect(error)}")
+
+    {:error, error_atom}
+  end
+
+  defp extract_upgradable_packages({:ok, %{success: true, result: result}}) do
+    {:ok, result}
+  end
+
+  defp extract_upgradable_packages({:error, _} = error), do: error
+
   defp get_suma_api_url(base_url),
     do: String.trim_trailing(base_url, "/") <> "/rhn/manager/api"
 

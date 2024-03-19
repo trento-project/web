@@ -29,6 +29,10 @@ defmodule Trento.SoftwareUpdates.Discovery do
   @impl true
   def clear, do: adapter().clear()
 
+  @impl true
+  def get_upgradable_packages(system_id),
+    do: adapter().get_upgradable_packages(system_id)
+
   @spec discover_software_updates :: {:ok, {list(), list()}}
   def discover_software_updates,
     do:

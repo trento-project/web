@@ -29,6 +29,14 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
             ) ::
               {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
 
+  @callback get_upgradable_packages(
+              base_url :: String.t(),
+              auth :: String.t(),
+              system_id :: pos_integer(),
+              use_ca_cert :: boolean()
+            ) ::
+              {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
+
   @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
 
   @impl true
@@ -60,6 +68,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   def get_relevant_patches(base_url, auth, system_id, use_ca_cert \\ false) do
     HTTPoison.get(
       "#{base_url}/system/getRelevantErrata?sid=#{system_id}",
+      [{"Content-type", "application/json"}],
+      hackney: [cookie: [auth]] ++ ssl_options(use_ca_cert)
+    )
+  end
+
+  @impl true
+  def get_upgradable_packages(base_url, auth, system_id, use_ca_cert \\ false) do
+    HTTPoison.get(
+      "#{base_url}/system/listLatestUpgradablePackages?sid=#{system_id}",
       [{"Content-type", "application/json"}],
       hackney: [cookie: [auth]] ++ ssl_options(use_ca_cert)
     )
