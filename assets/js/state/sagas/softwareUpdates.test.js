@@ -52,7 +52,9 @@ describe('Software Updates saga', () => {
         .onGet(`/api/v1/hosts/${hostID}/software_updates`)
         .reply(200, response);
 
-      const dispatched = await recordSaga(fetchSoftwareUpdates, { payload: hostID });
+      const dispatched = await recordSaga(fetchSoftwareUpdates, {
+        payload: hostID,
+      });
 
       expect(dispatched).toEqual([
         startLoadingSoftwareUpdates(),
@@ -73,7 +75,9 @@ describe('Software Updates saga', () => {
           .onGet(`/api/v1/hosts/${hostID}/software_updates`)
           .reply(status, body);
 
-        const dispatched = await recordSaga(fetchSoftwareUpdates, { payload: hostID });
+        const dispatched = await recordSaga(fetchSoftwareUpdates, {
+          payload: hostID,
+        });
 
         expect(dispatched).toEqual([
           startLoadingSoftwareUpdates(),
