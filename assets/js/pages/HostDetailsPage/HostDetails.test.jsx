@@ -176,6 +176,58 @@ describe('HostDetails component', () => {
     });
   });
 
+  describe('SUMA', () => {
+    it('should show the summary of SUMA software updates', () => {
+      const relevantPatches = faker.number.int(100);
+      const upgradablePackages = faker.number.int(100);
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          relevantPatches={relevantPatches}
+          upgradablePackages={upgradablePackages}
+        />
+      );
+
+      const relevantPatchesElement = screen
+        .getByText(/Relevant Patches/)
+        .closest('div');
+      const upgradablePackagesElement = screen
+        .getByText(/Upgradable Packages/)
+        .closest('div');
+
+      expect(relevantPatchesElement).toHaveTextContent(
+        relevantPatches.toString()
+      );
+      expect(upgradablePackagesElement).toHaveTextContent(
+        upgradablePackages.toString()
+      );
+    });
+
+    it("should display software updates as 'Unknown' when no SUMA updates data is available", () => {
+      const relevantPatches = undefined;
+      const upgradablePackages = undefined;
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          relevantPatches={relevantPatches}
+          upgradablePackages={upgradablePackages}
+        />
+      );
+
+      const relevantPatchesElement = screen
+        .getByText(/Relevant Patches/)
+        .closest('div');
+      const upgradablePackagesElement = screen
+        .getByText(/Upgradable Packages/)
+        .closest('div');
+
+      expect(relevantPatchesElement).toHaveTextContent('Unknown');
+      expect(upgradablePackagesElement).toHaveTextContent('Unknown');
+    });
+  });
+
   describe('last execution overview', () => {
     it('should be displayed when lastExecution has data inside', () => {
       const passingCount = faker.number.int(100);
