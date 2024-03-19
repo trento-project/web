@@ -150,6 +150,7 @@ function HostDetails({
               </Button>
 
               <Tooltip
+                wrap={false}
                 isEnabled={!canStartExecution(selectedChecks, savingChecks)}
                 content="Select some Checks first!"
                 place="bottom"
