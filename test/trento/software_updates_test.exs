@@ -453,4 +453,46 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       end)
     end
   end
+
+  describe "getting software updates" do
+    test "successfully returns software updates" do
+      %{id: host_id} = insert(:host)
+
+      assert {:ok, %{relevant_patches: [_, _], upgradable_packages: [_, _]}} =
+               SoftwareUpdates.get_software_updates(host_id)
+    end
+
+    test "handles non existing hosts" do
+      host_id = Faker.UUID.v4()
+
+      assert {:error, :not_found} =
+               SoftwareUpdates.get_software_updates(host_id)
+    end
+
+    test "returns errors when fetching upgradable packages" do
+      %{id: host_id} = insert(:host)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_upgradable_packages, 1, fn _ ->
+        {:error, :error_getting_packages}
+      end)
+
+      assert {:error, :error_getting_packages} = SoftwareUpdates.get_software_updates(host_id)
+    end
+
+    test "returns errors when fetching relevant_patches" do
+      %{id: host_id} = insert(:host)
+
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :get_relevant_patches, 1, fn _ ->
+        {:error, :error_getting_patches}
+      end)
+
+      assert {:error, :error_getting_patches} = SoftwareUpdates.get_software_updates(host_id)
+    end
+
+    test "errors when non existing fqdns are attempted" do
+      %{id: host_id} = insert(:host, fully_qualified_domain_name: nil)
+
+      assert {:error, :fqdn_not_found} = SoftwareUpdates.get_software_updates(host_id)
+    end
+  end
 end
