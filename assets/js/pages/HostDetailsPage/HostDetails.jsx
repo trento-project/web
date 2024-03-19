@@ -66,6 +66,7 @@ function HostDetails({
   relevantPatches,
   upgradablePackages,
   softwareUpdatesLoading,
+  softwareUpdatesTooltip,
   cleanUpHost,
   requestHostChecksExecution,
   navigate,
@@ -223,11 +224,7 @@ function HostDetails({
           className="mx-0 my-4"
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
-          tooltip={
-            relevantPatches === undefined && upgradablePackages === undefined
-              ? 'SUSE Manager is not available'
-              : undefined
-          }
+          tooltip={softwareUpdatesTooltip}
           loading={softwareUpdatesLoading}
         />
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>

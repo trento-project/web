@@ -108,6 +108,11 @@ function HostDetailsPage() {
       relevantPatches={numRelevantPatches}
       upgradablePackages={numUpgradablePackages}
       softwareUpdatesLoading={softwareUpdatesLoading}
+      softwareUpdatesTooltip={
+        numRelevantPatches === undefined && numUpgradablePackages === undefined
+          ? 'SUSE Manager is not available'
+          : undefined
+      }
       lastExecution={lastExecution}
       cleanUpHost={() => {
         dispatch(
