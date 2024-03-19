@@ -10,7 +10,7 @@ import {
   setSoftwareUpdatesErrors,
 } from '@state/softwareUpdates';
 
-export function* fetchSoftwareUpdates(hostID) {
+export function* fetchSoftwareUpdates({ payload: hostID }) {
   yield put(startLoadingSoftwareUpdates());
 
   try {
