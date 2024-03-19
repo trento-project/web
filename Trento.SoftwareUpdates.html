@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-98A79BFD.js"></script>
+    <script src="dist/sidebar_items-A03655FA.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -207,6 +207,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#get_software_updates/1" translate="no">get_software_updates(host_id)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#run_discovery/0" translate="no">run_discovery()</a>
 
       </div>
@@ -243,7 +251,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">software_update_settings_change_submission()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L20" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L23" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -276,7 +284,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">software_update_settings_save_submission()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L13" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L16" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -323,7 +331,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">change_settings(settings_submission, date_service \\ DateService)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L52" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L55" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -354,7 +362,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">clear_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L59" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L62" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -382,7 +390,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_settings()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L28" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L31" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -403,6 +411,41 @@ GUIDES
 
   </section>
 </section>
+<section class="detail" id="get_software_updates/1">
+
+  <div class="detail-header">
+    <a href="#get_software_updates/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_software_updates(host_id)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L102" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_software_updates(<a href="https://hexdocs.pm/ecto/3.11.1/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>()) ::
+  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()}
+  | {:error,
+     :system_id_not_found
+     | :not_found
+     | :fqdn_not_found
+     | :error_getting_patches
+     | :error_getting_packages}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="run_discovery/0">
 
   <div class="detail-header">
@@ -412,7 +455,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">run_discovery()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L78" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -442,7 +485,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">save_settings(settings_submission, date_service \\ DateService)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L42" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L45" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

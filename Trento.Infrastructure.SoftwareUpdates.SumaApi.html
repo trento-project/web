@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-98A79BFD.js"></script>
+    <script src="dist/sidebar_items-A03655FA.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -185,6 +185,14 @@ GUIDES
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#get_upgradable_packages/4" translate="no">get_upgradable_packages(url, auth, system_id, use_ca_cert)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#login/4" translate="no">login(url, username, password, use_ca_cert)</a>
 
       </div>
@@ -287,6 +295,39 @@ GUIDES
   use_ca_cert :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
 ) ::
   {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()} | {:error, :system_id_not_found | :authentication_error}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="get_upgradable_packages/4">
+
+  <div class="detail-header">
+    <a href="#get_upgradable_packages/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">get_upgradable_packages(url, auth, system_id, use_ca_cert)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/software_updates/suma_api.ex#L97" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_upgradable_packages(
+  url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  auth :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
+  system_id :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  use_ca_cert :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
+) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, :error_getting_packages | :authentication_error}</pre>
 
       </div>
 
