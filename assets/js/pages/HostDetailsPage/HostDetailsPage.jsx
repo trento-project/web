@@ -25,6 +25,7 @@ import {
 } from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
+import { fetchSoftwareUpdates } from '@state/sagas/softwareUpdates';
 import HostDetails from './HostDetails';
 
 // eslint-disable-next-line no-undef
@@ -77,6 +78,7 @@ function HostDetailsPage() {
     getExportersStatus();
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
+    dispatch(fetchSoftwareUpdates(hostID));
   }, []);
 
   if (!host) {
