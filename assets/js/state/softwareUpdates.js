@@ -15,21 +15,21 @@ export const softwareUpdatesSlice = createSlice({
     },
     setSoftwareUpdates: (
       state,
-      { payload: { hostId, relevant_patches, upgradable_packages } }
+      { payload: { hostID, relevant_patches, upgradable_packages } }
     ) => {
       state.loading = false;
 
       state.softwareUpdates = {
         ...state.softwareUpdates,
-        [hostId]: {
+        [hostID]: {
           relevant_patches,
           upgradable_packages,
         },
       };
     },
-    setEmptySoftwareUpdates: (state, { payload: { hostId } }) => {
+    setEmptySoftwareUpdates: (state, { payload: { hostID } }) => {
       state.loading = false;
-      state.softwareUpdates = { ...state.softwareUpdates, [hostId]: {} };
+      state.softwareUpdates = { ...state.softwareUpdates, [hostID]: {} };
     },
     setSoftwareUpdatesErrors: (state, { payload: errors }) => {
       state.loading = false;

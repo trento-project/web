@@ -11,6 +11,10 @@ import { getClusterByHost } from '@state/selectors/cluster';
 import { getInstancesOnHost } from '@state/selectors/sapSystem';
 import { getCatalog } from '@state/selectors/catalog';
 import { getLastExecution } from '@state/selectors/lastExecutions';
+import {
+  getSoftwareUpdates,
+  getSoftwareUpdatesStats,
+} from '@state/selectors/softwareUpdates';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
@@ -21,6 +25,7 @@ import {
 } from '@state/lastExecutions';
 
 import { deregisterHost } from '@state/hosts';
+import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostDetails from './HostDetails';
 
 // eslint-disable-next-line no-undef
@@ -47,6 +52,13 @@ function HostDetailsPage() {
 
   const [exportersStatus, setExportersStatus] = useState([]);
 
+  const { loading: softwareUpdatesLoading } = useSelector((state) =>
+    getSoftwareUpdates(state)
+  );
+  const { numRelevantPatches, numUpgradablePackages } = useSelector((state) =>
+    getSoftwareUpdatesStats(state, hostID)
+  );
+
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
       `/hosts/${hostID}/exporters_status`
@@ -66,6 +78,7 @@ function HostDetailsPage() {
     getExportersStatus();
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
+    dispatch(fetchSoftwareUpdates(hostID));
   }, []);
 
   if (!host) {
@@ -92,6 +105,14 @@ function HostDetailsPage() {
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}
       catalog={catalog}
+      relevantPatches={numRelevantPatches}
+      upgradablePackages={numUpgradablePackages}
+      softwareUpdatesLoading={softwareUpdatesLoading}
+      softwareUpdatesTooltip={
+        numRelevantPatches === undefined && numUpgradablePackages === undefined
+          ? 'SUSE Manager is not available'
+          : undefined
+      }
       lastExecution={lastExecution}
       cleanUpHost={() => {
         dispatch(

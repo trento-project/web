@@ -2,9 +2,9 @@ import { faker } from '@faker-js/faker';
 import { getSoftwareUpdates, getSoftwareUpdatesStats } from './softwareUpdates';
 
 describe('Software Updates selector', () => {
-  const hostId = faker.string.uuid();
+  const hostID = faker.string.uuid();
   const softwareUpdates = {
-    [hostId]: {
+    [hostID]: {
       relevant_patches: [
         {
           date: '2024-03-13',
@@ -103,7 +103,7 @@ describe('Software Updates selector', () => {
   });
 
   it('should return the correct software updates statistics', () => {
-    expect(getSoftwareUpdatesStats(state, hostId)).toEqual({
+    expect(getSoftwareUpdatesStats(state, hostID)).toEqual({
       numRelevantPatches: 4,
       numUpgradablePackages: 3,
     });

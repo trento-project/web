@@ -92,7 +92,7 @@ describe('SoftwareUpdates reducer', () => {
     };
 
     const action = setSoftwareUpdates({
-      hostId: host2,
+      hostID: host2,
       relevant_patches: newRelevantPatches,
       upgradable_packages: newUpgradablePackages,
     });
@@ -135,7 +135,7 @@ describe('SoftwareUpdates reducer', () => {
       errors: [],
     };
 
-    const action = setEmptySoftwareUpdates({ hostId: host2 });
+    const action = setEmptySoftwareUpdates({ hostID: host2 });
 
     const actual = softwareUpdatesReducer(initialState, action);
 
