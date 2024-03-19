@@ -102,6 +102,7 @@ function HanaClusterDetails({
               isEnabled={!hasSelectedChecks}
               content="Select some Checks first!"
               place="bottom"
+              wrap={false}
             >
               <Button
                 type="primary"
