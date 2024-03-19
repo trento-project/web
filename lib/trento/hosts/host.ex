@@ -410,6 +410,9 @@ defmodule Trento.Hosts.Host do
         %DeregisterHost{deregistered_at: deregistered_at}
       ) do
     [
+      %SoftwareUpdatesDiscoveryCleared{
+        host_id: host_id
+      },
       %HostDeregistered{
         host_id: host_id,
         deregistered_at: deregistered_at

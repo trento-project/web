@@ -1867,6 +1867,35 @@ defmodule Trento.Hosts.HostTest do
       )
     end
 
+    test "should clear up software updates discoveries on deregistration" do
+      host_id = Faker.UUID.v4()
+      deregistered_at = DateTime.utc_now()
+
+      assert_state(
+        [
+          build(:host_registered_event, host_id: host_id),
+          build(:software_updates_discovery_completed_event,
+            host_id: host_id,
+            relevant_patches: %{
+              security_advisories: 5,
+              bug_fixes: 0,
+              software_enhancements: 0
+            }
+          )
+        ],
+        %DeregisterHost{
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        },
+        fn host ->
+          assert %Host{
+                   software_updates_discovery_health: Health.unknown(),
+                   deregistered_at: ^deregistered_at
+                 } = host
+        end
+      )
+    end
+
     test "should reject all the commands except the registration ones when the host is deregistered" do
       host_id = Faker.UUID.v4()
       dat = DateTime.utc_now()
@@ -1905,7 +1934,7 @@ defmodule Trento.Hosts.HostTest do
       end
     end
 
-    test "should emit the HostDeregistered and HostTombstoned events" do
+    test "should emit relevant events when deregistering a host" do
       host_id = Faker.UUID.v4()
       dat = DateTime.utc_now()
 
@@ -1920,6 +1949,9 @@ defmodule Trento.Hosts.HostTest do
           }
         ],
         [
+          %SoftwareUpdatesDiscoveryCleared{
+            host_id: host_id
+          },
           %HostDeregistered{
             host_id: host_id,
             deregistered_at: dat
