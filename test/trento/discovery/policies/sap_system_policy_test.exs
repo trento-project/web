@@ -10,11 +10,14 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
 
   alias Trento.Discovery.Policies.SapSystemPolicy
 
+  alias Trento.Databases.Commands.{
+    MarkDatabaseInstanceAbsent,
+    RegisterDatabaseInstance
+  }
+
   alias Trento.SapSystems.Commands.{
     MarkApplicationInstanceAbsent,
-    MarkDatabaseInstanceAbsent,
-    RegisterApplicationInstance,
-    RegisterDatabaseInstance
+    RegisterApplicationInstance
   }
 
   test "should return the expected commands when a sap_system payload of type database is handled" do
@@ -24,7 +27,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 features: "HDB|HDB_WORKER",
                 host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                 instance_number: "00",
-                sap_system_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
+                database_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
                 sid: "PRD",
                 tenant: "PRD",
                 system_replication: "Primary",
@@ -44,7 +47,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 features: "HDB|HDB_WORKER",
                 host_id: "9cd46919-5f19-59aa-993e-cf3736c71053",
                 instance_number: "10",
-                sap_system_id: "6c9208eb-a5bb-57ef-be5c-6422dedab602",
+                database_id: "6c9208eb-a5bb-57ef-be5c-6422dedab602",
                 sid: "HDP",
                 tenant: "HDP",
                 system_replication: nil,
@@ -224,11 +227,11 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
       assert {:ok,
               [
                 %MarkDatabaseInstanceAbsent{
-                  sap_system_id: ^database_sap_system_id,
+                  database_id: ^database_sap_system_id,
                   instance_number: ^database_instance_number_1
                 },
                 %MarkDatabaseInstanceAbsent{
-                  sap_system_id: ^database_sap_system_id,
+                  database_id: ^database_sap_system_id,
                   instance_number: ^database_instance_number_2
                 },
                 %MarkApplicationInstanceAbsent{
@@ -239,7 +242,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 },
                 %RegisterDatabaseInstance{
                   instance_number: "00",
-                  sap_system_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
+                  database_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
                   sid: "PRD"
                 }
               ]} =

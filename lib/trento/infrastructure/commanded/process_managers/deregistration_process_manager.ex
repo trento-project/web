@@ -60,10 +60,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.Hosts.Commands.DeregisterHost
 
-  alias Trento.SapSystems.Commands.{
-    DeregisterApplicationInstance,
-    DeregisterDatabaseInstance
-  }
+  alias Trento.Databases.Commands.DeregisterDatabaseInstance
+  alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
   alias Trento.Clusters.Commands.DeregisterClusterHost
 
@@ -97,13 +95,12 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   def interested?(%SapSystemRolledUp{
         snapshot: %SapSystem{
-          database: %SapSystems.Database{instances: db_instances},
-          application: %SapSystems.Application{instances: app_instances}
+          instances: app_instances
         }
       }),
       do:
         {:start,
-         (db_instances ++ app_instances)
+         app_instances
          |> Enum.map(fn %SapSystems.Instance{host_id: host_id} -> host_id end)
          |> Enum.uniq()}
 
@@ -148,7 +145,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
                                         instance_number: instance_number
                                       } ->
         %DeregisterDatabaseInstance{
-          sap_system_id: sap_system_id,
+          database_id: sap_system_id,
           instance_number: instance_number,
           host_id: host_id,
           deregistered_at: requested_at
@@ -230,27 +227,15 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   def apply(
         %DeregistrationProcessManager{
-          database_instances: database_instances,
           application_instances: application_instances
         } = state,
         %SapSystemRolledUp{
           sap_system_id: snapshot_sap_system_id,
           snapshot: %SapSystem{
-            database: %SapSystems.Database{instances: snapshot_database_instances},
-            application: %SapSystems.Application{instances: snapshot_application_instances}
+            instances: snapshot_application_instances
           }
         }
       ) do
-    new_database_instances =
-      snapshot_database_instances
-      |> Enum.map(fn %SapSystems.Instance{
-                       instance_number: instance_number
-                     } ->
-        %Instance{sap_system_id: snapshot_sap_system_id, instance_number: instance_number}
-      end)
-      |> Enum.concat(database_instances)
-      |> Enum.uniq()
-
     new_application_instances =
       snapshot_application_instances
       |> Enum.map(fn %SapSystems.Instance{
@@ -263,8 +248,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
     %DeregistrationProcessManager{
       state
-      | database_instances: new_database_instances,
-        application_instances: new_application_instances
+      | application_instances: new_application_instances
     }
   end
 

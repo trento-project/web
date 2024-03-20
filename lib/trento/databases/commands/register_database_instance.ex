@@ -1,10 +1,10 @@
-defmodule Trento.SapSystems.Commands.RegisterDatabaseInstance do
+defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
   @moduledoc """
   Register a database instance to the monitoring system.
   """
 
   @required_fields [
-    :sap_system_id,
+    :database_id,
     :sid,
     :tenant,
     :host_id,
@@ -20,7 +20,7 @@ defmodule Trento.SapSystems.Commands.RegisterDatabaseInstance do
   require Trento.Enums.Health, as: Health
 
   defcommand do
-    field :sap_system_id, Ecto.UUID
+    field :database_id, Ecto.UUID
     field :sid, :string
     field :tenant, :string
     field :host_id, Ecto.UUID

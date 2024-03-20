@@ -12,10 +12,8 @@ defmodule Trento.SapSystemsTest do
     SapSystemReadModel
   }
 
-  alias Trento.SapSystems.Commands.{
-    DeregisterApplicationInstance,
-    DeregisterDatabaseInstance
-  }
+  alias Trento.Databases.Commands.DeregisterDatabaseInstance
+  alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
   @moduletag :integration
 
@@ -179,7 +177,7 @@ defmodule Trento.SapSystemsTest do
         Trento.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
-             sap_system_id: ^sap_system_id,
+             database_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number,
              deregistered_at: ^deregistered_at
