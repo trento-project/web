@@ -1,6 +1,14 @@
 defmodule Trento.Databases.Database do
   @moduledoc """
-  TODO
+  The database aggregate manages all the domain logic related to
+  deployed HANA database.
+
+  In order to have a fully registered database one of the next two conditions must exist:
+  - A HANA instance without system replication is discovered
+  - A HANA instance running as primary system replication instance is discovered
+
+  Once any of these conditions are met the Database is registered and all the events related
+  to it are available now.
   """
 
   require Trento.Enums.Health, as: Health
