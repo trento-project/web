@@ -7,8 +7,6 @@ config :trento, TrentoWeb.Endpoint,
 
 config :swoosh, local: false
 
-config :trento, suse_manager_enabled: false
-
 config :trento, Trento.SoftwareUpdates.Discovery,
   adapter: Trento.Infrastructure.SoftwareUpdates.Suma
 
