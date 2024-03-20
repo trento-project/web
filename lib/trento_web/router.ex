@@ -154,9 +154,13 @@ defmodule TrentoWeb.Router do
         patch "/api_key", SettingsController, :update_api_key_settings
 
         if Application.compile_env!(:trento, :suse_manager_enabled) do
-          resources "/suma_credentials", SUMACredentialsController,
-            only: [:show, :create, :update, :delete],
-            singleton: true
+          scope "/suma_credentials" do
+            resources "/", SUMACredentialsController,
+              only: [:show, :create, :update, :delete],
+              singleton: true
+
+            post "/test", SUMACredentialsController, :test
+          end
         end
       end
 

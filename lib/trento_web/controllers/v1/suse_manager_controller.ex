@@ -12,7 +12,7 @@ defmodule TrentoWeb.V1.SUSEManagerController do
 
   operation :software_updates,
     summary: "Gets available software updates for a given host",
-    tags: [],
+    tags: ["Platform"],
     description:
       "Endpoint to fetch available relevant patches and upgradable packages for a given host ID.",
     parameters: [

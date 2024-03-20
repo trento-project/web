@@ -4,6 +4,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
 
   import OpenApiSpex.TestAssertions
 
+  import Mox
   import Trento.Factory
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
@@ -14,11 +15,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
 
   describe "retrieve user settings" do
     test "should return user settings", %{conn: conn} do
-      insert(
-        :software_updates_settings,
-        [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
-        conflict_target: :id,
-        on_conflict: :replace_all
+      insert_software_updates_settings(
+        ca_cert: Faker.Lorem.sentence(),
+        ca_uploaded_at: DateTime.utc_now()
       )
 
       api_spec = ApiSpec.spec()
@@ -114,10 +113,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
 
     test "should not save valid settings when previously settings have been saved", %{conn: conn} do
-      insert(:software_updates_settings, [ca_cert: nil, ca_uploaded_at: nil],
-        conflict_target: :id,
-        on_conflict: :replace_all
-      )
+      insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
 
       new_settings = %{
         url: Faker.Internet.image_url(),
@@ -193,10 +189,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     test "should not process empty request body", %{
       conn: conn
     } do
-      insert(:software_updates_settings, [],
-        conflict_target: :id,
-        on_conflict: :replace_all
-      )
+      insert_software_updates_settings()
 
       submission = %{}
 
@@ -218,10 +211,7 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
 
     test "should validate partial changes to software updates settings", %{conn: conn} do
-      insert(:software_updates_settings, [],
-        conflict_target: :id,
-        on_conflict: :replace_all
-      )
+      insert_software_updates_settings()
 
       change_settings_scenarios = [
         %{
@@ -350,11 +340,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         ca_cert: _initial_ca_cert,
         ca_uploaded_at: initial_ca_uploaded_at
       } =
-        insert(
-          :software_updates_settings,
-          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
-          conflict_target: :id,
-          on_conflict: :replace_all
+        insert_software_updates_settings(
+          ca_cert: Faker.Lorem.sentence(),
+          ca_uploaded_at: DateTime.utc_now()
         )
 
       change_submission = %{
@@ -385,11 +373,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         ca_cert: _initial_ca_cert,
         ca_uploaded_at: initial_ca_uploaded_at
       } =
-        insert(
-          :software_updates_settings,
-          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
-          conflict_target: :id,
-          on_conflict: :replace_all
+        insert_software_updates_settings(
+          ca_cert: Faker.Lorem.sentence(),
+          ca_uploaded_at: DateTime.utc_now()
         )
 
       change_submission = %{url: new_url = "https://new.com", ca_cert: "new_ca_cert"}
@@ -415,11 +401,9 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
         ca_cert: _initial_ca_cert,
         ca_uploaded_at: _initial_ca_uploaded_at
       } =
-        insert(
-          :software_updates_settings,
-          [ca_cert: Faker.Lorem.sentence(), ca_uploaded_at: DateTime.utc_now()],
-          conflict_target: :id,
-          on_conflict: :replace_all
+        insert_software_updates_settings(
+          ca_cert: Faker.Lorem.sentence(),
+          ca_uploaded_at: DateTime.utc_now()
         )
 
       change_submission = %{
@@ -448,14 +432,51 @@ defmodule TrentoWeb.V1.SUMACredentialsControllerTest do
     end
 
     test "should return 204 when user settings have previously been saved", %{conn: conn} do
-      insert(:software_updates_settings, [],
-        conflict_target: :id,
-        on_conflict: :replace_all
-      )
+      insert_software_updates_settings()
 
       conn = delete(conn, "/api/v1/settings/suma_credentials")
 
       assert response(conn, 204) == ""
+    end
+  end
+
+  describe "testing connection with SUMA" do
+    test "should return 422 on test connection failure", %{conn: conn} do
+      error_reasons = [
+        :settings_not_configured,
+        :some_error_during_test_connection
+      ]
+
+      for error_reason <- error_reasons do
+        expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> {:error, error_reason} end)
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/settings/suma_credentials/test", %{})
+          |> json_response(:unprocessable_entity)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Connection with software updates provider failed.",
+                     "title" => "Unprocessable Entity"
+                   }
+                 ]
+               } == resp
+      end
+    end
+
+    test "should return 200 on successful test connection", %{conn: conn} do
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/settings/suma_credentials/test")
+        |> json_response(:ok)
+
+      assert "" == resp
     end
   end
 end

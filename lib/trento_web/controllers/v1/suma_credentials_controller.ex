@@ -87,6 +87,25 @@ defmodule TrentoWeb.V1.SUMACredentialsController do
     send_resp(conn, :no_content, "")
   end
 
+  operation :test,
+    summary: "Tests connection with SUMA",
+    tags: ["Platform"],
+    description: "Tests connection with SUMA with the saved credentials",
+    responses: [
+      ok: "The connection with SUMA was successful",
+      unprocessable_entity:
+        {"The connection with SUMA failed", "application/json", UnprocessableEntity}
+    ]
+
+  @spec test(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test(conn, _) do
+    with :ok <- SoftwareUpdates.test_connection_settings() do
+      conn
+      |> put_status(:ok)
+      |> json("")
+    end
+  end
+
   defp decode_body(body) when is_struct(body), do: Map.from_struct(body)
   defp decode_body(body), do: body
 end
