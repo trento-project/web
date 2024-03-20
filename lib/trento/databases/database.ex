@@ -61,10 +61,9 @@ defmodule Trento.Databases.Database do
       ),
       do: {:error, :database_not_registered}
 
-  # First time that a Database instance is registered, the SAP System starts its registration process.
+  # First time that a Database instance is registered, the Database starts its registration process.
   # Database instances are accepted when the system replication is disabled or when enabled, only if the database
   # has a primary role
-  # When an Application is discovered, the SAP System completes the registration process.
   def execute(
         %Database{database_id: nil},
         %RegisterDatabaseInstance{
@@ -161,8 +160,8 @@ defmodule Trento.Databases.Database do
     ]
   end
 
-  # When a RegisterDatabaseInstance command is received by an existing SAP System aggregate,
-  # the SAP System aggregate registers the Database instance if it is not already registered
+  # When a RegisterDatabaseInstance command is received by an existing database aggregate,
+  # the database aggregate registers the Database instance if it is not already registered
   # and updates the health when needed.
   def execute(
         %Database{instances: instances} = database,
@@ -217,7 +216,7 @@ defmodule Trento.Databases.Database do
   end
 
   # Deregister a database instance and emit a DatabaseInstanceDeregistered
-  # also potentially emit SapSystemDeregistered and DatabaseDeregistered events
+  # also potentially emit DatabaseDeregistered events
   def execute(
         %Database{database_id: database_id} = database,
         %DeregisterDatabaseInstance{

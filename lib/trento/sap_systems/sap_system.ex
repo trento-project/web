@@ -561,7 +561,7 @@ defmodule Trento.SapSystems.SapSystem do
     end
   end
 
-  # Restore a SAP system when the database is registered
+  # Restore a SAP system when the all the requires instances are registered
   defp maybe_emit_sap_system_restored_event(
          %SapSystem{instances: instances},
          %RegisterApplicationInstance{
@@ -580,9 +580,6 @@ defmodule Trento.SapSystems.SapSystem do
       }
     end
   end
-
-  # Do not restore SAP system if the database is not registered
-  defp maybe_emit_sap_system_restored_event(%SapSystem{}, %RegisterApplicationInstance{}), do: nil
 
   defp maybe_emit_sap_system_registered_or_updated_event(
          %SapSystem{sid: nil, instances: instances},
