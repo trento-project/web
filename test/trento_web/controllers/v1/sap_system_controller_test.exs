@@ -9,10 +9,8 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
   alias TrentoWeb.OpenApi.V1.ApiSpec
 
-  alias Trento.SapSystems.Commands.{
-    DeregisterApplicationInstance,
-    DeregisterDatabaseInstance
-  }
+  alias Trento.Databases.Commands.DeregisterDatabaseInstance
+  alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -145,7 +143,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         Trento.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
-             sap_system_id: ^sap_system_id,
+             database_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number
            } ->
@@ -172,7 +170,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         Trento.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
-             sap_system_id: ^sap_system_id,
+             database_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number
            } ->
@@ -202,7 +200,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
         Trento.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
-             sap_system_id: ^sap_system_id,
+             database_id: ^sap_system_id,
              host_id: ^host_id,
              instance_number: ^instance_number
            } ->

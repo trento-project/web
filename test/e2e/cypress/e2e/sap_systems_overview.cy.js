@@ -295,7 +295,7 @@ context('SAP Systems Overview', () => {
   describe('Move application instance', () => {
     const nwdSystem = {
       sid: 'NWD',
-      id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+      id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
       hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
       instanceNumber: '02',
       hostname: 'vmnwdev01',

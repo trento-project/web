@@ -6,7 +6,7 @@ export const healthMap = {
 };
 
 export const selectedSystem = {
-  Id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+  Id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
   Sid: 'NWD',
   Type: 'Application server',
   Hosts: [

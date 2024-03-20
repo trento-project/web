@@ -70,10 +70,13 @@ defmodule Trento.Factory do
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
-    DeregisterDatabaseInstance,
     RegisterApplicationInstance,
-    RegisterDatabaseInstance,
     RollUpSapSystem
+  }
+
+  alias Trento.Databases.Commands.{
+    DeregisterDatabaseInstance,
+    RegisterDatabaseInstance
   }
 
   alias Trento.Clusters.Commands.RegisterClusterHost
@@ -333,7 +336,7 @@ defmodule Trento.Factory do
 
   def deregister_database_instance_command_factory do
     DeregisterDatabaseInstance.new!(%{
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now(),
       host_id: Faker.UUID.v4(),
       instance_number: "00"
@@ -634,7 +637,7 @@ defmodule Trento.Factory do
 
   def register_database_instance_command_factory do
     RegisterDatabaseInstance.new!(%{
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       sid: Faker.StarWars.planet(),
       tenant: Faker.Beer.hop(),
       instance_number: "00",
