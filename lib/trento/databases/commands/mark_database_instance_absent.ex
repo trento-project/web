@@ -1,4 +1,4 @@
-defmodule Trento.SapSystems.Commands.MarkDatabaseInstanceAbsent do
+defmodule Trento.Databases.Commands.MarkDatabaseInstanceAbsent do
   @moduledoc """
   Mark a database instance as absent
   """
@@ -9,7 +9,7 @@ defmodule Trento.SapSystems.Commands.MarkDatabaseInstanceAbsent do
   defcommand do
     field :instance_number, :string
     field :host_id, Ecto.UUID
-    field :sap_system_id, Ecto.UUID
+    field :database_id, Ecto.UUID
     field :absent_at, :utc_datetime_usec
   end
 end
