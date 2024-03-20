@@ -51,7 +51,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
       "#{base_url}/auth/login",
       payload,
       [{"Content-type", "application/json"}],
-      ssl_options(use_ca_cert)
+      ssl_options(use_ca_cert) ++ [timeout: 1_000]
     )
   end
 
