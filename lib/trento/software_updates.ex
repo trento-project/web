@@ -77,6 +77,21 @@ defmodule Trento.SoftwareUpdates do
     :ok
   end
 
+  @spec test_connection_settings :: :ok | {:error, :connection_test_failed}
+  def test_connection_settings do
+    case Discovery.setup() do
+      :ok ->
+        :ok
+
+      error ->
+        Logger.error(
+          "Error while testing connection with software updates provider: #{inspect(error)}"
+        )
+
+        {:error, :connection_test_failed}
+    end
+  end
+
   @spec run_discovery :: :ok | {:error, :settings_not_configured}
   def run_discovery do
     case get_settings() do

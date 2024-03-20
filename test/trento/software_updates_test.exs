@@ -495,4 +495,18 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       assert {:error, :fqdn_not_found} = SoftwareUpdates.get_software_updates(host_id)
     end
   end
+
+  describe "testing connection settings" do
+    test "should return an error when connection test fails" do
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> {:error, :some_error} end)
+
+      assert {:error, :connection_test_failed} = SoftwareUpdates.test_connection_settings()
+    end
+
+    test "should return ok when connection test succeeds" do
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
+
+      assert :ok == SoftwareUpdates.test_connection_settings()
+    end
+  end
 end
