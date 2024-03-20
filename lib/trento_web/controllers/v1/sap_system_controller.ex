@@ -2,7 +2,10 @@ defmodule TrentoWeb.V1.SapSystemController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.SapSystems
+  alias Trento.{
+    Databases,
+    SapSystems
+  }
 
   alias TrentoWeb.OpenApi.V1.Schema
 
@@ -41,7 +44,7 @@ defmodule TrentoWeb.V1.SapSystemController do
     ]
 
   def list_databases(conn, _) do
-    databases = SapSystems.get_all_databases()
+    databases = Databases.get_all_databases()
 
     render(conn, "databases.json", databases: databases)
   end
@@ -117,7 +120,7 @@ defmodule TrentoWeb.V1.SapSystemController do
         host_id: host_id,
         instance_number: instance_number
       }) do
-    with :ok <- SapSystems.deregister_database_instance(sap_system_id, host_id, instance_number) do
+    with :ok <- Databases.deregister_database_instance(sap_system_id, host_id, instance_number) do
       send_resp(conn, 204, "")
     end
   end
