@@ -7,7 +7,7 @@ defmodule Trento.ProjectorsSupervisor do
 
   alias Trento.Hosts.Projections.{
     HostProjector,
-    SlesSubscriptionsProjector
+    SlesSubscriptionsProjector,
   }
 
   alias Trento.SapSystems.Projections.{
