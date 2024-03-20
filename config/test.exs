@@ -32,9 +32,6 @@ config :trento, TrentoWeb.Endpoint,
 # In test we don't send emails.
 config :trento, Trento.Mailer, adapter: Swoosh.Adapters.Test
 
-# Disable telemetry publishing during test
-config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.ToLogger
-
 # Print only warnings and errors during test
 config :logger, level: :warning
 

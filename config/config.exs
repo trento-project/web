@@ -96,12 +96,6 @@ config :trento, Trento.Scheduler,
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
     ],
-    publish_telemetry: [
-      schedule: {:extended, "@daily"},
-      task: {Trento.Infrastructure.Telemetry, :publish, []},
-      run_strategy: {Quantum.RunStrategy.Random, :cluster},
-      overlap: false
-    ],
     clusters_checks_execution: [
       # Runs every five minutes
       schedule: "*/5 * * * *",
@@ -131,8 +125,6 @@ config :trento, Trento.Scheduler,
     ]
   ],
   debug_logging: false
-
-config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.Suse
 
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
