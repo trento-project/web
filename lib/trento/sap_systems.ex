@@ -14,10 +14,9 @@ defmodule Trento.SapSystems do
 
   alias Trento.Support.DateService
 
-  alias Trento.SapSystems.Commands.{
-    DeregisterApplicationInstance,
-    DeregisterDatabaseInstance
-  }
+  alias Trento.Databases.Commands.DeregisterDatabaseInstance
+
+  alias Trento.SapSystems.Commands.DeregisterApplicationInstance
 
   alias Trento.Repo
 
@@ -107,7 +106,7 @@ defmodule Trento.SapSystems do
       _ ->
         commanded().dispatch(
           DeregisterDatabaseInstance.new!(%{
-            sap_system_id: sap_system_id,
+            database_id: sap_system_id,
             host_id: host_id,
             instance_number: instance_number,
             deregistered_at: date_service.utc_now()
