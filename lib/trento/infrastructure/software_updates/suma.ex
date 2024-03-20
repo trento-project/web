@@ -20,7 +20,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   def start_link(server_name),
     do: GenServer.start_link(__MODULE__, %State{}, name: process_identifier(server_name))
 
-  @impl true
+  @impl GenServer
   def init(%State{} = state), do: {:ok, state}
 
   def identify(server_name \\ @default_name),
@@ -29,6 +29,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> identification_tuple
       |> :global.whereis_name()
 
+  @impl Trento.SoftwareUpdates.Discovery.Gen
   def setup(server_name \\ @default_name),
     do:
       server_name
