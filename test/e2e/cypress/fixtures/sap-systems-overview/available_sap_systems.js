@@ -19,7 +19,7 @@ export const isHanaPrimary = (instance) =>
 export const availableSAPSystems = [
   {
     sid: 'NWD',
-    id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+    id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
     health: 'GREEN',
     attachedDatabase: {
       sid: 'HDD',
@@ -104,7 +104,7 @@ export const availableSAPSystems = [
     tag: 'env3',
   },
   {
-    id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
+    id: 'eb7bc03e-166f-5ed0-b22d-79672d110d04',
     sid: 'NWP',
     health: 'GREEN',
     attachedDatabase: {
@@ -190,7 +190,7 @@ export const availableSAPSystems = [
     tag: 'env1',
   },
   {
-    id: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
+    id: '6748d2dd-b5a1-5599-895c-d1308b2d6541',
     sid: 'NWQ',
     health: 'GREEN',
     attachedDatabase: {
