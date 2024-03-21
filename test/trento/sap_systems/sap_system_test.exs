@@ -7,8 +7,10 @@ defmodule Trento.SapSystems.SapSystemTest do
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
+    DeregisterSapSystem,
     MarkApplicationInstanceAbsent,
     RegisterApplicationInstance,
+    RestoreSapSystem,
     RollUpSapSystem
   }
 
@@ -1429,6 +1431,117 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
+    test "should restore a SAP system when abap/messageserver instances are present and the restore command is received" do
+      sap_system_id = UUID.uuid4()
+
+      deregistered_at = DateTime.utc_now()
+
+      application_sid = fake_sid()
+
+      message_server_host_id = UUID.uuid4()
+      message_server_instance_number = "00"
+      abap_host_id = UUID.uuid4()
+      abap_instance_number = "01"
+
+      initial_events = [
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "MESSAGESERVER|ENQUE",
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          host_id: abap_host_id,
+          instance_number: abap_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: application_sid
+        ),
+        build(:sap_system_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        )
+      ]
+
+      command = %RestoreSapSystem{
+        sap_system_id: sap_system_id
+      }
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [
+          %SapSystemRestored{
+            sap_system_id: sap_system_id,
+            health: :passing
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   deregistered_at: nil
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should not restore a SAP system when the SAP system is not deregistered" do
+      sap_system_id = UUID.uuid4()
+
+      application_sid = fake_sid()
+
+      message_server_host_id = UUID.uuid4()
+      message_server_instance_number = "00"
+      abap_host_id = UUID.uuid4()
+      abap_instance_number = "01"
+
+      initial_events = [
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "MESSAGESERVER|ENQUE",
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          host_id: abap_host_id,
+          instance_number: abap_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: application_sid
+        )
+      ]
+
+      command = %RestoreSapSystem{
+        sap_system_id: sap_system_id
+      }
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [],
+        fn sap_system ->
+          assert %SapSystem{
+                   deregistered_at: nil
+                 } = sap_system
+        end
+      )
+    end
+
     test "should reject all the commands except for the registration/instance deregistration ones, when the SAP system is deregistered" do
       sap_system_id = UUID.uuid4()
 
@@ -1478,6 +1591,135 @@ defmodule Trento.SapSystems.SapSystemTest do
         assert match?({:ok, _, _}, aggregate_run(initial_events, command)),
                "Command #{inspect(command)} should be accepted by a deregistered SAP system"
       end
+    end
+
+    test "should always deregister the SAP system when the deregistration command is received" do
+      sap_system_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      message_server_host_id = UUID.uuid4()
+      abap_host_id = UUID.uuid4()
+      enqrep_host_id = UUID.uuid4()
+
+      message_server_instance_number = "01"
+      abap_instance_number = "02"
+      enqrep_server_instance_number = "03"
+
+      application_sid = fake_sid()
+
+      assert_events_and_state(
+        [
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "MESSAGESERVER|ENQUE",
+            sid: application_sid,
+            host_id: message_server_host_id,
+            instance_number: message_server_instance_number
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            features: "ABAP|GATEWAY|ICMAN|IGS",
+            sid: application_sid,
+            host_id: abap_host_id,
+            instance_number: abap_instance_number
+          ),
+          build(
+            :sap_system_registered_event,
+            sap_system_id: sap_system_id,
+            sid: application_sid
+          ),
+          build(
+            :application_instance_registered_event,
+            sap_system_id: sap_system_id,
+            host_id: enqrep_host_id,
+            instance_number: enqrep_server_instance_number,
+            sid: application_sid,
+            features: "ENQREP"
+          )
+        ],
+        %DeregisterSapSystem{
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        },
+        [
+          %SapSystemDeregistered{
+            sap_system_id: sap_system_id,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   sid: ^application_sid,
+                   deregistered_at: ^deregistered_at,
+                   instances: [
+                     %Instance{
+                       host_id: ^enqrep_host_id,
+                       instance_number: ^enqrep_server_instance_number
+                     },
+                     %Instance{
+                       host_id: ^abap_host_id,
+                       instance_number: ^abap_instance_number
+                     },
+                     %Instance{
+                       host_id: ^message_server_host_id,
+                       instance_number: ^message_server_instance_number
+                     }
+                   ]
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should not deregister an already deregistered SAP system even when the deregistration command is received" do
+      sap_system_id = UUID.uuid4()
+
+      deregistered_at = DateTime.utc_now()
+
+      application_sid = fake_sid()
+
+      message_server_host_id = UUID.uuid4()
+      message_server_instance_number = "00"
+      abap_host_id = UUID.uuid4()
+      abap_instance_number = "01"
+
+      initial_events = [
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "MESSAGESERVER|ENQUE",
+          host_id: message_server_host_id,
+          instance_number: message_server_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          host_id: abap_host_id,
+          instance_number: abap_instance_number,
+          sid: application_sid
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: application_sid
+        ),
+        build(:sap_system_deregistered_event,
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        )
+      ]
+
+      assert_error(
+        initial_events,
+        %DeregisterSapSystem{
+          sap_system_id: sap_system_id,
+          deregistered_at: deregistered_at
+        },
+        {:error, :sap_system_not_registered}
+      )
     end
 
     test "should deregister an ENQREP Application Instance, SAP system registered" do
