@@ -6,9 +6,9 @@ defmodule Trento.EventHandlersSupervisor do
   alias Trento.Infrastructure.Commanded.EventHandlers.{
     AlertsEventHandler,
     DatabaseDeregistrationEventHandler,
+    DatabaseRestoreEventHandler,
     RollUpEventHandler,
-    StreamRollUpEventHandler,
-    DatabaseRestoreEventHandler
+    StreamRollUpEventHandler
   }
 
   def start_link(init_arg) do

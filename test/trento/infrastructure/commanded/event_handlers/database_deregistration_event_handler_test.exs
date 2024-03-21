@@ -5,9 +5,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
   import Mox
   import Trento.Factory
 
-  alias Trento.SapSystems.Commands.DeregisterSapSystem
   alias Trento.Databases.Events.DatabaseDeregistered
   alias Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandler
+  alias Trento.SapSystems.Commands.DeregisterSapSystem
 
   setup [:set_mox_from_context, :verify_on_exit!]
 

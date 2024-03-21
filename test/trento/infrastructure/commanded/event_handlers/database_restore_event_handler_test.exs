@@ -5,9 +5,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
   import Mox
   import Trento.Factory
 
-  alias Trento.SapSystems.Commands.RestoreSapSystem
   alias Trento.Databases.Events.DatabaseRestored
   alias Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandler
+  alias Trento.SapSystems.Commands.RestoreSapSystem
 
   setup [:set_mox_from_context, :verify_on_exit!]
 

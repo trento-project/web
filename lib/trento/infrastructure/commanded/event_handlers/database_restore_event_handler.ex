@@ -8,9 +8,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
     application: Trento.Commanded,
     name: "database_restore_event_handler"
 
-  alias Trento.SapSystems.Commands.RestoreSapSystem
   alias Trento.Databases.Events.DatabaseRestored
   alias Trento.Repo
+  alias Trento.SapSystems.Commands.RestoreSapSystem
   alias Trento.SapSystems.Projections.DatabaseReadModel
 
   import Ecto.Query, only: [from: 2]
@@ -22,12 +22,13 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
         _metadata
       ) do
     database =
-      from(d in DatabaseReadModel,
-        where: d.id == ^database_id,
-        preload: [:sap_systems],
-        select: [:id]
+      Repo.one!(
+        from(d in DatabaseReadModel,
+          where: d.id == ^database_id,
+          preload: [:sap_systems],
+          select: [:id]
+        )
       )
-      |> Repo.one!()
 
     for %{id: sap_system_id} <- database.sap_systems do
       Logger.info("Restoring sap system: #{sap_system_id} attached to database: #{database_id}")
