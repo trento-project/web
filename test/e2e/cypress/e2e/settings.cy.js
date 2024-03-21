@@ -26,7 +26,7 @@ context('Settings page', () => {
     it('should generate a new api key', () => {
       cy.get('button').contains('Generate Key').click();
       cy.get('.rc-input-number-input').as('quantityInput');
-      cy.get('.bg-jungle-green-500').as('generateButton');
+      cy.get('.generate-api-key').as('generateButton');
 
       cy.get('@quantityInput').type('2');
       cy.get('@generateButton').click();

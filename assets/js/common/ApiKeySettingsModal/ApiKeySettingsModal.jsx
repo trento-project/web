@@ -135,6 +135,7 @@ function ApiKeySettingsModal({
           </div>
           <div className="w-1/6 h-4/5">
             <Button
+              className="generate-api-key"
               onClick={() => generateApiKeyExpiration()}
               disabled={quantityError || loading}
             >
