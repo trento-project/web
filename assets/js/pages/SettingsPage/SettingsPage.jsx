@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
+import _ from 'lodash';
 import { format, parseISO } from 'date-fns';
 import classNames from 'classnames';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
@@ -20,6 +21,7 @@ import {
   updateSoftwareUpdatesSettings,
   setEditingSoftwareUpdatesSettings,
   clearSoftwareUpdatesSettings,
+  testSoftwareUpdatesConnection,
 } from '@state/softwareUpdatesSettings';
 import {
   getSoftwareUpdatesSettings,
@@ -81,10 +83,15 @@ function SettingsPage() {
     settings,
     loading: softwareUpdatesSettingsLoading,
     editing: editingSoftwareUpdatesSettings,
+    testingConnection: testingSoftwareUpdatesConnection,
   } = useSelector(getSoftwareUpdatesSettings);
 
   const suseManagerValidationErrors = useSelector(
     getSoftwareUpdatesSettingsErrors
+  );
+
+  const hasSoftwareUpdatesSettings = _.values(settings).every(
+    (it) => !_.isUndefined(it)
   );
 
   const hasApiKey = Boolean(apiKey);
@@ -263,6 +270,12 @@ function SettingsPage() {
               onClearSettings={() => {
                 setClearingSoftwareUpdatesSettings(false);
                 dispatch(clearSoftwareUpdatesSettings());
+              }}
+              testConnectionEnabled={
+                hasSoftwareUpdatesSettings && !testingSoftwareUpdatesConnection
+              }
+              onTestConnection={() => {
+                dispatch(testSoftwareUpdatesConnection());
               }}
               onCancel={() => setClearingSoftwareUpdatesSettings(false)}
             />

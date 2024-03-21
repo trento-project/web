@@ -13,6 +13,9 @@ describe('SuseManagerConfig', () => {
     expect(screen.getByText('https://')).toBeInTheDocument();
     expect(screen.getAllByText('-')).toHaveLength(1);
     expect(screen.getAllByText('.....')).toHaveLength(2);
+    expect(
+      screen.getByRole('button', { name: 'Test Connection' })
+    ).toBeDisabled();
   });
 
   it('renders settings', async () => {
@@ -40,5 +43,28 @@ describe('SuseManagerConfig', () => {
     const editSettingsButton = screen.getByText('Edit Settings');
     await user.click(editSettingsButton);
     expect(onEditClick).toHaveBeenCalled();
+  });
+
+  it('allows testing connection', async () => {
+    const user = userEvent.setup();
+
+    const onTestConnection = jest.fn();
+
+    render(
+      <SuseManagerConfig
+        url={faker.internet.url()}
+        username={faker.animal.cat()}
+        certUploadDate={faker.date.anytime()}
+        testConnectionEnabled
+        onTestConnection={onTestConnection}
+      />
+    );
+    expect(
+      screen.getByRole('button', { name: 'Test Connection' })
+    ).toBeEnabled();
+
+    const testConnectionButton = screen.getByText('Test Connection');
+    await user.click(testConnectionButton);
+    expect(onTestConnection).toHaveBeenCalled();
   });
 });

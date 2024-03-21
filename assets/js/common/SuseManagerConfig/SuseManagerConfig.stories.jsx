@@ -34,6 +34,12 @@ export default {
         type: 'boolean',
       },
     },
+    testConnectionEnabled: {
+      description: "Whether the 'Test connection' button is enabled or not",
+      control: {
+        type: 'boolean',
+      },
+    },
     onClearClick: {
       description: "Callback used to open 'Clear Settings' dialog",
       control: {
