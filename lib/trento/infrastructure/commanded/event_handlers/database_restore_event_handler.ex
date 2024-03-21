@@ -30,11 +30,11 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
         )
       )
 
-    for %{id: sap_system_id} <- database.sap_systems do
+    for %{id: sap_system_id, tenant: tenant, db_host: db_host} <- database.sap_systems do
       Logger.info("Restoring sap system: #{sap_system_id} attached to database: #{database_id}")
 
       commanded().dispatch(
-        %RestoreSapSystem{sap_system_id: sap_system_id},
+        %RestoreSapSystem{sap_system_id: sap_system_id, db_host: db_host, tenant: tenant},
         consistency: :strong
       )
     end

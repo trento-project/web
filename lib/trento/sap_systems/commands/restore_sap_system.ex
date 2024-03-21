@@ -9,5 +9,7 @@ defmodule Trento.SapSystems.Commands.RestoreSapSystem do
 
   defcommand do
     field :sap_system_id, Ecto.UUID
+    field :db_host, :string
+    field :tenant, :string
   end
 end

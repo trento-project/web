@@ -606,11 +606,13 @@ defmodule Trento.SapSystems.SapSystem do
   # Restore a SAP system when the restore command is received, check for the required instances
   defp maybe_emit_sap_system_restored_event(
          %SapSystem{instances: instances, health: health},
-         %RestoreSapSystem{sap_system_id: sap_system_id}
+         %RestoreSapSystem{sap_system_id: sap_system_id, db_host: db_host, tenant: tenant}
        ) do
     if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRestored{
         health: health,
+        db_host: db_host,
+        tenant: tenant,
         sap_system_id: sap_system_id
       }
     end
