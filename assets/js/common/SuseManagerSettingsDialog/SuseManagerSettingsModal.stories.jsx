@@ -76,6 +76,34 @@ export const WithErrors = {
   },
 };
 
+export const WithAllErrors = {
+  args: {
+    open: false,
+    errors: [
+      {
+        detail: "can't be blank",
+        source: { pointer: '/url' },
+        title: 'Invalid value',
+      },
+      {
+        detail: "can't be blank",
+        source: { pointer: '/ca_cert' },
+        title: 'Invalid value',
+      },
+      {
+        detail: "can't be blank",
+        source: { pointer: '/password' },
+        title: 'Invalid value',
+      },
+      {
+        detail: "can't be blank",
+        source: { pointer: '/username' },
+        title: 'Invalid value',
+      },
+    ],
+  },
+};
+
 export const Loading = {
   args: {
     open: false,
