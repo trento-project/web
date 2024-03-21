@@ -5,8 +5,10 @@ defmodule Trento.EventHandlersSupervisor do
 
   alias Trento.Infrastructure.Commanded.EventHandlers.{
     AlertsEventHandler,
+    DatabaseDeregistrationEventHandler,
     RollUpEventHandler,
-    StreamRollUpEventHandler
+    StreamRollUpEventHandler,
+    DatabaseRestoreEventHandler
   }
 
   def start_link(init_arg) do
@@ -18,7 +20,9 @@ defmodule Trento.EventHandlersSupervisor do
     children = [
       AlertsEventHandler,
       RollUpEventHandler,
-      StreamRollUpEventHandler
+      StreamRollUpEventHandler,
+      DatabaseDeregistrationEventHandler,
+      DatabaseRestoreEventHandler
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
