@@ -16,11 +16,14 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     HostRolledUp
   }
 
+  alias Trento.Databases.Events.{
+    DatabaseInstanceDeregistered,
+    DatabaseInstanceRegistered
+  }
+
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceRegistered,
-    DatabaseInstanceDeregistered,
-    DatabaseInstanceRegistered,
     SapSystemRolledUp
   }
 
@@ -164,13 +167,13 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       }
 
       host_id = UUID.uuid4()
-      sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
       instance_number = "01"
 
       events = [
         %DatabaseInstanceRegistered{
           host_id: host_id,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number
         }
       ]
@@ -182,7 +185,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       assert %DeregistrationProcessManager{
                database_instances: [
                  %Instance{
-                   sap_system_id: ^sap_system_id,
+                   sap_system_id: ^database_id,
                    instance_number: ^instance_number
                  }
                ],
@@ -441,6 +444,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
     test "should remove instance from state when DatabaseInstanceDeregistered event received" do
       sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
       instance_number = "00"
 
       initial_state = %DeregistrationProcessManager{
@@ -460,7 +464,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
         %DatabaseInstanceDeregistered{
           instance_number: instance_number,
           host_id: host_id,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           deregistered_at: deregistered_at
         }
       ]

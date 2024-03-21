@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Events.DatabaseInstanceSystemReplicationChanged do
 
   use Trento.Support.Event
 
-  defevent do
+  defevent superseded_by: Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged do
     field :sap_system_id, Ecto.UUID
     field :host_id, Ecto.UUID
     field :instance_number, :string
