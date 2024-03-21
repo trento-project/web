@@ -12,7 +12,8 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
-    DatabaseInstanceReadModel
+    DatabaseInstanceReadModel,
+    DatabaseReadModel
   }
 
   alias Trento.Tags.Tag
@@ -39,6 +40,8 @@ defmodule Trento.SapSystems.Projections.SapSystemReadModel do
       preload_order: [asc: :instance_number, asc: :host_id]
 
     has_many :tags, Tag, foreign_key: :resource_id
+
+    belongs_to :database, DatabaseReadModel, type: :binary_id
 
     field :deregistered_at, :utc_datetime_usec
 
