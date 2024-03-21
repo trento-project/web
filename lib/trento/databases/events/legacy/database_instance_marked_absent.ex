@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Events.DatabaseInstanceMarkedAbsent do
 
   use Trento.Support.Event
 
-  defevent do
+  defevent superseded_by: Trento.Databases.Events.DatabaseInstanceMarkedAbsent do
     field :instance_number, :string
     field :host_id, Ecto.UUID
     field :sap_system_id, Ecto.UUID

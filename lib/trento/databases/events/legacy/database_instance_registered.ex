@@ -7,7 +7,7 @@ defmodule Trento.SapSystems.Events.DatabaseInstanceRegistered do
 
   require Trento.Enums.Health, as: Health
 
-  defevent do
+  defevent superseded_by: Trento.Databases.Events.DatabaseInstanceRegistered do
     field :sap_system_id, Ecto.UUID
     field :sid, :string
     field :tenant, :string

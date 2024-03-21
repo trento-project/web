@@ -1,6 +1,6 @@
-defmodule Trento.SapSystems.Events.DatabaseHealthChanged do
+defmodule Trento.Databases.Events.DatabaseRestored do
   @moduledoc """
-  This event is emitted when a database health has changed.
+  This event is emitted when a database is restored.
   """
 
   use Trento.Support.Event
@@ -8,7 +8,7 @@ defmodule Trento.SapSystems.Events.DatabaseHealthChanged do
   require Trento.Enums.Health, as: Health
 
   defevent do
-    field :sap_system_id, Ecto.UUID
+    field :database_id, Ecto.UUID
     field :health, Ecto.Enum, values: Health.values()
   end
 end

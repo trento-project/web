@@ -44,11 +44,14 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     HostRolledUp
   }
 
+  alias Trento.Databases.Events.{
+    DatabaseInstanceDeregistered,
+    DatabaseInstanceRegistered
+  }
+
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
     ApplicationInstanceRegistered,
-    DatabaseInstanceDeregistered,
-    DatabaseInstanceRegistered,
     SapSystemRolledUp
   }
 
@@ -190,7 +193,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   def apply(
         %DeregistrationProcessManager{database_instances: database_instances} = state,
         %DatabaseInstanceRegistered{
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number
         }
       ) do
@@ -198,7 +201,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       state
       | database_instances: [
           %Instance{
-            sap_system_id: sap_system_id,
+            sap_system_id: database_id,
             instance_number: instance_number
           }
           | database_instances
