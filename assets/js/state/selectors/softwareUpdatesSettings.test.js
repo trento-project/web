@@ -21,6 +21,7 @@ describe('Software Updates Settings selector', () => {
       },
       errors: null,
       editing: false,
+      testingConnection: false,
     },
   ];
 
