@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-A03655FA.js"></script>
+    <script src="dist/sidebar_items-9D59E62F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -191,6 +191,14 @@ GUIDES
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:setup/0" translate="no">setup()</a>
+
+      </div>
+
+    </div>
+
 </div>
 
   </section>
@@ -213,7 +221,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">clear()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L15" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L17" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -241,7 +249,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_relevant_patches(system_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L9" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -270,7 +278,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_system_id(fully_qualified_domain_name)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L6" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L8" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -299,7 +307,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_upgradable_packages(system_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L12" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L14" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -313,6 +321,34 @@ GUIDES
 
           <pre translate="no"><span class="attribute">@callback</span> get_upgradable_packages(system_id :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()) ::
   {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:setup/0">
+
+  <div class="detail-header">
+    <a href="#c:setup/0" class="detail-link" title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">setup()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates/discovery/gen.ex#L6" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> setup() :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 
