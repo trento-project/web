@@ -150,11 +150,11 @@ describe('Cluster selector', () => {
 
     const databaseInstances = [
       databaseInstanceFactory.build({
-        sap_system_id: database2,
+        database_id: database2,
         host_id: host2,
       }),
       databaseInstanceFactory.build({
-        sap_system_id: database3,
+        database_id: database3,
         host_id: host4,
       }),
     ];
@@ -243,11 +243,11 @@ describe('Cluster selector', () => {
 
     const databaseInstances = [
       databaseInstanceFactory.build({
-        sap_system_id: sapSystem1,
+        database_id: sapSystem1,
         host_id: host3,
       }),
       databaseInstanceFactory.build({
-        sap_system_id: sapSystem2,
+        database_id: sapSystem2,
         host_id: host4,
       }),
     ];
@@ -303,11 +303,11 @@ describe('Cluster selector', () => {
 
     const databaseInstances = [
       databaseInstanceFactory.build({
-        sap_system_id: sapSystem1,
+        database_id: sapSystem1,
         host_id: host3,
       }),
       databaseInstanceFactory.build({
-        sap_system_id: sapSystem2,
+        database_id: sapSystem2,
         host_id: host4,
       }),
     ];
@@ -364,11 +364,11 @@ describe('Cluster selector', () => {
 
     const databaseInstances = [
       databaseInstanceFactory.build({
-        sap_system_id: database1,
+        database_id: database1,
         host_id: host3,
       }),
       databaseInstanceFactory.build({
-        sap_system_id: database2,
+        database_id: database2,
         host_id: host4,
       }),
     ];

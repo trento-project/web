@@ -31,11 +31,11 @@ const databaseWithSR = databaseFactory.build();
 
 const systemReplicationInstances = [
   databaseInstanceFactory.build({
-    sap_system_id: databaseWithSR.id,
+    database_id: databaseWithSR.id,
     system_replication: 'Primary',
   }),
   databaseInstanceFactory.build({
-    sap_system_id: databaseWithSR.id,
+    database_id: databaseWithSR.id,
     system_replication: 'Secondary',
     system_replication_status: 'ACTIVE',
   }),
@@ -44,10 +44,10 @@ const systemReplicationInstances = [
 const databaseWithAbsentInstances = databaseFactory.build();
 const absentInstance = [
   databaseInstanceFactory.build({
-    sap_system_id: databaseWithAbsentInstances.id,
+    database_id: databaseWithAbsentInstances.id,
   }),
   databaseInstanceFactory.build({
-    sap_system_id: databaseWithAbsentInstances.id,
+    database_id: databaseWithAbsentInstances.id,
     absent_at: faker.date.past().toISOString(),
   }),
 ];
