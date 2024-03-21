@@ -646,7 +646,8 @@ defmodule Trento.Factory do
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
       health: Health.passing(),
-      ensa_version: EnsaVersion.ensa1()
+      ensa_version: EnsaVersion.ensa1(),
+      database_id: Faker.UUID.v4()
     })
   end
 

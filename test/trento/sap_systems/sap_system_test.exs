@@ -891,7 +891,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           instance_number: instance_number,
           features: features,
           host_id: host_id,
-          health: :critical
+          health: :critical,
+          database_id: sap_system_id
         ),
         [
           build(
@@ -909,7 +910,8 @@ defmodule Trento.SapSystems.SapSystemTest do
             db_host: db_host,
             tenant: tenant,
             health: :critical,
-            ensa_version: ensa_version
+            ensa_version: ensa_version,
+            database_id: sap_system_id
           }
         ],
         fn state ->
