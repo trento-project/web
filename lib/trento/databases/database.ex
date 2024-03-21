@@ -25,7 +25,7 @@ defmodule Trento.Databases.Database do
     RegisterDatabaseInstance
   }
 
-  alias Trento.SapSystems.Events.{
+  alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
@@ -84,12 +84,12 @@ defmodule Trento.Databases.Database do
       ) do
     [
       %DatabaseRegistered{
-        sap_system_id: database_id,
+        database_id: database_id,
         sid: sid,
         health: health
       },
       %DatabaseInstanceRegistered{
-        sap_system_id: database_id,
+        database_id: database_id,
         sid: sid,
         tenant: tenant,
         instance_number: instance_number,
@@ -139,7 +139,7 @@ defmodule Trento.Databases.Database do
       when not is_nil(deregistered_at) do
     [
       %DatabaseInstanceRegistered{
-        sap_system_id: database_id,
+        database_id: database_id,
         sid: sid,
         tenant: tenant,
         instance_number: instance_number,
@@ -154,7 +154,7 @@ defmodule Trento.Databases.Database do
         health: health
       },
       %DatabaseRestored{
-        sap_system_id: database_id,
+        database_id: database_id,
         health: health
       }
     ]
@@ -206,7 +206,7 @@ defmodule Trento.Databases.Database do
         %DatabaseInstanceMarkedAbsent{
           instance_number: instance_number,
           host_id: host_id,
-          sap_system_id: database_id,
+          database_id: database_id,
           absent_at: absent_at
         }
 
@@ -245,7 +245,7 @@ defmodule Trento.Databases.Database do
   def apply(
         %Database{database_id: nil},
         %DatabaseRegistered{
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           health: health
         }
@@ -426,7 +426,7 @@ defmodule Trento.Databases.Database do
          }
        ) do
     %DatabaseInstanceRegistered{
-      sap_system_id: database_id,
+      database_id: database_id,
       sid: sid,
       tenant: tenant,
       instance_number: instance_number,
@@ -460,7 +460,7 @@ defmodule Trento.Databases.Database do
     %DatabaseInstanceMarkedPresent{
       instance_number: instance_number,
       host_id: host_id,
-      sap_system_id: database_id
+      database_id: database_id
     }
   end
 
@@ -482,7 +482,7 @@ defmodule Trento.Databases.Database do
        when system_replication != new_system_replication or
               system_replication_status != new_system_replication_status do
     %DatabaseInstanceSystemReplicationChanged{
-      sap_system_id: database_id,
+      database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
       system_replication: new_system_replication,
@@ -505,7 +505,7 @@ defmodule Trento.Databases.Database do
        )
        when health != new_health do
     %DatabaseInstanceHealthChanged{
-      sap_system_id: database_id,
+      database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
       health: new_health
@@ -528,7 +528,7 @@ defmodule Trento.Databases.Database do
 
     if new_health != health do
       %DatabaseHealthChanged{
-        sap_system_id: database_id,
+        database_id: database_id,
         health: new_health
       }
     end
@@ -555,7 +555,7 @@ defmodule Trento.Databases.Database do
 
       _ ->
         %DatabaseInstanceDeregistered{
-          sap_system_id: database_id,
+          database_id: database_id,
           instance_number: instance_number,
           host_id: host_id,
           deregistered_at: deregistered_at
@@ -571,7 +571,7 @@ defmodule Trento.Databases.Database do
          },
          deregistered_at
        ) do
-    %DatabaseDeregistered{sap_system_id: database_id, deregistered_at: deregistered_at}
+    %DatabaseDeregistered{database_id: database_id, deregistered_at: deregistered_at}
   end
 
   defp maybe_emit_database_deregistered_event(
@@ -594,7 +594,7 @@ defmodule Trento.Databases.Database do
 
     if has_secondary? and !has_primary? do
       %DatabaseDeregistered{
-        sap_system_id: database_id,
+        database_id: database_id,
         deregistered_at: deregistered_at
       }
     end

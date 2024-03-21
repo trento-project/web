@@ -42,16 +42,19 @@ defmodule Trento.Factory do
     SoftwareUpdatesDiscoveryCompleted
   }
 
-  alias Trento.SapSystems.Events.{
-    ApplicationInstanceDeregistered,
-    ApplicationInstanceMarkedAbsent,
-    ApplicationInstanceRegistered,
+  alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
-    DatabaseRestored,
+    DatabaseRestored
+  }
+
+  alias Trento.SapSystems.Events.{
+    ApplicationInstanceDeregistered,
+    ApplicationInstanceMarkedAbsent,
+    ApplicationInstanceRegistered,
     SapSystemDeregistered,
     SapSystemRegistered,
     SapSystemTombstoned
@@ -292,7 +295,7 @@ defmodule Trento.Factory do
 
   def database_instance_registered_event_factory do
     %DatabaseInstanceRegistered{
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
       tenant: Faker.UUID.v4(),
       instance_number: "00",
@@ -312,7 +315,7 @@ defmodule Trento.Factory do
     DatabaseInstanceMarkedAbsent.new!(%{
       instance_number: "00",
       host_id: Faker.UUID.v4(),
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       absent_at: DateTime.utc_now()
     })
   end
@@ -321,14 +324,14 @@ defmodule Trento.Factory do
     DatabaseInstanceDeregistered.new!(%{
       instance_number: "00",
       host_id: Faker.UUID.v4(),
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now()
     })
   end
 
   def database_restored_event_factory do
     DatabaseRestored.new!(%{
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       health: Health.passing()
     })
   end
@@ -344,7 +347,7 @@ defmodule Trento.Factory do
 
   def database_deregistered_event_factory do
     DatabaseDeregistered.new!(%{
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now()
     })
   end
@@ -393,7 +396,7 @@ defmodule Trento.Factory do
 
   def database_registered_event_factory do
     %DatabaseRegistered{
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
       health: Health.passing()
     }
