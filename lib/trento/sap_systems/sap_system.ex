@@ -589,7 +589,8 @@ defmodule Trento.SapSystems.SapSystem do
            tenant: tenant,
            db_host: db_host,
            health: health,
-           ensa_version: ensa_version
+           ensa_version: ensa_version,
+           database_id: database_id
          }
        ) do
     if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
@@ -599,7 +600,8 @@ defmodule Trento.SapSystems.SapSystem do
         tenant: tenant,
         db_host: db_host,
         health: health,
-        ensa_version: ensa_version
+        ensa_version: ensa_version,
+        database_id: database_id
       }
     end
   end
