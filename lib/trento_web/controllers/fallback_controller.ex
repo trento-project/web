@@ -17,6 +17,16 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"401", reason: "Invalid refresh token.")
   end
 
+  def call(conn, {:error, :unable_to_get_software_updates, :not_found}),
+    do: call(conn, {:error, :not_found})
+
+  def call(conn, {:error, :unable_to_get_software_updates, reason}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: get_failure_message(reason))
+  end
+
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
@@ -90,34 +100,6 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "No checks were selected for the target.")
   end
 
-  def call(conn, {:error, :fqdn_not_found}) do
-    conn
-    |> put_status(:unprocessable_entity)
-    |> put_view(ErrorView)
-    |> render(:"422", reason: "No FQDN was found for the target host.")
-  end
-
-  def call(conn, {:error, :system_id_not_found}) do
-    conn
-    |> put_status(:unprocessable_entity)
-    |> put_view(ErrorView)
-    |> render(:"422", reason: "No system ID was found on SUSE Manager for this host.")
-  end
-
-  def call(conn, {:error, :error_getting_patches}) do
-    conn
-    |> put_status(:unprocessable_entity)
-    |> put_view(ErrorView)
-    |> render(:"422", reason: "Unable to retrieve relevant patches for this host.")
-  end
-
-  def call(conn, {:error, :error_getting_packages}) do
-    conn
-    |> put_status(:unprocessable_entity)
-    |> put_view(ErrorView)
-    |> render(:"422", reason: "Unable to retrieve upgradable packages for this host.")
-  end
-
   def call(conn, {:error, :connection_test_failed}) do
     conn
     |> put_status(:unprocessable_entity)
@@ -133,4 +115,18 @@ defmodule TrentoWeb.FallbackController do
     |> put_view(ErrorView)
     |> render(:"500")
   end
+
+  defp get_failure_message(:settings_not_configured), do: "SUSE Manager settings not configured."
+  defp get_failure_message(:fqdn_not_found), do: "No FQDN was found for the target host."
+
+  defp get_failure_message(:system_id_not_found),
+    do: "No system ID was found on SUSE Manager for this host."
+
+  defp get_failure_message(:error_getting_patches),
+    do: "Unable to retrieve relevant patches for this host."
+
+  defp get_failure_message(:error_getting_packages),
+    do: "Unable to retrieve upgradable packages for this host."
+
+  defp get_failure_message(_), do: "Unknown error encountered getting software updates."
 end

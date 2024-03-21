@@ -108,19 +108,23 @@ defmodule Trento.SoftwareUpdates do
 
   @spec get_software_updates(Ecto.UUID.t()) ::
           {:ok, map()}
-          | {:error,
-             :system_id_not_found
+          | {:error, :unable_to_get_software_updates,
+             :settings_not_configured
+             | :system_id_not_found
              | :not_found
              | :fqdn_not_found
              | :error_getting_patches
              | :error_getting_packages}
   def get_software_updates(host_id) do
-    with {:ok, fqdn} <- get_host_fqdn(host_id),
+    with {:ok, _} <- get_settings(),
+         {:ok, fqdn} <- get_host_fqdn(host_id),
          {:ok, system_id} <- Discovery.get_system_id(fqdn),
          {:ok, relevant_patches} <- Discovery.get_relevant_patches(system_id),
          {:ok, upgradable_packages} <-
            Discovery.get_upgradable_packages(system_id) do
       {:ok, %{relevant_patches: relevant_patches, upgradable_packages: upgradable_packages}}
+    else
+      {:error, reason} -> {:error, :unable_to_get_software_updates, reason}
     end
   end
 
