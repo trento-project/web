@@ -14,6 +14,7 @@ const initialState = {
   settings: emptySettings,
   networkError: null,
   editing: false,
+  testingConnection: false,
   errors: [],
 };
 
@@ -42,6 +43,9 @@ export const softwareUpdatesSettingsSlice = createSlice({
     setEditingSoftwareUpdatesSettings: (state, { payload }) => {
       state.editing = payload;
     },
+    setTestingSoftwareUpdatesConnection: (state, { payload }) => {
+      state.testingConnection = payload;
+    },
   },
 });
 
@@ -52,6 +56,9 @@ export const UPDATE_SOFTWARE_UPDATES_SETTINGS =
   'UPDATE_SOFTWARE_UPDATES_SETTINGS';
 export const CLEAR_SOFTWARE_UPDATES_SETTINGS =
   'CLEAR_SOFTWARE_UPDATES_SETTINGS';
+
+export const TEST_SOFTWARE_UPDATES_CONNECTION =
+  'TEST_SOFTWARE_UPDATES_CONNECTION';
 
 export const fetchSoftwareUpdatesSettings = createAction(
   FETCH_SOFTWARE_UPDATES_SETTINGS
@@ -65,6 +72,9 @@ export const updateSoftwareUpdatesSettings = createAction(
 export const clearSoftwareUpdatesSettings = createAction(
   CLEAR_SOFTWARE_UPDATES_SETTINGS
 );
+export const testSoftwareUpdatesConnection = createAction(
+  TEST_SOFTWARE_UPDATES_CONNECTION
+);
 
 export const {
   startLoadingSoftwareUpdatesSettings,
@@ -72,6 +82,7 @@ export const {
   setEmptySoftwareUpdatesSettings,
   setSoftwareUpdatesSettingsErrors,
   setEditingSoftwareUpdatesSettings,
+  setTestingSoftwareUpdatesConnection,
 } = softwareUpdatesSettingsSlice.actions;
 
 export default softwareUpdatesSettingsSlice.reducer;

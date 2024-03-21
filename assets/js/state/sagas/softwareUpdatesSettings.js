@@ -6,6 +6,7 @@ import {
   saveSettings,
   updateSettings,
   clearSettings,
+  testConnection,
 } from '@lib/api/softwareUpdatesSettings';
 
 import {
@@ -13,11 +14,13 @@ import {
   SAVE_SOFTWARE_UPDATES_SETTINGS,
   UPDATE_SOFTWARE_UPDATES_SETTINGS,
   CLEAR_SOFTWARE_UPDATES_SETTINGS,
+  TEST_SOFTWARE_UPDATES_CONNECTION,
   startLoadingSoftwareUpdatesSettings,
   setSoftwareUpdatesSettings,
   setEmptySoftwareUpdatesSettings,
   setSoftwareUpdatesSettingsErrors,
   setEditingSoftwareUpdatesSettings,
+  setTestingSoftwareUpdatesConnection,
 } from '@state/softwareUpdatesSettings';
 
 export function* fetchSoftwareUpdatesSettings() {
@@ -78,6 +81,17 @@ export function* clearSoftwareUpdatesSettings() {
   }
 }
 
+export function* testSoftwareUpdatesConnection() {
+  yield put(setTestingSoftwareUpdatesConnection(true));
+  try {
+    yield call(testConnection);
+    yield put(notify({ text: `Connection succeeded!`, icon: '✅' }));
+  } catch (error) {
+    yield put(notify({ text: `Connection failed!`, icon: '❌' }));
+  }
+  yield put(setTestingSoftwareUpdatesConnection(false));
+}
+
 export function* watchSoftwareUpdateSettings() {
   yield takeEvery(
     FETCH_SOFTWARE_UPDATES_SETTINGS,
@@ -91,5 +105,9 @@ export function* watchSoftwareUpdateSettings() {
   yield takeEvery(
     CLEAR_SOFTWARE_UPDATES_SETTINGS,
     clearSoftwareUpdatesSettings
+  );
+  yield takeEvery(
+    TEST_SOFTWARE_UPDATES_CONNECTION,
+    testSoftwareUpdatesConnection
   );
 }

@@ -13,6 +13,7 @@ import {
   setSoftwareUpdatesSettingsErrors,
   setEmptySoftwareUpdatesSettings,
   setEditingSoftwareUpdatesSettings,
+  setTestingSoftwareUpdatesConnection,
 } from '@state/softwareUpdatesSettings';
 
 import {
@@ -20,6 +21,7 @@ import {
   saveSoftwareUpdatesSettings,
   updateSoftwareUpdatesSettings,
   clearSoftwareUpdatesSettings,
+  testSoftwareUpdatesConnection,
 } from './softwareUpdatesSettings';
 
 describe('Software Updates Settings saga', () => {
@@ -229,5 +231,38 @@ describe('Software Updates Settings saga', () => {
         notify({ text: `Unable to clear settings`, icon: '❌' }),
       ]);
     });
+  });
+
+  describe('Testing connection with Software Updates provider', () => {
+    it('should notify on successful connection test', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+
+      axiosMock.onPost('/settings/suma_credentials/test').reply(200);
+
+      const dispatched = await recordSaga(testSoftwareUpdatesConnection);
+
+      expect(dispatched).toEqual([
+        setTestingSoftwareUpdatesConnection(true),
+        notify({ text: `Connection succeeded!`, icon: '✅' }),
+        setTestingSoftwareUpdatesConnection(false),
+      ]);
+    });
+
+    it.each([400, 404, 422, 500])(
+      'should notify on failed connection test',
+      async (errorStatus) => {
+        const axiosMock = new MockAdapter(networkClient);
+
+        axiosMock.onPost('/settings/suma_credentials/test').reply(errorStatus);
+
+        const dispatched = await recordSaga(testSoftwareUpdatesConnection);
+
+        expect(dispatched).toEqual([
+          setTestingSoftwareUpdatesConnection(true),
+          notify({ text: `Connection failed!`, icon: '❌' }),
+          setTestingSoftwareUpdatesConnection(false),
+        ]);
+      }
+    );
   });
 });
