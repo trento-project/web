@@ -14,11 +14,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
 
   @test_integration_name "test_integration"
 
-  setup do
-    {:ok, %{settings: insert_software_updates_settings()}}
-  end
+  defp setup_initial_settings, do: {:ok, %{settings: insert_software_updates_settings()}}
 
   describe "Process start up and identification" do
+    setup do
+      setup_initial_settings()
+    end
+
     test "should find an already started SUMA process" do
       assert {_, {:already_started, pid}} = start_supervised(Suma)
 
@@ -108,7 +110,19 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
     end
   end
 
+  describe "Setting up SUMA integration service when settings are not configured" do
+    test "should return an error when settings are not configured" do
+      {:ok, _} = start_supervised({Suma, @test_integration_name})
+
+      assert {:error, :settings_not_configured} = Suma.setup(@test_integration_name)
+    end
+  end
+
   describe "Setting up SUMA integration service" do
+    setup do
+      setup_initial_settings()
+    end
+
     test "should setup SUMA state", %{
       settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
     } do
@@ -200,6 +214,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
   end
 
   describe "clearing up integration service" do
+    setup do
+      setup_initial_settings()
+    end
+
     test "should clear service state", %{
       settings: %Settings{url: url, username: username, password: password, ca_cert: ca_cert}
     } do
@@ -254,6 +272,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaTest do
   end
 
   describe "Integration service" do
+    setup do
+      setup_initial_settings()
+    end
+
     test "should return an error when a system id was not found for a given fqdn" do
       {:ok, _} = start_supervised({Suma, @test_integration_name})
 

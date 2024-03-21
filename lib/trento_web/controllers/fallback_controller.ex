@@ -118,6 +118,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Unable to retrieve upgradable packages for this host.")
   end
 
+  def call(conn, {:error, :connection_test_failed}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render(:"422", reason: "Connection with software updates provider failed.")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do

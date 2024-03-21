@@ -19,6 +19,9 @@ defmodule Trento.SoftwareUpdates.Discovery do
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
 
   @impl true
+  def setup, do: adapter().setup()
+
+  @impl true
   def get_system_id(fully_qualified_domain_name),
     do: adapter().get_system_id(fully_qualified_domain_name)
 

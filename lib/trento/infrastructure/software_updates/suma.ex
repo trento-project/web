@@ -20,7 +20,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   def start_link(server_name),
     do: GenServer.start_link(__MODULE__, %State{}, name: process_identifier(server_name))
 
-  @impl true
+  @impl GenServer
   def init(%State{} = state), do: {:ok, state}
 
   def identify(server_name \\ @default_name),
@@ -29,39 +29,40 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       |> identification_tuple
       |> :global.whereis_name()
 
+  @impl Trento.SoftwareUpdates.Discovery.Gen
   def setup(server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
-      |> GenServer.call(:setup)
+      |> call(:setup)
 
   @impl Trento.SoftwareUpdates.Discovery.Gen
   def clear(server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
-      |> GenServer.call(:clear)
+      |> call(:clear)
 
   @impl Trento.SoftwareUpdates.Discovery.Gen
   def get_system_id(fully_qualified_domain_name, server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
-      |> GenServer.call({:get_system_id, fully_qualified_domain_name})
+      |> call({:get_system_id, fully_qualified_domain_name})
 
   @impl Trento.SoftwareUpdates.Discovery.Gen
   def get_relevant_patches(system_id, server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
-      |> GenServer.call({:get_relevant_patches, system_id})
+      |> call({:get_relevant_patches, system_id})
 
   @impl Trento.SoftwareUpdates.Discovery.Gen
   def get_upgradable_packages(system_id, server_name \\ @default_name),
     do:
       server_name
       |> process_identifier
-      |> GenServer.call({:get_upgradable_packages, system_id})
+      |> call({:get_upgradable_packages, system_id})
 
   @impl GenServer
   def handle_call(:setup, _from, %State{} = state) do
@@ -91,6 +92,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
         {:reply, handle_result, state}
     end
   end
+
+  defp call(server, request), do: GenServer.call(server, request, 10_000)
 
   defp authenticate_and_handle(request, state) do
     case setup_auth(state) do

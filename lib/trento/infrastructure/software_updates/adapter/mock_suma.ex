@@ -6,6 +6,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
 
   @impl true
+  def setup, do: :ok
+
+  @impl true
   def get_system_id(fully_qualified_domain_name),
     do:
       {:ok,
