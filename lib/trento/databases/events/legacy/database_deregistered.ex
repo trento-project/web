@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Events.DatabaseDeregistered do
 
   use Trento.Support.Event
 
-  defevent do
+  defevent superseded_by: Trento.Databases.Events.DatabaseDeregistered do
     field :sap_system_id, Ecto.UUID
     field :deregistered_at, :utc_datetime_usec
   end

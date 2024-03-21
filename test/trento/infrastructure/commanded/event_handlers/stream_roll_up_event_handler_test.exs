@@ -100,7 +100,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
         end)
       )
 
-    event = build(:database_instance_registered_event, sap_system_id: sap_system_id)
+    event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
     expect(Trento.Commanded.Mock, :dispatch, fn %RollUpSapSystem{
                                                   sap_system_id: ^sap_system_id

@@ -11,10 +11,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler do
 
   alias Trento.Hosts.Events.HostHealthChanged
 
-  alias Trento.SapSystems.Events.{
-    DatabaseHealthChanged,
-    SapSystemHealthChanged
-  }
+  alias Trento.Databases.Events.DatabaseHealthChanged
+
+  alias Trento.SapSystems.Events.SapSystemHealthChanged
 
   alias Trento.Infrastructure.Alerting.Alerting
 
@@ -35,11 +34,11 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler do
   end
 
   def handle(
-        %DatabaseHealthChanged{sap_system_id: sap_system_id, health: health},
+        %DatabaseHealthChanged{database_id: database_id, health: health},
         _metadata
       )
       when health == :critical do
-    Alerting.notify_critical_database_health(sap_system_id)
+    Alerting.notify_critical_database_health(database_id)
   end
 
   def handle(

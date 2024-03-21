@@ -13,7 +13,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     DatabaseReadModel
   }
 
-  alias Trento.SapSystems.Events.{
+  alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
@@ -41,36 +41,36 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
   end
 
   test "should project a new database when DatabaseRegistered event is received" do
-    %{sap_system_id: sap_system_id} = event = build(:database_registered_event)
+    %{database_id: database_id} = event = build(:database_registered_event)
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
     %{sid: sid, health: health} =
-      database_projection = Repo.get!(DatabaseReadModel, event.sap_system_id)
+      database_projection = Repo.get!(DatabaseReadModel, event.database_id)
 
-    assert event.sap_system_id == database_projection.id
+    assert event.database_id == database_projection.id
     assert event.sid == database_projection.sid
     assert event.health == database_projection.health
 
     assert_broadcast "database_registered",
                      %{
                        health: ^health,
-                       id: ^sap_system_id,
+                       id: ^database_id,
                        sid: ^sid
                      },
                      1000
   end
 
   test "should update the health of a Database when a DatabaseHealthChanged event is received" do
-    insert(:database, id: sap_system_id = Faker.UUID.v4())
-    event = %DatabaseHealthChanged{sap_system_id: sap_system_id, health: :critical}
+    insert(:database, id: database_id = Faker.UUID.v4())
+    event = %DatabaseHealthChanged{database_id: database_id, health: :critical}
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
-    projection = Repo.get!(DatabaseReadModel, event.sap_system_id)
+    projection = Repo.get!(DatabaseReadModel, event.database_id)
 
     assert event.health == projection.health
 
-    assert_broadcast "database_health_changed", %{health: :critical, id: ^sap_system_id}, 1000
+    assert_broadcast "database_health_changed", %{health: :critical, id: ^database_id}, 1000
   end
 
   test "should project a new database instance when DatabaseInstanceRegistered event is received" do
@@ -79,7 +79,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     event =
       build(
         :database_instance_registered_event,
-        sap_system_id: sap_system_id,
+        database_id: sap_system_id,
         system_replication: "",
         system_replication_status: ""
       )
@@ -95,12 +95,12 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     } =
       database_instance_projection =
       Repo.get_by(DatabaseInstanceReadModel,
-        sap_system_id: event.sap_system_id,
+        sap_system_id: event.database_id,
         instance_number: event.instance_number,
         host_id: event.host_id
       )
 
-    assert event.sap_system_id == database_instance_projection.sap_system_id
+    assert event.database_id == database_instance_projection.sap_system_id
     assert event.sid == database_instance_projection.sid
     assert event.tenant == database_instance_projection.tenant
     assert event.instance_number == database_instance_projection.instance_number
@@ -133,7 +133,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     event =
       build(
         :database_instance_registered_event,
-        sap_system_id: sap_system_id,
+        database_id: sap_system_id,
         system_replication: "Primary",
         system_replication_status: "ACTIVE"
       )
@@ -161,7 +161,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     event =
       build(
         :database_instance_registered_event,
-        sap_system_id: sap_system_id,
+        database_id: sap_system_id,
         system_replication: "Secondary",
         system_replication_status: ""
       )
@@ -193,7 +193,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
       system_replication_status: system_replication_status
     } =
       event = %DatabaseInstanceSystemReplicationChanged{
-        sap_system_id: sap_system_id,
+        database_id: sap_system_id,
         instance_number: instance_number,
         host_id: host_id,
         system_replication: "Primary",
@@ -236,7 +236,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
       )
 
     event = %DatabaseInstanceSystemReplicationChanged{
-      sap_system_id: sap_system_id,
+      database_id: sap_system_id,
       instance_number: instance_number,
       host_id: host_id,
       system_replication: nil,
@@ -279,7 +279,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
       )
 
     event = %DatabaseInstanceHealthChanged{
-      sap_system_id: sap_system_id,
+      database_id: sap_system_id,
       host_id: host_id,
       instance_number: instance_number,
       health: :critical
@@ -310,7 +310,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     event = %DatabaseInstanceMarkedAbsent{
       instance_number: instance_number,
       host_id: host_id,
-      sap_system_id: sap_system_id,
+      database_id: sap_system_id,
       absent_at: absent_at
     }
 
@@ -340,7 +340,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     event = %DatabaseInstanceMarkedPresent{
       instance_number: instance_number,
       host_id: host_id,
-      sap_system_id: sap_system_id
+      database_id: sap_system_id
     }
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
@@ -364,7 +364,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     insert(:database, id: sap_system_id = Faker.UUID.v4())
 
     event = %DatabaseDeregistered{
-      sap_system_id: sap_system_id,
+      database_id: sap_system_id,
       deregistered_at: deregistered_at
     }
 
@@ -394,7 +394,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     event = %DatabaseInstanceDeregistered{
       instance_number: instance_number,
       host_id: host_id,
-      sap_system_id: sap_system_id,
+      database_id: sap_system_id,
       deregistered_at: deregistered_at
     }
 
@@ -439,7 +439,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjectorTest do
     insert_list(5, :tag, resource_id: sap_system_id)
 
     event = %DatabaseRestored{
-      sap_system_id: sap_system_id,
+      database_id: sap_system_id,
       health: :passing
     }
 

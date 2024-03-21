@@ -9,7 +9,7 @@ defmodule Trento.Databases.DatabaseTest do
     RegisterDatabaseInstance
   }
 
-  alias Trento.SapSystems.Events.{
+  alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
@@ -68,12 +68,12 @@ defmodule Trento.Databases.DatabaseTest do
         }),
         [
           %DatabaseRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: sid,
             health: :passing
           },
           %DatabaseInstanceRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: sid,
             tenant: tenant,
             instance_number: instance_number,
@@ -139,12 +139,12 @@ defmodule Trento.Databases.DatabaseTest do
         }),
         [
           %DatabaseRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: sid,
             health: :passing
           },
           %DatabaseInstanceRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: sid,
             tenant: tenant,
             instance_number: instance_number,
@@ -189,12 +189,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           tenant: tenant,
           instance_number: "10"
@@ -215,7 +215,7 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           tenant: tenant,
           instance_number: instance_number,
@@ -246,7 +246,7 @@ defmodule Trento.Databases.DatabaseTest do
       database_instance_registered_event =
         build(
           :database_instance_registered_event,
-          sap_system_id: database_registered_event.sap_system_id
+          database_id: database_registered_event.database_id
         )
 
       initial_events = [
@@ -258,7 +258,7 @@ defmodule Trento.Databases.DatabaseTest do
         initial_events,
         build(
           :register_database_instance_command,
-          database_id: database_registered_event.sap_system_id,
+          database_id: database_registered_event.database_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
           instance_number: database_instance_registered_event.instance_number,
@@ -278,7 +278,7 @@ defmodule Trento.Databases.DatabaseTest do
       database_instance_registered_event =
         build(
           :database_instance_registered_event,
-          sap_system_id: database_registered_event.sap_system_id,
+          database_id: database_registered_event.database_id,
           system_replication: "Secondary",
           system_replication_status: ""
         )
@@ -292,7 +292,7 @@ defmodule Trento.Databases.DatabaseTest do
         initial_events,
         build(
           :register_database_instance_command,
-          database_id: database_registered_event.sap_system_id,
+          database_id: database_registered_event.database_id,
           sid: database_instance_registered_event.sid,
           tenant: database_instance_registered_event.tenant,
           instance_number: database_instance_registered_event.instance_number,
@@ -303,7 +303,7 @@ defmodule Trento.Databases.DatabaseTest do
           health: :passing
         ),
         %DatabaseInstanceSystemReplicationChanged{
-          sap_system_id: database_registered_event.sap_system_id,
+          database_id: database_registered_event.database_id,
           host_id: database_instance_registered_event.host_id,
           instance_number: database_instance_registered_event.instance_number,
           system_replication: "Primary",
@@ -323,8 +323,8 @@ defmodule Trento.Databases.DatabaseTest do
       host_id = Faker.UUID.v4()
 
       initial_events = [
-        build(:database_registered_event, sap_system_id: database_id),
-        build(:database_instance_registered_event, sap_system_id: database_id)
+        build(:database_registered_event, database_id: database_id),
+        build(:database_instance_registered_event, database_id: database_id)
       ]
 
       assert_events_and_state(
@@ -342,7 +342,7 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: sid,
             tenant: tenant,
             instance_number: instance_number,
@@ -351,7 +351,7 @@ defmodule Trento.Databases.DatabaseTest do
             health: :critical
           ),
           %DatabaseHealthChanged{
-            sap_system_id: database_id,
+            database_id: database_id,
             health: :critical
           }
         ],
@@ -379,13 +379,13 @@ defmodule Trento.Databases.DatabaseTest do
       database_instance_registered_event =
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: host_id,
           instance_number: instance_number
         )
 
       initial_events = [
-        build(:database_registered_event, sap_system_id: database_id),
+        build(:database_registered_event, database_id: database_id),
         database_instance_registered_event
       ]
 
@@ -403,13 +403,13 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         [
           %DatabaseInstanceHealthChanged{
-            sap_system_id: database_id,
+            database_id: database_id,
             instance_number: instance_number,
             host_id: host_id,
             health: :critical
           },
           %DatabaseHealthChanged{
-            sap_system_id: database_id,
+            database_id: database_id,
             health: :critical
           }
         ],
@@ -438,12 +438,12 @@ defmodule Trento.Databases.DatabaseTest do
       database_instance_registered_event =
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           health: :warning
         )
 
       initial_events = [
-        build(:database_registered_event, sap_system_id: database_id, health: :warning),
+        build(:database_registered_event, database_id: database_id, health: :warning),
         database_instance_registered_event
       ]
 
@@ -474,7 +474,7 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: database_instance_registered_event.sid,
             tenant: database_instance_registered_event.tenant,
             instance_number: new_instance_number,
@@ -517,12 +517,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -530,20 +530,20 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         ),
         build(:database_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           deregistered_at: deregistered_at
         )
       ]
@@ -578,12 +578,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -591,20 +591,20 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         ),
         build(:database_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           deregistered_at: deregistered_at
         )
       ]
@@ -622,7 +622,7 @@ defmodule Trento.Databases.DatabaseTest do
         command,
         [
           %DatabaseInstanceRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid,
             tenant: command.tenant,
             instance_number: command.instance_number,
@@ -637,7 +637,7 @@ defmodule Trento.Databases.DatabaseTest do
             health: command.health
           },
           %DatabaseRestored{
-            sap_system_id: database_id,
+            database_id: database_id,
             health: command.health
           }
         ],
@@ -675,12 +675,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -688,26 +688,26 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           deregistered_at: deregistered_at
         ),
         build(:database_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           deregistered_at: deregistered_at
         )
       ]
@@ -725,7 +725,7 @@ defmodule Trento.Databases.DatabaseTest do
         command,
         [
           %DatabaseInstanceRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid,
             tenant: command.tenant,
             instance_number: command.instance_number,
@@ -740,7 +740,7 @@ defmodule Trento.Databases.DatabaseTest do
             health: command.health
           },
           %DatabaseRestored{
-            sap_system_id: database_id,
+            database_id: database_id,
             health: command.health
           }
         ],
@@ -780,12 +780,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -793,26 +793,26 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           deregistered_at: deregistered_at
         ),
         build(:database_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           deregistered_at: deregistered_at
         )
       ]
@@ -830,7 +830,7 @@ defmodule Trento.Databases.DatabaseTest do
         command,
         [
           %DatabaseInstanceRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid,
             tenant: command.tenant,
             instance_number: command.instance_number,
@@ -845,7 +845,7 @@ defmodule Trento.Databases.DatabaseTest do
             health: command.health
           },
           %DatabaseRestored{
-            sap_system_id: database_id,
+            database_id: database_id,
             health: command.health
           }
         ],
@@ -885,12 +885,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -898,20 +898,20 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         ),
         build(:database_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           deregistered_at: deregistered_at
         )
       ]
@@ -929,7 +929,7 @@ defmodule Trento.Databases.DatabaseTest do
         command,
         [
           %DatabaseInstanceRegistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid,
             tenant: command.tenant,
             instance_number: command.instance_number,
@@ -944,7 +944,7 @@ defmodule Trento.Databases.DatabaseTest do
             health: command.health
           },
           %DatabaseRestored{
-            sap_system_id: database_id,
+            database_id: database_id,
             health: command.health
           }
         ],
@@ -985,12 +985,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -998,20 +998,20 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary",
           sid: db_sid
         ),
         build(:database_instance_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
         ),
         build(:database_deregistered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           deregistered_at: deregistered_at
         )
       ]
@@ -1043,12 +1043,12 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: primary_database_host_id,
             sid: db_sid,
             instance_number: db_instance_number_1,
@@ -1056,7 +1056,7 @@ defmodule Trento.Databases.DatabaseTest do
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: secondary_database_host_id,
             instance_number: db_instance_number_2,
             system_replication: "Secondary",
@@ -1071,13 +1071,13 @@ defmodule Trento.Databases.DatabaseTest do
         },
         [
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: primary_database_host_id,
             instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
           %DatabaseDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             deregistered_at: deregistered_at
           }
         ],
@@ -1114,12 +1114,12 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             system_replication: "Primary",
             sid: db_sid,
             instance_number: instance_number_1,
@@ -1127,7 +1127,7 @@ defmodule Trento.Databases.DatabaseTest do
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             system_replication: "Secondary",
             sid: db_sid,
             host_id: secondary_db_host_id,
@@ -1141,7 +1141,7 @@ defmodule Trento.Databases.DatabaseTest do
           deregistered_at: deregistered_at
         },
         %DatabaseInstanceDeregistered{
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_db_host_id,
           instance_number: instance_number_2,
           deregistered_at: deregistered_at
@@ -1167,12 +1167,12 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: database_host_id,
             instance_number: db_instance_number_1,
             system_replication: nil,
@@ -1187,13 +1187,13 @@ defmodule Trento.Databases.DatabaseTest do
         },
         [
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: database_host_id,
             instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
           %DatabaseDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             deregistered_at: deregistered_at
           }
         ],
@@ -1222,12 +1222,12 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: database_host_id,
             instance_number: db_instance_number_1,
             system_replication: nil,
@@ -1235,7 +1235,7 @@ defmodule Trento.Databases.DatabaseTest do
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: second_database_host_id,
             instance_number: db_instance_number_2,
             system_replication: nil,
@@ -1249,7 +1249,7 @@ defmodule Trento.Databases.DatabaseTest do
           deregistered_at: deregistered_at
         },
         %DatabaseInstanceDeregistered{
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: database_host_id,
           instance_number: db_instance_number_1,
           deregistered_at: deregistered_at
@@ -1277,12 +1277,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -1290,7 +1290,7 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_2,
           system_replication: "Secondary"
@@ -1315,17 +1315,17 @@ defmodule Trento.Databases.DatabaseTest do
         ],
         [
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: primary_database_host_id,
             instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
           %DatabaseDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             deregistered_at: deregistered_at
           },
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: secondary_database_host_id,
             instance_number: db_instance_number_2,
             deregistered_at: deregistered_at
@@ -1354,12 +1354,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: first_primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_1,
@@ -1367,7 +1367,7 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: other_primary_database_host_id,
           sid: db_sid,
           instance_number: db_instance_number_2,
@@ -1375,14 +1375,14 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: db_instance_number_3,
           system_replication: "Secondary"
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: other_secondary_database_host_id,
           instance_number: db_instance_number_4,
           system_replication: "Secondary"
@@ -1419,29 +1419,29 @@ defmodule Trento.Databases.DatabaseTest do
         ],
         [
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: first_primary_database_host_id,
             instance_number: db_instance_number_1,
             deregistered_at: deregistered_at
           },
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: other_primary_database_host_id,
             instance_number: db_instance_number_2,
             deregistered_at: deregistered_at
           },
           %DatabaseDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             deregistered_at: deregistered_at
           },
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: secondary_database_host_id,
             instance_number: db_instance_number_3,
             deregistered_at: deregistered_at
           },
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: other_secondary_database_host_id,
             instance_number: db_instance_number_4,
             deregistered_at: deregistered_at
@@ -1465,12 +1465,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: db_sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: primary_database_host_id,
           sid: db_sid,
           instance_number: database_instance_number_1,
@@ -1478,7 +1478,7 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: secondary_database_host_id,
           instance_number: database_instance_number_2,
           system_replication: "Secondary"
@@ -1497,13 +1497,13 @@ defmodule Trento.Databases.DatabaseTest do
         ],
         [
           %DatabaseInstanceDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: primary_database_host_id,
             instance_number: database_instance_number_1,
             deregistered_at: deregistered_at
           },
           %DatabaseDeregistered{
-            sap_system_id: database_id,
+            database_id: database_id,
             deregistered_at: deregistered_at
           }
         ]
@@ -1518,12 +1518,12 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid,
             host_id: UUID.uuid4(),
             instance_number: "00",
@@ -1552,12 +1552,12 @@ defmodule Trento.Databases.DatabaseTest do
         [
           build(
             :database_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid
           ),
           build(
             :database_instance_registered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             sid: db_sid,
             host_id: deregistered_host_id,
             instance_number: deregistered_instance_number,
@@ -1565,7 +1565,7 @@ defmodule Trento.Databases.DatabaseTest do
           ),
           build(
             :database_instance_deregistered_event,
-            sap_system_id: database_id,
+            database_id: database_id,
             host_id: deregistered_host_id,
             instance_number: deregistered_instance_number,
             deregistered_at: DateTime.utc_now()
@@ -1596,12 +1596,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           host_id: host_id,
           instance_number: absent_db_instance_number,
@@ -1610,14 +1610,14 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_marked_absent_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: host_id,
           instance_number: absent_db_instance_number,
           absent_at: absent_db_absent_at
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           host_id: host_id,
           instance_number: present_db_instance_number,
@@ -1648,7 +1648,7 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceMarkedAbsent{
             instance_number: present_db_instance_number,
             host_id: host_id,
-            sap_system_id: database_id,
+            database_id: database_id,
             absent_at: absent_at
           }
         ],
@@ -1680,12 +1680,12 @@ defmodule Trento.Databases.DatabaseTest do
       initial_events = [
         build(
           :database_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           host_id: host_id,
           instance_number: absent_db_instance_number,
@@ -1694,14 +1694,14 @@ defmodule Trento.Databases.DatabaseTest do
         ),
         build(
           :database_instance_marked_absent_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: host_id,
           instance_number: absent_db_instance_number,
           absent_at: DateTime.utc_now()
         ),
         build(
           :database_instance_registered_event,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           host_id: host_id,
           instance_number: present_db_instance_number,
@@ -1730,7 +1730,7 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseInstanceMarkedPresent{
             instance_number: absent_db_instance_number,
             host_id: host_id,
-            sap_system_id: database_id
+            database_id: database_id
           }
         ],
         fn state ->
