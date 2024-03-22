@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
-import _ from 'lodash';
+import { values, isUndefined } from 'lodash';
 import { format, parseISO } from 'date-fns';
 import classNames from 'classnames';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
@@ -90,8 +90,8 @@ function SettingsPage() {
     getSoftwareUpdatesSettingsErrors
   );
 
-  const hasSoftwareUpdatesSettings = _.values(settings).every(
-    (it) => !_.isUndefined(it)
+  const hasSoftwareUpdatesSettings = values(settings).every(
+    (value) => !isUndefined(value)
   );
 
   const hasApiKey = Boolean(apiKey);
