@@ -130,8 +130,6 @@ describe('SuseManagerSettingsModal component', () => {
   });
 
   it('should display errors', async () => {
-    const onSave = jest.fn();
-
     const detail = capitalize(faker.lorem.words(5));
 
     const errors = [
@@ -154,7 +152,7 @@ describe('SuseManagerSettingsModal component', () => {
           initialUrl={faker.internet.url()}
           errors={errors}
           open
-          onSave={onSave}
+          onSave={() => {}}
           onCancel={() => {}}
         />
       );
