@@ -14,6 +14,7 @@ import {
   setEmptySoftwareUpdatesSettings,
   setEditingSoftwareUpdatesSettings,
   setTestingSoftwareUpdatesConnection,
+  setNetworkError,
 } from '@state/softwareUpdatesSettings';
 
 import {
@@ -44,16 +45,27 @@ describe('Software Updates Settings saga', () => {
 
     it('should empty software updates settings on failed fetching', async () => {
       const axiosMock = new MockAdapter(networkClient);
-      [404, 500].forEach(async (errorStatus) => {
-        axiosMock.onGet('/settings/suma_credentials').reply(errorStatus);
+      axiosMock.onGet('/settings/suma_credentials').reply(404);
 
-        const dispatched = await recordSaga(fetchSoftwareUpdatesSettings);
+      const dispatched = await recordSaga(fetchSoftwareUpdatesSettings);
 
-        expect(dispatched).toEqual([
-          startLoadingSoftwareUpdatesSettings(),
-          setEmptySoftwareUpdatesSettings(),
-        ]);
-      });
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdatesSettings(),
+        setEmptySoftwareUpdatesSettings(),
+      ]);
+    });
+
+    it('should empty software updates settings and put a network error flag on failed fetching', async () => {
+      const axiosMock = new MockAdapter(networkClient);
+      axiosMock.onGet('/settings/suma_credentials').reply(500);
+
+      const dispatched = await recordSaga(fetchSoftwareUpdatesSettings);
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdatesSettings(),
+        setNetworkError(true),
+        setEmptySoftwareUpdatesSettings(),
+      ]);
     });
   });
 

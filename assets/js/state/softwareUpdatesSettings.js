@@ -46,6 +46,9 @@ export const softwareUpdatesSettingsSlice = createSlice({
     setTestingSoftwareUpdatesConnection: (state, { payload }) => {
       state.testingConnection = payload;
     },
+    setNetworkError: (state, { payload }) => {
+      state.networkError = payload;
+    },
   },
 });
 
@@ -83,6 +86,7 @@ export const {
   setSoftwareUpdatesSettingsErrors,
   setEditingSoftwareUpdatesSettings,
   setTestingSoftwareUpdatesConnection,
+  setNetworkError,
 } = softwareUpdatesSettingsSlice.actions;
 
 export default softwareUpdatesSettingsSlice.reducer;

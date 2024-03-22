@@ -21,6 +21,7 @@ import {
   setSoftwareUpdatesSettingsErrors,
   setEditingSoftwareUpdatesSettings,
   setTestingSoftwareUpdatesConnection,
+  setNetworkError,
 } from '@state/softwareUpdatesSettings';
 
 export function* fetchSoftwareUpdatesSettings() {
@@ -30,6 +31,10 @@ export function* fetchSoftwareUpdatesSettings() {
     const response = yield call(getSettings);
     yield put(setSoftwareUpdatesSettings(response.data));
   } catch (error) {
+    const errorCode = get(error, ['response', 'status']);
+    if (errorCode === 500) {
+      yield put(setNetworkError(true));
+    }
     yield put(setEmptySoftwareUpdatesSettings());
   }
 }

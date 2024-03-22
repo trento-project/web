@@ -84,6 +84,7 @@ function SettingsPage() {
     settings,
     loading: softwareUpdatesSettingsLoading,
     editing: editingSoftwareUpdatesSettings,
+    networkError: softwareUpdatesSettingsNetworkError,
     testingConnection: testingSoftwareUpdatesConnection,
   } = useSelector(getSoftwareUpdatesSettings);
 
