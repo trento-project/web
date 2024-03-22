@@ -22,6 +22,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
+      insert_software_updates_settings()
       %{id: host_id} = insert(:host)
 
       %AvailableSoftwareUpdatesResponse{
@@ -48,10 +49,26 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         |> assert_schema("AvailableSoftwareUpdatesResponse", api_spec)
     end
 
+    test "should return 401 when no settings have been saved", %{conn: conn} do
+      %{id: host_id} = insert(:host)
+
+      resp =
+        conn
+        |> get("/api/v1/hosts/#{host_id}/software_updates")
+        |> json_response(:unauthorized)
+
+      assert %{
+               "errors" => [
+                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Unauthorized"}
+               ]
+             } == resp
+    end
+
     test "should return 404 when a host is not found", %{
       conn: conn,
       api_spec: api_spec
     } do
+      insert_software_updates_settings()
       host_id = Faker.UUID.v4()
 
       conn
@@ -64,6 +81,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
+      insert_software_updates_settings()
       %{id: host_id} = insert(:host, fully_qualified_domain_name: nil)
 
       conn

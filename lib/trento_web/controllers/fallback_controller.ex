@@ -10,6 +10,13 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"401", reason: "Invalid credentials.")
   end
 
+  def call(conn, {:error, :settings_not_configured}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(ErrorView)
+    |> render(:"401", reason: "SUSE Manager settings not configured.")
+  end
+
   def call(conn, {:error, :invalid_refresh_token}) do
     conn
     |> put_status(:unauthorized)
@@ -32,7 +39,6 @@ defmodule TrentoWeb.FallbackController do
              :database_not_registered,
              :application_instance_not_registered,
              :database_instance_not_registered,
-             :settings_not_configured,
              :api_key_settings_missing
            ] do
     conn
