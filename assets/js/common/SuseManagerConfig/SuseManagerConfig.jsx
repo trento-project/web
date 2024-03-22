@@ -15,8 +15,10 @@ function SuseManagerConfig({
   certUploadDate,
   onEditClick = noop,
   clearSettingsDialogOpen = false,
+  testConnectionEnabled = false,
   onClearClick = noop,
   onClearSettings = noop,
+  onTestConnection = noop,
   onCancel = noop,
 }) {
   return (
@@ -32,6 +34,15 @@ function SuseManagerConfig({
             SUSE Manager Config
           </h2>
           <span className="float-right">
+            <Button
+              className="mr-2"
+              type="default-fit"
+              size="small"
+              disabled={!testConnectionEnabled}
+              onClick={onTestConnection}
+            >
+              Test Connection
+            </Button>
             <Button
               className="mr-2"
               type="primary-white-fit"

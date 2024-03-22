@@ -23,7 +23,7 @@ const getButtonClasses = (type) => {
     case 'secondary':
       return 'bg-persimmon hover:opacity-75 focus:outline-none text-gray-800 w-full transition ease-in duration-200 text-center font-semibold rounded shadow';
     case 'default-fit':
-      return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-fit transition ease-in duration-200 text-center font-semibold rounded shadow';
+      return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white border border-jungle-green-500 w-fit transition ease-in duration-200 text-center font-semibold rounded shadow';
     case 'danger':
       return 'bg-white hover:opacity-75 focus:outline-none text-red-500 border border-red-500 transition ease-in duration-200 text-center font-semibold rounded shadow';
     case 'danger-bold':

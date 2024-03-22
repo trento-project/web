@@ -4,6 +4,7 @@ import softwareUpdatesSettingsReducer, {
   setEmptySoftwareUpdatesSettings,
   setSoftwareUpdatesSettingsErrors,
   setEditingSoftwareUpdatesSettings,
+  setTestingSoftwareUpdatesConnection,
 } from './softwareUpdatesSettings';
 
 describe('SoftwareUpdateSettings reducer', () => {
@@ -142,6 +143,32 @@ describe('SoftwareUpdateSettings reducer', () => {
     expect(actual).toEqual({
       ...initialState,
       editing: true,
+    });
+  });
+
+  it('should mark that the connection is being tested', () => {
+    const initialState = {
+      loading: false,
+      settings: {
+        url: 'https://valid.url',
+        username: 'username',
+        ca_uploaded_at: '2021-01-01T00:00:00Z',
+      },
+      networkError: null,
+      errors: [],
+      editing: false,
+      testingConnection: false,
+    };
+
+    [true, false].forEach((isTestingConnection) => {
+      const action = setTestingSoftwareUpdatesConnection(isTestingConnection);
+
+      const actual = softwareUpdatesSettingsReducer(initialState, action);
+
+      expect(actual).toEqual({
+        ...initialState,
+        testingConnection: isTestingConnection,
+      });
     });
   });
 });

@@ -11,3 +11,6 @@ export const updateSettings = (settings) =>
 
 export const clearSettings = () =>
   networkClient.delete(`/settings/suma_credentials`);
+
+export const testConnection = () =>
+  networkClient.post(`/settings/suma_credentials/test`);
