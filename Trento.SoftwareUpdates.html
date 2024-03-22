@@ -428,7 +428,7 @@ GUIDES
     </a>
     <h1 class="signature" translate="no">get_software_updates(host_id)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L117" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/software_updates.ex#L118" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -442,8 +442,9 @@ GUIDES
 
           <pre translate="no"><span class="attribute">@spec</span> get_software_updates(<a href="https://hexdocs.pm/ecto/3.11.1/Ecto.UUID.html#t:t/0">Ecto.UUID.t</a>()) ::
   {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()}
-  | {:error, :settings_not_configured,
-     :system_id_not_found
+  | {:error,
+     :settings_not_configured
+     | :system_id_not_found
      | :not_found
      | :fqdn_not_found
      | :error_getting_patches
