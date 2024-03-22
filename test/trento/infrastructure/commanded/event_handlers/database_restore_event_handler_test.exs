@@ -13,11 +13,17 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
 
   test "should dispatch RestoreSapSystem commands when a database is restored" do
     %{id: database_id} = insert(:database)
-    %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+
+    %{id: sap_system_id, tenant: tenant, db_host: db_host} =
+      insert(:sap_system, database_id: database_id)
 
     event = %DatabaseRestored{database_id: database_id}
 
-    expect(Trento.Commanded.Mock, :dispatch, fn %RestoreSapSystem{sap_system_id: ^sap_system_id},
+    expect(Trento.Commanded.Mock, :dispatch, fn %RestoreSapSystem{
+                                                  sap_system_id: ^sap_system_id,
+                                                  tenant: ^tenant,
+                                                  db_host: ^db_host
+                                                },
                                                 _ ->
       :ok
     end)
