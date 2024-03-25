@@ -1,6 +1,6 @@
 defmodule Trento.SapSystems.Commands.DeregisterSapSystem do
   @moduledoc """
-  Deregister (decommission) a SapSystem instance from the monitoring system.
+  Deregister (decommission) a SAP System
   """
 
   @required_fields :all

@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandlerTest do
   use ExUnit.Case
-  use Trento.EventStoreCase
+  use Trento.DataCase
 
   import Mox
   import Trento.Factory

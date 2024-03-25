@@ -1,6 +1,6 @@
 defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest do
   use ExUnit.Case
-  use Trento.EventStoreCase
+  use Trento.DataCase
 
   import Mox
   import Trento.Factory
@@ -13,13 +13,23 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
 
   test "should dispatch DeregisterSapSystem commands when a database is deregistered" do
     %{id: database_id} = insert(:database)
-    %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+
+    [%{id: first_sap_system_id}, %{id: second_sap_system_id}] =
+      insert_list(2, :sap_system, database_id: database_id)
 
     deregistered_at = DateTime.utc_now()
     event = %DatabaseDeregistered{database_id: database_id, deregistered_at: deregistered_at}
 
     expect(Trento.Commanded.Mock, :dispatch, fn %DeregisterSapSystem{
-                                                  sap_system_id: ^sap_system_id,
+                                                  sap_system_id: ^first_sap_system_id,
+                                                  deregistered_at: ^deregistered_at
+                                                },
+                                                _ ->
+      :ok
+    end)
+
+    expect(Trento.Commanded.Mock, :dispatch, fn %DeregisterSapSystem{
+                                                  sap_system_id: ^second_sap_system_id,
                                                   deregistered_at: ^deregistered_at
                                                 },
                                                 _ ->

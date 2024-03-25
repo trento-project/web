@@ -1599,11 +1599,9 @@ defmodule Trento.SapSystems.SapSystemTest do
 
       message_server_host_id = UUID.uuid4()
       abap_host_id = UUID.uuid4()
-      enqrep_host_id = UUID.uuid4()
 
       message_server_instance_number = "01"
       abap_instance_number = "02"
-      enqrep_server_instance_number = "03"
 
       application_sid = fake_sid()
 
@@ -1629,14 +1627,6 @@ defmodule Trento.SapSystems.SapSystemTest do
             :sap_system_registered_event,
             sap_system_id: sap_system_id,
             sid: application_sid
-          ),
-          build(
-            :application_instance_registered_event,
-            sap_system_id: sap_system_id,
-            host_id: enqrep_host_id,
-            instance_number: enqrep_server_instance_number,
-            sid: application_sid,
-            features: "ENQREP"
           )
         ],
         %DeregisterSapSystem{
@@ -1654,10 +1644,6 @@ defmodule Trento.SapSystems.SapSystemTest do
                    sid: ^application_sid,
                    deregistered_at: ^deregistered_at,
                    instances: [
-                     %Instance{
-                       host_id: ^enqrep_host_id,
-                       instance_number: ^enqrep_server_instance_number
-                     },
                      %Instance{
                        host_id: ^abap_host_id,
                        instance_number: ^abap_instance_number

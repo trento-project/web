@@ -3,7 +3,7 @@ defmodule Trento.Repo.Migrations.AddDatabaseSapSystemRelationship do
 
   def change do
     alter table(:sap_systems) do
-      add :database_id, references(:databases, type: :binary_id)
+      add :database_id, :binary_id
     end
   end
 end

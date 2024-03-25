@@ -21,7 +21,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
         %DatabaseRestored{database_id: database_id},
         _metadata
       ) do
-    database =
+    %{sap_systems: sap_systems} =
       Repo.one!(
         from(d in DatabaseReadModel,
           where: d.id == ^database_id,
@@ -30,8 +30,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
         )
       )
 
-    for %{id: sap_system_id, tenant: tenant, db_host: db_host} <- database.sap_systems do
-      Logger.info("Restoring sap system: #{sap_system_id} attached to database: #{database_id}")
+    for %{id: sap_system_id, tenant: tenant, db_host: db_host, sid: sid} <- sap_systems do
+      Logger.info("Restoring sap system #{sid} attached to database #{database_id}")
 
       commanded().dispatch(
         %RestoreSapSystem{sap_system_id: sap_system_id, db_host: db_host, tenant: tenant},

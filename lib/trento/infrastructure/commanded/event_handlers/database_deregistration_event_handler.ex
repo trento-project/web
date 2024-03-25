@@ -21,7 +21,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
         %DatabaseDeregistered{database_id: database_id, deregistered_at: deregistered_at},
         _metadata
       ) do
-    database =
+    %{sap_systems: sap_systems} =
       Repo.one!(
         from(d in DatabaseReadModel,
           where: d.id == ^database_id,
@@ -30,10 +30,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
         )
       )
 
-    for %{id: sap_system_id} <- database.sap_systems do
-      Logger.info(
-        "Deregistering sap system: #{sap_system_id} attached to database: #{database_id}"
-      )
+    for %{id: sap_system_id, sid: sid} <- sap_systems do
+      Logger.info("Deregistering sap system #{sid} attached to database #{database_id}")
 
       commanded().dispatch(
         %DeregisterSapSystem{sap_system_id: sap_system_id, deregistered_at: deregistered_at},

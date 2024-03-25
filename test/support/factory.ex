@@ -556,7 +556,8 @@ defmodule Trento.Factory do
       db_host: Faker.Internet.ip_v4_address(),
       health: Health.unknown(),
       ensa_version: EnsaVersion.ensa1(),
-      deregistered_at: nil
+      deregistered_at: nil,
+      database_id: Faker.UUID.v4()
     }
   end
 
