@@ -15,12 +15,15 @@ defmodule Trento.SapSystemsTest do
 
   describe "sap_systems" do
     test "should retrieve all the currently registered existing sap systems and the related instances" do
+      %{id: database_id} = insert(:database)
+
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid,
         tenant: tenant,
-        db_host: db_host
-      } = insert(:sap_system)
+        db_host: db_host,
+        database_id: database_id
+      } = insert(:sap_system, database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
@@ -32,7 +35,7 @@ defmodule Trento.SapSystemsTest do
 
       database_instances =
         Enum.sort_by(
-          insert_list(5, :database_instance_without_host, sap_system_id: sap_system_id),
+          insert_list(5, :database_instance_without_host, sap_system_id: database_id),
           &{&1.instance_number, &1.host_id}
         )
 
@@ -42,6 +45,7 @@ defmodule Trento.SapSystemsTest do
                  sid: ^sid,
                  tenant: ^tenant,
                  db_host: ^db_host,
+                 database_id: ^database_id,
                  application_instances: ^application_instances,
                  database_instances: ^database_instances
                }

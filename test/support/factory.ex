@@ -544,7 +544,8 @@ defmodule Trento.Factory do
       db_host: Faker.Internet.ip_v4_address(),
       health: Health.unknown(),
       ensa_version: EnsaVersion.ensa1(),
-      deregistered_at: nil
+      deregistered_at: nil,
+      database_id: Faker.UUID.v4()
     }
   end
 
@@ -634,7 +635,8 @@ defmodule Trento.Factory do
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
       health: Health.passing(),
-      ensa_version: EnsaVersion.ensa1()
+      ensa_version: EnsaVersion.ensa1(),
+      database_id: Faker.UUID.v4()
     })
   end
 

@@ -22,12 +22,13 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
     %SapSystemReadModel{
       id: sap_system_id,
-      sid: sid
+      sid: sid,
+      database_id: database_id
     } = insert(:sap_system, health: Health.critical())
 
     insert(
       :database_instance_without_host,
-      sap_system_id: sap_system_id,
+      sap_system_id: database_id,
       sid: "HDD",
       host_id: host_1_id,
       health: Health.warning()

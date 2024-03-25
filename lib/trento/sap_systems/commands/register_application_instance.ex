@@ -47,6 +47,7 @@ defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
     field :features, :string
     field :http_port, :integer
     field :https_port, :integer
+    field :database_id, Ecto.UUID
     field :start_priority, :string
     field :health, Ecto.Enum, values: Health.values()
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values()
