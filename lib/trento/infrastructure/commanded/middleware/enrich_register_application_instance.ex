@@ -19,7 +19,11 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
     case Repo.one(query) do
       %DatabaseInstanceReadModel{sap_system_id: sap_system_id} ->
         {:ok,
-         %RegisterApplicationInstance{command | sap_system_id: UUID.uuid5(sap_system_id, tenant)}}
+         %RegisterApplicationInstance{
+           command
+           | sap_system_id: UUID.uuid5(sap_system_id, tenant),
+             database_id: sap_system_id
+         }}
 
       nil ->
         {:error, :database_not_registered}
