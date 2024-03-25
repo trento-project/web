@@ -9,9 +9,11 @@ import { logError } from '@lib/log';
 import { get, patch } from '@lib/network';
 import { getFromConfig } from '@lib/config';
 
-import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
+import SuseManagerConfig, {
+  SuseManagerSettingsContainer,
+} from '@common/SuseManagerConfig';
 import SuseManagerSettingsModal from '@common/SuseManagerSettingsDialog';
 import ApiKeySettingsModal from '@common/ApiKeySettingsModal';
 
@@ -31,8 +33,6 @@ import {
 
 import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
-
-import SuseManagerConfig from '@common/SuseManagerConfig';
 
 function SettingsPage() {
   const dispatch = useDispatch();
@@ -254,12 +254,11 @@ function SettingsPage() {
       />
       {getFromConfig('suseManagerEnabled') && (
         <div className="py-4">
-          {softwareUpdatesSettingsLoading ? (
-            <LoadingBox
-              className="shadow-none rounded-lg"
-              text="Loading Settings..."
-            />
-          ) : (
+          <SuseManagerSettingsContainer
+            loading={softwareUpdatesSettingsLoading}
+            error={softwareUpdatesSettingsNetworkError}
+            onRetry={() => dispatch(fetchSoftwareUpdatesSettings())}
+          >
             <SuseManagerConfig
               url={settings.url}
               username={settings.username}
@@ -281,7 +280,7 @@ function SettingsPage() {
               }}
               onCancel={() => setClearingSoftwareUpdatesSettings(false)}
             />
-          )}
+          </SuseManagerSettingsContainer>
           <SuseManagerSettingsModal
             key={`${settings.url}-${settings.username}-${settings.ca_uploaded_at}-${editingSoftwareUpdatesSettings}`}
             open={editingSoftwareUpdatesSettings}
