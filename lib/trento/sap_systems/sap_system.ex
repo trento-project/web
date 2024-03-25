@@ -48,8 +48,10 @@ defmodule Trento.SapSystems.SapSystem do
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
+    DeregisterSapSystem,
     MarkApplicationInstanceAbsent,
     RegisterApplicationInstance,
+    RestoreSapSystem,
     RollUpSapSystem
   }
 
@@ -211,6 +213,26 @@ defmodule Trento.SapSystems.SapSystem do
       sap_system_id: sap_system_id,
       snapshot: snapshot
     }
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id, deregistered_at: nil},
+        %DeregisterSapSystem{deregistered_at: deregistered_at}
+      ) do
+    %SapSystemDeregistered{sap_system_id: sap_system_id, deregistered_at: deregistered_at}
+  end
+
+  def execute(
+        %SapSystem{deregistered_at: nil},
+        %RestoreSapSystem{}
+      ),
+      do: nil
+
+  def execute(
+        %SapSystem{} = sap_system,
+        %RestoreSapSystem{} = restore_command
+      ) do
+    maybe_emit_sap_system_restored_event(sap_system, restore_command)
   end
 
   def execute(
@@ -581,6 +603,21 @@ defmodule Trento.SapSystems.SapSystem do
     end
   end
 
+  # Restore a SAP system when the restore command is received, check for the required instances
+  defp maybe_emit_sap_system_restored_event(
+         %SapSystem{instances: instances, health: health},
+         %RestoreSapSystem{sap_system_id: sap_system_id, db_host: db_host, tenant: tenant}
+       ) do
+    if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
+      %SapSystemRestored{
+        health: health,
+        db_host: db_host,
+        tenant: tenant,
+        sap_system_id: sap_system_id
+      }
+    end
+  end
+
   defp maybe_emit_sap_system_registered_or_updated_event(
          %SapSystem{sid: nil, instances: instances},
          %RegisterApplicationInstance{
@@ -589,7 +626,8 @@ defmodule Trento.SapSystems.SapSystem do
            tenant: tenant,
            db_host: db_host,
            health: health,
-           ensa_version: ensa_version
+           ensa_version: ensa_version,
+           database_id: database_id
          }
        ) do
     if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
@@ -599,7 +637,8 @@ defmodule Trento.SapSystems.SapSystem do
         tenant: tenant,
         db_host: db_host,
         health: health,
-        ensa_version: ensa_version
+        ensa_version: ensa_version,
+        database_id: database_id
       }
     end
   end
