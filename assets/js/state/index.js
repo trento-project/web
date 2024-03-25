@@ -34,7 +34,8 @@ export const store = configureStore({
     softwareUpdates: softwareUpdatesReducer,
     softwareUpdatesSettings: softwareUpdatesSettingsReducer,
   },
-  middleware: [sagaMiddleware],
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(sagaMiddleware),
 });
 
 sagaMiddleware.run(rootSaga);
