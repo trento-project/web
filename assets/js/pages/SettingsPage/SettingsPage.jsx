@@ -22,6 +22,7 @@ import {
   setEditingSoftwareUpdatesSettings,
   clearSoftwareUpdatesSettings,
   testSoftwareUpdatesConnection,
+  setSoftwareUpdatesSettingsErrors,
 } from '@state/softwareUpdatesSettings';
 import {
   getSoftwareUpdatesSettings,
@@ -299,7 +300,10 @@ function SettingsPage() {
                 dispatch(saveSoftwareUpdatesSettings(payload));
               }
             }}
-            onCancel={() => dispatch(setEditingSoftwareUpdatesSettings(false))}
+            onCancel={() => {
+              dispatch(setSoftwareUpdatesSettingsErrors([]));
+              dispatch(setEditingSoftwareUpdatesSettings(false));
+            }}
           />
         </div>
       )}
