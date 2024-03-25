@@ -34,8 +34,10 @@ defmodule Trento.Router do
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
+    DeregisterSapSystem,
     MarkApplicationInstanceAbsent,
     RegisterApplicationInstance,
+    RestoreSapSystem,
     RollUpSapSystem
   }
 
@@ -82,6 +84,8 @@ defmodule Trento.Router do
 
   dispatch [
              DeregisterApplicationInstance,
+             DeregisterSapSystem,
+             RestoreSapSystem,
              MarkApplicationInstanceAbsent,
              RegisterApplicationInstance,
              RollUpSapSystem
