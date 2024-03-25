@@ -29,7 +29,11 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
 
     expected_sap_system_id = UUID.uuid5(sap_system_id, tenant)
 
-    assert {:ok, %RegisterApplicationInstance{sap_system_id: ^expected_sap_system_id}} =
+    assert {:ok,
+            %RegisterApplicationInstance{
+              sap_system_id: ^expected_sap_system_id,
+              database_id: ^sap_system_id
+            }} =
              Enrichable.enrich(command, %{})
   end
 
