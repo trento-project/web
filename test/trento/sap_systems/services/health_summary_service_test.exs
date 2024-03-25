@@ -24,12 +24,13 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
 
       %SapSystemReadModel{
         id: sap_system_id,
-        sid: sid
+        sid: sid,
+        database_id: database_id
       } = insert(:sap_system)
 
       insert(
         :database_instance_without_host,
-        sap_system_id: sap_system_id,
+        sap_system_id: database_id,
         host_id: a_host_id
       )
 
@@ -64,17 +65,20 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id_2} =
         app_host_2 = insert(:host, cluster_id: nil, heartbeat: Health.critical())
 
+      %{id: database_id} = insert(:database)
+
       %SapSystemReadModel{
         id: sap_system_id,
-        sid: sid
-      } = insert(:sap_system, health: Health.critical())
+        sid: sid,
+        database_id: database_id
+      } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
       database_instances = [
         insert(
           :database_instance,
-          sap_system_id: sap_system_id,
+          sap_system_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
           health: Health.warning(),
@@ -82,7 +86,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         ),
         insert(
           :database_instance,
-          sap_system_id: sap_system_id,
+          sap_system_id: database_id,
           instance_number: "01",
           host_id: db_host_id_2,
           health: Health.passing(),
@@ -133,10 +137,12 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id} =
         app_host = insert(:host, cluster_id: nil, health: Health.passing())
 
+      %{id: database_id} = insert(:database)
+
       %SapSystemReadModel{
         id: sap_system_id,
         sid: sid
-      } = insert(:sap_system, health: Health.critical())
+      } = insert(:sap_system, health: Health.critical(), database_id: database_id)
 
       insert(:sap_system, deregistered_at: DateTime.utc_now())
 
@@ -144,7 +150,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         insert_list(
           1,
           :database_instance,
-          sap_system_id: sap_system_id,
+          sap_system_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
           health: Health.warning(),
