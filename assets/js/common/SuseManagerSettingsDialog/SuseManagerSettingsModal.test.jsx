@@ -4,6 +4,8 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
+import { capitalize } from 'lodash';
+
 import SuseManagerSettingsModal from '.';
 
 describe('SuseManagerSettingsModal component', () => {
@@ -125,5 +127,37 @@ describe('SuseManagerSettingsModal component', () => {
       username,
       url,
     });
+  });
+
+  it('should display errors', async () => {
+    const detail = capitalize(faker.lorem.words(5));
+
+    const errors = [
+      {
+        detail,
+        source: { pointer: '/url' },
+        title: 'Invalid value',
+      },
+      {
+        detail,
+        source: { pointer: '/ca_cert' },
+        title: 'Invalid value',
+      },
+    ];
+
+    await act(async () => {
+      render(
+        <SuseManagerSettingsModal
+          initialUsername={faker.word.noun()}
+          initialUrl={faker.internet.url()}
+          errors={errors}
+          open
+          onSave={() => {}}
+          onCancel={() => {}}
+        />
+      );
+    });
+
+    expect(screen.getAllByText(detail)).toHaveLength(2);
   });
 });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { noop } from 'lodash';
+import { capitalize, noop } from 'lodash';
 import { format } from 'date-fns';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
 
@@ -8,7 +8,7 @@ import Modal from '@common/Modal';
 import Input, { Password, Textarea } from '@common/Input';
 import Label from '@common/Label';
 
-import { hasError } from './errors';
+import { hasError, getError } from './errors';
 
 const defaultErrors = [];
 
@@ -54,20 +54,26 @@ function SuseManagerSettingsModal({
 
   return (
     <Modal title="Enter SUSE Manager Settings" open={open} onClose={onCancel}>
-      <div className="grid grid-cols-6 items-center my-5 gap-6">
+      <div className="grid grid-cols-6 my-5 gap-6">
         <Label className="col-span-2" required>
           SUSE Manager URL
         </Label>
-        <Input
-          className="col-span-4"
-          value={url}
-          placeholder="Enter a URL"
-          error={hasError('url', errors)}
-          onChange={({ target: { value } }) => {
-            setUrl(value);
-            onClearErrors();
-          }}
-        />
+        <div className="col-span-4">
+          <Input
+            value={url}
+            placeholder="Enter a URL"
+            error={hasError('url', errors)}
+            onChange={({ target: { value } }) => {
+              setUrl(value);
+              onClearErrors();
+            }}
+          />
+          {hasError('url', errors) && (
+            <p className="text-red-500 mt-1">
+              {capitalize(getError('url', errors))}
+            </p>
+          )}
+        </div>
         <Label
           className="col-span-2 self-start"
           info="Only required for self-signed certificates"
@@ -75,16 +81,22 @@ function SuseManagerSettingsModal({
           CA Certificate
         </Label>
         {editingCertificate ? (
-          <Textarea
-            className="col-span-4"
-            value={certificate}
-            placeholder="Starts with -----BEGIN CERTIFICATE-----"
-            error={hasError('ca_cert', errors)}
-            onChange={({ target: { value } }) => {
-              setCertificate(value);
-              onClearErrors();
-            }}
-          />
+          <div className="col-span-4">
+            <Textarea
+              value={certificate}
+              placeholder="Starts with -----BEGIN CERTIFICATE-----"
+              error={hasError('ca_cert', errors)}
+              onChange={({ target: { value } }) => {
+                setCertificate(value);
+                onClearErrors();
+              }}
+            />
+            {hasError('ca_cert', errors) && (
+              <p className="text-red-500 mt-1">
+                {capitalize(getError('ca_cert', errors))}
+              </p>
+            )}
+          </div>
         ) : (
           <div className="col-span-4 flex flex-row items-center justify-start p-5 border border-gray-200 rounded-md">
             <EOS_LOCK_OUTLINED className="mr-3" size="25" />
@@ -104,30 +116,42 @@ function SuseManagerSettingsModal({
         <Label className="col-span-2" required>
           Username
         </Label>
-        <Input
-          className="col-span-4"
-          value={username}
-          placeholder="Enter a SUSE Manager username"
-          error={hasError('username', errors)}
-          onChange={({ target: { value } }) => {
-            setUsername(value);
-            onClearErrors();
-          }}
-        />
+        <div className="col-span-4">
+          <Input
+            value={username}
+            placeholder="Enter a SUSE Manager username"
+            error={hasError('username', errors)}
+            onChange={({ target: { value } }) => {
+              setUsername(value);
+              onClearErrors();
+            }}
+          />
+          {hasError('username', errors) && (
+            <p className="text-red-500 mt-1">
+              {capitalize(getError('username', errors))}
+            </p>
+          )}
+        </div>
         <Label className="col-span-2" required>
           Password
         </Label>
         {editingPassword ? (
-          <Password
-            className="col-span-4"
-            value={password}
-            placeholder="Enter a SUSE Manager password"
-            error={hasError('password', errors)}
-            onChange={({ target: { value } }) => {
-              setPassword(value);
-              onClearErrors();
-            }}
-          />
+          <div className="col-span-4">
+            <Password
+              value={password}
+              placeholder="Enter a SUSE Manager password"
+              error={hasError('password', errors)}
+              onChange={({ target: { value } }) => {
+                setPassword(value);
+                onClearErrors();
+              }}
+            />
+            {hasError('password', errors) && (
+              <p className="text-red-500 mt-1">
+                {capitalize(getError('password', errors))}
+              </p>
+            )}
+          </div>
         ) : (
           <div className="col-span-4 border border-gray-200 p-5 rounded-md">
             <p className="inline align-sub leading-10">•••••</p>
