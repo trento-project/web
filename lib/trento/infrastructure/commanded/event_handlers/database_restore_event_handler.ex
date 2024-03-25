@@ -9,9 +9,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
     name: "database_restore_event_handler"
 
   alias Trento.Databases.Events.DatabaseRestored
+  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Repo
   alias Trento.SapSystems.Commands.RestoreSapSystem
-  alias Trento.SapSystems.Projections.DatabaseReadModel
 
   import Ecto.Query, only: [from: 2]
 

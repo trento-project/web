@@ -341,7 +341,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     adapted_database_instance =
       database_instance
       |> Map.drop([:database_id])
-      |> Map.put(:sap_system_id, sap_system_id)
+      |> Map.put(:sap_system_id, database_id)
 
     assert_broadcast(
       "sap_system_restored",

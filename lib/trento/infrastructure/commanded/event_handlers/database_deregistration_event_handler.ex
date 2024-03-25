@@ -9,9 +9,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
     name: "database_deregistration_event_handler"
 
   alias Trento.Databases.Events.DatabaseDeregistered
+  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Repo
   alias Trento.SapSystems.Commands.DeregisterSapSystem
-  alias Trento.SapSystems.Projections.DatabaseReadModel
 
   import Ecto.Query, only: [from: 2]
 

@@ -865,6 +865,7 @@ defmodule Trento.SapSystems.SapSystemTest do
   describe "SAP System health" do
     test "should change the health of a SAP System when a new Application instance is registered" do
       sap_system_id = Faker.UUID.v4()
+      database_id = Faker.UUID.v4()
       sid = Faker.StarWars.planet()
       tenant = Faker.Beer.style()
       db_host = Faker.Internet.ip_v4_address()
@@ -894,7 +895,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           features: features,
           host_id: host_id,
           health: :critical,
-          database_id: sap_system_id
+          database_id: database_id
         ),
         [
           build(
@@ -913,7 +914,7 @@ defmodule Trento.SapSystems.SapSystemTest do
             tenant: tenant,
             health: :critical,
             ensa_version: ensa_version,
-            database_id: sap_system_id
+            database_id: database_id
           }
         ],
         fn state ->

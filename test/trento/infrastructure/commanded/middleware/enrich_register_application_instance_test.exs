@@ -32,7 +32,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
     assert {:ok,
             %RegisterApplicationInstance{
               sap_system_id: ^expected_sap_system_id,
-              database_id: ^sap_system_id
+              database_id: ^database_id
             }} =
              Enrichable.enrich(command, %{})
   end
