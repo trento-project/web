@@ -5,4 +5,3 @@ defmodule Trento.Repo.Migrations.RemoveHostTelemetryReadModel do
     drop table(:hosts_telemetry)
   end
 end
-
