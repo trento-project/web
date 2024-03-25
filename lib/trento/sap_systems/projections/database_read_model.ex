@@ -9,7 +9,11 @@ defmodule Trento.SapSystems.Projections.DatabaseReadModel do
 
   require Trento.Enums.Health, as: Health
 
-  alias Trento.SapSystems.Projections.DatabaseInstanceReadModel
+  alias Trento.SapSystems.Projections.{
+    DatabaseInstanceReadModel,
+    SapSystemReadModel
+  }
+
   alias Trento.Tags.Tag
 
   @type t :: %__MODULE__{}
@@ -21,6 +25,8 @@ defmodule Trento.SapSystems.Projections.DatabaseReadModel do
     field :health, Ecto.Enum, values: Health.values()
 
     has_many :tags, Tag, foreign_key: :resource_id
+
+    has_many :sap_systems, SapSystemReadModel, foreign_key: :database_id
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
