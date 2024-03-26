@@ -22,7 +22,8 @@ defmodule Trento.Databases.Database do
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
-    RegisterDatabaseInstance
+    RegisterDatabaseInstance,
+    RollUpDatabase
   }
 
   alias Trento.Databases.Events.{
@@ -35,7 +36,10 @@ defmodule Trento.Databases.Database do
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
-    DatabaseRestored
+    DatabaseRestored,
+    DatabaseRolledUp,
+    DatabaseRollUpRequested,
+    DatabaseTombstoned
   }
 
   alias Trento.Services.HealthService
@@ -48,10 +52,14 @@ defmodule Trento.Databases.Database do
     field :database_id, Ecto.UUID
     field :sid, :string, default: nil
     field :health, Ecto.Enum, values: Health.values()
+    field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_many :instances, Instance
   end
+
+  # Stop everything during the rollup process
+  def execute(%Database{rolling_up: true}, _), do: {:error, :database_rolling_up}
 
   def execute(
         %Database{database_id: nil},
@@ -232,6 +240,17 @@ defmodule Trento.Databases.Database do
     |> Multi.execute(fn database ->
       maybe_emit_database_deregistered_event(database, deregistered_at)
     end)
+    |> Multi.execute(&maybe_emit_database_tombstoned_event/1)
+  end
+
+  def execute(
+        %Database{database_id: database_id} = snapshot,
+        %RollUpDatabase{}
+      ) do
+    %DatabaseRollUpRequested{
+      database_id: database_id,
+      snapshot: snapshot
+    }
   end
 
   def execute(
@@ -406,6 +425,20 @@ defmodule Trento.Databases.Database do
         deregistered_at: nil
     }
   end
+
+  # Aggregate to rolling up state
+  def apply(%Database{} = database, %DatabaseRollUpRequested{}) do
+    %Database{database | rolling_up: true}
+  end
+
+  # Hydrate the aggregate with a rollup snapshot after rollup ends
+  def apply(%Database{}, %DatabaseRolledUp{
+        snapshot: snapshot
+      }) do
+    snapshot
+  end
+
+  def apply(%Database{} = database, %DatabaseTombstoned{}), do: database
 
   defp maybe_emit_database_instance_registered_event(
          nil,
@@ -601,6 +634,12 @@ defmodule Trento.Databases.Database do
   end
 
   defp maybe_emit_database_deregistered_event(_, _), do: nil
+
+  defp maybe_emit_database_tombstoned_event(%Database{database_id: database_id, instances: []}) do
+    %DatabaseTombstoned{database_id: database_id}
+  end
+
+  defp maybe_emit_database_tombstoned_event(_), do: nil
 
   defp get_instance(instances, host_id, instance_number) do
     Enum.find(instances, fn

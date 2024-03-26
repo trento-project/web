@@ -18,7 +18,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.Databases.Events.{
     DatabaseInstanceDeregistered,
-    DatabaseInstanceRegistered
+    DatabaseInstanceRegistered,
+    DatabaseRolledUp
   }
 
   alias Trento.SapSystems.Events.{
@@ -33,8 +34,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   alias Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Instance
 
   alias Trento.Clusters.Cluster
+  alias Trento.Databases.Database
   alias Trento.SapSystems.Instance, as: SapSystemInstance
-
   alias Trento.SapSystems.SapSystem
 
   alias Trento.Clusters.Commands.DeregisterClusterHost
@@ -100,6 +101,18 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
                DeregistrationProcessManager.interested?(%SapSystemRolledUp{
                  snapshot: %SapSystem{
                    instances: application_instances
+                 }
+               })
+    end
+
+    test "should start process managers when DatabaseRolledUp arrives" do
+      [%{host_id: db_host_id_1}, %{host_id: db_host_id_2}] =
+        database_instances = build_list(2, :sap_system_instance)
+
+      assert {:start, [^db_host_id_1, ^db_host_id_2]} =
+               DeregistrationProcessManager.interested?(%DatabaseRolledUp{
+                 snapshot: %Database{
+                   instances: database_instances
                  }
                })
     end
@@ -293,6 +306,52 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
                  %Instance{
                    sap_system_id: ^sap_system_id,
                    instance_number: ^application_instance_number
+                 }
+               ]
+             } = state
+    end
+
+    test "should update state when DatabaseRolledUp event received" do
+      sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
+      instance_number = "00"
+      database_instance_number = "01"
+
+      initial_state = %DeregistrationProcessManager{
+        database_instances: [],
+        application_instances: [
+          %Instance{sap_system_id: sap_system_id, instance_number: instance_number}
+        ]
+      }
+
+      events = [
+        %DatabaseRolledUp{
+          database_id: database_id,
+          snapshot: %Database{
+            instances: [
+              %SapSystemInstance{
+                instance_number: database_instance_number
+              }
+            ]
+          }
+        }
+      ]
+
+      {commands, state} = reduce_events(events, initial_state)
+
+      assert [] == commands
+
+      assert %DeregistrationProcessManager{
+               database_instances: [
+                 %Instance{
+                   sap_system_id: ^database_id,
+                   instance_number: ^database_instance_number
+                 }
+               ],
+               application_instances: [
+                 %Instance{
+                   sap_system_id: ^sap_system_id,
+                   instance_number: ^instance_number
                  }
                ]
              } = state
