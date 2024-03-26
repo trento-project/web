@@ -31,9 +31,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthE
       )
 
     for %{id: sap_system_id, sid: sid} <- sap_systems do
-      Logger.info(
-        "Updating database health of #{sid} SAP system to #{health}"
-      )
+      Logger.info("Updating database health of #{sid} SAP system to #{health}")
 
       commanded().dispatch(
         %UpdateDatabaseHealth{sap_system_id: sap_system_id, database_health: health},
