@@ -32,7 +32,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: undefined,
         ca_uploaded_at: undefined,
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     };
 
@@ -49,7 +49,7 @@ describe('SoftwareUpdateSettings reducer', () => {
     expect(actual).toEqual({
       loading: false,
       settings,
-      networkError: null,
+      networkError: false,
       errors: [],
     });
   });
@@ -62,7 +62,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     };
 
@@ -77,7 +77,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: undefined,
         ca_uploaded_at: undefined,
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     });
   });
@@ -90,7 +90,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     };
 
@@ -118,7 +118,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors,
     });
   });
@@ -131,7 +131,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
       editing: false,
     };
@@ -154,7 +154,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
       editing: false,
       testingConnection: false,

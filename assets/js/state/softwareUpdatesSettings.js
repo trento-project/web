@@ -12,7 +12,7 @@ const emptySettings = {
 const initialState = {
   loading: false,
   settings: emptySettings,
-  networkError: null,
+  networkError: false,
   editing: false,
   testingConnection: false,
   errors: [],
@@ -27,17 +27,17 @@ export const softwareUpdatesSettingsSlice = createSlice({
     },
     setSoftwareUpdatesSettings: (state, { payload: settings }) => {
       state.loading = false;
-      state.networkError = null;
+      state.networkError = false;
       state.settings = settings;
     },
     setEmptySoftwareUpdatesSettings: (state) => {
       state.loading = false;
-      state.networkError = null;
+      state.networkError = false;
       state.settings = emptySettings;
     },
     setSoftwareUpdatesSettingsErrors: (state, { payload: errors }) => {
       state.loading = false;
-      state.networkError = null;
+      state.networkError = false;
       state.errors = errors;
     },
     setEditingSoftwareUpdatesSettings: (state, { payload }) => {
