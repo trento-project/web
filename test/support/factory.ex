@@ -49,7 +49,8 @@ defmodule Trento.Factory do
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
     DatabaseRegistered,
-    DatabaseRestored
+    DatabaseRestored,
+    DatabaseTombstoned
   }
 
   alias Trento.SapSystems.Events.{
@@ -709,6 +710,12 @@ defmodule Trento.Factory do
   def sap_system_tombstoned_event_factory do
     SapSystemTombstoned.new!(%{
       sap_system_id: Faker.UUID.v4()
+    })
+  end
+
+  def database_tombstoned_event_factory do
+    DatabaseTombstoned.new!(%{
+      database_id: Faker.UUID.v4()
     })
   end
 

@@ -14,10 +14,12 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     name: "stream_roll_up_event_handler"
 
   alias Trento.Clusters.Commands.RollUpCluster
+  alias Trento.Databases.Commands.RollUpDatabase
   alias Trento.Hosts.Commands.RollUpHost
   alias Trento.SapSystems.Commands.RollUpSapSystem
 
   alias Trento.Clusters.Events.ClusterTombstoned
+  alias Trento.Databases.Events.DatabaseTombstoned
   alias Trento.Hosts.Events.HostTombstoned
   alias Trento.SapSystems.Events.SapSystemTombstoned
 
@@ -33,6 +35,17 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     Trento.Clusters.Events.ClusterHealthChanged,
     Trento.Clusters.Events.ClusterRegistered,
     Trento.Clusters.Events.HostAddedToCluster
+  ]
+
+  @database_events [
+    Trento.Databases.Events.DatabaseHealthChanged,
+    Trento.Databases.Events.DatabaseInstanceHealthChanged,
+    Trento.Databases.Events.DatabaseInstanceMarkedAbsent,
+    Trento.Databases.Events.DatabaseInstanceMarkedPresent,
+    Trento.Databases.Events.DatabaseInstanceRegistered,
+    Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged,
+    Trento.Databases.Events.DatabaseRegistered,
+    Trento.Databases.Events.DatabaseRestored
   ]
 
   @host_events [
@@ -53,13 +66,13 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
   @sap_system_events [
     Trento.SapSystems.Events.ApplicationInstanceHealthChanged,
     Trento.SapSystems.Events.ApplicationInstanceRegistered,
-    Trento.SapSystems.Events.DatabaseHealthChanged,
-    Trento.SapSystems.Events.DatabaseInstanceHealthChanged,
-    Trento.SapSystems.Events.DatabaseInstanceRegistered,
-    Trento.SapSystems.Events.DatabaseInstanceSystemReplicationChanged,
-    Trento.SapSystems.Events.DatabaseRegistered,
+    Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent,
+    Trento.SapSystems.Events.ApplicationInstanceMarkedPresent,
+    Trento.SapSystems.Events.ApplicationInstanceMoved,
+    Trento.SapSystems.Events.ApplicationInstanceRegistered,
     Trento.SapSystems.Events.SapSystemHealthChanged,
-    Trento.SapSystems.Events.SapSystemRegistered
+    Trento.SapSystems.Events.SapSystemRegistered,
+    Trento.SapSystems.Events.SapSystemRestored
   ]
 
   def handle(%event_type{host_id: host_id}, %{
@@ -124,6 +137,26 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     end
   end
 
+  def handle(%event_type{database_id: database_id}, %{
+        stream_version: event_stream_version
+      })
+      when event_type in @database_events and event_stream_version > @max_stream_version do
+    {:ok, %EventStore.Streams.StreamInfo{stream_version: stream_version}} =
+      Trento.EventStore.stream_info(database_id)
+
+    if stream_version > @max_stream_version do
+      Logger.info(
+        "Rolling up database: #{database_id} because  #{stream_version} > #{@max_stream_version}"
+      )
+
+      commanded().dispatch(%RollUpDatabase{database_id: database_id},
+        consistency: :strong
+      )
+    else
+      :ok
+    end
+  end
+
   def handle(%HostTombstoned{host_id: host_id}, _) do
     Logger.info("Rolling up host: #{host_id} because HostTombstoned was received")
 
@@ -146,6 +179,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler
     )
 
     commanded().dispatch(%RollUpSapSystem{sap_system_id: sap_system_id},
+      consistency: :strong
+    )
+  end
+
+  def handle(%DatabaseTombstoned{database_id: database_id}, _) do
+    Logger.info("Rolling up database: #{database_id} because DatabaseTombstoned was received")
+
+    commanded().dispatch(%RollUpDatabase{database_id: database_id},
       consistency: :strong
     )
   end
