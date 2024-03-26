@@ -211,7 +211,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
         build_list(
           2,
           :database_instance_without_host,
-          sap_system_id: database_sap_system_id
+          database_id: database_sap_system_id
         )
 
       [

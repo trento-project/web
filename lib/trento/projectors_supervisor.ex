@@ -11,10 +11,9 @@ defmodule Trento.ProjectorsSupervisor do
     TelemetryProjector
   }
 
-  alias Trento.SapSystems.Projections.{
-    DatabaseProjector,
-    SapSystemProjector
-  }
+  alias Trento.Databases.Projections.DatabaseProjector
+
+  alias Trento.SapSystems.Projections.SapSystemProjector
 
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)

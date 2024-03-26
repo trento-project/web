@@ -9,7 +9,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
 
   test "should return an enriched command if the database was found by the ip and tenant" do
     %{
-      sap_system_id: sap_system_id,
+      database_id: database_id,
       tenant: tenant,
       host: %{ip_addresses: [ip]}
     } = insert(:database_instance)
@@ -27,12 +27,12 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         health: :passing
       )
 
-    expected_sap_system_id = UUID.uuid5(sap_system_id, tenant)
+    expected_sap_system_id = UUID.uuid5(database_id, tenant)
 
     assert {:ok,
             %RegisterApplicationInstance{
               sap_system_id: ^expected_sap_system_id,
-              database_id: ^sap_system_id
+              database_id: ^database_id
             }} =
              Enrichable.enrich(command, %{})
   end

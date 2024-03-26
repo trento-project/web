@@ -1,10 +1,8 @@
 defmodule TrentoWeb.V1.HealthOverviewView do
   use TrentoWeb, :view
 
-  alias Trento.SapSystems.Projections.{
-    ApplicationInstanceReadModel,
-    DatabaseInstanceReadModel
-  }
+  alias Trento.Databases.Projections.DatabaseInstanceReadModel
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   def render("overview.json", %{health_infos: health_infos}) do
     render_many(health_infos, __MODULE__, "health_summary.json", as: :summary)
@@ -45,8 +43,8 @@ defmodule TrentoWeb.V1.HealthOverviewView do
   @spec extract_database_id([DatabaseInstanceReadModel.t()]) :: String.t() | nil
   defp extract_database_id([]), do: nil
 
-  defp extract_database_id([%DatabaseInstanceReadModel{sap_system_id: sap_system_id} | _]),
-    do: sap_system_id
+  defp extract_database_id([%DatabaseInstanceReadModel{database_id: database_id} | _]),
+    do: database_id
 
   @spec extract_cluster_id([ApplicationInstanceReadModel.t()] | [DatabaseInstanceReadModel.t()]) ::
           String.t() | nil
