@@ -50,6 +50,7 @@ defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
     field :database_id, Ecto.UUID
     field :start_priority, :string
     field :health, Ecto.Enum, values: Health.values()
+    field :database_health, Ecto.Enum, values: Health.values()
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values()
   end
 end

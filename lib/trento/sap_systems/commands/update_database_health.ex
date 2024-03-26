@@ -1,6 +1,6 @@
-defmodule Trento.SapSystems.Commands.RestoreSapSystem do
+defmodule Trento.SapSystems.Commands.UpdateDatabaseHealth do
   @moduledoc """
-  Restore a previously deregistered SapSystem.
+  Update the health of the database associated to the SAP system.
   """
 
   @required_fields :all
@@ -11,8 +11,6 @@ defmodule Trento.SapSystems.Commands.RestoreSapSystem do
 
   defcommand do
     field :sap_system_id, Ecto.UUID
-    field :db_host, :string
-    field :tenant, :string
     field :database_health, Ecto.Enum, values: Health.values()
   end
 end
