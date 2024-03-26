@@ -23,11 +23,14 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> add_system_replication_status_to_secondary_instance
   end
 
-  def render("database_instance.json", %{instance: instance}) do
+  def render("database_instance.json", %{instance: %{database_id: database_id} = instance}) do
     instance
     |> Map.from_struct()
     |> Map.delete(:__meta__)
     |> Map.delete(:host)
+    # Temporary solution to avoid changing frontend code in the same PR
+    |> Map.drop([:database_id])
+    |> Map.put(:sap_system_id, database_id)
   end
 
   def render("database_instance_with_sr_status.json", %{

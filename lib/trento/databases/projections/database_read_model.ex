@@ -1,4 +1,4 @@
-defmodule Trento.SapSystems.Projections.DatabaseReadModel do
+defmodule Trento.Databases.Projections.DatabaseReadModel do
   @moduledoc """
   Database read model
   """
@@ -9,10 +9,8 @@ defmodule Trento.SapSystems.Projections.DatabaseReadModel do
 
   require Trento.Enums.Health, as: Health
 
-  alias Trento.SapSystems.Projections.{
-    DatabaseInstanceReadModel,
-    SapSystemReadModel
-  }
+  alias Trento.Databases.Projections.DatabaseInstanceReadModel
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias Trento.Tags.Tag
 
@@ -30,7 +28,7 @@ defmodule Trento.SapSystems.Projections.DatabaseReadModel do
 
     has_many :database_instances, DatabaseInstanceReadModel,
       references: :id,
-      foreign_key: :sap_system_id,
+      foreign_key: :database_id,
       preload_order: [asc: :instance_number, asc: :host_id]
 
     field :deregistered_at, :utc_datetime_usec

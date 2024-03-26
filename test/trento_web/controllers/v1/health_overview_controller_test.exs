@@ -28,7 +28,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
     insert(
       :database_instance_without_host,
-      sap_system_id: database_id,
+      database_id: database_id,
       sid: "HDD",
       host_id: host_1_id,
       health: Health.warning()

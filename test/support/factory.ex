@@ -90,10 +90,13 @@ defmodule Trento.Factory do
     SlesSubscriptionReadModel
   }
 
+  alias Trento.Databases.Projections.{
+    DatabaseInstanceReadModel,
+    DatabaseReadModel
+  }
+
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
-    DatabaseInstanceReadModel,
-    DatabaseReadModel,
     SapSystemReadModel
   }
 
@@ -552,7 +555,7 @@ defmodule Trento.Factory do
 
   def database_instance_without_host_factory do
     %DatabaseInstanceReadModel{
-      sap_system_id: Faker.UUID.v4(),
+      database_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
       tenant: Faker.UUID.v4(),
       instance_number: "00",

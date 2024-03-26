@@ -3,7 +3,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   alias Trento.SapSystems.Commands.RegisterApplicationInstance
 
   alias Trento.Hosts.Projections.HostReadModel
-  alias Trento.SapSystems.Projections.DatabaseInstanceReadModel
+  alias Trento.Databases.Projections.DatabaseInstanceReadModel
 
   alias Trento.Repo
   import Ecto.Query
@@ -17,12 +17,12 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
         where: ^db_host in h.ip_addresses and ^tenant == d.tenant and is_nil(h.deregistered_at)
 
     case Repo.one(query) do
-      %DatabaseInstanceReadModel{sap_system_id: sap_system_id} ->
+      %DatabaseInstanceReadModel{database_id: database_id} ->
         {:ok,
          %RegisterApplicationInstance{
            command
-           | sap_system_id: UUID.uuid5(sap_system_id, tenant),
-             database_id: sap_system_id
+           | sap_system_id: UUID.uuid5(database_id, tenant),
+             database_id: database_id
          }}
 
       nil ->
