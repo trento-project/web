@@ -55,6 +55,7 @@ defmodule TrentoWeb.V1.SapSystemView do
     sap_system
     |> Map.from_struct()
     |> Map.delete(:__meta__)
+    |> Map.delete(:database)
     |> Map.delete(:database_instances)
     |> Map.delete(:application_instances)
     |> Map.delete(:tags)

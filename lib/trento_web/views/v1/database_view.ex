@@ -47,6 +47,7 @@ defmodule TrentoWeb.V1.DatabaseView do
     |> Map.delete(:__meta__)
     |> Map.delete(:tags)
     |> Map.delete(:database_instances)
+    |> Map.delete(:sap_systems)
   end
 
   def render("database_restored.json", %{database: database}) do
