@@ -6,7 +6,8 @@ defmodule Trento.Databases.DatabaseTest do
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
-    RegisterDatabaseInstance
+    RegisterDatabaseInstance,
+    RollUpDatabase
   }
 
   alias Trento.Databases.Events.{
@@ -19,7 +20,10 @@ defmodule Trento.Databases.DatabaseTest do
     DatabaseInstanceRegistered,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
-    DatabaseRestored
+    DatabaseRestored,
+    DatabaseRolledUp,
+    DatabaseRollUpRequested,
+    DatabaseTombstoned
   }
 
   alias Trento.Databases.Database
@@ -494,6 +498,195 @@ defmodule Trento.Databases.DatabaseTest do
                        health: :warning
                      }
                    ]
+                 } = state
+        end
+      )
+    end
+  end
+
+  describe "rollup" do
+    test "should not accept a rollup command if a database was not registered yet" do
+      assert_error(
+        RollUpDatabase.new!(%{database_id: Faker.UUID.v4()}),
+        {:error, :database_not_registered}
+      )
+    end
+
+    test "should change the database state to rolling up" do
+      database_id = UUID.uuid4()
+      sid = fake_sid()
+
+      database_instance_registered_event =
+        build(:database_instance_registered_event, database_id: database_id, sid: sid)
+
+      initial_events = [
+        database_instance_registered_event,
+        build(:database_registered_event, database_id: database_id, sid: sid)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        RollUpDatabase.new!(%{database_id: database_id}),
+        %DatabaseRollUpRequested{
+          database_id: database_id,
+          snapshot: %Database{
+            database_id: database_id,
+            sid: sid,
+            health: :passing,
+            instances: [],
+            rolling_up: false
+          }
+        },
+        fn %Database{rolling_up: rolling_up} ->
+          assert rolling_up
+        end
+      )
+    end
+
+    test "should not accept commands if a database is in rolling up state" do
+      database_id = UUID.uuid4()
+      sid = fake_sid()
+
+      initial_events = [
+        build(:database_instance_registered_event, database_id: database_id, sid: sid),
+        build(:database_registered_event, database_id: database_id, sid: sid),
+        %DatabaseRollUpRequested{
+          database_id: database_id,
+          snapshot: %Database{}
+        }
+      ]
+
+      assert_error(
+        initial_events,
+        build(
+          :register_database_instance_command,
+          database_id: database_id
+        ),
+        {:error, :database_rolling_up}
+      )
+
+      assert_error(
+        initial_events,
+        RollUpDatabase.new!(%{
+          database_id: database_id
+        }),
+        {:error, :database_rolling_up}
+      )
+    end
+
+    test "should apply the rollup event and rehydrate the aggregate" do
+      database_id = UUID.uuid4()
+
+      database_registered_event =
+        build(:database_registered_event, database_id: database_id)
+
+      initial_events = [
+        build(:database_instance_registered_event, database_id: database_id),
+        database_registered_event,
+        %DatabaseRolledUp{
+          database_id: database_id,
+          snapshot: %Database{
+            database_id: database_registered_event.database_id,
+            sid: database_registered_event.sid,
+            health: database_registered_event.health,
+            rolling_up: false
+          }
+        }
+      ]
+
+      assert_state(
+        initial_events,
+        [],
+        fn database ->
+          refute database.rolling_up
+          assert database.database_id == database_registered_event.database_id
+          assert database.sid == database_registered_event.sid
+          assert database.health == database_registered_event.health
+        end
+      )
+    end
+  end
+
+  describe "tombstoning" do
+    test "should tombstone a deregistered database when no database instances are left" do
+      database_id = UUID.uuid4()
+
+      primary_database_host_id = UUID.uuid4()
+      secondary_database_host_id = UUID.uuid4()
+
+      deregistered_at = DateTime.utc_now()
+
+      db_instance_number_1 = "00"
+      db_instance_number_2 = "01"
+
+      db_sid = fake_sid()
+
+      initial_events = [
+        build(
+          :database_registered_event,
+          database_id: database_id,
+          sid: db_sid
+        ),
+        build(
+          :database_instance_registered_event,
+          database_id: database_id,
+          host_id: primary_database_host_id,
+          sid: db_sid,
+          instance_number: db_instance_number_1,
+          system_replication: "Primary"
+        ),
+        build(
+          :database_instance_registered_event,
+          database_id: database_id,
+          host_id: secondary_database_host_id,
+          instance_number: db_instance_number_2,
+          system_replication: "Secondary",
+          sid: db_sid
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          %DeregisterDatabaseInstance{
+            database_id: database_id,
+            host_id: primary_database_host_id,
+            instance_number: db_instance_number_1,
+            deregistered_at: deregistered_at
+          },
+          %DeregisterDatabaseInstance{
+            database_id: database_id,
+            host_id: secondary_database_host_id,
+            instance_number: db_instance_number_2,
+            deregistered_at: deregistered_at
+          }
+        ],
+        [
+          %DatabaseInstanceDeregistered{
+            database_id: database_id,
+            host_id: primary_database_host_id,
+            instance_number: db_instance_number_1,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseDeregistered{
+            database_id: database_id,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseInstanceDeregistered{
+            database_id: database_id,
+            host_id: secondary_database_host_id,
+            instance_number: db_instance_number_2,
+            deregistered_at: deregistered_at
+          },
+          %DatabaseTombstoned{
+            database_id: database_id
+          }
+        ],
+        fn state ->
+          assert %Database{
+                   instances: [],
+                   deregistered_at: ^deregistered_at,
+                   sid: ^db_sid
                  } = state
         end
       )
@@ -1195,6 +1388,9 @@ defmodule Trento.Databases.DatabaseTest do
           %DatabaseDeregistered{
             database_id: database_id,
             deregistered_at: deregistered_at
+          },
+          %DatabaseTombstoned{
+            database_id: database_id
           }
         ],
         fn state ->
@@ -1329,6 +1525,9 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: secondary_database_host_id,
             instance_number: db_instance_number_2,
             deregistered_at: deregistered_at
+          },
+          %DatabaseTombstoned{
+            database_id: database_id
           }
         ]
       )
@@ -1445,6 +1644,9 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: other_secondary_database_host_id,
             instance_number: db_instance_number_4,
             deregistered_at: deregistered_at
+          },
+          %DatabaseTombstoned{
+            database_id: database_id
           }
         ]
       )
