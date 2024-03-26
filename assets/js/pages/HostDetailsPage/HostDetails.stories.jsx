@@ -181,6 +181,11 @@ export const Default = {
         completed_at: faker.date.past().toISOString(),
       },
     },
+    suseManagerEnabled: false,
+    relevantPatches: 0,
+    upgradablePackages: 0,
+    softwareUpdatesLoading: false,
+    softwareUpdatesTooltip: undefined,
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
   },
@@ -247,5 +252,32 @@ export const HostSummaryWithTooltip = {
   args: {
     ...Default.args,
     ipAddresses: Array.from({ length: 10 }, () => faker.internet.ipv4()),
+  },
+};
+
+export const WithSuseManager = {
+  args: {
+    ...Default.args,
+    suseManagerEnabled: true,
+    relevantPatches: 123,
+    upgradablePackages: 456,
+  },
+};
+
+export const SuseManagerLoading = {
+  args: {
+    ...Default.args,
+    suseManagerEnabled: true,
+    softwareUpdatesLoading: true,
+  },
+};
+
+export const SuseManagerUnknown = {
+  args: {
+    ...Default.args,
+    suseManagerEnabled: true,
+    relevantPatches: undefined,
+    upgradablePackages: undefined,
+    softwareUpdatesTooltip: 'SUSE Manager is not available',
   },
 };

@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { EOS_CLEAR_ALL, EOS_PLAY_CIRCLE, EOS_SETTINGS } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
-import { getFromConfig } from '@lib/config';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -64,6 +63,7 @@ function HostDetails({
   slesSubscriptions,
   catalog,
   lastExecution,
+  suseManagerEnabled,
   relevantPatches,
   upgradablePackages,
   softwareUpdatesLoading,
@@ -223,7 +223,7 @@ function HostDetails({
           </div>
         </div>
 
-        {getFromConfig('suseManagerEnabled') && (
+        {suseManagerEnabled && (
           <AvailableSoftwareUpdates
             className="mx-0 my-4"
             relevantPatches={relevantPatches}

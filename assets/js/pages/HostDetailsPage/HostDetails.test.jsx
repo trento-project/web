@@ -176,7 +176,7 @@ describe('HostDetails component', () => {
     });
   });
 
-  describe('SUMA', () => {
+  describe('SUSE Manager', () => {
     it('should show the summary of SUMA software updates', () => {
       const relevantPatches = faker.number.int(100);
       const upgradablePackages = faker.number.int(100);
@@ -184,6 +184,7 @@ describe('HostDetails component', () => {
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
+          suseManagerEnabled
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
         />
@@ -211,6 +212,7 @@ describe('HostDetails component', () => {
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
+          suseManagerEnabled
           relevantPatches={relevantPatches}
           upgradablePackages={upgradablePackages}
         />
@@ -225,6 +227,31 @@ describe('HostDetails component', () => {
 
       expect(relevantPatchesElement).toHaveTextContent('Unknown');
       expect(upgradablePackagesElement).toHaveTextContent('Unknown');
+    });
+
+    it('should show the summary of SUMA software updates in a loading state', () => {
+      const relevantPatches = faker.number.int(100);
+      const upgradablePackages = faker.number.int(100);
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          suseManagerEnabled
+          softwareUpdatesLoading
+          relevantPatches={relevantPatches}
+          upgradablePackages={upgradablePackages}
+        />
+      );
+
+      const relevantPatchesElement = screen
+        .getByText(/Relevant Patches/)
+        .closest('div');
+      const upgradablePackagesElement = screen
+        .getByText(/Upgradable Packages/)
+        .closest('div');
+
+      expect(relevantPatchesElement).toHaveTextContent('Loading');
+      expect(upgradablePackagesElement).toHaveTextContent('Loading');
     });
   });
 
