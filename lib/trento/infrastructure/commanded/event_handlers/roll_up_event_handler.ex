@@ -16,6 +16,11 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler do
     HostRollUpRequested
   }
 
+  alias Trento.Databases.Events.{
+    DatabaseRolledUp,
+    DatabaseRollUpRequested
+  }
+
   alias Trento.SapSystems.Events.{
     SapSystemRolledUp,
     SapSystemRollUpRequested
@@ -56,6 +61,18 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler do
   def handle(%SapSystemRollUpRequested{sap_system_id: stream_id, snapshot: snapshot}, _) do
     roll_up_event = %SapSystemRolledUp{
       sap_system_id: stream_id,
+      snapshot: snapshot
+    }
+
+    now = DateTime.to_iso8601(DateTime.utc_now())
+    archive_stream_id = "#{stream_id}-archived-#{now}"
+
+    RollUp.roll_up_aggregate(stream_id, roll_up_event, archive_stream_id)
+  end
+
+  def handle(%DatabaseRollUpRequested{database_id: stream_id, snapshot: snapshot}, _) do
+    roll_up_event = %DatabaseRolledUp{
+      database_id: stream_id,
       snapshot: snapshot
     }
 

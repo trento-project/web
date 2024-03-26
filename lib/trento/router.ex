@@ -30,7 +30,8 @@ defmodule Trento.Router do
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
-    RegisterDatabaseInstance
+    RegisterDatabaseInstance,
+    RollUpDatabase
   }
 
   alias Trento.SapSystems.Commands.{
@@ -100,7 +101,8 @@ defmodule Trento.Router do
   dispatch [
              DeregisterDatabaseInstance,
              MarkDatabaseInstanceAbsent,
-             RegisterDatabaseInstance
+             RegisterDatabaseInstance,
+             RollUpDatabase
            ],
            to: Databases.Database,
            lifespan: Databases.Lifespan
