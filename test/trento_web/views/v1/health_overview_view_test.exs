@@ -10,6 +10,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
   describe "renders overview.json" do
     test "should render all the fields" do
       sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
       sid = UUID.uuid4()
       tenant = UUID.uuid4()
       app_cluster_id = UUID.uuid4()
@@ -31,7 +32,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
         build_list(
           2,
           :database_instance_without_host,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           host: build(:host, cluster_id: db_cluster_id),
           tenant: tenant
         )
@@ -45,7 +46,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
                  application_cluster_health: Health.critical(),
                  database_cluster_health: Health.warning(),
                  database_health: Health.passing(),
-                 database_id: sap_system_id,
+                 database_id: database_id,
                  hosts_health: Health.warning(),
                  id: sap_system_id,
                  sapsystem_health: Health.passing(),
@@ -72,6 +73,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
 
     test "should send empty cluster ids" do
       sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
 
       application_instances =
         build_list(
@@ -85,7 +87,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
         build_list(
           2,
           :database_instance_without_host,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           host: build(:host, cluster_id: nil),
           tenant: UUID.uuid4()
         )

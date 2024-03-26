@@ -5,7 +5,7 @@ defmodule Trento.Databases do
 
   import Ecto.Query
 
-  alias Trento.SapSystems.Projections.{
+  alias Trento.Databases.Projections.{
     DatabaseInstanceReadModel,
     DatabaseReadModel
   }
@@ -44,7 +44,7 @@ defmodule Trento.Databases do
         date_service \\ DateService
       ) do
     case Repo.get_by(DatabaseInstanceReadModel,
-           sap_system_id: database_id,
+           database_id: database_id,
            host_id: host_id,
            instance_number: instance_number
          ) do

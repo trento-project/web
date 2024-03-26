@@ -15,7 +15,9 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
     RegisterApplicationInstance
   }
 
-  alias Trento.SapSystems.Projections.{ApplicationInstanceReadModel, DatabaseInstanceReadModel}
+  alias Trento.Databases.Projections.DatabaseInstanceReadModel
+
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   alias Trento.Discovery.Payloads.SapSystemDiscoveryPayload
 
@@ -170,7 +172,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         MarkDatabaseInstanceAbsent.new!(%{
           host_id: instance.host_id,
           instance_number: instance.instance_number,
-          database_id: instance.sap_system_id,
+          database_id: instance.database_id,
           absent_at: DateTime.utc_now()
         })
     end)
