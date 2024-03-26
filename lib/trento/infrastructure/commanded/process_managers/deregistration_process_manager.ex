@@ -158,11 +158,11 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       ) do
     database_instances_deregister_commands =
       Enum.map(database_instances, fn %Instance{
-                                        sap_system_id: sap_system_id,
+                                        sap_system_id: database_id,
                                         instance_number: instance_number
                                       } ->
         %DeregisterDatabaseInstance{
-          database_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number,
           host_id: host_id,
           deregistered_at: requested_at

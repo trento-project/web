@@ -7,7 +7,7 @@ defmodule Trento.DatabasesTest do
 
   alias Trento.Databases
 
-  alias Trento.SapSystems.Projections.DatabaseReadModel
+  alias Trento.Databases.Projections.DatabaseReadModel
 
   alias Trento.Databases.Commands.DeregisterDatabaseInstance
 
@@ -24,7 +24,7 @@ defmodule Trento.DatabasesTest do
 
       database_instances =
         Enum.sort_by(
-          insert_list(5, :database_instance_without_host, sap_system_id: database_id),
+          insert_list(5, :database_instance_without_host, database_id: database_id),
           & &1.host_id
         )
 
@@ -91,7 +91,7 @@ defmodule Trento.DatabasesTest do
     end
 
     test "should not delete a present database instance" do
-      %{sap_system_id: database_id, host_id: host_id, instance_number: instance_number} =
+      %{database_id: database_id, host_id: host_id, instance_number: instance_number} =
         insert(:database_instance_without_host, absent_at: nil)
 
       assert {:error, :instance_present} =

@@ -35,7 +35,7 @@ defmodule Trento.SapSystemsTest do
 
       database_instances =
         Enum.sort_by(
-          insert_list(5, :database_instance_without_host, sap_system_id: database_id),
+          insert_list(5, :database_instance_without_host, database_id: database_id),
           &{&1.instance_number, &1.host_id}
         )
 
