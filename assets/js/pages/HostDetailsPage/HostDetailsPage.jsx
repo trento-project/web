@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { get } from 'lodash';
 
+import { getFromConfig } from '@lib/config';
 import { networkClient } from '@lib/network';
 
 import { TARGET_HOST } from '@lib/model';
@@ -28,8 +29,8 @@ import { deregisterHost } from '@state/hosts';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import HostDetails from './HostDetails';
 
-// eslint-disable-next-line no-undef
-const { chartsEnabled } = config;
+const chartsEnabled = getFromConfig('chartsEnabled');
+const suseManagerEnabled = getFromConfig('suseManagerEnabled');
 
 function HostDetailsPage() {
   const { hostID } = useParams();
@@ -105,6 +106,8 @@ function HostDetailsPage() {
       selectedChecks={hostSelectedChecks}
       slesSubscriptions={host.sles_subscriptions}
       catalog={catalog}
+      lastExecution={lastExecution}
+      suseManagerEnabled={suseManagerEnabled}
       relevantPatches={numRelevantPatches}
       upgradablePackages={numUpgradablePackages}
       softwareUpdatesLoading={softwareUpdatesLoading}
@@ -113,7 +116,6 @@ function HostDetailsPage() {
           ? 'SUSE Manager is not available'
           : undefined
       }
-      lastExecution={lastExecution}
       cleanUpHost={() => {
         dispatch(
           deregisterHost({ id: hostID, hostname: host.hostname, navigate })
