@@ -1,4 +1,4 @@
-defmodule Trento.SapSystems.Projections.DatabaseInstanceReadModel do
+defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
   @moduledoc """
   Database instance read model
   """
@@ -16,7 +16,7 @@ defmodule Trento.SapSystems.Projections.DatabaseInstanceReadModel do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key false
   schema "database_instances" do
-    field :sap_system_id, Ecto.UUID, primary_key: true
+    field :database_id, Ecto.UUID, primary_key: true
     field :sid, :string
     field :tenant, :string
     field :instance_number, :string, primary_key: true

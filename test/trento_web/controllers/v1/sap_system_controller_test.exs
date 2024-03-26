@@ -16,10 +16,8 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
   describe "list" do
     test "should list all sap_systems", %{conn: conn} do
-      sap_system_id = UUID.uuid4()
-
-      insert(:sap_system, id: sap_system_id)
-      insert_list(2, :database_instance, sap_system_id: sap_system_id)
+      %{id: sap_system_id, database_id: database_id} = build(:sap_system)
+      insert_list(2, :database_instance, database_id: database_id)
       insert_list(2, :application_instance, sap_system_id: sap_system_id)
 
       api_spec = ApiSpec.spec()
@@ -35,7 +33,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       database_id = UUID.uuid4()
 
       insert(:database, id: database_id)
-      insert_list(2, :database_instance, sap_system_id: database_id)
+      insert_list(2, :database_instance, database_id: database_id)
 
       api_spec = ApiSpec.spec()
 
@@ -134,16 +132,16 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
     end
 
     test "should send 204 response on successful database instance deletion", %{conn: conn} do
-      %{id: sap_system_id} = build(:sap_system)
+      %{id: database_id} = build(:database)
 
       %{host_id: host_id, instance_number: instance_number} =
-        build(:database_instance, sap_system_id: sap_system_id)
+        build(:database_instance, database_id: database_id)
 
       expect(
         Trento.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
-             database_id: ^sap_system_id,
+             database_id: ^database_id,
              host_id: ^host_id,
              instance_number: ^instance_number
            } ->
@@ -152,25 +150,23 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       )
 
       conn
-      |> delete(
-        "/api/v1/databases/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
-      )
+      |> delete("/api/v1/databases/#{database_id}/hosts/#{host_id}/instances/#{instance_number}")
       |> response(204)
     end
 
     test "should send 422 response if the database instance is still present", %{
       conn: conn
     } do
-      %{id: sap_system_id} = build(:sap_system)
+      %{id: database_id} = build(:database)
 
       %{host_id: host_id, instance_number: instance_number} =
-        build(:database_instance, sap_system_id: sap_system_id)
+        build(:database_instance, database_id: database_id)
 
       expect(
         Trento.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
-             database_id: ^sap_system_id,
+             database_id: ^database_id,
              host_id: ^host_id,
              instance_number: ^instance_number
            } ->
@@ -181,9 +177,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       api_spec = ApiSpec.spec()
 
       conn
-      |> delete(
-        "/api/v1/databases/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
-      )
+      |> delete("/api/v1/databases/#{database_id}/hosts/#{host_id}/instances/#{instance_number}")
       |> json_response(422)
       |> assert_schema("UnprocessableEntity", api_spec)
     end
@@ -191,16 +185,16 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
     test "should send 404 response if the database instance is not found", %{
       conn: conn
     } do
-      %{id: sap_system_id} = build(:sap_system)
+      %{id: database_id} = build(:database)
 
       %{host_id: host_id, instance_number: instance_number} =
-        build(:database_instance, sap_system_id: sap_system_id)
+        build(:database_instance, database_id: database_id)
 
       expect(
         Trento.Commanded.Mock,
         :dispatch,
         fn %DeregisterDatabaseInstance{
-             database_id: ^sap_system_id,
+             database_id: ^database_id,
              host_id: ^host_id,
              instance_number: ^instance_number
            } ->
@@ -211,9 +205,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       api_spec = ApiSpec.spec()
 
       conn
-      |> delete(
-        "/api/v1/databases/#{sap_system_id}/hosts/#{host_id}/instances/#{instance_number}"
-      )
+      |> delete("/api/v1/databases/#{database_id}/hosts/#{host_id}/instances/#{instance_number}")
       |> json_response(404)
       |> assert_schema("NotFound", api_spec)
     end

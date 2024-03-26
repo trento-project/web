@@ -30,7 +30,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
 
       insert(
         :database_instance_without_host,
-        sap_system_id: database_id,
+        database_id: database_id,
         host_id: a_host_id
       )
 
@@ -78,7 +78,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       database_instances = [
         insert(
           :database_instance,
-          sap_system_id: database_id,
+          database_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
           health: Health.warning(),
@@ -86,7 +86,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         ),
         insert(
           :database_instance,
-          sap_system_id: database_id,
+          database_id: database_id,
           instance_number: "01",
           host_id: db_host_id_2,
           health: Health.passing(),
@@ -150,7 +150,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         insert_list(
           1,
           :database_instance,
-          sap_system_id: database_id,
+          database_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
           health: Health.warning(),

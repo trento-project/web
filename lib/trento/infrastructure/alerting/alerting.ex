@@ -6,10 +6,8 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Hosts.Projections.HostReadModel
 
-  alias Trento.SapSystems.Projections.{
-    DatabaseReadModel,
-    SapSystemReadModel
-  }
+  alias Trento.Databases.Projections.DatabaseReadModel
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias Trento.Infrastructure.Alerting.Emails.EmailAlert
   alias Trento.Mailer

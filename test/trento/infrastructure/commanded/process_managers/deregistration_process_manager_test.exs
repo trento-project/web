@@ -375,6 +375,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     test "should dispatch commands when HostDeregistrationRequested is emitted and the host does not belong to a cluster and has instances associated" do
       host_id = UUID.uuid4()
       sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
       db_instance_number = "00"
       app_instance_number = "01"
       requested_at = DateTime.utc_now()
@@ -382,7 +383,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       initial_state = %DeregistrationProcessManager{
         cluster_id: nil,
         database_instances: [
-          %Instance{sap_system_id: sap_system_id, instance_number: db_instance_number}
+          %Instance{sap_system_id: database_id, instance_number: db_instance_number}
         ],
         application_instances: [
           %Instance{sap_system_id: sap_system_id, instance_number: app_instance_number}
@@ -397,7 +398,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
       assert [
                %DeregisterDatabaseInstance{
-                 database_id: ^sap_system_id,
+                 database_id: ^database_id,
                  instance_number: ^db_instance_number,
                  host_id: ^host_id,
                  deregistered_at: ^requested_at
@@ -443,6 +444,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       host_id = UUID.uuid4()
       cluster_id = UUID.uuid4()
       sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
       db_instance_number = "00"
       app_instance_number = "01"
       requested_at = DateTime.utc_now()
@@ -450,7 +452,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       initial_state = %DeregistrationProcessManager{
         cluster_id: cluster_id,
         database_instances: [
-          %Instance{sap_system_id: sap_system_id, instance_number: db_instance_number}
+          %Instance{sap_system_id: database_id, instance_number: db_instance_number}
         ],
         application_instances: [
           %Instance{sap_system_id: sap_system_id, instance_number: app_instance_number}
@@ -465,7 +467,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
       assert [
                %DeregisterDatabaseInstance{
-                 database_id: ^sap_system_id,
+                 database_id: ^database_id,
                  instance_number: ^db_instance_number,
                  host_id: ^host_id,
                  deregistered_at: ^requested_at
