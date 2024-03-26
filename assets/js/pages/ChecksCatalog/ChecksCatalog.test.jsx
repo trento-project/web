@@ -23,7 +23,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        catalogData={catalogData}
+        completeCatalog={catalogData}
         updateCatalog={mockUpdateCatalog}
       />
     );
@@ -46,19 +46,127 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     });
   });
 
+  const scenarios = [
+    {
+      name: 'catalog without host checks',
+      catalogData: catalogCheckFactory.buildList(5, {
+        metadata: { target_type: 'cluster' },
+      }),
+      filter: 'All targets',
+      expectDisabled: 'Hosts',
+      expectEnabled: 'Clusters',
+    },
+    {
+      name: 'catalog without cluster checks',
+      catalogData: catalogCheckFactory.buildList(5, {
+        metadata: { target_type: 'host' },
+      }),
+      filter: 'All targets',
+      expectDisabled: 'Clusters',
+      expectEnabled: 'Hosts',
+    },
+    {
+      name: 'catalog without hana scale out cluster checks',
+      catalogData: [
+        catalogCheckFactory.build({
+          metadata: {
+            target_type: 'cluster',
+            cluster_type: 'hana_scale_up',
+          },
+        }),
+        catalogCheckFactory.build({
+          metadata: {
+            target_type: 'host',
+          },
+        }),
+        catalogCheckFactory.build({
+          metadata: {
+            target_type: 'cluster',
+            cluster_type: 'ascs_ers',
+          },
+        }),
+      ],
+      initialTargetType: 'Clusters',
+      filter: 'All cluster types',
+      expectDisabled: 'HANA Scale Out',
+      expectAllEnabled: ['HANA Scale Up', 'ASCS/ERS'],
+    },
+  ];
+
+  it.each(scenarios)(
+    'should rely upon the whole catalog for filters rendering when $name',
+    async ({
+      catalogData,
+      initialTargetType,
+      filter,
+      expectDisabled,
+      expectEnabled,
+      expectAllEnabled,
+    }) => {
+      const user = userEvent.setup();
+      const mockUpdateCatalog = jest.fn();
+
+      render(
+        <ChecksCatalog
+          completeCatalog={catalogData}
+          filteredCatalog={catalogCheckFactory.buildList(2)}
+          updateCatalog={mockUpdateCatalog}
+        />
+      );
+
+      if (initialTargetType) {
+        await user.click(screen.getByText('All targets'));
+        await user.click(screen.getByText(initialTargetType));
+      }
+
+      await user.click(screen.getByText(filter));
+
+      expect(
+        screen.getByText(expectDisabled, { exact: false }).closest('li')
+      ).toHaveAttribute('aria-disabled', 'true');
+
+      const expectItemEnabled = (itemExpectedEnabled) =>
+        expect(
+          screen.getByText(itemExpectedEnabled).closest('li')
+        ).not.toHaveAttribute('aria-disabled');
+
+      if (expectEnabled) {
+        expectItemEnabled(expectEnabled);
+      }
+      if (expectAllEnabled) {
+        expectAllEnabled.forEach(expectItemEnabled);
+      }
+    }
+  );
+
   it('should query the catalog with the correct filters', async () => {
     const user = userEvent.setup();
-
-    const catalogData = catalogCheckFactory.buildList(5);
     const mockUpdateCatalog = jest.fn();
+
+    const catalogData = [
+      catalogCheckFactory.build({
+        metadata: { target_type: 'host' },
+      }),
+      catalogCheckFactory.build({
+        metadata: {
+          target_type: 'cluster',
+          cluster_type: 'hana_scale_up',
+        },
+      }),
+      catalogCheckFactory.build({
+        metadata: {
+          target_type: 'cluster',
+          cluster_type: 'ascs_ers',
+        },
+      }),
+    ];
 
     render(
       <ChecksCatalog
-        catalogData={catalogData}
+        completeCatalog={catalogData}
         updateCatalog={mockUpdateCatalog}
       />
     );
-
     await user.click(screen.getByText('All providers'));
     await user.click(screen.getByText('AWS'));
 
@@ -66,8 +174,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     await user.click(screen.getByText('Clusters'));
 
     await user.click(screen.getByText('All cluster types'));
-    await user.click(screen.getByText('ASCS/ERS', { exact: false }));
-
+    await user.click(screen.getByText('ASCS/ERS'));
     expect(mockUpdateCatalog).toHaveBeenNthCalledWith(1, {
       selectedClusterType: 'all',
       selectedProvider: 'all',
@@ -83,11 +190,10 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedProvider: 'aws',
       selectedTargetType: 'cluster',
     });
-    // TODO: possibly re-enable this test once the catalog is updated with asc_ers checks
-    // expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
-    //   selectedClusterType: 'ascs_ers',
-    //   selectedProvider: 'aws',
-    //   selectedTargetType: 'cluster',
-    // });
+    expect(mockUpdateCatalog).toHaveBeenNthCalledWith(4, {
+      selectedClusterType: 'ascs_ers',
+      selectedProvider: 'aws',
+      selectedTargetType: 'cluster',
+    });
   });
 });

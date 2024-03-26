@@ -1,17 +1,16 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { faker } from '@faker-js/faker';
 
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 import ChecksCatalog from './ChecksCatalog';
 
-const groupName1 = faker.string.uuid();
-const groupName2 = faker.string.uuid();
-const groupName3 = faker.string.uuid();
+const groupName1 = 'group 1';
+const groupName2 = 'group 2';
+const groupName3 = 'group 3';
 
 const clusterCheck = catalogCheckFactory.build({
   group: groupName1,
-  metadata: { target_type: 'cluster' },
+  metadata: { target_type: 'cluster', cluster_type: 'hana_scale_up' },
 });
 
 const hostCheck = catalogCheckFactory.build({
@@ -22,11 +21,11 @@ const hostCheck = catalogCheckFactory.build({
 const group1 = [
   clusterCheck,
   hostCheck,
-  ...catalogCheckFactory.buildList(5, { group: groupName1 }),
+  ...catalogCheckFactory.buildList(1, { group: groupName1 }),
 ];
 
-const group2 = catalogCheckFactory.buildList(5, { group: groupName2 });
-const group3 = catalogCheckFactory.buildList(5, { group: groupName3 });
+const group2 = catalogCheckFactory.buildList(2, { group: groupName2 });
+const group3 = catalogCheckFactory.buildList(2, { group: groupName3 });
 const catalogData = [...group1, ...group2, ...group3];
 
 function ContainerWrapper({ children }) {
@@ -39,9 +38,13 @@ export default {
   title: 'Layouts/ChecksCatalog',
   component: ChecksCatalog,
   argTypes: {
-    catalogData: {
+    completeCatalog: {
       control: 'object',
-      description: 'Catalog content',
+      description: 'The whole Catalog content',
+    },
+    filteredCatalog: {
+      control: 'object',
+      description: 'The filtered Catalog content',
     },
     catalogError: {
       control: 'text',
@@ -79,7 +82,7 @@ export default {
 
 export const Default = {
   args: {
-    catalogData,
+    completeCatalog: catalogData,
   },
 };
 
@@ -100,6 +103,6 @@ export const Error = {
 export const Empty = {
   args: {
     ...Default.args,
-    catalogData: [],
+    filteredCatalog: [],
   },
 };
