@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   defmodule Instance do
     @moduledoc """
-    An application or database instance and which SAP System it belongs to.
+    An application or database instance and which SAP System/Database it belongs to.
     """
     @required_fields :all
     use Trento.Support.Type
@@ -46,7 +46,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.Databases.Events.{
     DatabaseInstanceDeregistered,
-    DatabaseInstanceRegistered
+    DatabaseInstanceRegistered,
+    DatabaseRolledUp
   }
 
   alias Trento.SapSystems.Events.{
@@ -71,6 +72,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   alias Trento.SapSystems
   alias Trento.SapSystems.SapSystem
 
+  alias Trento.Databases.Database
+
   @doc """
     The Process Manager is started by the following events (provided the instance hasn't been started already):
     - HostRegistered for a newly registered host.
@@ -83,8 +86,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     - "Rolled-Up" events:
         - HostRolledUp as the HostRegistered event might have been rolled up.
         - ClusterRolledUp as the HostAddedToCluster event might have been rolled up.
-        - SapSystemRolledUp as the DatabaseInstanceRegistered/ApplicationInstanceRegistered events might have been
-          rolled up.
+        - SapSystemRolledUp as the ApplicationInstanceRegistered events might have been rolled up.
+        - DatabaseRolledUp as the DatabaseInstanceRegistered events might have been rolled up.
 
     HostDeregistered stops a Process Manager for the Host identified by host_id.
   """
@@ -104,6 +107,17 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       do:
         {:start,
          app_instances
+         |> Enum.map(fn %SapSystems.Instance{host_id: host_id} -> host_id end)
+         |> Enum.uniq()}
+
+  def interested?(%DatabaseRolledUp{
+        snapshot: %Database{
+          instances: db_instances
+        }
+      }),
+      do:
+        {:start,
+         db_instances
          |> Enum.map(fn %SapSystems.Instance{host_id: host_id} -> host_id end)
          |> Enum.uniq()}
 
@@ -256,6 +270,33 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   end
 
   def apply(
+        %DeregistrationProcessManager{
+          database_instances: database_instances
+        } = state,
+        %DatabaseRolledUp{
+          database_id: snapshot_database_id,
+          snapshot: %Database{
+            instances: snapshot_database_instances
+          }
+        }
+      ) do
+    new_database_instances =
+      snapshot_database_instances
+      |> Enum.map(fn %SapSystems.Instance{
+                       instance_number: instance_number
+                     } ->
+        %Instance{sap_system_id: snapshot_database_id, instance_number: instance_number}
+      end)
+      |> Enum.concat(database_instances)
+      |> Enum.uniq()
+
+    %DeregistrationProcessManager{
+      state
+      | database_instances: new_database_instances
+    }
+  end
+
+  def apply(
         %DeregistrationProcessManager{database_instances: database_instances} = state,
         %DatabaseInstanceDeregistered{instance_number: instance_number}
       ) do
@@ -294,6 +335,9 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     do: {:retry, context}
 
   def error({:error, :sap_system_rolling_up}, _command_or_event, %{context: context}),
+    do: {:retry, context}
+
+  def error({:error, :database_rolling_up}, _command_or_event, %{context: context}),
     do: {:retry, context}
 
   defp maybe_deregister_cluster_host(nil, _, _), do: []
