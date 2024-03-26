@@ -1,4 +1,4 @@
-defmodule Trento.SapSystems.Projections.DatabaseProjector do
+defmodule Trento.Databases.Projections.DatabaseProjector do
   @moduledoc """
   Database projector
   """
@@ -8,7 +8,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
     repo: Trento.Repo,
     name: "database_projector"
 
-  alias Trento.SapSystems.Projections.{
+  alias Trento.Databases.Projections.{
     DatabaseInstanceReadModel,
     DatabaseReadModel
   }
@@ -33,11 +33,11 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
   @databases_topic "monitoring:databases"
 
   project(
-    %DatabaseRegistered{database_id: sap_system_id, sid: sid, health: health},
+    %DatabaseRegistered{database_id: database_id, sid: sid, health: health},
     fn multi ->
       changeset =
         DatabaseReadModel.changeset(%DatabaseReadModel{}, %{
-          id: sap_system_id,
+          id: database_id,
           sid: sid,
           health: health
         })
@@ -48,13 +48,13 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
 
   project(
     %DatabaseHealthChanged{
-      database_id: sap_system_id,
+      database_id: database_id,
       health: health
     },
     fn multi ->
       changeset =
         DatabaseReadModel
-        |> Repo.get!(sap_system_id)
+        |> Repo.get!(database_id)
         |> DatabaseReadModel.changeset(%{health: health})
 
       Ecto.Multi.update(multi, :database, changeset)
@@ -63,7 +63,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
 
   project(
     %DatabaseInstanceRegistered{
-      database_id: sap_system_id,
+      database_id: database_id,
       sid: sid,
       instance_number: instance_number,
       instance_hostname: instance_hostname,
@@ -80,7 +80,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
     fn multi ->
       database_instance_changeset =
         DatabaseInstanceReadModel.changeset(%DatabaseInstanceReadModel{}, %{
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           sid: sid,
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -101,7 +101,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
 
   project(
     %DatabaseInstanceHealthChanged{
-      database_id: sap_system_id,
+      database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
       health: health
@@ -110,7 +110,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
       changeset =
         DatabaseInstanceReadModel
         |> Repo.get_by(
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number,
           host_id: host_id
         )
@@ -122,7 +122,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
 
   project(
     %DatabaseInstanceSystemReplicationChanged{
-      database_id: sap_system_id,
+      database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
       system_replication: system_replication,
@@ -132,7 +132,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
       changeset =
         DatabaseInstanceReadModel
         |> Repo.get_by(
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number,
           host_id: host_id
         )
@@ -149,14 +149,14 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
     %DatabaseInstanceMarkedAbsent{
       instance_number: instance_number,
       host_id: host_id,
-      database_id: sap_system_id,
+      database_id: database_id,
       absent_at: absent_at
     },
     fn multi ->
       changeset =
         DatabaseInstanceReadModel
         |> Repo.get_by(
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number,
           host_id: host_id
         )
@@ -172,13 +172,13 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
     %DatabaseInstanceMarkedPresent{
       instance_number: instance_number,
       host_id: host_id,
-      database_id: sap_system_id
+      database_id: database_id
     },
     fn multi ->
       changeset =
         DatabaseInstanceReadModel
         |> Repo.get_by(
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number,
           host_id: host_id
         )
@@ -192,13 +192,13 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
 
   project(
     %DatabaseDeregistered{
-      database_id: sap_system_id,
+      database_id: database_id,
       deregistered_at: deregistered_at
     },
     fn multi ->
       changeset =
         DatabaseReadModel
-        |> Repo.get!(sap_system_id)
+        |> Repo.get!(database_id)
         |> DatabaseReadModel.changeset(%{deregistered_at: deregistered_at})
 
       Ecto.Multi.update(multi, :database, changeset)
@@ -207,13 +207,13 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
 
   project(
     %DatabaseRestored{
-      database_id: sap_system_id,
+      database_id: database_id,
       health: health
     },
     fn multi ->
       changeset =
         DatabaseReadModel
-        |> Repo.get!(sap_system_id)
+        |> Repo.get!(database_id)
         |> DatabaseReadModel.changeset(%{deregistered_at: nil, health: health})
 
       Ecto.Multi.update(multi, :database, changeset)
@@ -224,12 +224,12 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
     %DatabaseInstanceDeregistered{
       instance_number: instance_number,
       host_id: host_id,
-      database_id: sap_system_id
+      database_id: database_id
     },
     fn multi ->
       deregistered_instance =
         Repo.get_by(DatabaseInstanceReadModel,
-          sap_system_id: sap_system_id,
+          database_id: database_id,
           instance_number: instance_number,
           host_id: host_id
         )
@@ -273,12 +273,12 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
   def after_update(
         %DatabaseInstanceRegistered{},
         _,
-        %{database_instance: %DatabaseInstanceReadModel{sap_system_id: sap_system_id} = instance}
+        %{database_instance: %DatabaseInstanceReadModel{database_id: database_id} = instance}
       ) do
     # All database instances are required to compute the system replication status in the current instance
     database_instances =
       DatabaseInstanceReadModel
-      |> where([i], i.sap_system_id == ^sap_system_id)
+      |> where([i], i.database_id == ^database_id)
       |> Repo.all()
 
     TrentoWeb.Endpoint.broadcast(
@@ -300,7 +300,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
         _,
         %{
           database_instance: %DatabaseInstanceReadModel{
-            sap_system_id: sap_system_id,
+            database_id: database_id,
             host_id: host_id,
             instance_number: instance_number,
             health: health
@@ -312,7 +312,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
       "database_instance_health_changed",
       SapSystemView.render("database_instance_health_changed.json",
         instance: %{
-          sap_system_id: sap_system_id,
+          sap_system_id: database_id,
           host_id: host_id,
           instance_number: instance_number,
           health: health
@@ -327,7 +327,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
         _,
         %{
           database_instance: %DatabaseInstanceReadModel{
-            sap_system_id: sap_system_id,
+            database_id: database_id,
             host_id: host_id,
             instance_number: instance_number,
             system_replication: system_replication,
@@ -340,7 +340,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
       "database_instance_system_replication_changed",
       SapSystemView.render("database_instance_system_replication_changed.json",
         instance: %{
-          sap_system_id: sap_system_id,
+          sap_system_id: database_id,
           host_id: host_id,
           instance_number: instance_number,
           system_replication: system_replication,
@@ -355,7 +355,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
         %DatabaseInstanceMarkedAbsent{
           instance_number: instance_number,
           host_id: host_id,
-          database_id: sap_system_id,
+          database_id: database_id,
           absent_at: absent_at
         },
         _,
@@ -368,7 +368,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
-          sap_system_id: sap_system_id,
+          sap_system_id: database_id,
           sid: sid,
           absent_at: absent_at
         }
@@ -381,7 +381,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
         %DatabaseInstanceMarkedPresent{
           instance_number: instance_number,
           host_id: host_id,
-          database_id: sap_system_id
+          database_id: database_id
         },
         _,
         %{database_instance: %DatabaseInstanceReadModel{sid: sid}}
@@ -393,7 +393,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
-          sap_system_id: sap_system_id,
+          sap_system_id: database_id,
           sid: sid,
           absent_at: nil
         }
@@ -403,13 +403,13 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
 
   @impl true
   def after_update(
-        %DatabaseRestored{database_id: sap_system_id},
+        %DatabaseRestored{database_id: database_id},
         _,
         _
       ) do
     database =
       DatabaseReadModel
-      |> Repo.get!(sap_system_id)
+      |> Repo.get!(database_id)
       |> Repo.preload([:tags, :database_instances])
 
     TrentoWeb.Endpoint.broadcast(
@@ -422,7 +422,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
   @impl true
   def after_update(
         %DatabaseDeregistered{
-          database_id: sap_system_id
+          database_id: database_id
         },
         _,
         %{
@@ -435,7 +435,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
       @databases_topic,
       "database_deregistered",
       SapSystemView.render("database_deregistered.json",
-        id: sap_system_id,
+        id: database_id,
         sid: sid
       )
     )
@@ -446,7 +446,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
         %DatabaseInstanceDeregistered{
           instance_number: instance_number,
           host_id: host_id,
-          database_id: sap_system_id
+          database_id: database_id
         },
         _,
         %{
@@ -459,7 +459,7 @@ defmodule Trento.SapSystems.Projections.DatabaseProjector do
       @databases_topic,
       "database_instance_deregistered",
       SapSystemView.render("instance_deregistered.json",
-        sap_system_id: sap_system_id,
+        sap_system_id: database_id,
         instance_number: instance_number,
         host_id: host_id,
         sid: sid
