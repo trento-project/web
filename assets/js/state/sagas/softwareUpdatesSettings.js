@@ -32,10 +32,10 @@ export function* fetchSoftwareUpdatesSettings() {
     yield put(setSoftwareUpdatesSettings(response.data));
   } catch (error) {
     const errorCode = get(error, ['response', 'status']);
-    if (errorCode === 500) {
+    yield put(setEmptySoftwareUpdatesSettings());
+    if (errorCode !== 401) {
       yield put(setNetworkError(true));
     }
-    yield put(setEmptySoftwareUpdatesSettings());
   }
 }
 

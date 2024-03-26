@@ -47,6 +47,7 @@ export const softwareUpdatesSettingsSlice = createSlice({
       state.testingConnection = payload;
     },
     setNetworkError: (state, { payload }) => {
+      state.loading = false;
       state.networkError = payload;
     },
   },
