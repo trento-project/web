@@ -42,7 +42,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
       sid,
     }),
     database_instances: databaseInstanceFactory.buildList(2, {
-      sap_system_id: id,
+      database_id: id,
       sid: faker.string.alphanumeric(3, { casing: 'upper' }),
     }),
     db_host: faker.internet.ip(),
