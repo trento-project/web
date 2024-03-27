@@ -3,6 +3,8 @@ defmodule Trento.Databases.Events.DatabaseRegistered do
   This event is emitted when a database is registered.
   """
 
+  import Trento.Databases.Events.Upcaster.Upcast, only: [upcast_legacy_aggregate: 1]
+
   use Trento.Support.Event
 
   require Trento.Enums.Health, as: Health
@@ -13,11 +15,5 @@ defmodule Trento.Databases.Events.DatabaseRegistered do
     field :health, Ecto.Enum, values: Health.values()
   end
 
-  def upcast(%{"sap_system_id" => sap_system_id} = params, _, 2) do
-    params
-    |> Map.put("database_id", sap_system_id)
-    |> Map.drop(["sap_system_id"])
-  end
-
-  def upcast(params, _, 2), do: params
+  def upcast(params, _, 2), do: upcast_legacy_aggregate(params)
 end

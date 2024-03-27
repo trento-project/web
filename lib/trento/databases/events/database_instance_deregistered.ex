@@ -3,6 +3,8 @@ defmodule Trento.Databases.Events.DatabaseInstanceDeregistered do
   This event is emitted when a database instance is deregistered (decommissioned).
   """
 
+  import Trento.Databases.Events.Upcaster.Upcast, only: [upcast_legacy_aggregate: 1]
+
   use Trento.Support.Event
 
   defevent version: 2 do
@@ -12,11 +14,5 @@ defmodule Trento.Databases.Events.DatabaseInstanceDeregistered do
     field :deregistered_at, :utc_datetime_usec
   end
 
-  def upcast(%{"sap_system_id" => sap_system_id} = params, _, 2) do
-    params
-    |> Map.put("database_id", sap_system_id)
-    |> Map.drop(["sap_system_id"])
-  end
-
-  def upcast(params, _, 2), do: params
+  def upcast(params, _, 2), do: upcast_legacy_aggregate(params)
 end
