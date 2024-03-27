@@ -11,6 +11,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
@@ -22,11 +23,12 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
     test "should raise an exception when a cluster couldn't be loaded" do
       %HostReadModel{id: a_host_id} = insert(:host, cluster_id: Faker.UUID.v4())
 
+      %DatabaseReadModel{id: database_id} = insert(:database)
+
       %SapSystemReadModel{
         id: sap_system_id,
-        sid: sid,
-        database_id: database_id
-      } = insert(:sap_system)
+        sid: sid
+      } = insert(:sap_system, database_id: database_id)
 
       insert(
         :database_instance_without_host,
@@ -34,8 +36,6 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         host_id: a_host_id
       )
 
-      insert(:database, id: database_id)
-      
       insert(
         :application_instance_without_host,
         sap_system_id: sap_system_id,
@@ -67,7 +67,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id_2} =
         app_host_2 = insert(:host, cluster_id: nil, heartbeat: Health.critical())
 
-      %{id: database_id} = insert(:database, health: Health.warning())
+      %DatabaseReadModel{id: database_id, health: database_health} = insert(:database)
 
       %SapSystemReadModel{
         id: sap_system_id,
@@ -122,7 +122,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  id: sap_system_id,
                  sid: sid,
                  sapsystem_health: Health.critical(),
-                 database_health: Health.warning(),
+                 database_health: database_health,
                  database_cluster_health: Health.passing(),
                  application_cluster_health: Health.warning(),
                  hosts_health: Health.unknown(),
@@ -140,7 +140,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id} =
         app_host = insert(:host, cluster_id: nil, health: Health.passing())
 
-      %{id: database_id} = insert(:database, health: Health.warning())
+      %DatabaseReadModel{id: database_id, health: database_health} = insert(:database)
 
       %SapSystemReadModel{
         id: sap_system_id,
@@ -177,7 +177,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  id: sap_system_id,
                  sid: sid,
                  sapsystem_health: Health.critical(),
-                 database_health: Health.warning(),
+                 database_health: database_health,
                  database_cluster_health: Health.unknown(),
                  database_id: database_id,
                  application_cluster_health: Health.unknown(),
