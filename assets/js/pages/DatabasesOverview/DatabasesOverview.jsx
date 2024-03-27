@@ -132,7 +132,7 @@ function DatabasesOverview({
     tenant: database.tenant,
     dbAddress: database.db_host,
     databaseInstances: filter(databaseInstances, {
-      sap_system_id: database.id,
+      database_id: database.id,
     }),
     tags: (database.tags && database.tags.map((tag) => tag.value)) || [],
   }));

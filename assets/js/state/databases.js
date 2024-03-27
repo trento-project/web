@@ -32,7 +32,7 @@ export const databasesListSlice = createSlice({
         (database) => database.id !== id
       );
       state.databaseInstances = state.databaseInstances.filter(
-        (databaseInstance) => databaseInstance.sap_system_id !== id
+        (databaseInstance) => databaseInstance.database_id !== id
       );
     },
     updateDatabaseHealth: (state, { payload: { id, health } }) => {
