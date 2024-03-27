@@ -118,7 +118,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        https_port: 8443,
                        instance_hostname: "an-instance-name",
                        instance_number: "00",
-                       sap_system_id: ^database_id,
+                       database_id: ^database_id,
                        start_priority: "0.3",
                        system_replication: "",
                        system_replication_status: "",
@@ -214,7 +214,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert_broadcast "database_instance_system_replication_changed",
                      %{
-                       sap_system_id: ^database_id,
+                       database_id: ^database_id,
                        host_id: ^host_id,
                        instance_number: ^instance_number,
                        system_replication: ^system_replication,
@@ -257,7 +257,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert_broadcast "database_instance_system_replication_changed",
                      %{
-                       sap_system_id: ^database_id,
+                       database_id: ^database_id,
                        host_id: ^host_id,
                        instance_number: ^instance_number,
                        system_replication: nil,
@@ -289,7 +289,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert_broadcast "database_instance_health_changed",
                      %{
-                       sap_system_id: ^database_id,
+                       database_id: ^database_id,
                        host_id: ^host_id,
                        instance_number: ^instance_number,
                        health: :critical
@@ -321,7 +321,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       %{
         instance_number: ^instance_number,
         host_id: ^host_id,
-        sap_system_id: ^database_id,
+        database_id: ^database_id,
         sid: ^sid,
         absent_at: ^absent_at
       },
@@ -350,7 +350,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
       %{
         instance_number: ^instance_number,
         host_id: ^host_id,
-        sap_system_id: ^database_id,
+        database_id: ^database_id,
         sid: ^sid,
         absent_at: nil
       },
@@ -414,7 +414,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     assert_broadcast "database_instance_deregistered",
                      %{
-                       sap_system_id: ^database_id,
+                       database_id: ^database_id,
                        instance_number: ^instance_number,
                        host_id: ^host_id,
                        sid: ^sid
@@ -454,11 +454,8 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert nil == projection.deregistered_at
     assert :passing == projection.health
 
-    # Temporary solution to avoid changing frontend code in the same PR
     adapted_database_instances =
-      database_instances
-      |> Map.drop([:database_id])
-      |> Map.put(:sap_system_id, database_id)
+      Map.put(database_instances, :sap_system_id, database_id)
 
     assert_broadcast "database_restored",
                      %{

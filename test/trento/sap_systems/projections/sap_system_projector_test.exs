@@ -337,11 +337,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       |> Repo.get(sap_system_id)
       |> Repo.preload([:tags])
 
-    # Temporary solution to avoid changing frontend code in the same PR
     adapted_database_instance =
-      database_instance
-      |> Map.drop([:database_id])
-      |> Map.put(:sap_system_id, database_id)
+      Map.put(database_instance, :sap_system_id, database_id)
 
     assert_broadcast(
       "sap_system_restored",
