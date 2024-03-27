@@ -87,9 +87,6 @@ config :trento, TrentoWeb.Endpoint,
 unless IEx.started?() do
   config :trento, Trento.Scheduler,
     jobs: [
-      publish_telemetry: [
-        schedule: {:extended, "@hourly"}
-      ],
       clusters_checks_execution: [
         schedule: {:extended, "@hourly"}
       ],
@@ -98,8 +95,6 @@ unless IEx.started?() do
       ]
     ]
 end
-
-config :trento, Trento.Infrastructure.Telemetry, adapter: Trento.Infrastructure.Telemetry.ToLogger
 
 config :trento, Trento.Infrastructure.Checks.AMQP.Consumer,
   connection: "amqp://trento:trento@localhost:5673"

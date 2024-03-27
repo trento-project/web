@@ -79,7 +79,6 @@ defmodule Trento.Factory do
 
   alias Trento.Hosts.Projections.{
     HostReadModel,
-    HostTelemetryReadModel,
     SlesSubscriptionReadModel
   }
 
@@ -248,18 +247,6 @@ defmodule Trento.Factory do
     %SaptuneStatusUpdated{
       host_id: Faker.UUID.v4(),
       status: build(:saptune_status)
-    }
-  end
-
-  def host_telemetry_factory do
-    %HostTelemetryReadModel{
-      agent_id: Faker.UUID.v4(),
-      hostname: Faker.StarWars.character(),
-      cpu_count: Enum.random(0..100),
-      socket_count: Enum.random(0..100),
-      total_memory_mb: Enum.random(0..100),
-      sles_version: Faker.App.version(),
-      installation_source: Enum.random([:community, :suse, :unknown])
     }
   end
 

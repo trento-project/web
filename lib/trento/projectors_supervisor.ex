@@ -7,8 +7,7 @@ defmodule Trento.ProjectorsSupervisor do
 
   alias Trento.Hosts.Projections.{
     HostProjector,
-    SlesSubscriptionsProjector,
-    TelemetryProjector
+    SlesSubscriptionsProjector
   }
 
   alias Trento.SapSystems.Projections.{
@@ -27,8 +26,7 @@ defmodule Trento.ProjectorsSupervisor do
       DatabaseProjector,
       HostProjector,
       SapSystemProjector,
-      SlesSubscriptionsProjector,
-      TelemetryProjector
+      SlesSubscriptionsProjector
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
