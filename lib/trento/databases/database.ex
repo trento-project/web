@@ -46,6 +46,20 @@ defmodule Trento.Databases.Database do
 
   @required_fields []
 
+  @legacy_events [
+    Trento.SapSystems.Events.ApplicationInstanceDeregistered,
+    Trento.SapSystems.Events.ApplicationInstanceHealthChanged,
+    Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent,
+    Trento.SapSystems.Events.ApplicationInstanceMarkedPresent,
+    Trento.SapSystems.Events.ApplicationInstanceMoved,
+    Trento.SapSystems.Events.ApplicationInstanceRegistered,
+    Trento.SapSystems.Events.SapSystemDeregistered,
+    Trento.SapSystems.Events.SapSystemHealthChanged,
+    Trento.SapSystems.Events.SapSystemRegistered,
+    Trento.SapSystems.Events.SapSystemRestored,
+    Trento.SapSystems.Events.SapSystemUpdated
+  ]
+
   use Trento.Support.Type
 
   deftype do
@@ -439,6 +453,8 @@ defmodule Trento.Databases.Database do
   end
 
   def apply(%Database{} = database, %DatabaseTombstoned{}), do: database
+
+  def apply(database, %legacy_event{}) when legacy_event in @legacy_events, do: database
 
   defp maybe_emit_database_instance_registered_event(
          nil,
