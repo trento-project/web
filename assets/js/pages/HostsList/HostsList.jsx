@@ -25,6 +25,7 @@ import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
+import { getInstanceID } from '@state/instances';
 
 const getInstancesByHost = (instances, hostId) =>
   instances.filter((instance) => instance.host_id === hostId);
@@ -115,16 +116,19 @@ function HostsList() {
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
         render: (sids, { sap_systems }) => {
-          const sidsArray = sap_systems.map((instance, index) => [
-            index > 0 && ', ',
-            <SapSystemLink
-              key={`${instance?.sap_system_id}-${instance?.id}`}
-              systemType={instance?.type}
-              sapSystemId={instance?.sap_system_id}
-            >
-              {instance?.sid}
-            </SapSystemLink>,
-          ]);
+          const sidsArray = sap_systems.map((instance, index) => {
+            const instanceID = getInstanceID(instance);
+            return [
+              index > 0 && ', ',
+              <SapSystemLink
+                key={`${instanceID}-${instance?.id}`}
+                systemType={instance?.type}
+                sapSystemId={instanceID}
+              >
+                {instance?.sid}
+              </SapSystemLink>,
+            ];
+          });
 
           return sidsArray;
         },

@@ -17,10 +17,10 @@ describe('Databases reducer', () => {
   it('should remove a database from state', () => {
     const [database1, database2] = databaseFactory.buildList(2);
     const database1DatabaseInstances = databaseInstanceFactory.buildList({
-      sap_system_id: database1.id,
+      database_id: database1.id,
     });
     const database2DatabaseInstances = databaseInstanceFactory.buildList({
-      sap_system_id: database2.id,
+      database_id: database2.id,
     });
     const initialState = {
       databases: [database1, database2],
@@ -86,7 +86,7 @@ describe('Databases reducer', () => {
     };
 
     const instanceToUpdate = {
-      sap_system_id: instance.sap_system_id,
+      database_id: instance.database_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
       health: newHealth,

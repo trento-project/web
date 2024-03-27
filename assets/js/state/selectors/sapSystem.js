@@ -69,7 +69,7 @@ export const getEnrichedDatabaseDetails = createSelector(
     (state, databaseID) =>
       enrichInstances(
         filter(state.databasesList.databaseInstances, {
-          sap_system_id: databaseID,
+          database_id: databaseID,
         })
       )(state),
   ],

@@ -8,7 +8,7 @@ const features = () =>
   faker.helpers.arrayElements(['HDB', 'HDB_WORKER', 'HDB_STANDBY']);
 
 export const databaseInstanceFactory = Factory.define(() => ({
-  sap_system_id: faker.string.uuid(),
+  database_id: faker.string.uuid(),
   health: healthEnum(),
   host_id: faker.string.uuid(),
   http_port: faker.internet.port(),
@@ -32,7 +32,7 @@ export const databaseFactory = Factory.define(({ params }) => {
     sid,
     health: healthEnum(),
     database_instances: databaseInstanceFactory.buildList(2, {
-      sap_system_id: id,
+      database_id: id,
       sid,
     }),
   };

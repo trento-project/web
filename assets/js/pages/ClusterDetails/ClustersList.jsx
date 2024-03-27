@@ -7,6 +7,7 @@ import { getClusterTypeLabel } from '@lib/model/clusters';
 
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
+import { getInstanceID } from '@state/instances';
 
 import PageHeader from '@common/PageHeader';
 import SapSystemLink from '@common/SapSystemLink';
@@ -79,7 +80,7 @@ function ClustersList() {
               <SapSystemLink
                 key={`${id}-${singleSid}`}
                 systemType={sapSystemData?.type}
-                sapSystemId={sapSystemData?.sap_system_id}
+                sapSystemId={getInstanceID(sapSystemData)}
               >
                 {singleSid}
               </SapSystemLink>,

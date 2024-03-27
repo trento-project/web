@@ -127,7 +127,7 @@ function SapSystemsOverview({
       sap_system_id: sapSystem.id,
     }),
     databaseInstances: filter(databaseInstances, {
-      sap_system_id: sapSystem.id,
+      database_id: sapSystem.id,
     }),
     tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],
   }));

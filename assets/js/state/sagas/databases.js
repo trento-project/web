@@ -114,13 +114,13 @@ export function* databaseInstanceAbsentAtChanged({ payload }) {
 
 export function* deregisterDatabaseInstance({
   payload,
-  payload: { sid, sap_system_id, host_id, instance_number },
+  payload: { sid, database_id, host_id, instance_number },
 }) {
   yield put(setDatabaseInstanceDeregistering(payload));
   try {
     yield call(
       del,
-      `/databases/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+      `/databases/${database_id}/hosts/${host_id}/instances/${instance_number}`
     );
   } catch (error) {
     yield put(
