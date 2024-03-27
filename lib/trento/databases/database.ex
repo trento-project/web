@@ -44,20 +44,22 @@ defmodule Trento.Databases.Database do
 
   alias Trento.Services.HealthService
 
+  alias Trento.SapSystems.Events, as: SapSystemEvents
+
   @required_fields []
 
   @legacy_events [
-    Trento.SapSystems.Events.ApplicationInstanceDeregistered,
-    Trento.SapSystems.Events.ApplicationInstanceHealthChanged,
-    Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent,
-    Trento.SapSystems.Events.ApplicationInstanceMarkedPresent,
-    Trento.SapSystems.Events.ApplicationInstanceMoved,
-    Trento.SapSystems.Events.ApplicationInstanceRegistered,
-    Trento.SapSystems.Events.SapSystemDeregistered,
-    Trento.SapSystems.Events.SapSystemHealthChanged,
-    Trento.SapSystems.Events.SapSystemRegistered,
-    Trento.SapSystems.Events.SapSystemRestored,
-    Trento.SapSystems.Events.SapSystemUpdated
+    SapSystemEvents.ApplicationInstanceDeregistered,
+    SapSystemEvents.ApplicationInstanceHealthChanged,
+    SapSystemEvents.ApplicationInstanceMarkedAbsent,
+    SapSystemEvents.ApplicationInstanceMarkedPresent,
+    SapSystemEvents.ApplicationInstanceMoved,
+    SapSystemEvents.ApplicationInstanceRegistered,
+    SapSystemEvents.SapSystemDeregistered,
+    SapSystemEvents.SapSystemHealthChanged,
+    SapSystemEvents.SapSystemRegistered,
+    SapSystemEvents.SapSystemRestored,
+    SapSystemEvents.SapSystemUpdated
   ]
 
   use Trento.Support.Type
@@ -454,6 +456,7 @@ defmodule Trento.Databases.Database do
 
   def apply(%Database{} = database, %DatabaseTombstoned{}), do: database
 
+  # Handle legacy events
   def apply(database, %legacy_event{}) when legacy_event in @legacy_events, do: database
 
   defp maybe_emit_database_instance_registered_event(

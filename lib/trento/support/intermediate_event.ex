@@ -19,7 +19,7 @@ defmodule Trento.Support.IntermediateEvent do
     alias Trento.Support.IntermediateEvent
 
     def upcast(%IntermediateEvent{module: module, term: term}, metadata) do
-      superseded_module = module.supersede()
+      superseded_module = module.supersede(term)
 
       event =
         term
