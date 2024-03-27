@@ -206,10 +206,8 @@ Trento.Hosts.Host.html
 Trento.Hosts.Lifespan.html
 Trento.Hosts.Projections.HostProjector.html
 Trento.Hosts.Projections.HostReadModel.html
-Trento.Hosts.Projections.HostTelemetryReadModel.html
 Trento.Hosts.Projections.SlesSubscriptionReadModel.html
 Trento.Hosts.Projections.SlesSubscriptionsProjector.html
-Trento.Hosts.Projections.TelemetryProjector.html
 Trento.Hosts.ValueObjects.AwsProvider.html
 Trento.Hosts.ValueObjects.AzureProvider.html
 Trento.Hosts.ValueObjects.GcpProvider.html
@@ -251,10 +249,6 @@ Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.html
 Trento.Infrastructure.SoftwareUpdates.Suma.State.html
 Trento.Infrastructure.SoftwareUpdates.Suma.html
 Trento.Infrastructure.SoftwareUpdates.SumaApi.html
-Trento.Infrastructure.Telemetry.Gen.html
-Trento.Infrastructure.Telemetry.Suse.html
-Trento.Infrastructure.Telemetry.ToLogger.html
-Trento.Infrastructure.Telemetry.html
 Trento.ProjectorTestHelper.html
 Trento.Release.html
 Trento.Repo.html
@@ -428,8 +422,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-284891E4.js
-dist/sidebar_items-9D59E62F.js
+dist/search_data-0729CE32.js
+dist/sidebar_items-D8878232.js
 environment_variables.html
 hack_on_the_trento.html
 index.html
