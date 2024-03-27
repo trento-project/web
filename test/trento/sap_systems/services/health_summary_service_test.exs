@@ -34,6 +34,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
         host_id: a_host_id
       )
 
+      insert(:database, id: database_id)
+      
       insert(
         :application_instance_without_host,
         sap_system_id: sap_system_id,
@@ -65,7 +67,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id_2} =
         app_host_2 = insert(:host, cluster_id: nil, heartbeat: Health.critical())
 
-      %{id: database_id} = insert(:database)
+      %{id: database_id} = insert(:database, health: Health.warning())
 
       %SapSystemReadModel{
         id: sap_system_id,
@@ -124,6 +126,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  database_cluster_health: Health.passing(),
                  application_cluster_health: Health.warning(),
                  hosts_health: Health.unknown(),
+                 database_id: database_id,
                  database_instances: database_instances,
                  application_instances: application_instances
                }
@@ -137,7 +140,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       %HostReadModel{id: app_host_id} =
         app_host = insert(:host, cluster_id: nil, health: Health.passing())
 
-      %{id: database_id} = insert(:database)
+      %{id: database_id} = insert(:database, health: Health.warning())
 
       %SapSystemReadModel{
         id: sap_system_id,
@@ -176,6 +179,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  sapsystem_health: Health.critical(),
                  database_health: Health.warning(),
                  database_cluster_health: Health.unknown(),
+                 database_id: database_id,
                  application_cluster_health: Health.unknown(),
                  hosts_health: Health.passing(),
                  database_instances: database_instances,

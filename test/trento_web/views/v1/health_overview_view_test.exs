@@ -28,6 +28,8 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
             host: build(:host, cluster_id: app_cluster_id)
           )
 
+      insert(:database, id: database_id, health: Health.passing())
+
       database_instances =
         build_list(
           2,
@@ -39,18 +41,18 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
 
       assert [
                %{
-                 cluster_id: db_cluster_id,
+                 id: sap_system_id,
+                 sid: sid,
+                 sapsystem_health: Health.passing(),
+                 database_id: database_id,
+                 database_health: Health.passing(),
                  clusters_health: Health.warning(),
-                 application_cluster_id: app_cluster_id,
-                 database_cluster_id: db_cluster_id,
                  application_cluster_health: Health.critical(),
                  database_cluster_health: Health.warning(),
-                 database_health: Health.passing(),
-                 database_id: database_id,
                  hosts_health: Health.warning(),
-                 id: sap_system_id,
-                 sapsystem_health: Health.passing(),
-                 sid: sid,
+                 cluster_id: db_cluster_id,
+                 application_cluster_id: app_cluster_id,
+                 database_cluster_id: db_cluster_id,
                  tenant: tenant
                }
              ] ==
@@ -60,12 +62,13 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
                      id: sap_system_id,
                      sid: sid,
                      sapsystem_health: Health.passing(),
+                     application_instances: application_instances,
+                     database_id: database_id,
+                     database_instances: database_instances,
                      database_health: Health.passing(),
                      application_cluster_health: Health.critical(),
                      database_cluster_health: Health.warning(),
-                     hosts_health: Health.warning(),
-                     application_instances: application_instances,
-                     database_instances: database_instances
+                     hosts_health: Health.warning()
                    }
                  ]
                })
@@ -82,6 +85,8 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
           sap_system_id: sap_system_id,
           host: build(:host, cluster_id: nil)
         )
+
+      insert(:database, id: database_id, health: Health.passing())
 
       database_instances =
         build_list(
@@ -108,12 +113,13 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
                      id: sap_system_id,
                      sid: UUID.uuid4(),
                      sapsystem_health: Health.passing(),
+                     application_instances: application_instances,
+                     database_id: database_id,
+                     database_instances: database_instances,
                      database_health: Health.passing(),
                      application_cluster_health: Health.unknown(),
                      database_cluster_health: Health.unknown(),
-                     hosts_health: Health.warning(),
-                     application_instances: application_instances,
-                     database_instances: database_instances
+                     hosts_health: Health.warning()
                    }
                  ]
                })
