@@ -25,8 +25,8 @@ describe('HostsLists component', () => {
         provider: 'Azure',
         cluster: 'hana_cluster_1',
         sid: 'HDD',
-        sap_system_id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
-        sap_system_type: 'databases',
+        instanceID: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+        systemType: 'databases',
         version: '1.1.0+git.dev17.1660137228.fe5ba8a',
       },
       {
@@ -35,8 +35,8 @@ describe('HostsLists component', () => {
         provider: '',
         cluster: '',
         sid: 'NWQ',
-        sap_system_id: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
-        sap_system_type: 'sap_systems',
+        instanceID: 'cd52e571-c897-5bba-b0f9-e155ceca1fff',
+        systemType: 'sap_systems',
         version: '1.1.0+git.dev17.1660137228.fe5ba8a',
       },
     ].forEach(
@@ -46,8 +46,8 @@ describe('HostsLists component', () => {
         provider,
         cluster,
         sid,
-        sap_system_id,
-        sap_system_type,
+        instanceID,
+        systemType,
         version,
       }) => {
         it(`should show the correct values in the hosts list for host ${host}`, () => {
@@ -69,7 +69,7 @@ describe('HostsLists component', () => {
           expect(table.querySelector('td:nth-child(6)')).toHaveTextContent(sid);
           expect(table.querySelector('td:nth-child(6) > a')).toHaveAttribute(
             'href',
-            `/${sap_system_type}/${sap_system_id}`
+            `/${systemType}/${instanceID}`
           );
           expect(table.querySelector('td:nth-child(7)')).toHaveTextContent(
             version

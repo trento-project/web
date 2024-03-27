@@ -1,10 +1,12 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { faker } from '@faker-js/faker';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import {
   clusterFactory,
   hostFactory,
+  databaseInstanceFactory,
   sapSystemApplicationInstanceFactory,
   catalogFactory,
 } from '@lib/test-utils/factories';
@@ -12,7 +14,14 @@ import HostDetails from './HostDetails';
 
 const host = hostFactory.build({ provider: 'azure', agent_version: '2.0.0' });
 const cluster = clusterFactory.build({ id: host.cluster_id });
-const sapInstances = sapSystemApplicationInstanceFactory.buildList(2);
+const sapInstances = sapSystemApplicationInstanceFactory
+  .buildList(1)
+  .map((instance) => ({ ...instance, type: APPLICATION_TYPE }))
+  .concat(
+    databaseInstanceFactory
+      .buildList(1)
+      .map((instance) => ({ ...instance, type: DATABASE_TYPE }))
+  );
 
 function ContainerWrapper({ children }) {
   return (
