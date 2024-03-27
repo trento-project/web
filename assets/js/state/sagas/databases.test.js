@@ -38,15 +38,15 @@ describe('SAP Systems sagas', () => {
   });
 
   it('should remove the database instance', async () => {
-    const { sap_system_id, host_id, instance_number, sid } =
+    const { database_id, host_id, instance_number, sid } =
       databaseInstanceFactory.build();
 
     const dispatched = await recordSaga(databaseInstanceDeregistered, {
-      payload: { sap_system_id, host_id, instance_number, sid },
+      payload: { database_id, host_id, instance_number, sid },
     });
 
     expect(dispatched).toContainEqual(
-      removeDatabaseInstance({ sap_system_id, host_id, instance_number, sid })
+      removeDatabaseInstance({ database_id, host_id, instance_number, sid })
     );
     expect(dispatched).toContainEqual(
       notify({
@@ -92,11 +92,11 @@ describe('SAP Systems sagas', () => {
 
   it('should deregister the database instance', async () => {
     const instance = databaseInstanceFactory.build();
-    const { sap_system_id, host_id, instance_number } = instance;
+    const { database_id, host_id, instance_number } = instance;
 
     axiosMock
       .onDelete(
-        `/databases/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+        `/databases/${database_id}/hosts/${host_id}/instances/${instance_number}`
       )
       .reply(204, {});
 
@@ -112,11 +112,11 @@ describe('SAP Systems sagas', () => {
 
   it('should notify an error on database instance deregistration request failure', async () => {
     const instance = databaseInstanceFactory.build();
-    const { sid, sap_system_id, host_id, instance_number } = instance;
+    const { sid, database_id, host_id, instance_number } = instance;
 
     axiosMock
       .onDelete(
-        `/databases/${sap_system_id}/hosts/${host_id}/instances/${instance_number}`
+        `/databases/${database_id}/hosts/${host_id}/instances/${instance_number}`
       )
       .reply(404, {});
 
@@ -135,16 +135,16 @@ describe('SAP Systems sagas', () => {
   });
 
   it('should update the absent_at field when the database instance is marked present', async () => {
-    const { sap_system_id, instance_number, host_id, sid, absent_at } =
+    const { database_id, instance_number, host_id, sid, absent_at } =
       databaseInstanceFactory.build();
 
     const dispatched = await recordSaga(databaseInstanceAbsentAtChanged, {
-      payload: { sap_system_id, instance_number, host_id, sid, absent_at },
+      payload: { database_id, instance_number, host_id, sid, absent_at },
     });
 
     expect(dispatched).toEqual([
       updateDatabaseInstanceAbsentAt({
-        sap_system_id,
+        database_id,
         instance_number,
         host_id,
         sid,
@@ -158,16 +158,16 @@ describe('SAP Systems sagas', () => {
   });
 
   it('should update the absent_at field when the database instance is marked absent', async () => {
-    const { sap_system_id, instance_number, host_id, sid, absent_at } =
+    const { database_id, instance_number, host_id, sid, absent_at } =
       databaseInstanceFactory.build({ absent_at: new Date().toISOString() });
 
     const dispatched = await recordSaga(databaseInstanceAbsentAtChanged, {
-      payload: { sap_system_id, instance_number, host_id, sid, absent_at },
+      payload: { database_id, instance_number, host_id, sid, absent_at },
     });
 
     expect(dispatched).toEqual([
       updateDatabaseInstanceAbsentAt({
-        sap_system_id,
+        database_id,
         instance_number,
         host_id,
         sid,

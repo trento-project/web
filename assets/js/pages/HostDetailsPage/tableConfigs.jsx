@@ -1,6 +1,8 @@
 import React from 'react';
 import { Features } from '@pages/SapSystemDetails';
 
+import { getInstanceID } from '@state/instances';
+
 export const subscriptionsTableConfiguration = {
   usePadding: false,
   columns: [
@@ -43,7 +45,11 @@ export const subscriptionsTableConfiguration = {
 export const sapInstancesTableConfiguration = {
   usePadding: false,
   columns: [
-    { title: 'ID', key: 'sap_system_id' },
+    {
+      title: 'ID',
+      key: '',
+      render: (_content, item) => getInstanceID(item),
+    },
     { title: 'SID', key: 'sid' },
     { title: 'Type', key: 'type' },
     {
