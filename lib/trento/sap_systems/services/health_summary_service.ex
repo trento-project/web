@@ -29,6 +29,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     |> Repo.all()
     |> Repo.preload(application_instances: :host)
     |> Repo.preload(database_instances: :host)
+    |> Repo.preload(:database)
     |> Enum.map(&summary_from_sap_system/1)
   end
 
@@ -38,7 +39,9 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
          sid: sid,
          health: health,
          application_instances: application_instances,
-         database_instances: database_instances
+         database_instances: database_instances,
+         database: %{health: database_health},
+         database_id: database_id
        }) do
     all_instances = application_instances ++ database_instances
 
@@ -46,20 +49,14 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       id: id,
       sid: sid,
       sapsystem_health: health,
-      database_health: compute_database_health(database_instances),
+      database_id: database_id,
+      database_health: database_health,
       application_cluster_health: compute_cluster_health(application_instances),
       database_cluster_health: compute_cluster_health(database_instances),
       hosts_health: compute_hosts_health(all_instances),
       application_instances: application_instances,
       database_instances: database_instances
     }
-  end
-
-  @spec compute_database_health([DatabaseInstanceReadModel.t()]) :: Health.t()
-  defp compute_database_health(database_instances) do
-    database_instances
-    |> Enum.map(fn %{health: health} -> health end)
-    |> HealthService.compute_aggregated_health()
   end
 
   @spec compute_cluster_health(
