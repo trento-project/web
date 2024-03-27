@@ -5,7 +5,7 @@ defmodule Trento.SapSystems.Database do
 
   require Trento.Enums.Health, as: Health
 
-  alias Trento.SapSystems.SapSystem.Instance
+  alias Trento.SapSystems.Instance
 
   @required_fields []
 
