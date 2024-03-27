@@ -411,7 +411,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_absent_at_changed",
-      SapSystemView.render("instance_absent_at_changed.json",
+      SapSystemView.render("application_instance_absent_at_changed.json",
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
@@ -436,7 +436,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_absent_at_changed",
-      SapSystemView.render("instance_absent_at_changed.json",
+      SapSystemView.render("application_instance_absent_at_changed.json",
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
@@ -463,7 +463,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_deregistered",
-      SapSystemView.render("instance_deregistered.json",
+      SapSystemView.render("application_instance_deregistered.json",
         sap_system_id: sap_system_id,
         instance_number: instance_number,
         host_id: host_id,
