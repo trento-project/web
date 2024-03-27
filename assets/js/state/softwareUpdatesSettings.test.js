@@ -5,6 +5,7 @@ import softwareUpdatesSettingsReducer, {
   setSoftwareUpdatesSettingsErrors,
   setEditingSoftwareUpdatesSettings,
   setTestingSoftwareUpdatesConnection,
+  setNetworkError,
 } from './softwareUpdatesSettings';
 
 describe('SoftwareUpdateSettings reducer', () => {
@@ -32,7 +33,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: undefined,
         ca_uploaded_at: undefined,
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     };
 
@@ -49,7 +50,7 @@ describe('SoftwareUpdateSettings reducer', () => {
     expect(actual).toEqual({
       loading: false,
       settings,
-      networkError: null,
+      networkError: false,
       errors: [],
     });
   });
@@ -62,7 +63,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     };
 
@@ -77,7 +78,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: undefined,
         ca_uploaded_at: undefined,
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     });
   });
@@ -90,7 +91,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
     };
 
@@ -118,7 +119,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors,
     });
   });
@@ -131,7 +132,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
       editing: false,
     };
@@ -154,7 +155,7 @@ describe('SoftwareUpdateSettings reducer', () => {
         username: 'username',
         ca_uploaded_at: '2021-01-01T00:00:00Z',
       },
-      networkError: null,
+      networkError: false,
       errors: [],
       editing: false,
       testingConnection: false,
@@ -168,6 +169,33 @@ describe('SoftwareUpdateSettings reducer', () => {
       expect(actual).toEqual({
         ...initialState,
         testingConnection: isTestingConnection,
+      });
+    });
+  });
+
+  it('should mark that the connection is being tested', () => {
+    const initialState = {
+      loading: true,
+      settings: {
+        url: 'https://valid.url',
+        username: 'username',
+        ca_uploaded_at: '2021-01-01T00:00:00Z',
+      },
+      networkError: false,
+      errors: [],
+      editing: false,
+      testingConnection: false,
+    };
+
+    [true, false].forEach((hasNetworkError) => {
+      const action = setNetworkError(hasNetworkError);
+
+      const actual = softwareUpdatesSettingsReducer(initialState, action);
+
+      expect(actual).toEqual({
+        ...initialState,
+        loading: false,
+        networkError: hasNetworkError,
       });
     });
   });

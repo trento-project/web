@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
+import { authClient, storeRefreshToken } from '@lib/auth';
 import MockAdapter from 'axios-mock-adapter';
 
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
@@ -14,6 +15,7 @@ import {
   setEmptySoftwareUpdatesSettings,
   setEditingSoftwareUpdatesSettings,
   setTestingSoftwareUpdatesConnection,
+  setNetworkError,
 } from '@state/softwareUpdatesSettings';
 
 import {
@@ -42,19 +44,46 @@ describe('Software Updates Settings saga', () => {
       ]);
     });
 
-    it('should empty software updates settings on failed fetching', async () => {
+    it('should empty software updates settings when no configured settings were found', async () => {
       const axiosMock = new MockAdapter(networkClient);
-      [404, 500].forEach(async (errorStatus) => {
-        axiosMock.onGet('/settings/suma_credentials').reply(errorStatus);
+      const mockAuthClient = new MockAdapter(authClient);
+      storeRefreshToken('refresh-token');
+
+      mockAuthClient.onPost('/api/session/refresh').reply(200, {
+        access_token: 'new_token',
+      });
+
+      axiosMock
+        .onGet('/settings/suma_credentials')
+        .replyOnce(401, {
+          error: 'unauthorized',
+        })
+        .onGet('/settings/suma_credentials')
+        .reply(401);
+
+      const dispatched = await recordSaga(fetchSoftwareUpdatesSettings);
+
+      expect(dispatched).toEqual([
+        startLoadingSoftwareUpdatesSettings(),
+        setEmptySoftwareUpdatesSettings(),
+      ]);
+    });
+
+    it.each([403, 404, 500, 502, 504])(
+      'should empty software updates settings and put a network error flag on failed fetching',
+      async (status) => {
+        const axiosMock = new MockAdapter(networkClient);
+        axiosMock.onGet('/settings/suma_credentials').reply(status);
 
         const dispatched = await recordSaga(fetchSoftwareUpdatesSettings);
 
         expect(dispatched).toEqual([
           startLoadingSoftwareUpdatesSettings(),
           setEmptySoftwareUpdatesSettings(),
+          setNetworkError(true),
         ]);
-      });
-    });
+      }
+    );
   });
 
   describe('Saving Software Updates settings', () => {
