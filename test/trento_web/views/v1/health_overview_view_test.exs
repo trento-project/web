@@ -28,7 +28,7 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
             host: build(:host, cluster_id: app_cluster_id)
           )
 
-      insert(:database, id: database_id, health: Health.passing())
+      insert(:database, health: Health.passing())
 
       database_instances =
         build_list(
