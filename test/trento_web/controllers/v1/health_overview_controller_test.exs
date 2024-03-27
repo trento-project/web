@@ -26,6 +26,8 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
       database_id: database_id
     } = insert(:sap_system, health: Health.critical())
 
+    insert(:database, id: database_id, health: Health.warning())
+
     insert(
       :database_instance_without_host,
       database_id: database_id,
