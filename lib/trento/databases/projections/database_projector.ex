@@ -13,7 +13,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     DatabaseReadModel
   }
 
-  alias TrentoWeb.V1.SapSystemView
+  alias TrentoWeb.V1.DatabaseView
 
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
@@ -247,7 +247,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_registered",
-      SapSystemView.render("database_registered.json", database: database)
+      DatabaseView.render("database_registered.json", database: database)
     )
   end
 
@@ -260,7 +260,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_health_changed",
-      SapSystemView.render("database_health_changed.json",
+      DatabaseView.render("database_health_changed.json",
         health: %{
           id: id,
           health: health
@@ -284,7 +284,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_registered",
-      SapSystemView.render(
+      DatabaseView.render(
         "database_instance_with_sr_status.json",
         %{
           instance: instance,
@@ -310,9 +310,9 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_health_changed",
-      SapSystemView.render("database_instance_health_changed.json",
+      DatabaseView.render("database_instance_health_changed.json",
         instance: %{
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: host_id,
           instance_number: instance_number,
           health: health
@@ -338,9 +338,9 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_system_replication_changed",
-      SapSystemView.render("database_instance_system_replication_changed.json",
+      DatabaseView.render("database_instance_system_replication_changed.json",
         instance: %{
-          sap_system_id: database_id,
+          database_id: database_id,
           host_id: host_id,
           instance_number: instance_number,
           system_replication: system_replication,
@@ -364,11 +364,11 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_absent_at_changed",
-      SapSystemView.render("instance_absent_at_changed.json",
+      DatabaseView.render("database_instance_absent_at_changed.json",
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           absent_at: absent_at
         }
@@ -389,11 +389,11 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_absent_at_changed",
-      SapSystemView.render("instance_absent_at_changed.json",
+      DatabaseView.render("database_instance_absent_at_changed.json",
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
-          sap_system_id: database_id,
+          database_id: database_id,
           sid: sid,
           absent_at: nil
         }
@@ -415,7 +415,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_restored",
-      SapSystemView.render("database_restored.json", database: database)
+      DatabaseView.render("database_restored.json", database: database)
     )
   end
 
@@ -434,7 +434,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_deregistered",
-      SapSystemView.render("database_deregistered.json",
+      DatabaseView.render("database_deregistered.json",
         id: database_id,
         sid: sid
       )
@@ -458,8 +458,8 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_deregistered",
-      SapSystemView.render("instance_deregistered.json",
-        sap_system_id: database_id,
+      DatabaseView.render("database_instance_deregistered.json",
+        database_id: database_id,
         instance_number: instance_number,
         host_id: host_id,
         sid: sid

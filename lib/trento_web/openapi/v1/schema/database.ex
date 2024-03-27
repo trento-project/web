@@ -15,7 +15,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
       type: :object,
       additionalProperties: false,
       properties: %{
-        sap_system_id: %Schema{type: :string, description: "SAP System ID", format: :uuid},
+        sap_system_id: %Schema{
+          type: :string,
+          description: "SAP System ID",
+          format: :uuid,
+          deprecated: true
+        },
+        database_id: %Schema{type: :string, description: "Database ID", format: :uuid},
         sid: %Schema{type: :string, description: "SID"},
         tenant: %Schema{type: :string, description: "Tenant"},
         instance_number: %Schema{type: :string, description: "Instance Number"},
