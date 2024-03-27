@@ -1,94 +1,9 @@
 defmodule TrentoWeb.V1.SapSystemView do
   use TrentoWeb, :view
 
-  def render("databases.json", %{databases: databases}) do
-    render_many(databases, __MODULE__, "database.json", as: :database)
-  end
+  import TrentoWeb.V1.DatabaseView, only: [add_system_replication_status_to_secondary_instance: 1]
 
-  def render("database.json", %{
-        database:
-          %{
-            database_instances: database_instances
-          } = database
-      }) do
-    rendered_database_instances =
-      render_many(database_instances, __MODULE__, "database_instance.json", as: :instance)
-
-    database
-    |> Map.from_struct()
-    |> Map.delete(:__meta__)
-    |> Map.delete(:deregistered_at)
-    |> Map.delete(:sap_systems)
-    |> Map.put(:database_instances, rendered_database_instances)
-    |> add_system_replication_status_to_secondary_instance
-  end
-
-  def render("database_instance.json", %{instance: %{database_id: database_id} = instance}) do
-    instance
-    |> Map.from_struct()
-    |> Map.delete(:__meta__)
-    |> Map.delete(:host)
-    # Temporary solution to avoid changing frontend code in the same PR
-    |> Map.drop([:database_id])
-    |> Map.put(:sap_system_id, database_id)
-  end
-
-  def render("database_instance_with_sr_status.json", %{
-        instance: instance,
-        database_instances: database_instances
-      }) do
-    "database_instance.json"
-    |> render(%{instance: instance})
-    |> add_system_replication_status(database_instances)
-  end
-
-  def render("database_registered.json", %{database: database}) do
-    database
-    |> Map.from_struct()
-    |> Map.delete(:__meta__)
-    |> Map.delete(:tags)
-    |> Map.delete(:database_instances)
-  end
-
-  def render("database_restored.json", %{database: database}) do
-    render("database.json", database: database)
-  end
-
-  def render("database_health_changed.json", %{health: health}), do: health
-
-  def render("database_instance_health_changed.json", %{
-        instance: %{
-          sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number,
-          health: health
-        }
-      }) do
-    %{
-      sap_system_id: sap_system_id,
-      host_id: host_id,
-      instance_number: instance_number,
-      health: health
-    }
-  end
-
-  def render("database_instance_system_replication_changed.json", %{
-        instance: %{
-          sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number,
-          system_replication: system_replication,
-          system_replication_status: system_replication_status
-        }
-      }) do
-    %{
-      sap_system_id: sap_system_id,
-      host_id: host_id,
-      instance_number: instance_number,
-      system_replication: system_replication,
-      system_replication_status: system_replication_status
-    }
-  end
+  alias TrentoWeb.V1.DatabaseView
 
   def render("application_instance.json", %{instance: instance}) do
     instance
@@ -117,7 +32,7 @@ defmodule TrentoWeb.V1.SapSystemView do
       render_many(application_instances, __MODULE__, "application_instance.json", as: :instance)
 
     rendered_database_instances =
-      render_many(database_instances, __MODULE__, "database_instance.json", as: :instance)
+      render_many(database_instances, DatabaseView, "database_instance.json", as: :instance)
 
     sap_system
     |> Map.from_struct()
@@ -133,13 +48,14 @@ defmodule TrentoWeb.V1.SapSystemView do
       :application_instances,
       rendered_application_instances
     )
-    |> add_system_replication_status_to_secondary_instance
+    |> add_system_replication_status_to_secondary_instance()
   end
 
   def render("sap_system_registered.json", %{sap_system: sap_system}) do
     sap_system
     |> Map.from_struct()
     |> Map.delete(:__meta__)
+    |> Map.delete(:database)
     |> Map.delete(:database_instances)
     |> Map.delete(:application_instances)
     |> Map.delete(:tags)
@@ -156,9 +72,7 @@ defmodule TrentoWeb.V1.SapSystemView do
 
   def render("sap_system_deregistered.json", %{id: id, sid: sid}), do: %{id: id, sid: sid}
 
-  def render("database_deregistered.json", %{id: id, sid: sid}), do: %{id: id, sid: sid}
-
-  def render("instance_deregistered.json", %{
+  def render("application_instance_deregistered.json", %{
         sap_system_id: id,
         instance_number: instance_number,
         host_id: host_id,
@@ -166,7 +80,7 @@ defmodule TrentoWeb.V1.SapSystemView do
       }),
       do: %{sap_system_id: id, instance_number: instance_number, host_id: host_id, sid: sid}
 
-  def render("instance_absent_at_changed.json", %{
+  def render("application_instance_absent_at_changed.json", %{
         instance: %{
           instance_number: instance_number,
           host_id: host_id,
@@ -182,47 +96,4 @@ defmodule TrentoWeb.V1.SapSystemView do
         sid: sid,
         absent_at: absent_at
       }
-
-  defp add_system_replication_status_to_secondary_instance(
-         %{database_instances: database_instances} = sap_system
-       ) do
-    system_replication_status = get_system_replication_status(database_instances)
-
-    database_instances =
-      Enum.map(
-        database_instances,
-        &map_system_replication_status_to_secondary(&1, system_replication_status)
-      )
-
-    Map.put(sap_system, :database_instances, database_instances)
-  end
-
-  defp add_system_replication_status(instance, database_instances) do
-    system_replication_status = get_system_replication_status(database_instances)
-    map_system_replication_status_to_secondary(instance, system_replication_status)
-  end
-
-  defp get_system_replication_status(database_instances) do
-    Enum.find_value(database_instances, fn
-      %{
-        system_replication: "Primary",
-        system_replication_status: system_replication_status
-      } ->
-        system_replication_status
-
-      _ ->
-        false
-    end)
-  end
-
-  defp map_system_replication_status_to_secondary(
-         %{system_replication: "Secondary"} = instance,
-         system_replication_status
-       ),
-       do: %{instance | system_replication_status: system_replication_status}
-
-  defp map_system_replication_status_to_secondary(%{system_replication: "Primary"} = instance, _),
-    do: %{instance | system_replication_status: ""}
-
-  defp map_system_replication_status_to_secondary(instance, _), do: instance
 end

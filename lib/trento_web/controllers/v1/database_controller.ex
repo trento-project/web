@@ -1,8 +1,8 @@
-defmodule TrentoWeb.V1.SapSystemController do
+defmodule TrentoWeb.V1.DatabaseController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  alias Trento.SapSystems
+  alias Trento.Databases
 
   alias TrentoWeb.OpenApi.V1.Schema
 
@@ -16,25 +16,24 @@ defmodule TrentoWeb.V1.SapSystemController do
 
   tags ["Target Infrastructure"]
 
-  operation :list,
-    summary: "List SAP Systems",
-    description: "List all the discovered SAP Systems on the target infrastructure",
+  operation :list_databases,
+    summary: "List HANA Databases",
+    description: "List all the discovered HANA Databases on the target infrastructure",
     responses: [
       ok:
-        {"A collection of the discovered SAP Systems", "application/json",
-         Schema.SAPSystem.SAPSystemsCollection}
+        {"A collection of the discovered HANA Databases", "application/json",
+         Schema.Database.DatabasesCollection}
     ]
 
-  def list(conn, _) do
-    sap_systems = SapSystems.get_all_sap_systems()
+  def list_databases(conn, _) do
+    databases = Databases.get_all_databases()
 
-    render(conn, "sap_systems.json", sap_systems: sap_systems)
+    render(conn, "databases.json", databases: databases)
   end
 
-  operation :delete_application_instance,
-    summary: "Delete application instance",
-    description:
-      "Delete the application instance identified by the provided data if it is absent",
+  operation :delete_database_instance,
+    summary: "Delete database instance",
+    description: "Delete the database instance identified by the provided data if it is absent",
     parameters: [
       id: [
         in: :path,
@@ -53,19 +52,18 @@ defmodule TrentoWeb.V1.SapSystemController do
       ]
     ],
     responses: [
-      no_content: "The application instance has been deregistered",
+      no_content: "The database instance has been deregistered",
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
-  @spec delete_application_instance(Plug.Conn.t(), map) :: {:error, any} | Plug.Conn.t()
-  def delete_application_instance(conn, %{
+  @spec delete_database_instance(Plug.Conn.t(), map) :: {:error, any} | Plug.Conn.t()
+  def delete_database_instance(conn, %{
         id: sap_system_id,
         host_id: host_id,
         instance_number: instance_number
       }) do
-    with :ok <-
-           SapSystems.deregister_application_instance(sap_system_id, host_id, instance_number) do
+    with :ok <- Databases.deregister_database_instance(sap_system_id, host_id, instance_number) do
       send_resp(conn, 204, "")
     end
   end
