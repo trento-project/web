@@ -2,6 +2,7 @@ import catalogReducer, {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
+  setFilteredCatalog,
 } from './catalog';
 
 describe('Catalog reducer', () => {
@@ -23,35 +24,64 @@ describe('Catalog reducer', () => {
     const initialState = {
       loading: true,
       data: [],
+      filteredCatalog: [],
     };
 
-    const action = setCatalogData({ data: [1, 2, 3] });
+    [[1, 2, 3], []].forEach((data) => {
+      const action = setCatalogData({ data });
 
-    const expectedState = {
-      loading: false,
-      data: [1, 2, 3],
-      error: null,
+      const expectedState = {
+        loading: false,
+        data,
+        filteredCatalog: data,
+        error: null,
+      };
+
+      const actual = catalogReducer(initialState, action);
+
+      expect(actual).toEqual(expectedState);
+    });
+  });
+
+  it('should set filtered catalog', () => {
+    const initialState = {
+      loading: true,
+      data: [1, 2, 3, 4, 5],
+      filteredCatalog: [1, 2, 3, 4, 5],
     };
 
-    const actual = catalogReducer(initialState, action);
+    [[1, 2, 3], [2, 5], []].forEach((filteredCatalog) => {
+      const action = setFilteredCatalog({ data: filteredCatalog });
 
-    expect(actual).toEqual(expectedState);
+      const expectedState = {
+        loading: false,
+        data: initialState.data,
+        filteredCatalog,
+        error: null,
+      };
+
+      const actual = catalogReducer(initialState, action);
+
+      expect(actual).toEqual(expectedState);
+    });
   });
 
   it('should set catalog error', () => {
     const initialState = {
       loading: true,
-      data: [],
+      data: [1, 2, 3],
+      filteredCatalog: [2, 3],
       error: null,
     };
 
     const error = 'some-error';
 
-    const action = setCatalogError({ data: [], error });
+    const action = setCatalogError({ error });
 
     const expectedState = {
       loading: false,
       data: [],
+      filteredCatalog: [],
       error,
     };
 

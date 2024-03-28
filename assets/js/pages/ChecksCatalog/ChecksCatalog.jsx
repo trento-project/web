@@ -8,12 +8,7 @@ import {
   TARGET_HOST,
   TARGET_CLUSTER,
 } from '@lib/model';
-import {
-  ASCS_ERS,
-  HANA_SCALE_OUT,
-  clusterTypes,
-  getClusterTypeLabel,
-} from '@lib/model/clusters';
+import { clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
@@ -68,7 +63,19 @@ const targetTypeOptionRenderer = createOptionRenderer(
   )
 );
 
-function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
+const hasChecksForTarget = (catalog, targetType) =>
+  catalog.some(({ metadata }) => metadata?.target_type === targetType);
+
+const hasChecksForClusterType = (catalog, clusterType) =>
+  catalog.some(({ metadata }) => metadata?.cluster_type === clusterType);
+
+function ChecksCatalog({
+  completeCatalog,
+  filteredCatalog = completeCatalog,
+  catalogError,
+  loading,
+  updateCatalog,
+}) {
   const [selectedProvider, setProviderSelected] = useState(OPTION_ALL);
   const [selectedTargetType, setSelectedTargetType] = useState(OPTION_ALL);
   const [selectedClusterType, setSelectedClusterType] = useState(OPTION_ALL);
@@ -85,7 +92,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
       optionsName: 'targets',
       options: targetTypes.map((targetType) => ({
         value: targetType,
-        disabled: targetType === TARGET_HOST,
+        disabled: !hasChecksForTarget(completeCatalog, targetType),
       })),
       renderOption: targetTypeOptionRenderer,
       value: selectedTargetType,
@@ -95,7 +102,7 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
       optionsName: 'cluster-types',
       options: clusterTypes.map((clusterType) => ({
         value: clusterType,
-        disabled: [HANA_SCALE_OUT, ASCS_ERS].includes(clusterType),
+        disabled: !hasChecksForClusterType(completeCatalog, clusterType),
       })),
       renderOption: clusterTypeRenderer,
       value: selectedClusterType,
@@ -144,12 +151,12 @@ function ChecksCatalog({ catalogData, catalogError, loading, updateCatalog }) {
         onClear={clearFilters}
         onRefresh={() => updateCatalog(selectedProvider)}
         withResetFilters
-        empty={catalogData.length === 0}
+        empty={filteredCatalog.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
         <div>
-          {Object.entries(groupBy(catalogData, 'group')).map(
+          {Object.entries(groupBy(filteredCatalog, 'group')).map(
             ([group, checks], index) => (
               <ul key={group}>
                 <Accordion

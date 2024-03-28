@@ -5,7 +5,12 @@ import { recordSaga } from '@lib/test-utils';
 import { networkClient } from '@lib/network';
 import { updateCatalog } from './catalog';
 
-import { setCatalogLoading, setCatalogData, setCatalogError } from '../catalog';
+import {
+  setCatalogLoading,
+  setCatalogData,
+  setCatalogError,
+  setFilteredCatalog,
+} from '../catalog';
 
 const getCatalogUrl = '/api/v3/checks/catalog';
 const axiosMock = new MockAdapter(networkClient);
@@ -58,5 +63,28 @@ describe('Catalog saga', () => {
     expect(axiosMock.history.get[0].params).toEqual(payload);
     expect(dispatched).toContainEqual(setCatalogLoading());
     expect(dispatched).toContainEqual(setCatalogData({ data: catalog }));
+  });
+
+  it('should update filtered catalog only', async () => {
+    const filteredCatalog = catalogCheckFactory.buildList(5);
+
+    axiosMock.onGet(getCatalogUrl).reply(200, {
+      items: filteredCatalog,
+    });
+
+    const dispatched = await recordSaga(updateCatalog, {
+      payload: {
+        some: 'filter',
+        filteredCatalog: true,
+      },
+    });
+
+    expect(axiosMock.history.get[0].params).toEqual({
+      some: 'filter',
+    });
+    expect(dispatched).toEqual([
+      setCatalogLoading(),
+      setFilteredCatalog({ data: filteredCatalog }),
+    ]);
   });
 });

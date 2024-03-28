@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { pickBy } from 'lodash';
+import { pickBy, values } from 'lodash';
 
 import { getCatalog } from '@state/selectors/catalog';
 import { updateCatalog } from '@state/catalog';
@@ -9,21 +9,31 @@ import { OPTION_ALL } from '@common/Select';
 
 import ChecksCatalog from './ChecksCatalog';
 
-const buildUpdateCatalogAction = (selectedFilters) =>
-  updateCatalog(pickBy(selectedFilters, (value) => value !== OPTION_ALL));
+const isSomeFilter = (value) => value !== OPTION_ALL;
+
+const buildUpdateCatalogAction = (selectedFilters) => {
+  const hasFilters = values(selectedFilters).some(isSomeFilter);
+  const payload = {
+    ...pickBy(selectedFilters, isSomeFilter),
+    ...(hasFilters ? { filteredCatalog: true } : {}),
+  };
+  return updateCatalog(payload);
+};
 
 function ChecksCatalogPage() {
   const dispatch = useDispatch();
 
   const {
-    data: catalogData,
+    data: completeCatalog,
+    filteredCatalog,
     error: catalogError,
     loading,
   } = useSelector(getCatalog());
 
   return (
     <ChecksCatalog
-      catalogData={catalogData}
+      completeCatalog={completeCatalog}
+      filteredCatalog={filteredCatalog}
       catalogError={catalogError}
       loading={loading}
       updateCatalog={({
