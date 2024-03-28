@@ -8,6 +8,7 @@
     "cpu_count": 2,
     "socket_count": 1,
     "total_memory_mb": 4096,
-    "agent_version": "0.1.0"
+    "agent_version": "0.1.0",
+    "fully_qualified_domain_name": "suse.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net"
   }
 }

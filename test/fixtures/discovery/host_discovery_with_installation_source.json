@@ -9,6 +9,7 @@
     "socket_count": 1,
     "total_memory_mb": 4096,
     "agent_version": "0.1.0",
-    "installation_source": "Community"
+    "installation_source": "Community",
+    "fully_qualified_domain_name": "suse.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net"
   }
 }
