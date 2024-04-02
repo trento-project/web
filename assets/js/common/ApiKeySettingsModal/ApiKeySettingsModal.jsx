@@ -17,6 +17,7 @@ import Label from '@common/Label';
 import Select from '@common/Select';
 import Switch from '@common/Switch';
 import CopyButton from '@common/CopyButton';
+import ApiKeyBox from '@common/ApiKeyBox';
 
 const normalizeExpiration = (expiration) =>
   setMinutes(setHours(expiration, 0), 0);
@@ -153,19 +154,7 @@ function ApiKeySettingsModal({
         {generatedApiKey && keyGenerated && !loading && (
           <div className="flex flex-col my-1 mb-4">
             <div className="flex space-x-2">
-              <div className="w-full break-words p-2 pr-2 rounded-lg bg-white border-gray-300 border">
-                <code
-                  style={{
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    width: '650px',
-                    display: 'block',
-                  }}
-                >
-                  {generatedApiKey}
-                </code>
-              </div>
+              <ApiKeyBox apiKey={generatedApiKey} />
               <CopyButton content={generatedApiKey} />
             </div>
             <div className="flex space-x-2">

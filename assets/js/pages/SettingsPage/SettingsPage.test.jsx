@@ -48,7 +48,9 @@ describe('Settings Page', () => {
 
     expect(screen.getByText('Key will never expire')).toBeVisible();
     expect(screen.getByText('api_key')).toBeVisible();
-    expect(screen.getByText('Copy Key')).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'copy to clipboard' })
+    ).toBeVisible();
   });
 
   it('should render a loading box while fetching settings', async () => {

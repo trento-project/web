@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { values, isUndefined } from 'lodash';
 import { format, parseISO } from 'date-fns';
-import copy from 'copy-to-clipboard';
-import classNames from 'classnames';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { logError } from '@lib/log';
 import { get, patch } from '@lib/network';
@@ -15,6 +13,8 @@ import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
 import SuseManagerSettingsModal from '@common/SuseManagerSettingsDialog';
 import ApiKeySettingsModal from '@common/ApiKeySettingsModal';
+import ApiKeyBox from '@common/ApiKeyBox';
+import CopyButton from '@common/CopyButton';
 
 import {
   fetchSoftwareUpdatesSettings,
@@ -125,48 +125,30 @@ function SettingsPage() {
                 leaveFrom="transform opacity-100"
                 leaveTo="transform opacity-0"
               >
-                <div
-                  className={classNames(
-                    'w-full break-words bg-gray-100 p-4 rounded-lg',
-                    {
-                      'bg-gray-100': hasApiKey,
-                      'bg-red-100': !hasApiKey,
-                    }
-                  )}
-                >
-                  <code>
-                    {hasApiKey ? (
-                      apiKey
-                    ) : (
-                      <span>
-                        We were unable to provide you the API key you need 😱
-                        <br />
-                        Contact support for help!
-                      </span>
-                    )}
-                  </code>
-                </div>
+                {hasApiKey ? (
+                  <div className="flex">
+                    <ApiKeyBox apiKey={apiKey} className="!w-11/12" />
+                    <CopyButton content={apiKey} />
+                  </div>
+                ) : (
+                  <span>
+                    We were unable to provide you the API key you need 😱
+                    <br />
+                    Contact support for help!
+                  </span>
+                )}
+
                 {apiKey && (
                   <div className="flex space-x-2 my-4">
                     <EOS_INFO_OUTLINED size="20" className="mt-2" />
 
-                    <div className="mt-2 text-gray-600 text-sm">
+                    <div className="mt-1 text-gray-600 text-sm">
                       {apiKeyExpiration
                         ? `Key will expire ${format(
                             parseISO(apiKeyExpiration),
                             'd LLL yyyy'
                           )}`
                         : 'Key will never expire'}
-                    </div>
-                    <div className="!ml-auto">
-                      <Button
-                        onClick={() => {
-                          copy(apiKey);
-                        }}
-                        type="primary-white"
-                      >
-                        Copy Key
-                      </Button>
                     </div>
                   </div>
                 )}
