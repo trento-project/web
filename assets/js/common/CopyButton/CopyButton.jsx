@@ -20,7 +20,11 @@ function CopyButton({ content }) {
   };
 
   return (
-    <Tooltip content="Copied to clipboard" isEnabled={copied}>
+    <Tooltip
+      content="Copied to clipboard"
+      isEnabled={copied}
+      mouseLeaveDelay={2}
+    >
       <button
         type="button"
         onClick={() => copyText()}

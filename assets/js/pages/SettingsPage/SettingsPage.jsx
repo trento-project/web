@@ -161,7 +161,7 @@ function SettingsPage() {
                     <div className="!ml-auto">
                       <Button
                         onClick={() => {
-                          copy(apiKey)
+                          copy(apiKey);
                         }}
                         type="primary-white"
                       >
