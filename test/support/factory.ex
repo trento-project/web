@@ -535,7 +535,8 @@ defmodule Trento.Factory do
   def database_factory do
     %DatabaseReadModel{
       id: Faker.UUID.v4(),
-      sid: Faker.StarWars.planet()
+      sid: Faker.StarWars.planet(),
+      health: Health.unknown()
     }
   end
 

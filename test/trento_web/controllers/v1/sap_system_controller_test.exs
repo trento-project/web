@@ -15,7 +15,9 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
 
   describe "list" do
     test "should list all sap_systems", %{conn: conn} do
-      %{id: sap_system_id, database_id: database_id} = build(:sap_system)
+      %{id: database_id} = insert(:database)
+      %{id: sap_system_id} = insert(:sap_system, database_id: database_id)
+
       insert_list(2, :database_instance, database_id: database_id)
       insert_list(2, :application_instance, sap_system_id: sap_system_id)
 
