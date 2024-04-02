@@ -66,7 +66,7 @@ function SapSystemsOverview({
         render: (content, item) => (
           <Link
             className="text-jungle-green-500 hover:opacity-75"
-            to={`/databases/${item.id}`}
+            to={`/databases/${item.databaseId}`}
           >
             {content}
           </Link>
@@ -127,13 +127,13 @@ function SapSystemsOverview({
       sap_system_id: sapSystem.id,
     }),
     databaseInstances: filter(databaseInstances, {
-      database_id: sapSystem.id,
+      database_id: sapSystem.database_id,
     }),
     tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],
+    databaseId: sapSystem.database_id,
   }));
 
   const counters = getCounters(data || []);
-
   return loading ? (
     'Loading SAP Systems...'
   ) : (
