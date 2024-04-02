@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { values, isUndefined } from 'lodash';
 import { format, parseISO } from 'date-fns';
+import copy from 'copy-to-clipboard';
 import classNames from 'classnames';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { logError } from '@lib/log';
@@ -160,7 +161,7 @@ function SettingsPage() {
                     <div className="!ml-auto">
                       <Button
                         onClick={() => {
-                          window.navigator.clipboard.writeText(apiKey);
+                          copy(apiKey)
                         }}
                         type="primary-white"
                       >
