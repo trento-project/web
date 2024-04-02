@@ -3,9 +3,8 @@ defmodule Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged do
   This event is emitted when a database instance system replication has changed.
   """
 
-  import Trento.Databases.Events.Upcaster.Upcast, only: [upcast_legacy_aggregate: 1]
-
   use Trento.Support.Event
+  use Trento.Databases.Event.Upcaster.UpcastDatabaseId
 
   defevent version: 2 do
     field :database_id, Ecto.UUID
@@ -14,6 +13,4 @@ defmodule Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged do
     field :system_replication, :string
     field :system_replication_status, :string
   end
-
-  def upcast(params, _, 2), do: upcast_legacy_aggregate(params)
 end

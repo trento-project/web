@@ -3,9 +3,8 @@ defmodule Trento.Databases.Events.DatabaseHealthChanged do
   This event is emitted when a database health has changed.
   """
 
-  import Trento.Databases.Events.Upcaster.Upcast, only: [upcast_legacy_aggregate: 1]
-
   use Trento.Support.Event
+  use Trento.Databases.Event.Upcaster.UpcastDatabaseId
 
   require Trento.Enums.Health, as: Health
 
@@ -13,6 +12,4 @@ defmodule Trento.Databases.Events.DatabaseHealthChanged do
     field :database_id, Ecto.UUID
     field :health, Ecto.Enum, values: Health.values()
   end
-
-  def upcast(params, _, 2), do: upcast_legacy_aggregate(params)
 end
