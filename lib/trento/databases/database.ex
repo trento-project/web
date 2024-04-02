@@ -59,7 +59,10 @@ defmodule Trento.Databases.Database do
     SapSystemEvents.SapSystemHealthChanged,
     SapSystemEvents.SapSystemRegistered,
     SapSystemEvents.SapSystemRestored,
-    SapSystemEvents.SapSystemUpdated
+    SapSystemEvents.SapSystemUpdated,
+    SapSystemEvents.SapSystemRollUpRequested,
+    SapSystemEvents.SapSystemRolledUp,
+    SapSystemEvents.SapSystemTombstoned
   ]
 
   use Trento.Support.Type
