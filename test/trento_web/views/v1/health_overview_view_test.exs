@@ -29,8 +29,6 @@ defmodule TrentoWeb.V1.HealthOverviewViewTest do
 
       %{id: database_id} = insert(:database, health: Health.passing())
 
-      insert(:database, health: Health.passing())
-
       database_instances =
         build_list(
           2,
