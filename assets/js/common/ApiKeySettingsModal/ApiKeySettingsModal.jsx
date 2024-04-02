@@ -8,14 +8,16 @@ import {
   setHours,
   setMinutes,
 } from 'date-fns';
-import { noop, truncate } from 'lodash';
-import { EOS_CONTENT_COPY, EOS_INFO_OUTLINED } from 'eos-icons-react';
+import { noop } from 'lodash';
+import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import { InputNumber } from '@common/Input';
 import Label from '@common/Label';
 import Select from '@common/Select';
 import Switch from '@common/Switch';
+import CopyButton from '@common/CopyButton';
+import ApiKeyBox from '@common/ApiKeyBox';
 
 const normalizeExpiration = (expiration) =>
   setMinutes(setHours(expiration, 0), 0);
@@ -152,18 +154,8 @@ function ApiKeySettingsModal({
         {generatedApiKey && keyGenerated && !loading && (
           <div className="flex flex-col my-1 mb-4">
             <div className="flex space-x-2">
-              <div className="w-full break-words p-2 pr-2 rounded-lg bg-white border-gray-300 border">
-                <code>{truncate(generatedApiKey, { length: 65 })}</code>
-              </div>
-              <button
-                type="button"
-                aria-label="copy api key"
-                onClick={() => {
-                  window.navigator.clipboard.writeText(generatedApiKey);
-                }}
-              >
-                <EOS_CONTENT_COPY role="button" size="25" />
-              </button>
+              <ApiKeyBox apiKey={generatedApiKey} />
+              <CopyButton content={generatedApiKey} />
             </div>
             <div className="flex space-x-2">
               <EOS_INFO_OUTLINED size="20" className="mt-2" />

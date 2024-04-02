@@ -53,6 +53,7 @@ as mentioned in issue https://github.com/react-component/tooltip/issues/445
   */
   @apply block absolute visible opacity-100;
 
+  z-index: 99999;
   &.rc-tooltip.rc-tooltip-fade-enter,
   &.rc-tooltip.rc-tooltip-fade-appear {
     animation-duration: 0.2s;

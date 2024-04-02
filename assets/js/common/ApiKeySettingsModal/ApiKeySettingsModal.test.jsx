@@ -10,7 +10,6 @@ import {
   addYears,
   addDays,
 } from 'date-fns';
-import { truncate } from 'lodash';
 import ApiKeySettingsModal from './ApiKeySettingsModal';
 import '@testing-library/jest-dom';
 
@@ -237,9 +236,11 @@ describe('ApiKeySettingsModal', () => {
       await user.click(screen.getByRole('switch'));
       await user.click(screen.getByRole('button', { name: 'Generate' }));
 
-      await user.click(screen.getByRole('button', { name: 'copy api key' }));
+      await user.click(
+        screen.getByRole('button', { name: 'copy to clipboard' })
+      );
 
-      expect(screen.getByText(truncate(apiKey, { length: 65 }))).toBeVisible();
+      expect(screen.getByText(apiKey)).toBeVisible();
     });
   });
 });
