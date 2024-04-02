@@ -21,13 +21,12 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
     %HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
+    %DatabaseReadModel{health: database_health, id: database_id} = insert(:database)
+
     %SapSystemReadModel{
       id: sap_system_id,
-      sid: sid,
-      database_id: database_id
-    } = insert(:sap_system, health: Health.critical())
-
-    %DatabaseReadModel{health: database_health} = insert(:database, id: database_id)
+      sid: sid
+    } = insert(:sap_system, database_id: database_id, health: Health.critical())
 
     insert(
       :database_instance_without_host,
