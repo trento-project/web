@@ -76,6 +76,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           type: :array,
           items: ApplicationInstance
         },
+        database_id: %Schema{type: :string, description: "Database ID", format: :uuid},
         database_instances: Database.DatabaseInstances,
         tags: Tags,
         inserted_at: %Schema{type: :string, format: :datetime},

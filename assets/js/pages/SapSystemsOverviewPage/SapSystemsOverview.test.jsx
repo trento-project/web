@@ -46,8 +46,8 @@ describe('SapSystemsOverviews component', () => {
         db_host: dbAddress,
         application_instances: applicationInstances,
         database_instances: databaseInstances,
+        database_id: databaseID,
       } = sapSystem;
-
       renderWithRouter(
         <SapSystemsOverview
           sapSystems={[sapSystem]}
@@ -69,7 +69,7 @@ describe('SapSystemsOverviews component', () => {
       );
       expect(mainRow.querySelector('td:nth-child(3) > a')).toHaveAttribute(
         'href',
-        `/databases/${sapSystemID}`
+        `/databases/${databaseID}`
       );
       expect(mainRow.querySelector('td:nth-child(4)')).toHaveTextContent(
         tenant
@@ -107,6 +107,7 @@ describe('SapSystemsOverviews component', () => {
 
       const enrichedDatabaseInstances = databaseInstances.map((instance) => {
         const host = hostFactory.build({ id: instance.host_id });
+
         return {
           ...instance,
           host: {
@@ -118,7 +119,6 @@ describe('SapSystemsOverviews component', () => {
           },
         };
       });
-
       renderWithRouter(
         <SapSystemsOverview
           sapSystems={[sapSystem]}
