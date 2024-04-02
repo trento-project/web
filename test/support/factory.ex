@@ -301,7 +301,7 @@ defmodule Trento.Factory do
     %DatabaseInstanceRegistered{
       database_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
-      tenant: Faker.UUID.v4(),
+      # tenant: Faker.UUID.v4(),
       instance_number: "00",
       instance_hostname: "an-instance-name",
       features: Faker.Pokemon.name(),

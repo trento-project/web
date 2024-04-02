@@ -28,6 +28,8 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
     SystemReplication
   }
 
+  alias Trento.Databases.ValueObjects.Tenant
+
   @uuid_namespace Application.compile_env!(:trento, :uuid_namespace)
 
   @unknown_type 0
@@ -95,12 +97,22 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
          host_id,
          _
        ) do
+    # extract tenants name from the database
+    tenants =
+      Enum.map(databases, fn %{:Database => tenant} ->
+        Tenant.new!(%{name: tenant})
+      end)
+
+    IO.inspect(tenants)
+    # map all in the instances
+    # the tenants ecxtracted are the tenants of all the instances of the payload
+
     Enum.flat_map(databases, fn %{:Database => tenant} ->
       Enum.map(instances, fn instance ->
         RegisterDatabaseInstance.new(%{
           database_id: UUID.uuid5(@uuid_namespace, id),
           sid: sid,
-          tenant: tenant,
+          tenants: tenants,
           host_id: host_id,
           instance_number: parse_instance_number(instance),
           instance_hostname: parse_instance_hostname(instance),

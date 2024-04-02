@@ -3,10 +3,12 @@ defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
   Register a database instance to the monitoring system.
   """
 
+  alias Trento.Databases.ValueObjects.Tenant
+
   @required_fields [
     :database_id,
     :sid,
-    :tenant,
+    :tenants,
     :host_id,
     :instance_number,
     :features,
@@ -22,7 +24,6 @@ defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
   defcommand do
     field :database_id, Ecto.UUID
     field :sid, :string
-    field :tenant, :string
     field :host_id, Ecto.UUID
     field :instance_number, :string
     field :instance_hostname, :string
@@ -33,5 +34,7 @@ defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
     field :system_replication, :string
     field :system_replication_status, :string
     field :health, Ecto.Enum, values: Health.values()
+
+    embeds_many :tenants, Tenant
   end
 end

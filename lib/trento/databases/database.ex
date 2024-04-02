@@ -39,9 +39,11 @@ defmodule Trento.Databases.Database do
     DatabaseRestored,
     DatabaseRolledUp,
     DatabaseRollUpRequested,
+    DatabaseTenantsUpdated,
     DatabaseTombstoned
   }
 
+  alias Trento.Databases.ValueObjects.Tenant
   alias Trento.Services.HealthService
 
   alias Trento.SapSystems.Events, as: SapSystemEvents
@@ -75,6 +77,7 @@ defmodule Trento.Databases.Database do
     field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_many :instances, Instance
+    embeds_many :tenants, Tenant
   end
 
   # Stop everything during the rollup process
@@ -96,7 +99,7 @@ defmodule Trento.Databases.Database do
         %RegisterDatabaseInstance{
           database_id: database_id,
           sid: sid,
-          tenant: tenant,
+          tenants: tenants,
           host_id: host_id,
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -118,7 +121,7 @@ defmodule Trento.Databases.Database do
       %DatabaseInstanceRegistered{
         database_id: database_id,
         sid: sid,
-        tenant: tenant,
+        tenants: tenants,
         instance_number: instance_number,
         instance_hostname: instance_hostname,
         features: features,
@@ -129,6 +132,10 @@ defmodule Trento.Databases.Database do
         system_replication: system_replication,
         system_replication_status: system_replication_status,
         health: health
+      },
+      %DatabaseTenantsUpdated{
+        database_id: database_id,
+        tenants: tenants
       }
     ]
   end
@@ -150,7 +157,7 @@ defmodule Trento.Databases.Database do
         %RegisterDatabaseInstance{
           database_id: database_id,
           sid: sid,
-          tenant: tenant,
+          tenants: tenants,
           host_id: host_id,
           instance_number: instance_number,
           instance_hostname: instance_hostname,
@@ -168,7 +175,7 @@ defmodule Trento.Databases.Database do
       %DatabaseInstanceRegistered{
         database_id: database_id,
         sid: sid,
-        tenant: tenant,
+        tenants: tenants,
         instance_number: instance_number,
         instance_hostname: instance_hostname,
         features: features,
@@ -183,6 +190,10 @@ defmodule Trento.Databases.Database do
       %DatabaseRestored{
         database_id: database_id,
         health: health
+      },
+      %DatabaseTenantsUpdated{
+        database_id: database_id,
+        tenants: tenants
       }
     ]
   end
@@ -211,6 +222,9 @@ defmodule Trento.Databases.Database do
       maybe_emit_database_instance_marked_present_event(instance, command)
     end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
+    |> Multi.execute(fn database ->
+      maybe_emit_database_tenants_updated_event(database, command)
+    end)
   end
 
   def execute(
@@ -322,6 +336,10 @@ defmodule Trento.Databases.Database do
     ]
 
     %Database{database | instances: instances}
+  end
+
+  def apply(%Database{} = database, %DatabaseTenantsUpdated{tenants: tenants}) do
+    %Database{database | tenants: tenants}
   end
 
   def apply(
@@ -467,7 +485,7 @@ defmodule Trento.Databases.Database do
          %RegisterDatabaseInstance{
            database_id: database_id,
            sid: sid,
-           tenant: tenant,
+           tenants: tenants,
            instance_number: instance_number,
            instance_hostname: instance_hostname,
            features: features,
@@ -483,7 +501,7 @@ defmodule Trento.Databases.Database do
     %DatabaseInstanceRegistered{
       database_id: database_id,
       sid: sid,
-      tenant: tenant,
+      tenants: tenants,
       instance_number: instance_number,
       instance_hostname: instance_hostname,
       features: features,
@@ -498,6 +516,22 @@ defmodule Trento.Databases.Database do
   end
 
   defp maybe_emit_database_instance_registered_event(_, _), do: nil
+
+  defp maybe_emit_database_tenants_updated_event(
+         %Database{tenants: tenants},
+         %RegisterDatabaseInstance{tenants: tenants}
+       ),
+       do: nil
+
+  defp maybe_emit_database_tenants_updated_event(
+         %Database{database_id: database_id},
+         %RegisterDatabaseInstance{tenants: tenants}
+       ) do
+    %DatabaseTenantsUpdated{
+      database_id: database_id,
+      tenants: tenants
+    }
+  end
 
   defp maybe_emit_database_instance_marked_present_event(
          %Instance{absent_at: nil},
