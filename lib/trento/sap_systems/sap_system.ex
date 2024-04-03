@@ -88,10 +88,17 @@ defmodule Trento.SapSystems.SapSystem do
     field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_many :instances, Instance
+
+    # The current steam is composed by legacy events, coming from database events
+    # Just to be ignored
+    field :legacy, :boolean, default: false
   end
 
   # Stop everything during the rollup process
   def execute(%SapSystem{rolling_up: true}, _), do: {:error, :sap_system_rolling_up}
+
+  # The provided sap_system_id is a database, so the commands are ignored
+  def execute(%SapSystem{legacy: true}, _), do: {:error, :legacy_sap_system}
 
   # Restore sap system
   # Same registration rules
@@ -448,6 +455,14 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   def apply(%SapSystem{} = sap_system, %SapSystemTombstoned{}), do: sap_system
+
+  # The aggregate state is being build with legacy events, just ignore them and set it as
+  # legacy so further events are ignored
+  def apply(%SapSystem{} = sap_system, %{database_id: _}),
+    do: %SapSystem{
+      sap_system
+      | legacy: true
+    }
 
   defp maybe_emit_application_instance_registered_or_moved_event(
          %SapSystem{instances: []},

@@ -31,6 +31,8 @@ defmodule Trento.SapSystems.SapSystemTest do
     SapSystemUpdated
   }
 
+  alias Trento.Databases.Events, as: DatabaseEvents
+
   alias Trento.SapSystems.{
     Instance,
     SapSystem
@@ -2321,6 +2323,28 @@ defmodule Trento.SapSystems.SapSystemTest do
                    ]
                  } = state
         end
+      )
+    end
+  end
+
+  describe "legacy events" do
+    test "should ignore events belonging to database events" do
+      database_id = Faker.UUID.v4()
+
+      assert_error(
+        [
+          %DatabaseEvents.DatabaseRegistered{
+            database_id: database_id
+          }
+        ],
+        [
+          %DeregisterApplicationInstance{
+            instance_number: "00",
+            host_id: Faker.UUID.v4(),
+            sap_system_id: database_id
+          }
+        ],
+        {:error, :legacy_sap_system}
       )
     end
   end

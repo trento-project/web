@@ -326,6 +326,12 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     }
   end
 
+  # Ignore the legacy_system error. The instance to deregister does not exist
+  # because it was a leftover instance
+
+  def error({:error, :legacy_sap_system}, _command_or_event, _context),
+    do: {:skip, :continue_pending}
+
   # Retry the rollup errors, stop the process on other errors
 
   def error({:error, :host_rolling_up}, _command_or_event, %{context: context}),
