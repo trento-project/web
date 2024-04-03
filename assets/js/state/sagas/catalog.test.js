@@ -3,14 +3,14 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { recordSaga } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
-import { updateCatalog } from './catalog';
-
 import {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
   setFilteredCatalog,
-} from '../catalog';
+} from '@state/catalog';
+
+import { updateCatalog } from './catalog';
 
 const getCatalogUrl = '/api/v3/checks/catalog';
 const axiosMock = new MockAdapter(networkClient);
