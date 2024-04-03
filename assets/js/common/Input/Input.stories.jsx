@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { EOS_SEARCH, EOS_VISIBILITY_OFF_OUTLINED } from 'eos-icons-react';
 
-import Input, { Password, Textarea } from '.';
+import Input from '.';
 
 export default {
   title: 'Components/Input',
@@ -164,70 +164,4 @@ export const File = {
   args: {
     type: 'file',
   },
-};
-
-export const SUMASettingsSample = {
-  render: () => (
-    <div className="w-1/2">
-      <form className="w-full space-y-6" onSubmit={() => {}}>
-        <div className="flex items-center mb-6">
-          <div className="w-1/3">
-            <label className="block font-semibold" htmlFor="suma-url">
-              SUSE Manager URL
-            </label>
-          </div>
-          <div className="w-2/3">
-            <Input
-              id="suma-url"
-              type="text"
-              placeholder="Enter a url"
-              name="suma-url"
-            />
-          </div>
-        </div>
-        <div className="flex mb-6">
-          <div className="w-1/3">
-            <label className="block font-semibold" htmlFor="suma-ca-cert">
-              CA Certificate
-            </label>
-          </div>
-          <div className="w-2/3">
-            <Textarea
-              id="suma-ca-cert"
-              name="suma-ca-cert"
-              placeholder="Starts with -----BEGIN CERTIFICATE-----"
-            />
-          </div>
-        </div>
-        <div className="flex items-center mb-6">
-          <div className="w-1/3">
-            <label className="block font-semibold" htmlFor="suma-username">
-              Username
-            </label>
-          </div>
-          <div className="w-2/3">
-            <Input
-              id="suma-username"
-              name="suma-username"
-              placeholder="Enter SUSE Manager username"
-            />
-          </div>
-        </div>
-        <div className="flex items-center mb-6">
-          <div className="w-1/3">
-            <label className="block font-semibold" htmlFor="suma-password">
-              Password
-            </label>
-          </div>
-          <div className="w-2/3">
-            <Password
-              id="suma-password"
-              name="suma-password"
-              placeholder="Enter SUSE Manager password"
-            />
-          </div>
-        </div>
-      </form>
-    </div>
-  ),
 };
