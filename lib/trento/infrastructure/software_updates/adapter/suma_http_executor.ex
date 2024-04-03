@@ -60,7 +60,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.get(
       "#{base_url}/system/getId?name=#{fully_qualified_domain_name}",
       [{"Content-type", "application/json"}],
-      hackney: [cookie: [auth]] ++ ssl_options(use_ca_cert)
+      request_options(auth, use_ca_cert)
     )
   end
 
@@ -69,7 +69,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.get(
       "#{base_url}/system/getRelevantErrata?sid=#{system_id}",
       [{"Content-type", "application/json"}],
-      hackney: [cookie: [auth]] ++ ssl_options(use_ca_cert)
+      request_options(auth, use_ca_cert)
     )
   end
 
@@ -78,12 +78,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
     HTTPoison.get(
       "#{base_url}/system/listLatestUpgradablePackages?sid=#{system_id}",
       [{"Content-type", "application/json"}],
-      hackney: [cookie: [auth]] ++ ssl_options(use_ca_cert)
+      request_options(auth, use_ca_cert)
     )
   end
 
+  defp request_options(auth, use_ca_cert),
+    do: [hackney: [cookie: [auth]]] ++ ssl_options(use_ca_cert)
+
   defp ssl_options(true),
-    do: [ssl: [verify: :verify_peer, certfile: SumaApi.ca_cert_path()]]
+    do: [ssl: [verify: :verify_peer, cacertfile: SumaApi.ca_cert_path()]]
 
   defp ssl_options(_), do: []
 end
