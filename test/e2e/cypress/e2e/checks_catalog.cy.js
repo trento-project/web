@@ -21,7 +21,7 @@ context('Checks catalog', () => {
 
   const group1 = catalogCheckFactory.buildList(group1Checks, {
     group: clusterChecksGroup,
-    metadata: { target_type: 'cluster' },
+    metadata: { target_type: 'cluster', cluster_type: 'hana_scale_up' },
   });
   const group2 = catalogCheckFactory.buildList(group2Checks, {
     group: hostChecksGroup,
