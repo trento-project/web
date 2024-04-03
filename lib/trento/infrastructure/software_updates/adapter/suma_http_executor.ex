@@ -83,7 +83,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   end
 
   defp ssl_options(true),
-    do: [ssl: [verify: :verify_peer, certfile: SumaApi.ca_cert_path()]]
+    do: [ssl: [verify: :verify_peer, cacertfile: SumaApi.ca_cert_path()]]
 
   defp ssl_options(_), do: []
 end
