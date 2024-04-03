@@ -63,7 +63,9 @@ function SuseManagerConfig({
 
         <div className="grid grid-cols-6 mt-5 items-center">
           <div className="font-bold mb-3">SUSE Manager URL</div>
-          <div className="col-span-2 text-gray-500 mb-3">{url}</div>
+          <div className="col-span-2 text-gray-500 mb-3 truncate pr-12">
+            {url}
+          </div>
           <div className="font-bold mb-3">CA Certificate</div>
           <div className="col-span-2 text-gray-500 mb-3">
             <CertificateUploadDate date={certUploadDate} />
