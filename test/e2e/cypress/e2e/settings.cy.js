@@ -18,7 +18,7 @@ context('Settings page', () => {
 
       cy.get('body').should('contain', 'Key will never expire');
       cy.get('code').should('not.be.empty');
-      cy.get('button').contains('Copy Key').should('be.visible');
+      cy.get('[aria-label="copy to clipboard"]').should('be.visible');
     });
   });
 
