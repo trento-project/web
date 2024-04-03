@@ -335,7 +335,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       projection =
       SapSystemReadModel
       |> Repo.get(sap_system_id)
-      |> Repo.preload([:tags])
+      |> Repo.preload([:tags, :database])
 
     adapted_database_instance =
       Map.put(database_instance, :sap_system_id, database_id)

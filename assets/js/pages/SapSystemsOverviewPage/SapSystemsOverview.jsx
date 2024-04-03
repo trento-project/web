@@ -119,7 +119,7 @@ function SapSystemsOverview({
     id: sapSystem.id,
     health: sapSystem.health,
     sid: sapSystem.sid,
-    attachedRdbms: sapSystem.tenant,
+    attachedRdbms: sapSystem.database_sid,
     tenant: sapSystem.tenant,
     dbAddress: sapSystem.db_host,
     ensaVersion: sapSystem.ensa_version || '-',

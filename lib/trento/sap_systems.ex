@@ -24,6 +24,7 @@ defmodule Trento.SapSystems do
     |> Repo.all()
     |> Repo.preload([
       :application_instances,
+      :database,
       :database_instances,
       :tags
     ])

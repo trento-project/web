@@ -388,7 +388,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
     enriched_sap_system =
-      Repo.preload(sap_system, [:tags, :database_instances, :application_instances])
+      Repo.preload(sap_system, [:tags, :database, :database_instances, :application_instances])
 
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
