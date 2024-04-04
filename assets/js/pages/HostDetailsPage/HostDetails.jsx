@@ -120,8 +120,8 @@ function HostDetails({
       <div>
         <BackButton url="/hosts">Back to Hosts</BackButton>
         <div className="flex flex-wrap">
-          <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-            <PageHeader>
+          <div className="flex w-1/2 h-auto">
+            <PageHeader className="whitespace-normal">
               Host Details: <span className="font-bold">{hostname}</span>
             </PageHeader>
           </div>

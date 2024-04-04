@@ -71,7 +71,7 @@ export default {
 };
 
 const targetID = faker.string.uuid();
-const targetName = faker.lorem.word(7);
+const targetName = faker.lorem.words(7).split(' ').join('-');
 const selection = [faker.string.uuid()];
 const savedSelection = [faker.string.uuid()];
 
@@ -85,7 +85,7 @@ export const Default = {
       </BackButton>
     ),
     pageHeader: (
-      <PageHeader>
+      <PageHeader className="whitespace-normal">
         Target Settings for <span className="font-bold">{targetName}</span>
       </PageHeader>
     ),

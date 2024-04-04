@@ -78,7 +78,7 @@ function SaptuneDetails({
         Back to Host Details
       </BackButton>
       <div className="flex flex-wrap">
-        <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
+        <div className="flex w-1/2 h-auto truncate">
           <PageHeader>
             Saptune Details: <span className="font-bold">{hostname}</span>
           </PageHeader>

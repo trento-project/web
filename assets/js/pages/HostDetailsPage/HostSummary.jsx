@@ -46,7 +46,7 @@ function HostSummary({ agentVersion, cluster, ipAddresses }) {
           {
             title: 'IP Addresses',
             render: renderIpAddresses,
-            className: 'overflow-hidden overflow-ellipsis',
+            className: 'truncate',
             content: ipAddresses,
           },
         ]}

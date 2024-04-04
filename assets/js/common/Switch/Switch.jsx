@@ -10,7 +10,7 @@ function Switch({ onChange, selected }) {
       <HeadlessSwitch
         checked={selected}
         className={classNames(
-          'tn-check-switch relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
+          'tn-check-switch relative inline-flex shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer focus:outline-none transition-colors ease-in-out duration-200',
           { 'bg-jungle-green-500': selected, 'bg-gray-200': !selected }
         )}
         onChange={onChange}

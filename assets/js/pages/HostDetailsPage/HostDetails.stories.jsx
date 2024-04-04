@@ -10,7 +10,11 @@ import {
 } from '@lib/test-utils/factories';
 import HostDetails from './HostDetails';
 
-const host = hostFactory.build({ provider: 'azure', agent_version: '2.0.0' });
+const host = hostFactory.build({
+  provider: 'azure',
+  agent_version: '2.0.0',
+  ip_addresses: faker.helpers.multiple(faker.internet.ipv4, { count: 8 }),
+});
 const cluster = clusterFactory.build({ id: host.cluster_id });
 const sapInstances = sapSystemApplicationInstanceFactory.buildList(2);
 

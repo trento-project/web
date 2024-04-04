@@ -83,7 +83,7 @@ function Layout() {
       <div className="flex flex-col h-screen items-start justify-between">
         <div
           className={classNames(
-            'h-screen block shadow-lg fixed flex-shrink-0 z-20',
+            'h-screen block shadow-lg fixed shrink-0 z-20',
             { 'w-16': isCollapsed, 'w-64': !isCollapsed }
           )}
         >

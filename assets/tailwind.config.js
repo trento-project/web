@@ -14,6 +14,7 @@ module.exports = {
         },
       }),
       colors: {
+        current: 'currentColor',
         'pine-green': '#0C322C',
         'jungle-green': {
           100: '#E4F6EE',
@@ -32,6 +33,5 @@ module.exports = {
       sans: ['Lato'],
     },
   },
-  variants: {},
   plugins: [],
 };

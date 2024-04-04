@@ -118,7 +118,7 @@ function AscsErsClusterDetails({
     <div>
       <BackButton url="/clusters">Back to Clusters</BackButton>
       <div className="flex flex-wrap">
-        <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
+        <div className="flex w-1/2 h-auto truncate">
           <PageHeader className="whitespace-normal">
             Pacemaker Cluster Details:{' '}
             <span className="font-bold">{clusterName}</span>

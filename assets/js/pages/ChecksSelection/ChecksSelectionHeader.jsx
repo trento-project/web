@@ -26,9 +26,7 @@ function ChecksSelectionHeader({
     <div className="w-full px-2 sm:px-0">
       {backTo}
       <div className="flex flex-wrap">
-        <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-          {pageHeader}
-        </div>
+        <div className="flex w-1/2 h-auto">{pageHeader}</div>
         <div className="flex w-1/2 justify-end">
           <div className="flex w-fit whitespace-nowrap">
             <Button
