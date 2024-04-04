@@ -128,7 +128,6 @@ function DatabasesOverview({
     id: database.id,
     health: database.health,
     sid: database.sid,
-    attachedRdbms: database.tenant,
     tenant: database.tenant,
     dbAddress: database.db_host,
     databaseInstances: filter(databaseInstances, {
