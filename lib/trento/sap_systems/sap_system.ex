@@ -52,7 +52,8 @@ defmodule Trento.SapSystems.SapSystem do
     MarkApplicationInstanceAbsent,
     RegisterApplicationInstance,
     RestoreSapSystem,
-    RollUpSapSystem
+    RollUpSapSystem,
+    UpdateDatabaseHealth
   }
 
   alias Trento.SapSystems.Events.{
@@ -62,6 +63,7 @@ defmodule Trento.SapSystems.SapSystem do
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
+    SapSystemDatabaseHealthChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -82,6 +84,7 @@ defmodule Trento.SapSystems.SapSystem do
     field :sap_system_id, Ecto.UUID
     field :sid, :string, default: nil
     field :health, Ecto.Enum, values: Health.values()
+    field :database_health, Ecto.Enum, values: Health.values()
     # field :tenant, :string
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
     field :rolling_up, :boolean, default: false
@@ -114,6 +117,7 @@ defmodule Trento.SapSystems.SapSystem do
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_restored_event(sap_system, instance)
     end)
+    |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
   # SAP system not registered, application already present
@@ -232,7 +236,34 @@ defmodule Trento.SapSystems.SapSystem do
         %SapSystem{} = sap_system,
         %RestoreSapSystem{} = restore_command
       ) do
-    maybe_emit_sap_system_restored_event(sap_system, restore_command)
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn sap_system ->
+      maybe_emit_sap_system_restored_event(sap_system, restore_command)
+    end)
+    |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
+  end
+
+  def execute(
+        %SapSystem{database_health: database_health},
+        %UpdateDatabaseHealth{database_health: database_health}
+      ) do
+    nil
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = sap_system,
+        %UpdateDatabaseHealth{database_health: database_health}
+      ) do
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %SapSystemDatabaseHealthChanged{
+        sap_system_id: sap_system_id,
+        database_health: database_health
+      }
+    end)
+    |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
   def execute(
@@ -345,6 +376,7 @@ defmodule Trento.SapSystems.SapSystem do
         sap_system_id: sap_system_id,
         sid: sid,
         health: health,
+        database_health: database_health,
         ensa_version: ensa_version
       }) do
     %SapSystem{
@@ -352,6 +384,7 @@ defmodule Trento.SapSystems.SapSystem do
       | sap_system_id: sap_system_id,
         sid: sid,
         health: health,
+        database_health: database_health,
         ensa_version: ensa_version
     }
   end
@@ -360,6 +393,15 @@ defmodule Trento.SapSystems.SapSystem do
     %SapSystem{
       sap_system
       | health: health
+    }
+  end
+
+  def apply(%SapSystem{} = sap_system, %SapSystemDatabaseHealthChanged{
+        database_health: database_health
+      }) do
+    %SapSystem{
+      sap_system
+      | database_health: database_health
     }
   end
 
@@ -438,11 +480,13 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   def apply(%SapSystem{} = sap_system, %SapSystemRestored{
-        health: health
+        health: health,
+        database_health: database_health
       }) do
     %SapSystem{
       sap_system
       | health: health,
+        database_health: database_health,
         deregistered_at: nil
     }
   end
@@ -590,7 +634,8 @@ defmodule Trento.SapSystems.SapSystem do
            sap_system_id: sap_system_id,
            tenant: tenant,
            db_host: db_host,
-           health: health
+           health: health,
+           database_health: database_health
          }
        ) do
     if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
@@ -598,7 +643,8 @@ defmodule Trento.SapSystems.SapSystem do
         db_host: db_host,
         health: health,
         sap_system_id: sap_system_id,
-        tenant: tenant
+        tenant: tenant,
+        database_health: database_health
       }
     end
   end
@@ -606,14 +652,20 @@ defmodule Trento.SapSystems.SapSystem do
   # Restore a SAP system when the restore command is received, check for the required instances
   defp maybe_emit_sap_system_restored_event(
          %SapSystem{instances: instances, health: health},
-         %RestoreSapSystem{sap_system_id: sap_system_id, db_host: db_host, tenant: tenant}
+         %RestoreSapSystem{
+           sap_system_id: sap_system_id,
+           db_host: db_host,
+           tenant: tenant,
+           database_health: database_health
+         }
        ) do
     if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
       %SapSystemRestored{
         health: health,
         db_host: db_host,
         tenant: tenant,
-        sap_system_id: sap_system_id
+        sap_system_id: sap_system_id,
+        database_health: database_health
       }
     end
   end
@@ -627,7 +679,8 @@ defmodule Trento.SapSystems.SapSystem do
            db_host: db_host,
            health: health,
            ensa_version: ensa_version,
-           database_id: database_id
+           database_id: database_id,
+           database_health: database_health
          }
        ) do
     if instances_have_abap?(instances) and instances_have_messageserver?(instances) do
@@ -638,7 +691,8 @@ defmodule Trento.SapSystems.SapSystem do
         db_host: db_host,
         health: health,
         ensa_version: ensa_version,
-        database_id: database_id
+        database_id: database_id,
+        database_health: database_health
       }
     end
   end
@@ -680,11 +734,13 @@ defmodule Trento.SapSystems.SapSystem do
   defp maybe_emit_sap_system_health_changed_event(%SapSystem{
          sap_system_id: sap_system_id,
          health: health,
+         database_health: database_health,
          instances: instances
        }) do
     new_health =
       instances
       |> Enum.map(& &1.health)
+      |> Kernel.++([database_health])
       |> HealthService.compute_aggregated_health()
 
     if new_health != health do
