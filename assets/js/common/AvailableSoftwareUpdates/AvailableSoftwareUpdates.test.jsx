@@ -19,7 +19,7 @@ describe('AvailableSoftwareUpdates component', () => {
     );
 
     expect(screen.getByText(upgradablePackages)).toBeVisible();
-    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(4);
+    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(3);
   });
 
   it('renders critical counters', () => {
@@ -35,7 +35,7 @@ describe('AvailableSoftwareUpdates component', () => {
 
     expect(screen.getByText(relevantPatches)).toBeVisible();
     expect(screen.getByText(upgradablePackages)).toBeVisible();
-    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(5);
+    expect(screen.getAllByTestId('eos-svg-component')).toHaveLength(3);
   });
 
   it('renders Unknown status', async () => {
