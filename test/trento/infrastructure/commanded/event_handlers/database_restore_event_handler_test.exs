@@ -17,12 +17,13 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
     %{id: sap_system_id, tenant: tenant, db_host: db_host} =
       insert(:sap_system, database_id: database_id)
 
-    event = %DatabaseRestored{database_id: database_id}
+    event = %DatabaseRestored{database_id: database_id, health: :passing}
 
     expect(Trento.Commanded.Mock, :dispatch, fn %RestoreSapSystem{
                                                   sap_system_id: ^sap_system_id,
                                                   tenant: ^tenant,
-                                                  db_host: ^db_host
+                                                  db_host: ^db_host,
+                                                  database_health: :passing
                                                 },
                                                 _ ->
       :ok
