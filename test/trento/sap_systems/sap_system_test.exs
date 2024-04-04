@@ -11,7 +11,8 @@ defmodule Trento.SapSystems.SapSystemTest do
     MarkApplicationInstanceAbsent,
     RegisterApplicationInstance,
     RestoreSapSystem,
-    RollUpSapSystem
+    RollUpSapSystem,
+    UpdateDatabaseHealth
   }
 
   alias Trento.SapSystems.Events.{
@@ -21,6 +22,7 @@ defmodule Trento.SapSystems.SapSystemTest do
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
+    SapSystemDatabaseHealthChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -73,7 +75,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           start_priority: start_priority,
           host_id: host_id,
           health: :passing,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          database_health: :passing
         }),
         [
           %ApplicationInstanceRegistered{
@@ -94,6 +97,7 @@ defmodule Trento.SapSystems.SapSystemTest do
             db_host: db_host,
             tenant: tenant,
             health: :passing,
+            database_health: :passing,
             ensa_version: ensa_version
           }
         ],
@@ -101,6 +105,7 @@ defmodule Trento.SapSystems.SapSystemTest do
           assert %SapSystem{
                    sid: ^sid,
                    ensa_version: ^ensa_version,
+                   database_health: :passing,
                    instances: [
                      %Instance{
                        sid: ^sid,
@@ -176,7 +181,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: new_host_id,
           health: :passing,
           ensa_version: ensa_version,
-          cluster_id: cluster_id
+          cluster_id: cluster_id,
+          database_health: :passing
         }),
         [
           %ApplicationInstanceMoved{
@@ -260,7 +266,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: message_server_host_id,
           health: :passing,
           ensa_version: ensa_version,
-          cluster_id: cluster_id
+          cluster_id: cluster_id,
+          database_health: :passing
         }),
         []
       )
@@ -322,7 +329,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           host_id: new_host_id,
           health: :passing,
           ensa_version: ensa_version,
-          cluster_id: nil
+          cluster_id: nil,
+          database_health: :passing
         }),
         [
           %ApplicationInstanceRegistered{
@@ -408,7 +416,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           start_priority: start_priority,
           host_id: old_host_id,
           health: :passing,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          database_health: :passing
         }),
         [],
         fn state ->
@@ -611,7 +620,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           start_priority: start_priority,
           host_id: host_id,
           health: :passing,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          database_health: :passing
         }),
         [
           %ApplicationInstanceRegistered{
@@ -632,6 +642,7 @@ defmodule Trento.SapSystems.SapSystemTest do
             db_host: db_host,
             tenant: tenant,
             health: :passing,
+            database_health: :passing,
             ensa_version: ensa_version
           }
         ],
@@ -684,7 +695,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           start_priority: start_priority,
           host_id: host_id,
           health: :passing,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          database_health: :passing
         }),
         [
           %ApplicationInstanceRegistered{
@@ -746,7 +758,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           start_priority: start_priority,
           host_id: host_id,
           health: :passing,
-          ensa_version: ensa_version
+          ensa_version: ensa_version,
+          database_health: :passing
         }),
         [
           %ApplicationInstanceRegistered{
@@ -914,12 +927,14 @@ defmodule Trento.SapSystems.SapSystemTest do
             tenant: tenant,
             health: :critical,
             ensa_version: ensa_version,
-            database_id: database_id
+            database_id: database_id,
+            database_health: :passing
           }
         ],
         fn state ->
           assert %SapSystem{
                    health: :critical,
+                   database_health: :passing,
                    ensa_version: ^ensa_version,
                    instances: [
                      %Instance{
@@ -1060,6 +1075,55 @@ defmodule Trento.SapSystems.SapSystemTest do
         end
       )
     end
+
+    test "should change the health of the SAP system when its database health has changed" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "ABAP"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          UpdateDatabaseHealth.new!(%{
+            sap_system_id: sap_system_id,
+            database_health: :critical
+          }),
+          UpdateDatabaseHealth.new!(%{
+            sap_system_id: sap_system_id,
+            database_health: :critical
+          })
+        ],
+        [
+          %SapSystemDatabaseHealthChanged{
+            sap_system_id: sap_system_id,
+            database_health: :critical
+          },
+          %SapSystemHealthChanged{sap_system_id: sap_system_id, health: :critical}
+        ],
+        fn state ->
+          assert %SapSystem{
+                   health: :critical,
+                   database_health: :critical
+                 } = state
+        end
+      )
+    end
   end
 
   describe "rollup" do
@@ -1092,6 +1156,7 @@ defmodule Trento.SapSystems.SapSystemTest do
             sap_system_id: sap_system_id,
             sid: sid,
             health: :passing,
+            database_health: :passing,
             ensa_version: ensa_version,
             instances: [
               %Instance{
@@ -1344,7 +1409,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should restore a sap system when abap/messageserver instances are present" do
+    test "should restore a sap system with a new health when abap/messageserver instances are present" do
       sap_system_id = UUID.uuid4()
 
       database_host_id = UUID.uuid4()
@@ -1398,7 +1463,8 @@ defmodule Trento.SapSystems.SapSystemTest do
           sap_system_id: sap_system_id,
           sid: application_sid,
           db_host: database_host_id,
-          features: "MESSAGESERVER"
+          features: "MESSAGESERVER",
+          database_health: :critical
         )
 
       assert_events_and_state(
@@ -1421,11 +1487,18 @@ defmodule Trento.SapSystems.SapSystemTest do
             sap_system_id: sap_system_id,
             tenant: command.tenant,
             db_host: command.db_host,
-            health: command.health
+            health: command.health,
+            database_health: command.database_health
+          },
+          %SapSystemHealthChanged{
+            sap_system_id: sap_system_id,
+            health: :critical
           }
         ],
         fn sap_system ->
           assert %SapSystem{
+                   health: :critical,
+                   database_health: :critical,
                    deregistered_at: nil
                  } = sap_system
         end
@@ -1473,7 +1546,8 @@ defmodule Trento.SapSystems.SapSystemTest do
       ]
 
       command = %RestoreSapSystem{
-        sap_system_id: sap_system_id
+        sap_system_id: sap_system_id,
+        database_health: :passing
       }
 
       assert_events_and_state(
@@ -1482,11 +1556,71 @@ defmodule Trento.SapSystems.SapSystemTest do
         [
           %SapSystemRestored{
             sap_system_id: sap_system_id,
-            health: :passing
+            health: :passing,
+            database_health: :passing
           }
         ],
         fn sap_system ->
           assert %SapSystem{
+                   health: :passing,
+                   database_health: :passing,
+                   deregistered_at: nil
+                 } = sap_system
+        end
+      )
+    end
+
+    test "should restore a SAP system when abap/messageserver instances are present with the new health" do
+      sap_system_id = UUID.uuid4()
+
+      application_sid = fake_sid()
+
+      initial_events = [
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "MESSAGESERVER|ENQUE",
+          sid: application_sid
+        ),
+        build(
+          :application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          features: "ABAP|GATEWAY|ICMAN|IGS",
+          sid: application_sid
+        ),
+        build(
+          :sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: application_sid
+        ),
+        build(:sap_system_deregistered_event,
+          sap_system_id: sap_system_id
+        )
+      ]
+
+      command = %RestoreSapSystem{
+        sap_system_id: sap_system_id,
+        database_health: :critical
+      }
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [
+          %SapSystemRestored{
+            sap_system_id: sap_system_id,
+            health: :passing,
+            database_health: :critical
+          },
+          %SapSystemHealthChanged{
+            sap_system_id: sap_system_id,
+            health: :critical
+          }
+        ],
+        fn sap_system ->
+          assert %SapSystem{
+                   health: :critical,
+                   database_health: :critical,
                    deregistered_at: nil
                  } = sap_system
         end
@@ -2289,7 +2423,8 @@ defmodule Trento.SapSystems.SapSystemTest do
             instance_number: absent_app_instance_number,
             health: :passing,
             ensa_version: ensa_version,
-            features: "ABAP"
+            features: "ABAP",
+            database_health: :passing
           },
           %RegisterApplicationInstance{
             sap_system_id: sap_system_id,
@@ -2297,7 +2432,8 @@ defmodule Trento.SapSystems.SapSystemTest do
             instance_number: present_message_server_instance_number,
             health: :passing,
             ensa_version: ensa_version,
-            features: "MESSAGESERVER"
+            features: "MESSAGESERVER",
+            database_health: :passing
           }
         ],
         [

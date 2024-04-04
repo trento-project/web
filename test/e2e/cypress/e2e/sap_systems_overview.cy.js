@@ -265,10 +265,19 @@ context('SAP Systems Overview', () => {
       });
     });
 
-    it(`should have RED health in SAP system and when HANA instance when SAPControl-RED state is received`, () => {
+    it(`should have RED health in SAP system when HANA instance with SAPControl-RED state is received`, () => {
       cy.loadScenario(`sap-systems-overview-hana-RED`);
 
       const healthClasses = healthMap['RED'];
+
+      cy.get('table.table-fixed > tbody > tr')
+        .filter(':visible')
+        .eq(0)
+        .find('td')
+        .eq(0)
+        .get('svg')
+        .should('have.class', healthClasses);
+
       cy.get('table.table-fixed > tbody > tr').filter(':visible').eq(0).click();
       cy.get('table.table-fixed > tbody > tr')
         .filter(':visible')

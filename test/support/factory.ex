@@ -414,6 +414,7 @@ defmodule Trento.Factory do
       db_host: Faker.Internet.ip_v4_address(),
       tenant: Faker.Beer.hop(),
       health: Health.passing(),
+      database_health: Health.passing(),
       ensa_version: EnsaVersion.ensa1()
     }
   end
@@ -641,7 +642,8 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       health: Health.passing(),
       ensa_version: EnsaVersion.ensa1(),
-      database_id: Faker.UUID.v4()
+      database_id: Faker.UUID.v4(),
+      database_health: Health.passing()
     })
   end
 
