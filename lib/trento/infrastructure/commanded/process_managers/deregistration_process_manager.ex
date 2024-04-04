@@ -326,10 +326,11 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     }
   end
 
-  # Ignore the legacy_system error. The instance to deregister does not exist
-  # because it was a leftover instance
+  # Ignore error if deregistration command returns sap_system_not_registered error.
+  # Most probably it happens because the process manager was populated with legacy
+  # event, and those application instances don't exist anymore
 
-  def error({:error, :legacy_sap_system}, _command_or_event, _context),
+  def error({:error, :sap_system_not_registered}, _command_or_event, _context),
     do: {:skip, :continue_pending}
 
   # Retry the rollup errors, stop the process on other errors

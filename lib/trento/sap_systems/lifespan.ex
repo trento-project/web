@@ -25,6 +25,5 @@ defmodule Trento.SapSystems.Lifespan do
    If the aggregate is rolling up, it will be stopped to avoid processing any other event.
   """
   def after_error(:sap_system_rolling_up), do: :stop
-  def after_error(:legacy_sap_system), do: :stop
   def after_error(error), do: DefaultLifespan.after_error(error)
 end
