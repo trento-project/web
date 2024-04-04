@@ -56,6 +56,8 @@ defmodule TrentoWeb.V1.SapSystemView do
   end
 
   def render("sap_system_registered.json", %{sap_system: sap_system}) do
+    %{database: database} = sap_system
+
     sap_system
     |> Map.from_struct()
     |> Map.delete(:__meta__)
@@ -63,6 +65,10 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> Map.delete(:database_instances)
     |> Map.delete(:application_instances)
     |> Map.delete(:tags)
+    |> Map.put(
+      :database_sid,
+      database.sid
+    )
   end
 
   def render("sap_system_restored.json", %{sap_system: sap_system}) do

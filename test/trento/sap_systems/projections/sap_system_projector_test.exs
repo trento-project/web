@@ -44,7 +44,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should project a new SAP System when a SapSystemRegistered event is received" do
-    event = build(:sap_system_registered_event)
+    %{id: database_id} = insert(:database)
+    event = build(:sap_system_registered_event, database_id: database_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
 
@@ -62,6 +63,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     assert event.db_host == projection.db_host
     assert event.health == projection.health
     assert event.ensa_version == projection.ensa_version
+    assert event.database_id == projection.database_id
 
     assert_broadcast(
       "sap_system_registered",
