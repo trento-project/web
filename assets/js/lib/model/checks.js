@@ -18,7 +18,6 @@ export const hasChecksForClusterType = (catalog, clusterType) =>
     filter(isCheckForTarget(TARGET_CLUSTER)),
     some(
       ({ metadata }) =>
-        !hasMetadata({ metadata }) ||
         !hasClusterTypeMetadata({ metadata }) ||
         pipe(
           castArray,
