@@ -302,7 +302,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should restore a SAP system when SapSystemRestored is received" do
-    %{id: database_id} = insert(:database)
+    %{id: database_id, sid: database_sid, health: database_health} = insert(:database)
 
     %{tenant: tenant, id: sap_system_id, sid: sid} =
       insert(:sap_system, deregistered_at: DateTime.utc_now(), database_id: database_id)
@@ -328,7 +328,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       sap_system_id: sap_system_id,
       tenant: tenant,
       db_host: new_db_host,
-      health: new_health
+      health: new_health,
+      database_health: database_health
     }
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -352,7 +353,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         tenant: ^tenant,
         database_instances: [^adapted_database_instance],
         application_instances: [^application_instance],
-        tags: ^tags
+        tags: ^tags,
+        database_sid: ^database_sid
       },
       1000
     )

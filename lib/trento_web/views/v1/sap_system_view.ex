@@ -26,7 +26,7 @@ defmodule TrentoWeb.V1.SapSystemView do
           %{
             application_instances: application_instances,
             database_instances: database_instances,
-            database: database
+            database: %{sid: database_sid}
           } = sap_system
       }) do
     rendered_application_instances =
@@ -46,7 +46,7 @@ defmodule TrentoWeb.V1.SapSystemView do
     )
     |> Map.put(
       :database_sid,
-      database.sid
+      database_sid
     )
     |> Map.put(
       :application_instances,

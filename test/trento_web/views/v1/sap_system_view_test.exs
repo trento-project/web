@@ -7,7 +7,7 @@ defmodule TrentoWeb.V1.SapSystemViewTest do
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
   test "should add the system replication status to the secondary instance and should remove it from the primary one" do
-    database = insert(:database)
+    database = build(:database)
 
     [%{database_instances: database_instances}] =
       render(TrentoWeb.V1.SapSystemView, "sap_systems.json", %{
