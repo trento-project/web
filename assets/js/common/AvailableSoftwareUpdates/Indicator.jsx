@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import {
-  EOS_KEYBOARD_ARROW_RIGHT_FILLED,
+  // EOS_KEYBOARD_ARROW_RIGHT_FILLED,
   EOS_ERROR_OUTLINED,
   EOS_LOADING_ANIMATED,
 } from 'eos-icons-react';
@@ -58,14 +58,14 @@ function Indicator({ title, critical, tooltip, icon, loading, children }) {
           </div>
         </div>
         <div className="flex grow justify-end">
-          {!unknown && (
+          {/* {!unknown && (
             <div>
               <EOS_KEYBOARD_ARROW_RIGHT_FILLED
                 size="l"
                 className="fill-gray-400"
               />
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </Tooltip>
