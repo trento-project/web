@@ -5,7 +5,7 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import { apiKeySettingsFactory } from '@lib/test-utils/factories/settings';
-import { addDays, formatISO, subDays } from 'date-fns';
+import { addDays, addHours, formatISO, subDays } from 'date-fns';
 import HealthIcon from '@common/HealthIcon';
 import { notify, dismissableNotify } from '@state/notifications';
 import { checkApiKeyExpiration } from './settings';
@@ -74,6 +74,23 @@ describe('Settings sagas', () => {
 
       const dispatched = await recordSaga(checkApiKeyExpiration, {});
       expect(dispatched).toEqual([]);
+    });
+
+    it('should dispatch a dismissable notification if the api key is going to expire the same day', async () => {
+      axiosMock.onGet('/api/v1/settings/api_key').reply(
+        200,
+        apiKeySettingsFactory.build({
+          expire_at: formatISO(addHours(new Date(), 2)),
+        })
+      );
+      const dispatched = await recordSaga(checkApiKeyExpiration, {});
+      const expectedAction = dismissableNotify({
+        text: `API Key expires today`,
+        icon: <HealthIcon health="warning" />,
+        duration: Infinity,
+        id: 'api-key-expiration-toast',
+      });
+      expect(dispatched).toEqual([expectedAction]);
     });
   });
 });
