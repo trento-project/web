@@ -1,27 +1,23 @@
-import { pipe, some, castArray, filter } from 'lodash/fp';
+import { castArray } from 'lodash';
 import { TARGET_CLUSTER } from '.';
-
-const hasMetadata = ({ metadata }) => !!metadata;
-const hasClusterTypeMetadata = ({ metadata }) =>
-  hasMetadata({ metadata }) && !!metadata.cluster_type;
 
 const isCheckForTarget =
   (targetType) =>
   ({ metadata }) =>
-    !hasMetadata({ metadata }) || metadata.target_type === targetType;
+    !metadata || metadata.target_type === targetType;
+
+const supportsClusterType =
+  (clusterType) =>
+  ({ metadata }) =>
+    !metadata?.cluster_type ||
+    castArray(metadata.cluster_type).some(
+      (metadataClusterType) => metadataClusterType === clusterType
+    );
 
 export const hasChecksForTarget = (catalog, targetType) =>
-  some(isCheckForTarget(targetType))(catalog);
+  catalog.some(isCheckForTarget(targetType));
 
 export const hasChecksForClusterType = (catalog, clusterType) =>
-  pipe(
-    filter(isCheckForTarget(TARGET_CLUSTER)),
-    some(
-      ({ metadata }) =>
-        !hasClusterTypeMetadata({ metadata }) ||
-        pipe(
-          castArray,
-          some((metadataClusterType) => metadataClusterType === clusterType)
-        )(metadata.cluster_type)
-    )
-  )(catalog);
+  catalog
+    .filter(isCheckForTarget(TARGET_CLUSTER))
+    .some(supportsClusterType(clusterType));
