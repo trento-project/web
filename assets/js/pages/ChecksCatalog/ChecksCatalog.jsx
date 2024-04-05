@@ -9,6 +9,7 @@ import {
   TARGET_CLUSTER,
 } from '@lib/model';
 import { clusterTypes, getClusterTypeLabel } from '@lib/model/clusters';
+import { hasChecksForClusterType, hasChecksForTarget } from '@lib/model/checks';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
 import Pill from '@common/Pill';
@@ -62,12 +63,6 @@ const targetTypeOptionRenderer = createOptionRenderer(
     </TargetIcon>
   )
 );
-
-const hasChecksForTarget = (catalog, targetType) =>
-  catalog.some(({ metadata }) => metadata?.target_type === targetType);
-
-const hasChecksForClusterType = (catalog, clusterType) =>
-  catalog.some(({ metadata }) => metadata?.cluster_type === clusterType);
 
 function ChecksCatalog({
   completeCatalog,
