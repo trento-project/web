@@ -38,11 +38,17 @@ defmodule Trento.Hosts.Host do
   Every time a checks execution for a host completes the execution's result is taken into account to determine host's health.
   Checks execution is started either by an explicit user request or periodically as per the scheduler configuration.
 
-  ### Software Updates Discovery health
+  ### Software Updates Discovery
 
-  The Software Updates Discovery health is obtained from the integration with an external service, SUMA,
-  that provides information about relevant patches and upgradable packages for the host.
-  Presence of relevant patches concurs to the host's aggregated health as follows:
+  Business process integrating with an external service, SUMA, determining relevant patches and upgradable packages for a host.
+  Process is triggered
+  - on host registration
+  - when the fqdn of the host changes
+  - on host restoration
+  - every given amount of time
+  - on demand (ie the integration settings with the external service change)
+
+  Presence of relevant patches determines Software Updates Discovery health and concurs to the host's aggregated health as follows:
   - critical if there is at least one security advisory
   - warning if there are only buxfixes/software enhancements
   """
@@ -70,6 +76,7 @@ defmodule Trento.Hosts.Host do
     CompleteHostChecksExecution,
     CompleteSoftwareUpdatesDiscovery,
     DeregisterHost,
+    DiscoverSoftwareUpdates,
     RegisterHost,
     RequestHostDeregistration,
     RollUpHost,
@@ -99,7 +106,8 @@ defmodule Trento.Hosts.Host do
     SaptuneStatusUpdated,
     SlesSubscriptionsUpdated,
     SoftwareUpdatesDiscoveryCleared,
-    SoftwareUpdatesDiscoveryCompleted
+    SoftwareUpdatesDiscoveryCompleted,
+    SoftwareUpdatesDiscoveryRequested
   }
 
   @required_fields []
@@ -528,6 +536,21 @@ defmodule Trento.Hosts.Host do
     |> Multi.execute(&maybe_emit_host_health_changed_event/1)
   end
 
+  # Software Updates Discovery
+
+  def execute(
+        %Host{
+          host_id: host_id,
+          fully_qualified_domain_name: fully_qualified_domain_name
+        },
+        %DiscoverSoftwareUpdates{}
+      ) do
+    %SoftwareUpdatesDiscoveryRequested{
+      host_id: host_id,
+      fully_qualified_domain_name: fully_qualified_domain_name
+    }
+  end
+
   def execute(
         %Host{host_id: host_id} = host,
         %CompleteSoftwareUpdatesDiscovery{
@@ -713,6 +736,8 @@ defmodule Trento.Hosts.Host do
       | saptune_status: status
     }
   end
+
+  def apply(%Host{} = host, %SoftwareUpdatesDiscoveryRequested{}), do: host
 
   def apply(
         %Host{} = host,
