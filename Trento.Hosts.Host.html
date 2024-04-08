@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-43PMFBC7.js"></script>
-    <script src="dist/sidebar_items-D8878232.js"></script>
+    <script src="dist/sidebar_items-BAE4F76A.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -171,15 +171,14 @@ a heartbeat failure event is raised changing the health of the host as critical.
 </h3>
 <p>The checks health is obtained from the <a href="https://github.com/trento-project/wanda/">Checks Engine executions</a>.
 Every time a checks execution for a host completes the execution's result is taken into account to determine host's health.
-Checks execution is started either by an explicit user request or periodically as per the scheduler configuration.</p><h3 id="module-software-updates-discovery-health" class="section-heading">
-  <a href="#module-software-updates-discovery-health" class="hover-link">
+Checks execution is started either by an explicit user request or periodically as per the scheduler configuration.</p><h3 id="module-software-updates-discovery" class="section-heading">
+  <a href="#module-software-updates-discovery" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
-  <span class="text">Software Updates Discovery health</span>
+  <span class="text">Software Updates Discovery</span>
 </h3>
-<p>The Software Updates Discovery health is obtained from the integration with an external service, SUMA,
-that provides information about relevant patches and upgradable packages for the host.
-Presence of relevant patches concurs to the host's aggregated health as follows:</p><ul><li>critical if there is at least one security advisory</li><li>warning if there are only buxfixes/software enhancements</li></ul>
+<p>Business process integrating with an external service, SUMA, determining relevant patches and upgradable packages for a host.
+Process is triggered</p><ul><li>on host registration</li><li>when the fqdn of the host changes</li><li>on host restoration</li><li>every given amount of time</li><li>on demand (ie the integration settings with the external service change)</li></ul><p>Presence of relevant patches determines Software Updates Discovery health and concurs to the host's aggregated health as follows:</p><ul><li>critical if there is at least one security advisory</li><li>warning if there are only buxfixes/software enhancements</li></ul>
   </section>
 
 
@@ -303,7 +302,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -366,7 +365,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">apply(host, arg2)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L566" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L589" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -388,7 +387,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -410,7 +409,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -432,7 +431,7 @@ Accepts a map or a list of maps.</p></div>
     </a>
     <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -455,7 +454,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">execute(snapshot, arg2)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L149" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L157" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -477,7 +476,7 @@ validates the required ones and returns a changeset.</p>
     </a>
     <h1 class="signature" translate="no">new(structs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -506,7 +505,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">new!(params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -534,7 +533,7 @@ Accepts a map or a list of maps.</p>
     </a>
     <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
