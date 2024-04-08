@@ -1,6 +1,6 @@
 import React from 'react';
 import { get } from '@lib/network';
-import { differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays, parseISO, isAfter } from 'date-fns';
 import { call, put } from 'redux-saga/effects';
 import HealthIcon from '@common/HealthIcon';
 import { notify, dismissableNotify } from '@state/notifications';
@@ -21,7 +21,7 @@ export function* checkApiKeyExpiration() {
     return;
   }
 
-  if (expirationDays < 0) {
+  if (isAfter(new Date(), expireTS)) {
     yield put(
       notify({
         text: 'API Key has expired. Go to Settings to issue a new key',
@@ -30,14 +30,20 @@ export function* checkApiKeyExpiration() {
         id: API_KEY_EXPIRATION_NOTIFICATION_ID,
       })
     );
-  } else {
-    yield put(
-      dismissableNotify({
-        text: `API Key expires in ${expirationDays} days`,
-        icon: <HealthIcon health="warning" />,
-        duration: Infinity,
-        id: API_KEY_EXPIRATION_NOTIFICATION_ID,
-      })
-    );
+    return;
   }
+
+  const notificationText =
+    expirationDays === 0
+      ? 'API Key expires today'
+      : `API Key expires in ${expirationDays} days`;
+
+  yield put(
+    dismissableNotify({
+      text: notificationText,
+      icon: <HealthIcon health="warning" />,
+      duration: Infinity,
+      id: API_KEY_EXPIRATION_NOTIFICATION_ID,
+    })
+  );
 }

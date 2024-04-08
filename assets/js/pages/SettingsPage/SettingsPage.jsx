@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { values, isUndefined } from 'lodash';
-import { format, parseISO } from 'date-fns';
+import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { logError } from '@lib/log';
 import { get, patch } from '@lib/network';
@@ -34,6 +34,28 @@ import {
 
 import { dismissNotification } from '@state/notifications';
 import { API_KEY_EXPIRATION_NOTIFICATION_ID } from '@state/sagas/settings';
+
+function ApiKeyExpireInfo({ apiKeyExpiration }) {
+  const expirationLabel = () => {
+    if (!apiKeyExpiration) {
+      return 'Key will never expire';
+    }
+
+    const expireDate = parseISO(apiKeyExpiration);
+    if (apiKeyExpiration && isBefore(new Date(), expireDate)) {
+      return `Key will expire ${format(expireDate, 'd LLL yyyy')}`;
+    }
+
+    return 'Key expired';
+  };
+
+  return (
+    <div className="flex space-x-2 my-4">
+      <EOS_INFO_OUTLINED size="20" className="mt-2" />
+      <div className="mt-1 text-gray-600 text-sm">{expirationLabel()}</div>
+    </div>
+  );
+}
 
 function SettingsPage() {
   const dispatch = useDispatch();
@@ -140,18 +162,7 @@ function SettingsPage() {
                 )}
 
                 {apiKey && (
-                  <div className="flex space-x-2 my-4">
-                    <EOS_INFO_OUTLINED size="20" className="mt-2" />
-
-                    <div className="mt-1 text-gray-600 text-sm">
-                      {apiKeyExpiration
-                        ? `Key will expire ${format(
-                            parseISO(apiKeyExpiration),
-                            'd LLL yyyy'
-                          )}`
-                        : 'Key will never expire'}
-                    </div>
-                  </div>
+                  <ApiKeyExpireInfo apiKeyExpiration={apiKeyExpiration} />
                 )}
               </Transition>
             </div>
