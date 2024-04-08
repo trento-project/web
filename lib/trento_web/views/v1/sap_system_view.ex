@@ -55,9 +55,9 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> add_system_replication_status_to_secondary_instance()
   end
 
-  def render("sap_system_registered.json", %{sap_system: sap_system}) do
-    %{database: database} = sap_system
-
+  def render("sap_system_registered.json", %{
+        sap_system: %{database: %{sid: database_sid}} = sap_system
+      }) do
     sap_system
     |> Map.from_struct()
     |> Map.delete(:__meta__)
@@ -65,10 +65,7 @@ defmodule TrentoWeb.V1.SapSystemView do
     |> Map.delete(:database_instances)
     |> Map.delete(:application_instances)
     |> Map.delete(:tags)
-    |> Map.put(
-      :database_sid,
-      database.sid
-    )
+    |> Map.put(:database_sid, database_sid)
   end
 
   def render("sap_system_restored.json", %{sap_system: sap_system}) do

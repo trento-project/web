@@ -11,16 +11,57 @@ defmodule TrentoWeb.V1.SapSystemViewTest do
     test "should render sap_systems.json" do
       %{id: database_id, sid: database_sid} = database = insert(:database)
 
-      database_instances = [
-        build(:database_instance, database_id: database_id)
-      ]
+      [database_instance] =
+        database_instances = build_list(1, :database_instance, database_id: database_id)
 
-      database_instance = Enum.at(database_instances, 0)
+      %{
+        sid: database_instance_sid,
+        tenant: database_instance_tenant,
+        instance_number: database_instance_number,
+        instance_hostname: database_instance_hostname,
+        features: database_instance_features,
+        http_port: database_instance_http_port,
+        https_port: database_instance_https_port,
+        start_priority: database_instance_start_priority,
+        host_id: database_instance_host_id,
+        system_replication: database_instance_system_replication,
+        system_replication_status: database_instance_system_replication_status,
+        health: database_instance_health,
+        absent_at: database_instance_absent_at,
+        inserted_at: database_instance_inserted_at,
+        updated_at: database_instance_updated_at
+      } = database_instance
 
-      application_instances = [build(:application_instance)]
-      application_instance = Enum.at(application_instances, 0)
+      [application_instance] = application_instances = build_list(1, :application_instance)
 
-      sap_system =
+      %{
+        sap_system_id: application_instance_sap_system_id,
+        sid: application_instance_sid,
+        instance_number: application_instance_number,
+        features: application_instance_features,
+        host_id: application_instance_host_id,
+        health: application_instance_health,
+        absent_at: application_instance_absent_at,
+        inserted_at: application_instance_inserted_at,
+        updated_at: application_instance_updated_at,
+        start_priority: application_instance_start_priority,
+        instance_hostname: application_instance_hostname,
+        https_port: application_instance_https_port,
+        http_port: application_instance_http_port
+      } = application_instance
+
+      %{
+        id: sap_system_id,
+        tags: sap_system_tags,
+        health: sap_system_health,
+        tenant: sap_system_tenant,
+        sid: sap_system_sid,
+        ensa_version: sap_system_ensa_version,
+        db_host: sap_system_db_host,
+        inserted_at: sap_system_inserted_at,
+        updated_at: sap_system_updated_at
+      } =
+        sap_system =
         build(:sap_system,
           tags: [],
           database_id: database_id,
@@ -29,63 +70,63 @@ defmodule TrentoWeb.V1.SapSystemViewTest do
           application_instances: application_instances
         )
 
-      expected_sap_system_json =
+      expect_sap_system_json =
         [
           %{
-            id: sap_system.id,
-            tags: [],
-            inserted_at: nil,
-            updated_at: nil,
-            health: sap_system.health,
-            tenant: sap_system.tenant,
-            sid: sap_system.sid,
+            id: sap_system_id,
+            tags: sap_system_tags,
+            inserted_at: sap_system_inserted_at,
+            updated_at: sap_system_updated_at,
+            health: sap_system_health,
+            tenant: sap_system_tenant,
+            sid: sap_system_sid,
             database_instances: [
               %{
-                sap_system_id: database_id,
-                # keep backward compatibility between sap_system_id and database_id
                 database_id: database_id,
-                sid: database_instance.sid,
-                tenant: database_instance.tenant,
-                instance_number: database_instance.instance_number,
-                instance_hostname: nil,
-                features: database_instance.features,
-                http_port: nil,
-                https_port: nil,
-                start_priority: nil,
-                host_id: database_instance.host_id,
-                system_replication: database_instance.system_replication,
-                system_replication_status: database_instance.system_replication_status,
-                health: database_instance.health,
-                absent_at: nil,
-                inserted_at: nil,
-                updated_at: nil
+                # keep backward compatibility between sap_system_id and database_id
+                sap_system_id: database_id,
+                sid: database_instance_sid,
+                tenant: database_instance_tenant,
+                instance_number: database_instance_number,
+                instance_hostname: database_instance_hostname,
+                features: database_instance_features,
+                http_port: database_instance_http_port,
+                https_port: database_instance_https_port,
+                start_priority: database_instance_start_priority,
+                host_id: database_instance_host_id,
+                system_replication: database_instance_system_replication,
+                system_replication_status: database_instance_system_replication_status,
+                health: database_instance_health,
+                absent_at: database_instance_absent_at,
+                inserted_at: database_instance_inserted_at,
+                updated_at: database_instance_updated_at
               }
             ],
             database_id: database_id,
             application_instances: [
               %{
-                sap_system_id: application_instance.sap_system_id,
-                sid: application_instance.sid,
-                instance_number: application_instance.instance_number,
-                features: application_instance.features,
-                host_id: application_instance.host_id,
-                health: application_instance.health,
-                absent_at: nil,
-                inserted_at: nil,
-                updated_at: nil,
-                start_priority: nil,
-                instance_hostname: nil,
-                https_port: nil,
-                http_port: nil
+                sap_system_id: application_instance_sap_system_id,
+                sid: application_instance_sid,
+                instance_number: application_instance_number,
+                features: application_instance_features,
+                host_id: application_instance_host_id,
+                health: application_instance_health,
+                absent_at: application_instance_absent_at,
+                inserted_at: application_instance_inserted_at,
+                updated_at: application_instance_updated_at,
+                start_priority: application_instance_start_priority,
+                instance_hostname: application_instance_hostname,
+                https_port: application_instance_https_port,
+                http_port: application_instance_http_port
               }
             ],
-            ensa_version: sap_system.ensa_version,
+            ensa_version: sap_system_ensa_version,
             database_sid: database_sid,
-            db_host: sap_system.db_host
+            db_host: sap_system_db_host
           }
         ]
 
-      assert ^expected_sap_system_json =
+      assert expect_sap_system_json ==
                render(SapSystemView, "sap_systems.json", %{
                  sap_systems: [sap_system]
                })
