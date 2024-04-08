@@ -15,10 +15,32 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
     RegisterDatabaseInstance
   }
 
+  alias Trento.Databases.ValueObjects.Tenant
+
   alias Trento.SapSystems.Commands.{
     MarkApplicationInstanceAbsent,
     RegisterApplicationInstance
   }
+
+  test "should return the expected commands when a sap_system payload of type database is handled with multiple tenants" do
+    assert {:ok,
+            [
+              %RegisterDatabaseInstance{
+                features: "HDB|HDB_WORKER",
+                host_id: "6a5dc5da-e28b-5b3c-8808-8dc88714720d",
+                instance_number: "56",
+                database_id: "f2641862-5810-5976-b19f-079fa9f82d9a",
+                sid: "HS6",
+                tenants: [%Tenant{name: "HS6"}, %Tenant{name: "S4TENANT"}],
+                system_replication: nil,
+                system_replication_status: nil,
+                health: :passing
+              }
+            ]} =
+             "sap_system_discovery_database_multi_tenant"
+             |> load_discovery_event_fixture()
+             |> SapSystemPolicy.handle([], nil)
+  end
 
   test "should return the expected commands when a sap_system payload of type database is handled" do
     assert {:ok,
@@ -29,7 +51,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 instance_number: "00",
                 database_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
                 sid: "PRD",
-                tenant: "PRD",
+                tenants: [%Tenant{name: "PRD"}],
                 system_replication: "Primary",
                 system_replication_status: "ERROR",
                 health: :passing
@@ -49,7 +71,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 instance_number: "10",
                 database_id: "6c9208eb-a5bb-57ef-be5c-6422dedab602",
                 sid: "HDP",
-                tenant: "HDP",
+                tenants: [%Tenant{name: "HDP"}],
                 system_replication: nil,
                 system_replication_status: nil,
                 health: :unknown
