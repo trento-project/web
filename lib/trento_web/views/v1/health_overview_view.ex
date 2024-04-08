@@ -56,9 +56,11 @@ defmodule TrentoWeb.V1.HealthOverviewView do
     end)
   end
 
-  @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t() | nil
-  defp extract_tenant([]), do: nil
+  # TODO: EXTRACT FROM DB
+  # @spec extract_tenant([DatabaseInstanceReadModel.t()]) :: String.t() | nil
+  # defp extract_tenant([]), do: nil
 
-  defp extract_tenant([%DatabaseInstanceReadModel{tenant: tenant} | _]),
-    do: tenant
+  # defp extract_tenant([%DatabaseInstanceReadModel{tenants: tenants} | _]),
+  #   do: tenants
+  defp extract_tenant(_), do: "tenant"
 end
